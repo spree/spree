@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type OptionType from '../../types/generated/OptionType';
 import { OptionValueSchema } from './OptionValue';
 
 export const OptionTypeSchema = z.object({
@@ -14,6 +15,18 @@ export const OptionTypeSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   get option_values() { return z.array(OptionValueSchema).optional(); },
-});
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<OptionType['id']>;
+  name: z.ZodType<OptionType['name']>;
+  label: z.ZodType<OptionType['label']>;
+  position: z.ZodType<OptionType['position']>;
+  kind: z.ZodType<OptionType['kind']>;
+  translations: z.ZodOptional<z.ZodType<Exclude<OptionType['translations'], undefined>>>;
+  metadata: z.ZodType<OptionType['metadata']>;
+  filterable: z.ZodType<OptionType['filterable']>;
+  created_at: z.ZodType<OptionType['created_at']>;
+  updated_at: z.ZodType<OptionType['updated_at']>;
+  option_values: z.ZodOptional<z.ZodType<Exclude<OptionType['option_values'], undefined>>>;
+}>;
 
-export type OptionType = z.infer<typeof OptionTypeSchema>;
+export type { OptionType };

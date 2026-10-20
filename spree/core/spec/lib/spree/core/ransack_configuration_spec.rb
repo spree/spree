@@ -73,6 +73,13 @@ RSpec.describe Spree::RansackConfiguration do
 
       expect(config.custom_scopes_for(Spree::Product)).to contain_exactly('by_seller')
     end
+
+    it 'records the argument types it is declared with' do
+      config.add_scope(Spree::Product, :by_seller, type: 'id')
+      config.add_scope(Spree::Product, :featured)
+
+      expect(config.custom_scope_types_for(Spree::Product)).to eq('by_seller' => 'id')
+    end
   end
 
   describe '#custom_attributes_for' do

@@ -1,10 +1,11 @@
+import { countryCodeSchema } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 export const MEMBER_TYPES = ['country', 'state', 'postal_code'] as const
 
 export const deliveryZoneMemberSchema = z.object({
   member_type: z.enum(MEMBER_TYPES),
-  country_code: z.string().optional(),
+  country_code: countryCodeSchema.or(z.literal('')).optional(),
   state_code: z.string().optional(),
   postal_code_prefix: z.string().optional(),
   postal_code_from: z.string().optional(),

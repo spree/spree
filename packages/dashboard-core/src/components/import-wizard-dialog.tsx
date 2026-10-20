@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertDescription,
   Badge,
   Button,
   Card,
@@ -33,6 +35,7 @@ import {
   CheckCircle2Icon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CircleAlertIcon,
   DownloadIcon,
   RotateCcwIcon,
   XIcon,
@@ -107,13 +110,7 @@ export function ImportWizardDialog({ importId, onClose, onViewRecords }: ImportW
       }}
       modal
     >
-      <DialogContent
-        // Edge-to-edge minus a 3-unit gutter — see BulkPriceEditorDialog for
-        // why every inset/translate/max is overridden.
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
+      <DialogContent fullScreen showCloseButton={false}>
         {importId && (
           <ImportWizard
             importId={importId}
@@ -472,10 +469,10 @@ function MappingStep({
         </div>
 
         {error && (
-          <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-destructive text-sm">
-            <AlertTriangleIcon className="size-4 shrink-0" />
-            <span>{error.message}</span>
-          </div>
+          <Alert variant="destructive">
+            <CircleAlertIcon />
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
         )}
       </CardContent>
     </Card>

@@ -15,8 +15,8 @@ module Spree
 
         # Mirrors Spree::GiftCards::Apply, which refuses a gift card once store
         # credit is in use: the two are never combined on one order.
-        return failure(nil, Spree.t(:store_credit_using_gift_card_error)) if @order.gift_card.present?
-        return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless spendable_store_credits.exists?
+        return failure(nil, I18n.t('spree.store_credit_using_gift_card_error')) if @order.gift_card.present?
+        return failure(nil, I18n.t('spree.error_user_does_not_have_any_store_credits')) unless spendable_store_credits.exists?
 
         ApplicationRecord.transaction do
           existing = @order.payments.store_credits.where(status: :checkout)

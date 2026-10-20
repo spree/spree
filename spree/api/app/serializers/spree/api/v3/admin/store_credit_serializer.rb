@@ -3,11 +3,14 @@ module Spree
     module V3
       module Admin
         class StoreCreditSerializer < V3::StoreCreditSerializer
+          without_formatted_money
+
           typelize customer_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
                    memo: [:string, nullable: true],
-                   amount_authorized: :string,
-                   display_amount_authorized: :string,
+                   amount: [:string, nullable: false], amount_used: [:string, nullable: false],
+                   amount_remaining: [:string, nullable: false],
+                   amount_authorized: [:string, nullable: false],
                    outstanding: :boolean,
                    originator_type: [:string, nullable: true],
                    originator_id: [:string, nullable: true],
@@ -16,27 +19,15 @@ module Spree
           attributes :memo, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :amount_authorized do |store_credit|
-            store_credit.amount_authorized.to_s
-          end
-
+          money_attributes :amount_authorized
           # Answers the same question as the `outstanding` filter, so the row
           # and the filter cannot disagree.
-          attribute :outstanding do |store_credit|
-            store_credit.outstanding?
-          end
+          attribute :outstanding, &:outstanding?
 
-          attribute :display_amount_authorized do |store_credit|
-            store_credit.display_amount_authorized.to_s
-          end
-
-          attribute :customer_id do |store_credit|
-            store_credit.customer&.prefixed_id
-          end
-
-          attribute :created_by_id do |store_credit|
-            store_credit.created_by&.prefixed_id
-          end
+          # money_attributes types its fields nullable for gated guests; the
+          # Admin API never gates prices.
+          typelize amount_authorized: [:string, nullable: false]
+          prefixed_id_attributes :customer, :created_by
 
           # Why the credit exists: the return, exchange, claim or gift card
           # that issued it, or null when an admin issued it by hand. The type

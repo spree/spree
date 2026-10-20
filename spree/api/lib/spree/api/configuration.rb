@@ -27,6 +27,11 @@ module Spree
 
       preference :webhooks_enabled, :boolean, default: true, env: 'SPREE_WEBHOOKS_ENABLED'
       preference :webhooks_verify_ssl, :boolean, default: !Rails.env.development?, env: 'SPREE_WEBHOOKS_VERIFY_SSL'
+      # Hosts a webhook may reach even though they resolve to a private
+      # address (the SSRF guard otherwise refuses them). "host" matches that
+      # host; ".suffix" matches any host under it. See
+      # Spree::WebhookEndpoint.allowed_internal_host?.
+      preference :webhooks_allowed_internal_hosts, :array, default: [], env: 'SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS'
     end
   end
 end

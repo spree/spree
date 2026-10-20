@@ -67,14 +67,6 @@ describe Spree::Cart, type: :model do
         expect(cart.checkout_steps).to eq(%w(address delivery complete))
       end
     end
-
-    context 'when payment required' do
-      before { allow(cart).to receive_messages payment_required?: true }
-
-      specify do
-        expect(cart.checkout_steps).to eq(%w(address delivery payment complete))
-      end
-    end
   end
 
   describe '#current_checkout_step' do
@@ -135,14 +127,6 @@ describe Spree::Cart, type: :model do
   end
 
   describe 'lifecycle events' do
-    it 'publishes cart.* lifecycle events' do
-      expect(described_class.lifecycle_events_enabled).to be true
-      expect(described_class.event_prefix).to eq('cart')
-
-      registered = described_class._commit_callbacks.map(&:filter)
-      expect(registered).to include(:publish_create_event, :publish_update_event, :publish_delete_event)
-    end
-
     # The V3 cart serializer resolves by convention when spree_api is loaded;
     # core's dummy app only sees the fallback payload.
     it 'carries the prefixed id in the event payload' do
@@ -173,20 +157,6 @@ describe Spree::Cart, type: :model do
   end
 
   describe 'lifecycle' do
-    it 'generates a token on create' do
-      expect(create(:cart).token).to be_present
-    end
-
-    it 'is completed when completed_at is set' do
-      expect(build(:cart, completed_at: Time.current)).to be_completed
-      expect(build(:cart)).not_to be_completed
-    end
-
-    it 'is completing while completing_at holds the cart' do
-      expect(build(:cart, completing_at: Time.current)).to be_completing
-      expect(build(:cart)).not_to be_completing
-    end
-
     it 'scopes complete/incomplete on completed_at' do
       incomplete = create(:cart)
       complete = create(:cart, completed_at: Time.current)
@@ -196,37 +166,48 @@ describe Spree::Cart, type: :model do
     end
   end
 
-  describe 'line item ownership' do
-    let(:cart) { create(:cart) }
+  describe '#orderable_variants' do
+    let(:company) { create(:company, store: store) }
+    let(:catalog) { create(:catalog, store: store) }
+    let(:listed) { create(:product, store: store) }
+    let(:hidden) { create(:product, store: store) }
+    let(:cart) { create(:cart, store: store, customer: customer) }
 
-    it 'owns line items and destroys them with the cart' do
-      line_item = create(:line_item, order: nil, cart: cart, currency: cart.currency)
-
-      expect(line_item.owner).to eq(cart)
-      expect { cart.destroy }.to change(Spree::LineItem, :count).by(-1)
-    end
-  end
-
-  describe 'order link' do
-    it 'links to the order completed from it' do
-      cart = create(:cart, completed_at: Time.current)
-      order = create(:order, cart: cart)
-
-      expect(cart.order).to eq(order)
-    end
-  end
-
-  describe '#warnings' do
-    let(:cart) { build(:cart) }
-
-    it 'defaults to empty array' do
-      expect(cart.warnings).to eq([])
+    before do
+      create(:catalog_product, catalog: catalog, product: listed)
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+      create(:company_membership, company: company, customer: customer)
     end
 
-    it 'is a transient attribute (not persisted)' do
-      cart.warnings = [{ code: 'test', message: 'test' }]
-      cart.save!
-      expect(cart.reload.warnings).to eq([])
+    it "narrows to the catalogs of the buyer's company" do
+      expect(cart.orderable_variants).to include(listed.default_variant)
+      expect(cart.orderable_variants).not_to include(hidden.default_variant)
+    end
+
+    # A buyer in two companies has no sole standing, so only the company the
+    # cart names can say which agreement applies.
+    it 'answers from the company the cart is for' do
+      other_company = create(:company, store: store)
+      other_catalog = create(:catalog, store: store)
+      create(:catalog_product, catalog: other_catalog, product: hidden)
+      create(:catalog_assignment, catalog: other_catalog, assignable: other_company)
+      create(:company_membership, company: other_company, customer: customer)
+      cart.update!(company: other_company)
+
+      expect(cart.orderable_variants).to include(hidden.default_variant)
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+
+    it "leaves out a catalog product not published on the cart's channel" do
+      listed.product_publications.destroy_all
+
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+
+    it "leaves out a product whose publication on the cart's channel has ended" do
+      listed.product_publications.update_all(unpublished_at: 1.hour.ago)
+
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
     end
   end
 
@@ -275,13 +256,12 @@ describe Spree::Cart, type: :model do
       end
     end
 
-    context 'when cart is empty' do
-      let(:order) { create(:order, store: store, customer: user) }
+    it 'uses the configured remove out of stock items service' do
+      custom_service = Class.new(Spree::Carts::RemoveOutOfStockItems)
+      allow(Spree).to receive(:cart_remove_out_of_stock_items_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).with(cart: cart).and_call_original
 
-      it 'does nothing' do
-        cart.remove_out_of_stock_items!
-        expect(cart.warnings).to eq([])
-      end
+      cart.remove_out_of_stock_items!
     end
   end
 
@@ -387,7 +367,7 @@ describe Spree::Cart, type: :model do
     let(:state) { country.states.first || create(:state, country: country) }
     let!(:zone) { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |method|
+      create(:delivery_method).tap do |method|
         method.calculator.preferred_amount = 5
         method.calculator.save
       end
@@ -396,7 +376,7 @@ describe Spree::Cart, type: :model do
     let(:ship_address) { create(:address, country: country, state: state) }
     let(:cart) { create(:cart_with_line_items, store: store, ship_address: ship_address, email: 'buyer@example.com') }
     let(:express) do
-      create(:shipping_method, name: 'Express').tap do |method|
+      create(:delivery_method, name: 'Express').tap do |method|
         method.calculator.preferred_amount = 15
         method.calculator.save
       end
@@ -456,6 +436,43 @@ describe Spree::Cart, type: :model do
 
         cart.update_columns(completed_at: Time.current)
         expect(Spree::Cart.find(cart.id).rebuild_fulfillments!).to be_nil
+      end
+
+      context 'without a destination' do
+        let(:cart) { create(:cart_with_line_items, store: store, email: 'buyer@example.com') }
+        let!(:pickup_location) { create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any', store: store) }
+
+        before { create(:pickup_delivery_method, store: store) }
+
+        it 'proposes nothing rather than preselecting pickup' do
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments).to be_empty
+          expect(cart.shipping_address_required?).to be(true)
+        end
+
+        it 'proposes nothing when an item is added' do
+          Spree.cart_add_item_workflow.call(cart: cart, variant: cart.line_items.first.variant, quantity: 1)
+
+          expect(cart.fulfillments.reload).to be_empty
+        end
+
+        it 'proposes pickup once the customer chooses a pickup location' do
+          cart.update!(preferred_stock_location_id: pickup_location.id)
+
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to be_pickup
+        end
+
+        it 'proposes straight away when no item ships to an address' do
+          cart.line_items.first.update!(variant: create(:digital_product, store: store).default_variant)
+          create(:digital_delivery_method, store: store)
+
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments).to be_present
+        end
       end
     end
 

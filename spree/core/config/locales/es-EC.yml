@@ -1,0 +1,186 @@
+---
+es-EC:
+  activerecord:
+    attributes:
+      spree/address:
+        company: Empresa
+        country: Pais
+        state: Provincia ó Estado
+      spree/gift_card:
+        amount_used: Monto utilizado
+        expires_at: Vence el
+      spree/inventory_unit:
+        state: Provincia ó Estado
+      spree/invitation:
+        inviter: Invitador
+      spree/policy:
+        body: Contenido
+        owner: Política para
+      spree/product:
+        available_on: Disponible
+        discontinue_on: Descontinuar el
+        less_than: Menos de
+        on_hand: En mano
+      spree/promotion:
+        generate_code: Generar código de cupón
+        promotion_category: Categoría de promoción
+      spree/store:
+        preferred_digital_asset_authorized_clicks: Límite de clics de descarga
+        preferred_limit_digital_download_count: Limitar la cantidad de descargas de enlaces digitales
+        storefront_custom_code_body_end: Código personalizado antes de la etiqueta de cierre body
+        storefront_custom_code_body_start: Código personalizado después de la etiqueta de apertura body
+        storefront_custom_code_head: Código personalizado en el head de la página
+      spree/taxon:
+        permalink: Permalink
+      user:
+        sign_in_count: Cantidad de inicios de sesión
+    errors:
+      models:
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: No se puede eliminar una tarjeta de regalo utilizada
+        spree/market_country:
+          attributes:
+            country:
+              not_in_shipping_zone: no está cubierto por ninguna zona de envío. Por favor, configure primero una zona de envío.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: es mayor que el monto máximo permitido de %{max_amount}
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: No se pueden eliminar productos que estén agregados a pedidos realizados. En esos casos, por favor descontinúelos.
+            discontinue_on:
+              invalid_date_range: debe ser posterior a la fecha de disponibilidad
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: debe ser posterior a la fecha de inicio
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Supera el total de créditos.
+            amount_used:
+              cannot_be_greater_than_amount: No puede ser mayor que el monto.
+              greater_than_zero_restrict_delete: es mayor que cero. No se puede eliminar el crédito de tienda.
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: No se pueden eliminar variantes que estén agregadas a pedidos realizados. En esos casos, por favor descontinúelas.
+    models:
+      spree/address:
+        one: Dirección.
+        other: Direcciones
+      spree/customer_group_user:
+        one: Usuario de grupo de clientes
+        other: Usuarios de grupo de clientes
+      spree/inventory_unit:
+        one: Unidad de inventario.
+        other: Unidades de inventario
+      spree/promotion_category:
+        one: Categoría de promoción
+        other: Categorías de promoción
+      spree/refund_reason:
+        one: Motivo de reembolso
+        other: Motivos de reembolso
+      spree/role:
+        one: Función
+        other: Funciones
+      spree/stock_location:
+        one: Ubicación de stock
+        other: Ubicaciones de stock
+      spree/stock_transfer:
+        one: Transferencia de stock
+        other: Transferencias de stock
+      spree/store_credit:
+        one: Crédito de tienda
+        other: Créditos de tienda
+  spree:
+    adjustment_labels:
+      tax_rates:
+        including_tax: "%{name}%{amount} (incluido en el precio)"
+    api_key_scopes_immutable: no se pueden cambiar después de crear la clave; cree una nueva clave con los alcances que necesite y revoque esta
+    backorderable: Devuelto
+    cannot_be_destroyed: El pedido no se puede eliminar.
+    cart_already_updated: El carrito ya fue actualizado.
+    cart_line_item:
+      discontinued: "%{li_name} fue eliminado porque fue descontinuado"
+      out_of_stock: "%{li_name} fue eliminado porque se agotó"
+    channel: Canal de ventas
+    channels: Canales de ventas
+    checkout_requirements:
+      email_required: El correo electrónico es obligatorio
+      line_items_required: Agrega al menos un artículo a tu carrito
+      payment_required: Agrega un método de pago
+    company: Compañia
+    compare_at_amount: Monto de comparación
+    compare_at_price: Precio de comparación
+    coupon_code_used: El código de cupón que ingresaste ya fue utilizado. Por favor, inténtalo de nuevo.
+    depth: Ancho
+    discontinued: Descontinuado
+    discontinued_variants_present: Algunos artículos de este pedido tienen productos que ya no están disponibles.
+    error_user_destroy_with_orders: No se puede eliminar un usuario asociado a pedidos
+    error_user_does_not_have_any_store_credits: El usuario no tiene ningún crédito de tienda disponible
+    errors:
+      messages:
+        cannot_delete_default_channel: No se puede eliminar el canal predeterminado. Primero promueve otro canal como predeterminado.
+    expired: Vencido
+    export_mailer:
+      export_done:
+        message: "¡Buen trabajo, tu exportación está lista! Por favor, usa el enlace de abajo para descargarla."
+      greeting: Hola %{user_name},
+    gift_card_already_redeemed: La tarjeta de regalo ya fue canjeada.
+    gift_card_expired: La tarjeta de regalo ha vencido.
+    gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de tienda.
+    i18n:
+      this_file_language: Español (es-EC)
+    idempotency_key_reused: Esta Idempotency-Key ya fue utilizada con parámetros de solicitud diferentes.
+    invitation_mailer:
+      greeting: Hola %{user_name},
+      invitation_email:
+        link_description: 'Para aceptar esta invitación, por favor haz clic en el enlace de abajo:'
+    line_item: Artículo del pedido
+    line_items: Artículos del pedido
+    locale: Idioma
+    media: Medios
+    only_active_products_can_be_added_to_cart: Los productos en borrador y archivados no se pueden agregar al carrito, por favor marca el producto como activo antes.
+    or: ó
+    order_routing:
+      strategies:
+        legacy: Heredada
+    order_summary: Resumen del pedido
+    products_cannot_be_shipped: Por el momento no podemos enviar %{product_names} a tu ubicación actual. Por favor, cambia tu dirección de envío o elimina %{product_names} de tu carrito.
+    promotion_already_used: No puedes eliminar una promoción que ya fue aplicada
+    promotion_rule_types:
+      channel:
+        description: Limitar a pedidos realizados a través de los canales especificados
+      country:
+        description: Limitar a pedidos con dirección de envío en un país específico
+      customer_logged_in:
+        description: Disponible solo para clientes con sesión iniciada
+        name: Solo clientes con sesión iniciada
+      market:
+        description: Limitar a pedidos realizados en los mercados especificados
+    refund_amount: Monto del reembolso
+    remove: Quitar
+    return: Volver
+    selected_quantity_not_available: seleccionado de %{item} no está disponible.
+    status: Estatus
+    store_credit:
+      allocated: Agregado
+      captured: Utilizado
+    store_credit_name: Crédito de tienda
+    store_credit_payment_method:
+      currency_mismatch: La moneda del crédito de tienda no coincide con la moneda del pedido
+      insufficient_authorized_amount: No se puede capturar más del monto autorizado
+      insufficient_funds: El monto restante del crédito de tienda no es suficiente
+      successful_action: Crédito de tienda %{action} correctamente
+      unable_to_find: No se pudo encontrar el crédito de tienda
+      unable_to_find_for_action: 'No se pudo encontrar el crédito de tienda para el código de autorización: %{auth_code} para la acción: %{action}'
+    tax: Tasa
+    webhook_mailer:
+      endpoint_disabled:
+        instructions: Por favor, verifica la URL y el servicio del endpoint, luego vuelve a habilitarlo en Configuración → Desarrolladores → Webhooks.
+        message: El endpoint de webhook "%{endpoint_name}" se deshabilitó automáticamente tras repetidos fallos de entrega.

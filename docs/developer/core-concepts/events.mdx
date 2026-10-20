@@ -138,13 +138,23 @@ A synchronous subscriber runs while the customer waits, so a slow one slows thei
 
 ## Publishing your own events
 
-Anything in your own code can announce something, and subscribers and webhooks treat it like any built-in event:
+Anything in your own code can announce something, and subscribers and webhooks treat it like any built-in event. Declare the event on the model first, then publish it:
+
+```ruby server/config/initializers/spree_events.rb
+Rails.application.config.to_prepare do
+  Spree::Order.publishes_event :flagged_for_review
+end
+```
 
 ```ruby server/app/services/fraud_check.rb
 order.publish_event('order.flagged_for_review')
 ```
 
 Useful when your own domain has moments worth reacting to — a fraud check completing, an approval granted.
+
+Every event Spree publishes is declared this way, which is what lets the admin dashboard's webhook picker, the [webhook events endpoint](/developer/core-concepts/webhooks#event-subscriptions) and the typed events in `@spree/sdk/webhooks` list it. Publishing an event nobody declared raises an error in development and test, so a typo is caught before it ships; in production it is logged and delivered anyway.
+
+The payload is the model's Store API serializer, as for built-in events. To send something else, pass a serializer of your own: `publishes_event :flagged_for_review, serializer: 'MyApp::FraudFlagEventSerializer'`. Keep it to what a customer could see; back-office fields belong behind the Admin API. Facts about the event rather than the record, such as who triggered it, go in its metadata: `order.publish_event('order.flagged_for_review', nil, rule: 'velocity')`.
 
 ## Guidance
 

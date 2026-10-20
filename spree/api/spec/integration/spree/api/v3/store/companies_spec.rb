@@ -23,6 +23,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'memberships listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -91,10 +92,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { name: { type: :string, example: 'Acme Industrial Group' } }
-      }
+      request_body_for
 
       response '200', 'company updated' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -121,6 +119,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'members listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -151,11 +150,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { customer_email: { type: :string, example: 'colleague@acme.test' } },
-        required: ['customer_email']
-      }
+      request_body_for
 
       response '201', 'invitation sent' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -172,6 +167,35 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
     end
   end
 
+  path '/api/v3/store/companies/{company_id}/invitations' do
+    parameter name: :company_id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
+
+    get 'List pending company invitations' do
+      tags 'Companies'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'The invitations to this node that nobody has accepted or revoked yet. Requires standing over the node.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'invitations listed' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let!(:invitation) { create(:company_invitation, company: company, email: 'colleague@acme.test') }
+        let(:company_id) { company.prefixed_id }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema SwaggerSchemaHelpers.paginated('CompanyInvitation')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to eq([invitation.prefixed_id])
+        end
+      end
+    end
+  end
+
   path '/api/v3/store/companies/{company_id}/addresses' do
     parameter name: :company_id, in: :path, type: :string, required: true, description: 'Company node ID (comp_...)'
 
@@ -183,6 +207,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'addresses listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -193,6 +218,40 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
         run_test! do |response|
           expect(JSON.parse(response.body)['data'].first['label']).to eq('Headquarters')
+        end
+      end
+    end
+
+    post 'Add an address book entry' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Adds a labeled site to the node. Pass `default_billing: true` or `default_shipping: true` to make it the default of that kind.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      request_body_for
+
+      response '201', 'address book entry created' do
+        let!(:membership) { create(:company_membership, company: company, customer: user) }
+        let(:existing) { create(:company_address, owner: company, label: 'Headquarters') }
+        let(:company_id) { company.prefixed_id }
+        let(:body) do
+          {
+            label: 'Northern Warehouse', first_name: 'Ada', last_name: 'Lovelace',
+            address1: '350 Fifth Avenue', city: 'New York', postal_code: '10118',
+            country_code: existing.country.iso, state_code: existing.state.abbr, phone: '+12125551234',
+            default_shipping: true
+          }
+        end
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema '$ref' => '#/components/schemas/Address'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['label']).to eq('Northern Warehouse')
         end
       end
     end
@@ -211,13 +270,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          label: { type: :string, example: 'Northern Warehouse' },
-          default_shipping: { type: :boolean, example: true }
-        }
-      }
+      request_body_for
 
       response '200', 'address book entry updated' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -227,6 +280,8 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         let(:body) { { label: 'Northern Warehouse', default_shipping: true } }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['label']).to eq('Northern Warehouse')
@@ -293,6 +348,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'orders listed' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
@@ -363,15 +419,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       sdk_example 'company-invitations/accept'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'Ada' },
-          last_name: { type: :string, example: 'Lovelace' },
-          password: { type: :string, example: 'a-strong-password' },
-          password_confirmation: { type: :string, example: 'a-strong-password' }
-        }
-      }
+      request_body_for
 
       response '201', 'membership created' do
         let!(:invitation) { create(:company_invitation, company: company, email: 'new@acme.test') }

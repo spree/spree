@@ -29,7 +29,7 @@ export async function dockerCompose(args: string[], projectDir: string, options?
 // remove a race, we never mask a failure.
 export async function primeBundleVolume(
   projectDir: string,
-  options?: { stdio?: ExecaOptions['stdio'] },
+  options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
 ): Promise<void> {
   try {
     await dockerCompose(['up', '-d', '--no-deps', 'web'], projectDir, {
@@ -73,6 +73,19 @@ export async function appServices(projectDir: string): Promise<string[]> {
     // A broken compose file surfaces on the real command that follows.
     return ['web']
   }
+}
+
+/**
+ * Restart the app services in place when web is running, so a new Puma
+ * process loads gems installed or updated since it booted. A stopped stack is
+ * left stopped.
+ */
+export async function restartAppServices(projectDir: string, message: string): Promise<void> {
+  if (!(await isServiceRunning('web', projectDir))) return
+  p.log.step(pc.bold(message))
+  await dockerCompose(['restart', ...(await appServices(projectDir))], projectDir, {
+    stdio: 'inherit',
+  })
 }
 
 /**
@@ -199,7 +212,7 @@ export async function dockerComposeRun(
 // carries compose's output on the thrown error.
 export async function prepareDatabase(
   projectDir: string,
-  options?: { stdio?: ExecaOptions['stdio'] },
+  options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
 ): Promise<void> {
   const stdio = options?.stdio ?? 'pipe'
   await dockerCompose(['up', '-d', '--wait', 'postgres'], projectDir, { stdio })

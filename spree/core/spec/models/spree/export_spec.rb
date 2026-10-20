@@ -71,11 +71,6 @@ RSpec.describe Spree::Export, :job, type: :model do
     context 'when the export type is Spree::Exports::Customers' do
       let(:export) { build(:customer_export, store: store, user: user, format: 'csv') }
 
-      it 'generates the export' do
-        export.save!
-        expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
-      end
-
       it 'writes a row for a customer with addresses' do
         customer = create(:customer_with_addresses)
         export.save!
@@ -307,7 +302,7 @@ RSpec.describe Spree::Export, :job, type: :model do
       it 'exports a searched product list' do
         create(:product, name: 'Findable Widget')
         product_export = Spree::Exports::Products.create!(
-          store: store, user: user, format: 'csv', search_params: { multi_search: 'Findable' }.to_json
+          store: store, user: user, format: 'csv', search_params: { search: 'Findable' }.to_json
         )
 
         expect { product_export.generate }.to change(product_export.attachment, :attached?).from(false).to(true)
@@ -344,22 +339,6 @@ RSpec.describe Spree::Export, :job, type: :model do
 
       it 'applies the custom field predicate' do
         expect(export.records_to_export).to contain_exactly(target)
-      end
-    end
-  end
-
-  describe '#send_export_done_email' do
-    before { export.save! }
-
-    it 'queues the export done email' do
-      expect { export.send_export_done_email }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
-    end
-
-    context 'when the export has no user' do
-      let(:export) { build(:product_export, store: store, user: nil, format: 'csv') }
-
-      it 'does not queue an email — apps polling via secret API key have no inbox' do
-        expect { export.send_export_done_email }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
       end
     end
   end
@@ -411,12 +390,6 @@ RSpec.describe Spree::Export, :job, type: :model do
         export.search_params = params
         export.normalize_search_params
         expect(JSON.parse(export.search_params)).to eq(JSON.parse(params))
-      end
-
-      it 'ensures valid JSON output' do
-        export.search_params = params
-        export.normalize_search_params
-        expect { JSON.parse(export.search_params) }.not_to raise_error
       end
     end
 

@@ -86,7 +86,7 @@ export function initEncryption(projectDir: string): void {
 
   p.note(
     [
-      `1. Recreate the containers to load the new .env: ${pc.cyan(ejected ? 'spree dev' : 'spree update')}`,
+      `1. Recreate the containers to load the new .env: ${pc.cyan('spree dev')}`,
       `   (${pc.cyan('spree restart')} keeps the old environment).`,
       '2. Back up the three values in your secret manager —',
       '   losing them makes encrypted data unreadable.',

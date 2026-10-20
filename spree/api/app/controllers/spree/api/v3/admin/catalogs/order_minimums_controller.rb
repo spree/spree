@@ -9,6 +9,7 @@ module Spree
           class OrderMinimumsController < BaseController
             before_action :authorize_parent_access!
 
+            request_params('CatalogOrderMinimumParams') { |body| body.include_attributes Spree::Api::V3::Admin::CatalogOrderMinimumRequestSchema }
 
             protected
 
@@ -24,14 +25,9 @@ module Spree
               @parent.order_minimums
             end
 
-            def parent_association
-              :order_minimums
-            end
-
             def permitted_params
-              params.permit(:currency, :amount)
+              params.permit(*declared_permitted_attributes)
             end
-
           end
         end
       end

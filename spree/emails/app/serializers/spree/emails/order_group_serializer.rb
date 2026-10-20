@@ -1,0 +1,50 @@
+module Spree
+  module Emails
+    # A purchase that divided into several orders, as its confirmation reads
+    # it: every item, the parcels it ships in, and one set of totals.
+    class OrderGroupSerializer < Spree::Api::V3::OrderGroupSerializer
+      include Spree::Emails::PurchaseSummaryAttributes
+
+      without_display_money
+
+      typelize po_number: [:string, nullable: true], order_count: :number, delivery_total: :string,
+               additional_tax_total: :string, gift_card_total: :string
+
+      attributes :po_number
+
+      attribute :order_count do |group|
+        group.orders.size
+      end
+
+      attribute :delivery_total do |group|
+        Spree::Money::Rounding.format(group.delivery_total, group.currency)
+      end
+
+      attribute :additional_tax_total do |group|
+        Spree::Money::Rounding.format(group.additional_tax_total, group.currency)
+      end
+
+      attribute :gift_card_total do |group|
+        Spree::Money::Rounding.format(group.gift_card_total, group.currency)
+      end
+
+      many :payments, resource: Spree::Emails::PaymentSerializer
+
+      # Every child order in full is what the webhook payload carries; the
+      # email reads the purchase-wide fields above instead.
+      many :orders, resource: proc { Spree.api.order_serializer }, if: proc { false }
+
+      many :fulfillment_groups, resource: Spree::Emails::FulfillmentGroupSerializer
+
+      # What no parcel carries — a download, an emailed gift card.
+      many :unfulfilled_items,
+           source: proc { unfulfilled_line_items },
+           resource: Spree::Emails::LineItemSerializer
+
+      # One delivery row for the whole purchase; the parcels break it down.
+      many :delivery_lines,
+           source: proc { delivery_total.zero? ? [] : [Spree::Emails::AmountLine.new(amount: delivery_total, currency: currency)] },
+           resource: Spree::Emails::AmountLineSerializer
+    end
+  end
+end

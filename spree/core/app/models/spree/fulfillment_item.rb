@@ -15,11 +15,7 @@ module Spree
       belongs_to :line_item, class_name: 'Spree::LineItem'
     end
 
-    scope :backordered, -> { where status: 'backordered' }
-    scope :on_hand, -> { where status: 'on_hand' }
     scope :on_hand_or_backordered, -> { where status: ['backordered', 'on_hand'] }
-    scope :shipped, -> { where status: 'shipped' }
-    scope :returned, -> { where status: 'returned' }
     scope :backordered_per_variant, ->(stock_level) do
       includes(:fulfillment, :order).
         where.not(Spree::Fulfillment.table_name => { status: 'canceled' }).

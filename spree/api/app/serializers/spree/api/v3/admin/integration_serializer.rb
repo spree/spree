@@ -9,8 +9,7 @@ module Spree
                    name: :string,
                    group: [:string, nullable: true],
                    active: :boolean,
-                   preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
+                   preferences: 'Record<string, unknown>'
 
           attributes :name, :active,
                      created_at: :iso8601, updated_at: :iso8601
@@ -24,7 +23,6 @@ module Spree
           end
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
         end
       end
     end

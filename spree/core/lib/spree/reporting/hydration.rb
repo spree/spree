@@ -21,7 +21,7 @@ module Spree
         dimension = definition(name)
         # A row whose key is NULL is a real group — an order with no market or
         # channel — and needs a name a person can read, not a blank cell.
-        return { id: nil, label: Spree.t('reporting.unassigned'), meta: {} } if raw.nil? && !plain?(dimension)
+        return { id: nil, label: I18n.t('spree.reporting.unassigned'), meta: {} } if raw.nil? && !plain?(dimension)
         return { id: raw.to_s, label: Schema.value_label(dimension, raw), meta: {} } if dimension.enumerated_values
         return raw unless dimension.hydrate
 

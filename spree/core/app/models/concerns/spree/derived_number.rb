@@ -43,24 +43,22 @@ module Spree
     # unsaved record sorts last, which is what a merchant watching a new row
     # appear expects.
     def position_among_siblings
-      scope = sibling_scope
-      return 1 if scope.nil?
+      parent = owner
+      association = sibling_association_name
+      return 1 if parent.nil? || !parent.respond_to?(association)
 
-      earlier = id.nil? ? scope.count : scope.where(scope.arel_table[:id].lt(id)).count
+      earlier = if id.present? && parent.read_association_in_memory?(association)
+                  parent.public_send(association).to_a.count { |sibling| sibling.id.present? && sibling.id < id }
+                else
+                  scope = parent.public_send(association).unscope(:order)
+                  id.nil? ? scope.count : scope.where(scope.arel_table[:id].lt(id)).count
+                end
 
       earlier + 1
     end
 
-    # The siblings sharing this record's parent. Nil when there is no parent
-    # to group by.
-    def sibling_scope
-      parent = owner
-      return if parent.nil?
-
-      association = self.class.name.demodulize.underscore.pluralize
-      return unless parent.respond_to?(association)
-
-      parent.public_send(association).unscope(:order)
+    def sibling_association_name
+      self.class.name.demodulize.underscore.pluralize
     end
   end
 end

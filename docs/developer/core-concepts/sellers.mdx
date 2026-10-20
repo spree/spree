@@ -345,6 +345,8 @@ The amount is payment-source-agnostic — store credit and gift cards are how th
 
 A refund never edits an earning. `refund.created` writes a second row of kind `refund_reversal` against the same order, so what a seller has earned is always the sum of their transfers, and a reversal that lands after a payout closed falls into the next period rather than rewriting a settlement that already happened.
 
+A reversal takes back only the seller's share of what was refunded. When a return or claim refunds goods and their tax, the goods come back less the commission charged on them; the tax comes back from the seller only if the seller collected it, and stays with the marketplace when the marketplace remits it.
+
 ### Payouts — what was sent
 
 On schedule, a seller's confirmed, unsettled earnings are batched into one `Spree::SellerPayout` per currency and handed to the provider. A payout names exactly which transfers it settled, which is what a seller needs to reconcile a deposit.

@@ -48,8 +48,9 @@ RSpec.describe Spree::Integration, type: :model do
 
     before { stub_const('SpreeCarrier::Integration', described_klass) }
 
-    it 'declares no logo or description by default' do
+    it 'declares no logo, setup guide or description by default' do
       expect(described_class.logo_url).to be_nil
+      expect(described_class.docs_url).to be_nil
       expect(described_class.description).to be_nil
     end
 

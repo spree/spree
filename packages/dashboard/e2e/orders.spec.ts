@@ -1,7 +1,15 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, fillAddressForm, login } from './helpers'
+import {
+  adminRequest,
+  FIXTURE_BOGUS_GATEWAY,
+  FIXTURE_BOGUS_ORDER_EMAIL,
+  FIXTURE_BOGUS_TRANSACTION_ID,
+  FIXTURE_PROMO_PRODUCT,
+  fillAddressForm,
+  login,
+} from './helpers'
 
 // A PNG is in the PO document allowlist, so the shared fixture works and no
 // new binary ships with the suite.
@@ -295,5 +303,104 @@ test.describe('order addresses', () => {
 
     await expect(dialog).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
+  })
+})
+
+test.describe('order tags', () => {
+  async function createDraft(page: Page, storeId: string, email: string) {
+    await page.goto(NEW_ORDER_PATH(storeId))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await fillNewOrderForm(page, email)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${storeId}/orders/or_[^/]+$`), { timeout: 15_000 })
+  }
+
+  function tagsCard(page: Page) {
+    return page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^tags$/i }) })
+  }
+
+  // The order tag vocabulary is fetched by its short name (`order`); a tag
+  // saved on one order is offered as an existing tag on the next.
+  test('tags an order and offers the tag on another order', async ({ page }) => {
+    const creds = await login(page)
+    const suffix = Date.now()
+    const tagName = `e2e-order-tag-${suffix}`
+
+    await createDraft(page, creds.store_id, `e2e-order-tag-a-${suffix}@example.com`)
+    await tagsCard(page)
+      .getByRole('button', { name: /^edit$/i })
+      .click()
+    const input = tagsCard(page).getByPlaceholder(/type to add tags/i)
+    await input.fill(tagName)
+    await input.press('Enter')
+    await tagsCard(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    await expect(tagsCard(page).getByText(tagName, { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(tagsCard(page).getByPlaceholder(/type to add tags/i)).toHaveCount(0)
+
+    await createDraft(page, creds.store_id, `e2e-order-tag-b-${suffix}@example.com`)
+    await tagsCard(page)
+      .getByRole('button', { name: /^edit$/i })
+      .click()
+    await tagsCard(page)
+      .getByPlaceholder(/type to add tags/i)
+      .fill(tagName)
+    await expect(page.getByRole('option', { name: tagName, exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+})
+
+test.describe('order payments', () => {
+  test("links a card payment to its page at the gateway's dashboard", async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    const link = page.getByRole('menuitem', { name: `View at ${FIXTURE_BOGUS_GATEWAY}` })
+    await expect(link).toHaveAttribute(
+      'href',
+      `https://dashboard.bogus.example/payments/${FIXTURE_BOGUS_TRANSACTION_ID}`,
+    )
+    await expect(link).toHaveAttribute('target', '_blank')
+  })
+
+  test("shows a card payment's checks and captures", async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    const row = page.locator('tr').filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+    await expect(row.getByText('Failed card checks')).toBeVisible({ timeout: 15_000 })
+
+    await row.getByRole('button', { name: /^actions$/i }).click()
+    await page.getByRole('menuitem', { name: 'View details' }).click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText(FIXTURE_BOGUS_TRANSACTION_ID)).toBeVisible()
+    await expect(dialog.getByText('Did not pass')).toHaveCount(2)
+    await expect(dialog.getByText('CVV does not match')).toBeVisible()
+    await expect(dialog.getByRole('row').filter({ hasText: '€10.00' })).toBeVisible()
   })
 })

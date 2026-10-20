@@ -6,8 +6,6 @@ module Spree
   # is a lot of mail about something staff can already see in the dashboard.
   # Marketplace-side notifications ride the event and webhook surface instead.
   class SellerMailer < BaseMailer
-    helper Spree::MailHelper
-
     # @param seller [Spree::Seller, Integer]
     def approved_email(seller)
       @seller = load_seller(seller)
@@ -15,7 +13,7 @@ module Spree
       # so a hosted dashboard, a dev Vite server and a mounted build all work.
       @dashboard_url = Spree::Stores::DashboardUrl.call(store: store).presence
 
-      deliver_to_seller('seller_mailer.approved_email.subject')
+      deliver_to_seller
     end
 
     # Carries no reason: the operator's note is an internal record, and a
@@ -23,13 +21,13 @@ module Spree
     def suspended_email(seller)
       @seller = load_seller(seller)
 
-      deliver_to_seller('seller_mailer.suspended_email.subject')
+      deliver_to_seller
     end
 
     def rejected_email(seller)
       @seller = load_seller(seller)
 
-      deliver_to_seller('seller_mailer.rejected_email.subject')
+      deliver_to_seller
     end
 
     private
@@ -49,18 +47,15 @@ module Spree
       (@seller.users.pluck(:email) << @seller.contact_email).compact_blank.uniq(&:downcase)
     end
 
-    # Takes the key, not the translated string: resolving the subject outside
-    # the block would render it in whatever locale the job happens to run
-    # under, so a seller could get an English subject over a German email.
-    def deliver_to_seller(subject_key)
+    def deliver_to_seller
       addresses = recipients
       return message.perform_deliveries = false if addresses.empty?
 
+      @current_store = store
       with_store_locale(store) do
-        mail(
-          to: addresses,
-          subject: Spree.t(subject_key, store_name: store.name),
-          store_url: store.storefront_url
+        mail_template(
+          { seller: email_data(@seller, Spree.api.seller_serializer), dashboard_url: @dashboard_url },
+          to: addresses, store_url: store.storefront_url
         )
       end
     end

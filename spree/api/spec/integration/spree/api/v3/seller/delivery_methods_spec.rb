@@ -27,9 +27,12 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
         write against it is a 404.
       DESC
 
+      seller_sdk_example 'delivery-methods/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'delivery methods listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -63,35 +66,10 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
         because carrier accounts belong to the marketplace.
       DESC
 
+      seller_sdk_example 'delivery-methods/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          admin_name: { type: :string, nullable: true },
-          code: { type: :string, nullable: true },
-          delivery_profile_id: { type: :string, description: "One of the marketplace's delivery profiles" },
-          delivery_zone_id: { type: :string, nullable: true, description: 'Narrows where the method ships' },
-          storefront_visible: { type: :boolean },
-          tracking_url: { type: :string, nullable: true },
-          estimated_transit_business_days_min: { type: :integer, nullable: true },
-          estimated_transit_business_days_max: { type: :integer, nullable: true },
-          calculator_type: { type: :string },
-          calculator_preferences: { type: :object },
-          rules: {
-            type: :array,
-            description: 'Conditions on the method, from `/delivery_methods/rule_types`',
-            items: {
-              type: :object,
-              properties: {
-                type: { type: :string },
-                preferences: { type: :object }
-              }
-            }
-          }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'delivery method created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -100,8 +78,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
           {
             name: 'Next day',
             delivery_profile_id: delivery_profile.prefixed_id,
-            calculator_type: 'flat_rate',
-            calculator_preferences: { amount: '9.99', currency: 'USD' }
+            calculator: { type: 'flat_rate', preferences: { amount: '9.99', currency: 'USD' } }
           }
         end
 
@@ -133,6 +110,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       security [bearer_auth: []]
 
+      seller_sdk_example 'delivery-methods/get'
+
       response '200', 'delivery method found' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
@@ -151,34 +130,9 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       security [bearer_auth: []]
       description "Only the seller's own methods can be changed — a marketplace method shared with sellers is read-only."
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          admin_name: { type: :string, nullable: true },
-          code: { type: :string, nullable: true },
-          delivery_profile_id: { type: :string, description: "One of the marketplace's delivery profiles" },
-          delivery_zone_id: { type: :string, nullable: true, description: 'Narrows where the method ships' },
-          storefront_visible: { type: :boolean },
-          tracking_url: { type: :string, nullable: true },
-          estimated_transit_business_days_min: { type: :integer, nullable: true },
-          estimated_transit_business_days_max: { type: :integer, nullable: true },
-          calculator_type: { type: :string },
-          calculator_preferences: { type: :object },
-          rules: {
-            type: :array,
-            description: 'Replaces the whole set — a rule dropped here is deleted, so re-send surviving rules with their `id`.',
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string },
-                preferences: { type: :object }
-              }
-            }
-          }
-        }
-      }
+      seller_sdk_example 'delivery-methods/update'
+
+      request_body_for
 
       response '200', 'delivery method updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -198,6 +152,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       tags 'Delivery Methods'
       security [bearer_auth: []]
 
+      seller_sdk_example 'delivery-methods/delete'
+
       response '204', 'delivery method retired' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
@@ -215,6 +171,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       security [bearer_auth: []]
       description 'The eligibility rules a seller may put on their own method, with the preference schema each form is rendered from.'
 
+      seller_sdk_example 'delivery-methods/rule-types'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'rule types listed' do
@@ -231,7 +189,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
                        type: { type: :string },
                        name: { type: :string },
                        description: { type: :string },
-                       preference_schema: { type: :array, items: { type: :object } }
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' }
                      }
                    }
                  }
@@ -249,6 +207,8 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       security [bearer_auth: []]
 
+      seller_sdk_example 'delivery-methods/calculators'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'calculators listed' do
@@ -264,7 +224,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
                      properties: {
                        type: { type: :string },
                        name: { type: :string },
-                       preference_schema: { type: :array, items: { type: :object } }
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' }
                      }
                    }
                  }

@@ -18,6 +18,16 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(json_response['data']).to be_an(Array)
       expect(json_response['data'].length).to be >= 1
     end
+
+    it "filters by the payment method's type short name" do
+      api_type = payment.payment_method.class.api_type
+
+      get :index, params: { order_id: order_with_payment.prefixed_id, q: { payment_method_type_eq: api_type } }, as: :json
+      expect(json_response['data'].pluck('id')).to include(payment.prefixed_id)
+
+      get :index, params: { order_id: order_with_payment.prefixed_id, q: { payment_method_type_eq: 'store_credit' } }, as: :json
+      expect(json_response['data'].pluck('id')).not_to include(payment.prefixed_id)
+    end
   end
 
   describe 'GET #show' do
@@ -27,6 +37,30 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment.prefixed_id)
       expect(json_response['status']).to be_present
+    end
+
+    it "returns the payment's page at the gateway dashboard" do
+      allow_any_instance_of(Spree::Payment).to receive(:gateway_dashboard_payment_url).and_return('https://dashboard.example.com/payments/ch_123')
+
+      get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
+
+      expect(json_response['gateway_dashboard_payment_url']).to eq('https://dashboard.example.com/payments/ch_123')
+    end
+
+    it 'returns each capture of the payment when expanded' do
+      capture = create(:payment_capture_event, payment: payment, amount: BigDecimal('25.5'))
+
+      get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, expand: 'capture_events' }, as: :json
+
+      expect(json_response['capture_events']).to include(include('id' => capture.prefixed_id, 'amount' => '25.50'))
+    end
+
+    it 'reports which card checks failed' do
+      payment.update_columns(avs_response: 'Y', cvv_response_code: 'N', cvv_response_message: 'CVV does not match')
+
+      get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
+
+      expect(json_response).to include('avs_risky' => false, 'cvv_risky' => true)
     end
 
     it 'returns 404 for unknown payment id' do
@@ -173,6 +207,34 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('completed')
       expect(payment.reload.status).to eq('completed')
+    end
+
+    context 'with a partial amount' do
+      it 'hands the workflow the exact amount' do
+        expect(Spree.payment_capture_workflow).to receive(:call).with(payment: payment, amount: BigDecimal('1.15')).and_call_original
+
+        patch :capture, params: {
+          order_id: order_with_payment.prefixed_id,
+          id: payment.prefixed_id,
+          amount: '1.15'
+        }, as: :json
+      end
+
+      [1.15, '1,15', '1.155', '-5.00', '0', 'abc'].each do |amount|
+        it "refuses #{amount.inspect} with invalid_money_format" do
+          expect(Spree.payment_capture_workflow).not_to receive(:call)
+
+          patch :capture, params: {
+            order_id: order_with_payment.prefixed_id,
+            id: payment.prefixed_id,
+            amount: amount
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['code']).to eq('invalid_money_format')
+          expect(json_response['error']['details']).to have_key('amount')
+        end
+      end
     end
 
     context 'when payment is already completed' do

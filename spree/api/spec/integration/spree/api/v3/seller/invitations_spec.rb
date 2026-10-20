@@ -30,6 +30,8 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
         withdrawing one is bookkeeping on the offer itself, so it lives here.
       DESC
 
+      seller_sdk_example 'invitations/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'invitations listed' do
@@ -65,6 +67,8 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
         copy the link.
       DESC
 
+      seller_sdk_example 'invitations/acceptance-link'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'acceptance link found' do
@@ -93,6 +97,8 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
         one. An invitation whose window has closed is refused rather than
         re-sent.
       DESC
+
+      seller_sdk_example 'invitations/resend'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -129,6 +135,8 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
       produces 'application/json'
       security [bearer_auth: []]
       description 'Withdraws an offer that has not been accepted.'
+
+      seller_sdk_example 'invitations/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

@@ -9,6 +9,22 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'AddLineItemParams', action: :create do |body|
+              body.attribute :variant_id, :id, required: true, example: 'variant_abc123'
+              body.attribute :quantity, :integer, example: 2, description: 'Defaults to 1.'
+              body.attribute :metadata, :hash,
+                example: { gift_message: 'Happy Birthday!' },
+                description: 'Write-only key-value metadata.'
+              body.attribute :options, :hash, description: 'Values for line item attributes an extension adds.'
+            end
+
+            request_params 'UpdateLineItemParams', action: :update do |body|
+              body.attribute :quantity, :integer, example: 5, description: 'At least 1. Remove an item with DELETE.'
+              body.attribute :metadata, :hash,
+                example: { engraving: 'J.D.' },
+                description: 'Write-only key-value metadata, merged with what the line item has.'
+            end
+
             # POST  /api/v3/store/carts/:cart_id/items
             def create
               with_order_lock do
@@ -21,6 +37,7 @@ module Spree
                 )
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart(status: :created)
                 else
                   render_result_error(result)
@@ -41,7 +58,7 @@ module Spree
                   if permitted_params[:quantity].to_i < 1
                     return render_error(
                       code: ERROR_CODES[:invalid_quantity],
-                      message: Spree.t('cart_line_item.quantity_must_be_positive'),
+                      message: I18n.t('spree.cart_line_item.quantity_must_be_positive'),
                       status: :unprocessable_content
                     )
                   end
@@ -56,6 +73,7 @@ module Spree
                   )
 
                   if result.success?
+                    sweep_unavailable_coupon_code!
                     render_cart
                   else
                     render_result_error(result)
@@ -67,6 +85,7 @@ module Spree
                     @line_item.update!(metadata: @line_item.metadata.merge(permitted_params[:metadata].to_h))
                   end
 
+                  sweep_unavailable_coupon_code!
                   render_cart
                 end
               end
@@ -83,6 +102,7 @@ module Spree
                 )
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart
                 else
                   render_result_error(result)
@@ -93,7 +113,7 @@ module Spree
             private
 
             def variant
-              @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])
+              @variant ||= @cart.orderable_variants.find_by_prefix_id!(permitted_params[:variant_id])
             end
 
             # Extension attributes ride in `options`, which is how AddItem
@@ -109,11 +129,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(
-                :id, :variant_id, :quantity,
-                *Spree::LineItem.additional_permitted_attributes,
-                { metadata: {}, options: {} }
-              )
+              params.permit(*declared_permitted_attributes, *Spree::LineItem.additional_permitted_attributes)
             end
           end
         end

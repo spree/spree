@@ -17,13 +17,7 @@ module Spree
 
           attributes :quantity, :status
 
-          attribute :variant_id do |item|
-            item.variant&.prefixed_id
-          end
-
-          attribute :line_item_id do |item|
-            item.line_item&.prefixed_id
-          end
+          prefixed_id_attributes :variant, :line_item
 
           attribute :name do |item|
             item.variant&.product&.name

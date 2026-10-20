@@ -5,19 +5,21 @@ module Spree
         # Admin API Variant Serializer
         # Full variant data including admin-only fields
         class VariantSerializer < V3::VariantSerializer
+          without_formatted_money
+
           include Concerns::ExternalReferencesAttribute
 
 
           typelize product_name: :string,
                    position: :number, tax_category_id: [:string, nullable: true],
-                   cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
+                   cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    barcode: [:string, nullable: true],
                    available_stock: [:number, nullable: true],
                    reserved_quantity: :number, total_on_hand: [:number, nullable: true],
                    preorderable: :boolean, preorder_ships_at: [:string, nullable: true],
                    backorder_limit: [:number, nullable: true],
                    hs_code: [:string, nullable: true],
-                   country_of_origin: [:string, nullable: true],
+                   country_of_origin: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
@@ -32,7 +34,7 @@ module Spree
           # The last three override the store serializer's buyer-resolved
           # values with the variant's OWN: a merchant edits what is stored on
           # the row, not what some catalog resolves to for a buyer they are not.
-          attributes :metadata, :position, :cost_price, :cost_currency,
+          attributes :metadata, :position, :cost_currency,
                      :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      :minimum_order_quantity, :order_multiple, :purchase_unit,
@@ -40,12 +42,15 @@ module Spree
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :preorderable do |variant|
-            variant.preorderable?
-          end
+          money_attributes :cost_price, currency: :cost_currency, unit_price: true
 
+          attribute :preorderable, &:preorderable?
+
+          # Stored on the row only — nil means inherit from the product. The
+          # model's +tax_category+ reader resolves the effective category for
+          # tax; the admin form needs the raw column to tell override from inherit.
           attribute :tax_category_id do |variant|
-            variant.tax_category&.prefixed_id
+            Spree::TaxCategory.prefixed_id_for(variant[:tax_category_id])
           end
 
           # Encoded from the foreign key: loading the carton row just to
@@ -82,9 +87,7 @@ module Spree
           # seller's row ships; on an owned product the write is a no-op, since
           # every variant ships as the product does. The dashboard need not
           # know which.
-          attribute :delivery_profile_id do |variant|
-            variant.resolved_delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes delivery_profile_id: :resolved_delivery_profile
 
           one :seller,
               resource: proc { Spree.api.admin_seller_serializer },

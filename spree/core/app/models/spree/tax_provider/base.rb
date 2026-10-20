@@ -3,12 +3,16 @@ module Spree
     # Contract for tax providers — the only sanctioned writers of
     # {Spree::TaxLine} rows. +estimate+ must use replace-all set semantics per
     # target item (delete the item's stale lines, insert fresh ones); that is
-    # what keeps tax correct after address or item changes. Commit/void/refund
-    # are lifecycle no-ops for providers without a remote ledger.
+    # what keeps tax correct after address or item changes, and the post-sale
+    # +estimate_refund+ / +estimate_replacement+ follow the same rule.
+    # Commit/void/refund/commit_replacement are lifecycle no-ops for providers
+    # without a remote ledger.
     #
     # Providers are stateless and constructed without arguments, so anything
     # request-specific arrives as an argument rather than through the instance.
     class Base
+      extend Spree::ApiTyped
+
       # Domains this provider cannot handle, so a merchant is warned when
       # pairing it with a market instead of silently under-collecting. Declared
       # on the class because core reads it while presenting the choice, before
@@ -37,6 +41,16 @@ module Spree
         name.demodulize.titleize
       end
 
+      # The exemption reason codes this engine understands, `{ code => label }`,
+      # offered to a merchant adding a {Spree::TaxExemptionReason}. Nil for an
+      # engine that does not read the code, Spree's own included: any code a
+      # merchant chooses is then as good as another.
+      #
+      # @return [Hash{String => String}, nil]
+      def self.exemption_reason_codes
+        nil
+      end
+
       # The declared limits with the strings a merchant can act on. A capability
       # with no translation degrades to its humanized key rather than a missing
       # translation, so an extension that declares one without shipping strings
@@ -47,8 +61,8 @@ module Spree
         unsupported_capabilities.map do |capability|
           {
             key: capability.to_s,
-            label: Spree.t("tax_capabilities.#{capability}.label", default: capability.to_s.humanize),
-            description: Spree.t("tax_capabilities.#{capability}.description", default: nil)
+            label: I18n.t("spree.tax_capabilities.#{capability}.label", default: capability.to_s.humanize),
+            description: I18n.t("spree.tax_capabilities.#{capability}.description", default: nil)
           }.compact
         end
       end
@@ -61,10 +75,11 @@ module Spree
       # @return [Hash]
       def self.to_api_hash(store)
         {
-          id: name,
+          id: api_type,
           name: display_name,
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,
+          exemption_reason_codes: exemption_reason_codes&.map { |code, label| { value: code.to_s, label: label.to_s } },
           default: name == Spree.default_tax_provider.to_s
         }
       end
@@ -81,10 +96,18 @@ module Spree
       # @param tax_identifier [Spree::TaxIdentifier, nil] resolved buyer
       #   registration, nil for a consumer sale
       # @param exemptions [Array] exemption evidence to apply
+      # @param tax_inclusive [Boolean, nil] whether the owner's prices already
+      #   include tax, which its market decides (Spree::Market#tax_inclusive);
+      #   nil = ask the owner (+owner.tax_inclusive?+)
       # @param context [Hash] untyped provider extras from set_tax_line_context
-      # @return [void] the written rows are the output; raise when the
-      #   calculation cannot be completed
-      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
+      # @return [void] the written rows are the output
+      # @raise [Spree::Tax::ProviderUnavailable] when the engine could not
+      #   answer — refused, timed out, unreachable. Raise this (or a subclass,
+      #   as a provider's own request error may) rather than a bare error: core
+      #   turns it into a refusal the customer can retry, where anything else
+      #   reaches them as a broken checkout. A provider a merchant switched off
+      #   is not this — it has no opinion and writes no rows.
+      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil, context: {})
         raise NotImplementedError, "Please implement 'estimate' in your tax provider: #{self.class.name}"
       end
 
@@ -128,19 +151,73 @@ module Spree
         nil
       end
 
-      # Reports a partial credit against the committed document, keyed to the
-      # original transaction rather than voiding and re-committing it.
+      # Works out the tax given back on lines of a return, claim or exchange,
+      # and writes it as credit TaxLine rows on them. The customer is refunded
+      # exactly what these rows hold, so this — not +refund+ — decides the
+      # figure.
       #
-      # +amount+ is what the customer was actually refunded, which is not always
-      # the returned lines' worth: an admin may keep a restocking fee or refund
-      # a goodwill figure of their own. A provider must credit no more tax than
-      # that refund carries — crediting every returned line when only part of
-      # their value went back would reclaim tax the merchant never repaid, and a
-      # return is marked refunded once, so nothing later corrects it. Where the
-      # amount is short, allocate proportionally.
+      # Each item credits its +credited_quantity+, and zero means no rows.
+      # Replace-all per item, as +estimate+: the rows are rewritten when the
+      # warehouse counts what arrived and again when the money goes back.
+      #
+      # A provider may quote the credit, for example at the original
+      # +tax_date+, or give back the recorded share of what the sale charged —
+      # {Spree::TaxProvider::RecordedShare}, which Internal uses. Either way
+      # it answers in the same rows.
+      #
+      # @param order [Spree::Order] a placed order
+      # @param items [Array<Spree::ReturnLineItem, Spree::ClaimLineItem, Spree::ExchangeLineItem>]
+      # @param amounts [Hash{Object => BigDecimal}, nil] the money refunded per
+      #   item when it is less than the item's worth — a restocking fee, a
+      #   part refund. Tax is then credited in the same proportion. Nil
+      #   credits every item's full worth.
+      # @param tax_date [Time, nil] the date whose rates apply; nil = order.completed_at
+      # @return [void]
+      # @raise [Spree::Tax::ProviderError] when the credit could not be worked out
+      def estimate_refund(order, items, amounts: nil, tax_date: nil)
+        raise NotImplementedError, "Please implement 'estimate_refund' in your tax provider: #{self.class.name}"
+      end
+
+      # Taxes the replacement an exchange sends out, as a new sale, and writes
+      # it as charge TaxLine rows on the exchange lines. Never touches the
+      # order's own rows, which stay as the sale was placed. Replace-all per
+      # item; each item is taxed on its +taxable_basis+ under its
+      # +tax_category_id+, and one whose +credited_quantity+ is zero ships
+      # nothing and ends with no rows.
+      #
+      # @param order [Spree::Order] a placed order
+      # @param items [Array<Spree::ExchangeLineItem>]
+      # @param tax_date [Time, nil] date whose rates apply; nil = now
+      # @param tax_identifier [Spree::TaxIdentifier, nil] the order's frozen registration
+      # @param exemptions [Array] exemption evidence to apply
+      # @param tax_inclusive [Boolean, nil] as for +estimate+
+      # @return [void]
+      # @raise [Spree::Tax::ProviderError] when the tax could not be worked out
+      def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil)
+        raise NotImplementedError, "Please implement 'estimate_replacement' in your tax provider: #{self.class.name}"
+      end
+
+      # Files an exchange's replacement as a sale. Called once the exchange is
+      # fulfilled; must be idempotent, keyed on the exchange. No-op for a
+      # provider without a remote ledger.
       #
       # @param order [Spree::Order]
-      # @param return_items [Array<Spree::ReturnLineItem>] the returned lines
+      # @param items [Array<Spree::ExchangeLineItem>]
+      # @return [void]
+      def commit_replacement(order, items); end
+
+      # Reports a partial credit against the committed document, keyed to the
+      # original transaction rather than voiding and re-committing it. Called
+      # after the money has moved.
+      #
+      # By then each item's credit rows hold what went back (see
+      # +estimate_refund+), and a provider must credit no more than they do:
+      # the customer was repaid that tax and no more. +amount+ is the money
+      # refunded, which may be less than the items are worth when an admin kept
+      # a restocking fee or refunded a goodwill figure of their own.
+      #
+      # @param order [Spree::Order]
+      # @param return_items [Array<Spree::ReturnLineItem, Spree::ClaimLineItem, Spree::ExchangeLineItem>]
       # @param amount [BigDecimal, nil] the refund issued; nil = the lines' full worth
       # @param tax_date [Time, nil] the original supply date; nil = order.completed_at
       # @return [void]

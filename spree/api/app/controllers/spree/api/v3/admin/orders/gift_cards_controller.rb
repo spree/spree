@@ -6,9 +6,13 @@ module Spree
           class GiftCardsController < BaseController
             skip_before_action :set_resource, raise: false
 
+            request_params 'GiftCardApplyParams' do |body|
+              body.attribute :code, :string,
+                required: true,
+                description: 'The gift card code; matched case-insensitively.'
+            end
+
             # POST /api/v3/admin/orders/:order_id/gift_cards
-            #
-            # Body: { code: String }
             def create
               with_order_lock do
                 gift_card = find_gift_card!
@@ -53,17 +57,17 @@ module Spree
               gift_card = current_store.gift_cards.find_by(code: params[:code]&.downcase)
 
               if gift_card.nil?
-                render_error(code: ERROR_CODES[:gift_card_not_found], message: Spree.t(:gift_card_not_found), status: :not_found)
+                render_error(code: ERROR_CODES[:gift_card_not_found], message: I18n.t('spree.gift_card_not_found'), status: :not_found)
                 return
               end
 
               if gift_card.expired?
-                render_error(code: ERROR_CODES[:gift_card_expired], message: Spree.t(:gift_card_expired), status: :unprocessable_content)
+                render_error(code: ERROR_CODES[:gift_card_expired], message: I18n.t('spree.gift_card_expired'), status: :unprocessable_content)
                 return
               end
 
               if gift_card.redeemed?
-                render_error(code: ERROR_CODES[:gift_card_already_redeemed], message: Spree.t(:gift_card_already_redeemed), status: :unprocessable_content)
+                render_error(code: ERROR_CODES[:gift_card_already_redeemed], message: I18n.t('spree.gift_card_already_redeemed'), status: :unprocessable_content)
                 return
               end
 

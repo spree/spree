@@ -34,6 +34,10 @@ RSpec.describe 'Store-scoped cache keys' do
     'api/app/controllers/concerns/spree/api/v3/rate_limit_headers.rb' => [1,
       'Rate-limit budgets are per credential by design: API keys are ' \
       'store-bound, and a staff JWT\'s budget deliberately spans stores.'],
+    'core/app/services/spree/update_check.rb' => [2,
+      'The update check answers which Spree releases are newer than the ' \
+      'running version: one installation-wide fact, keyed by Spree.version, ' \
+      'holding no store data.'],
     'api/app/controllers/concerns/spree/api/v3/idempotent.rb' => [2,
       'idempotency_cache_key partitions by credential AND the resolved ' \
       'store, so replays cannot cross stores.'],

@@ -19,7 +19,7 @@ async function createEndpoint(
   // is ambiguous. Target the role=checkbox span by accessible name instead.
   // The label is the literal event name (e.g. `order.placed`).
   for (const ev of opts.pickEvents ?? []) {
-    await page.getByRole('checkbox', { name: ev }).click()
+    await page.getByRole('checkbox', { name: ev, exact: true }).click()
   }
 
   // The Sheet footer renders just "Cancel" + "Create". Match the latter.

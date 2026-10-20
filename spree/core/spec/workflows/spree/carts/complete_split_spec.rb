@@ -101,6 +101,44 @@ module Spree
 
       # The buyer's reference and the paperwork behind it have to travel
       # together: the reference on every order with the document on only one
+      # Each child pins claims of its own through Orders::Complete either way.
+      # What the split must hand on is the *cart's* snapshot: resolving again
+      # takes the resolver's cart-side override ids, which match nothing the
+      # child owns — widening the claim over every line it holds.
+      context 'when the sale was exempt for all but one line' do
+        # A *sibling's* line: the adopted first partition keeps the cart's
+        # snapshot anyway, so it would pass either way.
+        let(:carved_out) { cart.line_items.reload.find { |item| item.seller_id == seller.id } }
+
+        before do
+          claim = Spree::TaxExemption.new(
+            reason_code: 'resale', certificate_number: 'C-1',
+            item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: carved_out.prefixed_id,
+                                                                   exempt: false)]
+          )
+          allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+            and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                       call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+        end
+
+        it 'hands every child the claims the cart was priced with' do
+          group.orders.each do |order|
+            expect(order.applied_tax_exemptions&.sole).to include('certificate_number' => 'C-1')
+          end
+        end
+
+        it 'leaves the carve-out naming a line its own order holds' do
+          # Completion copies line items, so the id no longer matches.
+          owning = group.orders.find { |order| order.line_items.any? { |item| item.variant_id == carved_out.variant_id } }
+          line_item = owning.line_items.find { |item| item.variant_id == carved_out.variant_id }
+          named = owning.applied_tax_exemptions.sole['item_overrides'].sole['item_id']
+
+          expect(named).to eq(line_item.prefixed_id)
+          expect(named).not_to eq(carved_out.prefixed_id)
+          expect(owning.usable_exemptions.sole.covers_item?(line_item)).to be(false)
+        end
+      end
+
       # is the reconciliation problem the field exists to solve.
       context 'when the buyer supplied a purchase order' do
         before do
@@ -226,7 +264,7 @@ module Spree
         let!(:tax_category) { create(:tax_category, store: store, is_default: true) }
         let!(:tax_rate) do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
         end
 
         let(:cart) do
@@ -360,7 +398,7 @@ module Spree
 
         before do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
           create(:fee, order: nil, cart: cart, amount: 9, kind: 'payment', label: 'Card surcharge')
           cart.reload.recalculate_totals!
           cart.payments.each { |payment| payment.update!(amount: cart.reload.total) }
@@ -401,7 +439,7 @@ module Spree
 
         before do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
           create(:fee, order: nil, cart: cart, line_item: cart.line_items.reload.last,
                        amount: 10, kind: 'gift_wrap', label: 'Gift wrap')
           cart.reload.recalculate_totals!
@@ -437,7 +475,7 @@ module Spree
 
         before do
           create(:tax_rate, store: store, country_code: cart.tax_country&.iso, amount: 0.2,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
           create(:fee, order: nil, cart: cart, fulfillment: cart.fulfillments.first,
                        amount: 10, kind: 'handling', label: 'Handling')
           cart.reload.recalculate_totals!
@@ -578,18 +616,18 @@ module Spree
     describe 'the confirmation' do
       let(:cart) { cart_for(nil, seller, other_seller) }
 
-      # Asserted on the payload rather than the records: notify_customer is an
+      # Asserted on the event metadata rather than the records: notify_customer is an
       # in-memory flag, and the group reloads its children after placing them.
       it 'places every child silently', :events do
         placements = []
-        allow(Spree::Events).to receive(:publish) do |name, payload, *|
-          placements << payload if name == 'order.placed'
+        allow(Spree::Events).to receive(:publish) do |name, _payload, metadata|
+          placements << metadata if name == 'order.placed'
         end
 
         described_class.call(cart: cart)
 
         expect(placements.size).to eq(3)
-        expect(placements.map { |payload| payload[:notify_customer] }).to all(be false)
+        expect(placements.map { |metadata| metadata[:notify_customer] }).to all(be false)
       end
 
       # The old shape marked the first child confirmed and left the customer

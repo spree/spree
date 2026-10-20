@@ -38,7 +38,7 @@ RSpec.describe 'Seller CSV import', type: :request do
 
   it 'imports the seller\'s own products as drafts' do
     post '/api/v3/seller/imports',
-         params: { type: 'products', attachment: signed_id }, headers: headers
+         params: { type: 'products', attachment_signed_id: signed_id }, headers: headers
     expect(response).to have_http_status(:created)
     expect(json['status']).to eq('mapping')
 
@@ -71,7 +71,7 @@ RSpec.describe 'Seller CSV import', type: :request do
                                 seller: seller, store: store)
 
     post '/api/v3/seller/imports',
-         params: { type: 'products', attachment: signed_id }, headers: headers
+         params: { type: 'products', attachment_signed_id: signed_id }, headers: headers
     import = Spree::Import.find_by_prefix_id(json['id'])
     import.update!(preferred_inline: true)
     patch "/api/v3/seller/imports/#{import.prefixed_id}/complete_mapping", headers: headers
@@ -95,7 +95,7 @@ RSpec.describe 'Seller CSV import', type: :request do
     )
 
     post '/api/v3/seller/imports',
-         params: { type: 'products', attachment: blob.signed_id }, headers: headers
+         params: { type: 'products', attachment_signed_id: blob.signed_id }, headers: headers
     import = Spree::Import.find_by_prefix_id(json['id'])
     import.update!(preferred_inline: true)
     patch "/api/v3/seller/imports/#{import.prefixed_id}/complete_mapping", headers: headers
@@ -107,7 +107,7 @@ RSpec.describe 'Seller CSV import', type: :request do
 
   it 'refuses an import type that is not a seller\'s to run' do
     post '/api/v3/seller/imports',
-         params: { type: 'customers', attachment: signed_id }, headers: headers
+         params: { type: 'customers', attachment_signed_id: signed_id }, headers: headers
 
     expect(response).not_to have_http_status(:created)
   end
@@ -118,7 +118,7 @@ RSpec.describe 'Seller CSV import', type: :request do
                               seller: other_seller, store: store)
 
     post '/api/v3/seller/imports',
-         params: { type: 'products', attachment: signed_id }, headers: headers
+         params: { type: 'products', attachment_signed_id: signed_id }, headers: headers
     import = Spree::Import.find_by_prefix_id(json['id'])
     import.update!(preferred_inline: true)
     patch "/api/v3/seller/imports/#{import.prefixed_id}/complete_mapping", headers: headers

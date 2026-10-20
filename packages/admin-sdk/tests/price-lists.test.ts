@@ -173,7 +173,11 @@ describe('priceLists', () => {
                 type: 'volume_rule',
                 label: 'Volume Rule',
                 description: 'Apply pricing based on quantity purchased',
-                preference_schema: [{ key: 'min_quantity', type: 'integer', default: 1 }],
+                schema: {
+                  type: 'object',
+                  properties: { min_quantity: { type: 'integer', default: 1 } },
+                  additionalProperties: false,
+                },
               },
             ],
           }),

@@ -45,28 +45,21 @@ export function fieldTypeLabel(value: string): string {
 // when defining a field. Extending this is a one-line add — the API already
 // accepts any resource type registered in core.
 export const DEFAULT_RESOURCE_TYPES = [
-  'Spree::Product',
-  'Spree::Variant',
-  'Spree::Order',
-  'Spree::Customer',
-  // Category custom-field definitions are stored under Spree::Taxon (the API
-  // exposes taxons as categories — the custom_fields controller maps the
-  // category route segment to the Spree::Taxon class). Listing Spree::Category
-  // here would orphan definitions: the inline category card reads under Taxon.
-  'Spree::Taxon',
-  'Spree::OptionType',
+  'product',
+  'variant',
+  'order',
+  'customer',
+  'category',
+  'option_type',
 ] as const
 
 export type ResourceType = (typeof DEFAULT_RESOURCE_TYPES)[number] | (string & {})
 
 export function resourceTypeLabel(value: string): string {
-  // `nsSeparator: false` because resource type keys contain `::`, which
-  // i18next would otherwise parse as a namespace separator and miss the
-  // lookup. `defaultValue` strips the `Spree::` prefix for any owner the
-  // i18n bundle doesn't enumerate (plugin-defined resource types).
+  // `defaultValue` humanizes any owner the i18n bundle doesn't enumerate
+  // (plugin-defined resource types).
   return i18n.t(`admin.fields.custom_field_definition.resource_type.options.${value}`, {
-    nsSeparator: false,
-    defaultValue: value.replace(/^Spree::/, ''),
+    defaultValue: value.replace(/_/g, ' ').replace(/^\w/, (letter) => letter.toUpperCase()),
   })
 }
 
@@ -95,7 +88,7 @@ export const CUSTOM_FIELD_DEFINITION_DEFAULTS: CustomFieldDefinitionFormValues =
   namespace: 'custom',
   key: '',
   field_type: 'short_text',
-  resource_type: 'Spree::Product',
+  resource_type: 'product',
   storefront_visible: false,
   searchable: false,
   sortable: false,

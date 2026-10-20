@@ -46,9 +46,9 @@ module Spree
 
       def ensure_shippable
         unless stock_transfer.draft? || stock_transfer.ready_to_ship?
-          failure(stock_transfer, Spree.t('stock_transfer.errors.not_shippable'))
+          failure(stock_transfer, I18n.t('spree.stock_transfer.errors.not_shippable'))
         end
-        failure(stock_transfer, Spree.t('stock_transfer.errors.must_have_variant')) if stock_transfer.items.empty?
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.must_have_variant')) if stock_transfer.items.empty?
       end
 
       # Every line needs enough available stock for the quantity being moved,
@@ -65,7 +65,7 @@ module Spree
         return if unavailable_items.empty?
 
         failure(stock_transfer,
-                Spree.t('stock_transfer.errors.variants_unavailable', stock: source.name))
+                I18n.t('spree.stock_transfer.errors.variants_unavailable', stock: source.name))
       end
 
       def write_shipped_movements

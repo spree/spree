@@ -11,6 +11,7 @@ import {
 } from '../ui/dialog'
 import { Field, FieldLabel } from '../ui/field'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
+import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Switch } from '../ui/switch'
 import type { RefundMethod } from './return-dialogs'
@@ -93,8 +94,11 @@ export function ClaimResolveDialog({
 
   // Refunding nothing, or replacing nothing, is what the server rejects —
   // say so here instead of letting the request fail.
+  // The amount is the canonical decimal string a number input yields, so
+  // "above zero" is unsigned digits with a non-zero digit among them.
+  const positiveAmount = /^(\d+(\.\d+)?|\.\d+)$/.test(amount) && /[1-9]/.test(amount)
   const ready =
-    (!refunding || Number(amount) > 0) && (!sendingReplacement || chosenReplacements.length > 0)
+    (!refunding || positiveAmount) && (!sendingReplacement || chosenReplacements.length > 0)
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -138,7 +142,7 @@ export function ClaimResolveDialog({
                   <InputGroupInput
                     id="claim-resolve-amount"
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     value={amount}
                     onChange={(event) => setAmount(event.target.value)}
@@ -175,21 +179,23 @@ export function ClaimResolveDialog({
                 {t('admin.pages.orders.detail.claims.replacement_items')}
               </span>
               {lines.map((line) => (
-                <div
-                  key={line.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-                >
-                  <span className="truncate text-sm">
-                    {line.label}
-                    <span className="text-muted-foreground"> ×{line.quantity}</span>
-                  </span>
-                  <Switch
-                    checked={replacing[line.id] ?? false}
-                    onCheckedChange={(checked) =>
-                      setReplacing({ ...replacing, [line.id]: checked })
-                    }
-                  />
-                </div>
+                <Item key={line.id} variant="outline" className="flex-nowrap border-border-subtle">
+                  <ItemContent className="min-w-0">
+                    <ItemTitle className="block truncate font-normal">
+                      {line.label}
+                      <span className="text-muted-foreground"> ×{line.quantity}</span>
+                    </ItemTitle>
+                  </ItemContent>
+                  <ItemActions>
+                    <Switch
+                      aria-label={line.label}
+                      checked={replacing[line.id] ?? false}
+                      onCheckedChange={(checked) =>
+                        setReplacing({ ...replacing, [line.id]: checked })
+                      }
+                    />
+                  </ItemActions>
+                </Item>
               ))}
             </div>
           )}

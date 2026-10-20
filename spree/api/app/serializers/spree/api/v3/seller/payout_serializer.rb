@@ -5,21 +5,19 @@ module Spree
         # One settlement to this seller, as the seller reads it.
         class PayoutSerializer < V3::BaseSerializer
           typelize status: :string,
-                   currency: :string,
-                   provider: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
-                   display_amount: :string,
                    reference: 'string | null',
                    period_start: 'string | null',
                    period_end: 'string | null',
                    transfers_count: :number
 
-          attributes :status, :currency, :provider, :reference,
+          attributes :status, :currency, :reference,
                      period_start: :iso8601, period_end: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute(:amount) { |payout| payout.amount&.to_s }
-          attribute(:display_amount) { |payout| payout.display_amount.to_s }
+          attribute(:amount) { |payout| Spree::Money::Rounding.format(payout.amount, payout.currency) }
 
           # How many earnings this settlement covers. Read from a count the
           # controller made for the whole page when there is one; a single
@@ -29,6 +27,8 @@ module Spree
 
             counts ? counts.fetch(payout.id, 0) : payout.transfers.count
           end
+
+          api_type_attributes :provider
         end
       end
     end

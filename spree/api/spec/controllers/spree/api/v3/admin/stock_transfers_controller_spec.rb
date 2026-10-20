@@ -105,6 +105,13 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
       expect(destination_location.stock_level(variant.id)&.count_on_hand.to_i).to eq(0)
     end
 
+    it 'keeps the metadata it is created with, as sent' do
+      post :create, params: base_params.merge(metadata: { 'erp_id' => 'prod_UkLWZg9DAJ' }), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::StockTransfer.find_by_prefix_id(json_response['id']).metadata).to eq('erp_id' => 'prod_UkLWZg9DAJ')
+    end
+
     it 'returns 422 for a line with no quantity' do
       post :create, params: base_params.merge(items: [{ variant_id: variant.prefixed_id, quantity_shipped: 0 }]),
                     as: :json

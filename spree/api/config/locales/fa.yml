@@ -1,0 +1,15 @@
+---
+fa:
+  spree:
+    api:
+      cannot_delete: "%{model} قابل حذف نیست"
+      current_password_invalid: گذرواژه فعلی نامعتبر یا وارد نشده است
+      newsletter_verification_token_invalid: توکن تأیید خبرنامه نامعتبر یا منقضی شده است.
+      password_reset_requested: اگر حسابی برای آن ایمیل وجود داشته باشد، دستورالعمل بازنشانی گذرواژه ارسال شده است.
+      password_reset_token_invalid: توکن بازنشانی گذرواژه نامعتبر یا منقضی شده است.
+      record_not_found: "%{model} یافت نشد"
+      unauthorized: شما مجاز به انجام این عملیات نیستید.
+      v3:
+        payments:
+          method_unavailable: این روش پرداخت برای این سفارش در دسترس نیست.
+          session_required: این روش پرداخت به یک نشست پرداخت نیاز دارد. به‌جای آن از نقطه پایانی نشست‌های پرداخت استفاده کنید.

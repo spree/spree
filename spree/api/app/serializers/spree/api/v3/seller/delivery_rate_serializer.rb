@@ -10,24 +10,19 @@ module Spree
         class DeliveryRateSerializer < V3::BaseSerializer
           typelize name: :string,
                    selected: :boolean,
-                   cost: :string,
-                   display_cost: :string,
-                   total: :string,
-                   display_total: :string,
                    carrier: [:string, nullable: true],
                    service_level: [:string, nullable: true],
-                   estimated_delivery_date: [:string, nullable: true]
+                   estimated_delivery_date: [:string, nullable: true],
+                   unpriced: :boolean
 
-          attributes :name, :selected, :cost, :total,
-                     :carrier, :service_level, :estimated_delivery_date
+          attributes :name, :selected
 
-          attribute :display_cost do |delivery_rate|
-            delivery_rate.display_cost.to_s
-          end
+          money_attributes :cost, :total
 
-          attribute :display_total do |delivery_rate|
-            delivery_rate.display_total.to_s
-          end
+          attributes :carrier, :service_level, :estimated_delivery_date, :unpriced
+
+          typelize cost: [:string, nullable: false],
+                   total: [:string, nullable: false]
         end
       end
     end

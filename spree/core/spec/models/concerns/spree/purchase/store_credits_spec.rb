@@ -134,14 +134,15 @@ RSpec.shared_examples 'a store credits host' do
 
     context 'when the record is complete' do
       let(:record) { completed_record_with_store_credit_payment }
-      let(:store_credit_payments) { record.payments.checkout.store_credits }
 
-      before do
+      it 'leaves the store credit payments untouched' do
+        store_credit_payments = record.payments.store_credits.map { |payment| [payment.id, payment.status] }
+        expect(store_credit_payments).not_to be_empty
+
         subject
-        record.reload
-      end
 
-      it { expect(record.payments.checkout.store_credits).to eq store_credit_payments }
+        expect(record.reload.payments.store_credits.map { |payment| [payment.id, payment.status] }).to eq(store_credit_payments)
+      end
     end
   end
 
@@ -440,6 +441,31 @@ RSpec.shared_examples 'a store credits host' do
       it 'returns 0' do
         expect(total_applied_store_credit).to be_zero
       end
+    end
+  end
+
+  describe '#amount_due' do
+    let(:record) { new_record(customer: create(:user), total: 100) }
+
+    it 'takes off store credit applied but not captured yet' do
+      create_store_credit_payment(record, status: 'checkout', amount: 30)
+
+      expect(record.amount_due).to eq(70)
+    end
+
+    # Captured credit is a completed payment, so the balance counts it already.
+    it 'takes captured store credit off once' do
+      create_store_credit_payment(record, status: 'completed', amount: 30)
+      record.update_columns(payment_total: 30)
+
+      expect(record.amount_due).to eq(70)
+    end
+
+    it 'never goes negative' do
+      create_store_credit_payment(record, status: 'checkout', amount: 30)
+      record.update_columns(payment_total: 90)
+
+      expect(record.amount_due).to eq(0)
     end
   end
 

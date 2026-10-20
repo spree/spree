@@ -5,16 +5,20 @@ module Spree
         # Admin API Line Item Serializer
         # Extends the store serializer with metadata visibility
         class LineItemSerializer < V3::LineItemSerializer
+          include Concerns::ExternalReferencesAttribute
+
+          without_formatted_money
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
-          typelize price: [:string, nullable: false], display_price: [:string, nullable: false],
-                   total: [:string, nullable: false], display_total: [:string, nullable: false],
-                   adjustment_total: [:string, nullable: false], display_adjustment_total: [:string, nullable: false],
-                   additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
-                   included_tax_total: [:string, nullable: false], display_included_tax_total: [:string, nullable: false],
-                   discount_total: [:string, nullable: false], display_discount_total: [:string, nullable: false],
-                   pre_tax_amount: [:string, nullable: false], display_pre_tax_amount: [:string, nullable: false],
-                   discounted_amount: [:string, nullable: false], display_discounted_amount: [:string, nullable: false]
+          typelize price: [:string, nullable: false],
+                   total: [:string, nullable: false],
+                   adjustment_total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false],
+                   discount_total: [:string, nullable: false],
+                   pre_tax_amount: [:string, nullable: false],
+                   discounted_amount: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
                    cost_price: [:string, nullable: true],
@@ -34,7 +38,7 @@ module Spree
           # Base price, not resolved: resolving would call the pricing provider
           # once per line on a read path that must stay provider-free.
           attribute :catalog_price do |line_item|
-            line_item.variant&.amount_in(line_item.currency)&.to_s
+            Spree::Money::Rounding.format(line_item.variant&.amount_in(line_item.currency), line_item.currency, unit_price: true)
           end
 
           # Which agreement priced this line. The list id is stamped on the
@@ -44,9 +48,7 @@ module Spree
           # Empty on a shop-price or hand-negotiated line. Names ride along
           # beside the ids so a page of lines does not cost a request each to
           # label, as `company_name` already does.
-          attribute :price_list_id do |line_item|
-            line_item.price_list&.prefixed_id
-          end
+          prefixed_id_attributes :price_list
 
           attribute :price_list_name do |line_item|
             line_item.price_list&.name
@@ -60,13 +62,9 @@ module Spree
             line_item.price_list&.catalog&.name
           end
 
-          attribute :cost_price do |line_item|
-            line_item.cost_price&.to_s
-          end
+          money_attributes :cost_price, unit_price: true
 
-          attribute :tax_category_id do |line_item|
-            line_item.tax_category&.prefixed_id
-          end
+          prefixed_id_attributes :tax_category
 
           # Override inherited associations to use admin serializers
           many :option_values, resource: proc { Spree.api.admin_option_value_serializer }

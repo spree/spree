@@ -79,7 +79,9 @@ test.describe('seller invitation lifecycle', () => {
       // panel has to carry too — keys defined only in the operator's bundle
       // render as their own name here.
       await inviteePage.goto(`${SELLER_PANEL}${new URL(inviteePage.url()).pathname}/settings`)
-      await expect(inviteePage.getByText('Settings').first()).toBeVisible({ timeout: 20_000 })
+      await expect(inviteePage.getByRole('heading', { name: /^settings$/i })).toBeVisible({
+        timeout: 20_000,
+      })
       await expect(inviteePage.getByText(/admin\.settings_page/)).toHaveCount(0)
     } finally {
       await inviteeContext.close()

@@ -1,0 +1,15 @@
+---
+it:
+  spree:
+    api:
+      cannot_delete: "%{model} non può essere eliminato"
+      current_password_invalid: La password attuale non è valida o è mancante
+      newsletter_verification_token_invalid: Il token di verifica della newsletter non è valido o è scaduto.
+      password_reset_requested: Se esiste un account per quell'email, sono state inviate le istruzioni per reimpostare la password.
+      password_reset_token_invalid: Il token di reimpostazione della password non è valido o è scaduto.
+      record_not_found: "%{model} non trovato"
+      unauthorized: Non sei autorizzato a eseguire questa azione.
+      v3:
+        payments:
+          method_unavailable: Questo metodo di pagamento non è disponibile per questo ordine.
+          session_required: Questo metodo di pagamento richiede una sessione di pagamento. Usa invece l'endpoint delle sessioni di pagamento.

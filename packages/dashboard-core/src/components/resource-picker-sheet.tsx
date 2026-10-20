@@ -1,6 +1,11 @@
 import {
   Button,
   Checkbox,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
   type PaginationMeta,
   SearchInput,
   Sheet,
@@ -308,11 +313,10 @@ export function ResourcePickerSheet<T extends PickerOption>({
                   const subtitle = getOptionSubtitle?.(option)
                   return (
                     <li key={option.id}>
-                      <button
-                        type="button"
-                        disabled={inList}
+                      <Item
+                        render={<button type="button" disabled={inList} />}
                         onClick={() => toggle(option)}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-accent/50 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex-nowrap gap-3 rounded-none px-4 py-2.5 text-left hover:bg-accent/50 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <Checkbox
                           checked={checked}
@@ -320,20 +324,22 @@ export function ResourcePickerSheet<T extends PickerOption>({
                           className="pointer-events-none"
                         />
                         {getOptionImageUrl && <Thumbnail src={imageUrl} size="sm" />}
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm">{getOptionLabel(option)}</span>
+                        <ItemContent className="min-w-0 gap-0">
+                          <ItemTitle className="block truncate font-normal">
+                            {getOptionLabel(option)}
+                          </ItemTitle>
                           {subtitle && (
-                            <span className="block truncate text-muted-foreground text-xs">
+                            <ItemDescription className="line-clamp-1 text-xs">
                               {subtitle}
-                            </span>
+                            </ItemDescription>
                           )}
-                        </span>
+                        </ItemContent>
                         {inList && (
-                          <span className="shrink-0 text-muted-foreground text-xs">
+                          <ItemActions className="shrink-0 text-muted-foreground text-xs">
                             {t('admin.resource_picker.already_added')}
-                          </span>
+                          </ItemActions>
                         )}
-                      </button>
+                      </Item>
                     </li>
                   )
                 })}

@@ -117,11 +117,16 @@ module SpreeEasyPost
 
     # One shipment-create returns rates for every carrier and service, so all
     # delivery methods sharing this provider within a request reuse it.
+    #
+    # Keyed by a digest of the exact payload sent: an order split into
+    # several packages from one stock location must quote each package's own
+    # parcel and customs contents, never the first package's cached rates.
+    # Anything that changes the request changes the key; identical requests
+    # still cost one API call.
     def easypost_shipment(package)
-      cache_key = [:easypost_shipment, store.id, package.stock_location.id, package.owner.id]
-      Spree::Current.provider_cache[cache_key] ||= integration.client.shipment.create(
-        **shipment_params(package)
-      )
+      params = shipment_params(package)
+      cache_key = [:easypost_shipment, store.id, integration.id, Digest::SHA256.hexdigest(params.to_json)]
+      Spree::Current.provider_cache[cache_key] ||= integration.client.shipment.create(**params)
     end
 
     # Built by the shared helper so a label bought against this quote carries

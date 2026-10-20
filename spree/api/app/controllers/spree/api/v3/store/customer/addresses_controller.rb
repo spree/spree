@@ -7,6 +7,13 @@ module Spree
             prepend_before_action :require_authentication!
             before_action :set_resource, only: [:show, :update, :destroy]
 
+            request_params :address do |body|
+              body.include_attributes Spree::Api::V3::Store::AddressRequestSchema
+              body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
+              body.attribute :is_default_billing, :boolean, description: 'Makes this the default billing address.'
+              body.attribute :is_default_shipping, :boolean, description: 'Makes this the default shipping address.'
+            end
+
             # POST /api/v3/store/customers/me/addresses
             def create
               result = Spree.address_create_service.call(
@@ -49,10 +56,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :addresses
-            end
-
             def model_class
               Spree::Address
             end
@@ -62,13 +65,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(
-                *model_additional_permitted_attributes,
-                :first_name, :last_name, :address1, :address2, :city,
-                # country_iso and state_abbr are the legacy write names, accepted until 6.1.
-                :postal_code, :phone, :company, :country_code, :country_iso, :state_code, :state_abbr, :state_name,
-                :is_default_billing, :is_default_shipping
-              )
+              params.permit(*permitted_attributes)
             end
           end
         end

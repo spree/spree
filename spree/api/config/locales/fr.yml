@@ -1,0 +1,15 @@
+---
+fr:
+  spree:
+    api:
+      cannot_delete: "%{model} ne peut pas être supprimé"
+      current_password_invalid: Le mot de passe actuel est invalide ou manquant
+      newsletter_verification_token_invalid: Le jeton de vérification de la newsletter est invalide ou a expiré.
+      password_reset_requested: Si un compte existe pour cette adresse e-mail, les instructions de réinitialisation du mot de passe ont été envoyées.
+      password_reset_token_invalid: Le jeton de réinitialisation du mot de passe est invalide ou a expiré.
+      record_not_found: "%{model} introuvable"
+      unauthorized: Vous n'êtes pas autorisé à effectuer cette action.
+      v3:
+        payments:
+          method_unavailable: Ce mode de paiement n'est pas disponible pour cette commande.
+          session_required: Ce mode de paiement nécessite une session de paiement. Utilisez plutôt le point de terminaison des sessions de paiement.

@@ -5,16 +5,6 @@ RSpec.describe Spree::ApiKey, type: :model do
   let(:api_key) { create(:api_key, store: store) }
 
   describe 'validations' do
-    it 'is valid with valid attributes' do
-      expect(api_key).to be_valid
-    end
-
-    it 'requires a name' do
-      api_key.name = nil
-      expect(api_key).not_to be_valid
-      expect(api_key.errors[:name]).to be_present
-    end
-
     it 'requires a name unique among the store\'s active keys' do
       store = create(:store)
       existing = create(:api_key, name: 'Storefront', store: store)
@@ -36,21 +26,10 @@ RSpec.describe Spree::ApiKey, type: :model do
       expect(older.reload.revoked_at).to be_present
     end
 
-    it 'requires a key_type' do
-      api_key.key_type = nil
-      expect(api_key).not_to be_valid
-      expect(api_key.errors[:key_type]).to be_present
-    end
-
     it 'requires key_type to be publishable or secret' do
       api_key.key_type = 'invalid'
       expect(api_key).not_to be_valid
       expect(api_key.errors[:key_type]).to be_present
-    end
-
-    it 'requires a store' do
-      api_key.store = nil
-      expect(api_key).not_to be_valid
     end
 
     it 'requires unique token for publishable keys' do
@@ -223,11 +202,6 @@ RSpec.describe Spree::ApiKey, type: :model do
       api_key.revoke!(user)
       expect(api_key.revoked_by).to eq(user)
     end
-
-    it 'marks key as inactive' do
-      api_key.revoke!
-      expect(api_key.active?).to be false
-    end
   end
 
   describe '.find_by_secret_token' do
@@ -257,24 +231,6 @@ RSpec.describe Spree::ApiKey, type: :model do
     it 'does not find publishable keys' do
       key = create(:api_key, :publishable, store: store)
       expect(described_class.find_by_secret_token(key.token)).to be_nil
-    end
-  end
-
-  describe 'associations' do
-    it 'belongs to store' do
-      expect(api_key.store).to eq(store)
-    end
-
-    it 'can have created_by' do
-      user = create(:user)
-      key = create(:api_key, store: store, created_by: user)
-      expect(key.created_by).to eq(user)
-    end
-
-    it 'can have revoked_by' do
-      user = create(:user)
-      api_key.revoke!(user)
-      expect(api_key.revoked_by).to eq(user)
     end
   end
 

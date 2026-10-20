@@ -7,7 +7,7 @@ module Spree
         class PurchaseOrderSerializer < V3::BaseSerializer
           typelize number: :string,
                    status: :string,
-                   currency: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    reference: 'string | null',
                    notes: 'string | null',
                    supplier_id: 'string | null',
@@ -21,8 +21,6 @@ module Spree
                    quantity_rejected_total: :number,
                    quantity_ordered_total: :number,
                    quantity_received_total: :number,
-                   subtotal: :string,
-                   display_subtotal: :string,
                    editable: :boolean,
                    ordered_at: 'string | null',
                    received_at: 'string | null',
@@ -56,21 +54,10 @@ module Spree
 
           attribute :editable, &:editable?
 
-          attribute :subtotal do |purchase_order|
-            purchase_order.subtotal.to_s
-          end
+          money_attributes :subtotal
+          typelize subtotal: [:string, nullable: false]
 
-          attribute :display_subtotal do |purchase_order|
-            purchase_order.display_subtotal.to_s
-          end
-
-          attribute :supplier_id do |purchase_order|
-            purchase_order.supplier&.prefixed_id
-          end
-
-          attribute :destination_location_id do |purchase_order|
-            purchase_order.destination_location&.prefixed_id
-          end
+          prefixed_id_attributes :supplier, :destination_location
 
           many :items,
                resource: proc { Spree.api.admin_purchase_order_item_serializer },

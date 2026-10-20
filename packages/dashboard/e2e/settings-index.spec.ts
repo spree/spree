@@ -13,10 +13,10 @@ test.describe('settings index', () => {
       timeout: 15_000,
     })
     // The card, not the sidebar entry: the card's name carries its description.
-    await main.getByRole('link', { name: /^tax rates rates applied/i }).click()
+    await main.getByRole('link', { name: /^taxes tax categories/i }).click()
 
-    await expect(page).toHaveURL(new RegExp(`${SETTINGS_PATH(creds.store_id)}/tax-rates`))
-    await expect(page.getByRole('button', { name: /add tax rate/i })).toBeVisible({
+    await expect(page).toHaveURL(new RegExp(`${SETTINGS_PATH(creds.store_id)}/taxes/categories`))
+    await expect(page.getByRole('button', { name: /add tax category/i })).toBeVisible({
       timeout: 15_000,
     })
   })
@@ -34,7 +34,7 @@ test.describe('settings index', () => {
 
     await search.fill('webhook')
     await expect(main.getByRole('link', { name: /^webhooks/i })).toBeVisible()
-    await expect(main.getByRole('link', { name: /^tax rates/i })).toHaveCount(0)
+    await expect(main.getByRole('link', { name: /^taxes/i })).toHaveCount(0)
 
     await search.fill('zzz-nothing-matches')
     await expect(main.getByText(/no settings match/i)).toBeVisible()

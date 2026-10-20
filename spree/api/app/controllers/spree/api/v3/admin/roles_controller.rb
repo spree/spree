@@ -13,6 +13,18 @@ module Spree
 
           scoped_resource :staff
 
+          request_params :role do |body|
+            body.attribute :name, :string,
+              required: true, on: :create,
+              example: 'order_manager',
+              description: 'Unique role name, the machine identifier shown capitalized in the dashboard.'
+            body.attribute :description, :string, nullable: true, example: 'Handles daily orders'
+            # A caller may only grant permissions they hold themselves.
+            body.attribute :permissions, :array, of: :string,
+              example: %w[write_orders read_customers],
+              description: 'Permission keys (`read_orders`, `write_products`, ...) from the permissions endpoint. You can only grant keys you hold yourself.'
+          end
+
           # POST /api/v3/admin/roles
           # A caller may only grant permissions they effectively hold — the
           # same anti-amplification rule as role grants and API-key minting.
@@ -58,7 +70,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :description, permissions: [])
+            params.permit(*permitted_attributes)
           end
 
           private

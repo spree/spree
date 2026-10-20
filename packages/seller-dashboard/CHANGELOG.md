@@ -1,5 +1,82 @@
 # @spree/seller-dashboard
 
+## 1.0.0-rc.5
+
+### Minor Changes
+
+- [#14906](https://github.com/spree/spree/pull/14906) [`6bcdb66`](https://github.com/spree/spree/commit/6bcdb66e72b73777dbff5b6f6487e649f5b54c43) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `sellerClient` is now exported, so seller panel customizations can call the Seller API from their own hooks.
+
+### Patch Changes
+
+- [#14917](https://github.com/spree/spree/pull/14917) [`dd72579`](https://github.com/spree/spree/commit/dd72579df100ac42e46137851941f292c378172e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Apps no longer choose the versions of `@tanstack/react-table`, `@tanstack/react-hotkeys` and `@hookform/resolvers` used inside the dashboard packages: they are now regular dependencies, so upgrading them in an app (for example to React Table 9) no longer breaks type checking or the dashboard itself. Table column definitions are available as `DataGridColumn` from `@spree/dashboard-ui`. The TipTap menu extensions are pinned to the same version as the rest of the editor.
+  
+  `@spree/dashboard` and `@spree/seller-dashboard` now list the libraries they share with the app (React, TanStack Router and Query, React Hook Form, i18next, react-i18next and the Spree dashboard packages) as peer dependencies, so the app's copy is the only one. Before, an app on a different version got a second copy, which crashes React or makes plugins disappear. Apps must list these packages as their own dependencies; the starter templates now include React Hook Form, i18next and react-i18next.
+- Updated dependencies [[`11b9a03`](https://github.com/spree/spree/commit/11b9a03c775fce616a9cd73cb39fa47e7b88bb13)]:
+  - @spree/seller-sdk@1.0.0-rc.4
+
+## 1.0.0-rc.4
+
+### Patch Changes
+
+- Updated dependencies:
+  - @spree/seller-sdk@1.0.0-rc.3
+
+## 1.0.0-rc.3
+
+### Minor Changes
+
+- [#14856](https://github.com/spree/spree/pull/14856) [`05d6372`](https://github.com/spree/spree/commit/05d637294259a03b53e1849be6638bcb2b328d14) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Admin and Seller APIs no longer return `display_*` money fields, so their types drop them; format the amount with its currency instead. The dashboard and seller panel format every amount in the admin's own language. `formatMoney` writes a currency's ISO 4217 decimals and takes `{ unitPrice: true }` for up to four.
+
+- [#14866](https://github.com/spree/spree/pull/14866) [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `directUploads.create()` is replaced by `files.create()` and `files.upload()`, which uploads a file and resolves to a `signed_id` in one call, either straight to storage or in the request itself. The `signed_id` expires after a day. Every parameter that takes one is now named `signed_id` or `<slot>_signed_id` (`avatar_signed_id`, `logo_signed_id`, `attachment_signed_id`, `document_signed_id`, `file_signed_id`, `po_document_signed_id`, …). In `@spree/dashboard-core`, `useDirectUpload` becomes `useFileUpload({ visibility })`, and `signedIdParam` builds the three-state write for an image or document field.
+
+- [#14853](https://github.com/spree/spree/pull/14853) [`3001ebf`](https://github.com/spree/spree/commit/3001ebf19fa8c361f13a7d627384d4d86a829787) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Changed preferences to a typed contract. Every `/…/types` entry returns `schema`, the JSON Schema of the type's `preferences`, instead of `preference_schema`, and rows no longer repeat it; `PreferenceField` and `DeliveryPreferenceField` are replaced by `PreferenceSchema`. Each configurable family's settings are typed per `type` (`PromotionRulePreferencesMap`, `TypedPromotionRule`, …), and an extension adds its own by declaration merging. Store, channel, import and seller profile settings drop the `preferred_` prefix (`guest_checkout`, `timezone`, `delimiter`), the store's decimal settings are strings, and delivery methods read and write `calculator: { type, preferences }`. Preference writes are validated, refused with `invalid_preferences` and a JSON pointer per failing value. `paymentMethods.types()` lists every provider with `installed` set on those the store already has.
+
+### Patch Changes
+
+- [#14879](https://github.com/spree/spree/pull/14879) [`f184f25`](https://github.com/spree/spree/commit/f184f25097c94977eb930ac34dcbac98ff8ced7d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Methods that delete a record are named `delete` in both SDKs. In the Seller SDK, `taxIdentifiers.remove`, `team.remove` and `invitations.revoke` are now `taxIdentifiers.delete`, `team.delete` and `invitations.delete`. In the Admin SDK, `sellers.team.remove` and `sellers.invitations.remove` are now `sellers.team.delete` and `sellers.invitations.delete`. Methods that detach something from a cart or order (`remove`), or change a record without deleting it (`revoke`), keep their names.
+
+  Seller SDK types are corrected: `team.invite` returns the `Invitation`, and `auth.providers` returns `AuthProvidersResponse`.
+
+- Updated dependencies [[`05d6372`](https://github.com/spree/spree/commit/05d637294259a03b53e1849be6638bcb2b328d14), [`9728851`](https://github.com/spree/spree/commit/9728851b963a288e89f00ab85bcb993d3ebf5293), [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a), [`34b80f0`](https://github.com/spree/spree/commit/34b80f0db561300db3e6982543c7ec724e2f4c03), [`9b5911d`](https://github.com/spree/spree/commit/9b5911d12649671ce9896f28473a2940f9a1cba0), [`525959d`](https://github.com/spree/spree/commit/525959de11cf10af12fc0936f908ab3af000857f), [`3525c00`](https://github.com/spree/spree/commit/3525c00440076a17cce671f3e20801309d8ba586), [`f508a38`](https://github.com/spree/spree/commit/f508a389f7f09f5ca85bfa32a2dfcec9517ea1bf), [`f184f25`](https://github.com/spree/spree/commit/f184f25097c94977eb930ac34dcbac98ff8ced7d), [`a90a9cc`](https://github.com/spree/spree/commit/a90a9ccc68caff9349af1c0a888e6497f72d7228), [`90af080`](https://github.com/spree/spree/commit/90af080e5e3745423475ef9deef21f4dfc0bb71b), [`5c1eeee`](https://github.com/spree/spree/commit/5c1eeee6b5f2570c34271bcd8fd6c93fa6dbe36e), [`3001ebf`](https://github.com/spree/spree/commit/3001ebf19fa8c361f13a7d627384d4d86a829787), [`6990f37`](https://github.com/spree/spree/commit/6990f3730ffad5245dd116b458a7b8ceeb67d310)]:
+  - @spree/seller-sdk@1.0.0-rc.2
+  - @spree/dashboard-core@1.0.0-rc.3
+  - @spree/dashboard-ui@1.0.0-rc.3
+
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- [#14845](https://github.com/spree/spree/pull/14845) [`9a0a293`](https://github.com/spree/spree/commit/9a0a293e2e91dccce3024f74013ade4599bbff08) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed type checking in projects that install the dashboard or seller panel with pnpm. The generated route file imported the routes through the package's `node_modules` link, where TypeScript cannot find the dashboard's own dependencies, so `tsc` reported hundreds of "Cannot find module" errors. It now imports them from the installed location again. Under pnpm that location includes the package version, so an upgrade rewrites the import paths in `routeTree.gen.ts`.
+
+- Updated dependencies [[`dca32db`](https://github.com/spree/spree/commit/dca32dbbca0b72705f89f8afb62721d3c6486728), [`9a0a293`](https://github.com/spree/spree/commit/9a0a293e2e91dccce3024f74013ade4599bbff08)]:
+  - @spree/dashboard-ui@1.0.0-rc.2
+  - @spree/dashboard-core@1.0.0-rc.2
+
+## 1.0.0-rc.1
+
+### Minor Changes
+
+- [#14784](https://github.com/spree/spree/pull/14784) [`a4baf49`](https://github.com/spree/spree/commit/a4baf4900f24739125d8efceaba5fb7e70a7fea9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Plugins can now add cards to more detail pages. The admin dashboard has new slots on the seller payout, catalog, price list, promotion, purchase order, stock transfer and webhook endpoint pages, and the catalog, price list and promotion pages now save extension fields bound with `useHostForm()` with the page's own Save button. The seller panel has new slots on its product, order, payout and profile pages, and its product page saves extension fields the same way, under the form key `seller.product`. The slots catalog lists every slot and the context it receives.
+
+### Patch Changes
+
+- [#14776](https://github.com/spree/spree/pull/14776) [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57) Thanks [@mad-eel](https://github.com/mad-eel)! - The New claim dialog now pre-fills each line's refund with what the customer paid for those items after discounts, instead of their list price, which the claim would refuse to refund on a discounted order. The amount follows the claimed quantity until the merchant types one of their own. Code that builds the dialog's lines itself passes `discountedAmount` (the line's `discounted_amount`) in place of `price`, which `ClaimableLine` no longer accepts.
+
+- [#14776](https://github.com/spree/spree/pull/14776) [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57) Thanks [@mad-eel](https://github.com/mad-eel)! - A received return that is owed nothing, such as a free gift sent back, now offers "Complete return" instead of "Refund". The dialog explains that no money goes back and closes the return without asking for an amount or a refund method.
+
+- [#14799](https://github.com/spree/spree/pull/14799) [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da) Thanks [@mad-eel](https://github.com/mad-eel)! - The refund dialog says how much tax the pre-filled amount gives back, and the claim dialog pre-fills each line with the tax the customer paid on top of the price. Shipping an exchange whose replacement costs more asks first, because the difference is added to the order as a balance due, and that fee is labelled "Exchange" on the order.
+
+- [#14799](https://github.com/spree/spree/pull/14799) [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da) Thanks [@mad-eel](https://github.com/mad-eel)! - Admin returns carry `display_refunded_total`. A refunded return's card in the dashboard and the seller panel now shows what was actually refunded instead of what the return was worth, and names both when less went back, for example "Refunded $25.00 of $30.26".
+
+- [#14764](https://github.com/spree/spree/pull/14764) [`291238d`](https://github.com/spree/spree/commit/291238dfc0b05f9b322f9e51d6cd3737006ba430) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the seller panel opening with an empty sidebar when a seller returned with a live session but no remembered seller, for example after the browser cleared site storage. The panel now loads the seller's permissions once it knows which seller is active.
+
+- [#14747](https://github.com/spree/spree/pull/14747) [`a0151c1`](https://github.com/spree/spree/commit/a0151c15a268356f5a5ba236850b8ee7405e9ae7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the setup screen of a new project reloading while the merchant was filling it in. The generated route file now refers to installed packages by their stable location, and `spree add` generates it right after installing, so the first dev start has nothing to rewrite. Upgrades also no longer rewrite every line of that file, so its diff shows only the pages an upgrade added.
+
+- Updated dependencies [[`3b80c52`](https://github.com/spree/spree/commit/3b80c52d19006dafc717e4004ec9ae4619438b7b), [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f), [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57), [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57), [`4bd1741`](https://github.com/spree/spree/commit/4bd1741677b202f11c13b792bf16e62301d2c5cd), [`7fa7a64`](https://github.com/spree/spree/commit/7fa7a647d5372641fa45ff6fc9c52892bf791a1c), [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da), [`3a2a78b`](https://github.com/spree/spree/commit/3a2a78bb43f84a2da1570ebb29c197e6ae1f1c98), [`446d3cb`](https://github.com/spree/spree/commit/446d3cbc71b3ff980d48559317089e13eaab564e), [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da), [`c9d9a2f`](https://github.com/spree/spree/commit/c9d9a2f3e9f37c6a5f9c27d0825e4f505d86f4da), [`291238d`](https://github.com/spree/spree/commit/291238dfc0b05f9b322f9e51d6cd3737006ba430), [`9335e9f`](https://github.com/spree/spree/commit/9335e9f694df05f2311e5f369422056080a63f57), [`95c27af`](https://github.com/spree/spree/commit/95c27af49ace4316699f863a023671b236e2f467), [`a0151c1`](https://github.com/spree/spree/commit/a0151c15a268356f5a5ba236850b8ee7405e9ae7), [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f), [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f), [`53d9925`](https://github.com/spree/spree/commit/53d9925440d62343d77efad3c8dc849c4fa54008)]:
+  - @spree/seller-sdk@1.0.0-rc.1
+  - @spree/dashboard-ui@1.0.0-rc.1
+  - @spree/dashboard-core@1.0.0-rc.1
+
 ## 1.0.0-beta.8
 
 ### Patch Changes

@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
-import { Field, FieldLabel } from '../ui/field'
+import { Field, FieldDescription, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -140,19 +140,27 @@ export function ReturnReceiveDialog({
 }
 
 /**
- * Gives the money back: how much, and by what means.
+ * Gives the money back: how much, and by what means. A return owed nothing
+ * (a free gift sent back) is completed instead, with nothing to choose.
  *
  * The currency symbol comes from the caller — the operator's panel reads it
  * from the store it is looking at, and a seller has no currency of their own.
+ * `refundTaxTotal` is the formatted tax inside `refundableTotal`, shown so a
+ * merchant knows the pre-filled amount gives the tax back too.
  */
 export function ReturnRefundDialog({
   refundableTotal,
+  owesNothing,
+  refundTaxTotal,
   currencySymbol,
   onClose,
   onSubmit,
   pending = false,
 }: {
   refundableTotal: string
+  /** True when the return is owed nothing, so it is completed rather than refunded. */
+  owesNothing: boolean
+  refundTaxTotal?: string
   currencySymbol: string
   onClose: () => void
   onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
@@ -177,48 +185,67 @@ export function ReturnRefundDialog({
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('admin.pages.orders.detail.returns.refund_title')}</DialogTitle>
+          <DialogTitle>
+            {owesNothing
+              ? t('admin.pages.orders.detail.returns.complete_title')
+              : t('admin.pages.orders.detail.returns.refund_title')}
+          </DialogTitle>
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
-          <Field>
-            <FieldLabel htmlFor="refund-amount">
-              {t('admin.pages.orders.detail.returns.refund_amount')}
-            </FieldLabel>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>{currencySymbol}</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="refund-amount"
-                type="number"
-                step="0.01"
-                min="0"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-              />
-            </InputGroup>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="refund-method">
-              {t('admin.pages.orders.detail.returns.refund_method')}
-            </FieldLabel>
-            <Select
-              items={methodOptions}
-              value={refundMethod}
-              onValueChange={(value) => setRefundMethod(value as RefundMethod)}
-            >
-              <SelectTrigger id="refund-method">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {methodOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          {owesNothing ? (
+            <p className="text-muted-foreground text-sm">
+              {t('admin.pages.orders.detail.returns.nothing_owed')}
+            </p>
+          ) : (
+            <>
+              <Field>
+                <FieldLabel htmlFor="refund-amount">
+                  {t('admin.pages.orders.detail.returns.refund_amount')}
+                </FieldLabel>
+                <InputGroup>
+                  <InputGroupAddon>
+                    <InputGroupText>{currencySymbol}</InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="refund-amount"
+                    type="number"
+                    step="any"
+                    min="0"
+                    value={amount}
+                    onChange={(event) => setAmount(event.target.value)}
+                  />
+                </InputGroup>
+                {refundTaxTotal && (
+                  <FieldDescription>
+                    {t('admin.pages.orders.detail.returns.refund_includes_tax', {
+                      tax: refundTaxTotal,
+                    })}
+                  </FieldDescription>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="refund-method">
+                  {t('admin.pages.orders.detail.returns.refund_method')}
+                </FieldLabel>
+                <Select
+                  items={methodOptions}
+                  value={refundMethod}
+                  onValueChange={(value) => setRefundMethod(value as RefundMethod)}
+                >
+                  <SelectTrigger id="refund-method">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {methodOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </>
+          )}
         </DialogBody>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
@@ -227,9 +254,11 @@ export function ReturnRefundDialog({
           <Button
             type="button"
             disabled={pending}
-            onClick={() => onSubmit({ refundMethod, amount })}
+            onClick={() => onSubmit({ refundMethod, amount: owesNothing ? undefined : amount })}
           >
-            {t('admin.pages.orders.detail.returns.actions.refund')}
+            {owesNothing
+              ? t('admin.pages.orders.detail.returns.actions.complete')
+              : t('admin.pages.orders.detail.returns.actions.refund')}
           </Button>
         </DialogFooter>
       </DialogContent>

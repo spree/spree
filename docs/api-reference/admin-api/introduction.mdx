@@ -69,4 +69,12 @@ Before integrating, read:
 - [Authentication](/api-reference/admin-api/authentication) — secret API keys, scopes, and JWT tokens
 - [Errors](/api-reference/admin-api/errors) — error format and admin-specific codes
 - [Querying](/api-reference/admin-api/querying) — filtering, sorting, pagination, and `expand`
+- [Uploads](/api-reference/admin-api/uploads) — uploading files and passing their `signed_id`
 - [Spree CLI](/developer/cli/admin-api) — call the Admin API from your terminal
+
+## Opaque values
+
+Some values are references for you to pass along, not data to read. Store and use them exactly as given, and never build or parse them:
+
+- **Image URLs** (`original_url`, `small_url`, …) can change host or format, for example when a store moves to a CDN.
+- **`signed_id`** values from [uploads](/api-reference/admin-api/uploads) can change format, and expire after a day.

@@ -20,9 +20,9 @@ RSpec.describe Spree::Api::V3::StoreCreditSerializer do
   end
 
   it 'returns correct attribute values' do
-    expect(subject['amount']).to eq('100.0')
-    expect(subject['amount_used']).to eq('0.0')
-    expect(subject['amount_remaining']).to eq('100.0')
+    expect(subject['amount']).to eq('100.00')
+    expect(subject['amount_used']).to eq('0.00')
+    expect(subject['amount_remaining']).to eq('100.00')
     expect(subject['display_amount']).to be_present
     expect(subject['display_amount_used']).to be_present
     expect(subject['display_amount_remaining']).to be_present
@@ -35,9 +35,9 @@ RSpec.describe Spree::Api::V3::StoreCreditSerializer do
     end
 
     it 'returns correct amounts' do
-      expect(subject['amount']).to eq('100.0')
-      expect(subject['amount_used']).to eq('40.0')
-      expect(subject['amount_remaining']).to eq('60.0')
+      expect(subject['amount']).to eq('100.00')
+      expect(subject['amount_used']).to eq('40.00')
+      expect(subject['amount_remaining']).to eq('60.00')
     end
   end
 end

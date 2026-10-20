@@ -38,6 +38,17 @@ export const PAYMENT_METHOD_CREATE_DEFAULTS: PaymentMethodFormValues = {
   type: '',
 }
 
+/** Wire `type` values that must not appear in the add-payment-method provider picker. */
+export const PAYMENT_METHOD_TYPES_HIDDEN_FROM_PICKER = ['custom_payment_source_method'] as const
+
+/** The providers a merchant may add: not hidden, and not already installed on this store. */
+export function filterPaymentMethodProviderTypes<T extends { type: string; installed?: boolean }>(
+  types: T[],
+): T[] {
+  const hidden = new Set<string>(PAYMENT_METHOD_TYPES_HIDDEN_FROM_PICKER)
+  return types.filter((entry) => !hidden.has(entry.type) && !entry.installed)
+}
+
 export function paymentMethodValuesToCreateParams(
   v: PaymentMethodFormValues,
   preferences: Record<string, unknown>,

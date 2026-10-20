@@ -15,11 +15,11 @@ module Spree
                    terms_accepted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number,
-                   default_currency: :string,
-                   supported_currencies: [:string, multi: true],
-                   preferred_timezone: [:string, nullable: true]
+                   default_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   supported_currencies: [:string, multi: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   timezone: [:string, nullable: true]
 
-          attributes :preferred_timezone,
+          attributes :timezone,
                      :status, :legal_name, :registration_number,
                      :contact_email, :billing_email,
                      :tax_remittance, :payouts_schedule_interval,
@@ -28,7 +28,7 @@ module Spree
                      created_at: :iso8601
 
           attribute :minimum_payout_amount do |seller|
-            seller.minimum_payout_amount&.to_s
+            Spree::Money::Rounding.format(seller.minimum_payout_amount, seller.store&.default_currency, unit_price: true)
           end
 
           # Rebound from the inherited store declaration to this branch's own
@@ -40,13 +40,9 @@ module Spree
                resource: proc { Spree.api.seller_policy_serializer },
                if: proc { expand?('policies') }
 
-          attribute :on_holiday do |seller|
-            seller.on_holiday?
-          end
+          attribute :on_holiday, &:on_holiday?
 
-          attribute :sellable do |seller|
-            seller.sellable?
-          end
+          attribute :sellable, &:sellable?
 
           # What this seller prices in. Theirs by way of the marketplace: a
           # seller has no currency of their own, so the store's is the answer
@@ -64,11 +60,11 @@ module Spree
           end
 
           one :billing_address,
-              resource: proc { Spree.api.address_serializer },
+              resource: proc { Spree.api.seller_address_serializer },
               if: proc { |seller| seller.billing_address.present? }
 
           one :returns_address,
-              resource: proc { Spree.api.address_serializer },
+              resource: proc { Spree.api.seller_address_serializer },
               if: proc { |seller| seller.returns_address.present? }
         end
       end

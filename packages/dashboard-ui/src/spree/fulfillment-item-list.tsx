@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '../ui/item'
 import { Thumbnail } from '../ui/thumbnail'
 import { PackageIcon } from './icons'
 
@@ -30,17 +31,17 @@ export type FulfillmentItemRowData = {
  */
 function ItemRow({ row }: { row: FulfillmentItemRowData }) {
   return (
-    <div className="flex items-center gap-3 p-3">
+    <Item className="flex-nowrap gap-3 rounded-none border-0 p-3">
       <Thumbnail src={row.thumbnailUrl} fallback={<PackageIcon />} />
 
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{row.name}</div>
+      <ItemContent className="min-w-0 gap-0">
+        <ItemTitle className="block truncate">{row.name}</ItemTitle>
         {row.optionsText && (
-          <div className="truncate text-xs text-muted-foreground">{row.optionsText}</div>
+          <ItemDescription className="line-clamp-1 text-xs">{row.optionsText}</ItemDescription>
         )}
-      </div>
+      </ItemContent>
 
-      <div className="min-w-0 shrink text-right text-muted-foreground text-sm">
+      <ItemActions className="min-w-0 shrink flex-col items-end gap-0 text-right text-muted-foreground text-sm">
         {row.displayPrice ? (
           <span className="whitespace-nowrap">
             {row.displayPrice} × {row.quantity}
@@ -48,9 +49,9 @@ function ItemRow({ row }: { row: FulfillmentItemRowData }) {
         ) : (
           <span className="whitespace-nowrap">× {row.quantity}</span>
         )}
-        {row.priceSource && <div className="truncate text-xs">{row.priceSource}</div>}
-      </div>
-    </div>
+        {row.priceSource && <div className="max-w-full truncate text-xs">{row.priceSource}</div>}
+      </ItemActions>
+    </Item>
   )
 }
 

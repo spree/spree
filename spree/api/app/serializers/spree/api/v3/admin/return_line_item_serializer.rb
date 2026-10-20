@@ -5,10 +5,19 @@ module Spree
     module V3
       module Admin
         class ReturnLineItemSerializer < V3::ReturnLineItemSerializer
+          without_formatted_money
+
+          # No guest price gating here, so the inherited money fields are always present.
+          typelize pre_tax_amount: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false], additional_tax_total: [:string, nullable: false],
+                   tax_total: [:string, nullable: false],
+                   refund_amount: [:string, nullable: false]
+
           attributes created_at: :iso8601, updated_at: :iso8601
 
           one :variant, resource: proc { Spree.api.admin_variant_serializer }, if: proc { expand?('variant') }
           one :line_item, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('line_item') }
+          many :tax_lines, resource: proc { Spree.api.admin_tax_line_serializer }, if: proc { expand?('tax_lines') }
         end
       end
     end

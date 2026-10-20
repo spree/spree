@@ -4,10 +4,9 @@ module Spree
       @import = import
 
       with_store_locale(@import.store) do
-        mail(
-          to: @import.user.email,
-          subject: Spree.t('import_mailer.import_done.subject', import_number: @import.number).to_s,
-          store_url: current_store.url
+        mail_template(
+          { import: email_data(@import, Spree::Emails::ImportSerializer) },
+          to: @import.user.email, store_url: current_store.url
         )
       end
     end

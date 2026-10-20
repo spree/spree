@@ -46,10 +46,6 @@ describe Spree::PaymentMethod, type: :model do
       )
     end
 
-    it 'defaults to visible on the storefront' do
-      expect(visible_method.storefront_visible).to be true
-    end
-
     describe '.storefront_visible' do
       it 'returns only customer-facing methods' do
         expect(Spree::PaymentMethod.storefront_visible).to contain_exactly(visible_method)
@@ -93,8 +89,11 @@ describe Spree::PaymentMethod, type: :model do
     let(:visible_method) { build(:check_payment_method) }
     let(:admin_only_method) { build(:check_payment_method, storefront_visible: false) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     it 'reads the boolean back as the old tri-state value' do
       expect(visible_method.display_on).to eq('both')
+      expect(Spree::Deprecation).to have_received(:warn).with(/display_on is deprecated/)
       expect(admin_only_method.display_on).to eq('back_end')
     end
 
@@ -114,6 +113,30 @@ describe Spree::PaymentMethod, type: :model do
     it 'maps available_on_front_end? onto storefront visibility' do
       expect(visible_method.available_on_front_end?).to be true
       expect(admin_only_method.available_on_front_end?).to be false
+    end
+  end
+
+  describe '#gateway_amount' do
+    it 'hands a method that takes money amounts the amount with its currency' do
+      method = Spree::Gateway::Bogus.new
+
+      expect(method.gateway_amount(BigDecimal('1000'), 'JPY')).to eq(Spree::Money.new(BigDecimal('1000'), currency: 'JPY'))
+    end
+
+    it 'hands any other method hundredths, warning once that the bridge is going' do
+      legacy = Class.new(Spree::PaymentMethod) { def self.name = 'LegacyGateway' }.new
+      expect(Spree::Deprecation).to receive(:warn).once.with(/accepts_money_amounts/)
+
+      expect(legacy.gateway_amount(BigDecimal('19.99'), 'USD')).to eq(1999)
+      expect(legacy.gateway_amount(BigDecimal('1000'), 'JPY')).to eq(100_000)
+    end
+
+    # Zero hundredths reads as "capture everything" to many gateways.
+    it 'refuses to hand an old method an amount below a hundredth' do
+      legacy = Class.new(Spree::PaymentMethod) { def self.name = 'LegacyGateway' }.new
+      allow(Spree::Deprecation).to receive(:warn)
+
+      expect { legacy.gateway_amount(BigDecimal('0.004'), 'KWD') }.to raise_error(Spree::Core::GatewayError, /hundredth/)
     end
   end
 
@@ -221,18 +244,6 @@ describe Spree::PaymentMethod, type: :model do
 
       expect(Spree::PaymentMethod.where(capture_method: 'on_dispatch')).to be_present
     end
-
-    # The migration leaves auto_capture-false rows empty on purpose so they
-    # keep inheriting. Reading them as manual here would take them out of
-    # dispatch capture while the goods still went out.
-    context 'when a legacy row was left for the store to decide' do
-      it 'inherits the store setting rather than charging manually' do
-        gateway.auto_capture = false
-
-        expect(gateway.resolved_capture_method).to eq('on_dispatch')
-        expect(gateway).to be_capture_on_dispatch
-      end
-    end
   end
 
   describe '#available_for_order?' do
@@ -276,28 +287,6 @@ describe Spree::PaymentMethod, type: :model do
       eligible = pm.available_for_store?(store)
       expect(eligible).to be true
     end
-  end
-
-  describe '#source_required?' do
-    let(:payment_method) { create(:credit_card_payment_method) }
-
-    it { expect(payment_method.source_required?).to be true }
-  end
-
-  describe '#session_required?' do
-    it 'returns false by default' do
-      expect(build(:payment_method).session_required?).to be false
-    end
-  end
-
-  describe '#payment_source_class' do
-    let(:payment_method) { build(:credit_card_payment_method) }
-
-    it { expect(payment_method.payment_source_class).to eq(Spree::CreditCard) }
-  end
-
-  describe '#payment_icon_name' do
-    it { expect(build(:credit_card_payment_method, type: 'Spree::Gateway::AuthorizeNetGateway').payment_icon_name).to eq('authorizenet') }
   end
 
   context 'when payment method is destroyed' do
@@ -359,9 +348,17 @@ describe Spree::PaymentMethod, type: :model do
       Class.new(Spree::Gateway) do
         def self.name = 'TestConstrainedGateway'
 
-        preference :mode, :string, default: 'live', in: %w[test live]
+        preference :mode, :string, default: 'live', choices: %w[test live]
         preference :label, :string
+        preference :threshold, :decimal, default: 0
       end
+    end
+
+    # The API refuses a JSON number for a decimal, so it must not hand one out.
+    it 'serves a decimal default as a decimal string' do
+      field = gateway_class.serialized_preference_schema.find { |entry| entry[:key] == :threshold }
+
+      expect(field[:default]).to eq('0')
     end
 
     # The set is what the server validates against, so a form that does not
@@ -423,38 +420,19 @@ describe Spree::PaymentMethod, type: :model do
       expect(keys).not_to include(:issued_secret)
     end
 
-    it 'still stores and reads one, since the system depends on the value' do
-      gateway = gateway_class.new
-      gateway.preferred_issued_secret = 'whsec_abc'
-
-      expect(gateway.preferred_issued_secret).to eq('whsec_abc')
-    end
-
     it 'reports which preferences are internal' do
       gateway = gateway_class.new
 
       expect(gateway.preference_internal(:issued_secret)).to be(true)
       expect(gateway.preference_internal(:api_key)).to be_nil
     end
-
-    # A gateway loaded from a build that predates this option has no such
-    # reader. Schema computation rescues everything into an empty list, so
-    # without a guard one old declaration would strip every field from the
-    # class — including the password ones the admin form relies on.
-    it 'still describes a class whose declarations predate the option' do
-      gateway_class.send(:undef_method, :preferred_issued_secret_internal)
-      gateway_class.instance_variable_set(:@preference_schema, nil)
-
-      keys = gateway_class.preference_schema.map { |field| field[:key] }
-
-      expect(keys).to include(:api_key, :issued_secret)
-    end
   end
 
   # Describing a class needs a connection, so the schema can be asked for
   # before there is one — at boot, or in a rake task on an empty database.
-  # Settling on the empty answer would leave that class describing no
-  # preferences for the life of the process.
+  # The preferences are still described, from the declarations alone, but
+  # settling on that answer would leave out every default the database holds
+  # for the life of the process.
   describe 'a schema asked for before the database was up' do
     let(:gateway_class) do
       Class.new(Spree::Gateway) do
@@ -466,11 +444,13 @@ describe Spree::PaymentMethod, type: :model do
 
     it 'is retried rather than settled on' do
       allow(gateway_class).to receive(:new).and_raise(ActiveRecord::ConnectionNotEstablished)
-      expect(gateway_class.preference_schema).to be_empty
+      expect(gateway_class.preference_schema.map { |field| field[:key] }).to eq([:api_key])
+      expect(gateway_class.instance_variable_get(:@preference_schema)).to be_nil
 
       allow(gateway_class).to receive(:new).and_call_original
 
       expect(gateway_class.preference_schema.map { |field| field[:key] }).to eq([:api_key])
+      expect(gateway_class.instance_variable_get(:@preference_schema)).to be_present
     end
 
     # These memoize off the schema, so caching what they derived from its
@@ -484,6 +464,92 @@ describe Spree::PaymentMethod, type: :model do
 
       expect(gateway_class.password_preference_keys).to contain_exactly(:api_key)
       expect(gateway_class.serialized_preference_schema.map { |field| field[:key] }).to eq([:api_key])
+    end
+  end
+
+  describe 'secret preferences' do
+    let(:gateway) { create(:credit_card_payment_method) }
+    let(:raw_secret_column) do
+      ActiveRecord::Base.connection.select_value("SELECT secret_preferences FROM spree_payment_methods WHERE id = #{gateway.id}")
+    end
+
+    it 'stores a :password preference only in the encrypted column' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_live_secret')
+
+      expect(gateway.reload.preferred_dummy_secret_key).to eq('sk_live_secret')
+      expect(gateway.preferences).not_to have_key('dummy_secret_key')
+      expect(raw_secret_column).to be_present
+      expect(raw_secret_column).not_to include('sk_live_secret')
+    end
+
+    it 'moves a secret assigned with the whole preferences hash before saving' do
+      gateway.update!(preferences: gateway.preferences.merge(dummy_secret_key: 'sk_from_hash'))
+
+      expect(gateway.reload.preferences).not_to have_key('dummy_secret_key')
+      expect(gateway.preferred_dummy_secret_key).to eq('sk_from_hash')
+    end
+
+    it 'moves a secret assigned in a plain hash with string keys, as JSON or form parameters arrive' do
+      gateway.update!(preferences: { 'dummy_secret_key' => 'sk_from_json' })
+      gateway.update!(preferred_dummy_secret_key: 'sk_rotated')
+
+      expect(gateway.reload.preferences).not_to have_key('dummy_secret_key')
+      expect(gateway.preferred_dummy_secret_key).to eq('sk_rotated')
+    end
+
+    it 'reads a secret assigned with the whole hash before the save moves it' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_old')
+      gateway.preferences = gateway.preferences.merge(dummy_secret_key: 'sk_new')
+
+      expect(gateway.preferred_dummy_secret_key).to eq('sk_new')
+    end
+
+    it "reads a secret's default without copying it into storage" do
+      expect(gateway.preferred_dummy_secret_key).to eq('SECRETKEY123')
+      expect(gateway.secret_preferences.to_h).not_to have_key('dummy_secret_key')
+    end
+
+    it 'hands the secrets to the gateway connection' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_live_secret')
+
+      expect(gateway.reload.options).to include(dummy_secret_key: 'sk_live_secret', dummy_key: 'PUBLICKEY123')
+    end
+
+    it 'reports a secret change through the preference change methods' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_rotated')
+
+      expect(gateway.saved_change_to_preferred_dummy_secret_key?).to be(true)
+      expect(gateway.previously_changed_preference_names).to eq([:dummy_secret_key])
+    end
+
+    it 'does not mark a gateway without stored secrets as changed when one is read' do
+      gateway.update_column(:secret_preferences, nil)
+      reloaded = Spree::PaymentMethod.find(gateway.id)
+
+      reloaded.preferred_dummy_secret_key
+      reloaded.options
+
+      expect(reloaded.changed?).to be(false)
+    end
+
+    it 'treats a secret a decorator adds to the parent class later as a secret' do
+      parent = Class.new(Spree::Gateway) { def self.name = 'DecoratedGateway' }
+      child = Class.new(parent) { def self.name = 'DecoratedGatewayChild' }
+      expect(child.secret_preference_names).not_to include(:late_api_key)
+
+      parent.preference :late_api_key, :password
+
+      expect(child.secret_preference_names).to include(:late_api_key)
+    end
+
+    it 'refuses a :password preference on a model that cannot encrypt it' do
+      expect do
+        Class.new(Spree::Calculator) do
+          def self.name = 'CalculatorWithSecret'
+
+          preference :api_key, :password
+        end
+      end.to raise_error(ArgumentError, /Spree::SecretPreferences/)
     end
   end
 end

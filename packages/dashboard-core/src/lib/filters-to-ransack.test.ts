@@ -5,7 +5,7 @@ import type { ColumnDef, FilterRule } from './table-registry'
 const columns: ColumnDef[] = [
   { key: 'completed_at', label: 'Date', filterType: 'date' },
   { key: 'status', label: 'Status', filterType: 'enum', filterOptions: [] },
-  { key: 'tags', label: 'Tags', filterType: 'tags', taggableType: 'Spree::Product' },
+  { key: 'tags', label: 'Tags', filterType: 'tags', taggableType: 'product' },
   { key: 'sku', label: 'SKU', ransackAttribute: 'master_sku' },
   {
     key: 'companies',

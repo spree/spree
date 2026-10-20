@@ -1,12 +1,19 @@
 module Spree
   module TaxProvider
     # Computes tax directly from TaxRate configuration: rate × discounted
-    # base, with VAT included-in-price math backed out of the gross basis.
+    # base, backed out of the price instead when the market's prices include
+    # tax.
     # Rates are matched on the owner's tax address, each naming its own country
     # and optionally a state. Fees without a tax category are taxed with the
     # default tax category's rates — except customs duties, which +taxable_items+
     # withholds (see Spree::Purchase::Taxation).
     class Internal < Base
+      # What a merchant sees when picking a market's tax engine: the class name
+      # says nothing to someone who never read the code.
+      def self.display_name
+        I18n.t('spree.tax_providers.internal')
+      end
+
       # Rates are configured per country or state with no local-tax breakdown, no buyer
       # registration handling, no distance-selling thresholds, and delivery taxed
       # at its own method's rate rather than apportioned across the rates of the
@@ -20,7 +27,8 @@ module Spree
       # period, so there is only ever one version of the configuration to read.
       # +tax_identifier+ likewise — reverse charge is on the unsupported list,
       # so a buyer registration changes nothing here.
-      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
+      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil, context: {})
+        tax_inclusive = owner.tax_inclusive? if tax_inclusive.nil?
         full_estimate = items.nil?
         items ||= owner.taxable_items
         # A duty this engine taxed before it was excluded — or through an
@@ -30,40 +38,44 @@ module Spree
         sweep_internal_duty_tax_lines(owner) if full_estimate
         return if items.empty?
 
-        rates = Spree::TaxRate.for_store(owner.store).for_jurisdiction(owner.tax_country&.iso, owner.tax_address&.state_code).to_a
+        rates = rates_for(owner)
 
         items.group_by(&:class).each do |klass, group|
           # Replace-all set semantics per estimate: stale lines die with the
           # address/items change that triggered the re-estimate.
-          Spree::TaxLine.where(tax_line_foreign_key(klass) => group.map(&:id)).delete_all
+          Spree::TaxLine.where(Spree::TaxLine.adjustable_key_for(klass) => group.map(&:id)).delete_all
         end
 
+        items.each { |item| tax_item(owner, item, rates, exemptions, tax_inclusive) }
+      end
+
+      # Gives back each credited unit's share of the TaxLines the sale actually
+      # charged (see Spree::TaxProvider::RecordedShare). TaxRate rows are not
+      # versioned, so this engine can never recompute at a past date —
+      # +tax_date+ is accepted and ignored, and the rows are the only record
+      # of what the customer paid.
+      def estimate_refund(order, items, amounts: nil, tax_date: nil)
+        Spree::TaxProvider::RecordedShare.new(order: order, items: items, amounts: amounts).call
+      end
+
+      # Taxed like any line of the order, under the replacement's own category
+      # and at the order's tax address. +tax_date+ is ignored for the reason
+      # given on #estimate.
+      #
+      # An exemption is read as it applied to the line being replaced: a
+      # certificate's per-line carve-out names that line, and the exchange line
+      # replacing it would otherwise match no carve-out and come out exempt.
+      def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil)
+        return if items.empty?
+
+        tax_inclusive = order.tax_inclusive? if tax_inclusive.nil?
+        Spree::TaxLine.charges.where(exchange_line_item_id: items.map(&:id)).delete_all
+
+        rates = rates_for(order)
         items.each do |item|
-          relevant_rates = rates.select { |rate| rate.tax_category_id == tax_category_id_for(item, owner) }
+          next unless item.credited_quantity.to_i.positive?
 
-          # A matched rate always produces a row, zero-amount ones included:
-          # a zero rate is a treatment ("this is zero-rated"), which reporting
-          # and e-invoicing both need to see. No matched rate means no opinion,
-          # and writes nothing.
-          taxed = relevant_rates.map do |rate|
-            jurisdiction = jurisdiction_for(rate, owner)
-            [rate, jurisdiction, exemption_for(item, exemptions, jurisdiction)]
-          end
-
-          # An exempt item has no tax to back out of its price, so its whole
-          # basis is pre-tax.
-          exempt_rates = taxed.select { |_rate, _jurisdiction, exemption| exemption }.map(&:first)
-          store_pre_tax_amount(item, relevant_rates - exempt_rates)
-
-          taxed.each do |rate, jurisdiction, exemption|
-            if exemption
-              write_tax_line(owner, item, rate, 0, 'customer_exempt', jurisdiction,
-                             data: exemption_data(exemption, item))
-            else
-              write_tax_line(owner, item, rate, compute_tax(rate, item, relevant_rates),
-                             reason_for(rate), jurisdiction)
-            end
-          end
+          tax_item(order, item, rates, exemptions, tax_inclusive, exemption_subject: item.line_item || item)
         end
       end
 
@@ -71,11 +83,8 @@ module Spree
       # else, matched on where the invoiced business sits and taxed under the
       # store's default category — this engine has no separate notion of a
       # services category, and a marketplace commission is standard-rated
-      # nearly everywhere.
-      #
-      # Additional (not included-in-price) rates only: a commission is quoted
-      # net and its VAT is added on top, so a rate configured as
-      # tax-inclusive describes consumer pricing rather than this supply.
+      # nearly everywhere. A commission is quoted net and its tax added on top,
+      # whatever the store's markets do with their prices.
       #
       # Nil when the jurisdiction is unknown or configured with no matching
       # rate at all, so the caller falls back to its own default instead of
@@ -88,8 +97,7 @@ module Spree
 
         rates = Spree::TaxRate.for_store(store).
                 for_jurisdiction(address.country_code, address.state_code).
-                for_tax_category(category).
-                where(included_in_price: false)
+                for_tax_category(category)
         return nil if rates.empty?
 
         rates.sum(:amount)
@@ -107,12 +115,35 @@ module Spree
         owner.tax_lines.where(fee_id: duty_fee_ids, provider_id: 'internal').delete_all
       end
 
-      def tax_line_foreign_key(klass)
-        case klass.name
-        when 'Spree::LineItem' then :line_item_id
-        when 'Spree::Fulfillment' then :fulfillment_id
-        when 'Spree::Fee' then :fee_id
-        else raise ArgumentError, "#{klass} is not taxable"
+      def rates_for(owner)
+        Spree::TaxRate.for_store(owner.store).for_jurisdiction(owner.tax_country&.iso, owner.tax_address&.state_code).to_a
+      end
+
+      def tax_item(owner, item, rates, exemptions, tax_inclusive, exemption_subject: item)
+        relevant_rates = rates.select { |rate| rate.tax_category_id == tax_category_id_for(item, owner) }
+
+        # A matched rate always produces a row, zero-amount ones included:
+        # a zero rate is a treatment ("this is zero-rated"), which reporting
+        # and e-invoicing both need to see. No matched rate means no opinion,
+        # and writes nothing.
+        taxed = relevant_rates.map do |rate|
+          jurisdiction = jurisdiction_for(rate, owner)
+          [rate, jurisdiction, exemption_for(exemption_subject, exemptions, jurisdiction)]
+        end
+
+        # An exempt item has no tax to back out of its price, so its whole
+        # basis is pre-tax.
+        exempt_rates = taxed.select { |_rate, _jurisdiction, exemption| exemption }.map(&:first)
+        store_pre_tax_amount(item, relevant_rates - exempt_rates, tax_inclusive)
+
+        taxed.each do |rate, jurisdiction, exemption|
+          if exemption
+            write_tax_line(owner, item, rate, 0, 'customer_exempt', jurisdiction, tax_inclusive,
+                           data: exemption_data(exemption, exemption_subject))
+          else
+            write_tax_line(owner, item, rate, compute_tax(rate, item, relevant_rates, owner.currency, tax_inclusive),
+                           reason_for(rate), jurisdiction, tax_inclusive)
+          end
         end
       end
 
@@ -143,26 +174,26 @@ module Spree
         item.respond_to?(:taxable_basis) ? item.taxable_basis : item.amount
       end
 
-      def compute_tax(rate, item, relevant_rates)
+      # Rounded per line, half up, to the order's currency — the internal
+      # provider's choice; other providers round as their jurisdictions require.
+      def compute_tax(rate, item, relevant_rates, currency, tax_inclusive)
         basis = taxable_basis(item)
 
-        if rate.included_in_price
-          included_sum = relevant_rates.select(&:included_in_price).sum(&:amount)
-          included_sum = rate.amount if included_sum.zero?
-          (basis / (1 + included_sum) * rate.amount).round(2)
-        else
-          (basis * rate.amount).round(2)
-        end
+        tax = if tax_inclusive
+                basis / (1 + relevant_rates.sum(&:amount)) * rate.amount
+              else
+                basis * rate.amount
+              end
+        Spree::Money::Rounding.to_currency(tax, currency)
       end
 
       # Pre-tax amounts are stored so refund and reporting code can weigh
       # discounted, tax-exclusive values later (see #4318).
-      def store_pre_tax_amount(item, rates)
+      def store_pre_tax_amount(item, rates, tax_inclusive)
         return unless item.respond_to?(:pre_tax_amount)
 
         pre_tax_amount = taxable_basis(item)
-        included_rates = rates.select(&:included_in_price)
-        pre_tax_amount /= (1 + included_rates.sum(&:amount)) if included_rates.any?
+        pre_tax_amount /= (1 + rates.sum(&:amount)) if tax_inclusive && rates.any?
 
         item.update_column(:pre_tax_amount, pre_tax_amount)
       end
@@ -197,25 +228,30 @@ module Spree
       # a genuinely exempt supply depends on which exemption applied, which the
       # reason alone cannot say.
       def exemption_data(exemption, item)
+        reason_code = exemption.reason_code_for(item)
+
         {
           'exemption' => {
-            'reason_code' => exemption.reason_code_for(item),
+            'reason_code' => reason_code,
+            # A per-line override names only a code, so the entry's name would
+            # describe a different reason.
+            'reason_name' => (exemption.reason_name if reason_code == exemption.reason_code),
             'certificate_number' => exemption.certificate_number
           }.compact
         }
       end
 
-      def write_tax_line(owner, item, rate, amount, reason, jurisdiction, data: {})
+      def write_tax_line(owner, item, rate, amount, reason, jurisdiction, tax_inclusive, data: {})
         owner_key = owner.is_a?(Spree::Order) ? :order : :cart
         Spree::TaxLine.create!(
           {
-            tax_line_foreign_key(item.class) => item.id,
+            Spree::TaxLine.adjustable_key_for(item.class) => item.id,
             owner_key => owner,
             tax_rate: rate,
             amount: amount,
             rate: rate.amount,
-            label: rate.adjustment_label,
-            included: rate.included_in_price,
+            label: rate.adjustment_label(included: tax_inclusive),
+            included: tax_inclusive,
             provider_id: 'internal',
             taxability_reason: reason,
             data: data

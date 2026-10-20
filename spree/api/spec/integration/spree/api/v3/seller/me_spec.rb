@@ -21,6 +21,8 @@ RSpec.describe 'Seller Account API', type: :request, swagger_doc: 'api-reference
         there is no answer spanning all of them.
       DESC
 
+      seller_sdk_example 'me/get', as: :user
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: false,
                 description: 'The seller to report capability for. Omit to list sellers without narrowing permissions.'
 
@@ -62,20 +64,14 @@ RSpec.describe 'Seller Account API', type: :request, swagger_doc: 'api-reference
         `X-Spree-Seller-Id`, because the account is the same whichever seller
         they are acting for.
 
-        `avatar` takes an ActiveStorage direct-upload signed id to set the
+        `avatar_signed_id` takes the `signed_id` from `POST /files` to set the
         photo, or `null` to remove it; omit it to leave the current one alone.
         `email` is identity-bound and cannot be changed here.
       DESC
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'Ada' },
-          last_name: { type: :string, example: 'Lovelace' },
-          selected_locale: { type: :string, example: 'de', description: 'Panel display language, as a code the panel ships.' },
-          avatar: { type: :string, nullable: true, description: 'Direct-upload signed id, or `null` to remove the photo.' }
-        }
-      }
+      seller_sdk_example 'me/update', as: :user
+
+      request_body_for
 
       response '200', 'account updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -100,7 +96,7 @@ RSpec.describe 'Seller Account API', type: :request, swagger_doc: 'api-reference
             content_type: 'image/svg+xml'
           )
         end
-        let(:body) { { avatar: blob.signed_id } }
+        let(:body) { { avatar_signed_id: blob.signed_id } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

@@ -136,7 +136,8 @@
           "returns": {
             "actions": {
               "receive": "استلام العناصر",
-              "refund": "رد المبلغ"
+              "refund": "رد المبلغ",
+              "complete": "إكمال المرتجع"
             },
             "create_title": "إرجاع جديد",
             "location": "الإرجاع إلى",
@@ -147,12 +148,15 @@
             "receive_title": "استلام العناصر المرتجعة",
             "received_quantity": "المستلَم",
             "refund_amount": "المبلغ",
+            "refund_includes_tax": "يشمل المبلغ الكامل ضريبة بقيمة {{tax}}. عند رد مبلغ أقل، تُرد الضريبة بالنسبة نفسها.",
             "refund_method": "رد المبلغ إلى",
             "refund_methods": {
               "original_payment": "وسيلة الدفع الأصلية",
               "store_credit": "رصيد المتجر"
             },
             "refund_title": "رد مبلغ الإرجاع",
+            "complete_title": "إكمال المرتجع",
+            "nothing_owed": "لا يوجد أي مبلغ مستحق على هذا المرتجع، لذلك لن يُسترد أي مبلغ. يؤدي إكماله إلى إغلاق المرتجع.",
             "resellable": "قابل لإعادة البيع"
           }
         }
@@ -470,6 +474,7 @@
       "packing_slip_title": "قائمة التعبئة — الطلب {{number}}",
       "print_label": "طباعة الملصق",
       "print_packing_slip": "طباعة قائمة التعبئة",
+      "quoted_after_review": "يُسعَّر بعد المراجعة",
       "ship_to": "الشحن إلى",
       "ships_from_label": "يُشحن من",
       "split": "تقسيم",
@@ -520,6 +525,7 @@
         "cancel_message": "يُبلَّغ العميل بأنه لن يمضي قدمًا.",
         "cancel_title": "إلغاء هذا الاستبدال؟",
         "fulfill": "إرسال البديل",
+        "balance_due_confirm": "البديل أغلى من المنتج المُعاد. يؤدي إرساله إلى إضافة الفرق إلى الطلب كرصيد مستحق. لا يتم خصم أي مبلغ تلقائيًا.",
         "price_difference": "فرق السعر: {{amount}}",
         "receive": "استلام",
         "title": "الاستبدالات"
@@ -535,6 +541,8 @@
         "receive": "استلام",
         "refund": "رد المبلغ",
         "refund_total": "إجمالي الاسترداد: {{amount}}",
+        "refunded": "تم الاسترداد: {{amount}}",
+        "refunded_of": "تم الاسترداد: {{amount}} من {{total}}",
         "title": "المرتجعات"
       },
       "statuses": {

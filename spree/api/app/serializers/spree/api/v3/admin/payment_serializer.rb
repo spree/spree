@@ -3,27 +3,32 @@ module Spree
     module V3
       module Admin
         class PaymentSerializer < V3::PaymentSerializer
+          without_formatted_money
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
-          typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false]
+          typelize amount: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
-                   captured_amount: :string,
                    order_id: [:string, nullable: true],
                    avs_response: [:string, nullable: true],
                    cvv_response_code: [:string, nullable: true],
-                   cvv_response_message: [:string, nullable: true]
+                   cvv_response_message: [:string, nullable: true],
+                   gateway_dashboard_payment_url: [:string, nullable: true],
+                   avs_risky: [:boolean, comment: 'Whether the card issuer reported that the billing address did not match.'],
+                   cvv_risky: [:boolean, comment: 'Whether the card issuer reported that the security code did not match.']
 
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
+                     :gateway_dashboard_payment_url,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :captured_amount do |payment|
-            payment.captured_amount.to_s
-          end
+          attribute(:avs_risky, &:is_avs_risky?)
+          attribute(:cvv_risky, &:is_cvv_risky?)
 
-          attribute :order_id do |payment|
-            payment.order&.prefixed_id
-          end
+          money_attributes :captured_amount
+          typelize captured_amount: [:string, nullable: false]
+
+          prefixed_id_attributes :order
 
           # Override inherited associations to use admin serializers
           one :payment_method, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_method') }
@@ -42,6 +47,10 @@ module Spree
 
             serializer.new(payment.source).to_h
           end
+
+          many :capture_events,
+               resource: proc { Spree.api.admin_payment_capture_event_serializer },
+               if: proc { expand?('capture_events') }
 
           one :order,
               resource: proc { Spree.api.admin_order_serializer },

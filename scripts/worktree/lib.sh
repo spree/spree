@@ -7,10 +7,8 @@
 set -euo pipefail
 
 TEMPLATE_DB="spree_worktree_template"
-# The storefront's 6.0 line. Its main branch stays on the released Store API for
-# people forking or deploying it; 6-0-dev tracks the unreleased one we build here.
 STOREFRONT_REPO="https://github.com/spree/storefront.git"
-STOREFRONT_BRANCH="6-0-dev"
+STOREFRONT_BRANCH="main"
 # Same defaults as the starter's config/database.yml, so the psql tools and
 # Rails always agree on which server they are talking to. teardown runs after
 # the worktree (and its bundled Rails) is gone, so these cannot come from Rails.

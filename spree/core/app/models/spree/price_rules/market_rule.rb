@@ -6,11 +6,8 @@ module Spree
       # against raw `market_id` rows directly. Scope confines the
       # existence check to the price-list's store so cross-store market
       # IDs can't sneak in.
-      preference :market_ids, :array, default: [],
-                 parse_on_set: normalize_id_preference(
-                   klass: Spree::Market,
-                   scope: ->(rule) { rule.store.markets }
-                 )
+      preference :market_ids, :array, of: :id, model: 'Spree::Market', default: [],
+                 scope: ->(rule) { rule.store.markets }
 
       def markets
         return [] if preferred_market_ids.blank?
@@ -24,12 +21,6 @@ module Spree
 
         # Compare as strings to support both integer and UUID primary keys
         preferred_market_ids.map(&:to_s).include?(context.market.id.to_s)
-      end
-
-      # An empty market list matches every buyer (see #applicable?), so it names
-      # no geography — and that is the state a freshly created rule row is in.
-      def geographic?
-        preferred_market_ids.present?
       end
 
       def self.description

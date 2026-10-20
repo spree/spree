@@ -1,0 +1,50 @@
+---
+title: "MCP Server"
+sidebarTitle: Overview
+description: "Your store can be run from an AI assistant — in plain language, and only as far as the person who connected it is allowed to go."
+---
+
+Your store can host a server that lets an AI assistant work in it by talking to it. Claude, Cursor, an assistant your team builds — any of them can find products, answer "what did we sell in Germany last month", cancel an order, mark a shipment delivered or add a market.
+
+It is part of Spree. There is nothing extra to deploy, and an assistant can only do what the person who connected it could do by clicking.
+
+## The address
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+Paste that into your assistant and it will ask you to sign in.
+
+This is the back office — the catalog, orders, reporting and store setup — for your staff and the assistants they connect.
+
+## What an assistant gets
+
+- **Things it can do.** 58 of them, each one job: search products, cancel an order, run a report. [The reference](/developer/mcp/tools) lists every one.
+- **Files it can read.** Finished exports, so you can ask about a CSV rather than open it.
+- **What you approved, and no more.** You pick the permissions when you connect. An assistant is never even shown the things you did not approve, so it cannot try them.
+
+Everything an assistant does runs through the same checks as the rest of your store. There is no side door, and nothing an assistant can reach that your own permissions do not already reach.
+
+## Getting started
+
+<CardGroup cols={2}>
+  <Card title="Quick start" icon="rocket" href="/developer/mcp/quick-start">
+    Connect an assistant and have your first conversation.
+  </Card>
+  <Card title="What an assistant can do" icon="wrench" href="/developer/mcp/tools">
+    All 58 jobs, and the permission each one needs.
+  </Card>
+  <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
+    What you approve, what it can never reach, and how to take access away.
+  </Card>
+  <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
+    For developers: teach an assistant something your store does.
+  </Card>
+</CardGroup>
+
+## What it is not
+
+**Not the documentation server.** The [docs MCP server](/developer/agentic/docs-mcp) lets an assistant read Spree's documentation while someone writes code. This one runs a real store. They are unrelated, and you can use both.
+
+**Not a replacement for the API.** An assistant is good at a request in words. Anything scheduled or automatic — a nightly sync, a data pipeline, a storefront — should use the [Admin API](/api-reference/admin) or the [`spree api` CLI](/developer/cli/admin-api).

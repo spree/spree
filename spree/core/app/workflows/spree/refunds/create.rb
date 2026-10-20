@@ -26,7 +26,9 @@ module Spree
       #   Required only when the payment is shared by a split checkout, where
       #   it covers several orders and the payment cannot say which one this
       #   refund is for; otherwise the payment's own order is taken.
-      def perform(payment:, amount: nil, reason: nil, refunder: nil, originator: nil, order: nil)
+      # @param tax_amount [BigDecimal, Numeric] the tax inside +amount+, when
+      #   what is being refunded carried tax (see Spree::Refund#tax_amount)
+      def perform(payment:, amount: nil, reason: nil, refunder: nil, originator: nil, order: nil, tax_amount: 0)
         super
 
         step :ensure_refundable
@@ -96,7 +98,8 @@ module Spree
             order: order || payment.order,
             reason: reason || Spree::RefundReason.return_processing_reason(refund_store),
             refunder: refunder,
-            originator: originator
+            originator: originator,
+            tax_amount: tax_amount
           )
         end
       end

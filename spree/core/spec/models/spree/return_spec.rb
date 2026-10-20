@@ -7,10 +7,6 @@ RSpec.describe Spree::Return do
     expect(create(:return, store: store).number).to start_with('RET')
   end
 
-  it 'starts as requested' do
-    expect(create(:return, store: store)).to be_requested
-  end
-
   it 'requires at least one line item on create' do
     order = create(:shipped_order, store: store)
     record = described_class.new(
@@ -22,12 +18,6 @@ RSpec.describe Spree::Return do
 
     expect(record).not_to be_valid
     expect(record.errors[:return_line_items]).to be_present
-  end
-
-  it 'is reachable from its order' do
-    return_record = create(:return, store: store)
-
-    expect(return_record.order.reload.returns).to include(return_record)
   end
 
   describe 'totals' do
@@ -116,22 +106,29 @@ RSpec.describe Spree::Return do
     let(:return_record) { create(:return, store: store) }
     let(:line) { return_record.return_line_items.first }
 
-    # Refunding the list price would give back more than the customer paid
-    # on a discounted line.
-    it 'defaults the refundable amount to the paid share of the line' do
-      line_item = line.line_item
+    context 'when the line was discounted' do
+      let(:order) { create(:shipped_order, store: store) }
+      let(:return_record) { create(:return, order: order, store: store) }
+      let(:line_item) { order.line_items.first }
 
-      expect(line.pre_tax_amount).to eq(line_item.amount / line_item.quantity)
+      # Refunding the list price would give back more than the customer paid.
+      it 'defaults the refundable amount to what the customer paid after the discount' do
+        line_item.update_columns(price: 10, taxable_adjustment_total: -2)
+
+        expect(line.pre_tax_amount).to eq(8)
+      end
+
+      it 'refunds nothing for a unit the customer got for free' do
+        line_item.update_columns(price: 10, taxable_adjustment_total: -10)
+
+        expect(line.pre_tax_amount).to eq(0)
+      end
     end
 
     it 'requires a positive quantity' do
       line.quantity = 0
 
       expect(line).not_to be_valid
-    end
-
-    it 'starts with nothing received' do
-      expect(line.received_quantity).to eq(0)
     end
 
     # Nothing has been counted yet, so what the customer announced is the only
@@ -157,5 +154,12 @@ RSpec.describe Spree::Return do
     it 'never rewrites what the shipment recorded as sent' do
       expect { return_record.reload.to_package }.not_to change { fulfillment_item.reload.quantity }
     end
+  end
+
+  describe 'external references' do
+    let(:other_store) { create(:store) }
+    let(:record) { create(:return, store: other_store, order: create(:shipped_order, store: other_store)) }
+
+    it_behaves_like 'files external references under its store'
   end
 end

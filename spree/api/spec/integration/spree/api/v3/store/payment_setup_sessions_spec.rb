@@ -25,14 +25,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          payment_method_id: { type: :string, example: 'pm_abc123', description: 'Payment method ID' },
-          external_data: { type: :object, description: 'Provider-specific data passed to the gateway' }
-        },
-        required: %w[payment_method_id]
-      }
+      request_body_for
 
       response '201', 'payment setup session created' do
         let(:'x-spree-api-key') { api_key.token }
@@ -123,12 +116,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
 
       sdk_example 'customer-payment-setup-sessions/complete'
 
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          external_data: { type: :object, description: 'Provider-specific completion data' }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'payment setup session completed' do
         let(:'x-spree-api-key') { api_key.token }
@@ -142,7 +130,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
           data = JSON.parse(response.body)
           expect(data['status']).to eq('completed')
           expect(data['payment_source_id']).to be_present
-          expect(data['payment_source_type']).to eq('Spree::CreditCard')
+          expect(data['payment_source_type']).to eq('credit_card')
         end
       end
 

@@ -106,7 +106,7 @@ export function QuantityTierEditor({
                 )}
                 <InputGroupInput
                   type="number"
-                  step="0.01"
+                  step="any"
                   value={row.value}
                   disabled={disabled}
                   aria-label={labels.value}

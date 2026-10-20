@@ -10,7 +10,7 @@ module Spree
     let(:state)   { country.states.first || create(:state, country: country) }
     let!(:zone)   { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |sm|
+      create(:delivery_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
@@ -61,7 +61,7 @@ module Spree
           expect(order).to be_persisted
           expect(order.status).to eq('draft')
           expect(order.shipments).to be_empty
-          expect(order.shipment_total).to eq(0)
+          expect(order.delivery_total).to eq(0)
         end
       end
 
@@ -78,7 +78,7 @@ module Spree
           order = subject.value
           expect(order.line_items.count).to eq(1)
           expect(order.shipments).to be_empty
-          expect(order.shipment_total).to eq(0)
+          expect(order.delivery_total).to eq(0)
           expect(order.total).to eq(order.item_total)
         end
       end
@@ -96,7 +96,7 @@ module Spree
           order = subject.value
           expect(order.ship_address).to be_present
           expect(order.shipments).to be_empty
-          expect(order.shipment_total).to eq(0)
+          expect(order.delivery_total).to eq(0)
         end
       end
 
@@ -118,14 +118,14 @@ module Spree
           expect(order.fulfillments.first.shipping_rates).not_to be_empty
           expect(order.fulfillments.first.selected_shipping_rate).to be_present
 
-          expect(order.shipment_total).to eq(5)
-          expect(order.total).to eq(order.item_total + order.shipment_total + order.adjustment_total)
+          expect(order.delivery_total).to eq(5)
+          expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
         end
 
         it 'persists the totals to the database' do
           subject
           order = subject.value.reload
-          expect(order.shipment_total).to eq(5)
+          expect(order.delivery_total).to eq(5)
           expect(order.total).to eq(order.item_total + 5 + order.adjustment_total)
         end
       end
@@ -146,7 +146,7 @@ module Spree
         it 'does not build shipments' do
           expect(subject).to be_success
           expect(subject.value.shipments).to be_empty
-          expect(subject.value.shipment_total).to eq(0)
+          expect(subject.value.delivery_total).to eq(0)
         end
       end
 
@@ -170,19 +170,42 @@ module Spree
 
           # Shipments still exist, gross cost is still 5 (cost column on the shipment)
           expect(order.shipments.size).to eq(1)
-          expect(order.shipment_total).to eq(5)
+          expect(order.delivery_total).to eq(5)
 
           # Promo created a -5 adjustment on the shipment
           shipment = order.fulfillments.first
           expect(shipment.adjustment_total).to eq(-5)
           expect(shipment.discounts.promotion.size).to eq(1)
-          expect(order.shipping_discount).to eq(5)
+          expect(order.fulfillment_discount).to eq(5)
 
           # Promotion is associated with the order
           expect(order.promotions).to include(promotion)
 
           # Customer-visible total is item_total only — free shipping nets out
           expect(order.total).to eq(order.item_total)
+        end
+      end
+
+      context 'with a batch coupon code the order does not qualify for yet' do
+        let!(:promotion) do
+          create(:promotion_with_item_total_rule, :with_order_adjustment,
+                 code: nil, multi_codes: true, number_of_codes: 1, kind: :coupon_code, store: store,
+                 item_total_threshold_amount: 1_000)
+        end
+        let(:coupon_code) { promotion.coupon_codes.first }
+
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 1 }],
+            coupon_code: coupon_code.code
+          }
+        end
+
+        it 'leaves the code free for others' do
+          expect(subject).to be_success
+          expect(subject.value.read_attribute(:coupon_code)).to be_nil
+          expect(coupon_code.reload.holder).to be_nil
         end
       end
 
@@ -206,7 +229,7 @@ module Spree
           shipment = order.fulfillments.first
           expect(shipment).to be_present
           expect(shipment.adjustment_total).to eq(-5)
-          expect(order.shipping_discount).to eq(5)
+          expect(order.fulfillment_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
         end
       end
@@ -257,12 +280,12 @@ module Spree
         result = nil
         expect {
           result = described_class.call(
-            store: store, params: { email: 'buyer@example.com', po_document: orphan_blob.signed_id }
+            store: store, params: { email: 'buyer@example.com', po_document_signed_id: orphan_blob.signed_id }
           )
         }.not_to raise_error
 
         expect(result).to be_failure
-        expect(result.error.to_s).to include(Spree.t(:po_document_upload_incomplete))
+        expect(result.error.to_s).to include(I18n.t('spree.po_document_upload_incomplete'))
       end
     end
   end

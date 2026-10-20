@@ -8,7 +8,7 @@ defineTable<Catalog>('catalogs', {
   title: i18n.t('admin.nav.catalogs'),
   description: i18n.t('admin.table_descriptions.catalogs'),
   docsPath: 'catalogs/catalogs',
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.catalogs.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <BookOpenIcon className="size-8 text-muted-foreground" />,

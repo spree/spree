@@ -272,7 +272,8 @@
             },
             "confirm": {
               "cancel_confirm": "Cancelar cambio",
-              "cancel_dismiss": "Mantener cambio"
+              "cancel_dismiss": "Mantener cambio",
+              "balance_due": "El reemplazo cuesta más que lo devuelto. Al enviarlo, la diferencia se añade al pedido como saldo pendiente para que lo cobres. No se cobra nada automáticamente."
             },
             "create_title": "Nuevo cambio",
             "empty": "Sin cambios para este pedido.",
@@ -285,7 +286,8 @@
               "approve": "Aprobar",
               "create": "Nueva devolución",
               "receive": "Recibir artículos",
-              "refund": "Reembolsar"
+              "refund": "Reembolsar",
+              "complete": "Completar devolución"
             },
             "buy_label": "Comprar etiqueta de devolución",
             "buy_label_confirm": "¿Comprar una etiqueta de devolución prepagada? Tu cuenta de transportista se cobra en cuanto se emite la etiqueta.",
@@ -308,13 +310,18 @@
             "received_of": "{{received}} de {{requested}} recibidos",
             "received_quantity": "Recibidos",
             "refund_amount": "Monto",
+            "refund_includes_tax": "El importe completo incluye {{tax}} de impuestos. Un importe menor devuelve los impuestos en la misma proporción.",
             "refund_method": "Reembolsar a",
             "refund_methods": {
               "original_payment": "Pago original",
               "store_credit": "Crédito de tienda"
             },
             "refund_title": "Reembolsar devolución",
+            "complete_title": "Completar devolución",
+            "nothing_owed": "No se debe nada en esta devolución, así que no se reembolsa dinero. Al completarla, la devolución se cierra.",
             "refund_total": "Total del reembolso",
+            "refunded": "Reembolsado",
+            "refunded_of": "{{amount}} de {{total}}",
             "resellable": "Revendible",
             "returning_to": "Devolviendo a {{name}}"
           },
@@ -460,9 +467,22 @@
           "logo_dimensions_help": "Recomendado: 204×104 píxeles.",
           "section_addresses": "Direcciones de email",
           "section_delivery": "Entrega",
-          "section_logo": "Logo",
           "subtitle": "Direcciones de remitente, notificaciones y el logo incorporado en los emails transaccionales.",
-          "title": "Configuración de email"
+          "title": "Configuración de email",
+          "branding": {
+            "title": "Marca",
+            "description": "Colores y fuente de cada correo para clientes. Deja un color vacío para mantener el predeterminado.",
+            "default_color": "Predeterminado",
+            "fonts": {
+              "inter": "Inter (predeterminada)",
+              "system": "Fuente del sistema",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -583,39 +603,73 @@
           "empty_description": "Creá un endpoint para recibir un POST firmado cada vez que se dispara un evento suscripto.",
           "empty_title": "Todavía no hay endpoints de webhook",
           "event_groups": {
-            "asset": "Recurso",
+            "admin_user": "Miembro del personal",
+            "cart": "Carrito",
+            "catalog": "Catálogo",
+            "claim": "Reclamación",
+            "company": "Empresa",
+            "company_invitation": "Invitación de empresa",
             "custom": "Personalizado",
             "customer": "Cliente",
+            "data_request": "Solicitud de datos",
+            "delivery": "Entrega",
             "digital": "Digital",
+            "digital_asset": "Recurso digital",
+            "digital_link": "Enlace digital",
+            "email_template": "Plantillas de correo",
+            "exchange": "Cambio",
+            "export": "Exportación",
             "fulfillment": "Cumplimiento",
             "gift_card": "Tarjeta de regalo",
             "gift_card_batch": "Lote de tarjetas de regalo",
-            "import_export": "Importar / Exportar",
+            "import": "Importación",
+            "import_row": "Fila de importación",
             "invitation": "Invitación",
             "line_item": "Línea de pedido",
+            "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
+            "order_group": "Grupo de pedidos",
             "payment": "Pago",
             "payment_session": "Sesión de pago",
             "payment_setup_session": "Sesión de configuración de pago",
             "price": "Precio",
             "product": "Producto",
+            "product_submission": "Envío de producto",
             "promotion": "Promoción",
+            "purchase_order": "Orden de compra",
             "refund": "Reembolso",
-            "report": "Reporte",
             "return": "Devolución",
+            "saved_report": "Informe guardado",
+            "seller": "Vendedor",
+            "seller_payout": "Pago al vendedor",
+            "seller_requirement_submission": "Envío de requisito del vendedor",
+            "seller_user": "Usuario del vendedor",
+            "shipment": "Envío",
+            "shipping_label": "Etiqueta de envío",
+            "stock_item": "Artículo de inventario",
             "stock_level": "Nivel de stock",
             "stock_movement": "Movimiento de stock",
+            "stock_receipt": "Recepción de inventario",
             "stock_reservation": "Reserva de stock",
             "stock_transfer": "Transferencia de stock",
             "store_credit": "Crédito de tienda",
+            "supplier": "Proveedor",
+            "tax_exemption_certificate": "Certificado de exención fiscal",
+            "tax_identifier": "Identificador fiscal",
+            "user": "Cuenta de cliente",
             "variant": "Variante",
-            "wishlist": "Lista de deseos"
+            "wished_item": "Artículo deseado",
+            "wishlist": "Lista de deseos",
+            "wishlist_item": "Artículo de la lista de deseos"
           },
           "events_all": "Todos los eventos",
           "events_count_one": "{{count}} evento",
           "events_count_other": "{{count}} eventos",
+          "events_credential": "Credencial",
           "events_custom_input_placeholder": "custom.event_name",
+          "events_deprecated": "Obsoleto, usa {{event}}",
+          "events_load_failed": "No se pudo cargar la lista de eventos. Aún puedes añadir un evento por su nombre abajo.",
           "events_remove_aria": "Quitar {{event}}",
           "health": {
             "auto_disabled_alert": "Este endpoint se deshabilitó automáticamente después de fallas repetidas de entrega.",
@@ -665,6 +719,49 @@
           "admission_description": "Activar cualquiera de estas opciones elimina una decisión humana. Está bien en un marketplace solo por invitación; es arriesgado en uno abierto a cualquiera.",
           "communication_title": "Comunicación",
           "commission_tax_title": "Impuesto sobre la comisión"
+        },
+        "ai_agents": {
+          "title": "Agentes de IA",
+          "subtitle": "Agentes de IA conectados a tu tienda. Conecta Claude, ChatGPT y otros para gestionar tu tienda",
+          "empty": "Aún no se ha conectado ningún agente.",
+          "revoke": "Revocar acceso",
+          "table": {
+            "access": "Acceso",
+            "status": "Estado"
+          },
+          "revoke_confirm": {
+            "title": "¿Revocar el acceso?",
+            "message": "{{who}} perderá el acceso a {{name}} de inmediato. El resto sigue conectado."
+          },
+          "manage_connections": "Gestionar conexiones",
+          "connections": {
+            "person": "Persona",
+            "empty": "Nadie está conectado mediante este agente.",
+            "unknown_person": "Desconocido",
+            "count_one": "{{count}} persona conectada",
+            "count_other": "{{count}} personas conectadas",
+            "connected": "Conectado"
+          }
+        },
+        "oauth_clients": {
+          "title": "Clientes OAuth",
+          "subtitle": "Los clientes OAuth registrados para esta tienda",
+          "empty": "Aún no hay clientes registrados.",
+          "register": "Registrar un cliente",
+          "table": {
+            "client_id": "ID de cliente",
+            "created": "Registrado"
+          },
+          "delete_confirm": {
+            "title": "¿Eliminar este cliente?",
+            "message": "{{name}} dejará de funcionar de inmediato y se eliminará su registro."
+          },
+          "form": {
+            "create_title": "Registrar un cliente",
+            "edit_title": "Editar cliente",
+            "description": "Registre un cliente OAuth para poder conectarlo a esta tienda."
+          },
+          "copy_client_id": "Copiar ID de cliente"
         }
       },
       "staff": {
@@ -981,6 +1078,20 @@
         "variants_empty": "Todavía no hay variantes.",
         "variants_one": "{{count}} variante",
         "variants_other": "{{count}} variantes"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autorizar aplicación",
+          "subtitle": "Revise lo que pide esta aplicación antes de permitirla.",
+          "intro": "{{client}} quiere acceder a esta tienda en su nombre. Solo podrá hacer lo que usted permita a continuación, y nunca más de lo que permitan sus propios permisos.",
+          "permissions_heading": "Permisos",
+          "revoke_hint": "Puede revocarlo en cualquier momento en Configuración → Aplicaciones conectadas.",
+          "approve": "Permitir acceso",
+          "deny": "Cancelar",
+          "invalid_request": "Esta solicitud de autorización no es válida. Vuelva a empezar desde la aplicación que le envió aquí.",
+          "decision_failed": "No se pudo registrar la decisión. Inténtelo de nuevo.",
+          "withheld": "No se ofrece porque su propio rol no incluye: {{permissions}}"
+        }
       }
     },
     "fields": {
@@ -1083,8 +1194,7 @@
           "inherit": "Heredar de la tienda",
           "label": "Estrategia de ruteo de pedidos",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Reglas (ordenadas)"
+            "rules": "Reglas (ordenadas)"
           }
         },
         "storefront_access": {
@@ -1219,12 +1329,12 @@
         "resource_type": {
           "label": "Se aplica a",
           "options": {
-            "Spree::OptionType": "Tipos de opción",
-            "Spree::Order": "Pedidos",
-            "Spree::Product": "Productos",
-            "Spree::Taxon": "Categorías",
-            "Spree::Customer": "Clientes",
-            "Spree::Variant": "Variantes"
+            "option_type": "Tipos de opción",
+            "order": "Pedidos",
+            "product": "Productos",
+            "category": "Categorías",
+            "customer": "Clientes",
+            "variant": "Variantes"
           },
           "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo."
         },
@@ -1415,8 +1525,8 @@
           "label": "Idiomas admitidos"
         },
         "tax_inclusive": {
-          "help": "Mostrar los precios con impuestos incluidos. Común en mercados de la UE.",
-          "label": "Precios con impuestos incluidos"
+          "help": "Activado: los clientes pagan el precio que introduces, con los impuestos incluidos. Desactivado: los impuestos se añaden al finalizar la compra.",
+          "label": "Los precios incluyen impuestos"
         },
         "tax_provider": {
           "help": "Qué motor calcula los impuestos de los pedidos de este mercado.",
@@ -1496,6 +1606,12 @@
         },
         "internal_note": {
           "label": "Nota interna (solo staff)"
+        },
+        "locale": {
+          "label": "Idioma"
+        },
+        "market": {
+          "label": "Mercado"
         },
         "order_group": {
           "label": "Compra",
@@ -1779,10 +1895,6 @@
           "placeholder": "Ilimitado"
         }
       },
-      "reason_code": {
-        "help": "Se vuelve el código de uso de entidad del motor de impuestos.",
-        "label": "Motivo"
-      },
       "role": {
         "description": {
           "label": "Descripción",
@@ -2008,22 +2120,22 @@
           "invalid": "Usá solo letras mayúsculas, dígitos, guiones y #.",
           "label": "Sufijo"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Idioma del admin",
           "placeholder": "Usar el idioma predeterminado"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Desactivado, no se envían emails de confirmación de pedido, envío ni reembolso.",
           "label": "Enviar emails transaccionales a los clientes"
         },
-        "preferred_timezone": {
+        "timezone": {
           "label": "Zona horaria",
           "placeholder": "Seleccionar una zona horaria"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Sistema de unidades"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Unidad de peso"
         },
         "show_products_without_price": {
@@ -2101,14 +2213,14 @@
         "digital_asset_authorized_days": {
           "label": "Días disponibles"
         },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Alto",
           "help": "La caja en la que sueles enviar, usada por los proveedores de tarifas de transporte para el precio por peso dimensional: pulgadas en imperial, centímetros en métrico. Se necesitan los tres para que surta efecto.",
           "label": "Dimensiones del paquete predeterminado",
           "length": "Largo",
           "width": "Ancho"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Peso del empaque (caja y relleno) sumado al contenido de cada paquete al calcular las tarifas de entrega. Poniendo 0 lo deshabilitás.",
           "label": "Peso del paquete predeterminado"
         },
@@ -2128,6 +2240,25 @@
           "label": "Impuesto predeterminado sobre la comisión",
           "help": "Se aplica a tu comisión cuando ni la tarifa de comisión ni tu proveedor de impuestos indican una propia. Déjalo en 0 si tu comisión no lleva impuesto.",
           "suffix": "%"
+        },
+        "email_accent_color": {
+          "label": "Color de acento"
+        },
+        "email_background_color": {
+          "label": "Color de fondo"
+        },
+        "email_card_color": {
+          "label": "Color de la tarjeta"
+        },
+        "email_text_color": {
+          "label": "Color del texto"
+        },
+        "email_heading_color": {
+          "label": "Color de los títulos"
+        },
+        "email_font": {
+          "label": "Fuente",
+          "help": "Las aplicaciones de correo que no puedan cargarla usarán una fuente similar."
         }
       },
       "store_credit": {
@@ -2191,11 +2322,6 @@
         },
         "country_code": {
           "help": "Dejalo vacío para cobrar impuestos en todos los países."
-        },
-        "included_in_price": {
-          "help": "Los precios ya incluyen este impuesto, así que se descuenta en lugar de sumarse.",
-          "label": "Incluido en el precio",
-          "short": "Incluido"
         },
         "jurisdiction": {
           "label": "Aplica a"
@@ -2365,6 +2491,20 @@
           "label": "Caja predeterminada",
           "help": "El empaque sobre el que se calculan tus cotizaciones de paquetería. Solo una predeterminada a la vez."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Gestiona los motivos que se ofrecen aquí en Configuración → Impuestos → Motivos de exención.",
+        "label": "Motivo"
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "URL de retorno",
+          "help": "De la documentación del propio cliente. Los códigos de autorización se entregan aquí, así que debe ser la dirección que el cliente publica."
+        }
       }
     },
     "orders": {
@@ -2406,6 +2546,7 @@
           "discounts_empty": "Todavía no hay descuentos en este pedido.",
           "fee_kind_cod": "Pago contra entrega",
           "fee_kind_duty": "Arancel",
+          "fee_kind_exchange": "Cambio",
           "fee_kind_gift_wrap": "Envoltura para regalo",
           "fee_kind_handling": "Gestión",
           "fee_kind_payment": "Cargo por pago",
@@ -2567,9 +2708,18 @@
           "move_and_requote": "Mover y recotizar",
           "no_rates": "No hay métodos de entrega cotizados para este cumplimiento.",
           "out_of_stock": "Sin stock",
+          "packing_slip_discount": "Descuento",
+          "packing_slip_footer": "Gracias por tu pedido.",
+          "packing_slip_fulfillment": "Entrega n.º {{number}}",
+          "packing_slip_order": "Pedido n.º {{number}}",
+          "packing_slip_shipping": "Envío",
+          "packing_slip_subtotal": "Subtotal",
+          "packing_slip_tax": "Impuestos",
           "packing_slip_title": "Nota de despacho — pedido {{number}}",
+          "packing_slip_total": "Total",
           "print_label": "Imprimir etiqueta",
           "print_packing_slip": "Imprimir nota de despacho",
+          "quoted_after_review": "Precio tras revisión",
           "rates_pending_origin": "Guardá el nuevo origen para ver los métodos de entrega que ofrece.",
           "refund_label": "Reembolsar etiqueta",
           "retry_refund_label": "Reintentar reembolso",
@@ -2636,12 +2786,15 @@
           "state": "Estado",
           "this_order": "Este pedido",
           "shared_help": "Pagado una vez por un carrito que abarca varios vendedores. Este pedido tiene una parte de él.",
-          "load_error": "No se pudieron cargar los pagos de este pedido."
+          "load_error": "No se pudieron cargar los pagos de este pedido.",
+          "view_at_gateway": "Ver en {{gateway}}",
+          "view_details": "Ver detalles",
+          "failed_card_checks": "Verificaciones de tarjeta fallidas"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
           "document": "Documento de orden de compra",
-          "document_help": "PDF, imagen o archivo de Word, hasta 10 MB.",
+          "document_help": "PDF, imagen, documento de Word, hoja de cálculo o archivo CSV, hasta 10 MB.",
           "download_failed": "No se pudo descargar la orden de compra",
           "save_failed": "No se pudo guardar la orden de compra",
           "title": "Orden de compra"
@@ -2686,6 +2839,22 @@
           "cbm": "{{value}} CBM",
           "kg": "{{value}} kg",
           "incomplete": "Algunos artículos no están medidos, así que estas cifras son un piso más que un total."
+        },
+        "payment_details": {
+          "title": "Pago {{number}}",
+          "description": "Lo que informó el emisor de la tarjeta y cada captura del importe.",
+          "transaction_id": "ID de transacción",
+          "address_check": "Verificación de dirección",
+          "security_code_check": "Verificación del código de seguridad",
+          "code": "Código {{code}}",
+          "check": {
+            "passed": "Superada",
+            "failed": "No superada",
+            "not_checked": "No verificada"
+          },
+          "captures": "Capturas",
+          "captures_empty": "Aún no se ha capturado nada.",
+          "captured_at": "Capturado"
         }
       },
       "edit": {
@@ -4002,6 +4171,7 @@
         "customers": "Cuentas, direcciones, tarjetas y grupos de clientes",
         "dashboard": "Análisis de ventas y rendimiento",
         "delivery_methods": "Opciones de envío, tarifas y las reglas que las controlan",
+        "email_templates": "Plantillas de correo para clientes y el diseño del correo",
         "fulfillments": "Armar, despachar y rastrear cumplimientos de pedidos",
         "gift_cards": "Tarjetas de regalo y lotes de tarjetas",
         "integrations": "Credenciales y conexiones de proveedores",
@@ -4021,7 +4191,8 @@
         "staff": "Miembros del equipo, invitaciones, roles y sus permisos",
         "stock": "Niveles de stock, ubicaciones, movimientos y transferencias",
         "store_credits": "Saldos de crédito de tienda de los clientes",
-        "webhooks": "Endpoints y entregas de webhooks"
+        "webhooks": "Endpoints y entregas de webhooks",
+        "oauth_applications": "Clientes OAuth registrados en esta tienda"
       },
       "grid": {
         "read_aria": "Ver {{resource}}",
@@ -4053,6 +4224,7 @@
         "customers": "Clientes",
         "dashboard": "Dashboard",
         "delivery_methods": "Métodos de entrega",
+        "email_templates": "Plantillas de correo",
         "fulfillments": "Cumplimientos",
         "gift_cards": "Tarjetas de regalo",
         "integrations": "Integraciones",
@@ -4072,7 +4244,8 @@
         "staff": "Staff y roles",
         "stock": "Stock",
         "store_credits": "Créditos de tienda",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "Aplicaciones OAuth"
       }
     },
     "settings_nav": {
@@ -4096,12 +4269,13 @@
         "staff": "Personas con acceso a este dashboard",
         "stock_locations": "Depósitos y puntos de retiro que guardan stock",
         "store": "Nombre de la tienda, zona horaria, unidades y predeterminados regionales",
-        "tax_categories": "Clases de impuestos asignadas a los productos",
-        "tax_rates": "Tasas aplicadas por mercado y región",
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
-        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión"
+        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
+        "taxes": "Categorías fiscales, tipos impositivos y motivos de exención",
+        "ai_agents": "Agentes de IA con acceso a esta tienda",
+        "oauth_clients": "Registrar y configurar clientes OAuth"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4139,7 +4313,10 @@
         "webhooks": "Webhooks",
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
-        "marketplace": "Configuración"
+        "marketplace": "Configuración",
+        "taxes": "Impuestos",
+        "ai_agents": "Agentes de IA",
+        "oauth_clients": "Clientes OAuth"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -4783,7 +4960,7 @@
       "create_description": "Agregá un depósito, una tienda o un punto de retiro para cumplir pedidos desde ahí.",
       "create_label": "Crear ubicación de stock",
       "delete_confirm": {
-        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación no se borran.",
+        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación también se eliminarán.",
         "title": "¿Eliminar ubicación de stock?"
       },
       "edit_description": "Actualizá el nombre, la dirección, el retiro o las políticas de stock.",
@@ -4874,14 +5051,7 @@
       },
       "never_expires": "No vence",
       "no_document": "Sin documento adjunto",
-      "reason_codes": {
-        "agricultural": "Agrícola",
-        "charitable": "Benéfico",
-        "educational": "Educativo",
-        "government": "Gubernamental",
-        "manufacturing": "Manufactura",
-        "resale": "Reventa"
-      },
+      "no_reasons": "Aún no hay motivos de exención. Añádelos en Configuración → Impuestos → Motivos de exención.",
       "revoke_action": "Revocar",
       "revoke_confirm": {
         "message": "El certificado {{number}} deja de aplicar a pedidos nuevos. Queda archivado como registro.",
@@ -4987,8 +5157,9 @@
       },
       "table": {
         "search_placeholder": "Buscar notas…",
-        "empty": "Todavía no hay créditos de tienda. Emití uno desde el perfil de un cliente."
+        "empty": "Todavía no hay créditos de tienda."
       },
+      "issue_description": "Elegí un cliente y el monto que querés sumar a su cuenta.",
       "no_customer": "Sin cliente",
       "page": {
         "subtitle": "Lo que la tienda debe en saldos prepagos, en todos los clientes."
@@ -5002,7 +5173,7 @@
       "configure_cta": "Configurar",
       "connect_cta": "Conectar",
       "connect_description": "Ingresá las credenciales de este proveedor. Guardar las almacena; pasarla a activa verifica la conexión.",
-      "description": "Conectá servicios de proveedores a esta tienda. Las credenciales se guardan por tienda y las usan los proveedores de envío, impuestos y otros.",
+      "description": "Conecta proveedores de pago y otros servicios a esta tienda. Las credenciales se guardan por tienda y las usan el checkout, los envíos, los impuestos y otros proveedores.",
       "disconnect": "Desconectar",
       "disconnect_confirm": {
         "message": "¿Desconectar {{name}}? Sus credenciales guardadas se eliminan y los proveedores que la usan dejan de funcionar.",
@@ -5015,18 +5186,24 @@
       },
       "groups": {
         "other": "Otro",
+        "payments": "Pagos",
         "shipping": "Envío",
         "tax": "Impuestos"
       },
+      "manage_payment_methods": "Gestionar métodos de pago",
       "messages": {
         "connected": "Integración conectada",
         "disconnected": "Integración desconectada",
         "updated": "Integración actualizada"
       },
+      "setup_guide": "Guía de configuración",
       "status": {
         "active": "Activa",
         "connected_inactive": "Conectada (inactiva)",
         "not_connected": "No conectada"
+      },
+      "tabs": {
+        "all": "Todas"
       },
       "test": {
         "failure": "La conexión falló.",
@@ -5035,7 +5212,9 @@
         "success": "Conexión exitosa.",
         "testing": "Probando…"
       },
+      "test_mode": "Modo de prueba",
       "title": "Integraciones",
+      "toggle_label": "Activar o desactivar {{name}}",
       "view_cta": "Ver"
     },
     "tax_identifiers": {
@@ -5204,12 +5383,15 @@
         "help": "Qué salió mal con una entrega: artículo dañado, faltante o equivocado.",
         "title": "Motivos de reclamo"
       },
+      "code_engine_help": "Tu motor de impuestos decide la exención por este código, así que elige el que define para este motivo.",
+      "code_help": "Un identificador corto que registran los certificados. Único en tu tienda.",
+      "code_placeholder": "p. ej. RESALE",
       "create_description": "Los motivos aparecen en un desplegable cuando el staff abre una devolución, un reclamo o un reembolso.",
       "delete_confirm": {
         "message": "{{name}} ya no se ofrecerá. Los registros que ya lo usan lo conservan.",
         "title": "¿Eliminar motivo?"
       },
-      "description": "Los vocabularios de los que elige tu equipo al manejar devoluciones, reclamos, reembolsos y cancelaciones.",
+      "description": "Las listas que usa tu equipo al gestionar devoluciones, reclamaciones, reembolsos y cancelaciones.",
       "edit_sheet_title": "Editar motivo",
       "empty": "Todavía no hay motivos",
       "in_use": "En uso",
@@ -5232,6 +5414,12 @@
       "return": {
         "help": "Por qué un cliente devuelve algo. Lo comparten devoluciones y cambios.",
         "title": "Motivos de devolución"
+      },
+      "tax_exemption": {
+        "create_description": "Tu equipo elige un motivo al registrar el certificado de exención de una empresa.",
+        "help": "Por qué una empresa compra sin impuestos. Se registra en sus certificados de exención; el código es lo que recibe tu motor de impuestos.",
+        "name_placeholder": "p. ej. Reventa",
+        "title": "Motivos de exención de impuestos"
       },
       "title": "Devoluciones y motivos"
     },
@@ -5443,7 +5631,6 @@
       "sellers": "Los vendedores terceros que operan en tu marketplace y en qué punto está cada uno.",
       "store_credits": "Saldos que los clientes pueden gastar al finalizar la compra y cómo se emitió cada uno.",
       "tax_categories": "Agrupaciones que deciden qué tasa impositiva recibe un producto.",
-      "tax_rates": "El impuesto cobrado por categoría y región.",
       "webhook_deliveries": "Cada evento enviado a este endpoint y si se recibió.",
       "webhook_endpoints": "Dónde se notifica a tus otros sistemas cuando pasa algo en la tienda.",
       "returns": "Mercadería que vuelve, desde la solicitud hasta el reembolso.",
@@ -5719,7 +5906,6 @@
         "deleted": "Tasa de impuesto eliminada",
         "updated": "Tasa de impuesto actualizada"
       },
-      "search_placeholder": "Buscar tasas de impuesto",
       "select_category": "Seleccionar una categoría"
     },
     "translations": {
@@ -5907,8 +6093,7 @@
         "created": "Categoría de impuestos creada",
         "deleted": "Categoría de impuestos eliminada",
         "updated": "Categoría de impuestos actualizada"
-      },
-      "search_placeholder": "Buscar por nombre…"
+      }
     },
     "inventory_lines": {
       "add_label": "Agregar un producto",
@@ -6015,6 +6200,229 @@
     },
     "jurisdiction": {
       "everywhere": "En todos lados"
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Ajustes",
+        "templates": "Plantillas"
+      },
+      "list": {
+        "description": "Edita los correos que reciben los clientes. Los cambios se guardan como borrador y solo llegan a los clientes cuando los publicas.",
+        "groups": {
+          "email": {
+            "title": "Correos para clientes",
+            "description": "Cada correo que un cliente puede recibir de tu tienda."
+          },
+          "layout": {
+            "title": "Diseño",
+            "description": "El encabezado, el pie y los estilos de cada correo para clientes."
+          },
+          "partial": {
+            "title": "Bloques compartidos",
+            "description": "Piezas que usan varios correos, como la lista de artículos y los totales."
+          }
+        },
+        "empty": "Aquí no hay plantillas de correo editables. Las plantillas de correo para clientes vienen con el paquete de correos de Spree."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Confirmación del pedido",
+        "order_mailer_cancel_email": "Pedido cancelado",
+        "order_mailer_payment_link_email": "Enlace de pago",
+        "order_group_mailer_confirm_email": "Confirmación de pedido con varios vendedores",
+        "fulfillment_mailer_fulfilled_email": "Pedido enviado",
+        "return_mailer_refunded_email": "Devolución reembolsada",
+        "digital_asset_mailer_files_ready_email": "Descargas listas",
+        "customer_mailer_password_reset_email": "Restablecer contraseña",
+        "customer_mailer_data_export_email": "Exportación de datos personales lista",
+        "newsletter_mailer_email_confirmation": "Confirmación del boletín",
+        "company_mailer_invitation_email": "Invitación de empresa",
+        "spree_base_mailer": "Diseño del correo",
+        "shared_line_item": "Artículo",
+        "shared_order_summary": "Resumen del pedido",
+        "shared_purchase_totals": "Totales",
+        "shared_fulfillment_group": "Envío",
+        "shared_summary_row": "Fila de resumen"
+      },
+      "badges": {
+        "customized": "Personalizada",
+        "default": "Predeterminada",
+        "draft": "Borrador",
+        "other_languages": "También personalizada: {{languages}}",
+        "default_updated": "Actualizada por Spree",
+        "unsaved": "Cambios sin guardar",
+        "showing_draft": "Borrador: los clientes reciben la versión publicada",
+        "showing_published": "Publicada: lo que reciben los clientes",
+        "showing_default": "Predeterminada de Spree: lo que reciben los clientes"
+      },
+      "actions": {
+        "save_draft": "Guardar borrador",
+        "publish": "Publicar",
+        "discard_draft": "Descartar borrador",
+        "revert": "Volver a la predeterminada",
+        "send_test": "Enviar correo de prueba",
+        "history": "Historial"
+      },
+      "confirm": {
+        "discard_title": "¿Descartar este borrador?",
+        "discard_message": "Se eliminan tus cambios sin publicar. Los clientes siguen recibiendo la versión publicada.",
+        "revert_title": "¿Volver a la versión predeterminada de Spree?",
+        "revert_message": "A partir de ahora los clientes reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde.",
+        "restore_title": "¿Restaurar esta versión?",
+        "restore_message": "Esta versión reemplaza el borrador. Publícala para que la reciban los clientes.",
+        "leave_title": "¿Salir sin guardar?",
+        "leave_message": "Se perderán los cambios sin guardar de esta plantilla.",
+        "leave": "Salir",
+        "revert_every_language_message": "A partir de ahora los clientes de todos los idiomas reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde."
+      },
+      "editor": {
+        "title": "Plantilla",
+        "subject": "Asunto",
+        "body": "Código de la plantilla",
+        "language": "Idioma"
+      },
+      "preview": {
+        "title": "Vista previa",
+        "frame_title": "Vista previa del correo",
+        "subject": "Asunto: {{subject}}",
+        "html": "Correo",
+        "text": "Texto sin formato",
+        "desktop": "Ancho de escritorio",
+        "mobile": "Ancho móvil",
+        "shown_in": "Mostrar dentro de",
+        "record": "Vista previa con registro",
+        "unavailable": "No se pudo mostrar la vista previa.",
+        "needs_permission": "Las vistas previas se generan para quienes pueden editar plantillas de correo.",
+        "latest_record": "El más reciente"
+      },
+      "problems": {
+        "title": "Esta plantilla no se puede mostrar",
+        "on_line": "Línea {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Actualizada por Spree",
+        "description": "Spree cambió su versión predeterminada de esta plantilla desde que se creó la tuya. Compara ambas antes de decidir.",
+        "compare": "Comparar",
+        "dialog_title": "Qué cambió en la versión predeterminada de Spree",
+        "dialog_description": "A la izquierda, la predeterminada de la que partió tu versión. A la derecha, la predeterminada actual.",
+        "before": "Tu versión partió de",
+        "after": "Predeterminada actual de Spree",
+        "keep_mine": "Conservar mi versión",
+        "start_over": "Empezar desde la nueva predeterminada"
+      },
+      "history": {
+        "title": "Historial",
+        "description": "Cada versión publicada en este idioma, de la más reciente a la más antigua.",
+        "empty": "Aún no se ha publicado nada.",
+        "latest": "Más reciente",
+        "version": "Versión {{number}}",
+        "restore": "Restaurar"
+      },
+      "conflict": {
+        "title": "Otra persona guardó este borrador",
+        "keep_editing": "Seguir editando",
+        "reload": "Cargar su versión",
+        "overwrite": "Guardar la mía encima"
+      },
+      "variables": {
+        "title": "Variables",
+        "description": "Datos que puede mostrar este correo. Empieza a escribir una variable en el código para ver todos sus campos.",
+        "order": "El pedido, con sus artículos, direcciones y totales.",
+        "resend": "Si es una copia enviada de nuevo.",
+        "payment_url": "El enlace donde paga el cliente.",
+        "order_group": "Un pedido repartido entre varios vendedores.",
+        "fulfillment": "El envío, con su seguimiento.",
+        "return": "La devolución y lo reembolsado.",
+        "downloads": "Los archivos que puede descargar el cliente.",
+        "customer": "El cliente que recibe el correo.",
+        "reset_url": "El enlace para elegir una nueva contraseña.",
+        "download_url": "El enlace para descargar la exportación.",
+        "expires_at": "Cuándo deja de funcionar el enlace.",
+        "confirmation_url": "El enlace que confirma la suscripción.",
+        "company": "La empresa a la que se invita al cliente.",
+        "accept_url": "El enlace que acepta la invitación.",
+        "store": "Tu tienda: nombre, enlaces, logotipo y marca.",
+        "locale": "El idioma en que se envía el correo.",
+        "insert": "Insertar {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "Borrador guardado",
+        "draft_discarded": "Borrador descartado",
+        "published": "Publicada. Los clientes reciben esta versión a partir de ahora.",
+        "reverted": "Se volvió a la versión predeterminada de Spree",
+        "restored": "Versión restaurada en el borrador",
+        "test_sent": "Correo de prueba enviado a {{email}}"
+      },
+      "errors": {
+        "load_failed": "No se pudieron cargar las plantillas de correo",
+        "not_allowed": "No tienes permiso para ver las plantillas de correo",
+        "test_email_failed": "No se pudo enviar el correo de prueba"
+      },
+      "every_language": {
+        "notice": "Los clientes de todos los idiomas reciben esta versión hasta que publiques una para {{language}}."
+      }
+    },
+    "updates": {
+      "available": "Spree {{version}} está disponible",
+      "running": "Estás usando Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "open": "Notificaciones",
+      "open_unread": "Notificaciones, 1 sin leer",
+      "empty": "Estás al día.",
+      "view_on_github": "Ver en GitHub",
+      "release_notes_unavailable": "No se pudieron cargar las notas de la versión. Léelas en GitHub."
+    },
+    "taxes": {
+      "title": "Impuestos",
+      "description": "Cómo se gravan tus productos, qué tipos aplica Spree y por qué las empresas pueden comprar sin impuestos.",
+      "providers_title": "Cálculo de impuestos",
+      "provider_markets": "{{provider}} en {{markets}}",
+      "manage_markets": "Gestionar mercados",
+      "tabs": {
+        "categories": "Categorías",
+        "rates": "Tipos",
+        "exemption_reasons": "Motivos de exención"
+      },
+      "rates_unused_in": "Estos tipos no se usan en {{markets}}, donde un servicio externo calcula el impuesto.",
+      "rates_unused_everywhere": "Ninguno de tus mercados usa estos tipos: en {{markets}} un servicio externo calcula el impuesto.",
+      "rates_help": "El impuesto cobrado por categoría y región. Solo lo usan los mercados con los tipos de Spree: un servicio conectado como Avalara calcula el impuesto por su cuenta e ignora estos tipos."
+    },
+    "mcp_connect": {
+      "open_cta": "Conectar un agente",
+      "title": "Conectar un agente",
+      "subtitle": "Elija el asistente al que quiere dar acceso a esta tienda.",
+      "step_paste": "Pegue esta dirección en el conector o la configuración MCP de su cliente.",
+      "step_sign_in": "Le enviará aquí para iniciar sesión.",
+      "step_approve": "Apruebe lo que puede hacer el agente. Puede retirarlo en cualquier momento en esta página.",
+      "client_id_label": "ID de cliente",
+      "client_id_help": "Algunos clientes lo piden antes de empezar.",
+      "ready_title": "{{client}} está listo para conectarse",
+      "ready_subtitle": "Pegue esto en el cliente y luego apruebe lo que puede hacer.",
+      "endpoint_label": "La dirección MCP de su tienda",
+      "copy_endpoint": "Copiar dirección",
+      "copy_client_id": "Copiar ID de cliente",
+      "other_title": "Otra cosa",
+      "bounded_note": "Un agente nunca obtiene más de lo que usted tiene, y solo lo que usted aprueba.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop y Claude Code",
+        "chatgpt": "ChatGPT y Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai y Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Cualquier otro cliente que hable MCP",
+      "continue": "Continuar",
+      "run_label": "Ejecute esto",
+      "copy_command": "Copiar comando",
+      "cli_then_sign_in": "Se abrirá el navegador para iniciar sesión y aprobar lo que el agente puede hacer."
     }
   }
 }

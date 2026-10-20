@@ -1,5 +1,5 @@
 import type { StoreCredit } from '@spree/admin-sdk'
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
@@ -24,10 +24,10 @@ const ORIGIN_OPTIONS = [
 ]
 
 defineTable<StoreCredit>('store-credits', {
-  docsPath: 'loyalty/store-credits',
+  docsPath: 'loyalty/store-credits-list',
   description: i18n.t('admin.table_descriptions.store_credits'),
   title: i18n.t('admin.nav.store_credits'),
-  searchParam: 'memo_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.store_credits.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <BanknoteIcon className="size-8 text-muted-foreground" />,
@@ -56,25 +56,25 @@ defineTable<StoreCredit>('store-credits', {
       ),
     },
     {
-      key: 'display_amount',
+      key: 'amount',
       label: i18n.t('admin.fields.store_credit.amount.label'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (credit) => credit.display_amount,
+      render: (credit) => <Money amount={credit.amount} currency={credit.currency} />,
     },
     {
-      key: 'display_amount_used',
+      key: 'amount_used',
       label: i18n.t('admin.store_credits.columns.used'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap',
-      render: (credit) => credit.display_amount_used,
+      render: (credit) => <Money amount={credit.amount_used} currency={credit.currency} />,
     },
     {
-      key: 'display_amount_remaining',
+      key: 'amount_remaining',
       label: i18n.t('admin.store_credits.columns.remaining'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap',
-      render: (credit) => credit.display_amount_remaining,
+      render: (credit) => <Money amount={credit.amount_remaining} currency={credit.currency} />,
     },
     {
       // Money still owed versus money already spent. The two states are

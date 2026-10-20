@@ -36,7 +36,7 @@ import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { Controller, type DefaultValues, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { TaxProviderField } from '../../../../components/spree/tax-provider-field'
@@ -159,7 +159,7 @@ function CreateMarketSheet({
 
   // Seed the form with the store defaults so a typical "Europe" / "ROW"
   // setup is mostly pre-filled — the merchant only edits name + countries.
-  const initialDefaults: MarketFormValues = useMemo(
+  const initialDefaults: DefaultValues<MarketFormValues> = useMemo(
     () => ({
       ...MARKET_DEFAULTS,
       currency: defaultCurrency,
@@ -400,6 +400,7 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
         <span className="text-xs text-muted-foreground">
           {t('admin.fields.market.supported_locales.help')}
         </span>
+        <FieldError errors={[errors.supported_locales]} />
       </Field>
 
       <Field>

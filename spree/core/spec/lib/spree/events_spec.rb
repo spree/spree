@@ -279,6 +279,24 @@ RSpec.describe Spree::Events, events: true do
       expect(result).to eq(subscriber)
     end
 
+    it 'resolves string class names in production' do
+      allow(Rails.env).to receive(:development?).and_return(false)
+      allow(Rails.env).to receive(:test?).and_return(false)
+
+      result = described_class.resolve_subscriber('Spree::Subscriber')
+
+      expect(result).to eq(Spree::Subscriber)
+    end
+
+    it 'returns nil for invalid string class names in production' do
+      allow(Rails.env).to receive(:development?).and_return(false)
+      allow(Rails.env).to receive(:test?).and_return(false)
+
+      result = described_class.resolve_subscriber('NonExistent::Class')
+
+      expect(result).to be_nil
+    end
+
     it 'resolves subscriber by name in development' do
       allow(Rails.env).to receive(:development?).and_return(true)
 
@@ -344,6 +362,16 @@ RSpec.describe Spree::Events, events: true do
       described_class.register_subscribers!
 
       # The constant TestEventSubscriber should be resolved, not the old_class directly
+      expect(described_class.subscriptions.first.subscriber).to eq(TestEventSubscriber)
+    end
+
+    it 'registers subscribers given as class names in production' do
+      allow(Rails.env).to receive(:development?).and_return(false)
+      allow(Rails.env).to receive(:test?).and_return(false)
+      allow(Spree).to receive(:subscribers).and_return(['TestEventSubscriber'])
+
+      described_class.register_subscribers!
+
       expect(described_class.subscriptions.first.subscriber).to eq(TestEventSubscriber)
     end
   end

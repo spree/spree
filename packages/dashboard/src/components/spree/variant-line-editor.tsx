@@ -46,6 +46,10 @@ export interface VariantLine {
   unitCost?: string
 }
 
+export interface CostedVariantLine extends VariantLine {
+  unitCost: string
+}
+
 /**
  * Folds a whole picked batch into the existing lines, in one pass.
  *
@@ -68,7 +72,7 @@ export function addVariantsToLines(
   for (const variant of variants) {
     const index = indexByVariantId.get(variant.id)
     if (index === undefined) {
-      next.push({ variant, quantity: 1, unitCost: withCost ? '0.00' : undefined })
+      next.push({ variant, quantity: 1, unitCost: withCost ? '' : undefined })
       indexByVariantId.set(variant.id, next.length - 1)
     } else {
       next[index] = { ...next[index], quantity: next[index].quantity + 1 }
@@ -235,7 +239,7 @@ export function VariantLineEditor({
                         <InputGroupInput
                           type="number"
                           min={0}
-                          step="0.01"
+                          step="any"
                           value={unitCost ?? ''}
                           onChange={(event) => update(variant.id, { unitCost: event.target.value })}
                           className="text-right tabular-nums"

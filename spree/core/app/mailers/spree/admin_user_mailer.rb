@@ -8,30 +8,15 @@ module Spree
       @current_store = store
       @reset_url = password_reset_url(token, store, redirect_url)
 
-      with_store_locale(store, preferred_locale(admin_user, store)) do
-        mail(
-          to: admin_user.email,
-          subject: "#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject')}",
-          store_url: store.formatted_url
+      with_store_locale(store, staff_locale(admin_user, store)) do
+        mail_template(
+          { user: email_data(admin_user, Spree::Emails::UserSerializer), reset_url: @reset_url },
+          to: admin_user.email, store_url: store.formatted_url
         )
       end
     end
 
     private
-
-    # Locale chain for admin auth emails:
-    # the admin's own dashboard language (persisted by the profile/language
-    # switcher via `PATCH /api/v3/admin/me`) → the store's configured admin
-    # locale → nil, which lets with_store_locale fall back to the store's
-    # default (storefront) locale. Blank or unavailable values fall through.
-    def preferred_locale(admin_user, store)
-      [admin_user.try(:selected_locale), store&.preferred_admin_locale]
-        .find { |locale| available_locale?(locale) }
-    end
-
-    def available_locale?(locale)
-      locale.present? && I18n.available_locales.map(&:to_s).include?(locale.to_s)
-    end
 
     # The dashboard SPA passes a validated redirect URL; the token is appended as
     # a query param, falling back to the dashboard's own reset page.

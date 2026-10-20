@@ -13,7 +13,7 @@ describe Spree::StoreCredits::Remove, type: :service do
 
       before do
         create(:store_credit_payment_method)
-        Spree::Checkout::AddStoreCredit.call(order: order)
+        Spree::StoreCredits::Apply.call(order: order)
       end
 
       it { expect { subject }.to change { order.payments.checkout.store_credits.count }.from(1).to(0) }

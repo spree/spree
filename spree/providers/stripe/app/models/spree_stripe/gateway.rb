@@ -3,6 +3,8 @@ module SpreeStripe
   # created and confirmed through sessions; core's payment lifecycle then drives
   # capture, refund and cancellation against the resulting intent.
   class Gateway < ::Spree::Gateway
+    self.accepts_money_amounts = true
+
     include SpreeStripe::Gateway::PaymentSessions
     include SpreeStripe::Gateway::PaymentSetupSessions
     include SpreeStripe::Gateway::Webhooks
@@ -21,6 +23,14 @@ module SpreeStripe
 
     validates :preferred_secret_key, :preferred_publishable_key, presence: true
     validate :validate_secret_key, unless: -> { Rails.env.test? }, if: -> { preferred_secret_key.present? }
+
+    def self.logo_url
+      'https://spreecommerce.org/docs/images/integrations/logos/stripe.png'
+    end
+
+    def self.docs_url
+      'https://spreecommerce.org/docs/integrations/payments/stripe'
+    end
 
     def provider_class
       self.class
@@ -50,12 +60,10 @@ module SpreeStripe
     #
     # @return [Boolean]
     def only_webhook_registration_changed?
-      before, after = saved_change_to_preferences
-      return false unless before.is_a?(Hash) && after.is_a?(Hash)
+      return false if previously_new_record?
 
-      changed = (before.keys | after.keys).reject { |key| before[key] == after[key] }
-
-      changed.any? && changed.all? { |key| WEBHOOK_REGISTRATION_PREFERENCES.include?(key.to_sym) }
+      changed = previously_changed_preference_names
+      changed.any? && changed.all? { |key| WEBHOOK_REGISTRATION_PREFERENCES.include?(key) }
     end
 
     # Endpoints are registered per Stripe account, so a rotated key leaves the
@@ -67,42 +75,41 @@ module SpreeStripe
       # read as every key having changed.
       return false if previously_new_record?
 
-      # The preference macro's own reader rather than a hand-rolled diff: it
-      # reads the change through indifferent access, so it answers the same
-      # whether the serialized hash came back with symbol or string keys.
-      preferred_secret_key_previously_changed?
+      saved_change_to_preferred_secret_key?
     end
 
+    # Stripe shows test-mode payments only under its /test/ dashboard path.
     def gateway_dashboard_payment_url(payment)
       return if payment.transaction_id.blank?
 
-      "https://dashboard.stripe.com/payments/#{payment.transaction_id}"
+      mode_path = preferred_secret_key.to_s.match?(/\A(sk|rk)_test_/) ? 'test/' : ''
+      "https://dashboard.stripe.com/#{mode_path}payments/#{payment.transaction_id}"
     end
 
     # Called by core when a session-created payment moves to pending. The intent
     # is already confirmed client-side in the session flow, so this reads back the
     # intent rather than initiating a charge.
     #
-    # @param amount_in_cents [Integer]
+    # @param money [Spree::Money]
     # @param payment_source [Spree::PaymentSource, Spree::CreditCard]
     # @param gateway_options [Hash] Spree::Payment::GatewayOptions#to_hash
     # @return [Spree::PaymentResponse]
-    def authorize(amount_in_cents, payment_source, gateway_options = {})
-      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options)
+    def authorize(money, payment_source, gateway_options = {})
+      handle_authorize_or_purchase(money, payment_source, gateway_options)
     end
 
     # @see #authorize — capture vs authorize is decided by the intent's capture
     #   method, so both resolve the same way.
-    def purchase(amount_in_cents, payment_source, gateway_options = {})
-      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options)
+    def purchase(money, payment_source, gateway_options = {})
+      handle_authorize_or_purchase(money, payment_source, gateway_options)
     end
 
-    def capture(amount_in_cents, payment_intent_id, _gateway_options = {})
+    def capture(money, payment_intent_id, _gateway_options = {})
       protect_from_error do
         stripe_payment_intent = retrieve_payment_intent(payment_intent_id)
 
         response = if payment_intent_requires_capture?(stripe_payment_intent)
-                     capture_payment_intent(payment_intent_id, amount_in_cents)
+                     capture_payment_intent(payment_intent_id, SpreeStripe::Units.to_stripe(money, money.currency))
                    elsif stripe_payment_intent.status == 'succeeded'
                      stripe_payment_intent
                    else
@@ -113,10 +120,10 @@ module SpreeStripe
       end
     end
 
-    def credit(amount_in_cents, _source, payment_intent_id, _gateway_options = {})
+    def credit(money, _source, payment_intent_id, _gateway_options = {})
       protect_from_error do
         response = send_request do |opts|
-          Stripe::Refund.create({ amount: amount_in_cents, payment_intent: payment_intent_id }, opts)
+          Stripe::Refund.create({ amount: SpreeStripe::Units.to_stripe(money, money.currency), payment_intent: payment_intent_id }, opts)
         end
 
         success(response.id, response)
@@ -266,7 +273,7 @@ module SpreeStripe
 
     private
 
-    def handle_authorize_or_purchase(amount_in_cents, _payment_source, gateway_options)
+    def handle_authorize_or_purchase(_money, _payment_source, gateway_options)
       # Scoped through this gateway's own payments — a cart-owned payment
       # (checkout is still in flight) has no order to join through, and the
       # payment method already belongs to exactly one store. Found by the
@@ -302,14 +309,14 @@ module SpreeStripe
     def validate_secret_key
       Stripe::Refund.list({ limit: 0 }, api_options)
     rescue Stripe::AuthenticationError
-      errors.add(:base, :secret_key_invalid, message: Spree.t('stripe.errors.secret_key_invalid'))
+      errors.add(:base, :secret_key_invalid, message: I18n.t('spree.stripe.errors.secret_key_invalid'))
     rescue Stripe::PermissionError => e
       return unless e.error&.code == 'secret_key_required'
 
       errors.add(:base, :publishable_key_provided,
-                 message: Spree.t('stripe.errors.publishable_key_provided'))
+                 message: I18n.t('spree.stripe.errors.publishable_key_provided'))
     rescue Stripe::StripeError
-      errors.add(:base, :stripe_unavailable, message: Spree.t('stripe.errors.stripe_unavailable'))
+      errors.add(:base, :stripe_unavailable, message: I18n.t('spree.stripe.errors.stripe_unavailable'))
     end
 
     def build_customer_payload(order: nil, customer: nil)

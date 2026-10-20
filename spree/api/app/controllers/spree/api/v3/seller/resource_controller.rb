@@ -11,6 +11,7 @@ module Spree
           include Spree::Api::V3::Seller::SellerContext
           include Spree::Api::V3::SellerAuthentication
           include Spree::Api::V3::ScopedAuthorization
+          include Spree::Api::V3::StrictMoneyParams
 
           protected
 
@@ -63,6 +64,17 @@ module Spree
           # @return [Symbol]
           def seller_association
             model_class.table_name.delete_prefix('spree_').to_sym
+          end
+
+          # What extensions opened to sellers, never the operator-level list:
+          # an attribute opened to operators must not become seller-writable
+          # by accident.
+          def model_additional_permitted_attributes
+            return [] unless respond_to?(:model_class, true)
+
+            Array(model_class.try(:additional_seller_permitted_attributes))
+          rescue NotImplementedError
+            []
           end
 
           def authorize_resource!(resource = @resource, action = action_name.to_sym)

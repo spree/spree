@@ -55,7 +55,7 @@ export function ProductCustomFieldsProvider<T extends CustomFieldsFormShape>({
   return (
     <FormBackedCustomFieldsProvider
       form={form}
-      resourceType="Spree::Product"
+      resourceType="product"
       definitionIds={definitionIds}
       requiredDefinitionIds={requiredDefinitionIds}
     >

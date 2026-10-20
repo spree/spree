@@ -7,7 +7,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
 
-    serialize :preferences, type: Hash, coder: YAML, default: {}
+    serialize :preferences, coder: Spree::Metadata::HashSerializer, default: {}
 
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
@@ -206,7 +206,7 @@ module Spree
       scope.first
     end
 
-    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_code state_code]
+    self.whitelisted_ransackable_attributes = ADDRESS_FIELDS - %w[country state] + %w[country_code state_code]
     self.whitelisted_ransackable_associations = %w[owner]
 
     def self.required_fields

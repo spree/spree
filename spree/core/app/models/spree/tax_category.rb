@@ -16,6 +16,7 @@ module Spree
     before_save :set_default_category
 
     self.whitelisted_ransackable_attributes = %w[name is_default tax_code]
+    search_by :name
 
     # The category applied to taxable records that carry none of their own.
     #

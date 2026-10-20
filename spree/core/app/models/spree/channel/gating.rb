@@ -17,8 +17,9 @@ module Spree
         # Empty -> falls back to the Store-level preference. Both are `nullable`
         # so a blank write stays nil (inherit) rather than coercing to "" or
         # false, while an explicit value remains a channel override.
-        preference :storefront_access, :string, default: nil, nullable: true
+        preference :storefront_access, :string, default: nil, nullable: true, choices: STOREFRONT_ACCESS
         preference :guest_checkout, :boolean, default: nil, nullable: true
+        exposes_preferences :storefront_access, :guest_checkout
 
         validate :storefront_access_must_be_valid
       end
@@ -58,7 +59,7 @@ module Spree
         return if STOREFRONT_ACCESS.include?(value.to_s)
 
         errors.add(
-          :preferred_storefront_access, :invalid_storefront_access, message: Spree.t(:invalid_storefront_access, scope: [:errors, :messages], default: 'is not a valid storefront access level')
+          :preferred_storefront_access, :invalid_storefront_access, message: I18n.t('spree.errors.messages.invalid_storefront_access')
         )
       end
     end

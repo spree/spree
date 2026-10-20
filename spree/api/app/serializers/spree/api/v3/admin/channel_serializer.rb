@@ -4,16 +4,15 @@ module Spree
       module Admin
         class ChannelSerializer < V3::ChannelSerializer
           typelize store_id: :string,
-                   preferred_order_routing_strategy: [:string, nullable: true],
-                   preferred_storefront_access: [:string, nullable: true],
-                   preferred_guest_checkout: [:boolean, nullable: true],
+                   order_routing_strategy: [:string, nullable: true, comment: 'Order routing strategy; null inherits the store setting. Built-in: rules. Extensions may register more.'],
                    stock_location_ids: [:string, multi: true],
                    default_catalog_id: [:string, nullable: true]
 
-          attributes :preferred_order_routing_strategy,
-                     :preferred_storefront_access,
-                     :preferred_guest_checkout,
-                     created_at: :iso8601, updated_at: :iso8601
+          attributes created_at: :iso8601, updated_at: :iso8601
+
+          preference_attributes Spree::Channel, except: %i[order_routing_strategy]
+
+          api_type_attributes :order_routing_strategy
 
           # Fulfillment-origin allowlist; empty means every store location
           # serves this channel.
@@ -23,9 +22,7 @@ module Spree
 
           # When set, only the default catalog's products are visible on this
           # channel; unset means every publication.
-          attribute :default_catalog_id do |record|
-            record.default_catalog&.prefixed_id
-          end
+          prefixed_id_attributes :default_catalog
         end
       end
     end

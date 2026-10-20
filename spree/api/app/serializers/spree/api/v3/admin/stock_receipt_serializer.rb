@@ -28,9 +28,7 @@ module Spree
             receipt.receivable_type.demodulize.underscore
           end
 
-          attribute :receivable_id do |receipt|
-            receipt.receivable&.prefixed_id
-          end
+          prefixed_id_attributes :receivable
 
           actor_attributes :received_by
 

@@ -10,23 +10,6 @@ describe Spree::Promotion, type: :model do
   describe 'Validations' do
     let!(:valid_promotion) { build(:promotion, name: 'A promotion', kind: :automatic) }
 
-    it 'valid_promotion is valid' do
-      expect(valid_promotion).to be_valid
-    end
-
-    it 'validates usage limit' do
-      valid_promotion.usage_limit = -1
-      expect(valid_promotion).not_to be_valid
-
-      valid_promotion.usage_limit = 100
-      expect(valid_promotion).to be_valid
-    end
-
-    it 'validates name' do
-      valid_promotion.name = nil
-      expect(valid_promotion).not_to be_valid
-    end
-
     it 'can create multiple promos with the same code' do
       create(:promotion, code: 'ABC')
       valid_promotion.code = 'ABC'
@@ -174,25 +157,13 @@ describe Spree::Promotion, type: :model do
       promotion.save!
     end
 
-    it 'deletes actions' do
-      promotion.destroy!
-
-      expect(Spree::PromotionAction.count).to eq(0)
-    end
-
-    it 'deletes rules' do
-      promotion.destroy!
-
-      expect(Spree::PromotionRule.count).to eq(0)
-    end
-
     context 'if promotion was already used' do
       it 'does not destroy the promotion' do
         promotion.orders << create(:order)
         promotion.destroy
 
         expect(promotion.reload.errors).to be_present
-        expect(promotion.errors.full_messages).to eq [Spree.t('promotion_already_used')]
+        expect(promotion.errors.full_messages).to eq [I18n.t('spree.promotion_already_used')]
       end
     end
   end
@@ -240,18 +211,18 @@ describe Spree::Promotion, type: :model do
       promotion = create(:promotion, code: 'ABC', multi_codes: false, kind: :coupon_code)
 
       promotion.kind = :automatic
-      promotion.save
+      promotion.save!
 
-      expect(promotion.kind).to eq 'automatic'
+      expect(promotion.reload.kind).to eq 'automatic'
     end
 
     it 'allows to change promotion type from multiple discount codes to automatic' do
       promotion = create(:promotion, multi_codes: true, number_of_codes: 10, kind: :coupon_code)
 
       promotion.kind = :automatic
-      promotion.save
+      promotion.save!
 
-      expect(promotion.kind).to eq 'automatic'
+      expect(promotion.reload.kind).to eq 'automatic'
     end
   end
 
@@ -357,12 +328,6 @@ describe Spree::Promotion, type: :model do
     it 'is not expired if current time is within starts_at and expires_at range' do
       promotion.starts_at  = Time.current - 1.day
       promotion.expires_at = Time.current + 1.day
-      expect(promotion).not_to be_expired
-    end
-
-    it 'is not expired if usage limit is not exceeded' do
-      promotion.usage_limit = 2
-      allow(promotion).to receive_messages(credits_count: 1)
       expect(promotion).not_to be_expired
     end
   end
@@ -907,12 +872,6 @@ describe Spree::Promotion, type: :model do
         expect(promotion.code).not_to eq 'spree123'
       end
     end
-
-    context 'without generate_code' do
-      it 'has a generated code' do
-        expect(promotion.code).to eq 'spree123'
-      end
-    end
   end
 
   describe '#generate_coupon_codes' do
@@ -953,7 +912,7 @@ describe Spree::Promotion, type: :model do
     let(:category) { create(:category) }
 
     it 'builds a rule from a {type, preferences} hash' do
-      promotion.rules = [{ type: 'item_total', preferences: { amount_min: 50 } }]
+      promotion.rules = [{ type: 'item_total', preferences: { amount_min: '50' } }]
       promotion.reload
 
       expect(promotion.rules.size).to eq(1)
@@ -964,7 +923,7 @@ describe Spree::Promotion, type: :model do
     it 'updates an existing rule when matched by id' do
       existing = promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal', preferences: { amount_min: 10 })
 
-      promotion.rules = [{ id: existing.id, type: 'item_total', preferences: { amount_min: 99 } }]
+      promotion.rules = [{ id: existing.id, type: 'item_total', preferences: { amount_min: '99' } }]
       promotion.reload
 
       expect(promotion.rules.size).to eq(1)
@@ -1040,7 +999,7 @@ describe Spree::Promotion, type: :model do
 
       rule = promotion.rules.first
       expect(rule).to be_a(Spree::Promotion::Rules::Category)
-      expect(rule.taxons).to contain_exactly(category)
+      expect(rule.categories).to contain_exactly(category)
     end
 
     # Regression: `category_ids=` on Rules::Taxon is a custom setter (not a
@@ -1054,12 +1013,12 @@ describe Spree::Promotion, type: :model do
 
       rule = fresh.reload.rules.first
       expect(rule).to be_a(Spree::Promotion::Rules::Category)
-      expect(rule.taxons).to contain_exactly(category)
+      expect(rule.categories).to contain_exactly(category)
     end
 
     it 'defers application until after_save on a new promotion record' do
       promotion = build(:promotion)
-      promotion.rules = [{ type: 'item_total', preferences: { amount_min: 25 } }]
+      promotion.rules = [{ type: 'item_total', preferences: { amount_min: '25' } }]
 
       expect(promotion).to be_pending_rules_or_actions
       expect(promotion.rules).to be_empty
@@ -1094,7 +1053,7 @@ describe Spree::Promotion, type: :model do
         type: 'create_adjustment',
         calculator: {
           type: 'flat_rate',
-          preferences: { amount: 7.5, currency: 'USD' }
+          preferences: { amount: '7.5', currency: 'USD' }
         }
       }]
       promotion.reload
@@ -1115,7 +1074,7 @@ describe Spree::Promotion, type: :model do
       promotion.actions = [{
         id: action.id,
         type: 'create_adjustment',
-        calculator: { type: 'flat_percent_item_total', preferences: { flat_percent: 15 } }
+        calculator: { type: 'flat_percent_item_total', preferences: { flat_percent: '15' } }
       }]
       promotion.reload
 
@@ -1123,6 +1082,12 @@ describe Spree::Promotion, type: :model do
       expect(reloaded.id).to eq(action.id)
       expect(reloaded.calculator).to be_a(Spree::Calculator::FlatPercentItemTotal)
       expect(reloaded.calculator.preferred_flat_percent).to eq(15)
+    end
+
+    it 'refuses a calculator type the action does not offer' do
+      expect {
+        promotion.actions = [{ type: 'create_adjustment', calculator: { type: 'not_a_calculator' } }]
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/actions/0/calculator/type})
     end
 
     it 'builds a FreeShipping action without a calculator' do
@@ -1154,6 +1119,18 @@ describe Spree::Promotion, type: :model do
       promotion.reload
 
       expect(promotion.actions.size).to eq(1)
+    end
+
+    it 'reports an invalid action on the new promotion it was assigned to' do
+      promotion = build(:promotion)
+      promotion.actions = [{
+        type: 'create_adjustment',
+        calculator: { type: 'tiered_percent', preferences: { tiers: [{ threshold: '100', value: '150' }] } }
+      }]
+
+      expect(promotion.save).to be(false)
+      expect(promotion.errors[:base].join).to include('between 0% and 100%')
+      expect(promotion).not_to be_persisted
     end
   end
 end

@@ -13,6 +13,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import type { CurrencyCode } from '@spree/admin-sdk'
 import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
 import {
   getApiClient,
@@ -20,10 +21,12 @@ import {
   parseVideoUrl,
   ResourceMultiAutocomplete,
   TagCombobox,
-  useDirectUpload,
+  useFileUpload,
   useOptionalStore,
 } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Button,
   Card,
   CardAction,
@@ -59,6 +62,7 @@ import {
   FolderTreeIcon,
   ImageIcon,
   ImagePlusIcon,
+  InfoIcon,
   LibraryIcon,
   Loader2Icon,
   PencilIcon,
@@ -69,12 +73,20 @@ import {
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
+import {
+  type Control,
+  Controller,
+  type UseFormReturn,
+  useFormState,
+  useWatch,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { AddVideoDialog } from './add-video-dialog'
 import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
 import { ProductBulkPriceEditor } from './product-bulk-price-editor'
+import { variantHasTaxCategoryOverride } from './product-form-mapping'
+import type { VariantFormValues } from './product-schema'
 import type {
   PanelMedia as Media,
   PanelProduct as Product,
@@ -187,8 +199,8 @@ export function PricesCard({
    * StoreProvider; a seller's tenant is a seller and the store is derived
    * server-side, so it passes the currencies its profile reports.
    */
-  currencies?: string[]
-  defaultCurrency?: string
+  currencies?: CurrencyCode[]
+  defaultCurrency?: CurrencyCode
 }) {
   const { t } = useTranslation()
   const store = useOptionalStore()
@@ -197,7 +209,7 @@ export function PricesCard({
   // Not `useState(defaultCurrency)` alone: the store (or the seller's profile)
   // arrives after the first render, so a state seeded from the fallback would
   // stick and price everything in the wrong currency.
-  const [selectedCurrency, setCurrency] = useState<string | null>(null)
+  const [selectedCurrency, setCurrency] = useState<CurrencyCode | null>(null)
   const currency = selectedCurrency ?? defaultCurrency
 
   // Until the real default arrives there is no currency to price in, and an
@@ -213,7 +225,10 @@ export function PricesCard({
           {t('admin.common.prices')}
         </CardTitle>
         {currencies.length > 1 && (
-          <Select value={currency} onValueChange={setCurrency}>
+          <Select
+            value={currency}
+            onValueChange={(next) => setCurrency(currencies.find((code) => code === next) ?? null)}
+          >
             <SelectTrigger size="sm" className="w-24">
               <SelectValue />
             </SelectTrigger>
@@ -285,7 +300,7 @@ export function MediaCard({
   form: UseFormReturn<ProductFormValues, any, any>
 }) {
   const { t } = useTranslation()
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const deleteMedia = useDeleteProductMedia(productId ?? '')
   const confirm = useConfirm()
   const [pending, setPending] = useState<PendingUpload[]>([])
@@ -338,7 +353,7 @@ export function MediaCard({
         const preview = URL.createObjectURL(file)
         setPending((prev) => [...prev, { id: uploadId, file, preview, progress: 'uploading' }])
         try {
-          const result = await directUpload.mutateAsync(file)
+          const result = await fileUpload.mutateAsync(file)
           const current = form.getValues('media') ?? []
           form.setValue(
             'media',
@@ -373,7 +388,7 @@ export function MediaCard({
         }
       }
     },
-    [directUpload, form, t],
+    [fileUpload, form, t],
   )
 
   const handleDrop = useCallback(
@@ -969,13 +984,31 @@ export function CategorizationCard({ form }: FormCardProps) {
       .filter(Boolean)
   }, [selectedProductType?.option_type_labels, selectedProductType?.option_type_ids, optionTypes])
 
+  // Seed type categories only when the merchant picks or changes the product
+  // type — not when an existing product opens and the type record loads async.
+  const previousProductTypeIdRef = useRef<string | null | undefined>(undefined)
+
   useEffect(() => {
     // Only where the panel files products at all: a seller's client registers
     // no categories, so seeding them would dirty the form with ids their API
     // drops on save — an unsaved-changes prompt over a field they cannot see.
     if (!client.categories) return
 
-    const categoryIds = selectedProductType?.category_ids
+    const currentTypeId = selectedProductTypeId ?? null
+
+    if (previousProductTypeIdRef.current === undefined) {
+      previousProductTypeIdRef.current = currentTypeId
+      return
+    }
+
+    if (!currentTypeId || selectedProductType?.id !== currentTypeId) return
+
+    const typeChanged = previousProductTypeIdRef.current !== currentTypeId
+    if (!typeChanged) return
+
+    previousProductTypeIdRef.current = currentTypeId
+
+    const categoryIds = selectedProductType.category_ids
     if (!categoryIds?.length) return
 
     const current = (form.getValues('category_ids') as string[] | undefined) ?? []
@@ -983,7 +1016,7 @@ export function CategorizationCard({ form }: FormCardProps) {
     if (missing.length === 0) return
 
     form.setValue('category_ids', [...current, ...missing], { shouldDirty: true })
-  }, [selectedProductType, form, client.categories])
+  }, [selectedProductTypeId, selectedProductType, form, client.categories])
   // Automatic collections rebuild their members from rules, so a hand-picked
   // membership would be dropped on the next regeneration — offer manual only.
   // Memoized: `initialItems` feeds a useEffect + useMemo inside
@@ -1128,7 +1161,7 @@ export function CategorizationCard({ form }: FormCardProps) {
               control={form.control}
               render={({ field }) => (
                 <TagCombobox
-                  taggableType="Spree::Product"
+                  taggableType="product"
                   value={field.value ?? []}
                   onChange={field.onChange}
                 />
@@ -1149,6 +1182,27 @@ export function TaxCard({ form }: FormCardProps) {
   const { t } = useTranslation()
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
+  const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
+  const { dirtyFields } = useFormState({ control: form.control, name: 'tax_category_id' })
+  const showApplyToVariantsNotice = Boolean(dirtyFields.tax_category_id) && variants.length > 1
+  const overrides = useMemo(
+    () =>
+      variants
+        .map((variant, index) => ({ variant, index }))
+        .filter(({ variant }) => variantHasTaxCategoryOverride(variant)),
+    [variants],
+  )
+
+  const clearVariantTaxOverride = (variantIndex: number) => {
+    form.setValue(`variants.${variantIndex}.tax_category_id`, null, { shouldDirty: true })
+  }
+
+  const labelForVariant = (variant: VariantFormValues) => {
+    if (variant.options.length > 0) {
+      return variant.options.map((option) => `${option.name}: ${option.value}`).join(', ')
+    }
+    return variant.sku?.trim() || t('admin.products.variants.default_variant')
+  }
 
   return (
     <Card>
@@ -1158,7 +1212,7 @@ export function TaxCard({ form }: FormCardProps) {
           {t('admin.fields.tax.label')}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <Field>
           <FieldLabel>{t('admin.fields.tax_category_id.label')}</FieldLabel>
           <Controller
@@ -1185,6 +1239,48 @@ export function TaxCard({ form }: FormCardProps) {
             )}
           />
         </Field>
+
+        {showApplyToVariantsNotice && (
+          <Alert variant="info">
+            <InfoIcon />
+            <AlertDescription>{t('admin.products.tax.apply_to_variants_help')}</AlertDescription>
+          </Alert>
+        )}
+
+        {overrides.length > 0 && (
+          <div className="rounded-md border bg-muted/30 p-3 text-sm">
+            <p className="font-medium">{t('admin.products.tax.variant_overrides_heading')}</p>
+            <p className="text-muted-foreground mt-1">
+              {t('admin.products.tax.variant_overrides_description')}
+            </p>
+            <ul className="mt-3 space-y-2">
+              {overrides.map(({ variant, index }) => {
+                const categoryName =
+                  taxCategories.find((c) => c.id === variant.tax_category_id)?.name ??
+                  variant.tax_category_id
+                return (
+                  <li
+                    key={variant.id ?? `variant-tax-${index}`}
+                    className="flex flex-wrap items-center justify-between gap-2"
+                  >
+                    <span>
+                      {labelForVariant(variant)}
+                      <span className="text-muted-foreground"> — {categoryName}</span>
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => clearVariantTaxOverride(index)}
+                    >
+                      {t('admin.products.tax.clear_variant_override')}
+                    </Button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

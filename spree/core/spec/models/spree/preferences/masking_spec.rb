@@ -53,24 +53,15 @@ RSpec.describe Spree::Preferences::Masking do
   end
 
   describe '.serialize' do
-    # A throwaway Preferable — keeps the test focused on the masking
-    # helper instead of coupling to whichever production model happens
-    # to expose a :password preference today. Provides its own
-    # `preferences` hash since Preferable is normally mixed into an
-    # ActiveRecord model that supplies the serialized column.
+    # A throwaway payment method — keeps the test focused on the masking
+    # helper instead of coupling to whichever production gateway happens to
+    # expose a :password preference today. A payment method can store secrets.
     let(:preferable_class) do
-      Class.new do
-        include Spree::Preferences::Preferable
-        include Spree::PreferenceSchema
-
+      Class.new(Spree::PaymentMethod) do
         preference :api_key,        :string,   default: 'PUBLIC123'
         preference :api_secret,     :password, default: 'SECRET456'
         preference :ratio,          :decimal,  default: 0.5
         preference :enabled,        :boolean,  default: true
-
-        def preferences
-          @preferences ||= {}
-        end
 
         def self.name
           'TestPreferable'
@@ -95,7 +86,7 @@ RSpec.describe Spree::Preferences::Masking do
       result = described_class.serialize(preferable)
 
       expect(result['api_key']).to eq('pk_live_visible')
-      expect(result['ratio']).to eq(0.25)
+      expect(result['ratio']).to eq('0.25')
       expect(result['enabled']).to be false
     end
 
@@ -103,6 +94,38 @@ RSpec.describe Spree::Preferences::Masking do
       preferable.set_preference(:api_secret, 'sk_live_extremely_secret_value')
 
       expect(described_class.serialize(preferable)['api_secret']).to eq("#{'•' * 16}alue")
+    end
+
+    context 'with money preferences' do
+      let(:preferable_class) do
+        Class.new(Spree::Calculator) do
+          preference :amount, :money, default: 0
+          preference :currency, :string, default: 'USD'
+
+          def self.name
+            'TestMoneyCalculator'
+          end
+        end
+      end
+
+      it "writes money to the record's currency's decimals" do
+        preferable.set_preference(:amount, '12.5')
+
+        expect(described_class.serialize(preferable)['amount']).to eq('12.50')
+      end
+
+      it 'keeps an amount below a cent, as a unit price does' do
+        preferable.set_preference(:amount, '0.0125')
+
+        expect(described_class.serialize(preferable)['amount']).to eq('0.0125')
+      end
+
+      it 'writes whole yen' do
+        preferable.set_preference(:currency, 'JPY')
+        preferable.set_preference(:amount, '1500')
+
+        expect(described_class.serialize(preferable)['amount']).to eq('1500')
+      end
     end
 
     it 'returns nil for unset password preferences (no default leakage)' do
@@ -113,6 +136,25 @@ RSpec.describe Spree::Preferences::Masking do
       expect(result.fetch('api_secret')).to be_nil
       # Sanity check: the unmasked default would have leaked here.
       expect(result.fetch('api_secret')).not_to eq('SECRET456')
+    end
+
+    it 'returns amounts stored as numbers before preferences were typed as exact strings' do
+      calculator = Spree::Calculator::Shipping::FlatRate.new
+      calculator.preferences = calculator.preferences.merge('amounts' => { 'EUR' => 12.5 }, 'amount' => 3)
+
+      result = described_class.serialize(calculator)
+
+      expect(result['amounts']).to eq('EUR' => '12.50')
+      expect(result['amount']).to eq('3.00')
+    end
+
+    it 'returns an id list as prefixed ids, the form a write accepts' do
+      channel = create(:channel)
+      rule = Spree::PriceRules::ChannelRule.new(price_list: create(:price_list))
+      rule.preferred_channel_ids = [channel.prefixed_id]
+
+      expect(rule.preferences[:channel_ids]).to eq([channel.id.to_s])
+      expect(described_class.serialize(rule)['channel_ids']).to eq([channel.prefixed_id])
     end
   end
 end

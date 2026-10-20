@@ -5,6 +5,11 @@ module Spree
     module V3
       module Admin
         class ExchangeSerializer < V3::ExchangeSerializer
+          without_formatted_money
+
+          # No guest price gating here, so the inherited money fields are always present.
+          typelize price_difference: [:string, nullable: false]
+
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    stock_location_id: [:string, nullable: true],
@@ -13,9 +18,7 @@ module Spree
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :stock_location_id do |exchange|
-            exchange.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
           actor_attributes :created_by
 

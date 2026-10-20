@@ -1,10 +1,19 @@
 # Agent Instructions
 
+`CLAUDE.md` only imports this file — edit this one.
+
 This is the Spree admin dashboard for this project — a Vite + React app. The
 shell (routes, chrome, resource pages) ships in `@spree/dashboard`; this
 project holds your customizations.
 
 Full docs: https://spreecommerce.org/docs/developer/dashboard/overview
+
+## Running it
+
+`spree dev`, run from the project root (`../..`), starts this app's dev server
+together with the Spree API — don't start a second copy with `pnpm dev`. The
+Spree API itself is only ever run through the Spree CLI; see the project
+root's `AGENTS.md`.
 
 ## Imports
 
@@ -44,8 +53,10 @@ of what exists, not an implementation.
 - **Wrap API calls in a hook.** Components never call `adminClient` directly.
 - **Query keys are store-scoped.** Build them with `useResourceKey`; a bare
   `['brands']` key leaks one store's data into another after a store switch.
-- **Writes go through `useResourceMutation`**, which maps 422 responses onto
-  form fields instead of firing a toast.
+- **Writes go through `useResourceMutation`.** It shows a toast for network
+  and server failures but not for 422 validation errors — catch those in the
+  form's submit handler with `mapSpreeErrorsToForm`, which puts each message on
+  its field.
 - **Every visible string goes through i18next** — page titles, column labels,
   buttons, empty states, toasts. Never hardcode English in JSX or in a table
   definition. Add each new key to every locale file the project ships.
@@ -55,11 +66,14 @@ of what exists, not an implementation.
   walks every nested key and the SDK's object graph overflows the TypeScript
   compiler.
 - **A sortable or filterable column must be allowlisted for Ransack** on the
-  model, or the request fails at runtime.
+  model, or the request fails at runtime. That change belongs to the Spree API
+  in `../../server/` — follow `../../server/AGENTS.md`.
 - **Destructive actions that fire straight from a click need a confirm** —
   `useConfirm()` with `variant: 'destructive'`.
 
 ## Checks
+
+Run these with the project's package manager (`pnpm`, `npm run` or `yarn`):
 
 ```bash
 pnpm typecheck

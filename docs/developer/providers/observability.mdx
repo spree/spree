@@ -12,11 +12,21 @@ Tempo, Jaeger, Datadog, Honeycomb, New Relic, Dynatrace, and others.
 
 ## Setup
 
-Add the gem to your application's Gemfile:
+New Spree projects include `spree_opentelemetry` already. To add it to an older project:
 
-```ruby
-gem 'spree_opentelemetry'
-```
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree add opentelemetry
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```ruby server/Gemfile
+    # use the same version requirement as your `spree` gem, then run `bundle install`
+    gem 'spree_opentelemetry', '>= 6.0.0'
+    ```
+  </Tab>
+</Tabs>
 
 Then configure the exporter through the standard OpenTelemetry environment
 variables:

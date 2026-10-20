@@ -10,7 +10,7 @@ import en from '../locales/en.json'
 // made anywhere is honored on the next paint.
 export const ADMIN_LOCALE_STORAGE_KEY = 'spree-admin-locale'
 
-// Marks the locale key as auto-applied from a store's `preferred_admin_locale`
+// Marks the locale key as auto-applied from a store's `admin_locale`
 // (vs an explicit choice). Holds the storeId whose default is currently in
 // effect, so crossing into a different store can re-apply that store's default
 // while a genuine choice (switcher/profile/login) still wins everywhere. Mirrors
@@ -69,10 +69,10 @@ function readStoredLocale(): string {
 }
 
 /**
- * Reconcile the admin UI language against a store's `preferred_admin_locale`
+ * Reconcile the admin UI language against a store's `admin_locale`
  * fallback (legacy `base_controller` parity), for an admin with no genuine
  * personal choice. Encodes the precedence:
- *   account selected_locale > genuine stored choice > store preferred_admin_locale > 'en'
+ *   account selected_locale > genuine stored choice > store admin_locale > 'en'
  *
  * No-op when a higher tier owns the language (an account locale, or a genuine
  * stored choice — locale key set without an auto-marker). Otherwise drives the
@@ -83,7 +83,7 @@ function readStoredLocale(): string {
  *   - already matching → nothing changes.
  * Reloads (via the boot path) only when the displayed language actually changes.
  *
- * @param code        the store's current `preferred_admin_locale`
+ * @param code        the store's current `admin_locale`
  * @param storeId     the store being entered
  * @param accountLocale  the account's `selected_locale` (null when unset)
  * @param supported   locale codes the dashboard ships a bundle for

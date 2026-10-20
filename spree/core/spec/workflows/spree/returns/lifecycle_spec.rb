@@ -197,6 +197,64 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(result.error.value).to eq(:refund_exceeds_balance)
     end
 
+    it 'refuses zero while the customer is still owed money' do
+      result = Spree::Returns::Refund.call(return_record: return_record, amount: 0)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_amount_required)
+      expect(return_record.reload).to be_received
+    end
+
+    it 'refuses a negative amount' do
+      result = Spree::Returns::Refund.call(return_record: return_record, amount: -1)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_amount_negative)
+    end
+
+    # A free gift sent back is owed nothing, and refusing to refund it left the
+    # return received for good, with no step that could close it.
+    context 'when nothing is owed' do
+      before do
+        return_record.return_line_items.each { |line| line.update!(pre_tax_amount: 0) }
+        return_record.reload
+      end
+
+      %w[original_payment store_credit].each do |refund_method|
+        it "closes the return without moving any money when asked for #{refund_method}", :events do
+          allow(Spree::Events).to receive(:publish)
+          order = return_record.order
+          provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil, estimate_refund: nil)
+          allow(order).to receive(:tax_provider).and_return(provider)
+          allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+          result = Spree::Returns::Refund.call(return_record: return_record, refund_method: refund_method)
+
+          expect(result).to be_success
+          expect(result.value).to be_refunded
+          expect(return_record.refunds).to be_empty
+          expect(Spree::StoreCredit.where(originator: return_record)).to be_empty
+          expect(provider).not_to have_received(:refund)
+          expect(Spree::Events).to have_received(:publish).with('return.refunded', any_args)
+        end
+      end
+    end
+
+    # Completing a return whose money already went back moves nothing, so there
+    # is no tax to credit a second time.
+    it 'credits no tax when the money already went back' do
+      create(:store_credit, originator: return_record, amount: return_record.refund_total)
+      order = return_record.order
+      provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil, estimate_refund: nil)
+      allow(order).to receive(:tax_provider).and_return(provider)
+      allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+      result = Spree::Returns::Refund.call(return_record: return_record)
+
+      expect(result.value).to be_refunded
+      expect(provider).not_to have_received(:refund)
+    end
+
     context 'to store credit' do
       it 'issues credit inside the transaction and marks the return refunded' do
         result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
@@ -225,7 +283,7 @@ RSpec.describe 'Spree::Returns workflows' do
                             quantity: 1)
 
         order = return_record.order
-        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil, estimate_refund: nil)
         allow(order).to receive(:tax_provider).and_return(provider)
         allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
 
@@ -239,7 +297,7 @@ RSpec.describe 'Spree::Returns workflows' do
 
       it 'credits the returned items against the filed tax document' do
         order = return_record.order
-        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil, estimate_refund: nil)
         allow(order).to receive(:tax_provider).and_return(provider)
         allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
 
@@ -265,7 +323,7 @@ RSpec.describe 'Spree::Returns workflows' do
         return_record.reload
 
         order = return_record.order
-        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil, estimate_refund: nil)
         allow(order).to receive(:tax_provider).and_return(provider)
         allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
 
@@ -282,7 +340,7 @@ RSpec.describe 'Spree::Returns workflows' do
       # the merchant kept, and a return is marked refunded only once.
       it 'tells the provider how much was actually refunded' do
         order = return_record.order
-        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil, estimate_refund: nil)
         allow(order).to receive(:tax_provider).and_return(provider)
         allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
 
@@ -345,6 +403,164 @@ RSpec.describe 'Spree::Returns workflows' do
         expect(return_record.reload.refunds).to be_present
         expect(return_record.refunds.first.originator).to eq(return_record)
       end
+    end
+  end
+
+  # V-3725: a return refunded the price and kept the tax charged on top of it.
+  describe 'giving back the tax the customer paid' do
+    let(:order) { create(:shipped_order, store: store, line_items_count: 1, line_items_price: 25) }
+    let(:line_item) { order.line_items.first }
+
+    before do
+      create(:tax_line, order: order, line_item: line_item, amount: 2.5, rate: 0.1, label: 'Sales tax 10%')
+      order.payments.completed.first.update_column(:amount, 500)
+      allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+    end
+
+    def received_return(quantity: 1, received: quantity)
+      return_record = create_return(items: [{ fulfillment_item: fulfillment_items.first, quantity: quantity }]).value
+      Spree::Returns::Approve.call(return_record: return_record)
+      line = return_record.return_line_items.first
+      Spree::Returns::Receive.call(return_record: return_record, items: [{ return_line_item: line, quantity: received }])
+      return_record.reload
+    end
+
+    it 'opens the return with the tax beside the price' do
+      line = create_return.value.return_line_items.first
+
+      expect(line).to have_attributes(pre_tax_amount: 25, additional_tax_total: 2.5, included_tax_total: 0)
+      expect(line.refund_amount).to eq(27.5)
+      expect(line.tax_lines.credits.sole.amount).to eq(2.5)
+    end
+
+    it 'refunds the price and its tax by default' do
+      return_record = received_return
+
+      result = Spree::Returns::Refund.call(return_record: return_record)
+
+      expect(result).to be_success
+      expect(return_record.refunds.sole).to have_attributes(amount: 27.5, tax_amount: 2.5)
+    end
+
+    it 'refuses more than the price and its tax' do
+      result = Spree::Returns::Refund.call(return_record: received_return, amount: 27.51)
+
+      expect(result.error.value).to eq(:refund_exceeds_balance)
+    end
+
+    # A restocking fee kept: goods and tax are given back in the same proportion.
+    it 'gives back the tax in proportion when less is refunded' do
+      return_record = received_return
+
+      Spree::Returns::Refund.call(return_record: return_record, amount: 25)
+
+      expect(return_record.refunds.sole.tax_amount).to eq(2.27)
+      expect(return_record.credited_tax_total).to eq(2.27)
+    end
+
+    it 'gives back only the tax on the units that arrived' do
+      line_item.update_columns(quantity: 3, price: 10)
+      fulfillment_items.first.update_columns(quantity: 3)
+      line_item.tax_lines.sole.update_columns(amount: 3)
+      return_record = received_return(quantity: 3, received: 2)
+
+      expect(return_record.refund_total).to eq(22)
+
+      Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+      expect(Spree::StoreCredit.find_by(originator: return_record).amount).to eq(22)
+      expect(return_record.credited_tax_total).to eq(2)
+    end
+
+    context 'with VAT included in the price' do
+      before do
+        line_item.update_columns(price: 30.26)
+        line_item.tax_lines.sole.update_columns(amount: 5.66, rate: 0.23, included: true)
+      end
+
+      # It was refunded before, by accident: the before-tax figure held the
+      # gross price.
+      it 'holds the price before tax and the VAT inside it apart' do
+        line = create_return.value.return_line_items.first
+
+        expect(line).to have_attributes(pre_tax_amount: 24.6, included_tax_total: 5.66, additional_tax_total: 0)
+        expect(line.refund_amount).to eq(30.26)
+      end
+    end
+
+    # Opened before returns carried tax: no credit rows against a taxed line.
+    it 'refunds a return opened before the fix exactly as it was opened' do
+      return_record = create(:received_return, order: order, store: store)
+
+      Spree::Returns::Refund.call(return_record: return_record)
+
+      expect(return_record.refunds.sole).to have_attributes(amount: 25, tax_amount: 0)
+      expect(return_record.credited_tax_total).to eq(0)
+    end
+
+    it 'refuses to open a return whose tax could not be worked out' do
+      allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:estimate_refund).
+        and_raise(Spree::Tax::ProviderUnavailable)
+
+      result = create_return
+
+      expect(result.error.value).to eq(:tax_provider_unavailable)
+      expect(order.returns.reload).to be_empty
+    end
+
+    it 'still refunds when filing the credit fails' do
+      return_record = received_return
+      allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:refund).
+        and_raise(Spree::Tax::ProviderUnavailable)
+      allow(Rails.error).to receive(:report)
+
+      expect(Spree::Returns::Refund.call(return_record: return_record)).to be_success
+      expect(Rails.error).to have_received(:report).with(instance_of(Spree::Tax::ProviderUnavailable), any_args)
+    end
+
+    it 'takes the credit back when the return is canceled, without asking the tax service' do
+      return_record = create_return.value
+      allow_any_instance_of(Spree::TaxProvider::Internal).to receive(:estimate_refund).
+        and_raise(Spree::Tax::ProviderUnavailable)
+
+      expect(Spree::Returns::Cancel.call(return_record: return_record)).to be_success
+      expect(return_record.credited_tax_total).to eq(0)
+    end
+
+    # The line that never arrived gives nothing back, tax included.
+    it 'gives no tax back on a line that did not arrive' do
+      line_item.update_columns(quantity: 2)
+      fulfillment_items.first.update_columns(quantity: 2)
+      line_item.tax_lines.sole.update_columns(amount: 5)
+      return_record = create_return(items: [{ fulfillment_item: fulfillment_items.first, quantity: 1 }] * 2).value
+      first, second = return_record.return_line_items.to_a
+      Spree::Returns::Approve.call(return_record: return_record)
+      Spree::Returns::Receive.call(return_record: return_record, items: [{ return_line_item: first, quantity: 1 },
+                                                                         { return_line_item: second, quantity: 0 }])
+
+      Spree::Returns::Refund.call(return_record: return_record.reload)
+
+      expect(first.credited_tax_total).to eq(2.5)
+      expect(second.credited_tax_total).to eq(0)
+      expect(return_record.refunds.sole).to have_attributes(amount: 27.5, tax_amount: 2.5)
+    end
+
+    # A cent across two lines settles one of them at nothing, and the gateway
+    # then refuses: the retry must still give that line's tax back.
+    it 'still gives the tax back after a refund that failed at the gateway' do
+      line_item.update_columns(quantity: 2)
+      fulfillment_items.first.update_columns(quantity: 2)
+      line_item.tax_lines.sole.update_columns(amount: 5)
+      return_record = create_return(items: [{ fulfillment_item: fulfillment_items.first, quantity: 1 }] * 2).value
+      Spree::Returns::Approve.call(return_record: return_record)
+      Spree::Returns::Receive.call(return_record: return_record)
+      allow_any_instance_of(Spree::Refund).to receive(:perform!).and_raise(Spree::Core::GatewayError, 'declined')
+      Spree::Returns::Refund.call(return_record: return_record.reload, amount: 0.01)
+
+      allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+      Spree::Returns::Refund.call(return_record: return_record.reload)
+
+      expect(return_record.refunds.sole).to have_attributes(amount: 55, tax_amount: 5)
     end
   end
 

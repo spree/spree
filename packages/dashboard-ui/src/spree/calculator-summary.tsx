@@ -5,7 +5,8 @@
  * model (delivery methods, tax rates, …).
  *
  * The expected payload mirrors the admin API's calculator embed: a
- * `{ label, preferences, preference_schema }` triple. The component is
+ * `{ label, preferences, schema }` triple, `schema` being the JSON Schema of
+ * the calculator's preferences. The component is
  * tolerant of partial input — missing schema or preferences just fall
  * back to the label alone.
  *
@@ -22,7 +23,14 @@ export interface CalculatorPayload {
   /** STI class name (e.g. "Spree::Calculator::FlatRate"). Used as a label fallback. */
   type?: string | null
   preferences?: Record<string, unknown> | null
-  preference_schema?: ReadonlyArray<{ key: string; type: string }> | null
+  schema?: { properties?: Record<string, CalculatorPropertySchema> } | null
+}
+
+/** The part of a preference's JSON Schema the summary reads. */
+interface CalculatorPropertySchema {
+  type?: string | string[]
+  format?: string
+  pattern?: string
 }
 
 interface CalculatorSummaryProps {
@@ -60,14 +68,14 @@ export function formatCalculatorSummary(
     calculator.label?.trim() ||
     (calculator.type ? (calculator.type.split('::').pop() ?? calculator.type) : '')
 
-  const schema = calculator.preference_schema
+  const properties = Object.entries(calculator.schema?.properties ?? {})
   const prefs = calculator.preferences
 
-  if (!schema?.length || !prefs) return label || null
+  if (!properties.length || !prefs) return label || null
 
   const currency = (typeof prefs.currency === 'string' && prefs.currency) || 'USD'
-  const details = schema
-    .map((field) => formatField(field, prefs[field.key], currency))
+  const details = properties
+    .map(([key, property]) => formatField(key, property, prefs[key], currency))
     .filter((s): s is string => s !== null)
     .join(', ')
 
@@ -76,45 +84,47 @@ export function formatCalculatorSummary(
 }
 
 /**
- * Formats one preference value by naming convention. Calculators don't
- * carry richer field metadata (no `display_format`, no `unit`), so we
- * fall back to key-name heuristics that match the Ruby preference
- * declarations in `Spree::Calculator::*`.
+ * Formats one preference value from its schema.
  *
- * - `amount` / `*_amount` decimals → currency-formatted.
- * - `*_percent` decimals → `N%`.
- * - `currency` strings → omitted (folded into the money formatting).
+ * - money → currency-formatted.
+ * - `*_percent` values → `N%`.
+ * - currencies → omitted (folded into the money formatting).
  * - booleans → humanized key when true; skipped when false.
+ * - lists (tiers) → their length; objects → omitted.
  * - everything else → `key: value`.
  */
 function formatField(
-  field: { key: string; type: string },
+  key: string,
+  property: CalculatorPropertySchema,
   value: unknown,
   currency: string,
 ): string | null {
   if (value === null || value === undefined || value === '') return null
-  if (field.key === 'currency') return null
+  if (property.format === 'currency') return null
+  if (property.format === 'money') return formatMoney(value, currency)
+  if (/(?:^|_)percent$/.test(key)) return `${value}%`
 
-  if (field.type === 'decimal') {
-    if (/(?:^|_)percent$/.test(field.key)) return `${value}%`
-    if (field.key === 'amount' || field.key.endsWith('_amount')) {
-      return formatMoney(value, currency)
-    }
-    return `${humanize(field.key)}: ${value}`
+  const type = (Array.isArray(property.type) ? property.type : [property.type]).find(
+    (t) => t !== 'null',
+  )
+  if (type === 'boolean') return value ? humanize(key) : null
+  if (type === 'array') {
+    return Array.isArray(value) && value.length ? `${humanize(key)}: ${value.length}` : null
   }
-  if (field.type === 'boolean') {
-    return value ? humanize(field.key) : null
-  }
-  return `${humanize(field.key)}: ${value}`
+  if (type === 'object') return null
+  return `${humanize(key)}: ${value}`
 }
 
 function formatMoney(value: unknown, currency: string): string {
-  const n = typeof value === 'number' ? value : Number(value)
-  if (Number.isNaN(n)) return String(value)
+  const amount = String(value)
+  if (!/^-?\d+(\.\d+)?$/.test(amount)) return amount
   try {
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(n)
+    // `Intl` reads a numeric string exactly; its ES2022 typings only list numbers.
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(
+      amount as unknown as number,
+    )
   } catch {
-    return `${n} ${currency}`
+    return `${amount} ${currency}`
   }
 }
 

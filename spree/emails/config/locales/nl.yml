@@ -1,0 +1,38 @@
+---
+nl:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Wachtwoord resetten
+        expiry_notice: Deze link om je wachtwoord te resetten verloopt binnenkort. Als je dit niet hebt aangevraagd, hoef je niets te doen.
+        greeting: Hoi %{name},
+        ignore_notice: Als je geen wachtwoordreset hebt aangevraagd, kun je deze e-mail veilig negeren. Je wachtwoord wordt niet gewijzigd.
+        instructions: We hebben een verzoek ontvangen om je wachtwoord te resetten. Klik op de knop hieronder om een nieuw wachtwoord te kiezen.
+        subject: Instructies voor het opnieuw instellen van het wachtwoord
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hoi,
+        ignore_disclaimer: Als je dit niet hebt aangevraagd, kun je deze e-mail negeren.
+        instructions: Klik op de onderstaande knop om je e-mailadres te verifiëren.
+        message_copy_link: 'Als de knop niet werkt, kopieer en plak dan de volgende link in je browser:'
+        subject: Verifieer je e-mailadres
+        verify_email_address_link: E-mailadres verifiëren
+    order_mailer:
+      cancel_email:
+        instructions: Je order is GEANNULEERD. Bewaar deze annulering voor je administratie.
+        subject: Bestelling is geannuleerd
+      confirm_email:
+        instructions: Controleer je bestelling en bewaar deze mail.
+        subject: Bestelling is bevestigd
+      payment_link_email:
+        message: Klik op de onderstaande knop om je bestelling te betalen.
+        message_copy_link: 'Als de knop niet werkt, kopieer en plak dan de volgende link in je browser:'
+        pay_for_order: Bestelling betalen
+        subject: 'Betaallink voor bestelling #%{number}'
+      store_owner_notification_email:
+        heading: Nieuwe bestelling ontvangen
+        instructions: Je hebt een nieuwe bestelling ontvangen.
+        order_summary: Samenvatting van bestelling %{number}
+        subject: "%{store_name} heeft een nieuwe bestelling ontvangen"
+      subtotal: 'Subtotaal:'
+      total: 'Besteltotaal:'

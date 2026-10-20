@@ -6,6 +6,32 @@ module Spree
           class DigitalAssetsController < ResourceController
             scoped_resource :products
 
+            request_params :digital_asset do |body|
+              # Names a blob rather than a column, so it is attached
+              # separately (+attach_uploaded_file+).
+              body.attribute :signed_id, :string,
+                permit: false,
+                description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. Required for an uploaded file, omitted for a provider-backed asset. On update it replaces the file for everyone who already bought it."
+              # Resolved through the parent rather than assigned, so an asset
+              # can't be pointed at a variant of another product or store.
+              body.attribute :variant_id, :id,
+                permit: false,
+                description: "Defaults to the product's default variant when omitted."
+              # The model validates it names a registered provider.
+              body.attribute :provider_type, :string,
+                description: 'A provider shorthand from the providers endpoint. Omit for an uploaded file.'
+              # Its keys are declared by the provider, so it lands verbatim
+              # under one key in the asset's metadata.
+              body.attribute :provider_settings, :hash,
+                description: "Values for the provider's settings schema, keyed by field name."
+              body.attribute :authorized_clicks, :integer,
+                nullable: true,
+                description: "Null means the store's download settings apply."
+              body.attribute :authorized_days, :integer,
+                nullable: true,
+                description: "Null means the store's download settings apply."
+            end
+
             # PATCH /api/v3/admin/products/:product_id/digital_assets/:id
             #
             # Replacing the file keeps every already-issued link working, since
@@ -45,7 +71,7 @@ module Spree
 
               data = Spree.digital_asset_providers.map do |provider_class|
                 {
-                  type: provider_class.to_s,
+                  type: provider_class.api_type,
                   name: provider_class.provider_name,
                   requires_attachment: provider_class.requires_attachment?,
                   settings_schema: provider_class.settings_schema
@@ -70,10 +96,6 @@ module Spree
               authorize!(:show, @parent)
             end
 
-            def parent_association
-              :digital_assets
-            end
-
             # The parent association reaches assets through `variants`, which
             # carries an ORDER BY on the variants table. Combined with the
             # collection's DISTINCT, PostgreSQL rejects the query outright
@@ -88,17 +110,8 @@ module Spree
               [:variant, { attachment_attachment: :blob }]
             end
 
-            # variant_id is resolved through the parent rather than assigned:
-            # mass-assigning it would let a caller point an asset at a variant
-            # of any product, in any store. signed_id likewise names a blob
-            # rather than a column, so it is attached separately.
-            # provider_type is mass-assignable: the model validates it names a
-            # registered provider, so an unknown value is a 422, not a hazard.
-            # provider_settings is an open hash — its keys are declared by the
-            # provider, not fixed here — so it is permitted as arbitrary scalars
-            # and lands verbatim under one key in the asset's metadata.
             def permitted_params
-              params.permit(:authorized_clicks, :authorized_days, :provider_type, provider_settings: {})
+              params.permit(*declared_permitted_attributes)
             end
 
             private
@@ -138,7 +151,7 @@ module Spree
             end
 
             def render_private_storage_error
-              render_validation_error(Spree.t(:digital_assets_attachment_must_be_private))
+              render_validation_error(I18n.t('spree.digital_assets_attachment_must_be_private'))
             end
           end
         end

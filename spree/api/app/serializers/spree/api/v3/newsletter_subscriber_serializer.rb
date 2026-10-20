@@ -10,17 +10,13 @@ module Spree
 
         attributes :email, created_at: :iso8601, updated_at: :iso8601
 
-        attribute :verified do |subscriber|
-          subscriber.verified?
-        end
+        attribute :verified, &:verified?
 
         attribute :verified_at do |subscriber|
           subscriber.verified_at&.iso8601
         end
 
-        attribute :customer_id do |subscriber|
-          subscriber.customer&.prefixed_id
-        end
+        prefixed_id_attributes :customer
       end
     end
   end

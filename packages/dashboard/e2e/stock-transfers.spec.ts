@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 import {
   createInTransitTransfer,
   FIXTURE_TRANSFER_DESTINATION,
+  FIXTURE_TRANSFER_PRODUCT,
   FIXTURE_TRANSFER_SKU,
   FIXTURE_TRANSFER_SOURCE,
   gotoIndex,
@@ -44,6 +45,50 @@ test.describe('stock transfers', () => {
     await expect(page.getByText(/choose the warehouse it leaves from first/i)).toBeVisible()
   })
 
+  test('raises a draft from the form, packs it and sends it', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, TRANSFERS_PATH(creds.store_id), CTA)
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByRole('heading', { name: /new stock transfer/i })).toBeVisible()
+
+    await page.locator('#source').click()
+    await page.getByRole('option', { name: FIXTURE_TRANSFER_SOURCE }).click()
+    await page.locator('#destination').click()
+    await page.getByRole('option', { name: FIXTURE_TRANSFER_DESTINATION }).click()
+
+    await page
+      .getByRole('button', { name: /add a product/i })
+      .first()
+      .click()
+    const picker = page.getByRole('dialog')
+    await picker.getByRole('searchbox').fill(FIXTURE_TRANSFER_SKU)
+    await picker.getByRole('button', { name: new RegExp(FIXTURE_TRANSFER_PRODUCT) }).click()
+    await picker.getByRole('button', { name: /^add 1$/i }).click()
+    await expect(picker).toBeHidden()
+    await page.getByRole('spinbutton', { name: /^shipped$/i }).fill('3')
+    // Transfers move stock the merchant already owns, so a line carries no cost.
+    await expect(page.getByLabel(/^unit cost$/i)).toHaveCount(0)
+
+    await page.getByRole('button', { name: /create draft/i }).click()
+
+    await expect(page).toHaveURL(/\/transfers\/st_/, { timeout: 15_000 })
+    await expect(page.getByText(/^draft$/i).first()).toBeVisible()
+
+    await page.getByRole('button', { name: /mark as ready to ship/i }).click()
+    await expect(page.getByText(/^ready to ship$/i).first()).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /mark in transit/i }).click()
+    await expect(page.getByRole('heading', { name: /send this transfer\?/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /mark in transit/i })
+      .click()
+
+    await expect(page.getByText(/^in transit$/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('0 received of 3 shipped')).toBeVisible()
+    await expect(page.getByText(/no deliveries yet/i)).toBeVisible()
+  })
+
   test('sends a draft, then counts in a delivery with damage', async ({ page }) => {
     const creds = await login(page)
     const transfer = await createInTransitTransfer(page, creds.accessToken, {
@@ -63,15 +108,53 @@ test.describe('stock transfers', () => {
     // Count in eight of the ten intact; the other two arrived crushed.
     await page.getByLabel(/^accepted$/i).fill('8')
     await page.getByLabel(/^rejected$/i).fill('2')
+    // A refusal has to say why before the delivery can be booked.
+    const receive = page.getByRole('button', { name: /^receive$/i })
+    await expect(receive).toBeDisabled()
     await page.getByLabel(/^reason$/i).click()
     await page.getByRole('option', { name: /^damaged$/i }).click()
-    await page.getByRole('button', { name: /^receive$/i }).click()
+    await receive.click()
 
     // Everything that left has arrived, so the trip is over — with the two
     // refused units on the delivery's record, not the shelf.
     await expect(page.getByText(/^received$/i).first()).toBeVisible({ timeout: 15_000 })
     await expect(page.getByText('8 received of 10 shipped')).toBeVisible()
     await expect(page.getByText(/8 accepted · 2 rejected/i)).toBeVisible()
+    await expect(page.getByRole('cell', { name: /^damaged$/i })).toBeVisible()
+  })
+
+  test('counts a transfer in over two deliveries, each its own stock receipt', async ({ page }) => {
+    const creds = await login(page)
+    const transfer = await createInTransitTransfer(page, creds.accessToken, {
+      sku: FIXTURE_TRANSFER_SKU,
+      quantity: 6,
+    })
+
+    await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${transfer.id}`)
+    await expect(page.getByRole('heading', { name: transfer.number })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const firstNote = `Van 1 ${Date.now()}`
+    await page.getByLabel(/^delivery note$/i).fill(firstNote)
+    await page.getByLabel(/^accepted$/i).fill('2')
+    await page.getByRole('button', { name: /^receive$/i }).click()
+
+    await expect(page.getByText(/^partially received$/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('2 received of 6 shipped')).toBeVisible()
+    await expect(page.getByText(firstNote)).toBeVisible()
+
+    // The rest of the load arrives on a second van.
+    await page.getByLabel(/^accepted$/i).fill('4')
+    await page.getByRole('button', { name: /^receive$/i }).click()
+
+    await expect(page.getByText('6 received of 6 shipped')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/^\d+ accepted · \d+ rejected$/)).toHaveCount(2)
+    await expect(page.getByText('2 accepted · 0 rejected')).toBeVisible()
+    await expect(page.getByText('4 accepted · 0 rejected')).toBeVisible()
+    await expect(page.getByText(/receive a delivery/i)).toHaveCount(0)
   })
 
   test('a draft can be corrected, a shipped one cannot', async ({ page }) => {

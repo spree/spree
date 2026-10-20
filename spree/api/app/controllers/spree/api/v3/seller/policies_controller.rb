@@ -11,6 +11,18 @@ module Spree
         class PoliciesController < Seller::ResourceController
           scoped_resource :seller_profile
 
+          request_params :policy do |body|
+            body.attribute :name, :string,
+              required: true, on: :create,
+              example: 'Shipping Policy',
+              description: 'When the marketplace requires a named policy, use that exact name: the onboarding check matches on it.'
+            body.attribute :slug, :string, example: 'shipping-policy'
+            body.attribute :body, :string,
+              nullable: true,
+              example: '<p>Orders leave the workshop within two working days.</p>',
+              description: 'HTML, sanitized before it is stored. `body_html` on the response is the rendering of what was stored.'
+          end
+
           protected
 
           def model_class
@@ -19,10 +31,6 @@ module Spree
 
           def serializer_class
             Spree.api.seller_policy_serializer
-          end
-
-          def resource_permitted_attributes
-            [:name, :slug, :body]
           end
 
           # Accept slug or prefixed ID, matching the storefront's lookup.

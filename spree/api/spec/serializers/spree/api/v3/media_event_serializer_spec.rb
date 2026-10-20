@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V3::MediaEventSerializer do
   let(:store) { @default_store }
   let(:product) { create(:product) }
-  let(:asset) { create(:asset, viewable: product.default_variant) }
+  let(:asset) { create(:media, viewable: product.default_variant) }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   subject { described_class.new(asset, params: base_params).to_h }

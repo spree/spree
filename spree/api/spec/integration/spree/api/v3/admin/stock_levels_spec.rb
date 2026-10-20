@@ -36,12 +36,7 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[stock_location_id_eq]', in: :query, type: :string, required: false,
-                description: 'Only levels at this stock location'
-      parameter name: :'q[variant_id_eq]', in: :query, type: :string, required: false,
-                description: 'Only levels for this variant'
-      parameter name: :'q[variant_sku_or_variant_product_name_cont]', in: :query, type: :string, required: false,
-                description: 'Only levels whose variant SKU or product name contains this text'
+      filter_parameters_for
 
       response '200', 'stock levels found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -87,26 +82,7 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[stock_levels],
-        properties: {
-          stock_levels: {
-            type: :array,
-            items: {
-              type: :object,
-              required: %w[variant_id stock_location_id],
-              properties: {
-                variant_id: { type: :string, example: 'variant_xY9' },
-                stock_location_id: { type: :string, example: 'sloc_aBc' },
-                count_on_hand: { type: :integer, nullable: true, example: 42 },
-                adjustment: { type: :integer, nullable: true, example: -3 },
-                backorderable: { type: :boolean, nullable: true }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'stock levels updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -134,6 +110,48 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
         end
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/stock_levels/{id}' do
+    let(:stock_level) do
+      create(:stock_level, variant: variant, stock_location: stock_location, adjust_count_on_hand: false).tap do |level|
+        level.update_columns(count_on_hand: 10)
+      end
+    end
+    let(:id) { stock_level.prefixed_id }
+
+    patch 'Update a stock level' do
+      tags 'Stock'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Corrects one shelf. Send `count_on_hand` for the count the shelf should
+        end at, or `adjustment` for a signed change; either is recorded as a
+        stock movement labelled with `reason`.
+      DESC
+      admin_scope :write, :stock
+
+      admin_sdk_example 'stock-levels/update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Stock level ID'
+      request_body_for
+
+      response '200', 'stock level updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { count_on_hand: 25, backorderable: false, reason: 'Cycle count' } }
+
+        schema '$ref' => '#/components/schemas/StockLevel'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['count_on_hand']).to eq(25)
+          expect(data['backorderable']).to be(false)
+        end
       end
     end
   end

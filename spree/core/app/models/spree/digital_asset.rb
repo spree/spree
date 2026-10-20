@@ -5,6 +5,9 @@ module Spree
     has_prefix_id :dig
 
     publishes_lifecycle_events
+    publishes_event 'digital.created', deprecated_alias_of: 'digital_asset.created'
+    publishes_event 'digital.updated', deprecated_alias_of: 'digital_asset.updated'
+    publishes_event 'digital.deleted', deprecated_alias_of: 'digital_asset.deleted'
 
     # Provider config lives under one key in `metadata` so a provider owns its
     # own namespace without colliding with other developer metadata. The values
@@ -21,6 +24,10 @@ module Spree
     # says whether an attachment is required, so file assets keep today's rule
     # and provider-backed assets (which carry no file) are exempt.
     DEFAULT_PROVIDER = 'Spree::DigitalAssetProvider::File'.freeze
+
+    # The API names a provider by its shorthand (`file`); the column keeps the
+    # class name.
+    normalizes :provider_type, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.digital_asset_providers, value) }
 
     validate :provider_type_is_registered, if: -> { provider_type.present? }
     # Only ask a valid provider whether it needs a file — an unregistered

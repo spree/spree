@@ -73,6 +73,9 @@ packages/*/dist
 # Build-time-generated starter template embeds (see scripts/sync-starter.mjs)
 packages/cli/templates/dashboard-starter
 packages/cli/templates/seller-dashboard-starter
+# The CLI's offline Admin API spec, generated from docs/api-reference/admin.yaml
+# before every build, test, type check and dev run (see bundle-spec.mjs)
+packages/cli/src/generated
 .claude/worktrees
 *.tsbuildinfo
 .claude/scheduled_tasks.lock

@@ -11,9 +11,7 @@ module Spree
           attributes :name, :position,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :delivery_profile_id do |record|
-            record.delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes :delivery_profile
 
           # Empty means every store location.
           attribute :stock_location_ids do |record|

@@ -41,7 +41,7 @@ module Spree
             result = described_class.call(order: order, label: 'Nothing left', value: 5, line_item: line_item)
 
             expect(result).to be_failure
-            expect(result.error.to_s).to eq(Spree.t('errors.messages.discount_has_no_effect'))
+            expect(result.error.to_s).to eq(I18n.t('spree.errors.messages.discount_has_no_effect'))
           end.not_to change { order.discounts.count }
         end
       end
@@ -78,14 +78,14 @@ module Spree
           result = described_class.call(order: order, label: 'Zero', value: 0)
 
           expect(result).to be_failure
-          expect(result.error.to_s).to eq(Spree.t('errors.messages.discount_value_must_be_positive'))
+          expect(result.error.to_s).to eq(I18n.t('spree.errors.messages.discount_value_must_be_positive'))
         end
 
         it 'fails on an unknown value_type' do
           result = described_class.call(order: order, label: 'Odd', value: 5, value_type: 'points')
 
           expect(result).to be_failure
-          expect(result.error.to_s).to eq(Spree.t('errors.messages.discount_value_type_invalid'))
+          expect(result.error.to_s).to eq(I18n.t('spree.errors.messages.discount_value_type_invalid'))
         end
       end
 

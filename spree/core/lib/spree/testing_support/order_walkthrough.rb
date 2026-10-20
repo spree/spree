@@ -21,7 +21,7 @@ class OrderWalkthrough
 
     # A delivery method must exist for rates to be displayed on checkout page
     unless Spree::DeliveryMethod.exists?
-      FactoryBot.create(:shipping_method).tap do |delivery_method|
+      FactoryBot.create(:delivery_method).tap do |delivery_method|
         delivery_method.calculator.preferred_amount = 10
         delivery_method.calculator.preferred_currency = store.default_currency
         delivery_method.calculator.save

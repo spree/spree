@@ -71,20 +71,14 @@ module Spree
         resolutions = Array(resolutions)
         return if resolutions.empty?
 
-        # One derivation for the batch: every line in a resolution set belongs
-        # to the same cart, and tax_address / tax_country walk associations and
-        # a store preference that would otherwise be re-read per line.
-        owner = resolutions.first.first.owner
-        vat_inputs = { address: owner&.tax_address, country: owner&.tax_country, market: owner&.market }
-
         resolutions.each do |line_item, price|
           # Probe-based flows resolve against stand-ins, so the guard has to
           # hold at the write too.
           next if line_item.manual_price?
 
-          amount = price.price_including_vat_for(**vat_inputs)
+          amount = price.price
           # Marked before the blank guard: the provider has already answered,
-          # so a restatement that comes back blank must still not send the
+          # so a price that comes back blank must still not send the
           # after_save callback back to the provider from inside the caller's
           # transaction. Only the assign-for-a-coming-save case needs it — a
           # persisted write goes through update_columns and fires no callbacks.

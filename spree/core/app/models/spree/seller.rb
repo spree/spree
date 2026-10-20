@@ -25,6 +25,8 @@ module Spree
     MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count returns_location].freeze
 
     publishes_lifecycle_events
+    publishes_events :approved, :invited, :onboarding_reopened, :onboarding_started, :rejected,
+                     :submitted_for_review, :suspended
 
     # Where a seller is in its life on the marketplace. Transitions belong to
     # workflows (Spree::Sellers::Approve and friends) rather than a state
@@ -38,6 +40,12 @@ module Spree
     include Spree::HasStatus
     has_status :pending, :invited, :canceled, :onboarding, :ready_for_review,
                :approved, :rejected, :suspended, default: :pending
+
+    # The storefront lists approved sellers only, and a seller's contact
+    # address is back-office data.
+    self.whitelisted_ransackable_attributes = %w[status contact_email]
+    search_by :name
+    self.private_ransackable_attributes = { store: %w[status contact_email], seller: %w[status contact_email] }
 
     # Who remits consumer tax on this seller's sales. `seller` means they are
     # merchant of record; `platform` is the marketplace-facilitator case, and
@@ -62,7 +70,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     # The address knows it is a seller's from its owner, so it is read back
     # with the business rules — no personal name insisted on, the company line
     # required. Not `dependent: :destroy`: a seller is paranoid, so destroy is
@@ -195,6 +202,7 @@ module Spree
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :square_logo, service: Spree.public_storage_service_name
     has_one_attached :cover_photo, service: Spree.public_storage_service_name
+    signed_id_attachments :logo, :square_logo, :cover_photo
 
     #
     # Validations
@@ -339,7 +347,7 @@ module Spree
     # A seller keeps no clock of their own: a date means whatever the
     # marketplace says it means, so their panel reads timestamps in the
     # store's zone rather than in whichever one their browser sits in.
-    delegate :preferred_timezone, to: :store, allow_nil: true
+    delegate :preferred_timezone, :timezone, to: :store, allow_nil: true
 
     # Sellers holding an account with one provider, for the reverse lookup a
     # provider webhook does — it knows the account, not the seller.

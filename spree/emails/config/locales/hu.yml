@@ -1,0 +1,37 @@
+---
+hu:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Jelszó visszaállítása
+        expiry_notice: Ez a jelszó-visszaállítási hivatkozás hamarosan lejár. Ha nem Ön kezdeményezte, nincs teendője.
+        greeting: Üdv %{name}!
+        ignore_notice: Ha nem kért jelszó-visszaállítást, nyugodtan figyelmen kívül hagyhatja ezt az e-mailt. A jelszava nem fog megváltozni.
+        instructions: Kérést kaptunk a jelszava visszaállítására. Kattintson az alábbi gombra egy új jelszó kiválasztásához.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Üdv,
+        ignore_disclaimer: Ha nem Ön kérte ezt, kérjük, hagyja figyelmen kívül ezt az e-mailt.
+        instructions: Kérjük, kattintson az alábbi gombra az e-mail-címe megerősítéséhez.
+        message_copy_link: 'Ha a gomb nem működik, kérjük, másolja be a következő hivatkozást a böngészőjébe:'
+        subject: Erősítse meg az e-mail-címét
+        verify_email_address_link: E-mail-cím megerősítése
+    order_mailer:
+      cancel_email:
+        instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
+        subject: Cancellation of Order
+      confirm_email:
+        instructions: Please review and retain the following order information for your records.
+        subject: Order Confirmation
+      payment_link_email:
+        message: Kérjük, kattintson az alábbi gombra a rendelése kifizetéséhez.
+        message_copy_link: 'Ha a gomb nem működik, kérjük, másolja be a következő hivatkozást a böngészőjébe:'
+        pay_for_order: Rendelés kifizetése
+        subject: 'Fizetési hivatkozás a(z) #%{number} rendeléshez'
+      store_owner_notification_email:
+        heading: Új rendelés érkezett
+        instructions: Új rendelést kapott.
+        order_summary: "%{number} rendelés összegzése"
+        subject: "%{store_name} új rendelést kapott"
+      subtotal: 'Részösszeg:'
+      total: 'Rendelés végösszege:'

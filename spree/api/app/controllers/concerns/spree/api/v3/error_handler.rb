@@ -48,10 +48,12 @@ module Spree
           insufficient_stock: 'insufficient_stock',
           invalid_quantity: 'invalid_quantity',
           invalid_price: 'invalid_price',
+          invalid_money_format: 'invalid_money_format',
           price_override_not_allowed: 'price_override_not_allowed',
 
           # Validation errors
           validation_error: 'validation_error',
+          invalid_preferences: 'invalid_preferences',
           parameter_missing: 'parameter_missing',
           parameter_invalid: 'parameter_invalid',
 
@@ -74,6 +76,11 @@ module Spree
           # Export errors
           export_not_ready: 'export_not_ready',
 
+          # Email template errors
+          email_template_stale: 'email_template_stale',
+          email_template_invalid: 'email_template_invalid',
+          email_template_no_sample: 'email_template_no_sample',
+
           # Rate limiting errors
           rate_limit_exceeded: 'rate_limit_exceeded',
 
@@ -82,6 +89,11 @@ module Spree
 
           # Request errors
           request_too_large: 'request_too_large',
+
+          # Tax engine errors — the same two codes the completion workflow
+          # reports, so a client sees one vocabulary wherever tax failed.
+          tax_provider_unavailable: 'tax_provider_unavailable',
+          tax_calculation_refused: 'tax_calculation_refused',
 
           # General errors
           processing_error: 'processing_error',
@@ -94,10 +106,19 @@ module Spree
           rescue_from CanCan::AccessDenied, with: :handle_access_denied
           rescue_from Spree::Storefront::AccessDenied, with: :handle_access_denied
           rescue_from Spree::Core::GatewayError, with: :handle_gateway_error
+          # The backstop for every path that prices tax. Cart updates and
+          # completion answer for themselves, with a message shaped to what the
+          # customer was doing; anything else — adding an item, changing a
+          # quantity, a recalculation — reaches here rather than escaping as a
+          # 500 with an HTML body that a storefront cannot tell from a bug.
+          rescue_from Spree::Tax::ProviderError, with: :handle_tax_provider_error
           rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
           rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid
+          rescue_from Spree::Preferences::InvalidPreferences, with: :handle_invalid_preferences
+          rescue_from ActiveRecord::RecordNotSaved, with: :handle_record_not_saved
           rescue_from ArgumentError, with: :handle_argument_error
           rescue_from ActionDispatch::Http::Parameters::ParseError, with: :handle_parse_error
+          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :handle_invalid_signature
         end
 
         protected
@@ -155,9 +176,28 @@ module Spree
             # Workflows reject with a symbol naming the reason. Translate it,
             # falling back to the symbol so a missing key is visible rather
             # than silently blank.
-            render_error(code: code, message: Spree.t(error, default: error.to_s.humanize), status: status)
+            render_error(code: code, message: I18n.t("spree.#{error}", default: error.to_s.humanize), status: status)
           else
             render_error(code: code, message: error.to_s, status: status)
+          end
+        end
+
+        # Renders a failed workflow or service result. A tax engine failure the
+        # workflow caught itself (so it could roll the cart back) answers as
+        # handle_tax_provider_error would have: 503 for an outage, the one
+        # status the SDK retries, and 422 for a refusal. Anything else is
+        # rendered with +code+.
+        #
+        # @param result [Spree::ServiceModule::Result]
+        # @param code [String] the error code for any other failure
+        def render_result_failure(result, code:)
+          case result.error.code
+          when ERROR_CODES[:tax_provider_unavailable]
+            render_error(code: ERROR_CODES[:tax_provider_unavailable], message: result.error.to_s, status: :service_unavailable)
+          when ERROR_CODES[:tax_calculation_refused]
+            render_error(code: ERROR_CODES[:tax_calculation_refused], message: result.error.to_s, status: :unprocessable_content)
+          else
+            render_service_error(result.error, code: code)
           end
         end
 
@@ -225,6 +265,25 @@ module Spree
           )
         end
 
+        # Refused and unavailable are different instructions to the customer, so
+        # they keep different codes: one names something to fix, the other is
+        # worth retrying. Avalara's own wording is passed through for a refusal
+        # because it names the problem better than we can; an outage says only
+        # that, since its detail is about our endpoint and belongs in the error
+        # tracker.
+        def handle_tax_provider_error(exception)
+          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
+
+          refused = exception.is_a?(Spree::Tax::CalculationRefused)
+          render_error(
+            code: refused ? ERROR_CODES[:tax_calculation_refused] : ERROR_CODES[:tax_provider_unavailable],
+            message: refused ? exception.message.to_s : I18n.t('spree.cart_line_item.tax_unavailable'),
+            # A refusal is the request's fault, an outage is not. 503 is also
+            # the one the SDK retries — it retries on status, not on our code.
+            status: refused ? :unprocessable_content : :service_unavailable
+          )
+        end
+
         def handle_parameter_missing(exception)
           Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           render_error(
@@ -239,12 +298,42 @@ module Spree
           render_validation_error(exception.record.errors)
         end
 
+        # Each failing value is keyed by its JSON pointer into the request,
+        # e.g. `/preferences/channel_ids/1`.
+        def handle_invalid_preferences(exception)
+          render_error(
+            code: ERROR_CODES[:invalid_preferences],
+            message: exception.message,
+            status: :unprocessable_content,
+            details: exception.failures.group_by { |failure| failure[:pointer] }.transform_values { |failures| failures.pluck(:message) }
+          )
+        end
+
+        # Replacing a has_one on a saved record saves the new one at once, and
+        # raises when that one fails its own validations.
+        def handle_record_not_saved(exception)
+          errors = exception.record&.errors
+          return render_validation_error(errors) if errors.present?
+
+          render_error(code: ERROR_CODES[:validation_error], message: exception.message, status: :unprocessable_content)
+        end
+
         def handle_argument_error(exception)
           Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           render_error(
             code: ERROR_CODES[:invalid_request],
             message: exception.message,
             status: :bad_request
+          )
+        end
+
+        # A `signed_id` that was tampered with, or has expired (they last a
+        # day), is a bad parameter rather than a server fault.
+        def handle_invalid_signature(_exception)
+          render_error(
+            code: ERROR_CODES[:parameter_invalid],
+            message: I18n.t('spree.upload_reference_invalid'),
+            status: :unprocessable_content
           )
         end
 
@@ -263,9 +352,20 @@ module Spree
 
         # Format validation errors for details field
         def format_validation_details(errors)
-          errors.messages.transform_values do |messages|
-            messages.map { |msg| msg }
+          errors.messages.to_h do |attribute, messages|
+            [wire_error_attribute(errors, attribute), messages.map { |msg| msg }]
           end
+        end
+
+        # A setting the API reads and writes under its plain name reports its
+        # errors under that name too, never the `preferred_` one the model uses;
+        # an attachment slot reports them under the `<slot>_signed_id` it is
+        # written with.
+        def wire_error_attribute(errors, attribute)
+          record_class = errors.objects.first&.base&.class
+          (record_class.exposed_preference_name(attribute) if record_class.respond_to?(:exposed_preference_name)) ||
+            (record_class.signed_id_attribute_for(attribute) if record_class.respond_to?(:signed_id_attribute_for)) ||
+            attribute
         end
 
         # Infer error code from context
@@ -311,7 +411,7 @@ module Spree
                     model_name&.humanize || 'record'
                   end
 
-          Spree.t(:record_not_found, scope: 'api', model: label)
+          I18n.t('spree.api.record_not_found', model: label)
         end
 
         # Extract clean model name from exception

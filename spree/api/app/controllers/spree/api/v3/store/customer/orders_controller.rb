@@ -20,10 +20,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :orders
-            end
-
             def scope
               super.for_store(current_store).complete
             end

@@ -72,7 +72,7 @@ export function DeliveryMethodList({
         const price = carrierPriced
           ? t('admin.delivery_methods.carrier_rates')
           : formatListedPrice(
-              method.calculator_preferences,
+              method.calculator?.preferences,
               defaultCurrency,
               i18n.language,
               t('admin.delivery_methods.free'),
@@ -82,7 +82,7 @@ export function DeliveryMethodList({
         const ruleSummary = summarizeRules(method.rules, {
           t,
           currency: defaultCurrency,
-          weightUnit: store?.preferred_weight_unit ?? 'lb',
+          weightUnit: store?.weight_unit ?? 'lb',
           locale: i18n.language,
         })
 

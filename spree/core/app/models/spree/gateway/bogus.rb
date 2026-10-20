@@ -1,5 +1,7 @@
 module Spree
   class Gateway::Bogus < Gateway
+    self.accepts_money_amounts = true
+
     TEST_VISA = ['4111111111111111', '4012888888881881', '4222222222222']
     TEST_MC   = ['5500000000000004', '5555555555554444', '5105105105105100', '2223000010309703']
     TEST_AMEX = ['378282246310005', '371449635398431', '378734493671000', '340000000000009']
@@ -68,6 +70,13 @@ module Spree
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 
+    # A made-up address, so the dashboard link can be tried without a provider.
+    def gateway_dashboard_payment_url(payment)
+      return if payment.transaction_id.blank?
+
+      "https://dashboard.bogus.example/payments/#{payment.transaction_id}"
+    end
+
     def test?
       # Test mode is not really relevant with bogus gateway (no such thing as live server)
       true
@@ -115,6 +124,10 @@ module Spree
 
     def complete_payment_session(payment_session:, params: {})
       payment_session.complete
+    end
+
+    def cancel_payment_session(payment_session:)
+      payment_session.cancel
     end
 
     def setup_session_supported?

@@ -22,7 +22,7 @@ describe 'spree:upgrade:backfill_media_store_ids' do
 
   it 'takes a product-owned row from its product' do
     other_store = create(:store)
-    media = create(:image, viewable: create(:product, store: other_store))
+    media = create(:media, viewable: create(:product, store: other_store))
     unown!(media)
 
     subject.invoke
@@ -33,7 +33,7 @@ describe 'spree:upgrade:backfill_media_store_ids' do
   it 'takes a variant-owned row from the variant product' do
     other_store = create(:store)
     variant = create(:variant, product: create(:product, store: other_store))
-    media = create(:asset, viewable: variant)
+    media = create(:media, viewable: variant)
     unown!(media)
 
     subject.invoke
@@ -44,7 +44,7 @@ describe 'spree:upgrade:backfill_media_store_ids' do
   # An unowned row is invisible to every library query, so it has to land
   # somewhere rather than stay unreachable.
   it 'gives a row with no viewable to the default store' do
-    media = create(:image, viewable: nil)
+    media = create(:media, viewable: nil)
     unown!(media)
 
     subject.invoke
@@ -53,7 +53,7 @@ describe 'spree:upgrade:backfill_media_store_ids' do
   end
 
   it 'gives a row whose viewable is gone to the default store' do
-    media = create(:image, viewable: create(:product))
+    media = create(:media, viewable: create(:product))
     unown!(media)
     Spree::Media.unscoped.where(id: media.id).update_all(viewable_id: 0)
 
@@ -64,7 +64,7 @@ describe 'spree:upgrade:backfill_media_store_ids' do
 
   it 'leaves a row that already has a store alone' do
     other_store = create(:store)
-    media = create(:image, viewable: nil)
+    media = create(:media, viewable: nil)
     Spree::Media.unscoped.where(id: media.id).update_all(store_id: other_store.id)
 
     subject.invoke
@@ -73,7 +73,7 @@ describe 'spree:upgrade:backfill_media_store_ids' do
   end
 
   it 'can be run twice' do
-    media = create(:image, viewable: create(:product))
+    media = create(:media, viewable: create(:product))
     unown!(media)
 
     subject.invoke

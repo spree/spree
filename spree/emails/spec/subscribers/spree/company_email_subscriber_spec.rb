@@ -32,4 +32,13 @@ describe Spree::CompanyEmailSubscriber do
 
     expect { handle(invitation) }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
   end
+
+  it 'mails the invite through the registered subscribers', events: true do
+    perform_enqueued_jobs do
+      expect { create(:company_invitation, company: company, email: 'buyer@example.com') }.
+        to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    expect(ActionMailer::Base.deliveries.last.to).to eq(['buyer@example.com'])
+  end
 end

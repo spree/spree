@@ -12,6 +12,8 @@ module Spree
         include Spree::Api::V3::JwtAuthentication
         include Spree::Api::V3::ApiKeyAuthentication
         include Spree::Api::V3::ErrorHandler
+        include Spree::Api::V3::MoneyParams
+        include Spree::Api::V3::RequestParams
         include Spree::Api::V3::SecurityHeaders
         include Spree::Api::V3::ResourceSerializer
         include Spree::Api::V3::RateLimitHeaders
@@ -68,6 +70,16 @@ module Spree
         # parallel inheritance branches — both need it.
         def order_token
           request.headers['x-spree-token']
+        end
+
+        # Renders a workflow's result: the serialized record on success, its
+        # errors otherwise.
+        def render_result(result, status: :ok)
+          if result.success?
+            render json: serialize_resource(result.value), status: status
+          else
+            render_result_error(result)
+          end
         end
 
         # Renders a failed service/workflow Result: validation errors become a

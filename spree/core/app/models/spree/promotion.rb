@@ -87,6 +87,7 @@ module Spree
     # `name` is whitelisted so the admin global search / command palette can
     # filter via the `name_or_code_cont` predicate without a dedicated scope.
     self.whitelisted_ransackable_attributes = ['name', 'path', 'promotion_category_id', 'code', 'kind', 'starts_at', 'expires_at']
+    search_by :name, :code
     self.whitelisted_ransackable_associations = %w[coupon_codes]
 
     def self.with_coupon_code(coupon_code)
@@ -111,7 +112,8 @@ module Spree
     # exact recalculation where the cart first qualifies, and deactivates the
     # same way (Shopify-parity for cart-level discount codes). In-memory
     # assignments deliberately don't participate: unsaved codes belong to
-    # the explicit PromotionHandler::Coupon path.
+    # the explicit PromotionHandler::Coupon path. A batch code counts only
+    # while the purchase holds it (see #eligible?).
     #
     # @param purchase [Spree::Cart, Spree::Order]
     # @return [Array<Spree::Promotion>] empty, or the one promotion
@@ -223,7 +225,7 @@ module Spree
 
     # called anytime order.recalculate_totals! happens
     def eligible?(promotable, options = {})
-      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
+      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable) || !code_held_by?(promotable)
 
       !!eligible_rules(promotable, options)
     end
@@ -261,7 +263,7 @@ module Spree
     end
 
     def products
-      rules.where(type: %w[Spree::Promotion::Rules::Product Spree::Promotion::Rules::Product]).map(&:products).flatten.uniq
+      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)
@@ -346,6 +348,13 @@ module Spree
 
     private
 
+    # A batch code discounts only the cart or order holding it, which is what
+    # keeps each generated code to a single order. A cart's line item has no
+    # order, and the adjuster has asked with the cart before pricing its lines.
+    def code_held_by?(order)
+      !multi_codes? || order.nil? || coupon_codes.held_by(order).exists?
+    end
+
     # Counts distinct checkouts behind a set of discount rows.
     #
     # An order placed on its own is one checkout; the several orders a split
@@ -370,7 +379,7 @@ module Spree
     def not_used?
       return true if orders.empty?
 
-      errors.add(:base, :promotion_already_used, message: Spree.t('promotion_already_used'))
+      errors.add(:base, :promotion_already_used, message: I18n.t('spree.promotion_already_used'))
       throw(:abort)
     end
 

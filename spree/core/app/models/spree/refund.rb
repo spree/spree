@@ -5,6 +5,9 @@ module Spree
     include Spree::ActedBy
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     include Spree::InstrumentsGatewayCalls
     if defined?(Spree::Security::Refunds)
       include Spree::Security::Refunds
@@ -33,6 +36,20 @@ module Spree
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
     validate :order_is_covered_by_payment, on: :create
 
+    # Refunds for goods that came back, which settle what the customer owed
+    # for them rather than leaving it owed again.
+    scope :for_returned_items, -> { where(originator_type: returned_item_originators) }
+
+    # @return [Array<String>]
+    def self.returned_item_originators
+      [Spree::Return, Spree::Claim, Spree::Exchange].map(&:polymorphic_name)
+    end
+
+    # @return [Boolean]
+    def for_returned_items?
+      self.class.returned_item_originators.include?(originator_type)
+    end
+
     attr_reader :response
 
     delegate :currency, to: :payment
@@ -41,10 +58,6 @@ module Spree
     # ledger, the split's share — can rely on the column rather than walking
     # back through a payment that may belong to several orders.
     before_validation :assign_order_from_payment, on: :create
-
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
 
     def money
       Spree::Money.new(amount, currency: currency)
@@ -76,6 +89,17 @@ module Spree
       originator.refunded_line_amounts
     end
 
+    # The tax inside {#refunded_line_amounts}, for the lines whose tax is known.
+    # A line opened before returns and claims carried tax is absent: its amount
+    # says nothing about how much of it was tax.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => tax
+    def refunded_line_taxes
+      return {} unless originator.respond_to?(:refunded_line_taxes)
+
+      originator.refunded_line_taxes
+    end
+
     # Returns true if the refund is editable.
     #
     # Read through the refund's own order: a payment shared by a split checkout
@@ -96,9 +120,7 @@ module Spree
     def perform!
       return true if transaction_id.present?
 
-      credit_cents = Spree::Money.new(amount.to_f, currency: currency).amount_in_cents
-
-      @response = process!(credit_cents)
+      @response = process!(payment.payment_method.gateway_amount(amount, currency))
 
       self.transaction_id = @response.authorization
       update_columns(transaction_id: transaction_id)
@@ -141,37 +163,38 @@ module Spree
     end
 
     # return a payment response object if successful or else raise an error
-    def process!(credit_cents)
-      refund_total_in_cents = calculate_refund_amount(credit_cents)
+    # @param credit_amount [Spree::Money, Integer] as PaymentMethod#gateway_amount returns it
+    def process!(credit_amount)
+      refund_total = calculate_refund_amount(credit_amount)
 
       response = instrument_gateway_call(:credit, payment.payment_method) do
         if payment.payment_method.payment_profiles_supported?
-          payment.payment_method.credit(refund_total_in_cents, payment.source, payment.transaction_id, originator: self)
+          payment.payment_method.credit(refund_total, payment.source, payment.transaction_id, originator: self)
         else
-          payment.payment_method.credit(refund_total_in_cents, payment.transaction_id, originator: self)
+          payment.payment_method.credit(refund_total, payment.transaction_id, originator: self)
         end
       end
 
       if response.success?
-        track_order_as_refunded(refund_total_in_cents)
+        track_order_as_refunded(refund_total)
       else
-        Rails.logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
+        Rails.logger.error(I18n.t('spree.gateway_error') + "  #{response.to_yaml}")
         text = response.params['message'] || response.params['response_reason_text'] || response.message
         raise Core::GatewayError, text
       end
 
       response
     rescue Spree::PaymentConnectionError => e
-      Rails.logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
-      raise Core::GatewayError, Spree.t(:unable_to_connect_to_gateway)
+      Rails.logger.error(I18n.t('spree.gateway_error') + "  #{e.inspect}")
+      raise Core::GatewayError, I18n.t('spree.unable_to_connect_to_gateway')
     end
 
-    def calculate_refund_amount(credit_cents)
+    def calculate_refund_amount(credit_amount)
       # Overwrite this for more complex calculations
-      credit_cents
+      credit_amount
     end
 
-    def track_order_as_refunded(credit_cents)
+    def track_order_as_refunded(credit_amount)
       # You can track refunds here
     end
 

@@ -92,7 +92,9 @@ When a column is `filterable`, `filterType` decides which filter UI it gets:
 |---|---|---|
 | `'string'` (default) | Text input with contains/equals operators | — |
 | `'boolean'` | Yes/no toggle | — |
-| `'number'`, `'currency'` | Numeric comparisons | — |
+| `'number'` | Numeric comparisons | — |
+| `'currency'` | Pick from the store's currencies | — |
+| `'locale'` | Pick from the store's languages | — |
 | `'date'` | Date range picker (store-timezone aware) | — |
 | `'enum'` | Fixed option list | `filterOptions: [{ value, label }]` (required) |
 | `'resource'` | Multi-select autocomplete against another resource | `filterResource` (required) — `queryKey`, `search`, `hydrate`, `getOptionLabel` |

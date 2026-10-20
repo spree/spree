@@ -1,4 +1,4 @@
-import { defineTable, formatStoreDateTime, useTenantId } from '@spree/dashboard-core'
+import { defineTable, formatMoney, formatStoreDateTime, useTenantId } from '@spree/dashboard-core'
 import { StatusBadge } from '@spree/dashboard-ui'
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import type { Transfer } from '@spree/seller-sdk'
@@ -51,7 +51,7 @@ defineTable<Transfer>('seller-transfers', {
   // Without this the toolbar sends `name_cont`, which the ledger does not
   // whitelist — Ransack drops an unknown condition, so the box would look
   // like it worked and return everything.
-  searchParam: 'reference_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('earnings.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <BanknoteIcon className="size-8 text-muted-foreground" />,
@@ -112,7 +112,7 @@ defineTable<Transfer>('seller-transfers', {
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
-      render: (transfer) => transfer.display_amount,
+      render: (transfer) => formatMoney(transfer.amount, transfer.currency, i18n.language),
     },
   ],
 })

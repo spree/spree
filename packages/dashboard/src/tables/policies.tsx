@@ -8,7 +8,7 @@ defineTable<Policy>('policies', {
   docsPath: 'settings/policies',
   description: i18n.t('admin.table_descriptions.policies'),
   title: i18n.t('admin.settings_nav.items.policies'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.policies.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <ScrollTextIcon className="size-8 text-muted-foreground" />,

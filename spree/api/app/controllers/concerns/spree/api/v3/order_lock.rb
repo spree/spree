@@ -29,7 +29,7 @@ module Spree
             if order.is_a?(Spree::Cart) && order.completion_claimed?
               next render_error(
                 code: 'completion_in_progress',
-                message: Spree.t(:cart_completion_in_progress),
+                message: I18n.t('spree.cart_completion_in_progress'),
                 status: :conflict
               )
             end
@@ -51,7 +51,7 @@ module Spree
           Rails.error.report(exception, context: { order_id: (@order || @parent || @cart)&.id }, source: 'spree.api.v3')
           render_error(
             code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:cart_already_updated],
-            message: Spree.t(:cart_already_updated),
+            message: I18n.t('spree.cart_already_updated'),
             status: :conflict
           )
         end

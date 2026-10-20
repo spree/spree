@@ -685,7 +685,7 @@ RSpec.describe Spree::Customers::Anonymize do
   end
 
   it 'announces the erasure' do
-    expect(customer).to receive(:publish_event).with('customer.anonymized', hash_including(:store_id))
+    expect(customer).to receive(:publish_event).with('customer.anonymized', nil, hash_including(:store_id))
 
     described_class.call(customer: customer, store: store)
   end

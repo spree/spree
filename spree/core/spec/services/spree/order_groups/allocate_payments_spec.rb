@@ -39,6 +39,28 @@ RSpec.describe Spree::OrderGroups::AllocatePayments do
     end
   end
 
+  describe 'a yen checkout' do
+    let!(:orders) do
+      [BigDecimal('333'), BigDecimal('333'), BigDecimal('334')].map do |total|
+        create(:order, store: store, order_group: group, seller: seller, total: total).tap do |order|
+          order.update_columns(currency: 'JPY')
+        end
+      end
+    end
+
+    before do
+      group.update_columns(currency: 'JPY')
+      payment_for(500)
+      payment_for(500)
+      described_class.call(group: group.reload)
+    end
+
+    it 'shares out whole yen, each child getting exactly its total' do
+      expect(shares_by_order).to eq([BigDecimal('333'), BigDecimal('333'), BigDecimal('334')])
+      expect(Spree::PaymentSplit.sum(:authorized_amount)).to eq(BigDecimal('1000'))
+    end
+  end
+
   describe 'one payment' do
     let!(:orders) do
       [BigDecimal('40'), BigDecimal('60')].map do |total|

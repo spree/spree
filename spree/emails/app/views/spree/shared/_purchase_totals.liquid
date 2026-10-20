@@ -1,0 +1,35 @@
+{%- comment -%}
+  Every figure of an order or a purchase, once. Arguments: purchase.
+{%- endcomment -%}
+{%- assign tax_total = purchase.additional_tax_total | plus: 0 -%}
+{%- assign gift_card_total = purchase.gift_card_total | plus: 0 -%}
+<mj-table css-class="summary" padding="16px 0 0">
+  {%- assign value = purchase.item_total | money -%}
+  {% render 'spree/shared/summary_row', label: 'order_mailer.subtotal', translate: true, value: value %}
+  {%- for line in purchase.promotion_discounts -%}
+    {%- assign value = line.amount | money -%}
+    {% render 'spree/shared/summary_row', label: 'promotion', translate: true, sub: line.label, value: value %}
+  {%- endfor -%}
+  {%- for line in purchase.delivery_lines -%}
+    {%- assign value = line.amount | money -%}
+    {% render 'spree/shared/summary_row', label: 'shipping', translate: true, sub: line.label, value: value %}
+  {%- endfor -%}
+  {%- if tax_total != 0 -%}
+    {%- assign value = purchase.additional_tax_total | money -%}
+    {% render 'spree/shared/summary_row', label: 'tax', translate: true, value: value %}
+  {%- endif -%}
+  {%- if gift_card_total > 0 -%}
+    {%- assign gift_card_value = purchase.gift_card_total | money | prepend: '-' -%}
+    {% render 'spree/shared/summary_row', label: 'gift_card', translate: true, value: gift_card_value %}
+  {%- endif -%}
+  {%- for line in purchase.manual_discounts -%}
+    {%- assign value = line.amount | money -%}
+    {% render 'spree/shared/summary_row', label: line.label, value: value %}
+  {%- endfor -%}
+  {%- for line in purchase.fee_lines -%}
+    {%- assign value = line.amount | money -%}
+    {% render 'spree/shared/summary_row', label: line.label, value: value %}
+  {%- endfor -%}
+  {%- assign value = purchase.total_minus_store_credits | money -%}
+  {% render 'spree/shared/summary_row', label: 'order_mailer.total', translate: true, value: value, total: true %}
+</mj-table>

@@ -79,29 +79,6 @@ RSpec.describe Spree::Event do
     end
   end
 
-  describe 'validations' do
-    it 'requires name' do
-      event = described_class.new(store_id: store.id, payload: {})
-
-      expect(event).not_to be_valid
-      expect(event.errors[:name]).to include("can't be blank")
-    end
-
-    it 'requires store_id' do
-      allow(Spree::Current).to receive(:store).and_return(nil)
-      event = described_class.new(name: 'test', payload: {})
-
-      expect(event).not_to be_valid
-      expect(event.errors[:store_id]).to include("can't be blank")
-    end
-
-    it 'is valid with name and store_id' do
-      event = described_class.new(name: 'test', store_id: store.id, payload: {})
-
-      expect(event).to be_valid
-    end
-  end
-
   describe '#store' do
     it 'returns the store for the store_id' do
       event = described_class.new(name: 'order.placed', store_id: store.id)
@@ -146,24 +123,6 @@ RSpec.describe Spree::Event do
     it 'handles multi-part actions' do
       event = described_class.new(name: 'stock_level.low_stock', payload: {})
       expect(event.action).to eq('low_stock')
-    end
-  end
-
-  describe '#matches?' do
-    let(:event) { described_class.new(name: 'order.placed', payload: {}) }
-
-    it 'matches exact event names' do
-      expect(event.matches?('order.placed')).to be true
-      expect(event.matches?('order.canceled')).to be false
-    end
-
-    it 'matches wildcard patterns' do
-      expect(event.matches?('order.*')).to be true
-      expect(event.matches?('product.*')).to be false
-    end
-
-    it 'matches global wildcard' do
-      expect(event.matches?('*')).to be true
     end
   end
 

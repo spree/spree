@@ -37,26 +37,22 @@ module Spree
           # response.
           _attributes.delete(:policies)
 
+          # Stored without a currency, so it is shown as stored rather than
+          # rounded to the store's: a rounded figure would be saved back.
           attribute :minimum_payout_amount do |seller|
-            seller.minimum_payout_amount&.to_s
+            Spree::Money::Rounding.format(seller.minimum_payout_amount, (current_store || Spree::Current.store)&.default_currency, unit_price: true)
           end
 
           # Approved but away still cannot sell, and the list has to say so
           # without the dashboard re-deriving the rule.
-          attribute :on_holiday do |seller|
-            seller.on_holiday?
-          end
+          attribute :on_holiday, &:on_holiday?
 
-          attribute :sellable do |seller|
-            seller.sellable?
-          end
+          attribute :sellable, &:sellable?
 
           # Saves the dashboard a request per row for the two counts its list
           # and header show. Read off the seller, which memoizes the SQL count
           # so the minimum-products requirement asks the same question free.
-          attribute :products_count do |seller|
-            seller.products_count
-          end
+          attributes :products_count
 
           attribute :users_count do |seller|
             seller.users.size
@@ -67,13 +63,9 @@ module Spree
           # requirements themselves, with their submissions, stay on the
           # heavier `onboarding` action; a list of sellers needs the number,
           # not the rows behind it.
-          attribute :onboarding_progress do |seller|
-            seller.onboarding_progress
-          end
+          attributes :onboarding_progress
 
-          attribute :onboarding_complete do |seller|
-            seller.onboarding_complete?
-          end
+          attribute :onboarding_complete, &:onboarding_complete?
 
           attribute :legal_name, &:legal_name
           attribute :registration_number, &:registration_number

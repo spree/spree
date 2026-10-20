@@ -34,9 +34,7 @@ module Spree
 
           attributes :quantity, expires_at: :iso8601
 
-          attribute :active do |reservation|
-            reservation.active?
-          end
+          attribute :active, &:active?
 
           attributes created_at: :iso8601, updated_at: :iso8601
         end

@@ -1,9 +1,10 @@
 import fs from 'node:fs'
 import { platform } from 'node:os'
 import path from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa, execaCommand } from 'execa'
+import { execa } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
@@ -132,8 +133,9 @@ export async function runFirstRunSetup(flags: {
   const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
   s.stop('API keys configured.')
 
-  await installAppDeps(ctx.projectDir, 'storefront')
-  await installAppDeps(ctx.projectDir, 'dashboard')
+  for (const app of ['dashboard', 'seller-dashboard', 'storefront']) {
+    await installAppDeps(ctx.projectDir, app)
+  }
   ensureDashboardDevEnv(ctx.projectDir, ctx.port)
 
   // Sample-data imports need an admin as their owner; without credentials
@@ -155,7 +157,7 @@ export async function runFirstRunSetup(flags: {
 
   writeProjectSetupMarker(ctx.projectDir)
 
-  // With the React Dashboard chosen, its dev server IS the admin — started
+  // With apps/dashboard present, its dev server IS the admin — started
   // below alongside the stack, so what the user customizes is what they use.
   // One admin block: the dev server is the only admin URL worth naming. (The
   // production image serves a built dashboard at /dashboard — a deployment
@@ -196,8 +198,13 @@ export async function runFirstRunSetup(flags: {
       ]
     : [
         pc.bold('Admin Dashboard'),
-        `  ${pc.dim(`Not installed — add it with ${pc.bold('spree add dashboard')}`)}`,
+        `  ${pc.cyan(`http://localhost:${ctx.port}/dashboard`)}`,
         ...credentialLines,
+        `  ${pc.dim(
+          hasDashboardApp(ctx.projectDir)
+            ? 'Built-in dashboard — apps/dashboard/ runs once its dependencies are installed'
+            : `Built-in dashboard — run ${pc.bold('spree add dashboard')} to customize it`,
+        )}`,
       ]
 
   // The wholesale demo needs both the storefront env opt-in and the seeded
@@ -249,16 +256,16 @@ export async function runFirstRunSetup(flags: {
     if (flags.open) {
       // With the dashboard, wait for Vite to report ready (it auto-bumps the
       // port when 5173 is taken) so the browser opens the real URL. Without
-      // one there's no admin to open in development, so fall back to the
-      // store itself.
-      const dashboardUrl = dashboard ? await dashboard.url : null
+      // one, open the built-in dashboard the summary names.
+      const dashboardUrl = dashboard
+        ? ((await dashboard.url) ?? `http://localhost:${DASHBOARD_PORT}`)
+        : setupBase
       // No admin was seeded, so the dashboard would only show a login form
       // nobody can pass — open first-run setup instead and land the operator
       // on the account form directly.
-      const target =
-        setupToken && dashboardUrl
-          ? `${dashboardUrl.replace(/\/$/, '')}/setup?token=${setupToken}`
-          : (dashboardUrl ?? `http://localhost:${ctx.port}`)
+      const target = setupToken
+        ? `${dashboardUrl.replace(/\/$/, '')}/setup?token=${setupToken}`
+        : dashboardUrl
       await openBrowser(target)
     }
 
@@ -275,35 +282,36 @@ export async function runFirstRunSetup(flags: {
 // create-spree-app's per-app install steps, so first-run setup leaves every
 // app runnable with `pnpm dev`. Best-effort: a registry hiccup shouldn't
 // fail backend setup.
-async function installAppDeps(projectDir: string, app: 'storefront' | 'dashboard'): Promise<void> {
+async function installAppDeps(projectDir: string, app: string): Promise<void> {
   const appDir = path.join(projectDir, 'apps', app)
   if (!fs.existsSync(path.join(appDir, 'package.json'))) return
   if (fs.existsSync(path.join(appDir, 'node_modules'))) return
 
   const pm = detectPackageManager(projectDir, appDir)
   const s = p.spinner()
-  s.start(`Installing ${app} dependencies with ${pm}...`)
+  s.start(`Installing apps/${app}/ dependencies with ${pm}...`)
   try {
     await execa(pm, ['install'], { cwd: appDir })
-    s.stop(`${app === 'dashboard' ? 'Dashboard' : 'Storefront'} dependencies installed.`)
+    s.stop(`apps/${app}/ dependencies installed.`)
   } catch (err) {
     s.stop(pc.yellow(`${pm} install failed — run it manually in apps/${app}/.`))
     p.log.warn(err instanceof Error ? err.message : String(err))
   }
 }
 
-async function waitForHealthy(port: number): Promise<void> {
+export async function waitForHealthy(port: number, signal?: AbortSignal): Promise<void> {
   const url = `http://localhost:${port}/up`
   const start = Date.now()
 
   while (Date.now() - start < HEALTH_CHECK_TIMEOUT_MS) {
+    signal?.throwIfAborted()
     try {
-      const res = await fetch(url)
+      const res = await fetch(url, { signal })
       if (res.ok) return
     } catch {
       // not ready yet
     }
-    await new Promise((resolve) => setTimeout(resolve, HEALTH_CHECK_INTERVAL_MS))
+    await sleep(HEALTH_CHECK_INTERVAL_MS, undefined, { signal })
   }
 
   throw new Error(`Spree did not become healthy within ${HEALTH_CHECK_TIMEOUT_MS / 1000}s`)
@@ -390,12 +398,20 @@ function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: s
   return { adminEmail, adminPassword }
 }
 
-async function openBrowser(url: string): Promise<void> {
+export async function openBrowser(url: string): Promise<void> {
   const os = platform()
-  const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
+  // `start` is built into cmd.exe rather than a program of its own; its first
+  // quoted argument is a window title. An empty argument reaches cmd.exe as
+  // `""`, which is that empty title.
+  const [cmd, args] =
+    os === 'darwin'
+      ? ['open', [url]]
+      : os === 'win32'
+        ? ['cmd', ['/c', 'start', '', url]]
+        : ['xdg-open', [url]]
 
   try {
-    await execaCommand(`${cmd} ${url}`, { stdio: 'ignore' })
+    await execa(cmd, args, { stdio: 'ignore' })
   } catch {
     // best-effort
   }

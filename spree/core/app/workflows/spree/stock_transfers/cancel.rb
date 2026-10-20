@@ -49,11 +49,11 @@ module Spree
       private
 
       def ensure_cancelable
-        failure(stock_transfer, Spree.t('stock_transfer.errors.already_closed')) if stock_transfer.closed?
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.already_closed')) if stock_transfer.closed?
         return unless stock_transfer.in_flight?
         return if IN_TRANSIT_RESOLUTIONS.include?(on_in_transit)
 
-        failure(stock_transfer, Spree.t('stock_transfer.errors.in_transit_resolution_required'))
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.in_transit_resolution_required'))
       end
 
       # Whether the units come back or are written off, the destination is no

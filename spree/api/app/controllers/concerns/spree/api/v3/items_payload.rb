@@ -45,7 +45,7 @@ module Spree
         # `return_line_items`).
         def render_invalid_items
           errors = ActiveModel::Errors.new(@resource || model_class.new)
-          errors.add(:base, :invalid_items, message: Spree.t('errors.messages.items_not_a_list'))
+          errors.add(:base, :invalid_items, message: I18n.t('spree.errors.messages.items_not_a_list'))
           render_validation_error(errors)
         end
       end

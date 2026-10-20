@@ -98,10 +98,13 @@ export function CreateReturnDialog({
   )
 }
 
-/** A line the claim can name, with what one unit of it cost. */
+/** A line the claim can name, with what the customer paid for it. */
 export type ClaimableLine = PostSaleUnit & {
-  /** Unit price, used to default the refund to what was actually paid. */
-  price?: string | null
+  /**
+   * What the customer paid, tax included, for that many units of the line, as
+   * a decimal string — the default refund. Blank when it is unknown.
+   */
+  paidFor?: (quantity: number) => string
 }
 
 /**
@@ -138,6 +141,7 @@ export function CreateClaimDialog({
   const { t } = useTranslation()
   const [selection, setSelection] = useState<PostSaleSelection>({})
   const [amounts, setAmounts] = useState<Record<string, string>>({})
+  const [typedAmounts, setTypedAmounts] = useState<Record<string, boolean>>({})
   const [memo, setMemo] = useState('')
 
   const chosen = selectedUnits(selection)
@@ -173,16 +177,13 @@ export function CreateClaimDialog({
                           Math.min(Number(event.target.value), line.quantity),
                         )
                         setSelection({ ...selection, [line.id]: quantity })
-                        // Default the refund to what was paid for those units;
-                        // the merchant can still overwrite it.
-                        if (quantity > 0 && !amounts[line.id]) {
-                          const unitPrice = Number(line.price)
-                          if (Number.isFinite(unitPrice)) {
-                            setAmounts((current) => ({
-                              ...current,
-                              [line.id]: (unitPrice * quantity).toFixed(2),
-                            }))
-                          }
+                        // The refund follows what was paid for the chosen units
+                        // until the merchant types an amount of their own.
+                        if (!typedAmounts[line.id]) {
+                          setAmounts((current) => ({
+                            ...current,
+                            [line.id]: quantity > 0 ? (line.paidFor?.(quantity) ?? '') : '',
+                          }))
                         }
                       }}
                     />
@@ -199,12 +200,17 @@ export function CreateClaimDialog({
                         <InputGroupInput
                           id={`claim-amount-${line.id}`}
                           type="number"
-                          step="0.01"
+                          step="any"
                           min="0"
                           value={amounts[line.id] ?? ''}
-                          onChange={(event) =>
+                          onChange={(event) => {
                             setAmounts({ ...amounts, [line.id]: event.target.value })
-                          }
+                            // Clearing the field hands it back to the quantity.
+                            setTypedAmounts({
+                              ...typedAmounts,
+                              [line.id]: event.target.value !== '',
+                            })
+                          }}
                         />
                       </InputGroup>
                     </Field>

@@ -1064,6 +1064,12 @@
         "slug_placeholder": "url-del-producto"
       },
       "tax_category_placeholder": "Seleccionar categoría de impuestos",
+      "tax": {
+        "apply_to_variants_help": "Esta categoría se aplica a cada variante que no tenga su propia categoría fiscal. Al guardar, esas variantes usan esta configuración.",
+        "variant_overrides_heading": "Variantes con categoría fiscal propia",
+        "variant_overrides_description": "Estas variantes conservan su categoría hasta que quite la excepción. El resto siguen la categoría del producto de arriba.",
+        "clear_variant_override": "Usar categoría del producto"
+      },
       "transfers": {
         "create_description": "Mové stock entre ubicaciones o recibí stock nuevo de un proveedor externo.",
         "delete_confirm": {
@@ -1540,7 +1546,7 @@
       "create_description": "Agregá un depósito, un local o un punto de retiro desde el que cumplir pedidos.",
       "create_label": "Crear ubicación de inventario",
       "delete_confirm": {
-        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación no se borran.",
+        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación también se eliminarán.",
         "title": "¿Eliminar ubicación de inventario?"
       },
       "edit_description": "Actualizá el nombre, la dirección, el retiro o las políticas de stock.",
@@ -1602,11 +1608,13 @@
         "seeded_report_read_only": "Este es un reporte incorporado y no se puede modificar. Guardá una copia.",
         "taken": "ya está en uso",
         "too_long": "es demasiado largo (máximo {{count}} caracteres)",
+        "too_many_decimals": "tiene más de {{count}} decimales",
         "too_short": "es demasiado corto (mínimo {{count}} caracteres)",
         "wrong_length": "tiene un largo incorrecto (debería ser {{count}} caracteres)"
       },
       "country_required": "El país es obligatorio",
       "currency_required": "La moneda es obligatoria",
+      "locale_required": "El idioma es obligatorio",
       "first_name_required": "El nombre es obligatorio",
       "invalid_email": "Ingresá un email válido",
       "invalid_email_or_password": "Email o contraseña inválidos",
@@ -1618,7 +1626,8 @@
       "passwords_dont_match": "Las contraseñas no coinciden",
       "positive_number": "{{field}} debe ser mayor que 0",
       "required": "{{field}} es obligatorio",
-      "store_name_required": "El nombre de la tienda es obligatorio"
+      "store_name_required": "El nombre de la tienda es obligatorio",
+      "too_many_decimals": "{{field}} puede tener como máximo {{count}} decimales"
     },
     "common": {
       "active": "Activo",
@@ -1656,7 +1665,9 @@
       "searching": "Buscando…",
       "select_placeholder": "Seleccionar…",
       "unsaved_changes": "Tenés cambios sin guardar.",
-      "yes": "Sí"
+      "yes": "Sí",
+      "done": "Listo",
+      "error": "Algo salió mal."
     },
     "messages": {
       "address_removed": "Dirección eliminada",

@@ -21,7 +21,7 @@ module Spree
         return success(catalog) if terms.empty?
 
         foreign = terms.keys.reject { |product| product.store_id == catalog.store_id }
-        return failure(catalog, Spree.t('catalogs.product_not_in_store')) if foreign.any?
+        return failure(catalog, I18n.t('spree.catalogs.product_not_in_store')) if foreign.any?
 
         invalid = nil
 

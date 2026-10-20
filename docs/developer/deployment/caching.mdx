@@ -23,6 +23,25 @@ config.cache_store = :redis_cache_store, { url: ENV["REDIS_URL"] }
 
 Works identically with Redis or Valkey (the Linux Foundation fork most hosting platforms now provision).
 
+## HTTP caching of Store API responses
+
+Read-only Store API endpoints (products, categories, collections, markets, locales, currencies, policies, sellers) are HTTP-cacheable for guests, so a CDN or reverse proxy in front of Spree can serve them from the edge:
+
+- **Guests** get `Cache-Control: public, max-age=300` (list endpoints add `stale-while-revalidate=30`) plus an `ETag`, and conditional requests return `304 Not Modified`.
+- **Signed-in customers** (a customer JWT in `Authorization`) get `Cache-Control: private, no-store` — nothing is cached.
+
+Guest responses carry this `Vary` header:
+
+```
+Vary: Accept, X-Spree-Api-Key, Authorization, X-Spree-Country, X-Spree-Currency, X-Spree-Locale, X-Spree-Channel
+```
+
+Each of these headers changes the response body: the publishable key selects the store, `X-Spree-Country` selects the market (currency, prices, tax display, availability), and `X-Spree-Channel` controls price visibility and which products are listed. `Authorization` keeps a cached guest response from being served to a signed-in customer.
+
+<Warning>
+If your CDN ignores `Vary` or builds its own cache key (for example Cloudflare Cache Rules with a custom cache key), include every header listed above in that key, or it serves one market's or store's prices to another.
+</Warning>
+
 ## Testing Locally
 
 To enable caching in the development environment:

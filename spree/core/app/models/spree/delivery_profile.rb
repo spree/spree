@@ -13,6 +13,7 @@ module Spree
     include Spree::HasListPosition
 
     has_prefix_id :fp
+    search_by :name
 
     acts_as_list scope: :store
 

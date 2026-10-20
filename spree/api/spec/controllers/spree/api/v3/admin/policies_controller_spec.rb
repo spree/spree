@@ -35,6 +35,14 @@ RSpec.describe Spree::Api::V3::Admin::PoliciesController, type: :controller do
 
       expect(json_response['data'].map { |policy| policy['id'] }).not_to include(seller_policy.prefixed_id)
     end
+
+    it 'filters a polymorphic type by shorthand' do
+      get :index, params: { q: { owner_type_eq: 'store' } }, as: :json
+      expect(json_response['data'].map { |policy| policy['id'] }).to include(restocking_policy.prefixed_id)
+
+      get :index, params: { q: { owner_type_eq: 'seller' } }, as: :json
+      expect(json_response['data']).to be_empty
+    end
   end
 
   describe 'GET #show' do

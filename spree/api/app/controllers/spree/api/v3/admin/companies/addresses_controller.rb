@@ -8,6 +8,17 @@ module Spree
           class AddressesController < BaseController
             include Spree::Api::V3::CompanyAddressWrites
 
+            request_params :company_address do |body|
+              body.include_attributes Spree::Api::V3::AddressRequestSchema
+              body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
+              body.attribute :default_billing, :boolean,
+                permit: false,
+                description: 'True makes this the default address of that kind, false gives the slot up, and leaving it out keeps the current default.'
+              body.attribute :default_shipping, :boolean,
+                permit: false,
+                description: 'True makes this the default address of that kind, false gives the slot up, and leaving it out keeps the current default.'
+            end
+
             before_action :authorize_parent_access!
 
             # POST /api/v3/admin/companies/:company_id/addresses
@@ -52,10 +63,6 @@ module Spree
 
             def scope
               @parent.addresses
-            end
-
-            def parent_association
-              :addresses
             end
           end
         end

@@ -1,0 +1,15 @@
+---
+zh-CN:
+  spree:
+    api:
+      cannot_delete: "%{model} 无法删除"
+      current_password_invalid: 当前密码无效或缺失
+      newsletter_verification_token_invalid: 邮件订阅验证令牌无效或已过期。
+      password_reset_requested: 如果该邮箱存在对应账户，密码重置说明已发送。
+      password_reset_token_invalid: 密码重置令牌无效或已过期。
+      record_not_found: 未找到 %{model}
+      unauthorized: 您无权执行该操作。
+      v3:
+        payments:
+          method_unavailable: 此支付方式不适用于此订单。
+          session_required: 此支付方式需要支付会话。请改用支付会话端点。

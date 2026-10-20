@@ -9,7 +9,7 @@ describe 'Digital auto-fulfillment on order completion', type: :model do
   before do
     # Route the fulfillment through a digital delivery method so the provider
     # strategy resolves to Digital.
-    digital_method = create(:digital_shipping_method)
+    digital_method = create(:digital_delivery_method)
     order.fulfillments.each do |fulfillment|
       rate = fulfillment.delivery_rates.create!(delivery_method: digital_method, cost: 0, selected: false)
       fulfillment.delivery_rates.where.not(id: rate.id).update_all(selected: false)
@@ -18,12 +18,12 @@ describe 'Digital auto-fulfillment on order completion', type: :model do
     end
   end
 
-  it 'fulfills the digital fulfillment and creates links per quantity on finalize' do
+  it 'fulfills the digital fulfillment and creates links per quantity on completion' do
     line_item = order.line_items.first
     line_item.update_columns(quantity: 2)
     order.fulfillment_items.update_all(quantity: 2)
 
-    order.finalize!
+    Spree.order_complete_workflow.call(order: order, payment_pending: true)
 
     fulfillment = order.fulfillments.reload.first
     expect(fulfillment).to be_fulfilled
@@ -31,8 +31,8 @@ describe 'Digital auto-fulfillment on order completion', type: :model do
     expect(order.reload.fulfillment_status).to eq('fulfilled')
   end
 
-  it 'is idempotent across repeated finalization side effects' do
-    order.finalize!
+  it 'is idempotent across repeated completion side effects' do
+    Spree.order_complete_workflow.call(order: order, payment_pending: true)
     fulfillment = order.fulfillments.reload.first
 
     expect { fulfillment.provider.create_fulfillment(fulfillment) }.

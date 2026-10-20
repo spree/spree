@@ -113,16 +113,27 @@ module Spree
         SUM(COALESCE((SELECT SUM(r.amount) FROM %{refunds} r WHERE r.order_id = %{orders}.id), 0))
       SQL
 
-      # A refund is issued against the order, not a line, so it is apportioned
-      # by the line's share of the order's pre-tax value. The denominator is
-      # summed over the order's own lines rather than read from item_total:
-      # item_total is priced before discounts, so on a discounted order the
-      # shares would not add up to one and part of the refund would vanish.
-      # The `* 1.0` forces real division: SQLite divides two integer-valued
-      # decimals as integers, which silently rounds every share to zero.
+      # A refund that gives tax back carries it in its own column, so the goods
+      # and the tax it returned are netted from goods and tax respectively.
+      REFUNDED_GOODS_SUBQUERY = <<~SQL.squish.freeze
+        SUM(COALESCE((SELECT SUM(r.amount - r.tax_amount) FROM %{refunds} r WHERE r.order_id = %{orders}.id), 0))
+      SQL
+
+      REFUNDED_TAX_SUBQUERY = <<~SQL.squish.freeze
+        SUM(COALESCE((SELECT SUM(r.tax_amount) FROM %{refunds} r WHERE r.order_id = %{orders}.id), 0))
+      SQL
+
+      # A refund is issued against the order, not a line, so its goods are
+      # apportioned by the line's share of the order's pre-tax value. The
+      # denominator is summed over the order's own lines rather than read from
+      # item_total: item_total is priced before discounts, so on a discounted
+      # order the shares would not add up to one and part of the refund would
+      # vanish. The `* 1.0` forces real division: SQLite divides two
+      # integer-valued decimals as integers, which silently rounds every share
+      # to zero.
       LINE_ITEM_REFUNDS_SUBQUERY = <<~SQL.squish.freeze
         SUM(
-          COALESCE((SELECT SUM(r.amount) FROM %{refunds} r WHERE r.order_id = %{orders}.id), 0)
+          COALESCE((SELECT SUM(r.amount - r.tax_amount) FROM %{refunds} r WHERE r.order_id = %{orders}.id), 0)
           * CASE
               WHEN COALESCE((SELECT SUM(sibling.pre_tax_amount) FROM %{line_items} sibling
                              WHERE sibling.order_id = %{orders}.id), 0) > 0
@@ -293,7 +304,7 @@ module Spree
           metric :gross_sales, sql: 'SUM(%{line_items}.price * %{line_items}.quantity)',
                                base: :line_items, format: :money
           metric :discounts, sql: 'SUM(%{line_items}.discount_total)', base: :line_items, format: :money
-          metric :returns, sql: REFUNDS_SUBQUERY, base: :orders, format: :money
+          metric :returns, sql: REFUNDED_GOODS_SUBQUERY, base: :orders, format: :money
           # Net of returns as well as discounts, so this is the figure a
           # merchant recognises as "what we actually sold".
           metric :net_sales, sql: "SUM(%{line_items}.pre_tax_amount) - #{LINE_ITEM_REFUNDS_SUBQUERY}",
@@ -303,7 +314,8 @@ module Spree
           # Every shopper-visible fee except duties, which the chain counts separately.
           metric :fees, sql: "SUM(COALESCE(%{orders}.fee_total, 0)) - #{DUTIES_SUBQUERY}",
                         base: :orders, format: :money, suggests: 'net_sales'
-          metric :taxes, sql: 'SUM(%{orders}.additional_tax_total + %{orders}.included_tax_total)',
+          # Net of the tax given back, as net_sales is net of the goods.
+          metric :taxes, sql: "SUM(%{orders}.additional_tax_total + %{orders}.included_tax_total) - #{REFUNDED_TAX_SUBQUERY}",
                          base: :orders, format: :money, suggests: 'net_sales'
           # The order grand total, net of what came back.
           metric :total_sales, sql: "SUM(%{orders}.total) - #{REFUNDS_SUBQUERY}",

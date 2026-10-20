@@ -33,7 +33,7 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
       expect(row[0]).to eq newsletter_subscriber.email
       expect(row[1]).to eq user.full_name
       expect(row[2]).to eq user.id
-      expect(row[3]).to eq Spree.t(:say_yes)
+      expect(row[3]).to eq I18n.t('spree.say_yes')
       expect(row[4]).to eq newsletter_subscriber.verified_at
       expect(row[5]).to eq newsletter_subscriber.created_at
       expect(row[6]).to eq newsletter_subscriber.updated_at
@@ -43,7 +43,7 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
       before { newsletter_subscriber.update!(verified_at: nil) }
 
       it 'returns say_no for verified and nil for verified_at' do
-        expect(row[3]).to eq Spree.t(:say_no)
+        expect(row[3]).to eq I18n.t('spree.say_no')
         expect(row[4]).to be_nil
       end
     end

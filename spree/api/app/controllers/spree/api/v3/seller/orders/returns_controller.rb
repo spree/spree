@@ -17,6 +17,38 @@ module Spree
 
             before_action :set_resource, only: [:show, :approve, :receive, :refund, :cancel]
 
+            request_params :return do |body|
+              body.attribute :items, :array, required: true do |item|
+                item.attribute :fulfillment_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+              end
+              body.attribute :reason_id, :id, nullable: true
+              body.attribute :stock_location_id, :id,
+                nullable: true,
+                description: "One of this seller's own stock locations, where the goods are restocked."
+              body.attribute :memo, :string, nullable: true
+            end
+
+            request_params 'ReturnReceiveParams', action: :receive do |body|
+              body.attribute :items, :array,
+                description: 'What actually arrived. Omit to receive everything as requested and resellable.' do |item|
+                item.attribute :return_line_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+                item.attribute :resellable, :boolean, description: 'Defaults to true.'
+              end
+            end
+
+            request_params 'ReturnRefundParams', action: :refund do |body|
+              body.attribute :amount, :decimal, nullable: true
+              body.attribute :refund_method, :string,
+                choices: %w[original_payment store_credit],
+                description: 'Defaults to `original_payment`.'
+            end
+
+            request_params 'ReturnCancelParams', action: :cancel do |body|
+              body.attribute :reason, :string, description: 'A note on why the return was canceled.'
+            end
+
             protected
 
             def serializer_class

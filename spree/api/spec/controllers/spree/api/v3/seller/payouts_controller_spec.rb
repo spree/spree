@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::Seller::PayoutsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |payout| payout['id'] }).to contain_exactly(mine.prefixed_id)
       row = json_response['data'].first
-      expect(row['display_amount']).to eq('$120.00')
+      expect(row['amount']).to eq('120.00')
       expect(row['status']).to eq('pending')
       expect(row['reference']).to eq('BACS-1')
       expect(row).not_to have_key('seller_name')

@@ -1,6 +1,7 @@
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
+import { countryCodeSchema, currencyCodeSchema } from '../lib/iso-codes'
 import { normalizeQuantityRule } from './normalize-quantity'
 import { isSupportedVideoUrl } from './video-url'
 
@@ -33,13 +34,10 @@ export const variantOptionPairSchema = z.object({
 
 export type VariantOptionPair = z.infer<typeof variantOptionPairSchema>
 
-// Form-side prices use raw STRING amounts (the merchant's typed input).
-// The backend's `Spree::LocalizedNumber.parse` handles locale-aware parsing
-// (comma decimals, grouped digits, etc.), so the frontend ships exactly what
-// the merchant typed — no `Number(...)` coercion that mangles `"1.234,56"`
-// into `NaN` and silently drops the price.
+// Form-side prices are canonical decimal STRINGS ("1234.56"), never numbers:
+// `Number(...)` coercion loses precision and turns `"1.234,56"` into `NaN`.
 export const variantPriceFormSchema = z.object({
-  currency: z.string(),
+  currency: currencyCodeSchema,
   amount: z.string(),
   compare_at_amount: z.string().nullable().optional(),
 })
@@ -61,7 +59,7 @@ export const variantFormSchema = z.object({
   weight_unit: z.string().nullable().optional(),
   dimensions_unit: z.string().nullable().optional(),
   hs_code: z.string().nullable().optional(),
-  country_of_origin: z.string().nullable().optional(),
+  country_of_origin: countryCodeSchema.nullable().optional(),
   customs_description: z.string().nullable().optional(),
   // Held as strings so an unusable entry can be reported rather than
   // silently coerced away: normalizing `0` straight to null would clear the
@@ -101,7 +99,7 @@ export const customFieldFormSchema = z.object({
 export type CustomFieldFormValues = z.infer<typeof customFieldFormSchema>
 
 // Media in form state. Persisted entries carry an `id`; pre-save entries carry
-// a `signed_id` (from a completed ActiveStorage direct upload) or a
+// a `signed_id` (from a completed upload) or a
 // `source_media_id` (a file picked from the library). All can hold edits to
 // alt, position, and variant_ids that the parent product PATCH/POST ships
 // inline. previewUrl + uploadId are UI-only; stripped at submit.

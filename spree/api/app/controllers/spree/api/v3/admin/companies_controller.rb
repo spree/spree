@@ -12,6 +12,22 @@ module Spree
         class CompaniesController < ResourceController
           scoped_resource :customers
 
+          request_params :company do |body|
+            body.external_references
+            body.attribute :name, :string, required: true, on: :create, example: 'Globex Corporation'
+            body.attribute :kind, :string,
+              choices: Spree::Company::KINDS,
+              example: 'company',
+              description: '`company` is a legal entity (may hold tax registrations), `division` an organizational unit. Roots must be `company`.'
+            body.attribute :parent_id, :id,
+              nullable: true,
+              example: 'comp_86Rf07xd4z',
+              description: 'The parent node. Omit or null for a root.'
+            body.attribute :po_number_required, :boolean,
+              description: "Whether this buyer's own procurement process demands a PO reference on every order: checkout asks for one and refuses to complete without it."
+            body.attribute :metadata, :hash
+          end
+
           protected
 
           def model_class
@@ -22,18 +38,12 @@ module Spree
             Spree.api.admin_company_serializer
           end
 
-          def scope
-            super.for_store(current_store)
-          end
-
           def collection_includes
             [:children, :memberships, :external_references]
           end
 
           def permitted_params
-            permitted = params.permit(*model_additional_permitted_attributes,
-                                      :name, :kind, :parent_id, :po_number_required, metadata: {})
-            resolve_parent_param(permitted)
+            resolve_parent_param(params.permit(*permitted_attributes))
           end
 
           private

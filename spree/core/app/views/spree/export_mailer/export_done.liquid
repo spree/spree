@@ -1,0 +1,12 @@
+---
+subject: "{{ 'export_mailer.export_done.subject' | t: export_number: export.number }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'export_mailer.greeting' | t: user_name: export.user.first_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'export_mailer.export_done.message' | t }}</mj-text>
+    {% if export.results_url != blank %}
+      <mj-button href="{{ export.results_url }}">{{ export.filename }}</mj-button>
+    {% endif %}
+  </mj-column>
+</mj-section>

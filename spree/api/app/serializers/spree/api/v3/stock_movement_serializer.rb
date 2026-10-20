@@ -13,9 +13,7 @@ module Spree
         attributes :quantity, :kind, :reason,
                    created_at: :iso8601, updated_at: :iso8601
 
-        attribute :stock_level_id do |movement|
-          movement.stock_level&.prefixed_id
-        end
+        prefixed_id_attributes :stock_level
       end
     end
   end

@@ -12,13 +12,13 @@ describe Spree::Discount, type: :model do
   it 'requires exactly one owner' do
     discount = described_class.new(line_item: line_item, amount: -2, label: 'Promo', kind: 'manual')
     expect(discount).not_to be_valid
-    expect(discount.errors[:base]).to include(Spree.t('errors.messages.exactly_one_of_cart_or_order'))
+    expect(discount.errors[:base]).to include(I18n.t('spree.errors.messages.exactly_one_of_cart_or_order'))
   end
 
   it 'requires exactly one adjustable' do
     discount = described_class.new(order: order, amount: -2, label: 'Promo', kind: 'manual')
     expect(discount).not_to be_valid
-    expect(discount.errors[:base]).to include(Spree.t('errors.messages.exactly_one_adjustable'))
+    expect(discount.errors[:base]).to include(I18n.t('spree.errors.messages.exactly_one_adjustable'))
 
     discount.line_item = line_item
     discount.fulfillment = create(:fulfillment, order: order)
@@ -32,8 +32,12 @@ describe Spree::Discount, type: :model do
   end
 
   it 'keeps provenance snapshots when the promotion is gone' do
+    promotion = create(:promotion)
     discount = create(:discount, order: order, line_item: line_item, amount: -2, kind: 'promotion',
-                      code: 'SUMMER10', value: 10, value_type: 'percent')
+                      promotion: promotion, code: 'SUMMER10', value: 10, value_type: 'percent')
+
+    promotion.destroy!
+
     expect(discount.reload.code).to eq('SUMMER10')
     expect(discount.promotion).to be_nil
   end

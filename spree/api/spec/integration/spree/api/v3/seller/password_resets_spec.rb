@@ -27,18 +27,9 @@ RSpec.describe 'Seller Password Resets API', type: :request, swagger_doc: 'api-r
         to webhook endpoints.
       DESC
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'seller@acme.test' },
-          redirect_url: {
-            type: :string,
-            example: 'https://sellers.your-store.com/reset-password',
-            description: 'Must match an allowed origin of the store; ignored otherwise.'
-          }
-        },
-        required: %w[email]
-      }
+      seller_sdk_example 'auth/request-password-reset', as: :guest
+
+      request_body_for
 
       response '202', 'reset requested' do
         let(:body) { { email: seller_user.email } }
@@ -66,15 +57,10 @@ RSpec.describe 'Seller Password Resets API', type: :request, swagger_doc: 'api-r
         refused exactly as an expired one.
       DESC
 
+      seller_sdk_example 'auth/reset-password', as: :guest
+
       parameter name: :id, in: :path, type: :string, description: 'The reset token from the emailed link'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          password: { type: :string, example: 'new-password-123' },
-          password_confirmation: { type: :string, example: 'new-password-123' }
-        },
-        required: %w[password password_confirmation]
-      }
+      request_body_for
 
       response '200', 'password reset' do
         let(:id) { seller_user.generate_token_for(:password_reset) }

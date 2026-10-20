@@ -42,7 +42,7 @@ module Spree
         # @param line_item [Spree::LineItem]
         # @return [BigDecimal] never positive
         def compute_amount(line_item)
-          line_item.price * gifted_quantity_of(line_item) * -1
+          -Spree::Money::Rounding.to_currency(line_item.price * gifted_quantity_of(line_item), line_item.currency)
         end
 
         # Tops the order up to the promised quantity and discounts it.

@@ -33,8 +33,10 @@ module Spree
       #   amount negotiates the line (+price_source: 'manual'+), an explicit
       #   nil reverts a negotiated line to catalog pricing. Admin surface
       #   only (draft orders); refused once the order is placed.
+      # @param orderable_variants [ActiveRecord::Relation<Spree::Variant>, nil]
+      #   what an add may name; the store's variants when nil
       # @return [Spree::ServiceModule::Result] value is the cart
-      def perform(cart:, items:)
+      def perform(cart:, items:, orderable_variants: nil)
         super
         @warnings = []
 
@@ -107,7 +109,7 @@ module Spree
         # Price overrides are pre-placement only. reject! rather than
         # failure(cart, message), which would drop the message.
         if cart.completed? && @resolved_items.any?(&:price_provided)
-          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          errors.add(:base, :price_override_not_allowed, message: I18n.t('spree.cart_line_item.price_override_not_allowed'))
           reject!(nil, cart)
         end
       end
@@ -121,19 +123,19 @@ module Spree
         return nil if value.nil?
 
         if cart.completed?
-          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          errors.add(:base, :price_override_not_allowed, message: I18n.t('spree.cart_line_item.price_override_not_allowed'))
           reject!(nil, cart)
         end
 
         parsed = BigDecimal(value.to_s)
         if parsed.negative? || !parsed.finite?
-          errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+          errors.add(:base, :invalid_price, message: I18n.t('spree.cart_line_item.invalid_price'))
           reject!(nil, cart)
         end
 
         parsed
       rescue ArgumentError
-        errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+        errors.add(:base, :invalid_price, message: I18n.t('spree.cart_line_item.invalid_price'))
         reject!(nil, cart)
       end
 
@@ -230,7 +232,7 @@ module Spree
           # external system can be the only source for a currency. A
           # negotiated price is a quote too, made by the merchant.
           if !item.manual_price? && resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
-            message = Spree.t('cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
+            message = I18n.t('spree.cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
             failure(item.variant, message) unless partial_success?
 
             warn(index, item, :currency_unavailable, message)
@@ -238,7 +240,7 @@ module Spree
           end
 
           if unsupplyable?(item)
-            message = Spree.t(:selected_quantity_not_available, item: item.variant.name.inspect)
+            message = I18n.t('spree.selected_quantity_not_available', item: item.variant.name.inspect)
             failure(item.variant, message) unless partial_success?
 
             warn(index, item, :selected_quantity_not_available, message)
@@ -355,8 +357,15 @@ module Spree
           cart.line_items.detect { |line_item| line_item.variant_id.to_s == variant_id.to_s }&.variant ||
             Spree::Variant.with_deleted.find_by_param(variant_id)
         else
-          store.variants.find_by_param(variant_id) ||
-            raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
+          variant = store.variants.find_by_param(variant_id)
+          # +orderable_variants+ narrows what a request may add. A line already
+          # in the cart is a quantity edit and resolves as before — checkout
+          # judges it — so one stale line cannot fail a whole cart's update.
+          if variant && orderable_variants && cart.line_items.none? { |line_item| line_item.variant_id == variant.id }
+            variant = orderable_variants.find_by(id: variant.id)
+          end
+
+          variant || raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
         end
       end
 

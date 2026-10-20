@@ -7,27 +7,19 @@ module Spree
       class DiscountSerializer < BaseSerializer
         typelize label: :string, kind: [:string, enum: Spree::Discount::KINDS], code: [:string, nullable: true],
                  value: [:string, nullable: true], value_type: [:string, nullable: true],
-                 amount: [:string, nullable: true], display_amount: [:string, nullable: true],
                  promotion_id: [:string, nullable: true], line_item_id: [:string, nullable: true],
                  fulfillment_id: [:string, nullable: true]
 
         attributes :label, :kind, :code, :value_type
 
+        # A percent discount carries a rate; a flat one an amount.
         attribute :value do |record|
-          record.value&.to_s
+          next Spree::Money::Rounding.format_decimal(record.value) if record.value_type == 'percent'
+
+          Spree::Money::Rounding.format(record.value, record.currency) unless params[:hide_prices]
         end
 
-        attribute :promotion_id do |record|
-          record.promotion&.prefixed_id
-        end
-
-        attribute :line_item_id do |record|
-          record.line_item&.prefixed_id
-        end
-
-        attribute :fulfillment_id do |record|
-          record.fulfillment&.prefixed_id
-        end
+        prefixed_id_attributes :promotion, :line_item, :fulfillment
 
         money_attributes :amount, :display_amount
       end

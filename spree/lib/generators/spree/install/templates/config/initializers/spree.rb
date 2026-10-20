@@ -34,8 +34,8 @@
 # https://docs.spreecommerce.org/developer/customization/dependencies
 Spree.dependencies do |dependencies|
   # Example:
-  # Uncomment to change the default Service handling adding Items to Cart
-  # dependencies.cart_add_item_service = 'MyNewAwesomeService'
+  # Uncomment to change the default workflow handling adding items to the cart
+  # dependencies.cart_add_item_workflow = 'MyNewAwesomeWorkflow'
 end
 
 # Spree.api.cart_serializer = 'MyRailsApp::CartSerializer'

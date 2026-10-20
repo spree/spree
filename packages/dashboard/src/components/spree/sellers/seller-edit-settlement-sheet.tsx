@@ -201,7 +201,7 @@ export function SellerEditSettlementSheet({
                   <InputGroupInput
                     id="minimum_payout_amount"
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     inputMode="decimal"
                     aria-invalid={!!errors.minimum_payout_amount || undefined}

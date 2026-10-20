@@ -58,7 +58,7 @@ module Spree
       end
 
       it 'duplicates addresses instead of sharing rows' do
-        create(:shipping_method) if Spree::DeliveryMethod.none?
+        create(:delivery_method) if Spree::DeliveryMethod.none?
         country = Spree::Country.by_iso('US')
         cart.update!(
           ship_address: create(:address, country: country, state: country.states.first),

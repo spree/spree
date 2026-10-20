@@ -135,7 +135,7 @@ module Spree
             end
           }.join(',')
 
-          scope.ransack({ s: ransack_sort }, auth_object: @audience).result
+          scope.ransack({ s: ransack_sort }, auth_object: @audience).result.with_translation_fallback_order
         end
       end
 

@@ -23,6 +23,7 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'companies found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -46,33 +47,7 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Globex Corporation' },
-          kind: { type: :string, enum: %w[company division],
-                  description: 'company = legal entity (may hold tax registrations), division = organizational unit. Roots must be company.',
-                  example: 'company' },
-          parent_id: { type: :string, nullable: true,
-                       description: 'The parent node. Omit for a root.',
-                       example: 'comp_86Rf07xd4z' },
-          external_references: {
-            type: :array,
-            description: 'Identities this business has in your own systems. A system you do ' \
-                         'not name keeps the reference it already has, and creating with a ' \
-                         'reference that already exists updates that business instead.',
-            items: {
-              type: :object,
-              properties: {
-                system: { type: :string, example: 'erp' },
-                external_id: { type: :string, example: 'GLBX-42' }
-              },
-              required: %w[system external_id]
-            }
-          }
-        },
-        required: ['name']
-      }
+      request_body_for
 
       let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
@@ -90,6 +65,37 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
         let(:body) { { external_references: [{ system: 'erp', external_id: 'NO-NAME' }] } }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/companies/{id}' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Update a company' do
+      tags 'Companies'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Updates a company node. Only the attributes sent change.'
+      admin_scope :write, :customers
+
+      admin_sdk_example 'companies/update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'company updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { company.prefixed_id }
+        let(:body) { { name: 'Acme Industrial Group', po_number_required: true } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq('Acme Industrial Group')
+          expect(data['po_number_required']).to be(true)
+        end
       end
     end
   end

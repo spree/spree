@@ -4,13 +4,15 @@ module Spree
 
     extend DisplayMoney
     include Spree::SingleStoreResource
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
 
     publishes_lifecycle_events
 
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
     has_many :gift_cards, class_name: 'Spree::GiftCard', inverse_of: :batch, dependent: :destroy
 
@@ -34,10 +36,6 @@ module Spree
     normalizes :prefix, with: ->(value) { value&.to_s&.squish&.presence }
 
     money_methods :amount
-
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
 
     self.whitelisted_ransackable_attributes = %w[prefix]
 

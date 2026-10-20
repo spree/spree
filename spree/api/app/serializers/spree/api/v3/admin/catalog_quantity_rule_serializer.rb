@@ -15,9 +15,7 @@ module Spree
           attributes :minimum_order_quantity, :order_multiple,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :variant_id do |rule|
-            rule.variant&.prefixed_id
-          end
+          prefixed_id_attributes :variant
 
           attribute :variant_sku do |rule|
             rule.variant&.sku

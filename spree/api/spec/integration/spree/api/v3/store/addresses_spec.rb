@@ -24,6 +24,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :limit, in: :query, type: :integer, required: false
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
+      filter_parameters_for
 
       response '200', 'addresses found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -62,25 +63,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'John' },
-          last_name: { type: :string, example: 'Doe' },
-          address1: { type: :string, example: '123 Main St' },
-          address2: { type: :string, example: 'Apt 4B' },
-          city: { type: :string, example: 'New York' },
-          postal_code: { type: :string, example: '10001' },
-          phone: { type: :string, example: '+1 555 123 4567' },
-          company: { type: :string, example: 'Acme Inc' },
-          country_code: { type: :string, example: 'US', description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
-          state_code: { type: :string, example: 'NY', description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
-          state_name: { type: :string, example: 'New York', description: 'State name - for countries without predefined states' },
-          is_default_billing: { type: :boolean, example: true, description: 'Set as default billing address' },
-          is_default_shipping: { type: :boolean, example: true, description: 'Set as default shipping address' }
-        },
-        required: %w[first_name last_name address1 city postal_code country_code]
-      }
+      request_body_for
 
       response '201', 'address created' do
         let(:'x-spree-api-key') { api_key.token }
@@ -167,17 +150,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          first_name: { type: :string, example: 'John' },
-          last_name: { type: :string, example: 'Doe' },
-          address1: { type: :string, example: '456 Oak Ave' },
-          city: { type: :string, example: 'Los Angeles' },
-          is_default_billing: { type: :boolean, example: true, description: 'Set as default billing address' },
-          is_default_shipping: { type: :boolean, example: true, description: 'Set as default shipping address' }
-        }
-      }
+      request_body_for
 
       response '200', 'address updated' do
         let(:'x-spree-api-key') { api_key.token }

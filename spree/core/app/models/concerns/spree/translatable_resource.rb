@@ -12,6 +12,21 @@ module Spree
         const_get(:TRANSLATABLE_FIELDS)
       end
 
+      # The permission a caller needs in order to write this resource's
+      # translations.
+      #
+      # Declared rather than derived from the class name, because several
+      # resources are guarded by a permission that is not named after them:
+      # option types and values ride `write_products`, a policy rides
+      # `write_settings`. Deriving it produced names outside the permission
+      # catalog, which a credential could never hold and which the API
+      # therefore could not check at all.
+      #
+      # @return [String]
+      def translation_write_permission
+        "write_#{Spree::Base.polymorphic_api_type(name).pluralize}"
+      end
+
       # Maps a public API field name to the internal Mobility field, for a
       # model whose translatable column is named differently from the field the
       # API exposes. The public name is what the serializer and the translation
@@ -69,6 +84,40 @@ module Spree
 
       def arel_table_alias
         Arel::Table.new(translation_table_alias)
+      end
+
+      # Sorts translated fields by the translation, or by the default-language
+      # value in the base column when the translation is missing or empty.
+      # Ransack sorts them by the translation alone, which leaves untranslated
+      # records unordered. On a DISTINCT relation the value is selected as
+      # well, because PostgreSQL rejects an ORDER BY the select list lacks.
+      #
+      # @return [ActiveRecord::Relation]
+      def with_translation_fallback_order
+        relation = all
+        return relation unless relation.order_values.any? { |node| translated_ordering?(node) }
+
+        relation = relation.select(arel_table[Arel.star]) if relation.distinct_value && relation.select_values.empty?
+        orders = relation.order_values.map do |node|
+          next node unless translated_ordering?(node)
+
+          value = Arel::Nodes::NamedFunction.new('COALESCE', [
+            Arel::Nodes::NamedFunction.new('NULLIF', [node.expr, Arel::Nodes.build_quoted('')]),
+            arel_table[node.expr.name]
+          ])
+          relation = relation.select(Arel::Nodes::As.new(value, Arel.sql('translated_sort'))) if relation.distinct_value
+          node.class.new(value)
+        end
+
+        relation.reorder(orders)
+      end
+
+      private
+
+      def translated_ordering?(node)
+        node.is_a?(Arel::Nodes::Ordering) &&
+          node.expr.is_a?(Mobility::Plugins::Arel::Attribute) &&
+          self <= node.expr.backend_class.model_class
       end
     end
 

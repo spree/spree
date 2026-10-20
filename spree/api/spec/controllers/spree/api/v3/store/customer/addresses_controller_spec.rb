@@ -133,6 +133,13 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       expect(json_response['state_code']).to eq(state.abbr)
     end
 
+    it 'accepts quick_checkout, relaxing the phone requirement' do
+      post :create, params: address_params.except(:phone).merge(quick_checkout: true)
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['quick_checkout']).to be(true)
+    end
+
     context 'with invalid params' do
       it 'returns validation errors for missing first_name' do
         post :create, params: address_params.except(:first_name)
@@ -306,7 +313,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
     end
 
     context 'when the address is referenced by a shipment' do
-      let!(:shipment) { create(:shipment, address: address) }
+      let!(:shipment) { create(:fulfillment, address: address) }
 
       it 'soft-deletes the address, keeping the shipment association intact' do
         expect {

@@ -25,6 +25,23 @@ module Spree
 
           scoped_resource :exports
 
+          request_params 'SellerExportCreateParams' do |body|
+            body.attribute :type, :string,
+              required: true,
+              choices: ALLOWED_TYPES,
+              description: 'Which dataset to export.'
+            body.attribute :record_selection, :string,
+              choices: %w[filtered all],
+              description: '`filtered` (default) keeps `search_params`; `all` exports everything this seller owns.'
+            # Read from the raw params: an arbitrary Ransack hash with nested
+            # groupings, which `permit(k: {})` rejects.
+            body.attribute :search_params, :hash,
+              permit: false,
+              description: 'Ransack predicates, the same shape the list endpoints take. Ignored when `record_selection` is `all`.'
+            body.attribute :results_url, :string,
+              description: "Panel URL the export-done email links back to. Honored only when it matches one of the store's allowed origins."
+          end
+
           # POST /api/v3/seller/exports
           #
           # Refused before the record is built when the type is not one a
@@ -140,7 +157,7 @@ module Spree
           # `to_unsafe_h`. `:format` is deliberately dropped: only CSV exists,
           # and Rails' request format would otherwise overwrite the enum.
           def permitted_params
-            attrs = params.permit(*model_additional_permitted_attributes, :type, :record_selection, :results_url)
+            attrs = params.permit(*permitted_attributes)
             raw = params[:search_params]
             attrs[:search_params] = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw if raw.present?
             attrs
@@ -181,9 +198,9 @@ module Spree
           def render_unsupported_type
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: Spree.t(
-                'api.errors.unsupported_export_type',
-                default: "Unsupported export type. Supported types: #{ALLOWED_TYPES.join(', ')}"
+              message: I18n.t(
+                'spree.api.errors.unsupported_export_type',
+                types: ALLOWED_TYPES.join(', ')
               ),
               status: :unprocessable_content
             )

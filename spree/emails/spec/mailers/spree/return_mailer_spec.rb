@@ -29,7 +29,7 @@ describe Spree::ReturnMailer, type: :mailer do
 
   it 'names the returned items' do
     variant = return_record.return_line_items.first.variant
-    expect(message.body.encoded).to include(variant.product.name)
+    expect(email_body(message)).to include(variant.product.name)
   end
 
   it 'accepts an id as well as a record' do

@@ -1,4 +1,9 @@
-import type { Customer, TaxIdentifier, TaxIdentifierParams } from '@spree/admin-sdk'
+import type {
+  Customer,
+  TaxIdentifier,
+  TaxIdentifierCreateParams,
+  TaxIdentifierUpdateParams,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   i18n,
@@ -201,7 +206,7 @@ export function useCustomerTaxIdentifiers(customerId: string | undefined) {
 }
 
 export function useCreateCustomerTaxIdentifier(customerId: string) {
-  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierParams>({
+  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierCreateParams>({
     mutationFn: (params) => adminClient.customers.taxIdentifiers.create(customerId, params),
     invalidate: [['customers', customerId, 'tax-identifiers']],
     successMessage: i18n.t('admin.tax_identifiers.messages.created'),
@@ -211,7 +216,11 @@ export function useCreateCustomerTaxIdentifier(customerId: string) {
 
 /** The id travels with the variables so one hook serves every row. */
 export function useUpdateCustomerTaxIdentifier(customerId: string) {
-  return useResourceMutation<TaxIdentifier, Error, { id: string; params: TaxIdentifierParams }>({
+  return useResourceMutation<
+    TaxIdentifier,
+    Error,
+    { id: string; params: TaxIdentifierUpdateParams }
+  >({
     mutationFn: ({ id, params }) =>
       adminClient.customers.taxIdentifiers.update(customerId, id, params),
     invalidate: [['customers', customerId, 'tax-identifiers']],

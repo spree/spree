@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 /**
  * Resolves a code to its display name via `Intl.DisplayNames`, localized to a
  * given UI language. Returns `undefined` when the runtime lacks coverage so
- * callers can apply their own fallback (the API name, the raw code, etc.).
+ * callers can apply their own fallback (usually the raw code).
  *
  * Standalone (non-hook) variant for module-level use outside React.
  */
@@ -25,7 +25,7 @@ export function intlDisplayName(
  * type (`currency`, `language`, `region`, …), localized to the **admin UI
  * language** (`i18n.language`) — NOT the store's content locale — so names
  * match the rest of the dashboard chrome. Returns `undefined` on a miss; the
- * caller supplies the fallback (e.g. `?? code`, `?? country.name`).
+ * caller supplies the fallback (e.g. `?? code`).
  */
 export function useDisplayName(type: Intl.DisplayNamesType) {
   const { i18n: instance } = useTranslation()
@@ -37,6 +37,14 @@ export function useDisplayName(type: Intl.DisplayNamesType) {
     } catch {
       formatter = undefined
     }
-    return (code: string) => formatter?.of(code)
+    // `of` throws a RangeError for a malformed code (a legacy `english`), so
+    // such a code reads as unnamed rather than breaking the page.
+    return (code: string) => {
+      try {
+        return formatter?.of(code)
+      } catch {
+        return undefined
+      }
+    }
   }, [locale, type])
 }

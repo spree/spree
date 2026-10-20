@@ -28,7 +28,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
       post :create, params: { cart_id: order.prefixed_id, payment_method_id: check_payment_method.prefixed_id, amount: '5.00' }
 
       expect(response).to have_http_status(:created)
-      expect(json_response['amount']).to eq('5.0')
+      expect(json_response['amount']).to eq('5.00')
     end
 
     it 'creates a payment with metadata' do

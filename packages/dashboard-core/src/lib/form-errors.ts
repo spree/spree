@@ -71,6 +71,7 @@ function hasTranslation(field: string, entry: ValidationErrorDetail): boolean {
  */
 function translatedSummary(
   details: Record<string, Array<string | ValidationErrorDetail>>,
+  fieldAliases?: Record<string, string>,
 ): string | null {
   const sentences: string[] = []
 
@@ -85,7 +86,8 @@ function translatedSummary(
       // would fall through to the server's own sentence.
       if (!hasTranslation(field, entry)) return null
 
-      sentences.push(`${attributeLabel(field)} ${resolveDetailMessage(field, entry)}`.trim())
+      const labelField = fieldAliases?.[field] ?? field
+      sentences.push(`${attributeLabel(labelField)} ${resolveDetailMessage(field, entry)}`.trim())
     }
   }
 
@@ -163,19 +165,30 @@ function attributeLabel(field: string): string {
  * the bare `base` key and any `*.base` key as record-level and route them
  * to root.
  */
+export interface MapSpreeErrorsToFormOptions<TFieldValues extends FieldValues> {
+  /**
+   * Rails attribute names that differ from the form field the input is bound
+   * to. Address validation reports on `state`; the dashboard writes
+   * `state_code`.
+   */
+  fieldAliases?: Partial<Record<string, Path<TFieldValues>>>
+}
+
 export function mapSpreeErrorsToForm<TFieldValues extends FieldValues>(
   error: unknown,
   setError: UseFormSetError<TFieldValues>,
+  options?: MapSpreeErrorsToFormOptions<TFieldValues>,
 ): boolean {
   if (!(error instanceof SpreeError)) return false
 
   const { details, message } = error
+  const fieldAliases = options?.fieldAliases as Record<string, string> | undefined
 
   // The summary banner is the line a merchant actually reads, so it follows
   // their interface language too. It is rebuilt from the translated entries
   // when every one of them translated; a single untranslated code means the
   // server's own sentence is still the more complete summary, and it stays.
-  const summary = (details && translatedSummary(details)) || message
+  const summary = (details && translatedSummary(details, fieldAliases)) || message
   if (summary) {
     setError('root' as Path<TFieldValues>, { type: 'server', message: summary })
   }
@@ -193,9 +206,11 @@ export function mapSpreeErrorsToForm<TFieldValues extends FieldValues>(
   // worse failure mode than redundant root messages.
   for (const [field, entries] of Object.entries(details)) {
     if (!entries?.length) continue
-    if (!isRenderableFieldKey(field)) continue
 
-    setError(field as Path<TFieldValues>, {
+    const formField = (fieldAliases?.[field] ?? field) as string
+    if (!isRenderableFieldKey(formField)) continue
+
+    setError(formField as Path<TFieldValues>, {
       type: 'server',
       message: entries.map((entry) => resolveDetailMessage(field, entry)).join(', '),
     })

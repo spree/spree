@@ -42,7 +42,6 @@ module Spree
     SOURCES = [CHECKOUT, REGISTRATION, ACCOUNT, ADMIN, NEWSLETTER, ANONYMIZATION,
                UNKNOWN, 'import', 'storefront'].freeze
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :owner, polymorphic: true
 
     validates :purpose, presence: true

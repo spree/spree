@@ -15,20 +15,39 @@ module Spree
 
           skip_before_action :authenticate_admin!
 
+          request_params 'PasswordResetRequestParams', action: :create do |body|
+            body.attribute :email, :string,
+              required: true,
+              permit: false,
+              format: :email,
+              example: 'admin@example.com'
+            body.attribute :redirect_url, :string,
+              permit: false,
+              example: 'https://admin.your-store.com/reset-password',
+              description: 'The page the emailed reset link points at, with the reset token appended. Honored only on the dashboard origin, for an account that is staff of the store; ignored otherwise.'
+          end
+
+          request_params 'PasswordResetParams', action: :update do |body|
+            body.attribute :password, :string, required: true, permit: false
+            body.attribute :password_confirmation, :string, required: true, permit: false
+          end
+
           # POST /api/v3/admin/password_resets
           def create
             user = Spree.admin_user_class.find_by(email: params[:email])
 
             if user
-              redirect_url = trusted_redirect_url(user)
-              token = user.generate_token_for(:password_reset)
-              event_payload = { reset_token: token, email: user.email, store_id: current_store.prefixed_id }
-              event_payload[:redirect_url] = redirect_url if redirect_url.present?
-              user.publish_event('admin_user.password_reset_requested', event_payload)
+              event_name = 'admin_user.password_reset_requested'
+              payload = user.event_payload_for(
+                event_name,
+                reset_token: user.generate_token_for(:password_reset), store: current_store,
+                redirect_url: trusted_redirect_url(user).presence
+              )
+              user.publish_event(event_name, payload)
             end
 
             # Always return 202 to prevent email enumeration
-            render json: { message: Spree.t(:password_reset_requested, scope: :api) }, status: :accepted
+            render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
           end
 
           # PATCH /api/v3/admin/password_resets/:id
@@ -38,7 +57,7 @@ module Spree
             unless user
               return render_error(
                 code: ERROR_CODES[:password_reset_token_invalid],
-                message: Spree.t(:password_reset_token_invalid, scope: :api),
+                message: I18n.t('spree.api.password_reset_token_invalid'),
                 status: :unprocessable_content
               )
             end

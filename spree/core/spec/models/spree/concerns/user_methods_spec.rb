@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::UserMethods do
+describe Spree::CustomerMethods do
   let(:test_user) { create :user }
   let!(:another_user) { create(:user) }
   let(:current_store) { @default_store }
@@ -48,7 +48,7 @@ describe Spree::UserMethods do
     end
 
     context 'with incomplete canceled order' do
-      let(:canceled_order) { create(:order, customer: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
+      let!(:canceled_order) { create(:order, customer: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
 
       it { is_expected.to be_nil }
     end
@@ -132,18 +132,13 @@ describe Spree::UserMethods do
     # Superseded by Spree::Customers::Anonymize, which this now delegates to.
     # The tombstone names changed with it — the anonymizer's coverage is in
     # spec/workflows/spree/customers/anonymize_spec.rb.
-    it 'erases the email and names' do
+    it 'warns and erases the email and names' do
       expect { test_user.scramble_email_and_names }.
         to change(test_user, :email).and change(test_user, :first_name).and change(test_user, :last_name)
 
+      expect(Spree::Deprecation).to have_received(:warn).at_least(:once)
       expect(test_user.first_name).to eq(Spree::Customers::Anonymize::REDACTED_NAME)
       expect(test_user.last_name).to eq(Spree::Customers::Anonymize::REDACTED_NAME)
-    end
-
-    it 'warns that it is deprecated' do
-      expect(Spree::Deprecation).to receive(:warn).at_least(:once)
-
-      test_user.scramble_email_and_names
     end
   end
 
@@ -174,15 +169,15 @@ describe Spree::UserMethods do
     end
 
     it 'is case-insensitive across email and name' do
-      mixed = create(:user, email: 'Greg.Smith@Example.COM', first_name: 'Greg', last_name: 'Smith')
+      mixed = create(:user, email: 'Grevik.Quillmore@Example.COM', first_name: 'Grevik', last_name: 'Quillmore')
 
-      expect(Spree.customer_class.search('GREG.SMITH@EXAMPLE.COM')).to eq([mixed])
-      expect(Spree.customer_class.search('greg.smith@example.com')).to eq([mixed])
-      expect(Spree.customer_class.search('gReG.SmItH')).to eq([mixed])
-      expect(Spree.customer_class.search('GREG')).to eq([mixed])
-      expect(Spree.customer_class.search('SMITH')).to eq([mixed])
-      expect(Spree.customer_class.search('greg smith')).to eq([mixed])
-      expect(Spree.customer_class.search('GREG SMITH')).to eq([mixed])
+      expect(Spree.customer_class.search('GREVIK.QUILLMORE@EXAMPLE.COM')).to eq([mixed])
+      expect(Spree.customer_class.search('grevik.quillmore@example.com')).to eq([mixed])
+      expect(Spree.customer_class.search('gReViK.QuIlLmOrE')).to eq([mixed])
+      expect(Spree.customer_class.search('GREVIK')).to eq([mixed])
+      expect(Spree.customer_class.search('QUILLMORE')).to eq([mixed])
+      expect(Spree.customer_class.search('grevik quillmore')).to eq([mixed])
+      expect(Spree.customer_class.search('GREVIK QUILLMORE')).to eq([mixed])
     end
 
     it 'returns users based on the first name' do

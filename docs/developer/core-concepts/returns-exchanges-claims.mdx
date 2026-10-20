@@ -118,7 +118,15 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/returns/ret_xx
 
 Receiving takes the quantities the warehouse actually counted, because partial and damaged returns are normal rather than exceptional. A customer says three items are coming; two arrive; one of those can't be sold again. Only resellable goods go back into stock.
 
-Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit.
+Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit. A returned item is worth what the customer paid for it after discounts, not its list price, so a free gift sent back refunds nothing. Refunding a return that is owed nothing completes it with no money moved and no refund email; an amount of zero is refused on any return the customer is still owed money on.
+
+### Tax on returns
+
+A return gives back the tax the customer paid on what came back. A $25.00 shirt sold with 10% tax added on top refunds $27.50, and on a store whose prices include VAT the VAT inside the price goes back with it. Delivery and its tax are not refunded.
+
+Each return line shows its worth the way an order line does: `pre_tax_amount` before tax, `included_tax_total` and `additional_tax_total` beside it, and `refund_amount` with the tax included. The return's `refund_tax_total` says how much of `refund_total` is tax, and `expand=return_line_items.tax_lines` (Admin API) lists the tax given back rate by rate.
+
+The store's [tax provider](/developer/core-concepts/taxes) works this out when the return opens, and again just before the money goes back, for the units the warehouse counted. Refunding less than the return is worth — keeping a restocking fee, say — gives the tax back in the same proportion as the goods. If the tax service cannot answer, the return is not opened (or not refunded) and the customer can try again. Claims and exchanges follow the same rules.
 
 ### Where the goods come back to
 
@@ -199,7 +207,34 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/claim_x
 
 A replacement creates a new [fulfillment](/developer/core-concepts/fulfillments) on the original order, so the customer doesn't have to place a second one.
 
-The replacement is filed under the order line it replaces, but it doesn't count toward that line's quantity. Editing the line later, from a claim or an [exchange](#exchanges), adds or removes only the goods the customer paid for and leaves the replacement where it is.
+The replacement is filed under the order line it replaces, but it doesn't count toward that line's quantity. Editing the line later, from a claim or an [exchange](#exchanges), adds or removes only the goods the customer paid for and leaves the replacement where it is. Adding a fulfillment for that line works the same way: it takes only the goods the customer paid for, and the replacement stays in its own fulfillment.
+
+If a replacement's fulfillment is canceled, for example because the courier lost the booking, send the goods again by naming that fulfillment as the source of a new one. The new fulfillment takes everything the canceled one held and reserves its stock again. It is priced like any new fulfillment, so pass `cost: 0` to carry over the canceled fulfillment's delivery cost instead, which keeps a free replacement free.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await adminClient.orders.fulfillments.create('or_xxx', {
+  stock_location_id: 'sloc_xxx',
+  source_fulfillment_id: 'ful_xxx', // the canceled replacement fulfillment
+  cost: 0,
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "stock_location_id": "sloc_xxx",
+    "source_fulfillment_id": "ful_xxx",
+    "cost": 0
+  }'
+```
+
+</CodeGroup>
+
+A claim never refunds more than the customer paid for the claimed items after discounts, tax included. Each claim line reports that ceiling as `paid_amount`, and the `refund_amount` you enter for a line includes its tax. The tax goes back in proportion to the money: refunding half of what a line is worth gives back half its tax, and resolving with a replacement alone gives none back.
 
 ## Exchanges
 
@@ -225,6 +260,16 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/exchanges/exch
 ```
 
 </CodeGroup>
+
+### Settling the difference
+
+An exchange credits what came back and sells the replacement, each with its tax:
+
+- `original_price` is what the customer paid for the items coming back, after discounts and with their tax.
+- `new_variant_price` is the replacement, with its own tax. It keeps the deal the customer had: an item bought at 10% off is replaced at 10% off its price, so swapping a size costs nothing.
+- `price_difference` is the second less the first.
+
+When you fulfill, a cheaper replacement refunds the difference, to store credit or the original payment. A dearer one adds the difference to the order as an `exchange` [fee](/developer/core-concepts/fees), so the order shows a balance due. Spree never charges a stored card for it; take the payment through the order's [payments](/developer/core-concepts/payments).
 
 ## Reporting
 

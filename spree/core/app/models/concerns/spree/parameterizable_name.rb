@@ -20,6 +20,8 @@ module Spree
         end
       end
 
+      scope :with_name, ->(value) { where(name: value.to_s.parameterize) }
+
       def set_name_from_label
         self.name = label
       end

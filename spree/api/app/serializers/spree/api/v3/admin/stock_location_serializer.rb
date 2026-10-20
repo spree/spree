@@ -3,6 +3,9 @@ module Spree
     module V3
       module Admin
         class StockLocationSerializer < V3::StockLocationSerializer
+          # The Store API keeps these deprecated names until 6.1.
+          %i[country_iso state_abbr].each { |key| _attributes.delete(key) }
+
           include Concerns::ExternalReferencesAttribute
 
           typelize seller_id: [:string, nullable: true], seller_name: [:string, nullable: true],
@@ -22,9 +25,7 @@ module Spree
                      :pickup_ready_in_minutes, :pickup_instructions,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :seller_id do |stock_location|
-            stock_location.seller&.prefixed_id
-          end
+          prefixed_id_attributes :seller
 
           attribute :seller_name do |stock_location|
             stock_location.seller&.name

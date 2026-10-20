@@ -1,5 +1,63 @@
 # @spree/dashboard-core
 
+## 1.0.0-rc.4
+
+### Patch Changes
+
+- [#14917](https://github.com/spree/spree/pull/14917) [`dd72579`](https://github.com/spree/spree/commit/dd72579df100ac42e46137851941f292c378172e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Apps no longer choose the versions of `@tanstack/react-table`, `@tanstack/react-hotkeys` and `@hookform/resolvers` used inside the dashboard packages: they are now regular dependencies, so upgrading them in an app (for example to React Table 9) no longer breaks type checking or the dashboard itself. Table column definitions are available as `DataGridColumn` from `@spree/dashboard-ui`. The TipTap menu extensions are pinned to the same version as the rest of the editor.
+  
+  `@spree/dashboard` and `@spree/seller-dashboard` now list the libraries they share with the app (React, TanStack Router and Query, React Hook Form, i18next, react-i18next and the Spree dashboard packages) as peer dependencies, so the app's copy is the only one. Before, an app on a different version got a second copy, which crashes React or makes plugins disappear. Apps must list these packages as their own dependencies; the starter templates now include React Hook Form, i18next and react-i18next.
+
+- [#14907](https://github.com/spree/spree/pull/14907) [`04760bf`](https://github.com/spree/spree/commit/04760bf28c44a52fdf0c773af5fae7774b5910a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Ticking or unticking a value in the "Add filter" panel no longer reorders the list. Values selected when the panel opens are still shown first.
+
+- [#14907](https://github.com/spree/spree/pull/14907) [`04760bf`](https://github.com/spree/spree/commit/04760bf28c44a52fdf0c773af5fae7774b5910a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Search pickers keep the option you pick instead of flickering and switching to another value while results load.
+
+## 1.0.0-rc.3
+
+### Minor Changes
+
+- [#14856](https://github.com/spree/spree/pull/14856) [`05d6372`](https://github.com/spree/spree/commit/05d637294259a03b53e1849be6638bcb2b328d14) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Admin and Seller APIs no longer return `display_*` money fields, so their types drop them; format the amount with its currency instead. The dashboard and seller panel format every amount in the admin's own language. `formatMoney` writes a currency's ISO 4217 decimals and takes `{ unitPrice: true }` for up to four.
+
+- [#14859](https://github.com/spree/spree/pull/14859) [`9728851`](https://github.com/spree/spree/commit/9728851b963a288e89f00ab85bcb993d3ebf5293) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Plugins and host apps can now add pages outside a store, such as onboarding, sign-up and account pages. File routes go in the new `authenticatedRoutes` (signed-in users) or `publicRoutes` (anyone) directories of a plugin's `spree.dashboard` marker; registry routes take `scope: 'authenticated'` or `scope: 'public'` with a full URL path. Both mount at the root, outside the store layout, and a page that takes the path of a built-in page fails with an error naming it.
+
+  The signed-in landing page at `/` can be replaced through the new `store_selection` slot, for example with a list of stores and a way to create one, and the login page renders extra content, such as a sign-up link, from the new `login.after` slot.
+
+- [#14866](https://github.com/spree/spree/pull/14866) [`cbde8fe`](https://github.com/spree/spree/commit/cbde8fef8d27b91ef0cc415f3a7f69135b52113a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `directUploads.create()` is replaced by `files.create()` and `files.upload()`, which uploads a file and resolves to a `signed_id` in one call, either straight to storage or in the request itself. The `signed_id` expires after a day. Every parameter that takes one is now named `signed_id` or `<slot>_signed_id` (`avatar_signed_id`, `logo_signed_id`, `attachment_signed_id`, `document_signed_id`, `file_signed_id`, `po_document_signed_id`, …). In `@spree/dashboard-core`, `useDirectUpload` becomes `useFileUpload({ visibility })`, and `signedIdParam` builds the three-state write for an image or document field.
+
+### Patch Changes
+
+- [#14852](https://github.com/spree/spree/pull/14852) [`3525c00`](https://github.com/spree/spree/commit/3525c00440076a17cce671f3e20801309d8ba586) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Money fields are now shown and read in the number format of the person using the dashboard, whatever the currency or market: an admin whose dashboard is in German types `1.234,56` for dollars and euros alike. Previously the format followed the currency's market, which was ambiguous when two markets shared a currency. `useFormCurrencyLocale` and the panel client's `markets` entry are removed; use `useMoneyLocale()`.
+
+- [#14856](https://github.com/spree/spree/pull/14856) [`f508a38`](https://github.com/spree/spree/commit/f508a389f7f09f5ca85bfa32a2dfcec9517ea1bf) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Preferences of the new `money` type are shown with their currency's symbol in settings forms and as money in calculator summaries, instead of being guessed from the preference's name. `PreferenceField.type` documents the `money` type.
+
+- [#14854](https://github.com/spree/spree/pull/14854) [`90af080`](https://github.com/spree/spree/commit/90af080e5e3745423475ef9deef21f4dfc0bb71b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - List methods of documented endpoints now accept typed filter and sort parameters, generated from the filters each endpoint actually accepts; methods of endpoints the API reference does not document yet keep loose parameters. A misspelled filter, a filter the endpoint does not support, or an unknown sort field is now a type error instead of a request that silently returns the unfiltered list. `ProductListParams`, `CategoryListParams`, `CollectionListParams` and `OrderListParams` keep their names and are now generated; they no longer accept arbitrary keys. Filters an app adds through its own extensions can be sent unchecked inside `q` (`list({ q: { erp_id_eq: 'ERP-1' } })`), generated as declarations with `spree filters types`, or declared by hand by extending `<Resource>FilterExtensions` and `<Resource>SortExtensions`. The filter building blocks (`TextFilters`, `SortKey`, …) are exported for those declarations.
+
+  The dashboard's allowed-origins search, delivery zones by profile, and several filters and sorts on payment methods, sellers, option types, markets, custom field definitions and gift cards now take effect; the API used to ignore them.
+
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- [#14845](https://github.com/spree/spree/pull/14845) [`9a0a293`](https://github.com/spree/spree/commit/9a0a293e2e91dccce3024f74013ade4599bbff08) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed type checking in projects that install the dashboard or seller panel with pnpm. The generated route file imported the routes through the package's `node_modules` link, where TypeScript cannot find the dashboard's own dependencies, so `tsc` reported hundreds of "Cannot find module" errors. It now imports them from the installed location again. Under pnpm that location includes the package version, so an upgrade rewrites the import paths in `routeTree.gen.ts`.
+
+## 1.0.0-rc.1
+
+### Minor Changes
+
+- [#14785](https://github.com/spree/spree/pull/14785) [`4bd1741`](https://github.com/spree/spree/commit/4bd1741677b202f11c13b792bf16e62301d2c5cd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an email template editor under Settings → Emails → Templates. Merchants edit the emails customers receive, the email layout and shared blocks with a code editor that suggests variables and marks problems by line, next to a live preview (desktop and mobile, email and plain text). Edits save as drafts and go live when published; drafts can be discarded, templates reverted to Spree's default, test emails sent to yourself, and earlier versions restored from the history. A banner shows when a Spree upgrade changed a default the store customized, with a side-by-side comparison. The email settings page gains a Branding card for the colors and font of customer emails, with a preview. `@spree/dashboard-ui` adds a `CodeEditor` (deep import `@spree/dashboard-ui/ui/code-editor`) and a `useDebouncedValue` hook; `@spree/dashboard-core` adds the `EmailTemplate` permission subject.
+
+### Patch Changes
+
+- [#14818](https://github.com/spree/spree/pull/14818) [`7fa7a64`](https://github.com/spree/spree/commit/7fa7a647d5372641fa45ff6fc9c52892bf791a1c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Search pickers (customers, products, sellers and others) now search again each time they open, so a record created elsewhere in the dashboard shows up without reloading the page.
+
+- [#14764](https://github.com/spree/spree/pull/14764) [`291238d`](https://github.com/spree/spree/commit/291238dfc0b05f9b322f9e51d6cd3737006ba430) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the seller panel opening with an empty sidebar when a seller returned with a live session but no remembered seller, for example after the browser cleared site storage. The panel now loads the seller's permissions once it knows which seller is active.
+
+- [#14747](https://github.com/spree/spree/pull/14747) [`a0151c1`](https://github.com/spree/spree/commit/a0151c15a268356f5a5ba236850b8ee7405e9ae7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the setup screen of a new project reloading while the merchant was filling it in. The generated route file now refers to installed packages by their stable location, and `spree add` generates it right after installing, so the first dev start has nothing to rewrite. Upgrades also no longer rewrite every line of that file, so its diff shows only the pages an upgrade added.
+
+- [#14789](https://github.com/spree/spree/pull/14789) [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Tier threshold and discount inputs now carry accessible names, so screen readers announce what each field is.
+
+- [#14789](https://github.com/spree/spree/pull/14789) [`f52fc12`](https://github.com/spree/spree/commit/f52fc12c788bae7edcba264e43e5da7a6c58f25f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The tiers editor for the tiered percent and tiered flat rate calculators now reads and writes tiers as a list of `{ threshold, value }` entries, the shape Spree 6.0 stores them in. It still reads the old hash keyed by threshold, so a calculator the upgrade has not converted yet opens correctly.
+
 ## 1.0.0-beta.8
 
 ## 1.0.0-beta.7

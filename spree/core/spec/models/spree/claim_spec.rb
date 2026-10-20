@@ -10,19 +10,7 @@ RSpec.describe Spree::Claim do
     expect(claim).to be_open
   end
 
-  it 'is reachable from its order' do
-    claim = create(:claim, store: store)
-
-    expect(claim.order.reload.claims).to include(claim)
-  end
-
   describe 'reason' do
-    it 'records the merchant-owned reason' do
-      reason = create(:claim_reason, store: store, name: 'Arrived damaged')
-
-      expect(create(:claim, store: store, reason: reason).reason).to eq(reason)
-    end
-
     # A merchant mid-claim should not be blocked because nobody has curated
     # the vocabulary yet.
     it 'is optional' do
@@ -38,10 +26,10 @@ RSpec.describe Spree::Claim do
     let(:claim) { create(:claim, store: store) }
     let(:line) { claim.claim_line_items.first }
 
-    it 'caps a refund at what the customer paid for the units' do
-      line_item = line.line_item
+    it 'caps a refund at what the customer paid for the units after discounts' do
+      line.line_item.update_columns(price: 10, taxable_adjustment_total: -2)
 
-      expect(line.paid_amount).to eq(line_item.amount / line_item.quantity)
+      expect(line.paid_amount).to eq(8)
     end
 
     it 'sends the original variant when no replacement is named' do

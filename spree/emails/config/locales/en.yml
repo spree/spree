@@ -30,29 +30,22 @@ en:
         available_until: Available until %{date}
         dear_customer: Dear %{name},
         instructions: The files from your order %{number} are ready to download.
-        store_team: "%{store_name} Team"
         subject: Your files are ready
-        thanks: Thank you for your business.
     fulfillment_mailer:
       fulfilled_email:
         dear_customer: Dear %{name},
         delivery_method: 'Delivery method: %{delivery_method}'
         fulfillment_summary: Fulfillment summary for order
         instructions: Your order %{number} has been fulfilled
-        store_team: "%{store_name} Team"
         subject: Fulfillment Notification
-        thanks: Thank you for your business.
         track_information: 'Tracking Information: %{tracking}'
-        track_link: 'Tracking Link: %{url}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hey,
         ignore_disclaimer: If you didn't request this, please ignore this email.
         instructions: Please click the button below to verify your email address.
         message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
-        store_team: "%{store_name} Team"
         subject: Verify your email address
-        thanks: Thank you
         verify_email_address_link: Verify email address
     order_group_mailer:
       confirm_email:
@@ -62,7 +55,6 @@ en:
         dear_customer: Hey %{name},
         instructions: Please review and retain the following information about order %{number} for your records.
         subject: Order Confirmation
-        thanks: Thank you
       delivery: Delivery
       delivery_numbered: Delivery %{position} of %{count}
       nothing_to_ship: Nothing to ship
@@ -80,13 +72,11 @@ en:
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
-        thanks: Thank you for
       confirm_email:
         dear_customer: Hey %{name},
         instructions: Please review and retain the following order information for your records.
         order_summary: Order %{number} Summary
         subject: Order Confirmation
-        thanks: Thank you
       payment_link_email:
         message: Please click the button below to pay for your order.
         message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
@@ -98,8 +88,6 @@ en:
         instructions: You have received a new order.
         order_summary: Order %{number} Summary
         subject: "%{store_name} received a new order"
-        thanks: Thank you
-      store_team: "%{store_name} Team"
       subtotal: 'Subtotal:'
       total: 'Order Total:'
     return_mailer:
@@ -108,9 +96,7 @@ en:
         instructions: Your return for order %{number} has been refunded.
         refund_summary: Refund Summary
         returned_items: Returned Items
-        store_team: "%{store_name} Team"
         subject: Return Refunded
-        thanks: Thank you for your business.
         total_refunded: 'Total refunded: %{total}'
     seller_mailer:
       approved_email:
@@ -128,14 +114,3 @@ en:
         heading: Your account has been suspended
         message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
         subject: Your %{store_name} account has been suspended
-    shipment_mailer:
-      shipped_email:
-        dear_customer: Dear %{name},
-        instructions: Your order %{number} has been shipped
-        shipment_summary: Shipment Summary for order
-        shipping_method: 'Shipping method: %{shipping_method}'
-        store_team: "%{store_name} Team"
-        subject: Shipment Notification
-        thanks: Thank you for your business.
-        track_information: 'Tracking Information: %{tracking}'
-        track_link: 'Tracking Link: %{url}'

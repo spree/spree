@@ -1,10 +1,12 @@
 module Spree
   module Api
     module V3
-      # Payload of the supplier.* events. Suppliers have no storefront
-      # serializer — a customer never sees who the merchant buys from — so the
-      # event shape is declared here rather than found by convention.
-      class SupplierEventSerializer < Admin::SupplierSerializer
+      # Payload of the supplier.* events. A supplier's contact details stay
+      # behind the Admin API.
+      class SupplierEventSerializer < BaseSerializer
+        typelize name: :string
+
+        attributes :name, created_at: :iso8601, updated_at: :iso8601
       end
     end
   end

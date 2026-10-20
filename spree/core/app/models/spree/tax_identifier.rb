@@ -36,6 +36,8 @@ module Spree
   # directly. It is a habit of the gems that use it, not a rule this model
   # applies.
   class TaxIdentifier < Spree.base_class
+    publishes_event :number_changed
+
     has_prefix_id :txi
 
     # Statuses the platform records rather than the buyer chooses: nil means
@@ -150,7 +152,7 @@ module Spree
     # The kind as the dashboard shows it, falling back to the raw key so an
     # extension's kind reads as itself rather than blank.
     def kind_label
-      Spree.t("tax_identifier_kinds.#{kind}", default: kind.to_s.humanize)
+      I18n.t("spree.tax_identifier_kinds.#{kind}", default: kind.to_s.humanize)
     end
 
     # The class registered for this kind, or nil when nothing is registered and

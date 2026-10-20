@@ -24,6 +24,8 @@ RSpec.describe 'Seller Profile API', type: :request, swagger_doc: 'api-reference
         another seller here even by guessing one.
       DESC
 
+      seller_sdk_example 'profile/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'profile returned' do
@@ -69,33 +71,10 @@ RSpec.describe 'Seller Profile API', type: :request, swagger_doc: 'api-reference
         asked for is ignored rather than written.
       DESC
 
+      seller_sdk_example 'profile/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Acme Supplies' },
-          contact_email: { type: :string, format: 'email', nullable: true, example: 'hello@acme.test' },
-          billing_email: { type: :string, format: 'email', nullable: true, example: 'billing@acme.test' },
-          about: { type: :string, nullable: true, description: 'Sanitized HTML — the seller\'s public description' },
-          legal_name: { type: :string, nullable: true, description: 'The business a commission invoice is made out to' },
-          registration_number: { type: :string, nullable: true },
-          logo: { type: :string, nullable: true, description: 'ActiveStorage signed id; `null` removes the attachment' },
-          square_logo: { type: :string, nullable: true },
-          cover_photo: { type: :string, nullable: true },
-          accept_terms: { type: :boolean, description: 'Stamps acceptance of the marketplace terms' },
-          billing_address: { type: :object, additionalProperties: true },
-          custom_fields: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                custom_field_definition_id: { type: :string, example: 'cfd_abc123' },
-                value: { description: 'Any JSON value the definition accepts' }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'profile updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

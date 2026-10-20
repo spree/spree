@@ -190,6 +190,54 @@ RSpec.describe Spree::Checkout::Requirements do
     end
   end
 
+  describe 'assortment requirement' do
+    let(:customer) { create(:user) }
+    let(:company) { create(:company, store: store) }
+    let(:catalog) { create(:catalog, store: store) }
+    let(:hidden) { create(:product, store: store, name: 'Gravel Bike') }
+    let(:cart) { create(:cart, store: store, customer: customer) }
+
+    before do
+      create(:catalog_product, catalog: catalog, product: create(:product, store: store))
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+      create(:company_membership, company: company, customer: customer)
+    end
+
+    # A guest cart claimed after sign-in carries lines no add ever checked
+    # against this buyer's catalogs.
+    it "refuses a line outside the buyer's catalogs at completion" do
+      create(:line_item, cart: cart, order: nil, variant: hidden.default_variant)
+
+      expect(described_class.new(cart.reload).call(completion: true)).to include(
+        a_hash_including(step: 'cart', field: 'line_items', code: 'not_orderable', message: include('Gravel Bike'))
+      )
+    end
+
+    it 'accepts a line inside them' do
+      create(:catalog_product, catalog: catalog, product: hidden)
+      create(:line_item, cart: cart, order: nil, variant: hidden.default_variant)
+
+      expect(described_class.new(cart.reload).call(completion: true)).not_to include(a_hash_including(code: 'not_orderable'))
+    end
+
+    it 'reports a discontinued line once' do
+      hidden.update_column(:discontinue_on, 1.day.ago)
+      create(:line_item, cart: cart, order: nil, variant: hidden.default_variant)
+
+      codes = described_class.new(cart.reload).call(completion: true).map { |requirement| requirement[:code] }
+
+      expect(codes).to include('discontinued')
+      expect(codes).not_to include('not_orderable')
+    end
+
+    it "does not hold back staff's draft order" do
+      order.update_columns(customer_id: customer.id)
+      create(:line_item, order: order, variant: hidden.default_variant)
+
+      expect(described_class.new(order.reload).call(completion: true)).not_to include(a_hash_including(code: 'not_orderable'))
+    end
+  end
+
   describe 'fully ready order' do
     let(:order) { create(:order_with_line_items, store: store, state: 'payment') }
 

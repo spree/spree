@@ -22,7 +22,7 @@ module Spree
         return if locale.blank? || store.blank?
 
         unless store.supported_locales_list.include?(locale)
-          errors.add(:locale, :locale_not_supported_by_store, message: Spree.t(:locale_not_supported_by_store))
+          errors.add(:locale, :locale_not_supported_by_store, message: I18n.t('spree.locale_not_supported_by_store'))
         end
       end
     end

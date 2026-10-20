@@ -9,21 +9,13 @@ module Spree
 
         attributes :status, :external_id, :external_client_secret, :external_data
 
-        attribute :payment_method_id do |session|
-          session.payment_method&.prefixed_id
-        end
-
-        attribute :payment_source_id do |session|
-          session.payment_source&.prefixed_id
-        end
+        prefixed_id_attributes :payment_method, :payment_source
 
         attribute :payment_source_type do |session|
-          session.payment_source_type
+          Spree::Base.polymorphic_api_type(session.payment_source_type)
         end
 
-        attribute :customer_id do |session|
-          session.customer&.prefixed_id
-        end
+        prefixed_id_attributes :customer
 
         one :payment_method, resource: proc { Spree.api.payment_method_serializer }
       end

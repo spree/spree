@@ -1,5 +1,11 @@
-import type { CatalogParams, PriceList } from '@spree/admin-sdk'
-import { blankToNull, normalizeQuantityRule } from '@spree/dashboard-core'
+import type { CatalogCreateParams, CurrencyCode, PriceList } from '@spree/admin-sdk'
+import { compareMoney, negateMoney } from '@spree/admin-sdk'
+import {
+  blankToNull,
+  isPositiveMoney,
+  normalizeQuantityRule,
+  shiftDecimalPoint,
+} from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -149,7 +155,7 @@ export const catalogFormSchema = z
     (v) => {
       if (v.pricing_mode !== 'automatic' || v.adjustment_direction !== 'decrease') return true
       const magnitude = parsePercentage(v.adjustment_magnitude)
-      return magnitude === null || magnitude < 100
+      return magnitude === null || compareMoney(magnitude, '100') < 0
     },
     {
       path: ['adjustment_magnitude'],
@@ -198,7 +204,7 @@ export type StagedProductTerms = Record<string, ProductTermEntry>
  */
 export interface OrderMinimumEntry {
   id?: string
-  currency: string
+  currency: CurrencyCode
   amount: string
 }
 
@@ -252,12 +258,17 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
  * an object stands the list up or updates it, and an explicit null detaches
  * — which is a deliberate act, since a released list starts matching by its
  * own rules again.
+ *
+ * @param values the form values being saved
+ * @param loaded the pricing as last loaded from the catalog's owned list
+ *   (`catalogPricingValues`), so a mode switch can be told from a plain save
+ *   and an untouched ladder is left alone. Absent on create.
+ * @return the catalog create/update payload
  */
 export function catalogValuesToParams(
   values: CatalogFormValues,
-  /** The mode the catalog was saved in, so a switch can be told from a plain save. */
-  previousMode?: CatalogPricingMode,
-): CatalogParams {
+  loaded?: CatalogPricingValues,
+): CatalogCreateParams {
   return {
     name: values.name,
     description: blankToNull(values.description),
@@ -282,11 +293,11 @@ export function catalogValuesToParams(
       currency: row.currency,
       amount: row.amount,
     })),
-    price_list: priceListPayload(values, previousMode),
+    price_list: priceListPayload(values, loaded),
   }
 }
 
-function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPricingMode) {
+function priceListPayload(values: CatalogFormValues, loaded?: CatalogPricingValues) {
   if (values.pricing_mode === 'base') return null
 
   if (values.pricing_mode === 'fixed') {
@@ -314,30 +325,50 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
           adjust_compare_at: values.adjust_compare_at,
         }
       : {
-          price_adjustment_percentage: String(
-            values.adjustment_direction === 'decrease' ? -magnitude : magnitude,
-          ),
+          price_adjustment_percentage:
+            values.adjustment_direction === 'decrease' ? negateMoney(magnitude) : magnitude,
           adjust_compare_at: values.adjust_compare_at,
         }
 
   // A minimum quantity rides as the list's volume rule; dropping it from the
   // list of rules is what clears it, so removing the threshold is a real
   // edit rather than a silent no-op.
+  // The payload is the whole ladder, so a band the merchant deleted is a
+  // band absent from this array rather than one marked for removal.
+  const tiers = adjustmentTiersPayload(values.adjustment_tiers, values.adjustment_direction)
   const withRule = {
     ...base,
     rules: volumeRulePayload(values.minimum_quantity),
-    // The payload is the whole ladder, so a band the merchant deleted is a
-    // band absent from this array rather than one marked for removal.
-    price_adjustment_tiers: adjustmentTiersPayload(
-      values.adjustment_tiers,
-      values.adjustment_direction,
-    ),
+    // Left out when untouched: the form reads every band through one
+    // direction, so a ladder the API holds with mixed signs would come back
+    // with its markups turned into discounts on an unrelated save.
+    ...(ladderUnchanged(tiers, loaded) ? {} : { price_adjustment_tiers: tiers }),
   }
 
   // Switching away from hand-entered prices clears them. An explicit amount
   // beats the adjustment by design, so leaving the old rows behind would
   // keep charging them while the card claims a percentage is in effect.
-  return previousMode === 'fixed' ? { ...withRule, prices: [] } : withRule
+  return loaded?.pricing_mode === 'fixed' ? { ...withRule, prices: [] } : withRule
+}
+
+// Compared as payloads, so the direction is part of the comparison: flipping
+// it re-signs every band and is an edit, as is any band added, removed or
+// retyped.
+function ladderUnchanged(
+  tiers: ReturnType<typeof adjustmentTiersPayload>,
+  loaded: CatalogPricingValues | undefined,
+): boolean {
+  if (loaded?.pricing_mode !== 'automatic') return false
+
+  const loadedTiers = adjustmentTiersPayload(loaded.adjustment_tiers, loaded.adjustment_direction)
+  return (
+    tiers.length === loadedTiers.length &&
+    tiers.every(
+      (tier, index) =>
+        tier.min_quantity === loadedTiers[index].min_quantity &&
+        tier.percentage === loadedTiers[index].percentage,
+    )
+  )
 }
 
 /**
@@ -358,7 +389,7 @@ function adjustmentTiersPayload(
     return [
       {
         min_quantity: quantity,
-        percentage: String(direction === 'decrease' ? -magnitude : magnitude),
+        percentage: direction === 'decrease' ? negateMoney(magnitude) : magnitude,
       },
     ]
   })
@@ -381,7 +412,7 @@ function tierPercentageIsUsable(
   const magnitude = parsePercentage(tier.percentage)
   if (magnitude === null) return false
 
-  return direction === 'increase' || magnitude < 100
+  return direction === 'increase' || compareMoney(magnitude, '100') < 0
 }
 
 function volumeRulePayload(minimumQuantity: string | undefined) {
@@ -391,6 +422,16 @@ function volumeRulePayload(minimumQuantity: string | undefined) {
   if (quantity === null || quantity === 1) return []
 
   return [{ type: 'volume_rule', preferences: { min_quantity: quantity } }]
+}
+
+/** The pricing fields of the catalog form, as read off its owned list. */
+export interface CatalogPricingValues {
+  pricing_mode: CatalogPricingMode
+  adjustment_direction: CatalogFormValues['adjustment_direction']
+  adjustment_magnitude: string
+  adjust_compare_at: boolean
+  minimum_quantity: string
+  adjustment_tiers: AdjustmentTierValue[]
 }
 
 /**
@@ -408,14 +449,7 @@ export function catalogPricingValues(
       >
     | null
     | undefined,
-): {
-  pricing_mode: CatalogPricingMode
-  adjustment_direction: CatalogFormValues['adjustment_direction']
-  adjustment_magnitude: string
-  adjust_compare_at: boolean
-  minimum_quantity: string
-  adjustment_tiers: AdjustmentTierValue[]
-} {
+): CatalogPricingValues {
   if (!priceList) {
     return {
       pricing_mode: 'base',
@@ -441,7 +475,7 @@ export function catalogPricingValues(
   // The shallowest band decides the whole ladder's direction: the form offers
   // one increase/decrease control, and the magnitudes below are read through
   // it.
-  const bandDirection = Number(bands[0]?.percentage) > 0 ? 'increase' : 'decrease'
+  const bandDirection = isPositiveMoney(bands[0]?.percentage) ? 'increase' : 'decrease'
 
   return {
     pricing_mode: bandsOnly ? 'automatic' : pricing_mode,
@@ -455,7 +489,7 @@ export function catalogPricingValues(
     // above them carries the sign for the whole ladder.
     adjustment_tiers: bands.map((tier) => ({
       min_quantity: String(tier.min_quantity),
-      percentage: String(Math.abs(Number(tier.percentage))),
+      percentage: shiftDecimalPoint(String(tier.percentage).replace(/^-/, ''), 0),
     })),
   }
 }

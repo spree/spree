@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { __getNavEntries, __resetNavRegistry, nav } from '../src/lib/nav-registry'
+import { Subject } from '../src/lib/permissions'
 import {
   __resetSettingsNavRegistry,
   hasVisibleSettingsEntries,
@@ -24,7 +25,7 @@ function registerSettingsPages() {
     label: 'Store',
     path: '/store',
     group: 'store',
-    subject: 'Spree::Store',
+    subject: 'store',
     action: 'update',
   })
   settingsNav.add({
@@ -32,7 +33,7 @@ function registerSettingsPages() {
     label: 'Roles',
     path: '/roles',
     group: 'team',
-    subject: 'Spree::Role',
+    subject: 'role',
   })
 }
 
@@ -44,8 +45,8 @@ describe('settings nav visibility', () => {
 
     // An order manager: reads the store for shell data, manages nothing here.
     const orderManager = permissionsFor([
-      ['read', 'Spree::Store'],
-      ['manage', 'Spree::Order'],
+      ['read', 'store'],
+      ['manage', 'order'],
     ])
 
     expect(hasVisibleSettingsEntries(orderManager)).toBe(false)
@@ -55,8 +56,8 @@ describe('settings nav visibility', () => {
     registerSettingsPages()
 
     const settingsManager = permissionsFor([
-      ['read', 'Spree::Store'],
-      ['update', 'Spree::Store'],
+      ['read', 'store'],
+      ['update', 'store'],
     ])
 
     expect(hasVisibleSettingsEntries(settingsManager)).toBe(true)
@@ -65,7 +66,7 @@ describe('settings nav visibility', () => {
   it('shows read-gated pages to a role holding that read', () => {
     registerSettingsPages()
 
-    expect(hasVisibleSettingsEntries(permissionsFor([['read', 'Spree::Role']]))).toBe(true)
+    expect(hasVisibleSettingsEntries(permissionsFor([['read', 'role']]))).toBe(true)
   })
 
   it('treats entries without a subject as always visible', () => {
@@ -93,14 +94,14 @@ describe('main nav visibility', () => {
       key: 'getting-started',
       label: 'Getting Started',
       path: '/getting-started',
-      subject: 'Spree::Store',
+      subject: 'store',
       action: 'update',
     })
-    nav.add({ key: 'orders', label: 'Orders', path: '/orders', subject: 'Spree::Order' })
+    nav.add({ key: 'orders', label: 'Orders', path: '/orders', subject: 'order' })
 
     const orderManager = permissionsFor([
-      ['read', 'Spree::Store'],
-      ['read', 'Spree::Order'],
+      ['read', 'store'],
+      ['read', 'order'],
     ])
     const visible = navEntriesFor(orderManager)
 
@@ -113,11 +114,11 @@ describe('main nav visibility', () => {
       key: 'getting-started',
       label: 'Getting Started',
       path: '/getting-started',
-      subject: 'Spree::Store',
+      subject: 'store',
       action: 'update',
     })
 
-    expect(navEntriesFor(permissionsFor([['update', 'Spree::Store']]))).toContain('getting-started')
+    expect(navEntriesFor(permissionsFor([['update', 'store']]))).toContain('getting-started')
   })
 })
 
@@ -127,3 +128,10 @@ function navEntriesFor(permissions: { can: (action: string, subject: string) => 
     .filter((e) => !e.subject || permissions.can(e.action ?? 'read', e.subject))
     .map((e) => e.key)
 }
+
+describe('Subject', () => {
+  // The /me endpoints send short names; a class name here never matches a rule.
+  it('names every subject by its short name', () => {
+    for (const value of Object.values(Subject)) expect(value).toMatch(/^[a-z][a-z_]*$/)
+  })
+})

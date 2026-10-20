@@ -67,7 +67,7 @@ RSpec.shared_examples 'library media slots' do
   # A picked library file arrives as an existing blob; placing it must not
   # duplicate the file in storage.
   it 'shares the blob when a library file is picked into a slot' do
-    library_file = create(:image, viewable: nil)
+    library_file = create(:media, viewable: nil)
 
     expect {
       record.image.attach(library_file.attachment.blob)

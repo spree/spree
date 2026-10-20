@@ -5,6 +5,8 @@ module Spree
         # Admin API Order Serializer
         # Full order data including admin-only fields
         class OrderSerializer < V3::OrderSerializer
+          without_formatted_money
+
           include Concerns::ExternalReferencesAttribute
 
 
@@ -16,37 +18,23 @@ module Spree
 
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
-          typelize item_total: [:string, nullable: false], display_item_total: [:string, nullable: false],
-                   delivery_total: [:string, nullable: false], display_delivery_total: [:string, nullable: false],
-                   adjustment_total: [:string, nullable: false], display_adjustment_total: [:string, nullable: false],
-                   discount_total: [:string, nullable: false], display_discount_total: [:string, nullable: false],
-                   tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false],
-                   included_tax_total: [:string, nullable: false], display_included_tax_total: [:string, nullable: false],
-                   additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
-                   store_credit_total: [:string, nullable: false], display_store_credit_total: [:string, nullable: false],
-                   gift_card_total: [:string, nullable: false], display_gift_card_total: [:string, nullable: false],
-                   fee_total: [:string, nullable: false], display_fee_total: [:string, nullable: false],
-                   total: [:string, nullable: false], display_total: [:string, nullable: false],
-                   amount_due: [:string, nullable: false], display_amount_due: [:string, nullable: false]
-
-          # Back-office only: what the marketplace earned on this sale — the fee,
-          # the tax charged on it, and the two together. Never on the store
-          # serializer: a commission settles between the platform and the
-          # seller, and the shopper does not pay it.
-          #
-          # The tax stands on its own because it is separately reportable —
-          # the platform files it as output tax on a B2B supply to the seller.
-          typelize commission_amount_total: [:string, nullable: false],
-                   display_commission_amount_total: [:string, nullable: false],
-                   commission_tax_total: [:string, nullable: false],
-                   display_commission_tax_total: [:string, nullable: false],
-                   commission_total: [:string, nullable: false],
-                   display_commission_total: [:string, nullable: false]
+          typelize item_total: [:string, nullable: false],
+                   delivery_total: [:string, nullable: false],
+                   adjustment_total: [:string, nullable: false],
+                   discount_total: [:string, nullable: false],
+                   tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false],
+                   store_credit_total: [:string, nullable: false],
+                   gift_card_total: [:string, nullable: false],
+                   fee_total: [:string, nullable: false],
+                   total: [:string, nullable: false],
+                   amount_due: [:string, nullable: false]
 
           typelize status: [:string, enum: Spree::Order::STATUSES],
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,
-                   store_owner_notification_delivered: :boolean,
+                   store_owner_notification_delivered: [:boolean, nullable: true],
                    internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true],
                    approver_id: [:string, nullable: true],
                    approver_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
@@ -59,24 +47,34 @@ module Spree
                    cancel_reason_id: [:string, nullable: true],
                    cancel_reason_name: [:string, nullable: true],
                    cancel_note: [:string, nullable: true],
-                   payment_total: :string, display_payment_total: :string,
                    tags: [:string, multi: true],
                    metadata: 'Record<string, unknown>'
 
           # Admin-only attributes
           attributes :status, :last_ip_address, :considered_risky,
                      :confirmation_delivered, :store_owner_notification_delivered,
-                     :payment_total, :display_payment_total, :metadata,
-                     :cancel_note,
-                     :commission_amount_total, :display_commission_amount_total,
-                     :commission_tax_total, :display_commission_tax_total,
-                     :commission_total, :display_commission_total,
+                     :metadata, :cancel_note,
                      canceled_at: :iso8601, approved_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :preferred_stock_location_id do |order|
-            order.preferred_stock_location&.prefixed_id
-          end
+          money_attributes :payment_total
+          typelize payment_total: [:string, nullable: false]
+
+          # Back-office only: what the marketplace earned on this sale — the fee,
+          # the tax charged on it, and the two together. Never on the store
+          # serializer: a commission settles between the platform and the
+          # seller, and the shopper does not pay it.
+          #
+          # The tax stands on its own because it is separately reportable —
+          # the platform files it as output tax on a B2B supply to the seller.
+          money_attributes :commission_amount_total,
+                           :commission_tax_total,
+                           :commission_total
+          typelize commission_amount_total: [:string, nullable: false],
+                   commission_tax_total: [:string, nullable: false],
+                   commission_total: [:string, nullable: false]
+
+          prefixed_id_attributes :preferred_stock_location
 
           # Our own endpoint rather than a pre-signed storage URL: the
           # controller streams the bytes, so admin auth runs on every download
@@ -90,9 +88,7 @@ module Spree
           # Which company node the order is for, so the dashboard can show and
           # change it. Read back from the column rather than #resolved_company:
           # a placed order must report what it was stamped with.
-          attribute :company_id do |order|
-            order.company&.prefixed_id
-          end
+          prefixed_id_attributes :company
 
           attribute :company_name do |order|
             order.company&.name
@@ -100,9 +96,7 @@ module Spree
 
           # Whose sale this is — nil on the operator's own goods. The full
           # profile is `?expand=seller`.
-          attribute :seller_id do |order|
-            order.seller&.prefixed_id
-          end
+          prefixed_id_attributes :seller
 
           one :seller,
               resource: proc { Spree.api.admin_seller_serializer },
@@ -136,9 +130,7 @@ module Spree
           # secret key names the key.
           actor_attributes :approver, :canceler, :created_by
 
-          attribute :cancel_reason_id do |order|
-            order.cancel_reason&.prefixed_id
-          end
+          prefixed_id_attributes :cancel_reason
 
           # The reason's name alongside its id, so an order list can show why
           # each canceled order was called off without expanding a record per
@@ -147,9 +139,7 @@ module Spree
             order.cancel_reason&.name
           end
 
-          attribute :customer_id do |order|
-            order.customer&.prefixed_id
-          end
+          prefixed_id_attributes :customer
 
           # Override inherited associations to use admin serializers
           # Renamed from the store's `discounts` key: on the admin surface that

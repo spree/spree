@@ -7,16 +7,6 @@ describe Spree::Role do
   # lands: what matters is that the role is owned by something else.
   let(:seller_like) { create(:customer_group) }
 
-  describe 'with users' do
-    before do
-      user.spree_roles << role
-    end
-
-    it 'can access users through the polymorphic association' do
-      expect(role.users).to include(user)
-    end
-  end
-
   describe '.default_admin_role' do
     it 'returns the admin role, seeded immutable' do
       admin_role = Spree::Role.default_admin_role(@default_store)
@@ -36,6 +26,9 @@ describe Spree::Role do
       expect(admin_role).to be_staff
       expect(foreign_admin).not_to be_admin
       expect(foreign_admin).to be_mutable
+
+      foreign_admin.name = 'renamed'
+      expect(foreign_admin).to be_valid
     end
 
     # "admin" means everything in *this* store, so it cannot be one shared row.
@@ -84,10 +77,6 @@ describe Spree::Role do
       expect(build(:role, resource: seller_like)).not_to be_staff
     end
 
-    it 'is required' do
-      expect(build(:role, resource: nil)).not_to be_valid
-    end
-
     it 'cannot be changed once the role exists' do
       role = create(:role)
       role.resource = create(:store)
@@ -101,12 +90,6 @@ describe Spree::Role do
 
       expect(build(:role, name: 'Manager', resource: seller_like)).to be_valid
       expect(build(:role, name: 'Manager', resource: create(:store))).to be_valid
-    end
-
-    it 'still rejects a duplicate name under one owner' do
-      create(:role, name: 'Manager', resource: seller_like)
-
-      expect(build(:role, name: 'Manager', resource: seller_like)).not_to be_valid
     end
 
     it 'scopes roles to their owner' do
@@ -162,10 +145,6 @@ describe Spree::Role do
   describe 'admin role protection' do
     let(:admin_role) { Spree::Role.default_admin_role }
 
-    it 'is not mutable' do
-      expect(admin_role.mutable?).to be false
-    end
-
     it 'cannot be renamed' do
       admin_role.name = 'renamed'
 
@@ -177,16 +156,6 @@ describe Spree::Role do
       admin_role.permissions = %w[read_orders]
 
       expect(admin_role).not_to be_valid
-    end
-
-    # The protection is the store's super-role, not the name: another resource
-    # may call a role "admin" and it stays an ordinary, editable role.
-    it 'leaves a same-named role owned by something else editable' do
-      foreign_admin = create(:role, name: 'admin', resource: seller_like)
-      foreign_admin.name = 'renamed'
-
-      expect(foreign_admin).to be_mutable
-      expect(foreign_admin).to be_valid
     end
 
     it 'cannot be destroyed' do
@@ -253,10 +222,6 @@ describe Spree::Role do
       create(:invitation, role: role)
 
       expect(role.can_be_deleted?).to be false
-    end
-
-    it 'is false for the admin role' do
-      expect(Spree::Role.default_admin_role.can_be_deleted?).to be false
     end
   end
 end

@@ -18,9 +18,7 @@ module Spree
                  large_url: [:string, nullable: true], xlarge_url: [:string, nullable: true],
                  og_image_url: [:string, nullable: true]
 
-        attribute :product_id do |asset|
-          asset.product&.prefixed_id
-        end
+        prefixed_id_attributes :product
 
         # Returns prefixed IDs of variants this media is associated with.
         # Two paths coexist in 5.5:
@@ -34,8 +32,13 @@ module Spree
           ids.compact.uniq
         end
 
-        attributes :position, :alt, :media_type,
-                   :focal_point_x, :focal_point_y, :external_video_url
+        attributes :position, :alt, :media_type, :external_video_url
+
+        # Decimal columns serialize as strings; a focal point is a 0–1
+        # position on the image, which clients read as a number.
+        %i[focal_point_x focal_point_y].each do |name|
+          attribute(name) { |asset| asset.public_send(name)&.to_f }
+        end
 
         # Spree parses the YouTube/Vimeo link once, here, so no storefront has
         # to reimplement it. Nil on anything that isn't an external video.

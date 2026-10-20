@@ -69,7 +69,7 @@ export function useConnectStorefront() {
       } catch (error) {
         if (!(error instanceof SpreeError) || error.status !== 422) throw error
       }
-      await adminClient.store.update({ preferred_storefront_url: origin })
+      await adminClient.store.update({ storefront_url: origin })
       return origin
     },
     invalidate: [[STORE_QUERY_RESOURCE], ['allowed-origins']],

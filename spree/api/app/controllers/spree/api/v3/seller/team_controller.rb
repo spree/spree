@@ -16,6 +16,10 @@ module Spree
 
           before_action :set_member, only: [:destroy]
 
+          request_params :team_member do |body|
+            body.attribute :email, :string, required: true, example: 'colleague@acme.test'
+          end
+
           def index
             render json: { data: members.map { |member| serialize_member(member) } }
           end
@@ -68,7 +72,7 @@ module Spree
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:processing_error],
-              message: Spree.t(:seller_team_last_member),
+              message: I18n.t('spree.seller_team_last_member'),
               status: :unprocessable_content
             )
           end

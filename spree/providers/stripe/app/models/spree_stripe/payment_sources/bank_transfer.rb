@@ -6,11 +6,11 @@ module SpreeStripe
       end
 
       def self.display_name
-        Spree.t(:bank_transfer)
+        I18n.t('spree.bank_transfer')
       end
 
       def name
-        Spree.t(:bank_transfer)
+        I18n.t('spree.bank_transfer')
       end
     end
   end

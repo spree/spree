@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_PROMO_COUNTRY,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -65,6 +66,56 @@ async function pickAutocompleteOption(page: Page, placeholderRegex: RegExp, opti
 async function submitCreate(page: Page, name: string) {
   await page.getByRole('button', { name: /^create promotion$/i }).click()
   await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+}
+
+// Starts a whole-order adjustment on the Tiered Percent calculator and adds
+// one row per `[threshold, value]` pair, in the order given.
+async function addTieredPercentAction(page: Page, tiers: [string, string][]) {
+  await pickAction(page, /^create whole-order adjustment\b/i)
+  const calculatorSelect = page.locator('#calculator-type')
+  await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+  await calculatorSelect.click()
+  await page.getByRole('option', { name: /^tiered percent$/i }).click()
+
+  const dialog = page.getByRole('dialog')
+  for (const [index, [threshold, value]] of tiers.entries()) {
+    await dialog.getByRole('button', { name: /^add tier$/i }).click()
+    await dialog
+      .getByLabel(/^order total/i)
+      .nth(index)
+      .fill(threshold)
+    await dialog
+      .getByLabel(/^discount$/i)
+      .nth(index)
+      .fill(value)
+  }
+}
+
+async function openAdjustmentAction(page: Page, calculator: RegExp) {
+  await page
+    .locator('div.items-stretch')
+    .filter({ hasText: /create whole-order adjustment/i })
+    .first()
+    .getByRole('button')
+    .first()
+    .click()
+  await expect(page.getByRole('heading', { name: /^create whole-order adjustment$/i })).toBeVisible(
+    { timeout: 5_000 },
+  )
+  await expect(page.locator('#calculator-type')).toContainText(calculator, { timeout: 10_000 })
+}
+
+// The server keeps each number as an exact decimal, so 100 reads back as
+// "100.0"; compare the numbers rather than their text.
+const decimal = (n: string) => new RegExp(`^${n}(\\.0+)?$`)
+
+async function expectTiers(page: Page, tiers: [string, string][]) {
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByLabel(/^order total/i)).toHaveCount(tiers.length)
+  for (const [index, [threshold, value]] of tiers.entries()) {
+    await expect(dialog.getByLabel(/^order total/i).nth(index)).toHaveValue(decimal(threshold))
+    await expect(dialog.getByLabel(/^discount$/i).nth(index)).toHaveValue(decimal(value))
+  }
 }
 
 const PROMOTIONS_PATH = (storeId: string) => `/${storeId}/promotions`
@@ -189,6 +240,38 @@ test.describe('promotions', () => {
     await expect(page.getByText(FIXTURE_PROMO_COUNTRY).first()).toBeVisible({ timeout: 5_000 })
 
     await submitCreate(page, name)
+  })
+
+  // Both rules keep prefixed ids in their preferences; reloading proves they
+  // were saved and read back as the records they name.
+  test('creates a promotion with Channel and Market rules', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Channel Market Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^channel\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^channel\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search sales channels/i, FIXTURE_BULK_CHANNEL_NAME)
+    await saveEditor(page)
+
+    await pickRule(page, /^market\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^market\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search markets/i, 'Europe')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+
+    await page.reload()
+    await expect(page.getByText(FIXTURE_BULK_CHANNEL_NAME).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Europe', { exact: true }).first()).toBeVisible()
   })
 
   test('creates a promotion with a Product rule', async ({ page }) => {
@@ -337,17 +420,7 @@ test.describe('promotions', () => {
 
     await submitCreate(page, name)
 
-    await page
-      .locator('div.items-stretch')
-      .filter({ hasText: /create whole-order adjustment/i })
-      .first()
-      .getByRole('button')
-      .first()
-      .click()
-    await expect(
-      page.getByRole('heading', { name: /^create whole-order adjustment$/i }),
-    ).toBeVisible({ timeout: 5_000 })
-    await expect(calculatorSelect).toContainText(/flat rate/i, { timeout: 10_000 })
+    await openAdjustmentAction(page, /flat rate/i)
   })
 
   test('creates a promotion with a Create Adjustment action', async ({ page }) => {
@@ -370,6 +443,147 @@ test.describe('promotions', () => {
     await expect(page.getByText(/^create whole-order adjustment$/i).first()).toBeVisible()
 
     await submitCreate(page, name)
+  })
+
+  // Money goes to the API as an exact decimal string; each value must read
+  // back as typed after the promotion is saved and reloaded.
+  test('keeps a flat rate amount and an item total minimum exactly', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Money Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^item total\b/i)
+    await page.getByRole('dialog').locator('#preference-amount_min').fill('50.25')
+    await saveEditor(page)
+
+    await pickAction(page, /^create whole-order adjustment\b/i)
+    const calculatorSelect = page.locator('#calculator-type')
+    await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+    await calculatorSelect.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await page.getByRole('dialog').locator('#preference-amount').fill('12.50')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    await openAdjustmentAction(page, /flat rate/i)
+    // A money preference is written to its calculator's currency, so the
+    // amount keeps its cents.
+    await expect(page.getByRole('dialog').locator('#preference-amount')).toHaveValue('12.50')
+    await cancelEditor(page)
+
+    await page
+      .locator('div.items-stretch')
+      .filter({ hasText: /^item total/i })
+      .first()
+      .getByRole('button')
+      .first()
+      .click()
+    await expect(page.getByRole('dialog').locator('#preference-amount_min')).toHaveValue('50.25', {
+      timeout: 5_000,
+    })
+  })
+
+  test('keeps a flat percent discount exactly', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Percent Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickAction(page, /^create whole-order adjustment\b/i)
+    const calculatorSelect = page.locator('#calculator-type')
+    await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+    await calculatorSelect.click()
+    await page.getByRole('option', { name: /^flat percent$/i }).click()
+    await page.getByRole('dialog').locator('#preference-flat_percent').fill('7.5')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    await openAdjustmentAction(page, /flat percent/i)
+    await expect(page.getByRole('dialog').locator('#preference-flat_percent')).toHaveValue('7.5')
+  })
+
+  test('saves the tiers of a tiered calculator, lowest threshold first', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Tiers Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    // Entered out of order: the saved tiers come back sorted by threshold.
+    await addTieredPercentAction(page, [
+      ['250', '15'],
+      ['100', '10'],
+    ])
+    await saveEditor(page)
+    await expect(page.getByText(/tiered percent · tiers: 2/i).first()).toBeVisible({
+      timeout: 5_000,
+    })
+
+    await submitCreate(page, name)
+
+    await openAdjustmentAction(page, /tiered percent/i)
+    await expectTiers(page, [
+      ['100', '10'],
+      ['250', '15'],
+    ])
+  })
+
+  test('edits and removes tiers on a saved promotion', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Tiers Edit ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+    await addTieredPercentAction(page, [
+      ['100', '10'],
+      ['250', '15'],
+    ])
+    await saveEditor(page)
+    await submitCreate(page, name)
+
+    await openAdjustmentAction(page, /tiered percent/i)
+    const dialog = page.getByRole('dialog')
+    await dialog
+      .getByRole('button', { name: /^remove tier$/i })
+      .first()
+      .click()
+    await dialog
+      .getByLabel(/^discount$/i)
+      .first()
+      .fill('20')
+    await saveEditor(page)
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/promotion saved/i).first()).toBeVisible({ timeout: 15_000 })
+
+    // Read back from the server, not from the form's memory.
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    await openAdjustmentAction(page, /tiered percent/i)
+    await expectTiers(page, [['250', '20']])
+  })
+
+  test('refuses a tier discount above 100 percent', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Tiers Invalid ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+    await addTieredPercentAction(page, [['100', '150']])
+    await saveEditor(page)
+
+    await page.getByRole('button', { name: /^create promotion$/i }).click()
+    await expect(page.getByText(/between 0% and 100%/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: /^new promotion$/i })).toBeVisible()
   })
 
   test('creates a promotion with a Create Item Adjustments action', async ({ page }) => {

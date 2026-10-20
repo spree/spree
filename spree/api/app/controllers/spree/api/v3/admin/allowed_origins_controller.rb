@@ -5,6 +5,13 @@ module Spree
         class AllowedOriginsController < ResourceController
           scoped_resource :settings
 
+          request_params :allowed_origin do |body|
+            body.attribute :origin, :string,
+              required: true, on: :create,
+              example: 'https://admin.example.com',
+              description: 'Origin to allow in admin CORS preflight checks: a bare `scheme://host[:port]` (no path, query or fragment) using `http` or `https`.'
+          end
+
           protected
 
           def model_class
@@ -16,7 +23,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :origin)
+            params.permit(*permitted_attributes)
           end
         end
       end

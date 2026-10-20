@@ -6,11 +6,9 @@ module Spree
       # the typed Spree::Discount money rows.
       class AppliedPromotionSerializer < BaseSerializer
         typelize name: :string, description: [:string, nullable: true], code: [:string, nullable: true],
-                 amount: [:string, nullable: true], display_amount: [:string, nullable: true], promotion_id: :string
+                 promotion_id: :string
 
-        attribute :promotion_id do |record|
-          record.promotion&.prefixed_id
-        end
+        prefixed_id_attributes :promotion
 
         attributes :name, :description, :code
 

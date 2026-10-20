@@ -1,14 +1,12 @@
-require_dependency 'spree/calculator'
-
 module Spree
   class Calculator::PriceSack < Calculator
-    preference :minimal_amount, :decimal, default: 0
-    preference :normal_amount, :decimal, default: 0
-    preference :discount_amount, :decimal, default: 0
-    preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+    preference :minimal_amount, :money, default: 0
+    preference :normal_amount, :money, default: 0
+    preference :discount_amount, :money, default: 0
+    preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
     def self.description
-      Spree.t(:price_sack)
+      I18n.t('spree.price_sack')
     end
 
     # as object we always get line items, as calculable we have Coupon, ShippingMethod

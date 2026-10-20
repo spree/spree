@@ -31,6 +31,7 @@ export function AppShell({
   inSettings,
   uiLocales,
   onEditProfile,
+  notifications,
   children,
 }: {
   /** Prefix for the nav links. Defaults to the route's `storeId`. */
@@ -43,6 +44,11 @@ export function AppShell({
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
   /** Opens the app's edit-profile dialog from the account menu. */
   onEditProfile?: () => void
+  /**
+   * A control shown beside the account menu, such as the dashboard's
+   * notifications bell. The seller panel passes none.
+   */
+  notifications?: ReactNode
   children: ReactNode
 }) {
   // The settings area brings a full-width nav of its own, and two stacked
@@ -83,6 +89,7 @@ export function AppShell({
         header={sidebarHeader}
         uiLocales={uiLocales}
         onEditProfile={onEditProfile}
+        notifications={notifications}
       />
       {/* The sheet is exactly as tall as the viewport and scrolls internally,
           rather than growing with the page and letting the document scroll.
@@ -129,7 +136,11 @@ export function AppShell({
           tabIndex={-1}
           className="themed-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto me-[5px] outline-none"
         >
-          <MobileTopBar uiLocales={uiLocales} onEditProfile={onEditProfile} />
+          <MobileTopBar
+            uiLocales={uiLocales}
+            onEditProfile={onEditProfile}
+            notifications={notifications}
+          />
           <SheetTopBar tenantId={tenantId} inSettings={inSettings} />
           <MobileBreadcrumbBar
             tenantId={tenantId}

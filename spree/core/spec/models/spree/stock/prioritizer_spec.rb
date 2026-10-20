@@ -12,7 +12,7 @@ module Spree
       end
 
       def build_inventory_unit
-        build(:inventory_unit, variant: variant).tap do |unit|
+        build(:fulfillment_item, variant: variant).tap do |unit|
           inventory_units << unit
         end
       end

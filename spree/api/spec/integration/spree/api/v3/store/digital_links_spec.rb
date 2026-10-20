@@ -11,6 +11,31 @@ RSpec.describe 'Digital Links API', type: :request, swagger_doc: 'api-reference/
   let(:digital_asset) { create(:digital_asset, variant: line_item.variant) }
   let!(:digital_link) { create(:digital_link, digital_asset: digital_asset, line_item: line_item) }
 
+  path '/api/v3/store/customers/me/digital_links' do
+    get 'List my digital links' do
+      tags 'Digital Links'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description "The signed-in customer's downloads in this store, newest first."
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'digital links listed' do
+        let(:order) { create(:completed_order_with_totals, store: store, customer: user) }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema SwaggerSchemaHelpers.paginated('DigitalLink')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to eq([digital_link.prefixed_id])
+        end
+      end
+    end
+  end
+
   path '/api/v3/store/digital_links/{token}' do
     get 'Download a digital product' do
       tags 'Digital Links'

@@ -65,17 +65,13 @@ module Spree
       let(:email) { 'test@example.com' }
 
       it 'publishes subscription_requested with the verification token' do
-        published = nil
-        allow_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event) do |sub, name, payload = nil|
-          published = { name: name, payload: payload } if name == 'newsletter_subscriber.subscription_requested'
-        end
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:event_payload_for)
+          .with('newsletter_subscriber.subscription_requested', include_verification_token: true, store: kind_of(Spree::Store), redirect_url: nil)
+          .and_call_original
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event)
+          .with('newsletter_subscriber.subscription_requested', kind_of(Hash))
 
         service
-
-        expect(published).to be_present
-        expect(published[:payload][:email]).to eq('test@example.com')
-        expect(published[:payload][:verification_token]).to be_present
-        expect(published[:payload]).not_to have_key(:redirect_url)
       end
 
       it 'returns an instance of NewsletterSubscriber' do
@@ -90,15 +86,12 @@ module Spree
     context 'when a redirect_url is provided' do
       let(:redirect_url) { 'https://storefront.example.com/newsletter/confirm' }
 
-      it 'forwards redirect_url in the subscription_requested payload' do
-        published = nil
-        allow_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event) do |sub, name, payload = nil|
-          published = payload if name == 'newsletter_subscriber.subscription_requested'
-        end
+      it 'forwards redirect_url to the subscription_requested payload' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:event_payload_for)
+          .with('newsletter_subscriber.subscription_requested', hash_including(redirect_url: redirect_url))
+          .and_call_original
 
         service
-
-        expect(published[:redirect_url]).to eq(redirect_url)
       end
     end
 

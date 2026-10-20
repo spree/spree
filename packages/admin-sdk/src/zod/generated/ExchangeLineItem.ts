@@ -10,6 +10,8 @@ export const ExchangeLineItemSchema = z.object({
   original_price: z.string(),
   new_variant_price: z.string(),
   price_difference: z.string(),
+  original_tax_total: z.string(),
+  new_tax_total: z.string(),
   original_variant_id: z.string().nullable(),
   new_variant_id: z.string().nullable(),
   line_item_id: z.string().nullable(),

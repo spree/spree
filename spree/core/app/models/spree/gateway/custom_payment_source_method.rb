@@ -1,5 +1,10 @@
 module Spree
   class Gateway::CustomPaymentSourceMethod < Gateway
+    # Sources recorded by the merchant, not charged through a provider.
+    def self.third_party?
+      false
+    end
+
     def provider_class
       self.class
     end

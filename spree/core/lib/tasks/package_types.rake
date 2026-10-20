@@ -43,7 +43,7 @@ namespace :spree do
         end
 
         store.package_types.create!(
-          name: Spree.t('package_types.default_name'),
+          name: I18n.t('spree.package_types.default_name'),
           kind: 'box',
           default: true,
           weight: weight.positive? ? weight : nil,

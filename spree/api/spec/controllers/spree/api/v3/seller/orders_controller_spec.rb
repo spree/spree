@@ -237,9 +237,21 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
 
       row = json_response['payment_splits'].first
       expect(row['id']).to eq(split.prefixed_id)
-      expect(row).to include('captured_amount' => '100.0', 'refunded_amount' => '20.0',
-                             'net_captured_amount' => '80.0', 'display_captured_amount' => '$100.00')
+      expect(row).to include('captured_amount' => '100.00', 'refunded_amount' => '20.00',
+                             'net_captured_amount' => '80.00')
       expect(row.keys).not_to include('payment_id', 'payment_number', 'payment_method')
+    end
+
+    # What a claim on the line can refund at most, so the seller panel can
+    # offer it.
+    it 'renders what each line sold for after discounts' do
+      line_item = mine.line_items.first
+      line_item.update_columns(price: 10, quantity: 1, taxable_adjustment_total: -2)
+
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      item = json_response['items'].find { |row| row['id'] == line_item.prefixed_id }
+      expect(item).to include('discounted_amount' => '8.00')
     end
 
     it 'leaves the shares out unless asked' do

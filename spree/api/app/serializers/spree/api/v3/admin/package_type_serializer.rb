@@ -39,9 +39,7 @@ module Spree
           # Whose packaging this is: a seller's own, or (null) the
           # marketplace's shared vocabulary
           # (docs/plans/6.0-seller-package-types.md).
-          attribute :seller_id do |package_type|
-            package_type.seller&.prefixed_id
-          end
+          prefixed_id_attributes :seller
 
           attribute :seller_name do |package_type|
             package_type.seller&.name

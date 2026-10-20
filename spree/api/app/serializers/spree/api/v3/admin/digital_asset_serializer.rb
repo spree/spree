@@ -10,13 +10,15 @@ module Spree
                    authorized_days: [:number, nullable: true],
                    effective_authorized_clicks: :number,
                    effective_authorized_days: :number,
-                   provider_type: [:string, nullable: true],
+                   provider_type: [:string, nullable: true, comment: 'Digital asset provider; null is an uploaded file. Built-in: file. Extensions may register more.'],
                    provider_name: [:string, comment: 'Digital asset provider name. Built-in: File. Extensions may register more.'],
                    provider_settings: 'Record<string, unknown>',
                    download_url: [:string, nullable: true]
 
-          attributes :authorized_clicks, :authorized_days, :byte_size, :provider_type, :provider_settings
+          attributes :authorized_clicks, :authorized_days, :byte_size, :provider_settings
           attributes created_at: :iso8601, updated_at: :iso8601
+
+          api_type_attributes :provider_type
 
           # Human-readable source for the admin listing. Blank provider_type is
           # the uploaded-file default, so this reads "File" there.

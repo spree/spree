@@ -13,10 +13,19 @@ module Spree
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::SecretPreferences
     include Spree::CaptureMethod
+    include Spree::ProviderListing
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
+
+    # Whether authorize, purchase, capture and credit take the amount as a
+    # Spree::Money (amount and currency) and convert it to the provider's own
+    # unit. Methods that have not opted in receive an integer in hundredths of
+    # the currency, which is wrong for yen and dinar; that bridge is removed in
+    # Spree 6.1.
+    class_attribute :accepts_money_amounts, default: false, instance_writer: false
 
     # Blank falls back to the store, so a method only overrides when a merchant
     # deliberately picks one — the meaning the auto_capture boolean already had.
@@ -46,8 +55,9 @@ module Spree
     scope :storefront_visible, -> { where(storefront_visible: true) }
     scope :admin_only, -> { where(storefront_visible: false) }
 
-    # Real column, so admin clients filter it directly — no ransacker needed.
-    self.whitelisted_ransackable_attributes = %w[storefront_visible]
+    # Real columns, so admin clients filter them directly — no ransacker needed.
+    self.whitelisted_ransackable_attributes = %w[storefront_visible active type]
+    search_by :name
 
     after_initialize :set_name, if: :new_record?
 
@@ -57,7 +67,6 @@ module Spree
     validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
@@ -73,6 +82,20 @@ module Spree
     # Gateways predate `registers_subclasses_via` and expose their registry as
     # `providers`; declaring it keeps subclass resolution to a single rule.
     registers_subclasses_via { providers }
+
+    # Whether this method is backed by an external payment provider (Stripe,
+    # Adyen…) rather than handled by the store itself (check, store credit).
+    # Only third-party methods are listed under Settings → Integrations.
+    #
+    # @return [Boolean]
+    def self.third_party?
+      false
+    end
+
+    # @return [Hash] the listing attributes, plus whether the method is third-party
+    def self.provider_listing
+      super.merge(third_party: third_party?)
+    end
 
     def provider_class
       raise ::NotImplementedError, 'You must implement provider_class method for this gateway.'
@@ -134,6 +157,25 @@ module Spree
     # (called by the frontend or by the webhook handler).
     def complete_payment_session(payment_session:, params: {})
       raise ::NotImplementedError, 'You must implement complete_payment_session method for this gateway.'
+    end
+
+    # Cancels a session nobody is going to complete, so the provider can no
+    # longer take money against it. Called for the sessions left pending when
+    # an order is placed. The default leaves the session untouched: a
+    # gateway that cannot cancel at the provider must not report as canceled
+    # a session that can still be paid.
+    #
+    # Raise Spree::Core::GatewayError only for a refusal, such as a session
+    # that was already paid. A timeout, a rate limit, an outage, or rejected
+    # credentials is raised as itself. Callers that treat those as a refusal
+    # leave a session the buyer can still pay.
+    #
+    # @param payment_session [Spree::PaymentSession]
+    # @return [Boolean] whether the session was canceled
+    # @raise [Spree::Core::GatewayError] when the provider refuses, e.g. the
+    #   session has already been paid
+    def cancel_payment_session(payment_session:)
+      false
     end
 
     # Parses an incoming webhook payload from the payment provider.
@@ -284,9 +326,7 @@ module Spree
     end
 
     def public_preferences
-      public_preference_keys.each_with_object({}) do |key, hash|
-        hash[key] = preferences[key]
-      end
+      public_preference_keys.index_with { |key| get_preference(key) }
     end
 
     # @deprecated Use {#storefront_visible?}; removed in 6.1.
@@ -307,6 +347,27 @@ module Spree
       self.storefront_visible = value.to_s != 'back_end'
     end
 
+
+    # The amount in the form this payment method's gateway calls take.
+    #
+    # @param amount [BigDecimal] in the currency's own units ("19.99")
+    # @param currency [String]
+    # @return [Spree::Money, Integer] a Spree::Money for methods that accept
+    #   money amounts, otherwise hundredths of the currency (deprecated)
+    def gateway_amount(amount, currency)
+      return Spree::Money.new(amount, currency: currency) if accepts_money_amounts
+
+      warn_about_hundredths
+      hundredths = Spree::Money::Rounding.to_hundredths(amount)
+      # A hundredth is the smallest amount these gateways can be sent; zero
+      # reads as "the whole amount" to many of them.
+      if hundredths.zero? && !amount.zero?
+        raise Spree::Core::GatewayError, "#{self.class.name} cannot take an amount below a hundredth of #{currency}"
+      end
+
+      hundredths
+    end
+
     protected
 
     def public_preference_keys
@@ -315,6 +376,17 @@ module Spree
 
     def set_name
       self.name ||= default_name
+    end
+
+    def warn_about_hundredths
+      return if self.class.instance_variable_get(:@warned_about_hundredths)
+
+      self.class.instance_variable_set(:@warned_about_hundredths, true)
+      Spree::Deprecation.warn(
+        "#{self.class.name} receives amounts as an integer in hundredths, which is wrong for currencies " \
+        'without two decimals. Set `self.accepts_money_amounts = true` and take a Spree::Money ' \
+        '(amount and currency); hundredths are removed in Spree 6.1.'
+      )
     end
   end
 end

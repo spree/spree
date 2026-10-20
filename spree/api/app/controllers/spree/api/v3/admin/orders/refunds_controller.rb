@@ -6,6 +6,12 @@ module Spree
           class RefundsController < BaseController
             scoped_resource :refunds
 
+            request_params :refund do |body|
+              body.attribute :payment_id, :id, required: true, on: :create
+              body.attribute :amount, :decimal, required: true, on: :create
+              body.attribute :refund_reason_id, :id, description: "Defaults to the store's first refund reason."
+            end
+
             # POST /api/v3/admin/orders/:order_id/refunds
             #
             # Deliberately not wrapped in with_order_lock: the workflow calls
@@ -33,11 +39,7 @@ module Spree
                 order: @parent
               )
 
-              if result.success?
-                render json: serialize_resource(result.value), status: :created
-              else
-                render_result_error(result)
-              end
+              render_result(result, status: :created)
             end
 
             protected

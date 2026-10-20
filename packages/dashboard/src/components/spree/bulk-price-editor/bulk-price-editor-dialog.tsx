@@ -119,8 +119,9 @@ export function BulkPriceEditorDialog({
 
   // Currency switch discards pending edits — the working set is per-currency.
   const handleCurrencyChange = useCallback(
-    async (next: string) => {
-      if (next === currency) return
+    async (value: string) => {
+      const next = currencies.find((code) => code === value)
+      if (!next || next === currency) return
       if (editorState.dirtyCount > 0) {
         const ok = await confirm({
           title: t('admin.pages.products.price_lists.edit_prices.discard_confirm.title'),
@@ -135,7 +136,7 @@ export function BulkPriceEditorDialog({
       }
       setCurrency(next)
     },
-    [currency, editorState, confirm, t],
+    [currencies, currency, editorState, confirm, t],
   )
 
   const title = t('admin.pages.products.price_lists.edit_prices.title', { name: priceList.name })
@@ -149,18 +150,7 @@ export function BulkPriceEditorDialog({
       onOpenChange={(next, eventDetails) => handleOpenChange(next, eventDetails?.reason)}
       modal
     >
-      <DialogContent
-        // Edge-to-edge minus a 3-unit (0.75rem) gutter on all sides.
-        // The primitive ships `top-1/2 left-1/2 -translate-1/2` (centered
-        // popup) and inline `maxHeight: 90vh`. We override all four
-        // insets with `!` utilities, zero the translate, and pass
-        // `maxHeight: 'none'` to beat the inline style — together those
-        // let the popup actually stretch between top-3 / bottom-3 / left-3
-        // / right-3 instead of collapsing to its content size.
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
+      <DialogContent fullScreen showCloseButton={false}>
         <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
           <div className="min-w-0">
             <DialogTitle className="truncate">{title}</DialogTitle>

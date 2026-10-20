@@ -16,7 +16,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
   # other countries this spec assigns directly through the API.
   before do
     # Delivery methods are worldwide by default; one method covers all countries.
-    create(:shipping_method) unless Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
+    create(:delivery_method) unless Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
   end
 
   path '/api/v3/admin/markets' do
@@ -37,7 +37,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to embed. Supported: `countries`.'
@@ -76,30 +76,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Europe' },
-          currency: { type: :string, example: 'EUR', description: 'ISO 4217 currency code.' },
-          default_locale: { type: :string, example: 'de', description: 'IETF locale tag used as the market default.' },
-          supported_locales: {
-            type: :array,
-            items: { type: :string },
-            description: 'Locale codes available in this market. The default is always implicitly included.',
-            example: %w[de en]
-          },
-          tax_inclusive: { type: :boolean, default: false, description: 'Display prices with tax included.' },
-          default: { type: :boolean, default: false, description: 'Setting to true demotes the previous default.' },
-          position: { type: :integer, description: 'Sort order within the store; lower = first.' },
-          country_codes: {
-            type: :array,
-            items: { type: :string },
-            description: '2-letter ISO country codes assigned to this market. At least one is required.',
-            example: %w[DE FR]
-          }
-        },
-        required: %w[name currency default_locale country_codes]
-      }
+      request_body_for
 
       response '201', 'market created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -193,19 +170,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          currency: { type: :string },
-          default_locale: { type: :string },
-          supported_locales: { type: :array, items: { type: :string } },
-          tax_inclusive: { type: :boolean },
-          default: { type: :boolean },
-          position: { type: :integer },
-          country_codes: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'market updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

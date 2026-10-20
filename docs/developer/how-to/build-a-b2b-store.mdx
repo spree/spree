@@ -499,14 +499,14 @@ The gate is enforced by the Store API, not by the storefront, so a storefront ap
 ```typescript Admin SDK
 // Gate the wholesale channel, and give its shoppers a default agreement
 await adminClient.channels.update('ch_xxx', {
-  preferred_storefront_access: 'login_required',
-  preferred_guest_checkout: false,
+  storefront_access: 'login_required',
+  guest_checkout: false,
   default_catalog_id: 'cat_xxx',
 })
 
 // Or set the fallback for every channel that does not set its own
 await adminClient.store.update({
-  preferred_storefront_access: 'prices_hidden',
+  storefront_access: 'prices_hidden',
 })
 ```
 
@@ -515,8 +515,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/channels/ch_xxx' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
-        "preferred_storefront_access": "login_required",
-        "preferred_guest_checkout": false,
+        "storefront_access": "login_required",
+        "guest_checkout": false,
         "default_catalog_id": "cat_xxx"
       }'
 ```
@@ -610,7 +610,7 @@ For a corporate buyer, their own purchase order number matters as much as your o
 
 - The cart and the order carry `po_number`. It shows in order search, on the order, and in the confirmation email.
 - Turn on `po_number_required` on a company and its buyers must supply a number before they can complete checkout. The cart reports `po_number_required: true` and a `po_number_required` requirement until they do.
-- A buyer can also attach the signed PO document itself: a PDF, an image or a Word file of up to 10 MB, stored privately.
+- A buyer can also attach the signed PO document itself: a PDF, an image, a Word document or a spreadsheet (Excel, OpenDocument or CSV) of up to 10 MB, stored privately.
 
 <CodeGroup>
 
@@ -626,18 +626,16 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -d '{ "po_number": "PO-2026-0418" }'
 
 # Attaching the document: ask for an upload URL, upload the file there,
-# then send the returned signed_id as po_document on a cart update
+# then send the returned signed_id as po_document_signed_id on a cart update
 curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/po_document' \
   -H 'X-Spree-API-Key: pk_xxx' \
   -H "Authorization: Bearer $CUSTOMER_JWT" \
   -H 'Content-Type: application/json' \
   -d '{
-        "blob": {
-          "filename": "PO-2026-0418.pdf",
-          "byte_size": 48213,
-          "checksum": "BASE64_MD5",
-          "content_type": "application/pdf"
-        }
+        "filename": "PO-2026-0418.pdf",
+        "byte_size": 48213,
+        "checksum": "BASE64_MD5",
+        "content_type": "application/pdf"
       }'
 ```
 
@@ -807,6 +805,30 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/companies/comp_xxx/tax_identi
 
 When a sale is for a company, the company's registration takes precedence over the buyer's own, because the invoice is addressed to the business.
 
+### Exemption reasons
+
+Every certificate points at one of the store's active tax exemption reasons, the way a product points at a tax category. A reason has a `name` in your own wording and a `code` your tax service reads. A new store has six neutral ones (`RESALE`, `GOVERNMENT`, `CHARITABLE`, `EDUCATIONAL`, `MANUFACTURING`, `AGRICULTURAL`). Avalara decides an exemption by its entity use code, so on Avalara change each reason's code to Avalara's, such as `G` for resale. `taxProviders.list()` returns the codes each tax service understands as `exemption_reason_codes`. Codes are stored in upper case.
+
+<CodeGroup>
+
+```typescript Admin SDK
+const reason = await adminClient.taxExemptionReasons.create({
+  name: 'Reseller (wholesale)',
+  code: 'G',
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/tax_exemption_reasons' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "name": "Reseller (wholesale)", "code": "G" }'
+```
+
+</CodeGroup>
+
+Changing a reason's code changes what every certificate holding it sends from then on; orders already placed keep the code they were taxed with. Turn off `active` to stop offering a reason; certificates that already hold it keep it. A reason that certificates hold cannot be deleted.
+
 ### Exemption certificates
 
 A certificate starts `pending` and exempts nothing until staff verify it. Scope it to the country or state that issued it, or leave both empty for one that holds everywhere.
@@ -816,11 +838,11 @@ A certificate starts `pending` and exempts nothing until staff verify it. Scope 
 ```typescript Admin SDK
 const certificate = await adminClient.companies.taxExemptionCertificates.create('comp_xxx', {
   certificate_number: 'RS-44-1901',
-  reason_code: 'resale',
+  tax_exemption_reason_id: 'txr_xxx',
   country_code: 'US',
   state_code: 'CA',
   expires_at: '2027-12-31',
-  document: signedId, // from adminClient.directUploads.create()
+  document_signed_id: signedId, // from adminClient.files.upload(file, { visibility: 'private' })
 })
 
 await adminClient.companies.taxExemptionCertificates.verify('comp_xxx', certificate.id)
@@ -865,7 +887,7 @@ A wholesale order leaves as cartons, a pallet or a container, and international 
 ```typescript Admin SDK
 await adminClient.deliveryMethods.create({
   name: 'Pallet freight',
-  rate_provider: 'Spree::DeliveryRateProvider::Freight',
+  rate_provider: 'freight',
   rules: [
     { type: 'volume_rule', preferences: { minimum_volume: 1, maximum_volume: 15 } },
     { type: 'company_rule', preferences: { company_orders_only: true } },
@@ -879,7 +901,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/delivery_methods' \
   -H 'Content-Type: application/json' \
   -d '{
         "name": "Pallet freight",
-        "rate_provider": "Spree::DeliveryRateProvider::Freight",
+        "rate_provider": "freight",
         "rules": [
           { "type": "volume_rule", "preferences": { "minimum_volume": 1, "maximum_volume": 15 } },
           { "type": "company_rule", "preferences": { "company_orders_only": true } }
@@ -937,7 +959,7 @@ To add your own B2B cards, such as a credit account or an ERP reference, the com
 The B2B building blocks are ordinary Spree resources, so the usual customization paths apply:
 
 - **Events.** Companies, company invitations and catalogs publish lifecycle events, and orders publish `order.placed`. Subscribe to them to sync accounts and orders with an ERP or CRM. See [Events](/developer/core-concepts/events).
-- **External references.** Companies accept `external_references`, so an ERP can address a company by its own account number.
+- **[External references](/developer/core-concepts/external-references).** Companies accept `external_references`, so an ERP can address a company by its own account number.
 - **Tax identifier validators.** Register a validator that checks numbers against a live registry.
 - **Checkout requirements.** Register an extra requirement, such as "a cost center is required", and it appears in the cart's `requirements` next to the built-in ones. See [Checkout customization](/developer/customization/checkout).
 

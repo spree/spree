@@ -9,11 +9,20 @@ module Spree
       end
 
       def variant_includes
-        [:images, :prices, :stock_levels, :stock_locations, { option_values: [:option_type] }]
+        [:images, :prices, { stock_levels: :stock_location, option_values: [:option_type] }]
       end
 
       def multi_line_csv?
         true
+      end
+
+      # The seller scopes which locations the inventory columns cover; their
+      # default, worked out once per export, carries the full row's stock.
+      def to_csv_options
+        @to_csv_options ||= {
+          seller: seller,
+          default_stock_location: Spree::StockLocation.owned_by(store_id: store.id, seller_id: seller&.id).active.order_default.first || store.default_stock_location
+        }
       end
 
       # when doing full product export, we want to exclude archived products

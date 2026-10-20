@@ -19,6 +19,7 @@ module Spree
     has_spree_number prefix: 'DSR'
 
     publishes_lifecycle_events
+    publishes_event :completed
 
     include Spree::HasStatus
     has_status :pending, :processing, :completed, :failed, default: :pending
@@ -37,7 +38,6 @@ module Spree
     # asked, and it stops working when the request expires.
     has_secure_token :download_token
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :customer, class_name: Spree.customer_class.to_s
     # Null when the subject asked for it themselves; set when staff acted on a
     # request that arrived by email.
@@ -56,6 +56,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[number kind status email requested_at completed_at]
     self.whitelisted_ransackable_scopes = %w[access erasure in_progress]
+    self.ransackable_scope_types = %w[access erasure in_progress].index_with('boolean')
 
     before_validation :set_defaults, on: :create
 

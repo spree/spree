@@ -9,9 +9,8 @@ module Spree
       base_url = redirect_url.presence || store.storefront_url
       @confirm_email_url = append_token(base_url, @subscriber.verification_token)
       with_store_locale(store) do
-        mail(to: @subscriber.email, subject: Spree.t('newsletter_mailer.email_confirmation.subject'))
+        mail_template({ confirmation_url: @confirm_email_url }, to: @subscriber.email)
       end
     end
-
   end
 end

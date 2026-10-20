@@ -4,11 +4,20 @@ module Spree
 
     include Spree::Actor
     include Spree::PrefixedId
+    include Spree::SignedIdAttachments
     include Spree::UserRoles
     include Spree::RansackableAttributes
 
     included do
       has_prefix_id :adm
+
+      publishes_events 'admin_user.password_reset', 'seller_user.password_reset'
+      # Carry a live reset token and have no external consumer: core sends
+      # these emails itself, so no webhook endpoint ever receives them.
+      publishes_event 'admin_user.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', webhook: false
+      publishes_event 'seller_user.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', webhook: false
 
       has_person_name
 
@@ -58,6 +67,7 @@ module Spree
 
       # Attachments
       has_one_attached :avatar, service: Spree.public_storage_service_name
+      signed_id_attachments :avatar
 
       validates :avatar, content_type: Rails.application.config.active_storage.web_image_content_types
 
@@ -128,10 +138,14 @@ module Spree
     # @param model [Class]
     # @param name [Symbol] the acted_by association
     def clear_actor(model, name)
+      columns = Spree::ActedBy.columns_for(name, nil)
+      # Append-only tables (revisions) have no updated_at to stamp.
+      columns = columns.merge(updated_at: Time.current) if model.column_names.include?('updated_at')
+
       model.
         where(:"#{name}_id" => id).
         where(:"#{name}_type" => [self.class.polymorphic_name, nil]).
-        update_all(Spree::ActedBy.columns_for(name, nil).merge(updated_at: Time.current))
+        update_all(columns)
     end
   end
 end

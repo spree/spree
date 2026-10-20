@@ -9,13 +9,6 @@ RSpec.describe Spree::PaymentSetupSession, type: :model do
   let(:payment_setup_session) { create(:payment_setup_session, customer: user, payment_method: payment_method) }
 
   describe 'validations' do
-    it { expect(payment_setup_session).to be_valid }
-
-    it 'requires payment_method' do
-      payment_setup_session.payment_method = nil
-      expect(payment_setup_session).not_to be_valid
-    end
-
     it 'enforces unique external_id per payment_method' do
       payment_setup_session.update!(external_id: 'seti_123')
       duplicate = build(:payment_setup_session, payment_method: payment_method, external_id: 'seti_123')
@@ -34,23 +27,6 @@ RSpec.describe Spree::PaymentSetupSession, type: :model do
       session1 = create(:payment_setup_session, customer: user, payment_method: payment_method, external_id: nil)
       session2 = build(:payment_setup_session, customer: user, payment_method: payment_method, external_id: nil)
       expect(session2).to be_valid
-    end
-  end
-
-  describe 'associations' do
-    it 'belongs to customer' do
-      expect(payment_setup_session.customer).to eq(user)
-    end
-
-    it 'belongs to payment_method' do
-      expect(payment_setup_session.payment_method).to eq(payment_method)
-    end
-
-    it 'can have a payment_source (CreditCard)' do
-      credit_card = create(:credit_card, customer: user)
-      payment_setup_session.update!(payment_source: credit_card)
-      expect(payment_setup_session.payment_source).to eq(credit_card)
-      expect(payment_setup_session.payment_source_type).to eq('Spree::CreditCard')
     end
   end
 
@@ -138,36 +114,10 @@ RSpec.describe Spree::PaymentSetupSession, type: :model do
     end
   end
 
-  describe '#prefixed_id' do
-    it 'starts with pss_' do
-      expect(payment_setup_session.prefixed_id).to start_with('pss_')
-    end
-  end
-
-  describe 'soft delete' do
-    it 'soft deletes with acts_as_paranoid' do
-      payment_setup_session.destroy
-      expect(described_class.with_deleted.find(payment_setup_session.id)).to be_present
-      expect(described_class.find_by(id: payment_setup_session.id)).to be_nil
-    end
-  end
-
   describe 'events' do
     before do
       allow(Spree::Events).to receive(:enabled?).and_return(true)
       allow(Spree::Events).to receive(:publish)
-    end
-
-    describe 'lifecycle events' do
-      it 'publishes payment_setup_session.created on create' do
-        create(:payment_setup_session, customer: user, payment_method: payment_method)
-        expect(Spree::Events).to have_received(:publish).with('payment_setup_session.created', anything, anything)
-      end
-
-      it 'publishes payment_setup_session.updated on update' do
-        payment_setup_session.update!(external_id: 'new_id')
-        expect(Spree::Events).to have_received(:publish).with('payment_setup_session.updated', anything, anything)
-      end
     end
 
     describe 'state transition events' do

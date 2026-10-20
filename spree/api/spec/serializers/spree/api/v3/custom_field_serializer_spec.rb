@@ -19,8 +19,9 @@ RSpec.describe Spree::Api::V3::CustomFieldSerializer do
       expect(subject['label']).to eq(custom_field.label)
     end
 
-    it 'includes type' do
-      expect(subject['type']).to eq(custom_field.type)
+    it 'names the field type by its token, never the Ruby class' do
+      expect(subject['field_type']).to eq('short_text')
+      expect(subject).not_to have_key('type')
     end
 
     it 'includes serialized value' do
@@ -47,7 +48,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldSerializer do
       expect(subject).to include(
         'key' => custom_field.full_key,
         'label' => custom_field.label,
-        'type' => custom_field.type,
+        'field_type' => custom_field.field_type,
         'value' => 'admin value'
       )
     end

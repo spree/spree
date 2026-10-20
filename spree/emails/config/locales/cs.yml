@@ -1,0 +1,38 @@
+---
+cs:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Obnovit heslo
+        expiry_notice: Tento odkaz pro obnovení hesla brzy vyprší. Pokud jste o to nežádali, není třeba nic dělat.
+        greeting: Dobrý den %{name},
+        ignore_notice: Pokud jste o obnovení hesla nežádali, můžete tento e-mail bez obav ignorovat. Vaše heslo nebude změněno.
+        instructions: Obdrželi jsme žádost o obnovení vašeho hesla. Kliknutím na tlačítko níže si zvolte nové heslo.
+        subject: Pokyny k obnovení hesla
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Dobrý den,
+        ignore_disclaimer: Pokud jste o to nežádali, tento e-mail prosím ignorujte.
+        instructions: Pro ověření vaší e-mailové adresy klikněte prosím na tlačítko níže.
+        message_copy_link: 'Pokud tlačítko nefunguje, zkopírujte a vložte následující odkaz do svého prohlížeče:'
+        subject: Ověřte svou e-mailovou adresu
+        verify_email_address_link: Ověřit e-mailovou adresu
+    order_mailer:
+      cancel_email:
+        instructions: Vaše objednávka byla zrušena. Uschovejte si prosím tyto informace o zrušení k vaší evidenci.
+        subject: Zrušení objednávky
+      confirm_email:
+        instructions: Zkontrolujte si a uschovejte si prosím následující údaje objednávky k vaší evidenci.
+        subject: Potvrzení objednávky
+      payment_link_email:
+        message: Pro zaplacení objednávky klikněte prosím na tlačítko níže.
+        message_copy_link: 'Pokud tlačítko nefunguje, zkopírujte a vložte následující odkaz do svého prohlížeče:'
+        pay_for_order: Zaplatit objednávku
+        subject: Platební odkaz pro objednávku č. %{number}
+      store_owner_notification_email:
+        heading: Přijata nová objednávka
+        instructions: Obdrželi jste novou objednávku.
+        order_summary: Souhrn objednávky %{number}
+        subject: "%{store_name} obdržel novou objednávku"
+      subtotal: 'Mezisoučet:'
+      total: 'Celkem za objednávku:'

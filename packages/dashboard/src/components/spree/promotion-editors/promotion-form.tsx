@@ -3,29 +3,44 @@ import type {
   Customer,
   Promotion,
   PromotionAction,
-  PromotionActionDraft,
+  PromotionActionDraftParams,
   PromotionRule,
-  PromotionRuleDraft,
+  PromotionRuleDraftParams,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
-import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
-import { PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import {
+  Alert,
+  AlertDescription,
+  DropdownMenuItem,
+  formatCalculatorSummary,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon, PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useEffect, useState } from 'react'
-import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
+import {
+  Controller,
+  FormProvider,
+  type UseFormReturn,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
+import { TypePickerSheet } from '../type-picker-sheet'
 import { EditorShell } from './editor-shell'
 import './register'
 import {
   adminClient,
   ExportRecordButton,
+  extensionFormValues,
+  extensionSubmitValues,
   mapSpreeErrorsToForm,
   Slot,
   Subject,
-  typeDescription,
   typeLabel,
+  useCountryDisplayName,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -65,6 +80,7 @@ import {
 } from '@spree/dashboard-ui'
 import { optionValueLabel } from '../../../hooks/use-option-types'
 import {
+  usePromotionActionCalculators,
   usePromotionActionTypes,
   usePromotionCouponCodes,
   usePromotionRuleTypes,
@@ -117,8 +133,8 @@ export interface PromotionFormPayload {
   expires_at: string | null
   usage_limit: number | null
   match_policy: MatchPolicy
-  rules: PromotionRuleDraft[]
-  actions: PromotionActionDraft[]
+  rules: PromotionRuleDraftParams[]
+  actions: PromotionActionDraftParams[]
   /** Only sent in create mode — server rejects these on update. */
   kind?: PromotionKind
   code?: string | null
@@ -175,7 +191,7 @@ export function PromotionForm({
   const form = useForm<PromotionFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(promotionFormSchema) as any,
-    defaultValues: PROMOTION_DEFAULTS,
+    defaultValues: { ...PROMOTION_DEFAULTS, ...extensionFormValues('promotion', null) },
   })
 
   const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
@@ -201,11 +217,15 @@ export function PromotionForm({
       match_policy: promotion.match_policy,
       rules: initialRules.map(ruleDraftFromRule),
       actions: initialActions.map(actionDraftFromAction),
+      ...extensionFormValues('promotion', promotion),
     })
   }, [mode, promotion, initialRules, initialActions])
 
   async function handleSubmit(values: PromotionFormValues) {
     const payload: PromotionFormPayload = {
+      // Raw form state, not `values`: the Zod parse strips keys the schema
+      // doesn't know, which is every field a slot widget registered.
+      ...extensionSubmitValues('promotion', form),
       name: values.name,
       description: values.description?.length ? values.description : null,
       starts_at: values.starts_at || null,
@@ -238,84 +258,91 @@ export function PromotionForm({
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={
-              mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
-            }
-            backTo="promotions"
-            // Delete lives in the more-actions menu, not beside Save: a
-            // destructive action next to the primary one is easy to hit by
-            // mistake, and the menu is where every other record page puts it.
-            // `destructiveItems` rather than `onDelete`: the caller already runs
-            // its own confirm, naming the promotion being deleted, and
-            // `onDelete` would stack the header's generic prompt in front of it.
-            destructiveItems={
-              mode === 'edit' && onDelete && canDelete ? (
-                <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
-                  {t('admin.actions.delete')}
-                </DropdownMenuItem>
-              ) : undefined
-            }
-            jsonPreview={
-              mode === 'edit' && promotion
-                ? {
-                    title: `Promotion ${promotion.name}`,
-                    fetch: () => adminClient.promotions.get(promotion.id),
-                    endpoint: `/api/v3/admin/promotions/${promotion.id}`,
-                    resolveLink: spreeJsonLinkResolver(storeId),
-                  }
-                : undefined
-            }
-            actions={
-              <div className="flex gap-2">
-                <Button
-                  type="submit"
-                  disabled={
-                    form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
-                  }
-                >
-                  {form.formState.isSubmitting
-                    ? mode === 'create'
-                      ? t('admin.actions.creating')
-                      : t('admin.actions.saving')
-                    : mode === 'create'
-                      ? t('admin.pages.promotions.create_cta')
-                      : t('admin.actions.save')}
-                </Button>
-              </div>
-            }
-          />
-        }
-        main={
-          <>
-            {form.formState.errors.root?.message && (
-              <p
-                className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                role="alert"
-              >
-                {form.formState.errors.root.message}
-              </p>
-            )}
-            <RulesCard
-              form={form}
-              rulesArray={rulesArray}
-              matchPolicy={form.watch('match_policy')}
+    // FormProvider exposes the form to `promotion.form_sidebar` widgets, so
+    // inputs bound via `useHostForm()` save with this page.
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={
+                mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
+              }
+              backTo="promotions"
+              // Delete lives in the more-actions menu, not beside Save: a
+              // destructive action next to the primary one is easy to hit by
+              // mistake, and the menu is where every other record page puts it.
+              // `destructiveItems` rather than `onDelete`: the caller already runs
+              // its own confirm, naming the promotion being deleted, and
+              // `onDelete` would stack the header's generic prompt in front of it.
+              destructiveItems={
+                mode === 'edit' && onDelete && canDelete ? (
+                  <DropdownMenuItem
+                    variant="destructive"
+                    disabled={deletePending}
+                    onClick={onDelete}
+                  >
+                    {t('admin.actions.delete')}
+                  </DropdownMenuItem>
+                ) : undefined
+              }
+              jsonPreview={
+                mode === 'edit' && promotion
+                  ? {
+                      title: `Promotion ${promotion.name}`,
+                      fetch: () => adminClient.promotions.get(promotion.id),
+                      endpoint: `/api/v3/admin/promotions/${promotion.id}`,
+                      resolveLink: spreeJsonLinkResolver(storeId),
+                    }
+                  : undefined
+              }
+              actions={
+                <div className="flex gap-2">
+                  <Button
+                    type="submit"
+                    disabled={
+                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                    }
+                  >
+                    {form.formState.isSubmitting
+                      ? mode === 'create'
+                        ? t('admin.actions.creating')
+                        : t('admin.actions.saving')
+                      : mode === 'create'
+                        ? t('admin.pages.promotions.create_cta')
+                        : t('admin.actions.save')}
+                  </Button>
+                </div>
+              }
             />
-            <ActionsCard form={form} actionsArray={actionsArray} />
-          </>
-        }
-        sidebar={
-          <>
-            <BasicsCard form={form} />
-            <TriggerCard mode={mode} form={form} promotion={promotion} />
-            <ScheduleCard form={form} />
-          </>
-        }
-      />
-    </form>
+          }
+          main={
+            <>
+              {form.formState.errors.root?.message && (
+                <Alert variant="destructive">
+                  <CircleAlertIcon />
+                  <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                </Alert>
+              )}
+              <RulesCard
+                form={form}
+                rulesArray={rulesArray}
+                matchPolicy={form.watch('match_policy')}
+              />
+              <ActionsCard form={form} actionsArray={actionsArray} />
+            </>
+          }
+          sidebar={
+            <>
+              <BasicsCard form={form} />
+              <TriggerCard mode={mode} form={form} promotion={promotion} />
+              <ScheduleCard form={form} />
+              <Slot name="promotion.form_sidebar" context={{ promotion, mode }} />
+            </>
+          }
+        />
+      </form>
+    </FormProvider>
   )
 }
 
@@ -732,10 +759,17 @@ function RulesCard({
         </div>
 
         {pickerOpen && (
-          <RulePickerSheet
+          <TypePickerSheet
+            family="promotion_rule"
+            title={t('admin.promotions.rule_picker.title')}
+            description={t('admin.promotions.rule_picker.description')}
+            emptyMessage={t(
+              types.length === 0
+                ? 'admin.promotions.rule_types_empty'
+                : 'admin.promotions.rule_types_all_used',
+            )}
             // One rule type per promotion (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={types.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -831,12 +865,13 @@ function RuleRow({
 
 function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const { t } = useTranslation()
+  const countryName = useCountryDisplayName()
   const parts: string[] = []
   const products = nameList(draft.products)
   const categories = nameList(draft.categories)
   const customers = nameList(draft.customers, customerLabel)
   const groups = nameList(draft.customer_groups)
-  const countries = nameList(draft.countries)
+  const countries = nameList(draft.countries, countryName)
   const channels = nameList(draft.channels)
   const markets = nameList(draft.markets)
   const optionValues = nameList(draft.option_values, optionValueLabel)
@@ -867,9 +902,8 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
 
   // Fallback for preference-only rules (Currency, ItemTotal, FirstOrder,
   // OneUsePerUser, UserLoggedIn, OptionValue, …) — these don't carry
-  // embedded records, just a `preferences` hash. Walk the rule's
-  // preference schema and format each value so drafts that haven't been
-  // saved yet still get a useful row preview.
+  // embedded records, just a `preferences` hash. Format each value so
+  // drafts that haven't been saved yet still get a useful row preview.
   const prefSummary = formatPreferencesSummary(draft)
   if (prefSummary) parts.push(prefSummary)
 
@@ -891,15 +925,13 @@ const RULE_PREFS_SHOWN_ELSEWHERE = new Set([
 function formatPreferencesSummary(draft: PromotionRuleFormDraft): string | null {
   const prefs = draft.preferences
   if (!prefs) return null
-  const schema = draft.preference_schema ?? []
 
   const pairs: string[] = []
-  for (const field of schema) {
-    if (RULE_PREFS_SHOWN_ELSEWHERE.has(field.key)) continue
-    const value = prefs[field.key]
+  for (const [key, value] of Object.entries(prefs)) {
+    if (RULE_PREFS_SHOWN_ELSEWHERE.has(key)) continue
     if (value === null || value === undefined || value === '') continue
     if (Array.isArray(value) && value.length === 0) continue
-    pairs.push(`${humanize(field.key)}: ${formatPreferenceValue(value)}`)
+    pairs.push(`${humanize(key)}: ${formatPreferenceValue(value)}`)
   }
   return pairs.length > 0 ? pairs.join(', ') : null
 }
@@ -948,66 +980,6 @@ function customerLabel(c: Customer): string {
   return c.full_name || c.email || ''
 }
 
-function RulePickerSheet({
-  types,
-  registeredCount,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  /** Types still selectable — already-added types are filtered out upstream. */
-  types: ResourceTypeDefinition[]
-  /** Total registered types regardless of selection. */
-  registeredCount: number
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  const emptyKey =
-    registeredCount === 0
-      ? 'admin.promotions.rule_types_empty'
-      : 'admin.promotions.rule_types_all_used'
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.rule_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.rule_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
-          ) : (
-            types.map((tt) => (
-              <button
-                key={tt.type}
-                type="button"
-                onClick={() => onPicked(tt)}
-                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-              >
-                <span className="text-sm font-medium">
-                  {typeLabel('promotion_rule', tt.type, tt.label)}
-                </span>
-                {tt.description && (
-                  <span className="text-xs text-muted-foreground">
-                    {typeDescription('promotion_rule', tt.type, tt.description)}
-                  </span>
-                )}
-              </button>
-            ))
-          )}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
-}
-
 function RuleEditSheet({
   draft,
   types,
@@ -1052,7 +1024,9 @@ function RuleEditSheet({
 function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
   const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
-  const hasPreferences = !!draft.preference_schema?.length
+  const { data: typesData } = usePromotionRuleTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1067,7 +1041,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
           {t('admin.promotions.rule_edit.no_options')}
@@ -1137,7 +1111,10 @@ function ActionsCard({
         </div>
 
         {pickerOpen && (
-          <ActionPickerSheet
+          <TypePickerSheet
+            family="promotion_action"
+            title={t('admin.promotions.action_picker.title')}
+            description={t('admin.promotions.action_picker.description')}
             types={types}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
@@ -1232,13 +1209,19 @@ function ActionRow({
 function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
   const { t } = useTranslation()
   const parts: string[] = []
-  // dashboard-ui is headless, so the localized calculator name is resolved
-  // here and handed to the formatter rather than looked up inside it.
+  const { data: calculatorsData } = usePromotionActionCalculators(
+    draft.calculator ? draft.type : undefined,
+  )
+  // dashboard-ui is headless, so the localized calculator name and the
+  // calculator's schema are resolved here and handed to the formatter.
+  const calculatorType = draft.calculator?.type
   const calc = formatCalculatorSummary(
-    draft.calculator?.type
+    calculatorType
       ? {
           ...draft.calculator,
-          label: typeLabel('calculator', draft.calculator.type, draft.calculator.label),
+          label: typeLabel('calculator', calculatorType, draft.calculator?.label),
+          schema: calculatorsData?.data.find((calculator) => calculator.type === calculatorType)
+            ?.schema,
         }
       : draft.calculator,
   )
@@ -1249,54 +1232,6 @@ function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
     )
   if (parts.length === 0) return null
   return <div className="truncate text-xs text-muted-foreground">{parts.join(' · ')}</div>
-}
-
-function ActionPickerSheet({
-  types,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  types: ResourceTypeDefinition[]
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.action_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.action_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.map((type) => (
-            <button
-              key={type.type}
-              type="button"
-              onClick={() => onPicked(type)}
-              className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-            >
-              <span className="text-sm font-medium">
-                {typeLabel('promotion_action', type.type, type.label)}
-              </span>
-              {type.description && (
-                <span className="text-xs text-muted-foreground">
-                  {typeDescription('promotion_action', type.type, type.description)}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
 }
 
 function ActionEditSheet({
@@ -1343,7 +1278,9 @@ function ActionEditSheet({
 function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorContext) {
   const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
-  const hasPreferences = !!draft.preference_schema?.length
+  const { data: typesData } = usePromotionActionTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1358,7 +1295,7 @@ function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorCo
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
           {t('admin.promotions.action_edit.no_options')}

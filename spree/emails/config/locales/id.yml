@@ -1,0 +1,37 @@
+---
+id:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Atur Ulang Kata Sandi
+        expiry_notice: Tautan pengaturan ulang kata sandi ini akan segera kedaluwarsa. Jika Anda tidak meminta ini, tidak ada tindakan yang diperlukan.
+        greeting: Hai %{name},
+        ignore_notice: Jika Anda tidak meminta pengaturan ulang kata sandi, Anda dapat mengabaikan email ini dengan aman. Kata sandi Anda tidak akan diubah.
+        instructions: Kami menerima permintaan untuk mengatur ulang kata sandi Anda. Klik tombol di bawah ini untuk memilih kata sandi baru.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hai,
+        ignore_disclaimer: Jika Anda tidak meminta ini, harap abaikan email ini.
+        instructions: Silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda.
+        message_copy_link: 'Jika tombol tidak berfungsi, silakan salin dan tempel tautan berikut ke browser Anda:'
+        subject: Verifikasi alamat email Anda
+        verify_email_address_link: Verifikasi alamat email
+    order_mailer:
+      cancel_email:
+        instructions: Pemesanan anda telah DIBATALKAN.  Silahkan simpan informasi pendaftaran ini untuk catatan anda.
+        subject: Pembatalan order
+      confirm_email:
+        instructions: Silahkan melihat dan menyimpan urutan informasi sebagai berikut untuk catatan anda.
+        subject: Konfirmasi pemesanan
+      payment_link_email:
+        message: Silakan klik tombol di bawah ini untuk membayar pesanan Anda.
+        message_copy_link: 'Jika tombol tidak berfungsi, silakan salin dan tempel tautan berikut ke browser Anda:'
+        pay_for_order: Bayar pesanan
+        subject: 'Tautan pembayaran untuk pesanan #%{number}'
+      store_owner_notification_email:
+        heading: Pesanan Baru Diterima
+        instructions: Anda telah menerima pesanan baru.
+        order_summary: Ringkasan Pesanan %{number}
+        subject: "%{store_name} menerima pesanan baru"
+      subtotal: 'Subtotal:'
+      total: 'Total Pesanan:'

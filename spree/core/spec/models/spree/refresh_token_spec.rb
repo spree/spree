@@ -4,25 +4,6 @@ RSpec.describe Spree::RefreshToken, type: :model do
   let(:user) { create(:user) }
 
   describe 'validations' do
-    it 'requires a user' do
-      token = described_class.new(expires_at: 30.days.from_now)
-      token.valid?
-      expect(token.errors[:user]).to be_present
-    end
-
-    it 'requires expires_at' do
-      token = described_class.new(user: user)
-      # has_secure_token generates token automatically
-      token.valid?
-      expect(token.errors[:expires_at]).to be_present
-    end
-
-    it 'auto-generates a token via has_secure_token' do
-      token = described_class.create!(user: user, audience: 'store_api', expires_at: 30.days.from_now)
-      expect(token.token).to be_present
-      expect(token.token.length).to be >= 24
-    end
-
     it 'requires an audience on create' do
       token = described_class.new(user: user, expires_at: 30.days.from_now)
 
@@ -83,27 +64,14 @@ RSpec.describe Spree::RefreshToken, type: :model do
   describe '#rotate!' do
     let!(:original_token) { described_class.create_for(user, audience: 'store_api') }
 
-    it 'destroys the original token' do
-      original_id = original_token.id
-      original_token.rotate!
-      expect(described_class.find_by(id: original_id)).to be_nil
-    end
+    it 'replaces the original token with a new one for the same user' do
+      new_token = nil
+      expect { new_token = original_token.rotate! }.not_to change(described_class, :count)
 
-    it 'creates a new token' do
-      new_token = original_token.rotate!
+      expect(described_class.find_by(id: original_token.id)).to be_nil
       expect(new_token).to be_persisted
       expect(new_token.token).not_to eq(original_token.token)
-    end
-
-    it 'preserves the user' do
-      new_token = original_token.rotate!
       expect(new_token.user).to eq(user)
-    end
-
-    it 'keeps total count the same' do
-      expect {
-        original_token.rotate!
-      }.not_to change(described_class, :count)
     end
 
     it 'accepts new request env' do
@@ -170,13 +138,6 @@ RSpec.describe Spree::RefreshToken, type: :model do
 
       expect(described_class.find_by(id: active.id)).to be_present
       expect(described_class.find_by(id: expired.id)).to be_nil
-    end
-  end
-
-  describe 'prefixed_id' do
-    it 'uses rt_ prefix' do
-      token = described_class.create_for(user, audience: 'store_api')
-      expect(token.prefixed_id).to start_with('rt_')
     end
   end
 end

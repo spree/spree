@@ -36,10 +36,7 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[event_name_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by event name (exact)'
-      parameter name: :'q[success_eq]', in: :query, type: :boolean, required: false,
-                description: 'Filter by success flag'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-delivered_at`).'
       parameter name: :fields, in: :query, type: :string, required: false,

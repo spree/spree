@@ -1,95 +1,256 @@
 ---
 title: "Processing Orders"
-description: "Learn how to process orders in the Spree Commerce admin dashboard,"
+description: "Learn how to fulfill an order, take its payment, change what was bought and cancel a sale in Spree Commerce."
 ---
 
-Efficient order processing is essential for running a successful ecommerce business. In Spree, processing an order typically involves two key steps: capturing payment and fulfilling the order.
+Processing an order relates to everything you can and must do to it after the customer places it: taking the money, sending the goods, changing what was bought, and calling the sale off when it cannot go ahead.
 
-To process an order, navigate to the Orders tab of the Spree dashboard.
+All of it happens on the order's own page, which carries the whole history of the sale. The page is built from several cards, each covering a part of that history, and most of them carrying an action you can take.
 
-![The Spree Commerce orders management dashboard](/docs/images/user/orders/processing-orders/1-orders-tab.png)
+Most orders need only two of those jobs, collecting payment and fulfilling. The rest are for when something changes: a customer adds an item, an address was wrong, or the order has to be stopped.
 
-From here, simply click on the order you want to process to open the order page.
+To process an order, navigate to **Orders** in the admin dashboard and click an order's number.
 
-![An order overview page in Spree Commerce](/docs/images/user/orders/processing-orders/2-order-overview.png)
+## How to Take a Payment
 
-Here you’ll see a full overview of the order, including payment and shipment details.
+Whether an order needs anything from you here depends on how your store charges customers. That is set by **When to charge customers**, which is a store-wide default setting that any payment method can override. See [<u>Payment Methods</u>](/user/settings/payments).
 
-## Payment Capture
+| Setting | What it means for this order |
+|---|---|
+| **At checkout** | The money was taken as the order was placed. Nothing to do here: the order arrives paid and ready to ship. |
+| **On dispatch** | The amount was reserved at checkout and is taken when you fulfill the order, so fulfilling collects the money for you. |
+| **Manually** | The amount was reserved at checkout and waits for a member of staff to capture it. |
 
-![Capturing payments in Spree Commerce](/docs/images/user/orders/processing-orders/3-order-payment.png)
+So an order can arrive already paid, be paid by the act of fulfilling it, or sit waiting for someone to take the money. The order's **Payment** badge tells you which: **Paid** needs nothing from you, while **Authorized** means the money is reserved but not yet taken.
 
-Some businesses (especially B2C) choose to auto-capture payments when an order is placed. Others prefer to manually capture payments later - for example, after stock is verified or fraud checks are completed.
+A method such as **Check**, where the customer promises to pay another way, behaves like **Manually**: the payment is recorded against the order at checkout and waits for you to capture it once the money arrives.
 
-<Note>If you are auto-capturing payments, proceed to Order Fulfillment.</Note>
+### Capturing an Authorized Payment
 
-If the order still owes money — a **Partially paid** or **Authorized** payment status — follow one of the options below:
+![The capture confirmation on an authorized payment](/docs/images/user/orders/processing-orders/1-capture-payment.png)
 
-### Option 1: Manually Capture an Existing Payment
+An authorized payment shows as **Authorized** on the **Payments** card, and the order's badge reads **Authorized** too.
 
-![Manually capturing payments in Spree Commerce](/docs/images/user/orders/processing-orders/4-capture-payment.png)
+1. Open the payment's **Actions** menu on the **Payments** card.
+2. Choose **Capture** and confirm.
 
-If the payment is already authorized (e.g., via credit card or bank transfer), you can capture it manually:
+The payment's state changes to **Completed**, and the **Payment total** and **Outstanding balance** update. The order's badge becomes **Paid** once the balance reaches zero, or **Partially paid** if the capture covers only part of the total.
 
-1. Click the **three-dot menu** next to the existing payment.
-2. Select **Capture**.
+<Warning>An authorization only covers the amount it was taken for. If you add items to an order after the card was authorized, the authorization may no longer cover the new total, so check the **Outstanding balance** after capturing.</Warning>
 
-The payment status will update to Paid, and you will now be able to fulfill the order via the shipment section.
+<Note>Capturing more than the order was authorized for is possible with some payment providers, which matters in B2B where a total can rise after the order is placed. Whether it works, and by how much, is your provider's decision rather than Spree's, so check with yours before relying on it. An order whose captured payments come to more than its total carries the **Overcharged** status.</Note>
 
-### Option 2: Add a New Payment
+#### Voiding a Payment
 
-![Add new payment to an order in Spree Commerce](/docs/images/user/orders/processing-orders/5-new-payment.png)
+**Void** on a payment's **Actions** menu cancels a payment at the gateway. On an authorized payment, which is the usual case, that releases the hold on the customer's card before any money moves.
 
-If the original payment failed, or if the customer wants to pay via a different method, you can create a new payment.
+Void a payment when the order is not going ahead, when the authorization was taken for the wrong amount and a fresh one is needed, or when the customer wants to pay by another method instead. Leaving a dead authorization in place keeps the customer's funds tied up until their bank releases it on its own, which can take days.
 
-Simply click the **New Payment** to open the payment creation form, and fill out the fields
+<Note>**Void** is offered on a captured payment as well as an authorized one, but what happens then is your payment provider's decision rather than Spree's. Some accept it as a same-day cancellation that never reaches the customer's statement, and others refuse it and expect a refund instead. For money that has genuinely moved, the dependable route back is a [<u>return</u>](/user/orders/returns) or canceling the order with **Refund the customer** switched on.</Note>
 
-- Amount (defaults to order total)
-- Payment Method
-- Payment Source (e.g. saved credit card)
+### Adding a Payment to an Order
 
-Click **Create** to finalize the new payment.
+![The Add payment dialog, with its method, amount and capture switch](/docs/images/user/orders/processing-orders/2-add-payment.png)
 
-You can now either:
+A payment made outside the checkout does not usually need adding by hand. If your store offers a method such as **Check**, the customer picks it at checkout and the payment is already recorded against the order, waiting for you to capture it when the money arrives.
 
-- Capture the payment immediately if the details are saved
+Adding a payment is for when an order ends up short:
 
-<Note>Depending on the payment method used for the order, the refund or capture process may happen automatically or may require manual action.</Note>
+- The payment it was placed with failed, was declined or was voided afterwards.
+- An edit raised the order's total, and the difference has to be collected separately.
 
-## Order Fulfillment
+1. On the **Payments** card, click **Add**.
+2. Choose the **Payment method**.
+3. Check the **Amount**, which is filled in with what the order still owes. Change it to record part of it.
+4. Switch on **Capture immediately** if the money is already in your hands. Leave it off to record the payment now and capture it when the money arrives.
+5. Click **Add**.
 
-![How to ship an orders in Spree Commerce](/docs/images/user/orders/processing-orders/6-shipments.png)
+A payment added without capturing does not change what the order owes. Capture it later from its **Actions** menu.
 
-Once payment has been captured, you're ready to fulfill the order via the **Shipments** section.
+<Note>The amount offered counts only money already captured, so on an order whose original payment is still authorized it offers the whole total. Check the figure before you click **Add**.</Note>
 
-Before shipping, make sure you have:
+<Note>Building an order for a customer is a different job, and adding its payment is part of that flow. See [<u>Draft Orders</u>](/user/orders/draft-orders).</Note>
 
-- The correct tracking number
-- The correct carrier, based on the customer’s shipping selection
+## How to Fulfill an Order
 
-### Add Tracking Details
+![The fulfillment form with its items, tracking number and carrier](/docs/images/user/orders/processing-orders/3-fulfillment-form.png)
 
-![Adding a tracking number to an order in Spree Commerce](/docs/images/user/orders/processing-orders/7-tracking-number.png)
+Fulfilling records that the goods have left your warehouse, and is the moment the customer gets their tracking number.
 
-To add tracking details to the shipment:
+1. On the **Fulfillments** card, click **Mark as fulfilled**. The parcel's box turns into a form with every item ticked and a running count of units to ship.
+2. Check the items and quantities.
+3. Enter the **Tracking number**, if you have not added one already.
+4. Choose the **Shipping carrier**, or leave it on **Detect automatically**.
+5. Leave the notification box ticked to email the customer, or untick it to fulfill quietly.
+6. Click **Fulfill items**.
 
-1. Click the **\+** icon in the Tracking subsection.
-2. Enter the tracking number.
-3. Click **Save**.
+The fulfillment badge changes to **Fulfilled**, and the parcel's box shows the carrier and the tracking number as a link. The box then offers **Mark as delivered** for when the parcel arrives.
 
-### Ship the Order
+With the notification left ticked, the customer receives an email carrying the order number, the tracking number and a link to the carrier's site.
 
-Double-check that everything is correct and click **Ship** to complete the order.
+<Warning>An order whose goods have already been sent cannot be canceled. If the customer no longer wants the order after it has shipped, use a [<u>return</u>](/user/orders/returns) instead.</Warning>
 
-The order’s fulfillment status will update to **Fulfilled**, and the customer will receive a confirmation email with tracking details.
+### Printing a Packing Slip
 
-## Order Completed
+Open the parcel's **Actions** menu on the **Fulfillments** card and choose **Print packing slip**. It opens in a new tab, carrying the order and fulfillment numbers, the ship-to address, the stock location it ships from, and the products, quantities and prices.
 
-![A completed orders in the Spree Commerce dashboard](/docs/images/user/orders/processing-orders/8-order-complete.png)
+![A packing slip, showing the ship-to address and the products to pack](/docs/images/user/orders/processing-orders/4-packing-slip.png)
 
-At this point, the order will have:
+If the customer's shipping address needs correcting, do so before printing, because the slip uses the address saved on the order.
 
-- **Payment status**: Paid
-- **Fulfillment status**: Fulfilled — and **Delivered** once the carrier confirms it arrived
+### Adding a Tracking Number
 
-This means the order has been successfully processed and is now complete from your business’ point of view. All that’s left is for the customer to receive their shipment.
+Open the parcel's **Actions** menu, choose **Add tracking**, enter the number, choose the carrier or leave it on **Detect automatically**, and click **Save**.
+
+Tracking can be added before or after you fulfill, but adding it first is worth the habit. The shipment email carries the tracking link, so a number added beforehand reaches the customer with the email that tells them their parcel is on its way. Added afterwards, the email has already gone without it.
+
+A tracking link is the cheapest thing you can give a customer after they have paid. It answers "where is my order" without anyone writing to you, and it turns the wait between payment and delivery into something they can watch rather than wonder about.
+
+## How to Edit an Order
+
+Taking the payment and sending the goods covers most orders, but processing is also where an order gets corrected. A customer calls to add an item, a line was entered at the wrong price, something is out of stock and has to be swapped, or a goodwill discount is agreed after the sale.
+
+Each of those is changed in a different place on the order. The rest of the page is a record that keeps itself: the **Summary**, the **Taxes** card, **Special instructions** and **Metadata** are all read-only, and the [<u>Orders</u>](/user/orders/orders) page explains what each card holds.
+
+### How to Add or Remove Line Items
+
+![The order editor, with a unit price, quantity and line total for each product](/docs/images/user/orders/processing-orders/5-edit-order.png)
+
+Click **Edit order** at the top of the page. It is available on a placed order, not just a draft.
+
+The editor lists one row per product, with its **Unit price**, **Quantity** and line total.
+
+- **Add product** puts another item on the order.
+- **Remove** takes a line off.
+- Change a line's **Quantity** to match what the customer now wants.
+
+**Save** stays disabled until you change something. Totals are recalculated once you save, rather than as you type.
+
+<Note>Unit prices cannot be changed on a placed order. Setting a price per line is part of building a [<u>draft order</u>](/user/orders/draft-orders), where a price can be agreed with a business buyer before the order is placed. To take money off an order that is already placed, add a discount instead.</Note>
+
+<Warning>Editing an order does not change a payment already taken. Compare the new **Total** with the **Payment total** in the Summary afterwards, and settle any difference with the customer.</Warning>
+
+### How to Update an Address
+
+![The Edit shipping address dialog](/docs/images/user/orders/processing-orders/6-edit-shipping-address.png)
+
+Open the **Actions** menu on the **Customer** card and choose **Edit Shipping Address** or **Edit Billing Address**.
+
+Only the address you edit changes. The order's totals stay as they were, even where the new address would be taxed differently or carry a different delivery price.
+
+<Warning>Correct an address before printing a packing slip or fulfilling, because both use the address saved on the order at the time.</Warning>
+
+### How to Edit or Split a Fulfillment
+
+On the **Fulfillments** card, open a parcel's **Actions** menu.
+
+- **Edit** changes where the parcel ships from and which delivery method carries it. **Ships from** lists your stock locations, marking any that cannot cover the order as out of stock, and **Delivery method** lists the methods that reach the address, with their prices.
+- **Split** divides a parcel in two, so part of an order can go now and the rest follow. Each half then has its own tracking, carrier and status.
+- **Cancel** cancels that parcel.
+
+![A fulfillment's Actions menu, showing Edit, Split and the other parcel actions](/docs/images/user/orders/processing-orders/7-fulfillment-actions.png)
+
+Splitting suits an order whose items cannot sensibly travel together. One is in stock and another is not, so the customer gets what is ready rather than waiting for the whole order. Or the goods need different handling altogether: a lamp goes by parcel carrier while a sofa needs a two-person delivery.
+
+<Note>Where products routinely ship differently, [<u>delivery profiles</u>](/user/settings/delivery-profiles) can separate them at checkout, so the order arrives already split rather than needing splitting by hand.</Note>
+
+### How to Process Returns, Exchanges and Claims
+
+Anything that comes back, or goes wrong, after the sale starts from its own card on the order. Each has a process of its own:
+
+- [<u>Returns</u>](/user/orders/returns) - Goods the customer sends back for a refund.
+- [<u>Exchanges</u>](/user/orders/exchanges) - Goods swapped for something else.
+- [<u>Claims</u>](/user/orders/claims) - Goods that arrived damaged or never arrived at all.
+
+### How to Add a Discount
+
+![The Add discount form, with its label, value, type and target](/docs/images/user/orders/processing-orders/8-add-discount.png)
+
+On the **Discounts** card, click **Add discount**. This creates a discount by hand, rather than one a promotion or coupon applied.
+
+| Field | What it does |
+|---|---|
+| **Label** | What the discount is called, which the customer sees on their order. |
+| **Value** | How much comes off. |
+| **Type** | Whether the value is an amount or a percentage. |
+| **Applies to** | The whole order, or one line. |
+
+A discount applied to the whole order is spread across its items rather than sitting on one of them.
+
+### How to Add a Fee
+
+![The Add fee form, with its label, amount, kind and target](/docs/images/user/orders/processing-orders/9-add-fee.png)
+
+On the **Fees** card, click **Add fee**. Fees cover anything added to the price after the sale.
+
+| Field | What it does |
+|---|---|
+| **Label** | What the fee is called, which the customer sees on their order. |
+| **Amount** | How much is added. |
+| **Kind** | Surcharge, handling, gift wrap, cash on delivery, payment fee or duty. |
+| **Applies to** | The whole order, or one line. |
+
+<Warning>Adding a discount or a fee changes what the order comes to, but not what has already been paid. Check the **Outstanding balance** afterwards.</Warning>
+
+### How to Apply a Gift Card
+
+On the **Discounts & Credit** card, click **Apply** beside **Gift card** and enter the card's code. The card pays what it can of the order, and the **Outstanding balance** drops by that amount. See [<u>Gift Cards</u>](/user/loyalty/gift-cards).
+
+The **Discount code** on the same card is a record of the code the customer used at checkout, and cannot be changed afterwards. To take money off an order that is already placed, add a discount by hand as described above.
+
+### How to Add Notes and Tags
+
+Both sit on the right of the order, each with a pencil for editing.
+
+- **Internal note** is what your team should know about this order, such as a phone call with the customer. It takes formatted text, and only staff see it.
+- **Tags** are short labels such as `VIP` or `gift-wrap`. They are the quickest way to find a group of orders again, using the **Tags** filter on the orders list.
+
+Two more on the same side are edited the same way:
+
+- **Special instructions** is what the customer asked for at checkout, such as where to leave a parcel. It normally comes from them, but it can be corrected afterwards, for example when a customer phones in a change of instructions.
+- **Purchase order** is the buyer's own reference, which you can also search and filter the orders list by.
+
+### How to Add Custom Field Values
+
+![The Custom fields card on an order](/docs/images/user/orders/processing-orders/10-custom-fields.png)
+
+**Custom fields** holds the extra order fields your store has defined, each edited in place on the order.
+
+They suit anything your team needs to record against an order that Spree has no field for, such as a preferred delivery date, a gift message, whether installation was booked, or the account manager looking after the sale. Which fields appear, and which are required, is set under [<u>Custom Fields</u>](/user/settings/custom-fields).
+
+## How to Cancel an Order
+
+Only an order that has not been sent can be canceled. Once any of its goods have gone, the sale has happened, and the way back is a [<u>return</u>](/user/orders/returns) rather than a cancellation.
+
+So cancel an order while it is still unfulfilled: the customer changed their mind, the order is a duplicate, the goods turned out to be out of stock, or the payment was declined.
+
+Open **More actions** at the top of the order and choose **Cancel order**.
+
+![The More actions menu with Cancel order](/docs/images/user/orders/processing-orders/11-cancel-order-menu.png)
+
+The form asks for the following.
+
+![The Cancel order form, with its reason, note and refund and email switches](/docs/images/user/orders/processing-orders/12-cancel-order-form.png)
+
+| Field | What it does |
+|---|---|
+| **Reason** | Why the sale is off, chosen from a list such as duplicate order, out of stock or suspected fraud. Choosing one is optional. |
+| **Note** | Anything your team should know. Only staff see it. |
+| **Refund the customer** | Returns money already taken. An unclaimed authorization is released whether or not you switch this on. |
+| **Email the customer** | Sends the customer a cancellation email. |
+
+<Warning>**Refund the customer** and **Email the customer** both start switched off. Decide on each before you confirm.</Warning>
+
+Click **Cancel order** to confirm, or **Keep order** to back out. The order's badge changes to **Canceled**, its fulfillment is canceled, and the stock held for it is free to sell again. The Summary records when it was canceled, by whom, and the reason and note.
+
+## How to Resend the Order Confirmation
+
+If a customer says the confirmation never arrived, open **More actions** and choose **Resend Confirmation**. The customer receives the confirmation again, marked as a resend in the subject line, carrying the full order summary.
+
+## Further Reading
+
+- [<u>Orders</u>](/user/orders/orders) - The orders list, its filters and the status badges
+- [<u>Returns</u>](/user/orders/returns) - Goods a customer sends back
+- [<u>Exchanges</u>](/user/orders/exchanges) - Swapping one item for another
+- [<u>Claims</u>](/user/orders/claims) - Goods that arrived damaged or never arrived
+- [<u>Draft Orders</u>](/user/orders/draft-orders) - Building an order for a customer before it is placed

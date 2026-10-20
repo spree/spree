@@ -54,7 +54,7 @@ describe Spree::StockReceipt, type: :model do
       item = build(:stock_receipt_item, stock_receipt: receipt, line: line, quantity_accepted: 0)
 
       expect(item).to be_invalid
-      expect(item.errors[:base]).to include(Spree.t('stock_receipt.errors.nothing_counted'))
+      expect(item.errors[:base]).to include(I18n.t('spree.stock_receipt.errors.nothing_counted'))
     end
 
     it 'needs a known reason for whatever it refused' do

@@ -20,6 +20,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'catalogs found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -43,20 +44,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'VIP Assortment' },
-          active: { type: :boolean, example: true },
-          price_list: { type: :object, nullable: true,
-                        description: 'The price list this catalog owns, written inline. Omit for assortment-only (base prices); send null to remove the pricing, which deletes the list. A catalog with an empty assortment prices without restricting visibility; import or curate products to make it restrictive.',
-                        properties: {
-                          price_adjustment_percentage: { type: :string, nullable: true, example: '-15.0' },
-                          adjust_compare_at: { type: :boolean, example: false }
-                        } }
-        },
-        required: ['name']
-      }
+      request_body_for
 
       let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
@@ -76,6 +64,37 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/catalogs/{id}' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    patch 'Update a catalog' do
+      tags 'Catalogs'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Updates a catalog and its commercial terms. Only the attributes sent change.'
+      admin_scope :write, :products
+
+      admin_sdk_example 'catalogs/update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'catalog updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+        let(:body) { { name: 'Wholesale Plus', minimum_order_quantity: 10, order_multiple: 5 } }
+
+        schema '$ref' => '#/components/schemas/Catalog'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['name']).to eq('Wholesale Plus')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/catalogs/{id}/assign' do
     post 'Assign a catalog to an audience' do
       tags 'Catalogs'
@@ -90,15 +109,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          assignable_type: { type: :string, enum: %w[customer_group company],
-                             example: 'company' },
-          assignable_id: { type: :string, example: 'comp_86Rf07xd4z' }
-        },
-        required: %w[assignable_type assignable_id]
-      }
+      request_body_for
 
       let(:'x-spree-api-key') { secret_api_key.plaintext_token }
       let(:id) { catalog.prefixed_id }
@@ -131,12 +142,15 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       DESC
       admin_scope :read, :products
 
+      admin_sdk_example 'catalogs/products/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated. `catalog_price` adds the resolved price to every row.',
                 example: 'catalog_price'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -165,7 +179,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         run_test! do |response|
           price = JSON.parse(response.body)['data'].first['catalog_variants'].first
           expect(price['source']).to eq('automatic')
-          expect(price['amount']).to eq('80.0')
+          expect(price['amount']).to eq('80.00')
         end
       end
     end
@@ -178,14 +192,12 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       description 'Curates products into the assortment in bulk. Already-present products are skipped; the count reports what was added.'
       admin_scope :write, :products
 
+      admin_sdk_example 'catalogs/products/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
-        required: %w[product_ids]
-      }
+      request_body_for
 
       response '201', 'products added' do
         let!(:product) { create(:product, store: store) }
@@ -207,14 +219,12 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       description 'Removes products from the assortment in bulk. Ids that are not members are ignored; the count reports what was removed.'
       admin_scope :write, :products
 
+      admin_sdk_example 'catalogs/products/delete'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { product_ids: { type: :array, items: { type: :string }, example: ['prod_abc123'] } },
-        required: %w[product_ids]
-      }
+      request_body_for
 
       response '200', 'products removed' do
         let!(:product) { create(:product, store: store) }
@@ -239,9 +249,12 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       description 'The least a whole order must come to under this agreement. One row per currency — Spree holds no exchange rates, so a threshold is never stated once and converted.'
       admin_scope :read, :products
 
+      admin_sdk_example 'catalogs/order-minimums/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'order minimums found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -263,17 +276,12 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       description 'Requires orders in one currency to reach an amount. The buyer sees the shortfall on the cart while they can still act on it; completion is refused below it.'
       admin_scope :write, :products
 
+      admin_sdk_example 'catalogs/order-minimums/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          currency: { type: :string, example: 'USD' },
-          amount: { type: :string, example: '500.00' }
-        },
-        required: %w[currency amount]
-      }
+      request_body_for
 
       let(:'x-spree-api-key') { secret_api_key.plaintext_token }
       let(:catalog_id) { catalog.prefixed_id }
@@ -303,14 +311,13 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       description "Restates one currency's threshold."
       admin_scope :write, :products
 
+      admin_sdk_example 'catalogs/order-minimums/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: { amount: { type: :string, example: '750.00' } }
-      }
+      request_body_for
 
       response '200', 'order minimum updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -320,7 +327,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         let(:body) { { amount: '750.00' } }
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['amount']).to eq('750.0')
+          expect(JSON.parse(response.body)['amount']).to eq('750.00')
         end
       end
     end
@@ -331,6 +338,8 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Lifts the threshold for one currency, so orders in it may come to any total.'
       admin_scope :write, :products
+
+      admin_sdk_example 'catalogs/order-minimums/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -356,25 +365,12 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       description 'Writes the given products\' quantity terms in one request, keyed by prefixed product id. The stated pair is written to every variant of the product, which is the grain the database keeps them at. Both fields null clears that product\'s terms; a product not yet in the assortment is added, since a term with nothing to apply to is not a reachable state. Products absent from the payload are left alone — an agreement may name terms for thousands of SKUs. Read them back on the assortment rows: `GET /catalogs/{id}/products?expand=quantity_rule`.'
       admin_scope :write, :products
 
+      admin_sdk_example 'catalogs/quantity-rules/upsert'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :catalog_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          terms: {
-            type: :object,
-            additionalProperties: {
-              type: :object,
-              properties: {
-                minimum_order_quantity: { type: :integer, nullable: true, example: 48 },
-                order_multiple: { type: :integer, nullable: true, example: 24 }
-              }
-            }
-          }
-        },
-        required: ['terms']
-      }
+      request_body_for
 
       response '204', 'quantity rules set' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

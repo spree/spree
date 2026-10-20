@@ -35,7 +35,7 @@ module Spree
         # Preferences
         #
         MATCH_POLICIES = %w(any all)
-        preference :match_policy, :string, default: MATCH_POLICIES.first
+        preference :match_policy, :string, default: MATCH_POLICIES.first, choices: MATCH_POLICIES
 
         #
         # Attributes
@@ -46,10 +46,6 @@ module Spree
         # Callbacks
         #
         after_save :add_categories
-
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
 
         def eligible_category_ids
           @eligible_category_ids ||= promotion_rule_categories.pluck(:category_id)

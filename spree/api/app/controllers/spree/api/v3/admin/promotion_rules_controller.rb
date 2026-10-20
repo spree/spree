@@ -13,6 +13,15 @@ module Spree
           subclassed_via -> { Spree.promotions.rules },
                          unknown_type_error: 'unknown_promotion_rule_type'
 
+          request_params :promotion_rule do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              only: :create,
+              example: 'currency',
+              description: 'The rule kind, from `GET /promotion_rules/types`.'
+            body.include_attributes Spree::Api::V3::Admin::PromotionRuleRequestSchema
+          end
+
           def types
             authorize! :read, model_class
 
@@ -30,7 +39,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, preferences: {})
+            params.permit(*permitted_attributes)
           end
 
           # `types` is read-only discovery — maps to the read scope + :show ability.
@@ -43,10 +52,6 @@ module Spree
 
             @parent = current_store.promotions.accessible_by(current_ability, :update)
                                    .find_by_prefix_id!(params[:promotion_id])
-          end
-
-          def parent_association
-            :promotion_rules
           end
 
           private

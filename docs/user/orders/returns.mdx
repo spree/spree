@@ -1,71 +1,101 @@
 ---
 title: "Returns"
-description: "Process a return from request to refund — approve it, receive the goods, restock what can be resold, and refund the customer."
+description: "Learn how to take goods back from a customer and refund them in Spree Commerce."
 ---
 
-A return is the customer sending items back and getting their money back. It belongs to the order it came from, so opening the order shows the whole story in one place.
+A return is the process by which a customer sends faulty or unwanted goods back to you for a refund. It follows the goods from the moment the customer asks to send something back, through approving the request and counting in what arrives, to the refund. Units you count in as resellable go back into stock at the warehouse you chose, and the refund goes either to the customer's original payment or onto their store credit.
 
-Returns sit beside two related records — an [Exchange](/user/orders/exchanges), where the customer gets different items instead of money, and a [Claim](/user/orders/claims), where something went wrong with the delivery and nothing need come back. Find all three under **Orders** in the dashboard.
+If the customer wants a different size, color or product instead of their money, start an [<u>exchange</u>](/user/orders/exchanges). If a delivery went wrong, such as an item that arrived damaged or never arrived, open a [<u>claim</u>](/user/orders/claims).
 
-<Note>
-  This replaces the older three-step flow of Return Authorization, Customer Return, and Reimbursement. One record now covers the whole operation from request through to refund.
-</Note>
+With a handful of orders a month you could track returns by email. Once several people handle returns, or goods come back to more than one warehouse, a return record tells everyone what was asked for, what actually arrived and what has been paid back.
 
-## Processing a return
+Every return belongs to an order and is worked on that order's **Returns** card. Clicking a return's number in the list opens its order. The **Returns** item in the sidebar carries a count of returns not yet refunded, and the **Open returns** tile on Home shows the same queue. To manage returns, navigate to **Orders → Returns** in the admin dashboard.
 
+## Reviewing Returns
 
-### 1. Open the return
+The Returns list shows every return in the store, whichever order it belongs to.
 
-Find the order and create a return against it, choosing the items coming back and how many units of each. You can also record the reason for the return, which stock location the goods are returning to, and an internal memo.
+![The Returns list with one requested return](/docs/images/user/orders/returns/1-returns-overview.png)
 
-Customers can also open returns themselves from their account, if your storefront offers it. Those arrive with the status **requested**.
+| Column | What it means |
+|---|---|
+| **Number** | The return's own reference. Click it to open the order the return belongs to. |
+| **Status** | How far the return has got. See the table under [How to Approve and Receive a Return](#how-to-approve-and-receive-a-return). |
+| **Orders** | The order the goods came from. |
+| **Refund total** | The value of the goods on the return. Once you have counted the goods in, it shows the value of what actually arrived. |
+| **Created at** | When the return was opened. |
 
-### 2. Approve it
+Use the **Status** filter to see what needs you next: **Requested** returns are waiting for your approval, **Approved** ones are waiting for the goods, and **Received** ones are waiting for a refund. The search box finds a return by its number, and **Add filter** narrows the list by number or by the date a return was created or last updated.
 
-Approving a return tells the customer it is authorised.
+## How to Create a Return
 
-<Note>
-  Spree does not generate prepaid return labels yet. That arrives with the carrier integrations, which is where the label actually comes from. Until then, most merchants send a label from their carrier's own tools and paste the link into the return's notes.
-</Note>
+Open the order the goods came from and click **New return** on its **Returns** card.
 
-### 3. Receive the goods
+![The New return dialog, with the quantity at 0 and the Reason, Return to and Note fields](/docs/images/user/orders/returns/2-new-return.png)
 
-When the parcel arrives, record what actually turned up. Partial returns are normal, so you enter the quantity received for each line rather than assuming everything the customer said they would send has arrived.
+The dialog lists each item that was fulfilled on the order, with a quantity box beside it.
 
-You also mark each line as resellable or not. Resellable items go back into stock automatically at the return's stock location; damaged items do not.
+- **Quantity** - How many of that item the customer is sending back. Every box starts at 0, so nothing goes on the return unless you put it there, and you cannot enter more than were sent.
+- **Reason** - Why the customer is sending it back. The choices come from **Settings → Returns & reasons**, where you can add your own, see [<u>Returns & Reasons</u>](/user/settings/returns-and-reasons).
+- **Return to** - The stock location the goods are coming back to. Leave it on **Default returns location** or pick one of your warehouses.
+- **Note** - Anything your team should know about this return, such as what the customer told you about the item's condition.
 
-### 4. Refund the customer
+Enter the quantity for each item coming back, choose a **Reason**, and click **New return**. The button stays disabled until at least one quantity is above 0.
 
-Refund the return to either the original payment method or store credit. You can refund the full amount or part of it, and you can refund in more than one step — part to store credit and part back to the card, for example.
+The order's **Returns** card then shows the new return as **Requested**, with the items, the warehouse it is returning to and its **Refund total**.
 
-Once the refund goes through, the customer receives an email confirming it.
+![The order's Returns card with the new return listed as Requested](/docs/images/user/orders/returns/3-return-created.png)
 
-<Note>
-  A return can be cancelled at any point before the goods are received. Cancelling restocks nothing.
-</Note>
+If you try to return more units than are left to return on that order, the return is not created and a message at the bottom of the screen tells you how many can still be returned.
 
+## How to Approve and Receive a Return
 
-## Where to find them
+A return moves through five statuses. The **Actions** button on the return offers only the next steps that make sense for its status.
 
-Returns, exchanges, and claims each have their own page under Orders in the dashboard, so you can see everything in progress across all orders. Individual records also appear on the order they belong to, giving you the full history of that order in one place.
+| Status | What it means |
+|---|---|
+| **Requested** | The customer has asked to send goods back. Nothing has moved yet. **Actions** offers **Approve** and **Cancel**. |
+| **Approved** | You have agreed to take the goods back and are waiting for them. **Actions** offers **Receive items** and **Cancel**. |
+| **Received** | The goods have been counted in. Resellable units are back in stock. **Actions** offers **Refund** only. |
+| **Refunded** | The money has gone back to the customer. The return is finished and has no **Actions** button. |
+| **Canceled** | The return was called off before any money moved. The units can go on a new return. |
 
-## Reasons
+1. On the order's **Returns** card, click **Actions** on the return and choose **Approve**. The status changes to **Approved** straight away.
+2. When the parcel arrives, click **Actions** and choose **Receive items**. The **Receive returned items** dialog opens with the **Received** box filled in with the full quantity on the return.
+3. Change **Received** to the number of units that actually arrived. Leave **Resellable** switched on if they can go back on sale. The switch covers every unit on that line.
+4. Click **Receive items**. The return reads **Received**, the line shows how many arrived against how many were expected (for example **2 of 3 received**), and the **Refund total** drops to the value of what arrived. The resellable units are added back to stock at the return's warehouse.
 
-Spree keeps two separate lists of reasons, managed under **Settings → Returns & reasons** and seeded when your store is created:
+Count what is in front of you rather than what the customer said they sent. The figure you enter is what the refund amount is worked out from.
 
-- **Return reasons** explain why a customer is sending something back — "wrong size", "changed my mind", "no longer needed". These apply to both returns and exchanges.
-- **Claim reasons** explain what went wrong on your end — "arrived damaged", "never arrived", "wrong item sent".
+![A return on the order page after receiving 1 of 1 units](/docs/images/user/orders/returns/4-return-received.png)
 
-They are kept separate because they answer different questions, and mixing them makes reporting less useful. See [Settings → Returns & Reasons](/user/settings/returns-and-reasons) for how to manage them.
+### Sending the Customer a Return Label
 
-## Return policy
+A return starts with **No return label yet**, and **Buy return label** on the return buys a prepaid one for the customer to put on the parcel.
 
-Spree does not enforce a return window, restocking fee, or final-sale rule out of the box. Every merchant's policy differs, and the rules often vary by country for legal reasons.
+The button is there while the return is **Requested** or **Approved**, and disappears once the goods have been received, since a label is no use after the parcel has arrived.
 
-Instead, your developers can attach your policy to the point where a return is created. A common setup enforces the policy for customers opening returns themselves, while still letting your staff override it — so a supervisor can accept a return outside the window for a good customer without needing a code change.
+<Warning>Buying a label charges your carrier account as soon as the label is issued, so it needs a carrier account connected to your store. A label bought and then not used can be refunded from the return.</Warning>
 
-## Related
+A label bought outside Spree can be recorded against the return instead, so the return still carries the tracking whoever bought it.
 
-- [Exchanges](/user/orders/exchanges) — swapping items rather than refunding
-- [Claims](/user/orders/claims) — damaged, missing or wrong deliveries
-- [Returns & Reasons](/user/settings/returns-and-reasons) — the reason lists staff pick from
+## How to Refund a Return
+
+Once a return is **Received**, click **Actions** and choose **Refund**. The **Refund return** dialog opens.
+
+- **Amount** - What the customer gets back. It is filled in with the price of the units you received, without the delivery charge, and you can change it before you refund.
+- **Refund to** - Where the money goes. **Original payment** sends it back to the card or method the customer paid with. **Store credit** adds it to the customer's store credit balance, which you can see on their customer page, so they can spend it in your store.
+
+Check both, then click **Refund**. The dialog closes, the return reads **Refunded** and its **Actions** button disappears. After a refund to the original payment, the order's payment status changes to **Partially Refunded** when only part of the order was paid back, and the customer receives an email saying their return has been refunded, with the total amount refunded. The return also drops out of the count on the **Returns** sidebar item, as it has now been settled.
+
+![The Refund return dialog with the amount for the received units and Refund to set to Original payment](/docs/images/user/orders/returns/5-refund-return.png)
+
+<Warning>A refund to the original payment is sent to the customer's payment provider as soon as you click **Refund**, with no second confirmation. Check the **Amount** and **Refund to** before you click.</Warning>
+
+## Further Reading
+
+- [<u>Returns & Reasons</u>](/user/settings/returns-and-reasons) - Add and manage the reasons your team picks from when opening a return.
+- [<u>Exchanges</u>](/user/orders/exchanges) - Swap an item for a different size, color or product instead of refunding it.
+- [<u>Claims</u>](/user/orders/claims) - Deal with a delivery that arrived damaged, wrong or not at all.
+- [<u>Issue Store Credits</u>](/user/loyalty/store-credits) - Work with the store credit balance a refund can go to.
+- [<u>Processing Orders</u>](/user/orders/processing-orders) - Fulfilling an order, and the refunds a cancellation makes.

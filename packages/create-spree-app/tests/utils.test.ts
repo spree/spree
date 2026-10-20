@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { execa } from 'execa'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   detectPackageManager,
   generateEncryptionKeys,
@@ -8,11 +9,17 @@ import {
   storefrontPm,
 } from '../src/utils'
 
+vi.mock('execa', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('execa')>()),
+  execa: vi.fn(),
+}))
+
 describe('detectPackageManager', () => {
   const originalEnv = process.env.npm_config_user_agent
 
   beforeEach(() => {
     process.env.npm_config_user_agent = originalEnv
+    vi.mocked(execa).mockReset()
   })
 
   it('respects an explicit yarn agent', async () => {
@@ -26,16 +33,22 @@ describe('detectPackageManager', () => {
   })
 
   // An npm agent is the default runner (`npx create-spree-app`), not a
-  // choice — prefer pnpm when installed. These tests run under the pnpm
-  // workspace, so pnpm is always on PATH here.
+  // choice — prefer pnpm when installed.
   it('prefers pnpm over an npm agent when pnpm is installed', async () => {
     process.env.npm_config_user_agent = 'npm/10.0.0 node/v20.0.0'
     await expect(detectPackageManager()).resolves.toBe('pnpm')
+    expect(execa).toHaveBeenCalledWith('pnpm', ['--version'], { stdio: 'ignore' })
   })
 
   it('prefers pnpm when the agent is unknown', async () => {
     delete process.env.npm_config_user_agent
     await expect(detectPackageManager()).resolves.toBe('pnpm')
+  })
+
+  it('falls back to npm when pnpm is not installed', async () => {
+    process.env.npm_config_user_agent = 'npm/10.0.0 node/v20.0.0'
+    vi.mocked(execa).mockRejectedValue(new Error('spawn pnpm ENOENT'))
+    await expect(detectPackageManager()).resolves.toBe('npm')
   })
 })
 

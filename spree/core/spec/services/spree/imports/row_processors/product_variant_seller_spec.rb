@@ -168,6 +168,29 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, 'for a seller-owne
       expect(level).to be_present
       expect(level.count_on_hand).to eq(7)
     end
+
+    context 'when the row names a location' do
+      let(:marketplace_namesake) { create(:stock_location, store: store, name: 'Shared name') }
+      # Created after its namesake, so an unscoped lookup would find the marketplace's first.
+      let!(:seller_location) do
+        marketplace_namesake
+        create(:stock_location, seller: seller, store: store, name: 'Shared name', default: false)
+      end
+
+      let(:row_data) do
+        csv_row_hash('slug' => 'denim-shirt', 'name' => 'Denim Shirt', 'price' => '1.00',
+                     'inventory_count' => '7', 'stock_location' => seller_location.name)
+      end
+
+      before { import.mappings.find_by(schema_field: 'stock_location').update!(file_column: 'stock_location') }
+
+      it "resolves it among the seller's own, never the marketplace's namesake" do
+        variant = subject.process!
+
+        expect(variant.stock_levels.find_by(stock_location: seller_location).count_on_hand).to eq(7)
+        expect(variant.stock_levels.find_by(stock_location: marketplace_namesake)).to be_nil
+      end
+    end
   end
 
   describe 'updating' do

@@ -13,7 +13,7 @@ describe 'spree:migrate_media_class_names' do
 
   before { subject.reenable }
 
-  let!(:media) { create(:image) }
+  let!(:media) { create(:media) }
 
   # Simulates a pre-6.0 install: the rows still name the class by its old name.
   def name_rows_legacy!(legacy_name)

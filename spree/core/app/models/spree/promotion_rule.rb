@@ -1,6 +1,10 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.promotion_rule_types'
+
     has_prefix_id :prorule
 
     registers_subclasses_via { Spree.promotions.rules }
@@ -17,8 +21,8 @@ module Spree
       all.select { |rule| rule.applicable?(promotable) }
     end
 
-    def applicable?(_promotable)
-      raise 'applicable? should be implemented in a sub-class of Spree::PromotionRule'
+    def applicable?(promotable)
+      promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
     end
 
     def eligible?(_promotable, _options = {})
@@ -34,17 +38,6 @@ module Spree
     def eligibility_errors
       @eligibility_errors ||= ActiveModel::Errors.new(self)
     end
-
-    def self.human_name
-      Spree.t("promotion_rule_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    def self.human_description
-      Spree.t("promotion_rule_types.#{api_type}.description", default: '')
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
 
     # Returns the key of the promotion rule
     #
@@ -70,7 +63,7 @@ module Spree
     end
 
     def eligibility_error_message(key, options = {})
-      Spree.t(key, Hash[scope: [:eligibility_errors, :messages]].merge(options))
+      I18n.t("spree.eligibility_errors.messages.#{key}", **options)
     end
   end
 end

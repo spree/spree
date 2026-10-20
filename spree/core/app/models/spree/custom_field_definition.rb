@@ -25,20 +25,14 @@ module Spree
     scope :for_resource_type, ->(resource_type) { where(resource_type: resource_type) }
     scope :storefront_visible, -> { where(storefront_visible: true) }
     scope :admin_only, -> { where(storefront_visible: false) }
-    scope :search, ->(query) do
-      return all if query.blank?
-
-      search_term = "%#{query.downcase}%"
-      namespace_condition = arel_table[:namespace].lower.matches(search_term)
-      key_condition = arel_table[:key].lower.matches(search_term)
-      label_condition = arel_table[:label].lower.matches(search_term)
-
-      where(namespace_condition.or(key_condition).or(label_condition))
-    end
 
     #
     # Callbacks
     #
+    # The API names resources by shorthand (`product`); the column keeps the
+    # class name the custom fields themselves are stored under. Also applies to
+    # `where(resource_type:)`, so finders accept either.
+    normalizes :resource_type, with: ->(value) { Spree::Base.polymorphic_type_for(value, available_resources) || value }
     normalizes :key, with: ->(value) { value.to_s.parameterize.underscore.strip }
     normalizes :namespace, with: ->(value) { value.to_s.parameterize.underscore.strip }
     before_validation :set_default_type, if: -> { self[:field_type].blank? }, on: :create
@@ -48,8 +42,17 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type storefront_visible searchable sortable]
-    self.whitelisted_ransackable_scopes = %w[search]
+    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable]
+
+    # Both columns store class names; filters take the short names clients see.
+    def self.api_type_resolver(attribute)
+      case attribute
+      when 'resource_type' then ->(api_type) { normalize_value_for(:resource_type, api_type) }
+      when 'field_type' then ->(api_type) { Spree::CustomField::TYPE_TOKENS[api_type] }
+      else super
+      end
+    end
+    search_by :namespace, :key, :label
 
     # API-facing token for the STI subclass name stored in the `field_type`
     # column. Reader returns the registered token (`short_text`); writer
@@ -117,25 +120,13 @@ module Spree
     # as the API names it, so a client renders a picker rather than carrying
     # its own list that drifts from the registry.
     #
-    # `Spree::Category` reports itself as `Spree::Taxon`: existing category
-    # definitions are stored under the old class name, and offering the new
-    # one would file a merchant's next definition somewhere the category card
-    # does not read. Drops with the alias in 6.1.
-    #
-    # @return [Array<Hash{Symbol => String}>] `resource_type` + `name`
+    # @return [Array<Hash{Symbol => String}>] `resource_type` shorthand + `name`
     def self.enabled_resource_types
       # Through `available_resources`, not the registry directly: that is the
       # accessor the rest of the class reads, so discovery and validation
       # cannot disagree about what a host app has made available.
-      Array(available_resources).filter_map do |resource|
-        next if resource.nil?
-
-        # The label follows the class a merchant knows; the wire value follows
-        # where the rows are actually stored.
-        name = resource.to_s.demodulize.titleize.pluralize
-        resource_type = resource.to_s == 'Spree::Category' ? 'Spree::Taxon' : resource.to_s
-
-        { resource_type: resource_type, name: name }
+      Array(available_resources).compact.map do |resource|
+        { resource_type: Spree::Base.polymorphic_api_type(resource), name: resource.to_s.demodulize.titleize.pluralize }
       end.uniq { |entry| entry[:resource_type] }.sort_by { |entry| entry[:name] }
     end
 
@@ -174,7 +165,7 @@ module Spree
 
       tokens = Spree::CustomField::TYPE_TOKENS.keys.join(', ')
       errors.add(:field_type, :unknown_custom_field_type, types: tokens,
-                 message: Spree.t('errors.messages.unknown_custom_field_type', types: tokens))
+                 message: I18n.t('spree.errors.messages.unknown_custom_field_type', types: tokens))
     end
 
     # Validates the stored class name, not the token the reader returns.
@@ -186,14 +177,8 @@ module Spree
       errors.add(:field_type, :inclusion)
     end
 
-    # Both the registry's own names and the ones discovery offers: a value a
-    # client was offered has to be accepted, and the two differ where a class
-    # has been renamed (categories are stored under Spree::Taxon while the
-    # registry holds Spree::Category). Existing callers name either, so
-    # narrowing to one would reject definitions that already work.
     def valid_available_resources
-      self.class.available_resources.map(&:to_s) |
-        self.class.enabled_resource_types.map { |resource| resource[:resource_type] }
+      self.class.available_resources.map(&:to_s)
     end
 
     def set_default_type

@@ -7,6 +7,7 @@ module Spree
     # decide at resolution time rather than at claim creation.
     class Resolve < Spree::Workflow
       include Spree::Refunds::OrderPayments
+      include Spree::Refunds::TaxCredit
       include Spree::Fulfillments::Replacements
 
       hooks :validate, :before_settle, :after_resolve
@@ -33,6 +34,8 @@ module Spree
         step :resolve_amount if refunding?
         run_hooks :validate
 
+        step :settle_tax
+
         ApplicationRecord.transaction do
           run_hooks :before_settle
           step :build_replacement_fulfillments if replacing?
@@ -41,6 +44,7 @@ module Spree
         end
 
         external_step :refund_at_gateway if refunding? && !internal_refund?
+        external_step :refund_tax if refunding?
 
         step :recalculate_order
         run_hooks :after_resolve
@@ -69,14 +73,35 @@ module Spree
           # attribute, and ActiveModel raises when an error names one that
           # does not exist on the record.
           claim.errors.add(:base, :invalid_refund_method,
-                           message: Spree.t('errors.messages.invalid_refund_method'))
+                           message: I18n.t('spree.errors.messages.invalid_refund_method'))
           failure(claim)
         end
         failure(claim, :not_approved) unless claim.approved?
       end
 
+      # Rewrites the credit rows for the money actually going back — each line's
+      # share of it follows the refund agreed for that line — or clears them
+      # when the claim is put right with a replacement alone.
+      def settle_tax
+        lines = claim.claim_line_items.to_a
+        amounts = if refunding?
+                    weights = lines.index_with(&:refund_amount)
+                    weights = lines.index_with(&:paid_amount) if weights.values.sum.zero?
+                    allocate_refund(@amount_to_refund, weights, claim.currency)
+                  else
+                    lines.index_with { 0.to_d }
+                  end
+
+        with_tax_provider(claim) { claim.settle_tax!(amounts: amounts) }
+        @tax_amount = claim.credited_tax_total
+      end
+
+      def refund_tax
+        file_tax_credit(claim, claim.claim_line_items.to_a, @amount_to_refund)
+      end
+
       # A claim can never refund more than the customer paid for the affected
-      # items.
+      # items, tax included.
       def resolve_amount
         @amount_to_refund = (amount || claim.refund_total).to_d
         ceiling = claim.claim_line_items.sum(&:paid_amount).to_d
@@ -121,7 +146,8 @@ module Spree
           order: claim.order,
           amount: @amount_to_refund,
           record: claim,
-          refunder: resolver
+          refunder: resolver,
+          tax_amount: @tax_amount
         )
 
         failure(claim, :no_refundable_payments) if @refunds.empty?

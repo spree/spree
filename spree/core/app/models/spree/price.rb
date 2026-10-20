@@ -9,14 +9,17 @@ module Spree
 
     has_prefix_id :price
 
-    include Spree::VatPriceCalculation
     include Spree::StorePreferences
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount, :compare_at_amount, places: Spree::Money::Rounding::UNIT_PRICE_DECIMALS
 
     publishes_lifecycle_events
 
     acts_as_paranoid
 
-    MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
+    # The largest amount decimal(19,4) holds.
+    MAXIMUM_AMOUNT = BigDecimal('999_999_999_999_999.9999')
 
     # How many breaks one variant may carry on one list in one currency. A UI
     # sanity bound rather than a technical one — but enforced here so no
@@ -24,7 +27,7 @@ module Spree
     # every priced line (docs/plans/6.0-volume-pricing.md).
     MAXIMUM_BREAKS_PER_VARIANT = 10
 
-    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
+    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices
     belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
 
     has_many :price_histories, class_name: 'Spree::PriceHistory', dependent: :delete_all
@@ -32,6 +35,8 @@ module Spree
     before_validation :ensure_currency
     before_save :remove_compare_at_amount_if_equals_amount
     after_save :record_price_history, if: :should_record_price_history?
+    after_save :touch_variant, if: -> { saved_changes? && (amount.present? || amount_before_last_save.present?) }
+    after_destroy :touch_variant, if: -> { amount.present? }
 
     # legacy behavior
     validates :amount, allow_nil: true, numericality: {
@@ -100,10 +105,6 @@ module Spree
       Spree::Money.new(amount || 0, currency: currency.upcase)
     end
 
-    def amount=(amount)
-      self[:amount] = amount.blank? ? nil : Spree::LocalizedNumber.parse(amount)
-    end
-
     # Returns the amount in cents
     # @return [Integer]
     def amount_in_cents
@@ -112,12 +113,6 @@ module Spree
 
     def compare_at_money
       Spree::Money.new(compare_at_amount || 0, currency: currency)
-    end
-
-    def compare_at_amount=(value)
-      calculated_value = Spree::LocalizedNumber.parse(value) if value.present?
-
-      self[:compare_at_amount] = calculated_value
     end
 
     # Returns the compare at amount for display
@@ -137,48 +132,30 @@ module Spree
     end
 
     alias_attribute :price, :amount
-    alias_method :price=, :amount=
     alias_attribute :compare_at_price, :compare_at_amount
-    alias_method :compare_at_price=, :compare_at_amount=
 
-    # Whether this figure is the merchant's answer for the buyer's geography
-    # already. A price list narrowed by market or country states its prices for
-    # that geography, so they are charged exactly as entered — restating one would
-    # net it out with the *home* rate and destroy the price point the merchant
-    # chose. Lists narrowed by anything else (a quantity, a group) were not set
-    # for a country, so their prices restate like any other.
-    #
-    # @return [Boolean]
-    def final_for_destination?
-      rules = price_list&.price_rules.to_a
-      return false unless rules.any?(&:geographic?)
-
-      # Under 'any' the list can win on a non-geographic rule alone, so a
-      # geographic rule being present does not mean this buyer's geography is why
-      # the price applied. Under 'all' every rule matched, so it does.
-      price_list.match_policy == 'all' || rules.all?(&:geographic?)
+    # @deprecated Prices are charged as entered for every buyer since 6.0. Use {#price}; removed in 6.1.
+    def price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #price instead.')
+      price
     end
 
-    def price_including_vat_for(price_options)
-      return price if final_for_destination?
-
-      options = price_options.merge(tax_category: variant.tax_category)
-      gross_amount(price, options)
+    # @deprecated Use {#compare_at_price}; removed in 6.1.
+    def compare_at_price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #compare_at_price instead.')
+      compare_at_price
     end
 
-    def compare_at_price_including_vat_for(price_options)
-      return compare_at_price if final_for_destination?
-
-      options = price_options.merge(tax_category: variant.tax_category)
-      gross_amount(compare_at_price, options)
+    # @deprecated Use {#display_price}; removed in 6.1.
+    def display_price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#display_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #display_price instead.')
+      display_price
     end
 
-    def display_price_including_vat_for(price_options)
-      Spree::Money.new(price_including_vat_for(price_options), currency: currency)
-    end
-
-    def display_compare_at_price_including_vat_for(price_options)
-      Spree::Money.new(compare_at_price_including_vat_for(price_options), currency: currency)
+    # @deprecated Use {#display_compare_at_price}; removed in 6.1.
+    def display_compare_at_price_including_vat_for(_price_options = {})
+      Spree::Deprecation.warn('Spree::Price#display_compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #display_compare_at_price instead.')
+      display_compare_at_price
     end
 
     # returns the name of the price in a format of variant name and currency
@@ -340,6 +317,15 @@ module Spree
       rungs = rows.pluck(:min_quantity, :amount).to_h
       rungs[min_quantity] = amount if price_list_id == list_id
       rungs.sort_by(&:first)
+    end
+
+    # Stands in for `touch: true` on the variant, skipping placeholder rows: a
+    # price list holds one without an amount for every variant and currency
+    # nobody has priced yet, and it charges nothing, so writing one changes no
+    # price a shopper sees — yet the touch would expire the product's cached
+    # responses and reindex it for search.
+    def touch_variant
+      variant&.touch_later
     end
 
     def should_record_price_history?

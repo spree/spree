@@ -28,6 +28,18 @@ RSpec.describe Spree::Refunds::Create do
       expect(result.value.amount).to eq(10)
     end
 
+    it 'leaves the exact residual after partial refunds, and refunds it to the cent' do
+      described_class.call(payment: payment, amount: BigDecimal('10.33'))
+      described_class.call(payment: payment.reload, amount: BigDecimal('0.29'))
+
+      expect(payment.reload.credit_allowed).to eq(BigDecimal('35.13'))
+
+      result = described_class.call(payment: payment, amount: BigDecimal('35.13'))
+
+      expect(result).to be_success
+      expect(payment.reload.credit_allowed).to eq(BigDecimal('0'))
+    end
+
     it 'records the originator' do
       originator = create(:return)
 

@@ -25,14 +25,10 @@ module Spree
               # reject rather than a keyword it was never given.
               result = Spree.delivery_create_service.call(
                 owner: @parent,
-                **resource_permitted_attributes.index_with { |key| delivery_params[key] }
+                **delivery_keys.index_with { |key| delivery_params[key] }
               )
 
-              if result.success?
-                render json: serialize_resource(result.value), status: :created
-              else
-                render_result_error(result)
-              end
+              render_result(result, status: :created)
             end
           end
 
@@ -81,14 +77,14 @@ module Spree
             [:shipping_label]
           end
 
-          def resource_permitted_attributes
-            [:tracking_number, :carrier, :service, :tracking_url]
-          end
-
           private
 
           def delivery_params
-            @delivery_params ||= params.permit(*resource_permitted_attributes)
+            @delivery_params ||= params.permit(*declared_permitted_attributes)
+          end
+
+          def delivery_keys
+            declared_permitted_attributes.grep(Symbol)
           end
 
           # Deliveries can hang off something other than a fulfillment, which

@@ -10,9 +10,7 @@ module Spree
           attributes :email,
                      created_at: :iso8601, expires_at: :iso8601, accepted_at: :iso8601
 
-          attribute :status do |invitation|
-            invitation.status.to_s
-          end
+          attributes status: :string
         end
       end
     end

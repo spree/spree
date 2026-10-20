@@ -6,12 +6,12 @@ module Spree
         # context the admin UI needs: who the card was issued to (customer),
         # who issued it (admin), and the orders that consumed it.
         class GiftCardSerializer < V3::GiftCardSerializer
+          without_formatted_money
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
           typelize amount: [:string, nullable: false], amount_used: [:string, nullable: false],
-                   amount_authorized: [:string, nullable: false], amount_remaining: [:string, nullable: false],
-                   display_amount: [:string, nullable: false], display_amount_used: [:string, nullable: false],
-                   display_amount_remaining: [:string, nullable: false]
+                   amount_authorized: [:string, nullable: false], amount_remaining: [:string, nullable: false]
 
           typelize customer_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true]
@@ -24,13 +24,7 @@ module Spree
             params[:gift_card_codes] ? gift_card.display_code : gift_card.masked_code
           end
 
-          attribute :customer_id do |gift_card|
-            gift_card.customer&.prefixed_id
-          end
-
-          attribute :created_by_id do |gift_card|
-            gift_card.created_by&.prefixed_id
-          end
+          prefixed_id_attributes :customer, :created_by
 
           # Customer the card was issued to. Gated behind `expand?` to keep
           # the list payload thin — the SPA's list view passes

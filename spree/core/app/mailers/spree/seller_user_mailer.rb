@@ -12,27 +12,15 @@ module Spree
       @current_store = store
       @reset_url = password_reset_url(token, store, redirect_url)
 
-      with_store_locale(store, preferred_locale(seller_user, store)) do
-        mail(
-          to: seller_user.email,
-          subject: "#{store.name} #{Spree.t('seller_user_mailer.password_reset_email.subject')}",
-          store_url: store.formatted_url
+      with_store_locale(store, staff_locale(seller_user, store)) do
+        mail_template(
+          { user: email_data(seller_user, Spree::Emails::UserSerializer), reset_url: @reset_url },
+          to: seller_user.email, store_url: store.formatted_url
         )
       end
     end
 
     private
-
-    # The seller's own panel language, then the store's admin locale, then nil —
-    # which lets with_store_locale fall back to the store's default.
-    def preferred_locale(seller_user, store)
-      [seller_user.try(:selected_locale), store&.preferred_admin_locale]
-        .find { |locale| available_locale?(locale) }
-    end
-
-    def available_locale?(locale)
-      locale.present? && I18n.available_locales.map(&:to_s).include?(locale.to_s)
-    end
 
     # The panel passes a validated redirect URL when it has one. Without it the
     # panel origin is resolved server-side rather than falling back to the store

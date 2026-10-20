@@ -16,6 +16,8 @@ module Spree
   # and leaves the operator to pay by bank, while a provider like Stripe
   # Connect performs the transfer itself.
   class SellerPayout < Spree.base_class
+    publishes_event :completed
+
     has_prefix_id :vpo
 
     include Spree::Metadata
@@ -58,6 +60,12 @@ module Spree
     scope :owed, -> { where(status: %w[pending processing]) }
 
     self.whitelisted_ransackable_attributes = %w[amount currency status provider reference period_start period_end created_at seller_id]
+    search_by :reference
+    # Filtered by the provider's API shorthand (`system`); the column holds
+    # its class name.
+    ransacker :provider, formatter: ->(value) { Spree::ApiTyped.class_name_for(Spree.payout_providers, value) } do |parent|
+      parent.table[:provider]
+    end
     # No `transfers`: they lead on to the order and its buyer, which a
     # payouts-only caller may not read.
     self.whitelisted_ransackable_associations = %w[seller]

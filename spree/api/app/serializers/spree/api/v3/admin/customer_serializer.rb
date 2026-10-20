@@ -5,13 +5,14 @@ module Spree
         # Admin API Customer Serializer
         # Full customer data including admin-only fields
         class CustomerSerializer < V3::CustomerSerializer
+          without_formatted_money
+
           typelize failed_attempts: :number,
                    tags: [:string, multi: true],
                    internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    orders_count: :number,
                    total_spent: :string,
-                   display_total_spent: :string,
                    last_order_completed_at: [:string, nullable: true],
                    default_billing_address_id: [:string, nullable: true],
                    default_shipping_address_id: [:string, nullable: true],
@@ -28,9 +29,7 @@ module Spree
             user.anonymized_at&.iso8601
           end
 
-          attribute :anonymized do |user|
-            user.anonymized?
-          end
+          attribute :anonymized, &:anonymized?
 
           attribute :tags do |user|
             user.tags.map(&:name) # not pluck as we preload tags
@@ -44,13 +43,7 @@ module Spree
             user.respond_to?(:internal_note) ? user.internal_note.presence : nil
           end
 
-          attribute :default_billing_address_id do |user|
-            user.bill_address&.prefixed_id
-          end
-
-          attribute :default_shipping_address_id do |user|
-            user.ship_address&.prefixed_id
-          end
+          prefixed_id_attributes default_billing_address_id: :bill_address, default_shipping_address_id: :ship_address
 
           # Order aggregates: prefer attributes precomputed on the scope (see
           # CustomersController#scope) to avoid N+1 on list endpoints. Fall
@@ -61,13 +54,8 @@ module Spree
           end
 
           attribute :total_spent do |user|
-            (user.attributes['total_spent'] || user.orders.complete.sum(:total)).to_s
-          end
-
-          attribute :display_total_spent do |user|
             amount = user.attributes['total_spent'] || user.orders.complete.sum(:total)
-            currency = Spree::Current.currency || Spree::Current.store&.default_currency
-            Spree::Money.new(amount, currency: currency).to_s
+            Spree::Money::Rounding.format(amount, (current_store || Spree::Current.store)&.default_currency)
           end
 
           attribute :last_order_completed_at do |user|

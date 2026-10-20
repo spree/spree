@@ -29,9 +29,6 @@ def add_gems
   # Optional Spree packages
   gem 'spree_emails', USE_LOCAL_SPREE ? { path: File.join(SPREE_LOCAL_PATH, 'spree', 'emails') } : { version: SPREE_VERSION }
 
-  # translations
-  gem 'spree_i18n'
-
   # Development & Test gems
   gem_group :development, :test do
     gem 'spree_dev_tools'

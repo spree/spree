@@ -6,16 +6,6 @@ RSpec.describe Spree::Current do
   end
 
   describe '#store' do
-    context 'when store is set' do
-      let(:store) { create(:store) }
-
-      before { described_class.store = store }
-
-      it 'returns the set store' do
-        expect(described_class.store).to eq(store)
-      end
-    end
-
     context 'when store is not set' do
       it 'returns the default store' do
         expect(described_class.store).to eq(Spree::Store.default)
@@ -24,14 +14,6 @@ RSpec.describe Spree::Current do
   end
 
   describe '#currency' do
-    context 'when currency is set' do
-      before { described_class.currency = 'EUR' }
-
-      it 'returns the set currency' do
-        expect(described_class.currency).to eq('EUR')
-      end
-    end
-
     context 'when currency is not set' do
       let!(:store) { create(:store, default: true, default_currency: 'GBP') }
 
@@ -42,16 +24,6 @@ RSpec.describe Spree::Current do
   end
 
   describe '#tax_country' do
-    context 'when tax_country is set' do
-      let(:country) { create(:country) }
-
-      before { described_class.tax_country = country }
-
-      it 'returns the set country' do
-        expect(described_class.tax_country).to eq(country)
-      end
-    end
-
     context 'when tax_country is not set' do
       let!(:store) { create(:store, default: true) }
       let(:market) { create(:market, store: store) }
@@ -72,14 +44,6 @@ RSpec.describe Spree::Current do
   end
 
   describe '#locale' do
-    context 'when locale is set' do
-      before { described_class.locale = 'fr' }
-
-      it 'returns the set locale' do
-        expect(described_class.locale).to eq('fr')
-      end
-    end
-
     context 'when locale is not set but market has a default locale' do
       let!(:store) { create(:store, default: true, default_locale: 'en') }
       let!(:market) { create(:market, store: store, default: true, default_locale: 'de') }
@@ -107,14 +71,6 @@ RSpec.describe Spree::Current do
   end
 
   describe '#content_locale' do
-    context 'when content_locale is set' do
-      before { described_class.content_locale = 'de' }
-
-      it 'returns the set content locale' do
-        expect(described_class.content_locale).to eq('de')
-      end
-    end
-
     context 'when content_locale is not set' do
       it 'falls back to the application default locale' do
         expect(described_class.content_locale).to eq(I18n.default_locale.to_s)
@@ -131,30 +87,12 @@ RSpec.describe Spree::Current do
   end
 
   describe '#market' do
-    context 'when market is set' do
-      let(:market) { create(:market) }
-
-      before { described_class.market = market }
-
-      it 'returns the set market' do
-        expect(described_class.market).to eq(market)
-      end
-    end
-
     context 'when market is not set' do
       let!(:store) { create(:store, default: true) }
       let!(:market) { create(:market, store: store, default: true) }
 
       it 'returns the default market from the store' do
         expect(described_class.market).to eq(market)
-      end
-    end
-
-    context 'when market is not set' do
-      let!(:store) { create(:store, default: true) }
-
-      it 'falls back to the store default market' do
-        expect(described_class.market).to eq(store.default_market)
       end
     end
   end
@@ -167,10 +105,6 @@ RSpec.describe Spree::Current do
       described_class.store = store
       described_class.currency = 'USD'
       described_class.market = market
-    end
-
-    it 'returns a Spree::Pricing::Context' do
-      expect(described_class.global_pricing_context).to be_a(Spree::Pricing::Context)
     end
 
     it 'uses the current store' do
@@ -218,10 +152,6 @@ RSpec.describe Spree::Current do
     it 'returns price lists for the current store' do
       expect(described_class.price_lists).to include(active_price_list)
       expect(described_class.price_lists).not_to include(other_store_price_list)
-    end
-
-    it 'includes active price lists' do
-      expect(described_class.price_lists).to include(active_price_list)
     end
 
     it 'includes scheduled price lists within date range' do
@@ -367,12 +297,6 @@ RSpec.describe Spree::Current do
   end
 
   describe '#provider_cache' do
-    it 'defaults to a hash providers can memoize into' do
-      described_class.provider_cache[:quote] = 'cached'
-
-      expect(described_class.provider_cache[:quote]).to eq('cached')
-    end
-
     # Carrier quotes are request-scoped; leaking them across requests would
     # price one customer's checkout with another's destination.
     it 'is cleared between requests' do

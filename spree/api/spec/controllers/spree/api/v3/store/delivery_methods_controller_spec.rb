@@ -5,9 +5,9 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
 
   include_context 'API v3 Store'
 
-  let!(:shipping_method) { create(:shipping_method, name: 'Standard', storefront_visible: true) }
+  let!(:shipping_method) { create(:delivery_method, name: 'Standard', storefront_visible: true) }
   let!(:pickup_method) { create(:pickup_delivery_method, name: 'Store pickup', storefront_visible: true) }
-  let!(:hidden_method) { create(:shipping_method, name: 'Internal', storefront_visible: false) }
+  let!(:hidden_method) { create(:delivery_method, name: 'Internal', storefront_visible: false) }
 
   before { request.headers['X-Spree-Api-Key'] = api_key.token }
 
@@ -143,6 +143,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
           end
         end
         stub_const('TestPickupPointProvider', test_provider)
+        allow(Spree).to receive(:pickup_point_providers).and_return([test_provider])
         # update_columns: 'pickup_point' is deferred to 6.1 and no longer a
         # registered fulfillment type, but the endpoint still serves rows
         # carrying it (created before the deferral or via an extension).

@@ -15,6 +15,11 @@ module Spree
 
             prepend_before_action :require_authentication!
 
+            request_params 'CreateDataRequestParams', action: :create do |body|
+              body.attribute :kind, :string, choices: Spree::DataRequest::KINDS, description: 'Defaults to `access`.'
+              body.attribute :current_password, :string, description: 'Required for `erasure`.'
+            end
+
             # POST /api/v3/store/customers/me/data_requests
             def create
               return render_current_password_invalid if erasure? && !valid_current_password?
@@ -46,10 +51,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :data_requests
-            end
-
             # A person sees their own requests and no one else's. The store
             # narrowing is restated because the parent branch of the base scope
             # replaces `for_store` with the association, and a customer is
@@ -69,7 +70,6 @@ module Spree
             def erasure?
               params[:kind].to_s == Spree::DataRequest::ERASURE
             end
-
           end
         end
       end

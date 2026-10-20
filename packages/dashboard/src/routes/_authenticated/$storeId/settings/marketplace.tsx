@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
-import { currencyParts, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  currencyParts,
+  fractionToPercent,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  percentToFraction,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -49,11 +56,9 @@ import {
   useUpdateStoreSettings,
 } from '../../../../hooks/use-store-settings'
 import {
-  fractionToPercentage,
   type MarketplaceSettingsFormValues,
   marketplaceSettingsFormSchema,
   PAYOUT_SCHEDULE_INTERVALS,
-  percentageToFraction,
 } from '../../../../schemas/marketplace'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/marketplace')({
@@ -82,26 +87,24 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const { storeId } = Route.useParams()
   const updateMutation = useUpdateStoreSettings()
   const { data: payoutProviders } = usePayoutProviders()
-  const { symbol: currencySymbol } = currencyParts(store.default_currency, i18n.language)
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   const form = useForm<MarketplaceSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(marketplaceSettingsFormSchema) as any,
     defaultValues: {
-      preferred_payout_provider: store.preferred_payout_provider ?? '',
-      preferred_default_payouts_schedule_interval:
-        (store.preferred_default_payouts_schedule_interval as (typeof PAYOUT_SCHEDULE_INTERVALS)[number]) ??
+      payout_provider: store.payout_provider ?? '',
+      default_payouts_schedule_interval:
+        (store.default_payouts_schedule_interval as (typeof PAYOUT_SCHEDULE_INTERVALS)[number]) ??
         'monthly',
-      preferred_default_minimum_payout_amount: Number(
-        store.preferred_default_minimum_payout_amount ?? 0,
-      ),
-      preferred_auto_approve_sellers: store.preferred_auto_approve_sellers ?? false,
-      preferred_auto_approve_seller_products: store.preferred_auto_approve_seller_products ?? false,
-      preferred_send_seller_transactional_emails:
-        store.preferred_send_seller_transactional_emails ?? true,
-      commission_tax_rate_percentage: fractionToPercentage(
-        store.preferred_default_commission_tax_rate,
-      ),
+      // `String` only until the regenerated Store type reads these as the decimal strings the API sends.
+      default_minimum_payout_amount: String(store.default_minimum_payout_amount ?? '0'),
+      auto_approve_sellers: store.auto_approve_sellers ?? false,
+      auto_approve_seller_products: store.auto_approve_seller_products ?? false,
+      send_seller_transactional_emails: store.send_seller_transactional_emails ?? true,
+      commission_tax_rate_percentage:
+        fractionToPercent(String(store.default_commission_tax_rate ?? '')) || '0',
     },
   })
 
@@ -149,17 +152,13 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const onSubmit = async (values: MarketplaceSettingsFormValues) => {
     try {
       await updateMutation.mutateAsync({
-        preferred_payout_provider: values.preferred_payout_provider,
-        preferred_default_payouts_schedule_interval:
-          values.preferred_default_payouts_schedule_interval,
-        preferred_default_minimum_payout_amount: values.preferred_default_minimum_payout_amount,
-        preferred_auto_approve_sellers: values.preferred_auto_approve_sellers,
-        preferred_auto_approve_seller_products: values.preferred_auto_approve_seller_products,
-        preferred_send_seller_transactional_emails:
-          values.preferred_send_seller_transactional_emails,
-        preferred_default_commission_tax_rate: percentageToFraction(
-          values.commission_tax_rate_percentage,
-        ),
+        payout_provider: values.payout_provider,
+        default_payouts_schedule_interval: values.default_payouts_schedule_interval,
+        default_minimum_payout_amount: values.default_minimum_payout_amount,
+        auto_approve_sellers: values.auto_approve_sellers,
+        auto_approve_seller_products: values.auto_approve_seller_products,
+        send_seller_transactional_emails: values.send_seller_transactional_emails,
+        default_commission_tax_rate: percentToFraction(values.commission_tax_rate_percentage),
       })
       form.reset(values)
       toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
@@ -175,7 +174,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   // A provider that moves money asks sellers to onboard with it first, which
   // is worth saying before the choice rather than after.
   const selectedProvider = payoutProviders?.data?.find(
-    (provider) => provider.id === form.watch('preferred_payout_provider'),
+    (provider) => provider.id === form.watch('payout_provider'),
   )
 
   return (
@@ -212,7 +211,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                   <FieldGroup>
                     <Controller
                       control={form.control}
-                      name="preferred_payout_provider"
+                      name="payout_provider"
                       render={({ field }) => (
                         <Field>
                           <FieldLabel htmlFor="payout-provider">
@@ -256,14 +255,14 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                               </AlertDescription>
                             </Alert>
                           ))}
-                          <FieldError errors={[errors.preferred_payout_provider]} />
+                          <FieldError errors={[errors.payout_provider]} />
                         </Field>
                       )}
                     />
 
                     <Controller
                       control={form.control}
-                      name="preferred_default_payouts_schedule_interval"
+                      name="default_payouts_schedule_interval"
                       render={({ field }) => (
                         <Field>
                           <FieldLabel htmlFor="payout-schedule">
@@ -288,9 +287,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           <FieldDescription>
                             {t('admin.fields.store.payouts.schedule.help')}
                           </FieldDescription>
-                          <FieldError
-                            errors={[errors.preferred_default_payouts_schedule_interval]}
-                          />
+                          <FieldError errors={[errors.default_payouts_schedule_interval]} />
                         </Field>
                       )}
                     />
@@ -307,18 +304,16 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           id="payout-minimum"
                           type="number"
                           min={0}
-                          step="0.01"
+                          step="any"
                           inputMode="decimal"
-                          aria-invalid={
-                            !!errors.preferred_default_minimum_payout_amount || undefined
-                          }
-                          {...form.register('preferred_default_minimum_payout_amount')}
+                          aria-invalid={!!errors.default_minimum_payout_amount || undefined}
+                          {...form.register('default_minimum_payout_amount')}
                         />
                       </InputGroup>
                       <FieldDescription>
                         {t('admin.fields.store.payouts.minimum.help')}
                       </FieldDescription>
-                      <FieldError errors={[errors.preferred_default_minimum_payout_amount]} />
+                      <FieldError errors={[errors.default_minimum_payout_amount]} />
                     </Field>
                   </FieldGroup>
                 </CardContent>
@@ -337,14 +332,14 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                       id="marketplace-auto-approve-sellers"
                       label={t('admin.fields.store.auto_approve_sellers.label')}
                       help={t('admin.fields.store.auto_approve_sellers.help')}
-                      name="preferred_auto_approve_sellers"
+                      name="auto_approve_sellers"
                       control={form.control}
                     />
                     <SwitchField
                       id="marketplace-auto-approve-seller-products"
                       label={t('admin.fields.store.auto_approve_seller_products.label')}
                       help={t('admin.fields.store.auto_approve_seller_products.help')}
-                      name="preferred_auto_approve_seller_products"
+                      name="auto_approve_seller_products"
                       control={form.control}
                     />
                   </FieldGroup>
@@ -361,7 +356,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                       id="marketplace-send-seller-emails"
                       label={t('admin.fields.store.send_seller_transactional_emails.label')}
                       help={t('admin.fields.store.send_seller_transactional_emails.help')}
-                      name="preferred_send_seller_transactional_emails"
+                      name="send_seller_transactional_emails"
                       control={form.control}
                     />
                   </FieldGroup>
@@ -386,7 +381,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           type="number"
                           min={0}
                           max={100}
-                          step="0.01"
+                          step="any"
                           aria-invalid={!!errors.commission_tax_rate_percentage || undefined}
                           {...form.register('commission_tax_rate_percentage')}
                         />

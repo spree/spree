@@ -12,8 +12,7 @@ module Spree
                    channel_id: :string,
                    position: :number,
                    active: :boolean,
-                   preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
+                   preferences: 'Record<string, unknown>'
 
           attributes :position, :active
           attributes created_at: :iso8601, updated_at: :iso8601
@@ -22,12 +21,9 @@ module Spree
             rule.class.api_type
           end
 
-          attribute :channel_id do |rule|
-            rule.channel&.prefixed_id
-          end
+          prefixed_id_attributes :channel
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
 
         end
       end

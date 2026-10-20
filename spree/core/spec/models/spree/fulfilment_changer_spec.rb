@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::FulfilmentChanger do
+describe Spree::FulfillmentChanger do
   subject { shipment_splitter.run! }
 
   let(:variant) { create(:variant) }
@@ -158,7 +158,7 @@ describe Spree::FulfilmentChanger do
           end
 
           it 'does not unstock the desired location' do
-            expect { subject }.not_to change(stock_level, :count_on_hand)
+            expect { subject }.not_to change { stock_level.reload.count_on_hand }
           end
         end
       end
@@ -190,16 +190,6 @@ describe Spree::FulfilmentChanger do
 
         context 'when the desired stock location already has a backordered units' do
           let(:desired_count_on_hand) { -1 }
-
-          it 'releases seven at the original stock location' do
-            expect { subject }.
-              to change { current_shipment.stock_location.stock_level(variant).allocated_count }.by(-7)
-          end
-
-          it 'allocates seven at the desired stock location' do
-            expect { subject }.
-              to change { desired_shipment.stock_location.stock_level(variant).allocated_count }.by(7)
-          end
 
           it 'creates a shipment with the correct number of on hand and backordered units' do
             subject
@@ -386,7 +376,7 @@ describe Spree::FulfilmentChanger do
     end
 
     it 'removes the current shipment' do
-      expect { subject }.to change { Spree::Shipment.count }.by(-1)
+      expect { subject }.to change { Spree::Fulfillment.count }.by(-1)
     end
   end
 
@@ -397,17 +387,17 @@ describe Spree::FulfilmentChanger do
     let(:desired_shipment) { order.shipments.build(stock_location: current_shipment.stock_location) }
 
     it 'adds the desired inventory units to the desired shipment' do
-      expect { subject }.to change { Spree::Shipment.count }.by(1)
+      expect { subject }.to change { Spree::Fulfillment.count }.by(1)
     end
 
     it 'updates desired shipment cost after selecting the shipping rate' do
-      Spree::ShippingMethod.delete_all
+      Spree::DeliveryMethod.delete_all
       calculator = Spree::Calculator::Shipping::FlatRate.create!(preferred_amount: 10)
-      shipping_method_that_should_be_selected = create(:shipping_method, calculator: calculator)
+      shipping_method_that_should_be_selected = create(:delivery_method, calculator: calculator)
 
       subject
 
-      expect(desired_shipment.reload.shipping_method).to eq(shipping_method_that_should_be_selected)
+      expect(desired_shipment.reload.delivery_method).to eq(shipping_method_that_should_be_selected)
       expect(desired_shipment.reload.cost).to eq(10)
     end
 

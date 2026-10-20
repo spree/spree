@@ -24,7 +24,7 @@ const TASK_LINKS: Record<string, string> = {
   setup_payment_method: '/$storeId/settings/payment-methods',
   add_products: '/$storeId/products',
   set_customer_support_email: '/$storeId/settings/emails',
-  setup_taxes_collection: '/$storeId/settings/tax-rates',
+  setup_taxes_collection: '/$storeId/settings/taxes/rates',
 }
 
 export const Route = createFileRoute('/_authenticated/$storeId/getting-started')({

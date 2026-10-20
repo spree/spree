@@ -13,31 +13,22 @@ module Spree
         # What it adds over the shared one is the pair of figures a seller
         # needs to settle: what has already gone back, and what may still.
         class ReturnSerializer < V3::ReturnSerializer
+          without_formatted_money(:seller)
+
           typelize memo: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
-                   refunded_total: :string,
-                   refundable_total: :string,
-                   display_refunded_total: :string
+                   refund_total: [:string, nullable: false],
+                   refund_tax_total: [:string, nullable: false]
 
           attributes :memo
 
-          attribute :stock_location_id do |return_record|
-            return_record.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
-          attribute :refunded_total do |return_record|
-            return_record.refunded_total.to_s
-          end
-
+          money_attributes :refunded_total
           # What the refund dialog opens on — never more than this may be
           # given back, whatever amount is typed.
-          attribute :refundable_total do |return_record|
-            return_record.refundable_total.to_s
-          end
-
-          attribute :display_refunded_total do |return_record|
-            return_record.display_refunded_total.to_s
-          end
+          money_attributes :refundable_total
+          typelize refunded_total: [:string, nullable: false], refundable_total: [:string, nullable: false]
 
           many :return_line_items,
                resource: proc { Spree.api.seller_return_line_item_serializer },

@@ -5,7 +5,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :import, class_name: 'Spree::Import', inverse_of: :mappings, required: true
+    belongs_to :import, class_name: 'Spree::Import', inverse_of: :mappings
 
     #
     # Validations
@@ -17,7 +17,6 @@ module Spree
     #
     # Scopes
     #
-    scope :required, -> { where(schema_field: import.required_fields) }
     scope :mapped, -> { where.not(file_column: [nil, '']) }
 
     # Returns true if the mapping is required

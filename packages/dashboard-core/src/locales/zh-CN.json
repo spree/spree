@@ -183,7 +183,9 @@
       "searching": "搜索中…",
       "select_placeholder": "请选择…",
       "unsaved_changes": "您有未保存的更改。",
-      "yes": "是"
+      "yes": "是",
+      "done": "完成",
+      "error": "出了点问题。"
     },
     "components": {
       "address_block": {
@@ -1401,7 +1403,7 @@
       "create_description": "添加仓库、门店或自提点，用于履行订单。",
       "create_label": "创建库存地点",
       "delete_confirm": {
-        "message": "{{name}} 将被移除。此地点的库存项不会被删除。",
+        "message": "{{name}} 将被移除。此地点的库存水平也将被删除。",
         "title": "删除库存地点？"
       },
       "edit_description": "更新名称、地址、自提或库存策略。",
@@ -1463,11 +1465,13 @@
         "seeded_report_read_only": "这是内置报表，无法修改。请改为保存副本。",
         "taken": "已被占用",
         "too_long": "太长（最多 {{count}} 个字符）",
+        "too_many_decimals": "超过 {{count}} 位小数",
         "too_short": "太短（最少 {{count}} 个字符）",
         "wrong_length": "长度不正确（应为 {{count}} 个字符）"
       },
       "country_required": "请选择国家/地区",
       "currency_required": "请选择货币",
+      "locale_required": "请选择语言",
       "first_name_required": "名字为必填项",
       "invalid_email": "请输入有效的邮箱地址",
       "invalid_email_or_password": "邮箱或密码无效",
@@ -1479,7 +1483,8 @@
       "passwords_dont_match": "两次输入的密码不一致",
       "positive_number": "{{field}} 必须大于 0",
       "required": "{{field}} 为必填项",
-      "store_name_required": "商店名称为必填项"
+      "store_name_required": "商店名称为必填项",
+      "too_many_decimals": "{{field}}最多只能有 {{count}} 位小数"
     },
     "products": {
       "autocomplete": {
@@ -1575,6 +1580,12 @@
         "slug_placeholder": "product-url-handle"
       },
       "tax_category_placeholder": "选择税务类别",
+      "tax": {
+        "apply_to_variants_help": "此分类适用于未设置专属税务分类的每个变体。保存后，这些变体将使用此设置。",
+        "variant_overrides_heading": "已设置专属税务分类的变体",
+        "variant_overrides_description": "这些变体将保留其分类，直到您清除覆盖。其他变体遵循上方的产品分类。",
+        "clear_variant_override": "使用产品分类"
+      },
       "transfers": {
         "create_description": "在库存地点之间调拨库存，或从外部供应商收货。",
         "delete_confirm": {

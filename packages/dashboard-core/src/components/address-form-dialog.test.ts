@@ -17,9 +17,9 @@ describe('resolveAddressCountryCode', () => {
     expect(resolveAddressCountryCode({ country_code: null }, 'FR')).toBe('FR')
   })
 
-  it('stays empty when neither the address nor the store has a country', () => {
-    expect(resolveAddressCountryCode(null, null)).toBe('')
-    expect(resolveAddressCountryCode(undefined, undefined)).toBe('')
-    expect(resolveAddressCountryCode({ country_code: '' }, '')).toBe('')
+  it('stays unset when neither the address nor the store has a country', () => {
+    expect(resolveAddressCountryCode(null, null)).toBeUndefined()
+    expect(resolveAddressCountryCode(undefined, undefined)).toBeUndefined()
+    expect(resolveAddressCountryCode({ country_code: '' }, '')).toBeUndefined()
   })
 })

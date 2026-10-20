@@ -1,0 +1,37 @@
+---
+lt:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Atstatyti slaptažodį
+        expiry_notice: Ši slaptažodžio atstatymo nuoroda netrukus nustos galioti. Jei to neprašėte, jokių veiksmų atlikti nereikia.
+        greeting: Sveiki, %{name},
+        ignore_notice: Jei slaptažodžio atstatymo neprašėte, galite saugiai nepaisyti šio el. laiško. Jūsų slaptažodis nebus pakeistas.
+        instructions: Gavome prašymą atstatyti jūsų slaptažodį. Spustelėkite žemiau esantį mygtuką, kad pasirinktumėte naują slaptažodį.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Sveiki,
+        ignore_disclaimer: Jei to neprašėte, nepaisykite šio el. laiško.
+        instructions: Spustelėkite žemiau esantį mygtuką, kad patvirtintumėte savo el. pašto adresą.
+        message_copy_link: 'Jei mygtukas neveikia, nukopijuokite ir įklijuokite šią nuorodą į naršyklę:'
+        subject: Patvirtinkite savo el. pašto adresą
+        verify_email_address_link: Patvirtinti el. pašto adresą
+    order_mailer:
+      cancel_email:
+        instructions: Jūsų užsakymas buvo ATŠAUKTAS.
+        subject: Užsakymo atšaukimas
+      confirm_email:
+        instructions: Prašome išsaugoti šią žinutę.
+        subject: Užsakymo patvirtinimas
+      payment_link_email:
+        message: Spustelėkite žemiau esantį mygtuką, kad apmokėtumėte savo užsakymą.
+        message_copy_link: 'Jei mygtukas neveikia, nukopijuokite ir įklijuokite šią nuorodą į naršyklę:'
+        pay_for_order: Apmokėti užsakymą
+        subject: 'Mokėjimo nuoroda užsakymui #%{number}'
+      store_owner_notification_email:
+        heading: Gautas naujas užsakymas
+        instructions: Gavote naują užsakymą.
+        order_summary: Užsakymo %{number} suvestinė
+        subject: "%{store_name} gavo naują užsakymą"
+      subtotal: Už prekes
+      total: Viso

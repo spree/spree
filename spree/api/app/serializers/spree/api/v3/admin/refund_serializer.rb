@@ -3,6 +3,9 @@ module Spree
     module V3
       module Admin
         class RefundSerializer < V3::RefundSerializer
+          # The Store API keeps this deprecated name until 6.1.
+          _attributes.delete(:reimbursement_id)
+
           typelize payment_id: [:string, nullable: true],
                    refund_reason_id: [:string, nullable: true],
                    refunder_id: [:string, nullable: true],
@@ -11,6 +14,10 @@ module Spree
 
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601
+
+          # The tax inside the amount, when what was refunded carried tax.
+          money_attributes :tax_amount
+          typelize tax_amount: [:string, nullable: false]
 
           # Who issued it — an admin user, or the API key an integration
           # refunded through.

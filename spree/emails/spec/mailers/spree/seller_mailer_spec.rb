@@ -12,11 +12,11 @@ RSpec.describe Spree::SellerMailer do
     it 'tells the seller they can trade' do
       expect(message.subject).to include('Sparks Marketplace')
       expect(message.to).to eq(['seller@example.com'])
-      expect(message.body.encoded).to include('Sparks Audio')
+      expect(email_body(message)).to include('Sparks Audio')
     end
 
     it 'points them at the dashboard they sign in to' do
-      expect(message.body.encoded).to include(Spree::Stores::DashboardUrl.call(store: store))
+      expect(email_body(message)).to include(Spree::Stores::DashboardUrl.call(store: store))
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe Spree::SellerMailer do
 
     it 'tells the seller selling has stopped, and how to reach the operator' do
       expect(message.to).to eq(['seller@example.com'])
-      expect(message.body.encoded).to include(store.mail_from_address)
+      expect(email_body(message)).to include(store.mail_from_address)
     end
 
     # The operator's note is an internal record — a suspended seller is asked to
@@ -33,7 +33,7 @@ RSpec.describe Spree::SellerMailer do
     it 'does not leak the operator note' do
       seller.update!(metadata: { 'suspension_reason' => 'Counterfeit goods' })
 
-      expect(message.body.encoded).not_to include('Counterfeit goods')
+      expect(email_body(message)).not_to include('Counterfeit goods')
     end
   end
 
@@ -42,13 +42,13 @@ RSpec.describe Spree::SellerMailer do
 
     it 'tells the applicant they were not admitted' do
       expect(message.to).to eq(['seller@example.com'])
-      expect(message.body.encoded).to include('Sparks Audio')
+      expect(email_body(message)).to include('Sparks Audio')
     end
 
     it 'does not leak the operator note' do
       seller.update!(metadata: { 'rejection_reason' => 'Incomplete paperwork' })
 
-      expect(message.body.encoded).not_to include('Incomplete paperwork')
+      expect(email_body(message)).not_to include('Incomplete paperwork')
     end
   end
 

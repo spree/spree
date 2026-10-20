@@ -8,7 +8,7 @@ defineTable<AllowedOrigin>('allowed-origins', {
   title: i18n.t('admin.allowed_origins.table_title'),
   docsPath: 'settings/allowed-origins',
   description: i18n.t('admin.table_descriptions.allowed_origins'),
-  searchParam: 'origin_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.allowed_origins.search_placeholder'),
   defaultSort: { field: 'origin', direction: 'asc' },
   emptyIcon: <GlobeLockIcon className="size-8 text-muted-foreground" />,

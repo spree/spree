@@ -12,7 +12,7 @@ RSpec.describe Spree::MarketCountry, type: :model do
 
         before do
           zone.members.create!(member_type: 'country', country_code: country.iso)
-          create(:shipping_method, delivery_zone: zone)
+          create(:delivery_method, delivery_zone: zone)
         end
 
         it 'is valid' do
@@ -65,7 +65,7 @@ RSpec.describe Spree::MarketCountry, type: :model do
 
         before do
           zone.members.create!(member_type: 'state', country_code: state.country_code, state_code: state.abbr)
-          create(:shipping_method, delivery_zone: zone)
+          create(:delivery_method, delivery_zone: zone)
         end
 
         it 'is valid' do

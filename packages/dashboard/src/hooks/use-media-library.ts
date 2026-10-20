@@ -1,13 +1,15 @@
 import type {
   ListParams,
   Media,
+  MediaFilters,
   MediaLibraryCreateParams,
+  MediaSort,
   MediaUpdateParams,
 } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-export type MediaLibraryFilters = ListParams & Record<string, unknown>
+export type MediaLibraryFilters = ListParams<MediaFilters, MediaSort>
 
 export function useMediaLibrary(params?: MediaLibraryFilters) {
   return useQuery({

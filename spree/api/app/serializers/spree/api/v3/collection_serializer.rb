@@ -19,9 +19,7 @@ module Spree
           Spree::RichTextHelper.to_plain_text(collection.description)
         end
 
-        attribute :description_html do |collection|
-          collection.description_html
-        end
+        attributes :description_html
 
         attribute :image_url do |collection|
           image_url_for(collection.image)

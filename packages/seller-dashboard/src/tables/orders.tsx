@@ -1,4 +1,4 @@
-import { defineTable, formatStoreDateTime } from '@spree/dashboard-core'
+import { defineTable, formatMoney, formatStoreDateTime } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
@@ -110,7 +110,7 @@ defineTable<Order>('seller-orders', {
       key: 'total',
       label: i18n.t('orders.columns.total'),
       default: true,
-      render: (order) => order.display_total as string,
+      render: (order) => formatMoney(order.total, order.currency, i18n.language),
     },
   ],
 })

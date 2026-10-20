@@ -1,6 +1,6 @@
 {
   "name": "@spree/sdk",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-rc.4",
   "description": "Official TypeScript SDK for Spree Commerce Store API",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -55,10 +55,13 @@
   ],
   "scripts": {
     "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
+    "generate:filters": "tsx ../sdk-core/scripts/generate-filters.ts store",
+    "generate:params": "tsx ../sdk-core/scripts/generate-params.ts store",
+    "generate:iso-codes": "tsx ../sdk-core/scripts/generate-iso-codes.ts",
     "build": "tsup",
     "dev": "tsup --watch",
     "console": "tsx console.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.examples.json",
     "examples:typecheck": "tsc --noEmit -p tsconfig.examples.json",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
@@ -92,15 +95,15 @@
   },
   "devDependencies": {
     "@spree/sdk-core": "workspace:*",
-    "@types/node": "^25.6.0",
-    "@vitest/coverage-v8": "^4.1.5",
-    "msw": "^2.14.3",
-    "tsup": "^8.5.1",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "msw": "^3.0.3",
+    "tsup": "^9.0.0",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5",
     "yaml": "^2.8.4",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "peerDependencies": {
     "typescript": ">=4.7.0",

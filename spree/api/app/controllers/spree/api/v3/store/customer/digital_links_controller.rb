@@ -23,10 +23,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :digital_links
-            end
-
             # The `digital_links` association reaches links through orders and
             # line items, so it carries a DISTINCT and inherits an ORDER BY on
             # the line items' table. PostgreSQL rejects DISTINCT combined with

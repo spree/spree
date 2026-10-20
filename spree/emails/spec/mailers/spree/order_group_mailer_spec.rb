@@ -54,7 +54,7 @@ describe Spree::OrderGroupMailer, type: :mailer do
     end
 
     it 'prefixes a re-send so the customer knows it is not a second purchase' do
-      expect(described_class.confirm_email(group, true).subject).to include('[RESEND]')
+      expect(described_class.confirm_email(group, true).subject).to include('[Resend]')
     end
 
     # BaseMailer#current_store memoizes off @order, which a group never sets —
@@ -106,6 +106,16 @@ describe Spree::OrderGroupMailer, type: :mailer do
         expect(quoted).to eq(group.delivery_total)
         expect(message.text_part.body.to_s).to include(group.display_delivery_total.to_s)
       end
+
+      # A freight parcel awaiting its forwarder's quote costs zero for now;
+      # calling that free is what the email must never do.
+      it 'says a parcel awaiting a quote is quoted after review' do
+        group.orders.first.fulfillments.first.selected_delivery_rate.update_columns(unpriced: true)
+
+        parts_of(described_class.confirm_email(group.reload)).each do |body|
+          expect(body).to include('Quoted after review')
+        end
+      end
     end
 
     # SplitBySeller apportions an order-level fee into one row per child, all
@@ -144,9 +154,9 @@ describe Spree::OrderGroupMailer, type: :mailer do
       it 'tells each parcel what it carries rather than what was ordered' do
         text = described_class.confirm_email(group).text_part.body.to_s
 
-        expect(text).to include('(2)')
-        expect(text).to include('(1)')
-        expect(text).not_to include('(3)')
+        expect(text).to include('2 x')
+        expect(text).to include('1 x')
+        expect(text).not_to include('3 x')
       end
     end
 

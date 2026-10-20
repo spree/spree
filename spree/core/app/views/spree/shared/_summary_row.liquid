@@ -1,0 +1,8 @@
+{%- comment -%}
+  One label/value row inside an <mj-table css-class="summary">.
+  Arguments: label (translation key when translate is true), value, optional sub (a second line under the label), optional total (the emphasized final row).
+{%- endcomment -%}
+<tr{% if total %} class="summary_total"{% endif %}>
+  <td valign="top">{% if translate %}{{ label | t }}{% else %}{{ label }}{% endif %}{% if sub != blank %} <span class="summary_sub">{{ sub }}</span>{% endif %}</td>
+  <td class="summary_value" align="right" valign="top">{{ value }}</td>
+</tr>

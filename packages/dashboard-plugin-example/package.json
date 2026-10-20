@@ -45,7 +45,7 @@
     "@spree/dashboard-ui": "workspace:^",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "typescript": "~6.0.3",
-    "vite": "^8.0.11"
+    "typescript": "~7.0.2",
+    "vite": "^8.3.4"
   }
 }

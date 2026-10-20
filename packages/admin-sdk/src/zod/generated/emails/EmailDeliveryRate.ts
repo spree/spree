@@ -1,0 +1,24 @@
+// This file is auto-generated. Do not edit directly.
+import { z } from 'zod';
+import { EmailDeliveryMethodSchema } from './EmailDeliveryMethod';
+import { EmailFreightSummarySchema } from './EmailFreightSummary';
+
+export const EmailDeliveryRateSchema = z.object({
+  id: z.string(),
+  delivery_method_id: z.string(),
+  name: z.string(),
+  selected: z.boolean(),
+  cost: z.string().nullable(),
+  total: z.string().nullable(),
+  additional_tax_total: z.string().nullable(),
+  included_tax_total: z.string().nullable(),
+  tax_total: z.string().nullable(),
+  carrier: z.string().nullable(),
+  service_level: z.string().nullable(),
+  estimated_delivery_date: z.string().nullable(),
+  unpriced: z.boolean(),
+  freight_summary: EmailFreightSummarySchema.nullable(),
+  delivery_method: EmailDeliveryMethodSchema,
+});
+
+export type EmailDeliveryRate = z.infer<typeof EmailDeliveryRateSchema>;

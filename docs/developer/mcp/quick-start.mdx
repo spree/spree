@@ -1,0 +1,156 @@
+---
+title: "MCP Server Quick Start"
+sidebarTitle: Quick start
+description: "Install the MCP server, connect an AI client and run the first conversation against your store."
+---
+
+## Check it is installed
+
+A new Spree store has the server already — `spree_mcp` is in the starter's
+`Gemfile`, so the endpoint is live the first time you boot:
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+<Note>
+  There is nothing to configure and nothing to set up first.
+</Note>
+
+Upgrading an older store, or deliberately removed it? Add the gem back:
+
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree add mcp
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```ruby server/Gemfile
+    # use the same version requirement as your `spree` gem
+    gem 'spree_mcp', '>= 6.0.0'
+    ```
+
+    ```bash
+    bundle install
+    ```
+  </Tab>
+</Tabs>
+
+## Connect a client
+
+Paste the URL into your MCP client. It sends you to your store, you sign in, and you approve what it may do.
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http spree https://your-store.com/api/v3/admin/mcp
+    ```
+  </Tab>
+  <Tab title="Claude Desktop / claude.ai">
+    **Settings → Connectors → Add custom connector**, then paste the URL.
+
+    This client asks for a **Client ID** as well. Copy it from
+    **Settings → OAuth clients** in your Spree dashboard, where each
+    registered client shows one — it is public, and is what identifies the
+    connector to your store.
+  </Tab>
+  <Tab title="Cursor">
+    ```json .cursor/mcp.json
+    {
+      "mcpServers": {
+        "spree": {
+          "url": "https://your-store.com/api/v3/admin/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    ```json .vscode/mcp.json
+    {
+      "servers": {
+        "spree": {
+          "type": "http",
+          "url": "https://your-store.com/api/v3/admin/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+That is the whole setup. There is no key to create, paste or rotate: your assistant works out where to send you, and you approve it in a browser.
+
+<Note>
+  A Spree API key will **not** work here, deliberately: an assistant acts for a person and carries that person's own permissions. For something that cannot sign in — a nightly job, a server-side integration — use the [`spree api` CLI](/developer/cli/admin-api).
+</Note>
+
+## Approve what it may do
+
+Signing in brings up a consent screen listing the permissions the client asked for. Tick the ones you want it to have.
+
+What you approve matters more than it looks:
+
+- **It never gets more than you have.** If you cannot issue refunds, you cannot approve an assistant that can.
+- **Only what you approved.** Approving product access does not quietly include orders — the tools for anything else are not even offered to the model.
+- **It is yours, not the store's.** Each person connects for themselves, so an assistant's actions are recorded against whoever approved it, and revoking one person's access leaves their colleagues working.
+
+[Permissions and consent](/developer/mcp/permissions) covers this in full.
+
+## The first conversation
+
+It works out what to do from what you ask; there is no command to learn.
+
+> **You:** Which products are out of stock, and what did we sell in Germany last month?
+
+It calls `describe_resource` to learn that products can be filtered by an `out_of_stock` scope, `search_resources` to list them, then `describe_reporting` and `query_report` for the German figures — and answers in one reply.
+
+> **You:** Create a product called Expensive Bag with two variants, size S and M, 100 in stock each, priced 199 USD.
+
+It calls `create_resource` once, with the variants, their prices and their stock levels nested in the same write.
+
+> **You:** Cancel order R123456789 and tell the customer why.
+
+It finds the order, then calls `orders_cancel`. Your client asks you to confirm before the call runs, because the tool declares that it changes data. Spree then runs the same cancellation the dashboard runs, and the order's timeline records who cancelled it.
+
+## Check what it can see
+
+Just ask it. It can list everything it reaches, and your assistant's own settings show what it was offered. A connection approved for products alone sees roughly a dozen jobs rather than all 58.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The client says the server needs authorization and nothing happens">
+    Your assistant asks the store where to send you to sign in. If your store sits behind a proxy or a tunnel that changes the address, the one it is given has to be an address your browser can actually open — so check that your store's configured URL matches the one you reach it on.
+  </Accordion>
+
+  <Accordion title="Connected, but it says it cannot do something">
+    You did not approve that permission. **Settings → AI Agents** shows what each connection holds; revoke and reconnect to approve more. Anything you did not approve is not offered at all, so it will say it has no way to do it rather than failing halfway.
+  </Accordion>
+
+  <Accordion title="A tool exists but refuses with a permission error">
+    Tool visibility is per permission, but the data behind it is checked per record and per resource. A connection granted `read_reports` can run a report, and will still be refused a dimension that exposes customers unless it also holds `read_customers`.
+  </Accordion>
+
+  <Accordion title="Nothing is listed under AI Agents">
+    The page lists each assistant registered for the store with the people connected through it. One nobody has connected yet shows no one — register it under **Settings → OAuth clients**, then connect from your own.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Tool reference" icon="wrench" href="/developer/mcp/tools">
+    All 58 tools and the permission each needs.
+  </Card>
+  <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
+    What you approve, and what is out of reach whatever you do.
+  </Card>
+  <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
+    For developers: teach an assistant something your store does.
+  </Card>
+  <Card title="Admin API" icon="code" href="/api-reference/admin">
+    The same operations, for code rather than conversation.
+  </Card>
+</CardGroup>

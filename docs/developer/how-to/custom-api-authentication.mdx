@@ -77,7 +77,7 @@ module MyApp
 
       def authenticate
         token = params[:token] || extract_bearer
-        return failure(Spree.t('api.unauthorized')) if token.blank?
+        return failure(I18n.t('spree.api.unauthorized')) if token.blank?
 
         payload = verify_with_jwks(token)
 
@@ -93,7 +93,7 @@ module MyApp
 
         success(user)
       rescue JWT::DecodeError, JWT::ExpiredSignature, JWT::InvalidIssuerError, JWT::InvalidAudError, KeyError => e
-        failure(Spree.t('api.unauthorized'))
+        failure(I18n.t('spree.api.unauthorized'))
       end
 
       private

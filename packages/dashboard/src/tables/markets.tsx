@@ -8,7 +8,7 @@ defineTable<Market>('markets', {
   title: i18n.t('admin.settings_nav.items.markets'),
   docsPath: 'settings/markets',
   description: i18n.t('admin.table_descriptions.markets'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.markets.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <GlobeIcon className="size-8 text-muted-foreground" />,

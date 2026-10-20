@@ -2,18 +2,11 @@ module Spree
   module Api
     module V3
       class FulfillmentSerializer < BaseSerializer
-        typelize number: :string, status: [:string, enum: Spree::Fulfillment.statuses, enum_type_name: 'FulfillmentStatus'],
+        typelize number: :string,
+                 status: [:string, enum: Spree::Fulfillment.statuses, enum_type_name: 'FulfillmentStatus'],
                  fulfillment_type: [:string, enum: %w[shipping digital pickup pickup_point]],
-                 tracking: [:string, nullable: true],
-                 tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
-                 delivered_at: [:string, nullable: true],
-                 cost: [:string, nullable: true], display_cost: [:string, nullable: true],
-                 unpriced: :boolean,
-                 total: [:string, nullable: true], display_total: [:string, nullable: true],
-                 discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
-                 additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
-                 included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
-                 tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
+                 tracking: [:string, nullable: true], tracking_url: [:string, nullable: true],
+                 fulfilled_at: [:string, nullable: true], delivered_at: [:string, nullable: true], unpriced: :boolean,
                  items: 'Array<{ item_id: string; variant_id: string; quantity: number }>',
                  pickup_point_data: ['Record<string, unknown>', nullable: true],
                  selected_delivery_rate_id: [:string, nullable: true]

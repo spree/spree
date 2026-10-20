@@ -118,6 +118,29 @@ test.describe('companies', () => {
     await expect(members.getByText(email)).toHaveCount(0, { timeout: 15_000 })
   })
 
+  test('requires a state when saving a company address for the United States', async ({ page }) => {
+    const creds = await login(page)
+    await createCompany(page, creds.store_id, `E2E Austin ${Date.now()}`)
+
+    const addressBook = card(page, /^address book/i)
+    await addressBook.getByRole('button', { name: /add address/i }).click()
+    await expect(page.getByRole('heading', { name: /^new address$/i })).toBeVisible()
+    await fillAddressForm(page, {
+      address1: '1 Test Street',
+      city: 'Austin',
+      postalCode: '78701',
+    })
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+
+    await expect(page.getByText(/state \/ province (is required|can't be blank)/i)).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(addressBook.getByText('1 Test Street')).toHaveCount(0)
+  })
+
   test('adds an address to the address book', async ({ page }) => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Depots ${Date.now()}`)
@@ -140,6 +163,106 @@ test.describe('companies', () => {
       .click()
 
     await expect(addressBook.getByText('400 Dock Rd')).toBeVisible({ timeout: 15_000 })
+  })
+
+  // The document goes to private storage: a PDF is refused by the public
+  // allowlist, so this fails if the field ever uploads publicly again.
+  test('adds a tax exemption certificate with a PDF document', async ({ page }) => {
+    const creds = await login(page)
+    await createCompany(page, creds.store_id, `E2E Exempt ${Date.now()}`)
+
+    const certificates = card(page, /exemption certificates/i)
+    await certificates.getByRole('button', { name: /add certificate/i }).click()
+    const sheet = page.getByRole('dialog')
+    await expect(sheet.getByText(/add exemption certificate/i)).toBeVisible()
+
+    const certificateNumber = `RESALE-${Date.now()}`
+    await sheet.locator('#certificate_number').fill(certificateNumber)
+    await sheet.locator('#tax_exemption_reason_id').click()
+    await page.getByRole('option', { name: /^resale$/i }).click()
+    await sheet.locator('input[type="file"]').setInputFiles({
+      name: 'certificate.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('%PDF-1.4\n%%EOF\n'),
+    })
+
+    // Creating mid-upload would save the certificate without its document.
+    await expect(sheet.getByText(/attached file/i)).toBeVisible({ timeout: 30_000 })
+    await sheet.getByRole('button', { name: /^create$/i }).click()
+
+    await expect(certificates.getByText(certificateNumber)).toBeVisible({ timeout: 15_000 })
+    await expect(certificates.getByRole('button', { name: /certificate\.pdf/i })).toBeVisible()
+  })
+
+  // Certificates point at the store's own reasons: the picker offers the
+  // active ones only, and renaming a reason renames it on every certificate.
+  test('picks a tax exemption reason the store added', async ({ page }) => {
+    const creds = await login(page)
+    const suffix = Date.now()
+    const offered = `E2E Diplomatic ${suffix}`
+    const retired = `E2E Retired ${suffix}`
+    const renamed = `E2E Embassy ${suffix}`
+    const reasons = card(page, /^tax exemption reasons$/i)
+
+    await page.goto(`/${creds.store_id}/settings/taxes/exemption-reasons`)
+    for (const [name, code] of [
+      [offered, `DIPLOMATIC_${suffix}`],
+      [retired, `RETIRED_${suffix}`],
+    ]) {
+      await reasons.getByRole('button', { name: /add reason/i }).click()
+      await page.locator('#reason-name').fill(name)
+      await page.locator('#reason-code').fill(code)
+      await page
+        .getByRole('dialog')
+        .getByRole('button', { name: /^create$/i })
+        .click()
+      await expect(reasons.getByText(name)).toBeVisible({ timeout: 15_000 })
+    }
+    await openRowMenu(page, retired)
+    await page.getByRole('menuitem', { name: /^edit$/i }).click()
+    await page.getByRole('switch', { name: /available on new records/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    await expect(
+      reasons
+        .getByRole('row')
+        .filter({ hasText: retired })
+        .getByText(/^inactive$/i),
+    ).toBeVisible({ timeout: 15_000 })
+
+    await createCompany(page, creds.store_id, `E2E Consulate ${suffix}`)
+    const certificates = card(page, /exemption certificates/i)
+    await certificates.getByRole('button', { name: /add certificate/i }).click()
+    const sheet = page.getByRole('dialog')
+    const certificateNumber = `DIP-${suffix}`
+    await sheet.locator('#certificate_number').fill(certificateNumber)
+    await sheet.locator('#tax_exemption_reason_id').click()
+    await expect(page.getByRole('option', { name: retired })).toHaveCount(0)
+    await page.getByRole('option', { name: offered }).click()
+    await sheet.getByRole('button', { name: /^create$/i }).click()
+
+    await expect(certificates.getByText(certificateNumber)).toBeVisible({ timeout: 15_000 })
+    await expect(certificates.getByText(offered)).toBeVisible()
+
+    const companyUrl = page.url()
+    await page.goto(`/${creds.store_id}/settings/taxes/exemption-reasons`)
+    await openRowMenu(page, offered)
+    await page.getByRole('menuitem', { name: /^edit$/i }).click()
+    await page.locator('#reason-name').fill(renamed)
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    await expect(reasons.getByText(renamed)).toBeVisible({ timeout: 15_000 })
+
+    await page.goto(companyUrl)
+    await expect(
+      card(page, /exemption certificates/i)
+        .getByText(renamed)
+        .first(),
+    ).toBeVisible({ timeout: 15_000 })
   })
 
   test('deletes a company from the list', async ({ page }) => {

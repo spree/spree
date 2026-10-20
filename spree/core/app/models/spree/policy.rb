@@ -4,6 +4,12 @@ module Spree
 
     extend FriendlyId
     include Spree::TranslatableResource
+
+    # Policies are store settings — see Admin::PoliciesController.
+    def self.translation_write_permission
+      'write_settings'
+    end
+
     include Spree::SanitizableRichText
 
     UNIQUENESS_SCOPE = %i[owner_id owner_type].freeze
@@ -62,6 +68,7 @@ module Spree
     #  Ransack
     #
     self.whitelisted_ransackable_attributes = %w[name owner_type owner_id]
+    search_by :name
 
     before_destroy :really_destroy_slugs!
 

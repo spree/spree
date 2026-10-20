@@ -20,6 +20,8 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
       DESC
       admin_scope :read, :customers
 
+      admin_sdk_example 'customers/export'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
 
@@ -73,6 +75,8 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
       DESC
       admin_scope :write, :customers
 
+      admin_sdk_example 'customers/anonymize'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
 
@@ -93,6 +97,93 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
         end
       end
 
+    end
+  end
+
+  path '/api/v3/admin/consent_records' do
+    get 'List consent records' do
+      tags 'Customers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the consents customers gave or withdrew, newest first, as evidence of what each one agreed to and when.'
+      admin_scope :read, :customers
+
+      admin_sdk_example 'consent-records/list'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'consent records found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:consent_record) { create(:consent_record, store: store, owner: customer) }
+
+        schema SwaggerSchemaHelpers.paginated('ConsentRecord')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(consent_record.prefixed_id)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/data_requests' do
+    get 'List data requests' do
+      tags 'Customers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the requests customers made to export or erase their personal data, newest first.'
+      admin_scope :read, :customers
+
+      admin_sdk_example 'data-requests/list'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'data requests found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:data_request) { create(:data_request, store: store, customer: customer) }
+
+        schema SwaggerSchemaHelpers.paginated('DataRequest')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data'].pluck('id')).to include(data_request.prefixed_id)
+        end
+      end
+    end
+
+    post 'Record a data request' do
+      tags 'Customers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Records a request a customer made to the merchant directly, to export
+        or erase their personal data, and starts answering it. A request of the
+        same kind already in progress for the customer is returned instead of a
+        second one.
+      DESC
+      admin_scope :write, :customers
+
+      admin_sdk_example 'data-requests/create'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '202', 'data request recorded' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { customer_id: customer.prefixed_id, kind: 'access' } }
+
+        schema '$ref' => '#/components/schemas/DataRequest'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['kind']).to eq('access')
+        end
+      end
     end
   end
 end

@@ -1,0 +1,9 @@
+---
+subject: "{{ 'invitation_mailer.invitation_accepted.subject' | t: invitee_name: invitation.invitee_name, resource_name: invitation.resource_name }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'invitation_mailer.greeting' | t: user_name: invitation.inviter_first_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'invitation_mailer.invitation_accepted.body' | t: invitee_name: invitation.invitee_name, resource_name: invitation.resource_name }}</mj-text>
+  </mj-column>
+</mj-section>

@@ -1,10 +1,11 @@
 import { PageHeader } from '@spree/dashboard-core'
 import { Alert, AlertDescription } from '@spree/dashboard-ui'
+import { InfoIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
   PurchaseOrderForm,
-  type PurchaseOrderFormValues,
+  type PurchaseOrderSubmitValues,
 } from '../../../../../components/spree/purchase-order-form'
 import { usePurchaseOrder, useUpdatePurchaseOrder } from '../../../../../hooks/use-purchase-orders'
 
@@ -42,13 +43,14 @@ function EditPurchaseOrderPage() {
           backTo={`purchase-orders/${purchaseOrderId}`}
         />
         <Alert>
+          <InfoIcon />
           <AlertDescription>{t('admin.purchase_orders.errors.not_editable')}</AlertDescription>
         </Alert>
       </div>
     )
   }
 
-  async function handleSubmit(values: PurchaseOrderFormValues) {
+  async function handleSubmit(values: PurchaseOrderSubmitValues) {
     const saved = await updateMutation
       .mutateAsync({
         supplier_id: values.supplierId,
@@ -93,7 +95,7 @@ function EditPurchaseOrderPage() {
             thumbnail_url: item.thumbnail_url,
           },
           quantity: item.quantity_ordered,
-          unitCost: item.unit_cost ?? '0.00',
+          unitCost: item.unit_cost ?? '',
         })),
       }}
       // Every line cost is denominated in it, so changing it now would

@@ -1,0 +1,786 @@
+---
+zh-CN:
+  activemodel:
+    errors:
+      messages:
+        blank: 不能为空
+  activerecord:
+    attributes:
+      spree/address:
+        address1: 地址1
+        address2: 地址2(非必填)
+        city: 城市
+        company: 公司
+        country: 国家
+        label: 地址名称
+        phone: 电话
+        state: 省份
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO名称
+        name: 名称
+        numcode: ISO编号
+      spree/credit_card:
+        cc_type: 信用卡类型
+        month: 月份
+        name: 持卡人姓名
+        number: 卡号
+        verification_value: 验证码
+        year: 年份
+      spree/customer_group:
+        description: 描述
+        name: 名称
+      spree/gift_card:
+        amount_used: 已使用金额
+        expires_at: 过期时间
+      spree/import:
+        preferred_delimiter: 分隔符
+      spree/import_mapping:
+        file_column: 文件列
+        schema_field: 架构字段
+      spree/import_row:
+        row_number: 编号
+      spree/inventory_unit:
+        state: 状态
+      spree/invitation:
+        inviter: 邀请人
+      spree/line_item:
+        price: 单价
+        quantity: 数量
+      spree/option_type:
+        filterable: 可筛选
+        kind: 类型
+        name: 名称
+      spree/option_value:
+        color_code: 颜色代码
+        image: 色卡图片
+      spree/order:
+        checkout_complete: 完成结账
+        completed_at: 结账日期
+        considered_risky: 风险
+        coupon_code: 优惠券号码
+        created_at: 下单日期
+        email: 电子邮件
+        internal_note: 内部备注
+        ip_address: IP地址
+        item_count: 商品数量
+        item_total: 小记
+        number: 订单号
+        payment_state: 支付状态
+        shipment_state: 物流状态
+        special_instructions: 特别说明
+        state: 状态
+        total: 总计
+      spree/order/bill_address:
+        address1: 地址
+        city: 城市
+        phone: 电话
+        state: 省份
+      spree/order/ship_address:
+        address1: 地址
+        city: 城市
+        phone: 电话
+        state: 省份
+      spree/payment:
+        amount: 金额
+        number: 编号
+      spree/payment_method:
+        name: 名称
+      spree/policy:
+        body: 正文
+        owner: 适用对象
+      spree/price_list:
+        description: 描述
+        ends_at: 结束时间
+        match_policy: 匹配策略
+        name: 名称
+        priority: 优先级
+        starts_at: 开始时间
+        status: 状态
+      spree/price_rule:
+        priority: 优先级
+        type: 类型
+      spree/product:
+        available_on: 上架日期
+        cost_currency: 成本币种
+        cost_price: 成本
+        description: 描述
+        discontinue_on: 停售日期
+        less_than: 小于
+        make_active_at: 上架时间
+        master_price: 默认价格
+        more_than: 大于
+        name: 名称
+        on_hand: 库存
+        tax_category: 缴税分类
+      spree/promotion:
+        advertise: 推广
+        code: 编号
+        description: 描述
+        event_name: 事件名称
+        expires_at: 过期日期
+        generate_code: 生成优惠码
+        name: 名称
+        path: 路径
+        promotion_category: 促销分类
+        starts_at: 开始日期
+        usage_limit: 使用次数限制
+      spree/promotion_category:
+        code: 编号
+        name: 名称
+      spree/property:
+        name: 名称
+        presentation: 描述
+      spree/role:
+        name: ming cheng
+      spree/shipment:
+        number: 编号
+      spree/state:
+        abbr: 缩写
+        name: 名称
+      spree/store:
+        address: 地址
+        contact_phone: 联系电话
+        meta_description: meta描述语
+        meta_keywords: meta关键词
+        name: 名称
+        preferred_digital_asset_authorized_clicks: 下载点击次数限制
+        preferred_digital_asset_authorized_days: 下载天数限制
+        preferred_limit_digital_download_count: 限制数字链接下载次数
+        preferred_limit_digital_download_days: 限制数字链接下载天数
+        seo_robots: SEO 爬虫指令
+        seo_title: SEO 标题
+        storefront_custom_code_body_end: body 结束标签前的自定义代码
+        storefront_custom_code_body_start: body 开始标签后的自定义代码
+        storefront_custom_code_head: 页面 head 中的自定义代码
+        url: URL地址
+      spree/store_credit:
+        amount_used: 已使用金额
+      spree/tax_category:
+        description: 描述
+        name: 名称
+      spree/tax_rate:
+        amount: 税率
+        included_in_price: 包含在售价中
+        show_rate_in_label: 在标签中显示比率
+      spree/taxon:
+        name: 名称
+        permalink: 永久链接
+        position: 位置
+        sort_order: 排序顺序
+      spree/taxonomy:
+        name: 名称
+      spree/user:
+        avatar: 头像
+        email: 电子邮箱
+        password: 密码
+        password_confirmation: 确认密码
+      spree/variant:
+        cost_currency: 成本币种
+        cost_price: 成本
+        depth: 长度/深度
+        height: 高度
+        price: 单价
+        sku: 条码
+        weight: 重量
+        width: 宽度
+      spree/zone:
+        description: 描述
+        name: 名称
+      user:
+        current_sign_in: 本次登录时间
+        last_sign_in: 上次登录时间
+        sign_in_count: 登录次数
+    errors:
+      messages:
+        blank: 不能为空
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: 必须是源（协议和主机），不能包含路径、查询或片段
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: 已经关联
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: 信用卡过期
+              expiry_invalid: 信用卡过期日不正确
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: 无法删除已使用的礼品卡
+        spree/import:
+          attributes:
+            attachment:
+              content_type: 的内容类型不被允许
+            type:
+              inclusion: 不在允许的类型列表中
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: 无法删除默认市场。
+              cannot_destroy_last_market: 无法删除唯一的市场。
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: 已被分配到本店铺的另一个市场
+              not_in_shipping_zone: 未被任何配送区域覆盖。请先设置配送区域。
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: 超过了允许的最大金额 %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: 必须晚于开始时间
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: 无法删除已添加到已下达订单中的商品。这种情况下，请将其停售。
+            discontinue_on:
+              invalid_date_range: 必须晚于上架日期
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: 必须晚于发布日期
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: 必须晚于开始日期
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: 无法删除唯一的店铺。
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: 超过了总额度。
+            amount_used:
+              cannot_be_greater_than_amount: 不能大于总金额。
+              greater_than_zero_restrict_delete: 大于零，无法删除店铺积分。
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: 属于其他用户
+              deprecated_in_completed_order: 在已完成订单中已弃用
+            ship_address_id:
+              belongs_to_other_user: 属于其他用户
+              deprecated_in_completed_order: 在已完成订单中已弃用
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: 无法删除已添加到已下达订单中的变体。这种情况下，请将其停售。
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: 不能指向内部或私有网络地址
+    models:
+      spree/address:
+        one: 地址
+        other: 地址
+      spree/classification:
+        one: 分类
+        other: 分类
+      spree/country:
+        one: 国家
+        other: 国家
+      spree/credit_card:
+        one: 信用卡
+        other: 信用卡
+      spree/customer_group:
+        one: 客户群组
+        other: 客户群组
+      spree/customer_group_user:
+        one: 客户群组成员
+        other: 客户群组成员
+      spree/export:
+        one: 导出
+        other: 导出
+      spree/integration:
+        one: 集成
+        other: 集成
+      spree/inventory_unit:
+        one: 库存单位
+        other: 库存单位
+      spree/line_item:
+        one: 单项
+        other: 单项
+      spree/option_type:
+        one: 选项类型
+        other: 选项类型
+      spree/option_value:
+        one: 选项值
+        other: 选项值
+      spree/order:
+        one: 订单
+        other: 订单
+      spree/payment:
+        one: 支付
+        other: 支付
+      spree/payment_method:
+        one: 支付方式
+        other: 支付方式
+      spree/price:
+        one: 价格
+        other: 价格
+      spree/price_list:
+        one: 价格表
+        other: 价格表
+      spree/price_rule:
+        one: 价格规则
+        other: 价格规则
+      spree/product:
+        one: 产品
+        other: 产品
+      spree/promotion:
+        one: 促销
+        other: 促销
+      spree/promotion_category:
+        one: 促销分类
+        other: 促销分类
+      spree/property:
+        one: 属性
+        other: 属性
+      spree/refund_reason:
+        one: 退款原因
+        other: 退款原因
+      spree/role:
+        one: 角色
+        other: 角色
+      spree/shipment:
+        one: 物流
+        other: 物流
+      spree/shipping_method:
+        one: 配送方式
+        other: 配送方式
+      spree/state:
+        one: 省份
+        other: 省份
+      spree/stock_location:
+        one: 库存地点
+        other: 库存地点
+      spree/stock_movement:
+        one: 库存变动
+        other: 库存变动
+      spree/stock_transfer:
+        one: 库存转移
+        other: 库存转移
+      spree/store:
+        one: 店铺
+        other: 店铺
+      spree/store_credit:
+        one: Store Credit
+        other: Store Credits
+      spree/tax_category:
+        one: 缴税分类
+        other: 缴税分类
+      spree/tax_rate:
+        one: 税率
+        other: 税率
+      spree/taxon:
+        one: 分类
+        other: 分类
+      spree/taxonomy:
+        one: 分类
+        other: 分类
+      spree/user:
+        one: 用户
+        other: 用户
+      spree/variant:
+        one: 具体型号
+        other: 具体型号
+      spree/zone:
+        one: 区域
+        other: 区域
+  errors:
+    messages:
+      already_confirmed: 已被确认
+      not_found: 无法找到
+      not_locked: 未冻结
+      not_saved:
+        one: 有 1 个错误导致此%{resource}无法保存：
+        other: 有 %{count} 个错误导致此%{resource}无法保存：
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accept: 接受
+    accepted: 已接收
+    accepts_email_marketing: 接受邮件营销
+    account: 帐户
+    active: 激活
+    address: 地址
+    address1: 地址
+    address2: 地址（继续）
+    adjustment: 调整
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Included in Price)"
+    adjustments_deleted: 调整项已删除
+    admin_user_mailer:
+      password_reset_email:
+        action: 重置密码
+        expiry_notice: 此密码重置链接即将过期。如果这不是您本人操作，则无需采取任何措施。
+        greeting: 您好，%{name}：
+        ignore_notice: 如果您没有请求重置密码，可以放心忽略此邮件。您的密码不会被更改。
+        instructions: 我们收到了重置您 %{store_name} 管理员账户密码的请求。请点击下方按钮设置新密码。
+        subject: 密码重置说明
+    all: 全部
+    amount: 金额
+    api_key_no_current_key: 没有 API 密钥对此请求进行身份验证
+    api_key_scopes_immutable: 在密钥创建后无法更改；请创建一个拥有所需权限范围的新密钥并吊销此密钥
+    approver: 核准者
+    authorized: 已经审批
+    availability: 可用性
+    backorderable: 可预订
+    backordered: 待补
+    bill_address: 账单地址
+    billing_address: 账单地址
+    calculator: 计算器
+    canceled: 已经取消
+    cannot_be_destroyed: 订单无法删除。
+    capture: 付款
+    cart: 购物车
+    cart_already_updated: 购物车已更新。
+    cart_line_item:
+      delivery_unavailable: "%{li_name} 无法配送至所选地址"
+      discontinued: "%{li_name} 因已停售而被移除"
+      out_of_stock: "%{li_name} 因已售罄而被移除"
+    categories: 分类
+    category: 分类
+    channel: 销售渠道
+    channels: 销售渠道
+    checkout: 结账
+    checkout_requirements:
+      email_required: 需要填写电子邮箱地址
+      line_items_required: 请至少向购物车中添加一件商品
+      payment_required: 请添加支付方式
+      ship_address_required: 需要填写收货地址
+    city: 城市
+    color_code: 颜色代码
+    company: 公司
+    compare_at_amount: 原价金额
+    compare_at_price: 原价
+    complete: 完成
+    confirm: 确认
+    cost_price: 进货价
+    count_on_hand: 库存数量
+    country: 国家
+    coupon_code: 优惠券号码
+    coupon_code_already_applied: 优惠券号码已在本订单中使用
+    coupon_code_applied: 优惠券号码已在订单中生效。
+    coupon_code_expired: 优惠券号码已过期
+    coupon_code_max_usage: 优惠券号码使用次数超出限制
+    coupon_code_not_eligible: 您的订单号码无法在您的订单上生效。
+    coupon_code_not_found: 您所输入的优惠券号码不存在。请重新输入。
+    coupon_code_used: 您输入的优惠码已被使用。请重试。
+    created_at: 创建日期
+    credit_card: 信用卡
+    currency: 币种
+    currency_not_supported_by_store: 不被本店铺支持
+    customer: 顾客
+    customers: 客户
+    default: 默认
+    default_stock_location_name: 店铺地点
+    default_wishlist_name: 心愿单
+    delivery: 配送
+    depth: 长
+    description: 描述
+    destination: 目的地
+    destroy: 删除
+    details: 详情
+    digital:
+      digital_delivery: 数字交付
+    digital_assets: 数字资产
+    discontinued: 已停售
+    discontinued_variants_present: 此订单中的部分商品已不再供应。
+    display_delivery_range: "%{delivery_range} 个工作日内送达"
+    draft: 草稿
+    eligibility_errors:
+      messages:
+        no_matching_channel: 此优惠码不适用于该销售渠道。
+        no_matching_market: 此优惠码在您所在的市场不可用。
+        wrong_country: 此优惠码不适用于您所在的国家/地区
+    email: 电子邮件
+    error: 错误
+    error_user_destroy_with_orders: 无法删除关联了订单的用户
+    error_user_does_not_have_any_store_credits: 用户没有任何可用的店铺积分
+    errors:
+      messages:
+        cannot_delete_default_channel: 无法删除默认渠道。请先将另一个渠道设为默认。
+        channel_store_mismatch: 必须属于同一店铺
+        invalid_order_routing_rule: 不是已注册的订单路由规则
+        invalid_order_routing_strategy: 不是已注册的订单路由策略
+        store_association_can_not_be_changed: 店铺关联无法更改
+        store_is_already_set: 店铺已设置
+    expired: 已过期
+    export_mailer:
+      export_done:
+        message: 干得好，您的导出已就绪！请使用下方链接下载。
+        subject: 您的导出 %{export_number} 已成功处理！
+      greeting: 您好，%{user_name}：
+    field: 字段
+    first_name: 名
+    flat_percent: 固定费率
+    flat_rate_per_order: 固定费率 (每订单)
+    flexible_rate: 灵活费率
+    free: 免费
+    gateway: 网关
+    gateway_error: 网关出错
+    gift_card: 礼品卡
+    gift_card_already_redeemed: 该礼品卡已被兑换。
+    gift_card_applied: 礼品卡已成功应用于您的订单！
+    gift_card_customer_not_logged_in: 礼品卡无法用于访客用户。
+    gift_card_expired: 该礼品卡已过期。
+    gift_card_mismatched_currency: 礼品卡无法用于当前货币。
+    gift_card_mismatched_customer: 此礼品卡与另一用户关联。
+    gift_card_not_found: 未找到该礼品卡。
+    gift_card_removed: 礼品卡已成功从您的订单中移除
+    gift_card_using_store_credit_error: 在使用店铺积分后，您无法再应用礼品卡。
+    height: 高度
+    i18n:
+      this_file_language: 中文 简体 (zh-CN)
+    idempotency_key_reused: 此 Idempotency-Key 已使用不同的请求参数被使用过。
+    image: 图片
+    import: 导入
+    in_stock: 有货
+    internal_note: 内部备注
+    inventory: 库存
+    invitation_mailer:
+      greeting: 您好，%{user_name}：
+      invitation_accepted:
+        body: "%{invitee_name} 已接受您加入 %{resource_name} 的邀请"
+        subject: "%{invitee_name} 已接受您加入 %{resource_name} 的邀请"
+      invitation_email:
+        body: "%{inviter_name} 邀请您加入 %{resource_name}"
+        link_description: 要接受此邀请，请点击下方链接：
+        subject: 加入 %{resource_name} 的邀请
+    iso: ISO Alpha-2
+    item: 商品项
+    items_cannot_be_shipped: 商品无法发货
+    key: 密钥
+    kind: 类型
+    label: 标签
+    last_name: 姓
+    line_item: 订单项
+    line_items: 订单项
+    link: 链接
+    locale: 语言区域
+    locale_not_supported_by_store: 不被本店铺支持
+    manual: 手动
+    market: 市场
+    me_no_current_user: 没有管理员用户对此请求进行身份验证
+    media: 媒体
+    meta_description: 元描述
+    meta_keywords: 关键字
+    meta_title: 元标题
+    metadata: 元数据
+    min_quantity: 最小数量
+    month: 月
+    name: 名称
+    new_variant: 新建具体型号
+    no_cc_type: 不适用
+    none: 没有
+    number: 订单号
+    on_hand: 库存
+    only_active_products_can_be_added_to_cart: 草稿和已归档的商品无法加入购物车，请先将商品标记为已上架。
+    open: 打开
+    option_name: 选项名称
+    option_type: 选项类型
+    option_value: 选项值
+    options: 选项
+    or: 或
+    order: 订单
+    order_canceled: 订单已取消
+    order_routing:
+      strategies:
+        legacy: 传统
+        rules: 规则（按顺序）
+    order_summary: 订单概述
+    orders: 订单
+    out_of_stock: 没有库存
+    password: 密码
+    path: 路径
+    payment: 支付
+    payment_method: 支付方式
+    payment_methods: 支付方式
+    payment_processing_failed: 无法处理支付信息，请检查您所输入的详细信息
+    payment_source: 支付来源
+    percent: 百分比
+    percent_per_item: 单件百分比
+    phone: 电话
+    price: 价格
+    price_range: 价格范围
+    price_rules:
+      channel_rule:
+        description: 根据销售渠道设定定价
+      customer_group_rule:
+        description: 对特定客户群组应用定价
+    price_sack: 袋价格
+    prices: 价格
+    privacy_policy: 隐私政策
+    processing: 处理中
+    product: 产品
+    product_translations: 商品翻译
+    products: 产品
+    products_cannot_be_shipped: 我们目前无法将 %{product_names} 配送至您当前的所在地。请更改您的收货地址，或从购物车中移除 %{product_names}。
+    promotion: 促销
+    promotion_action_types:
+      create_adjustment:
+        description: 为订单添加促销用的价格调整
+        name: 添加订单的价格调整
+      create_item_adjustments:
+        description: 为订单上的单项产品添加一笔促销用的价格调整
+        name: 添加单项的价格调整
+      create_line_items:
+        description: 增加特定商品到订单中
+        name: 赠送礼品
+      free_shipping:
+        description: 整张订单免费发货
+        name: 免运费
+    promotion_actions: 优惠方式
+    promotion_already_used: 您无法删除已被应用的促销
+    promotion_label: 促销（%{name}）
+    promotion_rule_types:
+      category:
+        description: 订单包含指定分类中的商品
+        name: 分类
+      channel:
+        description: 限定为通过指定销售渠道下达的订单
+        name: 销售渠道
+      country:
+        description: 仅限收货地址在特定国家/地区的订单
+        name: 国家/地区
+      currency:
+        description: 仅限使用特定货币的订单
+        name: 货币
+      customer:
+        description: 仅限指定客户使用
+        name: 客户
+      customer_group:
+        description: 仅限指定客户群组中的客户使用
+        name: 客户群组
+      customer_logged_in:
+        description: 仅限已登录客户使用
+        name: 仅限已登录客户
+      first_order:
+        description: 必须是客户的第一笔订单
+        name: 第一笔订单
+      item_total:
+        description: 订单总额满足这些条件
+        name: 小记
+      market:
+        description: 限定为在指定市场下达的订单
+        name: 市场
+      one_use_per_user:
+        description: 每人只可使用一次
+        name: 每人一次
+      product:
+        description: 订单包含指定的产品
+        name: 产品
+    promotions: 促销
+    quantity: 数量
+    query: 查询
+    reason: 原因
+    received: 已收到
+    refund: 退款
+    refund_amount: 退款金额
+    registration: 注册
+    remove: 移出
+    remove_gift_card_on_completed_order_error: 订单下达后您无法移除礼品卡
+    resellable: 可转售
+    resend: 重新发送
+    response_code: 返回代码
+    return: 退货
+    returned: 已退回
+    returns_policy: 退货政策
+    row: 行
+    rules: Rules
+    say_no: 不
+    say_yes: 是的
+    scope: 范围
+    selected_quantity_not_available: 所选的 %{item} 数量不足。
+    ship: 发货
+    ship_address: 配送地址
+    shipment: 配送
+    shipped: 已发货
+    shipping: 配送中
+    shipping_address: 配送地址
+    shipping_flat_rate_per_item: 以单项计固定费率
+    shipping_flat_rate_per_order: 固定费率
+    shipping_flexible_rate: 以每项计弹性价格
+    shipping_policy: 配送政策
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price}（+ %{tax_amount} %{tax_rate_name}）"
+        including_tax: "%{price}（含 %{tax_amount} %{tax_rate_name}）"
+    sku: 条形码
+    source: 来源
+    status: 状态
+    stock_location: 库存区域
+    stock_locations: 库存区域
+    stock_transfer:
+      errors:
+        must_have_variant: 您必须至少添加一个变体
+        same_location: 不能与目标地点相同
+        variants_unavailable: 部分变体在 %{stock} 上不可用
+    store: 商城
+    store_credit:
+      allocated: 已添加
+      authorized: 已授权
+      captured: 已使用
+      credit: 积分
+      eligible: 符合条件
+    store_credit_name: 店铺积分
+    store_credit_payment_method:
+      currency_mismatch: 店铺积分货币与订单货币不匹配
+      insufficient_authorized_amount: 无法捕获超过已授权的金额
+      insufficient_funds: 剩余的店铺积分金额不足
+      successful_action: 店铺积分%{action}成功
+      unable_to_credit: 无法退款代码：%{auth_code}
+      unable_to_find: 未能找到店铺积分
+      unable_to_find_for_action: 未能找到授权码为 %{auth_code}、操作为 %{action} 的店铺积分
+      unable_to_void: 无法作废代码：%{auth_code}
+    success: 成功
+    tags: 标签
+    tax: 税
+    tax_category: 缴税分类
+    terms_of_service: 服务条款
+    total: 总计
+    track_inventory: 追踪库存
+    tracking: 追踪
+    tracking_number: 物流编号
+    tracking_url: 查询网站
+    type: 类型
+    unable_to_connect_to_gateway: 无法连接支付网关.
+    updated_at: 更新于
+    url: URL
+    user: 用户
+    validation:
+      must_be_int: 必须是整数
+    value: 值
+    variant: 具体型号
+    variants: 具体型号
+    verified: 已验证
+    void: 作废
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: 禁用于
+        heading: Webhook 端点已禁用
+        instructions: 请检查端点 URL 和服务，然后在 设置 → 开发者 → Webhooks 中重新启用它。
+        message: Webhook 端点 "%{endpoint_name}" 在多次投递失败后已被自动禁用。
+        name_label: 名称
+        reason_label: 原因
+        subject: Webhook 端点已禁用：%{endpoint_name}
+        url_label: URL
+    weight: 重量
+    weight_unit: 重量单位
+    width: 宽度
+    year: 年
+    zip: 邮编

@@ -79,10 +79,8 @@ export function SettingsSidebar({
         // the sheet rather than an extension of the nav rail beside it, so it
         // reads as part of the page it is navigating rather than as a second
         // band of chrome.
-        'z-30 hidden h-full shrink-0 overflow-hidden bg-muted text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
-        open
-          ? 'lg:w-(--spacing-sidebar-width) border-e border-border-subtle'
-          : 'lg:w-0 border-e-0 border-transparent',
+        'z-30 hidden vh-full shrink-0 overflow-hidden bg-muted m-1.5 rounded-lg text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
+        open ? 'lg:w-(--spacing-sidebar-width)' : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
       <div

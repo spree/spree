@@ -13,6 +13,15 @@ module Spree
           subclassed_via -> { Spree.promotions.actions },
                          unknown_type_error: 'unknown_promotion_action_type'
 
+          request_params :promotion_action do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              only: :create,
+              example: 'free_shipping',
+              description: 'The action kind, from `GET /promotion_actions/types`.'
+            body.include_attributes Spree::Api::V3::Admin::PromotionActionRequestSchema
+          end
+
           def types
             authorize! :read, model_class
 
@@ -38,7 +47,7 @@ module Spree
               {
                 type: calc.api_type,
                 label: calc.respond_to?(:description) ? calc.description : calc.to_s.demodulize.titleize,
-                preference_schema: calc.respond_to?(:serialized_preference_schema) ? calc.serialized_preference_schema : []
+                schema: calc.preference_json_schema
               }
             end.sort_by { |entry| entry[:label].to_s }
 
@@ -56,7 +65,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, preferences: {})
+            params.permit(*permitted_attributes)
           end
 
           # `types`/`calculators` are read-only discovery — read scope + :show ability.
@@ -69,10 +78,6 @@ module Spree
 
             @parent = current_store.promotions.accessible_by(current_ability, :update)
                                    .find_by_prefix_id!(params[:promotion_id])
-          end
-
-          def parent_association
-            :promotion_actions
           end
 
           private

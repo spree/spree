@@ -27,17 +27,13 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601,
                      revoked_at: :iso8601, last_used_at: :iso8601
 
-          attribute :channel_id do |key|
-            key.channel&.prefixed_id
-          end
+          prefixed_id_attributes :channel
 
           # Returned only on the create response — `plaintext_token` is held in
           # memory on the model after `generate_token` and is never persisted
           # for secret keys, so we serialize it whenever it's available rather
           # than gating on the action.
-          attribute :plaintext_token do |key|
-            key.plaintext_token
-          end
+          attributes :plaintext_token
 
           # A key can be minted by another key, which has no email — so the
           # address is answered only for the actors that have one, and

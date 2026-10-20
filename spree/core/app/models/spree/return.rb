@@ -19,14 +19,16 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasStatus
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
+    include Spree::PostSale::Taxation
 
     publishes_lifecycle_events
+    publishes_events :approved, :canceled, :received, :refunded, :requested
 
     has_status :requested, :approved, :received, :refunded, :canceled,
                default: :requested
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :returns
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
     belongs_to :reason, class_name: 'Spree::ReturnReason', optional: true, inverse_of: :returns
@@ -51,6 +53,7 @@ module Spree
     delegate :currency, to: :order
 
     self.whitelisted_ransackable_attributes = %w[number status created_at]
+    search_by :number
     self.whitelisted_ransackable_associations = %w[order reason]
 
     # The label that currently binds the inbound parcel — bought or uploaded,
@@ -118,9 +121,14 @@ module Spree
       received? || refunded?
     end
 
-    # What the customer is owed for the items being returned.
+    # What the customer is owed for the items being returned, tax included.
     def refund_total
       return_line_items.sum(&:refund_amount)
+    end
+
+    # The tax inside {#refund_total}.
+    def refund_tax_total
+      return_line_items.sum(&:refund_tax_amount)
     end
 
     # What a refund from this return paid for, line by line. Only ever what
@@ -136,6 +144,20 @@ module Spree
         next if amount.zero?
 
         amounts[line.line_item_id] += amount
+      end
+    end
+
+    # The tax inside {#refunded_line_amounts}, for the lines whose tax is
+    # recorded.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => tax
+    def refunded_line_taxes
+      return {} unless counted?
+
+      return_line_items.each_with_object(Hash.new(0)) do |line, taxes|
+        next if line.refund_amount.zero? || !line.settles_tax?
+
+        taxes[line.line_item_id] += line.refund_tax_amount
       end
     end
 
@@ -156,6 +178,14 @@ module Spree
 
     def display_refunded_total
       Spree::Money.new(refunded_total, currency: currency)
+    end
+
+    def display_refund_tax_total
+      Spree::Money.new(refund_tax_total, currency: currency)
+    end
+
+    def taxed_lines
+      return_line_items
     end
   end
 end

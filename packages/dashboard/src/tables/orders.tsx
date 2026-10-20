@@ -1,10 +1,11 @@
-import { defineTable, Subject } from '@spree/dashboard-core'
+import { defineTable, LocaleLabel, Money } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { customerAutocompleteProps } from '../hooks/use-customers'
+import { marketAutocompleteProps } from '../hooks/use-markets'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 import { orderGroupSearch } from '../lib/order-group-search'
 
@@ -22,7 +23,7 @@ defineTable('orders', {
   title: i18n.t('admin.nav.orders'),
   docsPath: 'orders/processing-orders',
   description: i18n.t('admin.table_descriptions.orders'),
-  searchParam: 'multi_search',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.orders.table.search_placeholder'),
   defaultSort: { field: 'completed_at', direction: 'desc' },
   emptyIcon: <ShoppingCartIcon className="size-8 text-muted-foreground" />,
@@ -74,10 +75,9 @@ defineTable('orders', {
     {
       key: 'channel',
       label: i18n.t('admin.fields.order.channel.label'),
-      sortable: true,
       filterable: true,
       filterType: 'resource',
-      filterResource: channelAutocompleteProps('orders-table-channel-filter'),
+      filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channel_id',
       default: true,
       className: 'text-sm text-muted-foreground',
@@ -159,7 +159,7 @@ defineTable('orders', {
       default: true,
       filterType: 'number',
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (order) => order.display_total ?? '—',
+      render: (order) => <Money amount={order.total} currency={order.currency} />,
     },
     // Off by default — most stores never see one — but a B2B merchant turns it
     // on and reconciles against the buyer's own reference.
@@ -180,6 +180,27 @@ defineTable('orders', {
       filterType: 'currency',
       default: false,
       render: (order) => order.currency ?? '—',
+    },
+    {
+      key: 'market',
+      label: i18n.t('admin.fields.order.market.label'),
+      filterable: true,
+      filterType: 'resource',
+      filterResource: marketAutocompleteProps(),
+      ransackAttribute: 'market_id',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) => order.market?.name ?? '—',
+    },
+    {
+      key: 'locale',
+      label: i18n.t('admin.fields.order.locale.label'),
+      sortable: true,
+      filterable: true,
+      filterType: 'locale',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) => (order.locale ? <LocaleLabel code={order.locale} /> : '—'),
     },
     // On a marketplace this list holds the operator's own orders and every
     // seller's together, so a row has to say which it is — shown by default
@@ -247,7 +268,7 @@ defineTable('orders', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: Subject.Order,
+      taggableType: 'order',
       default: false,
       render: (order) => <TagList tags={order.tags} />,
     },
@@ -257,7 +278,7 @@ defineTable('orders', {
       label: i18n.t('admin.fields.first_name.label'),
       filterable: true,
       displayable: false,
-      ransackAttribute: 'bill_address_first_name_i',
+      ransackAttribute: 'bill_address_first_name',
     },
     {
       key: 'last_name',

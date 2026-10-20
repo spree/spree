@@ -4,6 +4,6 @@ module Spree
     belongs_to :variant, class_name: 'Spree::Variant'
 
     validates :quantity, presence: true
-    validates :quantity, numericality: { only_integer: true, message: Spree.t('validation.must_be_int') }
+    validates :quantity, numericality: { only_integer: true, message: I18n.t('spree.validation.must_be_int') }
   end
 end

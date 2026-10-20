@@ -1,0 +1,301 @@
+---
+es-CL:
+  activerecord:
+    attributes:
+      spree/address:
+        address2: Dirección Complementaria
+        company: Empresa
+        state: Comuna
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Valor base
+        preferred_tiers: Niveles
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Porcentaje base
+        preferred_tiers: Niveles
+      spree/credit_card:
+        verification_value: Código de verificación (CVV)
+      spree/gift_card:
+        amount_used: Monto usado
+        expires_at: Vence el
+      spree/inventory_unit:
+        state: Estado
+      spree/order:
+        checkout_complete: Pedido completo
+        email: E-Mail del Cliente
+      spree/payment:
+        amount: Valor
+      spree/policy:
+        body: Contenido
+        owner: Política para
+      spree/price_list:
+        ends_at: Termina el
+      spree/product:
+        available_on: Disponible
+        cost_price: Precio costo
+        discontinue_on: Descontinuar el
+        less_than: Menos de
+        master_price: Precio principal
+        on_hand: En mano
+        tax_category: Categoría de Impuesto
+      spree/promotion:
+        expires_at: Expira en
+        generate_code: Generar código de cupón
+        promotion_category: Categoría de promoción
+        usage_limit: Límite de uso
+      spree/store:
+        mail_from_address: Dirección de email de envío
+        meta_description: Meta descripción
+        meta_keywords: Meta palabras claves
+        name: Nombre de la Tienda
+        preferred_digital_asset_authorized_clicks: Límite de clics de descarga
+        preferred_limit_digital_download_count: Limitar la cantidad de descargas de enlaces digitales
+        storefront_custom_code_head: Código personalizado en el head de la página
+        url: URL
+      spree/store_credit:
+        amount_used: Monto usado
+      spree/taxon:
+        permalink: Permalink
+      spree/user:
+        email: E-Mail
+        password: Contraseña
+        password_confirmation: Confirmación de Contraseña
+      spree/variant:
+        cost_currency: Moneda de costo
+        cost_price: Precio costo
+        depth: Profundidad
+        height: Alto
+        sku: SKU
+        width: Ancho
+      user:
+        sign_in_count: Cantidad de inicios de sesión
+    errors:
+      models:
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: is already linked to this product
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Card has expired
+              expiry_invalid: Card expiration is invalid
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: No se puede eliminar una tarjeta de regalo usada
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Must match order currency
+        spree/market_country:
+          attributes:
+            country:
+              not_in_shipping_zone: no está cubierto por ninguna zona de envío. Primero configura una zona de envío.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: es mayor que el monto máximo permitido de %{max_amount}
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: No se pueden eliminar productos que están agregados a pedidos realizados. En esos casos, descontinúalos.
+            discontinue_on:
+              invalid_date_range: debe ser posterior a la fecha de disponibilidad
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: debe ser posterior a la fecha de inicio
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: is greater than the allowed amount.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Supera el total de créditos.
+            amount_used:
+              cannot_be_greater_than_amount: No puede ser mayor que el monto.
+              greater_than_zero_restrict_delete: es mayor que cero. No se puede eliminar el crédito de tienda.
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: No se pueden eliminar variantes que están agregadas a pedidos realizados. En esos casos, descontinúalas.
+    models:
+      spree/country:
+        one: País
+        other: Paises
+      spree/credit_card:
+        one: Tarjeta de Crédito
+        other: Tarjetas de Crédito
+      spree/option_type:
+        one: Tipo de opción
+        other: Tipos de opciones
+      spree/payment_method:
+        one: Forma de Pago
+        other: Formas de Pago
+      spree/promotion_category:
+        one: Categoría Promoción
+        other: Categorías de Promoción
+      spree/refund_reason:
+        one: Refund Reason
+        other: Refund Reasons
+      spree/shipping_method:
+        one: Medio de envío
+        other: Medios de envío
+      spree/state:
+        one: Estado
+        other: Estados
+      spree/stock_location:
+        one: Ubicación de Stock
+        other: Ubicaciones de Stock
+      spree/stock_movement:
+        one: Movimiento de Stock
+        other: Movimientos de Stock
+      spree/stock_transfer:
+        one: Transferencia de Stock
+        other: Transferencias de Stock
+      spree/store_credit:
+        one: Crédito de tienda
+        other: Créditos de tienda
+      spree/tax_category:
+        one: Categoría de Impuesto
+        other: Categorías de Impuestos
+      spree/tax_rate:
+        one: Tarifa de impuesto
+        other: Tarifas de impuestos
+      spree/taxon:
+        one: Clasificación
+        other: Clasificaciónes
+  spree:
+    address2: Dirección Complementaria
+    adjustment_labels:
+      tax_rates:
+        including_tax: "%{name}%{amount} (Incluido en el precio)"
+    amount: Valor
+    api_key_scopes_immutable: no se pueden cambiar después de crear la clave; crea una clave nueva con los alcances que necesitas y revoca esta
+    approver: Aprobado
+    backorderable: backorderable
+    backordered: Pedido pendiente
+    canceler: Candelado
+    cannot_be_destroyed: El pedido no se puede eliminar.
+    cart_already_updated: El carro ya fue actualizado.
+    cart_line_item:
+      discontinued: "%{li_name} se eliminó porque fue descontinuado"
+    channel: Canal de venta
+    checkout_requirements:
+      email_required: El correo electrónico es obligatorio
+      line_items_required: Agrega al menos un artículo a tu carro
+      payment_required: Agrega un método de pago
+    company: Compañía
+    compare_at_amount: Monto de comparación
+    compare_at_price: Precio de comparación
+    coupon_code_max_usage: Excedido el límite de uso del código del cupón
+    coupon_code_unknown_error: Este código de cupón no se podría aplicar a la compra en este momento.
+    coupon_code_used: El código de cupón que ingresaste ya fue usado. Inténtalo de nuevo.
+    created_at: Creado el
+    digital_assets: Activos digitales
+    discontinued: Descontinuado
+    discontinued_variants_present: Algunos artículos de este pedido tienen productos que ya no están disponibles.
+    email: E-Mail
+    error_user_destroy_with_orders: No se puede eliminar un usuario asociado a pedidos
+    error_user_does_not_have_any_store_credits: El usuario no tiene créditos de tienda disponibles
+    errors:
+      messages:
+        cannot_delete_default_channel: No se puede eliminar el canal predeterminado. Primero promueve otro canal como predeterminado.
+        store_association_can_not_be_changed: La asociación de tienda no se puede cambiar
+    expired: Vencido
+    export_mailer:
+      greeting: Hola %{user_name},
+    gateway: Gateway
+    gateway_error: Error en Gateway
+    gift_card_already_redeemed: La tarjeta de regalo ya fue canjeada.
+    gift_card_customer_not_logged_in: La tarjeta de regalo no se puede aplicar como usuario invitado.
+    gift_card_expired: La tarjeta de regalo venció.
+    gift_card_using_store_credit_error: No puedes aplicar la tarjeta de regalo después de haber aplicado el crédito de tienda.
+    i18n:
+      this_file_language: Español (es-CL)
+    idempotency_key_reused: Esta Idempotency-Key ya fue usada con parámetros de solicitud distintos.
+    insufficient_stock_lines_present: Algunos artículos de este pedido no tienen la cantidad suficiente.
+    invitation_mailer:
+      greeting: Hola %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} aceptó tu invitación para unirse a %{resource_name}"
+        subject: "%{invitee_name} aceptó tu invitación para unirse a %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} te invitó a unirte a %{resource_name}"
+    media: Medios
+    meta_keywords: Meta palabras claves
+    meta_title: Meta Título
+    no_payment_found: No hay pagos encontrados
+    only_active_products_can_be_added_to_cart: Los productos en borrador y archivados no se pueden agregar al carro; primero marca el producto como activo.
+    order_routing:
+      strategies:
+        legacy: Heredada
+    order_summary: Resumen del pedido
+    password: Contraseña
+    payment_method: Medio de Pago
+    payment_method_not_supported: Medio de Pago no soportado, por favo seleccione otro.
+    payment_methods: Medios de Pago
+    payment_processing_failed: El pago no pudo ser procesado, por favor comprueba los detalles que has ingresado
+    price_sack: Precio Sack
+    product_translations: Traducciones del producto
+    products_cannot_be_shipped: Por el momento no podemos enviar %{product_names} a tu ubicación actual. Cambia tu dirección de envío o quita %{product_names} de tu carro.
+    promotion_action_types:
+      create_adjustment:
+        name: Crear ajuste para todo
+      create_item_adjustments:
+        description: Crea un ajuste de crédito de promoción por artículo
+        name: Crear ajuste por artículo
+      create_line_items:
+        description: Rellena el carrito con el valor especificado de la variante
+      free_shipping:
+        description: Envío Gratis
+        name: Envío Gratis
+    promotion_already_used: No puedes eliminar una promoción que ya fue aplicada
+    promotion_rule_types:
+      country:
+        description: Limitar a pedidos con dirección de envío en un país específico
+      customer_logged_in:
+        description: Disponible solo para clientes con sesión iniciada
+        name: Solo clientes con sesión iniciada
+      item_total:
+        name: Total del artículo
+      one_use_per_user:
+        description: Uno por usuario
+        name: Uno por usuario
+      option_value:
+        description: El pedido incluye producto(s) específico(s) con valor(es) de opción
+        name: Opción valor(es)
+    refund_amount: Monto del reembolso
+    remove: Quitar
+    remove_gift_card_on_completed_order_error: No puedes quitar la tarjeta de regalo después de realizar el pedido
+    resellable: Reusable
+    return: Volver
+    say_no: 'No'
+    selected_quantity_not_available: El artículo %{item} no está disponible.
+    shipping_price_sack: Precio empaque
+    sku: SKU
+    slug: Slug
+    stock_location: Ubicación de stock
+    stock_locations: Ubicaciones de Stock
+    store_credit:
+      allocated: Agregado
+    store_credit_name: Crédito de tienda
+    store_credit_payment_method:
+      currency_mismatch: La moneda del crédito de tienda no coincide con la moneda del pedido
+      insufficient_authorized_amount: No se puede capturar más que el monto autorizado
+      insufficient_funds: El monto restante de crédito de tienda no es suficiente
+      successful_action: Crédito de tienda %{action} correctamente
+      unable_to_credit: 'No se puede acreditar el código: %{auth_code}'
+      unable_to_find: No se pudo encontrar el crédito de tienda
+      unable_to_find_for_action: 'No se pudo encontrar el crédito de tienda para el código de autorización: %{auth_code} para la acción: %{action}'
+      unable_to_void: 'No se puede anular el código: %{auth_code}'
+    tax: Impuesto
+    tax_category: Categoría impuesto
+    tiered_flat_rate: Tarifa plana escalonada
+    tiered_percent: Porcentaje escalonado
+    track_inventory: Track Inventario
+    webhook_mailer:
+      endpoint_disabled:
+        instructions: Revisa la URL y el servicio del endpoint, luego vuelve a habilitarlo en Configuración → Desarrolladores → Webhooks.
+        message: El endpoint de webhook "%{endpoint_name}" se deshabilitó automáticamente tras varios fallos de entrega.

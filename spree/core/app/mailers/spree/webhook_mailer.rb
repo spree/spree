@@ -7,9 +7,9 @@ module Spree
       @current_store = webhook_endpoint.store
 
       with_store_locale(webhook_endpoint.store) do
-        mail(
+        mail_template(
+          { endpoint: email_data(@endpoint, Spree::Emails::WebhookEndpointSerializer) },
           to: @current_store.new_order_notifications_email.presence || @current_store.mail_from_address,
-          subject: Spree.t('webhook_mailer.endpoint_disabled.subject', endpoint_name: @endpoint.name || @endpoint.url),
           store_url: @current_store.formatted_url
         )
       end

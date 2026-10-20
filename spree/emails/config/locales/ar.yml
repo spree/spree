@@ -1,0 +1,40 @@
+---
+ar:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: إعادة تعيين كلمة المرور
+        expiry_notice: ستنتهي صلاحية رابط إعادة تعيين كلمة المرور هذا قريبًا. إذا لم تطلب ذلك، فلا داعي لاتخاذ أي إجراء.
+        greeting: مرحبًا %{name}،
+        ignore_notice: إذا لم تطلب إعادة تعيين كلمة المرور، فيمكنك تجاهل هذا البريد الإلكتروني بأمان. لن يتم تغيير كلمة مرورك.
+        instructions: تلقينا طلبًا لإعادة تعيين كلمة مرورك. انقر على الزر أدناه لاختيار كلمة مرور جديدة.
+        subject: تعليمات إعادة تعيين كلمة المرور
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: مرحبًا،
+        ignore_disclaimer: إذا لم تطلب ذلك، يُرجى تجاهل هذا البريد الإلكتروني.
+        instructions: يُرجى النقر على الزر أدناه للتحقق من عنوان بريدك الإلكتروني.
+        message_copy_link: 'إذا لم يعمل الزر، يُرجى نسخ الرابط التالي ولصقه في متصفحك:'
+        subject: تحقق من عنوان بريدك الإلكتروني
+        verify_email_address_link: تحقق من عنوان البريد الإلكتروني
+    order_mailer:
+      cancel_email:
+        dear_customer: " عزيزي %{name} ، "
+        instructions: " تم إلغاء طلبك. يرجى الاحتفاظ بمعلومات الإلغاء هذه لسجلاتك. "
+        subject: " إلغاء الطلب "
+      confirm_email:
+        dear_customer: "  عزيزي %{name}، "
+        instructions: " يرجى مراجعة معلومات الطلب التالية والاحتفاظ بها لسجلاتك "
+        subject: " تأكيد الطلب "
+      payment_link_email:
+        message: يُرجى النقر على الزر أدناه لدفع قيمة طلبك.
+        message_copy_link: 'إذا لم يعمل الزر، يُرجى نسخ الرابط التالي ولصقه في متصفحك:'
+        pay_for_order: ادفع قيمة الطلب
+        subject: رابط الدفع للطلب رقم %{number}
+      store_owner_notification_email:
+        heading: تم استلام طلب جديد
+        instructions: لقد تلقيت طلبًا جديدًا.
+        order_summary: ملخص الطلب %{number}
+        subject: استلم %{store_name} طلبًا جديدًا
+      subtotal: 'المجموع الفرعي:'
+      total: 'إجمالي الطلب:'

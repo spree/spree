@@ -10,38 +10,21 @@ module Spree
     # 6.0-delivery-rate-provider.md; a store needing one before then can put
     # the URL in the return's `metadata`.
     class Approve < Spree::Workflow
+      include Spree::PostSale::Approval
+
       hooks :validate, :after_approve
 
       # @param return_record [Spree::Return]
       # @param approver [Object, nil] who is approving it (see Spree.actor_classes)
       def perform(return_record:, approver: nil)
         super
-
-        step :ensure_approvable
-        run_hooks :validate
-
-        ApplicationRecord.transaction do
-          step :mark_approved
-        end
-
-        run_hooks :after_approve
-        return_record.publish_event('return.approved')
-        success(return_record.reload)
+        approve
       end
 
       private
 
-      def ensure_approvable
-        failure(return_record, :not_requested) unless return_record.requested?
-      end
-
-      def mark_approved
-        return_record.update!(
-          status: 'approved',
-          approved_at: Time.current,
-          created_by: return_record.created_by || approver
-        )
-      end
+      def post_sale_record = return_record
+      def approvable_status = 'requested'
     end
   end
 end

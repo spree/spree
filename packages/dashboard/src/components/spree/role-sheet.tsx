@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, usePermissions } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -97,8 +97,8 @@ export function RoleSheet({
   // Protected roles (admin, host-locked) and callers without update authority
   // get a read-only sheet — the server enforces both independently.
   const readOnly = isEditing
-    ? !role?.mutable || permissions.cannot('update', 'Spree::Role')
-    : permissions.cannot('create', 'Spree::Role')
+    ? !role?.mutable || permissions.cannot('update', Subject.Role)
+    : permissions.cannot('create', Subject.Role)
 
   // Populate from the edited role, or from the duplicate source.
   useEffect(() => {

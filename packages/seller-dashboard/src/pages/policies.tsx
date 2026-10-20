@@ -15,6 +15,11 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemGroup,
+  ItemTitle,
   RichTextEditor,
   RowActions,
   Sheet,
@@ -128,19 +133,26 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <p className="text-muted-foreground text-sm">{t('policies.required.description')}</p>
-            <ul className="flex flex-col gap-2">
+            <ItemGroup className="gap-2">
               {outstanding.map((name) => (
-                <li
+                <Item
                   key={name}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle px-3 py-2"
+                  role="listitem"
+                  variant="outline"
+                  size="sm"
+                  className="border-border-subtle"
                 >
-                  <span className="font-medium text-sm">{name}</span>
-                  <Button size="sm" variant="outline" onClick={() => setCreatingName(name)}>
-                    {t('policies.required.write')}
-                  </Button>
-                </li>
+                  <ItemContent>
+                    <ItemTitle>{name}</ItemTitle>
+                  </ItemContent>
+                  <ItemActions>
+                    <Button size="sm" variant="outline" onClick={() => setCreatingName(name)}>
+                      {t('policies.required.write')}
+                    </Button>
+                  </ItemActions>
+                </Item>
               ))}
-            </ul>
+            </ItemGroup>
           </CardContent>
         </Card>
       )}

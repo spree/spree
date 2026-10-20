@@ -63,7 +63,6 @@ module Spree
 
       puts "Rails app generator args: #{args.inspect}"
       Rails::Generators.invoke('app', args)
-      inject_yaml_permitted_classes
     end
 
     def test_dummy_config
@@ -95,14 +94,6 @@ module Spree
     attr_reader :database
 
     protected
-
-    def inject_yaml_permitted_classes
-      inside dummy_path do
-        inject_into_file 'config/application.rb', %Q[
-    config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Time]
-        ], after: /config\.load_defaults.*$/, verbose: true
-      end
-    end
 
     def dummy_path
       ENV['DUMMY_PATH'] || 'spec/dummy'

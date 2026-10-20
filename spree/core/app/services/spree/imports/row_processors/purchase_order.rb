@@ -18,7 +18,7 @@ module Spree
 
         def process!
           reference = attributes['reference'].to_s.strip
-          raise ArgumentError, Spree.t(:purchase_order_import_reference_required) if reference.blank?
+          raise ArgumentError, I18n.t('spree.purchase_order_import_reference_required') if reference.blank?
 
           line = {
             variant: find_variant,
@@ -78,31 +78,31 @@ module Spree
 
         def find_supplier
           name = attributes['supplier'].to_s.strip
-          raise ArgumentError, Spree.t(:purchase_order_import_supplier_required) if name.blank?
+          raise ArgumentError, I18n.t('spree.purchase_order_import_supplier_required') if name.blank?
 
           cached_lookup(:purchase_order_import_supplier, name.downcase) do
             store.suppliers.find_by(Spree::Supplier.arel_table[:name].lower.eq(name.downcase))
-          end || raise(ArgumentError, Spree.t(:purchase_order_import_unknown_supplier, name: name))
+          end || raise(ArgumentError, I18n.t('spree.purchase_order_import_unknown_supplier', name: name))
         end
 
         def find_destination
           name = attributes['destination'].to_s.strip
-          raise ArgumentError, Spree.t(:purchase_order_import_destination_required) if name.blank?
+          raise ArgumentError, I18n.t('spree.purchase_order_import_destination_required') if name.blank?
 
           cached_lookup(:purchase_order_import_destination, name.downcase) do
             store.stock_locations.find_by(Spree::StockLocation.arel_table[:name].lower.eq(name.downcase))
-          end || raise(ArgumentError, Spree.t(:purchase_order_import_unknown_destination, name: name))
+          end || raise(ArgumentError, I18n.t('spree.purchase_order_import_unknown_destination', name: name))
         end
 
         def find_variant
           sku = attributes['sku'].to_s.strip
-          raise ArgumentError, Spree.t(:purchase_order_import_sku_required) if sku.blank?
+          raise ArgumentError, I18n.t('spree.purchase_order_import_sku_required') if sku.blank?
 
           variants = cached_lookup(:purchase_order_import_variant, sku.downcase) do
             store.variants.where(Spree::Variant.arel_table[:sku].lower.eq(sku.downcase)).limit(2).to_a
           end
-          raise ArgumentError, Spree.t(:purchase_order_import_unknown_sku, sku: sku) if variants.empty?
-          raise ArgumentError, Spree.t(:purchase_order_import_ambiguous_sku, sku: sku) if variants.many?
+          raise ArgumentError, I18n.t('spree.purchase_order_import_unknown_sku', sku: sku) if variants.empty?
+          raise ArgumentError, I18n.t('spree.purchase_order_import_ambiguous_sku', sku: sku) if variants.many?
 
           variants.first
         end
@@ -110,7 +110,7 @@ module Spree
         def quantity_for(value)
           text = value.to_s.strip
           unless text.match?(QUANTITY_FORMAT) && text.to_i.positive?
-            raise ArgumentError, Spree.t(:purchase_order_import_invalid_quantity, value: text)
+            raise ArgumentError, I18n.t('spree.purchase_order_import_invalid_quantity', value: text)
           end
 
           text.to_i
@@ -118,7 +118,7 @@ module Spree
 
         def amount_for(value)
           text = value.to_s.strip
-          raise ArgumentError, Spree.t(:purchase_order_import_invalid_cost, value: text) unless text.match?(AMOUNT_FORMAT)
+          raise ArgumentError, I18n.t('spree.purchase_order_import_invalid_cost', value: text) unless text.match?(AMOUNT_FORMAT)
 
           BigDecimal(text)
         end
@@ -127,7 +127,7 @@ module Spree
           currency = value.to_s.strip.upcase.presence || store.default_currency
           return currency if supported_currencies.include?(currency)
 
-          raise ArgumentError, Spree.t(:purchase_order_import_unsupported_currency, currency: currency)
+          raise ArgumentError, I18n.t('spree.purchase_order_import_unsupported_currency', currency: currency)
         end
 
         def supported_currencies
@@ -142,14 +142,14 @@ module Spree
 
           Date.iso8601(text)
         rescue Date::Error
-          raise ArgumentError, Spree.t(:purchase_order_import_invalid_date, column: column, value: text)
+          raise ArgumentError, I18n.t('spree.purchase_order_import_invalid_date', column: column, value: text)
         end
 
         def failure_message(result)
           error = result.error
           return error.full_messages.to_sentence if error.respond_to?(:full_messages)
 
-          error.to_s.presence || Spree.t(:purchase_order_import_failed)
+          error.to_s.presence || I18n.t('spree.purchase_order_import_failed')
         end
       end
     end

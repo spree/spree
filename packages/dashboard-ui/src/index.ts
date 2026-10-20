@@ -12,6 +12,7 @@
 // CSS lives at `@spree/dashboard-ui/styles.css` — import once from your Vite app.
 
 export * from './hooks/use-copy-to-clipboard'
+export * from './hooks/use-debounced-value'
 export { useIsMobile } from './hooks/use-mobile'
 export * from './hooks/use-prefers-reduced-motion'
 export * from './hooks/use-scrolled'
@@ -25,7 +26,7 @@ export {
 } from './lib/date-range-presets'
 export { sameRichText, shouldEmitRichTextChange } from './lib/same-rich-text'
 export { cn } from './lib/utils'
-export { requiredMessage } from './lib/validation-messages'
+export { decimalPlacesMessage, requiredMessage } from './lib/validation-messages'
 // ---------------------------------------------------------------------------
 // Spree composed components — headless, accept data via props
 // ---------------------------------------------------------------------------
@@ -65,6 +66,8 @@ export * from './spree/return-dialogs'
 // `@spree/dashboard-ui/spree/json-preview-drawer` and
 // `@spree/dashboard-ui/spree/json-value-view`. Types are available the same
 // way — `import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'`.
+// CodeEditor (CodeMirror) is deep-imported for the same reason:
+// `@spree/dashboard-ui/ui/code-editor`.
 
 export * from './spree/external-link'
 export * from './spree/language-menu-items'
@@ -114,6 +117,7 @@ export * from './ui/empty'
 export * from './ui/field'
 export * from './ui/input'
 export * from './ui/input-group'
+export * from './ui/item'
 export * from './ui/label'
 export * from './ui/media-preview'
 export * from './ui/pagination'

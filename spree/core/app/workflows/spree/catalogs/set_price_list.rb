@@ -90,8 +90,8 @@ module Spree
       # settled by its assignments. Rules are reconciled by replacement, so
       # the audience rules the caller never mentioned are merged back in;
       # without this, editing a catalog's name through the inline payload
-      # would destroy a market rule and silently change how its prices are
-      # restated for VAT.
+      # would destroy a market rule and silently change which buyers its
+      # prices apply to.
       def merged_rules(rows)
         existing = catalog.price_list&.price_rules&.to_a || []
         untouched = existing.reject(&:contextual?)

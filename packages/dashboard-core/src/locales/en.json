@@ -183,7 +183,9 @@
       "searching": "Searching…",
       "select_placeholder": "Select…",
       "unsaved_changes": "You have unsaved changes.",
-      "yes": "Yes"
+      "yes": "Yes",
+      "done": "Done",
+      "error": "Something went wrong."
     },
     "components": {
       "address_block": {
@@ -1403,7 +1405,7 @@
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "create_label": "Create stock location",
       "delete_confirm": {
-        "message": "{{name}} will be removed. Stock levels at this location are not deleted.",
+        "message": "{{name}} will be removed. Stock levels at this location will be deleted as well.",
         "title": "Delete stock location?"
       },
       "edit_description": "Update name, address, pickup, or stock policies.",
@@ -1465,11 +1467,13 @@
         "seeded_report_read_only": "This is a built-in report and cannot be changed. Save a copy instead.",
         "taken": "has already been taken",
         "too_long": "is too long (maximum is {{count}} characters)",
+        "too_many_decimals": "has more than {{count}} decimal places",
         "too_short": "is too short (minimum is {{count}} characters)",
         "wrong_length": "is the wrong length (should be {{count}} characters)"
       },
       "country_required": "Country is required",
       "currency_required": "Currency is required",
+      "locale_required": "Language is required",
       "first_name_required": "First name is required",
       "invalid_email": "Enter a valid email",
       "invalid_email_or_password": "Invalid email or password",
@@ -1481,7 +1485,8 @@
       "passwords_dont_match": "Passwords do not match",
       "positive_number": "{{field}} must be greater than 0",
       "required": "{{field}} is required",
-      "store_name_required": "Store name is required"
+      "store_name_required": "Store name is required",
+      "too_many_decimals": "{{field}} can have at most {{count}} decimal places"
     },
     "products": {
       "autocomplete": {
@@ -1578,6 +1583,12 @@
         "slug_placeholder": "product-url-handle"
       },
       "tax_category_placeholder": "Select tax category",
+      "tax": {
+        "apply_to_variants_help": "This category applies to every variant that does not have its own tax category. When you save, those variants use this setting.",
+        "variant_overrides_heading": "Variants with their own tax category",
+        "variant_overrides_description": "These variants keep their category until you clear the override. All other variants follow the product category above.",
+        "clear_variant_override": "Use product category"
+      },
       "transfers": {
         "create_description": "Move stock between locations, or receive new stock from an external supplier.",
         "delete_confirm": {

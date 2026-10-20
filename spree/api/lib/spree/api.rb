@@ -1,10 +1,9 @@
 require 'spree/core'
 require 'pagy'
-require 'alba'
-require 'oj'
 require 'typelizer'
 require 'typelizer/proc_resource_resolution'
 require 'typelizer/open_enums'
+require 'spree/api/extension_fields'
 
 module Spree
   module Api
@@ -40,6 +39,13 @@ module Spree
     def respond_to_missing?(method_name, include_private = false)
       base_name = method_name.to_s.chomp('=').to_sym
       api_dependency?(base_name) || super
+    end
+
+    # Fields extensions add to core serializers' responses.
+    #
+    # @return [Spree::Api::ExtensionFields]
+    def extension_fields
+      @extension_fields ||= Spree::Api::ExtensionFields.new
     end
 
     # Direct access to raw dependencies object for backwards compatibility

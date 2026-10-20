@@ -9,13 +9,27 @@ module Spree
           class TaxExemptionCertificatesController < BaseController
             include ActiveStorage::SetCurrent
 
+            request_params :tax_exemption_certificate do |body|
+              body.attribute :certificate_number, :string, required: true, on: :create,
+                example: 'DE-RESALE-7'
+              body.attribute :tax_exemption_reason_id, :id, required: true, on: :create,
+                description: "One of the store's active tax exemption reasons. The tax provider receives its `code`."
+              body.attribute :issuing_authority, :string, nullable: true, example: 'Finanzamt Berlin'
+              body.attribute :issued_at, :datetime, nullable: true
+              body.attribute :expires_at, :datetime, nullable: true
+              body.attribute :country_code, :country,
+                nullable: true,
+                description: 'Where the certificate holds. Omit it and `state_code` for one valid everywhere.'
+              body.attribute :state_code, :string, nullable: true
+              body.attribute :document_signed_id, :string,
+                description: "A `signed_id` from `files.upload()` with `visibility: 'private'`."
+              body.attribute :metadata, :hash
+            end
+
             before_action :authorize_parent_access!
             # Re-declaring the filter replaces the inherited options, so the
             # standard actions have to be listed alongside the custom ones.
             before_action :set_resource, only: [:show, :update, :destroy, :verify, :revoke, :download]
-
-            # A tampered signed id would otherwise surface as a 500.
-            rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_signature
 
             # PATCH /api/v3/admin/companies/:company_id/tax_exemption_certificates/:id/verify
             def verify
@@ -24,11 +38,7 @@ module Spree
                 verified_by: try_spree_current_user
               )
 
-              if result.success?
-                render json: serialize_resource(result.value)
-              else
-                render_result_error(result)
-              end
+              render_result(result)
             end
 
             # PATCH .../:id/revoke — withdrawing evidence that was accepted.
@@ -88,20 +98,19 @@ module Spree
               @parent.tax_exemption_certificates
             end
 
-            def parent_association
-              :tax_exemption_certificates
-            end
-
             def collection_includes
-              [{ document_attachment: :blob }]
+              [:tax_exemption_reason, { document_attachment: :blob }]
             end
 
-            # `document` is an ActiveStorage signed blob id from
-            # POST /api/v3/admin/direct_uploads.
+            # Read through the store, so another store's reason is a 404
+            # rather than a certificate pointing across stores.
             def permitted_params
-              params.permit(:certificate_number, :reason_code, :issuing_authority,
-                            :issued_at, :expires_at, :country_code, :state_code, :document,
-                            metadata: {})
+              attributes = params.permit(*declared_permitted_attributes)
+              return attributes if attributes[:tax_exemption_reason_id].blank?
+
+              attributes.except(:tax_exemption_reason_id).merge(
+                tax_exemption_reason: current_store.tax_exemption_reasons.find_by_prefix_id!(attributes[:tax_exemption_reason_id])
+              )
             end
 
             def build_resource
@@ -118,16 +127,6 @@ module Spree
                        end
 
               authorize!(mapped, resource)
-            end
-
-            private
-
-            def render_invalid_signature
-              render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: 'Invalid document signed id',
-                status: :unprocessable_content
-              )
             end
           end
         end

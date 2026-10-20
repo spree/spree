@@ -83,6 +83,40 @@ The brand data is available via `?expand=brand`:
 GET /api/v3/store/products/prod_86Rf07xd4z?expand=brand
 ```
 
+### Adding a Field from an Extension
+
+Replacing a serializer works for your own application, but the setting holds one replacement. An extension that replaced `admin_product_serializer` would be silently undone by an application that replaces it too. An extension adds read-only fields to a core serializer instead: an **attribute**, written as it is, or an **association**, a related record or a list of them written by the extension's own serializer:
+
+```ruby server/config/initializers/my_extension.rb
+Rails.application.config.after_initialize do
+  Spree.api.extension_fields.attribute(:admin_product_serializer, method: :warranty_text)
+
+  Spree.api.extension_fields.association(
+    :admin_product_serializer,
+    one: :warranty,
+    serializer: 'MyExtension::WarrantySerializer',
+    expand: true
+  )
+
+  Spree.api.extension_fields.association(
+    :admin_product_serializer,
+    many: :warranty_claims,
+    serializer: 'MyExtension::ClaimSerializer',
+    expand: true
+  )
+end
+```
+
+- **The name** is the response key and the record's method that gives the value: `method:` for an attribute, `one:` or `many:` for an association. `one: :warranty` writes `product.warranty` with the given serializer; `many: :warranty_claims` writes each of `product.warranty_claims`. An extension adds such methods to core models with [model extensions](/developer/customization/decorators#adding-to-a-model-without-a-decorator).
+- **A simple computed value** needs no method: name the field and pass `value:`, as in `attribute(:admin_product_serializer, :warranty_months, value: ->(product) { ... })`. An association takes `value:` the same way, beside its `one:` or `many:`.
+- **Registered by dependency key**, such as `admin_product_serializer`. If the application replaces that serializer with one that inherits from a core serializer, as shown above, the field still renders on the replacement.
+- **`expand: true`** shows the field only when the request asks for it with `?expand=warranty`. Without it, the field is always shown. An association's nested expands reach its serializer, so `?expand=warranty.claims` passes `claims` on, the same way `?expand=variants.media` works. Lists apply the same expands to every item.
+- **Associations read on lists are batched** when they are Active Record associations, as core ones are. A value computed by `value:` is read for each record.
+- **Names are unique per serializer.** Registering a name that the serializer or another extension already uses raises an error at boot.
+- **Not in the generated SDK types.** The extension that adds a field declares its TypeScript type.
+
+This is the read side of [adding an attribute to a core resource](#adding-an-attribute-to-a-core-resource), which makes a field writable.
+
 ### Serializer Dependency Keys
 
 Here are the most commonly customized v3 serializers:
@@ -152,7 +186,7 @@ Override these methods to customize:
 | `serializer_class` | Alba serializer (required) |
 | `scope` | Base query — add `.where()` to filter |
 | `find_resource` | Custom ID lookup (slug fallback, etc.) |
-| `permitted_params` | Custom strong params |
+| `permitted_params` | Custom strong params (prefer `request_params`) |
 | `collection_includes` | Eager loading for `index` |
 
 ### Routes
@@ -171,24 +205,84 @@ Spree::Core::Engine.add_routes do
 end
 ```
 
-### Permitted Attributes
+### Request Parameters
 
-For endpoints that accept writes (create/update), declare the attributes in your
-controller:
+For endpoints that accept writes (create/update), declare what the body takes
+with `request_params`, at the top of the controller. Each attribute names its
+type, the way a model attribute or a [preference](/developer/customization/model-preferences) does:
 
-```ruby
-def resource_permitted_attributes
-  [:name, :slug, :description, :logo]
+```ruby app/controllers/spree/api/v3/admin/brands_controller.rb
+request_params :brand do |body|
+  body.attribute :name, :string, required: true, on: :create
+  body.attribute :slug, :string
+  body.attribute :description, :string, description: 'Shown on the brand page.'
+  body.attribute :region_ids, :array, of: :id
+  body.attribute :metadata, :hash
 end
 ```
 
-Entries are `params.permit` fragments, so collections and nested structures use
-the shapes you would pass there directly — `[:name, { region_ids: [] }]`.
+This one declaration is the endpoint's contract: the controller permits exactly
+these keys and nesting, and nothing else. Spree's own endpoints publish the same
+declarations in the [API reference](/api-reference/introduction), and the SDK request types
+(`ProductCreateParams`, `ProductUpdateParams`, …) are generated from it, so the
+controller, the reference and the TypeScript types cannot drift apart.
+
+| Type | Sent as |
+|------|---------|
+| `:string`, `:boolean`, `:integer` | the JSON type of the same name |
+| `:decimal` | a canonical decimal string (`"19.99"`) — every amount of money |
+| `:number` | a JSON number — weights, dimensions, coordinates |
+| `:id` | a prefixed ID (`brand_k5nR8xLq`) |
+| `:country`, `:currency` | an ISO 3166-1 alpha-2 or ISO 4217 code, typed `CountryCode` / `CurrencyCode` |
+| `:date`, `:datetime` | ISO 8601 strings |
+| `:hash` | an object with any keys, such as `metadata` |
+| `:object` | an object with declared attributes: a block, or a shared `shape:` |
+| `:array` | a list: `of:` a type or a shared shape, or a block for its items |
+| `:any` | a scalar, a list or a hash |
+
+| Option | Meaning |
+|------|---------|
+| `required: true` | Required on create and update; add `on: :create` to require it only when creating |
+| `only: :create` | Accepted on one action alone (`:update` for the other) |
+| `choices:` | The values it takes; add `open: true` when extensions may add more |
+| `nullable: true` | Accepts `null`, usually to clear a value |
+| `description:`, `example:`, `format:` | Documentation for the API reference and the SDK types |
+| `deprecated: 'Use x. Removed in 6.1.'` | Keeps it working while the reference and the types flag it |
+| `permit: false` | Documented, but read by the action itself rather than permitted |
+
+A custom action declares its own body with a name ending in `Params`:
+`request_params 'BrandMergeParams', action: :merge do |body| ... end`.
+
+A shape several endpoints accept, such as an address or a price, is a class in
+`app/request_schemas`, declared the way a model declares its attributes. A
+subclass starts from its parent's attributes:
+
+```ruby app/request_schemas/spree/api/v3/brand_logo_request_schema.rb
+module Spree
+  module Api
+    module V3
+      class BrandLogoRequestSchema < Spree::Api::V3::RequestSchema
+        publishes 'BrandLogoParams'
+
+        attribute :signed_id, :string, required: true
+        attribute :alt, :string
+      end
+    end
+  end
+end
+```
+
+Endpoints then reference it, `body.attribute :logo, :object, shape: Spree::Api::V3::BrandLogoRequestSchema`,
+or take its attributes into their own body with `body.include_attributes Spree::Api::V3::BrandLogoRequestSchema`.
+Without `publishes` the class is a set of attributes other declarations
+include, not a type of its own.
 
 <Note>
-  Declare `resource_permitted_attributes`, not `permitted_attributes`. The
-  latter is what appends extension-contributed attributes to your list, so
-  overriding it replaces them.
+  An endpoint that needs logic of its own can still override
+  `resource_permitted_attributes` with a plain `params.permit` list, but then
+  its body is neither documented nor typed. Never override
+  `permitted_attributes`: it is what appends extension-contributed attributes
+  to your list, so overriding it replaces them.
 </Note>
 
 ### Adding an Attribute to a Core Resource
@@ -212,6 +306,19 @@ already permits replaces its filter rather than widening it.
   which need no code and are filterable and sortable. This is for extensions
   that add real database columns.
 </Note>
+
+### Writable by sellers
+
+The Seller API accepts a narrower set of attributes than the Admin API, so the
+list above does not apply to it — an attribute you open to operators stays
+operator-only. To let sellers write it too, for example from a field on the
+seller panel's product page, declare it again on the seller list:
+
+```ruby config/initializers/spree.rb
+Spree::Product.additional_seller_permitted_attributes += [:brand_id]
+```
+
+Only declare attributes a seller may safely set on their own records.
 
 Two endpoints deliberately ignore this hook because their parameters are
 authorization data rather than resource data: API keys and invitations.

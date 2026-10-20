@@ -90,7 +90,7 @@ describe 'purchase order lifecycle', type: :model do
       result = Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.not_draft'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.not_draft'))
     end
   end
 
@@ -210,7 +210,7 @@ describe 'purchase order lifecycle', type: :model do
       result = receive([{ item: line, quantity_accepted: 0, quantity_rejected: 0 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.no_items_received'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.no_items_received'))
     end
 
     # Two entries for one line are genuinely ambiguous — two cartons, or a
@@ -220,7 +220,7 @@ describe 'purchase order lifecycle', type: :model do
       result = receive([{ item: line, quantity_accepted: 40 }, { item: line, quantity_accepted: 60 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.repeated_item', variant: line.variant_name))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.repeated_item', variant: line.variant_name))
       expect(on_hand).to eq(0)
     end
 
@@ -250,7 +250,7 @@ describe 'purchase order lifecycle', type: :model do
       result = receive([{ item: other_item, quantity_accepted: 1 }])
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.item_not_on_document'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.item_not_on_document'))
     end
 
     it 'refuses an order that has not been placed' do
@@ -259,7 +259,7 @@ describe 'purchase order lifecycle', type: :model do
       result = Spree::PurchaseOrders::Receive.call(purchase_order: draft)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.not_ordered'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.not_ordered'))
     end
   end
 
@@ -287,7 +287,7 @@ describe 'purchase order lifecycle', type: :model do
       result = Spree::PurchaseOrders::Close.call(purchase_order: purchase_order.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.not_partially_received'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.not_partially_received'))
     end
   end
 
@@ -311,7 +311,7 @@ describe 'purchase order lifecycle', type: :model do
       result = Spree::PurchaseOrders::MarkDraft.call(purchase_order: purchase_order.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.already_receiving'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.already_receiving'))
     end
   end
 
@@ -369,7 +369,7 @@ describe 'purchase order lifecycle', type: :model do
       result = Spree::PurchaseOrders::Cancel.call(purchase_order: purchase_order.reload)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.already_closed'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.already_closed'))
     end
   end
 
@@ -395,7 +395,7 @@ describe 'purchase order lifecycle', type: :model do
                                                   attributes: { reference: 'too late' })
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('purchase_order.errors.not_editable'))
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.not_editable'))
     end
   end
 end

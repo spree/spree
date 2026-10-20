@@ -25,10 +25,6 @@ module Spree
           model_class.arel_table[attribute.to_sym].lower.matches("%#{escaped}%", '\\')
         end
       end
-
-      # Backward compatibility aliases — remove in Spree 6.0
-      def self.sanitize_query_for_multi_search(query) = sanitize_query_for_search(query)
-      def self.multi_search_condition(model_class, attribute, query) = search_condition(model_class, attribute, query)
     end
   end
 end

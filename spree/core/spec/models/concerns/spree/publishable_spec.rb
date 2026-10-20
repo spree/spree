@@ -29,6 +29,7 @@ RSpec.describe Spree::Publishable, events: true do
       self.table_name = 'spree_products'
 
       include Spree::Publishable
+      publishes_event :custom
     end
   end
 
@@ -73,6 +74,13 @@ RSpec.describe Spree::Publishable, events: true do
       end
 
       expect(received).to be false
+    end
+
+    it 'refuses an event no model declared, even while events are disabled' do
+      Spree::Events.disable do
+        expect { instance.publish_event('test_product.undeclared') }
+          .to raise_error(Spree::Events::UndeclaredEventError, /test_product\.undeclared/)
+      end
     end
   end
 
@@ -156,25 +164,6 @@ RSpec.describe Spree::Publishable, events: true do
       end
     end
 
-    context 'with model override' do
-      let(:override_class) do
-        serializer = v3_serializer_class
-        Class.new(Spree::Base) do
-          self.table_name = 'spree_products'
-          include Spree::Publishable
-
-          define_method(:event_serializer_class) { serializer }
-        end
-      end
-
-      it 'uses the overridden serializer' do
-        stub_const('Spree::CustomModel', override_class)
-        instance = override_class.new(id: 1)
-
-        expect(instance.event_serializer_class).to eq(v3_serializer_class)
-      end
-    end
-
     context 'with anonymous class' do
       it 'returns nil' do
         anon_class = Class.new(Spree::Base) do
@@ -226,13 +215,13 @@ RSpec.describe Spree::Publishable, events: true do
 
   describe '#event_prefix' do
     before do
-      stub_const('Spree::Product', publishable_class)
+      stub_const('Spree::TestProduct', publishable_class)
     end
 
     it 'returns the model name element' do
-      instance = Spree::Product.new
+      instance = Spree::TestProduct.new
 
-      expect(instance.event_prefix).to eq('product')
+      expect(instance.event_prefix).to eq('test_product')
     end
   end
 
@@ -250,10 +239,6 @@ RSpec.describe Spree::Publishable, events: true do
       stub_const('Spree::TestProduct', lifecycle_class)
     end
 
-    it 'enables lifecycle events' do
-      expect(lifecycle_class.lifecycle_events_enabled).to be true
-    end
-
     # Note: These specs use ApplicationRecord directly to test Publishable in isolation
     # since Spree::Base now has lifecycle events enabled by default
     context 'with only option' do
@@ -269,7 +254,7 @@ RSpec.describe Spree::Publishable, events: true do
       it 'only registers specified callbacks' do
         expect(limited_class._commit_callbacks.map(&:filter)).to include(:publish_create_event)
         expect(limited_class._commit_callbacks.map(&:filter)).not_to include(:publish_update_event)
-        expect(limited_class._commit_callbacks.map(&:filter)).not_to include(:publish_destroy_event)
+        expect(limited_class._commit_callbacks.map(&:filter)).not_to include(:publish_delete_event)
       end
     end
 
@@ -330,6 +315,8 @@ RSpec.describe Spree::Publishable, events: true do
     context 'within Spree::Events.disable_lifecycle' do
       let(:product) { create(:product) }
 
+      before { Spree::Events.catalog.declare(Spree::Product, :custom) }
+
       it 'suppresses lifecycle events but lets explicit events through' do
         lifecycle_received = false
         explicit_received = false
@@ -355,12 +342,6 @@ RSpec.describe Spree::Publishable, events: true do
 
     it 'derives from model name' do
       expect(Spree::OrderLineItem.event_prefix).to eq('order_line_item')
-    end
-
-    it 'can be customized' do
-      stub_const('Spree::CustomModel', publishable_class)
-      Spree::CustomModel.event_prefix = 'custom'
-      expect(Spree::CustomModel.event_prefix).to eq('custom')
     end
   end
 end

@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::Admin::PayoutProvidersController, type: :controll
       get :index, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |row| row['id'] }).to include('Spree::PayoutProvider::System')
+      expect(json_response['data'].map { |row| row['id'] }).to include('system')
     end
 
     it 'names the one used when a store has chosen nothing' do
@@ -20,7 +20,7 @@ RSpec.describe Spree::Api::V3::Admin::PayoutProvidersController, type: :controll
 
       default = json_response['data'].find { |row| row['default'] }
 
-      expect(default['id']).to eq('Spree::PayoutProvider::System')
+      expect(default['id']).to eq('system')
     end
 
     # Whether sellers must onboard with the provider changes what the

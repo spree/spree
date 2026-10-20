@@ -8,7 +8,33 @@ import { CheckIcon, ChevronDownIcon, XIcon } from '../spree/icons'
 import { Button } from './button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from './input-group'
 
-const Combobox = ComboboxPrimitive.Root
+/**
+ * Base UI empties a multi-select when Escape is pressed with its popup closed,
+ * and picking a searched result closes the popup, so the Escape meant to
+ * dismiss the search silently wiped every chip. Chips are removed only through
+ * their own remove button or Backspace, and the Escape passes on to whatever
+ * encloses the picker, such as a sheet, as it does for an empty one.
+ */
+function Combobox<Value, Multiple extends boolean | undefined = false, Item = Value>(
+  props: ComboboxPrimitive.Root.Props<Value, Multiple, Item>,
+) {
+  const { multiple, onValueChange } = props
+  if (!multiple) return <ComboboxPrimitive.Root {...props} />
+
+  return (
+    <ComboboxPrimitive.Root
+      {...props}
+      onValueChange={(value, eventDetails) => {
+        if (eventDetails.reason === 'escape-key') {
+          eventDetails.cancel()
+          eventDetails.allowPropagation()
+          return
+        }
+        onValueChange?.(value, eventDetails)
+      }}
+    />
+  )
+}
 
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />

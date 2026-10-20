@@ -52,10 +52,11 @@ spree init --no-open           # Skip opening browser
 
 ### `spree dev`
 
-Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down).
+Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down). The Admin Dashboard opens in your browser as soon as it is ready.
 
 ```bash
 spree dev
+spree dev --no-open            # Skip opening browser
 ```
 
 ### `spree stop`
@@ -76,14 +77,6 @@ spree restart
 
 Not appropriate for Gemfile changes (use `spree bundle install`, then Ctrl+C and re-run `spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
 
-### `spree update`
-
-Pull the latest Spree Docker image and recreate containers. Migrations run automatically on startup.
-
-```bash
-spree update
-```
-
 ### `spree build`
 
 Rebuild the dev image after Dockerfile or `.ruby-version` changes. Only relevant after `spree eject`.
@@ -100,17 +93,30 @@ spree build --yes            # Skip confirmation prompts (for CI)
 
 ### `spree upgrade`
 
-Walk a Spree version upgrade end-to-end inside the dev stack. Runs `bundle update`, applies pending migrations, then walks the version-specific data backfills from the upgrade manifest.
+Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
+
+1. **Update the server** — on a project that runs the prebuilt image, it pulls the latest Spree image. On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`.
+2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+3. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
+4. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
+
+The packages are updated before the database steps, so a failed migration or backfill no longer stops them from moving to the newest release their ranges allow. Fix the cause and run `spree upgrade` again.
 
 ```bash
-spree upgrade                  # Detect target, run the full sequence interactively
-spree upgrade --plan           # Print the plan without executing (DRY_RUN=1)
-spree upgrade --to 5.5         # Cap the walk at a specific target version
-spree upgrade --step <id>      # Re-run a single step idempotently (skips bundle + migrate)
-spree upgrade --yes            # Skip the per-step prompts
+spree upgrade                  # Run every step, asking before each one
+spree upgrade --plan           # List the data backfills without running anything
+spree upgrade --to 6.1         # Set the target version for the data backfills
+spree upgrade --step <id>      # Re-run a single data backfill (runs nothing else)
+spree upgrade --yes            # Skip the prompts
 ```
 
-Production upgrades only need the third stage — `bundle install` and `db:migrate` happen in your deploy pipeline. The CLI runs all three for local development. See [Upgrades](/developer/upgrades) for the manual production path.
+Your storefront is your own code, so `spree upgrade` does not change it — it tells you which `@spree/sdk` version to move to.
+
+Production upgrades only need the data backfills — installing gems and migrating happen in your deploy pipeline. See [Upgrades](/developer/upgrades) for the manual production path.
+
+<Note>
+`spree update` is the old name for this command. It still works, prints a deprecation warning, and will be removed in a future release.
+</Note>
 
 ### `spree eject`
 
@@ -123,6 +129,49 @@ spree eject
 After ejecting, the Docker image is built from `server/Dockerfile`. Edit files in `server/` and run `spree dev` to rebuild and restart with your changes.
 
 See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing-the-backend) for details on what you can customize.
+
+### `spree add`
+
+Add an optional part or an extension to an existing project.
+
+```bash
+spree add dashboard           # the Admin Dashboard app in apps/dashboard/, to customize it
+spree add seller-dashboard    # the marketplace Seller Panel in apps/seller-dashboard/
+spree add ai                  # Spree agent skills + the docs MCP server for coding agents
+spree add stripe              # an extension, installed end to end
+```
+
+`spree add ai` installs the [Spree agent skills](/developer/agentic/agent-skills) and connects Claude Code, Cursor and VS Code to the [docs MCP server](/developer/agentic/docs-mcp). It keeps the MCP servers your config files already list and is safe to re-run. Pass `--no-skills` or `--no-mcp` to set up only one of the two.
+
+#### Extensions
+
+`spree add <extension>` installs an official extension in one step: it adds the gem, runs the extension's installer if it has one, runs the migrations, installs its dashboard plugin if it has one, and restarts the server if it is running.
+
+| Extension | Command |
+| --- | --- |
+| [Stripe](/integrations/payments/stripe) | `spree add stripe` |
+| [PayPal](/integrations/payments/paypal) | `spree add paypal` |
+| [Adyen](/integrations/payments/adyen) | `spree add adyen` |
+| [Avalara AvaTax](/integrations/tax/avalara) | `spree add avatax` |
+| [Klaviyo](/integrations/marketing/klaviyo) | `spree add klaviyo` |
+| [EasyPost](/integrations/shipping/easypost) | `spree add easypost` |
+| [Meilisearch](/integrations/search/meilisearch) | `spree add meilisearch` |
+| [MCP server](/developer/mcp/quick-start) | `spree add mcp` |
+| [OpenTelemetry](/developer/providers/observability) | `spree add opentelemetry` |
+
+A few things to know:
+
+- **A project on the prebuilt image is ejected first.** The prebuilt image cannot load new gems, so the command offers to [eject](#spree-eject) the project. Ejecting switches to a new development database without your current data, so it asks before doing it. Pass `--yes` to agree up front, for example in a script.
+- **New projects already include some extensions.** Stripe, EasyPost, Meilisearch and OpenTelemetry come with every new project. Until you eject, the command tells you there is nothing to install for those. After ejecting, it runs their installer and migrations again, which is harmless.
+- **It is safe to run again.** If an install fails partway, the command puts your `Gemfile` and `config/` back as they were. Running it again finishes an install that stopped halfway, and keeps files the first run created.
+- **Setup notes come from the extension.** If an extension needs anything else, such as an environment variable, it says so while it installs.
+
+To install an extension that is not in this list, name its gem or dashboard plugin package. The command asks you to confirm, since Spree does not vouch for it:
+
+```bash
+spree add --gem spree_acme_loyalty
+spree add --gem spree_acme_loyalty --npm @acme/loyalty-dashboard
+```
 
 ### `spree logs`
 
@@ -204,7 +253,7 @@ spree encryption init            # Add ACTIVE_RECORD_ENCRYPTION_* keys to the pr
 spree encryption init --print    # Print a fresh set without writing anything (e.g. for your hosting provider)
 ```
 
-It never overwrites keys `.env` already sets, and there is no `--force`: changing the keys makes data encrypted with them unreadable. Afterwards, recreate the containers so they load the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment), and back the keys up in your secret manager.
+It never overwrites keys `.env` already sets, and there is no `--force`: changing the keys makes data encrypted with them unreadable. Afterwards, recreate the containers so they load the new `.env` (`spree dev` — `spree restart` keeps the old environment), and back the keys up in your secret manager.
 
 ### `spree api`
 
@@ -245,6 +294,18 @@ spree generate migration AddPositionToSpreeBrands position:integer  # Rails buil
 ```
 
 `spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
+
+### `spree filters types`
+
+Generate TypeScript declarations for your app's list filters, so the SDKs accept and autocomplete the filters and sort fields your app adds. It reads them from the running app and writes `src/types/spree-filters.d.ts` into each app under `apps/` (storefront, dashboard, seller panel), for the SDK that app uses. Run it again after you change a filter.
+
+```bash
+spree filters types                                                    # every app under apps/
+spree filters types --api store --out ../my-storefront/src/types/spree-filters.d.ts   # one app elsewhere
+spree filters types --from filter-tables.json                         # from `bin/rails spree:api:filter_tables` output
+```
+
+See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
 
 ### `spree migrate`
 
@@ -328,7 +389,7 @@ Run a `bundle` command. Gems land in the `bundle_cache` volume (no image rebuild
 
 ```bash
 spree bundle install
-spree bundle add stripe
+spree bundle add faker
 spree bundle update spree_core
 spree bundle outdated
 ```
@@ -355,4 +416,4 @@ spree task spree:price_history:prune
 
 ## Pair with AI agents
 
-The CLI's predictable command surface is what AI coding agents drive when working on Spree projects. The [Spree agent skills](/developer/agentic/agent-skills) teach agents these commands and conventions, and the Claude Code plugin adds `/spree:doctor` (stack diagnosis) and `/spree:audit-upgrade` (upgrade-readiness audit) on top. See [Agentic Development](/developer/agentic/overview).
+The CLI's predictable command surface is what AI coding agents drive when working on Spree projects. The [Spree agent skills](/developer/agentic/agent-skills) teach agents these commands and conventions (install them with `spree add ai`), and the Claude Code plugin adds `/spree:doctor` (stack diagnosis) and `/spree:audit-upgrade` (upgrade-readiness audit) on top. See [Agentic Development](/developer/agentic/overview).

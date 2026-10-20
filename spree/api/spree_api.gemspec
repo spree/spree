@@ -24,8 +24,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rswag-specs'
 
-  s.add_dependency 'alba', '~> 3.0'
-  s.add_dependency 'oj', '~> 3.16'
   s.add_dependency 'typelizer', '~> 0.11.0'
 
   s.add_dependency 'spree_core', s.version

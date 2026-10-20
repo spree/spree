@@ -37,10 +37,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of records per page'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
-      parameter name: :'q[enabled_eq]', in: :query, type: :boolean, required: false,
-                description: 'Filter by whether the rate is in use'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-position`).'
 
@@ -93,70 +90,11 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[name kind value],
-        properties: {
-          name: { type: :string, example: 'Audio sellers' },
-          code: { type: :string, example: 'audio', nullable: true,
-                  description: 'Your own identifier for this rate; unique per store.' },
-          enabled: { type: :boolean, example: true },
-          position: { type: :integer, example: 1,
-                      description: 'Place in the list. Rates resolve top-down, so 1 is tried first. ' \
-                                   'New rates are created at the top; send this to move one.' },
-          kind: { type: :string, enum: %w[percentage fixed], example: 'percentage' },
-          value: { type: :string, example: '12.5',
-                   description: 'A percentage (10 = 10%) or a flat amount, per `kind`.' },
-          amounts: {
-            type: :object,
-            additionalProperties: { type: :string },
-            example: { USD: '2.50', EUR: '2.00' },
-            description: 'What a flat fee charges, keyed by currency. A currency with no amount is one ' \
-                         'this rate does not charge — those sales fall to the next rate. Ignored for a percentage.'
-          },
-          tax_inclusive: { type: :boolean, example: false,
-                         description: 'Charge on the price including the customer\'s VAT. Left off, commission is ' \
-                                      "charged on the seller's net revenue, which is the usual basis where the " \
-                                      'fee is taxed as its own supply.' },
-          include_shipping: { type: :boolean, example: false,
-                              description: "Also charge commission on the seller's delivery revenue." },
-          bounds: {
-            type: :object,
-            additionalProperties: {
-              type: :object,
-              properties: {
-                min_amount: { type: :string, nullable: true },
-                max_amount: { type: :string, nullable: true }
-              }
-            },
-            example: { USD: { min_amount: '1.0', max_amount: '50.0' } },
-            description: 'The floor and cap a percentage charges within, keyed by currency. Each holds only ' \
-                         'in its own currency; a sale in a currency with no bounds is charged unbounded.'
-          },
-          commission_tax_rate: { type: :string, example: '0.21', nullable: true,
-                                 description: 'A fraction, not a percentage. Null asks the tax engine.' },
-          rules: {
-            type: :array,
-            description: 'The full targeting; what you send replaces what the rate holds.',
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, description: 'Present for an existing rule; omit to create one.' },
-                type: { type: :string, example: 'seller_rule',
-                        description: 'A kind from /commission_rates/rule_types.' },
-                preferences: { type: :object, example: { seller_ids: ['sel_a1b2c3'] },
-                               description: "Configuration for the kind, per its preference_schema." },
-                product_ids: { type: :array, items: { type: :string },
-                               description: 'For kinds that name products, which are kept outside preferences.' }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'commission rate created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: 12.5 } }
+        let(:body) { { name: 'Audio sellers', kind: 'percentage', value: '12.5' } }
 
         schema '$ref' => '#/components/schemas/CommissionRate'
 
@@ -169,7 +107,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       response '422', 'validation failed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         # A flat fee means nothing without a currency to charge it in.
-        let(:body) { { name: 'Flat fee', kind: 'fixed', value: 2 } }
+        let(:body) { { name: 'Flat fee', kind: 'fixed', value: '2' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -193,6 +131,8 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
       DESC
       admin_scope :read, :commissions
 
+      admin_sdk_example 'commission_rates/rule-types'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 
@@ -209,7 +149,7 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
                        type: { type: :string, example: 'seller_rule' },
                        name: { type: :string, example: 'Seller' },
                        description: { type: :string, nullable: true },
-                       preference_schema: { type: :array, items: { type: :object } },
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' },
                        association_fields: { type: :array, items: { type: :string } }
                      }
                    }
@@ -273,37 +213,17 @@ RSpec.describe 'Admin Commission Rates API', type: :request, swagger_doc: 'api-r
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Standard' },
-          enabled: { type: :boolean, example: true },
-          position: { type: :integer, example: 1 },
-          value: { type: :string, example: '15.0' },
-          rules: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string, example: 'category_rule' },
-                preferences: { type: :object, example: { category_ids: ['ctg_a1b2c3'] } },
-                product_ids: { type: :array, items: { type: :string } }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'commission rate updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { commission_rate.prefixed_id }
-        let(:body) { { value: 15 } }
+        let(:body) { { value: '15' } }
 
         schema '$ref' => '#/components/schemas/CommissionRate'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['value']).to eq('15.0')
+          expect(JSON.parse(response.body)['value']).to eq('15')
         end
       end
     end

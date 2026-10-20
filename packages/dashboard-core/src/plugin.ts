@@ -106,11 +106,11 @@ export interface DashboardPluginConfig {
   /** Table mutations keyed by table key (see `defineTable`). */
   tables?: Record<string, TableMutations>
   /**
-   * Custom routes mounted under `/$storeId/`. Each entry's `path` is relative
-   * (e.g. `/brands`, `/brands/$brandId`). The dashboard's catch-all route at
-   * `/$storeId/*` dispatches based on the splat — your `component` renders
-   * exactly like any first-party route, including TanStack Router's
-   * `useParams()` for path params.
+   * Custom routes. By default mounted under `/$storeId/`, with a relative
+   * `path` (e.g. `/brands`, `/brands/$brandId`) — the dashboard's catch-all
+   * route at `/$storeId/*` dispatches based on the splat. Set `scope` to
+   * `'authenticated'` or `'public'` to mount a page at the root, outside any
+   * store.
    */
   routes?: RouteEntry[]
   /**

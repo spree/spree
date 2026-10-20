@@ -1,0 +1,685 @@
+---
+lv:
+  activemodel:
+    errors:
+      messages:
+        blank: nedrīkst būt tukšs
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adrese
+        address2: Adrese (papildus)
+        city: Pilsēta
+        company: Uzņēmums
+        country: Valsts
+        label: Adreses nosaukums
+        phone: Telefons
+        state: Rajons
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO nosaukums
+        name: Nosaukums
+        numcode: ISO kods
+      spree/credit_card:
+        cc_type: Tips
+        month: Mēnesis
+        number: Numurs
+        year: Gads
+      spree/customer_group:
+        description: Apraksts
+        name: Nosaukums
+      spree/gift_card:
+        amount_used: Izmantotā summa
+        expires_at: Derīga līdz
+      spree/import:
+        preferred_delimiter: Atdalītājs
+      spree/import_mapping:
+        file_column: Faila kolonna
+        schema_field: Shēmas lauks
+      spree/import_row:
+        row_number: Numurs
+      spree/inventory_unit:
+        state: Stāvoklis
+      spree/invitation:
+        inviter: Uzaicinātājs
+      spree/line_item:
+        price: Cena
+        quantity: Daudzums
+      spree/option_type:
+        filterable: Filtrējams
+        kind: Veids
+        name: Nosaukums
+      spree/option_value:
+        color_code: Krāsas kods
+        image: Paraugu attēls
+      spree/order:
+        completed_at: Pabeigts
+        coupon_code: Kupona kods
+        created_at: Izveidots
+        email: Epasts
+        internal_note: Iekšējā piezīme
+        ip_address: IP adrese
+        item_count: Vienības
+        number: Numurs
+        payment_state: Maksājuma stāvoklis
+        shipment_state: Piegādes stāvoklis
+        state: Stāvoklis
+        total: Kopā
+      spree/order/bill_address:
+        address1: Adrese
+        city: Pilsēta
+        phone: Tālrunis
+        state: Valsts
+      spree/order/ship_address:
+        address1: Adrese
+        city: Pilsēta
+        phone: Tālrunis
+        state: Valsts
+      spree/payment:
+        amount: Daudzums
+        number: Numurs
+      spree/payment_method:
+        name: Nosaukums
+      spree/policy:
+        body: Saturs
+        owner: Politika priekš
+      spree/price_list:
+        description: Apraksts
+        ends_at: Beidzas
+        match_policy: Atbilstības politika
+        name: Nosaukums
+        priority: Prioritāte
+        starts_at: Sākas
+        status: Statuss
+      spree/price_rule:
+        priority: Prioritāte
+        type: Tips
+      spree/product:
+        available_on: Pieejams pēc
+        cost_currency: Izmaksas valūta
+        cost_price: Pašizmaksa
+        description: Apraksts
+        discontinue_on: Pārtraukt
+        less_than: Mazāk nekā
+        make_active_at: Aktivizēt
+        master_price: Gala cena/Master Price
+        more_than: Vairāk nekā
+        name: Nosaukums
+        on_hand: Pieejams
+        tax_category: Nodokļu kategorija
+      spree/promotion:
+        code: Kods
+        description: Apraksts
+        generate_code: Ģenerēt kupona kodu
+        promotion_category: Akcijas kategorija
+      spree/promotion_category:
+        code: Kods
+        name: Nosaukums
+      spree/property:
+        name: Nosaukums
+        presentation: Prezentācija
+      spree/role:
+        name: Nosaukums
+      spree/shipment:
+        number: Numurs
+      spree/state:
+        abbr: Saīsinājums
+        name: Nosaukums
+      spree/store:
+        address: Adrese
+        contact_phone: Kontakttālrunis
+        preferred_digital_asset_authorized_clicks: Lejupielāžu klikšķu ierobežojums
+        preferred_digital_asset_authorized_days: Lejupielāžu dienu ierobežojums
+        preferred_limit_digital_download_count: Ierobežot digitālo saišu lejupielāžu skaitu
+        preferred_limit_digital_download_days: Ierobežot digitālo saišu lejupielāžu dienas
+        seo_robots: SEO Robots
+        storefront_custom_code_body_end: Pielāgots kods pirms body tagu aizvēršanas
+        storefront_custom_code_body_start: Pielāgots kods pēc body tagu atvēršanas
+        storefront_custom_code_head: Pielāgots kods lapas galvenē
+      spree/store_credit:
+        amount_used: Izmantotā summa
+      spree/tax_category:
+        description: Apraksts
+        name: Nosaukums
+      spree/tax_rate:
+        amount: Summa
+        included_in_price: Included in Price
+        show_rate_in_label: Show rate in label
+      spree/taxon:
+        name: Nosaukums
+        permalink: Permalink
+        position: Stāvoklis
+        sort_order: Kārtošanas secība
+      spree/taxonomy:
+        name: Nosaukums
+      spree/user:
+        avatar: Avatars
+        email: E-pasts
+        password: Parole
+        password_confirmation: Parole velreiz
+      spree/variant:
+        cost_price: Pašizmaksa
+        depth: Biezums
+        height: Augstums
+        price: Cena
+        sku: SKU
+        weight: Svars
+        width: Platums
+      spree/zone:
+        description: Apraksts
+        name: Nosaukums
+      user:
+        current_sign_in: Pašreizējā pieteikšanās
+        last_sign_in: Pēdējā pieteikšanās
+        sign_in_count: Pieteikšanos skaits
+    errors:
+      messages:
+        blank: nedrīkst būt tukšs
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: jābūt avotam (shēma un resursdators) bez ceļa, vaicājuma vai fragmenta
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Nevar dzēst izmantotu dāvanu karti
+        spree/import:
+          attributes:
+            attachment:
+              content_type: ir neatļauts satura veids
+            type:
+              inclusion: nav iekļauts atļauto veidu sarakstā
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Nevar dzēst noklusējuma tirgu.
+              cannot_destroy_last_market: Nevar dzēst vienīgo tirgu.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: jau ir piešķirta citam tirgum šajā veikalā
+              not_in_shipping_zone: nav iekļauta nevienā piegādes zonā. Lūdzu, vispirms iestatiet piegādes zonu.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: pārsniedz atļauto maksimālo summu %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: jābūt vēlāk par sākuma datumu
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Nevar dzēst produktus, kas ir pievienoti veiktajiem pasūtījumiem. Šādos gadījumos, lūdzu, pārtrauciet to pieejamību.
+            discontinue_on:
+              invalid_date_range: jābūt vēlāk par pieejamības datumu
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: jābūt vēlāk par publicēšanas datumu
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: jābūt vēlāk par sākuma datumu
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Nevar dzēst vienīgo veikalu.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Pārsniedz kopējo kredīta atlikumu.
+            amount_used:
+              cannot_be_greater_than_amount: Nevar būt lielāka par summu.
+              greater_than_zero_restrict_delete: ir lielāka par nulli. Veikala kredītu nevar dzēst.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: pieder citam lietotājam
+              deprecated_in_completed_order: vairs nav derīgs pabeigtā pasūtījumā
+            ship_address_id:
+              belongs_to_other_user: pieder citam lietotājam
+              deprecated_in_completed_order: vairs nav derīgs pabeigtā pasūtījumā
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Nevar dzēst variantus, kas ir pievienoti veiktajiem pasūtījumiem. Šādos gadījumos, lūdzu, pārtrauciet to pieejamību.
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: nedrīkst norādīt uz iekšēju vai privātu tīkla adresi
+    models:
+      spree/address:
+        one: Adrese
+        other: Adreses
+      spree/classification:
+        one: Klasifikācija
+        other: Klasifikācijas
+      spree/country:
+        one: Valsts
+        other: Valstis
+      spree/credit_card:
+        one: Credit Card
+        other: Credit Cards
+      spree/customer_group:
+        one: Klientu grupa
+        other: Klientu grupas
+      spree/customer_group_user:
+        one: Klientu grupas lietotājs
+        other: Klientu grupas lietotāji
+      spree/export:
+        one: Eksports
+        other: Eksporti
+      spree/integration:
+        one: Integrācija
+        other: Integrācijas
+      spree/inventory_unit:
+        one: Krājuma vienība
+        other: Krājuma vienības
+      spree/line_item:
+        one: Pozīcijas vienība
+        other: Pozīcijas vienības
+      spree/option_type:
+        one: Opcijas veids
+        other: Opciju veidi
+      spree/option_value:
+        one: Opcijas vērtība
+        other: Opciju vērtības
+      spree/order:
+        one: Pasūtījums
+        other: Pasūtījumi
+      spree/payment:
+        one: Maksājums
+        other: Maksājumi
+      spree/payment_method:
+        one: Maksājuma metode
+        other: Maksājuma metodes
+      spree/price:
+        one: Cena
+        other: Cenas
+      spree/price_list:
+        one: Cenu saraksts
+        other: Cenu saraksti
+      spree/price_rule:
+        one: Cenu noteikums
+        other: Cenu noteikumi
+      spree/product:
+        one: Produkts
+        other: Produkti
+      spree/promotion:
+        one: Akcija
+        other: Akcijas
+      spree/promotion_category:
+        one: Akcijas kategorija
+        other: Akciju kategorijas
+      spree/property:
+        one: Property
+        other: Properties
+      spree/refund_reason:
+        one: Atmaksas iemesls
+        other: Atmaksas iemesli
+      spree/role:
+        one: Loma
+        other: Lomas
+      spree/shipment:
+        one: Piegāde
+        other: Piegādes
+      spree/shipping_method:
+        one: Piegādes metode
+        other: Piegādes metodes
+      spree/state:
+        one: Štats
+        other: Štati
+      spree/stock_location:
+        one: Krājumu atrašanās vieta
+        other: Krājumu atrašanās vietas
+      spree/stock_movement:
+        one: Krājumu kustība
+        other: Krājumu kustības
+      spree/stock_transfer:
+        one: Krājumu pārvietošana
+        other: Krājumu pārvietošanas
+      spree/store:
+        one: Veikals
+        other: Veikali
+      spree/store_credit:
+        one: Veikala kredīts
+        other: Veikala kredīti
+      spree/tax_category:
+        one: Nodokļu kategorija
+        other: Nodokļu kategorijas
+      spree/tax_rate:
+        one: Nodokļu likme
+        other: Nodokļu likmes
+      spree/taxon:
+        one: Kategorija
+        other: Kategorijas
+      spree/taxonomy:
+        one: Kategorija
+        other: Kategorijas
+      spree/user:
+        one: Lietotājs
+        other: Lietotāji
+      spree/variant:
+        one: Variants
+        other: Varianti
+      spree/zone:
+        one: Zona
+        other: Zonas
+  errors:
+    messages:
+      already_confirmed: ir jau apstiprināts, lūdzu mēģiniet pieslēgties
+      not_found: netika atrasts
+      not_locked: netika nobloķēts
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accept: Apstiprināt
+    accepted: Apstiprināts
+    accepts_email_marketing: Pieņem e-pasta mārketingu
+    account: Konts
+    active: Aktīvs
+    address: Adrese
+    address1: Adrese
+    address2: Adrese (papildus)
+    adjustment: Piemērošana
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Iekļauts cenā)"
+    adjustments_deleted: Korekcijas dzēstas
+    all: Visi
+    amount: Summa
+    api_key_no_current_key: Neviena API atslēga neautentificēja šo pieprasījumu
+    api_key_scopes_immutable: nevar mainīt pēc atslēgas izveides; izveidojiet jaunu atslēgu ar nepieciešamajiem tvērumiem un atsauciet šo
+    availability: pieejamība
+    bill_address: Rēķina adrese
+    billing_address: Rēķina adrese
+    calculator: Kalkulātors
+    canceled: Atcelts
+    cannot_be_destroyed: Pasūtījumu nevar dzēst.
+    capture: Capture
+    cart: Grozs
+    cart_already_updated: Grozs jau ir atjaunināts.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} nevar piegādāt uz norādīto adresi"
+      discontinued: "%{li_name} tika noņemts, jo tā ražošana ir pārtraukta"
+      out_of_stock: "%{li_name} tika noņemts, jo tas ir izpārdots"
+    categories: Kategorijas
+    category: Kategorija
+    channel: Tirdzniecības kanāls
+    channels: Tirdzniecības kanāli
+    checkout: Pasūtīt
+    checkout_requirements:
+      email_required: Nepieciešama e-pasta adrese
+      line_items_required: Pievienojiet grozam vismaz vienu vienību
+      payment_required: Pievienojiet maksājuma metodi
+      ship_address_required: Nepieciešama piegādes adrese
+    city: Pilsēta
+    color_code: Krāsas kods
+    compare_at_amount: Salīdzinājuma summa
+    compare_at_price: Salīdzinājuma cena
+    complete: Pabeigts
+    confirm: Apstiprini
+    cost_price: Pašizmaksa
+    country: Valsts
+    coupon_code: Kupona kods
+    coupon_code_not_found: Ievadītais kupona kods neeksistē. Lūdzu, mēģiniet vēlreiz.
+    coupon_code_used: Ievadītais kupona kods jau ir izmantots. Lūdzu, mēģiniet vēlreiz.
+    credit_card: Kredītkarte
+    currency_not_supported_by_store: šis veikals neatbalsta
+    customer: Klients
+    customers: Klienti
+    default_stock_location_name: Veikala atrašanās vieta
+    default_wishlist_name: Vēlmju saraksts
+    delivery: Piegāde
+    depth: Dziļums
+    description: Apraksts
+    destroy: Izdzēst
+    digital:
+      digital_delivery: Digitālā piegāde
+    digital_assets: Digitālie resursi
+    discontinued: Pārtraukts
+    discontinued_variants_present: Dažas šī pasūtījuma pozīcijas satur produktus, kas vairs nav pieejami.
+    display_delivery_range: Piegāde %{delivery_range} darba dienu laikā
+    draft: Melnraksts
+    eligibility_errors:
+      messages:
+        no_matching_channel: Šis kupona kods nav derīgs šim pārdošanas kanālam.
+        no_matching_market: Šis kupona kods nav derīgs jūsu tirgū.
+        wrong_country: Šis kupona kods nav derīgs jūsu valstī
+    email: E-pasts
+    error: Kļūda
+    error_user_destroy_with_orders: Lietotāju, kas saistīts ar pasūtījumiem, nevar dzēst
+    error_user_does_not_have_any_store_credits: Lietotājam nav pieejams neviens veikala kredīts
+    errors:
+      messages:
+        cannot_delete_default_channel: Noklusējuma kanālu nevar dzēst. Vispirms iestatiet citu kanālu kā noklusējuma.
+        channel_store_mismatch: jāpieder tam pašam veikalam
+        invalid_order_routing_rule: nav reģistrēts pasūtījumu maršrutēšanas noteikums
+        invalid_order_routing_strategy: nav reģistrēta pasūtījumu maršrutēšanas stratēģija
+        store_association_can_not_be_changed: Veikala piesaisti nevar mainīt
+        store_is_already_set: Veikals jau ir iestatīts
+    expired: Beidzies
+    export_mailer:
+      export_done:
+        message: Lielisks darbs, jūsu eksports ir gatavs! Lūdzu, izmantojiet zemāk esošo saiti, lai to lejupielādētu.
+        subject: Jūsu eksports %{export_number} tika veiksmīgi apstrādāts!
+      greeting: Sveiki, %{user_name}!
+    field: Lauks
+    first_name: Vārds
+    flat_percent: Pamatprocents
+    flat_rate_per_order: Pamatlikme (par pasūtījumu)
+    flexible_rate: Elastīga likme
+    free: Bezmaksas
+    gateway: Gateway
+    gateway_error: Gateway kļūda
+    gift_card: Dāvanu karte
+    gift_card_already_redeemed: Dāvanu karte jau ir izmantota.
+    gift_card_applied: Dāvanu karte tika veiksmīgi pielietota jūsu pasūtījumam!
+    gift_card_customer_not_logged_in: Dāvanu karti nevar pielietot kā nereģistrēts lietotājs.
+    gift_card_expired: Dāvanu kartes derīgums ir beidzies.
+    gift_card_mismatched_currency: Dāvanu karti nevar pielietot ar pašreizējo valūtu.
+    gift_card_mismatched_customer: Šī dāvanu karte ir saistīta ar citu lietotāju.
+    gift_card_not_found: Dāvanu karte netika atrasta.
+    gift_card_removed: Dāvanu karte tika veiksmīgi noņemta no jūsu pasūtījuma
+    gift_card_using_store_credit_error: Jūs nevarat pielietot dāvanu karti pēc veikala kredīta pielietošanas.
+    height: Augstums
+    i18n:
+      this_file_language: Latvijas (LV)
+    idempotency_key_reused: Šī Idempotency-Key jau ir izmantota ar citiem pieprasījuma parametriem.
+    image: Attēls
+    import: Importēt
+    in_stock: Pieejams noliktavā
+    internal_note: Iekšējā piezīme
+    inventory: Inventūra
+    invitation_mailer:
+      greeting: Sveiki, %{user_name}!
+      invitation_accepted:
+        body: "%{invitee_name} ir pieņēmis jūsu uzaicinājumu pievienoties %{resource_name}"
+        subject: "%{invitee_name} ir pieņēmis jūsu uzaicinājumu pievienoties %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} jūs uzaicināja pievienoties %{resource_name}"
+        link_description: 'Lai pieņemtu šo uzaicinājumu, lūdzu, noklikšķiniet uz zemāk esošās saites:'
+        subject: Uzaicinājums pievienoties %{resource_name}
+    iso: ISO Alpha-2
+    item: Prece
+    key: Atslēga
+    kind: Veids
+    label: Etiķete
+    last_name: Uzvārds
+    line_item: Pasūtījuma pozīcija
+    line_items: Pasūtījuma pozīcijas
+    link: Saite
+    locale: Lokalizācija
+    locale_not_supported_by_store: šis veikals neatbalsta
+    manual: Manuāls
+    market: Tirgus
+    me_no_current_user: Neviens administratora lietotājs neautentificēja šo pieprasījumu
+    media: Multivide
+    meta_description: Meta apraksts
+    meta_keywords: Meta atslēgas vārdi
+    min_quantity: Min. daudzums
+    month: Mēnesis
+    name: Nosaukums
+    new_variant: Jauns variants
+    no_cc_type: Nav
+    none: Nekas
+    number: Numurs
+    on_hand: Ir uz vietas
+    only_active_products_can_be_added_to_cart: Melnraksta un arhivētus produktus nevar pievienot grozam, lūdzu, vispirms atzīmējiet produktu kā aktīvu.
+    option_name: Opcijas nosaukums
+    option_type: Option Type
+    option_value: Option Value
+    options: Iespējas
+    or: vai
+    order: Pasūtījums
+    order_canceled: Pasūtījums atcelts
+    order_routing:
+      strategies:
+        legacy: Mantotā
+        rules: Noteikumi (sakārtoti)
+    order_summary: Pasūtījuma apkopojums
+    orders: Pasūtījumi
+    out_of_stock: Izpārdots
+    password: Parole
+    path: Ceļš
+    payment: Maksājums
+    payment_method: Maksājuma veids
+    payment_methods: Maksājuma veidi
+    payment_source: Maksājuma avots
+    phone: Telefons
+    price: Cena
+    price_range: Price Range
+    price_rules:
+      channel_rule:
+        description: Piemērot cenas atkarībā no pārdošanas kanāla
+      customer_group_rule:
+        description: Pielietot cenas konkrētām klientu grupām
+    price_sack: Price Sack
+    prices: Cenas
+    privacy_policy: Privātuma politika
+    processing: Notiek apstrāde
+    product: Produkts
+    product_translations: Produktu tulkojumi
+    products: Produkti
+    products_cannot_be_shipped: Šobrīd mēs nevaram piegādāt %{product_names} uz jūsu pašreizējo atrašanās vietu. Lūdzu, mainiet piegādes adresi vai noņemiet %{product_names} no sava groza.
+    promotion_already_used: Nevar dzēst akciju, kas jau ir pielietota
+    promotion_label: Akcija (%{name})
+    promotion_rule_types:
+      category:
+        description: Pasūtījums ietver produktus norādītajās kategorijās
+        name: Kategorijas
+      channel:
+        description: Ierobežot līdz pasūtījumiem, kas veikti norādītajos kanālos
+        name: Kanāls(-i)
+      country:
+        description: Ierobežot līdz pasūtījumiem ar piegādes adresi konkrētā valstī
+        name: Valsts
+      currency:
+        description: Ierobežot līdz pasūtījumiem konkrētā valūtā
+        name: Valūta
+      customer:
+        description: Pieejams tikai norādītajiem klientiem
+        name: Klienti
+      customer_group:
+        description: Pieejams tikai klientiem norādītajā(-s) klientu grupā(-s)
+        name: Klientu grupa(-s)
+      customer_logged_in:
+        description: Pieejams tikai pieteikušamies klientiem
+        name: Tikai pieteikušies klienti
+      market:
+        description: Ierobežot līdz pasūtījumiem, kas veikti norādītajos tirgos
+        name: Tirgus(-i)
+    promotions: Akcijas
+    quantity: Daudzums
+    query: Vaicājums
+    reason: Iemesls
+    received: Saņemts
+    refund: Atmaksāt
+    refund_amount: Atmaksas summa
+    registration: Reģistrācija
+    rejected: Atraidīts
+    remove: Dzēst
+    remove_gift_card_on_completed_order_error: Jūs nevarat noņemt dāvanu karti pēc pasūtījuma veikšanas
+    resellable: Pārdodams atkārtoti
+    resend: Pārsūtīt
+    response_code: Atbildes kods
+    return: atgriezties
+    returned: Atgriezts
+    returns_policy: Atgriešanas politika
+    row: Rinda
+    rules: Noteikumi
+    scope: Scope
+    selected_quantity_not_available: izvēlētais no %{item} nav pieejams.
+    ship: sūtīt
+    ship_address: Piegādes adrese
+    shipment: Piegāde
+    shipped: Nosūtīts
+    shipping: Piegāde
+    shipping_address: Piegādes adrese
+    shipping_policy: Piegādes politika
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (iesk. %{tax_amount} %{tax_rate_name})"
+    status: Stāvoklis
+    stock_transfer:
+      errors:
+        must_have_variant: Jāpievieno vismaz viens variants
+        same_location: nevar būt tāda pati kā galamērķa atrašanās vieta
+        variants_unavailable: Daži varianti nav pieejami atrašanās vietā %{stock}
+    store: Veikals
+    store_credit:
+      allocated: Pievienots
+      authorized: Autorizēts
+      captured: Izmantots
+      credit: Kredīts
+      eligible: Atbilstošs
+    store_credit_name: Veikala kredīts
+    store_credit_payment_method:
+      currency_mismatch: Veikala kredīta valūta neatbilst pasūtījuma valūtai
+      insufficient_authorized_amount: Nevar iekasēt vairāk par autorizēto summu
+      insufficient_funds: Atlikušais veikala kredīta apjoms nav pietiekams
+      successful_action: Veiksmīga veikala kredīta darbība %{action}
+      unable_to_credit: 'Nevar kreditēt kodu: %{auth_code}'
+      unable_to_find: Nevarēja atrast veikala kredītu
+      unable_to_find_for_action: 'Nevarēja atrast veikala kredītu autorizācijas kodam: %{auth_code} darbībai: %{action}'
+      unable_to_void: 'Nevar anulēt kodu: %{auth_code}'
+    tags: Birkas
+    tax: Nodokļi
+    tax_category: Nodokļu kategorija
+    terms_of_service: Pakalpojumu noteikumi
+    total: Kopā
+    tracking: Tracking
+    type: Tips
+    unable_to_connect_to_gateway: Nav spējīgs pievienoties gateway.
+    updated_at: Atjaunināts
+    url: URL
+    user: Lietotājs
+    validation:
+      must_be_int: must be an integer
+    value: Vērtība
+    variant: Variants
+    variants: Varianti
+    verified: Apstiprināts
+    void: Void
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Atspējots
+        heading: Tīmekļāķa galapunkts atspējots
+        instructions: Lūdzu, pārbaudiet galapunkta URL un pakalpojumu, pēc tam atkārtoti to iespējojiet sadaļā Iestatījumi → Izstrādātāji → Tīmekļāķi.
+        message: Tīmekļāķa galapunkts "%{endpoint_name}" tika automātiski atspējots pēc atkārtotām piegādes neveiksmēm.
+        name_label: Nosaukums
+        reason_label: Iemesls
+        subject: 'Tīmekļāķa galapunkts atspējots: %{endpoint_name}'
+        url_label: URL
+    weight: Svars
+    weight_unit: Svara mērvienība
+    width: Platums
+    year: Gads
+    zip: Pasta indekss

@@ -6,9 +6,6 @@ module Spree
       class ClaimLineItemSerializer < BaseSerializer
         typelize quantity: :number,
                  send_replacement: :boolean,
-                 refund_amount: :string,
-                 display_refund_amount: :string,
-                 paid_amount: :string,
                  description: [:string, nullable: true],
                  variant_id: [:string, nullable: true],
                  replacement_variant_id: [:string, nullable: true],
@@ -16,32 +13,12 @@ module Spree
 
         attributes :quantity, :send_replacement, :description
 
-        attribute :refund_amount do |line|
-          line.refund_amount.to_s
-        end
-
-        # What the customer actually paid for these units — the ceiling the
-        # resolve workflow enforces, and what the dashboard offers when the
-        # claim carries no explicit amount.
-        attribute :paid_amount do |line|
-          line.paid_amount.to_s
-        end
-
-        attribute :display_refund_amount do |line|
-          line.display_refund_amount.to_s
-        end
-
-        attribute :variant_id do |line|
-          line.variant&.prefixed_id
-        end
-
-        attribute :replacement_variant_id do |line|
-          line.replacement_variant&.prefixed_id
-        end
-
-        attribute :line_item_id do |line|
-          line.line_item&.prefixed_id
-        end
+        # paid_amount is what the customer actually paid for these units, tax
+        # included — the ceiling the resolve workflow enforces, and what the
+        # dashboard offers when the claim carries no explicit amount.
+        money_attributes :refund_amount, :paid_amount, :pre_tax_amount, :included_tax_total,
+                         :additional_tax_total, :tax_total, :display_refund_amount
+        prefixed_id_attributes :variant, :replacement_variant, :line_item
 
         one :variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('variant') }
       end

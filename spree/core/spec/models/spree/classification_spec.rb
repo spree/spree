@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Classification, type: :model do
+  describe ProductCategory, type: :model do
     let(:store) { @default_store }
 
     # Regression test for #3494
@@ -22,19 +22,14 @@ module Spree
     end
 
     def positions_to_be_valid(category)
-      positions = category.reload.classifications.map(&:position)
-      expect(positions).to eq((1..category.classifications.count).to_a)
-    end
-
-    it 'has a valid fixtures' do
-      expect positions_to_be_valid(taxon_with_5_products)
-      expect(Spree::ProductCategory.count).to eq 5
+      positions = category.reload.product_categories.map(&:position)
+      expect(positions).to eq((1..category.product_categories.count).to_a)
     end
 
     context 'removing product from category' do
       before do
         p = taxon_with_5_products.products[1]
-        expect(p.classifications.first.position).to eq(2)
+        expect(p.product_categories.first.position).to eq(2)
         taxon_with_5_products.products.destroy(p)
       end
 
@@ -59,7 +54,7 @@ module Spree
     context 'removing category from product' do
       before do
         p = taxon_with_5_products.products[1]
-        p.taxons.destroy(taxon_with_5_products)
+        p.categories.destroy(taxon_with_5_products)
         p.save!
       end
 
@@ -68,10 +63,10 @@ module Spree
       end
     end
 
-    context "replacing product's taxons" do
+    context "replacing product's categories" do
       before do
         p = taxon_with_5_products.products[1]
-        p.taxons = []
+        p.categories = []
         p.save!
       end
 
@@ -82,7 +77,7 @@ module Spree
 
     context 'destroying classification' do
       before do
-        classification = taxon_with_5_products.classifications[1]
+        classification = taxon_with_5_products.product_categories[1]
         classification.destroy
       end
 
@@ -97,7 +92,7 @@ module Spree
 
       # The direct category-side classification_count was dropped in 6.0; the category
       # now tracks membership via the descendant-inclusive products_count, kept in
-      # sync by the Classification create/destroy callbacks (a leaf category's
+      # sync by the ProductCategory create/destroy callbacks (a leaf category's
       # products_count equals its direct count).
       describe 'products_count on category' do
         it 'increments when a classification is created' do
@@ -111,12 +106,6 @@ module Spree
           expect {
             classification.destroy
           }.to change { category.reload.products_count }.from(1).to(0)
-        end
-
-        it 'correctly counts multiple classifications' do
-          products = create_list(:product, 3)
-          products.each { |p| create(:product_category, category: category, product: p) }
-          expect(category.reload.products_count).to eq(3)
         end
       end
 
@@ -132,12 +121,6 @@ module Spree
           expect {
             classification.destroy
           }.to change { product.reload.categories_count }.from(1).to(0)
-        end
-
-        it 'correctly counts multiple classifications' do
-          taxons = create_list(:category, 3)
-          taxons.each { |t| create(:product_category, category: t, product: product) }
-          expect(product.reload.categories_count).to eq(3)
         end
       end
     end

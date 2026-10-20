@@ -13,7 +13,6 @@ module Spree
 
     encrypts :secret_key, deterministic: true if Rails.configuration.active_record.encryption.include?(:primary_key)
 
-    belongs_to :store, class_name: 'Spree::Store'
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 
     validates :url, presence: true
@@ -31,10 +30,44 @@ module Spree
     before_save :clear_disabled_state_when_reactivated
 
     self.whitelisted_ransackable_attributes = %w[name url active]
+    search_by :url
 
     scope :active, -> { where(active: true) }
     scope :inactive, -> { where(active: false) }
     scope :enabled, -> { active.where(disabled_at: nil) }
+
+    # Whether +url+ targets a host the operator trusts despite it resolving to
+    # a private address — e.g. a storefront Service in the same Kubernetes
+    # cluster. Set via +Spree::Api::Config.webhooks_allowed_internal_hosts+
+    # (SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS): an entry matches that exact
+    # host, or with a leading dot (".svc.cluster.local") any host under it.
+    # Matching is case-insensitive. Operator config only, so a store admin
+    # can never point a webhook at an internal address.
+    #
+    # @param url [String]
+    # @return [Boolean]
+    def self.allowed_internal_host?(url)
+      host = URI.parse(url.to_s).hostname&.downcase
+      return false if host.blank?
+
+      allowed_internal_hosts.any? do |entry|
+        entry.start_with?('.') ? host.end_with?(entry) : host == entry
+      end
+    rescue URI::InvalidURIError
+      false
+    end
+
+    # Spree::Api::Config only exists when spree_api is loaded; without it no
+    # webhook is ever delivered, so there is nothing to allow.
+    def self.allowed_internal_hosts
+      return [] unless defined?(Spree::Api::Config)
+
+      Array(Spree::Api::Config.webhooks_allowed_internal_hosts).filter_map do |entry|
+        entry = entry.to_s.strip.downcase
+        entry if entry.present? && entry != '.'
+      end
+    end
+    private_class_method :allowed_internal_hosts
 
     # Returns the plaintext `secret_key` only on the create response.
     #
@@ -50,18 +83,16 @@ module Spree
     # Number of consecutive failed deliveries before auto-disabling
     AUTO_DISABLE_THRESHOLD = 15
 
-    # Events whose payload carries a live customer credential (a password
-    # reset token). Receiving one is as good as holding the customer's account,
-    # so they reach only an endpoint that names them — never through `*` or a
-    # pattern — and the API asks for customer write access to point one at them.
-    CREDENTIAL_EVENTS = %w[customer.password_reset_requested].freeze
-
-    # Check if this endpoint is subscribed to a specific event
+    # Check if this endpoint is subscribed to a specific event.
+    #
+    # Events whose payload carries a live credential (a password reset token)
+    # reach only an endpoint that names them — never through `*` or a pattern —
+    # since receiving one is as good as holding the account.
     #
     # @param event_name [String] the event name to check
     # @return [Boolean]
     def subscribed_to?(event_name)
-      return subscriptions.to_a.include?(event_name) if CREDENTIAL_EVENTS.include?(event_name)
+      return subscriptions.to_a.include?(event_name) if Spree::Events.catalog.credential?(event_name)
       return true if subscriptions.blank? || subscriptions.include?('*')
 
       subscriptions.any? do |subscription|
@@ -74,11 +105,11 @@ module Spree
       end
     end
 
-    # Whether this endpoint receives customer credentials.
+    # The credential-carrying events this endpoint names.
     #
-    # @return [Boolean]
-    def receives_credentials?
-      (subscriptions.to_a & CREDENTIAL_EVENTS).any?
+    # @return [Array<Spree::Events::Catalog::Entry>]
+    def credential_subscriptions
+      Spree::Events.catalog.credential_events(subscriptions.to_a)
     end
 
     # Returns all events this endpoint is subscribed to
@@ -168,6 +199,8 @@ module Spree
     end
 
     def url_must_not_resolve_to_private_ip
+      return if self.class.allowed_internal_host?(url)
+
       uri = URI.parse(url)
       blacklist = SsrfFilter::IPV4_BLACKLIST + SsrfFilter::IPV6_BLACKLIST
       addresses = Resolv.getaddresses(uri.host)
