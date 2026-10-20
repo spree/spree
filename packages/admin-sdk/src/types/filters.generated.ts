@@ -212,9 +212,10 @@ export type LineItemFields = Filter.RangeFilters<'additional_tax_total' | 'adjus
   & Filter.RangeFilters<'quantity', number>
 
 export type MarketFields = Filter.RangeFilters<'created_at' | 'updated_at'>
-  & Filter.TextFilters<'currency' | 'default_locale' | 'name'>
+  & Filter.TextFilters<'currency' | 'name'>
   & Filter.IdFilters<'id'>
   & Filter.RangeFilters<'position', number>
+  & Filter.EnumFilters<'default_locale', Filter.LocaleCode>
 
 export type MediaFields = Filter.TextFilters<'alt'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -236,9 +237,10 @@ export type OptionValueFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'market_id' | 'order_group_id' | 'seller_id'>
   & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
   & Filter.BooleanFilters<'considered_risky'>
-  & Filter.TextFilters<'coupon_code' | 'currency' | 'email' | 'locale' | 'number' | 'po_number'>
+  & Filter.TextFilters<'coupon_code' | 'currency' | 'email' | 'number' | 'po_number'>
   & Filter.RangeFilters<'total_quantity', number>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
+  & Filter.EnumFilters<'locale', Filter.LocaleCode>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'payment_status', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>

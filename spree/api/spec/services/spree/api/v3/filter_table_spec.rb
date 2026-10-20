@@ -46,6 +46,11 @@ RSpec.describe Spree::Api::V3::FilterTable do
       )
     end
 
+    it 'publishes locale columns as the shared LocaleCode type' do
+      expect(table['attributes']).to include('locale' => { 'code' => 'LocaleCode' })
+      expect(described_class.for_model(Spree::Market, nil).attributes).to include('default_locale' => { 'code' => 'LocaleCode' })
+    end
+
     it 'names associated tables instead of nesting them' do
       expect(table['associations']).to include('line_items' => 'LineItem', 'customer' => 'Customer')
     end

@@ -13945,7 +13945,7 @@ paths:
           |---|---|---|
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `default_locale` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `default_locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -18707,7 +18707,7 @@ paths:
           | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `locale` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `market_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -83456,7 +83456,8 @@ components:
       attributes:
         created_at: datetime
         currency: text
-        default_locale: text
+        default_locale:
+          code: LocaleCode
         id: id
         name: text
         position: integer
@@ -83532,7 +83533,8 @@ components:
           - shipped
         id: id
         item_total: decimal
-        locale: text
+        locale:
+          code: LocaleCode
         market_id: id
         number: text
         order_group_id: id
