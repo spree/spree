@@ -719,7 +719,7 @@ When displaying amount or percentage fields please always use `<InputGroup>` wit
 
 ### @spree/core — Universal code
 
-Published package for code that is not tied to HTTP or a framework: the code lists (`pnpm generate:code-lists`), money helpers and the filter vocabulary. Code any client could use — a conversion, a format, a validation rule shared with the server — goes here, never into an SDK or a dashboard package. No runtime dependencies. `@spree/sdk-core` re-exports it and the SDKs bundle it, offering its code lists and money helpers under the same names as before. The code generators read it from source (the `@spree/source` export condition), so they run before anything is built.
+Published package for code that is not tied to HTTP or a framework: the code lists (`pnpm generate:code-lists`), unit systems, display names, money helpers (arithmetic, percentages, reading typed amounts) and the filter vocabulary. The dashboard packages import it directly; `@spree/dashboard-core` still re-exports its money helpers for plugin authors. Code any client could use — a conversion, a format, a validation rule shared with the server — goes here, never into an SDK or a dashboard package. No runtime dependencies. `@spree/sdk-core` re-exports it and the SDKs bundle it, offering its code lists and money helpers under the same names as before. The code generators read it from source (the `@spree/source` export condition), so they run before anything is built.
 
 ### @spree/sdk-core — Shared HTTP Layer
 

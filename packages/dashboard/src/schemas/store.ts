@@ -2,15 +2,6 @@ import { WeightUnit } from '@spree/admin-sdk'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
-// Labels live in `en.json` under `admin.store.unit_systems.*` and
-// `admin.store.weight_units.*`. Consumers translate at render time.
-export type UnitSystem = 'metric' | 'imperial'
-export const UNIT_SYSTEMS: readonly UnitSystem[] = ['metric', 'imperial']
-export const WEIGHT_UNITS: Record<UnitSystem, readonly WeightUnit[]> = {
-  metric: ['kg', 'g'],
-  imperial: ['lb', 'oz'],
-}
-
 // Store-wide storefront posture. Unlike the channel field there is no blank
 // "inherit" option — the store is the terminal fallback in the resolution
 // chain, so it always holds a concrete value. Labels live in `en.json` under

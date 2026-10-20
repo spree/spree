@@ -206,6 +206,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.9.1(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(react-hook-form@7.90.0(@types/react@19.3.0)(react@19.3.1))(zod@4.6.7)
+      '@spree/core':
+        specifier: workspace:^
+        version: link:../core
       '@tanstack/react-hotkeys':
         specifier: ^0.14.3
         version: 0.14.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -360,6 +363,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.9.1(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(react-hook-form@7.90.0(@types/react@19.3.0)(react@19.3.1))(zod@4.6.7)
+      '@spree/core':
+        specifier: workspace:^
+        version: link:../core
       '@tailwindcss/vite':
         specifier: ^4.2.4
         version: 4.3.3(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
@@ -582,6 +588,9 @@ importers:
       '@fontsource-variable/geist-mono':
         specifier: 5.3.0
         version: 5.3.0
+      '@spree/core':
+        specifier: workspace:^
+        version: link:../core
       '@tanstack/react-hotkeys':
         specifier: ^0.14.3
         version: 0.14.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)

@@ -663,7 +663,9 @@ jobs:
     # same-push admin-sdk version bump must land on npm first, or installs of
     # the just-published dashboard packages fail until it does. (release-cli
     # waits on this job, completing the admin-sdk → dashboard → cli chain.)
-    needs: [check, scaffolded-app, release-admin-sdk]
+    # The same holds for @spree/core, which dashboard-core, dashboard-ui and
+    # dashboard depend on.
+    needs: [check, scaffolded-app, release-admin-sdk, release-core]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:

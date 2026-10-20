@@ -1,11 +1,9 @@
-// Normalize a merchant's locale-formatted money input into the canonical
-// decimal string the Admin API expects (`"1234.56"` — period decimal, no
-// grouping). Industry-standard: localization is a presentation concern, so the
-// dashboard converts here, in the browser, and never relies on the server to
-// parse comma-vs-period. See docs/plans/5.5-client-side-money-normalization.md.
-//
-// The locale is the admin's own (`useMoneyLocale`), the same one the field is
-// displayed in, so a value reads back exactly as it was shown.
+// Reading amounts people type. Spree accepts amounts only as canonical decimal
+// strings ("1234.56": a period decimal, no grouping), and never parses a
+// comma or a period on the server, because how a number is written is a
+// presentation concern. A client converts what was typed in the reader's own
+// format, in the same locale the field is displayed in, so a value reads back
+// exactly as it was shown.
 
 /**
  * Derives a locale's decimal and group separators via `Intl`. `fr` groups with
@@ -82,4 +80,27 @@ export function normalizeMoneyInput(raw: string | null | undefined, locale: stri
 
   if (canonical === '' || canonical === '.') return ''
   return negative ? `-${canonical}` : canonical
+}
+
+/**
+ * A currency's symbol and decimal separator in a locale, for labelling an
+ * amount input ("€" and "," for EUR in `de`). An unknown currency falls back
+ * to its code and a period.
+ */
+export function currencyParts(
+  currencyCode: string,
+  locale: string,
+): { symbol: string; decimal: string } {
+  try {
+    const parts = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currencyCode,
+    }).formatToParts(1234.56)
+    return {
+      symbol: parts.find((p) => p.type === 'currency')?.value ?? currencyCode,
+      decimal: parts.find((p) => p.type === 'decimal')?.value ?? '.',
+    }
+  } catch {
+    return { symbol: currencyCode, decimal: '.' }
+  }
 }

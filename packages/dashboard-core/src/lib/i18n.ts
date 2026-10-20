@@ -1,6 +1,6 @@
+import { intlDisplayName } from '@spree/core'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import { intlDisplayName } from '../hooks/use-display-name'
 // Relative path, not `@/...`: dashboard-core ships source; the consuming
 // project's `@/*` alias is theirs alone (see Phase 1's rationale).
 import en from '../locales/en.json'

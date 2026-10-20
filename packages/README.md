@@ -20,7 +20,7 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 | [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (1.x) · **Release Candidate** (2.0) | TypeScript client for the customer-facing **Store API v3**. 1.x targets Spree 5.x; 2.0 targets Spree 6.0. |
 | [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Release Candidate** (1.0) | TypeScript client for the **Admin API v3**. |
 | [`seller-sdk`](./seller-sdk) | [`@spree/seller-sdk`](https://www.npmjs.com/package/@spree/seller-sdk) | **Release Candidate** (1.0) | TypeScript client for the **Seller API**, used by marketplace seller panels. |
-| [`core`](./core) | [`@spree/core`](https://www.npmjs.com/package/@spree/core) | **Developer Preview** (0.x) | Universal code with no HTTP: country, currency, locale and unit code lists, exact money arithmetic, the filter vocabulary. |
+| [`core`](./core) | [`@spree/core`](https://www.npmjs.com/package/@spree/core) | **Developer Preview** (0.x) | Universal code with no HTTP: country, currency, locale and unit code lists, unit systems, display names, exact money arithmetic and input parsing, the filter vocabulary. |
 | [`sdk-core`](./sdk-core) | — | **Internal** | Shared HTTP, retry and error layer the SDKs bundle. |
 | [`dashboard`](./dashboard) | [`@spree/dashboard`](https://www.npmjs.com/package/@spree/dashboard) | **Release Candidate** (1.0) | The Spree 6.0 admin dashboard, a React single-page app. Replaces the legacy Rails `spree/admin` engine. |
 | [`dashboard-core`](./dashboard-core) | [`@spree/dashboard-core`](https://www.npmjs.com/package/@spree/dashboard-core) | **Release Candidate** (1.0) | Dashboard framework: registries (table, nav, slot, settings-nav), providers, shared hooks, `defineDashboardPlugin`. The extension API. |
@@ -63,7 +63,7 @@ The three packages always release together under one version, and ship with Spre
 
 ### `@spree/core` — Universal code
 
-The code every Spree client shares, whatever it runs on: code lists generated from the API references, money helpers that work on decimal strings without floating point, and the filter types. No dependencies and no network calls. The SDKs bundle it and re-export its code lists and money helpers, so SDK users never install it separately. It is the home for any code a client could use — a conversion, a format, a rule shared with the server — and the base for moving more of Spree to TypeScript.
+The code every Spree client shares, whatever it runs on: code lists generated from the API references, unit systems, display names, money helpers that work on decimal strings without floating point (arithmetic, percentages, reading typed amounts), and the filter types. The dashboard packages depend on it directly. No dependencies and no network calls. The SDKs bundle it and re-export its code lists and money helpers, so SDK users never install it separately. It is the home for any code a client could use — a conversion, a format, a rule shared with the server — and the base for moving more of Spree to TypeScript.
 
 ### `@spree/sdk-core` — Shared internals
 

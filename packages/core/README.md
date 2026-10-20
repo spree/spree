@@ -13,7 +13,10 @@ npm install @spree/core
 ## Contents
 
 - [Code lists](#code-lists) — countries, currencies, locales, weight and dimension units
-- [Money](#money) — exact arithmetic and formatting for decimal-string amounts
+- [Unit systems](#unit-systems) — which weight units belong to metric and imperial
+- [Display names](#display-names) — country, currency and language names in any language
+- [Money](#money) — exact arithmetic, percentages and formatting for decimal-string amounts
+- [Reading typed amounts](#reading-typed-amounts) — turning "1.234,56" into "1234.56"
 - [Filters](#filters) — types for the queries Spree list endpoints accept
 - [Compatibility](#compatibility)
 
@@ -42,6 +45,32 @@ const options = Object.values(WeightUnit); // ['g', 'kg', 'lb', 'oz']
 ```
 
 A locale with a region uses a hyphen in its value and an underscore in its key, so `LocaleCode.pt_BR` is `'pt-BR'`.
+
+## Unit systems
+
+A Spree store uses either the metric or the imperial system. `UNIT_SYSTEM_WEIGHT_UNITS` lists the weight units each one offers, the usual one first, so a settings screen can offer only the units that fit:
+
+```typescript
+import { UNIT_SYSTEMS, UNIT_SYSTEM_WEIGHT_UNITS, type UnitSystem } from '@spree/core';
+
+UNIT_SYSTEMS; // ['metric', 'imperial']
+UNIT_SYSTEM_WEIGHT_UNITS.metric; // ['kg', 'g']
+UNIT_SYSTEM_WEIGHT_UNITS.imperial; // ['lb', 'oz']
+```
+
+## Display names
+
+`intlDisplayName` names a country, currency, language or other code in the reader's language, falling back to English:
+
+```typescript
+import { intlDisplayName } from '@spree/core';
+
+intlDisplayName('region', 'de', 'US'); // 'Vereinigte Staaten'
+intlDisplayName('currency', 'fr', 'JPY'); // 'yen japonais'
+intlDisplayName('language', 'en', 'pt-BR'); // 'Brazilian Portuguese'
+```
+
+It answers `undefined` when the runtime has no name for a code or the code is malformed, so you choose the fallback, usually the code itself: `intlDisplayName('region', locale, code) ?? code`.
 
 ## Money
 
@@ -74,6 +103,22 @@ formatMoney(subtotal, 'USD', 'en-US'); // '$25.00'
 | `isDecimalString(value)` | Whether a value is a plain decimal string. `'19.99'` is; `'19,99'` and the number `19.99` are not. |
 | `decimalPlaces(currency)` | How many decimals a currency uses: 2 for USD, 0 for JPY, 3 for KWD. An unknown code answers 2. |
 | `formatMoney(amount, currency, locale?, options?)` | Formats an amount for display in a language. |
+| `isPositiveMoney(value)` | Whether an amount is above zero. Blank or malformed values are not. |
+
+### Percentages and shares
+
+Rates travel as decimal strings too. These helpers convert and apply them without floating point, rounding the result once, half away from zero, to the currency's decimals:
+
+```typescript
+import { percentOf, prorateMoney, fractionToPercent, percentToFraction } from '@spree/core';
+
+percentOf('19.99', '10', 'USD'); // '2.00'  — 10% of $19.99
+prorateMoney('10.00', 1, 3, 'USD'); // '3.33'  — the share 1 of 3 units carries
+fractionToPercent('0.23'); // '23'    — a stored rate as a merchant reads it
+percentToFraction('7.25'); // '0.0725' — a typed percentage as the API stores it
+```
+
+`shiftDecimalPoint(value, places)` moves the decimal point by whole places, exactly: `shiftDecimalPoint('0.077', 2)` is `'7.7'`.
 
 ### Nothing is rounded away
 
@@ -104,6 +149,23 @@ formatMoney('0.0125', 'USD', 'en-US', { unitPrice: true }); // '$0.0125'
 - An amount that rounds to zero shows no minus sign: `'-0.001'` formats as `'$0.00'`.
 
 `CURRENCY_EXPONENTS` exposes the full currency decimals table. The Spree server reads the same table, so the server and your client always agree on a currency's decimals.
+
+## Reading typed amounts
+
+People type amounts in their own number format: a German writes `1.234,56`, a French person `1 234,56`. Spree accepts only `1234.56`, and never guesses on the server. Convert input in the same language the field is displayed in:
+
+```typescript
+import { normalizeMoneyInput, currencyParts } from '@spree/core';
+
+normalizeMoneyInput('1.234,56', 'de'); // '1234.56'
+normalizeMoneyInput('1 234,56', 'fr'); // '1234.56'
+normalizeMoneyInput('19.50', 'de'); // '19.50' — a period before two digits is a decimal point
+normalizeMoneyInput('  ', 'en'); // ''
+
+currencyParts('EUR', 'de'); // { symbol: '€', decimal: ',' } — to label the input
+```
+
+The result is always a plain decimal string or `''`, never a number, so nothing is lost on the way to the API.
 
 ## Filters
 

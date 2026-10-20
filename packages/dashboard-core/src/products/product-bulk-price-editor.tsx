@@ -1,12 +1,11 @@
 import type { CurrencyCode } from '@spree/admin-sdk'
+import { currencyParts, normalizeMoneyInput } from '@spree/core'
 import type { ProductFormValues, VariantPriceFormValues } from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useMoneyLocale } from '../hooks/use-money-locale'
-import { currencyParts } from '../lib/currency-parts'
-import { normalizeMoneyInput } from '../lib/normalize-money'
 import { composeOptionsText } from '../products/variants-matrix'
 import { useFormOptionTypes as useOptionTypes } from './use-product-form-data'
 
