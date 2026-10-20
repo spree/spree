@@ -72,6 +72,10 @@ import {
   useUpdateProductType,
 } from '../../../../hooks/use-product-types'
 import '../../../../tables/product-types'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 
 const productTypeFormSchema = z.object({
   name: z.string().min(1),
@@ -279,6 +283,7 @@ function EditProductTypeSheet({
   const { t } = useTranslation()
   const { data: productType, isLoading } = useProductType(id)
   const updateMutation = useUpdateProductType(id)
+  const customFields = useCustomFieldsDraft('product_type', id)
 
   const form = useForm<ProductTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -306,11 +311,16 @@ function EditProductTypeSheet({
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await updateMutation.mutateAsync({
-        ...withSortOrder(values),
-        ...extensionSubmitValues('product_type', form),
-      })
-      form.reset(values)
+      // The record saves first and is marked clean, so a retry after a failed
+      // custom field save sends only the custom fields.
+      if (form.formState.isDirty) {
+        await updateMutation.mutateAsync({
+          ...withSortOrder(values),
+          ...extensionSubmitValues('product_type', form),
+        })
+        form.reset(values)
+      }
+      if (!(await customFields.save())) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -336,6 +346,7 @@ function EditProductTypeSheet({
                 context={{ productType, mode: 'edit' }}
               />
               <ApplyToProductsSection id={id} productType={productType} />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
             </div>
             <SheetFooter>
               <Button
@@ -348,7 +359,9 @@ function EditProductTypeSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                disabled={
+                  form.formState.isSubmitting || (!form.formState.isDirty && !customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>

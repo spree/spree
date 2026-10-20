@@ -56,6 +56,10 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import {
   mediaPreviewUrl,
   mediaThumbnailUrl,
   useCreateMediaLibraryFile,
@@ -479,7 +483,8 @@ function MediaDetailSheet({
 
   const references = usage.data?.data ?? []
 
-  const isDirty = !!media && form.formState.isDirty
+  const customFields = useCustomFieldsDraft('media', media?.id ?? '')
+  const isDirty = !!media && (form.formState.isDirty || customFields.isDirty)
 
   // An explicit save, not save-on-blur: blur is invisible, so a merchant had
   // no way to tell whether their edit stuck.
@@ -487,16 +492,21 @@ function MediaDetailSheet({
     if (!media || !isDirty) return
 
     try {
-      await updateFile.mutateAsync({
-        id: media.id,
-        alt: values.alt,
-        ...extensionSubmitValues('media', form),
-      })
-      // Re-baselined against what was just saved, not the record the sheet
-      // opened with: that snapshot never refreshes, so after a save every
-      // close would otherwise ask to discard.
-      form.reset(form.getValues())
-      toastManager.add({ type: 'success', title: t('admin.messages.saved') })
+      if (form.formState.isDirty) {
+        await updateFile.mutateAsync({
+          id: media.id,
+          alt: values.alt,
+          ...extensionSubmitValues('media', form),
+        })
+        // Re-baselined against what was just saved, not the record the sheet
+        // opened with: that snapshot never refreshes, so after a save every
+        // close would otherwise ask to discard. Also keeps a retry after a
+        // failed custom field save from re-sending the file.
+        form.reset(form.getValues())
+      }
+      if (await customFields.save()) {
+        toastManager.add({ type: 'success', title: t('admin.messages.saved') })
+      }
     } catch (error) {
       if (!mapSpreeErrorsToForm(error, form.setError)) {
         toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
@@ -589,6 +599,8 @@ function MediaDetailSheet({
 
                 <Slot name="media.form_fields" context={{ media, canWrite }} />
 
+                {canWrite && <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />}
+
                 <dl className="space-y-2 text-sm">
                   <FileFact
                     label={t('admin.media_library.facts.type')}
@@ -648,8 +660,8 @@ function MediaDetailSheet({
                   <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                     {t('admin.actions.cancel')}
                   </Button>
-                  <Button type="submit" disabled={!isDirty || updateFile.isPending}>
-                    {updateFile.isPending && <Loader2Icon className="size-4 animate-spin" />}
+                  <Button type="submit" disabled={!isDirty || form.formState.isSubmitting}>
+                    {form.formState.isSubmitting && <Loader2Icon className="size-4 animate-spin" />}
                     {t('admin.actions.save')}
                   </Button>
                 </SheetFooter>

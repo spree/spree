@@ -404,9 +404,10 @@ export type ImportMappingParam = NonNullable<ImportCompleteMappingParams['mappin
 
 /**
  * Owner type passed to the generic `client.customFields(ownerType, ownerId)`
- * escape hatch. The first-class seven (products, variants, orders, customers,
- * categories, collections, option_types) have dedicated
- * `client.<resource>.customFields` accessors and don't need this.
+ * accessor. Products, variants, orders, customers, categories, collections,
+ * option types and sellers also have a dedicated
+ * `client.<resource>.customFields` accessor. A `store` owner is addressed by
+ * the current store's id.
  */
 export type CustomFieldOwnerType =
   | 'product'
@@ -417,6 +418,18 @@ export type CustomFieldOwnerType =
   | 'collection'
   | 'option_type'
   | 'seller'
+  | 'promotion'
+  | 'gift_card'
+  | 'store_credit'
+  | 'stock_transfer'
+  | 'purchase_order'
+  | 'company'
+  | 'payment_method'
+  | 'delivery_method'
+  | 'tax_rate'
+  | 'product_type'
+  | 'media'
+  | 'store'
   | (string & {})
 
 export type PromotionKind = 'coupon_code' | 'automatic'

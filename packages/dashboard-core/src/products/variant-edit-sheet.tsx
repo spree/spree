@@ -37,6 +37,7 @@ import { useTenantId } from '../providers/tenant-provider'
 import { cartonSize } from './carton-size'
 import { normalizeCustomsDescription, normalizeHsCode } from './normalize-customs'
 import { PURCHASE_UNITS } from './normalize-quantity'
+import { useSheetSaveHandlers } from './sheet-save-handlers'
 import {
   useFormCartonPackageTypes as useCartonPackageTypes,
   useFormOptionTypes as useOptionTypes,
@@ -112,6 +113,8 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
       : null
   }, [open, variantIndex, form])
 
+  const { onSave, saveAll, saving } = useSheetSaveHandlers()
+
   const variant = form.watch(`variants.${variantIndex}`)
   if (!variant) return null
 
@@ -144,8 +147,8 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
     onOpenChange(false)
   }
 
-  const handleDone = () => {
-    onOpenChange(false)
+  const handleDone = async () => {
+    if (await saveAll()) onOpenChange(false)
   }
 
   return (
@@ -712,7 +715,7 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
 
           <Slot
             name={`${formKey}.variant.form_fields`}
-            context={{ variant, variantIndex, fieldPrefix: `variants.${variantIndex}` }}
+            context={{ variant, variantIndex, fieldPrefix: `variants.${variantIndex}`, onSave }}
           />
         </div>
 
@@ -720,7 +723,7 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
           <Button type="button" variant="outline" onClick={handleCancel}>
             {t('admin.actions.cancel')}
           </Button>
-          <Button type="button" onClick={handleDone}>
+          <Button type="button" disabled={saving} onClick={handleDone}>
             {t('admin.actions.done')}
           </Button>
         </SheetFooter>

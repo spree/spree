@@ -1334,7 +1334,21 @@
             "product": "Productos",
             "category": "Categorías",
             "customer": "Clientes",
-            "variant": "Variantes"
+            "variant": "Variantes",
+            "seller": "Vendedores",
+            "collection": "Colecciones",
+            "promotion": "Promociones",
+            "gift_card": "Tarjetas de regalo",
+            "store_credit": "Créditos de tienda",
+            "stock_transfer": "Transferencias",
+            "purchase_order": "Órdenes de compra",
+            "company": "Empresas",
+            "payment_method": "Métodos de pago",
+            "delivery_method": "Métodos de entrega",
+            "tax_rate": "Tasas de impuestos",
+            "product_type": "Tipos de producto",
+            "media": "Medios",
+            "store": "Tienda"
           },
           "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo."
         },
@@ -5587,7 +5601,8 @@
         "empty_description": "Seguí detalles estructurados como material, calce o instrucciones de cuidado.",
         "empty_title": "Todavía no hay campos personalizados",
         "errors": {
-          "failed_to_save": "No se pudo guardar el campo personalizado"
+          "failed_to_save": "No se pudo guardar el campo personalizado",
+          "failed_to_load": "No se pudieron cargar los campos personalizados. Recarga la página para intentarlo de nuevo."
         },
         "manage_in_settings": "Gestionar en configuración",
         "new_definition_description": "Definí un campo personalizado para guardar información tipada y estructurada en tus {{resource}}.",

@@ -1,5 +1,12 @@
 import { expect, test } from '@playwright/test'
-import { FIXTURE_PROMO_TAXON, gotoIndex, login } from './helpers'
+import {
+  adminRequest,
+  FIXTURE_PROMO_TAXON,
+  gotoIndex,
+  login,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const PATH = (storeId: string) => `/${storeId}/settings/product-types`
 const CTA = /add product type/i
@@ -62,5 +69,23 @@ test.describe('product types', () => {
 
     // Client-side validation keeps the sheet open with an error.
     await expect(page.getByRole('heading', { name: /new product type/i })).toBeVisible()
+  })
+
+  test('saves a custom field with the product type', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'product_type', async (label) => {
+      const productType = await adminRequest<{ id: string }>(
+        page,
+        creds,
+        'post',
+        '/product_types',
+        {
+          name: `E2E Custom Field Type ${Date.now()}`,
+        },
+      )
+      const url = `${PATH(creds.store_id)}?edit=${productType.id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'Apparel')
+    })
   })
 })

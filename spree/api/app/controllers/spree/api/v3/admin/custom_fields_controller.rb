@@ -64,16 +64,37 @@ module Spree
           # store can't read or write custom fields on another store's records.
           # Users are intentionally global in Spree (`User.for_store` is a
           # no-op), so the store boundary for customer parents is enforced by
-          # the `authorize!(:show, @parent)` ability check above.
+          # the `authorize!(:update, @parent)` ability check above.
+          #
+          # Fails closed: `Spree::Base.for_store` answers the bare class when the
+          # store has no association for the model, which would search every
+          # store's records.
           def parent_relation
             klass = parent_lookup.klass
-            klass.respond_to?(:for_store) ? klass.for_store(current_store) : klass
+            return klass.where(id: current_store.id) if klass <= Spree::Store
+            return klass if klass <= Spree.customer_class
+
+            relation = klass.for_store(current_store)
+            raise ActiveRecord::RecordNotFound, 'Parent resource not found' if relation.equal?(klass)
+
+            relation
           end
 
           # Product-family parents have no scope pair of their own — their
           # custom fields are catalog data, gated by `products` like the rest
           # of the variant/option-type surface.
-          SCOPE_OVERRIDES = { 'option_type' => :products, 'variant' => :products }.freeze
+          # Parents whose own controller is gated by a scope other than their
+          # plural name share that controller's scope.
+          SCOPE_OVERRIDES = {
+            'option_type' => :products,
+            'variant' => :products,
+            'company' => :customers,
+            'stock_transfer' => :stock,
+            'purchase_order' => :purchasing,
+            'payment_method' => :settings,
+            'tax_rate' => :settings,
+            'store' => :settings
+          }.freeze
 
           # Per-parent scope check: a key holding `write_products` may write a
           # product's custom fields, `write_orders` may write an order's, etc.
@@ -104,12 +125,13 @@ module Spree
           # code reloads — `enabled_resources` is captured at boot and its
           # class references go stale. Aliases `'customer'` because the route
           # uses `customer_id` while user_class.model_name.element is `'user'`,
-          # and `'category'` because the routes expose taxons as categories
-          # (5.5 rename) while the model's element is still `'taxon'`.
+          # `'category'` because the routes expose taxons as categories
+          # (5.5 rename) while the model's element is still `'taxon'`, and
+          # `'medium'` because Rails singularizes the `media` route to `medium_id`.
           def parent_route_map
             @parent_route_map ||= Spree.custom_fields.enabled_resources.each_with_object({}) do |klass, m|
               m[klass.model_name.element.to_s] = klass.name
-            end.merge('customer' => Spree.customer_class.name, 'category' => 'Spree::Category')
+            end.merge('customer' => Spree.customer_class.name, 'category' => 'Spree::Category', 'medium' => 'Spree::Media')
           end
 
           # Returns the first segment whose `<segment>_id` is in the route,
@@ -117,8 +139,8 @@ module Spree
           # by both `set_parent` and `scoped_resource_name`.
           #
           # Read from the path only: a `store_id` or `refund_id` added to the
-          # query string or body must not switch the parent to a type that is
-          # never routed here and has no store scope to narrow it.
+          # query string or body must not switch the parent away from the record
+          # the route names.
           def parent_lookup
             return @parent_lookup if defined?(@parent_lookup)
 

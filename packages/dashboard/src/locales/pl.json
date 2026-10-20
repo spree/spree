@@ -584,7 +584,8 @@
         "empty_description": "Śledź ustrukturyzowane szczegóły, takie jak materiał, krój czy instrukcje pielęgnacji.",
         "empty_title": "Brak pól niestandardowych",
         "errors": {
-          "failed_to_save": "Nie udało się zapisać pola niestandardowego"
+          "failed_to_save": "Nie udało się zapisać pola niestandardowego",
+          "failed_to_load": "Nie udało się wczytać pól niestandardowych. Odśwież stronę, aby spróbować ponownie."
         },
         "manage_in_settings": "Zarządzaj w ustawieniach",
         "new_definition_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje dla: {{resource}}.",
@@ -1458,7 +1459,21 @@
             "product": "Produkty",
             "category": "Kategorie",
             "customer": "Klienci",
-            "variant": "Warianty"
+            "variant": "Warianty",
+            "seller": "Sprzedawcy",
+            "collection": "Kolekcje",
+            "promotion": "Promocje",
+            "gift_card": "Karty podarunkowe",
+            "store_credit": "Środki w sklepie",
+            "stock_transfer": "Transfery",
+            "purchase_order": "Zamówienia zakupu",
+            "company": "Firmy",
+            "payment_method": "Metody płatności",
+            "delivery_method": "Metody dostawy",
+            "tax_rate": "Stawki podatku",
+            "product_type": "Typy produktów",
+            "media": "Multimedia",
+            "store": "Sklep"
           },
           "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."
         },

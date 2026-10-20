@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { expect, type Page, type Route, test } from '@playwright/test'
-import { gotoIndex, login } from './helpers'
+import { gotoIndex, login, withCustomFieldDefinition } from './helpers'
 import { E2E_DIR } from './paths'
 import { createProduct, mediaCard, PRODUCTS_PATH } from './products-helpers'
 
@@ -234,6 +234,29 @@ test.describe('media library', () => {
     await usage.click()
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
       timeout: 15_000,
+    })
+  })
+
+  test('saves a custom field with the file, beside its alt text', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'media', async (label) => {
+      await page.goto(MEDIA_PATH(creds.store_id))
+      await expect(page.getByRole('heading', { name: /^media$/i })).toBeVisible({ timeout: 15_000 })
+      const name = `e2e-custom-field-${Date.now()}.png`
+      await uploadImage(page, name)
+
+      await (await findTile(page, name)).click()
+      const sheet = page.getByRole('dialog')
+      await sheet.getByLabel(label).fill('Licensed until 2027')
+      await sheet.getByRole('button', { name: /^save$/i }).click()
+      await expect(page.getByText(/^saved$/i).first()).toBeVisible({ timeout: 15_000 })
+      await sheet.getByRole('button', { name: /^cancel$/i }).click()
+
+      await page.reload()
+      await (await findTile(page, name)).click()
+      await expect(page.getByRole('dialog').getByLabel(label)).toHaveValue('Licensed until 2027', {
+        timeout: 15_000,
+      })
     })
   })
 })

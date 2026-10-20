@@ -13,6 +13,7 @@ import { BanIcon, MailIcon, PauseIcon, UndoIcon } from '@spree/dashboard-ui/icon
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EnterprisePreviewNote } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { SellerAddressCard } from '../../../../components/spree/sellers/seller-address-card'
@@ -290,6 +291,7 @@ function SellerBody({ seller }: { seller: Seller }) {
               canEdit={canEdit}
               onEdit={() => setEditingSettlement(true)}
             />
+            <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} />
             <EnterprisePreviewNote previewKey="sellers.shopify" />
             <Slot name="seller.form_sidebar" context={{ seller, canEdit }} />
           </>

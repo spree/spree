@@ -1,5 +1,12 @@
 import { expect, type Page, test } from '@playwright/test'
-import { escapeRegex, FIXTURE_PROMO_CUSTOMER_EMAIL, login, openRowMenu } from './helpers'
+import {
+  escapeRegex,
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
+  login,
+  openRowMenu,
+  saveCustomFieldOnCard,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const STORE_CREDITS_PATH = (storeId: string) => `/${storeId}/loyalty/store-credits`
 
@@ -17,6 +24,7 @@ async function issueStoreCredit(page: Page, accessToken: string, memo: string) {
     { headers, data: { amount: '40.00', currency: 'USD', memo } },
   )
   expect(created.status(), await created.text()).toBe(201)
+  return (await created.json()) as { id: string }
 }
 
 test.describe('store credits', () => {
@@ -136,5 +144,19 @@ test.describe('store credits', () => {
       .getByRole('button', { name: /^delete$/i })
       .click()
     await expect(page.locator('tr').filter({ hasText: memo })).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('records a custom field on a credit from its sheet', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'store_credit', async (label) => {
+      const credit = await issueStoreCredit(
+        page,
+        creds.accessToken,
+        `E2E custom field ${Date.now()}`,
+      )
+      await page.goto(`${STORE_CREDITS_PATH(creds.store_id)}?credit=${credit.id}`)
+      // A detail sheet with no form: the card edits and saves itself.
+      await saveCustomFieldOnCard(page, label, 'Goodwill')
+    })
   })
 })

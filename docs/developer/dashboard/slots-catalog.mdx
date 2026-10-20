@@ -120,7 +120,7 @@ On host-form pages your widget renders inside the page's `<form>` element, so a 
 | Where | The media editor sheet on the product create and edit pages, below the built-in fields |
 |---|---|
 | Use | Fields stored on one media file — a photo credit, a license, a usage restriction |
-| Context | `{ productId, media, mediaIndex, fieldPrefix }` — `media` is the row's form values, `fieldPrefix` the row's path (`media.2`); `productId` is `undefined` while creating |
+| Context | `{ productId, media, mediaIndex, fieldPrefix, onSave }` — `media` is the row's form values, `fieldPrefix` the row's path (`media.2`); `productId` is `undefined` while creating; `onSave` works as in `product.variant.form_fields`. The dashboard's own custom fields card renders here |
 | Host form | **Yes** — form key `product.media`. Bind inputs under `fieldPrefix` and register fields under `product.media` ([recipe](/developer/dashboard/recipes/custom-form-field#a-field-on-a-media-or-variant-row)) |
 
 #### `product.media.actions`
@@ -136,7 +136,7 @@ On host-form pages your widget renders inside the page's `<form>` element, so a 
 | Where | The variant editor sheet on the product create and edit pages, after the Tax section |
 |---|---|
 | Use | Fields stored on one variant — a supplier code, a fulfillment flag, a per-variant certification |
-| Context | `{ variant, variantIndex, fieldPrefix }` — `variant` is the row's form values, `fieldPrefix` the row's path (`variants.0`) |
+| Context | `{ variant, variantIndex, fieldPrefix, onSave }` — `variant` is the row's form values, `fieldPrefix` the row's path (`variants.0`); `onSave(handler)` registers an async function the sheet runs on Done, which keeps the sheet open when it resolves `false`, and returns an unregister function. A widget that writes its own record (as the dashboard's custom fields card does) saves it through `onSave`, so Done keeps it and Cancel drops it |
 | Host form | **Yes** — form key `product.variant`. Bind inputs under `fieldPrefix` and register fields under `product.variant` |
 
 #### `media.form_fields`

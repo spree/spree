@@ -581,7 +581,8 @@
         "empty_description": "تتبّع تفاصيل منظمة مثل الخامة أو المقاس أو تعليمات العناية.",
         "empty_title": "لا توجد حقول مخصصة بعد",
         "errors": {
-          "failed_to_save": "فشل حفظ الحقل المخصص"
+          "failed_to_save": "فشل حفظ الحقل المخصص",
+          "failed_to_load": "تعذّر تحميل الحقول المخصصة. أعد تحميل الصفحة للمحاولة مرة أخرى."
         },
         "manage_in_settings": "الإدارة في الإعدادات",
         "new_definition_description": "حدّد حقلاً مخصصاً لتخزين معلومات مكتوبة ومنظمة في {{resource}} الخاصة بك.",
@@ -1458,7 +1459,21 @@
             "product": "المنتجات",
             "category": "الفئات",
             "customer": "العملاء",
-            "variant": "المتغيرات"
+            "variant": "المتغيرات",
+            "seller": "البائعون",
+            "collection": "المجموعات",
+            "promotion": "العروض الترويجية",
+            "gift_card": "بطاقات الهدايا",
+            "store_credit": "أرصدة المتجر",
+            "stock_transfer": "التحويلات",
+            "purchase_order": "أوامر الشراء",
+            "company": "الشركات",
+            "payment_method": "طرق الدفع",
+            "delivery_method": "طرق التوصيل",
+            "tax_rate": "نسب الضريبة",
+            "product_type": "أنواع المنتجات",
+            "media": "الوسائط",
+            "store": "المتجر"
           },
           "read_only_help": "لا يمكن تغيير المالك بعد وجود قيم لهذا الحقل."
         },

@@ -574,7 +574,8 @@
         "empty_description": "Erfassen Sie strukturierte Details wie Material, Passform oder Pflegehinweise.",
         "empty_title": "Noch keine benutzerdefinierten Felder",
         "errors": {
-          "failed_to_save": "Benutzerdefiniertes Feld konnte nicht gespeichert werden"
+          "failed_to_save": "Benutzerdefiniertes Feld konnte nicht gespeichert werden",
+          "failed_to_load": "Benutzerdefinierte Felder konnten nicht geladen werden. Lade die Seite neu, um es erneut zu versuchen."
         },
         "manage_in_settings": "In den Einstellungen verwalten",
         "new_definition_description": "Definieren Sie ein benutzerdefiniertes Feld, um typisierte, strukturierte Informationen zu Ihren {{resource}} zu speichern.",
@@ -1440,7 +1441,21 @@
             "product": "Produkte",
             "category": "Kategorien",
             "customer": "Kunden",
-            "variant": "Varianten"
+            "variant": "Varianten",
+            "seller": "Verkäufer",
+            "collection": "Kollektionen",
+            "promotion": "Aktionen",
+            "gift_card": "Geschenkkarten",
+            "store_credit": "Guthaben",
+            "stock_transfer": "Umlagerungen",
+            "purchase_order": "Einkaufsbestellungen",
+            "company": "Firmen",
+            "payment_method": "Zahlungsmethoden",
+            "delivery_method": "Versandarten",
+            "tax_rate": "Steuersätze",
+            "product_type": "Produkttypen",
+            "media": "Medien",
+            "store": "Shop"
           },
           "read_only_help": "Der Eigentümer kann nicht mehr geändert werden, sobald Werte für dieses Feld vorhanden sind."
         },

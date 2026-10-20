@@ -52,6 +52,10 @@ import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { JurisdictionLabel } from '../../../../../components/spree/jurisdiction-label'
 import { SettingsListCard } from '../../../../../components/spree/settings-list-card'
 import { TaxCategoryLabel } from '../../../../../components/spree/tax-category-label'
@@ -279,6 +283,7 @@ function EditTaxRateSheet({
   const { t } = useTranslation()
   const { data: taxRate, isLoading } = useTaxRate(id)
   const updateMutation = useUpdateTaxRate(id)
+  const customFields = useCustomFieldsDraft('tax_rate', id)
 
   const form = useForm<TaxRateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -302,11 +307,16 @@ function EditTaxRateSheet({
 
   async function onSubmit(values: TaxRateFormValues) {
     try {
-      await updateMutation.mutateAsync({
-        ...taxRateValuesToParams(values),
-        ...extensionSubmitValues('tax_rate', form),
-      })
-      form.reset(values)
+      // The record saves first and is marked clean, so a retry after a failed
+      // custom field save sends only the custom fields.
+      if (form.formState.isDirty) {
+        await updateMutation.mutateAsync({
+          ...taxRateValuesToParams(values),
+          ...extensionSubmitValues('tax_rate', form),
+        })
+        form.reset(values)
+      }
+      if (!(await customFields.save())) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -333,6 +343,7 @@ function EditTaxRateSheet({
                 name="tax_rate.form_fields"
                 context={{ taxRate, mode: 'edit' }}
               />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
             </div>
             <SheetFooter>
               <Button
@@ -345,7 +356,9 @@ function EditTaxRateSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                disabled={
+                  form.formState.isSubmitting || (!form.formState.isDirty && !customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>

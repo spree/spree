@@ -1,7 +1,12 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
-import { login, openProfileDialog } from './helpers'
+import {
+  login,
+  openProfileDialog,
+  saveCustomFieldWithPage,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const FIXTURE_IMAGE = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -360,5 +365,13 @@ test.describe('store settings — emails', () => {
     await page.getByRole('option', { name: /^inter/i }).click()
     await save.click()
     await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  test('saves a store custom field with the page Save', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'store', async (label) => {
+      await page.goto(STORE_PATH(creds.store_id))
+      await saveCustomFieldWithPage(page, label, 'Region EU')
+    })
   })
 })

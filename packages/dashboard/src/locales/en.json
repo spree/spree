@@ -574,7 +574,8 @@
         "empty_description": "Track structured details like material, fit, or care instructions.",
         "empty_title": "No custom fields yet",
         "errors": {
-          "failed_to_save": "Failed to save custom field"
+          "failed_to_save": "Failed to save custom field",
+          "failed_to_load": "Custom fields could not be loaded. Reload the page to try again."
         },
         "manage_in_settings": "Manage in settings",
         "new_definition_description": "Define a custom field to store typed, structured information on your {{resource}}.",
@@ -1440,7 +1441,21 @@
             "product": "Products",
             "category": "Categories",
             "customer": "Customers",
-            "variant": "Variants"
+            "variant": "Variants",
+            "seller": "Sellers",
+            "collection": "Collections",
+            "promotion": "Promotions",
+            "gift_card": "Gift cards",
+            "store_credit": "Store credits",
+            "stock_transfer": "Stock transfers",
+            "purchase_order": "Purchase orders",
+            "company": "Companies",
+            "payment_method": "Payment methods",
+            "delivery_method": "Delivery methods",
+            "tax_rate": "Tax rates",
+            "product_type": "Product types",
+            "media": "Media",
+            "store": "Store"
           },
           "read_only_help": "The owner can't be changed once values exist for this field."
         },

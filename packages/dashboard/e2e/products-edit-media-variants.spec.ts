@@ -1,7 +1,7 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { createCustomFieldDefinition, deleteCustomFieldDefinition, login } from './helpers'
 import {
   addOptionToVariants,
   clickMediaThumbnailAction,
@@ -138,5 +138,44 @@ test.describe('edit product — media variant linking', () => {
     // accidentally wipe sibling edits.)
     await clickMediaThumbnailAction(media, 'edit')
     await expect(sheet.getByLabel('Alt text')).toHaveValue(newAlt)
+  })
+
+  test('saves a custom field on a persisted image from the sheet', async ({ page }) => {
+    const creds = await login(page)
+    const definition = await createCustomFieldDefinition(page, creds.accessToken, 'media')
+
+    try {
+      await createProduct(page, creds.store_id, `E2E Media Custom Field ${Date.now()}`)
+      const media = mediaCard(page)
+      await media.locator('input[type="file"]').setInputFiles(FIXTURE_IMAGE)
+      await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 15_000 })
+      await expect(media.locator('.animate-spin')).toHaveCount(0, { timeout: 15_000 })
+      // Only a saved file has an id to hang the value on.
+      await page.getByRole('button', { name: /save product/i }).click()
+      await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+        timeout: 30_000,
+      })
+      await page.reload()
+      await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
+
+      // Done keeps the value, like the alt text beside it.
+      await clickMediaThumbnailAction(media, 'edit')
+      const sheet = page.getByRole('dialog')
+      await sheet.getByLabel(definition.label).fill('Studio shot')
+      await sheet.getByRole('button', { name: /^done$/i }).click()
+      await expect(page.getByRole('heading', { name: /^edit media$/i })).toBeHidden({
+        timeout: 15_000,
+      })
+
+      await page.reload()
+      await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
+      await clickMediaThumbnailAction(media, 'edit')
+      await expect(page.getByRole('dialog').getByLabel(definition.label)).toHaveValue(
+        'Studio shot',
+        { timeout: 15_000 },
+      )
+    } finally {
+      await deleteCustomFieldDefinition(page, creds.accessToken, definition.id)
+    }
   })
 })

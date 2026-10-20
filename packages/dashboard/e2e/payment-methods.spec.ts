@@ -1,5 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  adminRequest,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const PAYMENT_METHODS_PATH = (storeId: string) => `/${storeId}/settings/payment-methods`
 const CTA = /add payment method/i
@@ -139,5 +147,22 @@ test.describe('payment methods', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
+  })
+
+  // An existing method: saving only a custom field leaves the method itself
+  // untouched, so the shared fixture stays as it was.
+  test('saves a custom field with the payment method', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'payment_method', async (label) => {
+      const methods = await adminRequest<{ data: { id: string }[] }>(
+        page,
+        creds,
+        'get',
+        '/payment_methods?limit=1',
+      )
+      const url = `${PAYMENT_METHODS_PATH(creds.store_id)}?edit=${methods.data[0].id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'NET30')
+    })
   })
 })

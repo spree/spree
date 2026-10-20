@@ -62,6 +62,10 @@ import {
 } from '../../../../schemas/gift-card'
 import '../../../../tables/gift-cards'
 import { Money } from '@spree/dashboard-core'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 
 const giftCardsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
@@ -270,6 +274,7 @@ function EditGiftCardSheet({
   const { t } = useTranslation()
   const { data: giftCard, isLoading } = useGiftCard(id, ['customer', 'created_by', 'orders'])
   const updateMutation = useUpdateGiftCard(id)
+  const customFields = useCustomFieldsDraft('gift_card', id)
 
   const form = useForm<GiftCardEditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -305,8 +310,14 @@ function EditGiftCardSheet({
 
   async function onSubmit(values: GiftCardEditFormValues) {
     try {
-      await updateMutation.mutateAsync(giftCardEditValuesToParams(values))
-      form.reset(values)
+      // A read-only card can still have its custom fields changed. The card
+      // saves first and is marked clean, so a retry after a failed custom field
+      // save sends only the custom fields.
+      if (editable && form.formState.isDirty) {
+        await updateMutation.mutateAsync(giftCardEditValuesToParams(values))
+        form.reset(values)
+      }
+      if (!(await customFields.save())) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -345,6 +356,7 @@ function EditGiftCardSheet({
               )}
               <EditGiftCardFormFields form={form} readOnly={!editable} />
               <GiftCardUsageSummary giftCard={giftCard} />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
             </div>
             <SheetFooter>
               <Button
@@ -357,7 +369,10 @@ function EditGiftCardSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={!editable || form.formState.isSubmitting || !form.formState.isDirty}
+                disabled={
+                  form.formState.isSubmitting ||
+                  !((editable && form.formState.isDirty) || customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>

@@ -50,7 +50,21 @@ export const DEFAULT_RESOURCE_TYPES = [
   'order',
   'customer',
   'category',
+  'collection',
   'option_type',
+  'seller',
+  'promotion',
+  'gift_card',
+  'store_credit',
+  'stock_transfer',
+  'purchase_order',
+  'company',
+  'payment_method',
+  'delivery_method',
+  'tax_rate',
+  'product_type',
+  'media',
+  'store',
 ] as const
 
 export type ResourceType = (typeof DEFAULT_RESOURCE_TYPES)[number] | (string & {})
