@@ -511,6 +511,31 @@ RSpec.describe Spree::Purchase::Addresses do
 
     it_behaves_like 'an addresses host'
 
+    describe 'after the buyer loses standing over the cart\'s company' do
+      let(:company) { create(:company, store: store) }
+      let!(:membership) { create(:company_membership, company: company, customer: user) }
+      let!(:company_address) { create(:company_address, owner: company) }
+
+      before do
+        record.update!(company: company)
+        membership.destroy!
+      end
+
+      it 'refuses an entry from the company book' do
+        expect(record.selectable_address(company_address.id)).to be_nil
+      end
+
+      it 'drops the company book from the listing' do
+        expect(record.selectable_addresses).not_to include(company_address)
+      end
+
+      it 'still offers the buyer their own book' do
+        own = create(:address, customer: user)
+
+        expect(record.selectable_addresses).to include(own)
+      end
+    end
+
     # Carts expose only use_shipping through the API — the ship→bill clone
     # is the one wired as a callback.
     describe 'use_shipping clone callback' do
@@ -529,6 +554,25 @@ RSpec.describe Spree::Purchase::Addresses do
     let(:guest_record) { create(:order, store: store, customer: nil, email: 'guest@example.com') }
 
     it_behaves_like 'an addresses host'
+
+    # An order's authority is the staff credential that created it, or the
+    # cart that was validated at completion — never a membership that can be
+    # revoked out from under it, so a past sale stays readable.
+    describe 'after the buyer loses standing over the order\'s company' do
+      let(:company) { create(:company, store: store) }
+      let!(:membership) { create(:company_membership, company: company, customer: user) }
+      let!(:company_address) { create(:company_address, owner: company) }
+
+      before do
+        record.update!(company: company)
+        membership.destroy!
+      end
+
+      it 'keeps the company book reachable' do
+        expect(record.selectable_address(company_address.id)).to eq(company_address)
+        expect(record.selectable_addresses).to include(company_address)
+      end
+    end
 
     describe 'use_billing clone callback (deprecated bridge, removed in 6.1)' do
       let(:order) { build(:order) }

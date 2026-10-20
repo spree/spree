@@ -106,10 +106,6 @@ module Spree
       # default address is prefilled from, so a division can pick the
       # headquarters address it already inherits.
       #
-      # Standing is not re-checked here: a cart cannot name a company its
-      # customer lacks standing over, so reaching this point already means the
-      # buyer may act for the node.
-      #
       # @param id [Integer, String, nil]
       # @return [Spree::Address, nil]
       def selectable_address(id)
@@ -118,7 +114,7 @@ module Spree
 
         return address if customer_id.present? && address.customer_owned? && address.owner_id == customer_id
 
-        company = resolved_company
+        company = readable_company
         return if company.nil? || address.owner_type != 'Spree::Company'
 
         company.self_and_ancestors.any? { |node| node.id == address.owner_id } ? address : nil
@@ -134,7 +130,7 @@ module Spree
       def selectable_addresses
         books = []
         books << ::Spree::Address.not_deleted.where(owner_type: ::Spree.customer_class.to_s, owner_id: customer_id) if customer_id.present?
-        books << resolved_company&.address_book
+        books << readable_company&.address_book
 
         books.compact.reduce { |left, right| left.or(right) } || ::Spree::Address.none
       end
@@ -240,6 +236,19 @@ module Spree
       end
 
       private
+
+      # The company whose book this purchase may read. A cart asks again
+      # rather than trusting the column, which nothing clears when a
+      # membership is revoked; an order's authority is staff or a completed
+      # cart, so it keeps what it was given.
+      #
+      # @return [Spree::Company, nil]
+      def readable_company
+        company = resolved_company
+        return company if company.nil? || !is_a?(Spree::Cart)
+
+        company if customer&.standing_for?(company)
+      end
 
       # Both slots often hold the same row, so destroy it once.
       def destroy_own_addresses
