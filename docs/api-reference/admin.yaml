@@ -6561,7 +6561,7 @@ paths:
           | `address2` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `company` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `first_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -7210,7 +7210,7 @@ paths:
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_by_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `memo` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -11591,7 +11591,7 @@ paths:
           | `code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_by_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `expires_at` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `gift_card_batch_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -13944,7 +13944,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `default_locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -16751,7 +16751,7 @@ paths:
 
           | Attribute | Kind | Predicates |
           |---|---|---|
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `included` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
@@ -17409,7 +17409,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `email` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -18700,7 +18700,7 @@ paths:
           | `considered_risky` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `coupon_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `email` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -22744,7 +22744,7 @@ paths:
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `compare_at_amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `min_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `price_list_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -30913,7 +30913,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -33065,7 +33065,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -33648,7 +33648,7 @@ paths:
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_by_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `memo` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -34198,9 +34198,9 @@ paths:
           | `carton_package_type_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `carton_weight` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `cartons_per_pallet` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `cost_currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `cost_currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `cost_price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `country_of_origin` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_of_origin` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `deleted_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `depth` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -35023,9 +35023,9 @@ paths:
           | `carton_package_type_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `carton_weight` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `cartons_per_pallet` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `cost_currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `cost_currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `cost_price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `country_of_origin` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_of_origin` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `deleted_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `depth` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -40135,7 +40135,7 @@ paths:
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `kind` | One of `percentage`, `fixed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -41007,7 +41007,7 @@ paths:
           | `address2` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `company` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `first_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -48927,7 +48927,7 @@ paths:
           | `cancel_by` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `closed_short_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `destination_location_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `expected_at` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -52777,7 +52777,7 @@ paths:
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `kind` | One of `earning`, `refund_reversal` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -52948,7 +52948,7 @@ paths:
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `period_end` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `period_start` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -55343,7 +55343,7 @@ paths:
           |---|---|---|
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `contact_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `email` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -82845,7 +82845,8 @@ components:
         address2: text
         city: text
         company: text
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         first_name: text
         id: id
@@ -82987,7 +82988,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         kind:
           enum:
@@ -83344,7 +83346,8 @@ components:
         code: text
         created_at: datetime
         created_by_id: id
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         expires_at: date
         gift_card_batch_id: id
@@ -83455,7 +83458,8 @@ components:
     Market:
       attributes:
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         default_locale:
           code: LocaleCode
         id: id
@@ -83516,7 +83520,8 @@ components:
         considered_risky: boolean
         coupon_code: text
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         delivery_total: decimal
         email: text
@@ -83618,7 +83623,8 @@ components:
     OrderGroup:
       attributes:
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         email: text
         id: id
         number: text
@@ -83719,7 +83725,8 @@ components:
         amount: decimal
         compare_at_amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         min_quantity: integer
         price_list_id: id
@@ -83864,7 +83871,8 @@ components:
         cancel_by: date
         closed_short_at: datetime
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         destination_location_id: id
         expected_at: date
         id: id
@@ -83990,7 +83998,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         period_end: datetime
         period_start: datetime
@@ -84039,7 +84048,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         kind:
           enum:
@@ -84103,7 +84113,8 @@ components:
     StockLocation:
       attributes:
         active: boolean
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         default: boolean
         id: id
@@ -84229,7 +84240,8 @@ components:
         amount: decimal
         created_at: datetime
         created_by_id: id
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         id: id
         memo: text
@@ -84252,7 +84264,8 @@ components:
       attributes:
         city: text
         contact_name: text
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         email: text
         id: id
@@ -84316,7 +84329,8 @@ components:
       scopes: {}
     TaxLine:
       attributes:
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         id: id
         included: boolean
@@ -84329,7 +84343,8 @@ components:
     TaxRate:
       attributes:
         amount: decimal
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         id: id
         name: text
@@ -84345,9 +84360,11 @@ components:
         carton_package_type_id: id
         carton_weight: decimal
         cartons_per_pallet: integer
-        cost_currency: text
+        cost_currency:
+          code: CurrencyCode
         cost_price: decimal
-        country_of_origin: text
+        country_of_origin:
+          code: CountryCode
         created_at: datetime
         deleted_at: datetime
         depth: decimal

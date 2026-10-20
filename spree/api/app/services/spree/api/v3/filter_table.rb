@@ -27,8 +27,14 @@ module Spree
 
         # Columns holding a value from one of the closed code lists the API
         # publishes as a shared type, matched by name (`locale`,
-        # `default_locale`), so clients filter with that type, not free text.
-        CODE_TYPES = { 'locale' => 'LocaleCode' }.freeze
+        # `default_locale`, `cost_currency`), so clients filter with that type,
+        # not free text.
+        CODE_TYPES = {
+          'locale' => 'LocaleCode',
+          'currency' => 'CurrencyCode',
+          'country_code' => 'CountryCode',
+          'country_of_origin' => 'CountryCode'
+        }.freeze
 
         # Raised when an endpoint's table cannot be described — a column of a
         # kind the contract has no predicates for, or two models sharing a name.
@@ -216,6 +222,10 @@ module Spree
         #   attribute the model does not have (`position` on a table without
         #   one), `:unclassified` for one the contract cannot describe
         def attribute_kind(attribute)
+          if (code_type = code_type(attribute))
+            return { 'code' => code_type }
+          end
+
           aliased = model._ransack_aliases[attribute] || model.attribute_aliases[attribute]
           return attribute_kind(aliased) if aliased
           return ransacker_kind(model._ransackers[attribute]) if model._ransackers.key?(attribute)
@@ -226,10 +236,6 @@ module Spree
           if (values = inclusion_values(attribute))
             return { 'enum' => values }
           end
-          if (code_type = code_type(attribute))
-            return { 'code' => code_type }
-          end
-
           column = model.columns_hash[attribute]
           return COLUMN_KINDS.fetch(column.type, :unclassified) if column
           return 'text' if translated_attribute?(attribute)

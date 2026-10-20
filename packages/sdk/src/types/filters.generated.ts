@@ -2,9 +2,10 @@
 
 import type * as Filter from '@spree/sdk-core'
 
-export type AddressFields = Filter.TextFilters<'address1' | 'address2' | 'city' | 'company' | 'country_code' | 'first_name' | 'last_name' | 'phone' | 'postal_code' | 'state_code'>
+export type AddressFields = Filter.TextFilters<'address1' | 'address2' | 'city' | 'company' | 'first_name' | 'last_name' | 'phone' | 'postal_code' | 'state_code'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
+  & Filter.EnumFilters<'country_code', Filter.CountryCode>
 
 export type CategoryFields = Filter.BooleanFilters<'automatic'>
   & Filter.RangeFilters<'children_count' | 'depth' | 'position' | 'products_count', number>
@@ -49,16 +50,18 @@ export type DeliveryMethodFields = Filter.BooleanFilters<'available_to_sellers' 
 export type DigitalLinkFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
 
-export type GiftCardFields = Filter.TextFilters<'code' | 'currency'>
+export type GiftCardFields = Filter.TextFilters<'code'>
   & Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
   & Filter.IdFilters<'created_by_id' | 'customer_id' | 'gift_card_batch_id' | 'id'>
+  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'state', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
   & Filter.EnumFilters<'status', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
 
 export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'market_id' | 'order_group_id' | 'seller_id'>
   & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
-  & Filter.TextFilters<'currency' | 'number' | 'po_number'>
+  & Filter.TextFilters<'number' | 'po_number'>
   & Filter.RangeFilters<'total_quantity', number>
+  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
   & Filter.EnumFilters<'locale', Filter.LocaleCode>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
@@ -85,8 +88,8 @@ export type SellerFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'name'>
 
 export type StoreCreditFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
-  & Filter.TextFilters<'currency'>
   & Filter.IdFilters<'customer_id' | 'id'>
+  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
 
 export type TagFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
