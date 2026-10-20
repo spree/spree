@@ -106,11 +106,20 @@ module Spree
       expires_at.present? && expires_at.past?
     end
 
-    # Whether the request is still waiting for confirmation and within the
-    # window to receive it.
+    # Whether the request is still waiting for confirmation, within the window
+    # to receive it, and still names the account's address.
     # @return [Boolean]
     def confirmable?
-      awaiting_confirmation? && requested_at > CONFIRMATION_WINDOW.ago
+      awaiting_confirmation? && requested_at > CONFIRMATION_WINDOW.ago && addressed_to_customer?
+    end
+
+    # Whether the request names the address the account has now. The work
+    # matches guest rows by the account's address when it runs, so a request
+    # for an address the account has since left would reach rows it never
+    # named.
+    # @return [Boolean]
+    def addressed_to_customer?
+      customer.present? && email.to_s.casecmp?(customer.email.to_s)
     end
 
     private

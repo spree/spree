@@ -773,6 +773,7 @@ en:
       anonymize_failed: The erasure could not be completed and nothing was changed
     customers: Customers
     data_request_errors:
+      address_changed: The account's email address changed after this request was made
       already_anonymized: This customer's personal data has already been erased
       confirmation_invalid: This confirmation link has expired or is no longer valid
       download_unavailable: This download link has expired or is no longer valid

@@ -50,6 +50,21 @@ RSpec.describe 'Store data requests', type: :request do
       expect(guest_order.ship_address.address1).to eq(address1)
     end
 
+    it 'refuses the link once the account has moved to another address' do
+      data_request = open_request(kind: 'access')
+      token = data_request.generate_token_for(:confirmation)
+
+      patch '/api/v3/store/customers/me',
+            params: { email: 'another@example.com', current_password: password },
+            headers: account_headers, as: :json
+      expect(response).to have_http_status(:ok)
+
+      post "/api/v3/store/data_requests/#{token}/confirmation", headers: api_key_headers, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(data_request.reload).to be_lapsed
+    end
+
     it 'hands the confirmed export to the token holder and never to the account' do
       data_request = open_request(kind: 'access')
       token = data_request.generate_token_for(:confirmation)

@@ -19,6 +19,14 @@ RSpec.describe Spree::DataRequests::Confirm do
     expect(result).to be_success
   end
 
+  it 'refuses a request whose account has moved to another address' do
+    data_request.customer.update_columns(email: 'someone-else@example.com')
+
+    expect { result }.not_to have_enqueued_job(Spree::DataRequests::ProcessJob)
+    expect(result).to be_failure
+    expect(data_request.reload).to be_lapsed
+  end
+
   it 'refuses a request left unconfirmed past the window' do
     data_request.update_columns(requested_at: (Spree::DataRequest::CONFIRMATION_WINDOW + 1.minute).ago)
 
