@@ -1,11 +1,5 @@
-import type { CurrencyCode } from '@spree/admin-sdk'
-import {
-  compareMoney,
-  isDecimalString,
-  type PreferencePropertySchema,
-  type PreferenceSchema,
-} from '@spree/admin-sdk'
-import { currencyParts } from '@spree/core'
+import type { PreferencePropertySchema, PreferenceSchema } from '@spree/admin-sdk'
+import { type CurrencyCode, compareMoney, currencyParts, isDecimalString } from '@spree/core'
 import {
   Button,
   Field,

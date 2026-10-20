@@ -12,7 +12,7 @@ npm install @spree/core
 
 ## Contents
 
-- [Code lists](#code-lists) — countries, currencies, locales, weight and dimension units
+- [Code lists](#code-lists) — countries, currencies, locales, weight and dimension units, and checking a code you received
 - [Unit systems](#unit-systems) — which weight units belong to metric and imperial
 - [Display names](#display-names) — country, currency and language names in any language
 - [Money](#money) — exact arithmetic, percentages and formatting for decimal-string amounts
@@ -46,6 +46,25 @@ const options = Object.values(WeightUnit); // ['g', 'kg', 'lb', 'oz']
 
 A locale with a region uses a hyphen in its value and an underscore in its key, so `LocaleCode.pt_BR` is `'pt-BR'`.
 
+### Checking a code you received
+
+`isCountryCode`, `isCurrencyCode` and `isLocaleCode` check a value's shape and narrow its type, so a plain string from a form, a URL or a file becomes a typed code:
+
+```typescript
+import { isCountryCode } from '@spree/core';
+
+const country = new URLSearchParams(location.search).get('country');
+if (isCountryCode(country)) {
+  // country is a CountryCode here
+}
+```
+
+They check the shape only, `US` but not `us` or `USA`, and accept a code missing from the lists above. The Spree server holds the authoritative list and rejects a code it does not know, so a client built with an older or newer version of this package still accepts what its server does.
+
+### Currencies still in use
+
+`CurrencyCode` includes replaced currencies, such as the Croatian kuna, so that amounts recorded in them stay valid. `ACTIVE_CURRENCY_CODES` leaves them out, for a picker offering any currency for new prices, and `RETIRED_CURRENCY_CODES` lists the ones it leaves out.
+
 ## Unit systems
 
 A Spree store uses either the metric or the imperial system. `UNIT_SYSTEM_WEIGHT_UNITS` lists the weight units each one offers, the usual one first, so a settings screen can offer only the units that fit:
@@ -71,6 +90,15 @@ intlDisplayName('language', 'en', 'pt-BR'); // 'Brazilian Portuguese'
 ```
 
 It answers `undefined` when the runtime has no name for a code or the code is malformed, so you choose the fallback, usually the code itself: `intlDisplayName('region', locale, code) ?? code`.
+
+`localeEndonym` names a language in that language itself, for a language picker where every reader finds their own language:
+
+```typescript
+import { localeEndonym } from '@spree/core';
+
+localeEndonym('de'); // 'Deutsch'
+localeEndonym('fr'); // 'Français'
+```
 
 ## Money
 
@@ -199,7 +227,7 @@ const query: ProductQuery = {
 | `Prefixed<Prefix, Filters>` | Filters on an associated record, such as `variants_sku_eq` | — |
 | `SortKey<Attribute>` | Sorting: `'name'`, descending `'-name'`, or two fields `'name,-price'` | — |
 
-Amounts in `RangeFilters` are decimal strings, like everywhere else in Spree. `FILTER_PREDICATES` lists the conditions for each kind of value, if you need them at runtime, for example to build a filter editor.
+Amounts in `RangeFilters` are decimal strings, like everywhere else in Spree. `FILTER_PREDICATES` lists the conditions for each kind of value, if you need them at runtime, for example to build a filter editor, and `FilterPredicate` is the type of any one of them.
 
 ## Compatibility
 

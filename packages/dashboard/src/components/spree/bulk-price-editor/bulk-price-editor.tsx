@@ -1,4 +1,5 @@
-import type { CurrencyCode, PriceBulkUpsertRowParams } from '@spree/admin-sdk'
+import type { PriceBulkUpsertRowParams } from '@spree/admin-sdk'
+import type { CurrencyCode } from '@spree/core'
 import {
   adminClient,
   currencyParts,

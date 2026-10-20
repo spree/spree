@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { DimensionUnit, WeightUnit } from '@spree/admin-sdk'
+import { DimensionUnit, WeightUnit } from '@spree/core'
 import {
   Button,
   Field,

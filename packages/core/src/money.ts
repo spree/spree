@@ -157,7 +157,7 @@ function roundsToZero(amount: string, places: number): boolean {
 }
 
 /** Whether an amount is a decimal string above zero. Blank or malformed is not. */
-export function isPositiveMoney(value: string | null | undefined): boolean {
+export function isPositiveMoney(value: string | null | undefined): value is string {
   return isDecimalString(value) && compareMoney(value, '0') > 0
 }
 

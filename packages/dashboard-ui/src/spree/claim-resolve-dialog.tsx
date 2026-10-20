@@ -1,3 +1,4 @@
+import { isPositiveMoney } from '@spree/core'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -94,9 +95,7 @@ export function ClaimResolveDialog({
 
   // Refunding nothing, or replacing nothing, is what the server rejects —
   // say so here instead of letting the request fail.
-  // The amount is the canonical decimal string a number input yields, so
-  // "above zero" is unsigned digits with a non-zero digit among them.
-  const positiveAmount = /^(\d+(\.\d+)?|\.\d+)$/.test(amount) && /[1-9]/.test(amount)
+  const positiveAmount = isPositiveMoney(amount)
   const ready =
     (!refunding || positiveAmount) && (!sendingReplacement || chosenReplacements.length > 0)
 

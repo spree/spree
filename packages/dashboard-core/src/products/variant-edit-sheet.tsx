@@ -1,4 +1,4 @@
-import { DimensionUnit, WeightUnit } from '@spree/admin-sdk'
+import { DimensionUnit, WeightUnit } from '@spree/core'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { CountryCombobox, StoreDatePicker } from '@spree/dashboard-core'
 import {

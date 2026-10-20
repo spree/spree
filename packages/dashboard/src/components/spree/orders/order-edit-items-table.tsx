@@ -1,4 +1,4 @@
-import { compareMoney, isDecimalString, multiplyMoney } from '@spree/admin-sdk'
+import { compareMoney, isDecimalString, multiplyMoney } from '@spree/core'
 import { Money } from '@spree/dashboard-core'
 import {
   Badge,

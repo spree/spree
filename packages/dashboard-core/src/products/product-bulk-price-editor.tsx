@@ -1,5 +1,4 @@
-import type { CurrencyCode } from '@spree/admin-sdk'
-import { currencyParts, normalizeMoneyInput } from '@spree/core'
+import { type CurrencyCode, currencyParts, normalizeMoneyInput } from '@spree/core'
 import type { ProductFormValues, VariantPriceFormValues } from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'

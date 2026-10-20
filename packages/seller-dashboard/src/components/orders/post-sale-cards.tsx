@@ -1,3 +1,4 @@
+import { sumMoney } from '@spree/core'
 import { currencyParts, formatMoney, isPositiveMoney, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Button,
@@ -23,7 +24,6 @@ import {
   ShieldAlertIcon,
 } from '@spree/dashboard-ui/icons'
 import type { Claim, Order } from '@spree/seller-sdk'
-import { sumMoney } from '@spree/seller-sdk'
 import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'

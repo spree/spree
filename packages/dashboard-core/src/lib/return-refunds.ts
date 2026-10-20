@@ -1,5 +1,4 @@
-import { compareMoney, isDecimalString, isZeroMoney, sumMoney } from '@spree/admin-sdk'
-import { prorateMoney } from '@spree/core'
+import { compareMoney, isDecimalString, isZeroMoney, prorateMoney, sumMoney } from '@spree/core'
 import { formatMoney } from './formatters'
 
 /** True when a received return is owed nothing, so completing it moves no money. */

@@ -1,5 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
-import { isZeroMoney } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/core'
 import { isPositiveMoney, LocaleLabel, Money, useStore } from '@spree/dashboard-core'
 import { Card, CardHeader, CardTitle, cn, Separator } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'

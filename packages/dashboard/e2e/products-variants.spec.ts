@@ -121,4 +121,55 @@ test.describe('product variants', () => {
     await expect(reopened.getByLabel(/^weight$/i)).toHaveValue('1.5')
     await expect(reopened.locator('[id$="-dim-unit"]')).toHaveText('ft')
   })
+
+  test('reads weights typed into the bulk editor with grouping and a decimal comma', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+
+    const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red', 'blue'])
+
+    const productName = `E2E Bulk Weights ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+    await addOptionToVariants(page, colorLabel, ['Red', 'Blue'])
+
+    const variantsCard = variantsCardLocator(page)
+    await variantsCard.getByRole('button', { name: /^bulk edit$/i }).click()
+    const grid = page.getByRole('dialog')
+
+    // A spreadsheet cell is read-only until double-clicked.
+    for (const [variant, typed] of [
+      ['Red', '1,500'],
+      ['Blue', '2,5'],
+    ]) {
+      const cell = grid.getByLabel(new RegExp(`^weight — .*\\b${variant}$`, 'i'))
+      await cell.dblclick()
+      await cell.fill(typed)
+      await cell.press('Enter')
+    }
+    await expect(grid.getByLabel(/^weight — .*\bred$/i)).toHaveValue('1500')
+    await expect(grid.getByLabel(/^weight — .*\bblue$/i)).toHaveValue('2.5')
+
+    await grid.getByRole('button', { name: /^done$/i }).click()
+    await expect(grid).toBeHidden()
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+    for (const [variant, weight] of [
+      ['red', '1500'],
+      ['blue', '2.5'],
+    ]) {
+      await variantsCard
+        .getByRole('button', { name: new RegExp(`^edit .*\\b${variant}$`, 'i') })
+        .click()
+      const sheet = page.getByRole('dialog')
+      await expect(sheet.getByLabel(/^weight$/i)).toHaveValue(weight)
+      await sheet.getByRole('button', { name: /^done$/i }).click()
+      await expect(sheet).toBeHidden()
+    }
+  })
 })

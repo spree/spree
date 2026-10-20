@@ -17,3 +17,18 @@ export function intlDisplayName(
     return undefined
   }
 }
+
+/**
+ * A language's name in that language itself (`Deutsch`, `Français`, `中文`),
+ * for a language picker every reader can find their own language in. Some
+ * languages write their names in lowercase, so the first letter is
+ * capitalized by that language's own rules. An unknown code answers itself.
+ *
+ * @example localeEndonym('fr') // "Français"
+ */
+export function localeEndonym(code: string): string {
+  const name = intlDisplayName('language', code, code)
+  if (!name) return code
+
+  return name.charAt(0).toLocaleUpperCase(code) + name.slice(1)
+}

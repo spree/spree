@@ -1,4 +1,4 @@
-import { WeightUnit } from '@spree/admin-sdk'
+import { WeightUnit } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 

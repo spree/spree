@@ -1,4 +1,4 @@
-import { DimensionUnit, WeightUnit } from '@spree/admin-sdk'
+import { DimensionUnit, WeightUnit } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
