@@ -452,9 +452,10 @@ export async function createCustomFieldDefinition(
  * selectors did not expect.
  */
 export async function deleteCustomFieldDefinition(page: Page, accessToken: string, id: string) {
-  await page.request.delete(`/api/v3/admin/custom_field_definitions/${id}`, {
+  const res = await page.request.delete(`/api/v3/admin/custom_field_definitions/${id}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
+  expect(res.ok(), `DELETE custom_field_definitions/${id}: ${await res.text()}`).toBeTruthy()
 }
 
 /**
