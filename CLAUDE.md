@@ -61,7 +61,7 @@ It is deliberately **not** a member of this pnpm workspace — one lockfile and 
 
 `storefront/.env.local` is regenerated on every boot with this worktree's API URL and the seeded publishable keys (read straight from Postgres — publishable tokens are plaintext), so a reseeded database can't leave a stale key behind. Anything you add below the marker line is preserved.
 
-One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), `mailpit` (`brew services start mailpit` — one instance serves every worktree), Ruby per `server/.ruby-version` (mise or rbenv), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
+One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), `mailpit` (`brew services start mailpit` — one instance serves every worktree), Ruby per `server/.ruby-version` via [mise](https://mise.jdx.dev) (`mise settings add idiomatic_version_file_enable_tools ruby`, so it reads `.ruby-version`), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
 
 | What changed | What to run (inside the worktree) |
 | --- | --- |
