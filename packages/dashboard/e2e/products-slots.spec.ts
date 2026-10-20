@@ -83,6 +83,37 @@ test.describe('product page slots', () => {
     })
   })
 
+  // A simple product's only variant is dropped as a placeholder unless the
+  // merchant set something on it — a plugin's field counts.
+  test('a variant sheet field set on the new product page is created with it', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRODUCTS_PATH(creds.store_id), /add product/i)
+    await page.getByRole('button', { name: /add product/i }).click()
+    await page.getByLabel(/^name$/i).fill(`E2E New Variant Slot ${Date.now()}`)
+
+    const variants = variantsCard(page)
+    await variants
+      .getByRole('button', { name: /^edit /i })
+      .first()
+      .click()
+    const sheet = page.getByRole('dialog')
+    await sheet.getByLabel('Probe variant code').fill('ACME-SIMPLE')
+    await sheet.getByRole('button', { name: /^done$/i }).click()
+    await page.getByRole('button', { name: /^create product$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    await variants
+      .getByRole('button', { name: /^edit /i })
+      .first()
+      .click()
+    await expect(page.getByRole('dialog').getByLabel('Probe variant code')).toHaveValue(
+      'ACME-SIMPLE',
+      { timeout: 15_000 },
+    )
+  })
+
   test('a variant sheet field saves with the product', async ({ page }) => {
     const creds = await login(page)
     const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red'])

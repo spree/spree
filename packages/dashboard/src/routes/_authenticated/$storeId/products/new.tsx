@@ -3,6 +3,7 @@ import { type ProductCreateParams, SpreeError } from '@spree/admin-sdk'
 import {
   CategorizationCard,
   extensionFormValues,
+  extensionRowValues,
   extensionSubmitValues,
   GeneralCard,
   InventoryCard,
@@ -19,6 +20,7 @@ import {
   Slot,
   StatusCard,
   TaxCard,
+  type VariantFormValues,
   VariantsCard,
   variantToWirePayload,
   withExtensionRowValues,
@@ -65,8 +67,12 @@ function NewProductPage() {
     // Strip the placeholder default variant if the merchant didn't touch it.
     // Spree::Product#variants= auto-creates the canonical default variant
     // server-side when none is provided. Any variant with options, SKU,
-    // prices, or stock_levels survives as merchant intent.
-    const meaningful = (variants ?? []).filter((v) => !isPlaceholderDefaultVariant(v))
+    // prices, stock_levels or a plugin's field survives as merchant intent.
+    const hasExtensionValues = (variant: VariantFormValues) =>
+      Object.keys(extensionRowValues('product.variant', variant)).length > 0
+    const meaningful = (variants ?? []).filter(
+      (v) => !isPlaceholderDefaultVariant(v) || hasExtensionValues(v),
+    )
 
     const payload: ProductCreateParams = {
       ...(rest as ProductCreateParams),
@@ -126,6 +132,7 @@ function NewProductPage() {
       // upserts onto the default variant rather than leaving the field at its
       // default.
       const hasVariantOnlyData =
+        hasExtensionValues(v) ||
         v.sku != null ||
         v.barcode != null ||
         v.weight != null ||

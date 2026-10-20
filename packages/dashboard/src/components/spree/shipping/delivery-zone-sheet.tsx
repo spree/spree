@@ -41,6 +41,11 @@ import { DeliveryZoneRegionPicker } from './delivery-zone-region-picker'
  * that owns them and never move between profiles, so the profile always
  * comes from the page that opened this sheet.
  */
+// A new zone's starting values, extension fields' blanks included.
+function blankZoneValues(): DeliveryZoneFormValues {
+  return { ...DELIVERY_ZONE_DEFAULTS, ...extensionFormValues('delivery_zone', null) }
+}
+
 export function DeliveryZoneSheet({
   deliveryProfileId,
   deliveryOriginGroupId,
@@ -74,12 +79,12 @@ export function DeliveryZoneSheet({
   const form = useForm<DeliveryZoneFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(deliveryZoneFormSchema) as any,
-    defaultValues: { ...DELIVERY_ZONE_DEFAULTS, ...extensionFormValues('delivery_zone', null) },
+    defaultValues: blankZoneValues(),
   })
 
   useEffect(() => {
     if (!zoneId) {
-      form.reset(DELIVERY_ZONE_DEFAULTS)
+      form.reset(blankZoneValues())
       return
     }
     if (!zone) return
@@ -116,7 +121,7 @@ export function DeliveryZoneSheet({
           ...extensionSubmitValues('delivery_zone', form),
         })
       }
-      form.reset(zoneId ? values : DELIVERY_ZONE_DEFAULTS)
+      form.reset(zoneId ? values : blankZoneValues())
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -130,7 +135,7 @@ export function DeliveryZoneSheet({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next && !editing) form.reset(DELIVERY_ZONE_DEFAULTS)
+        if (!next && !editing) form.reset(blankZoneValues())
         onOpenChange(next)
       }}
     >

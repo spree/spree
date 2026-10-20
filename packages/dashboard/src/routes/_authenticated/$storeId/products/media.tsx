@@ -465,7 +465,9 @@ function MediaDetailSheet({
 
   // Seeded from the record each time a different file is opened, so typing is
   // not overwritten by a background refetch of the same row.
+  // Cleared on close, so reopening the same file drops what was discarded.
   const [seededFor, setSeededFor] = useState<string | null>(null)
+  if (!media && seededFor !== null) setSeededFor(null)
   if (media && seededFor !== media.id) {
     setSeededFor(media.id)
     setPoster({ signedId: null, previewUrl: null, cleared: false })
