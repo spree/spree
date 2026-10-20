@@ -989,7 +989,209 @@
       "title": "Téléchargements"
     },
     "enterprise": {
-      "learn_more": "En savoir plus sur Spree Enterprise"
+      "available_in": "Disponible avec Spree Enterprise",
+      "badge": "Enterprise",
+      "cta": "Passer à Spree Enterprise",
+      "footer": "Spree Enterprise ajoute cette fonctionnalité au Spree open source que vous utilisez déjà. Vos données, votre boutique et vos intégrations restent inchangées.",
+      "how_it_works": "Comment ça marche",
+      "learn_more": "En savoir plus sur Spree Enterprise",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "Chaque entrée affiche l'ancienne et la nouvelle valeur, pour voir exactement ce qui a changé.",
+              "title": "Avant et après"
+            },
+            "coverage": {
+              "description": "Produits, variantes, prix, stock, catégories, promotions, paiements, expéditions, avoirs, taux de taxe et paramètres de la boutique.",
+              "title": "Tout ce qui compte"
+            },
+            "search": {
+              "description": "Filtrez par personne, type d'enregistrement ou date, et ouvrez l'enregistrement modifié.",
+              "title": "Recherche facile"
+            }
+          },
+          "intro": "Quand plusieurs personnes gèrent une boutique, vous devez savoir qui a modifié un prix, un niveau de stock ou un paramètre. Spree Enterprise enregistre chaque modification importante avec son auteur, l'heure et les valeurs avant et après.",
+          "nav": "Journal d'audit",
+          "steps": {
+            "change": {
+              "description": "Un membre de votre équipe modifie un enregistrement.",
+              "title": "Modification"
+            },
+            "record": {
+              "description": "Spree enregistre l'auteur de la modification, la date et ce qui a changé.",
+              "title": "Enregistrement"
+            },
+            "review": {
+              "description": "Retrouvez la modification dans le journal d'audit à tout moment.",
+              "title": "Consultation"
+            }
+          },
+          "subtitle": "Voyez qui a modifié quoi dans votre boutique, et quand.",
+          "title": "Journal d'audit"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "L'approbation donne à l'entreprise son catalogue et ses prix. Vous pouvez suspendre un compte plus tard, puis le rétablir.",
+              "title": "Approuver avec des conditions"
+            },
+            "checklist": {
+              "description": "Demandez un numéro fiscal, des documents ou des confirmations, et examinez chaque réponse.",
+              "title": "Votre propre liste de contrôle"
+            },
+            "dialogue": {
+              "description": "Renvoyez une demande avec une note au lieu de la refuser. L'entreprise répond depuis votre boutique.",
+              "title": "Demander plus d'informations"
+            }
+          },
+          "intro": "Lorsqu'une entreprise s'inscrit sur votre boutique, Spree Enterprise met son compte en attente de validation. Elle peut parcourir votre catalogue sans voir les prix pendant que votre équipe vérifie ses informations, demande les éléments manquants et l'approuve.",
+          "nav": "Validation",
+          "steps": {
+            "approve": {
+              "description": "L'entreprise voit ses prix et peut passer commande.",
+              "title": "Approbation"
+            },
+            "register": {
+              "description": "Une entreprise s'inscrit sur votre boutique.",
+              "title": "Inscription"
+            },
+            "review": {
+              "description": "Votre équipe examine la demande ou demande plus d'informations.",
+              "title": "Examen"
+            },
+            "verify": {
+              "description": "Elle remplit votre liste de contrôle, sans voir les prix.",
+              "title": "Vérification"
+            }
+          },
+          "subtitle": "Examinez les inscriptions d'entreprises avant qu'elles puissent acheter.",
+          "title": "Validation des entreprises"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "Expédiez automatiquement le lot le plus ancien ou celui qui expire en premier, ou laissez votre entrepôt choisir. Une expédition peut puiser dans plusieurs lots.",
+              "title": "Le bon lot en premier"
+            },
+            "recall": {
+              "description": "Retrouvez chaque commande et chaque client ayant reçu un lot, et voyez quels lots expirent bientôt.",
+              "title": "Rappels rapides"
+            },
+            "stock": {
+              "description": "Quantités, dates de péremption et de fabrication, et numéros de lot fournisseur pour chaque lot dans chaque emplacement.",
+              "title": "Stock par lot"
+            }
+          },
+          "intro": "Les vendeurs d'aliments, de cosmétiques, de produits de santé et d'autres produits réglementés doivent savoir quel lot est parti où. Spree Enterprise gère le stock par lot, avec les quantités et les dates de péremption, et choisit le bon lot pour chaque expédition.",
+          "nav": "Lots",
+          "steps": {
+            "allocate": {
+              "description": "Spree choisit les lots de chaque expédition selon votre règle.",
+              "title": "Affectation"
+            },
+            "receive": {
+              "description": "Enregistrez les lots à l'arrivée d'un bon de commande ou d'un transfert.",
+              "title": "Réception"
+            },
+            "ship": {
+              "description": "Chaque expédition enregistre les lots qu’elle contenait.",
+              "title": "Expédition"
+            },
+            "trace": {
+              "description": "Recherchez un lot pour retrouver ses commandes et ses clients.",
+              "title": "Traçabilité"
+            }
+          },
+          "subtitle": "Suivez le stock par lot, expédiez le bon lot en premier et retrouvez chaque commande liée à un lot.",
+          "title": "Lots et dates de péremption"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "Dès que l'acheteur accepte, le devis devient une commande avec ses conditions de paiement et son numéro de bon de commande.",
+              "title": "Directement en commande"
+            },
+            "negotiate": {
+              "description": "Modifiez les prix unitaires, les quantités, la livraison et les frais sur un seul devis, sans toucher à la liste de prix de l'acheteur.",
+              "title": "Des prix pour une affaire"
+            },
+            "validity": {
+              "description": "Chaque devis a une date d'expiration. L'acheteur peut demander des modifications et vous lui envoyez un devis révisé.",
+              "title": "Une validité claire"
+            }
+          },
+          "intro": "Les clients professionnels ont souvent besoin d'un prix avant de s'engager. Avec les devis, l'acheteur en demande un depuis son panier, votre équipe fixe les prix et l'acheteur l'accepte en ligne. Le devis accepté devient une commande classique aux prix convenus.",
+          "nav": "Devis",
+          "note": {
+            "description": "Avec Spree Enterprise, l'acheteur peut consulter un brouillon, demander des modifications et l'accepter en ligne avant son expiration.",
+            "title": "Envoyer ce brouillon comme devis"
+          },
+          "steps": {
+            "accept": {
+              "description": "L'acheteur accepte et le devis devient une commande.",
+              "title": "Acceptation"
+            },
+            "price": {
+              "description": "Votre équipe ajuste les prix, les quantités et la livraison.",
+              "title": "Chiffrage"
+            },
+            "request": {
+              "description": "L'acheteur demande un devis depuis son panier.",
+              "title": "Demande"
+            },
+            "send": {
+              "description": "L'acheteur reçoit un lien vers le devis et sa date d'expiration.",
+              "title": "Envoi"
+            }
+          },
+          "subtitle": "Négociez les prix avec vos clients professionnels et transformez les devis acceptés en commandes.",
+          "title": "Devis"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "Produits, variantes, images, traductions, prix et stock proviennent de la boutique du vendeur. Les nouveaux produits passent par votre validation habituelle.",
+              "title": "Catalogue synchronisé"
+            },
+            "control": {
+              "description": "Un champ modifié par votre équipe dans Spree n'est plus synchronisé jusqu'à ce que vous le réactiviez. Une commande qui ne peut pas être transmise vous est signalée.",
+              "title": "Vous gardez le contrôle"
+            },
+            "orders": {
+              "description": "Les commandes de la place de marché sont créées dans le Shopify du vendeur, déjà payées. Expéditions, suivi, annulations et remboursements remontent automatiquement.",
+              "title": "Les commandes au même endroit"
+            }
+          },
+          "intro": "Beaucoup de vendeurs vendent déjà sur Shopify. Connectez leur boutique à votre place de marché : leur catalogue et leur stock se synchronisent d'eux-mêmes. Vos commandes apparaissent dans leur Shopify, pour qu'ils traitent tout au même endroit.",
+          "nav": "Shopify",
+          "note": {
+            "description": "Avec Spree Enterprise, les produits, le stock et les commandes de ce vendeur restent synchronisés avec sa propre boutique Shopify.",
+            "title": "Connecter la boutique Shopify de ce vendeur"
+          },
+          "steps": {
+            "connect": {
+              "description": "Vous configurez une connexion pour le vendeur.",
+              "title": "Connexion"
+            },
+            "install": {
+              "description": "Le vendeur installe l'application dans sa boutique Shopify.",
+              "title": "Installation"
+            },
+            "sell": {
+              "description": "Les commandes partent vers sa boutique et les expéditions reviennent.",
+              "title": "Vente"
+            },
+            "sync": {
+              "description": "Son catalogue, ses emplacements et son stock arrivent dans votre place de marché.",
+              "title": "Synchronisation"
+            }
+          },
+          "subtitle": "Vos vendeurs continuent de gérer leur activité depuis leur propre boutique Shopify.",
+          "title": "Shopify pour les vendeurs"
+        }
+      },
+      "see_how_it_works": "Voir comment ça marche"
     },
     "errors": {
       "forbidden_description": "Vous n’avez pas la permission de voir cette page.",
