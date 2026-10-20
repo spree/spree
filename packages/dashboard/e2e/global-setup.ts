@@ -136,6 +136,9 @@ const BOOTSTRAP_RUBY = [
   // market would otherwise surface later as opaque multi-currency failures.
   `germany = Spree::Country.find_by_iso!('DE')`,
   `s.markets.find_or_create_by!(name: 'Europe') { |m| m.currency = 'EUR'; m.default_locale = 'de'; m.countries = [germany] } unless s.markets.exists?(currency: 'EUR')`,
+  // An order's locale has to be one its market offers, so the orders list can
+  // show a German-language order in the default US market.
+  `s.default_market.update!(supported_locales: s.default_market.supported_locales_list | ['de']) unless s.default_market.supported_locales_list.include?('de')`,
   // A seller with one settled earning and one payout still owed, so the
   // marketplace ledger screens have rows to read and a settlement to mark
   // paid. Written directly: both are produced by fulfilment and the payout
