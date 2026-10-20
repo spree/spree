@@ -8,7 +8,7 @@ It has no dependencies and makes no network calls, so it runs anywhere JavaScrip
 npm install @spree/core
 ```
 
-> **Developer Preview.** `@spree/core` is on the 0.x line, published under the `next` dist-tag (`npm install @spree/core@next`). Its API may change between minor versions until 1.0, so pin an exact version.
+> **Developer Preview.** `@spree/core` is on the 0.x line, and its API may change between minor versions until 1.0, so pin an exact version.
 
 ## Contents
 

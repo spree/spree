@@ -487,13 +487,14 @@ jobs:
             echo "published=false" >> $GITHUB_OUTPUT
           fi
 
+      # Unlike @spree/sdk, there is no older stable line to protect, so 0.x
+      # releases go to `latest`: that is what the npm page shows and what a
+      # plain `npm install @spree/core` resolves.
       - name: Determine npm tag
         id: tag
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if echo "$PACKAGE_VERSION" | grep -qE '^0\.'; then
-            echo "tag=next" >> $GITHUB_OUTPUT
-          elif echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
+          if echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
             echo "tag=beta" >> $GITHUB_OUTPUT
           else
             echo "tag=latest" >> $GITHUB_OUTPUT

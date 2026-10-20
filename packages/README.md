@@ -10,7 +10,7 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 | --- | --- |
 | **Stable** | Published to npm under `latest`, follows semver, safe for production. |
 | **Release Candidate** | The Spree 6.0 line, published under the `beta` dist-tag. The API is settling; pin exact versions. |
-| **Developer Preview** | Published to npm (0.x, under the `next` dist-tag); the API may change between minor versions. Pin exact versions. |
+| **Developer Preview** | Published to npm on the 0.x line; the API may change between minor versions. Pin exact versions. |
 | **Internal** | Private to the workspace (`"private": true`), not published. |
 
 ## Packages
