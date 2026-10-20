@@ -1,0 +1,83 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://sandbox-rest.avatax.com/api/v2/addresses/resolve?city=Seattle&country=US&line1=410%20Terry%20Ave%20N&line2=Northwest&postalCode=98109&region=WA
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.7.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.7.3;
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 01 Sep 2026 16:41:29 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - 8ec707bb-c52d-41bf-b848-6f5af1a06aa6
+      X-Avalara-Uid:
+      - 8ec707bb-c52d-41bf-b848-6f5af1a06aa6
+      X-Avalara-Gateway-Pod:
+      - avagateway-6766775548-45xdb
+      Serverduration:
+      - '00:00:00.0003091'
+      Api-Supported-Versions:
+      - '2.0'
+      X-Envoy-Upstream-Service-Time:
+      - '1'
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      X-Download-Options:
+      - noopen
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Permissions-Policy:
+      - camera 'none';microphone 'none';geolocation 'none';encrypted-media 'none';payment
+        'none';speaker 'none';usb 'none';
+      X-Cip-Engine:
+      - containers
+      X-Cip-Site:
+      - gcp_us-west3
+      X-Cip-Environment:
+      - sbx
+    body:
+      encoding: UTF-8
+      string: '{"address":{"line1":"410 Terry Ave N","line2":"Northwest","city":"Seattle","region":"WA","country":"US","postalCode":"98109"},"validatedAddresses":[{"addressType":"StreetOrResidentialAddress","deliveryIndicator":"Business","line1":"NORTHWEST","line2":"410
+        TERRY AVE N","line3":"","city":"SEATTLE","region":"WA","country":"US","postalCode":"98109-5210","latitude":47.622625,"longitude":-122.336775}],"coordinates":{"latitude":47.622625,"longitude":-122.336775},"resolutionQuality":"Intersection","taxAuthorities":[{"avalaraId":"167796","jurisdictionName":"SEATTLE","jurisdictionType":"City","signatureCode":"BVXK"},{"avalaraId":"2001060346","jurisdictionName":"UNITED
+        STATES","jurisdictionType":"Country","signatureCode":"USA0"},{"avalaraId":"2001083405","jurisdictionName":"SEATTLE
+        TOURISM IMPROVEMENT DISTRICT","jurisdictionType":"Special","signatureCode":"OKQZ"},{"avalaraId":"2986","jurisdictionName":"KING","jurisdictionType":"County","signatureCode":"BVVZ"},{"avalaraId":"61","jurisdictionName":"WASHINGTON","jurisdictionType":"State","signatureCode":"BVPJ"}]}'
+  recorded_at: Tue, 01 Sep 2026 16:41:29 GMT
+recorded_with: VCR 6.4.0
