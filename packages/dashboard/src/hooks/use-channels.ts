@@ -63,9 +63,14 @@ export function useDeleteChannel() {
   })
 }
 
-export function channelAutocompleteProps(queryKey: string) {
+/**
+ * Channel picker. List filters call it bare, so their options are cached for
+ * an hour under `channels` and refreshed by the channel writes above.
+ */
+export function channelAutocompleteProps(queryKey = 'channels') {
   return {
     queryKey,
+    staleTime: 60 * 60_000,
     search: (q: string) =>
       adminClient.channels.list({
         search: q,

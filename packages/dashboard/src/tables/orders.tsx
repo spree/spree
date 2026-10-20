@@ -77,7 +77,7 @@ defineTable('orders', {
       label: i18n.t('admin.fields.order.channel.label'),
       filterable: true,
       filterType: 'resource',
-      filterResource: channelAutocompleteProps('orders-table-channel-filter'),
+      filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channel_id',
       default: true,
       className: 'text-sm text-muted-foreground',
