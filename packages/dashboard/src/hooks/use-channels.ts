@@ -1,6 +1,8 @@
 import type { Channel, ChannelCreateParams, ChannelUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  listAllChannels,
+  STORE_CONFIG_STALE_TIME,
   useResourceKey,
   useResourceKeyBuilder,
   useResourceMutation,
@@ -8,17 +10,15 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
-interface UseChannelsParams {
-  page?: number
-  limit?: number
-  expand?: string[]
-}
-
-export function useChannels({ page = 1, limit = 100, expand }: UseChannelsParams = {}) {
+/**
+ * Every channel of the store, fetched once and shared with the channel list
+ * filter. Channel writes invalidate it.
+ */
+export function useChannels() {
   return useQuery({
-    queryKey: useResourceKey('channels', { page, limit, expand: expand?.join(',') ?? '' }),
-    queryFn: () => adminClient.channels.list({ page, limit, ...(expand ? { expand } : {}) }),
-    staleTime: 1000 * 60 * 5,
+    queryKey: useResourceKey('channels', 'all'),
+    queryFn: listAllChannels,
+    staleTime: STORE_CONFIG_STALE_TIME,
   })
 }
 
@@ -64,13 +64,14 @@ export function useDeleteChannel() {
 }
 
 /**
- * Channel picker. List filters call it bare, so their options are cached for
- * an hour under `channels` and refreshed by the channel writes above.
+ * Channel picker. List filters call it bare, so they read the shared list
+ * above; form pickers pass their own key and search as the operator types.
  */
 export function channelAutocompleteProps(queryKey = 'channels') {
   return {
     queryKey,
-    staleTime: 60 * 60_000,
+    staleTime: STORE_CONFIG_STALE_TIME,
+    listAll: listAllChannels,
     search: (q: string) =>
       adminClient.channels.list({
         search: q,

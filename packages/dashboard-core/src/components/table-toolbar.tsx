@@ -133,7 +133,7 @@ const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
     { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
   ],
   // Same shape as `enum` — the value picker just sources its option list
-  // from the active store's `supported_currencies` / `supported_locales`.
+  // from the currencies / languages of the active store's markets.
   currency: storeCodeOperators,
   locale: storeCodeOperators,
 }
@@ -520,6 +520,25 @@ function FilterChip({
 }
 
 /**
+ * The whole option list of a resource small enough to fetch once (`listAll`),
+ * cached under `[queryKey, tenant, 'all']` — the key the resource's own
+ * full-list hook uses, so filters and the rest of the dashboard share one
+ * fetch that the resource's writes invalidate.
+ */
+function useListAll(
+  config: ColumnDef['filterResource'],
+  tenantId: string | undefined,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: [config?.queryKey, tenantId, 'all'],
+    queryFn: () => config?.listAll?.() ?? Promise.resolve({ data: [] }),
+    enabled: enabled && Boolean(config?.listAll),
+    staleTime: config?.staleTime ?? 60_000,
+  })
+}
+
+/**
  * Hydrates the CSV id list in a resource filter into human labels. Reuses
  * the resource's `hydrate` callback so each chip benefits from React Query's
  * cache (the picker inside the panel populates the same `queryKey`).
@@ -534,19 +553,21 @@ function ResourceFilterValue({
   const tenantId = useTenantId()
   const ids = useMemo(() => parseFilterIds(value), [value])
 
-  const { data } = useQuery({
+  const all = useListAll(config, tenantId, ids.length > 0)
+  const hydrated = useQuery({
     // Tenant-scope the cache key so chips don't resolve against another
     // tenant's hydrate results after a store or seller switch.
     queryKey: [config.queryKey, tenantId, 'filter-chip', ids],
     queryFn: () => config.hydrate(ids),
-    enabled: ids.length > 0,
+    enabled: ids.length > 0 && !config.listAll,
     staleTime: config.staleTime ?? 60_000,
   })
+  const records = config.listAll ? all.data?.data : hydrated.data?.data
 
   if (ids.length === 0) return null
 
   const labels = ids.map((id) => {
-    const record = data?.data.find((r) => r.id === id)
+    const record = records?.find((r) => r.id === id)
     return record ? config.getOptionLabel(record) : id
   })
 
@@ -772,12 +793,7 @@ function QuickResourceFilter({
     [existingValue],
   )
 
-  const { data } = useQuery({
-    queryKey: [config.queryKey, tenantId, 'quick-filter-all'],
-    queryFn: () => config.listAll?.() ?? Promise.resolve({ data: [] }),
-    enabled: !!config.listAll,
-    staleTime: config.staleTime ?? 60_000,
-  })
+  const { data } = useListAll(config, tenantId)
   const options = useMemo(
     () =>
       (data?.data ?? []).map((item) => ({ value: item.id, label: config.getOptionLabel(item) })),
@@ -1138,12 +1154,17 @@ function InlineValueList({
   // genuinely new query reaches the network.
   const deferredQuery = useDeferredValue(query)
 
+  // A resource listed whole is fetched once and narrowed here as the operator
+  // types; anything larger is searched server-side.
+  const listed = Boolean(column.filterResource?.listAll)
+  const all = useListAll(column.filterResource, tenantId, !isTags && !isStoreCode)
+
   const resources = useQuery({
     // Tenant-scoped so a store or seller switch cannot reuse the previous
     // tenant's results.
     queryKey: [column.filterResource?.queryKey, tenantId, 'panel-resource-filter', deferredQuery],
     queryFn: () => column.filterResource?.search(deferredQuery),
-    enabled: !isTags && !isStoreCode && Boolean(column.filterResource),
+    enabled: !isTags && !isStoreCode && !listed && Boolean(column.filterResource),
     // These lists are reference data an operator reopens repeatedly while
     // narrowing one list, and the result is small now that only the displayed
     // fields are requested. Holding it for the session keeps reopening the
@@ -1183,11 +1204,19 @@ function InlineValueList({
     }
     const config = column.filterResource
     if (!config) return []
-    return (resources.data?.data ?? []).map((record) => ({
+    const records = (listed ? all.data?.data : resources.data?.data) ?? []
+    const resourceOptions = records.map((record) => ({
       value: record.id,
       label: config.getOptionLabel(record),
     }))
+    if (!listed) return resourceOptions
+    const needle = query.trim().toLowerCase()
+    return resourceOptions.filter(
+      (option) => !needle || option.label.toLowerCase().includes(needle),
+    )
   }, [
+    listed,
+    all.data,
     isStoreCode,
     isLocale,
     storeCodes,
@@ -1213,7 +1242,7 @@ function InlineValueList({
     return [...chosen, ...rest]
   }, [options, pinned])
 
-  if (!isStoreCode && (tags.isLoading || resources.isLoading)) {
+  if (!isStoreCode && (tags.isLoading || resources.isLoading || all.isLoading)) {
     return (
       <p className="px-2 py-6 text-center text-muted-foreground">{t('admin.common.loading')}</p>
     )

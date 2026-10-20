@@ -1,6 +1,8 @@
 import type { Market, MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  listAllMarkets,
+  STORE_CONFIG_STALE_TIME,
   STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
@@ -24,16 +26,15 @@ export function useMarkets({ page = 1, limit = 100, expand }: UseMarketsParams =
 }
 
 /**
- * Cached full-list fetch for markets — markets are store-scoped, rarely
- * change, and a store typically has only a handful. Reused by pickers
- * (e.g. the Market price rule) that need to filter client-side without
- * round-tripping the API on each keystroke.
+ * Every market of the store, fetched once and shared with the store shell
+ * (which derives the store's currencies and languages from it) and the market
+ * list filter. Market writes invalidate it.
  */
 export function useAllMarkets({ enabled = true }: { enabled?: boolean } = {}) {
   const { data, isLoading } = useQuery({
     queryKey: useResourceKey('markets', 'all'),
-    queryFn: () => adminClient.markets.list({ limit: 100, sort: 'position' }),
-    staleTime: 1000 * 60 * 30,
+    queryFn: listAllMarkets,
+    staleTime: STORE_CONFIG_STALE_TIME,
     enabled,
   })
 
@@ -51,10 +52,10 @@ export function useMarket(id: string | undefined) {
 /**
  * Query keys every market write invalidates.
  *
- * A store's supported currencies and locales are the union of its markets', so
- * a market write makes the cached store payload stale — pickers built on
- * `useStore()` would keep offering currencies and locales the markets no longer
- * carry. `STORE_QUERY_RESOURCE` refreshes them alongside the market lists.
+ * `['markets']` covers the shared market list the store shell derives
+ * `useStore()`'s currencies and languages from, so pickers drop a removed
+ * currency or language at once. `STORE_QUERY_RESOURCE` refreshes the store
+ * payload too, which still carries fields the server derives from markets.
  *
  * Exported so the invalidation contract is assertable without rendering hooks.
  */
@@ -98,18 +99,15 @@ export function useDeleteMarket() {
   })
 }
 
-/**
- * Market picker for list filters. Cached for an hour under `markets`, so the
- * market writes above refresh it rather than the clock.
- */
+/** Market picker for list filters, reading the shared list above. */
 export function marketAutocompleteProps() {
   return {
     queryKey: 'markets',
-    staleTime: 60 * 60_000,
+    staleTime: STORE_CONFIG_STALE_TIME,
     search: (q: string) =>
       adminClient.markets.list({ search: q, limit: 100, sort: 'position', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.markets.list({ id_in: ids, limit: ids.length }),
-    listAll: () => adminClient.markets.list({ limit: 100, sort: 'position', fields: ['name'] }),
+    listAll: listAllMarkets,
     getOptionLabel: (market: Market) => market.name ?? market.id,
     placeholder: i18n.t('admin.markets.search_placeholder'),
     emptyText: i18n.t('admin.markets.empty'),

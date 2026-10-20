@@ -19,7 +19,7 @@ import { useDisplayName } from '../hooks/use-display-name'
 import { useStore } from '../providers/store-provider'
 
 interface BaseProps {
-  /** Locale codes to pick from. Defaults to the current store's `supported_locales`. */
+  /** Locale codes to pick from. Defaults to the languages of the current store's markets. */
   options?: string[]
   /** Locale to filter out (e.g. the default locale when picking additional supported ones). */
   excludeCode?: string
@@ -109,10 +109,10 @@ export function LocaleLabel({ code }: { code: string }) {
 }
 
 /**
- * Picker for one of the current store's `supported_locales`. Single-select by
- * default; pass `multiple` for a chips multi-select. Each option reads
- * `CODE — Localized Name` (e.g. `EN — English`), localized via the browser's
- * `Intl.DisplayNames` against the store's `default_locale`. Use this anywhere
+ * Picker for one of the languages the current store's markets offer.
+ * Single-select by default; pass `multiple` for a chips multi-select. Each
+ * option reads `CODE — Localized Name` (e.g. `EN — English`), named in the
+ * admin UI language via the browser's `Intl.DisplayNames`. Use this anywhere
  * the merchant is choosing a storefront language (market default, supported
  * locales list, customer preference, etc.).
  *

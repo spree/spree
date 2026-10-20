@@ -80,10 +80,11 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
   emptyText?: string
   /**
    * Fetches the whole list, for a resource small enough to show in full —
-   * a store's warehouses, its channels. The control then opens as a plain
-   * list of options instead of an empty box waiting to be typed into, and
-   * still searches once the operator types. Leave it off for anything that
-   * could run to hundreds of rows.
+   * a store's warehouses, its channels. It is fetched once and cached under
+   * `[queryKey, tenant, 'all']`; the filter narrows it as the operator types
+   * and labels its chips from it, without further requests. Use the same
+   * request as the resource's own full-list hook, which shares that key.
+   * Leave it off for anything that could run to hundreds of rows.
    */
   listAll?: () => Promise<{ data: R[] }>
   /**

@@ -148,7 +148,7 @@ function OrderMinimums({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
-  const { store } = useStore()
+  const { currencies } = useStore()
   const rows: OrderMinimumEntry[] = form.watch('order_minimums') ?? []
 
   function update(next: OrderMinimumEntry[]) {
@@ -156,9 +156,7 @@ function OrderMinimums({
   }
 
   const usedCurrencies = rows.map((row) => row.currency)
-  const nextCurrency = [store?.default_currency, ...(store?.supported_currencies ?? [])]
-    .filter((code) => code !== undefined)
-    .find((code) => !usedCurrencies.includes(code))
+  const nextCurrency = currencies.find((code) => !usedCurrencies.includes(code))
 
   return (
     <section className="flex flex-col gap-3">

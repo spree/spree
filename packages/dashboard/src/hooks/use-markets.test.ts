@@ -23,8 +23,6 @@ function staleKeysAfter(invalidate: ReturnType<typeof marketUpdateInvalidations>
     marketList: ['markets', STORE_ID, 'all'],
     market: ['markets', STORE_ID, 'market_1'],
     otherMarket: ['markets', STORE_ID, 'market_2'],
-    filterOptions: ['markets', STORE_ID, 'panel-resource-filter', ''],
-    filterChip: ['markets', STORE_ID, 'filter-chip', ['market_1']],
     unrelated: ['products', STORE_ID],
   }
 
@@ -42,14 +40,14 @@ function staleKeysAfter(invalidate: ReturnType<typeof marketUpdateInvalidations>
 }
 
 describe('market write invalidations', () => {
-  // A store's supported currencies and locales are the union of its markets',
-  // so a market write leaves the cached store payload stale. Without this,
-  // pickers reading `useStore()` keep offering removed currencies/locales.
-  it('invalidates the store payload so derived currencies and locales refresh', () => {
+  // The store payload still carries fields the server derives from markets.
+  it('invalidates the store payload', () => {
     expect(staleKeysAfter(marketWriteInvalidations)).toContain('store')
     expect(staleKeysAfter(marketUpdateInvalidations('market_1'))).toContain('store')
   })
 
+  // `marketList` is the shared list `useStore()` reads currencies and
+  // languages from, so pickers drop a removed one at once.
   it('invalidates every market query', () => {
     const stale = staleKeysAfter(marketWriteInvalidations)
 
@@ -57,17 +55,8 @@ describe('market write invalidations', () => {
     expect(stale).toContain('market')
   })
 
-  // The list filter caches markets for an hour, so it relies on these writes
-  // to drop a renamed or deleted market rather than on the clock.
-  it('invalidates the market list filter', () => {
-    expect(staleKeysAfter(marketWriteInvalidations)).toEqual(
-      expect.arrayContaining(['filterOptions', 'filterChip']),
-    )
-    expect(staleKeysAfter(marketUpdateInvalidations('market_1'))).toEqual(
-      expect.arrayContaining(['filterOptions', 'filterChip']),
-    )
-  })
-
+  // The store shell and the market list filter read the same cached list,
+  // so these writes refresh both without waiting for its hour to pass.
   it('names the filter cache after markets so these writes reach it', () => {
     expect(marketAutocompleteProps().queryKey).toBe('markets')
   })
