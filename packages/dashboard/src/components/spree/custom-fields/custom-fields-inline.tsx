@@ -292,9 +292,11 @@ export interface CustomFieldsDraft {
   /**
    * Persists the changed values. Resolves `true` when everything saved, and
    * `false` after telling the user which fields did not — their edits are kept
-   * so a retry only re-sends the failures.
+   * so a retry only re-sends the failures. `announce` confirms a successful
+   * save with a toast, for a host whose own record did not need saving (so its
+   * own success toast never fires).
    */
-  save: () => Promise<boolean>
+  save: (options?: { announce?: boolean }) => Promise<boolean>
 }
 
 /**
@@ -367,60 +369,69 @@ export function useCustomFieldsDraft(
 
   const reset = useCallback(() => setDrafts({}), [])
 
-  const save = useCallback(async () => {
-    if (!ownerId || loadFailed || changedDefinitions.length === 0) {
-      setDrafts({})
-      return true
-    }
-
-    const tasks = changedDefinitions.map((def) => {
-      const draft = drafts[def.id]
-      const existing = savedByDefinitionId.get(def.id)
-      return existing
-        ? () => update.mutateAsync({ id: existing.id, value: draft })
-        : () => create.mutateAsync({ custom_field_definition_id: def.id, value: draft })
-    })
-
-    try {
-      // allSettled (not all): a mid-batch failure must not orphan the fields
-      // that already persisted. Refetch unconditionally so the baseline matches
-      // the server, then report partial failures by field name.
-      const results = await Promise.allSettled(tasks.map((task) => task()))
-      await refetch()
-
-      const failed = changedDefinitions.filter((_, i) => results[i].status === 'rejected')
-      if (failed.length === 0) {
+  const save = useCallback(
+    async ({ announce = false }: { announce?: boolean } = {}) => {
+      if (!ownerId || loadFailed || changedDefinitions.length === 0) {
         setDrafts({})
         return true
       }
 
-      toastManager.add({
-        type: 'error',
-        title: t('admin.components.custom_fields.values_save_partial_failed', {
-          fields: failed.map((def) => def.label || def.key).join(', '),
-        }),
+      const tasks = changedDefinitions.map((def) => {
+        const draft = drafts[def.id]
+        const existing = savedByDefinitionId.get(def.id)
+        return existing
+          ? () => update.mutateAsync({ id: existing.id, value: draft })
+          : () => create.mutateAsync({ custom_field_definition_id: def.id, value: draft })
       })
-      return false
-    } catch (err) {
-      // refetch() itself failed (network) — the saves may still have landed.
-      const message =
-        err instanceof Error
-          ? err.message
-          : t('admin.components.custom_fields.errors.failed_to_save')
-      toastManager.add({ type: 'error', title: message })
-      return false
-    }
-  }, [
-    ownerId,
-    loadFailed,
-    changedDefinitions,
-    drafts,
-    savedByDefinitionId,
-    create,
-    update,
-    refetch,
-    t,
-  ])
+
+      try {
+        // allSettled (not all): a mid-batch failure must not orphan the fields
+        // that already persisted. Refetch unconditionally so the baseline matches
+        // the server, then report partial failures by field name.
+        const results = await Promise.allSettled(tasks.map((task) => task()))
+        await refetch()
+
+        const failed = changedDefinitions.filter((_, i) => results[i].status === 'rejected')
+        if (failed.length === 0) {
+          setDrafts({})
+          if (announce) {
+            toastManager.add({
+              type: 'success',
+              title: t('admin.components.custom_fields.values_saved'),
+            })
+          }
+          return true
+        }
+
+        toastManager.add({
+          type: 'error',
+          title: t('admin.components.custom_fields.values_save_partial_failed', {
+            fields: failed.map((def) => def.label || def.key).join(', '),
+          }),
+        })
+        return false
+      } catch (err) {
+        // refetch() itself failed (network) — the saves may still have landed.
+        const message =
+          err instanceof Error
+            ? err.message
+            : t('admin.components.custom_fields.errors.failed_to_save')
+        toastManager.add({ type: 'error', title: message })
+        return false
+      }
+    },
+    [
+      ownerId,
+      loadFailed,
+      changedDefinitions,
+      drafts,
+      savedByDefinitionId,
+      create,
+      update,
+      refetch,
+      t,
+    ],
+  )
 
   return useMemo(
     () => ({
@@ -511,7 +522,6 @@ export function EditableApiCustomFieldsProvider({
   resourceLabel,
   children,
 }: EditableApiProviderProps) {
-  const { t } = useTranslation()
   const draft = useCustomFieldsDraft(ownerType, ownerId, resourceType)
   const { reset, save: saveDraft } = draft
 
@@ -534,17 +544,11 @@ export function EditableApiCustomFieldsProvider({
     setSaving(true)
     try {
       // On a partial failure edit mode stays open with the drafts intact.
-      if (await saveDraft()) {
-        toastManager.add({
-          type: 'success',
-          title: t('admin.components.custom_fields.values_saved'),
-        })
-        setIsEditing(false)
-      }
+      if (await saveDraft({ announce: true })) setIsEditing(false)
     } finally {
       setSaving(false)
     }
-  }, [draft.isDirty, cancel, saveDraft, t])
+  }, [draft.isDirty, cancel, saveDraft])
 
   const ctx = useMemo<CustomFieldsContextValue>(
     () => ({

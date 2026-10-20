@@ -1452,7 +1452,8 @@
             "media": "媒体",
             "store": "店铺"
           },
-          "read_only_help": "一旦此字段存在值，所属对象便无法更改。"
+          "read_only_help": "一旦此字段存在值，所属对象便无法更改。",
+          "api_only_group": "仅通过 API"
         },
         "searchable": {
           "help": "将值纳入店面商品全文搜索（仅短文本、长文本和数字）。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。",

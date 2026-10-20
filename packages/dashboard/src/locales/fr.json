@@ -1457,7 +1457,8 @@
             "media": "Médias",
             "store": "Boutique"
           },
-          "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ."
+          "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ.",
+          "api_only_group": "Uniquement via l'API"
         },
         "searchable": {
           "help": "Inclure les valeurs dans la recherche de produits de la boutique (texte court, texte long et nombre uniquement). Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants.",

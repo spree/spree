@@ -1350,7 +1350,8 @@
             "media": "Medios",
             "store": "Tienda"
           },
-          "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo."
+          "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo.",
+          "api_only_group": "Solo a través de la API"
         },
         "searchable": {
           "help": "Incluir los valores en la búsqueda de texto de productos del storefront (solo texto corto, texto largo y número). Después de activarlo con Meilisearch, ejecutá rake spree:search:reindex para actualizar los productos existentes.",

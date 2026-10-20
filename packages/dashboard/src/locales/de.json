@@ -1457,7 +1457,8 @@
             "media": "Medien",
             "store": "Shop"
           },
-          "read_only_help": "Der Eigentümer kann nicht mehr geändert werden, sobald Werte für dieses Feld vorhanden sind."
+          "read_only_help": "Der Eigentümer kann nicht mehr geändert werden, sobald Werte für dieses Feld vorhanden sind.",
+          "api_only_group": "Nur über die API"
         },
         "searchable": {
           "help": "Werte in die Storefront-Produktsuche aufnehmen (nur Kurztext, Langtext und Zahl). Nach dem Aktivieren mit Meilisearch rake spree:search:reindex ausführen, damit bestehende Produkte aktualisiert werden.",

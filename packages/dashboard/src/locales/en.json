@@ -1457,7 +1457,8 @@
             "media": "Media",
             "store": "Store"
           },
-          "read_only_help": "The owner can't be changed once values exist for this field."
+          "read_only_help": "The owner can't be changed once values exist for this field.",
+          "api_only_group": "Through the API only"
         },
         "searchable": {
           "help": "Include values in storefront product text search (short text, long text, and number only). After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated.",

@@ -313,11 +313,12 @@ function EditGiftCardSheet({
       // A read-only card can still have its custom fields changed. The card
       // saves first and is marked clean, so a retry after a failed custom field
       // save sends only the custom fields.
-      if (editable && form.formState.isDirty) {
+      const savesRecord = editable && form.formState.isDirty
+      if (savesRecord) {
         await updateMutation.mutateAsync(giftCardEditValuesToParams(values))
         form.reset(values)
       }
-      if (!(await customFields.save())) return
+      if (!(await customFields.save({ announce: !savesRecord }))) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err

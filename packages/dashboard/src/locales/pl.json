@@ -1475,7 +1475,8 @@
             "media": "Multimedia",
             "store": "Sklep"
           },
-          "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."
+          "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola.",
+          "api_only_group": "Tylko przez API"
         },
         "searchable": {
           "help": "Uwzględnij wartości w wyszukiwaniu produktów storefront (tylko krótki tekst, długi tekst i liczba). Po włączeniu z Meilisearch uruchom rake spree:search:reindex, aby zaktualizować istniejące produkty.",

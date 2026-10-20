@@ -40,10 +40,10 @@ export function fieldTypeLabel(value: string): string {
   })
 }
 
-// Owner types that have a first-class admin UI. The server allows more (see
-// `Spree.custom_fields.enabled_resources`); these are the ones admins can pick
-// when defining a field. Extending this is a one-line add — the API already
-// accepts any resource type registered in core.
+// Owner types whose values merchants can edit in the dashboard. The server
+// allows more (see `Spree.custom_fields.enabled_resources`); the definition
+// picker lists those under "Through the API only", since nothing here edits
+// them. A type gains a place here when a screen gets the custom fields card.
 export const DEFAULT_RESOURCE_TYPES = [
   'product',
   'variant',
@@ -69,11 +69,15 @@ export const DEFAULT_RESOURCE_TYPES = [
 
 export type ResourceType = (typeof DEFAULT_RESOURCE_TYPES)[number] | (string & {})
 
-export function resourceTypeLabel(value: string): string {
-  // `defaultValue` humanizes any owner the i18n bundle doesn't enumerate
-  // (plugin-defined resource types).
+/**
+ * @param fallback shown for an owner the i18n bundle doesn't enumerate
+ *   (plugin-defined resource types) — the server's name for it, when known;
+ *   otherwise the value is humanized.
+ */
+export function resourceTypeLabel(value: string, fallback?: string): string {
   return i18n.t(`admin.fields.custom_field_definition.resource_type.options.${value}`, {
-    defaultValue: value.replace(/_/g, ' ').replace(/^\w/, (letter) => letter.toUpperCase()),
+    defaultValue:
+      fallback ?? value.replace(/_/g, ' ').replace(/^\w/, (letter) => letter.toUpperCase()),
   })
 }
 

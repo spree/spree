@@ -525,6 +525,8 @@ export async function saveCustomFieldInSheet(
   await sheet.getByLabel(label).fill(value)
   await sheet.getByRole('button', { name: /^save$/i }).click()
   await expect(sheet).toBeHidden({ timeout: 15_000 })
+  // Only the custom field changed, so the record's own save toast never fires.
+  await expect(page.getByText(/^custom fields saved$/i).first()).toBeVisible()
 
   await page.goto(url)
   await expect(page.getByRole('dialog').getByLabel(label)).toHaveValue(value, { timeout: 15_000 })
