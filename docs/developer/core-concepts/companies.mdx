@@ -229,11 +229,12 @@ A member buying for their company ships to the company's sites, not only to thei
 const { data: addresses } = await client.carts.addresses.list('cart_xxx')
 
 // Each entry names the book it came out of, so a picker can label them.
-const sites = addresses.filter((address) => address.owner.type === 'company')
+// A personal purchase has no company sites, so there may be none.
+const site = addresses.find((address) => address.owner.type === 'company')
 
-await client.carts.update('cart_xxx', {
-  shipping_address_id: sites[0].id,
-})
+if (site) {
+  await client.carts.update('cart_xxx', { shipping_address_id: site.id })
+}
 ```
 
 ```bash cURL
