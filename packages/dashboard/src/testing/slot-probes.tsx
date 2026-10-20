@@ -13,7 +13,15 @@ import {
   type SlotEntry,
   useHostForm,
 } from '@spree/dashboard-core'
-import { Button, Card, CardContent, Field, FieldLabel, Input } from '@spree/dashboard-ui'
+import {
+  Button,
+  Card,
+  CardContent,
+  ContextMenuItem,
+  Field,
+  FieldLabel,
+  Input,
+} from '@spree/dashboard-ui'
 import type { ComponentType } from 'react'
 
 function probe<TContext>(component: ComponentType<TContext>): SlotEntry[] {
@@ -62,10 +70,13 @@ const PROBE_VIDEO_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
 defineDashboardPlugin({
   formFields: {
+    media: [metadataField],
     'product.media': [metadataField],
     'product.variant': [metadataField],
   },
   slots: {
+    'media.form_fields': hostField('Probe library credit', 'e2e_credit'),
+    'media.context_menu': probe(() => <ContextMenuItem>Probe menu action</ContextMenuItem>),
     'product.form_main': marker('product.form_main'),
     'product.form_sidebar': marker('product.form_sidebar'),
     'product.media.form_fields': hostField('Probe media credit', 'e2e_credit'),

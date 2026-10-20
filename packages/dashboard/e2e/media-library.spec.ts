@@ -153,6 +153,36 @@ test.describe('media library', () => {
     await page.unrouteAll({ behavior: 'ignoreErrors' })
   })
 
+  // The probes in src/testing/slot-probes.tsx stand in for a plugin.
+  test('a plugin field saves with the file and a plugin item joins the grid menu', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await page.goto(MEDIA_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^media$/i })).toBeVisible({ timeout: 15_000 })
+
+    const name = `e2e-slots-${Date.now()}.png`
+    await uploadImage(page, name)
+
+    const tile = await findTile(page, name)
+    await tile.click({ button: 'right' })
+    await expect(page.getByRole('menuitem', { name: 'Probe menu action' })).toBeVisible()
+    await page.keyboard.press('Escape')
+
+    await tile.click()
+    const sheet = page.getByRole('dialog')
+    await sheet.getByLabel('Probe library credit').fill('Photo by Jane')
+    await sheet.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/^saved$/i).first()).toBeVisible({ timeout: 15_000 })
+    await sheet.getByRole('button', { name: /^cancel$/i }).click()
+
+    await page.reload()
+    await (await findTile(page, name)).click()
+    await expect(page.getByRole('dialog').getByLabel('Probe library credit')).toHaveValue(
+      'Photo by Jane',
+    )
+  })
+
   test('deletes a file from the grid after confirming', async ({ page }) => {
     const creds = await login(page)
     await page.goto(MEDIA_PATH(creds.store_id))

@@ -15,6 +15,7 @@ If you need a new injection point in a built-in page, open a PR adding `<Slot na
 | Every page | Page header | `page.actions`, `page.actions_dropdown` |
 | Every page | Tabbed sub-navigation | `page.tabs` |
 | Products | Product | `product.form_main`, `product.form_sidebar`, `product.media.*`, `product.variant.form_fields` |
+| Products | Media library | `media.form_fields`, `media.context_menu` |
 | Products | Category | `category.form_sidebar` |
 | Products | Collection | `collection.form_sidebar` |
 | Products | Catalog | `catalog.form_sidebar` |
@@ -135,6 +136,21 @@ On host-form pages your widget renders inside the page's `<form>` element, so a 
 | Use | Fields stored on one variant — a supplier code, a fulfillment flag, a per-variant certification |
 | Context | `{ variant, variantIndex, fieldPrefix }` — `variant` is the row's form values, `fieldPrefix` the row's path (`variants.0`) |
 | Host form | **Yes** — form key `product.variant`. Bind inputs under `fieldPrefix` and register fields under `product.variant` |
+
+#### `media.form_fields`
+
+| Where | Media library (`products/media`), the file's detail sheet, below "Alt text" |
+|---|---|
+| Use | Fields stored on the file itself — a photo credit, a license, an expiry date for the rights to use it |
+| Context | `{ media, canWrite }` — the `Media` record from the Admin API; `canWrite` is whether the admin may edit it |
+| Host form | **Yes** — form key `media`. The sheet's Save sends the fields to the media endpoint, which accepts what `Spree::Media.additional_permitted_attributes` declares |
+
+#### `media.context_menu`
+
+| Where | Media library, the right-click menu on a file in the grid, above Delete |
+|---|---|
+| Use | Actions on one file — open it in a digital asset manager, remove its background, copy a public link |
+| Context | `{ media, canWrite }` — render `<ContextMenuItem>`s |
 
 #### `category.form_sidebar`
 
