@@ -162,9 +162,6 @@ module Spree
           render_missing_permission(required)
         end
 
-        # Refuses the request for want of one permission.
-        #
-        # @param permission [String] the permission key the caller lacks
         def render_missing_permission(permission)
           render_error(
             code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],

@@ -12,7 +12,8 @@ module Spree
             query.attribute :market_id, :id,
               description: 'Prices in this market and lists only variants with a price in its currency.'
             query.attribute :channel_id, :id,
-              description: 'Lists only variants published on this channel. Defaults to the store default channel.'
+              description: 'Lists only variants published on this channel. When another of these fields is given ' \
+                           'without it, the store default channel applies.'
             query.attribute :customer_id, :id,
               description: "Narrows to the customer's catalogs and prices as they would pay. Needs `read_customers`."
             query.attribute :company_id, :id,
