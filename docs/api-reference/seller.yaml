@@ -108,7 +108,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 2
+                  name: Seller 6
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -171,7 +171,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 4
+                  name: Seller 8
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -365,7 +365,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 75
+                  name: Seller 79
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -487,7 +487,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 113
+                  name: Seller 117
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -560,8 +560,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 85
-                  slug: seller-85
+                  name: Seller 89
+                  slug: seller-89
                   status: approved
                 permissions:
                 - allow: true
@@ -831,8 +831,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 87
-                  slug: seller-87
+                  name: Seller 91
+                  slug: seller-91
                   status: approved
                 permissions: []
                 permission_keys: []
@@ -14172,8 +14172,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2793250
-                  slug: product-2793250
+                  name: Product 2823250
+                  slug: product-2823250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14386,8 +14386,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2826710
-                slug: product-2826710
+                name: Product 2856710
+                slug: product-2856710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14477,7 +14477,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2858212
+                slug: product-2888212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14600,8 +14600,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 2887816
-                slug: product-2887816
+                name: Product 2917816
+                slug: product-2917816
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14711,8 +14711,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 290209
-                slug: product-290209
+                name: Product 293209
+                slug: product-293209
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14801,8 +14801,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2919405
-                slug: product-2919405
+                name: Product 2949405
+                slug: product-2949405
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15020,8 +15020,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 140
-                slug: seller-140
+                name: Seller 144
+                slug: seller-144
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15111,7 +15111,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-142
+                slug: seller-146
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15990,7 +15990,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e3e622807fc2a4cbaf839915644236c074b14c7b
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -15998,7 +15998,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--5d9d0b86e73fd398b0da66a7fd3ed0f444c4c192
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--db026124d00ca5e74d7fe8d3b919aaf931a505f7
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -17461,8 +17461,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2479315
-                    sku: SKU-331
+                    name: Product 2509315
+                    sku: SKU-334
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -17584,8 +17584,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 248961
-                  sku: SKU-332
+                  name: Product 251961
+                  sku: SKU-335
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
@@ -17682,8 +17682,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2492065
-                  sku: SKU-333
+                  name: Product 2522065
+                  sku: SKU-336
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
@@ -17768,8 +17768,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2503170
-                  sku: SKU-334
+                  name: Product 2533170
+                  sku: SKU-337
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
@@ -17868,8 +17868,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2517276
-                  sku: SKU-335
+                  name: Product 2547276
+                  sku: SKU-338
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
@@ -17971,8 +17971,8 @@ paths:
                     quantity: 1
                     line_item_id: li_gbHJdmfrXB
                     variant_id: variant_gbHJdmfrXB
-                    name: Product 2531765
-                    sku: SKU-337
+                    name: Product 2561765
+                    sku: SKU-340
                     options_text: ''
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   delivery_rates:
@@ -18017,8 +18017,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2523520
-                    sku: SKU-336
+                    name: Product 2553520
+                    sku: SKU-339
                     options_text: ''
                   selected_delivery_rate_id: dr_VqXmZF31wY
                   delivery_rates:
@@ -20763,7 +20763,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 26595
+                    name: Product 26895
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -20772,7 +20772,7 @@ paths:
                     additional_tax_total: '0.00'
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-349
+                    sku: SKU-352
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -20793,8 +20793,8 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 26595
-                      sku: SKU-349
+                      name: Product 26895
+                      sku: SKU-352
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
@@ -20959,7 +20959,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2669755
+                  name: Product 2699755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -20968,7 +20968,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-350
+                  sku: SKU-353
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -20989,8 +20989,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2669755
-                    sku: SKU-350
+                    name: Product 2699755
+                    sku: SKU-353
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -21155,7 +21155,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2696554
+                  name: Product 2726554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21164,7 +21164,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-353
+                  sku: SKU-356
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21185,8 +21185,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2696554
-                    sku: SKU-353
+                    name: Product 2726554
+                    sku: SKU-356
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -21341,7 +21341,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2705038
+                  name: Product 2735038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21350,7 +21350,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-354
+                  sku: SKU-357
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21371,8 +21371,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2705038
-                    sku: SKU-354
+                    name: Product 2735038
+                    sku: SKU-357
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -21534,7 +21534,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2723962
+                  name: Product 2753962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21543,7 +21543,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-356
+                  sku: SKU-359
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21564,8 +21564,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2723962
-                    sku: SKU-356
+                    name: Product 2753962
+                    sku: SKU-359
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -21704,7 +21704,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2735749
+                  name: Product 2765749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21713,7 +21713,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-357
+                  sku: SKU-360
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21734,8 +21734,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2735749
-                    sku: SKU-357
+                    name: Product 2765749
+                    sku: SKU-360
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -22391,7 +22391,7 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[provider_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
@@ -22710,7 +22710,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2987120 can be returned
+                  message: Only 1 of Product 3017120 can be returned
       requestBody:
         content:
           application/json:
@@ -23504,7 +23504,7 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[provider_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
@@ -31119,6 +31119,20 @@ components:
       - ZA
       - ZM
       - ZW
+    DimensionUnit:
+      type: string
+      enum:
+      - mm
+      - cm
+      - in
+      - ft
+    WeightUnit:
+      type: string
+      enum:
+      - g
+      - kg
+      - lb
+      - oz
     AccountUpdateParams:
       type: object
       properties:
@@ -31720,12 +31734,8 @@ components:
           type: number
           nullable: true
         dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
           nullable: true
         weight:
           type: number
@@ -31735,12 +31745,8 @@ components:
           type: number
           nullable: true
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
           nullable: true
         default:
           type: boolean
@@ -31775,12 +31781,8 @@ components:
           type: number
           nullable: true
         dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
           nullable: true
         weight:
           type: number
@@ -31790,12 +31792,8 @@ components:
           type: number
           nullable: true
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
           nullable: true
         default:
           type: boolean
@@ -31973,7 +31971,7 @@ components:
         variants:
           type: array
           items:
-            "$ref": "#/components/schemas/SellerProductVariantParams"
+            "$ref": "#/components/schemas/ProductVariantParams"
           description: 'The variants, as a whole: one absent from the list is removed.
             Pass `id` to update an existing variant.'
       required:
@@ -32045,9 +32043,16 @@ components:
         variants:
           type: array
           items:
-            "$ref": "#/components/schemas/SellerProductVariantParams"
+            "$ref": "#/components/schemas/ProductVariantParams"
           description: 'The variants, as a whole: one absent from the list is removed.
             Pass `id` to update an existing variant.'
+    ProductVariantParams:
+      allOf:
+      - "$ref": "#/components/schemas/VariantParams"
+      - type: object
+        properties:
+          id:
+            type: string
     ProfileUpdateParams:
       type: object
       properties:
@@ -32284,134 +32289,6 @@ components:
             type: string
           description: Replaces the variants this media is linked to. An empty list
             clears them.
-    SellerProductVariantParams:
-      type: object
-      properties:
-        id:
-          type: string
-        sku:
-          type: string
-        barcode:
-          type: string
-        cost_price:
-          type: string
-          format: decimal
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-        cost_currency:
-          "$ref": "#/components/schemas/CurrencyCode"
-        weight:
-          type: number
-          nullable: true
-        height:
-          type: number
-          nullable: true
-        width:
-          type: number
-          nullable: true
-        depth:
-          type: number
-          nullable: true
-        weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
-        dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
-        hs_code:
-          type: string
-        customs_description:
-          type: string
-        country_of_origin:
-          "$ref": "#/components/schemas/CountryCode"
-        minimum_order_quantity:
-          type: integer
-          nullable: true
-        order_multiple:
-          type: integer
-          nullable: true
-        purchase_unit:
-          type: string
-        units_per_carton:
-          type: integer
-          description: How many units fill one carton.
-          nullable: true
-        carton_package_type_id:
-          type: string
-          description: 'The carton this variant is packed into: a package type of
-            kind `carton`.'
-          nullable: true
-        carton_weight:
-          type: number
-          description: What one packed carton weighs, in the variant's weight unit.
-          nullable: true
-        cartons_per_pallet:
-          type: integer
-          description: How many cartons stack on one pallet.
-          nullable: true
-        track_inventory:
-          type: boolean
-        preorderable:
-          type: boolean
-        preorder_ships_at:
-          type: string
-          format: date-time
-          description: The "ships by" date shown to customers while the variant is
-            a pre-order. Null clears it.
-          nullable: true
-        backorder_limit:
-          type: integer
-          description: Maximum units sellable beyond available stock, capping backorders
-            and pre-orders. Null is unlimited.
-          nullable: true
-        position:
-          type: integer
-        options:
-          type: array
-          items:
-            "$ref": "#/components/schemas/VariantOptionParams"
-          description: One pair per option type the variant takes part in (size, color).
-        prices:
-          type: array
-          items:
-            type: object
-            properties:
-              currency:
-                allOf:
-                - "$ref": "#/components/schemas/CurrencyCode"
-                description: Omit to price in the store's currency. A seller has no
-                  currency of their own.
-                example: USD
-              amount:
-                type: string
-                format: decimal
-                pattern: "^-?\\d+(\\.\\d+)?$"
-                description: 'A canonical decimal string (`"1234.56"`: period decimal,
-                  no grouping). The API does not parse localized input.'
-                example: '24.00'
-              compare_at_amount:
-                type: string
-                format: decimal
-                pattern: "^-?\\d+(\\.\\d+)?$"
-                example: '30.00'
-                nullable: true
-            required:
-            - amount
-          description: Per-currency prices. Upserted by currency.
-        stock_levels:
-          type: array
-          items:
-            "$ref": "#/components/schemas/StockLevelParams"
-          description: 'Stock per location, at this seller''s own locations only:
-            a location belonging to anyone else is ignored.'
     SellerTaxIdentifierCreateParams:
       type: object
       properties:
@@ -32686,6 +32563,138 @@ components:
       required:
       - name
       - value
+    VariantParams:
+      type: object
+      properties:
+        sku:
+          type: string
+        barcode:
+          type: string
+        cost_price:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        cost_currency:
+          "$ref": "#/components/schemas/CurrencyCode"
+        weight:
+          type: number
+          nullable: true
+        height:
+          type: number
+          nullable: true
+        width:
+          type: number
+          nullable: true
+        depth:
+          type: number
+          nullable: true
+        weight_unit:
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
+          description: Null falls back to the store's weight unit.
+          nullable: true
+        dimensions_unit:
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
+          description: Null falls back to the store's unit system.
+          nullable: true
+        hs_code:
+          type: string
+        customs_description:
+          type: string
+        country_of_origin:
+          "$ref": "#/components/schemas/CountryCode"
+        minimum_order_quantity:
+          type: integer
+          nullable: true
+        order_multiple:
+          type: integer
+          nullable: true
+        purchase_unit:
+          type: string
+          enum:
+          - unit
+          - carton
+          nullable: true
+        units_per_carton:
+          type: integer
+          description: How many units fill one carton.
+          nullable: true
+        carton_package_type_id:
+          type: string
+          description: 'The carton this variant is packed into: a package type of
+            kind `carton`. Its dimensions are shared by every product packed the same
+            way, so a corrected carton size fixes all of them at once.'
+          nullable: true
+        carton_weight:
+          type: number
+          description: What one packed carton weighs, in the variant's weight unit.
+          nullable: true
+        cartons_per_pallet:
+          type: integer
+          description: How many cartons stack on one pallet.
+          nullable: true
+        track_inventory:
+          type: boolean
+        preorderable:
+          type: boolean
+          description: Sell this variant before it's in stock. Adds the pre-order
+            label and ships-by promise; the cap comes from `backorder_limit`, an incoming
+            stock count, or backorder.
+        preorder_ships_at:
+          type: string
+          format: date-time
+          description: The "ships by" date shown to customers while the variant is
+            a pre-order. Once it passes, the variant is no longer a pre-order. Null
+            clears it.
+          nullable: true
+        backorder_limit:
+          type: integer
+          description: Maximum units sellable beyond available stock, capping backorders
+            and pre-orders. Null is unlimited.
+          nullable: true
+        position:
+          type: integer
+        options:
+          type: array
+          items:
+            "$ref": "#/components/schemas/VariantOptionParams"
+          description: One pair per option type the variant takes part in (size, color).
+            Option types and values are created when missing.
+        prices:
+          type: array
+          items:
+            type: object
+            properties:
+              currency:
+                allOf:
+                - "$ref": "#/components/schemas/CurrencyCode"
+                description: Omit to price in the store's currency. A seller has no
+                  currency of their own.
+                example: USD
+              amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                description: 'A canonical decimal string (`"1234.56"`: period decimal,
+                  no grouping). The API does not parse localized input.'
+                example: '24.00'
+              compare_at_amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                example: '30.00'
+                nullable: true
+            required:
+            - amount
+          description: Per-currency prices. Upserted by currency.
+        stock_levels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StockLevelParams"
+          description: 'Stock per location, at this seller''s own locations only:
+            a location belonging to anyone else is ignored.'
   x-spree-filter-tables:
     Claim:
       attributes:

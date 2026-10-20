@@ -8,15 +8,15 @@ module Typelizer
   # from either still accepts an added value while every built-in value stays
   # documented and autocompletable.
   #
-  # ISO lists are the exception: a named type several serializers and the
-  # request types share, but closed, since nothing outside the standard can
-  # add a country or a currency, and markets only accept the locales
-  # `Spree::Locales::ALL` lists. The SDKs define them once, as values and
-  # types, in `@spree/sdk-core` (generated from the API reference by
-  # `pnpm generate:iso-codes`), so each SDK's `Enums.ts` re-exports that
+  # Shared code lists are the exception: a named type several serializers and
+  # the request types share, but closed, since nothing outside the standard
+  # can add a country, a currency or a unit, and markets only accept the
+  # locales `Spree::Locales::ALL` lists. The SDKs define them once, as values
+  # and types, in `@spree/sdk-core` (generated from the API reference by
+  # `pnpm generate:code-lists`), so each SDK's `Enums.ts` re-exports that
   # definition instead of carrying a copy of the list.
   module OpenEnums
-    CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode].freeze
+    CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode WeightUnit DimensionUnit].freeze
 
     module Property
       def enum_definition(...)

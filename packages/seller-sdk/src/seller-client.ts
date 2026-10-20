@@ -107,6 +107,7 @@ import type {
   ProductBulkSubmitParams,
   ProductCreateParams,
   ProductUpdateParams,
+  ProductVariantParams,
   ProfileUpdateParams,
   RequirementSubmissionParams,
   ReturnCancelParams,
@@ -123,6 +124,9 @@ import type {
 } from './types/params'
 
 export type * from './types/params'
+
+/** @deprecated Renamed to `ProductVariantParams`. */
+export type SellerProductVariantParams = ProductVariantParams
 
 /**
  * Resource methods for the Spree Seller API — the marketplace seller panel.

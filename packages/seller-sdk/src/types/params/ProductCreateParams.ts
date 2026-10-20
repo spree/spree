@@ -1,8 +1,8 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
 import type { CurrencyCode } from '../generated'
+import type { ProductVariantParams } from './ProductVariantParams'
 import type { SellerProductMediaParams } from './SellerProductMediaParams'
-import type { SellerProductVariantParams } from './SellerProductVariantParams'
 
 export type ProductCreateParams = {
   name: string
@@ -45,5 +45,5 @@ export type ProductCreateParams = {
    * The variants, as a whole: one absent from the list is removed. Pass `id` to update an existing
    * variant.
    */
-  variants?: SellerProductVariantParams[]
+  variants?: ProductVariantParams[]
 }

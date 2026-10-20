@@ -40,20 +40,24 @@ module Spree
           datetime: { type: :string, format: :'date-time' },
           id: { type: :string },
           any: {},
-          # ISO codes, from the closed lists below.
+          # Codes from the closed lists below.
           country: { type: :string },
           currency: { type: :string },
-          locale: { type: :string }
+          locale: { type: :string },
+          weight_unit: { type: :string },
+          dimension_unit: { type: :string }
         }.freeze
 
-        # The ISO lists a `country` or `currency` field takes, published once
-        # per API as a named component — the same `CountryCode` and
-        # `CurrencyCode` types the serializers declare, so a value read from
-        # a response is the type a request takes.
+        # The closed lists a code field takes, published once per API as a
+        # named component — the same `CountryCode`, `CurrencyCode` and
+        # `WeightUnit` types the serializers declare, so a value read from a
+        # response is the type a request takes.
         CODE_LISTS = {
           country: ['CountryCode', -> { Spree::IsoData.country_codes }],
           currency: ['CurrencyCode', -> { Spree::Money::Rounding::CURRENCY_CODES }],
-          locale: ['LocaleCode', -> { Spree::Locales::ALL }]
+          locale: ['LocaleCode', -> { Spree::Locales::ALL }],
+          weight_unit: ['WeightUnit', -> { Spree::Variant::WEIGHT_UNITS }],
+          dimension_unit: ['DimensionUnit', -> { Spree::Variant::DIMENSION_UNITS }]
         }.freeze
 
         ACTIONS = %i[create update].freeze
@@ -119,7 +123,7 @@ module Spree
           end
         end
 
-        attr_reader :name, :fields
+        attr_reader :name, :fields, :base
 
         # The types an attribute takes: the scalars above, plus `:hash` (any
         # keys), `:object` (a block or a `shape:`) and `:array` (`of:` a type
@@ -172,7 +176,7 @@ module Spree
             value.is_a?(Class) ? value.definition : value
           end
 
-          %i[attribute include_attributes require_attributes external_references].each do |method|
+          %i[attribute extends include_attributes require_attributes external_references].each do |method|
             define_method(method) { |*args, **options, &block| definition.public_send(method, *args, **options, &block) }
           end
         end
@@ -229,6 +233,19 @@ module Spree
           TEXT
         end
 
+        # Builds on a published shape: the body accepts all of its attributes,
+        # and the published type is that shape's type plus what this schema
+        # adds, so clients write one type wherever the shape is accepted.
+        #
+        # @param other [RequestSchema, Class] a shape with a published name
+        def extends(other)
+          parent = RequestSchema.resolve(other)
+          raise ArgumentError, "#{parent.class.name} has no published name to extend" unless shape?(parent)
+
+          include_attributes(parent)
+          @base = parent
+        end
+
         # Adds the attributes of another schema, for endpoints that extend a
         # shared set.
         #
@@ -253,6 +270,19 @@ module Spree
           @permit_lists = nil
         end
 
+        # Replaces the description of an attribute this schema took from
+        # another, for an endpoint where it behaves differently.
+        #
+        # @param name [Symbol]
+        # @param description [String]
+        # @return [void]
+        def describe_attribute(name, description)
+          field = fields.fetch(name) { raise ArgumentError, "#{name} is not an attribute of this schema" }
+          copy = field.dup
+          copy.instance_variable_set(:@description, description)
+          fields[name] = copy
+        end
+
         # The `params.permit` list for an action.
         #
         # @param action [Symbol, String, nil] `create` or `update`; nil
@@ -269,12 +299,21 @@ module Spree
         # @return [Hash]
         def json_schema(action = nil)
           action = action&.to_sym
-          fields = fields_for(action)
-          required = fields.select { |field| field.required_on?(action) }.map { |field| field.name.to_s }
+          # A base field this action does not take would still reach clients
+          # through the base's type, so such a body is published in full.
+          unless base && base.fields.each_value.all? { |field| field.accepted_on?(action) }
+            return object_schema(fields_for(action), action)
+          end
 
-          schema = { type: :object, properties: fields.to_h { |field| [field.name, property_schema(field)] } }
-          schema[:required] = required if required.any?
-          schema
+          # Attributes the base describes the same way for this action are
+          # left to its type.
+          own = fields_for(action).reject do |field|
+            inherited = base.fields[field.name]
+            inherited && inherited.required_on?(action) == field.required_on?(action) &&
+              property_schema(inherited) == property_schema(field)
+          end
+          reference = { '$ref': "#/components/schemas/#{base.name}" }
+          own.any? ? { allOf: [reference, object_schema(own, action)] } : reference
         end
 
         # The component name published for an action.
@@ -291,15 +330,15 @@ module Spree
         #
         # @return [Array<RequestSchema>]
         def shapes
-          fields.each_value.flat_map do |field|
+          [*base].concat(fields.each_value.flat_map do |field|
             next [] unless field.schema
 
             nested = field.schema.shapes
             shape?(field.schema) ? [field.schema, *nested] : nested
-          end.uniq
+          end).uniq
         end
 
-        # The ISO code lists this schema's fields reach, nested ones included,
+        # The code lists this schema's fields reach, nested ones included,
         # as the components they publish.
         #
         # @return [Hash{String => Hash}]
@@ -373,6 +412,14 @@ module Spree
           scalars + nested
         end
 
+
+        def object_schema(fields, action)
+          required = fields.select { |field| field.required_on?(action) }.map { |field| field.name.to_s }
+
+          schema = { type: :object, properties: fields.to_h { |field| [field.name, property_schema(field)] } }
+          schema[:required] = required if required.any?
+          schema
+        end
 
         def fields_for(action)
           fields.values.select { |field| field.accepted_on?(action) }

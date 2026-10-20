@@ -1,3 +1,4 @@
+import { DimensionUnit, WeightUnit } from '@spree/admin-sdk'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { CountryCombobox, StoreDatePicker } from '@spree/dashboard-core'
 import {
@@ -42,9 +43,6 @@ import {
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
 import { variantDisplayLabel } from './variants-matrix'
-
-const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
-const DIMENSION_UNITS = ['mm', 'cm', 'in'] as const
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -230,7 +228,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                         <SelectValue>{(v) => (v as string) || '—'}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {WEIGHT_UNITS.map((u) => (
+                        {Object.values(WeightUnit).map((u) => (
                           <SelectItem key={u} value={u}>
                             {u}
                           </SelectItem>
@@ -295,7 +293,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                         <SelectValue>{(v) => (v as string) || '—'}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {DIMENSION_UNITS.map((u) => (
+                        {Object.values(DimensionUnit).map((u) => (
                           <SelectItem key={u} value={u}>
                             {u}
                           </SelectItem>

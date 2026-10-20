@@ -1,3 +1,4 @@
+import { DimensionUnit, WeightUnit } from '@spree/admin-sdk'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { useCountries, useCountryDisplayName } from '@spree/dashboard-core'
 import {
@@ -22,9 +23,6 @@ import {
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
 import { composeOptionsText } from './variants-matrix'
-
-const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
-const DIMENSION_UNITS = ['mm', 'cm', 'in'] as const
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -242,8 +240,8 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
           <BulkVariantsTable
             rows={rows}
             onChange={handleChange}
-            weightUnitOptions={unitOptions(WEIGHT_UNITS)}
-            dimensionUnitOptions={unitOptions(DIMENSION_UNITS)}
+            weightUnitOptions={unitOptions(Object.values(WeightUnit))}
+            dimensionUnitOptions={unitOptions(Object.values(DimensionUnit))}
             taxCategoryOptions={
               taxCategories.length > 0
                 ? taxCategories.map((c) => ({ value: c.id, label: c.name }))

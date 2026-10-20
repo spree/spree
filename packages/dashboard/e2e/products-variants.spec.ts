@@ -79,7 +79,9 @@ test.describe('product variants', () => {
   })
 
   // Skipped: pre-existing flake — both the matrix and the edit sheet register
-  test('opens the per-variant edit sheet and edits SKU + weight', async ({ page }) => {
+  test('opens the per-variant edit sheet and edits SKU, weight and dimension unit', async ({
+    page,
+  }) => {
     const creds = await login(page)
 
     const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red'])
@@ -100,6 +102,10 @@ test.describe('product variants', () => {
     // verify the sheet's UI specifically).
     await sheet.getByLabel(/^sku$/i).fill('SKU-SHEET-1')
     await sheet.getByLabel(/^weight$/i).fill('1.5')
+    // Feet: the last unit the server accepts, once missing from this picker.
+    await sheet.locator('[id$="-dim-unit"]').click()
+    await page.getByRole('option', { name: 'ft', exact: true }).click()
+    await expect(sheet.locator('[id$="-dim-unit"]')).toHaveText('ft')
 
     await sheet.getByRole('button', { name: /^done$/i }).click()
     await expect(sheet).toBeHidden()
@@ -114,5 +120,6 @@ test.describe('product variants', () => {
     const reopened = page.getByRole('dialog')
     await expect(reopened.getByLabel(/^sku$/i)).toHaveValue('SKU-SHEET-1')
     await expect(reopened.getByLabel(/^weight$/i)).toHaveValue('1.5')
+    await expect(reopened.locator('[id$="-dim-unit"]')).toHaveText('ft')
   })
 })
