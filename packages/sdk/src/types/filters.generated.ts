@@ -39,7 +39,7 @@ export type DataRequestFields = Filter.RangeFilters<'completed_at' | 'created_at
   & Filter.TextFilters<'email' | 'number'>
   & Filter.IdFilters<'id'>
   & Filter.EnumFilters<'kind', 'access' | 'erasure'>
-  & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed'>
+  & Filter.EnumFilters<'status', 'awaiting_confirmation' | 'pending' | 'processing' | 'completed' | 'failed' | 'lapsed'>
 
 export type DeliveryMethodFields = Filter.BooleanFilters<'available_to_sellers' | 'storefront_visible'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
