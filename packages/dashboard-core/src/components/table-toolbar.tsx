@@ -537,10 +537,10 @@ function ResourceFilterValue({
   const { data } = useQuery({
     // Tenant-scope the cache key so chips don't resolve against another
     // tenant's hydrate results after a store or seller switch.
-    queryKey: ['filter-chip', config.queryKey, tenantId, ids],
+    queryKey: [config.queryKey, tenantId, 'filter-chip', ids],
     queryFn: () => config.hydrate(ids),
     enabled: ids.length > 0,
-    staleTime: 60_000,
+    staleTime: config.staleTime ?? 60_000,
   })
 
   if (ids.length === 0) return null
@@ -773,10 +773,10 @@ function QuickResourceFilter({
   )
 
   const { data } = useQuery({
-    queryKey: ['quick-filter-all', config.queryKey, tenantId],
+    queryKey: [config.queryKey, tenantId, 'quick-filter-all'],
     queryFn: () => config.listAll?.() ?? Promise.resolve({ data: [] }),
     enabled: !!config.listAll,
-    staleTime: 60_000,
+    staleTime: config.staleTime ?? 60_000,
   })
   const options = useMemo(
     () =>
@@ -1141,15 +1141,15 @@ function InlineValueList({
   const resources = useQuery({
     // Tenant-scoped so a store or seller switch cannot reuse the previous
     // tenant's results.
-    queryKey: ['panel-resource-filter', column.filterResource?.queryKey, tenantId, deferredQuery],
+    queryKey: [column.filterResource?.queryKey, tenantId, 'panel-resource-filter', deferredQuery],
     queryFn: () => column.filterResource?.search(deferredQuery),
     enabled: !isTags && !isStoreCode && Boolean(column.filterResource),
     // These lists are reference data an operator reopens repeatedly while
     // narrowing one list, and the result is small now that only the displayed
     // fields are requested. Holding it for the session keeps reopening the
     // panel instant; `gcTime` outlives the unmount between opens.
-    staleTime: 5 * 60_000,
-    gcTime: 30 * 60_000,
+    staleTime: column.filterResource?.staleTime ?? 5 * 60_000,
+    gcTime: Math.max(30 * 60_000, column.filterResource?.staleTime ?? 0),
     // Keeps the previous matches on screen while the next query resolves, so
     // the list does not blank on every keystroke.
     //
@@ -1158,7 +1158,7 @@ function InlineValueList({
     // drops them instead of briefly offering another tenant's records as
     // though they were this one's.
     placeholderData: (previous, previousQuery) => {
-      const [, previousResource, previousTenant] = (previousQuery?.queryKey ?? []) as unknown[]
+      const [previousResource, previousTenant] = (previousQuery?.queryKey ?? []) as unknown[]
       const sameScope =
         previousResource === column.filterResource?.queryKey && previousTenant === tenantId
       return sameScope ? previous : undefined

@@ -1,7 +1,11 @@
 import { STORE_QUERY_RESOURCE, withStoreScope } from '@spree/dashboard-core'
 import { QueryClient } from '@tanstack/react-query'
 import { describe, expect, it } from 'vitest'
-import { marketUpdateInvalidations, marketWriteInvalidations } from './use-markets'
+import {
+  marketAutocompleteProps,
+  marketUpdateInvalidations,
+  marketWriteInvalidations,
+} from './use-markets'
 
 const STORE_ID = 'store_abc123'
 
@@ -19,6 +23,8 @@ function staleKeysAfter(invalidate: ReturnType<typeof marketUpdateInvalidations>
     marketList: ['markets', STORE_ID, 'all'],
     market: ['markets', STORE_ID, 'market_1'],
     otherMarket: ['markets', STORE_ID, 'market_2'],
+    filterOptions: ['markets', STORE_ID, 'panel-resource-filter', ''],
+    filterChip: ['markets', STORE_ID, 'filter-chip', ['market_1']],
     unrelated: ['products', STORE_ID],
   }
 
@@ -49,6 +55,21 @@ describe('market write invalidations', () => {
 
     expect(stale).toContain('marketList')
     expect(stale).toContain('market')
+  })
+
+  // The list filter caches markets for an hour, so it relies on these writes
+  // to drop a renamed or deleted market rather than on the clock.
+  it('invalidates the market list filter', () => {
+    expect(staleKeysAfter(marketWriteInvalidations)).toEqual(
+      expect.arrayContaining(['filterOptions', 'filterChip']),
+    )
+    expect(staleKeysAfter(marketUpdateInvalidations('market_1'))).toEqual(
+      expect.arrayContaining(['filterOptions', 'filterChip']),
+    )
+  })
+
+  it('names the filter cache after markets so these writes reach it', () => {
+    expect(marketAutocompleteProps().queryKey).toBe('markets')
   })
 
   it('leaves unrelated resources cached', () => {

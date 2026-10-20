@@ -98,9 +98,14 @@ export function useDeleteMarket() {
   })
 }
 
-export function marketAutocompleteProps(queryKey: string) {
+/**
+ * Market picker for list filters. Cached for an hour under `markets`, so the
+ * market writes above refresh it rather than the clock.
+ */
+export function marketAutocompleteProps() {
   return {
-    queryKey,
+    queryKey: 'markets',
+    staleTime: 60 * 60_000,
     search: (q: string) =>
       adminClient.markets.list({ search: q, limit: 100, sort: 'position', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.markets.list({ id_in: ids, limit: ids.length }),

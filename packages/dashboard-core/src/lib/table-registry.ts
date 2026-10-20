@@ -67,6 +67,11 @@ interface ColumnDefBase<T = any> {
  * can show human-readable names instead of raw prefixed IDs.
  */
 export interface ResourceFilterConfig<R extends { id: string } = { id: string }> {
+  /**
+   * Leads every cache entry the filter creates, ahead of the tenant. Naming
+   * it after the resource (`'markets'`) lets that resource's writes, which
+   * invalidate `[resource, tenant]`, refresh the filter's lists too.
+   */
   queryKey: string
   search: (query: string) => Promise<{ data: R[] }>
   hydrate: (ids: string[]) => Promise<{ data: R[] }>
@@ -81,6 +86,11 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
    * could run to hundreds of rows.
    */
   listAll?: () => Promise<{ data: R[] }>
+  /**
+   * How long fetched options stay fresh, in milliseconds. Raise it for
+   * rarely-changing resources whose writes invalidate `queryKey`.
+   */
+  staleTime?: number
 }
 
 /**

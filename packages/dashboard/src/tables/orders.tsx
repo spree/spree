@@ -186,7 +186,7 @@ defineTable('orders', {
       label: i18n.t('admin.fields.order.market.label'),
       filterable: true,
       filterType: 'resource',
-      filterResource: marketAutocompleteProps('orders-table-market-filter'),
+      filterResource: marketAutocompleteProps(),
       ransackAttribute: 'market_id',
       default: false,
       className: 'text-sm text-muted-foreground',
