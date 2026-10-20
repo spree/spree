@@ -35019,8 +35019,9 @@ paths:
       - name: channel_id
         in: query
         required: false
-        description: Lists only variants published on this channel. When another of
-          these fields is given without it, the store default channel applies.
+        description: Lists only variants published on this channel. When a market,
+          customer, company or currency is given without it, the store default channel
+          applies; an order uses its own.
         schema:
           type: string
       - name: customer_id
@@ -82599,8 +82600,9 @@ components:
             in its currency.
         channel_id:
           type: string
-          description: Lists only variants published on this channel. When another
-            of these fields is given without it, the store default channel applies.
+          description: Lists only variants published on this channel. When a market,
+            customer, company or currency is given without it, the store default channel
+            applies; an order uses its own.
         customer_id:
           type: string
           description: Narrows to the customer's catalogs and prices as they would

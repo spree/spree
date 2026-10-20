@@ -11,8 +11,8 @@ export type VariantSalesContextParams = {
   /** Prices in this market and lists only variants with a price in its currency. */
   market_id?: string
   /**
-   * Lists only variants published on this channel. When another of these fields is given without
-   * it, the store default channel applies.
+   * Lists only variants published on this channel. When a market, customer, company or currency is
+   * given without it, the store default channel applies; an order uses its own.
    */
   channel_id?: string
   /** Narrows to the customer's catalogs and prices as they would pay. Needs `read_customers`. */
