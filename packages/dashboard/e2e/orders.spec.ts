@@ -102,7 +102,7 @@ test.describe('new order', () => {
     await expect(page.getByText('Slot probe: order.form_main')).toBeVisible()
   })
 
-  test('picking a market switches the currency and language to that market', async ({ page }) => {
+  test('picking a market switches the currency and locale to that market', async ({ page }) => {
     const creds = await login(page)
     await page.goto(NEW_ORDER_PATH(creds.store_id))
     await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })

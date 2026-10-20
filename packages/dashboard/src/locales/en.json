@@ -1723,7 +1723,7 @@
         },
         "market": {
           "label": "Market",
-          "help": "Sets the order's pricing and taxes, and which currency and languages it can use."
+          "help": "Sets the order's pricing and taxes, and which currency and locales it can use."
         },
         "order_group": {
           "label": "Purchase",
