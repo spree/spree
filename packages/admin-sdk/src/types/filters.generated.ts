@@ -5,7 +5,7 @@ import type * as Filter from '@spree/sdk-core'
 export type AddressFields = Filter.TextFilters<'address1' | 'address2' | 'city' | 'company' | 'first_name' | 'last_name' | 'phone' | 'postal_code' | 'state_code'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
-  & Filter.EnumFilters<'country_code', Filter.CountryCode>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type AdminUserFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'email' | 'first_name' | 'last_name'>
@@ -58,7 +58,7 @@ export type CollectionFields = Filter.BooleanFilters<'automatic'>
 
 export type CommissionLineFields = Filter.RangeFilters<'amount' | 'created_at' | 'rate' | 'tax_amount' | 'total' | 'updated_at'>
   & Filter.IdFilters<'id' | 'order_id'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'kind', 'percentage' | 'fixed'>
 
 export type CommissionRateFields = Filter.TextFilters<'code' | 'name'>
@@ -185,7 +185,7 @@ export type FulfillmentFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type GiftCardFields = Filter.TextFilters<'code'>
   & Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
   & Filter.IdFilters<'created_by_id' | 'customer_id' | 'gift_card_batch_id' | 'id'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'state', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
   & Filter.EnumFilters<'status', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
 
@@ -217,8 +217,8 @@ export type MarketFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
   & Filter.RangeFilters<'position', number>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
-  & Filter.EnumFilters<'default_locale', Filter.LocaleCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'default_locale', Filter.LocaleCode>
 
 export type MediaFields = Filter.TextFilters<'alt'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -242,9 +242,9 @@ export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' |
   & Filter.BooleanFilters<'considered_risky'>
   & Filter.TextFilters<'coupon_code' | 'email' | 'number' | 'po_number'>
   & Filter.RangeFilters<'total_quantity', number>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
-  & Filter.EnumFilters<'locale', Filter.LocaleCode>
+  & Filter.CodeFilters<'locale', Filter.LocaleCode>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'payment_status', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
@@ -258,7 +258,7 @@ export type OrderCancellationReasonFields = Filter.BooleanFilters<'active'>
 export type OrderGroupFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'email' | 'number'>
   & Filter.IdFilters<'id'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
 
 export type OrderRoutingRuleFields = Filter.BooleanFilters<'active'>
   & Filter.IdFilters<'channel_id' | 'id' | 'store_id' | 'type'>
@@ -290,7 +290,7 @@ export type PolicyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type PriceFields = Filter.RangeFilters<'amount' | 'compare_at_amount' | 'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'price_list_id' | 'variant_id'>
   & Filter.RangeFilters<'min_quantity', number>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
 
 export type PriceListFields = Filter.IdFilters<'catalog_id' | 'id'>
   & Filter.RangeFilters<'created_at' | 'ends_at' | 'starts_at' | 'updated_at'>
@@ -327,7 +327,7 @@ export type PromotionRuleFields = Filter.RangeFilters<'created_at' | 'updated_at
 export type PurchaseOrderFields = Filter.RangeFilters<'cancel_by' | 'closed_short_at' | 'created_at' | 'expected_at' | 'ordered_at' | 'received_at' | 'updated_at'>
   & Filter.IdFilters<'destination_location_id' | 'id' | 'supplier_id'>
   & Filter.TextFilters<'number' | 'reference'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'status', 'draft' | 'ordered' | 'partially_received' | 'received' | 'over_received' | 'canceled'>
 
 export type PurchaseOrderItemFields = Filter.RangeFilters<'created_at' | 'unit_cost' | 'updated_at'>
@@ -369,7 +369,7 @@ export type SellerFields = Filter.TextFilters<'contact_email' | 'name'>
 export type SellerPayoutFields = Filter.RangeFilters<'amount' | 'created_at' | 'period_end' | 'period_start' | 'updated_at'>
   & Filter.IdFilters<'id' | 'seller_id'>
   & Filter.TextFilters<'provider' | 'reference'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
 export type SellerRequirementFields = Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -384,7 +384,7 @@ export type SellerRequirementSubmissionFields = Filter.RangeFilters<'created_at'
 export type SellerTransferFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'order_id' | 'payout_id' | 'seller_id'>
   & Filter.TextFilters<'provider' | 'reference'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'kind', 'earning' | 'refund_reversal'>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
@@ -402,7 +402,7 @@ export type StockLocationFields = Filter.BooleanFilters<'active' | 'default' | '
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'seller_id'>
   & Filter.TextFilters<'kind' | 'name' | 'state_code'>
-  & Filter.EnumFilters<'country_code', Filter.CountryCode>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type StockMovementFields = Filter.RangeFilters<'created_at' | 'unit_cost' | 'updated_at'>
   & Filter.IdFilters<'exchange_id' | 'fulfillment_id' | 'id' | 'order_id' | 'purchase_order_id' | 'return_id' | 'stock_item_id' | 'stock_level_id' | 'stock_receipt_id' | 'stock_transfer_id'>
@@ -434,7 +434,7 @@ export type StoreFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type StoreCreditFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
   & Filter.IdFilters<'created_by_id' | 'customer_id' | 'id'>
   & Filter.TextFilters<'memo'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
 
 export type StoreCreditEventFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -442,7 +442,7 @@ export type StoreCreditEventFields = Filter.RangeFilters<'created_at' | 'updated
 export type SupplierFields = Filter.TextFilters<'city' | 'contact_name' | 'email' | 'name' | 'phone'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
-  & Filter.EnumFilters<'country_code', Filter.CountryCode>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type TagFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -470,20 +470,20 @@ export type TaxLineFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.BooleanFilters<'included'>
   & Filter.TextFilters<'provider_id' | 'state_code' | 'taxability_reason'>
-  & Filter.EnumFilters<'country_code', Filter.CountryCode>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type TaxRateFields = Filter.RangeFilters<'amount' | 'created_at' | 'rate' | 'updated_at'>
   & Filter.IdFilters<'id' | 'tax_category_id'>
   & Filter.TextFilters<'name' | 'state_code'>
-  & Filter.EnumFilters<'country_code', Filter.CountryCode>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type VariantFields = Filter.IdFilters<'carton_package_type_id' | 'id' | 'product_id'>
   & Filter.RangeFilters<'carton_weight' | 'cost_price' | 'created_at' | 'deleted_at' | 'depth' | 'discontinue_on' | 'height' | 'updated_at' | 'weight' | 'width'>
   & Filter.RangeFilters<'cartons_per_pallet' | 'minimum_order_quantity' | 'order_multiple' | 'position' | 'units_per_carton', number>
   & Filter.TextFilters<'hs_code' | 'sku'>
   & Filter.BooleanFilters<'track_inventory'>
-  & Filter.EnumFilters<'cost_currency', Filter.CurrencyCode>
-  & Filter.EnumFilters<'country_of_origin', Filter.CountryCode>
+  & Filter.CodeFilters<'cost_currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'country_of_origin', Filter.CountryCode>
   & Filter.EnumFilters<'purchase_unit', 'unit' | 'carton'>
 
 export type WebhookDeliveryFields = Filter.RangeFilters<'created_at' | 'delivered_at' | 'updated_at'>

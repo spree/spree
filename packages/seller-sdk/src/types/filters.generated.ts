@@ -54,9 +54,9 @@ export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' |
   & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
   & Filter.TextFilters<'number' | 'po_number'>
   & Filter.RangeFilters<'total_quantity', number>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
-  & Filter.EnumFilters<'locale', Filter.LocaleCode>
+  & Filter.CodeFilters<'locale', Filter.LocaleCode>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'payment_status', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
@@ -99,13 +99,13 @@ export type ReturnReasonFields = Filter.BooleanFilters<'active'>
 export type SellerPayoutFields = Filter.RangeFilters<'amount' | 'created_at' | 'period_end' | 'period_start' | 'updated_at'>
   & Filter.IdFilters<'id' | 'seller_id'>
   & Filter.TextFilters<'provider' | 'reference'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
 export type SellerTransferFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'order_id' | 'payout_id' | 'seller_id'>
   & Filter.TextFilters<'provider' | 'reference'>
-  & Filter.EnumFilters<'currency', Filter.CurrencyCode>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'kind', 'earning' | 'refund_reversal'>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
@@ -119,7 +119,7 @@ export type StockLocationFields = Filter.BooleanFilters<'active' | 'default' | '
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'seller_id'>
   & Filter.TextFilters<'kind' | 'name' | 'state_code'>
-  & Filter.EnumFilters<'country_code', Filter.CountryCode>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type TaxIdentifierFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>

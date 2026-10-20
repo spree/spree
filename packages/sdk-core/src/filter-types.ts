@@ -22,7 +22,8 @@ type Kind =
   | 'type'
   | 'boolean'
 // `code` names one of the shared code-list types the SDKs export
-// (`LocaleCode`), for a value the API does not enumerate per table.
+// (`LocaleCode`, `CurrencyCode`, `CountryCode`), for a closed list the API
+// does not enumerate per table.
 type AttributeKind = Kind | { enum: string[] } | { code: string }
 type ScopeType = Kind | Kind[] | { list: Kind }
 
@@ -105,8 +106,11 @@ function fieldsType(table: FilterTable): string {
 
   for (const [attribute, kind] of Object.entries(table.attributes)) {
     if (typeof kind === 'object') {
-      const values = 'code' in kind ? `Filter.${kind.code}` : union(kind.enum)
-      enums.push(`Filter.EnumFilters<${literal(attribute)}, ${values}>`)
+      enums.push(
+        'code' in kind
+          ? `Filter.CodeFilters<${literal(attribute)}, Filter.${kind.code}>`
+          : `Filter.EnumFilters<${literal(attribute)}, ${union(kind.enum)}>`,
+      )
       continue
     }
     const block = KIND_TYPES[kind as Exclude<Kind, 'enum'>].block

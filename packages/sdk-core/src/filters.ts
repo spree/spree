@@ -54,6 +54,9 @@ export type EnumFilters<K extends string, V extends string> = KindFilters<
   V | (string & {})
 >
 
+/** A code from a closed standard list (`CurrencyCode`, `CountryCode`, `LocaleCode`); no other value is accepted. */
+export type CodeFilters<K extends string, V extends string> = KindFilters<K, 'equality', V>
+
 /** Prefixed IDs (`prod_86Rf07xd4z`) and type short names (`credit_card`). */
 export type IdFilters<K extends string> = KindFilters<K, 'equality', string>
 
