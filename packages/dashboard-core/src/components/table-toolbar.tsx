@@ -36,11 +36,10 @@ import {
   XIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useDeferredValue, useMemo, useState } from 'react'
+import { Fragment, useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
-import { useDisplayName } from '../hooks/use-display-name'
 import {
   DATE_PRESET_KEYS,
   type DatePresetKey,
@@ -56,6 +55,7 @@ import {
 } from '../lib/table-registry'
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
+import { LocaleLabel, useLocaleLabel } from './locale-select'
 import { StoreDatePicker } from './store-date-picker'
 
 interface TableToolbarProps {
@@ -493,6 +493,15 @@ function FilterChip({
               <ResourceFilterValue value={first.value} config={col.filterResource} />
             ) : col?.filterType === 'tags' ? (
               <span>{parseFilterIds(first.value).join(', ')}</span>
+            ) : col?.filterType === 'locale' ? (
+              <span>
+                {parseFilterIds(first.value).map((code, index) => (
+                  <Fragment key={code}>
+                    {index > 0 && ', '}
+                    <LocaleLabel code={code} />
+                  </Fragment>
+                ))}
+              </span>
             ) : col?.filterType === 'enum' && col.filterOptions ? (
               <span>
                 {parseFilterIds(first.value)
@@ -1129,7 +1138,7 @@ function InlineValueList({
   // keeps the panel mountable in one that has none.
   const store = useOptionalStore()
   const storeCodes = (isCurrency ? store?.currencies : isLocale ? store?.locales : null) ?? noCodes
-  const languageName = useDisplayName('language')
+  const localeLabel = useLocaleLabel()
 
   // Tags arrive as one list and are filtered client-side; resources are
   // searched server-side, since their vocabulary is unbounded.
@@ -1192,7 +1201,7 @@ function InlineValueList({
       return storeCodes
         .map((code) => ({
           value: code,
-          label: isLocale ? `${languageName(code) ?? code} (${code})` : code,
+          label: isLocale ? localeLabel(code) : code,
         }))
         .filter((option) => !needle || option.label.toLowerCase().includes(needle))
     }
@@ -1220,7 +1229,7 @@ function InlineValueList({
     isStoreCode,
     isLocale,
     storeCodes,
-    languageName,
+    localeLabel,
     isTags,
     tags.data,
     resources.data,

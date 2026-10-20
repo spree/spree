@@ -1,4 +1,4 @@
-import { defineTable, Money } from '@spree/dashboard-core'
+import { defineTable, LocaleLabel, Money } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -200,7 +200,7 @@ defineTable('orders', {
       filterType: 'locale',
       default: false,
       className: 'text-sm text-muted-foreground',
-      render: (order) => order.locale ?? '—',
+      render: (order) => (order.locale ? <LocaleLabel code={order.locale} /> : '—'),
     },
     // On a marketplace this list holds the operator's own orders and every
     // seller's together, so a row has to say which it is — shown by default

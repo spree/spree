@@ -152,7 +152,7 @@ test.describe('orders list', () => {
 
     await expect(row(page, small.number)).toContainText(usMarket, { timeout: 15_000 })
     await expect(
-      row(page, large.number).getByRole('cell', { name: 'de', exact: true }),
+      row(page, large.number).getByRole('cell', { name: 'DE — German', exact: true }),
     ).toBeVisible()
 
     await addRecordFilter(page, /^locale$/i, 'German')

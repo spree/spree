@@ -13,7 +13,7 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from '@spree/dashboard-ui'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisplayName } from '../hooks/use-display-name'
 import { useStore } from '../providers/store-provider'
@@ -64,16 +64,6 @@ interface MultiProps extends BaseProps {
 type LocaleSelectProps = SingleProps | MultiProps
 
 /**
- * Resolves a locale code (`en`, `pt-BR`) to its display name (`English`,
- * `Portuguese (Brazil)`) in the admin UI language, falling back to the code
- * itself when the runtime lacks coverage.
- */
-function useLocaleDisplayName() {
-  const displayName = useDisplayName('language')
-  return (code: string) => displayName(code) ?? code
-}
-
-/**
  * Mirrors `CurrencySelect`'s row format: `CODE — Localized Name`. Codes the
  * runtime cannot name (`Intl.DisplayNames` returns the code back, as it does
  * for `dz`) render as the bare upper-cased code rather than `DZ — dz`.
@@ -97,15 +87,25 @@ function localeFilter(labelFor: (locale: string) => string) {
 }
 
 /**
+ * Returns a function that labels a locale code the way the dashboard shows
+ * locales everywhere: `EN — English`, named in the admin UI language. For
+ * plain-text contexts (option lists, search); render `LocaleLabel` in JSX.
+ */
+export function useLocaleLabel() {
+  const displayName = useDisplayName('language')
+  return useCallback((code: string) => formatOption(code, displayName(code) ?? code), [displayName])
+}
+
+/**
  * Static text label for a locale code: `EN — English`. Use this in tables
  * and read-only contexts where the picker isn't needed but the same
  * formatting is. Falls back to the upper-cased code when `Intl.DisplayNames`
  * has no entry.
  */
 export function LocaleLabel({ code }: { code: string }) {
-  const displayNameFor = useLocaleDisplayName()
+  const labelFor = useLocaleLabel()
   if (!code) return null
-  return <>{formatOption(code, displayNameFor(code))}</>
+  return <>{labelFor(code)}</>
 }
 
 /**
@@ -124,7 +124,7 @@ export function LocaleLabel({ code }: { code: string }) {
 export function LocaleSelect(props: LocaleSelectProps) {
   const { t } = useTranslation()
   const { locales: storeLocales } = useStore()
-  const displayNameFor = useLocaleDisplayName()
+  const localeLabel = useLocaleLabel()
 
   // Union of `props.options` (everything the picker should show) and the
   // currently selected values — so editing an existing record doesn't
@@ -145,15 +145,14 @@ export function LocaleSelect(props: LocaleSelectProps) {
   // per character; a lookup map keeps it to a single pass per list change.
   const labels = useMemo(() => {
     const map = new Map<string, string>()
-    for (const locale of items) map.set(locale, formatOption(locale, displayNameFor(locale)))
+    for (const locale of items) map.set(locale, localeLabel(locale))
     return map
-  }, [items, displayNameFor])
+  }, [items, localeLabel])
 
   // `CODE — Name` label for a locale, from the precomputed map (falls back to a
   // direct lookup for a value not in the current option list, e.g. a selected
   // chip the list later dropped).
-  const labelFor = (locale: string) =>
-    labels.get(locale) ?? formatOption(locale, displayNameFor(locale))
+  const labelFor = (locale: string) => labels.get(locale) ?? localeLabel(locale)
 
   if (props.multiple) {
     return (
