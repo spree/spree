@@ -93,7 +93,20 @@ RSpec.describe Spree::Addresses::Update do
           # state_name is promoted to the matching state record, so it clears
           expect(value).to have_attributes(new_address_params.except(:state_name))
           expect(value.country).to eq(country)
-          expect(value.state).to eq(state)
+          # Compared by name: a few names belong to two subdivisions of one
+          # country (Hungary's Veszprém is a city and a county), and either is
+          # a correct match for a name alone.
+          expect(value.state.name).to eq(state.name)
+        end
+
+        # The address starts in New York, and "NY" is also a Hungarian code.
+        context 'when the old state code also exists in the new country' do
+          let(:country) { Spree::Country.by_iso('HU') }
+          let(:state) { Spree::State.resolve('HU', 'BK') }
+
+          it 'resolves the submitted state name' do
+            expect(value.state).to eq(state)
+          end
         end
 
         context 'when user sets address as default shipping' do
@@ -163,7 +176,7 @@ RSpec.describe Spree::Addresses::Update do
             expect(value).to have_attributes(new_address_params.except(:state_name))
             expect(value.id).not_to eq(address.id)
             expect(value.country).to eq(country)
-            expect(value.state).to eq(state)
+            expect(value.state.name).to eq(state.name)
             expect(value.owner).to eq(user)
             expect(address.deleted_at).not_to be_nil
           end

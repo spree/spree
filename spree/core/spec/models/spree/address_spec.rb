@@ -178,6 +178,24 @@ describe Spree::Address, type: :model do
       expect(address.state_name).to be_nil
     end
 
+    context 'when a saved address is given a new state_name' do
+      let(:address) { create(:address, country: country, state: Spree::State.resolve('US', 'NY')) }
+
+      it 'resolves the name instead of keeping the old code' do
+        address.update!(state_name: 'Maryland')
+        expect(address.reload.state_code).to eq('MD')
+      end
+
+      # Hungary also has an "NY" subdivision (Nyíregyháza), so the old code
+      # stays valid after the move and must not win over the submitted name.
+      it 'resolves the name when the old code also exists in the new country' do
+        address.update!(country_code: 'HU', state_name: 'Bács-Kiskun',
+                        postal_code: Spree::TestingSupport::CountryPool.postal_code_for('HU'))
+        expect(address.reload.state_code).to eq('BK')
+        expect(address.state_name).to be_nil
+      end
+    end
+
     it 'does not require a state when the country does not require one' do
       address.country_code = stateless_country.iso
       address.postal_code = Spree::TestingSupport::CountryPool.postal_code_for(stateless_country.iso)

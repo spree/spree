@@ -531,8 +531,13 @@ module Spree
     # a real subdivision of this country. A name matching nothing is left
     # alone — countries without subdivisions keep it as free text, and
     # +state_validate+ decides whether that is acceptable.
+    #
+    # A name submitted in this change beats a code carried over from before
+    # it: the old code can be just as valid in the new country (New York's
+    # "NY" is also a Hungarian county code), and would otherwise silently win.
     def normalize_state
       return if country_code.blank?
+      return if state_name_changed? && !state_code_changed? && resolve_state_name
 
       submitted_abbr = self[:state_code].presence
 
@@ -546,6 +551,10 @@ module Spree
         return if resolved
       end
 
+      resolve_state_name
+    end
+
+    def resolve_state_name
       return if state_name.blank?
 
       matched = Spree::IsoData.subdivision_code(country_code, state_name)
@@ -553,6 +562,7 @@ module Spree
 
       self[:state_code] = matched
       self.state_name = nil
+      matched
     end
 
     def clear_state
