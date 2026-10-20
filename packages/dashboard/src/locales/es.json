@@ -1607,6 +1607,12 @@
         "internal_note": {
           "label": "Nota interna (solo staff)"
         },
+        "locale": {
+          "label": "Idioma"
+        },
+        "market": {
+          "label": "Mercado"
+        },
         "order_group": {
           "label": "Compra",
           "view": "Ver compra"

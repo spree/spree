@@ -178,7 +178,7 @@ defineTable('products', {
       sortable: false,
       filterable: true,
       filterType: 'resource',
-      filterResource: channelAutocompleteProps('products-table-channel-filter'),
+      filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channels_id',
       default: false,
       render: (product) => product.channels?.map((c: Channel) => c.name).join(', ') ?? '—',

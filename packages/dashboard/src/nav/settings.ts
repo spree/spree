@@ -130,6 +130,9 @@ settingsNav.add({
   group: 'store',
   position: 300,
   subject: Subject.Channel,
+  // Every staff member reads channels for the shell, so `read` would show
+  // the page to all of them; it is for whoever may change them.
+  action: 'update',
 })
 
 settingsNav.add({
@@ -156,6 +159,9 @@ settingsNav.add({
   group: 'selling',
   position: 100,
   subject: Subject.Market,
+  // Every staff member reads markets for the shell, so `read` would show
+  // the page to all of them; it is for whoever may change them.
+  action: 'update',
 })
 
 settingsNav.add({

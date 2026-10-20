@@ -1511,6 +1511,12 @@
         "internal_note": {
           "label": "Interne Notiz (nur Mitarbeiter)"
         },
+        "locale": {
+          "label": "Sprache"
+        },
+        "market": {
+          "label": "Markt"
+        },
         "order_group": {
           "label": "Einkauf",
           "view": "Einkauf anzeigen"

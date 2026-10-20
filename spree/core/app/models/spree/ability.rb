@@ -167,6 +167,9 @@ module Spree
 
     # Reference data every staff member can read regardless of keys — address
     # forms need countries/states, and the dashboard shell reads the store.
+    # The back office also reads the store's markets and channels: its
+    # currencies and languages come from the markets, and list filters offer
+    # both.
     #
     # The store grant is unrestricted only for the store's own back office.
     # Another panel reads the one store it operates under and no other, so a
@@ -180,6 +183,11 @@ module Spree
       else
         can :read, Spree::Store, id: @store.id
       end
+
+      return unless store_resource?
+
+      can :read, Spree::Market, store_id: @resource.id
+      can :read, Spree::Channel, store_id: @resource.id
     end
 
   end

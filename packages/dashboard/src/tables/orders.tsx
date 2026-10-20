@@ -1,10 +1,11 @@
-import { defineTable, Money } from '@spree/dashboard-core'
+import { defineTable, LocaleLabel, Money } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { customerAutocompleteProps } from '../hooks/use-customers'
+import { marketAutocompleteProps } from '../hooks/use-markets'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 import { orderGroupSearch } from '../lib/order-group-search'
 
@@ -76,7 +77,7 @@ defineTable('orders', {
       label: i18n.t('admin.fields.order.channel.label'),
       filterable: true,
       filterType: 'resource',
-      filterResource: channelAutocompleteProps('orders-table-channel-filter'),
+      filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channel_id',
       default: true,
       className: 'text-sm text-muted-foreground',
@@ -179,6 +180,27 @@ defineTable('orders', {
       filterType: 'currency',
       default: false,
       render: (order) => order.currency ?? '—',
+    },
+    {
+      key: 'market',
+      label: i18n.t('admin.fields.order.market.label'),
+      filterable: true,
+      filterType: 'resource',
+      filterResource: marketAutocompleteProps(),
+      ransackAttribute: 'market_id',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) => order.market?.name ?? '—',
+    },
+    {
+      key: 'locale',
+      label: i18n.t('admin.fields.order.locale.label'),
+      sortable: true,
+      filterable: true,
+      filterType: 'locale',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (order) => (order.locale ? <LocaleLabel code={order.locale} /> : '—'),
     },
     // On a marketplace this list holds the operator's own orders and every
     // seller's together, so a row has to say which it is — shown by default

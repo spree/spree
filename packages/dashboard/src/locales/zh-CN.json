@@ -1506,6 +1506,12 @@
         "internal_note": {
           "label": "内部备注（仅员工可见）"
         },
+        "locale": {
+          "label": "语言区域"
+        },
+        "market": {
+          "label": "市场"
+        },
         "order_group": {
           "label": "本次购买",
           "view": "查看本次购买"

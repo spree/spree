@@ -152,7 +152,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
       total item_total total_quantity considered_risky channel_id currency coupon_code customer_id seller_id
-      order_group_id po_number
+      order_group_id po_number market_id locale
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search]
     self.ransackable_scope_types = %w[complete incomplete refunded partially_refunded].index_with('boolean')

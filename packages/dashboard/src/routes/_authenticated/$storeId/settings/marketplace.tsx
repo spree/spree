@@ -6,6 +6,7 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   percentToFraction,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   Alert,
@@ -86,7 +87,8 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const { storeId } = Route.useParams()
   const updateMutation = useUpdateStoreSettings()
   const { data: payoutProviders } = usePayoutProviders()
-  const { symbol: currencySymbol } = currencyParts(store.default_currency, i18n.language)
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   const form = useForm<MarketplaceSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

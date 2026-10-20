@@ -1529,6 +1529,12 @@
         "internal_note": {
           "label": "Notatka wewnętrzna (tylko dla personelu)"
         },
+        "locale": {
+          "label": "Język"
+        },
+        "market": {
+          "label": "Rynek"
+        },
         "order_group": {
           "label": "Zakup",
           "view": "Zobacz zakup"

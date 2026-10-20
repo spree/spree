@@ -33,8 +33,8 @@ interface CurrencySelectProps {
   /** Fires on every selection change. */
   onChange?: (currency: CurrencyCode) => void
   /**
-   * Currency codes to pick from. Defaults to the current store's
-   * `supported_currencies`. Pass `ALL_CURRENCY_CODES` (or any custom list) for
+   * Currency codes to pick from. Defaults to the currencies of the current
+   * store's markets. Pass `ALL_CURRENCY_CODES` (or any custom list) for
    * contexts where the merchant chooses a currency the store doesn't yet
    * support — e.g. a market's currency.
    */
@@ -55,8 +55,8 @@ interface CurrencySelectProps {
 }
 
 /**
- * Picker for a currency code. Defaults to the current store's
- * `supported_currencies` (and the store's `default_currency`), so callers
+ * Picker for a currency code. Defaults to the currencies of the
+ * current store's markets (the default market's first), so callers
  * choosing among already-configured currencies don't have to wire anything up.
  * Pass `options` (e.g. `ALL_CURRENCY_CODES`) when the merchant may pick any
  * currency, such as a market's currency. Each option reads `CODE — Full Name`

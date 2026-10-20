@@ -36,7 +36,7 @@ import {
   XIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useDeferredValue, useMemo, useState } from 'react'
+import { Fragment, useCallback, useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
@@ -55,6 +55,7 @@ import {
 } from '../lib/table-registry'
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
+import { LocaleLabel, useLocaleLabel } from './locale-select'
 import { StoreDatePicker } from './store-date-picker'
 
 interface TableToolbarProps {
@@ -81,6 +82,13 @@ interface TableToolbarProps {
 
 // Operator labels are stored as i18n keys (`admin.components.table_toolbar.operators.*`)
 // and resolved with `t()` at render time so they follow the active language.
+const storeCodeOperators = [
+  { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
+  { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.is_not' },
+  { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
+  { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
+]
+
 const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
   string: [
     // `i_cont` (case-insensitive) rather than `cont` — an admin typing
@@ -125,13 +133,9 @@ const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
     { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
   ],
   // Same shape as `enum` — the value picker just sources its option list
-  // from the active store's `supported_currencies`.
-  currency: [
-    { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
-    { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.is_not' },
-    { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
-    { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
-  ],
+  // from the currencies / languages of the active store's markets.
+  currency: storeCodeOperators,
+  locale: storeCodeOperators,
 }
 
 function getOperators(type: string) {
@@ -155,7 +159,7 @@ const noValueOperators = ['present', 'blank']
 
 /** Stable empty list, so a panel with no store doesn't rebuild `items` (and
  *  re-emit Base UI Select state) on every render. */
-const noCurrencies: string[] = []
+const noCodes: string[] = []
 
 // ============================================================================
 // TableToolbar
@@ -489,6 +493,15 @@ function FilterChip({
               <ResourceFilterValue value={first.value} config={col.filterResource} />
             ) : col?.filterType === 'tags' ? (
               <span>{parseFilterIds(first.value).join(', ')}</span>
+            ) : col?.filterType === 'locale' ? (
+              <span>
+                {parseFilterIds(first.value).map((code, index) => (
+                  <Fragment key={code}>
+                    {index > 0 && ', '}
+                    <LocaleLabel code={code} />
+                  </Fragment>
+                ))}
+              </span>
             ) : col?.filterType === 'enum' && col.filterOptions ? (
               <span>
                 {parseFilterIds(first.value)
@@ -516,6 +529,25 @@ function FilterChip({
 }
 
 /**
+ * The whole option list of a resource small enough to fetch once (`listAll`),
+ * cached under `[queryKey, tenant, 'all']` — the key the resource's own
+ * full-list hook uses, so filters and the rest of the dashboard share one
+ * fetch that the resource's writes invalidate.
+ */
+function useListAll(
+  config: ColumnDef['filterResource'],
+  tenantId: string | undefined,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: [config?.queryKey, tenantId, 'all'],
+    queryFn: () => config?.listAll?.() ?? Promise.resolve({ data: [] }),
+    enabled: enabled && Boolean(config?.listAll),
+    staleTime: config?.staleTime ?? 60_000,
+  })
+}
+
+/**
  * Hydrates the CSV id list in a resource filter into human labels. Reuses
  * the resource's `hydrate` callback so each chip benefits from React Query's
  * cache (the picker inside the panel populates the same `queryKey`).
@@ -530,19 +562,21 @@ function ResourceFilterValue({
   const tenantId = useTenantId()
   const ids = useMemo(() => parseFilterIds(value), [value])
 
-  const { data } = useQuery({
+  const all = useListAll(config, tenantId, ids.length > 0)
+  const hydrated = useQuery({
     // Tenant-scope the cache key so chips don't resolve against another
     // tenant's hydrate results after a store or seller switch.
-    queryKey: ['filter-chip', config.queryKey, tenantId, ids],
+    queryKey: [config.queryKey, tenantId, 'filter-chip', ids],
     queryFn: () => config.hydrate(ids),
-    enabled: ids.length > 0,
-    staleTime: 60_000,
+    enabled: ids.length > 0 && !config.listAll,
+    staleTime: config.staleTime ?? 60_000,
   })
+  const records = config.listAll ? all.data?.data : hydrated.data?.data
 
   if (ids.length === 0) return null
 
   const labels = ids.map((id) => {
-    const record = data?.data.find((r) => r.id === id)
+    const record = records?.find((r) => r.id === id)
     return record ? config.getOptionLabel(record) : id
   })
 
@@ -768,12 +802,7 @@ function QuickResourceFilter({
     [existingValue],
   )
 
-  const { data } = useQuery({
-    queryKey: ['quick-filter-all', config.queryKey, tenantId],
-    queryFn: () => config.listAll?.() ?? Promise.resolve({ data: [] }),
-    enabled: !!config.listAll,
-    staleTime: 60_000,
-  })
+  const { data } = useListAll(config, tenantId)
   const options = useMemo(
     () =>
       (data?.data ?? []).map((item) => ({ value: item.id, label: config.getOptionLabel(item) })),
@@ -1101,10 +1130,15 @@ function InlineValueList({
   const tagsClient = getApiClient().tags
   const isTags = column.filterType === 'tags'
   const isCurrency = column.filterType === 'currency'
-  // `filterType: 'currency'` is only declared by tables in the operator's
-  // dashboard, which always has a store. Reading it optionally keeps the panel
-  // mountable in one that has none.
-  const currencies = useOptionalStore()?.currencies ?? noCurrencies
+  const isLocale = column.filterType === 'locale'
+  // Store codes are listed client-side from the store payload, never searched.
+  const isStoreCode = isCurrency || isLocale
+  // `filterType: 'currency'` / `'locale'` are only declared by tables in the
+  // operator's dashboard, which always has a store. Reading it optionally
+  // keeps the panel mountable in one that has none.
+  const store = useOptionalStore()
+  const storeCodes = (isCurrency ? store?.currencies : isLocale ? store?.locales : null) ?? noCodes
+  const localeLabel = useLocaleLabel()
 
   // Tags arrive as one list and are filtered client-side; resources are
   // searched server-side, since their vocabulary is unbounded.
@@ -1129,18 +1163,23 @@ function InlineValueList({
   // genuinely new query reaches the network.
   const deferredQuery = useDeferredValue(query)
 
+  // A resource listed whole is fetched once and narrowed here as the operator
+  // types; anything larger is searched server-side.
+  const listed = Boolean(column.filterResource?.listAll)
+  const all = useListAll(column.filterResource, tenantId, !isTags && !isStoreCode)
+
   const resources = useQuery({
     // Tenant-scoped so a store or seller switch cannot reuse the previous
     // tenant's results.
-    queryKey: ['panel-resource-filter', column.filterResource?.queryKey, tenantId, deferredQuery],
+    queryKey: [column.filterResource?.queryKey, tenantId, 'panel-resource-filter', deferredQuery],
     queryFn: () => column.filterResource?.search(deferredQuery),
-    enabled: !isTags && !isCurrency && Boolean(column.filterResource),
+    enabled: !isTags && !isStoreCode && !listed && Boolean(column.filterResource),
     // These lists are reference data an operator reopens repeatedly while
     // narrowing one list, and the result is small now that only the displayed
     // fields are requested. Holding it for the session keeps reopening the
     // panel instant; `gcTime` outlives the unmount between opens.
-    staleTime: 5 * 60_000,
-    gcTime: 30 * 60_000,
+    staleTime: column.filterResource?.staleTime ?? 5 * 60_000,
+    gcTime: Math.max(30 * 60_000, column.filterResource?.staleTime ?? 0),
     // Keeps the previous matches on screen while the next query resolves, so
     // the list does not blank on every keystroke.
     //
@@ -1149,7 +1188,7 @@ function InlineValueList({
     // drops them instead of briefly offering another tenant's records as
     // though they were this one's.
     placeholderData: (previous, previousQuery) => {
-      const [, previousResource, previousTenant] = (previousQuery?.queryKey ?? []) as unknown[]
+      const [previousResource, previousTenant] = (previousQuery?.queryKey ?? []) as unknown[]
       const sameScope =
         previousResource === column.filterResource?.queryKey && previousTenant === tenantId
       return sameScope ? previous : undefined
@@ -1157,11 +1196,14 @@ function InlineValueList({
   })
 
   const options = useMemo(() => {
-    if (isCurrency) {
+    if (isStoreCode) {
       const needle = query.trim().toLowerCase()
-      return currencies
-        .filter((code) => !needle || code.toLowerCase().includes(needle))
-        .map((code) => ({ value: code, label: code }))
+      return storeCodes
+        .map((code) => ({
+          value: code,
+          label: isLocale ? localeLabel(code) : code,
+        }))
+        .filter((option) => !needle || option.label.toLowerCase().includes(needle))
     }
     if (isTags) {
       const names = tags.data?.data?.map((tag) => tag.name) ?? []
@@ -1171,11 +1213,29 @@ function InlineValueList({
     }
     const config = column.filterResource
     if (!config) return []
-    return (resources.data?.data ?? []).map((record) => ({
+    const records = (listed ? all.data?.data : resources.data?.data) ?? []
+    const resourceOptions = records.map((record) => ({
       value: record.id,
       label: config.getOptionLabel(record),
     }))
-  }, [isCurrency, currencies, isTags, tags.data, resources.data, column.filterResource, query])
+    if (!listed) return resourceOptions
+    const needle = query.trim().toLowerCase()
+    return resourceOptions.filter(
+      (option) => !needle || option.label.toLowerCase().includes(needle),
+    )
+  }, [
+    listed,
+    all.data,
+    isStoreCode,
+    isLocale,
+    storeCodes,
+    localeLabel,
+    isTags,
+    tags.data,
+    resources.data,
+    column.filterResource,
+    query,
+  ])
 
   // Values already selected when the list opens ride at the top, so an active
   // filter is visible without scrolling. The set is frozen at mount: ticking a
@@ -1191,7 +1251,7 @@ function InlineValueList({
     return [...chosen, ...rest]
   }, [options, pinned])
 
-  if (!isCurrency && (tags.isLoading || resources.isLoading)) {
+  if (!isStoreCode && (tags.isLoading || resources.isLoading || all.isLoading)) {
     return (
       <p className="px-2 py-6 text-center text-muted-foreground">{t('admin.common.loading')}</p>
     )
@@ -1274,7 +1334,7 @@ function FilterPanel({
   // Types whose values are chosen from a list rather than typed. `multi` ones
   // accumulate a set and need an explicit Apply; the single ones commit on the
   // click that picks them.
-  const multi = type === 'tags' || type === 'resource' || type === 'currency'
+  const multi = type === 'tags' || type === 'resource' || type === 'currency' || type === 'locale'
   // Dates are their own shape: a list of relative presets, with the calendar
   // behind "custom". Same presets the quick filter offers, so a range means
   // the same thing wherever it was set.
@@ -1653,7 +1713,7 @@ function FilterPanel({
               </Select>
             ) : null}
 
-            {/* Everything picked from a list — currency, tags, resources — or
+            {/* Everything picked from a list — currency, locale, tags, resources — or
                 from a calendar is handled above; this branch is only the types
                 you type into. */}
             {!noValueOperators.includes(operator) && listOptions.length === 0 && (
