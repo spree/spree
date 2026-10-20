@@ -78,7 +78,6 @@ test.describe('product variants', () => {
     await expect(variantsCard.getByText('Blue')).toHaveCount(0)
   })
 
-  // Skipped: pre-existing flake — both the matrix and the edit sheet register
   test('opens the per-variant edit sheet and edits SKU, weight and dimension unit', async ({
     page,
   }) => {

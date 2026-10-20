@@ -203,6 +203,17 @@ RSpec.describe Spree::Api::V3::RequestSchema do
         )
       end
 
+      it 'publishes every shape its base builds on' do
+        parent = base
+        middle = Class.new(described_class) do
+          publishes 'TestShippingAddressParams'
+          extends parent
+        end
+        schema = described_class.new(:widget) { |schema| schema.extends middle }
+
+        expect(schema.shapes.map(&:name)).to eq(%w[TestShippingAddressParams TestAddressParams])
+      end
+
       it 'restates a base field it requires' do
         parent = Class.new(described_class) do
           publishes 'TestOptionalCityParams'

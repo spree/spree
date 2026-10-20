@@ -330,7 +330,7 @@ module Spree
         #
         # @return [Array<RequestSchema>]
         def shapes
-          [*base].concat(fields.each_value.flat_map do |field|
+          (base ? [base, *base.shapes] : []).concat(fields.each_value.flat_map do |field|
             next [] unless field.schema
 
             nested = field.schema.shapes

@@ -53,6 +53,7 @@ export type {
   SellerCountry,
   SellerExportCreateParams,
   SellerExportType,
+  SellerProductVariantParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from './seller-client'
