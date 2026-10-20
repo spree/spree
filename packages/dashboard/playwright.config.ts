@@ -72,6 +72,9 @@ export default defineConfig({
         // `VITE_SPREE_API_URL` here would flip the SDK to absolute URLs and
         // break the cookie path the refresh flow depends on.
         VITE_API_PROXY_TARGET: `http://localhost:${RAILS_PORT}`,
+        // Slot probes (src/testing/slot-probes.tsx). Preview mode serves a
+        // build that already has them, so the build step sets it too.
+        VITE_E2E_SLOT_PROBES: '1',
       },
     },
     {

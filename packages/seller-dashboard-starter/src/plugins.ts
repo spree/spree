@@ -25,7 +25,9 @@
 //   })
 //
 // Slots the built-in screens expose: `seller.team.actions`, `seller.team.after`,
-// `seller.product.form_sidebar`, `seller.order.form_sidebar`,
+// `seller.product.form_main`, `seller.product.form_sidebar`,
+// `seller.product.media.form_fields`, `seller.product.media.actions`,
+// `seller.product.variant.form_fields`, `seller.order.form_sidebar`,
 // `seller.payout.form_sidebar`, `seller.profile.form_main`,
 // `seller.profile.form_sidebar`.
 //

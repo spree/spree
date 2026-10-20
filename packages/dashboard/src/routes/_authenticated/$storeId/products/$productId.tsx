@@ -22,6 +22,7 @@ import {
   TaxCard,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import {
   ErrorState,
@@ -171,10 +172,17 @@ function ProductForm({ product }: { product: Product }) {
     const current = form.getValues('media') ?? []
     if (current.length > 0) return
     if (form.formState.dirtyFields?.media) return
-    form.setValue('media', mediaItems.map(mediaToFormValues), { shouldDirty: false })
+    form.setValue(
+      'media',
+      mediaItems.map((media, index) => mediaToFormValues(media, index)),
+      { shouldDirty: false },
+    )
   }, [mediaItems, form])
 
-  const onSubmit = async (data: ProductFormValues) => {
+  const onSubmit = async (submitted: ProductFormValues) => {
+    // Media and variant rows get their extension fields back from live form
+    // state, which the parse behind `submitted` stripped.
+    const data = withExtensionRowValues('product', submitted, form.getValues())
     const { variants, media, ...rest } = data
     // Extension fields come from live form state: the Zod parse behind
     // `data` strips keys the first-party schema doesn't know.
@@ -238,7 +246,11 @@ function ProductForm({ product }: { product: Product }) {
       // read: a failed refetch keeps the stale list in `data`.
       const mediaRefetch = await refetchMedia()
       if (mediaRefetch.status === 'success' && !form.formState.dirtyFields.media) {
-        form.resetField('media', { defaultValue: mediaRefetch.data.data.map(mediaToFormValues) })
+        form.resetField('media', {
+          defaultValue: mediaRefetch.data.data.map((media, index) =>
+            mediaToFormValues(media, index),
+          ),
+        })
       }
       toastManager.add({ type: 'success', title: t('admin.messages.product_saved') })
     } catch (err) {
@@ -265,9 +277,10 @@ function ProductForm({ product }: { product: Product }) {
   }
 
   return (
-    // FormProvider exposes the form to slot widgets: a `product.form_sidebar`
-    // extension binds inputs via `useHostForm()` and they persist through
-    // this form's Save — no widget-owned save cycle.
+    // FormProvider exposes the form to slot widgets: a `product.*` extension
+    // (the page columns, the media and variant sheets) binds inputs via
+    // `useHostForm()` and they persist through this form's Save — no
+    // widget-owned save cycle.
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
@@ -325,6 +338,7 @@ function ProductForm({ product }: { product: Product }) {
                 emptyTitle={t('admin.components.metadata_card.empty_title')}
                 emptyDescription={t('admin.components.metadata_card.empty_description')}
               />
+              <Slot name="product.form_main" context={{ product, mode: 'edit' }} />
             </>
           }
           sidebar={
@@ -344,7 +358,7 @@ function ProductForm({ product }: { product: Product }) {
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} product={product} />
-              <Slot name="product.form_sidebar" context={{ product }} />
+              <Slot name="product.form_sidebar" context={{ product, mode: 'edit' }} />
             </>
           }
         />

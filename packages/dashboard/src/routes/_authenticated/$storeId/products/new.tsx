@@ -16,10 +16,12 @@ import {
   prepareVariantsTaxForProductSave,
   productFormSchema,
   SEOCard,
+  Slot,
   StatusCard,
   TaxCard,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import {
   FormActions,
@@ -54,7 +56,10 @@ function NewProductPage() {
     defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('product', null) },
   })
 
-  const onSubmit = async (data: ProductFormValues) => {
+  const onSubmit = async (submitted: ProductFormValues) => {
+    // Before the placeholder variant is filtered out below, so row `i` of the
+    // parse still lines up with row `i` of the form.
+    const data = withExtensionRowValues('product', submitted, form.getValues())
     const { variants, custom_fields, media, digital_assets, ...rest } = data
 
     // Strip the placeholder default variant if the merchant didn't touch it.
@@ -216,6 +221,7 @@ function NewProductPage() {
               >
                 <CustomFieldsInlineCard />
               </ProductCustomFieldsProvider>
+              <Slot name="product.form_main" context={{ product: undefined, mode: 'new' }} />
             </>
           }
           sidebar={
@@ -225,6 +231,7 @@ function NewProductPage() {
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} />
+              <Slot name="product.form_sidebar" context={{ product: undefined, mode: 'new' }} />
             </>
           }
         />

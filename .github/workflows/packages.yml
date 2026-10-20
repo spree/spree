@@ -298,7 +298,12 @@ jobs:
       # invitation happens there rather than in the dashboard. Its starter's
       # vite config imports `@spree/seller-dashboard/vite`, which resolves to
       # that package's `dist/`, so it must be built even to load the config.
+      #
+      # VITE_E2E_SLOT_PROBES builds in the slot probes the E2E specs assert
+      # against (packages/dashboard/src/testing/slot-probes.tsx).
       - name: Build dashboard packages
+        env:
+          VITE_E2E_SLOT_PROBES: "1"
         run: pnpm turbo build --filter=@spree/dashboard --filter=@spree/seller-dashboard-starter --cache-dir=.turbo
 
       - name: Setup dummy Rails app

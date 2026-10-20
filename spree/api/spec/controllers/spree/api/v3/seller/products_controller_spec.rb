@@ -470,11 +470,12 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
 
     context 'with extension-contributed attributes' do
       around do |example|
-        admin_attributes = Spree::Product.additional_permitted_attributes
-        seller_attributes = Spree::Product.additional_seller_permitted_attributes
+        models = [Spree::Product, Spree::Media]
+        admin_attributes = models.index_with(&:additional_permitted_attributes)
+        seller_attributes = models.index_with(&:additional_seller_permitted_attributes)
         example.run
-        Spree::Product.additional_permitted_attributes = admin_attributes
-        Spree::Product.additional_seller_permitted_attributes = seller_attributes
+        admin_attributes.each { |model, attributes| model.additional_permitted_attributes = attributes }
+        seller_attributes.each { |model, attributes| model.additional_seller_permitted_attributes = attributes }
       end
 
       def permitted_keys_for(params)
@@ -500,6 +501,22 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
         Spree::Product.additional_permitted_attributes += [:brand_id]
 
         expect(permitted_keys_for(brand_id: 'acme')).not_to include('brand_id')
+      end
+
+      it 'permits a media attribute declared for sellers inside the nested media list, never an operator-only one' do
+        Spree::Media.additional_seller_permitted_attributes += [:credit]
+        Spree::Media.additional_permitted_attributes += [:license]
+
+        media_keys = nil
+        expect_any_instance_of(described_class).to receive(:permitted_params).at_least(:once).and_wrap_original do |original|
+          result = original.call
+          media_keys = result[:media].first.keys
+          result.except('media')
+        end
+        patch :update, params: { id: mine.prefixed_id, media: [{ alt: 'Front', credit: 'Jane', license: 'CC' }] }, as: :json
+
+        expect(media_keys).to include('credit')
+        expect(media_keys).not_to include('license')
       end
     end
   end

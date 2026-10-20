@@ -1,5 +1,11 @@
 import type { ProductFormValues } from '@spree/dashboard-core'
-import { ImageUploadField, parseVideoUrl, useTranslation } from '@spree/dashboard-core'
+import {
+  extensionFieldNames,
+  ImageUploadField,
+  parseVideoUrl,
+  Slot,
+  useTranslation,
+} from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -39,13 +45,24 @@ interface Props {
   variants: Variant[]
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** The product form's key — names the slot and the row's extension fields. */
+  formKey: string
+  productId?: string
 }
 
 // Form-backed media editor. The sheet edits `form.media[index]` directly —
 // changes ride the parent product PATCH/POST, no per-asset API calls.
 // Cancel restores a snapshot taken on open; Done closes (parent form Save
 // commits). Same model as the per-variant Sheet.
-export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange }: Props) {
+export function MediaEditSheet({
+  form,
+  mediaIndex,
+  variants,
+  open,
+  onOpenChange,
+  formKey,
+  productId,
+}: Props) {
   const { t } = useTranslation()
 
   // Snapshot on open so Cancel can restore. Re-snapshot if mediaIndex changes
@@ -58,7 +75,11 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   // freshly-uploaded row that has no id yet we fall back to the current
   // index — uploads don't surface a drag handle so the race is impossible.
   type MediaRow = NonNullable<ProductFormValues['media']>[number]
-  type Snapshot = Pick<MediaRow, (typeof EDITED_FIELDS)[number]> & { key: string | null }
+  type Snapshot = Pick<MediaRow, (typeof EDITED_FIELDS)[number]> & {
+    key: string | null
+    // Fields a `<formKey>.media.form_fields` widget edits, restored the same way.
+    extensions: Record<string, unknown>
+  }
   const snapshotRef = useRef<Snapshot | null>(null)
   const rowKey = useCallback(
     (m: MediaRow): string | null => m.id ?? m.signed_id ?? m.uploadId ?? null,
@@ -84,8 +105,16 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
       // Copy the array — the snapshot must not alias the row's own value.
       variant_ids: [...(row.variant_ids ?? [])],
       key: rowKey(row),
+      extensions: structuredClone(
+        Object.fromEntries(
+          extensionFieldNames(`${formKey}.media`).map((name) => [
+            name,
+            (row as Record<string, unknown>)[name],
+          ]),
+        ),
+      ),
     }
-  }, [open, mediaIndex, form, rowKey])
+  }, [open, mediaIndex, form, rowKey, formKey])
 
   const entry = form.watch(`media.${mediaIndex}`)
   if (!entry) return null
@@ -203,6 +232,13 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
           shouldTouch: false,
         })
       }
+      for (const [name, value] of Object.entries(snap.extensions)) {
+        // Extension names are outside the typed row.
+        form.setValue(`media.${targetIndex}.${name}` as any, value, {
+          shouldDirty: false,
+          shouldTouch: false,
+        })
+      }
     }
     onOpenChange(false)
   }
@@ -309,6 +345,16 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
               </div>
             </Field>
           )}
+
+          <Slot
+            name={`${formKey}.media.form_fields`}
+            context={{
+              productId,
+              media: entry,
+              mediaIndex,
+              fieldPrefix: `media.${mediaIndex}`,
+            }}
+          />
         </div>
 
         <SheetFooter>
