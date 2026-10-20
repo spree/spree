@@ -246,7 +246,7 @@ export default async function globalSetup() {
       '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
       "if ENV['DASHBOARD_E2E'] == '1'",
       '  Rails.application.config.after_initialize do',
-      '    [Spree::Media, Spree::Variant].each do |model|',
+      '    [Spree::Media, Spree::TaxRate, Spree::Variant].each do |model|',
       '      next if model.additional_permitted_attributes.include?({ metadata: {} })',
       '',
       '      model.additional_permitted_attributes += [{ metadata: {} }]',

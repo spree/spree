@@ -1,6 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryZone } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import {
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
+  mapSpreeErrorsToForm,
+} from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -69,7 +74,7 @@ export function DeliveryZoneSheet({
   const form = useForm<DeliveryZoneFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(deliveryZoneFormSchema) as any,
-    defaultValues: DELIVERY_ZONE_DEFAULTS,
+    defaultValues: { ...DELIVERY_ZONE_DEFAULTS, ...extensionFormValues('delivery_zone', null) },
   })
 
   useEffect(() => {
@@ -94,17 +99,22 @@ export function DeliveryZoneSheet({
         postal_code_from: member.postal_code_from ?? '',
         postal_code_to: member.postal_code_to ?? '',
       })),
+      ...extensionFormValues('delivery_zone', zone),
     })
   }, [zone, zoneId, form])
 
   async function onSubmit(values: DeliveryZoneFormValues) {
     try {
       if (zoneId) {
-        await updateMutation.mutateAsync(deliveryZoneValuesToParams(values))
+        await updateMutation.mutateAsync({
+          ...deliveryZoneValuesToParams(values),
+          ...extensionSubmitValues('delivery_zone', form),
+        })
       } else {
-        await createMutation.mutateAsync(
-          deliveryZoneValuesToParams(values, deliveryProfileId, deliveryOriginGroupId),
-        )
+        await createMutation.mutateAsync({
+          ...deliveryZoneValuesToParams(values, deliveryProfileId, deliveryOriginGroupId),
+          ...extensionSubmitValues('delivery_zone', form),
+        })
       }
       form.reset(zoneId ? values : DELIVERY_ZONE_DEFAULTS)
       onOpenChange(false)
@@ -154,6 +164,15 @@ export function DeliveryZoneSheet({
               <DeliveryZoneFormFields
                 form={form}
                 siblingZones={siblingZones.filter((sibling) => sibling.id !== zoneId)}
+              />
+              <HostFormSlot
+                form={form}
+                name="delivery_zone.form_fields"
+                context={{
+                  deliveryZone: zone,
+                  deliveryProfileId,
+                  mode: editing ? 'edit' : 'new',
+                }}
               />
             </div>
             <SheetFooter>

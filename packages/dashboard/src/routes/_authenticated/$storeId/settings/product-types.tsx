@@ -19,6 +19,9 @@ import type { ProductType } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceMultiAutocomplete,
   ResourceTable,
@@ -205,12 +208,15 @@ function CreateProductTypeSheet({
   const form = useForm<ProductTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productTypeFormSchema) as any,
-    defaultValues: PRODUCT_TYPE_DEFAULTS,
+    defaultValues: { ...PRODUCT_TYPE_DEFAULTS, ...extensionFormValues('product_type', null) },
   })
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await createMutation.mutateAsync(withSortOrder(values))
+      await createMutation.mutateAsync({
+        ...withSortOrder(values),
+        ...extensionSubmitValues('product_type', form),
+      })
       form.reset(PRODUCT_TYPE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -234,6 +240,11 @@ function CreateProductTypeSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <ProductTypeFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="product_type.form_fields"
+              context={{ productType: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -288,13 +299,17 @@ function EditProductTypeSheet({
             required: definition.required,
           }),
         ),
+        ...extensionFormValues('product_type', productType),
       })
     }
   }, [productType, form])
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await updateMutation.mutateAsync(withSortOrder(values))
+      await updateMutation.mutateAsync({
+        ...withSortOrder(values),
+        ...extensionSubmitValues('product_type', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -315,6 +330,11 @@ function EditProductTypeSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <ProductTypeFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="product_type.form_fields"
+                context={{ productType, mode: 'edit' }}
+              />
               <ApplyToProductsSection id={id} productType={productType} />
             </div>
             <SheetFooter>

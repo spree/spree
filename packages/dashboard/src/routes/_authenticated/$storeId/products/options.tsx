@@ -19,6 +19,9 @@ import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceTable,
   resourceSearchSchema,
@@ -213,13 +216,14 @@ function CreateOptionTypeSheet({
   const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(optionTypeFormSchema) as any,
-    defaultValues: OPTION_TYPE_DEFAULTS,
+    defaultValues: { ...OPTION_TYPE_DEFAULTS, ...extensionFormValues('option_type', null) },
   })
 
   async function onSubmit(values: OptionTypeFormValues) {
     try {
       await createMutation.mutateAsync({
         ...values,
+        ...extensionSubmitValues('option_type', form),
         option_values: values.option_values.map(valueToParam),
       } as OptionTypeCreateParams)
       form.reset(OPTION_TYPE_DEFAULTS)
@@ -250,6 +254,11 @@ function CreateOptionTypeSheet({
               </p>
             )}
             <OptionTypeFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="option_type.form_fields"
+              context={{ optionType: undefined, mode: 'new' }}
+            />
             <OptionValuesFieldArray form={form} />
           </div>
           <SheetFooter>
@@ -302,6 +311,7 @@ function EditOptionTypeSheet({
         ...optionType,
         kind: optionType.kind as OptionTypeFormValues['kind'],
         option_values: (optionType.option_values ?? []).map(optionValueToFormRow),
+        ...extensionFormValues('option_type', optionType),
       })
     }
   }, [optionType, form])
@@ -310,6 +320,7 @@ function EditOptionTypeSheet({
     try {
       await updateMutation.mutateAsync({
         ...values,
+        ...extensionSubmitValues('option_type', form),
         option_values: values.option_values.map(valueToParam),
       })
       // The sheet closes here; the `useOptionType` cache invalidation done by
@@ -368,6 +379,11 @@ function EditOptionTypeSheet({
                 </p>
               )}
               <OptionTypeFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="option_type.form_fields"
+                context={{ optionType, mode: 'edit' }}
+              />
               <OptionValuesFieldArray form={form} />
             </div>
             <SheetFooter>

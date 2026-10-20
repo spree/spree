@@ -30,6 +30,7 @@ If you need a new injection point in a built-in page, open a PR adding `<Slot na
 | Sellers | Seller payout | `seller_payout.form_main`, `seller_payout.form_sidebar` |
 | Settings | Store | `store.form_main` |
 | Settings | Delivery profile | `delivery_profile.form_main`, `delivery_profile.form_sidebar` |
+| Settings, options, customer groups | Create and edit sheets | `<resource>.form_fields` — see [Sheet slots](#sheet-slots) |
 | Settings | Payment method | `payment_method.*.<provider>` |
 | Settings | Webhook endpoint | `webhook_endpoint.form_sidebar` |
 | Onboarding | Getting started | `getting-started.task.<name>` |
@@ -375,6 +376,29 @@ These slots are on the store owner's seller management pages in the admin dashbo
 | Context | `{ endpoint }` — the full `WebhookEndpoint` record |
 | Host form | No |
 
+## Sheet slots
+
+The create and edit sheets of the resources below render a slot after their built-in fields. Each sheet is a host form: a widget binds inputs with `useHostForm()`, registers them under the form key (the slot's prefix), and they save with the sheet's own Create or Save button. The matching Admin API endpoint accepts what the model's `additional_permitted_attributes` declares (see [Adding an Attribute to a Core Resource](/developer/customization/api#adding-an-attribute-to-a-core-resource)).
+
+Every sheet passes `mode` — `'new'` or `'edit'` — and its record, which is `undefined` while creating.
+
+| Slot | Where | Context |
+|---|---|---|
+| `market.form_fields` | Settings → Markets | `{ market, mode }` |
+| `stock_location.form_fields` | Settings → Stock locations | `{ stockLocation, mode }` |
+| `tax_rate.form_fields` | Settings → Taxes → Rates | `{ taxRate, mode }` |
+| `tax_category.form_fields` | Settings → Taxes → Categories | `{ taxCategory, mode }` |
+| `channel.form_fields` | Settings → Sales channels | `{ channel, mode }` |
+| `policy.form_fields` | Settings → Policies | `{ policy, mode }` |
+| `package_type.form_fields` | Settings → Package types | `{ packageType, mode }` |
+| `product_type.form_fields` | Settings → Product types | `{ productType, mode }` |
+| `delivery_zone.form_fields` | A delivery profile's zone sheet | `{ deliveryZone, deliveryProfileId, mode }` |
+| `delivery_method.form_fields` | A delivery profile's method sheet | `{ deliveryMethod, deliveryProfile, mode }` |
+| `option_type.form_fields` | Products → Options | `{ optionType, mode }` |
+| `customer_group.form_fields` | Customers → Groups | `{ customerGroup, mode }` |
+
+Staff invitations have no slot: the invitations endpoint deliberately accepts no extension attributes, because what it takes decides who gets access.
+
 ## Seller panel slots
 
 Rendered by the marketplace seller panel (`@spree/seller-dashboard`) rather than the admin dashboard, and registered the same way, in the seller panel's own plugins. Their names start with `seller.` followed by the page — `seller.form_main` and `seller.form_sidebar` above belong to the admin dashboard instead.
@@ -392,6 +416,8 @@ The product page is a host form with the form key `seller.product` (`seller.prod
 | `seller.payout.form_sidebar` | Payout detail page, end of the sidebar column | `{ payout }` |
 | `seller.profile.form_main` | Profile page, end of the main column | `{ profile }` |
 | `seller.profile.form_sidebar` | Profile page, end of the sidebar column | `{ profile }` |
+| `seller.stock_location.form_fields` | Stock location create and edit sheets | `{ stockLocation, mode }` — host form key `seller.stock_location` |
+| `seller.package_type.form_fields` | Package type create and edit sheets | `{ packageType, mode }` — host form key `seller.package_type` |
 | `seller.team.actions` | Team page, in the header's action area — bulk invite, export, an external directory sync | `{ sellerId }` |
 | `seller.team.after` | Team page, below the member list — audit log, role explainer, seat usage | `{ sellerId }` |
 

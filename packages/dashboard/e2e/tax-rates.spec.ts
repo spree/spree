@@ -68,6 +68,26 @@ test.describe('tax rates', () => {
     await expect(row.getByText('12.5%')).toBeVisible({ timeout: 15_000 })
   })
 
+  // The probes in src/testing/slot-probes.tsx stand in for a plugin.
+  test('a plugin field in the rate sheet saves with the rate', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, TAX_RATES_PATH(creds.store_id), CTA)
+
+    const name = `E2E Slot Rate ${Date.now()}`
+    await createTaxRate(page, { name, ratePercent: '10' })
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+    await rowButton(page, name).click()
+    await expect(page.locator('#rate_percent')).toHaveValue('10', { timeout: 15_000 })
+    await page.getByLabel('Probe tax rate note').fill('Filed with the regulator')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 15_000 })
+
+    await rowButton(page, name).click()
+    await expect(page.getByLabel('Probe tax rate note')).toHaveValue('Filed with the regulator', {
+      timeout: 15_000,
+    })
+  })
+
   // The API stores the fraction (0.07125); the form must read back exactly
   // what the merchant typed, not a rounded 7.13.
   test('keeps a rate with three decimals exactly', async ({ page }) => {
