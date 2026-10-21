@@ -127,10 +127,12 @@ RSpec.describe 'Data Requests API', type: :request, swagger_doc: 'api-reference/
         download link once the export is ready. Needs no signed-in session, because
         the link may be opened on a device that was never signed in.
 
-        The token stays readable after the 24-hour confirmation window: `status`
-        says whether the request can still be confirmed (`awaiting_confirmation`)
-        or has lapsed. `404` means the token is unknown, or was voided when the
-        customer's data was erased.
+        The token stays readable after the 24-hour confirmation window, and the
+        response carries the request's saved `status`. A request that is
+        `awaiting_confirmation` can be confirmed only within that window: a later
+        confirmation attempt returns `422` and marks the request `lapsed`. `404`
+        means the token is unknown, or was voided when the customer's data was
+        erased.
       DESC
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
