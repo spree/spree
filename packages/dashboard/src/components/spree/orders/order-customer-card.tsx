@@ -31,7 +31,7 @@ export function CustomerCard({ order }: { order: Order }) {
   const orderId = order.id
   const customer = order.customer
   const shippingAddress = order.shipping_address
-  const billingSameAsShipping = !!shippingAddress && order.shipping_eq_billing_address
+  const billingSameAsShipping = order.shipping_eq_billing_address
   const [editAddress, setEditAddress] = useState<AddressType | null>(null)
   const [editCustomer, setEditCustomer] = useState(false)
 
