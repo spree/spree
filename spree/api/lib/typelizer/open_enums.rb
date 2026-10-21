@@ -22,15 +22,16 @@ module Typelizer
     CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode WeightUnit DimensionUnit].freeze
 
     CLOSED_LIST_NAMES = %w[
-      ApiKeyType CaptureMethod CatalogPriceSource ClaimResolution CollectionRuleMatchPolicy CollectionSortOrder
-      CommissionKind CompanyInvitationStatus CompanyKind ConsentSource DataRequestKind DeliveryStatus
-      DeliveryZoneMemberType DiscountKind DocumentNumberFormat EmailFont EmailTemplateKind FileUploadVisibility
-      FulfillmentType MatchPolicy MediaType OptionTypeKind OrderFulfillmentStatus OrderPaymentStatus OrderStatus
-      PackageTypeKind PaymentSourceType PayoutScheduleInterval PermissionKind PickupStockPolicy
-      ProviderFailurePolicy PurchaseUnit SellerRequirementState SellerTransferKind ShippingLabelFormat
-      ShippingLabelOwnerType ShippingLabelSource StockAvailability StockMovementKind StockReceiptLineType
-      StockReceiptReceivableType StockReceiptRejectionReason StorefrontAccess TaxIdentifierSource
-      TaxIdentifierValidationStatus TaxRemittance UnitSystem
+      ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
+      CollectionRuleMatchPolicy CollectionSortOrder CommissionKind CompanyInvitationStatus CompanyKind
+      ConsentSource DataRequestKind DeliveryStatus DeliveryZoneMemberType DiscountKind DocumentNumberFormat
+      EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType MatchPolicy MediaType OptionTypeKind
+      OrderFulfillmentStatus OrderPaymentStatus OrderStatus PackageTypeKind PaymentSourceType
+      PayoutScheduleInterval PermissionKind PickupStockPolicy ProviderFailurePolicy PurchaseUnit
+      SellerRequirementState SellerTransferKind ShippingLabelFormat ShippingLabelOwnerType ShippingLabelSource
+      StockAvailability StockMovementKind StockReceiptLineType StockReceiptReceivableType
+      StockReceiptRejectionReason StorefrontAccess TaxIdentifierSource TaxIdentifierValidationStatus
+      TaxRemittance UnitSystem
     ].freeze
 
     # @param name [String, nil] a list's `enum_type_name`

@@ -12,6 +12,10 @@ export type ApiKeyType = (typeof API_KEY_TYPES)[number]
 export const CAPTURE_METHODS = ['checkout', 'on_dispatch', 'manual'] as const
 export type CaptureMethod = (typeof CAPTURE_METHODS)[number]
 
+/** Every value of `CatalogAssignableType`. */
+export const CATALOG_ASSIGNABLE_TYPES = ['customer_group', 'company'] as const
+export type CatalogAssignableType = (typeof CATALOG_ASSIGNABLE_TYPES)[number]
+
 /** Every value of `CatalogPriceSource`. */
 export const CATALOG_PRICE_SOURCES = ['explicit', 'automatic', 'base'] as const
 export type CatalogPriceSource = (typeof CATALOG_PRICE_SOURCES)[number]

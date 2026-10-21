@@ -58880,6 +58880,9 @@ components:
           type: string
         assignable_type:
           type: string
+          enum:
+          - customer_group
+          - company
         assignable_id:
           type: string
         assignable_name:

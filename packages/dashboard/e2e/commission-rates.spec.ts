@@ -114,7 +114,11 @@ test.describe('commission rates', () => {
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 
     await page.reload()
-    await rowButton(page, name).click()
+    // A click landing while the app is still booting after the reload is lost.
+    await expect(async () => {
+      await rowButton(page, name).click()
+      await expect(page.locator('#value')).toBeVisible({ timeout: 3_000 })
+    }).toPass({ timeout: 15_000 })
     await expect(page.locator('#value')).toHaveValue(/^8(\.0+)?$/, { timeout: 15_000 })
     await expect(sheet.getByText(FIXTURE_LEDGER_SELLER)).toBeVisible()
     await expect(sheet.getByText(FIXTURE_PROMO_TAXON).first()).toBeVisible()
