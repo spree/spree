@@ -2540,7 +2540,8 @@
         },
         "address_edit": {
           "billing_title": "Editar dirección de facturación",
-          "shipping_title": "Editar dirección de envío"
+          "shipping_title": "Editar dirección de envío",
+          "billing_same_as_shipping": "Igual que la dirección de envío"
         },
         "adjustment_lines": {
           "add_discount": "Agregar descuento",
@@ -2870,6 +2871,10 @@
           "captures": "Capturas",
           "captures_empty": "Aún no se ha capturado nada.",
           "captured_at": "Capturado"
+        },
+        "customer_edit": {
+          "title": "Editar cliente",
+          "customer_help": "Quita el cliente para convertir este pedido en un pedido de invitado."
         }
       },
       "edit": {

@@ -116,6 +116,16 @@ module Spree
         end
       end
 
+      context 'with use_shipping' do
+        let(:params) { { email: 'new@example.com', shipping_address: address_attrs, use_shipping: true } }
+
+        it 'copies the shipping address to the billing address' do
+          order = subject.value
+          expect(order.bill_address).to be_present
+          expect(order.bill_address).to eq(order.ship_address)
+        end
+      end
+
       context 'with items but no shipping address' do
         let(:params) do
           {

@@ -2914,7 +2914,8 @@
         },
         "address_edit": {
           "billing_title": "Edytuj adres rozliczeniowy",
-          "shipping_title": "Edytuj adres wysyłki"
+          "shipping_title": "Edytuj adres wysyłki",
+          "billing_same_as_shipping": "Taki sam jak adres dostawy"
         },
         "adjustment_lines": {
           "add_discount": "Dodaj rabat",
@@ -3248,6 +3249,10 @@
           "captures": "Pobrania środków",
           "captures_empty": "Nie pobrano jeszcze żadnych środków.",
           "captured_at": "Pobrano"
+        },
+        "customer_edit": {
+          "title": "Edytuj klienta",
+          "customer_help": "Usuń klienta, aby zamówienie stało się zamówieniem gościa."
         }
       },
       "edit": {

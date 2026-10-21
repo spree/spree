@@ -17570,6 +17570,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -18438,6 +18439,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -18790,6 +18792,7 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: false
+                  shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
@@ -19015,6 +19018,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: true
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19171,6 +19175,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19317,6 +19322,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19515,6 +19521,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19693,6 +19700,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19832,6 +19840,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19965,6 +19974,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -64422,6 +64432,8 @@ components:
           nullable: true
         within_withdrawal_period:
           type: boolean
+        shipping_eq_billing_address:
+          type: boolean
         cart_id:
           type: string
           nullable: true
@@ -65102,6 +65114,7 @@ components:
       - market_id
       - withdrawal_period_ends_at
       - within_withdrawal_period
+      - shipping_eq_billing_address
       - cart_id
       - channel_id
       - company_id
@@ -78943,6 +78956,9 @@ components:
           example: customer@example.com
         customer_id:
           type: string
+          description: Null detaches the customer, leaving a guest order under its
+            `email`.
+          nullable: true
         use_customer_default_address:
           type: boolean
           description: With `customer_id`, copies the customer's saved billing and
@@ -79006,6 +79022,9 @@ components:
           "$ref": "#/components/schemas/AddressInputParams"
         billing_address:
           "$ref": "#/components/schemas/AddressInputParams"
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
         items:
           type: array
           items:
@@ -79081,6 +79100,9 @@ components:
           example: customer@example.com
         customer_id:
           type: string
+          description: Null detaches the customer, leaving a guest order under its
+            `email`.
+          nullable: true
         currency:
           allOf:
           - "$ref": "#/components/schemas/CurrencyCode"
@@ -79131,6 +79153,9 @@ components:
           "$ref": "#/components/schemas/AddressInputParams"
         billing_address:
           "$ref": "#/components/schemas/AddressInputParams"
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
         items:
           type: array
           items:

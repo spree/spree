@@ -6,6 +6,7 @@ import {
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
   FIXTURE_BOGUS_TRANSACTION_ID,
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_PRODUCT,
   fillAddressForm,
   login,
@@ -312,13 +313,7 @@ test.describe('order addresses', () => {
       timeout: 15_000,
     })
 
-    // Several cards on the order page carry an Actions menu, so reach the
-    // customer card's through the heading that names it.
-    const customerCard = page.locator('[data-slot="card"]').filter({
-      has: page.locator('[data-slot="card-title"]', { hasText: /^Customer$/ }),
-    })
-    await customerCard.getByRole('button', { name: /actions/i }).click()
-    await page.getByRole('menuitem', { name: /edit shipping address/i }).click()
+    await page.getByRole('button', { name: /edit shipping address/i }).click()
 
     // Named, because the country and state comboboxes inside the sheet are
     // themselves dialogs.
@@ -341,6 +336,79 @@ test.describe('order addresses', () => {
 
     await expect(dialog).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('uses the shipping address for billing', async ({ page }) => {
+    const creds = await login(page)
+    const street = `${Date.now()} Paryska Street`
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-order-same-address-${Date.now()}@example.com`,
+      shipping_address: {
+        first_name: 'Ada',
+        last_name: 'Lovelace',
+        address1: street,
+        city: 'Los Angeles',
+        country_code: 'US',
+        state_code: 'CA',
+        postal_code: '90001',
+        phone: '5555555555',
+      },
+    })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const sameAsShipping = page.getByRole('button', { name: /same as shipping address/i })
+    await expect(sameAsShipping).toBeVisible({ timeout: 15_000 })
+    await sameAsShipping.click()
+
+    await expect(sameAsShipping).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(/^same as shipping address$/i)).toBeVisible()
+    await expect(page.getByText(street)).toHaveCount(1)
+  })
+})
+
+test.describe('order customer', () => {
+  test("changes a guest order's email", async ({ page }) => {
+    const creds = await login(page)
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-guest-${Date.now()}@example.com`,
+    })
+    const newEmail = `e2e-guest-renamed-${Date.now()}@example.com`
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.getByLabel(/email/i).fill(newEmail)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(newEmail)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('detaches the customer, leaving a guest order', async ({ page }) => {
+    const creds = await login(page)
+    const customers = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
+    )
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      customer_id: customers.data[0].id,
+    })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const customerLink = page.getByRole('link', { name: 'Promo Customer', exact: true })
+    await expect(customerLink).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.locator('[data-slot="combobox-clear"]').click()
+    await expect(dialog.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(customerLink).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
   })
 })
 

@@ -2890,7 +2890,8 @@
         },
         "address_edit": {
           "billing_title": "Edit Billing Address",
-          "shipping_title": "Edit Shipping Address"
+          "shipping_title": "Edit Shipping Address",
+          "billing_same_as_shipping": "Same as shipping address"
         },
         "adjustment_lines": {
           "add_discount": "Add discount",
@@ -3220,6 +3221,10 @@
           "captures": "Captures",
           "captures_empty": "Nothing has been captured yet.",
           "captured_at": "Captured"
+        },
+        "customer_edit": {
+          "title": "Edit customer",
+          "customer_help": "Clear the customer to make this a guest order."
         }
       },
       "edit": {

@@ -17,7 +17,9 @@ module Spree
           request_params :order do |body|
             body.external_references
             body.attribute :email, :string, example: 'customer@example.com'
-            body.attribute :customer_id, :id
+            body.attribute :customer_id, :id,
+              nullable: true,
+              description: 'Null detaches the customer, leaving a guest order under its `email`.'
             body.attribute :use_customer_default_address, :boolean,
               only: :create,
               description: "With `customer_id`, copies the customer's saved billing and shipping addresses onto the order."
@@ -51,6 +53,8 @@ module Spree
             body.attribute :tags, :array, of: :string
             body.attribute :shipping_address, :object, shape: ADDRESS
             body.attribute :billing_address, :object, shape: ADDRESS
+            body.attribute :use_shipping, :boolean,
+              description: 'When true, copies the shipping address to the billing address.'
             body.attribute :items, :array,
               description: 'Line items to upsert, keyed by variant. An entry sets that variant\'s quantity, creating the line item when the order has none; `quantity: 0` removes it. Variants you do not send are left alone.' do |item|
               item.attribute :variant_id, :id, required: true
@@ -343,7 +347,9 @@ module Spree
           # Named rather than read from the action, since an upsert reaches
           # update from the create action.
           def order_update_params
-            resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:update))))
+            permitted = resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:update))))
+            permitted[:customer_id] = resolve_customer&.id if permitted.key?(:customer_id)
+            permitted
           end
 
           # An incidental lookup like any other: resolved through the store so

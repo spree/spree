@@ -2890,7 +2890,8 @@
         },
         "address_edit": {
           "billing_title": "Modifier l'adresse de facturation",
-          "shipping_title": "Modifier l'adresse de livraison"
+          "shipping_title": "Modifier l'adresse de livraison",
+          "billing_same_as_shipping": "Identique à l'adresse de livraison"
         },
         "adjustment_lines": {
           "add_discount": "Ajouter une remise",
@@ -3220,6 +3221,10 @@
           "captures": "Captures",
           "captures_empty": "Rien n'a encore été capturé.",
           "captured_at": "Capturé"
+        },
+        "customer_edit": {
+          "title": "Modifier le client",
+          "customer_help": "Retirez le client pour en faire une commande invité."
         }
       },
       "edit": {

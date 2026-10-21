@@ -2908,7 +2908,8 @@
         },
         "address_edit": {
           "billing_title": "تحرير عنوان الفواتير",
-          "shipping_title": "تحرير عنوان الشحن"
+          "shipping_title": "تحرير عنوان الشحن",
+          "billing_same_as_shipping": "نفس عنوان الشحن"
         },
         "adjustment_lines": {
           "add_discount": "إضافة خصم",
@@ -3240,6 +3241,10 @@
           "captures": "عمليات التحصيل",
           "captures_empty": "لم يتم تحصيل أي مبلغ بعد.",
           "captured_at": "تاريخ التحصيل"
+        },
+        "customer_edit": {
+          "title": "تعديل العميل",
+          "customer_help": "أزل العميل لتحويل هذا الطلب إلى طلب ضيف."
         }
       },
       "edit": {

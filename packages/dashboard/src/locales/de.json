@@ -2890,7 +2890,8 @@
         },
         "address_edit": {
           "billing_title": "Rechnungsadresse bearbeiten",
-          "shipping_title": "Lieferadresse bearbeiten"
+          "shipping_title": "Lieferadresse bearbeiten",
+          "billing_same_as_shipping": "Wie Lieferadresse"
         },
         "adjustment_lines": {
           "add_discount": "Rabatt hinzufügen",
@@ -3220,6 +3221,10 @@
           "captures": "Erfassungen",
           "captures_empty": "Es wurde noch nichts erfasst.",
           "captured_at": "Erfasst"
+        },
+        "customer_edit": {
+          "title": "Kunde bearbeiten",
+          "customer_help": "Entfernen Sie den Kunden, um daraus eine Gastbestellung zu machen."
         }
       },
       "edit": {

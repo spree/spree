@@ -123,6 +123,7 @@ module Spree
 
         assign_address(order, :ship_address, @params[:shipping_address_id], @params[:shipping_address])
         assign_address(order, :bill_address, @params[:billing_address_id], @params[:billing_address])
+        order.use_shipping = @params[:use_shipping]
       end
 
       def assign_address(order, association, address_id, address_attrs)

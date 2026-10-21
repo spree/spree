@@ -727,6 +727,18 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    context 'with use_shipping' do
+      let(:order) { create(:order, store: store, ship_address: create(:address), bill_address: nil) }
+
+      it 'copies the shipping address to the billing address' do
+        patch :update, params: { id: order.prefixed_id, use_shipping: true }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['shipping_eq_billing_address']).to be(true)
+        expect(order.reload.bill_address).to eq(order.ship_address)
+      end
+    end
+
     # Staff assigning the business an order is for. A buyer with several
     # memberships names the node on their own cart; this is the back-office
     # equivalent.
@@ -785,6 +797,21 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.customer).to eq(new_customer)
+      end
+
+      it 'detaches the customer, keeping the order email' do
+        patch :update, params: { id: order.prefixed_id, customer_id: nil }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.customer).to be_nil
+        expect(order.email).to be_present
+      end
+
+      it 'refuses a customer that does not exist' do
+        patch :update, params: { id: order.prefixed_id, customer_id: 'cus_missing' }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload.customer).to eq(original_customer)
       end
     end
 

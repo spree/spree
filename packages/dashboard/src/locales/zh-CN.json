@@ -2883,7 +2883,8 @@
         },
         "address_edit": {
           "billing_title": "编辑账单地址",
-          "shipping_title": "编辑收货地址"
+          "shipping_title": "编辑收货地址",
+          "billing_same_as_shipping": "与收货地址相同"
         },
         "adjustment_lines": {
           "add_discount": "添加折扣",
@@ -3212,6 +3213,10 @@
           "captures": "扣款记录",
           "captures_empty": "尚未扣款。",
           "captured_at": "扣款时间"
+        },
+        "customer_edit": {
+          "title": "编辑客户",
+          "customer_help": "清除客户即可将此订单改为访客订单。"
         }
       },
       "edit": {
