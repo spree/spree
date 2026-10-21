@@ -8959,6 +8959,11 @@ paths:
         Returns the data request the emailed confirmation token belongs to, with a
         download link once the export is ready. Needs no signed-in session, because
         the link may be opened on a device that was never signed in.
+
+        The token stays readable after the 24-hour confirmation window: `status`
+        says whether the request can still be confirmed (`awaiting_confirmation`)
+        or has lapsed. `404` means the token is unknown, or was voided when the
+        customer's data was erased.
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8987,7 +8992,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/DataRequest"
         '404':
-          description: token not recognised
+          description: token unknown or voided
           content:
             application/json:
               example:

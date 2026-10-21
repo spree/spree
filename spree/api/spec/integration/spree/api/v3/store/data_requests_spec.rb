@@ -126,6 +126,11 @@ RSpec.describe 'Data Requests API', type: :request, swagger_doc: 'api-reference/
         Returns the data request the emailed confirmation token belongs to, with a
         download link once the export is ready. Needs no signed-in session, because
         the link may be opened on a device that was never signed in.
+
+        The token stays readable after the 24-hour confirmation window: `status`
+        says whether the request can still be confirmed (`awaiting_confirmation`)
+        or has lapsed. `404` means the token is unknown, or was voided when the
+        customer's data was erased.
       DESC
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -141,7 +146,7 @@ RSpec.describe 'Data Requests API', type: :request, swagger_doc: 'api-reference/
         run_test!
       end
 
-      response '404', 'token not recognised' do
+      response '404', 'token unknown or voided' do
         let(:'x-spree-api-key') { api_key.token }
         let(:token) { 'not-a-token' }
 
