@@ -487,6 +487,12 @@
         "discard_title": "Entwurf verwerfen?"
       }
     },
+    "currency_amounts": {
+      "amount_in_currency": "Betrag in {{currency}}",
+      "help": "Währungen ohne Betrag wird diese Versandart nicht angeboten.",
+      "label": "Betrag",
+      "required": "Gib einen Betrag in mindestens einer Währung ein."
+    },
     "custom_field_definitions": {
       "errors": {
         "failed_to_create": "Benutzerdefiniertes Feld konnte nicht erstellt werden",

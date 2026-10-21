@@ -34,6 +34,7 @@ export * from './components/bulk-action-bar'
 export * from './components/can'
 export * from './components/country-combobox'
 export * from './components/country-state-fields'
+export * from './components/currency-amounts-field'
 export * from './components/currency-select'
 export * from './components/export-button'
 export * from './components/file-upload-field'
@@ -88,6 +89,7 @@ export * from './hooks/use-switch-admin-locale'
 export * from './hooks/use-visual-viewport-offset'
 export * from './lib/cancel-order-form'
 export * from './lib/create-action-registry'
+export * from './lib/currency-amounts'
 // ---------------------------------------------------------------------------
 // Registries — pluggable extension points (nav, route, slot, table,
 // settings-nav, form fields, custom field components)

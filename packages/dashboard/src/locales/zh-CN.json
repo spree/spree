@@ -797,10 +797,6 @@
         "updated": "配送方式已更新"
       },
       "no_zone_restriction": "不限制",
-      "pricing": {
-        "amount_in_currency": "{{currency}} 金额",
-        "currency_amounts_help": "未填写金额的币种将不会提供该配送方式。"
-      },
       "provider_needs_connection": "连接 {{name}} 后即可使用",
       "provider_unavailable": "{{name}}(不可用)",
       "rule_summary": {

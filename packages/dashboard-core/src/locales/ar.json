@@ -487,6 +487,12 @@
         "discard_title": "تجاهل هذه المسودة؟"
       }
     },
+    "currency_amounts": {
+      "amount_in_currency": "المبلغ بعملة {{currency}}",
+      "help": "العملات المتروكة فارغة لا تُعرض لها طريقة التوصيل هذه.",
+      "label": "كمية",
+      "required": "أدخل مبلغًا بعملة واحدة على الأقل."
+    },
     "custom_field_definitions": {
       "errors": {
         "failed_to_create": "فشل إنشاء تعريف الحقل المخصص",

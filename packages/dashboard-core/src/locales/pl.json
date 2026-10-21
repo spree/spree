@@ -488,6 +488,12 @@
         "discard_title": "Odrzucić szkic?"
       }
     },
+    "currency_amounts": {
+      "amount_in_currency": "Kwota w {{currency}}",
+      "help": "Waluty bez kwoty nie mają oferowanej tej metody dostawy.",
+      "label": "Kwota",
+      "required": "Podaj kwotę w co najmniej jednej walucie."
+    },
     "custom_field_definitions": {
       "errors": {
         "failed_to_create": "Nie udało się utworzyć definicji pola niestandardowego",

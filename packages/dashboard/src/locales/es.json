@@ -4805,10 +4805,6 @@
         "updated": "Método de entrega actualizado"
       },
       "no_zone_restriction": "Sin restricción",
-      "pricing": {
-        "amount_in_currency": "Monto en {{currency}}",
-        "currency_amounts_help": "A las monedas dejadas en blanco no se les ofrece este método de entrega."
-      },
       "provider_needs_connection": "Conectá {{name}} para usarlo",
       "provider_unavailable": "{{name}} (no disponible)",
       "rule_summary": {

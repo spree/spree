@@ -811,10 +811,6 @@
         "updated": "Zaktualizowano metodę dostawy"
       },
       "no_zone_restriction": "Bez ograniczeń",
-      "pricing": {
-        "amount_in_currency": "Kwota w {{currency}}",
-        "currency_amounts_help": "Waluty bez kwoty nie mają oferowanej tej metody dostawy."
-      },
       "provider_needs_connection": "Połącz {{name}}, aby użyć",
       "provider_unavailable": "{{name}} (niedostępny)",
       "rule_summary": {

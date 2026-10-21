@@ -799,10 +799,6 @@
         "updated": "Versandart aktualisiert"
       },
       "no_zone_restriction": "Keine Beschränkung",
-      "pricing": {
-        "amount_in_currency": "Betrag in {{currency}}",
-        "currency_amounts_help": "Währungen ohne Betrag wird diese Versandart nicht angeboten."
-      },
       "provider_needs_connection": "{{name}} verbinden, um es zu nutzen",
       "provider_unavailable": "{{name}} (nicht verfügbar)",
       "rule_summary": {

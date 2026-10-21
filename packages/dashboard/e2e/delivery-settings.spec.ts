@@ -252,6 +252,48 @@ test.describe('delivery profiles', () => {
     await expect(sheet.getByText(FIXTURE_BULK_CHANNEL_NAME)).toBeVisible()
   })
 
+  // A currency left blank is not offered, the store's default currency
+  // included, and a method with no amount in any currency is refused rather
+  // than saved as one nobody can be quoted.
+  test('leaves a blank currency out, the store default included, and asks for at least one amount', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const methodName = `E2E Euro Only ${stamp}`
+    await createProfile(page, `E2E Euro Only Profile ${stamp}`)
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    const sheet = page.getByRole('dialog')
+    await sheet.locator('#name').fill(methodName)
+
+    const calculator = sheet.locator('#calculator-type')
+    await expect(calculator).toBeEnabled({ timeout: 15_000 })
+    await calculator.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue('')
+
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(sheet.getByText(/enter an amount in at least one currency/i)).toBeVisible()
+
+    await sheet.locator('#calculator-amount-EUR').fill('4.50')
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    await page.getByText(methodName).click()
+    await expect(sheet.locator('#calculator-amount-EUR')).toHaveValue(/^4\.50?$/, {
+      timeout: 15_000,
+    })
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue('')
+  })
+
   // Opening a method is a search-param change, so the sheet must survive a
   // reload and a direct link — that is what keeps bookmarked methods working.
   test('opens the method sheet straight from a URL', async ({ page }) => {

@@ -2175,6 +2175,15 @@ per-currency carrier accounts). The pricing card renders one amount per
 supported store currency; the default currency maps to the legacy amount
 preference.
 
+**Amended 2026-10-21:** `amounts` decides alone once it holds an amount, and
+the dashboard writes the store's default currency into it like every other
+currency. The legacy pair still quotes its own currency, but only while
+`amounts` is empty. Mapping the default currency to the legacy `amount`
+made "left blank" impossible for it: the pair's untouched default (0 in the
+store's currency) read as a price, so a method priced only in euros, through
+the dashboard or the API, was offered free to dollar carts. Upgrades from 5.6
+need no data step: 5.x methods hold only the legacy pair.
+
 ## 2026-08-09: Fulfillment profiles — ShippingCategory promoted, not removed
 
 Reverses three recorded decisions inside the 6.0 window: "fulfillment types

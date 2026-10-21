@@ -3,7 +3,9 @@ module Spree
     class DigitalDelivery < ShippingCalculator
       include Spree::Calculator::CurrencyAmounts
 
-      preference :amount, :money, default: 0
+      # Blank once its figure has moved into `amounts`, so the method quotes
+      # nothing outside the hash.
+      preference :amount, :money, default: 0, nullable: true
       preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
       def self.description

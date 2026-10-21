@@ -806,10 +806,6 @@
         "updated": "تم تحديث طريقة التوصيل"
       },
       "no_zone_restriction": "بدون تقييد",
-      "pricing": {
-        "amount_in_currency": "المبلغ بعملة {{currency}}",
-        "currency_amounts_help": "العملات المتروكة فارغة لا تُعرض لها طريقة التوصيل هذه."
-      },
       "provider_needs_connection": "اربط {{name}} لاستخدامه",
       "provider_unavailable": "{{name}} (غير متاح)",
       "rule_summary": {

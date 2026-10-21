@@ -7,14 +7,25 @@ RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
     let(:usd_package) { double(currency: 'USD', weight: 1, item_total: 50) }
     let(:eur_package) { double(currency: 'EUR', weight: 1, item_total: 50) }
 
-    it 'quotes each currency its own amount and hides currencies without one' do
+    it 'quotes from the per-currency amounts alone once they hold one, hiding every other currency' do
       subject.preferred_amounts = { 'EUR' => 4 }
 
-      expect(subject.compute_package(usd_package)).to eq(5)
       expect(subject.compute_package(eur_package)).to eq(4)
-      expect(subject.supports_currency?('USD')).to be true
-      expect(subject.supports_currency?('EUR')).to be true
+      expect(subject.compute_package(usd_package)).to be_nil
+      expect(subject.supports_currency?('USD')).to be false
       expect(subject.supports_currency?('GBP')).to be false
+    end
+
+    it 'never reads the untouched single amount as a price beside the per-currency amounts' do
+      calculator = described_class.new(preferred_amounts: { 'EUR' => 4 })
+
+      expect(calculator.supports_currency?(calculator.preferred_currency)).to be false
+    end
+
+    it 'quotes nothing for a blank single amount' do
+      subject.preferred_amount = nil
+
+      expect(subject.supports_currency?('USD')).to be false
     end
 
     it 'keeps the legacy single amount+currency pair working unchanged' do

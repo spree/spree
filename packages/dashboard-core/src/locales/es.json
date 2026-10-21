@@ -301,6 +301,12 @@
         "discard_title": "¿Descartar este borrador?"
       }
     },
+    "currency_amounts": {
+      "amount_in_currency": "Monto en {{currency}}",
+      "help": "A las monedas dejadas en blanco no se les ofrece este método de entrega.",
+      "label": "Monto",
+      "required": "Introduce un monto en al menos una moneda."
+    },
     "pages": {
       "settings": {
         "stock_locations": {

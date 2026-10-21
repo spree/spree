@@ -451,10 +451,13 @@ module Spree
         calculator.description + ': ' +
 
         if calculator.is_a?(Spree::Calculator::Shipping::FlatRate)
-          if calculator.preferred_amount == 0
+          amount = calculator.amount_for(calculator.preferred_currency)
+          if amount.nil?
+            ''
+          elsif amount.zero?
             I18n.t('spree.free')
           else
-            Spree::Money.new(calculator.preferred_amount, { currency: calculator.preferred_currency }).to_s
+            Spree::Money.new(amount, { currency: calculator.preferred_currency }).to_s
           end
         elsif calculator.is_a?(Spree::Calculator::Shipping::FlexiRate)
           Spree::Money.new(calculator.preferred_first_item, { currency: calculator.preferred_currency }).to_s
