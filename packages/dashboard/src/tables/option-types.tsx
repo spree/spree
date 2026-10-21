@@ -1,10 +1,11 @@
 import type { OptionType } from '@spree/admin-sdk'
+import type { OptionTypeKind } from '@spree/core'
 import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
 import { ListChecksIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
-const KIND_LABELS: Record<string, string> = {
+const KIND_LABELS: Record<OptionTypeKind, string> = {
   dropdown: i18n.t('admin.option_types.kinds.dropdown'),
   color_swatch: i18n.t('admin.option_types.kinds.color_swatch'),
   buttons: i18n.t('admin.option_types.kinds.buttons'),

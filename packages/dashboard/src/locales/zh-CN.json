@@ -2653,6 +2653,7 @@
         "updated": "礼品卡已更新"
       },
       "statuses": {
+        "active": "启用",
         "canceled": "已取消",
         "expired": "已过期",
         "partially_redeemed": "部分已兑换",

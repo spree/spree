@@ -1,5 +1,5 @@
 import type { Channel } from '@spree/admin-sdk'
-import { defineTable, formatPrice } from '@spree/dashboard-core'
+import { ASSIGNABLE_PRODUCT_STATUSES, defineTable, formatPrice } from '@spree/dashboard-core'
 import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -45,11 +45,10 @@ defineTable('products', {
       default: true,
       filterType: 'enum',
       quickFilter: true,
-      filterOptions: [
-        { value: 'draft', label: i18n.t('admin.pages.products.status_options.draft') },
-        { value: 'active', label: i18n.t('admin.fields.active.label') },
-        { value: 'archived', label: i18n.t('admin.pages.products.status_options.archived') },
-      ],
+      filterOptions: ASSIGNABLE_PRODUCT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.pages.products.status_options.${status}`),
+      })),
       render: (product) => <StatusBadge status={product.status} />,
     },
     {

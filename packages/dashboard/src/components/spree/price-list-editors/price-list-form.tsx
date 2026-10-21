@@ -5,6 +5,7 @@ import type {
   PriceRule,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
+import { MATCH_POLICIES, type MatchPolicy } from '@spree/core'
 import {
   adminClient,
   Can,
@@ -97,7 +98,6 @@ import {
   useRemovePriceListProducts,
 } from '../../../hooks/use-price-lists'
 import {
-  MATCH_POLICIES,
   PRICE_LIST_DEFAULTS,
   type PriceListFormValues,
   type PriceRuleFormDraft,
@@ -184,7 +184,7 @@ export function PriceListForm({
       description: priceList.description ?? '',
       starts_at: priceList.starts_at,
       ends_at: priceList.ends_at,
-      match_policy: (priceList.match_policy as 'all' | 'any') ?? 'all',
+      match_policy: (priceList.match_policy as MatchPolicy) ?? 'all',
       rules: initialRules.map(ruleDraftFromRule),
       staged_products: { adds: [], removes: [] },
       ...extensionFormValues('price_list', priceList),

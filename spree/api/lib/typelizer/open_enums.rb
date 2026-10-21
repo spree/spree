@@ -8,23 +8,41 @@ module Typelizer
   # from either still accepts an added value while every built-in value stays
   # documented and autocompletable.
   #
-  # Shared code lists are the exception: a named type several serializers and
-  # the request types share, but closed, since nothing outside the standard
-  # can add a country, a currency or a unit, and markets only accept the
-  # locales `Spree::Locales::ALL` lists. The SDKs define them once, as values
-  # and types, in `@spree/sdk-core` (generated from the API reference by
-  # `pnpm generate:code-lists`), so each SDK's `Enums.ts` re-exports that
-  # definition instead of carrying a copy of the list.
+  # Every named list is defined once, as values and type, in `@spree/core`, and
+  # each SDK's `Enums.ts` re-exports it through `@spree/sdk-core` instead of
+  # carrying a copy. {Spree::Api::EnumTypes} writes them there.
+  #
+  # A name in `CLOSED_LIST_NAMES` keeps its list closed — named only so it is
+  # defined once — and both contracts stay exactly what `enum:` alone gives.
+  # Shared code lists are closed too, but come from the API reference
+  # (`pnpm generate:code-lists`) rather than the serializers: nothing outside
+  # the standard can add a country, a currency or a unit, and markets only
+  # accept the locales `Spree::Locales::ALL` lists.
   module OpenEnums
     CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode WeightUnit DimensionUnit].freeze
 
+    CLOSED_LIST_NAMES = %w[
+      ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
+      CollectionRuleMatchPolicy CollectionSortOrder CommissionKind CompanyInvitationStatus CompanyKind
+      ConsentSource DataRequestKind DeliveryStatus DeliveryZoneMemberType DiscountKind DocumentNumberFormat
+      EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType MatchPolicy MediaType OptionTypeKind
+      OrderFulfillmentStatus OrderPaymentStatus OrderStatus PackageTypeKind PaymentSourceType
+      PayoutScheduleInterval PermissionKind PickupStockPolicy ProviderFailurePolicy PurchaseUnit
+      SellerRequirementState SellerTransferKind ShippingLabelFormat ShippingLabelOwnerType ShippingLabelSource
+      StockAvailability StockMovementKind StockReceiptLineType StockReceiptReceivableType
+      StockReceiptRejectionReason StorefrontAccess TaxIdentifierSource TaxIdentifierValidationStatus
+      TaxRemittance UnitSystem
+    ].freeze
+
+    # @param name [String, nil] a list's `enum_type_name`
+    # @return [Boolean] whether the list is closed: no value outside it is valid
+    def self.closed?(name)
+      CLOSED_TYPE_NAMES.include?(name) || CLOSED_LIST_NAMES.include?(name)
+    end
+
     module Property
       def enum_definition(...)
-        definition = super
-        return definition unless definition
-        return "type { #{enum_type_name} } from '@spree/sdk-core'" if CLOSED_TYPE_NAMES.include?(enum_type_name)
-
-        "#{definition} | (string & {})"
+        super && "type { #{enum_type_name} } from '@spree/sdk-core'"
       end
 
       # Typelizer skips rewriting a file whose digest is unchanged, and the
@@ -32,7 +50,7 @@ module Typelizer
       # the re-export in makes a checkout that still carries the old inline
       # list regenerate.
       def fingerprint
-        return super unless CLOSED_TYPE_NAMES.include?(enum_type_name)
+        return super unless enum_type_name
 
         [super, enum_definition].inspect
       end
@@ -43,10 +61,16 @@ module Typelizer
 
       def inline_schema(definition, property, openapi_version:)
         return super unless property.enum_type_name && property.enum.is_a?(Array) && !property.multi
-        return super if CLOSED_TYPE_NAMES.include?(property.enum_type_name)
+        return super if OpenEnums.closed?(property.enum_type_name)
 
         open = { anyOf: [{ type: :string, enum: property.enum.compact }, { type: :string }] }
-        apply_nullable(open, property, openapi_version: openapi_version)
+        # OpenAPI 3.0 ignores `nullable` beside `anyOf`, which is where
+        # Typelizer puts it, so the free-string branch carries it instead.
+        if property.nullable && !v31?(openapi_version)
+          open[:anyOf].last[:nullable] = true
+        else
+          apply_nullable(open, property, openapi_version: openapi_version)
+        end
         apply_metadata(open, property)
         open[:description] ||= OPEN_ENUM_DESCRIPTION
         open

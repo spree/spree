@@ -4,7 +4,7 @@ module Spree
       class FulfillmentSerializer < BaseSerializer
         typelize number: :string,
                  status: [:string, enum: Spree::Fulfillment.statuses, enum_type_name: 'FulfillmentStatus'],
-                 fulfillment_type: [:string, enum: %w[shipping digital pickup pickup_point]],
+                 fulfillment_type: [:string, enum: %w[shipping digital pickup pickup_point], enum_type_name: 'FulfillmentType'],
                  tracking: [:string, nullable: true], tracking_url: [:string, nullable: true],
                  fulfilled_at: [:string, nullable: true], delivered_at: [:string, nullable: true], unpriced: :boolean,
                  items: 'Array<{ item_id: string; variant_id: string; quantity: number }>',

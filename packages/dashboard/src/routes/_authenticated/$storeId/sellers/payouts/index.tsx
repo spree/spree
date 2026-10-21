@@ -12,12 +12,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PayoutCompleteDialog } from '../../../../../components/spree/sellers/payout-complete-dialog'
+import { OWED_PAYOUT_STATUSES } from '../../../../../hooks/use-seller-ledger'
 import '../../../../../tables/seller-ledger'
-
-// A settlement the sweep has written but nobody has confirmed. The workflow
-// accepts exactly these, so offering the action on anything else would
-// promise a move the server refuses.
-const OWED = ['pending', 'processing', 'unresolved']
 
 export const Route = createFileRoute('/_authenticated/$storeId/sellers/payouts/')({
   validateSearch: resourceSearchSchema,
@@ -59,7 +55,7 @@ function SellerPayoutsPage() {
                 key: 'complete',
                 label: t('admin.payouts.complete.action'),
                 icon: <CheckCircleIcon className="size-4" />,
-                visible: canComplete && OWED.includes(payout.status),
+                visible: canComplete && OWED_PAYOUT_STATUSES.includes(payout.status),
                 onSelect: () => setCompleting(payout),
               },
             ]}

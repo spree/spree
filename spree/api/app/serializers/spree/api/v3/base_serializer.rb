@@ -126,7 +126,7 @@ module Spree
           names = model.exposed_preference_names.to_a - except if names.empty?
           definitions = model.preference_definitions
           names.each do |name|
-            typelize name => preference_type_hint(Spree::PreferenceSchema::JsonSchema.property_schema(definitions.fetch(name)))
+            typelize name => preference_type_hint(Spree::PreferenceSchema::JsonSchema.property_schema(definitions.fetch(name)), name)
             reader = :"preferred_#{name}"
             attribute(name) do |object|
               value = object.public_send(reader)
@@ -138,12 +138,29 @@ module Spree
         TYPELIZER_TYPES = { 'string' => :string, 'integer' => :number, 'number' => :number, 'boolean' => :boolean }.freeze
         private_constant :TYPELIZER_TYPES
 
-        def self.preference_type_hint(schema)
+        # The shared name of each setting's value list, so it is defined once
+        # in `@spree/core` rather than inline wherever the setting appears.
+        PREFERENCE_LIST_NAMES = {
+          capture_method: 'CaptureMethod',
+          default_payouts_schedule_interval: 'PayoutScheduleInterval',
+          document_number_format: 'DocumentNumberFormat',
+          email_font: 'EmailFont',
+          inventory_provider_failure_policy: 'ProviderFailurePolicy',
+          pricing_provider_failure_policy: 'ProviderFailurePolicy',
+          storefront_access: 'StorefrontAccess',
+          unit_system: 'UnitSystem'
+        }.freeze
+        private_constant :PREFERENCE_LIST_NAMES
+
+        def self.preference_type_hint(schema, name)
           types = Array(schema['type'])
           hint = TYPELIZER_TYPES.fetch((types - ['null']).first, :unknown)
           options = {}
           options[:nullable] = true if types.include?('null')
-          options[:enum] = schema['enum'].compact if schema['enum']
+          if schema['enum']
+            options[:enum] = schema['enum'].compact
+            options[:enum_type_name] = PREFERENCE_LIST_NAMES[name.to_sym] if PREFERENCE_LIST_NAMES.key?(name.to_sym)
+          end
           options.empty? ? hint : [hint, options]
         end
         private_class_method :preference_type_hint

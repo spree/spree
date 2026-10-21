@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
+import { PAYOUT_SCHEDULE_INTERVALS } from '@spree/core'
 import {
   currencyParts,
   fractionToPercent,
@@ -58,7 +59,6 @@ import {
 import {
   type MarketplaceSettingsFormValues,
   marketplaceSettingsFormSchema,
-  PAYOUT_SCHEDULE_INTERVALS,
 } from '../../../../schemas/marketplace'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/marketplace')({

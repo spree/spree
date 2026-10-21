@@ -15,7 +15,7 @@ module Spree
         # refuses to write them (docs/plans/6.0-seller-package-types.md).
         class PackageTypeSerializer < V3::BaseSerializer
           typelize name: :string,
-                   kind: [:string, enum: Spree::PackageType::KINDS],
+                   kind: [:string, enum: Spree::PackageType::KINDS, enum_type_name: 'PackageTypeKind'],
                    length: [:string, nullable: true],
                    width: [:string, nullable: true],
                    height: [:string, nullable: true],

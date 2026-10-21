@@ -9,6 +9,11 @@ module Spree
       def self.call(serializer_dirs)
         serializer_dirs.each { |dir| Rails.autoloaders.main.eager_load_dir(dir.to_s) }
 
+        # Before the SDK types, so two serializers disagreeing on a list's
+        # values stop generation instead of one of them silently winning.
+        require Spree::Api::Engine.root.join('lib/spree/api/enum_types').to_s
+        Spree::Api::EnumTypes.new.write!(Spree::Api::Engine.root.join('../..'))
+
         require 'typelizer/generator'
         Typelizer::Generator.call(force: true)
 

@@ -9,7 +9,7 @@ module Spree
                    reference: 'string | null',
                    notes: 'string | null',
                    received_at: :string,
-                   receivable_type: [:string, enum: %w[purchase_order stock_transfer]],
+                   receivable_type: [:string, enum: %w[purchase_order stock_transfer], enum_type_name: 'StockReceiptReceivableType'],
                    receivable_id: :string,
                    received_by_id: 'string | null',
                    received_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],

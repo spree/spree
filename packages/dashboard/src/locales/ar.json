@@ -2676,6 +2676,7 @@
         "updated": "تم تحديث بطاقة الهدايا"
       },
       "statuses": {
+        "active": "نشطة",
         "canceled": "ملغاة",
         "expired": "منتهية الصلاحية",
         "partially_redeemed": "مُستَخدمة جزئيًا",

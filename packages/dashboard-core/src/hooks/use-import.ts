@@ -1,3 +1,4 @@
+import { IMPORT_STATUSES, subsetOf } from '@spree/core'
 import { toastManager } from '@spree/dashboard-ui'
 import {
   type QueryClient,
@@ -20,7 +21,7 @@ import { useTenantId } from '../providers/tenant-provider'
 import { useAuth } from './use-auth'
 
 /** Statuses the wizard polls through — row creation and processing. */
-const ACTIVE_STATUSES = new Set(['completed_mapping', 'processing'])
+const ACTIVE_STATUSES = subsetOf(IMPORT_STATUSES, ['completed_mapping', 'processing'])
 
 const IMPORT_POLL_INTERVAL_MS = 2000
 const ROWS_POLL_INTERVAL_MS = 5000
@@ -49,7 +50,7 @@ const IMPORT_TOUCHED_RESOURCES = [
 
 /** Whether the import's pipeline is still running (the poll's continue predicate). */
 export function isImportActive(status: string | undefined): boolean {
-  return !!status && ACTIVE_STATUSES.has(status)
+  return !!status && ACTIVE_STATUSES.includes(status)
 }
 
 /**

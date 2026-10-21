@@ -1,4 +1,5 @@
 import type { EmailTemplate } from '@spree/admin-sdk'
+import { EMAIL_TEMPLATE_KINDS, type EmailTemplateKind } from '@spree/core'
 import {
   PageHeader,
   Subject,
@@ -32,8 +33,6 @@ import { emailTemplateName } from '../../../../../../lib/email-template-name'
 export const Route = createFileRoute('/_authenticated/$storeId/settings/emails/templates/')({
   component: EmailTemplatesPage,
 })
-
-const GROUPS = ['email', 'layout', 'partial'] as const
 
 function EmailTemplatesPage() {
   const { t } = useTranslation()
@@ -72,7 +71,7 @@ function EmailTemplatesPage() {
               </CardContent>
             </Card>
           ) : (
-            GROUPS.map((kind) => (
+            EMAIL_TEMPLATE_KINDS.map((kind) => (
               <TemplateGroup
                 key={kind}
                 kind={kind}
@@ -90,7 +89,7 @@ function TemplateGroup({
   kind,
   templates,
 }: {
-  kind: (typeof GROUPS)[number]
+  kind: EmailTemplateKind
   templates: EmailTemplate[]
 }) {
   const { t } = useTranslation()

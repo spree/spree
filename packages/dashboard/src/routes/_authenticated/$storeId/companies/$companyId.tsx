@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Company, CompanyInvitation, CompanyMembership } from '@spree/admin-sdk'
+import { COMPANY_KINDS } from '@spree/core'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -82,7 +83,6 @@ import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   COMPANY_CHILD_DEFAULTS,
   COMPANY_DEFAULTS,
-  COMPANY_KINDS,
   type CompanyChildFormValues,
   type CompanyFormValues,
   companyChildFormSchema,

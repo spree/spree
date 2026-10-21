@@ -1,8 +1,20 @@
 import { SpreeError } from '@spree/admin-sdk'
+import { SELLER_PAYOUT_STATUSES, subsetOf } from '@spree/core'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
+
+/**
+ * A settlement the sweep has written but nobody has confirmed. The workflow
+ * accepts exactly these, so offering the action on anything else would
+ * promise a move the server refuses.
+ */
+export const OWED_PAYOUT_STATUSES = subsetOf(SELLER_PAYOUT_STATUSES, [
+  'pending',
+  'processing',
+  'unresolved',
+])
 
 /** Where one seller stands with the marketplace, one row per currency. */
 export function useSellerBalances(sellerId: string | undefined) {

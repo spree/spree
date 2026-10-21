@@ -5704,6 +5704,7 @@
         "updated": "Tarjeta de regalo actualizada"
       },
       "statuses": {
+        "active": "Activa",
         "canceled": "Cancelada",
         "expired": "Vencida",
         "partially_redeemed": "Canjeada parcialmente",

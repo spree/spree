@@ -1,3 +1,4 @@
+import { PRODUCT_STATUSES, subsetOf } from '@spree/core'
 import type {
   BulkAction,
   BulkActionFormProps,
@@ -40,7 +41,7 @@ import '../tables/products'
  * approves it, so the only moves offered here are the two a seller makes
  * alone (docs/plans/6.0-seller-product-submission.md).
  */
-const BULK_STATUSES = ['draft', 'archived'] as const
+const BULK_STATUSES = subsetOf(PRODUCT_STATUSES, ['draft', 'archived'])
 
 type BulkStatus = (typeof BULK_STATUSES)[number]
 type StatusFormValues = { status: BulkStatus }

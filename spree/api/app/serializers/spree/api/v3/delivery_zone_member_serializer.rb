@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class DeliveryZoneMemberSerializer < BaseSerializer
-        typelize member_type: [:string, enum: Spree::DeliveryZoneMember::MEMBER_TYPES], country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
+        typelize member_type: [:string, enum: Spree::DeliveryZoneMember::MEMBER_TYPES, enum_type_name: 'DeliveryZoneMemberType'], country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                  country_name: [:string, nullable: true],
                  state_code: [:string, nullable: true], state_name: [:string, nullable: true],
                  postal_code_prefix: [:string, nullable: true],

@@ -7,7 +7,7 @@ module Spree
         # default, and the draft in progress.
         class EmailTemplateSerializer < V3::BaseSerializer
           typelize key: :string,
-                   kind: [:string, enum: Spree::Emails::EditableTemplates::KINDS.map(&:to_s)],
+                   kind: [:string, enum: Spree::Emails::EditableTemplates::KINDS.map(&:to_s), enum_type_name: 'EmailTemplateKind'],
                    language: :string,
                    customized: :boolean,
                    customized_languages: [:string, multi: true],

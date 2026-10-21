@@ -1,4 +1,5 @@
 import type { Media, MediaUsageReference } from '@spree/admin-sdk'
+import { MEDIA_TYPES } from '@spree/core'
 import {
   adminClient,
   Can,
@@ -72,7 +73,7 @@ import {
 const PLACEMENT_FILTERS = ['all', 'attached', 'unattached'] as const
 type PlacementFilter = (typeof PLACEMENT_FILTERS)[number]
 
-const TYPE_FILTERS = ['all', 'image', 'video', 'external_video'] as const
+const TYPE_FILTERS = ['all', ...MEDIA_TYPES] as const
 type TypeFilter = (typeof TYPE_FILTERS)[number]
 
 // Multiples of the widest grid (6 columns at lg), so a full page always ends

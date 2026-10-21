@@ -24,7 +24,7 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
-                   purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS],
+                   purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS, enum_type_name: 'PurchaseUnit'],
                    carton_package_type_id: [:string, nullable: true],
                    carton_weight: [:string, nullable: true],
                    cartons_per_pallet: ['number | null'],

@@ -14,7 +14,7 @@ module Spree
                    starts_at: 'string | null',
                    ends_at: 'string | null',
                    deleted_at: 'string | null',
-                   match_policy: [:string, enum: Spree::PriceList::MATCH_POLICIES],
+                   match_policy: [:string, enum: Spree::PriceList::MATCH_POLICIES, enum_type_name: 'MatchPolicy'],
                    price_adjustment_percentage: 'string | null',
                    adjust_compare_at: :boolean,
                    automatic_pricing: :boolean,

@@ -87,7 +87,11 @@ import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
 import { ProductBulkPriceEditor } from './product-bulk-price-editor'
 import { variantHasTaxCategoryOverride } from './product-form-mapping'
-import type { MediaFormValues, VariantFormValues } from './product-schema'
+import {
+  ASSIGNABLE_PRODUCT_STATUSES,
+  type MediaFormValues,
+  type VariantFormValues,
+} from './product-schema'
 import type {
   PanelMedia as Media,
   PanelProduct as Product,
@@ -915,8 +919,6 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
 // Status
 // ---------------------------------------------------------------------------
 
-const ASSIGNABLE_STATUSES = ['draft', 'active', 'archived']
-
 export function StatusCard({
   form,
   reviewActions,
@@ -941,9 +943,11 @@ export function StatusCard({
   // made, so the operator can move the product on from here like any other —
   // overriding their own refusal is not a review action, and leaving the
   // picker disabled there was a dead end with no way out.
-  const inReview = Boolean(status) && !ASSIGNABLE_STATUSES.includes(status as string)
+  const inReview = Boolean(status) && !ASSIGNABLE_PRODUCT_STATUSES.includes(status as string)
   const awaitingDecision = status === 'proposed'
-  const values = inReview ? [status as string, ...ASSIGNABLE_STATUSES] : ASSIGNABLE_STATUSES
+  const values = inReview
+    ? [status as string, ...ASSIGNABLE_PRODUCT_STATUSES]
+    : ASSIGNABLE_PRODUCT_STATUSES
 
   return (
     <SharedStatusCard<ProductFormValues>

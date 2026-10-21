@@ -25075,6 +25075,10 @@ components:
         resolution:
           type: string
           nullable: true
+          enum:
+          - refund
+          - replacement
+          - refund_and_replacement
         order_id:
           type: string
           nullable: true
@@ -27984,9 +27988,18 @@ components:
           nullable: true
         tax_remittance:
           type: string
+          enum:
+          - seller
+          - platform
         payouts_schedule_interval:
           type: string
           nullable: true
+          enum:
+          - daily
+          - weekly
+          - biweekly
+          - monthly
+          - manual
         holiday_mode_until:
           type: string
           nullable: true
@@ -28906,6 +28919,10 @@ components:
         format:
           type: string
           nullable: true
+          enum:
+          - pdf
+          - png
+          - zpl
         external_id:
           type: string
           nullable: true

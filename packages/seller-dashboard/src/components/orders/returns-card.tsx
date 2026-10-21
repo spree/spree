@@ -1,3 +1,4 @@
+import { RETURN_STATUSES, subsetOf } from '@spree/core'
 import {
   currencyParts,
   formatMoney,
@@ -35,7 +36,7 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Refunded and canceled returns are finished; offering a menu on them would
 // open onto nothing.
-const ACTIONABLE = ['requested', 'approved', 'received']
+const ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
 
 /**
  * Goods coming back on this order.

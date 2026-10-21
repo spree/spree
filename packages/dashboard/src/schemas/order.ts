@@ -1,5 +1,5 @@
 import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
-import { isDecimalString, multiplyMoney, sumMoney } from '@spree/core'
+import { FEE_KINDS, isDecimalString, multiplyMoney, subsetOf, sumMoney } from '@spree/core'
 import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
@@ -53,15 +53,17 @@ export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
 }
 
 /**
- * Fee kinds offered when adding a manual fee to an order. The backend accepts
- * any string, so this is the curated admin-facing set, not a DB constraint.
+ * Fee kinds offered when adding a manual fee to an order. `exchange` is left
+ * out: Spree writes it itself, so it is labelled on the order but never offered.
  */
-export const FEE_KINDS = ['surcharge', 'handling', 'gift_wrap', 'cod', 'payment', 'duty'] as const
-
-export type FeeKind = (typeof FEE_KINDS)[number]
-
-/** Kinds Spree writes itself — labelled on the order, never offered when adding a fee. */
-export const SYSTEM_FEE_KINDS = ['exchange'] as const
+export const MANUAL_FEE_KINDS = subsetOf(FEE_KINDS, [
+  'surcharge',
+  'handling',
+  'gift_wrap',
+  'cod',
+  'payment',
+  'duty',
+])
 
 /**
  * One row of the order edit table. Everything here is a primitive on purpose:
