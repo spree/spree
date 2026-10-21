@@ -138,7 +138,7 @@ test.describe('orders list', () => {
 
   test('shows and filters by market and locale', async ({ page }) => {
     const session = await login(page)
-    // `de` is a store language through the seeded Europe market.
+    // `de` is a locale the seeded US market offers (see global-setup).
     const { lastName, small, large } = await seedOrders(page, session, 'de')
     const markets = await adminRequest<{ data: { name: string; currency: string }[] }>(
       page,

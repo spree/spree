@@ -29,6 +29,20 @@ module RequestBodyHelper
     parameter name: :body, in: :body, required: required, schema: { '$ref': "#/components/schemas/#{name}" }
   end
 
+  # Documents a shape a read endpoint takes as query parameters, and publishes
+  # it as a component so the SDKs generate one type for it.
+  #
+  # @param shape [Spree::Api::V3::RequestSchema] a named shape
+  def query_parameters_for(shape)
+    register_request_schema(shape.name, shape.json_schema)
+    shape.code_lists.each { |list_name, definition| register_request_schema(list_name, definition) }
+
+    shape.json_schema[:properties].each do |name, property|
+      parameter name: name, in: :query, required: false, description: property[:description],
+                schema: property.except(:description)
+    end
+  end
+
   private
 
   def request_body_route

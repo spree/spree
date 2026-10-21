@@ -25,8 +25,11 @@ export function OrderSkeleton() {
           <Skeleton className="h-48 w-full rounded-xl" />
           <Skeleton className="h-48 w-full rounded-xl" />
         </div>
+        {/* Customer, shipping address and billing address cards. */}
         <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-          <Skeleton className="h-64 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-44 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl" />
         </div>
       </div>
     </div>

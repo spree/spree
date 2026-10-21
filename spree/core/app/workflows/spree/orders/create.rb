@@ -28,6 +28,14 @@ module Spree
 
         return failure(:store_is_required) if store.nil?
 
+        @sales_context = Spree::SalesContext.new(
+          store: store,
+          market: (resolve_market if @params[:market_id].present?),
+          currency: @params[:currency],
+          locale: @params[:locale]
+        )
+        return refuse_sales_context unless @sales_context.valid?
+
         order = nil
         ApplicationRecord.transaction do
           order = build_order
@@ -60,8 +68,9 @@ module Spree
           customer: @customer,
           created_by: @created_by,
           email: @params[:email] || @customer&.email,
-          currency: @params[:currency].presence&.upcase || @store.default_currency,
-          locale: @params[:locale] || Spree::Current.locale,
+          market: @sales_context.market,
+          currency: @sales_context.currency,
+          locale: @sales_context.locale || Spree::Current.locale,
           customer_note: @params[:customer_note],
           po_number: @params[:po_number],
           internal_note: @params[:internal_note],
@@ -74,13 +83,18 @@ module Spree
         # signed id, so it assigns like any other attribute.
         attrs[:po_document_signed_id] = @params[:po_document_signed_id] if @params[:po_document_signed_id].present?
 
-        attrs[:market] = resolve_market if @params[:market_id].present?
         attrs[:channel] = resolve_channel if @params[:channel_id].present?
         attrs[:company] = resolve_company if @params[:company_id].present?
         attrs[:preferred_stock_location] = resolve_preferred_stock_location if @params[:preferred_stock_location_id].present?
         attrs.compact_blank!
 
         @store.orders.new(attrs)
+      end
+
+      def refuse_sales_context
+        order = @store.orders.new
+        order.errors.merge!(@sales_context.errors)
+        failure(order, order.errors.full_messages.to_sentence)
       end
 
       def resolve_market
@@ -109,6 +123,7 @@ module Spree
 
         assign_address(order, :ship_address, @params[:shipping_address_id], @params[:shipping_address])
         assign_address(order, :bill_address, @params[:billing_address_id], @params[:billing_address])
+        order.use_shipping = @params[:use_shipping]
       end
 
       def assign_address(order, association, address_id, address_attrs)
@@ -127,7 +142,10 @@ module Spree
       end
 
       def add_items(order)
-        result = Spree::Orders::UpsertItems.call(order: order, items: @params[:items])
+        result = Spree::Orders::UpsertItems.call(
+          order: order, items: @params[:items],
+          orderable_variants: Spree::SalesContext.from_order(order).orderable_variants
+        )
         return if result.success?
 
         propagate_step_failure!(order, result, fallback: 'Failed to add items to order')

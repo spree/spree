@@ -372,7 +372,12 @@ function OrderEditPage() {
       </form>
 
       {addingItem && (
-        <AddLineItemDialog open={addingItem} onOpenChange={setAddingItem} onSelect={stageVariant} />
+        <AddLineItemDialog
+          orderId={orderId}
+          open={addingItem}
+          onOpenChange={setAddingItem}
+          onSelect={stageVariant}
+        />
       )}
     </>
   )

@@ -13,7 +13,8 @@ export type OrderUpdateParams = {
    */
   external_references?: Record<string, unknown>
   email?: string
-  customer_id?: string
+  /** Null detaches the customer, leaving a guest order under its `email`. */
+  customer_id?: string | null
   currency?: CurrencyCode
   market_id?: string
   /** Defaults to the store primary channel when omitted. */
@@ -47,6 +48,8 @@ export type OrderUpdateParams = {
   tags?: string[]
   shipping_address?: AddressInputParams
   billing_address?: AddressInputParams
+  /** When true, copies the shipping address to the billing address. */
+  use_shipping?: boolean
   /**
    * Line items to upsert, keyed by variant. An entry sets that variant's quantity, creating the
    * line item when the order has none; `quantity: 0` removes it. Variants you do not send are left

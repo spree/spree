@@ -29,10 +29,13 @@ import { useTranslation } from 'react-i18next'
  * pending row until the merchant saves the order.
  */
 export function AddLineItemDialog({
+  orderId,
   open,
   onOpenChange,
   onSelect,
 }: {
+  /** Lists only what this order's buyer can be sold, priced as they would pay. */
+  orderId: string
   open: boolean
   onOpenChange: (open: boolean) => void
   onSelect: (variant: Variant, quantity: number) => void
@@ -43,8 +46,8 @@ export function AddLineItemDialog({
   const [quantity, setQuantity] = useState(1)
 
   const { data: variantsData } = useQuery({
-    queryKey: ['variants', 'search', search],
-    queryFn: () => adminClient.variants.list({ search, limit: 10 }),
+    queryKey: ['variants', 'search', orderId, search],
+    queryFn: () => adminClient.variants.list({ search, limit: 10, order_id: orderId }),
     enabled: search.length >= 3,
     staleTime: 30_000,
   })

@@ -1703,6 +1703,10 @@
           "label": "Coupon code",
           "placeholder": "Optional"
         },
+        "currency": {
+          "help": "Set by the market.",
+          "label": "Currency"
+        },
         "customer_note": {
           "label": "Customer note (visible to customer)"
         },
@@ -1714,10 +1718,12 @@
           "label": "Internal note (staff only)"
         },
         "locale": {
-          "label": "Locale"
+          "label": "Locale",
+          "help": "Used for the emails and documents the customer receives."
         },
         "market": {
-          "label": "Market"
+          "label": "Market",
+          "help": "Sets the order's pricing and taxes, and which currency and locales it can use."
         },
         "order_group": {
           "label": "Purchase",
@@ -2884,7 +2890,8 @@
         },
         "address_edit": {
           "billing_title": "Edit Billing Address",
-          "shipping_title": "Edit Shipping Address"
+          "shipping_title": "Edit Shipping Address",
+          "billing_same_as_shipping": "Same as shipping address"
         },
         "adjustment_lines": {
           "add_discount": "Add discount",
@@ -3214,6 +3221,12 @@
           "captures": "Captures",
           "captures_empty": "Nothing has been captured yet.",
           "captured_at": "Captured"
+        },
+        "customer_edit": {
+          "title": "Edit customer",
+          "customer_help": "Clear the customer to make this a guest order.",
+          "confirm_detach": "This order will no longer appear in the customer's order history or account. Remove the customer?",
+          "detach": "Remove customer"
         }
       },
       "edit": {
@@ -3670,10 +3683,18 @@
         "new": {
           "add_line_item": "Add line item",
           "company_help": "Attach this order to a business. The customer list then shows only people who can buy for it.",
+          "reset_items": {
+            "confirm": "Change and remove items",
+            "message_one": "The {{count}} item you picked may not be sold, or may cost something else, for this buyer, market or channel. It will be removed.",
+            "message_other": "The {{count}} items you picked may not be sold, or may cost something else, for this buyer, market or channel. They will be removed.",
+            "title": "Remove the picked items?"
+          },
           "search_variant": "Search variant…",
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
+          "section_market": "Market and channel",
+          "section_market_help": "What can be sold, and at what price, depends on the buyer, the market and the channel.",
           "section_notes": "Notes",
           "section_summary": "Summary",
           "select_company": "Company (optional)",

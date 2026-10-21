@@ -198,6 +198,31 @@ import type {
 // Semantic reporting contract (docs/plans/6.0-analytics-semantic-layer.md)
 // ============================================
 
+// Every sales context field, so adding one to `VariantSalesContextParams`
+// fails to compile until it is listed here too.
+const VARIANT_SALES_CONTEXT_FIELDS: Record<keyof VariantSalesContextParams, true> = {
+  order_id: true,
+  market_id: true,
+  channel_id: true,
+  customer_id: true,
+  company_id: true,
+  currency: true,
+}
+
+// The sales context scopes and prices the list, so it stays out of the Ransack filters.
+function variantListQuery(
+  params: ListParams<VariantFilters, VariantSort> & VariantSalesContextParams,
+): ReturnType<typeof transformListParams> {
+  const filters: Record<string, unknown> = { ...params }
+  const context: Record<string, string> = {}
+  for (const field of Object.keys(VARIANT_SALES_CONTEXT_FIELDS)) {
+    const value = filters[field]
+    if (typeof value === 'string' && value) context[field] = value
+    delete filters[field]
+  }
+  return { ...transformListParams(filters), ...context }
+}
+
 export type ReportingGrain = 'hour' | 'day' | 'week' | 'month'
 
 export type ReportingCompare = 'previous_period' | 'previous_year'
@@ -595,6 +620,7 @@ import type {
   TaxRateUpdateParams,
   TrackingCarrierOption,
   VariantCreateParams,
+  VariantSalesContextParams,
   VariantUpdateParams,
   WebhookEndpointCreateParams,
   WebhookEndpointDisableParams,
@@ -4963,12 +4989,12 @@ export class AdminClient {
 
   readonly variants = {
     list: (
-      params?: ListParams<VariantFilters, VariantSort>,
+      params?: ListParams<VariantFilters, VariantSort> & VariantSalesContextParams,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Variant>> =>
       this.request<PaginatedResponse<Variant>>('GET', '/variants', {
         ...options,
-        params: params ? transformListParams(params) : undefined,
+        params: params ? variantListQuery(params) : undefined,
       }),
 
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Variant> =>

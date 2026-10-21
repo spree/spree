@@ -17570,6 +17570,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -18438,6 +18439,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -18790,6 +18792,7 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: false
+                  shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
@@ -19015,6 +19018,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: true
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19171,6 +19175,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19317,6 +19322,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19515,6 +19521,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19693,6 +19700,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19832,6 +19840,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19965,6 +19974,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -35001,6 +35011,51 @@ paths:
         description: Number of records per page
         schema:
           type: integer
+      - name: order_id
+        in: query
+        required: false
+        description: 'A draft order to sell to: lists only what its buyer can be sold
+          on its channel, priced in its market. Needs `read_orders`, and cannot be
+          combined with the fields below.'
+        schema:
+          type: string
+      - name: market_id
+        in: query
+        required: false
+        description: Prices in this market and lists only variants with a price in
+          its currency.
+        schema:
+          type: string
+      - name: channel_id
+        in: query
+        required: false
+        description: Lists only variants published on this channel. When a market,
+          customer, company or currency is given without it, the store default channel
+          applies; an order uses its own.
+        schema:
+          type: string
+      - name: customer_id
+        in: query
+        required: false
+        description: Narrows to the customer's catalogs and prices as they would pay.
+          Needs `read_customers`.
+        schema:
+          type: string
+      - name: company_id
+        in: query
+        required: false
+        description: Narrows to the company's catalogs and prices under its agreement.
+          Needs `read_customers`.
+        schema:
+          type: string
+      - name: currency
+        in: query
+        required: false
+        description: Lists only variants with a price in this currency. With `market_id`
+          it must be the market's currency.
+        schema:
+          allOf:
+          - "$ref": "#/components/schemas/CurrencyCode"
       - name: q
         in: query
         required: false
@@ -64377,6 +64432,8 @@ components:
           nullable: true
         within_withdrawal_period:
           type: boolean
+        shipping_eq_billing_address:
+          type: boolean
         cart_id:
           type: string
           nullable: true
@@ -65057,6 +65114,7 @@ components:
       - market_id
       - withdrawal_period_ends_at
       - within_withdrawal_period
+      - shipping_eq_billing_address
       - cart_id
       - channel_id
       - company_id
@@ -78898,6 +78956,9 @@ components:
           example: customer@example.com
         customer_id:
           type: string
+          description: Null detaches the customer, leaving a guest order under its
+            `email`.
+          nullable: true
         use_customer_default_address:
           type: boolean
           description: With `customer_id`, copies the customer's saved billing and
@@ -78961,6 +79022,9 @@ components:
           "$ref": "#/components/schemas/AddressInputParams"
         billing_address:
           "$ref": "#/components/schemas/AddressInputParams"
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
         items:
           type: array
           items:
@@ -79036,6 +79100,9 @@ components:
           example: customer@example.com
         customer_id:
           type: string
+          description: Null detaches the customer, leaving a guest order under its
+            `email`.
+          nullable: true
         currency:
           allOf:
           - "$ref": "#/components/schemas/CurrencyCode"
@@ -79086,6 +79153,9 @@ components:
           "$ref": "#/components/schemas/AddressInputParams"
         billing_address:
           "$ref": "#/components/schemas/AddressInputParams"
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
         items:
           type: array
           items:
@@ -82541,6 +82611,36 @@ components:
             "$ref": "#/components/schemas/StockLevelParams"
           description: Stock per location. Upserted by location; omitted locations
             are removed.
+    VariantSalesContextParams:
+      type: object
+      properties:
+        order_id:
+          type: string
+          description: 'A draft order to sell to: lists only what its buyer can be
+            sold on its channel, priced in its market. Needs `read_orders`, and cannot
+            be combined with the fields below.'
+        market_id:
+          type: string
+          description: Prices in this market and lists only variants with a price
+            in its currency.
+        channel_id:
+          type: string
+          description: Lists only variants published on this channel. When a market,
+            customer, company or currency is given without it, the store default channel
+            applies; an order uses its own.
+        customer_id:
+          type: string
+          description: Narrows to the customer's catalogs and prices as they would
+            pay. Needs `read_customers`.
+        company_id:
+          type: string
+          description: Narrows to the company's catalogs and prices under its agreement.
+            Needs `read_customers`.
+        currency:
+          allOf:
+          - "$ref": "#/components/schemas/CurrencyCode"
+          description: Lists only variants with a price in this currency. With `market_id`
+            it must be the market's currency.
     VariantUpdateParams:
       allOf:
       - "$ref": "#/components/schemas/VariantParams"

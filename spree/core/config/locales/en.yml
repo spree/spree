@@ -765,6 +765,7 @@ en:
     created_at: Created at
     credit_card: Credit Card
     currency: Currency
+    currency_does_not_match_market: must be %{currency}, the currency of the chosen market
     currency_not_supported_by_store: is not supported by this store
     custom_field_definitions: Custom Field Definitions
     custom_fields: Custom Fields
@@ -1016,6 +1017,7 @@ en:
     line_items: Line items
     link: Link
     locale: Locale
+    locale_not_supported_by_market: is not offered by the chosen market
     locale_not_supported_by_store: is not supported by this store
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
     manual: Manual

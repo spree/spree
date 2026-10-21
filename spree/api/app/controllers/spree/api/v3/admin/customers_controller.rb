@@ -248,12 +248,7 @@ module Spree
             missing = EXPORT_PERMISSIONS.reject { |permission| holds_permission?(permission) }
             return true if missing.empty?
 
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: "Missing permission: #{missing.first}",
-              status: :forbidden,
-              details: { required_permission: missing.first }
-            )
+            render_missing_permission(missing.first)
             false
           end
 

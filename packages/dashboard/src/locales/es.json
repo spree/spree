@@ -349,10 +349,19 @@
         "new": {
           "add_line_item": "Agregar línea de pedido",
           "company_help": "Vinculá este pedido a una empresa. La lista de clientes mostrará solo a quienes puedan comprar para ella.",
+          "reset_items": {
+            "confirm": "Cambiar y quitar artículos",
+            "message_many": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
+            "message_one": "Es posible que el {{count}} artículo elegido no se venda, o cueste otra cosa, para este comprador, mercado o canal. Se quitará.",
+            "message_other": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
+            "title": "¿Quitar los artículos elegidos?"
+          },
           "search_variant": "Buscar variante…",
           "section_billing": "Facturación",
           "section_customer": "Cliente",
           "section_items": "Artículos",
+          "section_market": "Mercado y canal",
+          "section_market_help": "Lo que se puede vender, y a qué precio, depende del comprador, el mercado y el canal.",
           "section_notes": "Notas",
           "section_summary": "Resumen",
           "select_company": "Empresa (opcional)",
@@ -1597,6 +1606,10 @@
           "label": "Código de cupón",
           "placeholder": "Opcional"
         },
+        "currency": {
+          "help": "La define el mercado.",
+          "label": "Moneda"
+        },
         "customer_note": {
           "label": "Nota del cliente (visible para el cliente)"
         },
@@ -1608,10 +1621,12 @@
           "label": "Nota interna (solo staff)"
         },
         "locale": {
-          "label": "Idioma"
+          "label": "Idioma",
+          "help": "Se usa en los correos y documentos que recibe el cliente."
         },
         "market": {
-          "label": "Mercado"
+          "label": "Mercado",
+          "help": "Define los precios e impuestos del pedido, y qué moneda e idiomas puede usar."
         },
         "order_group": {
           "label": "Compra",
@@ -2525,7 +2540,8 @@
         },
         "address_edit": {
           "billing_title": "Editar dirección de facturación",
-          "shipping_title": "Editar dirección de envío"
+          "shipping_title": "Editar dirección de envío",
+          "billing_same_as_shipping": "Igual que la dirección de envío"
         },
         "adjustment_lines": {
           "add_discount": "Agregar descuento",
@@ -2855,6 +2871,12 @@
           "captures": "Capturas",
           "captures_empty": "Aún no se ha capturado nada.",
           "captured_at": "Capturado"
+        },
+        "customer_edit": {
+          "title": "Editar cliente",
+          "customer_help": "Quita el cliente para convertir este pedido en un pedido de invitado.",
+          "confirm_detach": "Este pedido dejará de aparecer en el historial de pedidos y la cuenta del cliente. ¿Quitar el cliente?",
+          "detach": "Quitar cliente"
         }
       },
       "edit": {

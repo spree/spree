@@ -36,10 +36,13 @@ function localizedCountryName(
 export function AddressBlock({
   title,
   address,
+  emptyText,
 }: {
   /** Omitted where the surrounding card already names the address. */
   title?: string
   address: AddressBlockValue | null | undefined
+  /** Shown in place of the address when there is none. Defaults to "Not provided". */
+  emptyText?: string
 }) {
   const { t, i18n } = useTranslation()
   return (
@@ -61,7 +64,7 @@ export function AddressBlock({
         </div>
       ) : (
         <span className="text-sm text-muted-foreground">
-          {t('admin.components.address_block.not_provided')}
+          {emptyText ?? t('admin.components.address_block.not_provided')}
         </span>
       )}
     </div>

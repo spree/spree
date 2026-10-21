@@ -1703,6 +1703,10 @@
           "label": "Gutscheincode",
           "placeholder": "Optional"
         },
+        "currency": {
+          "help": "Wird durch den Markt festgelegt.",
+          "label": "Währung"
+        },
         "customer_note": {
           "label": "Kundennotiz (für Kunden sichtbar)"
         },
@@ -1714,10 +1718,12 @@
           "label": "Interne Notiz (nur Mitarbeiter)"
         },
         "locale": {
-          "label": "Sprache"
+          "label": "Sprache",
+          "help": "Wird für die E-Mails und Dokumente verwendet, die der Kunde erhält."
         },
         "market": {
-          "label": "Markt"
+          "label": "Markt",
+          "help": "Legt Preise und Steuern der Bestellung fest sowie die verfügbaren Währungen und Sprachen."
         },
         "order_group": {
           "label": "Einkauf",
@@ -2884,7 +2890,8 @@
         },
         "address_edit": {
           "billing_title": "Rechnungsadresse bearbeiten",
-          "shipping_title": "Lieferadresse bearbeiten"
+          "shipping_title": "Lieferadresse bearbeiten",
+          "billing_same_as_shipping": "Wie Lieferadresse"
         },
         "adjustment_lines": {
           "add_discount": "Rabatt hinzufügen",
@@ -3214,6 +3221,12 @@
           "captures": "Erfassungen",
           "captures_empty": "Es wurde noch nichts erfasst.",
           "captured_at": "Erfasst"
+        },
+        "customer_edit": {
+          "title": "Kunde bearbeiten",
+          "customer_help": "Entfernen Sie den Kunden, um daraus eine Gastbestellung zu machen.",
+          "confirm_detach": "Diese Bestellung erscheint nicht mehr im Bestellverlauf und Konto des Kunden. Kunde entfernen?",
+          "detach": "Kunde entfernen"
         }
       },
       "edit": {
@@ -3670,10 +3683,18 @@
         "new": {
           "add_line_item": "Position hinzufügen",
           "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
+          "reset_items": {
+            "confirm": "Ändern und Artikel entfernen",
+            "message_one": "Der ausgewählte Artikel ({{count}}) ist für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kostet etwas anderes. Er wird entfernt.",
+            "message_other": "Die {{count}} ausgewählten Artikel sind für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kosten etwas anderes. Sie werden entfernt.",
+            "title": "Ausgewählte Artikel entfernen?"
+          },
           "search_variant": "Variante suchen…",
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
+          "section_market": "Markt und Kanal",
+          "section_market_help": "Was verkauft werden kann und zu welchem Preis, hängt vom Käufer, vom Markt und vom Kanal ab.",
           "section_notes": "Notizen",
           "section_summary": "Zusammenfassung",
           "select_company": "Firma (optional)",

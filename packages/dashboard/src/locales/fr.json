@@ -1703,6 +1703,10 @@
           "label": "Code promo",
           "placeholder": "Facultatif"
         },
+        "currency": {
+          "help": "Définie par le marché.",
+          "label": "Devise"
+        },
         "customer_note": {
           "label": "Note du client (visible par le client)"
         },
@@ -1714,10 +1718,12 @@
           "label": "Note interne (personnel uniquement)"
         },
         "locale": {
-          "label": "Langue"
+          "label": "Langue",
+          "help": "Utilisée pour les e-mails et documents envoyés au client."
         },
         "market": {
-          "label": "Marché"
+          "label": "Marché",
+          "help": "Définit les prix et les taxes de la commande, ainsi que la devise et les langues disponibles."
         },
         "order_group": {
           "label": "Achat",
@@ -2884,7 +2890,8 @@
         },
         "address_edit": {
           "billing_title": "Modifier l'adresse de facturation",
-          "shipping_title": "Modifier l'adresse de livraison"
+          "shipping_title": "Modifier l'adresse de livraison",
+          "billing_same_as_shipping": "Identique à l'adresse de livraison"
         },
         "adjustment_lines": {
           "add_discount": "Ajouter une remise",
@@ -3214,6 +3221,12 @@
           "captures": "Captures",
           "captures_empty": "Rien n'a encore été capturé.",
           "captured_at": "Capturé"
+        },
+        "customer_edit": {
+          "title": "Modifier le client",
+          "customer_help": "Retirez le client pour en faire une commande invité.",
+          "confirm_detach": "Cette commande n'apparaîtra plus dans l'historique des commandes ni dans le compte du client. Retirer le client ?",
+          "detach": "Retirer le client"
         }
       },
       "edit": {
@@ -3670,10 +3683,19 @@
         "new": {
           "add_line_item": "Ajouter une ligne d'article",
           "company_help": "Rattacher cette commande à une entreprise. La liste des clients n'affiche alors que les personnes autorisées à acheter pour elle.",
+          "reset_items": {
+            "confirm": "Modifier et retirer les articles",
+            "message_many": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
+            "message_one": "L'article choisi ({{count}}) n'est peut-être pas vendu, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Il sera retiré.",
+            "message_other": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
+            "title": "Retirer les articles choisis ?"
+          },
           "search_variant": "Rechercher une variante…",
           "section_billing": "Facturation",
           "section_customer": "Client",
           "section_items": "Articles",
+          "section_market": "Marché et canal",
+          "section_market_help": "Ce qui peut être vendu, et à quel prix, dépend de l'acheteur, du marché et du canal.",
           "section_notes": "Notes",
           "section_summary": "Récapitulatif",
           "select_company": "Entreprise (facultatif)",

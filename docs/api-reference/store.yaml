@@ -3300,6 +3300,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id: cart_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -6377,6 +6378,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -7737,6 +7739,7 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: true
+                  shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
@@ -8063,6 +8066,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -12359,6 +12363,7 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: true
+                  shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id: comp_UkLWZg9DAJ
@@ -19318,6 +19323,8 @@ components:
           nullable: true
         within_withdrawal_period:
           type: boolean
+        shipping_eq_billing_address:
+          type: boolean
         cart_id:
           type: string
           nullable: true
@@ -19933,6 +19940,7 @@ components:
       - market_id
       - withdrawal_period_ends_at
       - within_withdrawal_period
+      - shipping_eq_billing_address
       - cart_id
       - channel_id
       - company_id
