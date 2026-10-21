@@ -122,6 +122,24 @@ module Spree
       end
     end
 
+    # Replaces the token, revoking whoever held the old one. A completion
+    # interrupted after its draft order was created leaves that order (and a
+    # multi-seller group with its orders) holding the old token, which is
+    # what the orders lookup matches on — so the purchase moves with the cart.
+    #
+    # @return [String] the new token
+    def rotate_token!
+      old_token = token
+      regenerate_token
+
+      orders = Spree::Order.where(cart_id: id)
+      orders = orders.or(Spree::Order.where(order_group_id: order_group.id)) if order_group
+      orders.where(token: old_token).update_all(token: token, updated_at: Time.current)
+      order_group.update_columns(token: token, updated_at: Time.current) if order_group&.token == old_token
+
+      token
+    end
+
     # A link that opens this cart in the store's own checkout, for a buyer
     # handed over by an agent. It carries the token because the browser
     # arriving has no other claim to the cart; the storefront checks the pair

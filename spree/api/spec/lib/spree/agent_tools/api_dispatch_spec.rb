@@ -62,12 +62,15 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
       expect(response.status).to eq(401)
     end
 
-    # The Store API rate-limits by key and client address. Without the
-    # address, every shopper behind one public key would share one bucket.
-    it 'carries the client address along with it' do
+    # The Store API rate-limits by key and client address, and prices and
+    # gates the catalog by channel. Without them every shopper behind one
+    # public key would share one bucket and see the default channel.
+    it 'carries the client address and channel along with it' do
       key = create(:api_key, :publishable, store: store)
-      headers = { 'HTTP_X_SPREE_API_KEY' => key.token, 'HTTP_HOST' => 'www.example.com', 'REMOTE_ADDR' => '203.0.113.9' }
-      expect(Rails.application).to receive(:call).with(hash_including('REMOTE_ADDR' => '203.0.113.9')).and_call_original
+      headers = { 'HTTP_X_SPREE_API_KEY' => key.token, 'HTTP_HOST' => 'www.example.com', 'REMOTE_ADDR' => '203.0.113.9',
+                  'HTTP_X_SPREE_CHANNEL' => 'wholesale' }
+      expect(Rails.application).to receive(:call).
+        with(hash_including('REMOTE_ADDR' => '203.0.113.9', 'HTTP_X_SPREE_CHANNEL' => 'wholesale')).and_call_original
 
       dispatcher_for(key, headers: headers).call(method: :get, path: '/api/v3/store/products')
     end

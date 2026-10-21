@@ -41,8 +41,11 @@ module Spree
                 'HTTP_HOST' => request.host_with_port,
                 # Each shopper's agent gets its own rate-limit bucket, as it
                 # would calling the Store API directly.
-                'REMOTE_ADDR' => request.remote_ip
-              }
+                'REMOTE_ADDR' => request.remote_ip,
+                # The Store API resolves and validates it again, so the
+                # agent sees the channel's catalog and prices, not the default's.
+                'HTTP_X_SPREE_CHANNEL' => request.headers['X-Spree-Channel']
+              }.compact
             )
           end
         end

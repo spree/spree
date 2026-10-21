@@ -14,11 +14,16 @@ module Spree
             include Spree::Api::V3::CartResolvable
 
             before_action :find_cart!
-            before_action :require_cart_token!
 
             # PATCH /api/v3/store/carts/:cart_id/token
             def update
-              @cart.regenerate_token
+              # Checked under the row lock, so two requests holding the same
+              # token cannot both rotate it and each believe theirs won.
+              @cart.with_lock do
+                require_cart_token!
+                @cart.rotate_token!
+              end
+
               render_cart
             end
 

@@ -64,7 +64,7 @@ module Spree
       #
       # The client's address travels too: a rate limit keyed by key and
       # address would otherwise put every caller of a public key in one bucket.
-      FORWARDED_HEADERS = %w[HTTP_AUTHORIZATION HTTP_X_SPREE_API_KEY HTTP_HOST REMOTE_ADDR].freeze
+      FORWARDED_HEADERS = %w[HTTP_AUTHORIZATION HTTP_X_SPREE_API_KEY HTTP_X_SPREE_CHANNEL HTTP_HOST REMOTE_ADDR].freeze
 
       # What a single call may add. Never the caller's credential: a tool
       # names a record, it does not get to choose who is asking for it.
