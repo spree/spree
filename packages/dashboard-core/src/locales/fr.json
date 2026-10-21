@@ -100,6 +100,7 @@
     "address_book": {
       "default_billing": "Facturation par défaut",
       "default_shipping": "Livraison par défaut",
+      "inherited_from": "Héritée de {{name}}",
       "set_default_billing": "Définir comme adresse de facturation par défaut",
       "set_default_shipping": "Définir comme adresse de livraison par défaut"
     },

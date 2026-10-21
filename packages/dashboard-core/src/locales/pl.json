@@ -100,6 +100,7 @@
     "address_book": {
       "default_billing": "Domyślny rozliczeniowy",
       "default_shipping": "Domyślny wysyłkowy",
+      "inherited_from": "Dziedziczony z: {{name}}",
       "set_default_billing": "Ustaw jako domyślny adres rozliczeniowy",
       "set_default_shipping": "Ustaw jako domyślny adres wysyłkowy"
     },

@@ -100,6 +100,7 @@
     "address_book": {
       "default_billing": "الفوترة الافتراضية",
       "default_shipping": "الشحن الافتراضي",
+      "inherited_from": "موروث من {{name}}",
       "set_default_billing": "تعيين كعنوان فوترة افتراضي",
       "set_default_shipping": "تعيين كعنوان شحن افتراضي"
     },
