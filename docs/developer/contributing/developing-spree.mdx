@@ -438,6 +438,31 @@ The MCP server URL for quick setup:
 https://spreecommerce.org/docs/mcp
 ```
 
+### Claude Code cloud sessions
+
+Cloud sessions (claude.ai/code, or **Cloud** in the Claude desktop app) run the agent on a remote Linux machine. The repository is set up so the agent there can run the backend, the admin dashboard and the seller panel, and check its work in a headless browser.
+
+Create the cloud environment once, then share it with your organization if others need it:
+
+1. Open the environment settings from the environment selector under the message box.
+2. **Setup script**: paste the contents of [`scripts/cloud/environment-setup.sh`](https://github.com/spree/spree/blob/main/scripts/cloud/environment-setup.sh). It installs Ruby, pnpm, Mailpit and Chromium, and the result is saved for later sessions.
+3. **Network access**: choose **Custom**, keep the default allowed domains, and add `cdn.playwright.dev` and `playwright.download.prss.microsoft.com` so the browser can be downloaded.
+4. **Environment variables**:
+
+   ```bash
+   PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
+   BASH_DEFAULT_TIMEOUT_MS=300000
+   BASH_MAX_TIMEOUT_MS=1200000
+   ```
+
+When a session starts, a hook clones the starter app, installs dependencies, and creates and seeds the database. The first session takes a few minutes. The agent then starts the servers with `scripts/cloud/start.sh` and looks at pages with `scripts/cloud/screenshot.mjs`.
+
+<Note>
+The servers run on the remote machine, so you cannot open them in your own browser. The agent checks the pages itself, and the Playwright suite (`pnpm wt:e2e`) runs there as it does on a laptop.
+</Note>
+
+When the starter moves to a new Ruby version, update `RUBY_VERSION` in `scripts/cloud/environment-setup.sh` and paste the script into the environment again.
+
 ## That's a wrap!
 
 Thank you for participating in Open Source and improving Spree - you're awesome!
