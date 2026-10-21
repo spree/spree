@@ -29,7 +29,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "lint": "biome check src tests",
     "lint:fix": "biome check --fix src tests",
     "format": "biome format --write src tests",
