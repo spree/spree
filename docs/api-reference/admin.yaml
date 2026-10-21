@@ -58226,7 +58226,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by_label:
@@ -59773,7 +59773,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -60120,7 +60120,7 @@ components:
             - not_collecting
             - not_subject_to_tax
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         country_code:
@@ -62299,7 +62299,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         updated_by:
@@ -62360,7 +62360,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         published_by:
@@ -62579,7 +62579,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -66558,7 +66558,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         approver:
@@ -66573,7 +66573,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         canceler:
@@ -66588,7 +66588,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -69036,7 +69036,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         refunder:
@@ -69210,7 +69210,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -71687,7 +71687,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         received_by:
@@ -74250,7 +74250,7 @@ components:
             - not_collecting
             - not_subject_to_tax
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         country_code:

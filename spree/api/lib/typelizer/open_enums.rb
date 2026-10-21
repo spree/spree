@@ -64,7 +64,13 @@ module Typelizer
         return super if OpenEnums.closed?(property.enum_type_name)
 
         open = { anyOf: [{ type: :string, enum: property.enum.compact }, { type: :string }] }
-        apply_nullable(open, property, openapi_version: openapi_version)
+        # OpenAPI 3.0 ignores `nullable` beside `anyOf`, which is where
+        # Typelizer puts it, so the free-string branch carries it instead.
+        if property.nullable && !v31?(openapi_version)
+          open[:anyOf].last[:nullable] = true
+        else
+          apply_nullable(open, property, openapi_version: openapi_version)
+        end
         apply_metadata(open, property)
         open[:description] ||= OPEN_ENUM_DESCRIPTION
         open
