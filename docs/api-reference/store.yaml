@@ -14873,6 +14873,10 @@ components:
         resolution:
           type: string
           nullable: true
+          enum:
+          - refund
+          - replacement
+          - refund_and_replacement
         order_id:
           type: string
           nullable: true
@@ -14933,6 +14937,15 @@ components:
           type: number
         sort_order:
           type: string
+          enum:
+          - manual
+          - best_selling
+          - price asc
+          - price desc
+          - available_on desc
+          - available_on asc
+          - name asc
+          - name desc
         meta_title:
           type: string
           nullable: true

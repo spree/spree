@@ -1,26 +1,14 @@
-import type { Collection, CollectionRuleParams, CollectionSortOrder } from '@spree/admin-sdk'
-import { COLLECTION_RULE_MATCH_POLICIES, MATCH_POLICIES } from '@spree/core'
+import type { Collection, CollectionRuleParams } from '@spree/admin-sdk'
+import {
+  COLLECTION_RULE_MATCH_POLICIES,
+  COLLECTION_SORT_ORDERS,
+  type CollectionSortOrder,
+  MATCH_POLICIES,
+} from '@spree/core'
 import { customFieldFormSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
-
-/**
- * Canonical values only — labels are resolved at render time via
- * {@link sortOrderLabelKey}. The space-separated form is the server's own
- * vocabulary (Spree::Collection::SORT_ORDERS) and is what goes back on the
- * wire unchanged.
- */
-export const COLLECTION_SORT_ORDERS = [
-  'manual',
-  'best_selling',
-  'price asc',
-  'price desc',
-  'available_on desc',
-  'available_on asc',
-  'name asc',
-  'name desc',
-] as const satisfies ReadonlyArray<CollectionSortOrder>
 
 /**
  * Locale key for a sort order's label. The server vocabulary is

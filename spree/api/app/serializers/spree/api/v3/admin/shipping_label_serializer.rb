@@ -15,7 +15,7 @@ module Spree
                    service: [:string, nullable: true],
                    tracking_number: [:string, nullable: true],
                    currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
-                   format: [:string, nullable: true],
+                   format: [:string, nullable: true, enum: Spree::ShippingLabel::FORMATS, enum_type_name: 'ShippingLabelFormat'],
                    external_id: [:string, nullable: true],
                    integration_id: [:string, nullable: true],
                    download_url: [:string, nullable: true],

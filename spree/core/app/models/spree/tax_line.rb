@@ -22,10 +22,11 @@ module Spree
     # core doesn't know about registers its reason here. The bar for a new
     # value: it distinguishes a treatment that reporting or invoicing has to
     # tell apart, not merely a different amount.
-    class_attribute :taxability_reasons,
-                    default: %w[standard_rated reduced_rated zero_rated reverse_charge
-                                intra_community_supply export customer_exempt product_exempt
-                                not_collecting not_subject_to_tax]
+    BUILT_IN_TAXABILITY_REASONS = %w[standard_rated reduced_rated zero_rated reverse_charge
+                                     intra_community_supply export customer_exempt product_exempt
+                                     not_collecting not_subject_to_tax].freeze
+
+    class_attribute :taxability_reasons, default: BUILT_IN_TAXABILITY_REASONS.dup
 
     # Provider payloads (jurisdiction breakdowns, external ids) read nil-safe.
     attribute :data, default: -> { {} }

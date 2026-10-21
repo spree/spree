@@ -1,5 +1,5 @@
 import type { EmailTemplate } from '@spree/admin-sdk'
-import { EMAIL_TEMPLATE_KINDS } from '@spree/core'
+import { EMAIL_TEMPLATE_KINDS, type EmailTemplateKind } from '@spree/core'
 import {
   PageHeader,
   Subject,
@@ -89,7 +89,7 @@ function TemplateGroup({
   kind,
   templates,
 }: {
-  kind: (typeof EMAIL_TEMPLATE_KINDS)[number]
+  kind: EmailTemplateKind
   templates: EmailTemplate[]
 }) {
   const { t } = useTranslation()

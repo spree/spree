@@ -1,5 +1,5 @@
 import type { Claim, Order, Variant } from '@spree/admin-sdk'
-import { sumMoney } from '@spree/core'
+import { type ClaimResolution, sumMoney } from '@spree/core'
 import {
   adminClient,
   currencyParts,
@@ -11,7 +11,6 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
-  type ClaimResolution,
   ClaimResolveDialog,
   Dialog,
   DialogBody,

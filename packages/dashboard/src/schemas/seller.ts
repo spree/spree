@@ -1,10 +1,8 @@
 import type { SellerCreateParams } from '@spree/admin-sdk'
-import { PAYOUT_SCHEDULE_INTERVALS } from '@spree/core'
+import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
 import { blankToNull, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-
-export const TAX_REMITTANCES = ['seller', 'platform'] as const
 
 export const sellerFormSchema = z.object({
   name: z

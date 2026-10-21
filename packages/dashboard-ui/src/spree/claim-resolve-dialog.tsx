@@ -1,4 +1,4 @@
-import { isPositiveMoney } from '@spree/core'
+import { CLAIM_RESOLUTIONS, type ClaimResolution, isPositiveMoney } from '@spree/core'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -17,8 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Switch } from '../ui/switch'
 import type { RefundMethod } from './return-dialogs'
 
-/** How a claim is settled. */
-export type ClaimResolution = 'refund' | 'replacement' | 'refund_and_replacement'
+export type { ClaimResolution }
 
 /** One claimed line, as the resolve form needs it. */
 export type ClaimLineForResolve = {
@@ -75,12 +74,10 @@ export function ClaimResolveDialog({
     .filter(([, on]) => on)
     .map(([id]) => id)
 
-  const resolutionOptions = (['refund', 'replacement', 'refund_and_replacement'] as const).map(
-    (value) => ({
-      value,
-      label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
-    }),
-  )
+  const resolutionOptions = CLAIM_RESOLUTIONS.map((value) => ({
+    value,
+    label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
+  }))
 
   const methodOptions = [
     {

@@ -7,7 +7,7 @@ module Spree
 
           typelize amount: [:string, nullable: false],
                    provider_id: [:string, nullable: true], metadata: ['Record<string, unknown>', nullable: true],
-                   taxability_reason: [:string, nullable: true], country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
+                   taxability_reason: [:string, nullable: true, enum: Spree::TaxLine::BUILT_IN_TAXABILITY_REASONS, enum_type_name: 'TaxabilityReason'], country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    state_code: [:string, nullable: true], data: ['Record<string, unknown>', nullable: true],
                    original_tax_line_id: [:string, nullable: true]
 

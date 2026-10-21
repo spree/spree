@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Seller } from '@spree/admin-sdk'
-import { PAYOUT_SCHEDULE_INTERVALS } from '@spree/core'
+import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
 import {
   currencyParts,
   mapSpreeErrorsToForm,
@@ -40,7 +40,6 @@ import {
   type SellerFormValues,
   sellerFormSchema,
   sellerValuesToParams,
-  TAX_REMITTANCES,
 } from '../../../schemas/seller'
 
 export function SellerEditSettlementSheet({

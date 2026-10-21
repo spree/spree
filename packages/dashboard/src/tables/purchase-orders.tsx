@@ -1,10 +1,11 @@
 import type { PurchaseOrder } from '@spree/admin-sdk'
+import { PURCHASE_ORDER_STATUSES } from '@spree/core'
 import { defineTable, Money } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { TruckIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { supplierAutocompleteProps } from '../hooks/use-suppliers'
-import { isClosed, PURCHASE_ORDER_STATUSES } from '../schemas/inventory-operations'
+import { isClosed } from '../schemas/inventory-operations'
 
 // A calendar day, compared as text: both sides are `yyyy-mm-dd`. Display
 // only — the list filters below are answered by the server's own scopes.

@@ -143,21 +143,6 @@ export type ProductPublicationInput = ProductPublicationParams
 export type ProductVariantInput = ProductVariantParams
 
 /**
- * Default product sort applied to a collection's storefront listing. A
- * shopper's own `sort` param always wins over this; `manual` means the
- * merchant's hand-set product order.
- */
-export type CollectionSortOrder =
-  | 'manual'
-  | 'best_selling'
-  | 'price asc'
-  | 'price desc'
-  | 'available_on desc'
-  | 'available_on asc'
-  | 'name asc'
-  | 'name desc'
-
-/**
  * Wire shorthand (`api_type`) for an automatic-collection rule — what
  * `collectionRules.types()` returns. Ruby class names are not accepted.
  */

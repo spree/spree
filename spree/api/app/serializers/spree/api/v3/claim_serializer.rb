@@ -7,7 +7,7 @@ module Spree
       class ClaimSerializer < BaseSerializer
         typelize number: :string,
                  status: [:string, enum: Spree::Claim.statuses, enum_type_name: 'ClaimStatus'],
-                 resolution: [:string, nullable: true],
+                 resolution: [:string, nullable: true, enum: Spree::Claim::RESOLUTIONS, enum_type_name: 'ClaimResolution'],
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],
                  approved_at: [:string, nullable: true],

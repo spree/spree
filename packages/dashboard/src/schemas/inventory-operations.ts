@@ -1,32 +1,3 @@
-/**
- * Canonical status values for the two inventory documents, matching
- * `Spree::HasStatus` on the models. Values only — labels are built at render
- * time from `admin.stock_transfers.statuses.*` and
- * `admin.purchase_orders.statuses.*`.
- */
-export const STOCK_TRANSFER_STATUSES = [
-  'draft',
-  'ready_to_ship',
-  'in_transit',
-  'partially_received',
-  'received',
-  'over_received',
-  'canceled',
-] as const
-
-export type StockTransferStatus = (typeof STOCK_TRANSFER_STATUSES)[number]
-
-export const PURCHASE_ORDER_STATUSES = [
-  'draft',
-  'ordered',
-  'partially_received',
-  'received',
-  'over_received',
-  'canceled',
-] as const
-
-export type PurchaseOrderStatus = (typeof PURCHASE_ORDER_STATUSES)[number]
-
 /** What happens to units still in flight when a shipped transfer is called off. */
 export const IN_TRANSIT_RESOLUTIONS = ['restock', 'write_off'] as const
 

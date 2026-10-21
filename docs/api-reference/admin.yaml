@@ -59721,6 +59721,10 @@ components:
         resolution:
           type: string
           nullable: true
+          enum:
+          - refund
+          - replacement
+          - refund_and_replacement
         order_id:
           type: string
           nullable: true
@@ -59834,6 +59838,15 @@ components:
           type: number
         sort_order:
           type: string
+          enum:
+          - manual
+          - best_selling
+          - price asc
+          - price desc
+          - available_on desc
+          - available_on asc
+          - name asc
+          - name desc
         meta_title:
           type: string
           nullable: true
@@ -60090,8 +60103,23 @@ components:
           - ZWN
           - ZWR
         taxability_reason:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - standard_rated
+            - reduced_rated
+            - zero_rated
+            - reverse_charge
+            - intra_community_supply
+            - export
+            - customer_exempt
+            - product_exempt
+            - not_collecting
+            - not_subject_to_tax
+          - type: string
           nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         country_code:
           type: string
           nullable: true
@@ -68660,7 +68688,18 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - ordered
+            - partially_received
+            - received
+            - over_received
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         currency:
           type: string
           enum:
@@ -70143,9 +70182,18 @@ components:
           nullable: true
         tax_remittance:
           type: string
+          enum:
+          - seller
+          - platform
         payouts_schedule_interval:
           type: string
           nullable: true
+          enum:
+          - daily
+          - weekly
+          - biweekly
+          - monthly
+          - manual
         metadata:
           type: object
           nullable: true
@@ -70925,6 +70973,10 @@ components:
         format:
           type: string
           nullable: true
+          enum:
+          - pdf
+          - png
+          - zpl
         external_id:
           type: string
           nullable: true
@@ -71776,7 +71828,19 @@ components:
         destination_location_id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - ready_to_ship
+            - in_transit
+            - partially_received
+            - received
+            - over_received
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         notes:
           type: string
           nullable: true
@@ -74169,8 +74233,23 @@ components:
           type: object
           nullable: true
         taxability_reason:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - standard_rated
+            - reduced_rated
+            - zero_rated
+            - reverse_charge
+            - intra_community_supply
+            - export
+            - customer_exempt
+            - product_exempt
+            - not_collecting
+            - not_subject_to_tax
+          - type: string
           nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         country_code:
           type: string
           nullable: true

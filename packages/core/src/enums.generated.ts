@@ -16,6 +16,10 @@ export type CaptureMethod = (typeof CAPTURE_METHODS)[number]
 export const CATALOG_PRICE_SOURCES = ['explicit', 'automatic', 'base'] as const
 export type CatalogPriceSource = (typeof CATALOG_PRICE_SOURCES)[number]
 
+/** Every value of `ClaimResolution`. */
+export const CLAIM_RESOLUTIONS = ['refund', 'replacement', 'refund_and_replacement'] as const
+export type ClaimResolution = (typeof CLAIM_RESOLUTIONS)[number]
+
 /** The built-in values of `ClaimStatus`. Extensions may add more. */
 export const CLAIM_STATUSES = ['open', 'approved', 'resolved', 'denied', 'canceled'] as const
 export type ClaimStatus = (typeof CLAIM_STATUSES)[number] | (string & {})
@@ -28,6 +32,19 @@ export const COLLECTION_RULE_MATCH_POLICIES = [
   'does_not_contain',
 ] as const
 export type CollectionRuleMatchPolicy = (typeof COLLECTION_RULE_MATCH_POLICIES)[number]
+
+/** Every value of `CollectionSortOrder`. */
+export const COLLECTION_SORT_ORDERS = [
+  'manual',
+  'best_selling',
+  'price asc',
+  'price desc',
+  'available_on desc',
+  'available_on asc',
+  'name asc',
+  'name desc',
+] as const
+export type CollectionSortOrder = (typeof COLLECTION_SORT_ORDERS)[number]
 
 /** Every value of `CommissionKind`. */
 export const COMMISSION_KINDS = ['percentage', 'fixed'] as const
@@ -300,6 +317,17 @@ export type ProductSubmissionStatus = (typeof PRODUCT_SUBMISSION_STATUSES)[numbe
 export const PROVIDER_FAILURE_POLICIES = ['fallback', 'strict'] as const
 export type ProviderFailurePolicy = (typeof PROVIDER_FAILURE_POLICIES)[number]
 
+/** The built-in values of `PurchaseOrderStatus`. Extensions may add more. */
+export const PURCHASE_ORDER_STATUSES = [
+  'draft',
+  'ordered',
+  'partially_received',
+  'received',
+  'over_received',
+  'canceled',
+] as const
+export type PurchaseOrderStatus = (typeof PURCHASE_ORDER_STATUSES)[number] | (string & {})
+
 /** Every value of `PurchaseUnit`. */
 export const PURCHASE_UNITS = ['unit', 'carton'] as const
 export type PurchaseUnit = (typeof PURCHASE_UNITS)[number]
@@ -366,6 +394,10 @@ export const SELLER_TRANSFER_STATUSES = [
 ] as const
 export type SellerTransferStatus = (typeof SELLER_TRANSFER_STATUSES)[number] | (string & {})
 
+/** Every value of `ShippingLabelFormat`. */
+export const SHIPPING_LABEL_FORMATS = ['pdf', 'png', 'zpl'] as const
+export type ShippingLabelFormat = (typeof SHIPPING_LABEL_FORMATS)[number]
+
 /** Every value of `ShippingLabelOwnerType`. */
 export const SHIPPING_LABEL_OWNER_TYPES = ['fulfillment', 'return'] as const
 export type ShippingLabelOwnerType = (typeof SHIPPING_LABEL_OWNER_TYPES)[number]
@@ -413,6 +445,18 @@ export const STOCK_RECEIPT_REJECTION_REASONS = [
 ] as const
 export type StockReceiptRejectionReason = (typeof STOCK_RECEIPT_REJECTION_REASONS)[number]
 
+/** The built-in values of `StockTransferStatus`. Extensions may add more. */
+export const STOCK_TRANSFER_STATUSES = [
+  'draft',
+  'ready_to_ship',
+  'in_transit',
+  'partially_received',
+  'received',
+  'over_received',
+  'canceled',
+] as const
+export type StockTransferStatus = (typeof STOCK_TRANSFER_STATUSES)[number] | (string & {})
+
 /** Every value of `StorefrontAccess`. */
 export const STOREFRONT_ACCESSES = ['public', 'prices_hidden', 'login_required'] as const
 export type StorefrontAccess = (typeof STOREFRONT_ACCESSES)[number]
@@ -442,6 +486,25 @@ export const TAX_IDENTIFIER_VALIDATION_STATUSES = [
 ] as const
 export type TaxIdentifierValidationStatus = (typeof TAX_IDENTIFIER_VALIDATION_STATUSES)[number]
 
+/** Every value of `TaxRemittance`. */
+export const TAX_REMITTANCES = ['seller', 'platform'] as const
+export type TaxRemittance = (typeof TAX_REMITTANCES)[number]
+
+/** The built-in values of `TaxabilityReason`. Extensions may add more. */
+export const TAXABILITY_REASONS = [
+  'standard_rated',
+  'reduced_rated',
+  'zero_rated',
+  'reverse_charge',
+  'intra_community_supply',
+  'export',
+  'customer_exempt',
+  'product_exempt',
+  'not_collecting',
+  'not_subject_to_tax',
+] as const
+export type TaxabilityReason = (typeof TAXABILITY_REASONS)[number] | (string & {})
+
 /** Every value of `UnitSystem`. */
 export const UNIT_SYSTEMS = ['metric', 'imperial'] as const
 export type UnitSystem = (typeof UNIT_SYSTEMS)[number]
@@ -468,11 +531,13 @@ export type BuiltInStatus =
   | (typeof PRICE_LIST_STATUSES)[number]
   | (typeof PRODUCT_STATUSES)[number]
   | (typeof PRODUCT_SUBMISSION_STATUSES)[number]
+  | (typeof PURCHASE_ORDER_STATUSES)[number]
   | (typeof RETURN_STATUSES)[number]
   | (typeof SELLER_PAYOUT_STATUSES)[number]
   | (typeof SELLER_REQUIREMENT_SUBMISSION_STATUSES)[number]
   | (typeof SELLER_STATUSES)[number]
   | (typeof SELLER_TRANSFER_STATUSES)[number]
   | (typeof SHIPPING_LABEL_STATUSES)[number]
+  | (typeof STOCK_TRANSFER_STATUSES)[number]
   | (typeof TAX_EXEMPTION_CERTIFICATE_STATUSES)[number]
   | (typeof TAX_IDENTIFIER_VALIDATION_STATUSES)[number]

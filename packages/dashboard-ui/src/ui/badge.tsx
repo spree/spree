@@ -159,6 +159,8 @@ const statusToneMap: Record<string, StatusTone> = {
   ready_to_ship: 'warning',
   ordered: 'info',
   partially_received: 'info',
+  // More arrived than was ordered: done, but worth a look.
+  over_received: 'warning',
   // Gift cards.
   partially_redeemed: 'info',
   redeemed: 'neutral',
