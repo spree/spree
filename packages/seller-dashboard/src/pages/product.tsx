@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   CategorizationCard,
   extensionFormValues,
+  extensionRowValues,
   extensionSubmitValues,
   GeneralCard,
   InventoryCard,
@@ -17,6 +18,7 @@ import {
   Slot,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import { FormActions, ResourceLayout, StatusBadge, toastManager } from '@spree/dashboard-ui'
 import type { ProductCreateParams } from '@spree/seller-sdk'
@@ -106,7 +108,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     if (form.formState.isDirty) return
 
     form.reset({
-      ...productToFormValues(product as PanelProduct, product.media),
+      ...productToFormValues(product as PanelProduct, product.media, 'seller.product'),
       ...extensionFormValues('seller.product', product),
     })
   }, [product, form])
@@ -137,6 +139,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         // cards offer both — an allow-list that omitted them let a seller
         // set a crop or paste a video URL and watch it vanish on save.
         media: (values.media ?? []).map((item) => ({
+          ...extensionRowValues('seller.product.media', item),
           id: item.id,
           signed_id: item.signed_id ?? undefined,
           poster_signed_id: item.poster_signed_id ?? undefined,
@@ -149,7 +152,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
           variant_ids: item.variant_ids,
         })),
         variants: (values.variants ?? []).map((variant, index) =>
-          variantToWirePayload(variant, index),
+          variantToWirePayload(variant, index, 'seller.product'),
         ) as ProductCreateParams['variants'],
       }
 
@@ -181,7 +184,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
       // Raw form state, not `values`: the Zod parse strips keys the schema
       // doesn't know, which is every field a slot widget registered.
       await save.mutateAsync({
-        values,
+        values: withExtensionRowValues('seller.product', values, form.getValues()),
         extensionValues: extensionSubmitValues('seller.product', form),
       })
     } catch (err) {
@@ -236,8 +239,13 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
           main={
             <>
               <GeneralCard form={form} />
-              <VariantsCard form={form} />
-              <MediaCard productId={productId} variants={product?.variants ?? []} form={form} />
+              <VariantsCard form={form} formKey="seller.product" />
+              <MediaCard
+                productId={productId}
+                variants={product?.variants ?? []}
+                form={form}
+                formKey="seller.product"
+              />
               <PricesCard
                 form={form}
                 productName={product?.name ?? ''}
@@ -245,6 +253,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 defaultCurrency={profile?.default_currency}
               />
               <InventoryCard form={form} />
+              <Slot name="seller.product.form_main" context={{ product, mode }} />
             </>
           }
           sidebar={

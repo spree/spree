@@ -2,8 +2,12 @@ import type { Media, MediaUsageReference } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
   ImageUploadField,
+  mapSpreeErrorsToForm,
   PageHeader,
+  Slot,
   Subject,
   useFileUpload,
   usePermissions,
@@ -47,7 +51,8 @@ import {
   UploadIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useDeferredValue, useRef, useState } from 'react'
+import { useDeferredValue, useEffect, useRef, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import {
@@ -353,6 +358,7 @@ function MediaLibraryPage() {
                           {t('admin.media_library.download')}
                         </ContextMenuItem>
                       )}
+                      <Slot name="media.context_menu" context={{ media, canWrite }} />
                       {canWrite && (
                         <>
                           <ContextMenuSeparator />
@@ -426,6 +432,14 @@ function MediaPlaceholderIcon({ media }: { media: Media }) {
   return <Icon className="size-6 text-muted-foreground" />
 }
 
+interface MediaDetailFormValues {
+  alt: string
+}
+
+function mediaDetailFormValues(media: Media): MediaDetailFormValues {
+  return { alt: media.alt ?? '', ...extensionFormValues('media', media) }
+}
+
 function MediaDetailSheet({
   media,
   onOpenChange,
@@ -440,11 +454,9 @@ function MediaDetailSheet({
   const confirm = useConfirm()
   const updateFile = useUpdateMediaLibraryFile()
   const usage = useMediaUsage(media?.id ?? null)
-  const [alt, setAlt] = useState('')
-  // Compared against what was last saved, not against the record the sheet
-  // opened with: that snapshot never refreshes, so after a successful save it
-  // would still hold the old alt and every close would ask to discard.
-  const [savedAlt, setSavedAlt] = useState('')
+  // A host form for `media.form_fields` widgets: what they bind saves with the
+  // sheet's Save, alongside the alt text.
+  const form = useForm<MediaDetailFormValues>({ defaultValues: { alt: '' } })
   const [poster, setPoster] = useState<{
     signedId: string | null
     previewUrl: string | null
@@ -453,34 +465,43 @@ function MediaDetailSheet({
 
   // Seeded from the record each time a different file is opened, so typing is
   // not overwritten by a background refetch of the same row.
+  // Cleared on close, so reopening the same file drops what was discarded.
   const [seededFor, setSeededFor] = useState<string | null>(null)
+  if (!media && seededFor !== null) setSeededFor(null)
   if (media && seededFor !== media.id) {
     setSeededFor(media.id)
-    setAlt(media.alt ?? '')
-    setSavedAlt(media.alt ?? '')
     setPoster({ signedId: null, previewUrl: null, cleared: false })
   }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keyed on the file, not on each refetch of it
+  useEffect(() => {
+    if (media) form.reset(mediaDetailFormValues(media))
+  }, [seededFor, form])
 
   const references = usage.data?.data ?? []
 
-  const isDirty = !!media && alt !== savedAlt
+  const isDirty = !!media && form.formState.isDirty
 
   // An explicit save, not save-on-blur: blur is invisible, so a merchant had
   // no way to tell whether their edit stuck.
-  function saveAlt() {
+  async function save(values: MediaDetailFormValues) {
     if (!media || !isDirty) return
 
-    const submitted = alt
-    updateFile.mutate(
-      { id: media.id, alt: submitted },
-      {
-        onSuccess: () => {
-          setSavedAlt(submitted)
-          toastManager.add({ type: 'success', title: t('admin.messages.saved') })
-        },
-        onError: () => toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') }),
-      },
-    )
+    try {
+      await updateFile.mutateAsync({
+        id: media.id,
+        alt: values.alt,
+        ...extensionSubmitValues('media', form),
+      })
+      // Re-baselined against what was just saved, not the record the sheet
+      // opened with: that snapshot never refreshes, so after a save every
+      // close would otherwise ask to discard.
+      form.reset(form.getValues())
+      toastManager.add({ type: 'success', title: t('admin.messages.saved') })
+    } catch (error) {
+      if (!mapSpreeErrorsToForm(error, form.setError)) {
+        toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
+      }
+    }
   }
 
   // Closing with an unsaved edit would drop it silently, so ask first.
@@ -496,8 +517,7 @@ function MediaDetailSheet({
     if (discard) onOpenChange(false)
   }
 
-  // The poster saves on the spot — picking a file is already an explicit act,
-  // and there is no surrounding form to carry it.
+  // The poster saves on the spot — picking a file is already an explicit act.
   function savePoster(value: {
     signedId: string | null
     previewUrl: string | null
@@ -517,117 +537,125 @@ function MediaDetailSheet({
     <Sheet open={!!media} onOpenChange={handleOpenChange}>
       <SheetContent className="w-full sm:max-w-md">
         {media && (
-          <>
-            <SheetHeader>
-              <SheetTitle>{media.filename || t('admin.media_library.file')}</SheetTitle>
-              <SheetDescription>
-                {media.attached
-                  ? t('admin.media_library.placement.attached')
-                  : t('admin.media_library.placement.unattached')}
-              </SheetDescription>
-            </SheetHeader>
+          <FormProvider {...form}>
+            {/* A form, so Enter in any field saves, like any single-field form. */}
+            <form onSubmit={form.handleSubmit(save)} className="flex min-h-0 flex-1 flex-col">
+              <SheetHeader>
+                <SheetTitle>{media.filename || t('admin.media_library.file')}</SheetTitle>
+                <SheetDescription>
+                  {media.attached
+                    ? t('admin.media_library.placement.attached')
+                    : t('admin.media_library.placement.unattached')}
+                </SheetDescription>
+              </SheetHeader>
 
-            <div className="flex-1 space-y-5 overflow-y-auto p-4">
-              <MediaPreview
-                mediaType={media.media_type}
-                previewUrl={mediaPreviewUrl(media)}
-                videoUrl={media.video_url}
-                embedUrl={media.video_embed_url}
-                alt={media.alt ?? ''}
-              />
-
-              {/* A video needs a still for gallery tiles, emails and every
-                  listing that renders an <img>. YouTube supplies one; an
-                  upload or a Vimeo link does not. */}
-              {media.media_type !== 'image' && canWrite && (
-                <ImageUploadField
-                  label={t('admin.fields.media.poster.label')}
-                  help={t('admin.fields.media.poster.help')}
-                  serverUrl={media.poster_url}
-                  value={poster}
-                  onChange={savePoster}
+              <div className="flex-1 space-y-5 overflow-y-auto p-4">
+                <MediaPreview
+                  mediaType={media.media_type}
+                  previewUrl={mediaPreviewUrl(media)}
+                  videoUrl={media.video_url}
+                  embedUrl={media.video_embed_url}
+                  alt={form.watch('alt')}
                 />
-              )}
 
-              <Field>
-                <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
-                <Input
-                  id="media-alt"
-                  value={alt}
-                  disabled={!canWrite}
-                  onChange={(e) => setAlt(e.target.value)}
-                  // Enter saves, like any single-field form.
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && isDirty) {
-                      e.preventDefault()
-                      saveAlt()
-                    }
-                  }}
-                  placeholder={t('admin.fields.media.alt.placeholder')}
-                />
-              </Field>
-
-              <dl className="space-y-2 text-sm">
-                <FileFact label={t('admin.media_library.facts.type')} value={media.content_type} />
-                <FileFact
-                  label={t('admin.media_library.facts.size')}
-                  value={formatBytes(media.byte_size)}
-                />
-              </dl>
-
-              <div>
-                <h3 className="mb-2 font-medium text-sm">{t('admin.media_library.usage.title')}</h3>
-                {usage.isLoading ? (
-                  <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
-                ) : references.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">
-                    {t('admin.media_library.usage.empty')}
-                  </p>
-                ) : (
-                  <ul className="space-y-1.5">
-                    {references.map((reference) => {
-                      const target = usageLink(reference)
-
-                      return (
-                        <li
-                          key={`${reference.kind}-${reference.owner_type}-${reference.owner_id}-${reference.field}`}
-                          className="flex items-center justify-between gap-2 text-sm"
-                        >
-                          {target ? (
-                            <Link
-                              to={target.to}
-                              params={{ storeId, ...target.params }}
-                              className="truncate underline-offset-4 hover:underline"
-                            >
-                              {reference.name}
-                            </Link>
-                          ) : (
-                            <span className="truncate">{reference.name}</span>
-                          )}
-                          <Badge variant="secondary">{usageBadgeLabel(reference, t)}</Badge>
-                        </li>
-                      )
-                    })}
-                  </ul>
+                {/* A video needs a still for gallery tiles, emails and every
+                    listing that renders an <img>. YouTube supplies one; an
+                    upload or a Vimeo link does not. */}
+                {media.media_type !== 'image' && canWrite && (
+                  <ImageUploadField
+                    label={t('admin.fields.media.poster.label')}
+                    help={t('admin.fields.media.poster.help')}
+                    serverUrl={media.poster_url}
+                    value={poster}
+                    onChange={savePoster}
+                  />
                 )}
-              </div>
-            </div>
 
-            {canWrite && (
-              // Cancel / Save, matching the product gallery's edit sheet.
-              // Deleting a file is not editing it — that lives in the grid's
-              // context menu, away from the field a merchant is typing in.
-              <SheetFooter className="flex-row justify-end">
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                  {t('admin.actions.cancel')}
-                </Button>
-                <Button type="button" disabled={!isDirty || updateFile.isPending} onClick={saveAlt}>
-                  {updateFile.isPending && <Loader2Icon className="size-4 animate-spin" />}
-                  {t('admin.actions.save')}
-                </Button>
-              </SheetFooter>
-            )}
-          </>
+                {form.formState.errors.root?.message && (
+                  <p className="text-destructive text-sm" role="alert">
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
+
+                <Field>
+                  <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
+                  <Input
+                    id="media-alt"
+                    disabled={!canWrite}
+                    placeholder={t('admin.fields.media.alt.placeholder')}
+                    {...form.register('alt')}
+                  />
+                </Field>
+
+                <Slot name="media.form_fields" context={{ media, canWrite }} />
+
+                <dl className="space-y-2 text-sm">
+                  <FileFact
+                    label={t('admin.media_library.facts.type')}
+                    value={media.content_type}
+                  />
+                  <FileFact
+                    label={t('admin.media_library.facts.size')}
+                    value={formatBytes(media.byte_size)}
+                  />
+                </dl>
+
+                <div>
+                  <h3 className="mb-2 font-medium text-sm">
+                    {t('admin.media_library.usage.title')}
+                  </h3>
+                  {usage.isLoading ? (
+                    <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
+                  ) : references.length === 0 ? (
+                    <p className="text-muted-foreground text-sm">
+                      {t('admin.media_library.usage.empty')}
+                    </p>
+                  ) : (
+                    <ul className="space-y-1.5">
+                      {references.map((reference) => {
+                        const target = usageLink(reference)
+
+                        return (
+                          <li
+                            key={`${reference.kind}-${reference.owner_type}-${reference.owner_id}-${reference.field}`}
+                            className="flex items-center justify-between gap-2 text-sm"
+                          >
+                            {target ? (
+                              <Link
+                                to={target.to}
+                                params={{ storeId, ...target.params }}
+                                className="truncate underline-offset-4 hover:underline"
+                              >
+                                {reference.name}
+                              </Link>
+                            ) : (
+                              <span className="truncate">{reference.name}</span>
+                            )}
+                            <Badge variant="secondary">{usageBadgeLabel(reference, t)}</Badge>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              {canWrite && (
+                // Cancel / Save, matching the product gallery's edit sheet.
+                // Deleting a file is not editing it — that lives in the grid's
+                // context menu, away from the field a merchant is typing in.
+                <SheetFooter className="flex-row justify-end">
+                  <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                    {t('admin.actions.cancel')}
+                  </Button>
+                  <Button type="submit" disabled={!isDirty || updateFile.isPending}>
+                    {updateFile.isPending && <Loader2Icon className="size-4 animate-spin" />}
+                    {t('admin.actions.save')}
+                  </Button>
+                </SheetFooter>
+              )}
+            </form>
+          </FormProvider>
         )}
       </SheetContent>
     </Sheet>

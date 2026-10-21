@@ -157,6 +157,17 @@ test.describe('stock transfers', () => {
     await expect(page.getByText(/receive a delivery/i)).toHaveCount(0)
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slot at the end of the main column', async ({ page }) => {
+    const creds = await login(page)
+    const draft = await createDraftTransfer(page, creds.accessToken, 1)
+
+    await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${draft.id}`)
+    await expect(page.getByText('Slot probe: stock_transfer.form_main')).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('a draft can be corrected, a shipped one cannot', async ({ page }) => {
     const creds = await login(page)
     const draft = await createDraftTransfer(page, creds.accessToken, 3)

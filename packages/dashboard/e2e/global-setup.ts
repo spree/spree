@@ -50,6 +50,7 @@ import {
   ASYNC_JOBS_INITIALIZER,
   CREDENTIALS_FILE,
   RAILS_PID_FILE,
+  SLOT_PROBES_INITIALIZER,
   TEST_INTEGRATION_INITIALIZER,
 } from './paths'
 import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
@@ -233,6 +234,23 @@ export default async function globalSetup() {
       '      end',
       '    end',
       "    Spree.integrations << 'E2eRelay' unless Spree.integrations.include?('E2eRelay')",
+      '  end',
+      'end',
+      '',
+    ].join('\n'),
+  )
+
+  writeFileSync(
+    SLOT_PROBES_INITIALIZER,
+    [
+      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
+      "if ENV['DASHBOARD_E2E'] == '1'",
+      '  Rails.application.config.after_initialize do',
+      '    [Spree::Media, Spree::TaxRate, Spree::Variant].each do |model|',
+      '      next if model.additional_permitted_attributes.include?({ metadata: {} })',
+      '',
+      '      model.additional_permitted_attributes += [{ metadata: {} }]',
+      '    end',
       '  end',
       'end',
       '',

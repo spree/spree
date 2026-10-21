@@ -245,6 +245,15 @@ test.describe('purchase orders', () => {
     await expect(page.getByText(/^cancelled$/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slot at the end of the main column', async ({ page }) => {
+    const creds = await login(page)
+    const purchaseOrder = await createPurchaseOrder(page, creds.accessToken, { quantity: 1 })
+    await openPurchaseOrder(page, creds.store_id, purchaseOrder)
+
+    await expect(page.getByText('Slot probe: purchase_order.form_main')).toBeVisible()
+  })
+
   test('deletes a draft from the list', async ({ page }) => {
     const creds = await login(page)
     const purchaseOrder = await createPurchaseOrder(page, creds.accessToken, { quantity: 1 })

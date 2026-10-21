@@ -3,6 +3,7 @@ import { type ProductCreateParams, SpreeError } from '@spree/admin-sdk'
 import {
   CategorizationCard,
   extensionFormValues,
+  extensionRowValues,
   extensionSubmitValues,
   GeneralCard,
   InventoryCard,
@@ -16,10 +17,13 @@ import {
   prepareVariantsTaxForProductSave,
   productFormSchema,
   SEOCard,
+  Slot,
   StatusCard,
   TaxCard,
+  type VariantFormValues,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import {
   FormActions,
@@ -54,14 +58,21 @@ function NewProductPage() {
     defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('product', null) },
   })
 
-  const onSubmit = async (data: ProductFormValues) => {
+  const onSubmit = async (submitted: ProductFormValues) => {
+    // Before the placeholder variant is filtered out below, so row `i` of the
+    // parse still lines up with row `i` of the form.
+    const data = withExtensionRowValues('product', submitted, form.getValues())
     const { variants, custom_fields, media, digital_assets, ...rest } = data
 
     // Strip the placeholder default variant if the merchant didn't touch it.
     // Spree::Product#variants= auto-creates the canonical default variant
     // server-side when none is provided. Any variant with options, SKU,
-    // prices, or stock_levels survives as merchant intent.
-    const meaningful = (variants ?? []).filter((v) => !isPlaceholderDefaultVariant(v))
+    // prices, stock_levels or a plugin's field survives as merchant intent.
+    const hasExtensionValues = (variant: VariantFormValues) =>
+      Object.keys(extensionRowValues('product.variant', variant)).length > 0
+    const meaningful = (variants ?? []).filter(
+      (v) => !isPlaceholderDefaultVariant(v) || hasExtensionValues(v),
+    )
 
     const payload: ProductCreateParams = {
       ...(rest as ProductCreateParams),
@@ -121,6 +132,7 @@ function NewProductPage() {
       // upserts onto the default variant rather than leaving the field at its
       // default.
       const hasVariantOnlyData =
+        hasExtensionValues(v) ||
         v.sku != null ||
         v.barcode != null ||
         v.weight != null ||
@@ -216,6 +228,7 @@ function NewProductPage() {
               >
                 <CustomFieldsInlineCard />
               </ProductCustomFieldsProvider>
+              <Slot name="product.form_main" context={{ product: undefined, mode: 'new' }} />
             </>
           }
           sidebar={
@@ -225,6 +238,7 @@ function NewProductPage() {
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} />
+              <Slot name="product.form_sidebar" context={{ product: undefined, mode: 'new' }} />
             </>
           }
         />

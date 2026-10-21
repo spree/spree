@@ -289,6 +289,10 @@ module Spree
             Spree.product_update_workflow
           end
 
+          def nested_permitted_models
+            { media: Spree::Media, variants: Spree::Variant }
+          end
+
           # Use SearchProvider::Database for collection to handle price/best_selling
           # sorting correctly (counts before sorting, avoiding PG/Mobility issues).
           def collection

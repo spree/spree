@@ -212,6 +212,10 @@ module Spree
             Spree.product_update_workflow
           end
 
+          def nested_permitted_models
+            { media: Spree::Media, variants: Spree::Variant }
+          end
+
           # The workflow builds its own product, which would leave a seller's
           # listing unowned. Handing it one built through `current_seller.products`
           # keeps the seller on the record, whatever the payload claims.

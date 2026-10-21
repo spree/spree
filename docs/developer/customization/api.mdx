@@ -297,6 +297,15 @@ Spree::Product.additional_permitted_attributes += [:brand_id]
 Standard resource endpoints append these to their own allowlist, so one
 declaration covers the model's create and update endpoints.
 
+A product write also carries its media and variants as nested lists, and those
+lists take what `Spree::Media` and `Spree::Variant` declare. One line makes a
+media column writable both through the media endpoints and as part of a product
+save:
+
+```ruby config/initializers/spree.rb
+Spree::Media.additional_permitted_attributes += [:photo_credit]
+```
+
 Use `+=`, never `=` — assigning replaces what another extension added — and
 declare only attributes of your own, since redeclaring a key the controller
 already permits replaces its filter rather than widening it.
@@ -317,6 +326,9 @@ seller panel's product page, declare it again on the seller list:
 ```ruby config/initializers/spree.rb
 Spree::Product.additional_seller_permitted_attributes += [:brand_id]
 ```
+
+The seller product endpoint's nested media and variant lists read the same
+seller lists on `Spree::Media` and `Spree::Variant`.
 
 Only declare attributes a seller may safely set on their own records.
 

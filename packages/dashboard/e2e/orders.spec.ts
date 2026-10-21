@@ -98,6 +98,8 @@ test.describe('new order', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
       timeout: 15_000,
     })
+    // The main column's plugin slot, filled by src/testing/slot-probes.tsx.
+    await expect(page.getByText('Slot probe: order.form_main')).toBeVisible()
   })
 
   // The motivating case for this form: a purchase order arrives by email and

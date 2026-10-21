@@ -96,6 +96,7 @@ function PurchaseOrderDetailPage() {
             purchaseOrderId={purchaseOrder.id}
             title={t('admin.purchase_orders.history_title')}
           />
+          <Slot name="purchase_order.form_main" context={{ purchaseOrder }} />
         </>
       }
       sidebar={

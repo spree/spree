@@ -27,6 +27,8 @@ async function createOptionType(
     await row.getByLabel('Label').fill(value.label)
   }
 
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: option_type.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create option type/i }).click()
 }
 

@@ -20,6 +20,8 @@ test.describe('product types', () => {
     await expect(page.getByRole('heading', { name: /new product type/i })).toBeVisible()
 
     await page.locator('#name').fill(name)
+    // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+    await expect(page.getByText('Slot probe: product_type.form_fields (new)')).toBeVisible()
     await page.getByRole('button', { name: /create product type/i }).click()
 
     await expect(page.getByText(name)).toBeVisible({ timeout: 15_000 })

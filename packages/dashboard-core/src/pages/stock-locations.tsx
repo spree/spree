@@ -34,6 +34,7 @@ import { Can } from '../components/can'
 import { CountryCombobox } from '../components/country-combobox'
 import { StateCombobox, useCountryStates } from '../components/country-state-fields'
 import { ResourceTable, resourceSearchSchema } from '../components/resource-table'
+import { HostFormSlot } from '../components/slot'
 import {
   canDeleteStockLocations,
   listStockLocations,
@@ -43,6 +44,7 @@ import {
   useUpdateStockLocation,
 } from '../hooks/use-stock-locations'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { extensionFormValues, extensionSubmitValues } from '../lib/form-fields-registry'
 import { Subject } from '../lib/permissions'
 import { usePermissions } from '../providers/permission-provider'
 import {
@@ -90,8 +92,11 @@ export function StockLocationsPage({
   search,
   stockLevelsPanel: StockLevelsPanel,
   activityPanel: ActivityPanel,
+  formKey = 'stock_location',
 }: {
   search: StockLocationsSearch
+  /** Names the sheets' slot and extension fields — `seller.stock_location` in the seller panel. */
+  formKey?: string
   /** Rendered inside the edit sheet, below the form. Optional — see above. */
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>
   /** What changed in this warehouse, for reconciliation. Optional. */
@@ -170,10 +175,13 @@ export function StockLocationsPage({
         }
       />
 
-      {isCreating && <CreateStockLocationSheet open onOpenChange={(o) => !o && closeSheet()} />}
+      {isCreating && (
+        <CreateStockLocationSheet formKey={formKey} open onOpenChange={(o) => !o && closeSheet()} />
+      )}
       {editId && (
         <EditStockLocationSheet
           id={editId}
+          formKey={formKey}
           open
           onOpenChange={(o) => !o && closeSheet()}
           stockLevelsPanel={StockLevelsPanel}
@@ -189,9 +197,11 @@ export function StockLocationsPage({
 // ============================================================================
 
 function CreateStockLocationSheet({
+  formKey,
   open,
   onOpenChange,
 }: {
+  formKey: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -201,13 +211,13 @@ function CreateStockLocationSheet({
   const form = useForm<StockLocationFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(stockLocationFormSchema) as any,
-    defaultValues: STOCK_LOCATION_DEFAULTS,
+    defaultValues: { ...STOCK_LOCATION_DEFAULTS, ...extensionFormValues(formKey, null) },
   })
 
   async function onSubmit(values: StockLocationFormValues) {
     try {
       const params = formValuesToParams(values)
-      await createMutation.mutateAsync(params)
+      await createMutation.mutateAsync({ ...params, ...extensionSubmitValues(formKey, form) })
       form.reset(STOCK_LOCATION_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -231,6 +241,11 @@ function CreateStockLocationSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <StockLocationFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name={`${formKey}.form_fields`}
+              context={{ stockLocation: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -259,12 +274,14 @@ function CreateStockLocationSheet({
 
 function EditStockLocationSheet({
   id,
+  formKey,
   open,
   onOpenChange,
   stockLevelsPanel: StockLevelsPanel,
   activityPanel: ActivityPanel,
 }: {
   id: string
+  formKey: string
   open: boolean
   onOpenChange: (open: boolean) => void
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>
@@ -284,14 +301,17 @@ function EditStockLocationSheet({
   // with whatever the server last persisted (including external edits).
   useEffect(() => {
     if (stockLocation) {
-      form.reset(stockLocationToFormValues(stockLocation))
+      form.reset({
+        ...stockLocationToFormValues(stockLocation),
+        ...extensionFormValues(formKey, stockLocation),
+      })
     }
-  }, [stockLocation, form])
+  }, [stockLocation, form, formKey])
 
   async function onSubmit(values: StockLocationFormValues) {
     try {
       const params = formValuesToParams(values)
-      await updateMutation.mutateAsync(params)
+      await updateMutation.mutateAsync({ ...params, ...extensionSubmitValues(formKey, form) })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -314,6 +334,11 @@ function EditStockLocationSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <StockLocationFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name={`${formKey}.form_fields`}
+                context={{ stockLocation, mode: 'edit' }}
+              />
               {StockLevelsPanel && <StockLevelsPanel stockLocationId={id} />}
               {ActivityPanel && <ActivityPanel stockLocationId={id} />}
             </div>

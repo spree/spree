@@ -3,6 +3,9 @@ import type { TaxRate } from '@spree/admin-sdk'
 import {
   Can,
   CountryCombobox,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   StateCombobox,
   Subject,
@@ -205,12 +208,15 @@ function CreateTaxRateSheet({
   const form = useForm<TaxRateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(taxRateFormSchema) as any,
-    defaultValues: TAX_RATE_DEFAULTS,
+    defaultValues: { ...TAX_RATE_DEFAULTS, ...extensionFormValues('tax_rate', null) },
   })
 
   async function onSubmit(values: TaxRateFormValues) {
     try {
-      await createMutation.mutateAsync(taxRateValuesToParams(values))
+      await createMutation.mutateAsync({
+        ...taxRateValuesToParams(values),
+        ...extensionSubmitValues('tax_rate', form),
+      })
       form.reset(TAX_RATE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -234,6 +240,11 @@ function CreateTaxRateSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <TaxRateFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="tax_rate.form_fields"
+              context={{ taxRate: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -284,13 +295,17 @@ function EditTaxRateSheet({
         country_code: taxRate.country_code ?? '',
         state_code: taxRate.state_code ?? '',
         show_rate_in_label: taxRate.show_rate_in_label,
+        ...extensionFormValues('tax_rate', taxRate),
       })
     }
   }, [taxRate, form])
 
   async function onSubmit(values: TaxRateFormValues) {
     try {
-      await updateMutation.mutateAsync(taxRateValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...taxRateValuesToParams(values),
+        ...extensionSubmitValues('tax_rate', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -313,6 +328,11 @@ function EditTaxRateSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <TaxRateFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="tax_rate.form_fields"
+                context={{ taxRate, mode: 'edit' }}
+              />
             </div>
             <SheetFooter>
               <Button

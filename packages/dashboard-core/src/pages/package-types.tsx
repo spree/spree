@@ -33,6 +33,7 @@ import { z } from 'zod/v4'
 import type { PanelPackageType } from '../api-client'
 import { Can } from '../components/can'
 import { ResourceTable, resourceSearchSchema } from '../components/resource-table'
+import { HostFormSlot } from '../components/slot'
 import {
   canDeletePackageTypes,
   canWritePackageTypes,
@@ -43,6 +44,7 @@ import {
   useUpdatePackageType,
 } from '../hooks/use-package-types'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { extensionFormValues, extensionSubmitValues } from '../lib/form-fields-registry'
 import { Subject } from '../lib/permissions'
 import { usePermissions } from '../providers/permission-provider'
 import {
@@ -88,7 +90,14 @@ export type PackageTypesSearch = z.infer<typeof packageTypesSearchSchema>
  */
 function noop() {}
 
-export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
+export function PackageTypesPage({
+  search,
+  formKey = 'package_type',
+}: {
+  search: PackageTypesSearch
+  /** Names the sheets' slot and extension fields — `seller.package_type` in the seller panel. */
+  formKey?: string
+}) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const confirm = useConfirm()
@@ -193,16 +202,27 @@ export function PackageTypesPage({ search }: { search: PackageTypesSearch }) {
         }
       />
 
-      {isCreating && <CreatePackageTypeSheet open onOpenChange={(o) => !o && closeSheet()} />}
-      {editId && <EditPackageTypeSheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />}
+      {isCreating && (
+        <CreatePackageTypeSheet formKey={formKey} open onOpenChange={(o) => !o && closeSheet()} />
+      )}
+      {editId && (
+        <EditPackageTypeSheet
+          id={editId}
+          formKey={formKey}
+          open
+          onOpenChange={(o) => !o && closeSheet()}
+        />
+      )}
     </>
   )
 }
 
 function CreatePackageTypeSheet({
+  formKey,
   open,
   onOpenChange,
 }: {
+  formKey: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -210,12 +230,15 @@ function CreatePackageTypeSheet({
   const createMutation = useCreatePackageType()
   const form = useForm<PackageTypeFormValues>({
     resolver: zodResolver(packageTypeFormSchema),
-    defaultValues: PACKAGE_TYPE_DEFAULTS,
+    defaultValues: { ...PACKAGE_TYPE_DEFAULTS, ...extensionFormValues(formKey, null) },
   })
 
   async function onSubmit(values: PackageTypeFormValues) {
     try {
-      await createMutation.mutateAsync(packageTypeFormValuesToParams(values))
+      await createMutation.mutateAsync({
+        ...packageTypeFormValuesToParams(values),
+        ...extensionSubmitValues(formKey, form),
+      })
       form.reset(PACKAGE_TYPE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -239,6 +262,11 @@ function CreatePackageTypeSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <PackageTypeFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name={`${formKey}.form_fields`}
+              context={{ packageType: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button type="submit" disabled={createMutation.isPending}>
@@ -253,10 +281,12 @@ function CreatePackageTypeSheet({
 
 function EditPackageTypeSheet({
   id,
+  formKey,
   open,
   onOpenChange,
 }: {
   id: string
+  formKey: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -270,12 +300,17 @@ function EditPackageTypeSheet({
   const form = useForm<PackageTypeFormValues>({
     resolver: zodResolver(packageTypeFormSchema),
     defaultValues: PACKAGE_TYPE_DEFAULTS,
-    values: packageType ? packageTypeToFormValues(packageType) : undefined,
+    values: packageType
+      ? { ...packageTypeToFormValues(packageType), ...extensionFormValues(formKey, packageType) }
+      : undefined,
   })
 
   async function onSubmit(values: PackageTypeFormValues) {
     try {
-      await updateMutation.mutateAsync(packageTypeFormValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...packageTypeFormValuesToParams(values),
+        ...extensionSubmitValues(formKey, form),
+      })
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -298,6 +333,11 @@ function EditPackageTypeSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <PackageTypeFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name={`${formKey}.form_fields`}
+              context={{ packageType, mode: 'edit' }}
+            />
           </div>
           <SheetFooter>
             <Button type="submit" disabled={updateMutation.isPending}>
