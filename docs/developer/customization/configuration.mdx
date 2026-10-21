@@ -26,6 +26,7 @@ boot rather than silently reverting to the default.
 | Variable | Default | What it does |
 |---|---|---|
 | `SPREE_DASHBOARD_URL` | — | Origin where the dashboard is hosted. Used for every link that sends someone into it — invitation emails, SSO redirects, and the first-run setup link printed by `db:seed`. |
+| `SPREE_PUBLIC_API_URL` | — | Origin where the API is reached from the internet. Used for addresses given to outside clients, such as the [storefront MCP server](/developer/mcp/storefront) address in your store's UCP profile. Set it when your storefront reaches the API on a private address. |
 | `SPREE_SELLER_PANEL_URL` | — | Origin where the marketplace seller panel is hosted, when it isn't this app's own `/sellers` mount. Unset uses `/sellers`; with no panel deployed, seller links open the dashboard. |
 | `SPREE_STORE_SCOPE_GUARD` | `log` | Tripwire for queries that miss a store scope, in development and test only. `log` warns, `raise` fails, `off` disables. Never active in production. |
 

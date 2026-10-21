@@ -53,7 +53,7 @@ module Spree
         #
         # @return [Hash]
         def annotations(tool)
-          { read_only_hint: !tool.mutating?, destructive_hint: tool.mutating?, idempotent_hint: !tool.mutating? }
+          { read_only_hint: !tool.mutating?, destructive_hint: tool.destructive?, idempotent_hint: !tool.mutating? }
         end
 
         # A tool answers with a plain hash. A hash carrying `:error` is the

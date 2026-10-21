@@ -122,6 +122,25 @@ module Spree
       end
     end
 
+    # A link that opens this cart in the store's own checkout, for a buyer
+    # handed over by an agent. It carries the token because the browser
+    # arriving has no other claim to the cart; the storefront checks the pair
+    # against the Store API before adopting it.
+    #
+    # @return [String, nil] nil when the store has no web storefront to open
+    def storefront_checkout_url
+      base = store.configured_storefront_url
+      "#{base}/cart/resume?#{{ id: prefixed_id, token: token }.to_query}" if base
+    end
+
+    # The storefront's confirmation page for what this cart became.
+    #
+    # @return [String, nil] nil when the store has no web storefront
+    def storefront_order_url
+      base = store.configured_storefront_url
+      "#{base}/order-placed/#{prefixed_id}" if base
+    end
+
     # A completed cart is an immutable audit record — post-checkout life
     # belongs to the order. Blocks save/update_columns/touch/destroy at the
     # model level; the completion write itself passes because it fires while

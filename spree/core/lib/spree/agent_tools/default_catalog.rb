@@ -32,6 +32,24 @@ module Spree
         Spree::AgentTools::ProposeImportMapping
       ].freeze
 
+      # The storefront's tools: the Universal Commerce Protocol's shopping
+      # operations, under the spec's own names (docs/plans/6.1-store-mcp-server.md).
+      # `complete_checkout` is absent until payment can happen in the agent.
+      STORE_TOOLS = %w[
+        Spree::AgentTools::Shopping::SearchCatalog
+        Spree::AgentTools::Shopping::LookupCatalog
+        Spree::AgentTools::Shopping::GetProduct
+        Spree::AgentTools::Shopping::CreateCart
+        Spree::AgentTools::Shopping::GetCart
+        Spree::AgentTools::Shopping::UpdateCart
+        Spree::AgentTools::Shopping::CancelCart
+        Spree::AgentTools::Shopping::CreateCheckout
+        Spree::AgentTools::Shopping::GetCheckout
+        Spree::AgentTools::Shopping::UpdateCheckout
+        Spree::AgentTools::Shopping::CancelCheckout
+        Spree::AgentTools::Shopping::GetOrder
+      ].freeze
+
 
       # Workflow key => permission, or => {permission:, except:, summary:}.
       WORKFLOWS = {
@@ -173,6 +191,12 @@ module Spree
         def install(registry)
           TOOLS.each { |tool| registry << tool }
           registry.expose_workflows(**WORKFLOWS)
+        end
+
+        # @param registry [Spree::AgentTools::Registry] the storefront one
+        # @return [void]
+        def install_store(registry)
+          STORE_TOOLS.each { |tool| registry << tool }
         end
       end
     end

@@ -1,0 +1,74 @@
+---
+title: "Storefront MCP Server"
+sidebarTitle: Storefront (UCP)
+description: "Let shoppers buy from your store through AI assistants, using the Universal Commerce Protocol."
+---
+
+Your store can host a second MCP server, for shoppers rather than staff. An AI assistant connected to it can search your catalog, build a cart and hand the shopper to your checkout to pay. "Find me an espresso machine under $900 in black" ends with the shopper on your checkout page, the machine already in their cart.
+
+It speaks the [Universal Commerce Protocol](https://ucp.dev/2026-08-25/specification/overview/) (UCP), version `2026-08-25`, the open standard AI shopping assistants use. An assistant that knows UCP knows how to shop in your store without any setup for it.
+
+## The address
+
+```text
+https://your-store.com/api/v3/store/mcp?key=pk_your_publishable_key
+```
+
+The key is your store's [publishable API key](/api-reference/store-api/authentication), the same one your storefront already uses. It is public, so it is safe to put in the address. Assistants that let you set headers can send it as `X-Spree-API-Key` instead.
+
+There is nothing to sign in to. A shopper browses and fills a cart as a guest, just as on your storefront.
+
+## How assistants find your store
+
+Agents that follow UCP look for a profile at `/.well-known/ucp` on your store's domain. The [Next.js storefront](/developer/storefront/nextjs/quickstart) serves it for you. It tells the agent where the server is and what it can do. If your storefront reaches the API on a private address, set `SPREE_PUBLIC_API_URL` so the profile gives agents the public one.
+
+If you run your own storefront, serve the profile Spree builds:
+
+<Tabs>
+  <Tab title="SDK">
+    ```typescript
+    // app/.well-known/ucp/route.ts
+    export async function GET() {
+      const response = await fetch(`${process.env.SPREE_API_URL}/api/v3/store/ucp_profile`, {
+        headers: { 'X-Spree-API-Key': process.env.SPREE_PUBLISHABLE_KEY! },
+      })
+      return Response.json(await response.json())
+    }
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl https://your-store.com/api/v3/store/ucp_profile \
+      -H "X-Spree-API-Key: pk_your_publishable_key"
+    ```
+  </Tab>
+</Tabs>
+
+## What an assistant can do
+
+| Tool | What it does |
+| --- | --- |
+| `search_catalog` | Searches products the way your storefront search does, with your sorting and boosts. An empty search lists the catalog. |
+| `lookup_catalog` | Reads several products at once, by product or variant id. |
+| `get_product` | Reads one product with its options and every variant that can be bought. |
+| `create_cart`, `get_cart`, `update_cart`, `cancel_cart` | Builds and changes a cart. An update replaces the whole cart. |
+| `create_checkout`, `get_checkout`, `update_checkout`, `cancel_checkout` | Turns a cart into a checkout and reports when it has been paid. |
+| `get_order` | Reads the order a checkout became. |
+
+Prices are whole numbers in the currency's smallest unit: `87999` is $879.99.
+
+## Paying happens on your checkout
+
+No payment passes through the server. When a checkout is ready, the assistant gives the shopper a link (`continue_url`). It opens your checkout with the cart already filled in, where the shopper chooses delivery and pays as usual. The link works once: opening it hands the cart to the shopper's browser, and the assistant can no longer read or change that cart or the order it becomes. The shopper's address and payment stay between them and your store.
+
+The link opens `/cart/resume` on your storefront's address (the store's **Storefront URL** setting). The Next.js storefront handles it. A custom storefront needs a page there that adopts the cart from the `id` and `token` in the link, and replaces the token as it does so (`client.carts.rotateToken()`), so the link stops working. A store with no web storefront gets no link: the checkout reports that it cannot be finished through the assistant.
+
+## What stays private
+
+- **A cart belongs to whoever holds its id.** The id an assistant gets for a cart or checkout is a long random token. It cannot be guessed, and an assistant cannot reach any other shopper's cart or order.
+- **Shoppers see what your storefront shows.** Hidden prices, restricted catalogs and sales channels apply exactly as they do on your storefront. Cost prices and other back-office data are never available.
+- **The back office is a different server.** Store staff connect to the [admin MCP server](/developer/mcp/overview). Nothing from it is offered here.
+
+## Coming next
+
+Shoppers signing in to see their own orders, paying inside the assistant, and choosing delivery options there are planned. Until then, payment and delivery are chosen on your checkout.

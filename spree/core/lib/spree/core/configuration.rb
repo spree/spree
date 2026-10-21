@@ -39,6 +39,12 @@ module Spree
       # seller may call. Unset on a marketplace that runs no panel, in which
       # case seller invitations fall back to the dashboard origin.
       preference :seller_panel_url, :string, default: nil, env: 'SPREE_SELLER_PANEL_URL'
+      # Origin where the API is reached from the internet (e.g.
+      # `https://api.shop.com`), for addresses handed to outside clients, such
+      # as the MCP endpoint a store's UCP profile advertises. Unset, they use
+      # the address the request arrived on — which is wrong when the caller
+      # is a storefront reaching the API on a private network address.
+      preference :public_api_url, :string, default: nil, env: 'SPREE_PUBLIC_API_URL'
       preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — completion checks whether payments cover the total, so a failed gateway call never completes an order'
       preference :allow_empty_price_amount, :boolean, default: false, env: 'SPREE_ALLOW_EMPTY_PRICE_AMOUNT'
       preference :alternative_shipping_phone, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6'

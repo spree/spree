@@ -285,6 +285,42 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
     end
   end
 
+  path '/api/v3/store/carts/{cart_id}/token' do
+    patch 'Replace the cart token' do
+      tags 'Carts'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Replaces a guest cart's token and returns the cart with the new one. Call it when a
+        browser takes over a cart someone else built, such as an AI shopping agent's checkout
+        link: whoever holds the old token loses access to the cart and to the order it becomes.
+        Requires the current token (x-spree-token).
+      DESC
+
+      sdk_example 'carts/rotate_token'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'x-spree-token', in: :header, type: :string, required: true, description: 'Current cart token'
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
+
+      response '200', 'token replaced' do
+        let(:guest_cart) { create(:cart_with_line_items, store: store, customer: nil) }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'x-spree-token') { guest_cart.token }
+        let(:cart_id) { guest_cart.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Cart'
+
+        run_test! do |response|
+          token = JSON.parse(response.body)['token']
+          expect(token).to be_present
+          expect(token).not_to eq(guest_cart.token)
+          expect(guest_cart.reload.token).to eq(token)
+        end
+      end
+    end
+  end
+
   path '/api/v3/store/carts/{id}/complete' do
     post 'Complete cart' do
       tags 'Carts'

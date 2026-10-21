@@ -43,20 +43,56 @@ module Spree
         file itself for you to read.
       TEXT
 
+      # What a shopper's agent is told at discovery. Short on purpose: the
+      # tool names are the UCP spec's own, which a spec-following agent
+      # already knows, so this only says what is particular to Spree.
+      STORE_INSTRUCTIONS = <<~TEXT.freeze
+        This server is one store's shopping surface, following the Universal
+        Commerce Protocol (UCP) tool names.
+
+        Find products with search_catalog (an empty query lists the catalog),
+        then get_product for its variants. Carts and checkouts hold variant ids,
+        never product ids — a product with options is bought as one of its
+        variants.
+
+        A cart or checkout id is the buyer's own handle and the only key to it:
+        keep it for the rest of the conversation and never show it to anyone
+        else. Prices are in minor units of the cart's currency.
+
+        Payment never passes through this server. When a checkout is ready, or
+        needs something only the buyer can give, hand the buyer its
+        continue_url to finish in the store's own checkout. Opening it hands the
+        checkout to the buyer: its id stops working here, and the buyer tracks
+        the order with the store.
+      TEXT
+
+      # One entry per surface. A surface names its own registry, so a
+      # storefront visitor is never offered a back-office tool however the
+      # endpoint that built the server was reached.
+      SURFACES = {
+        admin: { name: 'spree-admin', label: 'Spree admin', instructions: INSTRUCTIONS, registry: :admin_agent_tools },
+        store: { name: 'spree-store', label: 'Spree store', instructions: STORE_INSTRUCTIONS, registry: :store_agent_tools }
+      }.freeze
+
       class << self
         # @param context [Spree::AgentTools::Context] who is asking, and where
+        # @param surface [Symbol] `:admin` for the back office, `:store` for a shopper
         # @return [MCP::Server]
-        def for(context)
+        def for(context, surface: :admin)
+          definition = SURFACES.fetch(surface)
+
           server = ::MCP::Server.new(
-            name: 'spree-admin',
-            title: "#{context.store.name} (Spree admin)",
+            name: definition[:name],
+            title: "#{context.store.name} (#{definition[:label]})",
             version: Spree.version,
-            instructions: INSTRUCTIONS,
-            tools: tools_for(context),
+            instructions: definition[:instructions],
+            tools: tools_for(context, registry: Spree.public_send(definition[:registry])),
             server_context: { store_id: context.store.id }
           )
 
-          register_resources(server, context)
+          # A shopper has no files to fetch: exports and attached documents
+          # are back-office records.
+          register_resources(server, context) if surface == :admin
           server
         end
 
@@ -106,9 +142,10 @@ module Spree
         # which says less about what else exists.
         #
         # @param context [Spree::AgentTools::Context]
+        # @param registry [Spree::AgentTools::Registry]
         # @return [Array<Class<MCP::Tool>>]
-        def tools_for(context)
-          Spree.admin_agent_tools.available_for(context).map { |tool| ToolAdapter.build(tool) }
+        def tools_for(context, registry: Spree.admin_agent_tools)
+          registry.available_for(context).map { |tool| ToolAdapter.build(tool) }
         end
       end
     end

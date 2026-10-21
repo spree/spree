@@ -31,6 +31,7 @@ class AgentTool
     class_attribute :declared_description, instance_accessor: false
     class_attribute :declared_permission, instance_accessor: false
     class_attribute :declared_mutating, instance_accessor: false, default: false
+    class_attribute :declared_destructive, instance_accessor: false, default: true
     class_attribute :declared_audience, instance_accessor: false, default: :admin
     class_attribute :declared_params, instance_accessor: false, default: {}.freeze
 
@@ -75,14 +76,23 @@ class AgentTool
       # Declares that this tool changes store data, so the turn halts for
       # human approval instead of executing.
       #
+      # @param destructive [Boolean] false for a write that only adds to or
+      #   reshapes something the caller owns — a shopper filling their own
+      #   cart — so a client need not confirm it like a cancellation
       # @return [void]
-      def mutating!
+      def mutating!(destructive: true)
         self.declared_mutating = true
+        self.declared_destructive = destructive
       end
 
       # @return [Boolean]
       def mutating?
         declared_mutating == true
+      end
+
+      # @return [Boolean]
+      def destructive?
+        mutating? && declared_destructive == true
       end
 
       # @param name [Symbol]
@@ -115,7 +125,7 @@ class AgentTool
       @context = context
     end
 
-    delegate :tool_name, :description, :permission, :mutating?, :params, to: :class
+    delegate :tool_name, :description, :permission, :mutating?, :destructive?, :params, to: :class
 
     # Runs the tool. Subclasses implement this with keyword arguments matching
     # their declared params.

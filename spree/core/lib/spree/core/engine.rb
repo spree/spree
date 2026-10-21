@@ -171,6 +171,7 @@ module Spree
         app.config.spree.admin_agent_tools = Spree::AgentTools::Registry.new(audience: :admin)
         app.config.spree.store_agent_tools = Spree::AgentTools::Registry.new(audience: :store)
         Spree::AgentTools::DefaultCatalog.install(app.config.spree.admin_agent_tools)
+        Spree::AgentTools::DefaultCatalog.install_store(app.config.spree.store_agent_tools)
       end
 
 

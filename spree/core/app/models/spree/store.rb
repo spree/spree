@@ -567,9 +567,18 @@ module Spree
     #
     # @return [String] e.g. "https://myshop.com"
     def storefront_url
+      configured_storefront_url || formatted_url
+    end
+
+    # The storefront's origin when the store has one, without falling back to
+    # the API's own address. A link that only works on a storefront page —
+    # opening a cart in checkout — needs this: on a store with no web
+    # storefront there is nowhere to send it.
+    #
+    # @return [String, nil]
+    def configured_storefront_url
       preferred_storefront_url.presence ||
-        allowed_origins.order(:created_at).reject(&:loopback?).first&.origin ||
-        formatted_url
+        allowed_origins.order(:created_at).reject(&:loopback?).first&.origin
     end
 
     # Returns true if the given URL's origin matches one of the store's allowed origins.

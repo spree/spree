@@ -70,6 +70,13 @@ describe('carts', () => {
     })
   })
 
+  describe('rotateToken', () => {
+    it('replaces the guest cart token', async () => {
+      const result = await client.carts.rotateToken('cart_1', { spreeToken: 'guest-token' })
+      expect(result.id).toBeDefined()
+    })
+  })
+
   // A cart holding several sellers' goods divides on completion, and the
   // group it produced is what comes back.
   describe('complete', () => {

@@ -1097,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3436979
-                  slug: product-3436979
+                  name: Product 3446979
+                  slug: product-3446979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1390,8 +1390,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3919085
-                  slug: product-3919085
+                  name: Product 3929085
+                  slug: product-3929085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1422,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3928209
-                  slug: product-3928209
+                  name: Product 3938209
+                  slug: product-3938209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1552,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4196885
-                slug: product-4196885
+                name: Product 4206885
+                slug: product-4206885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1946,7 +1946,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--ce685b81cb33633270d4b39d96fbac6de2186552
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -1954,7 +1954,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c371f81d2998190ebc1edf0b658c9b3921921de1
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--1fd7805ba16120f373bb24686b7d5def47bb2731
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -3244,6 +3244,176 @@ paths:
                   message: You are not authorized to access this page.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/carts/{cart_id}/token":
+    patch:
+      summary: Replace the cart token
+      tags:
+      - Carts
+      security:
+      - api_key: []
+      description: |
+        Replaces a guest cart's token and returns the cart with the new one. Call it when a
+        browser takes over a cart someone else built, such as an AI shopping agent's checkout
+        link: whoever holds the old token loses access to the cart and to the order it becomes.
+        Requires the current token (x-spree-token).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const cart = await client.carts.rotateToken('cart_abc123', {
+            spreeToken: '<cart-token>',
+          })
+          // cart.token is the new token; the old one no longer opens the cart
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: true
+        description: Current cart token
+        schema:
+          type: string
+      - name: cart_id
+        in: path
+        required: true
+        description: Cart prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: token replaced
+          content:
+            application/json:
+              example:
+                id: cart_UkLWZg9DAJ
+                market_id: mkt_UkLWZg9DAJ
+                channel_id: ch_UkLWZg9DAJ
+                preferred_stock_location_id:
+                company_id:
+                company_name:
+                po_number_required: false
+                po_document_filename:
+                po_document_byte_size:
+                number: cart_UkLWZg9DAJ
+                token: Rg8cksFF6WThaU8Y23q9ukQL
+                email:
+                customer_note:
+                po_number:
+                currency: USD
+                locale: en
+                total_quantity: 1
+                warnings: []
+                coupon_code:
+                item_total: '10.00'
+                display_item_total: "$10.00"
+                discount_total: '0.00'
+                display_discount_total: "$0.00"
+                tax_total: '0.00'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.00'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.00'
+                display_additional_tax_total: "$0.00"
+                delivery_total: '0.00'
+                display_delivery_total: "$0.00"
+                fee_total: '0.00'
+                display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
+                store_credit_total: '0.00'
+                display_store_credit_total: "$0.00"
+                total: '10.00'
+                display_total: "$10.00"
+                amount_due: '10.00'
+                display_amount_due: "$10.00"
+                covered_by_store_credit: false
+                payments: []
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
+                current_step: address
+                completed_steps: []
+                requirements:
+                - code: email_required
+                  step: address
+                  field: email
+                  message: Email address is required
+                - code: delivery_method_required
+                  step: delivery
+                  field: shipping_method
+                  message: Select a delivery method for all fulfillments
+                - code: payment_required
+                  step: payment
+                  field: payment
+                  message: Add a payment method
+                order_minimum:
+                order_minimum_shortfall:
+                below_order_minimum: false
+                freight_summary:
+                shipping_eq_billing_address: true
+                discounts: []
+                fees: []
+                items:
+                - id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  seller_id:
+                  preorder: false
+                  preorder_ships_at:
+                  quantity: 1
+                  currency: USD
+                  name: Product 3252038
+                  slug: product-3252038
+                  options_text: ''
+                  price: '10.00'
+                  display_price: "$10.00"
+                  total: '10.00'
+                  display_total: "$10.00"
+                  adjustment_total: '0.00'
+                  display_adjustment_total: "$0.00"
+                  additional_tax_total: '0.00'
+                  display_additional_tax_total: "$0.00"
+                  included_tax_total: '0.00'
+                  display_included_tax_total: "$0.00"
+                  discount_total: '0.00'
+                  display_discount_total: "$0.00"
+                  pre_tax_amount: '10.00'
+                  display_pre_tax_amount: "$10.00"
+                  discounted_amount: '10.00'
+                  display_discounted_amount: "$10.00"
+                  display_compare_at_amount: "$0.00"
+                  compare_at_amount:
+                  thumbnail_url:
+                  option_values: []
+                  digital_links: []
+                fulfillments: []
+                billing_address:
+                shipping_address:
+                payment_methods: []
+                gift_card:
+                market:
+                  id: mkt_UkLWZg9DAJ
+                  name: United States
+                  currency: USD
+                  default_locale: en
+                  tax_inclusive: false
+                  default: true
+                  country_codes:
+                  - US
+                  country_isos:
+                  - US
+                  supported_locales:
+                  - en
+              schema:
+                "$ref": "#/components/schemas/Cart"
   "/api/v3/store/carts/{id}/complete":
     post:
       summary: Complete cart
@@ -3378,8 +3548,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3254794
-                  slug: product-3254794
+                  name: Product 3264794
+                  slug: product-3264794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3697,8 +3867,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3582614
-                  slug: product-3582614
+                  name: Product 3592614
+                  slug: product-3592614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3892,8 +4062,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3593461
-                  slug: product-3593461
+                  name: Product 3603461
+                  slug: product-3603461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4081,8 +4251,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3618182
-                  slug: product-3618182
+                  name: Product 3628182
+                  slug: product-3628182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4401,8 +4571,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3635702
-                  slug: product-3635702
+                  name: Product 3645702
+                  slug: product-3645702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4645,8 +4815,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3679569
-                  slug: product-3679569
+                  name: Product 3689569
+                  slug: product-3689569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4775,10 +4945,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 37063 cannot be delivered to the selected address
+                  message: Product 37163 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 371298 cannot be delivered to the selected address
+                  message: Product 372298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4837,8 +5007,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 37063
-                  slug: product-37063
+                  name: Product 37163
+                  slug: product-37163
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4868,8 +5038,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 371298
-                  slug: product-371298
+                  name: Product 372298
+                  slug: product-372298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5084,8 +5254,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3779165
-                  slug: product-3779165
+                  name: Product 3789165
+                  slug: product-3789165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5892,8 +6062,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4429789
-                  slug: product-4429789
+                  name: Product 4439789
+                  slug: product-4439789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6077,8 +6247,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 444179
-                  slug: product-444179
+                  name: Product 445179
+                  slug: product-445179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6437,8 +6607,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 381496
-                  slug: product-381496
+                  name: Product 382496
+                  slug: product-382496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -7790,8 +7960,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3455270
-                    slug: product-3455270
+                    name: Product 3465270
+                    slug: product-3465270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -8116,8 +8286,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3475633
-                  slug: product-3475633
+                  name: Product 3485633
+                  slug: product-3485633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -10809,7 +10979,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-550
+                  sku: SKU-551
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -10895,7 +11065,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-551
+                  sku: SKU-552
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -12412,8 +12582,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3445649
-                    slug: product-3445649
+                    name: Product 3455649
+                    slug: product-3455649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
