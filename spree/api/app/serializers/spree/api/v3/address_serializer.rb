@@ -12,7 +12,7 @@ module Spree
                  country_iso: [:string, deprecated: 'Use `country_code`. Removed in 6.1.'],
                  country_name: :string,
                  quick_checkout: :boolean, is_default_billing: :boolean, is_default_shipping: :boolean,
-                 label: [:string, nullable: true]
+                 label: [:string, nullable: true], owner: { nullable: true }
 
         # What the address is filed under in whichever book owns it — a
         # customer's ("Home") or a company node's ("Northern Warehouse").
@@ -31,6 +31,10 @@ module Spree
         attribute :state_name do |address|
           address.state_name.presence || address.state&.name
         end
+
+        # The address book the entry belongs to. Null for an address in no
+        # book: one a guest typed in, or the copy a placed order keeps.
+        one :owner, resource: proc { Spree.api.address_owner_serializer }
       end
     end
   end

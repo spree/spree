@@ -6,7 +6,7 @@ module Spree
       # two, and the owner is the only thing that tells a warehouse from
       # somebody's flat.
       class AddressOwnerSerializer < BaseSerializer
-        typelize type: [:string, enum: %w[customer company], enum_type_name: 'AddressOwnerType'],
+        typelize type: [:string, enum: %w[customer company seller], enum_type_name: 'AddressOwnerType'],
                  name: [:string, nullable: true]
 
         attribute :type do |owner|

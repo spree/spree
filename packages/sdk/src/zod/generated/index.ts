@@ -83,7 +83,6 @@ export { ReturnSchema, type Return } from './Return';
 export { ReturnLineItemSchema, type ReturnLineItem } from './ReturnLineItem';
 export { ReturnReasonSchema, type ReturnReason } from './ReturnReason';
 export { SavedReportEventSchema, type SavedReportEvent } from './SavedReportEvent';
-export { SelectableAddressSchema, type SelectableAddress } from './SelectableAddress';
 export { SellerSchema, type Seller } from './Seller';
 export { ShippingLabelEventSchema, type ShippingLabelEvent } from './ShippingLabelEvent';
 export { StateSchema, type State } from './State';

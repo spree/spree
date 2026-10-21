@@ -217,7 +217,7 @@ Note that a delivery site is just an address. Ten warehouses do not mean ten com
 
 ### Addresses inherit downwards
 
-Listing a node's addresses returns its own entries **and** the ones it inherits from the nodes above it, so a division can ship to the headquarters site it shares. Writing one stays with the node that owns it: a division can add and edit its own entries, and reads its parent's without being able to change them.
+Listing a node's addresses returns its own entries **and** the ones it inherits from the nodes above it, so a division can ship to the headquarters site it shares. Writing one stays with the node that owns it: a division can add and edit its own entries, and reads its parent's without being able to change them. Each entry's `owner` names the node it belongs to, so a client can tell inherited entries apart from the node's own.
 
 ### Picking an address at checkout
 
@@ -230,7 +230,7 @@ const { data: addresses } = await client.carts.addresses.list('cart_xxx')
 
 // Each entry names the book it came out of, so a picker can label them.
 // A personal purchase has no company sites, so there may be none.
-const site = addresses.find((address) => address.owner.type === 'company')
+const site = addresses.find((address) => address.owner?.type === 'company')
 
 if (site) {
   await client.carts.update('cart_xxx', { shipping_address_id: site.id })

@@ -6614,14 +6614,16 @@ paths:
                   is_default_billing: false
                   is_default_shipping: false
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   latitude:
                   longitude:
                   customer_id: cust_UkLWZg9DAJ
-                  owner_id: cust_UkLWZg9DAJ
-                  owner_type: customer
                 meta:
                   page: 1
                   limit: 25
@@ -6712,14 +6714,16 @@ paths:
                 is_default_billing: false
                 is_default_shipping: false
                 state_name: New York
+                owner:
+                  id: cust_UkLWZg9DAJ
+                  type: customer
+                  name:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
-                owner_id: cust_UkLWZg9DAJ
-                owner_type: customer
       requestBody:
         content:
           application/json:
@@ -6801,14 +6805,16 @@ paths:
                 is_default_billing: false
                 is_default_shipping: false
                 state_name: New York
+                owner:
+                  id: cust_UkLWZg9DAJ
+                  type: customer
+                  name:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
-                owner_id: cust_UkLWZg9DAJ
-                owner_type: customer
       requestBody:
         content:
           application/json:
@@ -36637,7 +36643,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 disabled_at:
-                secret_key: 507fa8041773b106ae4242f7458a20bdbf22bcda1eaaafaafe5199e035271094
+                secret_key: f44b508d518f47b9d42ae8a67ba913f7f7c4ee25be2e4dda1fbc06370fe29854
                 last_delivery_at:
                 recent_delivery_count: 0
                 recent_failure_count: 0
@@ -41864,14 +41870,16 @@ paths:
                   is_default_billing: false
                   is_default_shipping: false
                   state_name: New York
+                  owner:
+                    id: comp_UkLWZg9DAJ
+                    type: company
+                    name: Acme Corp 3
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   latitude:
                   longitude:
                   customer_id:
-                  owner_id: comp_UkLWZg9DAJ
-                  owner_type: company
                 meta:
                   page: 1
                   limit: 25
@@ -41975,14 +41983,16 @@ paths:
                 is_default_billing: false
                 is_default_shipping: true
                 state_name: New York
+                owner:
+                  id: comp_UkLWZg9DAJ
+                  type: company
+                  name: Acme Corp 4
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id:
-                owner_id: comp_UkLWZg9DAJ
-                owner_type: company
               schema:
                 "$ref": "#/components/schemas/Address"
       requestBody:
@@ -42068,14 +42078,16 @@ paths:
                 is_default_billing: true
                 is_default_shipping: false
                 state_name: New York
+                owner:
+                  id: comp_UkLWZg9DAJ
+                  type: company
+                  name: Acme Corp 5
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 latitude:
                 longitude:
                 customer_id:
-                owner_id: comp_UkLWZg9DAJ
-                owner_type: company
               schema:
                 "$ref": "#/components/schemas/Address"
       requestBody:
@@ -53473,14 +53485,16 @@ paths:
                   is_default_billing: false
                   is_default_shipping: false
                   state_name:
+                  owner:
+                    id: sel_UkLWZg9DAJ
+                    type: seller
+                    name:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   latitude:
                   longitude:
                   customer_id:
-                  owner_id: sel_UkLWZg9DAJ
-                  owner_type: seller
               schema:
                 "$ref": "#/components/schemas/Seller"
         '422':
@@ -57773,6 +57787,29 @@ components:
       - type
       - label
       x-typelizer: true
+    AddressOwner:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          anyOf:
+          - type: string
+            enum:
+            - customer
+            - company
+            - seller
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        name:
+          type: string
+          nullable: true
+      required:
+      - id
+      - type
+      - name
+      x-typelizer: true
     Address:
       type: object
       properties:
@@ -58067,6 +58104,10 @@ components:
         state_name:
           type: string
           nullable: true
+        owner:
+          allOf:
+          - "$ref": "#/components/schemas/AddressOwner"
+          nullable: true
         metadata:
           type: object
         created_at:
@@ -58080,12 +58121,6 @@ components:
           type: number
           nullable: true
         customer_id:
-          type: string
-          nullable: true
-        owner_id:
-          type: string
-          nullable: true
-        owner_type:
           type: string
           nullable: true
       required:
@@ -58108,14 +58143,13 @@ components:
       - is_default_billing
       - is_default_shipping
       - state_name
+      - owner
       - metadata
       - created_at
       - updated_at
       - latitude
       - longitude
       - customer_id
-      - owner_id
-      - owner_type
       x-typelizer: true
     AdminUser:
       type: object

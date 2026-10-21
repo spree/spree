@@ -37,7 +37,7 @@ module Spree
             end
 
             def serializer_class
-              Spree.api.selectable_address_serializer
+              Spree.api.address_serializer
             end
 
             def collection_includes

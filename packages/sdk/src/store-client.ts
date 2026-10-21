@@ -76,7 +76,6 @@ import type {
   Return,
   ReturnFilters,
   ReturnSort,
-  SelectableAddress,
   Seller,
   StockLocation,
   StoreCredit,
@@ -597,8 +596,8 @@ export class StoreClient {
         cartId: string,
         params?: ListParams<AddressFilters, AddressSort>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<SelectableAddress>> =>
-        this.request<PaginatedResponse<SelectableAddress>>('GET', `/carts/${cartId}/addresses`, {
+      ): Promise<PaginatedResponse<Address>> =>
+        this.request<PaginatedResponse<Address>>('GET', `/carts/${cartId}/addresses`, {
           ...options,
           params: transformListParams({ ...params }),
         }),

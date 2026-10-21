@@ -51,7 +51,7 @@ RSpec.describe 'Cart Addresses API', type: :request, swagger_doc: 'api-reference
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/SelectableAddress' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Address' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 

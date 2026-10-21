@@ -61,8 +61,12 @@ module Spree
               Spree.api.admin_address_serializer
             end
 
-            # division's orders may ship to its headquarters' sites, so staff placing one must be able to see them —
-            # while writes stay with the node that owns the row.
+            def collection_includes
+              [:owner]
+            end
+
+            # The listing includes what the node inherits: a division's orders may ship to its headquarters' sites,
+            # so staff placing one must be able to see them — while writes stay with the node that owns the row.
             def scope
               action_name == 'index' ? @parent.address_book : @parent.addresses
             end

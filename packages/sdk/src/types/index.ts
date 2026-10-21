@@ -79,7 +79,6 @@ export type {
   Refund,
   Return,
   ReturnLineItem,
-  SelectableAddress,
   Seller,
   State,
   StockLocation,

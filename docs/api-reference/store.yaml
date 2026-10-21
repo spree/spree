@@ -2122,7 +2122,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/SelectableAddress"
+                      "$ref": "#/components/schemas/Address"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -3428,6 +3428,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 shipping_address:
                   id: addr_UkLWZg9DAJ
                   label:
@@ -3450,6 +3454,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 payment_methods: []
                 gift_card:
                 market:
@@ -3749,6 +3757,7 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
                 shipping_address:
                   id: addr_OIJLhNcSbf
                   label:
@@ -3771,6 +3780,7 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -4453,6 +4463,7 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
                 payment_methods: []
                 gift_card:
                 market:
@@ -6818,6 +6829,7 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
                 shipping_address:
                   id: addr_gbHJdmfrXB
                   label:
@@ -6840,6 +6852,7 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -7168,6 +7181,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 - id: addr_gbHJdmfrXB
                   label:
                   first_name: John
@@ -7189,6 +7206,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 - id: addr_EfhxLZ9ck8
                   label:
                   first_name: John
@@ -7210,6 +7231,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 meta:
                   page: 1
                   limit: 25
@@ -7311,6 +7336,10 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+                owner:
+                  id: cust_UkLWZg9DAJ
+                  type: customer
+                  name:
               schema:
                 "$ref": "#/components/schemas/Address"
         '422':
@@ -7416,6 +7445,10 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+                owner:
+                  id: cust_UkLWZg9DAJ
+                  type: customer
+                  name:
               schema:
                 "$ref": "#/components/schemas/Address"
         '404':
@@ -7498,6 +7531,10 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+                owner:
+                  id: cust_UkLWZg9DAJ
+                  type: customer
+                  name:
               schema:
                 "$ref": "#/components/schemas/Address"
       requestBody:
@@ -8172,6 +8209,7 @@ paths:
                     state_abbr: NY
                     country_iso: US
                     state_name: New York
+                    owner:
                   shipping_address:
                     id: addr_VqXmZF31wY
                     label:
@@ -8194,6 +8232,7 @@ paths:
                     state_abbr: NY
                     country_iso: US
                     state_name: New York
+                    owner:
                   gift_card:
                   market:
                     id: mkt_UkLWZg9DAJ
@@ -8499,6 +8538,7 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
                 shipping_address:
                   id: addr_VqXmZF31wY
                   label:
@@ -8521,6 +8561,7 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
                 gift_card:
                 market:
                   id: mkt_UkLWZg9DAJ
@@ -8714,6 +8755,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 - id: addr_gbHJdmfrXB
                   label:
                   first_name: John
@@ -8735,6 +8780,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 default_billing_address:
                   id: addr_gbHJdmfrXB
                   label:
@@ -8757,6 +8806,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
                   label:
@@ -8779,6 +8832,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 newsletter_subscriber:
                 customer_groups: []
               schema:
@@ -8871,6 +8928,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 - id: addr_gbHJdmfrXB
                   label:
                   first_name: John
@@ -8892,6 +8953,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 default_billing_address:
                   id: addr_gbHJdmfrXB
                   label:
@@ -8914,6 +8979,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 default_shipping_address:
                   id: addr_UkLWZg9DAJ
                   label:
@@ -8936,6 +9005,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: cust_UkLWZg9DAJ
+                    type: customer
+                    name:
                 newsletter_subscriber:
                 customer_groups: []
               schema:
@@ -12392,6 +12465,10 @@ paths:
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
+                  owner:
+                    id: comp_UkLWZg9DAJ
+                    type: company
+                    name: Acme Industrial
                 meta:
                   page: 1
                   limit: 25
@@ -12449,6 +12526,10 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+                owner:
+                  id: comp_UkLWZg9DAJ
+                  type: company
+                  name: Acme Industrial
               schema:
                 "$ref": "#/components/schemas/Address"
       requestBody:
@@ -12518,6 +12599,10 @@ paths:
                 state_abbr: NY
                 country_iso: US
                 state_name: New York
+                owner:
+                  id: comp_UkLWZg9DAJ
+                  type: company
+                  name: Acme Industrial
               schema:
                 "$ref": "#/components/schemas/Address"
       requestBody:
@@ -12903,6 +12988,7 @@ paths:
                     state_abbr: NY
                     country_iso: US
                     state_name: New York
+                    owner:
                   shipping_address:
                     id: addr_VqXmZF31wY
                     label:
@@ -12925,6 +13011,7 @@ paths:
                     state_abbr: NY
                     country_iso: US
                     state_name: New York
+                    owner:
                   gift_card:
                   market:
                     id: mkt_UkLWZg9DAJ
@@ -13868,6 +13955,7 @@ components:
             enum:
             - customer
             - company
+            - seller
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
@@ -14180,6 +14268,10 @@ components:
         state_name:
           type: string
           nullable: true
+        owner:
+          allOf:
+          - "$ref": "#/components/schemas/AddressOwner"
+          nullable: true
       required:
       - id
       - label
@@ -14202,6 +14294,7 @@ components:
       - state_abbr
       - country_iso
       - state_name
+      - owner
       x-typelizer: true
     AppliedPromotion:
       type: object
@@ -22148,333 +22241,6 @@ components:
       - created_at
       - updated_at
       - user_id
-      x-typelizer: true
-    SelectableAddress:
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-          nullable: true
-        first_name:
-          type: string
-          nullable: true
-        last_name:
-          type: string
-          nullable: true
-        full_name:
-          type: string
-        address1:
-          type: string
-          nullable: true
-        address2:
-          type: string
-          nullable: true
-        postal_code:
-          type: string
-          nullable: true
-        city:
-          type: string
-          nullable: true
-        phone:
-          type: string
-          nullable: true
-        company:
-          type: string
-          nullable: true
-        country_name:
-          type: string
-        country_code:
-          type: string
-          enum:
-          - AD
-          - AE
-          - AF
-          - AG
-          - AI
-          - AL
-          - AM
-          - AO
-          - AR
-          - AS
-          - AT
-          - AU
-          - AW
-          - AZ
-          - BA
-          - BB
-          - BD
-          - BE
-          - BF
-          - BG
-          - BH
-          - BI
-          - BJ
-          - BL
-          - BM
-          - BN
-          - BO
-          - BQ
-          - BR
-          - BS
-          - BT
-          - BW
-          - BY
-          - BZ
-          - CA
-          - CC
-          - CD
-          - CF
-          - CG
-          - CH
-          - CI
-          - CK
-          - CL
-          - CM
-          - CN
-          - CO
-          - CR
-          - CU
-          - CV
-          - CW
-          - CX
-          - CY
-          - CZ
-          - DE
-          - DJ
-          - DK
-          - DM
-          - DO
-          - DZ
-          - EC
-          - EE
-          - EG
-          - ER
-          - ES
-          - ET
-          - FI
-          - FJ
-          - FK
-          - FM
-          - FO
-          - FR
-          - GA
-          - GB
-          - GD
-          - GE
-          - GF
-          - GG
-          - GH
-          - GI
-          - GL
-          - GM
-          - GN
-          - GP
-          - GQ
-          - GR
-          - GT
-          - GU
-          - GW
-          - GY
-          - HK
-          - HN
-          - HR
-          - HT
-          - HU
-          - ID
-          - IE
-          - IL
-          - IM
-          - IN
-          - IQ
-          - IR
-          - IS
-          - IT
-          - JE
-          - JM
-          - JO
-          - JP
-          - KE
-          - KG
-          - KH
-          - KI
-          - KM
-          - KN
-          - KP
-          - KR
-          - KW
-          - KY
-          - KZ
-          - LA
-          - LB
-          - LC
-          - LI
-          - LK
-          - LR
-          - LS
-          - LT
-          - LU
-          - LV
-          - LY
-          - MA
-          - MC
-          - MD
-          - ME
-          - MF
-          - MG
-          - MH
-          - MK
-          - ML
-          - MM
-          - MN
-          - MO
-          - MP
-          - MQ
-          - MR
-          - MS
-          - MT
-          - MU
-          - MV
-          - MW
-          - MX
-          - MY
-          - MZ
-          - NA
-          - NC
-          - NE
-          - NF
-          - NG
-          - NI
-          - NL
-          - 'NO'
-          - NP
-          - NR
-          - NU
-          - NZ
-          - OM
-          - PA
-          - PE
-          - PF
-          - PG
-          - PH
-          - PK
-          - PL
-          - PM
-          - PN
-          - PR
-          - PS
-          - PT
-          - PW
-          - PY
-          - QA
-          - RE
-          - RO
-          - RS
-          - RU
-          - RW
-          - SA
-          - SB
-          - SC
-          - SD
-          - SE
-          - SG
-          - SH
-          - SI
-          - SJ
-          - SK
-          - SL
-          - SM
-          - SN
-          - SO
-          - SR
-          - SS
-          - ST
-          - SV
-          - SX
-          - SY
-          - SZ
-          - TC
-          - TD
-          - TG
-          - TH
-          - TJ
-          - TK
-          - TL
-          - TM
-          - TN
-          - TO
-          - TR
-          - TT
-          - TV
-          - TW
-          - TZ
-          - UA
-          - UG
-          - US
-          - UY
-          - UZ
-          - VA
-          - VC
-          - VE
-          - VG
-          - VI
-          - VN
-          - VU
-          - WF
-          - WS
-          - YE
-          - YT
-          - ZA
-          - ZM
-          - ZW
-        state_text:
-          type: string
-          nullable: true
-        state_code:
-          type: string
-          nullable: true
-        quick_checkout:
-          type: boolean
-        is_default_billing:
-          type: boolean
-        is_default_shipping:
-          type: boolean
-        state_abbr:
-          type: string
-          nullable: true
-          deprecated: true
-        country_iso:
-          type: string
-          deprecated: true
-        state_name:
-          type: string
-          nullable: true
-        owner:
-          "$ref": "#/components/schemas/AddressOwner"
-      required:
-      - id
-      - label
-      - first_name
-      - last_name
-      - full_name
-      - address1
-      - address2
-      - postal_code
-      - city
-      - phone
-      - company
-      - country_name
-      - country_code
-      - state_text
-      - state_code
-      - quick_checkout
-      - is_default_billing
-      - is_default_shipping
-      - state_abbr
-      - country_iso
-      - state_name
-      - owner
       x-typelizer: true
     Seller:
       type: object
