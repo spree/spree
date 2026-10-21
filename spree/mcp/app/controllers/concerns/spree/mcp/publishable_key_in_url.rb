@@ -34,15 +34,11 @@ module Spree
       end
 
       # This endpoint's address as a client should be given it: the key the
-      # request authenticated with, carried in the URL. The configured public
-      # origin wins over the one the request arrived on, which is a private
-      # address whenever a storefront fetches the profile on an internal
-      # network.
+      # request authenticated with, carried in the URL.
       #
       # @return [String]
       def store_mcp_url
-        origin = Spree::Config[:public_api_url].presence&.chomp('/') || request.base_url
-        "#{origin}/api/v3/store/mcp?#{{ key: current_api_key.token }.to_query}"
+        "#{request.base_url}/api/v3/store/mcp?#{{ key: current_api_key.token }.to_query}"
       end
     end
   end

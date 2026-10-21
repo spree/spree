@@ -89,17 +89,5 @@ RSpec.describe 'Storefront MCP endpoint', type: :request do
       expect(profile['capabilities'].keys).to include('dev.ucp.shopping.checkout', 'dev.ucp.shopping.catalog.search')
       expect(profile['payment_handlers']).to eq({})
     end
-
-    # A storefront fetching the profile over a private network would
-    # otherwise advertise that private address to the public.
-    it 'advertises the configured public address over the one the request used' do
-      allow(Spree::Config).to receive(:[]).and_call_original
-      allow(Spree::Config).to receive(:[]).with(:public_api_url).and_return('https://api.shop.example/')
-
-      get "/api/v3/store/ucp_profile?key=#{api_key.token}"
-
-      endpoint = JSON.parse(response.body).dig('ucp', 'services', 'dev.ucp.shopping', 0, 'endpoint')
-      expect(endpoint).to eq("https://api.shop.example/api/v3/store/mcp?key=#{api_key.token}")
-    end
   end
 end
