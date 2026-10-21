@@ -1,5 +1,9 @@
 import type { SellerPayout, SellerTransfer } from '@spree/admin-sdk'
-import { SELLER_PAYOUT_STATUSES, SELLER_TRANSFER_STATUSES } from '@spree/core'
+import {
+  SELLER_PAYOUT_STATUSES,
+  SELLER_TRANSFER_KINDS,
+  SELLER_TRANSFER_STATUSES,
+} from '@spree/core'
 import { defineTable, formatStoreDateTime, Money, useStore } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { BanknoteIcon, HandCoinsIcon } from '@spree/dashboard-ui/icons'
@@ -19,8 +23,6 @@ function LedgerDate({ iso }: { iso: string }) {
 
   return <>{formatStoreDateTime(iso, timezone)}</>
 }
-
-const TRANSFER_KINDS = ['earning', 'refund_reversal'] as const
 
 function statusOptions(statuses: readonly string[]) {
   return statuses.map((status) => ({
@@ -97,7 +99,7 @@ defineTable<SellerTransfer>('seller-transfers', {
       label: i18n.t('admin.payouts.columns.kind'),
       filterable: true,
       filterType: 'enum',
-      filterOptions: TRANSFER_KINDS.map((kind) => ({
+      filterOptions: SELLER_TRANSFER_KINDS.map((kind) => ({
         value: kind,
         label: i18n.t(`admin.payouts.kinds.${kind}`),
       })),

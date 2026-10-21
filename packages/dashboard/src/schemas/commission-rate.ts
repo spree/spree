@@ -3,18 +3,16 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
 } from '@spree/admin-sdk'
-import { compareMoney, isDecimalString } from '@spree/core'
+import { COMMISSION_KINDS, compareMoney, isDecimalString } from '@spree/core'
 import { blankToNull, fractionToPercent, i18n, percentToFraction } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-
-export const COMMISSION_RATE_KINDS = ['percentage', 'fixed'] as const
 
 const commissionRateFieldsSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   code: z.string().optional(),
   enabled: z.boolean(),
-  kind: z.enum(COMMISSION_RATE_KINDS),
+  kind: z.enum(COMMISSION_KINDS),
   // A canonical decimal string from a number input, sent as typed.
   value: z
     .string()

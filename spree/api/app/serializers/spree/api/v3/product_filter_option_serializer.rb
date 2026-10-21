@@ -6,7 +6,7 @@ module Spree
                  type: "'option'",
                  name: :string,
                  label: :string,
-                 kind: [:string, enum: Spree::OptionType::KINDS],
+                 kind: [:string, enum: Spree::OptionType::KINDS, enum_type_name: 'OptionTypeKind'],
                  options: [:ProductFilterOptionValue, multi: true]
 
         attributes :id, :type, :name, :label, :kind

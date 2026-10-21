@@ -50,6 +50,9 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
 const RETURN_ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
+// Once goods have arrived the return can only be refunded.
+const RETURN_CANCELABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
+const RETURN_RECEIVED = subsetOf(RETURN_STATUSES, ['received', 'refunded'])
 
 /**
  * Returns on an order. Each status change is a distinct action rather than an
@@ -147,7 +150,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             )}
                           </DropdownMenuItem>
                         )}
-                        {['requested', 'approved'].includes(returnRecord.status) && (
+                        {RETURN_CANCELABLE.includes(returnRecord.status) && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -354,7 +357,7 @@ function RefundSummaryFooter({
 
 function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string }) {
   const { t } = useTranslation()
-  const received = ['received', 'refunded'].includes(status)
+  const received = RETURN_RECEIVED.includes(status)
 
   return (
     <div className="flex items-center justify-between text-sm">

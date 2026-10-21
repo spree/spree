@@ -50,6 +50,7 @@ import {
 // show a menu button that opens onto nothing.
 const EXCHANGE_ACTIONABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved', 'received'])
 const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
+const EXCHANGE_CANCELABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved'])
 
 /** Exchanges on an order, with the actions available at each status. */
 export function OrderExchangesCard({ order }: { order: Order }) {
@@ -150,7 +151,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
                           </DropdownMenuItem>
                         )}
-                        {['requested', 'approved'].includes(exchange.status) && (
+                        {EXCHANGE_CANCELABLE.includes(exchange.status) && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -294,7 +295,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.claims.actions.resolve')}
                           </DropdownMenuItem>
                         )}
-                        {['open', 'approved'].includes(claim.status) && <DropdownMenuSeparator />}
+                        {CLAIM_ACTIONABLE.includes(claim.status) && <DropdownMenuSeparator />}
                         {claim.status === 'open' && (
                           <DropdownMenuItem
                             variant="destructive"
@@ -314,7 +315,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.claims.actions.deny')}
                           </DropdownMenuItem>
                         )}
-                        {['open', 'approved'].includes(claim.status) && (
+                        {CLAIM_ACTIONABLE.includes(claim.status) && (
                           <DropdownMenuItem
                             variant="destructive"
                             onClick={async () => {

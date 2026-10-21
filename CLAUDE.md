@@ -416,7 +416,7 @@ end
 
 - `typelize attr: :type` for computed/delegated attribute types
 - Value lists come in three tiers — picking the wrong one is a contract bug:
-  - **Closed** (nothing can extend it — units, match policies): `enum: Model::KINDS` → closed TS union, plain OpenAPI `enum`
+  - **Closed** (nothing can extend it — units, match policies): `enum: Model::KINDS, enum_type_name: 'ModelKind'` and add the name to `Typelizer::OpenEnums::CLOSED_LIST_NAMES` → closed TS union defined once in `@spree/core` (`MODEL_KINDS` + `ModelKind`), plain OpenAPI `enum`. Never leave a list unnamed: an inline union is copied into every SDK and cannot be imported by the dashboards
   - **Open** (extensions may add, built-ins known at class-load — `has_status`, `Spree::Fee::KINDS`): add `enum_type_name: 'ModelStatus'` → open TS union (`'a' | 'b' | (string & {})`) + OpenAPI `anyOf`, so clients autocomplete the built-ins and still accept extension values. The list is generated once into `@spree/core` (`MODEL_STATUSES` + `ModelStatus`) and each SDK's `Enums.ts` re-exports the type; two serializers giving one name different values stop generation. Dashboards never copy a list: iterate the generated constant, and pick a subset with `subsetOf(MODEL_STATUSES, [...])` so a typo fails to compile
   - **Registry-driven `type`** (the typed families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
 - Never use `typelize_from` — it connects to the database

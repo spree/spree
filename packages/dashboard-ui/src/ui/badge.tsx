@@ -1,3 +1,4 @@
+import type { BuiltInStatus } from '@spree/core'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type * as React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -80,6 +81,7 @@ const statusToneMap: Record<string, StatusTone> = {
   authorized: 'info',
   complete: 'success',
   completed: 'success',
+  placed: 'success',
   paid: 'success',
   fulfilled: 'success',
   delivered: 'success',
@@ -163,12 +165,28 @@ const statusToneMap: Record<string, StatusTone> = {
   // Price lists — `scheduled` is live-but-not-yet, which is the same shape as
   // any other "waiting on the clock" state.
   scheduled: 'info',
+  // The rest of the API's own statuses, on the same rule as above.
+  accepted: 'success',
+  waived: 'neutral',
+  withdrawn: 'neutral',
+  awaiting_confirmation: 'warning',
+  lapsed: 'neutral',
+  mapping: 'warning',
+  completed_mapping: 'info',
+  unresolved: 'destructive',
+  on_hand: 'success',
+  backordered: 'warning',
+  shipped: 'success',
+  checkout: 'neutral',
+  invalid: 'destructive',
+  purchased: 'success',
+  refund_requested: 'warning',
   // Boolean filter values. A yes/no pair is a state like any other — "in
   // stock: no" is the row an operator is looking for, and reading it in the
   // same green/red the rest of the app uses saves them parsing the word.
   true: 'success',
   false: 'destructive',
-}
+} satisfies Record<BuiltInStatus, StatusTone> & Record<string, StatusTone>
 
 // Dot fills, by tone. These read the same `--status-*` ramps the tinted Badge
 // variants use, but take the *reading* step rather than the fill step: a 6px

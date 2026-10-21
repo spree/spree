@@ -1,8 +1,8 @@
 module Spree
   module Api
-    # Renders every open value list the serializers name (`enum_type_name:`,
-    # see {Typelizer::OpenEnums}) into `@spree/core`, once, as both the
-    # built-in values and the type. Each SDK's `Enums.ts` re-exports the type
+    # Renders every value list the serializers name (`enum_type_name:`, see
+    # {Typelizer::OpenEnums}) into `@spree/core`, once, as both the values and
+    # the type — open unless the name is one of `CLOSED_LIST_NAMES`. Each SDK's `Enums.ts` re-exports the type
     # from there instead of carrying its own copy, and the dashboards read the
     # values instead of repeating them by hand.
     #
@@ -20,11 +20,26 @@ module Spree
         @properties = properties
       end
 
+      # Walks every property rather than Typelizer's own `enum_types`, which
+      # keeps one property per name within a serializer and so would hide two
+      # attributes of one serializer that disagree.
+      #
       # @return [Array<Typelizer::Property>] the named enum properties of every serializer each Typelizer writer emits
       def self.serializer_properties
         Typelizer.configuration.writers.keys
                  .flat_map { |writer_name| Typelizer.interfaces(writer_name: writer_name) }
-                 .flat_map(&:enum_types)
+                 .flat_map { |interface| named_properties(interface.properties + interface.trait_interfaces.flat_map(&:properties)) }
+      end
+
+      # @param properties [Array<Typelizer::Property>]
+      # @return [Array<Typelizer::Property>] those carrying a named list, nested and inline ones included
+      def self.named_properties(properties)
+        properties.flat_map do |property|
+          nested = property.nested_properties.to_a
+          nested += property.type.properties if property.type.is_a?(Typelizer::Interface) && property.type.inline?
+
+          [property, *named_properties(nested)]
+        end.select { |property| property.enum && property.enum_type_name }
       end
 
       # @return [Hash{String => Array<String>}] built-in values keyed by type name
@@ -38,14 +53,22 @@ module Spree
                    .to_h { |name, properties| [name, values_of(name, properties)] }
       end
 
+      # @return [Array<String>] closed list names no serializer declares any more
+      def stale_closed_names
+        Typelizer::OpenEnums::CLOSED_LIST_NAMES - lists.keys
+      end
+
       # @return [String] the file's contents
       def render
-        HEADER + lists.map { |name, values| definition(name, values) }.join
+        HEADER + lists.map { |name, values| definition(name, values) }.join + built_in_status
       end
 
       # @param root [Pathname] the monorepo root
       # @return [void]
+      # @raise [ConflictError] when `CLOSED_LIST_NAMES` names a list no serializer declares
       def write!(root)
+        raise ConflictError, "No serializer names #{stale_closed_names.join(', ')}; remove it from CLOSED_LIST_NAMES." if stale_closed_names.any?
+
         File.write(root.join(PATH), render)
       end
 
@@ -66,15 +89,29 @@ module Spree
                              'Give every serializer the same list, or give the lists different names.'
       end
 
+      # Every built-in value of every status list, so a surface that styles
+      # statuses can be checked for one the server added.
+      def built_in_status
+        members = lists.keys.grep(/Status\z/).map { |name| "  | (typeof #{self.class.constant_name(name)})[number]\n" }
+        return '' if members.empty?
+
+        "\n/** Every built-in value of every status list above. */\nexport type BuiltInStatus =\n#{members.join}"
+      end
+
       def definition(name, values)
         constant = self.class.constant_name(name)
         quoted = values.map { |value| "'#{value}'" }
         line = "export const #{constant} = [#{quoted.join(', ')}] as const"
         line = "export const #{constant} = [\n#{quoted.map { |value| "  #{value},\n" }.join}] as const" if line.length > LINE_WIDTH
-        type = "export type #{name} = (typeof #{constant})[number] | (string & {})"
-        type = "export type #{name} =\n  | (typeof #{constant})[number]\n  | (string & {})" if type.length > LINE_WIDTH
 
-        "\n/** The built-in values of `#{name}`. Extensions may add more. */\n#{line}\n#{type}\n"
+        if Typelizer::OpenEnums.closed?(name)
+          "\n/** Every value of `#{name}`. */\n#{line}\nexport type #{name} = (typeof #{constant})[number]\n"
+        else
+          type = "export type #{name} = (typeof #{constant})[number] | (string & {})"
+          type = "export type #{name} =\n  | (typeof #{constant})[number]\n  | (string & {})" if type.length > LINE_WIDTH
+
+          "\n/** The built-in values of `#{name}`. Extensions may add more. */\n#{line}\n#{type}\n"
+        end
       end
     end
   end

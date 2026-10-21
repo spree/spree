@@ -68,7 +68,7 @@ They check the shape only, `US` but not `us` or `USA`, and accept a code missing
 
 ## Statuses and kinds
 
-Every status and kind the Spree API returns — `ProductStatus`, `PaymentStatus`, `FeeKind`, `SellerStatus` and the rest — generated from the API itself. Each comes as a list of its built-in values and a type:
+Every status, kind and other value list the Spree API returns — `ProductStatus`, `PaymentStatus`, `FeeKind`, `MediaType` and the rest — generated from the API itself. Each comes as a list of its built-in values and a type:
 
 ```typescript
 import { PRODUCT_STATUSES, type ProductStatus } from '@spree/core';
@@ -79,7 +79,7 @@ PRODUCT_STATUSES; // ['draft', 'active', 'archived', 'proposed', 'rejected']
 const options = PRODUCT_STATUSES.map((status) => ({ value: status, label: t(status) }));
 ```
 
-Unlike the code lists, these lists are open: an extension may add its own statuses, so the type still accepts any string, while your editor suggests the built-in ones.
+Statuses and kinds an extension may add to — `ProductStatus`, `PaymentStatus`, `FeeKind` and the like — are open: the type still accepts any string, while your editor suggests the built-in ones. The rest are closed, like the code lists: `OrderPaymentStatus`, `MediaType`, `DiscountKind` and every other list the API never grows accept only their own values.
 
 When only some values matter — the statuses an action accepts, say — pick them with `subsetOf`. A misspelled or retired value fails to compile, and `includes` takes any status the API returns:
 

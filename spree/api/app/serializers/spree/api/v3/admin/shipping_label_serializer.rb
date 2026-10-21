@@ -7,8 +7,8 @@ module Spree
         # The file is streamed through +download_url+, never linked to storage.
         class ShippingLabelSerializer < V3::BaseSerializer
           typelize owner_id: :string,
-                   owner_type: [:string, enum: Spree::ShippingLabel::OWNER_TYPES.map { |type| Spree::Base.polymorphic_api_type(type) }],
-                   source: [:string, enum: Spree::ShippingLabel::SOURCES],
+                   owner_type: [:string, enum: Spree::ShippingLabel::OWNER_TYPES.map { |type| Spree::Base.polymorphic_api_type(type) }, enum_type_name: 'ShippingLabelOwnerType'],
+                   source: [:string, enum: Spree::ShippingLabel::SOURCES, enum_type_name: 'ShippingLabelSource'],
                    status: [:string, enum: Spree::ShippingLabel.statuses, enum_type_name: 'ShippingLabelStatus'],
                    carrier: [:string, nullable: true],
                    carrier_name: [:string, nullable: true],

@@ -19,7 +19,7 @@ module Spree
                    line_item_id: 'string | null',
                    fulfillment_id: 'string | null',
                    commission_rate_id: 'string | null',
-                   kind: [:string, enum: Spree::CommissionRate::KINDS],
+                   kind: [:string, enum: Spree::CommissionRate::KINDS, enum_type_name: 'CommissionKind'],
                    taxability_reason: 'string | null',
                    country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    state_code: 'string | null',

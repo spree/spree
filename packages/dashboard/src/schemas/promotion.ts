@@ -1,3 +1,4 @@
+import { MATCH_POLICIES } from '@spree/core'
 import { emptyToUndefined, i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
@@ -7,7 +8,6 @@ import type {
 } from '../components/spree/promotion-editors/types'
 
 export type PromotionKind = 'coupon_code' | 'automatic'
-export type MatchPolicy = 'all' | 'any'
 
 // Labels live in `en.json` under `admin.promotions.kinds.*` and
 // `admin.promotions.match_policies.*`. Consumers translate at render time.
@@ -15,7 +15,6 @@ export const PROMOTION_KINDS = [
   'coupon_code',
   'automatic',
 ] as const satisfies ReadonlyArray<PromotionKind>
-export const MATCH_POLICIES = ['all', 'any'] as const satisfies ReadonlyArray<MatchPolicy>
 
 /**
  * Promotion form schema.
@@ -47,7 +46,7 @@ export const promotionFormSchema = z
     starts_at: z.string(),
     expires_at: z.string(),
     usage_limit: z.preprocess(emptyToUndefined, z.coerce.number().int().positive().optional()),
-    match_policy: z.enum(['all', 'any']),
+    match_policy: z.enum(MATCH_POLICIES),
     // Rule/action drafts are owned by the editor components; we accept whatever
     // shape they emit and let the server's rule/action serializers validate.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

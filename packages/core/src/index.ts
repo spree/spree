@@ -55,5 +55,4 @@ export {
 } from './money'
 export { currencyParts, normalizeMoneyInput } from './money-input'
 // Units
-export type { UnitSystem } from './unit-systems'
-export { UNIT_SYSTEM_WEIGHT_UNITS, UNIT_SYSTEMS } from './unit-systems'
+export { UNIT_SYSTEM_WEIGHT_UNITS } from './unit-systems'

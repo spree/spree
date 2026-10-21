@@ -4,7 +4,7 @@ import type {
   PriceListUpdateParams,
   PriceRule,
 } from '@spree/admin-sdk'
-import { isDecimalString, isZeroMoney } from '@spree/core'
+import { isDecimalString, isZeroMoney, MATCH_POLICIES } from '@spree/core'
 import {
   blankToNull,
   defaultPreferences,
@@ -15,9 +15,6 @@ import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
 import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
-
-export const MATCH_POLICIES = ['all', 'any'] as const
-export type MatchPolicy = (typeof MATCH_POLICIES)[number]
 
 /**
  * How a list produces prices. `fixed` prices only what it holds explicit

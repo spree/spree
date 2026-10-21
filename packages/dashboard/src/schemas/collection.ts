@@ -1,4 +1,5 @@
 import type { Collection, CollectionRuleParams, CollectionSortOrder } from '@spree/admin-sdk'
+import { COLLECTION_RULE_MATCH_POLICIES, MATCH_POLICIES } from '@spree/core'
 import { customFieldFormSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
@@ -54,15 +55,6 @@ function knownMatchPolicy(value: string | null): CollectionRuleFormValues['match
     : 'is_equal_to'
 }
 
-export const COLLECTION_RULE_MATCH_POLICIES = [
-  'is_equal_to',
-  'is_not_equal_to',
-  'contains',
-  'does_not_contain',
-] as const
-
-export const COLLECTION_RULES_MATCH_POLICIES = ['all', 'any'] as const
-
 // Each image field is a small state machine: untouched (omit on save),
 // uploaded (send signed_id), or cleared (send null to purge).
 const imageFields = {
@@ -101,7 +93,7 @@ export const collectionFormSchema = z.object({
   meta_description: z.string(),
   sort_order: z.enum(COLLECTION_SORT_ORDERS),
   automatic: z.boolean(),
-  rules_match_policy: z.enum(COLLECTION_RULES_MATCH_POLICIES),
+  rules_match_policy: z.enum(MATCH_POLICIES),
   rules: z.array(collectionRuleSchema),
   custom_fields: z.array(customFieldFormSchema).optional(),
   ...imageFields,

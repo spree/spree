@@ -28,6 +28,26 @@ RSpec.describe Spree::Api::EnumTypes do
     expect(source).not_to include('Currency')
   end
 
+  it 'keeps a closed list closed' do
+    source = described_class.new([property('SellerTransferKind', %w[earning refund_reversal])]).render
+
+    expect(source).to include("export type SellerTransferKind = (typeof SELLER_TRANSFER_KINDS)[number]\n")
+  end
+
+  it 'joins every status list into one type of the built-in statuses' do
+    source = described_class.new([property('ProductStatus', %w[draft]), property('FeeKind', %w[duty])]).render
+
+    expect(source).to include("export type BuiltInStatus =\n  | (typeof PRODUCT_STATUSES)[number]\n")
+    expect(source[/export type BuiltInStatus.*/m]).not_to include('FEE_KINDS')
+  end
+
+  it 'finds two attributes of one serializer that disagree, which Typelizer would collapse into one' do
+    nested = property('ProductStatus', %w[draft])
+    parent = Typelizer::Property.new(name: :product, type: :object, nested_properties: [nested])
+
+    expect(described_class.named_properties([property('ProductStatus', %w[draft active]), parent]).size).to eq(2)
+  end
+
   it 'refuses a list two serializers declare with different values' do
     generator = described_class.new([property('ProductStatus', %w[draft active]), property('ProductStatus', %w[draft])])
 

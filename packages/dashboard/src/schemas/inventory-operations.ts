@@ -27,15 +27,6 @@ export const PURCHASE_ORDER_STATUSES = [
 
 export type PurchaseOrderStatus = (typeof PURCHASE_ORDER_STATUSES)[number]
 
-/**
- * Why a delivery refused units, matching `Spree::StockReceiptItem::REJECTION_REASONS`.
- * A closed list: the server accepts nothing else, and a fixed vocabulary is
- * what makes the figures worth reporting on.
- */
-export const REJECTION_REASONS = ['damaged', 'wrong_item', 'expired', 'other'] as const
-
-export type RejectionReason = (typeof REJECTION_REASONS)[number]
-
 /** What happens to units still in flight when a shipped transfer is called off. */
 export const IN_TRANSIT_RESOLUTIONS = ['restock', 'write_off'] as const
 
