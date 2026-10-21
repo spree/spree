@@ -7,11 +7,10 @@ module Spree
             scoped_resource :products
 
             request_params :variant do |body|
+              body.extends Spree::Api::V3::Admin::VariantRequestSchema
               body.external_references
-              body.include_attributes Spree::Api::V3::VariantRequestSchema
-              body.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
-                required: true, on: :create,
-                description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing. On update, omit to leave the option values untouched.'
+              body.require_attributes :options, on: :create
+              body.describe_attribute :options, 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing. On update, omit to leave the option values untouched.'
             end
 
             protected

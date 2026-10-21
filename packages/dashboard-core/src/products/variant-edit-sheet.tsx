@@ -1,5 +1,6 @@
+import { DimensionUnit, WeightUnit } from '@spree/core'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
-import { CountryCombobox, StoreDatePicker } from '@spree/dashboard-core'
+import { CountryCombobox, Slot, StoreDatePicker } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -43,13 +44,12 @@ import {
 } from './use-product-form-data'
 import { variantDisplayLabel } from './variants-matrix'
 
-const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
-const DIMENSION_UNITS = ['mm', 'cm', 'in'] as const
-
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<ProductFormValues, any, any>
   variantIndex: number
+  /** The product form's key — names the `<formKey>.variant.form_fields` slot. */
+  formKey: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -58,7 +58,7 @@ interface Props {
 // form — no own form state. Save closes the sheet (changes are already in
 // form state; the product Save button commits them). Cancel restores the
 // snapshot captured when the sheet opened.
-export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Props) {
+export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChange }: Props) {
   const { t } = useTranslation()
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
@@ -230,7 +230,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                         <SelectValue>{(v) => (v as string) || '—'}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {WEIGHT_UNITS.map((u) => (
+                        {Object.values(WeightUnit).map((u) => (
                           <SelectItem key={u} value={u}>
                             {u}
                           </SelectItem>
@@ -295,7 +295,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                         <SelectValue>{(v) => (v as string) || '—'}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {DIMENSION_UNITS.map((u) => (
+                        {Object.values(DimensionUnit).map((u) => (
                           <SelectItem key={u} value={u}>
                             {u}
                           </SelectItem>
@@ -709,6 +709,11 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
               </Field>
             </FormSection>
           )}
+
+          <Slot
+            name={`${formKey}.variant.form_fields`}
+            context={{ variant, variantIndex, fieldPrefix: `variants.${variantIndex}` }}
+          />
         </div>
 
         <SheetFooter>

@@ -1007,7 +1007,209 @@
       "title": "Pobrania"
     },
     "enterprise": {
-      "learn_more": "Dowiedz się więcej o Spree Enterprise"
+      "available_in": "Dostępne w Spree Enterprise",
+      "badge": "Enterprise",
+      "cta": "Wybierz Spree Enterprise",
+      "footer": "Spree Enterprise dodaje tę funkcję do Spree w wersji open source, którego już używasz. Twoje dane, sklep i integracje pozostają bez zmian.",
+      "how_it_works": "Jak to działa",
+      "learn_more": "Dowiedz się więcej o Spree Enterprise",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "Każdy wpis pokazuje starą i nową wartość, więc widzisz dokładnie, co się zmieniło.",
+              "title": "Przed i po"
+            },
+            "coverage": {
+              "description": "Produkty, warianty, ceny, stany magazynowe, kategorie, promocje, płatności, przesyłki, kredyt sklepowy, stawki podatku i ustawienia sklepu.",
+              "title": "Wszystko, co ważne"
+            },
+            "search": {
+              "description": "Filtruj według osoby, typu rekordu lub daty i otwieraj zmieniony rekord.",
+              "title": "Łatwe wyszukiwanie"
+            }
+          },
+          "intro": "Gdy sklep prowadzi kilka osób, musisz wiedzieć, kto zmienił cenę, stan magazynowy lub ustawienie. Spree Enterprise zapisuje każdą ważną zmianę wraz z jej autorem, czasem oraz wartościami przed zmianą i po niej.",
+          "nav": "Dziennik zmian",
+          "steps": {
+            "change": {
+              "description": "Ktoś z Twojego zespołu edytuje rekord.",
+              "title": "Zmiana"
+            },
+            "record": {
+              "description": "Spree zapisuje, kto, kiedy i co zmienił.",
+              "title": "Zapis"
+            },
+            "review": {
+              "description": "Znajdź zmianę w dzienniku, kiedy tylko jej potrzebujesz.",
+              "title": "Przegląd"
+            }
+          },
+          "subtitle": "Sprawdzaj, kto, co i kiedy zmienił w Twoim sklepie.",
+          "title": "Dziennik zmian"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "Zatwierdzona firma otrzymuje swój katalog i ceny. Konto możesz później zawiesić i przywrócić.",
+              "title": "Zatwierdzenie na Twoich warunkach"
+            },
+            "checklist": {
+              "description": "Poproś o NIP, dokumenty lub potwierdzenia i zweryfikuj każdą odpowiedź.",
+              "title": "Własna lista wymagań"
+            },
+            "dialogue": {
+              "description": "Zamiast odrzucać zgłoszenie, odeślij je z notatką. Firma odpowiada bezpośrednio w Twoim sklepie.",
+              "title": "Prośba o dodatkowe informacje"
+            }
+          },
+          "intro": "Gdy firma zarejestruje się w Twoim sklepie, Spree Enterprise wstrzymuje jej konto do weryfikacji. Firma może przeglądać katalog bez widocznych cen, a Twój zespół w tym czasie sprawdza jej dane, prosi o brakujące informacje i zatwierdza konto.",
+          "nav": "Onboarding",
+          "steps": {
+            "approve": {
+              "description": "Firma widzi swoje ceny i może składać zamówienia.",
+              "title": "Zatwierdzenie"
+            },
+            "register": {
+              "description": "Firma rejestruje się w Twoim sklepie.",
+              "title": "Rejestracja"
+            },
+            "review": {
+              "description": "Twój zespół weryfikuje zgłoszenie lub prosi o więcej informacji.",
+              "title": "Weryfikacja"
+            },
+            "verify": {
+              "description": "Firma uzupełnia listę wymagań, a ceny pozostają ukryte.",
+              "title": "Wymagania"
+            }
+          },
+          "subtitle": "Weryfikuj rejestracje firm, zanim będą mogły kupować.",
+          "title": "Rejestracja firm"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "Automatycznie wysyłaj najstarszą partię lub tę, która najwcześniej traci ważność, albo pozwól wybrać magazynowi. Jedna przesyłka może pochodzić z kilku partii.",
+              "title": "Właściwa partia najpierw"
+            },
+            "recall": {
+              "description": "Znajdź wszystkie zamówienia i klientów, do których trafiła partia, i sprawdź, którym partiom wkrótce kończy się ważność.",
+              "title": "Szybkie wycofania"
+            },
+            "stock": {
+              "description": "Ilości, daty ważności i produkcji oraz numery partii dostawcy dla każdej partii w każdej lokalizacji.",
+              "title": "Stany według partii"
+            }
+          },
+          "intro": "Sprzedawcy żywności, kosmetyków, produktów zdrowotnych i innych towarów regulowanych muszą wiedzieć, która partia trafiła do kogo. Spree Enterprise prowadzi stany magazynowe według partii, z ilościami i datami ważności, i dobiera właściwą partię do każdej przesyłki.",
+          "nav": "Partie",
+          "steps": {
+            "allocate": {
+              "description": "Spree dobiera partie do każdej przesyłki według Twojej reguły.",
+              "title": "Przydział"
+            },
+            "receive": {
+              "description": "Rejestruj partie przy przyjęciu zamówienia zakupu lub transferu.",
+              "title": "Przyjęcie"
+            },
+            "ship": {
+              "description": "Każda przesyłka zapisuje, z jakich partii się składała.",
+              "title": "Wysyłka"
+            },
+            "trace": {
+              "description": "Wyszukaj partię, aby znaleźć jej zamówienia i klientów.",
+              "title": "Śledzenie"
+            }
+          },
+          "subtitle": "Śledź stany magazynowe według partii, wysyłaj najpierw właściwą partię i sprawdzaj, do jakich zamówień trafiła.",
+          "title": "Partie i daty ważności"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "Gdy kupujący zaakceptuje ofertę, staje się ona zamówieniem z warunkami płatności i numerem zamówienia klienta.",
+              "title": "Prosto do zamówienia"
+            },
+            "negotiate": {
+              "description": "Zmieniaj ceny jednostkowe, ilości, wysyłkę i opłaty w jednej ofercie, bez zmiany cennika kupującego.",
+              "title": "Ceny dla jednej transakcji"
+            },
+            "validity": {
+              "description": "Każda oferta ma datę wygaśnięcia. Kupujący może poprosić o zmiany, a Ty wysyłasz poprawioną ofertę.",
+              "title": "Jasny termin ważności"
+            }
+          },
+          "intro": "Klienci biznesowi często potrzebują ceny, zanim podejmą decyzję. Dzięki ofertom kupujący prosi o wycenę prosto z koszyka, Twój zespół ją przygotowuje, a kupujący akceptuje ją online. Zaakceptowana oferta staje się zwykłym zamówieniem po uzgodnionych cenach.",
+          "nav": "Oferty",
+          "note": {
+            "description": "Ze Spree Enterprise kupujący mogą przejrzeć zamówienie robocze, poprosić o zmiany i zaakceptować je online przed upływem terminu ważności.",
+            "title": "Wyślij to zamówienie robocze jako ofertę"
+          },
+          "steps": {
+            "accept": {
+              "description": "Kupujący akceptuje ofertę, a ta staje się zamówieniem.",
+              "title": "Akceptacja"
+            },
+            "price": {
+              "description": "Twój zespół dostosowuje ceny, ilości i wysyłkę.",
+              "title": "Wycena"
+            },
+            "request": {
+              "description": "Kupujący prosi o ofertę z poziomu koszyka.",
+              "title": "Prośba"
+            },
+            "send": {
+              "description": "Kupujący otrzymuje link do oferty z datą jej wygaśnięcia.",
+              "title": "Wysyłka"
+            }
+          },
+          "subtitle": "Negocjuj ceny z klientami biznesowymi i zamieniaj zaakceptowane oferty w zamówienia.",
+          "title": "Oferty"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "Produkty, warianty, zdjęcia, tłumaczenia, ceny i stany magazynowe pochodzą ze sklepu sprzedawcy. Nowe produkty przechodzą Twoją standardową weryfikację.",
+              "title": "Zsynchronizowany katalog"
+            },
+            "control": {
+              "description": "Pole edytowane przez Twój zespół w Spree przestaje się synchronizować, dopóki nie wznowisz synchronizacji. Zamówienie, którego nie da się przesłać, zostaje oznaczone.",
+              "title": "Kontrola po Twojej stronie"
+            },
+            "orders": {
+              "description": "Zamówienia z marketplace są tworzone w Shopify sprzedawcy jako już opłacone. Przesyłki, numery śledzenia, anulowania i zwroty pieniędzy wracają automatycznie.",
+              "title": "Zamówienia w jednym miejscu"
+            }
+          },
+          "intro": "Wielu sprzedawców już sprzedaje na Shopify. Połącz ich sklep ze swoim marketplace, a ich katalog i stany magazynowe będą synchronizować się automatycznie. Twoje zamówienia trafiają do ich Shopify, więc realizują wszystko w jednym miejscu.",
+          "nav": "Shopify",
+          "note": {
+            "description": "Ze Spree Enterprise produkty, stany magazynowe i zamówienia tego sprzedawcy są zsynchronizowane z jego własnym sklepem Shopify.",
+            "title": "Połącz sklep Shopify tego sprzedawcy"
+          },
+          "steps": {
+            "connect": {
+              "description": "Konfigurujesz połączenie dla sprzedawcy.",
+              "title": "Połączenie"
+            },
+            "install": {
+              "description": "Sprzedawca instaluje aplikację w swoim sklepie Shopify.",
+              "title": "Instalacja"
+            },
+            "sell": {
+              "description": "Zamówienia trafiają do jego sklepu, a przesyłki wracają do Ciebie.",
+              "title": "Sprzedaż"
+            },
+            "sync": {
+              "description": "Jego katalog, lokalizacje i stany magazynowe trafiają do Twojego marketplace.",
+              "title": "Synchronizacja"
+            }
+          },
+          "subtitle": "Pozwól sprzedawcom prowadzić biznes z ich własnego sklepu Shopify.",
+          "title": "Shopify dla sprzedawców"
+        }
+      },
+      "see_how_it_works": "Zobacz, jak to działa"
     },
     "errors": {
       "forbidden_description": "Nie masz uprawnień do wyświetlenia tej strony.",
@@ -1528,6 +1730,12 @@
         },
         "internal_note": {
           "label": "Notatka wewnętrzna (tylko dla personelu)"
+        },
+        "locale": {
+          "label": "Język"
+        },
+        "market": {
+          "label": "Rynek"
         },
         "order_group": {
           "label": "Zakup",

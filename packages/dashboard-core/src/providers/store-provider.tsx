@@ -1,9 +1,11 @@
-import type { CurrencyCode, LocaleCode, Store } from '@spree/admin-sdk'
+import type { Store } from '@spree/admin-sdk'
+import type { CurrencyCode, LocaleCode } from '@spree/core'
 import { useQuery } from '@tanstack/react-query'
-import { createContext, type ReactNode, useContext, useEffect, useRef } from 'react'
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useRef } from 'react'
 import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
 import { coreLocaleCodes, reconcileStoreDefaultLocale } from '../lib/i18n'
+import { listAllMarkets, marketLocalization, STORE_CONFIG_STALE_TIME } from '../lib/store-config'
 
 /**
  * Resource segment of the store query key: the current store lives in the
@@ -19,14 +21,17 @@ interface StoreContextValue {
   store: Store | null
   storeId: string
   isLoading: boolean
+  /** Currencies of the store's markets, the default market's first. */
   currencies: CurrencyCode[]
-  /** Locales this store is configured to translate content into. */
+  /** Languages the store's markets offer — what content is translated into. */
   locales: LocaleCode[]
   /** Every locale a merchant may translate content into — the full canonical
    *  set, independent of which locales the store currently uses. Drives locale
    *  pickers so a new locale can always be added. */
   availableLocales: LocaleCode[]
+  /** The default market's currency. */
   defaultCurrency: CurrencyCode
+  /** The default market's language. */
   defaultLocale: LocaleCode
   /** ISO country the store sells from — used to pre-fill new address forms. */
   defaultCountry: string
@@ -75,6 +80,26 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   })
   const store = query.data ?? null
 
+  // Same key and request as the dashboard's market list, so the shell and every
+  // market picker share one cached fetch that market writes invalidate.
+  const marketsQuery = useQuery({
+    queryKey: ['markets', storeId, 'all'],
+    queryFn: listAllMarkets,
+    staleTime: STORE_CONFIG_STALE_TIME,
+  })
+  // Until the markets arrive, or if they cannot be read, the store payload
+  // stands in: the server derives the same values from the same markets, and a
+  // hardcoded USD/en would be wrong for most stores.
+  const localization = useMemo(() => {
+    if (marketsQuery.data) return marketLocalization(marketsQuery.data.data)
+    return {
+      currencies: store?.supported_currencies ?? [],
+      locales: store?.supported_locales ?? [],
+      defaultCurrency: store?.default_currency,
+      defaultLocale: store?.default_locale,
+    }
+  }, [marketsQuery.data, store])
+
   // Reconcile the admin language against this store's default — adopting it,
   // or dropping a now-stale auto-applied default — only when no account locale
   // or genuine personal choice owns it (legacy base_controller parity).
@@ -90,11 +115,10 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
     )
   }, [store, storeId])
 
-  const currencies = store?.supported_currencies ?? []
-  const locales = store?.supported_locales ?? []
+  const { currencies, locales } = localization
   const availableLocales = store?.available_locales ?? []
-  const defaultCurrency = store?.default_currency ?? 'USD'
-  const defaultLocale = store?.default_locale ?? 'en'
+  const defaultCurrency = localization.defaultCurrency ?? 'USD'
+  const defaultLocale = localization.defaultLocale ?? 'en'
   const defaultCountry = store?.default_country_code ?? ''
   // A store's zone preference defaults to the host app's `Time.zone.name`,
   // which may be a Rails name ("Eastern Time (US & Canada)") that Intl and

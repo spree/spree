@@ -1,5 +1,5 @@
 import type { Claim, Order, Variant } from '@spree/admin-sdk'
-import { sumMoney } from '@spree/admin-sdk'
+import { sumMoney } from '@spree/core'
 import {
   adminClient,
   currencyParts,

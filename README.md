@@ -24,6 +24,8 @@
 
 Teams use Spree to build **multi-vendor marketplaces** and **B2B and wholesale** channels, as well as headless DTC, cross-border and omnichannel selling — all from one set of commerce primitives, and all alongside the ERP, PIM, and payment systems you already run.
 
+Use AI agents to build your ecommerce business. Spree ships with a collection of agent skills for coding agents and a local MCP server that allows your to manage your store via chat.
+
 ## Use Cases
 
 Spree ships commerce primitives, so the same core serves very different businesses.
@@ -72,45 +74,23 @@ Copy and paste the following command to your terminal to set up Spree locally in
 npx create-spree-app@latest my-store
 ```
 
-This sets up the Spree backend, the React Admin Dashboard, and optionally the [Next.js storefront](https://github.com/spree/storefront) in a single project. The storefront is built with Next.js 16, React 19, Tailwind CSS 4, and TypeScript.
+This sets up the Spree backend, the React Admin Dashboard, and optionally the [Next.js storefront](https://github.com/spree/storefront) in a monorepo. The storefront is built with Next.js 16, React 19, Tailwind CSS 4, and TypeScript. Admin dashboard uses Vite and TanStack.
 
 You need Node.js 24+ installed and Docker running. Learn more in the [installation docs](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
-If you like what you see, consider giving Spree a GitHub star ⭐
-
-Thank you for supporting Spree open-source ❤️
-
 ### Agentic Development
 
-Building with an AI coding agent? `create-spree-app` sets it up for you — answer yes to **Set up AI coding agents?** In an existing project, run:
-
-```bash
-npx spree add ai
-```
-
-This installs the [Spree agent skills](https://github.com/spree/agent-skills), which teach Claude Code, Codex, Cursor, Copilot and 60+ other tools Spree's conventions, customization patterns and upgrade flows. It also connects Claude Code, Cursor and VS Code to the [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), so your agent can search the latest docs. Learn more in the [Agentic Development docs](https://spreecommerce.org/docs/developer/agentic/overview).
-
-### Spree CLI
-
-[`@spree/cli`](packages/cli) manages your Spree project from the terminal — boot the stack, run generators and migrations, tail logs — and calls the **Admin API** directly with simple `get`/`post`/`patch`/`delete` commands. It's a fast way to inspect and script your store, and works hands-free for AI agents (zero-config credentials in local dev):
-
-```bash
-spree dev                                                            # boot the project (web + worker + db)
-spree generate api_resource Brand name:string description:rich_text  # Creates full API endpoints, models and database schema for a Brand resource
-spree api get /orders -q status_eq=complete --limit 10               # query the Admin API
-spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'  # create resources
-```
-
-`spree api endpoints` and `spree api schema` explore the full API offline. See the [CLI docs](https://spreecommerce.org/docs/developer/cli/quickstart).
+Spree comes with [agent skills](https://github.com/spree/agent-skills), which teach Claude Code, Codex, Cursor, Copilot and 60+ other tools Spree's conventions, customization patterns and upgrade flows. It also connects Claude Code, Cursor and VS Code to the [documentation MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), so your agent can search the latest docs. This is automatically setup for you when you run `npx create-spree-app` and can be added to existing projects with `spree add ai`. See the [Agentic Development docs](https://spreecommerce.org/docs/developer/agentic/overview) for more details.
 
 ## Features
 
 Everything below ships in this repository under the BSD 3-Clause license.
 
-* **[REST API & TypeScript SDKs](https://spreecommerce.org/docs/api-reference/store-api/introduction)** — a REST API for storefronts, admins and sellers, with publishable keys, scoped secret keys, rate limiting and an OpenAPI 3.0 spec. Three typed clients: [`@spree/sdk`](packages/sdk) (Store), [`@spree/admin-sdk`](packages/admin-sdk) (Admin) and [`@spree/seller-sdk`](packages/seller-sdk) (Seller).
-* **[React Admin Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview)** — a Vite + React SPA built on TanStack Router and Query, shadcn/ui and Tailwind. Extend it with [plugins](https://spreecommerce.org/docs/developer/dashboard/plugins/overview) — nav entries, routes, table columns and slot widgets — without forking it. Ships with a matching **Seller Panel** for marketplace vendors.
+* **[REST API & TypeScript SDKs](https://spreecommerce.org/docs/api-reference/store-api/introduction)** — a REST API for storefronts, admins and sellers, with publishable keys, scoped secret keys, rate limiting and an OpenAPI 3.0 spec. Each provide their own TypeScript SDK.
+* **[React Admin Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview)** — a Vite + React application built on TanStack Router and Query, shadcn/ui and Tailwind. Own it and customize without forking: [change navignation](https://spreecommerce.org/docs/developer/dashboard/customization/navigation), add/remove [routes](https://spreecommerce.org/docs/developer/dashboard/customization/routes), [modify table columns](https://spreecommerce.org/docs/developer/dashboard/customization/tables) and [insert your own UI widgets](https://spreecommerce.org/docs/developer/dashboard/customization/slots). Ships with a matching **Seller Panel** for marketplace vendors.
 * **[Next.js Storefront](https://github.com/spree/storefront)** — open-source storefront built with Next.js 16, React 19, Tailwind CSS 4, and TypeScript. Full shopping experience, multi-region URL routing, Stripe payments (Apple Pay, Google Pay, Klarna, Affirm), customer accounts, and SEO built in. [Try the demo](https://demo.spreecommerce.org/)
 * **[Spree CLI](https://spreecommerce.org/docs/developer/cli/quickstart)** — manage projects from the terminal (boot, generate, migrate, upgrade) and call the Admin API directly with `spree api get/post/...` — zero-config in local dev, built for scripts and AI agents.
+* **[MCP Server](https://spreecommerce.org/docs/developer/mcp/overview)** — a local server that you can connect to Claude, ChatGPT, or any LLM to fully manage your store via natural language.
 * **[Marketplace & Payouts](https://spreecommerce.org/docs/developer/core-concepts/sellers)** — seller onboarding with a configurable requirements checklist, per-seller order splitting, a [commission engine](https://spreecommerce.org/docs/developer/core-concepts/commissions) with EU commission taxation, and a payout ledger with Stripe Connect payouts.
 * **[B2B & Wholesale](https://spreecommerce.org/docs/developer/how-to/build-a-b2b-store)** — [price lists](https://spreecommerce.org/docs/developer/core-concepts/pricing) with volume tiers and negotiated rates, [customer groups](https://spreecommerce.org/docs/user/customers/customer-groups) for segmentation, [companies](https://spreecommerce.org/docs/developer/core-concepts/companies) with locations, contacts and validated tax exemptions, and [catalogs](https://spreecommerce.org/docs/developer/core-concepts/catalogs) for per-segment assortments.
 * **[Payments](https://spreecommerce.org/docs/developer/core-concepts/payments)** — provider-agnostic payment sessions that finish reliably even when a tab closes. Ships with [Stripe](https://spreecommerce.org/docs/integrations/payments/stripe), [Adyen](https://spreecommerce.org/docs/integrations/payments/adyen) and [PayPal](https://spreecommerce.org/docs/integrations/payments/paypal). Add your own with the [Payment Provider SDK](https://spreecommerce.org/docs/developer/how-to/custom-payment-method).

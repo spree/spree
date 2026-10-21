@@ -31,6 +31,11 @@ export const FILTER_PREDICATES = {
 type Predicates = typeof FILTER_PREDICATES
 type Kind = keyof Predicates
 
+/** Every predicate a list endpoint accepts on some kind of value: `eq`, `i_cont`, `not_in`, … */
+export type FilterPredicate = {
+  [K in Kind]: Predicates[K]['value' | 'list' | 'flag'][number]
+}[Kind]
+
 type Keyed<K extends string, P extends string, V> = { [Key in K as `${Key}_${P}`]?: V }
 
 type KindFilters<K extends string, Of extends Kind, V> = Keyed<
@@ -53,6 +58,9 @@ export type EnumFilters<K extends string, V extends string> = KindFilters<
   'equality',
   V | (string & {})
 >
+
+/** A code from a closed standard list (`CurrencyCode`, `CountryCode`, `LocaleCode`); no other value is accepted. */
+export type CodeFilters<K extends string, V extends string> = KindFilters<K, 'equality', V>
 
 /** Prefixed IDs (`prod_86Rf07xd4z`) and type short names (`credit_card`). */
 export type IdFilters<K extends string> = KindFilters<K, 'equality', string>

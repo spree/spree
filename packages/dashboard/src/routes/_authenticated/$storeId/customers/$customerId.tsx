@@ -123,6 +123,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
             emptyTitle={t('admin.components.metadata_card.empty_title')}
             emptyDescription={t('admin.components.metadata_card.empty_description')}
           />
+          <Slot name="customer.form_main" context={{ customer }} />
         </>
       }
       sidebar={

@@ -3,6 +3,9 @@ import type { CustomerGroup, CustomerGroupCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceTable,
   resourceSearchSchema,
@@ -155,14 +158,15 @@ function CreateCustomerGroupSheet({
   const form = useForm<CustomerGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(customerGroupFormSchema) as any,
-    defaultValues: CUSTOMER_GROUP_DEFAULTS,
+    defaultValues: { ...CUSTOMER_GROUP_DEFAULTS, ...extensionFormValues('customer_group', null) },
   })
 
   async function onSubmit(values: CustomerGroupFormValues) {
     try {
-      await createMutation.mutateAsync(
-        customerGroupValuesToParams(values) as CustomerGroupCreateParams,
-      )
+      await createMutation.mutateAsync({
+        ...(customerGroupValuesToParams(values) as CustomerGroupCreateParams),
+        ...extensionSubmitValues('customer_group', form),
+      })
       form.reset(CUSTOMER_GROUP_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -186,6 +190,11 @@ function CreateCustomerGroupSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <NameDescriptionFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="customer_group.form_fields"
+              context={{ customerGroup: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -233,13 +242,17 @@ function EditCustomerGroupSheet({
       form.reset({
         name: group.name,
         description: group.description ?? '',
+        ...extensionFormValues('customer_group', group),
       })
     }
   }, [group, form])
 
   async function onSubmit(values: CustomerGroupFormValues) {
     try {
-      await updateMutation.mutateAsync(customerGroupValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...customerGroupValuesToParams(values),
+        ...extensionSubmitValues('customer_group', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -268,6 +281,11 @@ function EditCustomerGroupSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <NameDescriptionFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="customer_group.form_fields"
+                context={{ customerGroup: group, mode: 'edit' }}
+              />
               <MembersSummary
                 count={group?.customers_count ?? 0}
                 href={`/${storeId}/customers?filters=${encodeURIComponent(membersFilter)}`}

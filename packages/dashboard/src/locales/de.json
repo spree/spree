@@ -989,7 +989,209 @@
       "title": "Downloads"
     },
     "enterprise": {
-      "learn_more": "Mehr über Spree Enterprise erfahren"
+      "available_in": "Verfügbar in Spree Enterprise",
+      "badge": "Enterprise",
+      "cta": "Spree Enterprise holen",
+      "footer": "Spree Enterprise ergänzt das Open-Source-Spree, das Sie bereits nutzen. Ihre Daten, Ihr Onlineshop und Ihre Integrationen bleiben unverändert.",
+      "how_it_works": "So funktioniert es",
+      "learn_more": "Mehr über Spree Enterprise erfahren",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "Jeder Eintrag zeigt den alten und den neuen Wert, sodass Sie genau sehen, was sich geändert hat.",
+              "title": "Vorher und nachher"
+            },
+            "coverage": {
+              "description": "Produkte, Varianten, Preise, Bestand, Kategorien, Aktionen, Zahlungen, Sendungen, Guthaben, Steuersätze und Shop-Einstellungen.",
+              "title": "Alles, was zählt"
+            },
+            "search": {
+              "description": "Filtern Sie nach Person, Datensatztyp oder Datum und öffnen Sie den geänderten Datensatz.",
+              "title": "Einfach zu durchsuchen"
+            }
+          },
+          "intro": "Wenn mehrere Personen einen Shop betreiben, müssen Sie wissen, wer einen Preis, einen Bestand oder eine Einstellung geändert hat. Spree Enterprise erfasst jede wichtige Änderung mit der Person, dem Zeitpunkt sowie den Werten davor und danach.",
+          "nav": "Audit-Log",
+          "steps": {
+            "change": {
+              "description": "Jemand aus Ihrem Team bearbeitet einen Datensatz.",
+              "title": "Ändern"
+            },
+            "record": {
+              "description": "Spree speichert, wer die Änderung vorgenommen hat, wann und was sich geändert hat.",
+              "title": "Erfassen"
+            },
+            "review": {
+              "description": "Finden Sie die Änderung jederzeit im Änderungsprotokoll.",
+              "title": "Nachsehen"
+            }
+          },
+          "subtitle": "Sehen Sie, wer was in Ihrem Shop geändert hat und wann.",
+          "title": "Änderungsprotokoll"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "Mit der Freigabe erhält die Firma ihren Katalog und ihre Preise. Sie können ein Konto später sperren und wiederherstellen.",
+              "title": "Mit Konditionen freigeben"
+            },
+            "checklist": {
+              "description": "Fordern Sie Steuernummer, Dokumente oder Bestätigungen an und prüfen Sie jede Antwort.",
+              "title": "Ihre eigene Checkliste"
+            },
+            "dialogue": {
+              "description": "Senden Sie einen Antrag mit einer Notiz zurück, statt ihn abzulehnen. Die Firma antwortet über Ihren Onlineshop.",
+              "title": "Weitere Angaben anfordern"
+            }
+          },
+          "intro": "Wenn sich eine Firma in Ihrem Onlineshop registriert, hält Spree Enterprise ihr Konto zur Prüfung zurück. Die Firma kann Ihren Katalog ohne Preise durchsuchen, während Ihr Team ihre Angaben prüft, Fehlendes anfordert und sie freigibt.",
+          "nav": "Onboarding",
+          "steps": {
+            "approve": {
+              "description": "Die Firma sieht ihre Preise und kann bestellen.",
+              "title": "Freigeben"
+            },
+            "register": {
+              "description": "Eine Firma registriert sich in Ihrem Onlineshop.",
+              "title": "Registrieren"
+            },
+            "review": {
+              "description": "Ihr Team prüft den Antrag oder fordert weitere Angaben an.",
+              "title": "Prüfen"
+            },
+            "verify": {
+              "description": "Sie arbeitet Ihre Checkliste ab, während die Preise verborgen bleiben.",
+              "title": "Angaben machen"
+            }
+          },
+          "subtitle": "Prüfen Sie Registrierungen von Firmen, bevor sie bestellen können.",
+          "title": "Prüfung neuer Firmen"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "Versenden Sie automatisch die älteste oder die zuerst ablaufende Charge, oder lassen Sie Ihr Lager entscheiden. Eine Sendung kann aus mehreren Chargen bestehen.",
+              "title": "Richtige Charge zuerst"
+            },
+            "recall": {
+              "description": "Finden Sie alle Bestellungen und Kunden, an die eine Charge ging, und sehen Sie, welche Chargen bald ablaufen.",
+              "title": "Schnelle Rückrufe"
+            },
+            "stock": {
+              "description": "Mengen, Verfalls- und Herstellungsdaten sowie Chargennummern des Lieferanten für jede Charge an jedem Lagerort.",
+              "title": "Bestand nach Charge"
+            }
+          },
+          "intro": "Wer Lebensmittel, Kosmetik, Gesundheitsprodukte oder andere regulierte Waren verkauft, muss wissen, welche Charge wohin ging. Spree Enterprise führt den Bestand nach Charge, mit Mengen und Verfallsdaten, und wählt für jede Sendung die richtige Charge.",
+          "nav": "Chargen",
+          "steps": {
+            "allocate": {
+              "description": "Spree wählt nach Ihrer Regel die Chargen für jede Sendung.",
+              "title": "Zuordnen"
+            },
+            "receive": {
+              "description": "Erfassen Sie Chargen, wenn eine Bestellung oder Umlagerung eintrifft.",
+              "title": "Wareneingang"
+            },
+            "ship": {
+              "description": "Jede Sendung speichert, welche Chargen sie enthielt.",
+              "title": "Versenden"
+            },
+            "trace": {
+              "description": "Suchen Sie eine Charge, um ihre Bestellungen und Kunden zu finden.",
+              "title": "Zurückverfolgen"
+            }
+          },
+          "subtitle": "Bestand nach Charge führen, die richtige Charge zuerst versenden und jede Bestellung einer Charge zurückverfolgen.",
+          "title": "Chargen und Verfallsdaten"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "Nimmt der Käufer an, wird das Angebot zu einer Bestellung mit Zahlungsbedingungen und Bestellnummer des Kunden.",
+              "title": "Direkt zur Bestellung"
+            },
+            "negotiate": {
+              "description": "Ändern Sie Stückpreise, Mengen, Versand und Gebühren in einem einzelnen Angebot, ohne die Preisliste des Käufers anzutasten.",
+              "title": "Preise für ein einzelnes Geschäft"
+            },
+            "validity": {
+              "description": "Jedes Angebot hat ein Ablaufdatum. Käufer können Änderungen anfragen, und Sie senden ein überarbeitetes Angebot.",
+              "title": "Klare Gültigkeit"
+            }
+          },
+          "intro": "Geschäftskunden brauchen oft einen Preis, bevor sie sich festlegen. Mit Angeboten fordert ein Käufer aus seinem Warenkorb ein Angebot an, Ihr Team legt die Preise fest und der Käufer nimmt es online an. Das angenommene Angebot wird zu einer normalen Bestellung zu den vereinbarten Preisen.",
+          "nav": "Angebote",
+          "note": {
+            "description": "Mit Spree Enterprise können Käufer einen Entwurf prüfen, Änderungen anfragen und ihn vor Ablauf online annehmen.",
+            "title": "Diesen Entwurf als Angebot senden"
+          },
+          "steps": {
+            "accept": {
+              "description": "Der Käufer nimmt an und das Angebot wird zur Bestellung.",
+              "title": "Annehmen"
+            },
+            "price": {
+              "description": "Ihr Team passt Preise, Mengen und Versand an.",
+              "title": "Kalkulieren"
+            },
+            "request": {
+              "description": "Der Käufer fordert aus seinem Warenkorb ein Angebot an.",
+              "title": "Anfragen"
+            },
+            "send": {
+              "description": "Der Käufer erhält einen Link zum Angebot mit Ablaufdatum.",
+              "title": "Senden"
+            }
+          },
+          "subtitle": "Verhandeln Sie Preise mit Geschäftskunden und machen Sie aus angenommenen Angeboten Bestellungen.",
+          "title": "Angebote"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "Produkte, Varianten, Bilder, Übersetzungen, Preise und Bestand kommen aus dem Shop des Verkäufers. Neue Produkte durchlaufen Ihre übliche Prüfung.",
+              "title": "Katalog synchron"
+            },
+            "control": {
+              "description": "Ein Feld, das Ihr Team in Spree bearbeitet, wird nicht mehr synchronisiert, bis Sie es wieder aktivieren. Eine Bestellung, die nicht übertragen werden kann, wird für Sie markiert.",
+              "title": "Sie behalten die Kontrolle"
+            },
+            "orders": {
+              "description": "Marktplatzbestellungen werden bereits bezahlt im Shopify des Verkäufers angelegt. Sendungen, Sendungsverfolgung, Stornierungen und Erstattungen kommen automatisch zurück.",
+              "title": "Bestellungen an einem Ort"
+            }
+          },
+          "intro": "Viele Verkäufer verkaufen bereits über Shopify. Verbinden Sie ihren Shop mit Ihrem Marktplatz, und Katalog und Bestand bleiben automatisch synchron. Ihre Bestellungen erscheinen in deren Shopify, sodass sie alles an einem Ort abwickeln.",
+          "nav": "Shopify",
+          "note": {
+            "description": "Mit Spree Enterprise bleiben Produkte, Bestand und Bestellungen dieses Verkäufers mit seinem eigenen Shopify-Shop synchron.",
+            "title": "Shopify-Shop dieses Verkäufers verbinden"
+          },
+          "steps": {
+            "connect": {
+              "description": "Sie richten eine Verbindung für den Verkäufer ein.",
+              "title": "Verbinden"
+            },
+            "install": {
+              "description": "Der Verkäufer installiert die App in seinem Shopify-Shop.",
+              "title": "Installieren"
+            },
+            "sell": {
+              "description": "Bestellungen gehen an seinen Shop, Sendungen kommen zurück.",
+              "title": "Verkaufen"
+            },
+            "sync": {
+              "description": "Katalog, Standorte und Bestand gelangen in Ihren Marktplatz.",
+              "title": "Synchronisieren"
+            }
+          },
+          "subtitle": "Verkäufer führen ihr Geschäft weiter aus ihrem eigenen Shopify-Shop.",
+          "title": "Shopify für Verkäufer"
+        }
+      },
+      "see_how_it_works": "Funktionsweise ansehen"
     },
     "errors": {
       "forbidden_description": "Sie haben keine Berechtigung, diese Seite anzuzeigen.",
@@ -1510,6 +1712,12 @@
         },
         "internal_note": {
           "label": "Interne Notiz (nur Mitarbeiter)"
+        },
+        "locale": {
+          "label": "Sprache"
+        },
+        "market": {
+          "label": "Markt"
         },
         "order_group": {
           "label": "Einkauf",

@@ -1,4 +1,5 @@
-import { type Customer, decimalPlaces } from '@spree/admin-sdk'
+import type { Customer } from '@spree/admin-sdk'
+import { prorateMoney } from '@spree/core'
 import { formatAmount, isPositiveMoney, useMoneyLocale, useStore } from '@spree/dashboard-core'
 import { Item, ItemContent, ItemDescription, ItemTitle, RelativeTime } from '@spree/dashboard-ui'
 import type { ReactNode } from 'react'
@@ -10,13 +11,14 @@ export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) 
   const { defaultCurrency } = useStore()
   const orders = customer.orders_count ?? 0
   const totalSpent = customer.total_spent
-  // Dividing needs a number; the average is only displayed, never sent or compared.
-  const averageForDisplay =
-    orders > 0 && isPositiveMoney(totalSpent)
-      ? (Number(totalSpent) / orders).toFixed(decimalPlaces(defaultCurrency))
-      : null
   const aovDisplay =
-    averageForDisplay === null ? '—' : formatAmount(averageForDisplay, defaultCurrency, moneyLocale)
+    orders > 0 && isPositiveMoney(totalSpent)
+      ? formatAmount(
+          prorateMoney(totalSpent, 1, orders, defaultCurrency),
+          defaultCurrency,
+          moneyLocale,
+        )
+      : '—'
 
   return (
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">

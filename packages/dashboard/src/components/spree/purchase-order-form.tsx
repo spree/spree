@@ -1,5 +1,5 @@
-import type { CurrencyCode, Supplier } from '@spree/admin-sdk'
-import { isDecimalString } from '@spree/admin-sdk'
+import type { Supplier } from '@spree/admin-sdk'
+import { type CurrencyCode, isDecimalString } from '@spree/core'
 import {
   CurrencySelect,
   PageHeader,

@@ -36,6 +36,7 @@ module Spree
           # and rate settings are formatted below.
           preference_attributes Spree::Store, except: %i[order_routing_strategy payout_provider
                                                          default_minimum_payout_amount default_commission_tax_rate]
+          typelize weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS, enum_type_name: 'WeightUnit']
 
           # Once the counter has issued a number the starting value no longer
           # applies, so the settings page can say that instead of accepting a

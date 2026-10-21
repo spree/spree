@@ -90,6 +90,8 @@ defineDashboardPlugin({
 
 `path` is **relative** to `/$storeId` — the dispatcher prepends the prefix at match time. So `/reports` matches the URL `/store_xyz/reports`. The leading `/` is required.
 
+A registry route can sit under a built-in section, next to its record pages: `/sellers/shopify` renders your page, not a seller whose ID is `shopify`. A registry route wins only where it is more specific than the built-in page — fixed segments beat `$params` — so it can never replace a built-in page at the same path, or claim every record with a pattern such as `/sellers/$id`.
+
 ## Pages outside a store
 
 Most pages live inside a store, under `/$storeId`. Some don't belong to one: an onboarding flow, a sign-up page, an account page, terms of service. Both mechanisms can mount pages at the root instead, in one of two scopes:

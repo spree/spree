@@ -1,3 +1,4 @@
+import { intlDisplayName } from '@spree/core'
 import { useTranslation } from 'react-i18next'
 
 /**
@@ -28,15 +29,8 @@ function localizedCountryName(
   iso?: string | null,
   name?: string | null,
 ): string | null {
-  if (iso) {
-    try {
-      const localized = new Intl.DisplayNames([locale, 'en'], { type: 'region' }).of(iso)
-      if (localized) return localized
-    } catch {
-      // Runtime without Intl.DisplayNames coverage — fall back below.
-    }
-  }
-  return name ?? iso ?? null
+  const localized = iso ? intlDisplayName('region', locale, iso) : undefined
+  return localized || (name ?? iso ?? null)
 }
 
 export function AddressBlock({

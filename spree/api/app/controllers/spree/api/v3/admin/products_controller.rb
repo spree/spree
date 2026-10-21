@@ -77,10 +77,8 @@ module Spree
             body.attribute :variants, :array,
               as: 'ProductVariantParams',
               description: 'Every purchasable attribute (sku, prices, stock, weight, dimensions) lives on variants. An entry without `options` upserts onto the default variant of a simple product; pass `id` to update an existing variant.' do |variant|
+              variant.extends Spree::Api::V3::Admin::VariantRequestSchema
               variant.attribute :id, :id
-              variant.include_attributes Spree::Api::V3::VariantRequestSchema
-              variant.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
-                description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing.'
             end
           end
 
@@ -289,6 +287,10 @@ module Spree
 
           def update_workflow
             Spree.product_update_workflow
+          end
+
+          def nested_permitted_models
+            { media: Spree::Media, variants: Spree::Variant }
           end
 
           # Use SearchProvider::Database for collection to handle price/best_selling

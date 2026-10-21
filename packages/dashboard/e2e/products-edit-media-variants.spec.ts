@@ -105,7 +105,7 @@ test.describe('edit product — media variant linking', () => {
     // Open the sheet, type new alt text, click Done.
     await clickMediaThumbnailAction(media, 'edit')
     const sheet = page.getByRole('dialog')
-    const altInput = sheet.getByRole('textbox')
+    const altInput = sheet.getByLabel('Alt text')
     const newAlt = `Alt text ${Date.now()}`
     await altInput.fill(newAlt)
     await sheet.getByRole('button', { name: /^done$/i }).click()
@@ -121,13 +121,13 @@ test.describe('edit product — media variant linking', () => {
     await page.reload()
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
     await clickMediaThumbnailAction(media, 'edit')
-    await expect(sheet.getByRole('textbox')).toHaveValue(newAlt)
+    await expect(sheet.getByLabel('Alt text')).toHaveValue(newAlt)
 
     // ---- Regression: Cancel after editing must actually discard. ----
     // The earlier implementation used form.reset(..., { keepDirtyValues:true })
     // which PRESERVES dirty values rather than restoring the snapshot — so
     // Cancel was a silent no-op for any edit the user actually made.
-    await sheet.getByRole('textbox').fill('TYPED THEN CANCELLED')
+    await sheet.getByLabel('Alt text').fill('TYPED THEN CANCELLED')
     await sheet.getByRole('button', { name: /^cancel$/i }).click()
     await expect(page.getByRole('heading', { name: /^edit media$/i })).toBeHidden()
 
@@ -137,6 +137,6 @@ test.describe('edit product — media variant linking', () => {
     // acceptable trade-off for a per-field-scoped restore that doesn't
     // accidentally wipe sibling edits.)
     await clickMediaThumbnailAction(media, 'edit')
-    await expect(sheet.getByRole('textbox')).toHaveValue(newAlt)
+    await expect(sheet.getByLabel('Alt text')).toHaveValue(newAlt)
   })
 })

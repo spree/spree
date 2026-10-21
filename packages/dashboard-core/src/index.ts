@@ -11,6 +11,17 @@
 //     import { AuthProvider } from '@spree/dashboard-core/providers/auth-provider'
 //     import { useResourceMutation } from '@spree/dashboard-core/hooks/use-resource-mutation'
 
+// Money helpers from @spree/core, offered here as before for plugin authors
+export {
+  currencyParts,
+  fractionToPercent,
+  isPositiveMoney,
+  normalizeMoneyInput,
+  percentOf,
+  percentToFraction,
+  prorateMoney,
+  shiftDecimalPoint,
+} from '@spree/core'
 export * from './api-client'
 // ---------------------------------------------------------------------------
 // Admin SDK client (Vite-aware singleton; reads VITE_SPREE_API_URL at build)
@@ -81,7 +92,6 @@ export * from './lib/create-action-registry'
 // Registries — pluggable extension points (nav, route, slot, table,
 // settings-nav, form fields, custom field components)
 // ---------------------------------------------------------------------------
-export * from './lib/currency-parts'
 export * from './lib/custom-field-components'
 export * from './lib/date-presets'
 export * from './lib/delivery-form'
@@ -103,9 +113,7 @@ export * from './lib/i18n'
 export * from './lib/import-types'
 export * from './lib/iso-codes'
 export * from './lib/label-upload-form'
-export * from './lib/money'
 export * from './lib/nav-registry'
-export * from './lib/normalize-money'
 export * from './lib/permissions'
 export * from './lib/progress'
 export * from './lib/query-client'
@@ -115,6 +123,7 @@ export * from './lib/route-registry'
 export * from './lib/search-registry'
 export * from './lib/settings-nav-registry'
 export * from './lib/slot-registry'
+export * from './lib/store-config'
 export * from './lib/table-registry'
 export { ensureTimestampColumns } from './lib/timestamp-columns'
 export * from './lib/type-labels'

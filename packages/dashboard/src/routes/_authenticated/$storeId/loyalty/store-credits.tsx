@@ -1,5 +1,5 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
-import { isZeroMoney } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/core'
 import {
   Can,
   formatAmount,

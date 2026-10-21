@@ -1,4 +1,4 @@
-// This file is auto-generated from docs/api-reference/store.yaml by `pnpm generate:iso-codes`. Do not edit directly.
+// This file is auto-generated from docs/api-reference by `pnpm generate:code-lists`. Do not edit directly.
 
 /** ISO 3166-1 alpha-2 country codes, as Spree accepts them. */
 export const CountryCode = {
@@ -1257,3 +1257,31 @@ export const LocaleCode = {
 } as const
 
 export type LocaleCode = (typeof LocaleCode)[keyof typeof LocaleCode]
+
+/** Units a weight is measured in. */
+export const WeightUnit = {
+  /** Gram */
+  g: 'g',
+  /** Kilogram */
+  kg: 'kg',
+  /** Pound */
+  lb: 'lb',
+  /** Ounce */
+  oz: 'oz',
+} as const
+
+export type WeightUnit = (typeof WeightUnit)[keyof typeof WeightUnit]
+
+/** Units a length, width, height or depth is measured in. */
+export const DimensionUnit = {
+  /** Millimeter */
+  mm: 'mm',
+  /** Centimeter */
+  cm: 'cm',
+  /** Inch */
+  in: 'in',
+  /** Foot */
+  ft: 'ft',
+} as const
+
+export type DimensionUnit = (typeof DimensionUnit)[keyof typeof DimensionUnit]

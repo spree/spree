@@ -10,59 +10,14 @@
  * full 404 page; once the dashboard grows a proper 404 view, this can render
  * that instead.
  */
-import { matchPluginRoute, usePermissions, usePluginRoutes } from '@spree/dashboard-core'
-import { ErrorState } from '@spree/dashboard-ui'
-import { createFileRoute, type ErrorComponentProps } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
+import { createFileRoute } from '@tanstack/react-router'
+import { PluginRoutePage } from '../../../components/spree/plugin-route-page'
 
 export const Route = createFileRoute('/_authenticated/$storeId/$')({
   component: PluginRouteDispatcher,
-  // Contain plugin render errors to this route — a broken third-party page
-  // shouldn't take down the dashboard shell.
-  errorComponent: PluginRouteError,
 })
-
-function PluginRouteError({ error }: ErrorComponentProps) {
-  const { t } = useTranslation()
-  return (
-    <ErrorState
-      title={t('admin.errors.plugin_route_title', { defaultValue: 'This page failed to render' })}
-      error={error}
-    />
-  )
-}
 
 function PluginRouteDispatcher() {
   const { storeId, _splat } = Route.useParams() as { storeId: string; _splat?: string }
-  const searchParams = Route.useSearch() as Record<string, unknown>
-  const routes = usePluginRoutes()
-  const { t } = useTranslation()
-  const { permissions } = usePermissions()
-
-  const match = matchPluginRoute(_splat ?? '', routes)
-
-  if (!match) {
-    return (
-      <ErrorState
-        title={t('admin.errors.not_found_title', { defaultValue: 'Page not found' })}
-        description={t('admin.errors.not_found_description', {
-          defaultValue: 'The page you’re looking for doesn’t exist.',
-        })}
-      />
-    )
-  }
-
-  if (match.entry.subject && !permissions.can('read', match.entry.subject)) {
-    return (
-      <ErrorState
-        title={t('admin.errors.forbidden_title', { defaultValue: 'Not authorized' })}
-        description={t('admin.errors.forbidden_description', {
-          defaultValue: 'You don’t have permission to view this page.',
-        })}
-      />
-    )
-  }
-
-  const Component = match.entry.component
-  return <Component params={match.params} storeId={storeId} searchParams={searchParams} />
+  return <PluginRoutePage storeId={storeId} path={_splat ?? ''} />
 }

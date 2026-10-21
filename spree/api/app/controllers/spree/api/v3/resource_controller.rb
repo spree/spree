@@ -559,7 +559,17 @@ module Spree
         # declared on the model. Override +resource_permitted_attributes+ rather
         # than this, so the extension union is not lost.
         def permitted_attributes
-          resource_permitted_attributes + model_additional_permitted_attributes
+          with_nested_additional_permitted_attributes(resource_permitted_attributes) + model_additional_permitted_attributes
+        end
+
+        # Nested lists this resource writes, keyed by param name, mapped to the
+        # model each entry becomes — +{ media: Spree::Media }+ lets an
+        # extension's +Spree::Media.additional_permitted_attributes+ ride the
+        # product's +media+ entries, not only the media endpoint.
+        #
+        # @return [Hash{Symbol => Class}]
+        def nested_permitted_models
+          {}
         end
 
         # The resource's writable attributes: its `request_params`
@@ -580,12 +590,32 @@ module Spree
         def model_additional_permitted_attributes
           return [] unless respond_to?(:model_class, true)
 
-          model = model_class
-          return [] unless model.respond_to?(:additional_permitted_attributes)
-
-          Array(model.additional_permitted_attributes)
+          additional_permitted_attributes_for(model_class)
         rescue NotImplementedError
           []
+        end
+
+        # What extensions declared writable on +model+. `Spree.base_class` is
+        # host-overridable, so the class_attribute may not be there at all.
+        #
+        # @param model [Class]
+        # @return [Array]
+        def additional_permitted_attributes_for(model)
+          Array(model.try(:additional_permitted_attributes))
+        end
+
+        def with_nested_additional_permitted_attributes(attributes)
+          return attributes if nested_permitted_models.empty?
+
+          attributes.map do |attribute|
+            next attribute unless attribute.is_a?(Hash)
+
+            attribute.to_h do |name, nested|
+              model = nested_permitted_models[name.to_sym]
+              additional = model ? additional_permitted_attributes_for(model) : []
+              [name, additional.any? && nested.is_a?(Array) ? nested + additional : nested]
+            end
+          end
         end
       end
     end

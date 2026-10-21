@@ -4,6 +4,7 @@ import type { Store } from '@spree/admin-sdk'
 import { hasVisibleSettingsEntries, nav, Subject } from '@spree/dashboard-core'
 import {
   AnalyticsIcon,
+  Building2Icon,
   GiftIcon,
   HomeIcon,
   InboxIcon,
@@ -201,14 +202,19 @@ nav.add({
       subject: Subject.CustomerGroup,
       position: 100,
     },
-    {
-      key: 'customers.companies',
-      labelKey: 'admin.nav.companies',
-      path: '/companies',
-      subject: Subject.Company,
-      position: 200,
-    },
   ],
+})
+
+// Business buyers get their own section rather than sitting under Customers:
+// a company is an organisation tree with its own catalogs, members and
+// onboarding, not a kind of customer.
+nav.add({
+  key: 'companies',
+  labelKey: 'admin.nav.companies',
+  path: '/companies',
+  icon: Building2Icon,
+  subject: Subject.Company,
+  position: 425,
 })
 
 // Only a marketplace has sellers, so the entry hides itself on a store whose

@@ -1,4 +1,5 @@
-import type { LocaleCode, MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
+import type { MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
+import type { LocaleCode } from '@spree/core'
 import { countryCodeSchema, currencyCodeSchema } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import type { DefaultValues } from 'react-hook-form'

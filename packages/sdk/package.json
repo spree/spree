@@ -55,9 +55,8 @@
   ],
   "scripts": {
     "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
-    "generate:filters": "tsx ../sdk-core/scripts/generate-filters.ts store",
+    "generate:filters": "tsx --conditions=@spree/source ../sdk-core/scripts/generate-filters.ts store",
     "generate:params": "tsx ../sdk-core/scripts/generate-params.ts store",
-    "generate:iso-codes": "tsx ../sdk-core/scripts/generate-iso-codes.ts",
     "build": "tsup",
     "dev": "tsup --watch",
     "console": "tsx console.ts",

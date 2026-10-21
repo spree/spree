@@ -1,7 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryProfile, DeliveryZone } from '@spree/admin-sdk'
-import { isDecimalString, isZeroMoney } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { isDecimalString, isZeroMoney } from '@spree/core'
+import {
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
+  mapSpreeErrorsToForm,
+} from '@spree/dashboard-core'
 import {
   Button,
   Sheet,
@@ -97,7 +102,11 @@ export function DeliveryMethodSheet({
   const form = useForm<DeliveryMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(deliveryMethodFormSchema) as any,
-    defaultValues: { ...DELIVERY_METHOD_DEFAULTS, delivery_zone_id: zoneId ?? '' },
+    defaultValues: {
+      ...DELIVERY_METHOD_DEFAULTS,
+      delivery_zone_id: zoneId ?? '',
+      ...extensionFormValues('delivery_method', null),
+    },
   })
 
   // A new method is seeded once, from values that owe nothing to any query.
@@ -107,7 +116,11 @@ export function DeliveryMethodSheet({
   // in the other order.
   useEffect(() => {
     if (!editing) {
-      form.reset({ ...DELIVERY_METHOD_DEFAULTS, delivery_zone_id: zoneId ?? '' })
+      form.reset({
+        ...DELIVERY_METHOD_DEFAULTS,
+        delivery_zone_id: zoneId ?? '',
+        ...extensionFormValues('delivery_method', null),
+      })
     }
   }, [editing, zoneId, form])
 
@@ -155,6 +168,7 @@ export function DeliveryMethodSheet({
         product_ids: rule.product_ids,
         takes_products: takesProducts(ruleTypes?.data, rule.type),
       })),
+      ...extensionFormValues('delivery_method', method),
     })
   }, [editing, method, ruleTypes, form])
 
@@ -174,10 +188,14 @@ export function DeliveryMethodSheet({
   async function onSubmit(values: DeliveryMethodFormValues) {
     try {
       if (editing) {
-        await updateMutation.mutateAsync(deliveryMethodValuesToParams(values))
+        await updateMutation.mutateAsync({
+          ...deliveryMethodValuesToParams(values),
+          ...extensionSubmitValues('delivery_method', form),
+        })
       } else {
         await createMutation.mutateAsync({
           ...deliveryMethodValuesToParams(values),
+          ...extensionSubmitValues('delivery_method', form),
           delivery_profile_id: profile.id,
           // Only sent when the merchant added the method from a specific
           // group; otherwise the server files it under the zone's group, else
@@ -223,6 +241,15 @@ export function DeliveryMethodSheet({
                 // Creating from inside a zone card answers the zone question;
                 // editing still needs the picker to move a method or clear it.
                 zonePreselected={!methodId && !!zoneId}
+              />
+              <HostFormSlot
+                form={form}
+                name="delivery_method.form_fields"
+                context={{
+                  deliveryMethod: method,
+                  deliveryProfile: profile,
+                  mode: editing ? 'edit' : 'new',
+                }}
               />
             </div>
             <SheetFooter>

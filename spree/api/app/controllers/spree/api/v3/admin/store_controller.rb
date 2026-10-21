@@ -9,7 +9,7 @@ module Spree
             body.attribute :name, :string, example: 'My Store'
             body.attribute :admin_locale, :string, example: 'en'
             body.attribute :timezone, :string, example: 'Europe/Berlin'
-            body.attribute :weight_unit, :string, choices: Spree::Variant::WEIGHT_UNITS
+            body.attribute :weight_unit, :weight_unit
             body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS
             body.attribute :storefront_access, :string,
               choices: Spree::Channel::Gating::STOREFRONT_ACCESS,

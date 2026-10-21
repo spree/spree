@@ -14,7 +14,8 @@
  * promise the seller panel methods its API does not have.
  */
 
-import type { CountryCode, PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
+import type { PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
+import type { CountryCode, DimensionUnit, WeightUnit } from '@spree/core'
 
 /** What a panel may change on the signed-in person's own account. */
 export interface PanelAccountParams {
@@ -354,10 +355,10 @@ export interface PanelPackageTypeParams {
   length?: number | null
   width?: number | null
   height?: number | null
-  dimensions_unit?: PanelPackageDimensionUnit | null
+  dimensions_unit?: DimensionUnit | null
   weight?: number | null
   max_weight?: number | null
-  weight_unit?: PanelPackageWeightUnit | null
+  weight_unit?: WeightUnit | null
   default?: boolean
   /**
    * Not nullable: both SDKs take a merge, so clearing a key is sending the
@@ -387,8 +388,10 @@ export interface PanelPackageTypeWrites extends PanelPackageTypeReads {
 }
 
 export type PanelPackageTypeKind = 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
-export type PanelPackageDimensionUnit = 'mm' | 'cm' | 'in' | 'ft'
-export type PanelPackageWeightUnit = 'g' | 'kg' | 'lb' | 'oz'
+/** @deprecated Use `DimensionUnit` from `@spree/core`. */
+export type PanelPackageDimensionUnit = DimensionUnit
+/** @deprecated Use `WeightUnit` from `@spree/core`. */
+export type PanelPackageWeightUnit = WeightUnit
 
 /**
  * A new row must say what it is and what to call it — packaging without

@@ -239,11 +239,15 @@ export function getCredentials(): E2ECredentials {
  * are single-use (rotated on every refresh), so each context needs its own.
  *
  * Not used by `auth.spec.ts` — that spec exercises the login form itself.
+ * Pass `account` to sign in as a teammate rather than the seeded admin.
  */
-export async function login(page: Page): Promise<E2ELoginSession> {
+export async function login(
+  page: Page,
+  account?: { email: string; password: string },
+): Promise<E2ELoginSession> {
   const creds = getCredentials()
   const res = await page.request.post('/api/v3/admin/auth/login', {
-    data: { email: creds.admin_email, password: creds.admin_password },
+    data: account ?? { email: creds.admin_email, password: creds.admin_password },
   })
   if (!res.ok()) {
     throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
@@ -501,12 +505,25 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
 /**
  * Places an order for the promo customer, paid by store credit, and ships it
  * unless `ship` is false. `firstName` / `lastName` set the billing name, so a
- * list test can tell its own orders apart from everyone else's.
+ * list test can tell its own orders apart from everyone else's. `locale`
+ * places it in another of the store's languages.
  */
 export async function createPlacedOrder(
   page: Page,
   accessToken: string,
-  { quantity = 2, ship = true, firstName = 'Promo', lastName = 'Customer' } = {},
+  {
+    quantity = 2,
+    ship = true,
+    firstName = 'Promo',
+    lastName = 'Customer',
+    locale,
+  }: {
+    quantity?: number
+    ship?: boolean
+    firstName?: string
+    lastName?: string
+    locale?: string
+  } = {},
 ) {
   const headers = { Authorization: `Bearer ${accessToken}` }
   const request = async (method: 'get' | 'post' | 'patch', path: string, data?: object) => {
@@ -537,6 +554,7 @@ export async function createPlacedOrder(
     items: [{ variant_id: variants.data[0].id, quantity }],
     shipping_address: address,
     billing_address: address,
+    ...(locale ? { locale } : {}),
   })
   await request('post', `/api/v3/admin/customers/${customerId}/store_credits`, {
     amount: order.total,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeMoneyInput } from './normalize-money'
+import { currencyParts, normalizeMoneyInput } from '../src'
 
 describe('normalizeMoneyInput', () => {
   it('passes through canonical en input', () => {
@@ -63,5 +63,16 @@ describe('normalizeMoneyInput', () => {
     expect(normalizeMoneyInput('.', 'en')).toBe('')
     expect(normalizeMoneyInput('-', 'en')).toBe('')
     expect(normalizeMoneyInput('abc', 'en')).toBe('')
+  })
+})
+
+describe('currencyParts', () => {
+  it('gives a currency’s symbol and decimal separator in a locale', () => {
+    expect(currencyParts('EUR', 'de')).toEqual({ symbol: '€', decimal: ',' })
+    expect(currencyParts('USD', 'en')).toEqual({ symbol: '$', decimal: '.' })
+  })
+
+  it('falls back to the code and a period for an unknown currency', () => {
+    expect(currencyParts('XYZ1', 'en')).toEqual({ symbol: 'XYZ1', decimal: '.' })
   })
 })

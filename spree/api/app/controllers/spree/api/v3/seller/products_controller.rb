@@ -41,19 +41,6 @@ module Spree
             'archived' => -> { Spree.product_archive_workflow }
           }.freeze
 
-          # The operator's price shape, except `currency` may be left out: the
-          # store's currency is assumed (see `default_price_currencies`).
-          PRICE = Spree::Api::V3::RequestSchema.new do |schema|
-            schema.attribute :currency, :currency,
-              example: 'USD',
-              description: "Omit to price in the store's currency. A seller has no currency of their own."
-            schema.attribute :amount, :decimal,
-              required: true,
-              example: '24.00',
-              description: 'A canonical decimal string (`"1234.56"`: period decimal, no grouping). The API does not parse localized input.'
-            schema.attribute :compare_at_amount, :decimal, nullable: true, example: '30.00'
-          end
-
           scoped_resource :products
 
           request_params :product do |body|
@@ -69,7 +56,7 @@ module Spree
               description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."
             body.attribute :delivery_profile_id, :id,
               description: "Which of the marketplace's delivery profiles the product ships under. A new product sent without one lands on the profile marked default."
-            body.attribute :prices, :array, of: PRICE,
+            body.attribute :prices, :array, of: Spree::Api::V3::Seller::PriceRequestSchema,
               description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant."
             # `external_url` stays out for the same reason it does on the
             # operator's endpoint: it would make the server fetch a URL the
@@ -83,56 +70,11 @@ module Spree
               media_item.attribute :variant_ids, :array, of: :id,
                 description: 'Replaces the variants this media is linked to. An empty list clears them.'
             end
-            # Narrower than the operator's variant set: `seller_id` would let a
-            # payload hand a variant to somebody else, and
-            # `tax_category_id`/`delivery_profile_id` are marketplace
-            # configuration.
             body.attribute :variants, :array,
-              as: 'SellerProductVariantParams',
+              as: 'ProductVariantParams',
               description: 'The variants, as a whole: one absent from the list is removed. Pass `id` to update an existing variant.' do |variant|
+              variant.extends Spree::Api::V3::Seller::VariantRequestSchema
               variant.attribute :id, :id
-              variant.attribute :sku, :string
-              variant.attribute :barcode, :string
-              variant.attribute :cost_price, :decimal, nullable: true
-              variant.attribute :cost_currency, :currency
-              variant.attribute :weight, :number, nullable: true
-              variant.attribute :height, :number, nullable: true
-              variant.attribute :width, :number, nullable: true
-              variant.attribute :depth, :number, nullable: true
-              variant.attribute :weight_unit, :string, choices: Spree::Variant::WEIGHT_UNITS
-              variant.attribute :dimensions_unit, :string, choices: Spree::Variant::DIMENSION_UNITS
-              variant.attribute :hs_code, :string
-              variant.attribute :customs_description, :string
-              variant.attribute :country_of_origin, :country
-              variant.attribute :minimum_order_quantity, :integer, nullable: true
-              variant.attribute :order_multiple, :integer, nullable: true
-              variant.attribute :purchase_unit, :string
-              variant.attribute :units_per_carton, :integer,
-                nullable: true,
-                description: 'How many units fill one carton.'
-              variant.attribute :carton_package_type_id, :id,
-                nullable: true,
-                description: 'The carton this variant is packed into: a package type of kind `carton`.'
-              variant.attribute :carton_weight, :number,
-                nullable: true,
-                description: "What one packed carton weighs, in the variant's weight unit."
-              variant.attribute :cartons_per_pallet, :integer,
-                nullable: true,
-                description: 'How many cartons stack on one pallet.'
-              variant.attribute :track_inventory, :boolean
-              variant.attribute :preorderable, :boolean
-              variant.attribute :preorder_ships_at, :datetime,
-                nullable: true,
-                description: 'The "ships by" date shown to customers while the variant is a pre-order. Null clears it.'
-              variant.attribute :backorder_limit, :integer,
-                nullable: true,
-                description: 'Maximum units sellable beyond available stock, capping backorders and pre-orders. Null is unlimited.'
-              variant.attribute :position, :integer
-              variant.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
-                description: 'One pair per option type the variant takes part in (size, color).'
-              variant.attribute :prices, :array, of: PRICE, description: 'Per-currency prices. Upserted by currency.'
-              variant.attribute :stock_levels, :array, of: Spree::Api::V3::StockLevelRequestSchema,
-                description: "Stock per location, at this seller's own locations only: a location belonging to anyone else is ignored."
             end
           end
 
@@ -268,6 +210,10 @@ module Spree
 
           def update_workflow
             Spree.product_update_workflow
+          end
+
+          def nested_permitted_models
+            { media: Spree::Media, variants: Spree::Variant }
           end
 
           # The workflow builds its own product, which would leave a seller's

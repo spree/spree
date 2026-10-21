@@ -1607,6 +1607,12 @@
         "internal_note": {
           "label": "Nota interna (solo staff)"
         },
+        "locale": {
+          "label": "Idioma"
+        },
+        "market": {
+          "label": "Mercado"
+        },
         "order_group": {
           "label": "Compra",
           "view": "Ver compra"
@@ -6190,7 +6196,209 @@
       }
     },
     "enterprise": {
-      "learn_more": "Conocé Spree Enterprise"
+      "available_in": "Disponible en Spree Enterprise",
+      "badge": "Enterprise",
+      "cta": "Obtener Spree Enterprise",
+      "footer": "Spree Enterprise suma esto al Spree de código abierto que ya usás. Tus datos, tu tienda online y tus integraciones quedan como están.",
+      "how_it_works": "Cómo funciona",
+      "learn_more": "Conocé Spree Enterprise",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "Cada entrada muestra el valor anterior y el nuevo, para que veas exactamente qué cambió.",
+              "title": "Antes y después"
+            },
+            "coverage": {
+              "description": "Productos, variantes, precios, stock, categorías, promociones, pagos, envíos, créditos de tienda, tasas de impuestos y configuración de la tienda.",
+              "title": "Todo lo importante"
+            },
+            "search": {
+              "description": "Filtrá por persona, tipo de registro o fecha, y abrí el registro que cambió.",
+              "title": "Fácil de buscar"
+            }
+          },
+          "intro": "Cuando varias personas gestionan una tienda, necesitás saber quién cambió un precio, un nivel de stock o un ajuste. Spree Enterprise registra cada cambio importante con la persona que lo hizo, la hora y los valores antes y después.",
+          "nav": "Auditoría",
+          "steps": {
+            "change": {
+              "description": "Alguien de tu equipo edita un registro.",
+              "title": "Cambio"
+            },
+            "record": {
+              "description": "Spree guarda quién hizo el cambio, cuándo y qué cambió.",
+              "title": "Registro"
+            },
+            "review": {
+              "description": "Encontrá el cambio en el registro de auditoría cuando lo necesites.",
+              "title": "Revisión"
+            }
+          },
+          "subtitle": "Mirá quién cambió qué en tu tienda, y cuándo.",
+          "title": "Registro de auditoría"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "Al aprobar una empresa, recibe su catálogo y sus precios. Podés suspender una cuenta más adelante y restablecerla.",
+              "title": "Aprobar con condiciones"
+            },
+            "checklist": {
+              "description": "Pedí un número fiscal, documentos o confirmaciones, y revisá cada respuesta.",
+              "title": "Tu propia lista de verificación"
+            },
+            "dialogue": {
+              "description": "Devolvé una solicitud con una nota en lugar de rechazarla. La empresa responde desde tu tienda online.",
+              "title": "Pedir más información"
+            }
+          },
+          "intro": "Cuando una empresa se registra en tu tienda online, Spree Enterprise deja su cuenta pendiente de revisión. La empresa puede recorrer tu catálogo sin ver precios mientras tu equipo revisa sus datos, pide lo que falta y la aprueba.",
+          "nav": "Onboarding",
+          "steps": {
+            "approve": {
+              "description": "La empresa ve sus precios y puede hacer pedidos.",
+              "title": "Aprobación"
+            },
+            "register": {
+              "description": "Una empresa se registra en tu tienda online.",
+              "title": "Registro"
+            },
+            "review": {
+              "description": "Tu equipo revisa la solicitud o pide más información.",
+              "title": "Revisión"
+            },
+            "verify": {
+              "description": "Completa tu lista de verificación mientras los precios siguen ocultos.",
+              "title": "Verificación"
+            }
+          },
+          "subtitle": "Revisá los registros de empresas antes de que puedan comprar.",
+          "title": "Onboarding de empresas"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "Enviá automáticamente el lote más antiguo o el que vence primero, o dejá que elija tu depósito. Un envío puede tomar de varios lotes.",
+              "title": "Primero el lote correcto"
+            },
+            "recall": {
+              "description": "Encontrá cada pedido y cliente al que fue un lote, y mirá qué lotes vencen pronto.",
+              "title": "Retiros rápidos"
+            },
+            "stock": {
+              "description": "Cantidades, fechas de vencimiento y de fabricación, y números de lote del proveedor para cada lote en cada ubicación.",
+              "title": "Stock por lote"
+            }
+          },
+          "intro": "Quienes venden alimentos, cosméticos, productos de salud y otros bienes regulados necesitan saber qué lote fue a dónde. Spree Enterprise lleva el stock por lote, con cantidades y fechas de vencimiento, y elige el lote correcto para cada envío.",
+          "nav": "Lotes",
+          "steps": {
+            "allocate": {
+              "description": "Spree elige los lotes de cada envío según tu regla.",
+              "title": "Asignar"
+            },
+            "receive": {
+              "description": "Registrá los lotes cuando llega una orden de compra o una transferencia.",
+              "title": "Recibir"
+            },
+            "ship": {
+              "description": "Cada envío registra qué lotes contenía.",
+              "title": "Enviar"
+            },
+            "trace": {
+              "description": "Buscá un lote para encontrar sus pedidos y clientes.",
+              "title": "Rastrear"
+            }
+          },
+          "subtitle": "Controlá el stock por lote, enviá primero el lote correcto y rastreá cada pedido al que fue un lote.",
+          "title": "Lotes y fechas de vencimiento"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "Cuando el comprador acepta, la cotización se convierte en un pedido con sus condiciones de pago y su número de orden de compra.",
+              "title": "Directo a un pedido"
+            },
+            "negotiate": {
+              "description": "Cambiá precios unitarios, cantidades, envío y cargos en una sola cotización, sin tocar la lista de precios del comprador.",
+              "title": "Precios para una operación"
+            },
+            "validity": {
+              "description": "Cada cotización tiene fecha de vencimiento. Los compradores pueden pedir cambios y vos enviás una cotización revisada.",
+              "title": "Vigencia clara"
+            }
+          },
+          "intro": "Los compradores empresariales suelen necesitar un precio antes de comprometerse. Con las cotizaciones, el comprador pide una desde su carrito, tu equipo le pone precio y el comprador la acepta en línea. La cotización aceptada se convierte en un pedido normal con los precios acordados.",
+          "nav": "Cotizaciones",
+          "note": {
+            "description": "Con Spree Enterprise, los compradores pueden revisar un borrador, pedir cambios y aceptarlo en línea antes de que venza.",
+            "title": "Enviar este borrador como cotización"
+          },
+          "steps": {
+            "accept": {
+              "description": "El comprador acepta y la cotización se convierte en pedido.",
+              "title": "Aceptar"
+            },
+            "price": {
+              "description": "Tu equipo ajusta precios, cantidades y envío.",
+              "title": "Cotizar"
+            },
+            "request": {
+              "description": "El comprador pide una cotización desde su carrito.",
+              "title": "Solicitar"
+            },
+            "send": {
+              "description": "El comprador recibe un enlace a la cotización y su fecha de vencimiento.",
+              "title": "Enviar"
+            }
+          },
+          "subtitle": "Negociá precios con compradores empresariales y convertí las cotizaciones aceptadas en pedidos.",
+          "title": "Cotizaciones"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "Productos, variantes, imágenes, traducciones, precios y stock vienen de la tienda del vendedor. Los productos nuevos pasan por tu revisión habitual.",
+              "title": "Catálogo sincronizado"
+            },
+            "control": {
+              "description": "Un campo que tu equipo edita en Spree deja de sincronizarse hasta que decidas reanudarlo. Un pedido que no se puede enviar queda marcado para vos.",
+              "title": "Vos tenés el control"
+            },
+            "orders": {
+              "description": "Los pedidos del marketplace se crean en el Shopify del vendedor, ya pagados. Envíos, seguimiento, cancelaciones y reembolsos vuelven automáticamente.",
+              "title": "Pedidos en un solo lugar"
+            }
+          },
+          "intro": "Muchos vendedores ya venden en Shopify. Conectá su tienda a tu marketplace y su catálogo y stock se mantienen sincronizados solos. Tus pedidos aparecen en su Shopify, así preparan todo en un solo lugar.",
+          "nav": "Shopify",
+          "note": {
+            "description": "Con Spree Enterprise, los productos, el stock y los pedidos de este vendedor se mantienen sincronizados con su propia tienda Shopify.",
+            "title": "Conectar la tienda Shopify de este vendedor"
+          },
+          "steps": {
+            "connect": {
+              "description": "Configurás una conexión para el vendedor.",
+              "title": "Conectar"
+            },
+            "install": {
+              "description": "El vendedor instala la app en su tienda Shopify.",
+              "title": "Instalar"
+            },
+            "sell": {
+              "description": "Los pedidos van a su tienda y los envíos vuelven.",
+              "title": "Vender"
+            },
+            "sync": {
+              "description": "Su catálogo, ubicaciones y stock llegan a tu marketplace.",
+              "title": "Sincronizar"
+            }
+          },
+          "subtitle": "Permití que los vendedores sigan gestionando su negocio desde su propia tienda Shopify.",
+          "title": "Shopify para vendedores"
+        }
+      },
+      "see_how_it_works": "Ver cómo funciona"
     },
     "jurisdiction": {
       "everywhere": "En todos lados"
