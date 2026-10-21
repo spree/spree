@@ -493,6 +493,7 @@ function MediaDetailSheet({
 
     try {
       if (form.formState.isDirty) {
+        const submitted = form.getValues()
         await updateFile.mutateAsync({
           id: media.id,
           alt: values.alt,
@@ -501,8 +502,9 @@ function MediaDetailSheet({
         // Re-baselined against what was just saved, not the record the sheet
         // opened with: that snapshot never refreshes, so after a save every
         // close would otherwise ask to discard. Also keeps a retry after a
-        // failed custom field save from re-sending the file.
-        form.reset(form.getValues())
+        // failed custom field save from re-sending the file. An edit typed
+        // while the request was out stays on screen and stays unsaved.
+        form.reset(submitted, { keepValues: true })
       }
       if (await customFields.save()) {
         toastManager.add({ type: 'success', title: t('admin.messages.saved') })

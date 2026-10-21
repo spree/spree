@@ -213,6 +213,8 @@ export function MediaEditSheet({
   }
 
   const handleCancel = () => {
+    // A save already sent can't be called back, so the sheet stays until it settles.
+    if (saving) return
     const snap = snapshotRef.current
     if (snap) {
       // Resolve the row by stable key — the media array may have reordered
@@ -363,7 +365,7 @@ export function MediaEditSheet({
         </div>
 
         <SheetFooter>
-          <Button type="button" variant="outline" onClick={handleCancel}>
+          <Button type="button" variant="outline" disabled={saving} onClick={handleCancel}>
             {t('admin.actions.cancel')}
           </Button>
           <Button

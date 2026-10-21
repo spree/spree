@@ -125,6 +125,8 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
   )
 
   const handleCancel = () => {
+    // A save already sent can't be called back, so the sheet stays until it settles.
+    if (saving) return
     const snap = snapshotRef.current
     if (snap) {
       // Resolve the target index by stable id when we have one — the array
@@ -720,7 +722,7 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
         </div>
 
         <SheetFooter>
-          <Button type="button" variant="outline" onClick={handleCancel}>
+          <Button type="button" variant="outline" disabled={saving} onClick={handleCancel}>
             {t('admin.actions.cancel')}
           </Button>
           <Button type="button" disabled={saving} onClick={handleDone}>
