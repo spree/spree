@@ -45,6 +45,7 @@ export type {
   Customer,
   CustomerGroup,
   CustomField,
+  DataRequest,
   Delivery,
   DeliveryMethod,
   DeliveryRate,

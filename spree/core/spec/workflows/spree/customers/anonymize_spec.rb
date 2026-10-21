@@ -646,6 +646,16 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(data_request.reload).to be_completed
       expect(data_request.requested_at).to be_present
     end
+
+    it 'voids the link of a request still waiting for confirmation' do
+      waiting = create(:data_request, :awaiting_confirmation, store: store, customer: customer)
+      token = waiting.generate_token_for(:confirmation)
+
+      result
+
+      expect(waiting.reload).to be_lapsed
+      expect(Spree::DataRequest.find_by_token_for(:confirmation, token)).to be_nil
+    end
   end
 
   # The access export discloses all three as this person's data, so leaving

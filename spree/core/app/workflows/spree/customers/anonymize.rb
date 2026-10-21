@@ -407,7 +407,9 @@ module Spree
         end
 
         # The token goes too, so a link already emailed stops resolving rather
-        # than waiting out its expiry.
+        # than waiting out its expiry. Confirmation links are bound to it, so
+        # a request still waiting for one can never be confirmed.
+        requests.awaiting_confirmation.update_all(status: 'lapsed', updated_at: Time.current)
         requests.update_all(
           email: customer.email,
           download_token: nil,

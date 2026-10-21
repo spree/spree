@@ -6,6 +6,7 @@ import {
   CompanySchema,
   CompanyInvitationSchema,
   CustomerSchema,
+  DataRequestConfirmationRequestedEventSchema,
   DataRequestEventSchema,
   DeliverySchema,
   DigitalAssetSchema,
@@ -85,6 +86,7 @@ type WebhookEventName =
   | 'customer.password_reset'
   | 'customer.password_reset_requested'
   | 'data_request.completed'
+  | 'data_request.confirmation_requested'
   | 'data_request.created'
   | 'data_request.deleted'
   | 'data_request.updated'
@@ -339,6 +341,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'customer.password_reset': CustomerSchema,
   'customer.password_reset_requested': PasswordResetRequestedEventSchema,
   'data_request.completed': DataRequestEventSchema,
+  'data_request.confirmation_requested': DataRequestConfirmationRequestedEventSchema,
   'data_request.created': DataRequestEventSchema,
   'data_request.deleted': DataRequestEventSchema,
   'data_request.updated': DataRequestEventSchema,

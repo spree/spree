@@ -25,11 +25,15 @@ module Spree
         end
 
         # Present only while the file is still there — a link the storefront
-        # can render without having to reason about expiry itself.
-        attribute :download_url do |data_request, params|
+        # can render without having to reason about expiry itself — and only
+        # to a caller holding the confirmation token, never to the signed-in
+        # account, because the export covers guest orders placed at the address
+        # the request names.
+        attribute :download_url do |data_request|
+          next nil unless params[:download_url_visible]
           next nil unless data_request.downloadable?
 
-          host = (params&.dig(:store) || data_request.store)&.formatted_url
+          host = (params[:store] || data_request.store)&.formatted_url
           next nil if host.blank?
 
           Spree::Api::DataRequestUrls.download_url(data_request, host)
