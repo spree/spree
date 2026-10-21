@@ -21,12 +21,13 @@ function publishedUnitSystems(node: unknown, found = new Set<string>()): Set<str
 }
 
 describe('unit systems', () => {
+  // Parsing the multi-megabyte reference outlasts the default five seconds on CI runners.
   it('match the unit systems the Admin API accepts', () => {
     const reference = parse(
       readFileSync(resolve(__dirname, '../../../docs/api-reference/admin.yaml'), 'utf-8'),
     )
     expect([...publishedUnitSystems(reference)].sort()).toEqual([...UNIT_SYSTEMS].sort())
-  })
+  }, 30_000)
 
   it('offer every weight unit in exactly one system', () => {
     expect(Object.values(UNIT_SYSTEM_WEIGHT_UNITS).flat().sort()).toEqual(
