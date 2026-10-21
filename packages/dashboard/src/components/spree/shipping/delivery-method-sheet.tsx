@@ -1,7 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryProfile, DeliveryZone } from '@spree/admin-sdk'
-import { isDecimalString, isZeroMoney } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { isDecimalString, isZeroMoney } from '@spree/core'
+import {
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
+  mapSpreeErrorsToForm,
+} from '@spree/dashboard-core'
 import {
   Button,
   Sheet,
@@ -27,6 +32,7 @@ import {
   deliveryMethodFormSchema,
   deliveryMethodValuesToParams,
 } from '../../../schemas/delivery-method'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import { DeliveryMethodFormCards } from './delivery-method-form'
 
 /** API decimals arrive as strings ("0.0"); show blank instead of a noisy zero. */
@@ -87,6 +93,8 @@ export function DeliveryMethodSheet({
   const { data: fulfillmentProviders } = useFulfillmentProviders()
   const createMutation = useCreateDeliveryMethod()
   const updateMutation = useUpdateDeliveryMethod(methodId ?? '')
+  // Edit only: a method being created has no id to hang values on yet.
+  const customFields = useCustomFieldsDraft('delivery_method', methodId ?? '')
 
   // Saving sends the full rule set for reconciliation, so the form must not be
   // reachable until the existing rules have loaded — otherwise a quick save
@@ -97,7 +105,11 @@ export function DeliveryMethodSheet({
   const form = useForm<DeliveryMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(deliveryMethodFormSchema) as any,
-    defaultValues: { ...DELIVERY_METHOD_DEFAULTS, delivery_zone_id: zoneId ?? '' },
+    defaultValues: {
+      ...DELIVERY_METHOD_DEFAULTS,
+      delivery_zone_id: zoneId ?? '',
+      ...extensionFormValues('delivery_method', null),
+    },
   })
 
   // A new method is seeded once, from values that owe nothing to any query.
@@ -107,7 +119,11 @@ export function DeliveryMethodSheet({
   // in the other order.
   useEffect(() => {
     if (!editing) {
-      form.reset({ ...DELIVERY_METHOD_DEFAULTS, delivery_zone_id: zoneId ?? '' })
+      form.reset({
+        ...DELIVERY_METHOD_DEFAULTS,
+        delivery_zone_id: zoneId ?? '',
+        ...extensionFormValues('delivery_method', null),
+      })
     }
   }, [editing, zoneId, form])
 
@@ -155,6 +171,7 @@ export function DeliveryMethodSheet({
         product_ids: rule.product_ids,
         takes_products: takesProducts(ruleTypes?.data, rule.type),
       })),
+      ...extensionFormValues('delivery_method', method),
     })
   }, [editing, method, ruleTypes, form])
 
@@ -174,10 +191,21 @@ export function DeliveryMethodSheet({
   async function onSubmit(values: DeliveryMethodFormValues) {
     try {
       if (editing) {
-        await updateMutation.mutateAsync(deliveryMethodValuesToParams(values))
+        // The method saves first and is marked clean, so a retry after a
+        // failed custom field save sends only the custom fields.
+        const savesRecord = form.formState.isDirty
+        if (savesRecord) {
+          await updateMutation.mutateAsync({
+            ...deliveryMethodValuesToParams(values),
+            ...extensionSubmitValues('delivery_method', form),
+          })
+          form.reset(values)
+        }
+        if (!(await customFields.save({ announce: !savesRecord }))) return
       } else {
         await createMutation.mutateAsync({
           ...deliveryMethodValuesToParams(values),
+          ...extensionSubmitValues('delivery_method', form),
           delivery_profile_id: profile.id,
           // Only sent when the merchant added the method from a specific
           // group; otherwise the server files it under the zone's group, else
@@ -224,6 +252,16 @@ export function DeliveryMethodSheet({
                 // editing still needs the picker to move a method or clear it.
                 zonePreselected={!methodId && !!zoneId}
               />
+              <HostFormSlot
+                form={form}
+                name="delivery_method.form_fields"
+                context={{
+                  deliveryMethod: method,
+                  deliveryProfile: profile,
+                  mode: editing ? 'edit' : 'new',
+                }}
+              />
+              {editing && <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />}
             </div>
             <SheetFooter>
               <Button
@@ -236,7 +274,10 @@ export function DeliveryMethodSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting || (editing && !form.formState.isDirty)}
+                disabled={
+                  form.formState.isSubmitting ||
+                  (editing && !form.formState.isDirty && !customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting
                   ? editing

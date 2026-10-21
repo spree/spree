@@ -1,6 +1,6 @@
 {
   "name": "@spree/seller-dashboard",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "license": "MIT",
   "type": "module",
   "description": "Spree marketplace seller panel — the seller-facing counterpart to the admin dashboard.",
@@ -48,6 +48,7 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@spree/core": "workspace:^",
     "@spree/seller-sdk": "workspace:*",
     "@tanstack/router-plugin": "^1.168.46",
     "@tanstack/virtual-file-routes": "^1.162.0",

@@ -81,6 +81,22 @@ RSpec.describe 'OAuth discovery', type: :request do
       expect(response.location).to include(other.prefixed_id)
       expect(response.location).not_to include(store.prefixed_id)
     end
+
+    # Resolving the hostname makes the default store current, and an app
+    # that scopes queries by the current store would then miss the client.
+    it 'finds the client before resolving the store from the hostname' do
+      other = create(:store, code: "other-#{SecureRandom.hex(4)}")
+      application = other.oauth_applications.create!(
+        name: 'Other store client', redirect_uri: 'https://example.test/cb', confidential: false
+      )
+      expect(Spree.current_store_finder).not_to receive(:new)
+
+      get '/oauth/authorize', params: {
+        client_id: application.uid, redirect_uri: 'https://example.test/cb', response_type: 'code'
+      }
+
+      expect(response.location).to include(other.prefixed_id)
+    end
   end
 
   # The endpoint exists so the metadata document can name it; it renders

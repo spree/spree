@@ -1,6 +1,5 @@
-import { compareMoney, isDecimalString, isZeroMoney, sumMoney } from '@spree/admin-sdk'
+import { compareMoney, isDecimalString, isZeroMoney, prorateMoney, sumMoney } from '@spree/core'
 import { formatMoney } from './formatters'
-import { prorateMoney } from './money'
 
 /** True when a received return is owed nothing, so completing it moves no money. */
 export function returnOwesNothing(refundableTotal: string): boolean {

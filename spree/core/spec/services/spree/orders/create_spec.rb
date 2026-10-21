@@ -65,6 +65,67 @@ module Spree
         end
       end
 
+      context 'with a market' do
+        let(:market) { create(:market, :eu, store: store) }
+        let(:params) { { email: 'new@example.com', market_id: market.prefixed_id } }
+
+        it "takes the market's currency and default locale" do
+          order = subject.value
+          expect(order.market).to eq(market)
+          expect(order.currency).to eq('EUR')
+          expect(order.locale).to eq('de')
+        end
+
+        context 'and one of its languages' do
+          before { market.update!(supported_locales: %w[de fr]) }
+
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'fr' } }
+
+          it 'keeps the given language' do
+            expect(subject.value.locale).to eq('fr')
+          end
+        end
+
+        context 'and no market, only its currency' do
+          let(:params) { { email: 'new@example.com', currency: 'EUR' } }
+
+          before { market }
+
+          it 'places the order in a market that sells the currency' do
+            expect(subject.value.market).to eq(market)
+          end
+        end
+
+        context 'and a currency the market does not use' do
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, currency: 'USD' } }
+
+          it 'refuses the order' do
+            expect { subject }.not_to change(Spree::Order, :count)
+            expect(subject).to be_failure
+            expect(subject.value.errors[:currency]).to be_present
+          end
+        end
+
+        context 'and a language the market does not offer' do
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'ja' } }
+
+          it 'refuses the order' do
+            expect(subject).to be_failure
+            expect(subject.value.errors[:locale]).to be_present
+          end
+        end
+      end
+
+      context 'with use_shipping' do
+        let(:params) { { email: 'new@example.com', shipping_address: address_attrs, use_shipping: true } }
+
+        it 'copies the shipping address to the billing address' do
+          order = subject.value
+          expect(order.bill_address).to be_present
+          expect(order.bill_address).to eq(order.ship_address)
+        end
+      end
+
       context 'with items but no shipping address' do
         let(:params) do
           {
@@ -231,6 +292,23 @@ module Spree
           expect(shipment.adjustment_total).to eq(-5)
           expect(order.fulfillment_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
+        end
+      end
+
+      context 'with an item not published on the channel' do
+        let(:unpublished_product) do
+          create(:product_in_stock).tap { |p| p.product_publications.destroy_all }
+        end
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: unpublished_product.default_variant.prefixed_id, quantity: 1 }]
+          }
+        end
+
+        it 'does not create the order' do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          expect(Spree::Order.where(email: 'new@example.com')).to be_empty
         end
       end
 

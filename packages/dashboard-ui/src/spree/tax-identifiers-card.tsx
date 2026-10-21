@@ -15,17 +15,20 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemTitle,
   RelativeTime,
+  RowActions,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -35,7 +38,7 @@ import {
   StatusBadge,
   useConfirm,
 } from '../index'
-import { BadgeCheckIcon, EllipsisVerticalIcon, PencilIcon, PlusIcon, TrashIcon } from './icons'
+import { BadgeCheckIcon, PlusIcon } from './icons'
 
 /** One selectable registration kind. */
 interface KindOption {
@@ -153,81 +156,71 @@ export function TaxIdentifiersCard({
           <p className="text-muted-foreground text-sm">{t('admin.tax_identifiers.empty')}</p>
         </CardContent>
       ) : (
-        <CardContent className="flex flex-col gap-3">
-          {identifiers.map((identifier) => (
-            <div
-              key={identifier.id}
-              className="flex items-start justify-between gap-3 rounded-md border p-3"
-            >
-              <div className="flex min-w-0 flex-col gap-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium text-sm">{identifier.value}</span>
-                  <Badge variant="outline">
-                    {t(`admin.tax_identifiers.kinds.${identifier.kind}`, {
-                      defaultValue: identifier.kind,
-                    })}
-                  </Badge>
-                  {identifier.validation_status ? (
-                    <StatusBadge
-                      status={identifier.validation_status}
-                      label={t(
-                        `admin.tax_identifiers.validation_status.${identifier.validation_status}`,
-                        { defaultValue: identifier.validation_status },
-                      )}
-                    />
-                  ) : (
-                    <Badge variant="secondary">
-                      {t('admin.tax_identifiers.validation_status.not_checked')}
+        <CardContent>
+          <ItemGroup className="gap-3">
+            {identifiers.map((identifier) => (
+              <Item key={identifier.id} role="listitem" variant="outline" className="items-start">
+                <ItemContent className="min-w-0">
+                  <ItemTitle className="flex-wrap">
+                    {identifier.value}
+                    <Badge variant="outline">
+                      {t(`admin.tax_identifiers.kinds.${identifier.kind}`, {
+                        defaultValue: identifier.kind,
+                      })}
                     </Badge>
+                    {identifier.validation_status ? (
+                      <StatusBadge
+                        status={identifier.validation_status}
+                        label={t(
+                          `admin.tax_identifiers.validation_status.${identifier.validation_status}`,
+                          { defaultValue: identifier.validation_status },
+                        )}
+                      />
+                    ) : (
+                      <Badge variant="secondary">
+                        {t('admin.tax_identifiers.validation_status.not_checked')}
+                      </Badge>
+                    )}
+                  </ItemTitle>
+                  {identifier.validated_at && (
+                    <ItemDescription className="text-xs">
+                      <RelativeTime
+                        iso={identifier.validated_at}
+                        prefix={t('admin.tax_identifiers.checked_prefix')}
+                      />
+                    </ItemDescription>
                   )}
-                </div>
-                {identifier.validated_at && (
-                  <span className="text-muted-foreground text-xs">
-                    <RelativeTime
-                      iso={identifier.validated_at}
-                      prefix={t('admin.tax_identifiers.checked_prefix')}
-                    />
-                  </span>
-                )}
-                {!identifier.validatable && (
-                  <span className="text-muted-foreground text-xs">
-                    {t('admin.tax_identifiers.not_validatable')}
-                  </span>
-                )}
-              </div>
+                  {!identifier.validatable && (
+                    <ItemDescription className="text-xs">
+                      {t('admin.tax_identifiers.not_validatable')}
+                    </ItemDescription>
+                  )}
+                </ItemContent>
 
-              {canEdit && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-xs">
-                      <EllipsisVerticalIcon className="size-4" />
-                      <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      disabled={!identifier.validatable || mutations.isValidating}
-                      onClick={() => mutations.validate(identifier.id).catch(() => undefined)}
-                    >
-                      <BadgeCheckIcon className="size-4" />
-                      {t('admin.tax_identifiers.validate_action')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setEditing(identifier)}>
-                      <PencilIcon className="size-4" />
-                      {t('admin.actions.edit')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={() => handleDelete(identifier)}
-                    >
-                      <TrashIcon className="size-4" />
-                      {t('admin.actions.delete')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          ))}
+                {canEdit && (
+                  <ItemActions>
+                    <RowActions
+                      actions={[
+                        {
+                          key: 'validate',
+                          label: t('admin.tax_identifiers.validate_action'),
+                          icon: <BadgeCheckIcon className="size-4" />,
+                          disabled: !identifier.validatable || mutations.isValidating,
+                          onSelect: () => mutations.validate(identifier.id).catch(() => undefined),
+                        },
+                        { key: 'edit', onSelect: () => setEditing(identifier) },
+                        {
+                          key: 'delete',
+                          destructive: true,
+                          onSelect: () => handleDelete(identifier),
+                        },
+                      ]}
+                    />
+                  </ItemActions>
+                )}
+              </Item>
+            ))}
+          </ItemGroup>
         </CardContent>
       )}
 

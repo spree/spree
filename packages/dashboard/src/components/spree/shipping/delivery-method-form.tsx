@@ -38,6 +38,10 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -598,24 +602,25 @@ function ProvidersCard({
       )}
 
       {connectableIntegrations.map((integrationType) => (
-        <div
-          key={integrationType.type}
-          className="flex items-center justify-between gap-3 rounded-md border border-dashed p-3"
-        >
-          <span className="text-sm text-muted-foreground">
-            {t('admin.delivery_methods.connect_provider_hint', { name: integrationType.name })}
-          </span>
+        <Item key={integrationType.type} variant="outline" className="border-dashed">
+          <ItemContent>
+            <ItemDescription>
+              {t('admin.delivery_methods.connect_provider_hint', { name: integrationType.name })}
+            </ItemDescription>
+          </ItemContent>
           <Can I="create" a={Subject.Integration}>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setConnectingType(integrationType)}
-            >
-              {t('admin.integrations.connect_cta')}
-            </Button>
+            <ItemActions>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setConnectingType(integrationType)}
+              >
+                {t('admin.integrations.connect_cta')}
+              </Button>
+            </ItemActions>
           </Can>
-        </div>
+        </Item>
       ))}
 
       {connectingType && (

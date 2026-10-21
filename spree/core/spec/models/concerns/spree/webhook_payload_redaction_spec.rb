@@ -42,6 +42,18 @@ describe Spree::WebhookPayloadRedaction do
       expect(described_class.merge(payload, secrets)).to eq(original)
     end
 
+    it 'redacts the data request confirmation_token' do
+      original = {
+        'name' => 'data_request.confirmation_requested',
+        'data' => { 'email' => 'a@example.com', 'confirmation_token' => 'live-token' }
+      }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload['data']['confirmation_token']).to eq(placeholder)
+      expect(secrets).to eq('data.confirmation_token' => 'live-token')
+    end
+
     # Payment session events carry live gateway credentials: a client secret
     # confirms a payment and an ephemeral key lists a customer's saved cards.
     it 'redacts payment session credentials nested inside external_data' do

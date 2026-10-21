@@ -22,16 +22,22 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
   form,
   label,
   savingLabel,
+  dirty = false,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   label?: string
   savingLabel?: string
+  /**
+   * Unsaved changes held outside the form — custom field drafts the page
+   * saves from its own submit — counted as dirty alongside the form's own.
+   */
+  dirty?: boolean
 }) {
   const { t } = useTranslation()
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
   return (
-    <Button type="submit" disabled={!isDirty || isSubmitting}>
+    <Button type="submit" disabled={!(isDirty || dirty) || isSubmitting}>
       {isSubmitting && <Loader2Icon className="animate-spin" />}
       {isSubmitting
         ? (savingLabel ?? t('admin.actions.saving'))
@@ -52,15 +58,22 @@ export function FormDiscardButton<TFieldValues extends FieldValues>({
   form,
   label,
   onDiscard,
+  dirty = false,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   label?: string
   onDiscard?: () => void
+  /**
+   * Unsaved changes held outside the form — custom field drafts the page
+   * saves from its own submit — counted as dirty alongside the form's own.
+   * Pass `onDiscard` too, so discarding drops them.
+   */
+  dirty?: boolean
 }) {
   const { t } = useTranslation()
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
-  if (!isDirty) return null
+  if (!isDirty && !dirty) return null
 
   return (
     <Button
@@ -83,17 +96,23 @@ export function FormActions<TFieldValues extends FieldValues>({
   savingLabel,
   discardLabel,
   onDiscard,
+  dirty,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   saveLabel?: string
   savingLabel?: string
   discardLabel?: string
   onDiscard?: () => void
+  /**
+   * Unsaved changes held outside the form — custom field drafts the page
+   * saves from its own submit — counted as dirty alongside the form's own.
+   */
+  dirty?: boolean
 }) {
   return (
     <>
-      <FormDiscardButton form={form} label={discardLabel} onDiscard={onDiscard} />
-      <FormSaveButton form={form} label={saveLabel} savingLabel={savingLabel} />
+      <FormDiscardButton form={form} label={discardLabel} onDiscard={onDiscard} dirty={dirty} />
+      <FormSaveButton form={form} label={saveLabel} savingLabel={savingLabel} dirty={dirty} />
     </>
   )
 }
@@ -113,8 +132,11 @@ export function FormActions<TFieldValues extends FieldValues>({
 export function useFormSubmitShortcut<TFieldValues extends FieldValues>(
   form: UseFormReturn<TFieldValues, any, any>,
   onSubmit: (values: TFieldValues) => void | Promise<void>,
+  /** Unsaved changes held outside the form, as on `FormActions`. */
+  { dirty: externalDirty = false }: { dirty?: boolean } = {},
 ) {
-  const { isDirty, isSubmitting } = useFormState({ control: form.control })
+  const { isDirty: formDirty, isSubmitting } = useFormState({ control: form.control })
+  const isDirty = formDirty || externalDirty
 
   useHotkey(
     'Mod+S',

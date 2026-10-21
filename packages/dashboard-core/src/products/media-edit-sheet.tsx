@@ -1,5 +1,11 @@
 import type { ProductFormValues } from '@spree/dashboard-core'
-import { ImageUploadField, parseVideoUrl, useTranslation } from '@spree/dashboard-core'
+import {
+  extensionFieldNames,
+  ImageUploadField,
+  parseVideoUrl,
+  Slot,
+  useTranslation,
+} from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -18,6 +24,7 @@ import i18n from 'i18next'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import type { PanelVariant as Variant } from './product-types'
+import { useSheetSaveHandlers } from './sheet-save-handlers'
 
 // The fields this sheet edits. Snapshot, cancel-restore and the type all derive
 // from this one list, so a new editable field can't reach the form and then be
@@ -39,13 +46,25 @@ interface Props {
   variants: Variant[]
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** The product form's key — names the slot and the row's extension fields. */
+  formKey: string
+  productId?: string
 }
 
 // Form-backed media editor. The sheet edits `form.media[index]` directly —
 // changes ride the parent product PATCH/POST, no per-asset API calls.
-// Cancel restores a snapshot taken on open; Done closes (parent form Save
-// commits). Same model as the per-variant Sheet.
-export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange }: Props) {
+// Cancel restores a snapshot taken on open; Done runs the slot widgets' own
+// saves, then closes (parent form Save commits). Same model as the per-variant
+// Sheet.
+export function MediaEditSheet({
+  form,
+  mediaIndex,
+  variants,
+  open,
+  onOpenChange,
+  formKey,
+  productId,
+}: Props) {
   const { t } = useTranslation()
 
   // Snapshot on open so Cancel can restore. Re-snapshot if mediaIndex changes
@@ -58,7 +77,11 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   // freshly-uploaded row that has no id yet we fall back to the current
   // index — uploads don't surface a drag handle so the race is impossible.
   type MediaRow = NonNullable<ProductFormValues['media']>[number]
-  type Snapshot = Pick<MediaRow, (typeof EDITED_FIELDS)[number]> & { key: string | null }
+  type Snapshot = Pick<MediaRow, (typeof EDITED_FIELDS)[number]> & {
+    key: string | null
+    // Fields a `<formKey>.media.form_fields` widget edits, restored the same way.
+    extensions: Record<string, unknown>
+  }
   const snapshotRef = useRef<Snapshot | null>(null)
   const rowKey = useCallback(
     (m: MediaRow): string | null => m.id ?? m.signed_id ?? m.uploadId ?? null,
@@ -84,8 +107,18 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
       // Copy the array — the snapshot must not alias the row's own value.
       variant_ids: [...(row.variant_ids ?? [])],
       key: rowKey(row),
+      extensions: structuredClone(
+        Object.fromEntries(
+          extensionFieldNames(`${formKey}.media`).map((name) => [
+            name,
+            (row as Record<string, unknown>)[name],
+          ]),
+        ),
+      ),
     }
-  }, [open, mediaIndex, form, rowKey])
+  }, [open, mediaIndex, form, rowKey, formKey])
+
+  const { onSave, saveAll, saving } = useSheetSaveHandlers()
 
   const entry = form.watch(`media.${mediaIndex}`)
   if (!entry) return null
@@ -180,6 +213,8 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   }
 
   const handleCancel = () => {
+    // A save already sent can't be called back, so the sheet stays until it settles.
+    if (saving) return
     const snap = snapshotRef.current
     if (snap) {
       // Resolve the row by stable key — the media array may have reordered
@@ -199,6 +234,13 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
       // after a cancel; it clears on the next Save round-trip.
       for (const field of EDITED_FIELDS) {
         form.setValue(`media.${targetIndex}.${field}`, snap[field], {
+          shouldDirty: false,
+          shouldTouch: false,
+        })
+      }
+      for (const [name, value] of Object.entries(snap.extensions)) {
+        // Extension names are outside the typed row.
+        form.setValue(`media.${targetIndex}.${name}` as any, value, {
           shouldDirty: false,
           shouldTouch: false,
         })
@@ -309,13 +351,30 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
               </div>
             </Field>
           )}
+
+          <Slot
+            name={`${formKey}.media.form_fields`}
+            context={{
+              productId,
+              media: entry,
+              mediaIndex,
+              fieldPrefix: `media.${mediaIndex}`,
+              onSave,
+            }}
+          />
         </div>
 
         <SheetFooter>
-          <Button type="button" variant="outline" onClick={handleCancel}>
+          <Button type="button" variant="outline" disabled={saving} onClick={handleCancel}>
             {t('admin.actions.cancel')}
           </Button>
-          <Button type="button" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            disabled={saving}
+            onClick={async () => {
+              if (await saveAll()) onOpenChange(false)
+            }}
+          >
             {t('admin.actions.done')}
           </Button>
         </SheetFooter>

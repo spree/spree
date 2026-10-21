@@ -9,6 +9,10 @@ FactoryBot.define do
       kind { Spree::DataRequest::ERASURE }
     end
 
+    trait :awaiting_confirmation do
+      status { 'awaiting_confirmation' }
+    end
+
     trait :completed do
       status { 'completed' }
       completed_at { Time.current }

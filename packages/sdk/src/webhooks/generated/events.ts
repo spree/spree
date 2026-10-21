@@ -5,6 +5,7 @@ import type {
   Company,
   CompanyInvitation,
   Customer,
+  DataRequestConfirmationRequestedEvent,
   DataRequestEvent,
   Delivery,
   DigitalAsset,
@@ -91,6 +92,8 @@ export interface WebhookEventMap {
   /** Carries a live credential: delivered only to endpoints that name this event. */
   'customer.password_reset_requested': PasswordResetRequestedEvent
   'data_request.completed': DataRequestEvent
+  /** Carries a live credential: delivered only to endpoints that name this event. */
+  'data_request.confirmation_requested': DataRequestConfirmationRequestedEvent
   'data_request.created': DataRequestEvent
   'data_request.deleted': DataRequestEvent
   'data_request.updated': DataRequestEvent

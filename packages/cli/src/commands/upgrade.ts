@@ -6,12 +6,12 @@ import { execa } from 'execa'
 import pc from 'picocolors'
 import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
 import {
-  appServices,
   dockerCompose,
   dockerComposeCapture,
   dockerComposeExecOrRun,
   isServiceRunning,
   primeBundleVolume,
+  restartAppServices,
 } from '../docker.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
@@ -81,7 +81,9 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     await updateSpreePackages(ctx.projectDir, flags)
     await runMigrate(ctx.projectDir, flags)
     await runRakeUpgrade(ctx.projectDir, flags)
-    if (gemsUpdated) await restartAppServices(ctx.projectDir)
+    // Puma loaded the old gems at boot; the rake steps ran in fresh processes.
+    if (gemsUpdated)
+      await restartAppServices(ctx.projectDir, 'Restarting the app to load the updated gems')
   } else {
     const imagePulled = await pullImage(ctx.projectDir, flags)
     await updateSpreePackages(ctx.projectDir, flags)
@@ -122,16 +124,6 @@ async function recreateContainers(projectDir: string): Promise<void> {
   // below doesn't race the copy-up if this follows a `down -v` (cold volume).
   await primeBundleVolume(projectDir)
   await dockerCompose(['up', '-d', '--wait'], projectDir, { stdio: 'inherit' })
-}
-
-// Puma loaded the old gems at boot; the rake steps ran in fresh processes,
-// but the server itself only picks up the bumped gems on restart.
-async function restartAppServices(projectDir: string): Promise<void> {
-  if (!(await isServiceRunning('web', projectDir))) return
-  p.log.step(pc.bold('Restarting the app to load the updated gems'))
-  await dockerCompose(['restart', ...(await appServices(projectDir))], projectDir, {
-    stdio: 'inherit',
-  })
 }
 
 // Upgrade migrates the DB and runs spree:upgrade rake against the project's

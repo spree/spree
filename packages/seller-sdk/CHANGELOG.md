@@ -1,5 +1,11 @@
 # @spree/seller-sdk
 
+## 1.0.0-rc.4
+
+### Minor Changes
+
+- [#14900](https://github.com/spree/spree/pull/14900) [`11b9a03`](https://github.com/spree/spree/commit/11b9a03c775fce616a9cd73cb39fa47e7b88bb13) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `CountryCode`, `CurrencyCode` and `LocaleCode` as values as well as types, so you can write `CurrencyCode.USD`, list every code with `Object.values(CurrencyCode)` and see each code's name in your editor. Plain strings such as `'USD'` still type-check.
+
 ## 1.0.0-rc.3
 
 ### Patch Changes

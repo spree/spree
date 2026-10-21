@@ -10,7 +10,7 @@ module Spree
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, preorder: :boolean,
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
-                 weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS],
+                 weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS, enum_type_name: 'WeightUnit'], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS, enum_type_name: 'DimensionUnit'],
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  minimum_order_quantity: :number, order_multiple: :number,

@@ -6353,7 +6353,7 @@ paths:
           | `kind` | One of `access`, `erasure` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `requested_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `status` | One of `pending`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `awaiting_confirmation`, `pending`, `processing`, `completed`, `failed`, `lapsed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
           **Sort by:** `completed_at`, `created_at`, `email`, `id`, `kind`, `number`, `requested_at`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
@@ -6561,7 +6561,7 @@ paths:
           | `address2` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `company` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `first_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -7203,14 +7203,14 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[memo_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_by_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `memo` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -7228,7 +7228,7 @@ paths:
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customer_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_tags_` | `created_at`, `id`, `name`, `updated_at` |
@@ -7803,7 +7803,7 @@ paths:
           | `addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `orders_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `orders_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `orders_fulfillments_` | `created_at`, `id`, `number`, `updated_at` |
@@ -11182,6 +11182,130 @@ paths:
             schema:
               "$ref": "#/components/schemas/FulfillmentSplitParams"
         required: true
+  "/api/v3/admin/gift_cards/{gift_card_id}/custom_fields":
+    get:
+      summary: List gift card custom fields
+      tags:
+      - Gift Cards
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the gift card's custom field values.
+
+        **Required scope:** `read_gift_cards` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('gift_card', 'gc_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /gift_cards/{gift_card_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: gift_card_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/gift_card_batches":
     get:
       summary: List gift card batches
@@ -11591,7 +11715,7 @@ paths:
           | `code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_by_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `expires_at` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `gift_card_batch_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -11611,11 +11735,11 @@ paths:
           | `customers_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customers_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customers_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customers_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customers_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customers_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customers_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customers_tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `orders_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `orders_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `orders_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -11632,7 +11756,7 @@ paths:
           | `users_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `users_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `users_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `users_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `users_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `users_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `users_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `users_tags_` | `created_at`, `id`, `name`, `updated_at` |
@@ -13944,8 +14068,8 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `default_locale` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `default_locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -14594,7 +14718,7 @@ paths:
               example:
                 data:
                 - id: opt_UkLWZg9DAJ
-                  name: foo-size-12
+                  name: foo-size-14
                   label: Size
                   position: 1
                   kind: dropdown
@@ -14790,7 +14914,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-16
+                name: foo-size-18
                 label: Size
                 position: 1
                 kind: dropdown
@@ -14864,7 +14988,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-18
+                name: foo-size-20
                 label: Updated Label
                 position: 1
                 kind: dropdown
@@ -15031,7 +15155,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -15195,7 +15319,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -16039,7 +16163,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -16203,7 +16327,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -16747,11 +16871,11 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[country_code_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[provider_id_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `included` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
@@ -17409,7 +17533,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `email` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -17425,11 +17549,11 @@ paths:
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customer_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `orders_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `orders_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `orders_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -17570,6 +17694,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -17891,7 +18016,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -17947,8 +18072,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 759180
-                  slug: product-759180
+                  name: Product 779180
+                  slug: product-779180
                   options_text: 'Size: S'
                   price: '10.00'
                   total: '20.00'
@@ -17963,11 +18088,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-11
+                    name: size-13
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-21
+                    option_type_name: foo-size-23
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -18056,8 +18181,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 7799
-                slug: product-7799
+                name: Product 7999
+                slug: product-7999
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '59.97'
@@ -18072,11 +18197,11 @@ paths:
                 option_values:
                 - id: optval_gbHJdmfrXB
                   option_type_id: opt_gbHJdmfrXB
-                  name: size-13
+                  name: size-15
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-23
+                  option_type_name: foo-size-25
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -18179,8 +18304,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 782714
-                slug: product-782714
+                name: Product 802714
+                slug: product-802714
                 options_text: 'Size: S'
                 price: '10.00'
                 total: '20.00'
@@ -18195,11 +18320,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-14
+                  name: size-16
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-24
+                  option_type_name: foo-size-26
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -18283,8 +18408,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 799758
-                slug: product-799758
+                name: Product 819758
+                slug: product-819758
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '99.95'
@@ -18299,11 +18424,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-15
+                  name: size-17
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-25
+                  option_type_name: foo-size-27
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -18438,6 +18563,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -18700,13 +18826,15 @@ paths:
           | `considered_risky` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `coupon_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `email` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `market_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -18748,7 +18876,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Order
         sortable:
@@ -18764,6 +18892,8 @@ paths:
         - fulfillment_status
         - id
         - item_total
+        - locale
+        - market_id
         - number
         - order_group_id
         - payment_state
@@ -18786,6 +18916,7 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: false
+                  shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
@@ -19011,6 +19142,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19167,6 +19299,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19313,6 +19446,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19511,6 +19645,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19689,6 +19824,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: false
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19828,6 +19964,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -19961,6 +20098,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -20128,7 +20266,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -20299,7 +20437,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -20463,7 +20601,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1772493 can be returned
+                  message: Only 1 of Product 1792493 can be returned
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20984,6 +21122,130 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/payment_methods/{payment_method_id}/custom_fields":
+    get:
+      summary: List payment method custom fields
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the payment method's custom field values.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('payment_method', 'pm_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /payment_methods/{payment_method_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: payment_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/payment_methods":
     get:
       summary: List payment methods
@@ -21089,7 +21351,7 @@ paths:
               example:
                 data:
                 - id: pm_UkLWZg9DAJ
-                  name: Check 2
+                  name: Check 3
                   description:
                   type: check
                   session_required: false
@@ -21365,7 +21627,7 @@ paths:
             application/json:
               example:
                 id: pm_UkLWZg9DAJ
-                name: Check 6
+                name: Check 7
                 description:
                 type: check
                 session_required: false
@@ -21552,7 +21814,7 @@ paths:
 
           | Prefix | Attributes |
           |---|---|
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -22733,14 +22995,14 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[amount_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `compare_at_amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `min_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `price_list_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -24250,8 +24512,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1276550
-                  slug: product-1276550
+                  name: Product 1296550
+                  slug: product-1296550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -24529,8 +24791,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1312061
-                slug: product-1312061
+                name: Product 1332061
+                slug: product-1332061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -24640,7 +24902,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-1335339
+                slug: product-1355339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25448,8 +25710,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1518682
-                slug: product-1518682
+                name: Product 1538682
+                slug: product-1538682
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25570,8 +25832,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1544387
-                slug: product-1544387
+                name: Product 1564387
+                slug: product-1564387
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -28195,6 +28457,130 @@ paths:
                   in: 2
                   previous:
                   next:
+  "/api/v3/admin/promotions/{promotion_id}/custom_fields":
+    get:
+      summary: List promotion custom fields
+      tags:
+      - Promotions
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the promotion's custom field values.
+
+        **Required scope:** `read_promotions` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('promotion', 'promo_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotions/{promotion_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: promotion_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/promotions/{promotion_id}/promotion_actions":
     parameters:
     - name: promotion_id
@@ -29725,6 +30111,254 @@ paths:
             schema:
               "$ref": "#/components/schemas/RefundCreateParams"
         required: true
+  "/api/v3/admin/tax_rates/{tax_rate_id}/custom_fields":
+    get:
+      summary: List tax rate custom fields
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the tax rate's custom field values.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('tax_rate', 'tax_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_rates/{tax_rate_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: tax_rate_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/stores/{store_id}/custom_fields":
+    get:
+      summary: List store custom fields
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the store's custom field values.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('store', 'store_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stores/{store_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: store_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/locales":
     get:
       summary: List supported locales
@@ -30909,7 +31543,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -31517,7 +32151,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.0.rc3
+                current_version: 6.0.0.rc4
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
@@ -33060,7 +33694,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -33525,6 +34159,130 @@ paths:
       responses:
         '204':
           description: stock location deleted
+  "/api/v3/admin/store_credits/{store_credit_id}/custom_fields":
+    get:
+      summary: List store credit custom fields
+      tags:
+      - Store Credits
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the store credit's custom field values.
+
+        **Required scope:** `read_store_credits` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('store_credit', 'credit_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store_credits/{store_credit_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: store_credit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/store_credits":
     get:
       summary: List store credits
@@ -33636,14 +34394,14 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[memo_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_by_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `memo` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -33661,7 +34419,7 @@ paths:
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_customer_groups_` | `created_at`, `id`, `name`, `updated_at` |
-          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `customer_orders_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `customer_ship_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_tags_` | `created_at`, `id`, `name`, `updated_at` |
@@ -34186,16 +34944,16 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[cost_currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[hs_code_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `carton_package_type_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `carton_weight` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `cartons_per_pallet` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `cost_currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `cost_currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `cost_price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `country_of_origin` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_of_origin` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `deleted_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `depth` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -34277,7 +35035,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-281
+                  sku: SKU-285
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -34332,11 +35090,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2126804
+                  product_name: Product 2146804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-282
+                  sku: SKU-286
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -34371,11 +35129,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-68
+                    name: size-70
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-78
+                    option_type_name: foo-size-80
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -34403,7 +35161,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2126804
+                  product_name: Product 2146804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -34549,7 +35307,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2131771
+                product_name: Product 2151771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -34561,7 +35319,7 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - value: SKU-286
+                    - value: SKU-290
                       code: taken
                       message: has already been taken
                       specific: false
@@ -34649,7 +35407,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-288
+                sku: SKU-292
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -34684,11 +35442,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-71
+                  name: size-73
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-81
+                  option_type_name: foo-size-83
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -34716,7 +35474,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2154025
+                product_name: Product 2174025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -34824,11 +35582,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-73
+                  name: size-75
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-83
+                  option_type_name: foo-size-85
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -34856,7 +35614,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2175672
+                product_name: Product 2195672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -34997,6 +35755,51 @@ paths:
         description: Number of records per page
         schema:
           type: integer
+      - name: order_id
+        in: query
+        required: false
+        description: 'A draft order to sell to: lists only what its buyer can be sold
+          on its channel, priced in its market. Needs `read_orders`, and cannot be
+          combined with the fields below.'
+        schema:
+          type: string
+      - name: market_id
+        in: query
+        required: false
+        description: Prices in this market and lists only variants with a price in
+          its currency.
+        schema:
+          type: string
+      - name: channel_id
+        in: query
+        required: false
+        description: Lists only variants published on this channel. When a market,
+          customer, company or currency is given without it, the store default channel
+          applies; an order uses its own.
+        schema:
+          type: string
+      - name: customer_id
+        in: query
+        required: false
+        description: Narrows to the customer's catalogs and prices as they would pay.
+          Needs `read_customers`.
+        schema:
+          type: string
+      - name: company_id
+        in: query
+        required: false
+        description: Narrows to the company's catalogs and prices under its agreement.
+          Needs `read_customers`.
+        schema:
+          type: string
+      - name: currency
+        in: query
+        required: false
+        description: Lists only variants with a price in this currency. With `market_id`
+          it must be the market's currency.
+        schema:
+          allOf:
+          - "$ref": "#/components/schemas/CurrencyCode"
       - name: q
         in: query
         required: false
@@ -35011,16 +35814,16 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[cost_currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[hs_code_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `carton_package_type_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `carton_weight` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `cartons_per_pallet` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `cost_currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `cost_currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `cost_price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `country_of_origin` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_of_origin` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `deleted_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `depth` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -35102,7 +35905,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-295
+                  sku: SKU-299
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -35157,11 +35960,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2193647
+                  product_name: Product 2213647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-296
+                  sku: SKU-300
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -35196,11 +35999,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-75
+                    name: size-77
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-85
+                    option_type_name: foo-size-87
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -35228,7 +36031,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2193647
+                  product_name: Product 2213647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -36516,6 +37319,12 @@ paths:
                   group: data_request
                   credential_permission:
                   credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: data_request.confirmation_requested
+                  group: data_request
+                  credential_permission: write_customers
+                  credential: true
                   deprecated: false
                   replaced_by:
                 - name: data_request.created
@@ -37863,7 +38672,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 251
+                  count: 252
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -40124,13 +40933,13 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[amount_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `kind` | One of `percentage`, `fixed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -41002,7 +41811,7 @@ paths:
           | `address2` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `company` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `first_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -42667,6 +43476,8 @@ paths:
                   name: Claims
                 - resource_type: collection
                   name: Collections
+                - resource_type: company
+                  name: Companies
                 - resource_type: credit_card
                   name: Credit Cards
                 - resource_type: customer
@@ -42703,6 +43514,8 @@ paths:
                   name: Products
                 - resource_type: promotion
                   name: Promotions
+                - resource_type: purchase_order
+                  name: Purchase Orders
                 - resource_type: refund
                   name: Refunds
                 - resource_type: return
@@ -42898,6 +43711,750 @@ paths:
         schema:
           type: string
       - name: seller_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/stock_transfers/{stock_transfer_id}/custom_fields":
+    get:
+      summary: List stock transfer custom fields
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the stock transfer's custom field values.
+
+        **Required scope:** `read_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('stock_transfer', 'st_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_transfers/{stock_transfer_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: stock_transfer_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/purchase_orders/{purchase_order_id}/custom_fields":
+    get:
+      summary: List purchase order custom fields
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the purchase order's custom field values.
+
+        **Required scope:** `read_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('purchase_order', 'po_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /purchase_orders/{purchase_order_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: purchase_order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/companies/{company_id}/custom_fields":
+    get:
+      summary: List company custom fields
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the company's custom field values.
+
+        **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('company', 'comp_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /companies/{company_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: company_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/delivery_methods/{delivery_method_id}/custom_fields":
+    get:
+      summary: List delivery method custom fields
+      tags:
+      - Delivery
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the delivery method's custom field values.
+
+        **Required scope:** `read_delivery_methods` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('delivery_method', 'dm_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /delivery_methods/{delivery_method_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: delivery_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/product_types/{product_type_id}/custom_fields":
+    get:
+      summary: List product type custom fields
+      tags:
+      - Product Types
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the product type's custom field values.
+
+        **Required scope:** `read_product_types` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('product_type', 'pt_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /product_types/{product_type_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: product_type_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/media/{medium_id}/custom_fields":
+    get:
+      summary: List media file custom fields
+      tags:
+      - Media
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the media file's custom field values.
+
+        **Required scope:** `read_media` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('media', 'media_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /media/{medium_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: medium_id
         in: path
         required: true
         schema:
@@ -43584,7 +45141,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: UPS Ground
-                  code: UPS_GROUND_10
+                  code: UPS_GROUND_11
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -43770,7 +45327,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: UPS Express
-                code: UPS_GROUND_11
+                code: UPS_GROUND_12
                 estimated_transit_business_days_min: 1
                 estimated_transit_business_days_max: 2
                 digital: false
@@ -45315,7 +46872,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 393397
+                  name: Product 413397
                   owner_type: product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -48162,12 +49719,12 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1063365
+                  name: Product 1083365
                   thumbnail_url:
                   price_list_variants:
                   - id: variant_UkLWZg9DAJ
                     label:
-                    sku: SKU-123
+                    sku: SKU-127
                     currency: USD
                     source: base
                     break_count: 1
@@ -48922,7 +50479,7 @@ paths:
           | `cancel_by` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `closed_short_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `destination_location_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `expected_at` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -49222,15 +50779,15 @@ paths:
                   purchase_order_id: po_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 1619018
-                  variant_sku: SKU-194
+                  variant_name: Product 1639018
+                  variant_sku: SKU-198
                   options_text: 'Size: S'
                   thumbnail_url:
                 supplier:
                   id: sup_UkLWZg9DAJ
                   name: Acme Wholesale
                   contact_name: Dana Okafor
-                  email: supplier6@example.com
+                  email: supplier7@example.com
                   phone: 555-0100
                   notes:
                   address1:
@@ -52766,13 +54323,13 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[provider_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `kind` | One of `earning`, `refund_reversal` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -52937,13 +54494,13 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[provider_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `period_end` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `period_start` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -53274,8 +54831,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1865410
-                  variant_sku: SKU-229
+                  variant_name: Product 1885410
+                  variant_sku: SKU-233
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -53294,8 +54851,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1865410
-                  variant_sku: SKU-230
+                  variant_name: Product 1885410
+                  variant_sku: SKU-234
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -53314,8 +54871,8 @@ paths:
                   reserved_count: 2
                   incoming_count: 20
                   purchasable_count: 35
-                  variant_name: Product 1865410
-                  variant_sku: SKU-230
+                  variant_name: Product 1885410
+                  variant_sku: SKU-234
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Pilar Stokes
@@ -53499,8 +55056,8 @@ paths:
                 reserved_count: 0
                 incoming_count: 0
                 purchasable_count: 25
-                variant_name: Product 1899378
-                variant_sku: SKU-236
+                variant_name: Product 1919378
+                variant_sku: SKU-240
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_name: Gilbert Marquardt
@@ -53678,8 +55235,8 @@ paths:
                   stock_location_id: sloc_UkLWZg9DAJ
                   stock_location_name: Mona Hegmann
                   variant_id: variant_gbHJdmfrXB
-                  variant_name: Product 1908513
-                  variant_sku: SKU-237
+                  variant_name: Product 1928513
+                  variant_sku: SKU-241
                   order_id:
                   fulfillment_id:
                   return_id:
@@ -53793,8 +55350,8 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 stock_location_name: Chrystal Sauer
                 variant_id: variant_gbHJdmfrXB
-                variant_name: Product 1922954
-                variant_sku: SKU-241
+                variant_name: Product 1942954
+                variant_sku: SKU-245
                 order_id:
                 fulfillment_id:
                 return_id:
@@ -53908,10 +55465,10 @@ paths:
           | Prefix | Attributes |
           |---|---|
           | `line_item_` | `additional_tax_total`, `adjustment_total`, `cost_price`, `created_at`, `discount_total`, `id`, `included_tax_total`, `non_taxable_adjustment_total`, `order_id`, `pre_tax_amount`, `price`, `quantity`, `tax_category_id`, `taxable_adjustment_total`, `updated_at`, `variant_id` |
-          | `line_item_order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `line_item_order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `line_item_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
           | `line_item_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
-          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
+          | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `order_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
@@ -54385,8 +55942,8 @@ paths:
                   stock_transfer_id: st_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 1992176
-                  variant_sku: SKU-254
+                  variant_name: Product 2012176
+                  variant_sku: SKU-258
                   options_text: 'Size: S'
                   thumbnail_url:
                 source_location:
@@ -55338,7 +56895,7 @@ paths:
           |---|---|---|
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `contact_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `email` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -55369,7 +56926,7 @@ paths:
                 - id: sup_UkLWZg9DAJ
                   name: Acme Wholesale
                   contact_name: Dana Okafor
-                  email: supplier16@example.com
+                  email: supplier17@example.com
                   phone: 555-0100
                   notes:
                   address1: 1 Warehouse Way
@@ -55565,7 +57122,7 @@ paths:
                 id: sup_UkLWZg9DAJ
                 name: Acme Wholesale
                 contact_name: Dana Okafor
-                email: supplier20@example.com
+                email: supplier21@example.com
                 phone: 555-0100
                 notes:
                 address1: 1 Warehouse Way
@@ -55642,7 +57199,7 @@ paths:
                 id: sup_UkLWZg9DAJ
                 name: Acme Wholesale
                 contact_name: Sam Reyes
-                email: supplier22@example.com
+                email: supplier23@example.com
                 phone: 555-0100
                 notes:
                 address1: 1 Warehouse Way
@@ -59752,10 +61309,12 @@ components:
           anyOf:
           - type: string
             enum:
+            - awaiting_confirmation
             - pending
             - processing
             - completed
             - failed
+            - lapsed
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
@@ -64373,6 +65932,8 @@ components:
           nullable: true
         within_withdrawal_period:
           type: boolean
+        shipping_eq_billing_address:
+          type: boolean
         cart_id:
           type: string
           nullable: true
@@ -65053,6 +66614,7 @@ components:
       - market_id
       - withdrawal_period_ends_at
       - within_withdrawal_period
+      - shipping_eq_billing_address
       - cart_id
       - channel_id
       - company_id
@@ -75507,6 +77069,20 @@ components:
       - zh-HK
       - zh-TW
       - zu
+    DimensionUnit:
+      type: string
+      enum:
+      - mm
+      - cm
+      - in
+      - ft
+    WeightUnit:
+      type: string
+      enum:
+      - g
+      - kg
+      - lb
+      - oz
     AddressInputParams:
       type: object
       properties:
@@ -78880,6 +80456,9 @@ components:
           example: customer@example.com
         customer_id:
           type: string
+          description: Null detaches the customer, leaving a guest order under its
+            `email`.
+          nullable: true
         use_customer_default_address:
           type: boolean
           description: Copies the saved default billing and shipping addresses onto
@@ -78947,6 +80526,9 @@ components:
           "$ref": "#/components/schemas/AddressInputParams"
         billing_address:
           "$ref": "#/components/schemas/AddressInputParams"
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
         items:
           type: array
           items:
@@ -79022,6 +80604,9 @@ components:
           example: customer@example.com
         customer_id:
           type: string
+          description: Null detaches the customer, leaving a guest order under its
+            `email`.
+          nullable: true
         currency:
           allOf:
           - "$ref": "#/components/schemas/CurrencyCode"
@@ -79072,6 +80657,9 @@ components:
           "$ref": "#/components/schemas/AddressInputParams"
         billing_address:
           "$ref": "#/components/schemas/AddressInputParams"
+        use_shipping:
+          type: boolean
+          description: When true, copies the shipping address to the billing address.
         items:
           type: array
           items:
@@ -79125,12 +80713,8 @@ components:
           type: number
           nullable: true
         dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
           description: Unit the three dimensions are in; falls back to the store's
             unit system.
           example: cm
@@ -79145,12 +80729,8 @@ components:
           description: What the package can hold, not the same as its own weight.
           nullable: true
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
           example: kg
           nullable: true
         default:
@@ -79191,12 +80771,8 @@ components:
           type: number
           nullable: true
         dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
           description: Unit the three dimensions are in; falls back to the store's
             unit system.
           example: cm
@@ -79211,12 +80787,8 @@ components:
           description: What the package can hold, not the same as its own weight.
           nullable: true
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
           example: kg
           nullable: true
         default:
@@ -80199,124 +81771,12 @@ components:
             lives on variants. An entry without `options` upserts onto the default
             variant of a simple product; pass `id` to update an existing variant.
     ProductVariantParams:
-      type: object
-      properties:
-        id:
-          type: string
-        sku:
-          type: string
-        barcode:
-          type: string
-        cost_price:
-          type: string
-          format: decimal
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-        cost_currency:
-          "$ref": "#/components/schemas/CurrencyCode"
-        weight:
-          type: number
-          nullable: true
-        height:
-          type: number
-          nullable: true
-        width:
-          type: number
-          nullable: true
-        depth:
-          type: number
-          nullable: true
-        weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
-        dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
-        hs_code:
-          type: string
-        customs_description:
-          type: string
-        country_of_origin:
-          "$ref": "#/components/schemas/CountryCode"
-        minimum_order_quantity:
-          type: integer
-          nullable: true
-        order_multiple:
-          type: integer
-          nullable: true
-        purchase_unit:
-          type: string
-        units_per_carton:
-          type: integer
-          description: How many units fill one carton.
-          nullable: true
-        carton_package_type_id:
-          type: string
-          description: 'The carton this variant is packed into: a package type of
-            kind `carton`. Its dimensions are shared by every product packed the same
-            way, so a corrected carton size fixes all of them at once.'
-          nullable: true
-        carton_weight:
-          type: number
-          description: What one packed carton weighs, in the variant's weight unit.
-          nullable: true
-        cartons_per_pallet:
-          type: integer
-          description: How many cartons stack on one pallet.
-          nullable: true
-        seller_id:
-          type: string
-        delivery_profile_id:
-          type: string
-          nullable: true
-        track_inventory:
-          type: boolean
-        preorderable:
-          type: boolean
-          description: Sell this variant before it's in stock. Adds the pre-order
-            label and ships-by promise; the cap comes from `backorder_limit`, an incoming
-            stock count, or backorder.
-        preorder_ships_at:
-          type: string
-          format: date-time
-          description: The "ships by" date shown to customers while the variant is
-            a pre-order. Once it passes, the variant is no longer a pre-order. Null
-            clears it.
-          nullable: true
-        backorder_limit:
-          type: integer
-          description: Maximum units sellable beyond available stock, capping backorders
-            and pre-orders. Null is unlimited.
-          nullable: true
-        tax_category_id:
-          type: string
-        position:
-          type: integer
-        prices:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PriceParams"
-          description: Per-currency prices. Upserted by currency.
-        stock_levels:
-          type: array
-          items:
-            "$ref": "#/components/schemas/StockLevelParams"
-          description: Stock per location. Upserted by location; omitted locations
-            are removed.
-        options:
-          type: array
-          items:
-            "$ref": "#/components/schemas/VariantOptionParams"
-          description: One pair per option type the variant takes part in (size, color).
-            Option types and values are created when missing.
+      allOf:
+      - "$ref": "#/components/schemas/VariantParams"
+      - type: object
+        properties:
+          id:
+            type: string
     PromotionActionCalculatorParams:
       type: object
       properties:
@@ -81902,12 +83362,7 @@ components:
           type: string
           example: Europe/Berlin
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          "$ref": "#/components/schemas/WeightUnit"
         unit_system:
           type: string
           enum:
@@ -82510,132 +83965,27 @@ components:
       required:
       - translations
     VariantCreateParams:
-      type: object
-      properties:
-        external_references:
-          type: object
-          additionalProperties: true
-          description: 'Identities the record has in external systems, keyed by system:
-            the same `{ system: external_id }` map the Admin API renders, so what
-            you read can be sent straight back. Systems you do not name keep the reference
-            they have. A list of `{ system, external_id }` entries is accepted too.'
-        sku:
-          type: string
-        barcode:
-          type: string
-        cost_price:
-          type: string
-          format: decimal
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-        cost_currency:
-          "$ref": "#/components/schemas/CurrencyCode"
-        weight:
-          type: number
-          nullable: true
-        height:
-          type: number
-          nullable: true
-        width:
-          type: number
-          nullable: true
-        depth:
-          type: number
-          nullable: true
-        weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
-        dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
-        hs_code:
-          type: string
-        customs_description:
-          type: string
-        country_of_origin:
-          "$ref": "#/components/schemas/CountryCode"
-        minimum_order_quantity:
-          type: integer
-          nullable: true
-        order_multiple:
-          type: integer
-          nullable: true
-        purchase_unit:
-          type: string
-        units_per_carton:
-          type: integer
-          description: How many units fill one carton.
-          nullable: true
-        carton_package_type_id:
-          type: string
-          description: 'The carton this variant is packed into: a package type of
-            kind `carton`. Its dimensions are shared by every product packed the same
-            way, so a corrected carton size fixes all of them at once.'
-          nullable: true
-        carton_weight:
-          type: number
-          description: What one packed carton weighs, in the variant's weight unit.
-          nullable: true
-        cartons_per_pallet:
-          type: integer
-          description: How many cartons stack on one pallet.
-          nullable: true
-        seller_id:
-          type: string
-        delivery_profile_id:
-          type: string
-          nullable: true
-        track_inventory:
-          type: boolean
-        preorderable:
-          type: boolean
-          description: Sell this variant before it's in stock. Adds the pre-order
-            label and ships-by promise; the cap comes from `backorder_limit`, an incoming
-            stock count, or backorder.
-        preorder_ships_at:
-          type: string
-          format: date-time
-          description: The "ships by" date shown to customers while the variant is
-            a pre-order. Once it passes, the variant is no longer a pre-order. Null
-            clears it.
-          nullable: true
-        backorder_limit:
-          type: integer
-          description: Maximum units sellable beyond available stock, capping backorders
-            and pre-orders. Null is unlimited.
-          nullable: true
-        tax_category_id:
-          type: string
-        position:
-          type: integer
-        prices:
-          type: array
-          items:
-            "$ref": "#/components/schemas/PriceParams"
-          description: Per-currency prices. Upserted by currency.
-        stock_levels:
-          type: array
-          items:
-            "$ref": "#/components/schemas/StockLevelParams"
-          description: Stock per location. Upserted by location; omitted locations
-            are removed.
-        options:
-          type: array
-          items:
-            "$ref": "#/components/schemas/VariantOptionParams"
-          description: One pair per option type the variant takes part in (size, color).
-            Option types and values are created when missing. On update, omit to leave
-            the option values untouched.
-      required:
-      - options
+      allOf:
+      - "$ref": "#/components/schemas/VariantParams"
+      - type: object
+        properties:
+          options:
+            type: array
+            items:
+              "$ref": "#/components/schemas/VariantOptionParams"
+            description: One pair per option type the variant takes part in (size,
+              color). Option types and values are created when missing. On update,
+              omit to leave the option values untouched.
+          external_references:
+            type: object
+            additionalProperties: true
+            description: 'Identities the record has in external systems, keyed by
+              system: the same `{ system: external_id }` map the Admin API renders,
+              so what you read can be sent straight back. Systems you do not name
+              keep the reference they have. A list of `{ system, external_id }` entries
+              is accepted too.'
+        required:
+        - options
     VariantOptionParams:
       type: object
       properties:
@@ -82648,16 +83998,9 @@ components:
       required:
       - name
       - value
-    VariantUpdateParams:
+    VariantParams:
       type: object
       properties:
-        external_references:
-          type: object
-          additionalProperties: true
-          description: 'Identities the record has in external systems, keyed by system:
-            the same `{ system: external_id }` map the Admin API renders, so what
-            you read can be sent straight back. Systems you do not name keep the reference
-            they have. A list of `{ system, external_id }` entries is accepted too.'
         sku:
           type: string
         barcode:
@@ -82682,19 +84025,15 @@ components:
           type: number
           nullable: true
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
+          description: Null falls back to the store's weight unit.
+          nullable: true
         dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
+          description: Null falls back to the store's unit system.
+          nullable: true
         hs_code:
           type: string
         customs_description:
@@ -82709,6 +84048,10 @@ components:
           nullable: true
         purchase_unit:
           type: string
+          enum:
+          - unit
+          - carton
+          nullable: true
         units_per_carton:
           type: integer
           description: How many units fill one carton.
@@ -82726,11 +84069,6 @@ components:
         cartons_per_pallet:
           type: integer
           description: How many cartons stack on one pallet.
-          nullable: true
-        seller_id:
-          type: string
-        delivery_profile_id:
-          type: string
           nullable: true
         track_inventory:
           type: boolean
@@ -82751,10 +84089,21 @@ components:
           description: Maximum units sellable beyond available stock, capping backorders
             and pre-orders. Null is unlimited.
           nullable: true
-        tax_category_id:
-          type: string
         position:
           type: integer
+        options:
+          type: array
+          items:
+            "$ref": "#/components/schemas/VariantOptionParams"
+          description: One pair per option type the variant takes part in (size, color).
+            Option types and values are created when missing.
+        seller_id:
+          type: string
+        delivery_profile_id:
+          type: string
+          nullable: true
+        tax_category_id:
+          type: string
         prices:
           type: array
           items:
@@ -82766,13 +84115,56 @@ components:
             "$ref": "#/components/schemas/StockLevelParams"
           description: Stock per location. Upserted by location; omitted locations
             are removed.
-        options:
-          type: array
-          items:
-            "$ref": "#/components/schemas/VariantOptionParams"
-          description: One pair per option type the variant takes part in (size, color).
-            Option types and values are created when missing. On update, omit to leave
-            the option values untouched.
+    VariantSalesContextParams:
+      type: object
+      properties:
+        order_id:
+          type: string
+          description: 'A draft order to sell to: lists only what its buyer can be
+            sold on its channel, priced in its market. Needs `read_orders`, and cannot
+            be combined with the fields below.'
+        market_id:
+          type: string
+          description: Prices in this market and lists only variants with a price
+            in its currency.
+        channel_id:
+          type: string
+          description: Lists only variants published on this channel. When a market,
+            customer, company or currency is given without it, the store default channel
+            applies; an order uses its own.
+        customer_id:
+          type: string
+          description: Narrows to the customer's catalogs and prices as they would
+            pay. Needs `read_customers`.
+        company_id:
+          type: string
+          description: Narrows to the company's catalogs and prices under its agreement.
+            Needs `read_customers`.
+        currency:
+          allOf:
+          - "$ref": "#/components/schemas/CurrencyCode"
+          description: Lists only variants with a price in this currency. With `market_id`
+            it must be the market's currency.
+    VariantUpdateParams:
+      allOf:
+      - "$ref": "#/components/schemas/VariantParams"
+      - type: object
+        properties:
+          options:
+            type: array
+            items:
+              "$ref": "#/components/schemas/VariantOptionParams"
+            description: One pair per option type the variant takes part in (size,
+              color). Option types and values are created when missing. On update,
+              omit to leave the option values untouched.
+          external_references:
+            type: object
+            additionalProperties: true
+            description: 'Identities the record has in external systems, keyed by
+              system: the same `{ system: external_id }` map the Admin API renders,
+              so what you read can be sent straight back. Systems you do not name
+              keep the reference they have. A list of `{ system, external_id }` entries
+              is accepted too.'
     WebhookEndpointCreateParams:
       type: object
       properties:
@@ -82844,7 +84236,8 @@ components:
         address2: text
         city: text
         company: text
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         first_name: text
         id: id
@@ -82986,7 +84379,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         kind:
           enum:
@@ -83176,10 +84570,12 @@ components:
         requested_at: datetime
         status:
           enum:
+          - awaiting_confirmation
           - pending
           - processing
           - completed
           - failed
+          - lapsed
         updated_at: datetime
       associations: {}
       scopes:
@@ -83343,7 +84739,8 @@ components:
         code: text
         created_at: datetime
         created_by_id: id
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         expires_at: date
         gift_card_batch_id: id
@@ -83454,8 +84851,10 @@ components:
     Market:
       attributes:
         created_at: datetime
-        currency: text
-        default_locale: text
+        currency:
+          code: CurrencyCode
+        default_locale:
+          code: LocaleCode
         id: id
         name: text
         position: integer
@@ -83514,7 +84913,8 @@ components:
         considered_risky: boolean
         coupon_code: text
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         delivery_total: decimal
         email: text
@@ -83531,6 +84931,9 @@ components:
           - shipped
         id: id
         item_total: decimal
+        locale:
+          code: LocaleCode
+        market_id: id
         number: text
         order_group_id: id
         payment_state:
@@ -83613,7 +85016,8 @@ components:
     OrderGroup:
       attributes:
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         email: text
         id: id
         number: text
@@ -83714,7 +85118,8 @@ components:
         amount: decimal
         compare_at_amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         min_quantity: integer
         price_list_id: id
@@ -83859,7 +85264,8 @@ components:
         cancel_by: date
         closed_short_at: datetime
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         destination_location_id: id
         expected_at: date
         id: id
@@ -83985,7 +85391,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         period_end: datetime
         period_start: datetime
@@ -84034,7 +85441,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         kind:
           enum:
@@ -84098,7 +85506,8 @@ components:
     StockLocation:
       attributes:
         active: boolean
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         default: boolean
         id: id
@@ -84224,7 +85633,8 @@ components:
         amount: decimal
         created_at: datetime
         created_by_id: id
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         id: id
         memo: text
@@ -84247,7 +85657,8 @@ components:
       attributes:
         city: text
         contact_name: text
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         email: text
         id: id
@@ -84311,7 +85722,8 @@ components:
       scopes: {}
     TaxLine:
       attributes:
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         id: id
         included: boolean
@@ -84324,7 +85736,8 @@ components:
     TaxRate:
       attributes:
         amount: decimal
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         id: id
         name: text
@@ -84340,9 +85753,11 @@ components:
         carton_package_type_id: id
         carton_weight: decimal
         cartons_per_pallet: integer
-        cost_currency: text
+        cost_currency:
+          code: CurrencyCode
         cost_price: decimal
-        country_of_origin: text
+        country_of_origin:
+          code: CountryCode
         created_at: datetime
         deleted_at: datetime
         depth: decimal

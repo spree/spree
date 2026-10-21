@@ -1,5 +1,12 @@
 import { expect, type Locator, type Page, test } from '@playwright/test'
-import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
+import {
+  adminRequest,
+  FIXTURE_BULK_CHANNEL_NAME,
+  gotoIndex,
+  login,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const DELIVERY_PROFILES_PATH = (storeId: string) => `/${storeId}/settings/delivery-profiles`
 const PROFILE_CTA = /add profile/i
@@ -34,6 +41,16 @@ test.describe('delivery profiles', () => {
     await expect(page.getByText(/^default$/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slots on a profile page', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+    await createProfile(page, `E2E Slots ${Date.now()}`)
+
+    await expect(page.getByText('Slot probe: delivery_profile.form_main')).toBeVisible()
+    await expect(page.getByText('Slot probe: delivery_profile.form_sidebar')).toBeVisible()
+  })
+
   test('creates a profile, a zone inside it, and a method inside the zone', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
@@ -65,6 +82,8 @@ test.describe('delivery profiles', () => {
     await zoneSheet.getByPlaceholder(/search countries and regions/i).fill('United States')
     await zoneSheet.getByRole('checkbox', { name: /^united states$/i }).check()
 
+    // The sheets' plugin slots, filled by src/testing/slot-probes.tsx.
+    await expect(zoneSheet.getByText('Slot probe: delivery_zone.form_fields (new)')).toBeVisible()
     await page.getByRole('button', { name: /create delivery zone/i }).click()
 
     await expect(page.getByText(zoneName)).toBeVisible({ timeout: 15_000 })
@@ -89,6 +108,9 @@ test.describe('delivery profiles', () => {
     await expect(page.getByRole('dialog').getByText(/^zone$/i)).toHaveCount(0)
 
     await page.getByRole('dialog').locator('#name').fill(methodName)
+    await expect(
+      page.getByRole('dialog').getByText('Slot probe: delivery_method.form_fields (new)'),
+    ).toBeVisible()
     await page.getByRole('button', { name: /create delivery method/i }).click()
 
     // Saving closes the sheet and the method appears under its zone.
@@ -474,5 +496,21 @@ test.describe('delivery profiles', () => {
     })
     await expect(reopened.locator('#markup_percent')).toHaveValue('7.5')
     await expect(reopened.locator('#markup_flat')).toHaveValue('2.50')
+  })
+
+  // An existing method: saving only a custom field leaves the method itself
+  // untouched, so the shared fixture stays as it was.
+  test('saves a custom field with the delivery method', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'delivery_method', async (label) => {
+      const methods = await adminRequest<{
+        data: { id: string; delivery_profile_id: string | null }[]
+      }>(page, creds, 'get', '/delivery_methods?limit=25')
+      const method = methods.data.find((candidate) => candidate.delivery_profile_id)
+      if (!method) throw new Error('no delivery method on a profile in the fixtures')
+      const url = `${DELIVERY_PROFILES_PATH(creds.store_id)}/${method.delivery_profile_id}?method=${method.id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'Carrier contract 12')
+    })
   })
 })

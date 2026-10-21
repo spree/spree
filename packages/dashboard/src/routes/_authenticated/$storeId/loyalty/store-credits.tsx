@@ -1,5 +1,5 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
-import { isZeroMoney } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/core'
 import {
   Can,
   formatAmount,
@@ -17,6 +17,10 @@ import {
   Card,
   CardContent,
   cn,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemTitle,
   Pagination,
   RelativeTime,
   RowActions,
@@ -36,6 +40,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EditStoreCreditDialog } from '../../../../components/spree/store-credits/edit-store-credit-dialog'
 import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
 import { useDeleteCustomerStoreCredit } from '../../../../hooks/use-customer-store-credits'
@@ -372,6 +377,8 @@ function StoreCreditSheet({
                 />
               </dl>
 
+              <ApiCustomFieldsCard ownerType="store_credit" ownerId={credit.id} hideWhenEmpty />
+
               <div className="flex flex-col gap-2">
                 <h3 className="font-medium text-sm">{t('admin.store_credits.ledger.title')}</h3>
                 {eventsError ? (
@@ -386,20 +393,25 @@ function StoreCreditSheet({
                   <>
                     <ul className="flex flex-col divide-y rounded-md border">
                       {events.data.map((event) => (
-                        <li
+                        <Item
                           key={event.id}
-                          className="flex items-baseline justify-between gap-3 p-3"
+                          render={<li />}
+                          className="flex-nowrap items-baseline gap-3 rounded-none border-0 p-3"
                         >
-                          <span className="text-sm">{event.display_action ?? event.action}</span>
-                          <span className="flex items-baseline gap-3">
+                          <ItemContent>
+                            <ItemTitle className="font-normal">
+                              {event.display_action ?? event.action}
+                            </ItemTitle>
+                          </ItemContent>
+                          <ItemActions className="items-baseline gap-3">
                             <span className="text-sm tabular-nums">
                               <Money amount={event.amount} currency={credit.currency} />
                             </span>
                             <span className="whitespace-nowrap text-muted-foreground text-xs">
                               <RelativeTime iso={event.created_at} />
                             </span>
-                          </span>
-                        </li>
+                          </ItemActions>
+                        </Item>
                       ))}
                     </ul>
                     {events.meta && <Pagination meta={events.meta} onPageChange={setLedgerPage} />}

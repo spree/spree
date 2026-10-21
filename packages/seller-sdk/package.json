@@ -1,6 +1,6 @@
 {
   "name": "@spree/seller-sdk",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "description": "TypeScript client for the Spree Seller API — the marketplace seller panel.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -45,7 +45,7 @@
   ],
   "scripts": {
     "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
-    "generate:filters": "tsx ../sdk-core/scripts/generate-filters.ts seller",
+    "generate:filters": "tsx --conditions=@spree/source ../sdk-core/scripts/generate-filters.ts seller",
     "generate:params": "tsx ../sdk-core/scripts/generate-params.ts seller",
     "build": "tsup",
     "dev": "tsup --watch",

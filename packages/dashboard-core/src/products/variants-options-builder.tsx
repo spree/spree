@@ -4,6 +4,10 @@ import {
   Field,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -130,39 +134,38 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
               )
             }
             return (
-              <li
-                key={ot.id}
-                className="flex items-center gap-3 rounded-lg border border-border-subtle px-3 py-2"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="text-sm font-medium">{ot.label}</div>
-                  <div className="mt-1 flex flex-wrap gap-1">
+              <Item key={ot.id} variant="outline" render={<li />} className="border-border-subtle">
+                <ItemContent className="min-w-0">
+                  <ItemTitle>{ot.label}</ItemTitle>
+                  <div className="flex flex-wrap gap-1">
                     {ot.values.map((v) => (
                       <Badge key={v.name} variant="secondary">
                         {v.label ?? v.name}
                       </Badge>
                     ))}
                   </div>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={t('admin.actions.edit')}
-                  onClick={() => setEditingIndex(i)}
-                >
-                  <PencilIcon />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={t('admin.actions.remove')}
-                  onClick={() => removeAt(i)}
-                >
-                  <XIcon />
-                </Button>
-              </li>
+                </ItemContent>
+                <ItemActions>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={t('admin.actions.edit')}
+                    onClick={() => setEditingIndex(i)}
+                  >
+                    <PencilIcon />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={t('admin.actions.remove')}
+                    onClick={() => removeAt(i)}
+                  >
+                    <XIcon />
+                  </Button>
+                </ItemActions>
+              </Item>
             )
           })}
         </ul>

@@ -9,6 +9,7 @@ import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
 import { Notifications } from '../../components/spree/notifications'
+import { PluginRoutePage, usePluginRouteClaim } from '../../components/spree/plugin-route-page'
 import { ProfileDialog } from '../../components/spree/profile-dialog'
 import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
 import { getAvailableUiLocales } from '../../i18n-setup'
@@ -40,7 +41,7 @@ function StoreLayout() {
     <StoreProvider storeId={storeId}>
       <CommandPaletteProvider>
         <AppShellProvider>
-          <StoreShell inSettings={inSettings} />
+          <StoreShell storeId={storeId} inSettings={inSettings} />
         </AppShellProvider>
         <CommandPalette />
       </CommandPaletteProvider>
@@ -48,7 +49,7 @@ function StoreLayout() {
   )
 }
 
-function StoreShell({ inSettings }: { inSettings: boolean }) {
+function StoreShell({ storeId, inSettings }: { storeId: string; inSettings: boolean }) {
   // Loaded by the shell rather than by whichever badge happens to be on screen:
   // the sidebar only mounts the children of the section you are in, so leaving
   // the request to a badge means no counts at all on every other page. One
@@ -58,6 +59,7 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
   // open state — the trigger sits in the sidebar's account menu, which is
   // mounted here and stays put across route changes.
   const [profileOpen, setProfileOpen] = useState(false)
+  const claimedPath = usePluginRouteClaim(storeId)
 
   return (
     <AppShell
@@ -67,7 +69,10 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
       notifications={<Notifications />}
     >
       <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
-      <Outlet />
+      {/* A plugin page more specific than the matched route (`/sellers/shopify`
+          over `/sellers/$sellerId`) renders here, since the router never
+          reaches the catch-all for it. */}
+      {claimedPath ? <PluginRoutePage storeId={storeId} path={claimedPath} /> : <Outlet />}
     </AppShell>
   )
 }

@@ -15,6 +15,7 @@ module Spree
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
                  completed_at: [:string, nullable: true],
                  withdrawal_period_ends_at: [:string, nullable: true], within_withdrawal_period: :boolean,
+                 shipping_eq_billing_address: :boolean,
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 
@@ -28,6 +29,7 @@ module Spree
         end
 
         attribute :within_withdrawal_period, &:within_withdrawal_period?
+        attribute :shipping_eq_billing_address, &:shipping_eq_billing_address?
 
         # The checkout handle this order was born from (nil for admin drafts).
         # Lets abandonment tooling match cart.* events to the conversion.

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { CurrencyCode } from '@spree/admin-sdk'
+import type { CurrencyCode } from '@spree/core'
 import {
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,

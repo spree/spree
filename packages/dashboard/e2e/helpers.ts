@@ -239,11 +239,15 @@ export function getCredentials(): E2ECredentials {
  * are single-use (rotated on every refresh), so each context needs its own.
  *
  * Not used by `auth.spec.ts` — that spec exercises the login form itself.
+ * Pass `account` to sign in as a teammate rather than the seeded admin.
  */
-export async function login(page: Page): Promise<E2ELoginSession> {
+export async function login(
+  page: Page,
+  account?: { email: string; password: string },
+): Promise<E2ELoginSession> {
   const creds = getCredentials()
   const res = await page.request.post('/api/v3/admin/auth/login', {
-    data: { email: creds.admin_email, password: creds.admin_password },
+    data: account ?? { email: creds.admin_email, password: creds.admin_password },
   })
   if (!res.ok()) {
     throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
@@ -416,6 +420,119 @@ export async function fillAddressForm(page: Page, address: AddressInput) {
 }
 
 /**
+ * Defines a short text custom field for one resource type and answers its
+ * id and label. Seeded through the API: defining fields has its own spec, and the
+ * specs calling this drive the record's own custom fields card.
+ */
+export async function createCustomFieldDefinition(
+  page: Page,
+  accessToken: string,
+  resourceType: string,
+): Promise<{ id: string; label: string }> {
+  const suffix = `${Date.now()}${Math.floor(Math.random() * 1000)}`
+  const label = `E2E ${resourceType} field ${suffix}`
+  const created = await page.request.post('/api/v3/admin/custom_field_definitions', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    data: {
+      namespace: 'e2e',
+      key: `field_${suffix}`,
+      label,
+      field_type: 'short_text',
+      resource_type: resourceType,
+    },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+
+  return { id: (await created.json()).id as string, label }
+}
+
+/**
+ * Definitions are store-wide and outlive a spec, so one a sheet would render
+ * goes once the spec is done — a leftover field adds inputs other specs'
+ * selectors did not expect.
+ */
+export async function deleteCustomFieldDefinition(page: Page, accessToken: string, id: string) {
+  const res = await page.request.delete(`/api/v3/admin/custom_field_definitions/${id}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+  expect(res.ok(), `DELETE custom_field_definitions/${id}: ${await res.text()}`).toBeTruthy()
+}
+
+/**
+ * Runs `test` with a short text custom field defined for `resourceType`, and
+ * deletes the definition afterwards however the test ends.
+ */
+export async function withCustomFieldDefinition(
+  page: Page,
+  session: E2ELoginSession,
+  resourceType: string,
+  test: (label: string) => Promise<void>,
+) {
+  const definition = await createCustomFieldDefinition(page, session.accessToken, resourceType)
+  try {
+    await test(definition.label)
+  } finally {
+    await deleteCustomFieldDefinition(page, session.accessToken, definition.id)
+  }
+}
+
+function customFieldsCardOn(page: Page) {
+  return page
+    .locator('[data-slot="card"]')
+    .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Custom fields$/ }) })
+}
+
+/**
+ * Sets a value through a custom fields card that edits and saves itself (a
+ * detail page with no form of its own), and checks it survives a reload.
+ */
+export async function saveCustomFieldOnCard(page: Page, label: string, value: string) {
+  const card = customFieldsCardOn(page)
+  await card.getByRole('button', { name: /^edit$/i }).click()
+  await card.getByLabel(label).fill(value)
+  await card.getByRole('button', { name: /^save$/i }).click()
+  await expect(card.getByText(value)).toBeVisible({ timeout: 15_000 })
+
+  await page.reload()
+  await expect(customFieldsCardOn(page).getByText(value)).toBeVisible({ timeout: 15_000 })
+}
+
+/**
+ * Sets a value on a page whose own Save also saves its custom fields, and
+ * checks it survives a reload. A custom field alone must enable that Save.
+ */
+export async function saveCustomFieldWithPage(page: Page, label: string, value: string) {
+  await page.getByLabel(label).fill(value)
+  const save = page.getByRole('button', { name: /^save$/i })
+  await save.click()
+  await expect(save).toBeDisabled({ timeout: 15_000 })
+
+  await page.reload()
+  await expect(page.getByLabel(label)).toHaveValue(value, { timeout: 15_000 })
+}
+
+/**
+ * Sets a value in the open edit sheet and saves it with the sheet's own Save,
+ * then reopens the sheet at `url` to check it stuck.
+ */
+export async function saveCustomFieldInSheet(
+  page: Page,
+  url: string,
+  label: string,
+  value: string,
+) {
+  const sheet = page.getByRole('dialog')
+  await sheet.getByLabel(label).fill(value)
+  await sheet.getByRole('button', { name: /^save$/i }).click()
+  await expect(sheet).toBeHidden({ timeout: 15_000 })
+  // Only the custom field changed, so the record's own save toast never fires.
+  await expect(page.getByText(/^custom fields saved$/i).first()).toBeVisible()
+
+  await page.goto(url)
+  await expect(page.getByRole('dialog').getByLabel(label)).toHaveValue(value, { timeout: 15_000 })
+}
+
+/**
  * Opens a transfer of `quantity` units of `sku` from the fixture source
  * warehouse to the fixture destination and marks it in transit, through the
  * API: the trip's middle is what these specs test, not the two warehouse
@@ -501,12 +618,25 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
 /**
  * Places an order for the promo customer, paid by store credit, and ships it
  * unless `ship` is false. `firstName` / `lastName` set the billing name, so a
- * list test can tell its own orders apart from everyone else's.
+ * list test can tell its own orders apart from everyone else's. `locale`
+ * places it in another of the store's languages.
  */
 export async function createPlacedOrder(
   page: Page,
   accessToken: string,
-  { quantity = 2, ship = true, firstName = 'Promo', lastName = 'Customer' } = {},
+  {
+    quantity = 2,
+    ship = true,
+    firstName = 'Promo',
+    lastName = 'Customer',
+    locale,
+  }: {
+    quantity?: number
+    ship?: boolean
+    firstName?: string
+    lastName?: string
+    locale?: string
+  } = {},
 ) {
   const headers = { Authorization: `Bearer ${accessToken}` }
   const request = async (method: 'get' | 'post' | 'patch', path: string, data?: object) => {
@@ -537,6 +667,7 @@ export async function createPlacedOrder(
     items: [{ variant_id: variants.data[0].id, quantity }],
     shipping_address: address,
     billing_address: address,
+    ...(locale ? { locale } : {}),
   })
   await request('post', `/api/v3/admin/customers/${customerId}/store_credits`, {
     amount: order.total,

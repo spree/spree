@@ -38,6 +38,7 @@ export {
   ChevronsLeftIcon,
   ChevronsRightIcon,
   ChevronsUpDownIcon,
+  CircleAlertIcon,
   CircleCheckIcon,
   CircleDotIcon,
   CircleIcon,

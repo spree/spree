@@ -4,7 +4,7 @@ import type {
   PriceListUpdateParams,
   PriceRule,
 } from '@spree/admin-sdk'
-import { isDecimalString, isZeroMoney } from '@spree/admin-sdk'
+import { isDecimalString, isZeroMoney } from '@spree/core'
 import {
   blankToNull,
   defaultPreferences,

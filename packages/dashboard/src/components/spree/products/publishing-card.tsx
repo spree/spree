@@ -10,6 +10,11 @@ import {
   Checkbox,
   Field,
   FieldLabel,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -376,22 +381,28 @@ function ManageChannelsSheet({
             channels.map((channel) => {
               const checked = publicationsArray.fields.some((f) => f.channel_id === channel.id)
               return (
-                <button
+                <Item
                   key={channel.id}
-                  type="button"
+                  variant="outline"
+                  size="sm"
+                  render={<button type="button" />}
                   onClick={() => toggle(channel, !checked)}
-                  className="flex w-full cursor-pointer items-center gap-3 rounded-md border border-border bg-background px-3 py-2 text-left hover:bg-accent"
+                  className="cursor-pointer bg-background text-left hover:bg-accent"
                 >
-                  <Checkbox checked={checked} tabIndex={-1} />
-                  <span className="flex-1 text-sm">
-                    {channel.name ?? channel.code ?? channel.id}
-                  </span>
+                  <ItemMedia>
+                    <Checkbox checked={checked} tabIndex={-1} />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle className="font-normal">
+                      {channel.name ?? channel.code ?? channel.id}
+                    </ItemTitle>
+                  </ItemContent>
                   {!channel.active && (
-                    <span className="text-xs text-muted-foreground">
+                    <ItemActions className="text-xs text-muted-foreground">
                       {t('admin.pages.products.publishing.inactive_marker')}
-                    </span>
+                    </ItemActions>
                   )}
-                </button>
+                </Item>
               )
             })}
         </div>

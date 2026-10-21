@@ -77,6 +77,41 @@ RSpec.describe Spree::TranslatableResource, type: :model do
     end
   end
 
+  describe '.with_translation_fallback_order' do
+    let!(:alpha) { create(:product, name: 'Alpha', store: store) }
+    let!(:bravo) { create(:product, name: 'Bravo', store: store) }
+    let!(:charlie) { create(:product, name: 'Charlie', store: store) }
+
+    before do
+      create(:product_translation, translated_model: charlie, locale: 'de', name: 'Anton')
+      create(:product_translation, translated_model: bravo, locale: 'de', name: '')
+    end
+
+    def sorted(direction, distinct: true)
+      Spree::Product.where(id: [alpha, bravo, charlie]).
+        ransack(s: "name #{direction}").result(distinct: distinct).
+        with_translation_fallback_order
+    end
+
+    it 'sorts by the translation, falling back to the base name when it is missing or blank' do
+      Mobility.with_locale(:de) do
+        expect(sorted(:asc).to_a).to eq([alpha, charlie, bravo])
+        expect(sorted(:desc).to_a).to eq([bravo, charlie, alpha])
+      end
+    end
+
+    it 'sorts and counts a relation without DISTINCT' do
+      Mobility.with_locale(:de) do
+        expect(sorted(:asc, distinct: false).to_a).to eq([alpha, charlie, bravo])
+        expect(sorted(:asc, distinct: false).count(:all)).to eq(3)
+      end
+    end
+
+    it 'leaves a sort in the content locale on the base column' do
+      Mobility.with_locale(:en) { expect(sorted(:asc).to_a).to eq([alpha, bravo, charlie]) }
+    end
+  end
+
   describe '.translatable_rich_text_fields' do
     it 'returns the fields a model declares as rich text' do
       expect(Spree::Product.translatable_rich_text_fields).to eq(%i[description])

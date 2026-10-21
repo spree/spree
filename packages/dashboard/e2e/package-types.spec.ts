@@ -11,6 +11,8 @@ async function createPackageType(page: Page, name: string) {
   await page.locator('#package-type-width').fill('30')
   await page.locator('#package-type-height').fill('20')
   await page.locator('#package-type-weight').fill('0.5')
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: package_type.form_fields (new)')).toBeVisible()
   await page
     .getByRole('dialog')
     .getByRole('button', { name: /^save$/i })

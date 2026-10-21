@@ -14,20 +14,23 @@ If you need a new injection point in a built-in page, open a PR adding `<Slot na
 |---|---|---|
 | Every page | Page header | `page.actions`, `page.actions_dropdown` |
 | Every page | Tabbed sub-navigation | `page.tabs` |
-| Products | Product | `product.form_sidebar` |
-| Products | Category | `category.form_sidebar` |
-| Products | Collection | `collection.form_sidebar` |
+| Products | Product | `product.form_main`, `product.form_sidebar`, `product.media.*`, `product.variant.form_fields` |
+| Products | Media library | `media.form_fields`, `media.context_menu` |
+| Products | Category | `category.form_main`, `category.form_sidebar` |
+| Products | Collection | `collection.form_main`, `collection.form_sidebar` |
 | Products | Catalog | `catalog.form_sidebar` |
 | Products | Price list | `price_list.form_sidebar`, `price_list.rule_form.<type>` |
-| Orders | Order | `order.form_sidebar` |
-| Customers | Customer | `customer.form_sidebar` |
+| Orders | Order | `order.form_main`, `order.form_sidebar` |
+| Customers | Customer | `customer.form_main`, `customer.form_sidebar` |
 | Customers | Company | `company.form_main`, `company.form_sidebar`, `company_membership.*` |
 | Promotions | Promotion | `promotion.form_sidebar`, `promotion.rule_form.<type>`, `promotion.action_form.<type>` |
-| Inventory | Purchase order | `purchase_order.form_sidebar` |
-| Inventory | Stock transfer | `stock_transfer.form_sidebar` |
+| Inventory | Purchase order | `purchase_order.form_main`, `purchase_order.form_sidebar` |
+| Inventory | Stock transfer | `stock_transfer.form_main`, `stock_transfer.form_sidebar` |
 | Sellers | Seller | `seller.form_main`, `seller.form_sidebar` |
 | Sellers | Seller payout | `seller_payout.form_main`, `seller_payout.form_sidebar` |
 | Settings | Store | `store.form_main` |
+| Settings | Delivery profile | `delivery_profile.form_main`, `delivery_profile.form_sidebar` |
+| Settings, options, customer groups | Create and edit sheets | `<resource>.form_fields` — see [Sheet slots](#sheet-slots) |
 | Settings | Payment method | `payment_method.*.<provider>` |
 | Settings | Webhook endpoint | `webhook_endpoint.form_sidebar` |
 | Onboarding | Getting started | `getting-started.task.<name>` |
@@ -96,28 +99,91 @@ On host-form pages your widget renders inside the page's `<form>` element, so a 
 
 ### Products
 
+#### `product.form_main`
+
+| Where | Product create and edit pages (`products/new`, `products/$productId`), end of the main column |
+|---|---|
+| Use | Wide cards that belong with the product's content — size charts, bundle contents, a feed preview |
+| Context | `{ product, mode }` — `mode` is `'new'` or `'edit'`; `product` is `undefined` while creating |
+| Host form | **Yes** — form key `product` |
+
 #### `product.form_sidebar`
 
-| Where | Product detail page (`products/$productId`), end of the sidebar column |
+| Where | Product create and edit pages (`products/new`, `products/$productId`), end of the sidebar column |
 |---|---|
 | Use | Add a card scoped to the product being edited (e.g., a "Brand" picker, wishlist stats, sync status from an external system) |
-| Context | `{ product }` — the full `Product` record from the Admin API |
+| Context | `{ product, mode }` — the full `Product` record from the Admin API; `mode` is `'new'` or `'edit'`, and `product` is `undefined` while creating |
 | Host form | **Yes** — form key `product` |
+
+#### `product.media.form_fields`
+
+| Where | The media editor sheet on the product create and edit pages, below the built-in fields |
+|---|---|
+| Use | Fields stored on one media file — a photo credit, a license, a usage restriction |
+| Context | `{ productId, media, mediaIndex, fieldPrefix, onSave }` — `media` is the row's form values, `fieldPrefix` the row's path (`media.2`); `productId` is `undefined` while creating; `onSave` works as in `product.variant.form_fields`. The dashboard's own custom fields card renders here |
+| Host form | **Yes** — form key `product.media`. Bind inputs under `fieldPrefix` and register fields under `product.media` ([recipe](/developer/dashboard/recipes/custom-form-field#a-field-on-a-media-or-variant-row)) |
+
+#### `product.media.actions`
+
+| Where | The product page's Media card, after the "Add video link" button |
+|---|---|
+| Use | More ways to add media — import from a digital asset manager, generate an image |
+| Context | `{ productId, addMedia }` — `addMedia(entries)` appends entries to the gallery and they save with the product. Each entry carries a `signed_id` (from a finished upload), a library `source_media_id`, or `media_type: 'external_video'` with an `external_video_url`, plus an optional `previewUrl` for the tile |
+| Host form | **Yes** — form key `product` |
+
+#### `product.variant.form_fields`
+
+| Where | The variant editor sheet on the product create and edit pages, after the Tax section |
+|---|---|
+| Use | Fields stored on one variant — a supplier code, a fulfillment flag, a per-variant certification |
+| Context | `{ variant, variantIndex, fieldPrefix, onSave }` — `variant` is the row's form values, `fieldPrefix` the row's path (`variants.0`); `onSave(handler)` registers an async function the sheet runs on Done, which keeps the sheet open when it resolves `false`, and returns an unregister function. A widget that writes its own record (as the dashboard's custom fields card does) saves it through `onSave`, so Done keeps it and Cancel drops it |
+| Host form | **Yes** — form key `product.variant`. Bind inputs under `fieldPrefix` and register fields under `product.variant` |
+
+#### `media.form_fields`
+
+| Where | Media library (`products/media`), the file's detail sheet, below "Alt text" |
+|---|---|
+| Use | Fields stored on the file itself — a photo credit, a license, an expiry date for the rights to use it |
+| Context | `{ media, canWrite }` — the `Media` record from the Admin API; `canWrite` is whether the admin may edit it |
+| Host form | **Yes** — form key `media`. The sheet's Save sends the fields to the media endpoint, which accepts what `Spree::Media.additional_permitted_attributes` declares |
+
+#### `media.context_menu`
+
+| Where | Media library, the right-click menu on a file in the grid, above Delete |
+|---|---|
+| Use | Actions on one file — open it in a digital asset manager, remove its background, copy a public link |
+| Context | `{ media, canWrite }` — render `<ContextMenuItem>`s |
+
+#### `category.form_main`
+
+| Where | Category create and edit pages (`products/categories/new`, `products/categories/$categoryId`), end of the main column |
+|---|---|
+| Use | Wide category cards — a landing-page banner, a curated content block |
+| Context | `{ category, mode }` — `mode` is `'new'` or `'edit'`; `category` is `undefined` while creating (and briefly while refetching) |
+| Host form | **Yes** — form key `category` |
 
 #### `category.form_sidebar`
 
-| Where | Category detail page (`products/categories/$categoryId`), end of the sidebar column |
+| Where | Category create and edit pages, end of the sidebar column |
 |---|---|
 | Use | Category-scoped cards — merchandising rules, feed settings, external sync state |
-| Context | `{ category }` — the `Category` record (may be briefly `undefined` while refetching) |
+| Context | `{ category, mode }` — as for `category.form_main` |
 | Host form | **Yes** — form key `category` |
+
+#### `collection.form_main`
+
+| Where | Collection create and edit pages (`products/collections/new`, `products/collections/$collectionId`), end of the main column |
+|---|---|
+| Use | Wide collection cards — a campaign banner, a schedule |
+| Context | `{ collection, mode }` — `mode` is `'new'` or `'edit'`; `collection` is `undefined` while creating |
+| Host form | **Yes** — form key `collection` |
 
 #### `collection.form_sidebar`
 
-| Where | Collection detail page (`products/collections/$collectionId`), end of the sidebar column |
+| Where | Collection create and edit pages, end of the sidebar column |
 |---|---|
 | Use | Collection-scoped cards — merchandising rules, feed settings, external sync state |
-| Context | `{ collection }` — the `Collection` record |
+| Context | `{ collection, mode }` — as for `collection.form_main` |
 | Host form | **Yes** — form key `collection` |
 
 #### `catalog.form_sidebar`
@@ -138,6 +204,14 @@ On host-form pages your widget renders inside the page's `<form>` element, so a 
 
 ### Orders and customers
 
+#### `order.form_main`
+
+| Where | Order detail page (`orders/$orderId`), end of the main column |
+|---|---|
+| Use | Wide order cards — a shipment timeline from a carrier, a support conversation, a fraud report |
+| Context | `{ order }` — the full `Order` record |
+| Host form | No — widgets save via their own API calls |
+
 #### `order.form_sidebar`
 
 | Where | Order detail page (`orders/$orderId`), end of the sidebar column |
@@ -145,6 +219,14 @@ On host-form pages your widget renders inside the page's `<form>` element, so a 
 | Use | Fraud-check status, shipping-integration state, loyalty points earned |
 | Context | `{ order }` — the full `Order` record |
 | Host form | No — widgets save via their own API calls |
+
+#### `customer.form_main`
+
+| Where | Customer detail page (`customers/$customerId`), end of the main column |
+|---|---|
+| Use | Wide customer cards — subscriptions, reviews the customer wrote, a support history |
+| Context | `{ customer }` — the full `Customer` record |
+| Host form | No — the page edits through sheets; widgets save via their own API calls |
 
 #### `customer.form_sidebar`
 
@@ -192,12 +274,28 @@ The company's member list and its "Add member" sheet carry three smaller slots, 
 
 ### Inventory
 
+#### `purchase_order.form_main`
+
+| Where | Purchase order detail page (`purchase-orders/$purchaseOrderId`), end of the main column |
+|---|---|
+| Use | Supplier correspondence, shipment tracking for inbound goods, quality-check results |
+| Context | `{ purchaseOrder }` — the full `PurchaseOrder` record |
+| Host form | No |
+
 #### `purchase_order.form_sidebar`
 
 | Where | Purchase order detail page (`purchase-orders/$purchaseOrderId`), end of the sidebar column |
 |---|---|
 | Use | Supplier portal links, ERP sync status, landed-cost notes |
 | Context | `{ purchaseOrder }` — the full `PurchaseOrder` record |
+| Host form | No |
+
+#### `stock_transfer.form_main`
+
+| Where | Stock transfer detail page (`transfers/$transferId`), end of the main column |
+|---|---|
+| Use | Carrier tracking events, packing lists from a warehouse system |
+| Context | `{ transfer }` — the full `StockTransfer` record |
 | Host form | No |
 
 #### `stock_transfer.form_sidebar`
@@ -254,6 +352,22 @@ These slots are on the store owner's seller management pages in the admin dashbo
 | Context | `{ store }` — the full `Store` record |
 | Host form | **Yes** — form key `store` |
 
+#### `delivery_profile.form_main`
+
+| Where | Delivery profile page (`settings/delivery-profiles/$profileId`), below the zones and methods |
+|---|---|
+| Use | Rate tables from a carrier, a preview of what checkout offers for the profile |
+| Context | `{ deliveryProfile }` — the full `DeliveryProfile` record |
+| Host form | No — the page edits through sheets; widgets save via their own API calls |
+
+#### `delivery_profile.form_sidebar`
+
+| Where | Delivery profile page, end of the sidebar column |
+|---|---|
+| Use | Carrier account status, a sync state from a fulfillment system |
+| Context | `{ deliveryProfile }` — the full `DeliveryProfile` record |
+| Host form | No |
+
 #### `webhook_endpoint.form_sidebar`
 
 | Where | Webhook endpoint detail page (`settings/webhooks/$webhookEndpointId`), end of the sidebar column |
@@ -262,19 +376,48 @@ These slots are on the store owner's seller management pages in the admin dashbo
 | Context | `{ endpoint }` — the full `WebhookEndpoint` record |
 | Host form | No |
 
+## Sheet slots
+
+The create and edit sheets of the resources below render a slot after their built-in fields. Each sheet is a host form: a widget binds inputs with `useHostForm()`, registers them under the form key (the slot's prefix), and they save with the sheet's own Create or Save button. The matching Admin API endpoint accepts what the model's `additional_permitted_attributes` declares (see [Adding an Attribute to a Core Resource](/developer/customization/api#adding-an-attribute-to-a-core-resource)).
+
+Every sheet passes `mode` — `'new'` or `'edit'` — and its record, which is `undefined` while creating.
+
+| Slot | Where | Context |
+|---|---|---|
+| `market.form_fields` | Settings → Markets | `{ market, mode }` |
+| `stock_location.form_fields` | Settings → Stock locations | `{ stockLocation, mode }` |
+| `tax_rate.form_fields` | Settings → Taxes → Rates | `{ taxRate, mode }` |
+| `tax_category.form_fields` | Settings → Taxes → Categories | `{ taxCategory, mode }` |
+| `channel.form_fields` | Settings → Sales channels | `{ channel, mode }` |
+| `policy.form_fields` | Settings → Policies | `{ policy, mode }` |
+| `package_type.form_fields` | Settings → Package types | `{ packageType, mode }` |
+| `product_type.form_fields` | Settings → Product types | `{ productType, mode }` |
+| `delivery_zone.form_fields` | A delivery profile's zone sheet | `{ deliveryZone, deliveryProfileId, mode }` |
+| `delivery_method.form_fields` | A delivery profile's method sheet | `{ deliveryMethod, deliveryProfile, mode }` |
+| `option_type.form_fields` | Products → Options | `{ optionType, mode }` |
+| `customer_group.form_fields` | Customers → Groups | `{ customerGroup, mode }` |
+
+Staff invitations have no slot: the invitations endpoint deliberately accepts no extension attributes, because what it takes decides who gets access.
+
 ## Seller panel slots
 
 Rendered by the marketplace seller panel (`@spree/seller-dashboard`) rather than the admin dashboard, and registered the same way, in the seller panel's own plugins. Their names start with `seller.` followed by the page — `seller.form_main` and `seller.form_sidebar` above belong to the admin dashboard instead.
 
-The product page is a host form with the form key `seller.product`: fields a widget binds with `useHostForm()` save with the product. The Seller API accepts only the attributes your extension declares in `additional_seller_permitted_attributes` — see [Writable by sellers](/developer/customization/api#writable-by-sellers). The other seller panel pages have no page-wide form, so widgets there save via their own Seller API calls.
+The product page is a host form with the form key `seller.product` (`seller.product.media` and `seller.product.variant` for the rows its sheets edit): fields a widget binds with `useHostForm()` save with the product. The Seller API accepts only the attributes your extension declares in `additional_seller_permitted_attributes` — see [Writable by sellers](/developer/customization/api#writable-by-sellers). The other seller panel pages have no page-wide form, so widgets there save via their own Seller API calls.
 
 | Slot | Where | Context |
 |---|---|---|
+| `seller.product.form_main` | Product create and edit pages, end of the main column | `{ product, mode }` — `mode` is `'new'` or `'edit'`; `product` is `undefined` while creating |
 | `seller.product.form_sidebar` | Product create and edit pages, end of the sidebar column | `{ product, mode }` — `mode` is `'new'` or `'edit'`; `product` is `undefined` while creating |
+| `seller.product.media.form_fields` | The media editor sheet on the product pages | `{ productId, media, mediaIndex, fieldPrefix }` — host form key `seller.product.media` |
+| `seller.product.media.actions` | The product pages' Media card, after the "Add video link" button | `{ productId, addMedia }` — see [`product.media.actions`](#product-media-actions) |
+| `seller.product.variant.form_fields` | The variant editor sheet on the product pages | `{ variant, variantIndex, fieldPrefix }` — host form key `seller.product.variant` |
 | `seller.order.form_sidebar` | Order detail page, end of the sidebar column | `{ order }` |
 | `seller.payout.form_sidebar` | Payout detail page, end of the sidebar column | `{ payout }` |
 | `seller.profile.form_main` | Profile page, end of the main column | `{ profile }` |
 | `seller.profile.form_sidebar` | Profile page, end of the sidebar column | `{ profile }` |
+| `seller.stock_location.form_fields` | Stock location create and edit sheets | `{ stockLocation, mode }` — host form key `seller.stock_location` |
+| `seller.package_type.form_fields` | Package type create and edit sheets | `{ packageType, mode }` — host form key `seller.package_type` |
 | `seller.team.actions` | Team page, in the header's action area — bulk invite, export, an external directory sync | `{ sellerId }` |
 | `seller.team.after` | Team page, below the member list — audit log, role explainer, seat usage | `{ sellerId }` |
 

@@ -27,6 +27,7 @@ export const OrderSchema = z.object({
   market_id: z.string().nullable(),
   withdrawal_period_ends_at: z.string().nullable(),
   within_withdrawal_period: z.boolean(),
+  shipping_eq_billing_address: z.boolean(),
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   company_id: z.string().nullable(),
@@ -117,6 +118,7 @@ export const OrderSchema = z.object({
   market_id: z.ZodType<Order['market_id']>;
   withdrawal_period_ends_at: z.ZodType<Order['withdrawal_period_ends_at']>;
   within_withdrawal_period: z.ZodType<Order['within_withdrawal_period']>;
+  shipping_eq_billing_address: z.ZodType<Order['shipping_eq_billing_address']>;
   cart_id: z.ZodType<Order['cart_id']>;
   channel_id: z.ZodType<Order['channel_id']>;
   company_id: z.ZodType<Order['company_id']>;

@@ -1,4 +1,4 @@
-import type { CountryCode, CurrencyCode } from '@spree/admin-sdk'
+import type { CountryCode, CurrencyCode } from '@spree/core'
 
 /**
  * What the shared product form reads off a product, its variants and its

@@ -22,7 +22,7 @@ import {
   SelectValue,
   Switch,
 } from '@spree/dashboard-ui'
-import { InfoIcon, TableIcon } from '@spree/dashboard-ui/icons'
+import { CircleAlertIcon, InfoIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -260,15 +260,17 @@ export function CatalogPricingFields({
           rule-less one matches every shopper — so the consequence is stated
           before Save, not after. */}
       {hasOwnedList && mode === 'base' && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-          {t('admin.catalogs.detach_warning')}
-        </p>
+        <Alert variant="destructive">
+          <CircleAlertIcon />
+          <AlertDescription>{t('admin.catalogs.detach_warning')}</AlertDescription>
+        </Alert>
       )}
 
       {willDiscardPrices && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-          {t('admin.catalogs.discard_prices_warning')}
-        </p>
+        <Alert variant="destructive">
+          <CircleAlertIcon />
+          <AlertDescription>{t('admin.catalogs.discard_prices_warning')}</AlertDescription>
+        </Alert>
       )}
 
       {/* Fixed pricing is only half-configured until amounts exist, so the

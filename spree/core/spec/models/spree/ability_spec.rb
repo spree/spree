@@ -131,6 +131,16 @@ describe Spree::Ability, type: :model do
         expect(staff_ability).to be_able_to :read, Spree::State.new
         expect(staff_ability).to be_able_to :read, store
       end
+
+      it "reads only this store's markets and channels" do
+        other_store = create(:store)
+
+        expect(staff_ability).to be_able_to :read, build(:market, store: store)
+        expect(staff_ability).to be_able_to :read, build(:channel, store: store)
+        expect(staff_ability).not_to be_able_to :update, build(:market, store: store)
+        expect(staff_ability).not_to be_able_to :read, build(:market, store: other_store)
+        expect(staff_ability).not_to be_able_to :read, build(:channel, store: other_store)
+      end
     end
 
     context 'with the admin role' do

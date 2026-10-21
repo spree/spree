@@ -1,7 +1,7 @@
 {
   "name": "@spree/dashboard",
   "license": "MIT",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "description": "Spree Dashboard app shell — the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
@@ -65,6 +65,7 @@
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "@hookform/resolvers": "^5.2.2",
+    "@spree/core": "workspace:^",
     "@tanstack/react-hotkeys": "^0.14.3",
     "@tanstack/react-table": "^9.3.1",
     "@tanstack/router-plugin": "^1.168.46",

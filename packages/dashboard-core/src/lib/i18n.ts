@@ -1,6 +1,6 @@
+import { localeEndonym } from '@spree/core'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import { intlDisplayName } from '../hooks/use-display-name'
 // Relative path, not `@/...`: dashboard-core ships source; the consuming
 // project's `@/*` alias is theirs alone (see Phase 1's rationale).
 import en from '../locales/en.json'
@@ -151,17 +151,6 @@ export function localesFromBundlePaths(paths: string[]): Array<{ code: string; n
 // the calling file used (`./locales/`, `../locales/`), so match either.
 function localeCodesFromBundlePaths(paths: string[]): string[] {
   return ['en', ...paths.map((path) => path.replace(/^.*\/locales\//, '').replace('.json', ''))]
-}
-
-// Each language's endonym (its own name: `Deutsch`, `中文`). `Intl.DisplayNames`
-// answers in the language's own convention, so some come back lowercase
-// (`français`, `polski`); capitalize the first letter by THAT language's casing
-// rules rather than the current locale's. Scripts without case are unaffected,
-// and an unknown code falls back to itself.
-function localeEndonym(code: string): string {
-  const name = intlDisplayName('language', code, code) ?? code
-
-  return name.charAt(0).toLocaleUpperCase(code) + name.slice(1)
 }
 
 // The languages the running panel can display, as it declared them. `null`

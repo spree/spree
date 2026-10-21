@@ -15,7 +15,16 @@ import {
   dlxCommand,
   installAgentSkills,
 } from '../lib/ai.js'
+import {
+  EXTENSIONS,
+  extensionNames,
+  isValidGemName,
+  isValidNpmName,
+  resolveExtension,
+} from '../lib/extensions.js'
+import { confirmOrExit } from '../lib/prompt.js'
 import type { ProjectContext } from '../types.js'
+import { type AddExtensionOptions, addExtension } from './add-extension.js'
 
 /**
  * The two admin SPAs `spree add` can scaffold. They differ only in where they
@@ -71,14 +80,21 @@ interface AddAiOptions {
   quiet?: boolean
 }
 
-// `spree add <thing>` — bolt an optional component onto an existing project.
-// Dashboard, seller panel and the AI coding agent setup for now; storefront
-// parity is planned (see docs/plans/5.6-project-layout-and-dashboard.md).
+// `spree add <thing>` — bolt an optional component or an extension onto an
+// existing project. Components (dashboard, seller panel, AI coding agent
+// setup) are built in; extensions come from the catalog in extensions.json
+// (see docs/plans/6.0-cli-add-extensions.md).
 export function registerAddCommand(program: Command) {
   program
     .command('add')
-    .description('Add an optional component to your project')
-    .argument('<thing>', 'Component to add: dashboard, seller-dashboard or ai')
+    .description('Add an optional component or an extension to your project')
+    .argument(
+      '[thing]',
+      `Component (dashboard, seller-dashboard, ai) or extension (${extensionNames().join(', ')})`,
+    )
+    .option('--gem <name>', 'Install a gem that is not in the extension catalog')
+    .option('--npm <package>', 'Install a dashboard plugin that is not in the extension catalog')
+    .option('-y, --yes', 'Agree to ejecting the project and to installing outside the catalog')
     .option(
       '--template <src>',
       'Starter template: git URL or local path (default: the template bundled with the CLI; env SPREE_DASHBOARD_TEMPLATE / SPREE_SELLER_DASHBOARD_TEMPLATE overrides)',
@@ -89,15 +105,25 @@ export function registerAddCommand(program: Command) {
     .option('--quiet', 'Skip the final summary note (for wrapping tools that print their own)')
     .action(
       async (
-        thing: string,
+        thing: string | undefined,
         flags: {
           template?: string
           install: boolean
           skills: boolean
           mcp: boolean
           quiet?: boolean
+          gem?: string
+          npm?: string
+          yes?: boolean
         },
       ) => {
+        if (flags.gem || flags.npm) {
+          if (thing) usageError('Pass either a name or --gem/--npm, not both.')
+          await addUncataloguedExtension(flags.gem, flags.npm, { yes: Boolean(flags.yes) })
+          return
+        }
+        if (!thing) usageError('Name a component or an extension to add.')
+
         if (thing === 'ai') {
           if (!flags.quiet) p.intro(pc.bgCyan(pc.black(' Spree AI coding agents ')))
           const ready = await addAi(detectProject(), flags)
@@ -106,12 +132,23 @@ export function registerAddCommand(program: Command) {
           return
         }
 
-        const app = APPS[thing]
+        const app = Object.hasOwn(APPS, thing) ? APPS[thing] : undefined
         if (!app) {
-          console.error(
-            `\n${pc.red('Error:')} Unknown component: ${thing}. Try: ${[...Object.keys(APPS), 'ai'].join(', ')}\n`,
-          )
-          process.exit(2)
+          const extension = resolveExtension(thing)
+          if (!extension) {
+            usageError(
+              [
+                `Unknown component or extension: ${thing}.`,
+                `Components: ${[...Object.keys(APPS), 'ai'].join(', ')}`,
+                `Extensions: ${extensionNames().join(', ')}`,
+                `For a gem that is not listed, use ${pc.bold('spree add --gem <name>')}.`,
+              ].join('\n'),
+            )
+          }
+          p.intro(pc.bgCyan(pc.black(` Spree ${extension.label} `)))
+          await addExtension(detectProject(), extension, { yes: Boolean(flags.yes) })
+          p.outro('Done!')
+          return
         }
 
         p.intro(pc.bgCyan(pc.black(` Spree ${app.label} `)))
@@ -125,6 +162,45 @@ export function registerAddCommand(program: Command) {
         p.outro('Done!')
       },
     )
+}
+
+function usageError(message: string): never {
+  console.error(`\n${pc.red('Error:')} ${message}\n`)
+  process.exit(2)
+}
+
+/**
+ * Install a gem or dashboard plugin named on the command line rather than
+ * through the catalog. Names are checked so neither can be read as a flag,
+ * and the developer confirms, since nothing vouches for the package.
+ */
+async function addUncataloguedExtension(
+  gem: string | undefined,
+  npm: string | undefined,
+  opts: AddExtensionOptions,
+): Promise<void> {
+  if (gem && !isValidGemName(gem)) usageError(`Not a valid gem name: ${gem}`)
+  if (npm && !isValidNpmName(npm)) usageError(`Not a valid npm package name: ${npm}`)
+
+  // An official gem named with --gem still installs as the catalog says
+  // (pinned to the Spree version where it is released with Spree).
+  const catalogued = Object.values(EXTENSIONS).find((entry) => entry.gem === gem)
+  const uncatalogued = [catalogued ? undefined : gem, npm].filter(Boolean)
+  const label = catalogued?.label ?? uncatalogued.join(' and ')
+
+  p.intro(pc.bgCyan(pc.black(` ${label} `)))
+  if (uncatalogued.length > 0) {
+    await confirmOrExit(
+      `${uncatalogued.join(' and ')} ${uncatalogued.length > 1 ? 'are' : 'is'} not in the Spree extension catalog. Install anyway?`,
+      opts.yes,
+    )
+  }
+  await addExtension(
+    detectProject(),
+    { ...catalogued, label, gem, dashboard: npm ?? catalogued?.dashboard },
+    opts,
+  )
+  p.outro('Done!')
 }
 
 /**

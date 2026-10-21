@@ -3,7 +3,7 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
 } from '@spree/admin-sdk'
-import { compareMoney, isDecimalString } from '@spree/admin-sdk'
+import { compareMoney, isDecimalString } from '@spree/core'
 import { blankToNull, fractionToPercent, i18n, percentToFraction } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'

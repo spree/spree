@@ -45,9 +45,12 @@ module Spree
         before_validation :clone_shipping_address, if: :use_shipping?
       end
 
+      # Whether both addresses are present and match. With neither present
+      # there is nothing to call the same.
+      #
       # @return [Boolean]
       def shipping_eq_billing_address?
-        bill_address == ship_address
+        ship_address.present? && bill_address == ship_address
       end
 
       # Whether checkout must collect a customer shipping address. Selected

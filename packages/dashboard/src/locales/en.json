@@ -574,7 +574,8 @@
         "empty_description": "Track structured details like material, fit, or care instructions.",
         "empty_title": "No custom fields yet",
         "errors": {
-          "failed_to_save": "Failed to save custom field"
+          "failed_to_save": "Failed to save custom field",
+          "failed_to_load": "Custom fields could not be loaded. Reload the page to try again."
         },
         "manage_in_settings": "Manage in settings",
         "new_definition_description": "Define a custom field to store typed, structured information on your {{resource}}.",
@@ -989,7 +990,209 @@
       "title": "Downloads"
     },
     "enterprise": {
-      "learn_more": "Learn about Spree Enterprise"
+      "available_in": "Available in Spree Enterprise",
+      "badge": "Enterprise",
+      "cta": "Get Spree Enterprise",
+      "footer": "Spree Enterprise adds this to the open-source Spree you already run. Your data, storefront and integrations stay as they are.",
+      "how_it_works": "How it works",
+      "learn_more": "Learn about Spree Enterprise",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "Each entry shows the old and new values, so you can see exactly what changed.",
+              "title": "Before and after"
+            },
+            "coverage": {
+              "description": "Products, variants, prices, stock, categories, promotions, payments, shipments, store credit, tax rates and store settings.",
+              "title": "Everything that matters"
+            },
+            "search": {
+              "description": "Filter by person, type of record or date, and open the record that changed.",
+              "title": "Easy to search"
+            }
+          },
+          "intro": "When several people run a store, you need to know who changed a price, a stock level or a setting. Spree Enterprise records every important change with the person who made it, the time, and the values before and after.",
+          "nav": "Audit log",
+          "steps": {
+            "change": {
+              "description": "Someone on your team edits a record.",
+              "title": "Change"
+            },
+            "record": {
+              "description": "Spree saves who made the change, when, and what changed.",
+              "title": "Record"
+            },
+            "review": {
+              "description": "Find the change in the audit log whenever you need it.",
+              "title": "Review"
+            }
+          },
+          "subtitle": "See who changed what in your store, and when.",
+          "title": "Audit log"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "Approving a company gives it its catalog and prices. You can suspend an account later and restore it.",
+              "title": "Approve with terms"
+            },
+            "checklist": {
+              "description": "Ask for a tax number, documents or confirmations, and review each answer.",
+              "title": "Your own checklist"
+            },
+            "dialogue": {
+              "description": "Send an application back with a note instead of rejecting it. The business answers from your storefront.",
+              "title": "Ask for more information"
+            }
+          },
+          "intro": "When a business signs up on your storefront, Spree Enterprise holds its account for review. The business can browse your catalog with prices hidden while your team checks its details, asks for anything missing and approves it.",
+          "nav": "Onboarding",
+          "steps": {
+            "approve": {
+              "description": "The company sees its prices and can place orders.",
+              "title": "Approve"
+            },
+            "register": {
+              "description": "A business registers on your storefront.",
+              "title": "Sign up"
+            },
+            "review": {
+              "description": "Your team reviews the application or asks for more.",
+              "title": "Review"
+            },
+            "verify": {
+              "description": "It completes your checklist while prices stay hidden.",
+              "title": "Check"
+            }
+          },
+          "subtitle": "Review business sign-ups before they can buy.",
+          "title": "Company onboarding"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "Ship the oldest lot or the one that expires first automatically, or let your warehouse choose. A shipment can draw on several lots.",
+              "title": "Right lot first"
+            },
+            "recall": {
+              "description": "Find every order and customer a lot went to, and see which lots expire soon.",
+              "title": "Fast recalls"
+            },
+            "stock": {
+              "description": "Quantities, expiry and manufacturing dates, and supplier batch numbers for each lot at each location.",
+              "title": "Stock by lot"
+            }
+          },
+          "intro": "Sellers of food, cosmetics, health products and other regulated goods need to know which lot went where. Spree Enterprise keeps stock by lot, with quantities and expiry dates, and picks the right lot for every shipment.",
+          "nav": "Lots",
+          "steps": {
+            "allocate": {
+              "description": "Spree picks lots for each shipment by your rule.",
+              "title": "Allocate"
+            },
+            "receive": {
+              "description": "Record lots when a purchase order or transfer arrives.",
+              "title": "Receive"
+            },
+            "ship": {
+              "description": "Each shipment records which lots it contained.",
+              "title": "Ship"
+            },
+            "trace": {
+              "description": "Search a lot to find its orders and customers.",
+              "title": "Trace"
+            }
+          },
+          "subtitle": "Track stock by lot, ship the right lot first, and trace every order a lot went into.",
+          "title": "Lots and expiry dates"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "When the buyer accepts, the quote becomes an order with its payment terms and purchase order number.",
+              "title": "Straight to an order"
+            },
+            "negotiate": {
+              "description": "Change unit prices, quantities, shipping and fees on a single quote, without touching the buyer's price list.",
+              "title": "Prices for one deal"
+            },
+            "validity": {
+              "description": "Each quote has an expiry date. Buyers can ask for changes, and you send a revised quote.",
+              "title": "Clear validity"
+            }
+          },
+          "intro": "Business buyers often need a price before they commit. With quotes, a buyer asks for one from their cart, your team prices it, and the buyer accepts it online. The accepted quote becomes a normal order at the prices you agreed.",
+          "nav": "Quotes",
+          "note": {
+            "description": "With Spree Enterprise, buyers can review a draft, ask for changes and accept it online before it expires.",
+            "title": "Send this draft as a quote"
+          },
+          "steps": {
+            "accept": {
+              "description": "The buyer accepts and the quote becomes an order.",
+              "title": "Accept"
+            },
+            "price": {
+              "description": "Your team adjusts prices, quantities and shipping.",
+              "title": "Price"
+            },
+            "request": {
+              "description": "The buyer asks for a quote from their cart.",
+              "title": "Request"
+            },
+            "send": {
+              "description": "The buyer gets a link to the quote and its expiry date.",
+              "title": "Send"
+            }
+          },
+          "subtitle": "Negotiate prices with business buyers and turn accepted quotes into orders.",
+          "title": "Quotes"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "Products, variants, images, translations, prices and stock come from the seller's shop. New products go through your normal review.",
+              "title": "Catalog in sync"
+            },
+            "control": {
+              "description": "A field your team edits in Spree stops syncing until you choose to resume it. An order that cannot be sent is flagged for you.",
+              "title": "You stay in control"
+            },
+            "orders": {
+              "description": "Marketplace orders are created in the seller's Shopify, already paid. Shipments, tracking, cancellations and refunds come back automatically.",
+              "title": "Orders in one place"
+            }
+          },
+          "intro": "Many sellers already sell on Shopify. Connect their shop to your marketplace and their catalog and stock stay in sync on their own. Your orders appear in their Shopify, so they fulfil everything in one place.",
+          "nav": "Shopify",
+          "note": {
+            "description": "With Spree Enterprise, this seller's products, stock and orders stay in sync with their own Shopify shop.",
+            "title": "Connect this seller's Shopify shop"
+          },
+          "steps": {
+            "connect": {
+              "description": "You set up a connection for the seller.",
+              "title": "Connect"
+            },
+            "install": {
+              "description": "The seller installs the app in their Shopify shop.",
+              "title": "Install"
+            },
+            "sell": {
+              "description": "Orders go to their shop and shipments come back.",
+              "title": "Sell"
+            },
+            "sync": {
+              "description": "Their catalog, locations and stock come into your marketplace.",
+              "title": "Sync"
+            }
+          },
+          "subtitle": "Let sellers keep running their business from their own Shopify shop.",
+          "title": "Shopify for sellers"
+        }
+      },
+      "see_how_it_works": "See how it works"
     },
     "errors": {
       "forbidden_description": "You don’t have permission to view this page.",
@@ -1238,9 +1441,24 @@
             "product": "Products",
             "category": "Categories",
             "customer": "Customers",
-            "variant": "Variants"
+            "variant": "Variants",
+            "seller": "Sellers",
+            "collection": "Collections",
+            "promotion": "Promotions",
+            "gift_card": "Gift cards",
+            "store_credit": "Store credits",
+            "stock_transfer": "Stock transfers",
+            "purchase_order": "Purchase orders",
+            "company": "Companies",
+            "payment_method": "Payment methods",
+            "delivery_method": "Delivery methods",
+            "tax_rate": "Tax rates",
+            "product_type": "Product types",
+            "media": "Media",
+            "store": "Store"
           },
-          "read_only_help": "The owner can't be changed once values exist for this field."
+          "read_only_help": "The owner can't be changed once values exist for this field.",
+          "api_only_group": "Through the API only"
         },
         "searchable": {
           "help": "Include values in storefront product text search (short text, long text, and number only). After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated.",
@@ -1501,6 +1719,10 @@
           "label": "Coupon code",
           "placeholder": "Optional"
         },
+        "currency": {
+          "help": "Set by the market.",
+          "label": "Currency"
+        },
         "customer_note": {
           "label": "Customer note (visible to customer)"
         },
@@ -1510,6 +1732,14 @@
         },
         "internal_note": {
           "label": "Internal note (staff only)"
+        },
+        "locale": {
+          "label": "Locale",
+          "help": "Used for the emails and documents the customer receives."
+        },
+        "market": {
+          "label": "Market",
+          "help": "Sets the order's pricing and taxes, and which currency and locales it can use."
         },
         "order_group": {
           "label": "Purchase",
@@ -2676,7 +2906,8 @@
         },
         "address_edit": {
           "billing_title": "Edit Billing Address",
-          "shipping_title": "Edit Shipping Address"
+          "shipping_title": "Edit Shipping Address",
+          "billing_same_as_shipping": "Same as shipping address"
         },
         "adjustment_lines": {
           "add_discount": "Add discount",
@@ -3006,6 +3237,12 @@
           "captures": "Captures",
           "captures_empty": "Nothing has been captured yet.",
           "captured_at": "Captured"
+        },
+        "customer_edit": {
+          "title": "Edit customer",
+          "customer_help": "Clear the customer to make this a guest order.",
+          "confirm_detach": "This order will no longer appear in the customer's order history or account. Remove the customer?",
+          "detach": "Remove customer"
         }
       },
       "edit": {
@@ -3466,10 +3703,18 @@
           "company_addresses": "Company addresses",
           "company_help": "Attach this order to a business. The customer list then shows only people who can buy for it.",
           "customer_addresses": "Customer addresses",
+          "reset_items": {
+            "confirm": "Change and remove items",
+            "message_one": "The {{count}} item you picked may not be sold, or may cost something else, for this buyer, market or channel. It will be removed.",
+            "message_other": "The {{count}} items you picked may not be sold, or may cost something else, for this buyer, market or channel. They will be removed.",
+            "title": "Remove the picked items?"
+          },
           "search_variant": "Search variant…",
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
+          "section_market": "Market and channel",
+          "section_market_help": "What can be sold, and at what price, depends on the buyer, the market and the channel.",
           "section_notes": "Notes",
           "section_summary": "Summary",
           "select_billing_address": "Billing address",
@@ -6234,6 +6479,7 @@
         "digital_asset_mailer_files_ready_email": "Downloads ready",
         "customer_mailer_password_reset_email": "Password reset",
         "customer_mailer_data_export_email": "Personal data export ready",
+        "customer_mailer_data_request_confirmation_email": "Data request confirmation",
         "newsletter_mailer_email_confirmation": "Newsletter confirmation",
         "company_mailer_invitation_email": "Company invitation",
         "spree_base_mailer": "Email layout",
@@ -6337,7 +6583,8 @@
         "reset_url": "The link to choose a new password.",
         "download_url": "The link to download the export.",
         "expires_at": "When the link stops working.",
-        "confirmation_url": "The link that confirms the subscription.",
+        "confirmation_url": "The link that confirms the subscription or data request.",
+        "kind": "Whether the data request asks for a copy (access) or for erasure (erasure).",
         "company": "The company the customer is invited to.",
         "accept_url": "The link that accepts the invitation.",
         "store": "Your store: name, links, logo and branding.",

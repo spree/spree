@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertAction,
+  AlertDescription,
   Badge,
   Button,
   Checkbox,
@@ -9,6 +12,7 @@ import {
   Input,
   Switch,
 } from '@spree/dashboard-ui'
+import { CircleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -139,14 +143,17 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
       <div className="flex max-h-72 flex-col gap-4 overflow-y-auto p-3">
         {isPending && <p className="text-xs text-muted-foreground">{t('admin.common.loading')}</p>}
         {isError && (
-          <div className="flex items-center justify-between gap-2" role="alert">
-            <p className="text-xs text-destructive">
+          <Alert variant="destructive" className="has-data-[slot=alert-action]:pr-28">
+            <CircleAlertIcon />
+            <AlertDescription>
               {t('admin.pages.settings.webhooks.events_load_failed')}
-            </p>
-            <Button type="button" variant="outline" size="sm" onClick={() => refetch()}>
-              {t('admin.common.retry')}
-            </Button>
-          </div>
+            </AlertDescription>
+            <AlertAction>
+              <Button type="button" variant="outline" size="sm" onClick={() => refetch()}>
+                {t('admin.common.retry')}
+              </Button>
+            </AlertAction>
+          </Alert>
         )}
         {[...groups].map(([group, groupEvents]) => (
           <div key={group} className="flex flex-col gap-1">

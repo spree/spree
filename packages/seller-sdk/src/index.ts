@@ -11,6 +11,7 @@ export {
   CountryCode,
   CurrencyCode,
   compareMoney,
+  DimensionUnit,
   decimalPlaces,
   formatMoney,
   isDecimalString,
@@ -21,6 +22,7 @@ export {
   SpreeError,
   subtractMoney,
   sumMoney,
+  WeightUnit,
 } from '@spree/sdk-core'
 // `Client` is the whole configured client (auth + resources + token/seller
 // setters); `SellerClient` below is just the resource group. Exported under
@@ -51,6 +53,7 @@ export type {
   SellerCountry,
   SellerExportCreateParams,
   SellerExportType,
+  SellerProductVariantParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from './seller-client'

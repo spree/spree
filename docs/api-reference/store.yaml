@@ -1097,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3456979
-                  slug: product-3456979
+                  name: Product 3476979
+                  slug: product-3476979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1390,8 +1390,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3939085
-                  slug: product-3939085
+                  name: Product 3959085
+                  slug: product-3959085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1422,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3948209
-                  slug: product-3948209
+                  name: Product 3968209
+                  slug: product-3968209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1552,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4216885
-                slug: product-4216885
+                name: Product 4236885
+                slug: product-4236885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1997,7 +1997,7 @@ paths:
           | `address2` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `company` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `first_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -2374,12 +2374,14 @@ paths:
           | `channel_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `completed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `market_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -2390,7 +2392,7 @@ paths:
           | `total_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Order
         sortable:
@@ -2403,6 +2405,8 @@ paths:
         - fulfillment_status
         - id
         - item_total
+        - locale
+        - market_id
         - number
         - order_group_id
         - payment_state
@@ -2489,7 +2493,7 @@ paths:
                   order_minimum_shortfall:
                   below_order_minimum: false
                   freight_summary:
-                  shipping_eq_billing_address: true
+                  shipping_eq_billing_address: false
                   discounts: []
                   fees: []
                   items:
@@ -2500,8 +2504,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 316715
-                    slug: product-316715
+                    name: Product 318715
+                    slug: product-318715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2610,7 +2614,7 @@ paths:
                   order_minimum_shortfall:
                   below_order_minimum: false
                   freight_summary:
-                  shipping_eq_billing_address: true
+                  shipping_eq_billing_address: false
                   discounts: []
                   fees: []
                   items:
@@ -2621,8 +2625,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3172171
-                    slug: product-3172171
+                    name: Product 3192171
+                    slug: product-3192171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2794,7 +2798,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items: []
@@ -2910,7 +2914,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 321307 was removed because it was sold out
+                  message: Product 323307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -2959,7 +2963,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees:
                 - id: fee_UkLWZg9DAJ
@@ -3142,7 +3146,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -3153,8 +3157,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3223263
-                  slug: product-3223263
+                  name: Product 3243263
+                  slug: product-3243263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3377,8 +3381,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3248992
-                  slug: product-3248992
+                  name: Product 3268992
+                  slug: product-3268992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3539,6 +3543,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id: cart_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -3600,7 +3605,7 @@ paths:
                     gateway_payment_profile_id:
                   payment_method:
                     id: pm_UkLWZg9DAJ
-                    name: Check 8
+                    name: Check 9
                     description:
                     type: check
                     session_required: false
@@ -3617,8 +3622,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3274794
-                  slug: product-3274794
+                  name: Product 3294794
+                  slug: product-3294794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3672,8 +3677,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 173
-                    code: UPS_GROUND_191
+                    name: UPS Ground 174
+                    code: UPS_GROUND_192
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -3696,7 +3701,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 173
+                    name: UPS Ground 174
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -3715,8 +3720,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 173
-                      code: UPS_GROUND_191
+                      name: UPS Ground 174
+                      code: UPS_GROUND_192
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -3925,7 +3930,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -3936,8 +3941,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3602614
-                  slug: product-3602614
+                  name: Product 3622614
+                  slug: product-3622614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4120,7 +4125,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -4131,8 +4136,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3613461
-                  slug: product-3613461
+                  name: Product 3633461
+                  slug: product-3633461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4320,8 +4325,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3638182
-                  slug: product-3638182
+                  name: Product 3658182
+                  slug: product-3658182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4375,8 +4380,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 194
-                    code: UPS_GROUND_213
+                    name: UPS Ground 195
+                    code: UPS_GROUND_214
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4399,7 +4404,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 194
+                    name: UPS Ground 195
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -4418,8 +4423,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 194
-                      code: UPS_GROUND_213
+                      name: UPS Ground 195
+                      code: UPS_GROUND_214
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4432,7 +4437,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 505 Lovely Street
+                  address1: 509 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4629,7 +4634,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -4640,8 +4645,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3655702
-                  slug: product-3655702
+                  name: Product 3675702
+                  slug: product-3675702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4873,7 +4878,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -4884,8 +4889,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3699569
-                  slug: product-3699569
+                  name: Product 3719569
+                  slug: product-3719569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5014,10 +5019,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 37263 cannot be delivered to the selected address
+                  message: Product 37463 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 373298 cannot be delivered to the selected address
+                  message: Product 375298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -5065,7 +5070,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -5076,8 +5081,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 37263
-                  slug: product-37263
+                  name: Product 37463
+                  slug: product-37463
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5107,8 +5112,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 373298
-                  slug: product-373298
+                  name: Product 375298
+                  slug: product-375298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5312,7 +5317,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -5323,8 +5328,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3799165
-                  slug: product-3799165
+                  name: Product 3819165
+                  slug: product-3819165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5488,7 +5493,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items: []
@@ -5954,7 +5959,7 @@ paths:
                 source:
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Check 9
+                  name: Check 10
                   description:
                   type: check
                   session_required: false
@@ -6120,7 +6125,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -6131,8 +6136,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4449789
-                  slug: product-4449789
+                  name: Product 4469789
+                  slug: product-4469789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6305,7 +6310,7 @@ paths:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
-                shipping_eq_billing_address: true
+                shipping_eq_billing_address: false
                 discounts: []
                 fees: []
                 items:
@@ -6316,8 +6321,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 446179
-                  slug: product-446179
+                  name: Product 448179
+                  slug: product-448179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6616,6 +6621,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -6676,8 +6682,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 383496
-                  slug: product-383496
+                  name: Product 385496
+                  slug: product-385496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6740,8 +6746,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 208
-                    code: UPS_GROUND_227
+                    name: UPS Ground 209
+                    code: UPS_GROUND_228
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6764,7 +6770,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 208
+                    name: UPS Ground 209
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6783,8 +6789,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 208
-                      code: UPS_GROUND_227
+                      name: UPS Ground 209
+                      code: UPS_GROUND_228
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6796,7 +6802,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 561 Lovely Street
+                  address1: 565 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6818,7 +6824,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 562 Lovely Street
+                  address1: 566 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7107,7 +7113,7 @@ paths:
           | `address2` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `company` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `first_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -7921,12 +7927,14 @@ paths:
           | `channel_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `completed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `market_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -7937,7 +7945,7 @@ paths:
           | `total_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Order
         sortable:
@@ -7950,6 +7958,8 @@ paths:
         - fulfillment_status
         - id
         - item_total
+        - locale
+        - market_id
         - number
         - order_group_id
         - payment_state
@@ -7972,6 +7982,7 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: true
+                  shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id:
@@ -8025,8 +8036,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3475270
-                    slug: product-3475270
+                    name: Product 3495270
+                    slug: product-3495270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -8089,8 +8100,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 186
-                      code: UPS_GROUND_204
+                      name: UPS Ground 187
+                      code: UPS_GROUND_205
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8113,7 +8124,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 186
+                      name: UPS Ground 187
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -8132,8 +8143,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 186
-                        code: UPS_GROUND_204
+                        name: UPS Ground 187
+                        code: UPS_GROUND_205
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -8298,6 +8309,7 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
                 company_id:
@@ -8351,8 +8363,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3495633
-                  slug: product-3495633
+                  name: Product 3515633
+                  slug: product-3515633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -8415,8 +8427,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 188
-                    code: UPS_GROUND_206
+                    name: UPS Ground 189
+                    code: UPS_GROUND_207
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -8439,7 +8451,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 188
+                    name: UPS Ground 189
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -8458,8 +8470,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 188
-                      code: UPS_GROUND_206
+                      name: UPS Ground 189
+                      code: UPS_GROUND_207
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -9021,7 +9033,7 @@ paths:
           | `kind` | One of `access`, `erasure` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `requested_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `status` | One of `pending`, `processing`, `completed`, `failed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `awaiting_confirmation`, `pending`, `processing`, `completed`, `failed`, `lapsed` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
           **Sort by:** `completed_at`, `created_at`, `email`, `id`, `kind`, `number`, `requested_at`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
@@ -9080,11 +9092,14 @@ paths:
         bearer_auth: []
       description: |
         Opens a GDPR request for a copy of the customer's personal data (`access`)
-        or its erasure (`erasure`). The work happens in the background and the
-        response is the pending request.
+        or its erasure (`erasure`). Nothing happens until the request is confirmed
+        from the link emailed to the account's address: the response is the request
+        awaiting confirmation, and the link opens `redirect_url` with the
+        confirmation token appended. The work then happens in the background.
 
         An erasure request requires the account password. A request of the same
-        kind that is still in flight is returned instead of starting a second one.
+        kind that is still in flight is returned instead of starting a second one,
+        and a request still awaiting confirmation sends the email again.
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9105,7 +9120,7 @@ paths:
                 id: dsr_UkLWZg9DAJ
                 number: DSR1001
                 kind: access
-                status: pending
+                status: awaiting_confirmation
                 requested_at: '2026-01-15T12:00:00Z'
                 completed_at:
                 expires_at:
@@ -9135,8 +9150,9 @@ paths:
       security:
       - api_key: []
         bearer_auth: []
-      description: Returns one of the customer's own data requests, with a download
-        link once the export is ready
+      description: 'Returns one of the customer''s own data requests. The download
+        link is never shown here: it goes only to the holder of the emailed confirmation
+        token'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9177,6 +9193,110 @@ paths:
                 error:
                   code: record_not_found
                   message: Data request not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/data_requests/{token}":
+    get:
+      summary: Get a data request by its confirmation token
+      tags:
+      - Customers
+      security:
+      - api_key: []
+      description: |
+        Returns the data request the emailed confirmation token belongs to, with a
+        download link once the export is ready. Needs no signed-in session, because
+        the link may be opened on a device that was never signed in.
+
+        The token stays readable after the 24-hour confirmation window, and the
+        response carries the request's saved `status`. A request that is
+        `awaiting_confirmation` can be confirmed only within that window: a later
+        confirmation attempt returns `422` and marks the request `lapsed`. `404`
+        means the token is unknown, or was voided when the customer's data was
+        erased.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: data request found
+          content:
+            application/json:
+              example:
+                id: dsr_UkLWZg9DAJ
+                number: DSR1001
+                kind: access
+                status: pending
+                requested_at: '2026-01-15T12:00:00Z'
+                completed_at:
+                expires_at:
+                download_url:
+              schema:
+                "$ref": "#/components/schemas/DataRequest"
+        '404':
+          description: token unknown or voided
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: This confirmation link has expired or is no longer valid
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/data_requests/{token}/confirmation":
+    post:
+      summary: Confirm a data request
+      tags:
+      - Customers
+      security:
+      - api_key: []
+      description: |
+        Confirms a data request with the token from the confirmation email, and
+        starts the work. Call it when the person presses a button on the page the
+        link opens, never when the page loads: some mail scanners open links and
+        run the page's scripts. Confirming again returns the request as it stands.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: data request confirmed
+          content:
+            application/json:
+              example:
+                id: dsr_UkLWZg9DAJ
+                number: DSR1001
+                kind: access
+                status: pending
+                requested_at: '2026-01-15T12:00:00Z'
+                completed_at:
+                expires_at:
+                download_url:
+              schema:
+                "$ref": "#/components/schemas/DataRequest"
+        '422':
+          description: token not recognised, or the request has lapsed
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: This confirmation link has expired or is no longer valid
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/customers/me/gift_cards":
@@ -9284,7 +9404,7 @@ paths:
           | `code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_by_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `expires_at` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `gift_card_batch_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -9772,13 +9892,13 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[amount_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -11044,7 +11164,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-552
+                  sku: SKU-556
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11130,7 +11250,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-553
+                  sku: SKU-557
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -12217,7 +12337,7 @@ paths:
           | `address2` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `city` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `company` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `first_name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -12539,12 +12659,14 @@ paths:
           | `channel_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `completed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `market_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -12555,7 +12677,7 @@ paths:
           | `total_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Order
         sortable:
@@ -12568,6 +12690,8 @@ paths:
         - fulfillment_status
         - id
         - item_total
+        - locale
+        - market_id
         - number
         - order_group_id
         - payment_state
@@ -12590,6 +12714,7 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: true
+                  shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
                   company_id: comp_UkLWZg9DAJ
@@ -12643,8 +12768,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3465649
-                    slug: product-3465649
+                    name: Product 3485649
+                    slug: product-3485649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -12706,8 +12831,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 177
-                      code: UPS_GROUND_195
+                      name: UPS Ground 178
+                      code: UPS_GROUND_196
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -12730,7 +12855,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 177
+                      name: UPS Ground 178
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -12749,8 +12874,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 177
-                        code: UPS_GROUND_195
+                        name: UPS Ground 178
+                        code: UPS_GROUND_196
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -15789,6 +15914,56 @@ components:
       - newsletter_subscriber
       - customer_groups
       x-typelizer: true
+    DataRequestConfirmationRequestedEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        kind:
+          type: string
+          enum:
+          - access
+          - erasure
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - awaiting_confirmation
+            - pending
+            - processing
+            - completed
+            - failed
+            - lapsed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        requested_at:
+          type: string
+          nullable: true
+        completed_at:
+          type: string
+          nullable: true
+        email:
+          type: string
+        confirmation_token:
+          type: string
+        store_id:
+          type: string
+        redirect_url:
+          type: string
+      required:
+      - id
+      - number
+      - kind
+      - status
+      - requested_at
+      - completed_at
+      - email
+      - confirmation_token
+      - store_id
+      x-typelizer: true
     DataRequestEvent:
       type: object
       properties:
@@ -15805,10 +15980,12 @@ components:
           anyOf:
           - type: string
             enum:
+            - awaiting_confirmation
             - pending
             - processing
             - completed
             - failed
+            - lapsed
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
@@ -15842,10 +16019,12 @@ components:
           anyOf:
           - type: string
             enum:
+            - awaiting_confirmation
             - pending
             - processing
             - completed
             - failed
+            - lapsed
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
@@ -19571,6 +19750,8 @@ components:
           nullable: true
         within_withdrawal_period:
           type: boolean
+        shipping_eq_billing_address:
+          type: boolean
         cart_id:
           type: string
           nullable: true
@@ -20186,6 +20367,7 @@ components:
       - market_id
       - withdrawal_period_ends_at
       - within_withdrawal_period
+      - shipping_eq_billing_address
       - cart_id
       - channel_id
       - company_id
@@ -24400,6 +24582,12 @@ components:
         current_password:
           type: string
           description: Required for `erasure`.
+        redirect_url:
+          type: string
+          format: uri
+          description: The storefront page the confirmation link opens, with the token
+            appended. Ignored unless it matches one of the store's allowed origins.
+          example: https://myshop.com/account/data-requests/confirm
     CreateNewsletterSubscriberParams:
       type: object
       properties:
@@ -24826,7 +25014,8 @@ components:
         address2: text
         city: text
         company: text
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         first_name: text
         id: id
@@ -24930,10 +25119,12 @@ components:
         requested_at: datetime
         status:
           enum:
+          - awaiting_confirmation
           - pending
           - processing
           - completed
           - failed
+          - lapsed
         updated_at: datetime
       associations: {}
       scopes:
@@ -24964,7 +25155,8 @@ components:
         code: text
         created_at: datetime
         created_by_id: id
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         expires_at: date
         gift_card_batch_id: id
@@ -24994,7 +25186,8 @@ components:
         channel_id: id
         completed_at: datetime
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         delivery_total: decimal
         fulfillment_status:
@@ -25010,6 +25203,9 @@ components:
           - shipped
         id: id
         item_total: decimal
+        locale:
+          code: LocaleCode
+        market_id: id
         number: text
         order_group_id: id
         payment_state:
@@ -25150,7 +25346,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         id: id
         updated_at: datetime

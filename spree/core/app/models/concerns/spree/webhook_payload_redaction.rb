@@ -32,6 +32,7 @@ module Spree
       reset_token
       unsubscribe_token
       verification_token
+      confirmation_token
       download_url
       external_client_secret
       client_secret

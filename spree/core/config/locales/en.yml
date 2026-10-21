@@ -765,6 +765,7 @@ en:
     created_at: Created at
     credit_card: Credit Card
     currency: Currency
+    currency_does_not_match_market: must be %{currency}, the currency of the chosen market
     currency_not_supported_by_store: is not supported by this store
     custom_field_definitions: Custom Field Definitions
     custom_fields: Custom Fields
@@ -773,7 +774,9 @@ en:
       anonymize_failed: The erasure could not be completed and nothing was changed
     customers: Customers
     data_request_errors:
+      address_changed: The account's email address changed after this request was made
       already_anonymized: This customer's personal data has already been erased
+      confirmation_invalid: This confirmation link has expired or is no longer valid
       download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
     default: Default
@@ -1016,6 +1019,7 @@ en:
     line_items: Line items
     link: Link
     locale: Locale
+    locale_not_supported_by_market: is not offered by the chosen market
     locale_not_supported_by_store: is not supported by this store
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
     manual: Manual

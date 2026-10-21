@@ -1,14 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu'
+import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { AddressBlock, type AddressBlockValue } from './address-block'
-import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from './icons'
+import { RowActions } from './row-actions'
 
 /** What every address book row needs, whoever owns the book. */
 export interface AddressBookEntry extends AddressBlockValue {
@@ -45,52 +39,44 @@ export function AddressBookRow({
   const { t } = useTranslation()
 
   return (
-    <div className="flex items-start justify-between gap-2 rounded-md border p-3">
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="flex flex-wrap items-center gap-2">
-          {address.label && (
-            <span className="font-medium text-foreground text-sm">{address.label}</span>
-          )}
-          {address.is_default_billing && (
-            <Badge variant="outline">{t('admin.address_book.default_billing')}</Badge>
-          )}
-          {address.is_default_shipping && (
-            <Badge variant="outline">{t('admin.address_book.default_shipping')}</Badge>
-          )}
-        </span>
+    <Item variant="outline" className="items-start">
+      <ItemContent className="min-w-0">
+        {(address.label || address.is_default_billing || address.is_default_shipping) && (
+          <ItemTitle className="flex-wrap">
+            {address.label}
+            {address.is_default_billing && (
+              <Badge variant="outline">{t('admin.address_book.default_billing')}</Badge>
+            )}
+            {address.is_default_shipping && (
+              <Badge variant="outline">{t('admin.address_book.default_shipping')}</Badge>
+            )}
+          </ItemTitle>
+        )}
         <AddressBlock address={address} />
-      </div>
+      </ItemContent>
 
       {canEdit && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-xs" className="shrink-0">
-              <EllipsisVerticalIcon className="size-4" />
-              <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onEdit}>
-              <PencilIcon className="size-4" />
-              {t('admin.actions.edit')}
-            </DropdownMenuItem>
-            {onSetDefaultBilling && !address.is_default_billing && (
-              <DropdownMenuItem onClick={onSetDefaultBilling}>
-                {t('admin.address_book.set_default_billing')}
-              </DropdownMenuItem>
-            )}
-            {onSetDefaultShipping && !address.is_default_shipping && (
-              <DropdownMenuItem onClick={onSetDefaultShipping}>
-                {t('admin.address_book.set_default_shipping')}
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem variant="destructive" onClick={onRemove}>
-              <TrashIcon className="size-4" />
-              {t('admin.actions.delete')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ItemActions>
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: onEdit },
+              {
+                key: 'set_default_billing',
+                label: t('admin.address_book.set_default_billing'),
+                visible: !!onSetDefaultBilling && !address.is_default_billing,
+                onSelect: () => onSetDefaultBilling?.(),
+              },
+              {
+                key: 'set_default_shipping',
+                label: t('admin.address_book.set_default_shipping'),
+                visible: !!onSetDefaultShipping && !address.is_default_shipping,
+                onSelect: () => onSetDefaultShipping?.(),
+              },
+              { key: 'delete', destructive: true, onSelect: onRemove },
+            ]}
+          />
+        </ItemActions>
       )}
-    </div>
+    </Item>
   )
 }

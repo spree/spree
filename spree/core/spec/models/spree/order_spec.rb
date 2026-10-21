@@ -1247,7 +1247,7 @@ describe Spree::Order, type: :model do
         order.ship_address = nil
       end
 
-      it { expect(order.shipping_eq_billing_address?).to eq(true) }
+      it { expect(order.shipping_eq_billing_address?).to eq(false) }
     end
   end
 

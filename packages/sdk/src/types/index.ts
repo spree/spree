@@ -46,6 +46,7 @@ export type {
   Customer,
   CustomerGroup,
   CustomField,
+  DataRequest,
   Delivery,
   DeliveryMethod,
   DeliveryRate,
@@ -170,6 +171,7 @@ export interface ProductFiltersParams {
 // that extends them (see `spree filters types`).
 export type {
   BooleanFilters,
+  CodeFilters,
   CustomFieldValueFilters,
   EnumFilters,
   IdFilters,

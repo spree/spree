@@ -1,3 +1,13 @@
+## 2026-10-19: A self-service data request is confirmed from its email address before Spree acts on it
+
+**Context:** A customer's own access or erasure request covers the guest orders, carts, cards and consent recorded at the account's email address, so that someone who checked out as a guest and registered later receives their whole history. Spree never confirms that an account's email address belongs to the account holder, so a request should not reach rows at that address until the address itself confirms it.
+
+**Decision:** A request a customer raises for themselves starts as `awaiting_confirmation` and does nothing until it is confirmed from the address it names. Spree publishes `data_request.confirmation_requested` with a confirmation token, gated with `credential: 'write_customers'` like `customer.password_reset_requested`, and its key joins `Spree::WebhookPayloadRedaction::SENSITIVE_PAYLOAD_KEYS`, so the webhook delivery log stores `[REDACTED]` in its place. `spree_emails` sends the link, and a headless storefront can send it from a webhook instead. As in the newsletter and password reset flows, the request takes a `redirect_url`, kept only when it matches one of the store's allowed origins, and the email links to `<redirect_url>?token=…`, falling back to the store's storefront URL. That page acts only when the person presses its button, which calls `POST /api/v3/store/data_requests/:token/confirmation`: some mail scanners open links and run the page's scripts, so a page that confirmed on load could erase data nobody approved. Only then is the request queued, and it matches guest rows by email as before. The download link is given only to whoever holds the token, by email or through the token-addressed read; the account's own session sees the status and never the link. After 24 hours an unconfirmed request can no longer be confirmed, and it is marked `lapsed` the next time the customer asks, follows the link or is erased. Erasure still asks for the account password. Staff-raised requests skip confirmation, since staff check identity themselves. A verified-email flag on the customer was rejected for now: it would add state that every email change must clear, and no other feature needs it yet. Limiting self-service requests to rows the account owns was also rejected, because a former guest would then never receive their full history.
+
+**Consequences:** Every self-service request costs one extra email, and an access request sends a second one when the file is ready. A store with neither `spree_emails` nor a handler for the event cannot complete self-service requests; staff requests still work, and the docs say so. `download_url` stays in the Store API response but is `null` on the account's own reads, which matters only to 6.0 prerelease adopters, since no stable release had data requests. The storefront gains the confirmation page in the same change, since it has no page for the newsletter's links either and a link to the storefront's home page would confirm nothing; and `spree_emails` gains a customer email that merchants can edit. `awaiting_confirmation` and `lapsed` join `DataRequestStatus`.
+
+**Plan amended:** `5.4-6.0-eu-legal-compliance.md` (Key Decision 8 and the Constraints on Current Work).
+
 ## 2026-10-17: Certificates point at their exemption reason
 
 **Context:** Certificates stored a copy of their reason's code, so a code had to be locked once any certificate used it. A new store's seeded reasons could then never be switched to Avalara's codes, and finding a reason's certificates meant joining through companies on a copied string.
@@ -6434,3 +6444,23 @@ relaxation.
 The registry was split by surface during the 6.0 build for exactly this —
 `Spree.store_agent_tools` exists and is empty, and a tool filed on the wrong
 surface is refused at registration.
+
+## 2026-10-19 — `spree add` installs extensions from a catalog shipped with the CLI
+
+`spree add paypal` will eject (with consent), add the gem, run its install
+generator if it has one, migrate, install any dashboard plugin and restart a
+running server (`docs/plans/6.0-cli-add-extensions.md`). Names resolve only
+through a JSON catalog bundled in `@spree/cli`, never by guessing a gem name,
+because a guessed name turns a typo into installing a stranger's gem. The
+catalog ships with the CLI rather than being fetched, so the command works
+offline and a remote file cannot change what gets installed. Setup notes live
+in each gem's `post_install_message`, not in the CLI.
+
+## 2026-10-19 — Extensions released with Spree are pinned to the project's Spree version
+
+`spree add` adds the gems that ship from this repository (`spree_stripe`,
+`spree_meilisearch`, `spree_easypost`, `spree_opentelemetry`, `spree_mcp`) as
+`>= <locked spree version>`. An unpinned `bundle add spree_stripe` resolves to
+the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
+already lists is reported as installed rather than ejecting the project to
+re-add it.

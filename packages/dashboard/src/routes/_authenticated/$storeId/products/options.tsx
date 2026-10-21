@@ -19,6 +19,9 @@ import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceTable,
   resourceSearchSchema,
@@ -102,6 +105,10 @@ import {
   valueToParam,
 } from '../../../../schemas/option-type'
 import '../../../../tables/option-types'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 
 const optionTypesSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
@@ -213,13 +220,14 @@ function CreateOptionTypeSheet({
   const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(optionTypeFormSchema) as any,
-    defaultValues: OPTION_TYPE_DEFAULTS,
+    defaultValues: { ...OPTION_TYPE_DEFAULTS, ...extensionFormValues('option_type', null) },
   })
 
   async function onSubmit(values: OptionTypeFormValues) {
     try {
       await createMutation.mutateAsync({
         ...values,
+        ...extensionSubmitValues('option_type', form),
         option_values: values.option_values.map(valueToParam),
       } as OptionTypeCreateParams)
       form.reset(OPTION_TYPE_DEFAULTS)
@@ -250,6 +258,11 @@ function CreateOptionTypeSheet({
               </p>
             )}
             <OptionTypeFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="option_type.form_fields"
+              context={{ optionType: undefined, mode: 'new' }}
+            />
             <OptionValuesFieldArray form={form} />
           </div>
           <SheetFooter>
@@ -289,6 +302,7 @@ function EditOptionTypeSheet({
   const { t } = useTranslation()
   const { data: optionType, isLoading } = useOptionType(id)
   const updateMutation = useUpdateOptionType(id)
+  const customFields = useCustomFieldsDraft('option_type', id)
 
   const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -302,16 +316,25 @@ function EditOptionTypeSheet({
         ...optionType,
         kind: optionType.kind as OptionTypeFormValues['kind'],
         option_values: (optionType.option_values ?? []).map(optionValueToFormRow),
+        ...extensionFormValues('option_type', optionType),
       })
     }
   }, [optionType, form])
 
   async function onSubmit(values: OptionTypeFormValues) {
     try {
-      await updateMutation.mutateAsync({
-        ...values,
-        option_values: values.option_values.map(valueToParam),
-      })
+      // The record saves first and is marked clean, so a retry after a failed
+      // custom field save sends only the custom fields.
+      const savesRecord = form.formState.isDirty
+      if (savesRecord) {
+        await updateMutation.mutateAsync({
+          ...values,
+          ...extensionSubmitValues('option_type', form),
+          option_values: values.option_values.map(valueToParam),
+        })
+        form.reset(values)
+      }
+      if (!(await customFields.save({ announce: !savesRecord }))) return
       // The sheet closes here; the `useOptionType` cache invalidation done by
       // the mutation hook re-hydrates the form via `useEffect` the next time
       // the sheet opens. Don't reset from the update response — the v3
@@ -368,7 +391,13 @@ function EditOptionTypeSheet({
                 </p>
               )}
               <OptionTypeFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="option_type.form_fields"
+                context={{ optionType, mode: 'edit' }}
+              />
               <OptionValuesFieldArray form={form} />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
             </div>
             <SheetFooter>
               <Button
@@ -381,7 +410,9 @@ function EditOptionTypeSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                disabled={
+                  form.formState.isSubmitting || (!form.formState.isDirty && !customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>

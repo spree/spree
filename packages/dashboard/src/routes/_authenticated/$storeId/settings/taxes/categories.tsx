@@ -1,6 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { TaxCategory, TaxCategoryCreateParams } from '@spree/admin-sdk'
-import { Can, mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
+  mapSpreeErrorsToForm,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   ActiveBadge,
   Button,
@@ -190,12 +198,15 @@ function CreateTaxCategorySheet({
   const form = useForm<TaxCategoryFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(taxCategoryFormSchema) as any,
-    defaultValues: TAX_CATEGORY_DEFAULTS,
+    defaultValues: { ...TAX_CATEGORY_DEFAULTS, ...extensionFormValues('tax_category', null) },
   })
 
   async function onSubmit(values: TaxCategoryFormValues) {
     try {
-      await createMutation.mutateAsync(taxCategoryValuesToParams(values) as TaxCategoryCreateParams)
+      await createMutation.mutateAsync({
+        ...(taxCategoryValuesToParams(values) as TaxCategoryCreateParams),
+        ...extensionSubmitValues('tax_category', form),
+      })
       form.reset(TAX_CATEGORY_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -219,6 +230,11 @@ function CreateTaxCategorySheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <TaxCategoryFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="tax_category.form_fields"
+              context={{ taxCategory: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -267,13 +283,17 @@ function EditTaxCategorySheet({
         tax_code: taxCategory.tax_code ?? '',
         description: taxCategory.description ?? '',
         is_default: taxCategory.is_default,
+        ...extensionFormValues('tax_category', taxCategory),
       })
     }
   }, [taxCategory, form])
 
   async function onSubmit(values: TaxCategoryFormValues) {
     try {
-      await updateMutation.mutateAsync(taxCategoryValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...taxCategoryValuesToParams(values),
+        ...extensionSubmitValues('tax_category', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -296,6 +316,11 @@ function EditTaxCategorySheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <TaxCategoryFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="tax_category.form_fields"
+                context={{ taxCategory, mode: 'edit' }}
+              />
             </div>
             <SheetFooter>
               <Button

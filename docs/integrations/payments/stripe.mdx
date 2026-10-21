@@ -15,16 +15,19 @@ Before you can enable Stripe, it must be installed. To do so, you need to run th
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree bundle add spree_stripe && spree generate spree_stripe:install
+spree add stripe
 ```
 
-```bash Without Spree CLI
-bundle add spree_stripe && bin/rails g spree_stripe:install
+```ruby Without Spree CLI
+# server/Gemfile — use the same version requirement as your `spree` gem, then run `bundle install`
+gem 'spree_stripe', '>= 6.0.0'
 ```
 
 </CodeGroup>
 
-After that, you need to make sure to restart the server.
+The Spree CLI restarts the server for you. Without it, restart the server yourself.
+
+<Note>New Spree projects include Stripe already, so you can skip this step.</Note>
 
 ## Connect Stripe
 

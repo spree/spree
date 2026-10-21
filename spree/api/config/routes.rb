@@ -155,6 +155,10 @@ Spree::Core::Engine.add_routes do
         # Token-addressed so the emailed link works from a device that was
         # never signed in.
         get 'data_requests/:token/download', to: 'data_request_downloads#show', as: :data_request_download
+        # Addressed by the confirmation token emailed to the address a
+        # customer's own request names, for the same reason.
+        get 'data_requests/:token', to: 'data_requests#show', as: :data_request
+        post 'data_requests/:token/confirmation', to: 'data_request_confirmations#create', as: :data_request_confirmation
         # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
         get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 
@@ -283,6 +287,9 @@ Spree::Core::Engine.add_routes do
         resource :store, only: [:show, :update], controller: 'store' do
           get :data_sources
         end
+        # The store's own custom fields, addressed by its id like every other
+        # parent. The controller only ever resolves the current store.
+        resources :stores, only: [], concerns: :custom_fieldable
 
         # Staff & access (invitations, admin users, roles, API keys)
         resources :admin_users, only: [:index, :show, :update, :destroy]
@@ -346,7 +353,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Products
-        resources :product_types do
+        resources :product_types, concerns: :custom_fieldable do
           post :apply_to_products, on: :member
         end
         resources :products, concerns: [:custom_fieldable, :translatable] do
@@ -388,7 +395,7 @@ Spree::Core::Engine.add_routes do
         # Media library — every file in the store, placed or not. Files are put
         # ON a product through the nested media routes above; this is where they
         # are uploaded, browsed and deleted.
-        resources :media, controller: 'media_library', only: [:index, :show, :create, :update, :destroy] do
+        resources :media, controller: 'media_library', only: [:index, :show, :create, :update, :destroy], concerns: :custom_fieldable do
           get :usage, on: :member
         end
 
@@ -423,7 +430,7 @@ Spree::Core::Engine.add_routes do
         resources :tax_categories
 
         # Tax Rates — the internal tax provider's configuration
-        resources :tax_rates
+        resources :tax_rates, concerns: :custom_fieldable
 
         # Selectable tax engines and their declared limits (discovery only)
         resources :tax_providers, only: [:index]
@@ -448,7 +455,7 @@ Spree::Core::Engine.add_routes do
           post :bulk_upsert, on: :collection
         end
         resources :stock_movements, only: [:index, :show]
-        resources :stock_transfers do
+        resources :stock_transfers, concerns: :custom_fieldable do
           member do
             patch :mark_ready
             patch :mark_in_transit
@@ -461,7 +468,7 @@ Spree::Core::Engine.add_routes do
 
         # Purchasing
         resources :suppliers
-        resources :purchase_orders do
+        resources :purchase_orders, concerns: :custom_fieldable do
           member do
             patch :mark_ordered
             patch :mark_draft
@@ -472,7 +479,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Payment Methods
-        resources :delivery_methods do
+        resources :delivery_methods, concerns: :custom_fieldable do
           collection do
             get :calculators
             get :fulfillment_providers
@@ -493,7 +500,7 @@ Spree::Core::Engine.add_routes do
                                     only: [:index, :show, :create, :update, :destroy]
         end
 
-        resources :payment_methods do
+        resources :payment_methods, concerns: :custom_fieldable do
           get :types, on: :collection
         end
 
@@ -503,7 +510,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Promotions, with nested actions/rules/coupon codes.
-        resources :promotions do
+        resources :promotions, concerns: :custom_fieldable do
           resources :promotion_actions, only: [:index, :show, :create, :update, :destroy]
           resources :promotion_rules, only: [:index, :show, :create, :update, :destroy]
           resources :coupon_codes, only: [:index, :show]
@@ -636,7 +643,7 @@ Spree::Core::Engine.add_routes do
         # Business customers — a tree of company nodes. Nested collections are
         # listed and created under their node and then addressed directly, so
         # a caller holding an entry id does not have to know its company.
-        resources :companies do
+        resources :companies, concerns: :custom_fieldable do
           # The node's address book.
           resources :addresses, controller: 'companies/addresses'
 
@@ -721,12 +728,12 @@ Spree::Core::Engine.add_routes do
         end
 
         # Gift cards
-        resources :gift_cards
+        resources :gift_cards, concerns: :custom_fieldable
         resources :gift_card_batches, only: [:index, :show, :create]
 
         # Store credits across all customers. Read-only: issuing, editing and
         # deleting a credit stays nested under the customer that holds it.
-        resources :store_credits, only: [:index, :show] do
+        resources :store_credits, only: [:index, :show], concerns: :custom_fieldable do
           resources :events, only: [:index], controller: 'store_credits/events'
         end
 

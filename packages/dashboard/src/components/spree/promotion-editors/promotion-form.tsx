@@ -9,8 +9,14 @@ import type {
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
-import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
-import { PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import {
+  Alert,
+  AlertDescription,
+  DropdownMenuItem,
+  formatCalculatorSummary,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon, PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useEffect, useState } from 'react'
 import {
@@ -22,6 +28,7 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
+import { TypePickerSheet } from '../type-picker-sheet'
 import { EditorShell } from './editor-shell'
 import './register'
 import {
@@ -32,7 +39,6 @@ import {
   mapSpreeErrorsToForm,
   Slot,
   Subject,
-  typeDescription,
   typeLabel,
   useCountryDisplayName,
   usePermissions,
@@ -71,6 +77,7 @@ import {
   TableHeader,
   TableRow,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { optionValueLabel } from '../../../hooks/use-option-types'
 import {
@@ -89,6 +96,7 @@ import {
   type PromotionKind,
   promotionFormSchema,
 } from '../../../schemas/promotion'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import {
   actionDraftFromAction,
   actionDraftFromType,
@@ -188,6 +196,12 @@ export function PromotionForm({
     defaultValues: { ...PROMOTION_DEFAULTS, ...extensionFormValues('promotion', null) },
   })
 
+  // Edit only: a promotion being created has no id to hang values on yet.
+  const customFields = useCustomFieldsDraft(
+    'promotion',
+    mode === 'edit' ? (promotion?.id ?? '') : '',
+  )
+
   const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
   const actionsArray = useFieldArray({ control: form.control, name: 'actions', keyName: '_key' })
 
@@ -233,7 +247,20 @@ export function PromotionForm({
       Object.assign(payload, couponFieldsForKind(values))
     }
     try {
-      await onSubmit(payload)
+      // The promotion saves first and is marked clean, so a retry after a
+      // failed custom field save sends only the custom fields — the rule and
+      // action sets would otherwise be submitted again. A failed save keeps
+      // its edits and names the fields itself.
+      const savesRecord = mode === 'create' || form.formState.isDirty
+      if (savesRecord) {
+        await onSubmit(payload)
+        if (mode === 'edit') form.reset(form.getValues())
+      }
+      const savesCustomFields = customFields.isDirty
+      // The promotion's own save toasts; a custom-field-only save has to say so.
+      if ((await customFields.save()) && savesCustomFields && !savesRecord) {
+        toastManager.add({ type: 'success', title: t('admin.messages.promotion_saved') })
+      }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
@@ -295,7 +322,8 @@ export function PromotionForm({
                   <Button
                     type="submit"
                     disabled={
-                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                      form.formState.isSubmitting ||
+                      (mode === 'edit' && !form.formState.isDirty && !customFields.isDirty)
                     }
                   >
                     {form.formState.isSubmitting
@@ -313,12 +341,10 @@ export function PromotionForm({
           main={
             <>
               {form.formState.errors.root?.message && (
-                <p
-                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                  role="alert"
-                >
-                  {form.formState.errors.root.message}
-                </p>
+                <Alert variant="destructive">
+                  <CircleAlertIcon />
+                  <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                </Alert>
               )}
               <RulesCard
                 form={form}
@@ -333,6 +359,7 @@ export function PromotionForm({
               <BasicsCard form={form} />
               <TriggerCard mode={mode} form={form} promotion={promotion} />
               <ScheduleCard form={form} />
+              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} />}
               <Slot name="promotion.form_sidebar" context={{ promotion, mode }} />
             </>
           }
@@ -755,10 +782,17 @@ function RulesCard({
         </div>
 
         {pickerOpen && (
-          <RulePickerSheet
+          <TypePickerSheet
+            family="promotion_rule"
+            title={t('admin.promotions.rule_picker.title')}
+            description={t('admin.promotions.rule_picker.description')}
+            emptyMessage={t(
+              types.length === 0
+                ? 'admin.promotions.rule_types_empty'
+                : 'admin.promotions.rule_types_all_used',
+            )}
             // One rule type per promotion (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={types.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -969,66 +1003,6 @@ function customerLabel(c: Customer): string {
   return c.full_name || c.email || ''
 }
 
-function RulePickerSheet({
-  types,
-  registeredCount,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  /** Types still selectable — already-added types are filtered out upstream. */
-  types: ResourceTypeDefinition[]
-  /** Total registered types regardless of selection. */
-  registeredCount: number
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  const emptyKey =
-    registeredCount === 0
-      ? 'admin.promotions.rule_types_empty'
-      : 'admin.promotions.rule_types_all_used'
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.rule_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.rule_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
-          ) : (
-            types.map((tt) => (
-              <button
-                key={tt.type}
-                type="button"
-                onClick={() => onPicked(tt)}
-                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-              >
-                <span className="text-sm font-medium">
-                  {typeLabel('promotion_rule', tt.type, tt.label)}
-                </span>
-                {tt.description && (
-                  <span className="text-xs text-muted-foreground">
-                    {typeDescription('promotion_rule', tt.type, tt.description)}
-                  </span>
-                )}
-              </button>
-            ))
-          )}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
-}
-
 function RuleEditSheet({
   draft,
   types,
@@ -1160,7 +1134,10 @@ function ActionsCard({
         </div>
 
         {pickerOpen && (
-          <ActionPickerSheet
+          <TypePickerSheet
+            family="promotion_action"
+            title={t('admin.promotions.action_picker.title')}
+            description={t('admin.promotions.action_picker.description')}
             types={types}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
@@ -1278,54 +1255,6 @@ function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
     )
   if (parts.length === 0) return null
   return <div className="truncate text-xs text-muted-foreground">{parts.join(' · ')}</div>
-}
-
-function ActionPickerSheet({
-  types,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  types: ResourceTypeDefinition[]
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.action_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.action_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.map((type) => (
-            <button
-              key={type.type}
-              type="button"
-              onClick={() => onPicked(type)}
-              className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-            >
-              <span className="text-sm font-medium">
-                {typeLabel('promotion_action', type.type, type.label)}
-              </span>
-              {type.description && (
-                <span className="text-xs text-muted-foreground">
-                  {typeDescription('promotion_action', type.type, type.description)}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
 }
 
 function ActionEditSheet({

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { compareMoney, isZeroMoney, type Order, SpreeError, type Variant } from '@spree/admin-sdk'
+import { type Order, SpreeError, type Variant } from '@spree/admin-sdk'
+import { compareMoney, isZeroMoney } from '@spree/core'
 import {
   adminClient,
   GONE_STATUSES,
@@ -371,7 +372,12 @@ function OrderEditPage() {
       </form>
 
       {addingItem && (
-        <AddLineItemDialog open={addingItem} onOpenChange={setAddingItem} onSelect={stageVariant} />
+        <AddLineItemDialog
+          orderId={orderId}
+          open={addingItem}
+          onOpenChange={setAddingItem}
+          onSelect={stageVariant}
+        />
       )}
     </>
   )

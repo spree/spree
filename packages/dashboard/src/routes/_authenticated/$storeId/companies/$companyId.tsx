@@ -53,6 +53,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CompanyAddressSheet } from '../../../../components/spree/company-address-sheet'
 import { CompanyKindBadge } from '../../../../components/spree/company-kind-badge'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EnterpriseUpsell } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { TaxExemptionCertificatesCard } from '../../../../components/spree/tax-exemption-certificates-card'
@@ -170,6 +171,7 @@ function CompanyBody({ company }: { company: Company }) {
           ) : (
             <CompanyTaxIdentifiersCard companyId={company.id} canEdit={canEdit} />
           )}
+          <ApiCustomFieldsCard ownerType="company" ownerId={company.id} />
           <Slot name="company.form_sidebar" context={{ company, kind: company.kind, canEdit }} />
         </>
       }

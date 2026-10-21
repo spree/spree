@@ -35,6 +35,7 @@ import type {
   Country,
   CreateCartParams,
   CreateClaimParams,
+  CreateDataRequestParams,
   CreateNewsletterSubscriberParams,
   CreatePaymentParams,
   CreatePaymentSessionParams,
@@ -45,6 +46,7 @@ import type {
   CreditCard,
   Currency,
   Customer,
+  DataRequest,
   DeliveryMethod,
   DigitalLink,
   DigitalLinkFilters,
@@ -1082,6 +1084,42 @@ export class StoreClient {
     },
 
     /**
+     * Nested resource: GDPR data requests (a copy of the customer's data, or its erasure)
+     */
+    dataRequests: {
+      /**
+       * List the customer's data requests, most recent first
+       */
+      list: (
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DataRequest>> =>
+        this.request<PaginatedResponse<DataRequest>>('GET', '/customers/me/data_requests', {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+
+      /**
+       * Get one of the customer's data requests. Never carries the download
+       * link: that goes only to the holder of the emailed confirmation token.
+       */
+      get: (id: string, options?: RequestOptions): Promise<DataRequest> =>
+        this.request<DataRequest>('GET', `/customers/me/data_requests/${id}`, options),
+
+      /**
+       * Open a data request. Nothing happens until it is confirmed from the
+       * link emailed to the customer's address, which opens `redirect_url`
+       * with the token appended (see `client.dataRequests.confirm`). Erasure
+       * needs `current_password`.
+       */
+      create: (params?: CreateDataRequestParams, options?: RequestOptions): Promise<DataRequest> =>
+        this.request<DataRequest>('POST', '/customers/me/data_requests', {
+          ...options,
+          body: params,
+        }),
+    },
+
+    /**
      * Nested resource: Credit Cards
      */
     creditCards: {
@@ -1259,6 +1297,31 @@ export class StoreClient {
           { ...options, body: params },
         ),
     },
+  }
+
+  // ============================================
+  // Data Requests (by confirmation token)
+  // ============================================
+
+  readonly dataRequests = {
+    /**
+     * Get the data request a confirmation token belongs to, with the download
+     * link once the export is ready. Needs no signed-in customer.
+     */
+    get: (token: string, options?: RequestOptions): Promise<DataRequest> =>
+      this.request<DataRequest>('GET', `/data_requests/${encodeURIComponent(token)}`, options),
+
+    /**
+     * Confirm a data request with the token from the confirmation email, and
+     * start the work. Call it when the person presses a button, never on page
+     * load: some mail scanners open links and run the page's scripts.
+     */
+    confirm: (token: string, options?: RequestOptions): Promise<DataRequest> =>
+      this.request<DataRequest>(
+        'POST',
+        `/data_requests/${encodeURIComponent(token)}/confirmation`,
+        options,
+      ),
   }
 
   // ============================================

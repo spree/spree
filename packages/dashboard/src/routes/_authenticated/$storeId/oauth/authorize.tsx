@@ -12,6 +12,7 @@ import {
   ScrollArea,
   Skeleton,
 } from '@spree/dashboard-ui'
+import { CircleAlertIcon, InfoIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -122,6 +123,7 @@ function OauthAuthorizePage() {
           below would skeleton forever behind it. */}
       {error ? (
         <Alert variant="destructive">
+          <CircleAlertIcon />
           <AlertDescription>
             {t('admin.pages.oauth.authorize.invalid_request')}
             {errorDetail ? (
@@ -184,6 +186,7 @@ function OauthAuthorizePage() {
                 </div>
 
                 <Alert variant="info">
+                  <InfoIcon />
                   <AlertDescription>
                     {t('admin.pages.oauth.authorize.revoke_hint')}
                   </AlertDescription>
@@ -191,6 +194,7 @@ function OauthAuthorizePage() {
 
                 {decisionError ? (
                   <Alert variant="destructive">
+                    <CircleAlertIcon />
                     <AlertDescription>{decisionError}</AlertDescription>
                   </Alert>
                 ) : null}

@@ -115,6 +115,12 @@ describe('custom fields', () => {
       expect(echoed).toEqual({ parent: 'customers', parent_id: 'cus_1' })
     })
 
+    it('routes the store to /stores', async () => {
+      const result = await client.customFields('store', 'store_1').list()
+      const echoed = (result.data[0] as { _route?: { parent: string; parent_id: string } })._route
+      expect(echoed).toEqual({ parent: 'stores', parent_id: 'store_1' })
+    })
+
     it('supports CRUD via the curried accessor', async () => {
       const accessor = client.customFields('order', 'or_1')
 

@@ -67,6 +67,27 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           expect(ids).to include(pos_order.prefixed_id, default_channel_order.prefixed_id)
         end
       end
+
+      context 'filtering by market and locale' do
+        let(:market) { create(:market, store: store) }
+        let!(:market_order) do
+          allow(store).to receive(:supported_locales_list).and_return(%w[de en])
+          create(:order, store: store, market: market, locale: 'de')
+        end
+
+        it 'returns only orders in the requested market via a prefixed market_id_in' do
+          get :index, params: { q: { market_id_in: [market.prefixed_id] } }, as: :json
+
+          expect(json_response['data'].map { |o| o['id'] }).to eq([market_order.prefixed_id])
+          expect(json_response['data'].first['market']['name']).to eq(market.name)
+        end
+
+        it 'returns only orders in the requested locale via locale_in' do
+          get :index, params: { q: { locale_in: ['de'] } }, as: :json
+
+          expect(json_response['data'].map { |o| o['id'] }).to eq([market_order.prefixed_id])
+        end
+      end
     end
 
     context 'with q[search] (full-text search)' do
@@ -706,6 +727,18 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    context 'with use_shipping' do
+      let(:order) { create(:order, store: store, ship_address: create(:address), bill_address: nil) }
+
+      it 'copies the shipping address to the billing address' do
+        patch :update, params: { id: order.prefixed_id, use_shipping: true }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['shipping_eq_billing_address']).to be(true)
+        expect(order.reload.bill_address).to eq(order.ship_address)
+      end
+    end
+
     # Staff assigning the business an order is for. A buyer with several
     # memberships names the node on their own cart; this is the back-office
     # equivalent.
@@ -764,6 +797,21 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.customer).to eq(new_customer)
+      end
+
+      it 'detaches the customer, keeping the order email' do
+        patch :update, params: { id: order.prefixed_id, customer_id: nil }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.customer).to be_nil
+        expect(order.email).to be_present
+      end
+
+      it 'refuses a customer that does not exist' do
+        patch :update, params: { id: order.prefixed_id, customer_id: 'cus_missing' }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload.customer).to eq(original_customer)
       end
     end
 

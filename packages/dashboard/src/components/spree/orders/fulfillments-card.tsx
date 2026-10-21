@@ -38,6 +38,9 @@ import {
   type FulfillmentItemRowData,
   FulfillmentPanel,
   Input,
+  type PostSaleSelection,
+  type PostSaleUnit,
+  QuantityPicker,
   RelativeTime,
   Select,
   SelectContent,
@@ -45,6 +48,7 @@ import {
   SelectTrigger,
   SelectValue,
   StatusBadge,
+  selectedUnits,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -114,9 +118,9 @@ function unitsOf(fulfillment: Fulfillment): FulfillmentUnit[] {
  * unclaimed remainder is offered: units already sitting in a fulfillment move
  * via Split, and shipped ones do not move at all.
  */
-function orderUnits(order: Order): Array<{ itemId: string; label: string; quantity: number }> {
+function orderUnits(order: Order): PostSaleUnit[] {
   return unfulfilledItemRows(order.items ?? [], order.fulfillments ?? []).map((row) => ({
-    itemId: row.key,
+    id: row.key,
     label: [row.name, row.optionsText].filter(Boolean).join(' — ') || row.key,
     quantity: row.quantity,
   }))
@@ -300,11 +304,12 @@ function CreateFulfillmentDialog({
   const locations = data?.data ?? []
   const [stockLocationId, setStockLocationId] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [selection, setSelection] = useState<Record<string, number>>({})
+  const [selection, setSelection] = useState<PostSaleSelection>({})
 
-  const items = Object.entries(selection)
-    .filter(([, quantity]) => quantity > 0)
-    .map(([itemId, quantity]) => ({ item_id: itemId, quantity }))
+  const items = selectedUnits(selection).map(([itemId, quantity]) => ({
+    item_id: itemId,
+    quantity,
+  }))
 
   const locationOptions = locations.map((location) => ({
     value: location.id,
@@ -382,33 +387,7 @@ function CreateFulfillmentDialog({
 
             <Field>
               <FieldLabel>{t('admin.orders.detail.fulfillments.create_items')}</FieldLabel>
-              <div className="flex flex-col gap-2">
-                {units.map((unit) => (
-                  <div
-                    key={unit.itemId}
-                    className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-                  >
-                    <span className="text-sm truncate">{unit.label}</span>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={unit.quantity}
-                      className="w-20"
-                      aria-label={unit.label}
-                      value={selection[unit.itemId] ?? 0}
-                      onChange={(event) =>
-                        setSelection((current) => ({
-                          ...current,
-                          [unit.itemId]: Math.max(
-                            0,
-                            Math.min(Number(event.target.value), unit.quantity),
-                          ),
-                        }))
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
+              <QuantityPicker units={units} selection={selection} onChange={setSelection} />
             </Field>
           </FieldGroup>
         </DialogBody>

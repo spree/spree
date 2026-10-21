@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { useSyncExternalStore } from 'react'
+import { type ComponentType, useSyncExternalStore } from 'react'
 import { ensureLabelled, resolveNavDescription, resolveNavLabel } from './nav-registry'
 import type { ActionName, SubjectName } from './permissions'
 
@@ -75,6 +75,11 @@ export interface SettingsNavEntry {
   action?: ActionName
   /** When true, the page is disabled in the sidebar with a "Soon" badge. */
   comingSoon?: boolean
+  /**
+   * Rendered after the label in the sidebar and on the settings landing page.
+   * A component — not an element — so it can call hooks and return null.
+   */
+  badge?: ComponentType
 }
 
 export interface SettingsNavGroup {

@@ -2,13 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Company, Customer, Variant } from '@spree/admin-sdk'
 import {
   adminClient,
+  CurrencySelect,
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,
   type FileUploadValue,
   formatPrice,
+  LocaleSelect,
   mapSpreeErrorsToForm,
   PageHeader,
   ResourceCombobox,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   type AddressOptionGroup,
@@ -16,6 +19,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   Field,
@@ -25,6 +29,11 @@ import {
   FieldLabel,
   Input,
   ResourceLayout,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Switch,
   Table,
   TableBody,
@@ -33,6 +42,7 @@ import {
   TableHeader,
   TableRow,
   Textarea,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { FileTextIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useMutation } from '@tanstack/react-query'
@@ -45,6 +55,7 @@ import { CompanyComboboxOption } from '../../../../components/spree/company-comb
 import { useChannels } from '../../../../hooks/use-channels'
 import { companyAutocompleteProps, useCompanyAddresses } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps, useCustomerAddresses } from '../../../../hooks/use-customers'
+import { useAllMarkets } from '../../../../hooks/use-markets'
 import {
   NEW_ORDER_DEFAULTS,
   type NewOrderFormValues,
@@ -90,7 +101,8 @@ function NewOrderPage() {
   })
   const { errors } = form.formState
 
-  const { data: channelsData } = useChannels()
+  const confirm = useConfirm()
+  const { data: channelsData, isLoading: channelsLoading } = useChannels()
   const channels = channelsData?.data ?? []
 
   // Both books the order will accept an address from. The company's listing
@@ -124,6 +136,52 @@ function NewOrderPage() {
     },
   ]
 
+  // A market fixes the order's currency and narrows its languages, so the two
+  // follow the market rather than being chosen independently of it.
+  const { markets, isLoading: marketsLoading } = useAllMarkets()
+  const { currencies, locales, defaultCurrency, defaultLocale } = useStore()
+  const marketId = form.watch('market_id')
+  const market =
+    markets.find((m) => m.id === marketId) ?? markets.find((m) => m.default) ?? markets[0]
+  const currencyOptions = market ? [market.currency] : currencies
+  const localeOptions: string[] = market
+    ? Array.from(new Set([market.default_locale, ...market.supported_locales]))
+    : locales
+  const chosenLocale = form.watch('locale')
+  const currency = market?.currency ?? (form.watch('currency') || defaultCurrency)
+  const locale = localeOptions.includes(chosenLocale)
+    ? chosenLocale
+    : (market?.default_locale ?? defaultLocale)
+  const channelId = form.watch('channel_id') || channels.find((c) => c.default)?.id
+  // Availability and prices depend on who buys, on which channel, in which
+  // market, so the item search asks in exactly that context.
+  const salesContext = {
+    market_id: market?.id,
+    channel_id: channelId,
+    customer_id: customer?.id,
+    company_id: company?.id,
+    currency,
+  }
+
+  // Searching before the defaults arrive would offer items from outside them.
+  const salesContextReady = !marketsLoading && !channelsLoading
+
+  // Items picked for another buyer, market or channel may not be sold, or
+  // priced, the same way in the new one.
+  async function changeSalesContext(apply: () => void) {
+    if (items.length > 0) {
+      const confirmed = await confirm({
+        title: t('admin.pages.orders.new.reset_items.title'),
+        message: t('admin.pages.orders.new.reset_items.message', { count: items.length }),
+        confirmLabel: t('admin.pages.orders.new.reset_items.confirm'),
+        variant: 'destructive',
+      })
+      if (!confirmed) return
+    }
+    apply()
+    setItems([])
+  }
+
   const createMutation = useMutation({
     mutationFn: (values: NewOrderFormValues) => {
       const payload: Record<string, unknown> = {
@@ -148,6 +206,9 @@ function NewOrderPage() {
       if (poDocument.signedId) payload.po_document_signed_id = poDocument.signedId
       if (values.coupon_code) payload.coupon_code = values.coupon_code
       if (values.channel_id) payload.channel_id = values.channel_id
+      if (market) payload.market_id = market.id
+      payload.currency = currency
+      payload.locale = locale
       return adminClient.orders.create(payload)
     },
     onSuccess: (order) => {
@@ -240,17 +301,18 @@ function NewOrderPage() {
                       {...companyAutocompleteProps('order-company-picker')}
                       value={company?.id}
                       onChange={(_id, record) => {
-                        setCompany(record)
+                        if (record?.id === company?.id) return
                         // A customer already chosen may have no standing for the
                         // new company, and silently sending that pair would
                         // attach the order to a business this person cannot buy
                         // for. Clearing is the honest reset — and so is dropping
                         // the picked addresses, which belong to the books the
                         // old pair opened and would be refused by the new one.
-                        if (record?.id !== company?.id) {
+                        changeSalesContext(() => {
+                          setCompany(record)
                           setCustomer(null)
                           clearPickedAddresses()
-                        }
+                        })
                       }}
                       renderOption={(company) => <CompanyComboboxOption company={company} />}
                     />
@@ -262,8 +324,11 @@ function NewOrderPage() {
                       {...customerAutocompleteProps('customer-picker', company?.id)}
                       value={customer?.id}
                       onChange={(_id, record) => {
-                        setCustomer(record)
-                        clearPickedAddresses()
+                        if (record?.id !== customer?.id)
+                          changeSalesContext(() => {
+                            setCustomer(record)
+                            clearPickedAddresses()
+                          })
                       }}
                       renderOption={(c) => (
                         <div>
@@ -340,6 +405,101 @@ function NewOrderPage() {
 
             <Card>
               <CardHeader>
+                <CardTitle>{t('admin.pages.orders.new.section_market')}</CardTitle>
+                <CardDescription>{t('admin.pages.orders.new.section_market_help')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FieldGroup>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {markets.length > 0 && (
+                      <Field>
+                        <FieldLabel htmlFor="order-market">
+                          {t('admin.fields.order.market.label')}
+                        </FieldLabel>
+                        <Select
+                          value={market?.id ?? ''}
+                          disabled={markets.length < 2}
+                          onValueChange={(v) =>
+                            changeSalesContext(() => {
+                              form.setValue('market_id', v as string, { shouldDirty: true })
+                              form.setValue('locale', '', { shouldDirty: true })
+                            })
+                          }
+                        >
+                          <SelectTrigger id="order-market">
+                            <SelectValue>
+                              {(v) => markets.find((m) => m.id === v)?.name ?? ''}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {markets.map((m) => (
+                              <SelectItem key={m.id} value={m.id}>
+                                {m.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FieldDescription>{t('admin.fields.order.market.help')}</FieldDescription>
+                      </Field>
+                    )}
+                    {channels.length > 0 && (
+                      <Field>
+                        <FieldLabel htmlFor="order-channel">
+                          {t('admin.fields.order.channel.label')}
+                        </FieldLabel>
+                        <ChannelSelect
+                          id="order-channel"
+                          value={channelId ?? ''}
+                          disabled={channels.length < 2}
+                          onChange={(v) =>
+                            changeSalesContext(() =>
+                              form.setValue('channel_id', v, { shouldDirty: true }),
+                            )
+                          }
+                          placeholder={t('admin.fields.order.channel.placeholder')}
+                        />
+                        <FieldDescription>{t('admin.fields.order.channel.help')}</FieldDescription>
+                      </Field>
+                    )}
+                    <Field>
+                      <FieldLabel htmlFor="order-currency">
+                        {t('admin.fields.order.currency.label')}
+                      </FieldLabel>
+                      <CurrencySelect
+                        id="order-currency"
+                        value={currency}
+                        options={currencyOptions}
+                        disabled={currencyOptions.length < 2}
+                        onChange={(v) =>
+                          changeSalesContext(() =>
+                            form.setValue('currency', v, { shouldDirty: true }),
+                          )
+                        }
+                      />
+                      {market && (
+                        <FieldDescription>{t('admin.fields.order.currency.help')}</FieldDescription>
+                      )}
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="order-locale">
+                        {t('admin.fields.order.locale.label')}
+                      </FieldLabel>
+                      <LocaleSelect
+                        id="order-locale"
+                        value={locale}
+                        options={localeOptions}
+                        disabled={localeOptions.length < 2}
+                        onChange={(v) => form.setValue('locale', v, { shouldDirty: true })}
+                      />
+                      <FieldDescription>{t('admin.fields.order.locale.help')}</FieldDescription>
+                    </Field>
+                  </div>
+                </FieldGroup>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>{t('admin.pages.orders.new.section_items')}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -352,14 +512,19 @@ function NewOrderPage() {
                         adds the row and clears the field, so no value is
                         held — the picker is an action, not a bound input. */}
                     <ResourceCombobox<Variant>
-                      queryKey="new-order-variant-picker"
+                      queryKey={`new-order-variant-picker:${JSON.stringify(salesContext)}`}
+                      disabled={!salesContextReady}
                       value=""
                       onChange={(id) => {
                         const variant = id ? variantById.current.get(id) : undefined
                         if (variant) addItem(variant)
                       }}
                       search={async (query) => {
-                        const res = await adminClient.variants.list({ search: query, limit: 8 })
+                        const res = await adminClient.variants.list({
+                          search: query,
+                          limit: 8,
+                          ...salesContext,
+                        })
                         for (const v of res.data) variantById.current.set(v.id, v)
                         return res
                       }}
@@ -501,28 +666,6 @@ function NewOrderPage() {
                 </FieldGroup>
               </CardContent>
             </Card>
-
-            {channels.length > 1 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.fields.order.channel.label')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FieldGroup>
-                    <Field>
-                      <ChannelSelect
-                        value={form.watch('channel_id') || ''}
-                        onChange={(v) => form.setValue('channel_id', v, { shouldDirty: true })}
-                        placeholder={t('admin.fields.order.channel.placeholder')}
-                      />
-                      <span className="text-xs text-muted-foreground">
-                        {t('admin.fields.order.channel.help')}
-                      </span>
-                    </Field>
-                  </FieldGroup>
-                </CardContent>
-              </Card>
-            )}
 
             <Card>
               <CardHeader>

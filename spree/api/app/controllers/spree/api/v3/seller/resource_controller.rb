@@ -69,12 +69,8 @@ module Spree
           # What extensions opened to sellers, never the operator-level list:
           # an attribute opened to operators must not become seller-writable
           # by accident.
-          def model_additional_permitted_attributes
-            return [] unless respond_to?(:model_class, true)
-
-            Array(model_class.try(:additional_seller_permitted_attributes))
-          rescue NotImplementedError
-            []
+          def additional_permitted_attributes_for(model)
+            Array(model.try(:additional_seller_permitted_attributes))
           end
 
           def authorize_resource!(resource = @resource, action = action_name.to_sym)

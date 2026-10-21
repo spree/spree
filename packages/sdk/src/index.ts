@@ -6,6 +6,7 @@ export {
   CountryCode,
   CurrencyCode,
   compareMoney,
+  DimensionUnit,
   decimalPlaces,
   formatMoney,
   isDecimalString,
@@ -16,6 +17,7 @@ export {
   SpreeError,
   subtractMoney,
   sumMoney,
+  WeightUnit,
 } from '@spree/sdk-core'
 export type { Client, ClientConfig } from './client'
 export { createClient } from './client'
