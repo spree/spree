@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
 import {
   adminRequest,
+  createPlacedOrder,
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
   FIXTURE_BOGUS_TRANSACTION_ID,
@@ -409,6 +410,25 @@ test.describe('order customer', () => {
     await expect(dialog).toBeHidden({ timeout: 15_000 })
     await expect(customerLink).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
+  })
+
+  test('asks before removing the customer from a placed order', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const customerLink = page.getByRole('link', { name: 'Promo Customer', exact: true })
+    await expect(customerLink).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.locator('[data-slot="combobox-clear"]').click()
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await page.getByRole('button', { name: /^remove customer$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(customerLink).toBeHidden({ timeout: 15_000 })
   })
 })
 

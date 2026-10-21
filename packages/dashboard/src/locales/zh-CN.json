@@ -3216,7 +3216,9 @@
         },
         "customer_edit": {
           "title": "编辑客户",
-          "customer_help": "清除客户即可将此订单改为访客订单。"
+          "customer_help": "清除客户即可将此订单改为访客订单。",
+          "confirm_detach": "此订单将不再显示在客户的订单历史和账户中。要移除客户吗？",
+          "detach": "移除客户"
         }
       },
       "edit": {

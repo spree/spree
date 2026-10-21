@@ -3252,7 +3252,9 @@
         },
         "customer_edit": {
           "title": "Edytuj klienta",
-          "customer_help": "Usuń klienta, aby zamówienie stało się zamówieniem gościa."
+          "customer_help": "Usuń klienta, aby zamówienie stało się zamówieniem gościa.",
+          "confirm_detach": "To zamówienie zniknie z historii zamówień i konta klienta. Usunąć klienta?",
+          "detach": "Usuń klienta"
         }
       },
       "edit": {

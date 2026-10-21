@@ -3224,7 +3224,9 @@
         },
         "customer_edit": {
           "title": "Kunde bearbeiten",
-          "customer_help": "Entfernen Sie den Kunden, um daraus eine Gastbestellung zu machen."
+          "customer_help": "Entfernen Sie den Kunden, um daraus eine Gastbestellung zu machen.",
+          "confirm_detach": "Diese Bestellung erscheint nicht mehr im Bestellverlauf und Konto des Kunden. Kunde entfernen?",
+          "detach": "Kunde entfernen"
         }
       },
       "edit": {

@@ -3224,7 +3224,9 @@
         },
         "customer_edit": {
           "title": "Edit customer",
-          "customer_help": "Clear the customer to make this a guest order."
+          "customer_help": "Clear the customer to make this a guest order.",
+          "confirm_detach": "This order will no longer appear in the customer's order history or account. Remove the customer?",
+          "detach": "Remove customer"
         }
       },
       "edit": {

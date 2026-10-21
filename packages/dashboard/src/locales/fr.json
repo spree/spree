@@ -3224,7 +3224,9 @@
         },
         "customer_edit": {
           "title": "Modifier le client",
-          "customer_help": "Retirez le client pour en faire une commande invité."
+          "customer_help": "Retirez le client pour en faire une commande invité.",
+          "confirm_detach": "Cette commande n'apparaîtra plus dans l'historique des commandes ni dans le compte du client. Retirer le client ?",
+          "detach": "Retirer le client"
         }
       },
       "edit": {

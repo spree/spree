@@ -14,6 +14,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -35,6 +36,7 @@ export function OrderCustomerDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const confirm = useConfirm()
   const [customerId, setCustomerId] = useState<string | undefined>(order.customer_id ?? undefined)
   // The order's email is only taken from the customer when the order is
   // created, so a newly picked customer's email is sent alongside it —
@@ -49,6 +51,20 @@ export function OrderCustomerDialog({
   )
 
   async function onSubmit(values: { email: string }) {
+    // A placed order leaves the customer's order history and account with
+    // its customer, so detaching one is confirmed first.
+    const detachingFromPlacedOrder = !customerId && !!order.customer_id && !!order.completed_at
+    if (
+      detachingFromPlacedOrder &&
+      !(await confirm({
+        message: t('admin.orders.detail.customer_edit.confirm_detach'),
+        variant: 'destructive',
+        confirmLabel: t('admin.orders.detail.customer_edit.detach'),
+      }))
+    ) {
+      return
+    }
+
     try {
       await mutation.mutateAsync(
         customerId

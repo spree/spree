@@ -2874,7 +2874,9 @@
         },
         "customer_edit": {
           "title": "Editar cliente",
-          "customer_help": "Quita el cliente para convertir este pedido en un pedido de invitado."
+          "customer_help": "Quita el cliente para convertir este pedido en un pedido de invitado.",
+          "confirm_detach": "Este pedido dejará de aparecer en el historial de pedidos y la cuenta del cliente. ¿Quitar el cliente?",
+          "detach": "Quitar cliente"
         }
       },
       "edit": {
