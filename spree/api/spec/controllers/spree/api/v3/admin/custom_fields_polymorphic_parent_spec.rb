@@ -10,9 +10,11 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
   before { request.headers.merge!(headers) }
 
-  shared_examples 'parent-from-route inference' do |parent_factory:, definition_trait:, param_key:|
+  shared_examples 'parent-from-route inference' do |parent_factory:, param_key:, definition_trait: nil, resource_type: nil|
     let!(:parent) { create(parent_factory) }
-    let!(:definition) { create(:custom_field_definition, definition_trait) }
+    let!(:definition) do
+      definition_trait ? create(:custom_field_definition, definition_trait) : create(:custom_field_definition, resource_type: resource_type)
+    end
     let!(:custom_field) do
       create(:custom_field, resource: parent, custom_field_definition: definition,
                          type: definition.field_type_class_name,
@@ -47,6 +49,61 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                      parent_factory: :variant,
                      definition_trait: :for_variant,
                      param_key: :variant_id
+  end
+
+  {
+    promotions: [:promotion, :promotion_id, 'Spree::Promotion'],
+    gift_cards: [:gift_card, :gift_card_id, 'Spree::GiftCard'],
+    store_credits: [:store_credit, :store_credit_id, 'Spree::StoreCredit'],
+    stock_transfers: [:stock_transfer, :stock_transfer_id, 'Spree::StockTransfer'],
+    purchase_orders: [:purchase_order, :purchase_order_id, 'Spree::PurchaseOrder'],
+    companies: [:company, :company_id, 'Spree::Company'],
+    payment_methods: [:check_payment_method, :payment_method_id, 'Spree::PaymentMethod'],
+    delivery_methods: [:delivery_method, :delivery_method_id, 'Spree::DeliveryMethod'],
+    tax_rates: [:tax_rate, :tax_rate_id, 'Spree::TaxRate'],
+    product_types: [:product_type, :product_type_id, 'Spree::ProductType'],
+    media: [:media, :medium_id, 'Spree::Media']
+  }.each do |name, (parent_factory, param_key, resource_type)|
+    describe name.to_s do
+      include_examples 'parent-from-route inference',
+                       parent_factory: parent_factory, param_key: param_key, resource_type: resource_type
+    end
+  end
+
+  describe 'the store' do
+    let!(:definition) { create(:custom_field_definition, resource_type: 'Spree::Store') }
+
+    it 'writes custom fields on the current store' do
+      post :create,
+           params: { store_id: store.prefixed_id, custom_field_definition_id: definition.prefixed_id, value: 'EU' },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(store.custom_fields.pluck(:value)).to eq(['EU'])
+    end
+
+    it 'does not reach another store' do
+      other_store = create(:store)
+
+      get :index, params: { store_id: other_store.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  # `Spree::Base.for_store` answers the bare class when the store has no
+  # association for a model; the lookup must refuse rather than search every
+  # store's records.
+  describe 'a parent the store cannot scope' do
+    let!(:promotion) { create(:promotion) }
+
+    before { allow(Spree::Promotion).to receive(:for_store).and_return(Spree::Promotion) }
+
+    it 'returns not found' do
+      get :index, params: { promotion_id: promotion.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   # Simulates the dev-mode class-reload condition where

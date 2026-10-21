@@ -24,6 +24,7 @@ import i18n from 'i18next'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import type { PanelVariant as Variant } from './product-types'
+import { useSheetSaveHandlers } from './sheet-save-handlers'
 
 // The fields this sheet edits. Snapshot, cancel-restore and the type all derive
 // from this one list, so a new editable field can't reach the form and then be
@@ -52,8 +53,9 @@ interface Props {
 
 // Form-backed media editor. The sheet edits `form.media[index]` directly —
 // changes ride the parent product PATCH/POST, no per-asset API calls.
-// Cancel restores a snapshot taken on open; Done closes (parent form Save
-// commits). Same model as the per-variant Sheet.
+// Cancel restores a snapshot taken on open; Done runs the slot widgets' own
+// saves, then closes (parent form Save commits). Same model as the per-variant
+// Sheet.
 export function MediaEditSheet({
   form,
   mediaIndex,
@@ -115,6 +117,8 @@ export function MediaEditSheet({
       ),
     }
   }, [open, mediaIndex, form, rowKey, formKey])
+
+  const { onSave, saveAll, saving } = useSheetSaveHandlers()
 
   const entry = form.watch(`media.${mediaIndex}`)
   if (!entry) return null
@@ -209,6 +213,8 @@ export function MediaEditSheet({
   }
 
   const handleCancel = () => {
+    // A save already sent can't be called back, so the sheet stays until it settles.
+    if (saving) return
     const snap = snapshotRef.current
     if (snap) {
       // Resolve the row by stable key — the media array may have reordered
@@ -353,15 +359,22 @@ export function MediaEditSheet({
               media: entry,
               mediaIndex,
               fieldPrefix: `media.${mediaIndex}`,
+              onSave,
             }}
           />
         </div>
 
         <SheetFooter>
-          <Button type="button" variant="outline" onClick={handleCancel}>
+          <Button type="button" variant="outline" disabled={saving} onClick={handleCancel}>
             {t('admin.actions.cancel')}
           </Button>
-          <Button type="button" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            disabled={saving}
+            onClick={async () => {
+              if (await saveAll()) onOpenChange(false)
+            }}
+          >
             {t('admin.actions.done')}
           </Button>
         </SheetFooter>

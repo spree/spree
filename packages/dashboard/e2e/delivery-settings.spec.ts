@@ -1,5 +1,12 @@
 import { expect, type Locator, type Page, test } from '@playwright/test'
-import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
+import {
+  adminRequest,
+  FIXTURE_BULK_CHANNEL_NAME,
+  gotoIndex,
+  login,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const DELIVERY_PROFILES_PATH = (storeId: string) => `/${storeId}/settings/delivery-profiles`
 const PROFILE_CTA = /add profile/i
@@ -489,5 +496,21 @@ test.describe('delivery profiles', () => {
     })
     await expect(reopened.locator('#markup_percent')).toHaveValue('7.5')
     await expect(reopened.locator('#markup_flat')).toHaveValue('2.50')
+  })
+
+  // An existing method: saving only a custom field leaves the method itself
+  // untouched, so the shared fixture stays as it was.
+  test('saves a custom field with the delivery method', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'delivery_method', async (label) => {
+      const methods = await adminRequest<{
+        data: { id: string; delivery_profile_id: string | null }[]
+      }>(page, creds, 'get', '/delivery_methods?limit=25')
+      const method = methods.data.find((candidate) => candidate.delivery_profile_id)
+      if (!method) throw new Error('no delivery method on a profile in the fixtures')
+      const url = `${DELIVERY_PROFILES_PATH(creds.store_id)}/${method.delivery_profile_id}?method=${method.id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'Carrier contract 12')
+    })
   })
 })

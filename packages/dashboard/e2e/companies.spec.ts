@@ -6,6 +6,8 @@ import {
   login,
   openRowMenu,
   rowButton,
+  saveCustomFieldOnCard,
+  withCustomFieldDefinition,
 } from './helpers'
 
 const COMPANIES_PATH = (storeId: string) => `/${storeId}/companies`
@@ -279,5 +281,13 @@ test.describe('companies', () => {
       .click()
 
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('records a custom field on the company', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'company', async (label) => {
+      await createCompany(page, creds.store_id, `E2E Custom Field Co ${Date.now()}`)
+      await saveCustomFieldOnCard(page, label, 'Key account')
+    })
   })
 })

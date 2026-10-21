@@ -10202,7 +10202,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3f8bec6f6c76d54da7993efa8940c4e929b71478
                 filename: products.csv
                 content_type: text/csv
                 byte_size: 48213
@@ -10210,7 +10210,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJxcmZsMnNod3YwYmR4cWF3ZWFocDZvYjhlYzh5IiwiY29udGVudF90eXBlIjoidGV4dC9jc3YiLCJjb250ZW50X2xlbmd0aCI6NDgyMTMsImNoZWNrc3VtIjoiaGdKTXJSNkRFQjJYTloxelVRVVJWZz09Iiwic2VydmljZV9uYW1lIjoidGVzdCJ9LCJleHAiOiIyMDI2LTAxLTE1VDEyOjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--900c151cd70c1eef5cc5fc5c7fd1d4922ae2063a
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJxcmZsMnNod3YwYmR4cWF3ZWFocDZvYjhlYzh5IiwiY29udGVudF90eXBlIjoidGV4dC9jc3YiLCJjb250ZW50X2xlbmd0aCI6NDgyMTMsImNoZWNrc3VtIjoiaGdKTXJSNkRFQjJYTloxelVRVVJWZz09Iiwic2VydmljZV9uYW1lIjoidGVzdCJ9LCJleHAiOiIyMDI2LTAxLTE1VDEyOjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--a294aa361a67bf05482ee35d5a92f7bda8903373
                   headers:
                     Content-Type: text/csv
               schema:
@@ -11182,6 +11182,130 @@ paths:
             schema:
               "$ref": "#/components/schemas/FulfillmentSplitParams"
         required: true
+  "/api/v3/admin/gift_cards/{gift_card_id}/custom_fields":
+    get:
+      summary: List gift card custom fields
+      tags:
+      - Gift Cards
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the gift card's custom field values.
+
+        **Required scope:** `read_gift_cards` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('gift_card', 'gc_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /gift_cards/{gift_card_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: gift_card_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/gift_card_batches":
     get:
       summary: List gift card batches
@@ -14594,7 +14718,7 @@ paths:
               example:
                 data:
                 - id: opt_UkLWZg9DAJ
-                  name: foo-size-12
+                  name: foo-size-14
                   label: Size
                   position: 1
                   kind: dropdown
@@ -14790,7 +14914,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-16
+                name: foo-size-18
                 label: Size
                 position: 1
                 kind: dropdown
@@ -14864,7 +14988,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-18
+                name: foo-size-20
                 label: Updated Label
                 position: 1
                 kind: dropdown
@@ -17948,8 +18072,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 759180
-                  slug: product-759180
+                  name: Product 779180
+                  slug: product-779180
                   options_text: 'Size: S'
                   price: '10.00'
                   total: '20.00'
@@ -17964,11 +18088,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-11
+                    name: size-13
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-21
+                    option_type_name: foo-size-23
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -18057,8 +18181,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 7799
-                slug: product-7799
+                name: Product 7999
+                slug: product-7999
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '59.97'
@@ -18073,11 +18197,11 @@ paths:
                 option_values:
                 - id: optval_gbHJdmfrXB
                   option_type_id: opt_gbHJdmfrXB
-                  name: size-13
+                  name: size-15
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-23
+                  option_type_name: foo-size-25
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -18180,8 +18304,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 782714
-                slug: product-782714
+                name: Product 802714
+                slug: product-802714
                 options_text: 'Size: S'
                 price: '10.00'
                 total: '20.00'
@@ -18196,11 +18320,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-14
+                  name: size-16
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-24
+                  option_type_name: foo-size-26
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -18284,8 +18408,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 799758
-                slug: product-799758
+                name: Product 819758
+                slug: product-819758
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '99.95'
@@ -18300,11 +18424,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-15
+                  name: size-17
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-25
+                  option_type_name: foo-size-27
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -20477,7 +20601,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1772493 can be returned
+                  message: Only 1 of Product 1792493 can be returned
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -20998,6 +21122,130 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/payment_methods/{payment_method_id}/custom_fields":
+    get:
+      summary: List payment method custom fields
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the payment method's custom field values.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('payment_method', 'pm_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /payment_methods/{payment_method_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: payment_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/payment_methods":
     get:
       summary: List payment methods
@@ -21103,7 +21351,7 @@ paths:
               example:
                 data:
                 - id: pm_UkLWZg9DAJ
-                  name: Check 2
+                  name: Check 3
                   description:
                   type: check
                   session_required: false
@@ -21379,7 +21627,7 @@ paths:
             application/json:
               example:
                 id: pm_UkLWZg9DAJ
-                name: Check 6
+                name: Check 7
                 description:
                 type: check
                 session_required: false
@@ -23716,7 +23964,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0Z252N2l0MG55YnkwbHhkczg5Y2hteTd6aXlvIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--e42005e4c105e6f8094c921695292e20b969a0ad/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0Z252N2l0MG55YnkwbHhkczg5Y2hteTd6aXlvIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--ead0f2ac81a0f7ac756847931f8e1927ea68ba81/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                 meta:
@@ -23807,7 +24055,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJhOXR0cGNpbmxxbThvbmtlNHM1NmI2Y3gxMWVzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--c9c18ad2443198da01ed71a0dc9284caacae4001/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJhOXR0cGNpbmxxbThvbmtlNHM1NmI2Y3gxMWVzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--73db409a7ac92c07e323ae2157b9daa88b6b8921/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
               schema:
@@ -23896,7 +24144,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwZXp6d3IzMzE3ajRoem9kc3Awc2czN3EzMnhzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--460229b26eb8f170248268466ab15eea32d07043/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwZXp6d3IzMzE3ajRoem9kc3Awc2czN3EzMnhzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--d1a701884ca72f5d076bf8fe63cdd083f0bed7bd/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
               schema:
@@ -24264,8 +24512,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1276550
-                  slug: product-1276550
+                  name: Product 1296550
+                  slug: product-1296550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -24543,8 +24791,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1312061
-                slug: product-1312061
+                name: Product 1332061
+                slug: product-1332061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -24654,7 +24902,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-1335339
+                slug: product-1355339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25462,8 +25710,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1518682
-                slug: product-1518682
+                name: Product 1538682
+                slug: product-1538682
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25584,8 +25832,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1544387
-                slug: product-1544387
+                name: Product 1564387
+                slug: product-1564387
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -28209,6 +28457,130 @@ paths:
                   in: 2
                   previous:
                   next:
+  "/api/v3/admin/promotions/{promotion_id}/custom_fields":
+    get:
+      summary: List promotion custom fields
+      tags:
+      - Promotions
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the promotion's custom field values.
+
+        **Required scope:** `read_promotions` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('promotion', 'promo_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotions/{promotion_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: promotion_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/promotions/{promotion_id}/promotion_actions":
     parameters:
     - name: promotion_id
@@ -29739,6 +30111,254 @@ paths:
             schema:
               "$ref": "#/components/schemas/RefundCreateParams"
         required: true
+  "/api/v3/admin/tax_rates/{tax_rate_id}/custom_fields":
+    get:
+      summary: List tax rate custom fields
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the tax rate's custom field values.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('tax_rate', 'tax_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_rates/{tax_rate_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: tax_rate_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/stores/{store_id}/custom_fields":
+    get:
+      summary: List store custom fields
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the store's custom field values.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('store', 'store_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stores/{store_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: store_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/locales":
     get:
       summary: List supported locales
@@ -33539,6 +34159,130 @@ paths:
       responses:
         '204':
           description: stock location deleted
+  "/api/v3/admin/store_credits/{store_credit_id}/custom_fields":
+    get:
+      summary: List store credit custom fields
+      tags:
+      - Store Credits
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the store credit's custom field values.
+
+        **Required scope:** `read_store_credits` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('store_credit', 'credit_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store_credits/{store_credit_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: store_credit_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/store_credits":
     get:
       summary: List store credits
@@ -34291,7 +35035,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-281
+                  sku: SKU-285
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -34346,11 +35090,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2126804
+                  product_name: Product 2146804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-282
+                  sku: SKU-286
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -34385,11 +35129,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-68
+                    name: size-70
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-78
+                    option_type_name: foo-size-80
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -34417,7 +35161,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2126804
+                  product_name: Product 2146804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -34563,7 +35307,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2131771
+                product_name: Product 2151771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -34575,7 +35319,7 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - value: SKU-286
+                    - value: SKU-290
                       code: taken
                       message: has already been taken
                       specific: false
@@ -34663,7 +35407,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-288
+                sku: SKU-292
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -34698,11 +35442,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-71
+                  name: size-73
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-81
+                  option_type_name: foo-size-83
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -34730,7 +35474,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2154025
+                product_name: Product 2174025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -34838,11 +35582,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-73
+                  name: size-75
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-83
+                  option_type_name: foo-size-85
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -34870,7 +35614,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2175672
+                product_name: Product 2195672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -35161,7 +35905,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-295
+                  sku: SKU-299
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -35216,11 +35960,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2193647
+                  product_name: Product 2213647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-296
+                  sku: SKU-300
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -35255,11 +35999,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-75
+                    name: size-77
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-85
+                    option_type_name: foo-size-87
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -35287,7 +36031,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2193647
+                  product_name: Product 2213647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -42726,6 +43470,8 @@ paths:
                   name: Claims
                 - resource_type: collection
                   name: Collections
+                - resource_type: company
+                  name: Companies
                 - resource_type: credit_card
                   name: Credit Cards
                 - resource_type: customer
@@ -42762,6 +43508,8 @@ paths:
                   name: Products
                 - resource_type: promotion
                   name: Promotions
+                - resource_type: purchase_order
+                  name: Purchase Orders
                 - resource_type: refund
                   name: Refunds
                 - resource_type: return
@@ -42957,6 +43705,750 @@ paths:
         schema:
           type: string
       - name: seller_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/stock_transfers/{stock_transfer_id}/custom_fields":
+    get:
+      summary: List stock transfer custom fields
+      tags:
+      - Stock Transfers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the stock transfer's custom field values.
+
+        **Required scope:** `read_stock` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('stock_transfer', 'st_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_transfers/{stock_transfer_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: stock_transfer_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/purchase_orders/{purchase_order_id}/custom_fields":
+    get:
+      summary: List purchase order custom fields
+      tags:
+      - Purchase Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the purchase order's custom field values.
+
+        **Required scope:** `read_purchasing` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('purchase_order', 'po_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /purchase_orders/{purchase_order_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: purchase_order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/companies/{company_id}/custom_fields":
+    get:
+      summary: List company custom fields
+      tags:
+      - Companies
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the company's custom field values.
+
+        **Required scope:** `read_customers` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('company', 'comp_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /companies/{company_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: company_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/delivery_methods/{delivery_method_id}/custom_fields":
+    get:
+      summary: List delivery method custom fields
+      tags:
+      - Delivery
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the delivery method's custom field values.
+
+        **Required scope:** `read_delivery_methods` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('delivery_method', 'dm_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /delivery_methods/{delivery_method_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: delivery_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/product_types/{product_type_id}/custom_fields":
+    get:
+      summary: List product type custom fields
+      tags:
+      - Product Types
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the product type's custom field values.
+
+        **Required scope:** `read_product_types` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('product_type', 'pt_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /product_types/{product_type_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: product_type_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomField
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: custom fields found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cf_UkLWZg9DAJ
+                  label: Title
+                  field_type: short_text
+                  key: custom.title
+                  value: wool
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  storefront_visible: true
+                  custom_field_definition_id: cfdef_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/admin/media/{medium_id}/custom_fields":
+    get:
+      summary: List media file custom fields
+      tags:
+      - Media
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the media file's custom field values.
+
+        **Required scope:** `read_media` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: customFields } = await client.customFields('media', 'media_UkLWZg9DAJ').list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /media/{medium_id}/custom_fields
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: medium_id
         in: path
         required: true
         schema:
@@ -43643,7 +45135,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: UPS Ground
-                  code: UPS_GROUND_10
+                  code: UPS_GROUND_11
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -43829,7 +45321,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: UPS Express
-                code: UPS_GROUND_11
+                code: UPS_GROUND_12
                 estimated_transit_business_days_min: 1
                 estimated_transit_business_days_max: 2
                 digital: false
@@ -45080,13 +46572,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c7cabbf4f42ac8ba67d9a91d8296f41a60806a27/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a76f6551b45153f6e6be558bc5934f5252e5d4b/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--70f1b4b1d65bbac19c369f6514a14b2efae9b861/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad2e7db00f46de1be1b1d802422591dc63cda389/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a86d6ae04dadfd78927fab23cc51648f9edd3775/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--c0f594ef4e0298070899e42d661848fbdf32192b/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b7d4163e56d2e1c1224b82fcbf29c6d389418c35/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e4e9e92ff0d575e068b03d2347f9e63c034c7f0/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e3cb86219678c00b3174ca00c64f04641a1742a5/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5abf9aeeafa5e725cf201c0560614c9317e73c8c/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5db1bd36ac712fe3dc607583f4ab31ecdf3a1f21/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04f02fc0aba9c7fed646166193caa31a9a247344/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -45094,10 +46586,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28f76504c18451476e04c1b0194941f513805ebe/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--11e07b486f19a616a54cd5b6e644a9a09062da00/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3f8bec6f6c76d54da7993efa8940c4e929b71478
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -45188,13 +46680,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c7cabbf4f42ac8ba67d9a91d8296f41a60806a27/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a76f6551b45153f6e6be558bc5934f5252e5d4b/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--70f1b4b1d65bbac19c369f6514a14b2efae9b861/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad2e7db00f46de1be1b1d802422591dc63cda389/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a86d6ae04dadfd78927fab23cc51648f9edd3775/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--c0f594ef4e0298070899e42d661848fbdf32192b/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b7d4163e56d2e1c1224b82fcbf29c6d389418c35/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e4e9e92ff0d575e068b03d2347f9e63c034c7f0/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e3cb86219678c00b3174ca00c64f04641a1742a5/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5abf9aeeafa5e725cf201c0560614c9317e73c8c/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5db1bd36ac712fe3dc607583f4ab31ecdf3a1f21/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04f02fc0aba9c7fed646166193caa31a9a247344/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -45202,10 +46694,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28f76504c18451476e04c1b0194941f513805ebe/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--f52aea954c8b0c35d86e91416f4414376ea5c1ef
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--11e07b486f19a616a54cd5b6e644a9a09062da00/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3b8702b07c49f5c3b0de775f88f23bfead0d5834
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -45283,13 +46775,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c7cabbf4f42ac8ba67d9a91d8296f41a60806a27/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a76f6551b45153f6e6be558bc5934f5252e5d4b/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--70f1b4b1d65bbac19c369f6514a14b2efae9b861/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad2e7db00f46de1be1b1d802422591dc63cda389/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a86d6ae04dadfd78927fab23cc51648f9edd3775/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--c0f594ef4e0298070899e42d661848fbdf32192b/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b7d4163e56d2e1c1224b82fcbf29c6d389418c35/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e4e9e92ff0d575e068b03d2347f9e63c034c7f0/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e3cb86219678c00b3174ca00c64f04641a1742a5/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5abf9aeeafa5e725cf201c0560614c9317e73c8c/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5db1bd36ac712fe3dc607583f4ab31ecdf3a1f21/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04f02fc0aba9c7fed646166193caa31a9a247344/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -45297,10 +46789,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28f76504c18451476e04c1b0194941f513805ebe/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--11e07b486f19a616a54cd5b6e644a9a09062da00/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3f8bec6f6c76d54da7993efa8940c4e929b71478
                 viewable_id: prod_UkLWZg9DAJ
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -45374,7 +46866,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 393397
+                  name: Product 413397
                   owner_type: product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -45534,13 +47026,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c7cabbf4f42ac8ba67d9a91d8296f41a60806a27/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a76f6551b45153f6e6be558bc5934f5252e5d4b/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--70f1b4b1d65bbac19c369f6514a14b2efae9b861/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad2e7db00f46de1be1b1d802422591dc63cda389/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a86d6ae04dadfd78927fab23cc51648f9edd3775/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--c0f594ef4e0298070899e42d661848fbdf32192b/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b7d4163e56d2e1c1224b82fcbf29c6d389418c35/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e4e9e92ff0d575e068b03d2347f9e63c034c7f0/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e3cb86219678c00b3174ca00c64f04641a1742a5/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5abf9aeeafa5e725cf201c0560614c9317e73c8c/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5db1bd36ac712fe3dc607583f4ab31ecdf3a1f21/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04f02fc0aba9c7fed646166193caa31a9a247344/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -45548,10 +47040,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28f76504c18451476e04c1b0194941f513805ebe/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--11e07b486f19a616a54cd5b6e644a9a09062da00/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3f8bec6f6c76d54da7993efa8940c4e929b71478
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -45642,13 +47134,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c7cabbf4f42ac8ba67d9a91d8296f41a60806a27/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a76f6551b45153f6e6be558bc5934f5252e5d4b/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--70f1b4b1d65bbac19c369f6514a14b2efae9b861/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad2e7db00f46de1be1b1d802422591dc63cda389/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a86d6ae04dadfd78927fab23cc51648f9edd3775/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--c0f594ef4e0298070899e42d661848fbdf32192b/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b7d4163e56d2e1c1224b82fcbf29c6d389418c35/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e4e9e92ff0d575e068b03d2347f9e63c034c7f0/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e3cb86219678c00b3174ca00c64f04641a1742a5/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5abf9aeeafa5e725cf201c0560614c9317e73c8c/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5db1bd36ac712fe3dc607583f4ab31ecdf3a1f21/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04f02fc0aba9c7fed646166193caa31a9a247344/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -45656,10 +47148,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28f76504c18451476e04c1b0194941f513805ebe/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--11e07b486f19a616a54cd5b6e644a9a09062da00/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3f8bec6f6c76d54da7993efa8940c4e929b71478
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -45749,13 +47241,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c7cabbf4f42ac8ba67d9a91d8296f41a60806a27/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a76f6551b45153f6e6be558bc5934f5252e5d4b/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--70f1b4b1d65bbac19c369f6514a14b2efae9b861/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad2e7db00f46de1be1b1d802422591dc63cda389/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a86d6ae04dadfd78927fab23cc51648f9edd3775/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--c0f594ef4e0298070899e42d661848fbdf32192b/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b7d4163e56d2e1c1224b82fcbf29c6d389418c35/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e4e9e92ff0d575e068b03d2347f9e63c034c7f0/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e3cb86219678c00b3174ca00c64f04641a1742a5/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5abf9aeeafa5e725cf201c0560614c9317e73c8c/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5db1bd36ac712fe3dc607583f4ab31ecdf3a1f21/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04f02fc0aba9c7fed646166193caa31a9a247344/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -45763,10 +47255,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28f76504c18451476e04c1b0194941f513805ebe/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--11e07b486f19a616a54cd5b6e644a9a09062da00/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3f8bec6f6c76d54da7993efa8940c4e929b71478
                 viewable_id: prod_UkLWZg9DAJ
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--ac7861aca8bb12054d2fd9cc61d77a69b65bfbf3/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--4aef6bb6c096b25410d225d848efa139fb02ef80/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -45918,13 +47410,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--c7cabbf4f42ac8ba67d9a91d8296f41a60806a27/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2a76f6551b45153f6e6be558bc5934f5252e5d4b/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--70f1b4b1d65bbac19c369f6514a14b2efae9b861/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ad2e7db00f46de1be1b1d802422591dc63cda389/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--a86d6ae04dadfd78927fab23cc51648f9edd3775/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--c0f594ef4e0298070899e42d661848fbdf32192b/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b7d4163e56d2e1c1224b82fcbf29c6d389418c35/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1e4e9e92ff0d575e068b03d2347f9e63c034c7f0/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e3cb86219678c00b3174ca00c64f04641a1742a5/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--5abf9aeeafa5e725cf201c0560614c9317e73c8c/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--5db1bd36ac712fe3dc607583f4ab31ecdf3a1f21/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--04f02fc0aba9c7fed646166193caa31a9a247344/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -45932,10 +47424,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--28f76504c18451476e04c1b0194941f513805ebe/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--f52aea954c8b0c35d86e91416f4414376ea5c1ef
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--11e07b486f19a616a54cd5b6e644a9a09062da00/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--3b8702b07c49f5c3b0de775f88f23bfead0d5834
                   viewable_id: variant_gbHJdmfrXB
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--0aa96b0c1672ab4a98f8d9aee1d20d5e590a630a/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--719bfa956a3578a33855c517211e1a484db6a78a/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: variant
                 meta:
@@ -48221,12 +49713,12 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1063365
+                  name: Product 1083365
                   thumbnail_url:
                   price_list_variants:
                   - id: variant_UkLWZg9DAJ
                     label:
-                    sku: SKU-123
+                    sku: SKU-127
                     currency: USD
                     source: base
                     break_count: 1
@@ -49281,15 +50773,15 @@ paths:
                   purchase_order_id: po_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 1619018
-                  variant_sku: SKU-194
+                  variant_name: Product 1639018
+                  variant_sku: SKU-198
                   options_text: 'Size: S'
                   thumbnail_url:
                 supplier:
                   id: sup_UkLWZg9DAJ
                   name: Acme Wholesale
                   contact_name: Dana Okafor
-                  email: supplier6@example.com
+                  email: supplier7@example.com
                   phone: 555-0100
                   notes:
                   address1:
@@ -53333,8 +54825,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1865410
-                  variant_sku: SKU-229
+                  variant_name: Product 1885410
+                  variant_sku: SKU-233
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -53353,8 +54845,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1865410
-                  variant_sku: SKU-230
+                  variant_name: Product 1885410
+                  variant_sku: SKU-234
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -53373,8 +54865,8 @@ paths:
                   reserved_count: 2
                   incoming_count: 20
                   purchasable_count: 35
-                  variant_name: Product 1865410
-                  variant_sku: SKU-230
+                  variant_name: Product 1885410
+                  variant_sku: SKU-234
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Pilar Stokes
@@ -53558,8 +55050,8 @@ paths:
                 reserved_count: 0
                 incoming_count: 0
                 purchasable_count: 25
-                variant_name: Product 1899378
-                variant_sku: SKU-236
+                variant_name: Product 1919378
+                variant_sku: SKU-240
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_name: Gilbert Marquardt
@@ -53737,8 +55229,8 @@ paths:
                   stock_location_id: sloc_UkLWZg9DAJ
                   stock_location_name: Mona Hegmann
                   variant_id: variant_gbHJdmfrXB
-                  variant_name: Product 1908513
-                  variant_sku: SKU-237
+                  variant_name: Product 1928513
+                  variant_sku: SKU-241
                   order_id:
                   fulfillment_id:
                   return_id:
@@ -53852,8 +55344,8 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 stock_location_name: Chrystal Sauer
                 variant_id: variant_gbHJdmfrXB
-                variant_name: Product 1922954
-                variant_sku: SKU-241
+                variant_name: Product 1942954
+                variant_sku: SKU-245
                 order_id:
                 fulfillment_id:
                 return_id:
@@ -54444,8 +55936,8 @@ paths:
                   stock_transfer_id: st_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 1992176
-                  variant_sku: SKU-254
+                  variant_name: Product 2012176
+                  variant_sku: SKU-258
                   options_text: 'Size: S'
                   thumbnail_url:
                 source_location:
@@ -55428,7 +56920,7 @@ paths:
                 - id: sup_UkLWZg9DAJ
                   name: Acme Wholesale
                   contact_name: Dana Okafor
-                  email: supplier16@example.com
+                  email: supplier17@example.com
                   phone: 555-0100
                   notes:
                   address1: 1 Warehouse Way
@@ -55624,7 +57116,7 @@ paths:
                 id: sup_UkLWZg9DAJ
                 name: Acme Wholesale
                 contact_name: Dana Okafor
-                email: supplier20@example.com
+                email: supplier21@example.com
                 phone: 555-0100
                 notes:
                 address1: 1 Warehouse Way
@@ -55701,7 +57193,7 @@ paths:
                 id: sup_UkLWZg9DAJ
                 name: Acme Wholesale
                 contact_name: Sam Reyes
-                email: supplier22@example.com
+                email: supplier23@example.com
                 phone: 555-0100
                 notes:
                 address1: 1 Warehouse Way

@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  adminRequest,
   FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_PROMO_COUNTRY,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
@@ -10,6 +11,8 @@ import {
   gotoIndex,
   login,
   rowButton,
+  saveCustomFieldWithPage,
+  withCustomFieldDefinition,
 } from './helpers'
 
 async function startNewPromotion(page: Page, storeId: string, name: string) {
@@ -648,5 +651,17 @@ test.describe('promotions', () => {
       timeout: 15_000,
     })
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('saves a promotion custom field with the page Save', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'promotion', async (label) => {
+      const promotion = await adminRequest<{ id: string }>(page, creds, 'post', '/promotions', {
+        name: `E2E Custom Field Promo ${Date.now()}`,
+        kind: 'automatic',
+      })
+      await page.goto(`${PROMOTIONS_PATH(creds.store_id)}/${promotion.id}`)
+      await saveCustomFieldWithPage(page, label, 'Spring campaign')
+    })
   })
 })

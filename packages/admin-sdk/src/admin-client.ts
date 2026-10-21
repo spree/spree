@@ -771,6 +771,18 @@ const CUSTOM_FIELD_OWNER_PATHS = {
   collection: '/collections',
   option_type: '/option_types',
   seller: '/sellers',
+  promotion: '/promotions',
+  gift_card: '/gift_cards',
+  store_credit: '/store_credits',
+  stock_transfer: '/stock_transfers',
+  purchase_order: '/purchase_orders',
+  company: '/companies',
+  payment_method: '/payment_methods',
+  delivery_method: '/delivery_methods',
+  tax_rate: '/tax_rates',
+  product_type: '/product_types',
+  media: '/media',
+  store: '/stores',
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
 export class AdminClient {

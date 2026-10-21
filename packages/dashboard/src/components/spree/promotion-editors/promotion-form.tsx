@@ -77,6 +77,7 @@ import {
   TableHeader,
   TableRow,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { optionValueLabel } from '../../../hooks/use-option-types'
 import {
@@ -95,6 +96,7 @@ import {
   type PromotionKind,
   promotionFormSchema,
 } from '../../../schemas/promotion'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import {
   actionDraftFromAction,
   actionDraftFromType,
@@ -194,6 +196,12 @@ export function PromotionForm({
     defaultValues: { ...PROMOTION_DEFAULTS, ...extensionFormValues('promotion', null) },
   })
 
+  // Edit only: a promotion being created has no id to hang values on yet.
+  const customFields = useCustomFieldsDraft(
+    'promotion',
+    mode === 'edit' ? (promotion?.id ?? '') : '',
+  )
+
   const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
   const actionsArray = useFieldArray({ control: form.control, name: 'actions', keyName: '_key' })
 
@@ -239,7 +247,20 @@ export function PromotionForm({
       Object.assign(payload, couponFieldsForKind(values))
     }
     try {
-      await onSubmit(payload)
+      // The promotion saves first and is marked clean, so a retry after a
+      // failed custom field save sends only the custom fields — the rule and
+      // action sets would otherwise be submitted again. A failed save keeps
+      // its edits and names the fields itself.
+      const savesRecord = mode === 'create' || form.formState.isDirty
+      if (savesRecord) {
+        await onSubmit(payload)
+        if (mode === 'edit') form.reset(form.getValues())
+      }
+      const savesCustomFields = customFields.isDirty
+      // The promotion's own save toasts; a custom-field-only save has to say so.
+      if ((await customFields.save()) && savesCustomFields && !savesRecord) {
+        toastManager.add({ type: 'success', title: t('admin.messages.promotion_saved') })
+      }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
@@ -301,7 +322,8 @@ export function PromotionForm({
                   <Button
                     type="submit"
                     disabled={
-                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                      form.formState.isSubmitting ||
+                      (mode === 'edit' && !form.formState.isDirty && !customFields.isDirty)
                     }
                   >
                     {form.formState.isSubmitting
@@ -337,6 +359,7 @@ export function PromotionForm({
               <BasicsCard form={form} />
               <TriggerCard mode={mode} form={form} promotion={promotion} />
               <ScheduleCard form={form} />
+              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} />}
               <Slot name="promotion.form_sidebar" context={{ promotion, mode }} />
             </>
           }

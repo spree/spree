@@ -1,5 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  adminRequest,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const OPTIONS_PATH = (storeId: string) => `/${storeId}/products/options`
 const CTA = /add option type/i
@@ -115,5 +123,18 @@ test.describe('option types', () => {
       .click()
 
     await expect(rowButton(page, internalName)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('saves a custom field with the option type', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'option_type', async (label) => {
+      const optionType = await adminRequest<{ id: string }>(page, creds, 'post', '/option_types', {
+        name: `e2e-custom-field-${Date.now()}`,
+        label: 'E2E Custom Field Option',
+      })
+      const url = `${OPTIONS_PATH(creds.store_id)}?edit=${optionType.id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'Swatch')
+    })
   })
 })

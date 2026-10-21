@@ -572,7 +572,8 @@
         "empty_description": "记录结构化的详细信息，例如材质、版型或保养说明。",
         "empty_title": "尚无自定义字段",
         "errors": {
-          "failed_to_save": "保存自定义字段失败"
+          "failed_to_save": "保存自定义字段失败",
+          "failed_to_load": "无法加载自定义字段。请刷新页面重试。"
         },
         "manage_in_settings": "在设置中管理",
         "new_definition_description": "定义自定义字段，以在您的{{resource}}上存储有类型的结构化信息。",
@@ -1435,9 +1436,24 @@
             "product": "商品",
             "category": "分类",
             "customer": "客户",
-            "variant": "变体"
+            "variant": "变体",
+            "seller": "卖家",
+            "collection": "系列",
+            "promotion": "促销",
+            "gift_card": "礼品卡",
+            "store_credit": "店铺信用",
+            "stock_transfer": "调拨",
+            "purchase_order": "采购订单",
+            "company": "企业",
+            "payment_method": "支付方式",
+            "delivery_method": "配送方式",
+            "tax_rate": "税率",
+            "product_type": "商品类型",
+            "media": "媒体",
+            "store": "店铺"
           },
-          "read_only_help": "一旦此字段存在值，所属对象便无法更改。"
+          "read_only_help": "一旦此字段存在值，所属对象便无法更改。",
+          "api_only_group": "仅通过 API"
         },
         "searchable": {
           "help": "将值纳入店面商品全文搜索（仅短文本、长文本和数字）。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。",

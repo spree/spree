@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { createCustomFieldDefinition, deleteCustomFieldDefinition, login } from './helpers'
 import {
   addOptionToVariants,
   createProduct,
@@ -177,6 +177,45 @@ test.describe('product variants', () => {
       await expect(sheet.getByLabel(/^weight$/i)).toHaveValue(weight)
       await sheet.getByRole('button', { name: /^done$/i }).click()
       await expect(sheet).toBeHidden()
+    }
+  })
+
+  test('saves a custom field from the variant sheet', async ({ page }) => {
+    const creds = await login(page)
+    const definition = await createCustomFieldDefinition(page, creds.accessToken, 'variant')
+    const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red'])
+
+    try {
+      await createProduct(page, creds.store_id, `E2E Variant Custom Field ${Date.now()}`)
+      await addOptionToVariants(page, colorLabel, ['Red'])
+      // Only a saved variant has an id to hang the value on.
+      await page.getByRole('button', { name: /save product/i }).click()
+      await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+        timeout: 30_000,
+      })
+
+      // Edited like the rest of the sheet: Done keeps it, Cancel drops it.
+      const variantsCard = variantsCardLocator(page)
+      await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
+      const sheet = page.getByRole('dialog')
+      await sheet.getByLabel(definition.label).fill('Matte')
+      await sheet.getByRole('button', { name: /^done$/i }).click()
+      await expect(sheet).toBeHidden({ timeout: 15_000 })
+
+      await page.reload()
+      await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
+      const reopened = page.getByRole('dialog')
+      await expect(reopened.getByLabel(definition.label)).toHaveValue('Matte', { timeout: 15_000 })
+
+      await reopened.getByLabel(definition.label).fill('Gloss')
+      await reopened.getByRole('button', { name: /^cancel$/i }).click()
+      await page.reload()
+      await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
+      await expect(page.getByRole('dialog').getByLabel(definition.label)).toHaveValue('Matte', {
+        timeout: 15_000,
+      })
+    } finally {
+      await deleteCustomFieldDefinition(page, creds.accessToken, definition.id)
     }
   })
 })

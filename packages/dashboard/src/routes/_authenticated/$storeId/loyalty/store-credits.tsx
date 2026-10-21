@@ -40,6 +40,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EditStoreCreditDialog } from '../../../../components/spree/store-credits/edit-store-credit-dialog'
 import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
 import { useDeleteCustomerStoreCredit } from '../../../../hooks/use-customer-store-credits'
@@ -375,6 +376,8 @@ function StoreCreditSheet({
                   value={credit.memo ?? '—'}
                 />
               </dl>
+
+              <ApiCustomFieldsCard ownerType="store_credit" ownerId={credit.id} hideWhenEmpty />
 
               <div className="flex flex-col gap-2">
                 <h3 className="font-medium text-sm">{t('admin.store_credits.ledger.title')}</h3>

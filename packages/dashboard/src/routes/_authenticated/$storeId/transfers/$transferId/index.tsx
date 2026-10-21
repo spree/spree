@@ -38,6 +38,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
+import { ApiCustomFieldsCard } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
@@ -110,6 +111,7 @@ function StockTransferDetailPage() {
       sidebar={
         <>
           <SummaryCard transfer={transfer} />
+          <ApiCustomFieldsCard ownerType="stock_transfer" ownerId={transfer.id} />
           <Slot name="stock_transfer.form_sidebar" context={{ transfer }} />
         </>
       }

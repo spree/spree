@@ -155,4 +155,26 @@ test.describe('custom field definitions', () => {
     await page.reload()
     await expect(customFields.getByText('Gold')).toBeVisible({ timeout: 15_000 })
   })
+
+  // Types no dashboard screen edits stay definable for integrations, but the
+  // picker says so instead of implying a merchant can fill them in.
+  test('lists types without an edit screen apart, under their own heading', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    await page.locator('#cfd-resource-type').click()
+
+    const listbox = page.getByRole('listbox')
+    await expect(listbox.getByRole('option', { name: /^stock transfers$/i })).toBeVisible()
+    await expect(listbox.getByText(/^through the api only$/i)).toBeVisible()
+    await expect(
+      listbox
+        .getByRole('group')
+        .filter({ hasText: /^through the api only/i })
+        .getByRole('option', {
+          name: /^line items$/i,
+        }),
+    ).toBeVisible()
+  })
 })

@@ -574,7 +574,8 @@
         "empty_description": "Suivez des détails structurés comme la matière, la coupe ou les instructions d’entretien.",
         "empty_title": "Aucun champ personnalisé pour le moment",
         "errors": {
-          "failed_to_save": "Impossible d’enregistrer le champ personnalisé"
+          "failed_to_save": "Impossible d’enregistrer le champ personnalisé",
+          "failed_to_load": "Impossible de charger les champs personnalisés. Rechargez la page pour réessayer."
         },
         "manage_in_settings": "Gérer dans les paramètres",
         "new_definition_description": "Définissez un champ personnalisé pour stocker des informations typées et structurées sur vos {{resource}}.",
@@ -1440,9 +1441,24 @@
             "product": "Produits",
             "category": "Catégories",
             "customer": "Clients",
-            "variant": "Variantes"
+            "variant": "Variantes",
+            "seller": "Vendeurs",
+            "collection": "Collections",
+            "promotion": "Promotions",
+            "gift_card": "Cartes cadeaux",
+            "store_credit": "Avoirs en boutique",
+            "stock_transfer": "Transferts",
+            "purchase_order": "Bons de commande",
+            "company": "Entreprises",
+            "payment_method": "Modes de paiement",
+            "delivery_method": "Modes de livraison",
+            "tax_rate": "Taux de taxe",
+            "product_type": "Types de produit",
+            "media": "Médias",
+            "store": "Boutique"
           },
-          "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ."
+          "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ.",
+          "api_only_group": "Uniquement via l'API"
         },
         "searchable": {
           "help": "Inclure les valeurs dans la recherche de produits de la boutique (texte court, texte long et nombre uniquement). Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants.",

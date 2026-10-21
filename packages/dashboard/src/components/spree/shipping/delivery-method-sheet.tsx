@@ -32,6 +32,7 @@ import {
   deliveryMethodFormSchema,
   deliveryMethodValuesToParams,
 } from '../../../schemas/delivery-method'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import { DeliveryMethodFormCards } from './delivery-method-form'
 
 /** API decimals arrive as strings ("0.0"); show blank instead of a noisy zero. */
@@ -92,6 +93,8 @@ export function DeliveryMethodSheet({
   const { data: fulfillmentProviders } = useFulfillmentProviders()
   const createMutation = useCreateDeliveryMethod()
   const updateMutation = useUpdateDeliveryMethod(methodId ?? '')
+  // Edit only: a method being created has no id to hang values on yet.
+  const customFields = useCustomFieldsDraft('delivery_method', methodId ?? '')
 
   // Saving sends the full rule set for reconciliation, so the form must not be
   // reachable until the existing rules have loaded — otherwise a quick save
@@ -188,10 +191,17 @@ export function DeliveryMethodSheet({
   async function onSubmit(values: DeliveryMethodFormValues) {
     try {
       if (editing) {
-        await updateMutation.mutateAsync({
-          ...deliveryMethodValuesToParams(values),
-          ...extensionSubmitValues('delivery_method', form),
-        })
+        // The method saves first and is marked clean, so a retry after a
+        // failed custom field save sends only the custom fields.
+        const savesRecord = form.formState.isDirty
+        if (savesRecord) {
+          await updateMutation.mutateAsync({
+            ...deliveryMethodValuesToParams(values),
+            ...extensionSubmitValues('delivery_method', form),
+          })
+          form.reset(values)
+        }
+        if (!(await customFields.save({ announce: !savesRecord }))) return
       } else {
         await createMutation.mutateAsync({
           ...deliveryMethodValuesToParams(values),
@@ -251,6 +261,7 @@ export function DeliveryMethodSheet({
                   mode: editing ? 'edit' : 'new',
                 }}
               />
+              {editing && <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />}
             </div>
             <SheetFooter>
               <Button
@@ -263,7 +274,10 @@ export function DeliveryMethodSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting || (editing && !form.formState.isDirty)}
+                disabled={
+                  form.formState.isSubmitting ||
+                  (editing && !form.formState.isDirty && !customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting
                   ? editing
