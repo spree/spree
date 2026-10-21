@@ -3,24 +3,6 @@ import { blankToNull, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
-/**
- * The lifecycle, in the order a seller normally travels it. `status` is
- * never part of a form: each move is its own workflow on the server, so the
- * list here is only for rendering labels and filters.
- */
-export const SELLER_STATUSES = [
-  'pending',
-  'invited',
-  'onboarding',
-  'ready_for_review',
-  'approved',
-  'suspended',
-  'rejected',
-  'canceled',
-] as const
-
-export type SellerStatus = (typeof SELLER_STATUSES)[number]
-
 export const TAX_REMITTANCES = ['seller', 'platform'] as const
 export const PAYOUT_INTERVALS = ['daily', 'weekly', 'biweekly', 'monthly', 'manual'] as const
 

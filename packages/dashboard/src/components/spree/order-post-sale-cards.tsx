@@ -1,4 +1,5 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
+import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf } from '@spree/core'
 import { isPositiveMoney, Money } from '@spree/dashboard-core'
 import {
   Badge,
@@ -47,8 +48,8 @@ import {
 
 // Statuses that still offer an action. A terminal record would otherwise
 // show a menu button that opens onto nothing.
-const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
-const CLAIM_ACTIONABLE = ['open', 'approved']
+const EXCHANGE_ACTIONABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved', 'received'])
+const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
 
 /** Exchanges on an order, with the actions available at each status. */
 export function OrderExchangesCard({ order }: { order: Order }) {

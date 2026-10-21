@@ -1,3 +1,4 @@
+import { PRODUCT_STATUSES, subsetOf } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -169,6 +170,13 @@ export const productPublicationFormSchema = z.object({
 
 export type ProductPublicationFormValues = z.infer<typeof productPublicationFormSchema>
 
+/** Statuses a merchant sets by hand; the rest come from the review workflow. */
+export const ASSIGNABLE_PRODUCT_STATUSES = subsetOf(PRODUCT_STATUSES, [
+  'draft',
+  'active',
+  'archived',
+])
+
 export const productFormSchema = z.object({
   // General
   name: z.string().min(1, { error: requiredMessage('name') }),
@@ -179,7 +187,7 @@ export const productFormSchema = z.object({
   // marketplace product also comes back `proposed` or `rejected`, and a schema
   // that rejects those makes the whole form unsavable rather than flagging a
   // field (docs/plans/6.0-seller-product-submission.md).
-  status: z.enum(['draft', 'active', 'archived', 'proposed', 'rejected']).optional(),
+  status: z.enum(PRODUCT_STATUSES).optional(),
 
   // Categorization
   category_ids: z.array(z.string()).optional(),

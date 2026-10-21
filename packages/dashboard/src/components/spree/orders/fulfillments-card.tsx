@@ -1,4 +1,5 @@
 import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
+import { FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
 import {
   type FulfillmentItemRow,
   formatAmount,
@@ -410,11 +411,11 @@ function CreateFulfillmentDialog({
 
 // Which transitions the workflows actually accept, so the card does not
 // present an action that can only 422.
-const CAN_SHIP = ['unfulfilled']
-const CAN_CANCEL = ['unfulfilled']
-const CAN_EDIT = ['unfulfilled']
+const CAN_SHIP = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_CANCEL = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 // Receipt is confirmed after handover, never before.
-const CAN_MARK_DELIVERED = ['fulfilled']
+const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const { t } = useTranslation()

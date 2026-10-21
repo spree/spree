@@ -2676,6 +2676,7 @@
         "updated": "Karta podarunkowa została zaktualizowana"
       },
       "statuses": {
+        "active": "Aktywna",
         "canceled": "Anulowana",
         "expired": "Wygasła",
         "partially_redeemed": "Częściowo zrealizowana",

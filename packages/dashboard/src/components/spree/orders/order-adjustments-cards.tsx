@@ -1,5 +1,12 @@
 import type { Discount, Fee, FeeCreateParams, Order } from '@spree/admin-sdk'
-import { compareMoney, isDecimalString, isZeroMoney, sumMoney } from '@spree/core'
+import {
+  compareMoney,
+  FEE_KINDS,
+  type FeeKind,
+  isDecimalString,
+  isZeroMoney,
+  sumMoney,
+} from '@spree/core'
 import { adminClient, currencyParts, formatMoney, Money, percentOf } from '@spree/dashboard-core'
 import {
   Badge,
@@ -63,11 +70,11 @@ import {
   showsTaxabilityReason,
   type TaxLineGroup,
 } from '../../../lib/tax-line-groups'
-import { FEE_KINDS, SYSTEM_FEE_KINDS } from '../../../schemas/order'
+import { MANUAL_FEE_KINDS } from '../../../schemas/order'
 
 /** The API accepts any kind string, so unknown values fall back to the raw value. */
 function feeKindLabel(kind: string) {
-  return ([...FEE_KINDS, ...SYSTEM_FEE_KINDS] as readonly string[]).includes(kind)
+  return (FEE_KINDS as readonly string[]).includes(kind)
     ? i18n.t(`admin.orders.detail.adjustment_lines.fee_kind_${kind}`)
     : kind
 }
@@ -562,7 +569,7 @@ function AddFeeDialog({
   const { t } = useTranslation()
   const orderId = order.id
   const [target, setTarget] = useState('order')
-  const [kind, setKind] = useState<(typeof FEE_KINDS)[number]>('surcharge')
+  const [kind, setKind] = useState<FeeKind>('surcharge')
 
   const mutation = useOrderAdjustmentLinesMutation(orderId, (params: FeeCreateParams) =>
     adminClient.orders.fees.create(orderId, params),
@@ -573,7 +580,7 @@ function AddFeeDialog({
     ...(order.items ?? []).map((item) => ({ value: item.id, label: item.name ?? item.id })),
   ]
 
-  const kindOptions = FEE_KINDS.map((value) => ({
+  const kindOptions = MANUAL_FEE_KINDS.map((value) => ({
     value,
     label: t(`admin.orders.detail.adjustment_lines.fee_kind_${value}`),
   }))
@@ -635,7 +642,7 @@ function AddFeeDialog({
                   <Select
                     items={kindOptions}
                     value={kind}
-                    onValueChange={(v) => setKind(v as (typeof FEE_KINDS)[number])}
+                    onValueChange={(v) => setKind(v as FeeKind)}
                   >
                     <SelectTrigger>
                       <SelectValue />

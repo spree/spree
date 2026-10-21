@@ -8,23 +8,20 @@ module Typelizer
   # from either still accepts an added value while every built-in value stays
   # documented and autocompletable.
   #
-  # Shared code lists are the exception: a named type several serializers and
-  # the request types share, but closed, since nothing outside the standard
-  # can add a country, a currency or a unit, and markets only accept the
-  # locales `Spree::Locales::ALL` lists. The SDKs define them once, as values
-  # and types, in `@spree/sdk-core` (generated from the API reference by
-  # `pnpm generate:code-lists`), so each SDK's `Enums.ts` re-exports that
-  # definition instead of carrying a copy of the list.
+  # Every named list is defined once, as values and type, in `@spree/core`, and
+  # each SDK's `Enums.ts` re-exports it through `@spree/sdk-core` instead of
+  # carrying a copy. The open lists are written there by
+  # {Spree::Api::EnumTypes}. Shared code lists are the closed exception: a
+  # named type several serializers and the request types share, closed since
+  # nothing outside the standard can add a country, a currency or a unit, and
+  # markets only accept the locales `Spree::Locales::ALL` lists. They come from
+  # the API reference (`pnpm generate:code-lists`).
   module OpenEnums
     CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode WeightUnit DimensionUnit].freeze
 
     module Property
       def enum_definition(...)
-        definition = super
-        return definition unless definition
-        return "type { #{enum_type_name} } from '@spree/sdk-core'" if CLOSED_TYPE_NAMES.include?(enum_type_name)
-
-        "#{definition} | (string & {})"
+        super && "type { #{enum_type_name} } from '@spree/sdk-core'"
       end
 
       # Typelizer skips rewriting a file whose digest is unchanged, and the
@@ -32,7 +29,7 @@ module Typelizer
       # the re-export in makes a checkout that still carries the old inline
       # list regenerate.
       def fingerprint
-        return super unless CLOSED_TYPE_NAMES.include?(enum_type_name)
+        return super unless enum_type_name
 
         [super, enum_definition].inspect
       end

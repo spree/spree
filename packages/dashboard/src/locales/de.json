@@ -2658,6 +2658,7 @@
         "updated": "Geschenkkarte aktualisiert"
       },
       "statuses": {
+        "active": "Aktiv",
         "canceled": "Storniert",
         "expired": "Abgelaufen",
         "partially_redeemed": "Teilweise eingelöst",

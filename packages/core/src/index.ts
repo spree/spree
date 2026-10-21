@@ -17,6 +17,10 @@ export {
 export { CURRENCY_EXPONENTS } from './currency-exponents'
 // Display names
 export { intlDisplayName, localeEndonym } from './display-names'
+// Statuses, kinds and the other open value lists, generated from the API serializers
+export type { Subset } from './enums'
+export { subsetOf } from './enums'
+export * from './enums.generated'
 // Filters
 export type {
   BooleanFilters,

@@ -1,4 +1,5 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
+import { RETURN_STATUSES, subsetOf } from '@spree/core'
 import {
   currencyParts,
   formatAmount,
@@ -48,7 +49,7 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
-const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
+const RETURN_ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
 
 /**
  * Returns on an order. Each status change is a distinct action rather than an
@@ -245,7 +246,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
 }
 
 /** A return is only worth a label while the goods are still coming back. */
-const RETURN_LABEL_STATUSES = ['requested', 'approved']
+const RETURN_LABEL_STATUSES = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
 
 /**
  * The prepaid label for the parcel coming back, and the button to buy one.

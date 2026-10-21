@@ -1,3 +1,4 @@
+import { STOCK_LOCATION_KINDS } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import type { PanelStockLocation, PanelStockLocationCreateParams } from '../api-client'
@@ -7,7 +8,7 @@ import { countryCodeSchema } from '../lib/iso-codes'
 // Labels live in `en.json` under `admin.stock_locations.kinds.*` and
 // `admin.stock_locations.pickup_stock_policies.*`. Consumers map these
 // values to translated labels at render time.
-export const STOCK_LOCATION_KINDS = ['warehouse', 'store', 'fulfillment_center'] as const
+export { STOCK_LOCATION_KINDS }
 export const PICKUP_STOCK_POLICIES = ['local', 'any'] as const
 export type PickupStockPolicy = (typeof PICKUP_STOCK_POLICIES)[number]
 
