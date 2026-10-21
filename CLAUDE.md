@@ -81,6 +81,8 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 | Broken beyond repair | `wt remove` and recreate — or `dropdb spree_dev_<branch>`, delete `server/`, re-run `pnpm wt:setup` |
 
 When working with worktrees, don't use the `pnpm server:dev` and other docker-based commands. 
+
+**Cloud sessions** (`CLAUDE_CODE_REMOTE=true`) have no worktrees, portless or Homebrew. The SessionStart hook (`scripts/cloud/provision.sh`) has already started Postgres and Mailpit, cloned `server/`, and created and seeded `spree_development` — its summary at the top of the session lists the URLs. Start servers with `scripts/cloud/start.sh [rails|dashboard|seller|all]` (plain http: Rails :3000, dashboard :5173, seller :5175, logs in `/tmp/spree-*.log`); `pnpm wt:dev`/`wt:dashboard`/`wt:seller` do not work there. Check UI changes yourself with `node scripts/cloud/screenshot.mjs <url> <out.png> --login` and Read the PNG — the human cannot open these servers. `pnpm test:rspec`, `pnpm test:changed` and `pnpm wt:e2e` work unchanged.
 NEVER kill/shut off dev serves already running unless they are broken (eg. migrations didn't run, missing migrations).
 
 ---
