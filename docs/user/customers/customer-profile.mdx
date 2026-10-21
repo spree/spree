@@ -1,142 +1,164 @@
 ---
 title: "Customer Profiles"
-description: "Learn how to access and interpret the Customer Profile in the Spree admin dashboard."
+description: "Learn what a customer's page holds, how to change it, and how to answer a data protection request in Spree Commerce."
 ---
 
-The Customer Profile gives you a complete view of a customer’s activity, order history, and account details - all in one place. It helps you better understand purchasing behavior, identify high-value customers, and provide faster, more personalized support.
+A customer's profile is a single page holding everything your store knows about that person. Part of it is a record the store keeps as they shop: what they have spent, every order they have placed, and the store credit and gift cards they hold. The rest can be set or changed from the dashboard: their contact details and addresses, the groups they belong to, their tax registration, and the tags and notes your team keeps on them.
 
-## Accessing a Customer Profile
+Open a customer profile whenever a customer gets in touch. Their order history can answer a lot of questions before you even have to ask anything. A customer chasing a parcel, querying a payment or waiting on a refund is answered by the badges beside each order: whether it has shipped, whether it was paid for, whether money has already gone back, and whether it was canceled.
 
-To access a customer’s profile, navigate to **Customers** in the admin dashboard.
+A profile is updated whenever something about the customer changes. Often that happens on the customer's own side, as they place an order, change their address or update their email. The rest of the time a member of staff makes the change for them, which covers everything the customer could do themselves and a few things they cannot, such as: assigning them to a group, issuing store credit, or leaving an internal note.
 
-![Understanding the customer profile page in Spree commerce](/docs/images/user/customers/customer-profiles/1-customers-tab.png)
+To open a customer's page, navigate to **Customers** in the admin dashboard and click their email address.
 
-Find the customer you’d like to review (use search and filters if needed), and click on the customer’s name to open their profile.
+## Reviewing a Customer
 
-![A customer's profile in the Spree Commerce dashboard](/docs/images/user/customers/customer-profiles/2-customer-profile.png)
+![A customer's page, with their details, addresses, orders and store credit](/docs/images/user/customers/customer-profile/1-customer-profile.png)
 
-The profile page is divided into several sections, each providing important information about the customer.
+Across the top of the page is a strip of figures covering the whole relationship:
 
-## User Analytics
+| Figure | What it means |
+|---|---|
+| **Total spent** | Everything the customer has spent with you. |
+| **Orders** | How many orders they have placed. |
+| **Avg order value** | What a typical order from them comes to. |
+| **Store credit** | What you currently owe them as credit. |
+| **Customer since** | How long they have been a customer. |
 
-![Customer profile analytics in Spree Commerce](/docs/images/user/customers/customer-profiles/3-user-analytics.png)
+Below it, the page consists of a number of cards arranged into two columns. Some are a record of what the customer has done and can manage themselves. The rest are yours to change, if and when necessary, each from its own card.
 
-At the top of the page, you’ll see a summary of key customer metrics:
+## How to Manage a Customer
 
-- Total Amount Spent
-- Number of Orders
-- Average Order Value
-- Store Credits
-  - Shows the value of store credits the customer has available
-  - You can assign store credits here by clicking **Add Store Credit**
-- Created At date, i.e., when they became a customer
+### Profile
 
-These metrics give you a quick snapshot of the customer’s engagement and lifetime value.
+Their email address, phone number, whether they are subscribed to marketing, and when they became a customer.
 
-## Details
+**Edit** opens a form holding:
 
-![A customer's personal details in the Spree Commerce dashboard](/docs/images/user/customers/customer-profiles/4-user-details.png)
+- **Email** - Their email address.
+- **First name** and **Last name** - Their name.
+- **Phone** - A contact number.
+- **Tags** - Your own labels. Typing a word that does not exist yet offers to create it.
+- **Subscribed to marketing** - Whether they have agreed to receive marketing.
 
-This section contains core account information, including:
+<Note>Tags are how you find a group of customers again later, using the **Tags** filter on the customers list. They are also the quickest thing to set in bulk from that list.</Note>
 
-- Email address
-- Phone number
-- First and last name
-- Email marketing opt-in status
-- Assigned [<u>Customer Groups</u>](https://spreecommerce.org/docs/user/customers/customer-groups) 
-- Customer tags
+### Customer Groups
 
-<Note>You can use **tags** and **customer groups** to segment customers for promotions, pricing rules, or internal organization.</Note>
+Which groups the customer belongs to, if any. A customer can belong to multiple groups at once, so someone can be in both the Wholesale and VIP groups without the two conflicting.
 
-## Addresses
+**Edit** opens a searchable picker for adding and removing them. Membership is what a promotion's customer group rule reads, and what a catalog reads when a group has been set as its audience, so this is the card that decides which offers the customer qualifies for and which assortment and prices they are shown on the storefront.
 
-### **Shipping Address**
+This card is one of only two places membership can be set. The other is the customers list, where ticking rows gives you **Add to group…** and **Remove from group…** for several people at once. A group's own page cannot add or remove anyone, so this card is where a single customer's membership is managed. See [<u>Customer Groups</u>](/user/customers/customer-groups).
 
-![A customer's shipping address in the Spree dashboard](/docs/images/user/customers/customer-profiles/5-shipping-address.png)
+### Addresses
 
-This section displays the customer’s default shipping address.
+Every address on file, each under its own label, with badges marking which one is the default for billing and which for shipping. There is no limit on how many a customer can keep, though no two of theirs can share a label, so a second address called Home has to be named something else.
 
-<Note>If a Google Maps API key is connected, a map preview with a pinned location will also be shown.</Note>
+**Add address** takes:
 
-### **Billing Address**
+- **Label** - Your own name for the site, such as Home or Office.
+- **First name** and **Last name** - Who the parcel is for, prefilled from the profile.
+- **Address** and **Apartment, suite, etc.** - The street address.
+- **Country**, **City**, **State / Province** and **Postal code** - Where it is.
+- **Phone** - A contact number, prefilled from the profile.
+- **Default billing address** and **Default shipping address** - Whether this becomes the default for either purpose, or both.
 
-![A customer's billing address in the Spree dashboard](/docs/images/user/customers/customer-profiles/6-billing-address.png)
+Which of these are required depends on the country, which is why a state has to be picked on a US address and no postal code is asked for on an Irish one.
 
-Displays the billing address or indicates **“Same as shipping address”** if that option is selected.
+Each address has its own **Actions** menu, offering **Edit**, the option to set it as one of the defaults, and **Delete**. Deleting the default billing or shipping address does not leave the customer without one: the most recently added of their remaining addresses takes its place.
 
-## Internal Note
+<Note>These are the customer's own saved addresses, and an order keeps its own copy of the address it was placed with. Changing or deleting an address here leaves orders already placed exactly as they were, so correcting where a parcel is going is done on the order itself. See [<u>Processing Orders</u>](/user/orders/processing-orders).</Note>
 
-![An internal customer note in the Spree Commerce](/docs/images/user/customers/customer-profiles/7-internal-note.png)
+### Tax Registration
 
-The Internal Note section displays any notes added by admins related to the customer.
+![Two tax registrations on one customer, an EU VAT number and a UK one](/docs/images/user/customers/customer-profile/2-tax-registration.png)
 
-These notes are not visible to the customer and can be used to:
+The VAT or business numbers the customer trades under. A number recorded here appears on the customer's invoices, and it is what makes EU B2B reverse charge possible. **Add registration** takes:
 
-- Document special agreements or pricing arrangements
-- Flag account concern
-- Record support interactions
-- Add context for other team members
+- **Kind** - Which registration this is: EU VAT, UK VAT, Swiss VAT, Australian Business Number or US EIN.
+- **Number** - The registration number itself.
 
-Internal notes help ensure your team has the full picture when assisting the customer.
+One registration of each kind can be held at once, so a customer registered under more than one tax regime keeps them all on this card. A UK trader selling into the EU is the usual case, holding a UK VAT number at home and an EU VAT registration for what they sell into Europe. Having both on the profile saves the team going back to the customer to ask, and gives the store a registration to hand to its tax service when an order's tax is worked out.
 
-## Last Order Placed
+<Note>A number is only format-checked where the store has a checker for that kind of registration, and a stock Spree store ships one for EU VAT. A registration marked **Not checked** has not been confirmed against the tax authority's own register, which is a separate step from the check made when it is saved.</Note>
 
-![The last order placed by a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/8-last-order-placed.png)
+A registration on a person is for someone trading in their own name. A business buying through a company account has its registrations on the company instead. See [<u>Companies</u>](/user/customers/companies).
 
-This section shows a summary of the most recent order placed by the customer.
+### Internal Note
 
-You can click the order number (e.g., R394161122) to see the full order details page.
+Anything your team should know about this customer, such as what was agreed on a phone call. It takes formatted text, and only staff see it.
 
-## Orders
+### Last Order Placed
 
-![Orders subsection of the customer proflile in the Spree dashboard](/docs/images/user/customers/customer-profiles/9-customer-orders.png)
+![The Last order placed card, showing the most recent order and what was on it](/docs/images/user/customers/customer-profile/3-last-order-placed.png)
 
-The Orders subsection displays a full list of all completed orders associated with the customer.
+The customer's most recent order, with its number, its payment and fulfillment badges, how long ago it was placed, its total, and the items that were on it.
 
-You can:
+It is the card that answers a customer who has just got in touch, because the order they are calling about is almost always this one.
 
-- Search within the customer’s orders
-- Apply filters
-- Sort and select which columns to display
+### Orders
 
-This makes it easy to quickly find specific transactions.
+![The Orders card, listing every order the customer has placed](/docs/images/user/customers/customer-profile/4-order-history.png)
 
-## Draft Orders
+Every order the customer has placed, with its date, status and total. Click an order to open it.
 
-![Draft orders associated with a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/10-draft-orders.png)
+Both cards are a record and cannot be edited here. Changing an order happens on the order itself. See [<u>Orders</u>](/user/orders/orders).
 
-Draft Orders include:
+### Store Credit and Gift Cards
 
-- Abandoned carts
-- Admin-created orders that are not yet completed
-- Orders without attached payments
+![The Store credit card after a credit was issued](/docs/images/user/customers/customer-profile/5-store-credit.png)
 
-This section is useful for following up on incomplete purchases or manually created orders.
+**Store credit** lists every credit the customer holds, and **Issue store credit** adds one. Any gift cards attached to them appear alongside.
 
-## Gift Cards
+Both are balances you owe, so they are worth checking before you settle anything else with the customer. See [<u>Store Credits</u>](/user/loyalty/store-credits) and [<u>Gift Cards</u>](/user/loyalty/gift-cards).
 
-![Gift cards issued to a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/11-gift-cards.png)
+### Custom Fields
 
-Displays all gift cards assigned to the customer, including:
+![The Custom fields card on a customer's page](/docs/images/user/customers/customer-profile/6-custom-fields.png)
 
-- Current balance
-- Amount used
-- Currency
-- Status
+The extra customer fields your store has defined, each edited in place on the profile.
 
-For more information on issuing gift cards, please refer to our [<u>Issuing Gift Cards</u>](https://spreecommerce.org/docs/user/customers/issue-gift-card) article.
+They suit anything your team needs to record against a customer that Spree has no field for, such as the account manager looking after them, how they prefer to be contacted, standing delivery instructions, or the payment terms agreed with a trade buyer. Which fields appear, and which are required, is set under [<u>Custom Fields</u>](/user/settings/custom-fields).
 
-## Store Credits
+### Metadata
 
-![Store credits assigned to a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/12-store-credits.png)
+Structured data that apps and integrations write to the customer, such as an identifier from a system your store is connected to.
 
-Displays any store credit assigned to the customer, along with usage history.
+It is read-only: nothing on this card is filled in or edited by your team.
 
-Store credits are commonly used for refunds, loyalty rewards, or manual adjustments. 
+## Privacy and Data
 
-In more advanced use cases, store credits may function as the primary payment method - especially in B2B environments where companies maintain a prepaid balance or approved credit limit and settle invoices periodically.
+![The Privacy and data card, with the Export data and Erase personal data buttons](/docs/images/user/customers/customer-profile/7-privacy-and-data.png)
 
-To learn more about store credits, please refer to our [<u>Assigning Store Credits</u>](https://spreecommerce.org/docs/user/customers/assign-store-credits) article.
+The last card on the page answers a data protection request, whether the customer wants a copy of what you hold or wants it removed. It also records when their marketing consent last changed.
 
+Both of its buttons matter. **Export data** gathers everything the store holds about the customer into a file. **Erase personal data** strips those details out of the store and cannot be undone, which makes it the one control on the profile worth being certain about before pressing.
 
-In summary, the Customer Profile gives you a centralized view of everything related to a customer - making it easier to support them, reward loyalty, and resolve issues quickly.
+### How to Export a Customer's Data
+
+**Export data** downloads a complete record of what the store holds about that person: their account and marketing consent, their addresses, their orders, split-checkout order groups, draft orders and carts, their payment sources and connected logins, their store credits, gift cards and wishlists, their custom fields, and any companies and tax identifiers.
+
+The file downloads straight away, and nothing is sent to the customer. The request is recorded against your store, so there is a record that it was answered.
+
+<Note>This is a different thing from the customer export on the list, which gives a spreadsheet row per person. Use this one when someone asks for everything you hold about them.</Note>
+
+### How to Erase a Customer's Personal Data
+
+**Erase personal data** removes the customer's personal details from everywhere the store holds them, and asks you to confirm first.
+
+![A customer's page after erasure](/docs/images/user/customers/customer-profile/8-after-erasure.png)
+
+Afterwards the page is marked as erased, the name and email are replaced, and the record shows the date the erasure happened. The customer drops out of the default customers list, and the **Erased** filter is how you find them again.
+
+<Warning>Erasing cannot be undone. The customer's orders and balances are kept, because your books still need them, but the person behind them can no longer be identified.</Warning>
+
+Erasing is the only removal the dashboard offers. There is no way to delete a customer outright, which is deliberate: their orders are part of your trading record, and deleting the customer would take that with them.
+
+## Further Reading
+
+- [<u>Customers</u>](/user/customers/customers) - The list, its filters, and adding a customer
+- [<u>Customer Groups</u>](/user/customers/customer-groups) - What a group changes for the people in it
+- [<u>Companies</u>](/user/customers/companies) - Business accounts and the people who buy for them
+- [<u>Orders</u>](/user/orders/orders) - The orders on this customer's page
+- [<u>Store Credits</u>](/user/loyalty/store-credits) - Issuing and tracking credit

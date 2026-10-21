@@ -445,6 +445,22 @@
       "destination": "/user/loyalty/store-credits"
     },
     {
+      "source": "/user/customers/create-customer",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/searching-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/exporting-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/edit-customer",
+      "destination": "/user/customers/customer-profile"
+    },
+    {
       "source": "/user/loyalty/store-credits-list",
       "destination": "/user/loyalty/store-credits"
     },
@@ -1307,11 +1323,8 @@
                   {
                     "group": "Customers",
                     "pages": [
-                      "user/customers/create-customer",
+                      "user/customers/customers",
                       "user/customers/customer-profile",
-                      "user/customers/edit-customer",
-                      "user/customers/searching-customers",
-                      "user/customers/exporting-customers",
                       "user/customers/customer-groups",
                       "user/customers/companies"
                     ],
@@ -2952,11 +2965,8 @@
           {
             "group": "Customers",
             "pages": [
-              "user/customers/create-customer",
+              "user/customers/customers",
               "user/customers/customer-profile",
-              "user/customers/edit-customer",
-              "user/customers/searching-customers",
-              "user/customers/exporting-customers",
               "user/customers/customer-groups",
               "user/customers/companies"
             ]
