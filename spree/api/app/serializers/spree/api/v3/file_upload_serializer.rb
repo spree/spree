@@ -15,7 +15,7 @@ module Spree
                  filename: :string,
                  content_type: :string,
                  byte_size: :number,
-                 visibility: [:string, enum: Spree::FileUpload::VISIBILITIES],
+                 visibility: [:string, enum: Spree::FileUpload::VISIBILITIES, enum_type_name: 'FileUploadVisibility'],
                  expires_at: :string,
                  upload: [:FileUploadTarget, nullable: true]
 

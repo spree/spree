@@ -1,3 +1,4 @@
+import { COLLECTION_RULE_MATCH_POLICIES, MATCH_POLICIES } from '@spree/core'
 import { typeLabel } from '@spree/dashboard-core'
 import {
   Button,
@@ -22,12 +23,7 @@ import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCollectionRuleTypes } from '../../../hooks/use-collections'
 
-import {
-  blankCollectionRule,
-  COLLECTION_RULE_MATCH_POLICIES,
-  COLLECTION_RULES_MATCH_POLICIES,
-  type CollectionFormValues,
-} from '../../../schemas/collection'
+import { blankCollectionRule, type CollectionFormValues } from '../../../schemas/collection'
 
 /**
  * Membership card: the manual/automatic switch plus, for automatic
@@ -61,7 +57,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
     value,
     label: t(`admin.collections.rule_match_policies.${value}`),
   }))
-  const rulesMatchPolicyOptions = COLLECTION_RULES_MATCH_POLICIES.map((value) => ({
+  const rulesMatchPolicyOptions = MATCH_POLICIES.map((value) => ({
     value,
     label: t(`admin.collections.rules_match_policies.${value}`),
   }))

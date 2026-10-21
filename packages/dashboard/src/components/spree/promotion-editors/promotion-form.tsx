@@ -8,6 +8,7 @@ import type {
   PromotionRuleDraftParams,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
+import { MATCH_POLICIES, type MatchPolicy } from '@spree/core'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
 import {
   Alert,
@@ -88,8 +89,6 @@ import {
 } from '../../../hooks/use-promotions'
 
 import {
-  MATCH_POLICIES,
-  type MatchPolicy,
   PROMOTION_DEFAULTS,
   PROMOTION_KINDS,
   type PromotionFormValues,

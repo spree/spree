@@ -58226,7 +58226,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by_label:
@@ -58880,6 +58880,9 @@ components:
           type: string
         assignable_type:
           type: string
+          enum:
+          - customer_group
+          - company
         assignable_id:
           type: string
         assignable_name:
@@ -59721,6 +59724,10 @@ components:
         resolution:
           type: string
           nullable: true
+          enum:
+          - refund
+          - replacement
+          - refund_and_replacement
         order_id:
           type: string
           nullable: true
@@ -59766,7 +59773,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -59834,6 +59841,15 @@ components:
           type: number
         sort_order:
           type: string
+          enum:
+          - manual
+          - best_selling
+          - price asc
+          - price desc
+          - available_on desc
+          - available_on asc
+          - name asc
+          - name desc
         meta_title:
           type: string
           nullable: true
@@ -60090,8 +60106,23 @@ components:
           - ZWN
           - ZWR
         taxability_reason:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - standard_rated
+            - reduced_rated
+            - zero_rated
+            - reverse_charge
+            - intra_community_supply
+            - export
+            - customer_exempt
+            - product_exempt
+            - not_collecting
+            - not_subject_to_tax
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         country_code:
           type: string
           nullable: true
@@ -62268,7 +62299,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         updated_by:
@@ -62329,7 +62360,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         published_by:
@@ -62548,7 +62579,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -66527,7 +66558,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         approver:
@@ -66542,7 +66573,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         canceler:
@@ -66557,7 +66588,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -68660,7 +68691,18 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - ordered
+            - partially_received
+            - received
+            - over_received
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         currency:
           type: string
           enum:
@@ -68994,7 +69036,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         refunder:
@@ -69168,7 +69210,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
@@ -70143,9 +70185,18 @@ components:
           nullable: true
         tax_remittance:
           type: string
+          enum:
+          - seller
+          - platform
         payouts_schedule_interval:
           type: string
           nullable: true
+          enum:
+          - daily
+          - weekly
+          - biweekly
+          - monthly
+          - manual
         metadata:
           type: object
           nullable: true
@@ -70925,6 +70976,10 @@ components:
         format:
           type: string
           nullable: true
+          enum:
+          - pdf
+          - png
+          - zpl
         external_id:
           type: string
           nullable: true
@@ -71632,7 +71687,7 @@ components:
             - admin_user
             - api_key
           - type: string
-          nullable: true
+            nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
         received_by:
@@ -71776,7 +71831,19 @@ components:
         destination_location_id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - ready_to_ship
+            - in_transit
+            - partially_received
+            - received
+            - over_received
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         notes:
           type: string
           nullable: true
@@ -74169,8 +74236,23 @@ components:
           type: object
           nullable: true
         taxability_reason:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - standard_rated
+            - reduced_rated
+            - zero_rated
+            - reverse_charge
+            - intra_community_supply
+            - export
+            - customer_exempt
+            - product_exempt
+            - not_collecting
+            - not_subject_to_tax
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         country_code:
           type: string
           nullable: true

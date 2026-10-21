@@ -6,7 +6,7 @@ module Spree
         # the merchant owes and expects, which no customer ever sees.
         class PurchaseOrderSerializer < V3::BaseSerializer
           typelize number: :string,
-                   status: :string,
+                   status: [:string, enum: Spree::PurchaseOrder.statuses, enum_type_name: 'PurchaseOrderStatus'],
                    currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    reference: 'string | null',
                    notes: 'string | null',

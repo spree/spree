@@ -14,7 +14,7 @@ module Spree
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  minimum_order_quantity: :number, order_multiple: :number,
-                 purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS], units_per_carton: ['number | null'],
+                 purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS, enum_type_name: 'PurchaseUnit'], units_per_carton: ['number | null'],
                  seller_id: [:string, nullable: true]
 
         prefixed_id_attributes :product

@@ -1,19 +1,10 @@
-import { compareMoney, isDecimalString } from '@spree/core'
+import { compareMoney, isDecimalString, PAYOUT_SCHEDULE_INTERVALS } from '@spree/core'
 import { z } from 'zod'
 
 const nonNegativeDecimal = z
   .string()
   .trim()
   .refine((value) => isDecimalString(value) && !value.startsWith('-'))
-
-/** How often a marketplace settles its sellers, unless one carries its own. */
-export const PAYOUT_SCHEDULE_INTERVALS = [
-  'daily',
-  'weekly',
-  'biweekly',
-  'monthly',
-  'manual',
-] as const
 
 export const marketplaceSettingsFormSchema = z.object({
   // Blank is the built-in provider: the marketplace keeps the books and

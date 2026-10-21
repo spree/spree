@@ -1,3 +1,4 @@
+import { MEDIA_TYPES, type MediaType, PRODUCT_STATUSES, subsetOf } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -103,9 +104,7 @@ export type CustomFieldFormValues = z.infer<typeof customFieldFormSchema>
 // `source_media_id` (a file picked from the library). All can hold edits to
 // alt, position, and variant_ids that the parent product PATCH/POST ships
 // inline. previewUrl + uploadId are UI-only; stripped at submit.
-export const MEDIA_TYPES = ['image', 'video', 'external_video'] as const
-
-export type MediaType = (typeof MEDIA_TYPES)[number]
+export { MEDIA_TYPES, type MediaType }
 
 export const mediaFormSchema = z
   .object({
@@ -169,6 +168,13 @@ export const productPublicationFormSchema = z.object({
 
 export type ProductPublicationFormValues = z.infer<typeof productPublicationFormSchema>
 
+/** Statuses a merchant sets by hand; the rest come from the review workflow. */
+export const ASSIGNABLE_PRODUCT_STATUSES = subsetOf(PRODUCT_STATUSES, [
+  'draft',
+  'active',
+  'archived',
+])
+
 export const productFormSchema = z.object({
   // General
   name: z.string().min(1, { error: requiredMessage('name') }),
@@ -176,10 +182,11 @@ export const productFormSchema = z.object({
 
   // Status
   // Every status the API may answer, not just the ones a form sets. A
-  // marketplace product also comes back `proposed` or `rejected`, and a schema
-  // that rejects those makes the whole form unsavable rather than flagging a
-  // field (docs/plans/6.0-seller-product-submission.md).
-  status: z.enum(['draft', 'active', 'archived', 'proposed', 'rejected']).optional(),
+  // marketplace product also comes back `proposed` or `rejected`, an extension
+  // may add statuses of its own, and a schema that rejects any of those makes
+  // the whole form unsavable rather than flagging a field
+  // (docs/plans/6.0-seller-product-submission.md).
+  status: z.string().optional(),
 
   // Categorization
   category_ids: z.array(z.string()).optional(),

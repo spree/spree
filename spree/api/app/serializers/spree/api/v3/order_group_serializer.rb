@@ -9,8 +9,8 @@ module Spree
       # inside it, each carrying its own items, delivery and tracking.
       class OrderGroupSerializer < BaseSerializer
         typelize number: :string, email: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
-                 fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
-                 payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
+                 fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES, enum_type_name: 'OrderFulfillmentStatus'],
+                 payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES, enum_type_name: 'OrderPaymentStatus'],
                  completed_at: [:string, nullable: true],
                  billing_address: { nullable: true }, shipping_address: { nullable: true }
 

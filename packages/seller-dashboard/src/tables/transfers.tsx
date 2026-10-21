@@ -1,3 +1,4 @@
+import { SELLER_TRANSFER_KINDS, SELLER_TRANSFER_STATUSES } from '@spree/core'
 import { defineTable, formatMoney, formatStoreDateTime, useTenantId } from '@spree/dashboard-core'
 import { StatusBadge } from '@spree/dashboard-ui'
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
@@ -43,9 +44,6 @@ function LedgerDate({ iso }: { iso: string }) {
   return <>{formatStoreDateTime(iso, timezone)}</>
 }
 
-const STATUSES = ['pending', 'processing', 'completed', 'failed', 'unresolved'] as const
-const KINDS = ['earning', 'refund_reversal'] as const
-
 defineTable<Transfer>('seller-transfers', {
   title: i18n.t('earnings.transfers.title'),
   // Without this the toolbar sends `name_cont`, which the ledger does not
@@ -78,7 +76,7 @@ defineTable<Transfer>('seller-transfers', {
       label: i18n.t('earnings.columns.kind'),
       filterable: true,
       filterType: 'enum',
-      filterOptions: KINDS.map((kind) => ({
+      filterOptions: SELLER_TRANSFER_KINDS.map((kind) => ({
         value: kind,
         label: i18n.t(`earnings.kinds.${kind}`),
       })),
@@ -93,7 +91,7 @@ defineTable<Transfer>('seller-transfers', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: STATUSES.map((status) => ({
+      filterOptions: SELLER_TRANSFER_STATUSES.map((status) => ({
         value: status,
         label: i18n.t(`earnings.statuses.${status}`),
       })),

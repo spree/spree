@@ -13,6 +13,7 @@ npm install @spree/core
 ## Contents
 
 - [Code lists](#code-lists) — countries, currencies, locales, weight and dimension units, and checking a code you received
+- [Statuses and kinds](#statuses-and-kinds) — every status and kind the API returns, and picking the ones an action accepts
 - [Unit systems](#unit-systems) — which weight units belong to metric and imperial
 - [Display names](#display-names) — country, currency and language names in any language
 - [Money](#money) — exact arithmetic, percentages and formatting for decimal-string amounts
@@ -64,6 +65,36 @@ They check the shape only, `US` but not `us` or `USA`, and accept a code missing
 ### Currencies still in use
 
 `CurrencyCode` includes replaced currencies, such as the Croatian kuna, so that amounts recorded in them stay valid. `ACTIVE_CURRENCY_CODES` leaves them out, for a picker offering any currency for new prices, and `RETIRED_CURRENCY_CODES` lists the ones it leaves out.
+
+## Statuses and kinds
+
+Every status, kind and other value list the Spree API returns — `ProductStatus`, `PaymentStatus`, `FeeKind`, `MediaType` and the rest — generated from the API itself. Each comes as a list of its built-in values and a type:
+
+```typescript
+import { PRODUCT_STATUSES, type ProductStatus } from '@spree/core';
+
+PRODUCT_STATUSES; // ['draft', 'active', 'archived', 'proposed', 'rejected']
+
+// A filter built from the list stays complete when Spree adds a status.
+const options = PRODUCT_STATUSES.map((status) => ({ value: status, label: t(status) }));
+```
+
+Statuses and kinds an extension may add to — `ProductStatus`, `PaymentStatus`, `FeeKind` and the like — are open: the type still accepts any string, while your editor suggests the built-in ones. The rest are closed, like the code lists: `OrderPaymentStatus`, `MediaType`, `DiscountKind` and every other list the API never grows accept only their own values.
+
+When only some values matter — the statuses an action accepts, say — pick them with `subsetOf`. A misspelled or retired value fails to compile, and `includes` takes any status the API returns:
+
+```typescript
+import { RETURN_STATUSES, subsetOf } from '@spree/core';
+
+const ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received']);
+subsetOf(RETURN_STATUSES, ['requsted']); // Type error
+
+if (ACTIONABLE.includes(ret.status)) {
+  // show the actions
+}
+```
+
+The SDKs re-export the types each of them uses, so `import type { PaymentStatus } from '@spree/sdk'` works too.
 
 ## Unit systems
 

@@ -1,4 +1,4 @@
-import { sumMoney } from '@spree/core'
+import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf, sumMoney } from '@spree/core'
 import { currencyParts, formatMoney, isPositiveMoney, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Button,
@@ -36,8 +36,8 @@ import {
 import { lineLabel } from './line-label'
 import { CreateClaimDialog } from './post-sale-create-dialogs'
 
-const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
-const CLAIM_ACTIONABLE = ['open', 'approved']
+const EXCHANGE_ACTIONABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved', 'received'])
+const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
 
 /**
  * Goods swapped for different ones.

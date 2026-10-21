@@ -1,6 +1,7 @@
 import type { Product } from '@spree/admin-sdk'
 import type { BulkAction, BulkActionFormProps, ColumnDef } from '@spree/dashboard-core'
 import {
+  ASSIGNABLE_PRODUCT_STATUSES,
   adminClient,
   ExportButton,
   ImportButton,
@@ -81,8 +82,8 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/')({
   component: ProductsPage,
 })
 
-type ProductStatus = 'draft' | 'active' | 'archived'
-type StatusFormValues = { status: ProductStatus }
+type AssignableStatus = (typeof ASSIGNABLE_PRODUCT_STATUSES)[number]
+type StatusFormValues = { status: AssignableStatus }
 type CategoriesFormValues = { category_ids: string[] }
 type CollectionsFormValues = { collection_ids: string[] }
 type ChannelsFormValues = { channel_ids: string[] }
@@ -451,13 +452,11 @@ function ProductRowActions({ product, storeId }: { product: Product; storeId: st
   )
 }
 
-const PRODUCT_STATUSES: ProductStatus[] = ['draft', 'active', 'archived']
-
 function StatusPickerSheet({ onSubmit, onCancel }: BulkActionFormProps<StatusFormValues>) {
   const { t } = useTranslation()
-  const [status, setStatus] = useState<ProductStatus>('active')
+  const [status, setStatus] = useState<AssignableStatus>('active')
 
-  const statusItems = PRODUCT_STATUSES.map((value) => ({
+  const statusItems = ASSIGNABLE_PRODUCT_STATUSES.map((value) => ({
     value,
     label: t(`admin.pages.products.status_options.${value}`),
   }))
@@ -475,7 +474,7 @@ function StatusPickerSheet({ onSubmit, onCancel }: BulkActionFormProps<StatusFor
         <Select
           items={statusItems}
           value={status}
-          onValueChange={(v) => setStatus(v as ProductStatus)}
+          onValueChange={(v) => setStatus(v as AssignableStatus)}
         >
           <SelectTrigger>
             <SelectValue />

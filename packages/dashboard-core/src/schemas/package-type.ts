@@ -1,14 +1,10 @@
-import { DimensionUnit, WeightUnit } from '@spree/core'
+import { DimensionUnit, PACKAGE_TYPE_KINDS, type PackageTypeKind, WeightUnit } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
 import type { PanelPackageType, PanelPackageTypeCreateParams } from '../api-client'
 
-// The vocabulary the server validates against; typing anything else could
-// only fail on save.
-export const PACKAGE_TYPE_KINDS = ['box', 'envelope', 'carton', 'pallet', 'container'] as const
-
-export type PackageTypeKind = (typeof PACKAGE_TYPE_KINDS)[number]
+export { PACKAGE_TYPE_KINDS, type PackageTypeKind }
 
 /** @deprecated Use `Object.values(DimensionUnit)` from `@spree/admin-sdk`. */
 export const PACKAGE_DIMENSION_UNITS = Object.values(DimensionUnit)

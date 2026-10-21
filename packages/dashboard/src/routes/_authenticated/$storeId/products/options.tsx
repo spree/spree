@@ -16,6 +16,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
+import { OPTION_TYPE_KINDS } from '@spree/core'
 import {
   adminClient,
   Can,
@@ -97,7 +98,6 @@ import {
 } from '../../../../hooks/use-option-types'
 import {
   OPTION_TYPE_DEFAULTS,
-  OPTION_TYPE_KINDS,
   type OptionTypeFormValues,
   type OptionValueFormValue,
   optionTypeFormSchema,

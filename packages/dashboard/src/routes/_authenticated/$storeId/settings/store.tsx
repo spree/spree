@@ -1,6 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store, type StoreDataSourceProvider } from '@spree/admin-sdk'
-import { UNIT_SYSTEM_WEIGHT_UNITS, UNIT_SYSTEMS } from '@spree/core'
+import {
+  CAPTURE_METHODS,
+  DOCUMENT_NUMBER_FORMATS,
+  PROVIDER_FAILURE_POLICIES,
+  STOREFRONT_ACCESSES,
+  UNIT_SYSTEM_WEIGHT_UNITS,
+  UNIT_SYSTEMS,
+  type UnitSystem,
+} from '@spree/core'
 import {
   extensionFormValues,
   extensionSubmitValues,
@@ -65,11 +73,7 @@ import {
 } from '../../../../hooks/use-store-settings'
 import { getAvailableUiLocales } from '../../../../i18n-setup'
 import {
-  CAPTURE_METHODS,
-  DOCUMENT_NUMBER_FORMATS,
   INTERNAL_PROVIDER_KEY,
-  PROVIDER_FAILURE_POLICIES,
-  STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
 } from '../../../../schemas/store'
@@ -109,10 +113,10 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     name: store.name,
     admin_locale: store.admin_locale ?? '',
     timezone: store.timezone,
-    unit_system: (store.unit_system as 'metric' | 'imperial') ?? 'metric',
+    unit_system: (store.unit_system as UnitSystem) ?? 'metric',
     weight_unit: store.weight_unit,
     storefront_access:
-      (store.storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
+      (store.storefront_access as (typeof STOREFRONT_ACCESSES)[number]) ?? 'public',
     guest_checkout: store.guest_checkout ?? true,
     always_include_confirm_step: store.always_include_confirm_step ?? false,
     company_field_enabled: store.company_field_enabled ?? false,
@@ -330,7 +334,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   )
   const storefrontAccessOptions = useMemo(
     () =>
-      STOREFRONT_ACCESS_LEVELS.map((value) => ({
+      STOREFRONT_ACCESSES.map((value) => ({
         value,
         label: t(`admin.fields.store.storefront_access.options.${value}`),
       })),

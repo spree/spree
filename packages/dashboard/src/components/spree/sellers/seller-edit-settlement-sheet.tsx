@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Seller } from '@spree/admin-sdk'
+import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
 import {
   currencyParts,
   mapSpreeErrorsToForm,
@@ -35,12 +36,10 @@ import { useTranslation } from 'react-i18next'
 import { useOnSheetOpen } from '../../../hooks/use-on-sheet-open'
 import { useUpdateSeller } from '../../../hooks/use-sellers'
 import {
-  PAYOUT_INTERVALS,
   SELLER_DEFAULTS,
   type SellerFormValues,
   sellerFormSchema,
   sellerValuesToParams,
-  TAX_REMITTANCES,
 } from '../../../schemas/seller'
 
 export function SellerEditSettlementSheet({
@@ -100,7 +99,7 @@ export function SellerEditSettlementSheet({
   }))
   const intervalOptions = [
     { value: '', label: t('admin.sellers.payout_interval.inherit') },
-    ...PAYOUT_INTERVALS.map((value) => ({
+    ...PAYOUT_SCHEDULE_INTERVALS.map((value) => ({
       value,
       label: t(`admin.sellers.payout_interval.${value}`),
     })),

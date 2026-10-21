@@ -32,9 +32,11 @@ import { useTranslation } from 'react-i18next'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { PayoutCompleteDialog } from '../../../../../components/spree/sellers/payout-complete-dialog'
 import { ReadRow } from '../../../../../components/spree/sellers/seller-read-row'
-import { usePayout, useSellerTransfers } from '../../../../../hooks/use-seller-ledger'
-
-const OWED = ['pending', 'processing', 'unresolved']
+import {
+  OWED_PAYOUT_STATUSES,
+  usePayout,
+  useSellerTransfers,
+} from '../../../../../hooks/use-seller-ledger'
 
 export const Route = createFileRoute('/_authenticated/$storeId/sellers/payouts/$payoutId')({
   component: PayoutDetailPage,
@@ -75,7 +77,7 @@ function PayoutDetailPage() {
 
   const rows = transfers?.data ?? []
   const canComplete =
-    permissions.can('update', Subject.SellerPayout) && OWED.includes(payout.status)
+    permissions.can('update', Subject.SellerPayout) && OWED_PAYOUT_STATUSES.includes(payout.status)
 
   return (
     <>

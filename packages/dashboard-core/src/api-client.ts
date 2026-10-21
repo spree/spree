@@ -1,3 +1,4 @@
+import type { PackageTypeKind, PickupStockPolicy } from '@spree/core'
 /**
  * The client registry.
  *
@@ -387,7 +388,8 @@ export interface PanelPackageTypeWrites extends PanelPackageTypeReads {
   delete?(id: string): Promise<void>
 }
 
-export type PanelPackageTypeKind = 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
+/** @deprecated Use `PackageTypeKind` from `@spree/core`. */
+export type PanelPackageTypeKind = PackageTypeKind
 /** @deprecated Use `DimensionUnit` from `@spree/core`. */
 export type PanelPackageDimensionUnit = DimensionUnit
 /** @deprecated Use `WeightUnit` from `@spree/core`. */
@@ -601,7 +603,7 @@ export type PanelStockLocationParams = Partial<
    * because plugins register their own, but the pickup policy is a fixed pair
    * the server validates, and both SDKs type it that way.
    */
-  pickup_stock_policy?: 'local' | 'any'
+  pickup_stock_policy?: PickupStockPolicy
 }
 
 /**

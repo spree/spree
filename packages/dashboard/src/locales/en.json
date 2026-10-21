@@ -2658,6 +2658,7 @@
         "updated": "Gift card updated"
       },
       "statuses": {
+        "active": "Active",
         "canceled": "Canceled",
         "expired": "Expired",
         "partially_redeemed": "Partially redeemed",
