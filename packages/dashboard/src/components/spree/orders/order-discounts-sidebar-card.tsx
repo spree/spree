@@ -1,5 +1,5 @@
 import type { Order } from '@spree/admin-sdk'
-import { isZeroMoney } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/core'
 import { adminClient, Money, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,

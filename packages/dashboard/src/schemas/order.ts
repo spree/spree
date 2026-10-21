@@ -1,10 +1,5 @@
-import {
-  isDecimalString,
-  type LineItem,
-  multiplyMoney,
-  type OrderUpdateParams,
-  sumMoney,
-} from '@spree/admin-sdk'
+import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
+import { isDecimalString, multiplyMoney, sumMoney } from '@spree/core'
 import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
@@ -108,7 +103,11 @@ export const orderEditItemSchema = z
   .superRefine((item, ctx) => {
     // Neither case sends a price, so refusing the form over one would block a
     // legitimate removal.
-    if (!item.removed && !item.revert_price && !/^\d+(\.\d+)?$/.test(item.price)) {
+    if (
+      !item.removed &&
+      !item.revert_price &&
+      !(isDecimalString(item.price) && !item.price.startsWith('-'))
+    ) {
       ctx.addIssue({
         code: 'custom',
         path: ['price'],

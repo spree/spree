@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store, type StoreDataSourceProvider } from '@spree/admin-sdk'
+import { UNIT_SYSTEM_WEIGHT_UNITS, UNIT_SYSTEMS } from '@spree/core'
 import {
   extensionFormValues,
   extensionSubmitValues,
@@ -67,8 +68,6 @@ import {
   STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
-  UNIT_SYSTEMS,
-  WEIGHT_UNITS,
 } from '../../../../schemas/store'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
@@ -210,7 +209,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // that system so the form never holds an inconsistent pair.
   const unitSystem = form.watch('unit_system')
   useEffect(() => {
-    const validUnits = WEIGHT_UNITS[unitSystem] ?? []
+    const validUnits = UNIT_SYSTEM_WEIGHT_UNITS[unitSystem] ?? []
     const current = form.getValues('weight_unit')
     if (current && !validUnits.includes(current)) {
       form.setValue('weight_unit', validUnits[0] ?? '', { shouldDirty: true })
@@ -305,7 +304,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   )
   const weightOptions = useMemo(
     () =>
-      (WEIGHT_UNITS[unitSystem] ?? WEIGHT_UNITS.metric).map((value) => ({
+      (UNIT_SYSTEM_WEIGHT_UNITS[unitSystem] ?? UNIT_SYSTEM_WEIGHT_UNITS.metric).map((value) => ({
         value,
         label: t(`admin.store.weight_units.${value}`),
       })),

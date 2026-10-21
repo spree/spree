@@ -14,13 +14,8 @@
  * promise the seller panel methods its API does not have.
  */
 
-import type {
-  CountryCode,
-  DimensionUnit,
-  PermissionRule,
-  UploadFileOptions,
-  WeightUnit,
-} from '@spree/admin-sdk'
+import type { PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
+import type { CountryCode, DimensionUnit, WeightUnit } from '@spree/core'
 
 /** What a panel may change on the signed-in person's own account. */
 export interface PanelAccountParams {
@@ -393,9 +388,9 @@ export interface PanelPackageTypeWrites extends PanelPackageTypeReads {
 }
 
 export type PanelPackageTypeKind = 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
-/** @deprecated Use `DimensionUnit` from `@spree/admin-sdk`. */
+/** @deprecated Use `DimensionUnit` from `@spree/core`. */
 export type PanelPackageDimensionUnit = DimensionUnit
-/** @deprecated Use `WeightUnit` from `@spree/admin-sdk`. */
+/** @deprecated Use `WeightUnit` from `@spree/core`. */
 export type PanelPackageWeightUnit = WeightUnit
 
 /**

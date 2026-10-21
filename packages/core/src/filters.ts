@@ -31,6 +31,11 @@ export const FILTER_PREDICATES = {
 type Predicates = typeof FILTER_PREDICATES
 type Kind = keyof Predicates
 
+/** Every predicate a list endpoint accepts on some kind of value: `eq`, `i_cont`, `not_in`, … */
+export type FilterPredicate = {
+  [K in Kind]: Predicates[K]['value' | 'list' | 'flag'][number]
+}[Kind]
+
 type Keyed<K extends string, P extends string, V> = { [Key in K as `${Key}_${P}`]?: V }
 
 type KindFilters<K extends string, Of extends Kind, V> = Keyed<

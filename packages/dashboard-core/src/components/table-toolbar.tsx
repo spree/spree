@@ -1,3 +1,4 @@
+import type { FilterPredicate } from '@spree/core'
 import {
   Button,
   Checkbox,
@@ -82,14 +83,16 @@ interface TableToolbarProps {
 
 // Operator labels are stored as i18n keys (`admin.components.table_toolbar.operators.*`)
 // and resolved with `t()` at render time so they follow the active language.
-const storeCodeOperators = [
+type OperatorOption = { value: FilterPredicate; labelKey: string }
+
+const storeCodeOperators: OperatorOption[] = [
   { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
   { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.is_not' },
   { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
   { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
 ]
 
-const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
+const operatorsByType: Record<string, OperatorOption[]> = {
   string: [
     // `i_cont` (case-insensitive) rather than `cont` — an admin typing
     // "2 years" expects to match "2 Years".

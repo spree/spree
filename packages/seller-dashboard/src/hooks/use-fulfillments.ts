@@ -1,6 +1,6 @@
+import type { CurrencyCode } from '@spree/core'
 import { useResourceKeyBuilder } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
-import type { CurrencyCode } from '@spree/seller-sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { sellerClient } from '../api-client'
 

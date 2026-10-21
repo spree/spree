@@ -1,4 +1,4 @@
-import { DimensionUnit, WeightUnit } from '@spree/admin-sdk'
+import { DimensionUnit, normalizeMoneyInput, WeightUnit } from '@spree/core'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { useCountries, useCountryDisplayName } from '@spree/dashboard-core'
 import {
@@ -169,39 +169,24 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
           set(`variants.${idx}.cartons_per_pallet`, change.value)
           break
         case 'cartonWeight': {
-          if (change.value == null || change.value.trim() === '') {
-            set(`variants.${idx}.carton_weight`, null)
-            break
-          }
-          const parsed = Number(change.value.trim().replace(',', '.'))
-          if (!Number.isFinite(parsed) || parsed < 0) break
-          set(`variants.${idx}.carton_weight`, parsed)
+          const parsed = readMeasure(change.value)
+          if (parsed !== undefined) set(`variants.${idx}.carton_weight`, parsed)
           break
         }
         case 'preorderable':
           set(`variants.${idx}.preorderable`, change.value)
           break
         case 'backorderLimit': {
-          if (change.value == null || change.value.trim() === '') {
-            set(`variants.${idx}.backorder_limit`, null)
-            break
+          const parsed = readMeasure(change.value)
+          if (parsed !== undefined) {
+            set(`variants.${idx}.backorder_limit`, parsed === null ? null : Math.trunc(parsed))
           }
-          const parsed = Number(change.value.trim().replace(',', '.'))
-          if (!Number.isFinite(parsed) || parsed < 0) break
-          set(`variants.${idx}.backorder_limit`, Math.trunc(parsed))
           break
         }
         default: {
-          // weight / height / width / depth — decimals. Accept a comma
-          // decimal (the cell ships raw input); ignore anything that doesn't
-          // parse to a non-negative number rather than mangling it.
-          if (change.value == null || change.value.trim() === '') {
-            set(`variants.${idx}.${change.field}`, null)
-            break
-          }
-          const parsed = Number(change.value.trim().replace(',', '.'))
-          if (!Number.isFinite(parsed) || parsed < 0) break
-          set(`variants.${idx}.${change.field}`, parsed)
+          // weight / height / width / depth
+          const parsed = readMeasure(change.value)
+          if (parsed !== undefined) set(`variants.${idx}.${change.field}`, parsed)
           break
         }
       }
@@ -290,4 +275,20 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
       </DialogContent>
     </Dialog>
   )
+}
+
+// Cells show numbers with a period, so they read back the same way, with
+// comma grouping (`1,500`) or a lone decimal comma (`2,5`) also accepted.
+const MEASURE_INPUT = /^(?:(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?|\d+,\d+)$/
+
+/**
+ * A measurement typed or pasted into a cell: `null` when cleared, `undefined`
+ * when it is not a non-negative number, so the cell keeps its value rather
+ * than being mangled.
+ */
+function readMeasure(value: string | null | undefined): number | null | undefined {
+  const typed = value?.trim() ?? ''
+  if (typed === '') return null
+  if (!MEASURE_INPUT.test(typed)) return undefined
+  return Number(normalizeMoneyInput(typed, 'en'))
 }

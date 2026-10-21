@@ -105,8 +105,8 @@ jobs:
       - name: Check SDK code lists are up to date
         run: |
           pnpm generate:code-lists
-          if [ -n "$(git status --porcelain -- packages/sdk-core/src/code-lists.generated.ts)" ]; then
-            git diff -- packages/sdk-core/src/code-lists.generated.ts
+          if [ -n "$(git status --porcelain -- packages/core/src/code-lists.generated.ts)" ]; then
+            git diff -- packages/core/src/code-lists.generated.ts
             echo "::error::SDK code lists are out of date. Run 'pnpm generate:code-lists' and commit the result."
             exit 1
           fi
@@ -153,7 +153,7 @@ jobs:
       # `pnpm publish` does in the release jobs below.
       - name: Pack packages
         run: |
-          for pkg in admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli; do
+          for pkg in core admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli; do
             pnpm --dir "packages/$pkg" pack --pack-destination "$RUNNER_TEMP/tarballs"
           done
 
@@ -444,6 +444,66 @@ jobs:
         if: steps.check.outputs.published == 'false'
         run: pnpm turbo build --filter=@spree/sdk && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
 
+  release-core:
+    name: "Core - Release"
+    needs: [check, scaffolded-app]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/core
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      # See release-sdk: Trusted Publishing needs a newer npm than Node 22 ships.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view @spree/core@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Unlike @spree/sdk, there is no older stable line to protect, so 0.x
+      # releases go to `latest`: that is what the npm page shows and what a
+      # plain `npm install @spree/core` resolves.
+      - name: Determine npm tag
+        id: tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: pnpm turbo build --filter=@spree/core && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
+
   release-admin-sdk:
     name: "Admin SDK - Release"
     needs: [check, scaffolded-app]
@@ -603,7 +663,9 @@ jobs:
     # same-push admin-sdk version bump must land on npm first, or installs of
     # the just-published dashboard packages fail until it does. (release-cli
     # waits on this job, completing the admin-sdk → dashboard → cli chain.)
-    needs: [check, scaffolded-app, release-admin-sdk]
+    # The same holds for @spree/core, which dashboard-core, dashboard-ui and
+    # dashboard depend on.
+    needs: [check, scaffolded-app, release-admin-sdk, release-core]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -665,7 +727,8 @@ jobs:
   # starter with ranges floored at these versions.
   release-seller:
     name: "Seller packages - Release"
-    needs: [check, scaffolded-app]
+    # Gated on release-core for the same reason as release-dashboard.
+    needs: [check, scaffolded-app, release-core]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:

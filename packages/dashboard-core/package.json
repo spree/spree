@@ -73,6 +73,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.2.2",
+    "@spree/core": "workspace:^",
     "@tailwindcss/vite": "^4.2.4",
     "@tanstack/react-hotkeys": "^0.14.3",
     "date-fns": "^4.4.0",

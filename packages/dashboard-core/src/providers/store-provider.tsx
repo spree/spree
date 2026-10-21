@@ -1,4 +1,5 @@
-import type { CurrencyCode, LocaleCode, Store } from '@spree/admin-sdk'
+import type { Store } from '@spree/admin-sdk'
+import type { CurrencyCode, LocaleCode } from '@spree/core'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useRef } from 'react'
 import { adminClient } from '../client'

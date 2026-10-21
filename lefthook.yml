@@ -55,10 +55,10 @@ pre-commit:
       # needs fresh lists.
       glob:
         - "docs/api-reference/{store,admin}.yaml"
-        - "packages/sdk-core/scripts/generate-code-lists.ts"
+        - "packages/core/scripts/generate-code-lists.ts"
       run: |
         pnpm generate:code-lists
-        git add packages/sdk-core/src/code-lists.generated.ts
+        git add packages/core/src/code-lists.generated.ts
 
 pre-push:
   commands:

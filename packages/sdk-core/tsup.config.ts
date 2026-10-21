@@ -5,7 +5,9 @@ export default defineConfig({
     index: 'src/index.ts',
   },
   format: ['cjs', 'esm'],
-  dts: true,
+  // Inlined, so the SDKs that bundle this package stay self-contained.
+  dts: { resolve: ['@spree/core'] },
+  noExternal: ['@spree/core'],
   splitting: false,
   sourcemap: true,
   clean: true,

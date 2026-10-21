@@ -1,4 +1,4 @@
-import { compareMoney, isDecimalString } from '@spree/admin-sdk'
+import { compareMoney, isDecimalString } from '@spree/core'
 import { z } from 'zod'
 
 const nonNegativeDecimal = z

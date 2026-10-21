@@ -31,6 +31,7 @@ Use `/project:create-plan` and `/project:update-plan` for plan management, and `
 | `packages/sdk` | `@spree/sdk` — TypeScript Store API client |
 | `packages/admin-sdk` | `@spree/admin-sdk` — TypeScript Admin API client |
 | `packages/seller-sdk` | `@spree/seller-sdk` — TypeScript Seller API client |
+| `packages/core` | `@spree/core` — universal code with no HTTP: code lists, money helpers, filter vocabulary (published; the base for shared TypeScript code) |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
@@ -715,6 +716,10 @@ When displaying amount or percentage fields please always use `<InputGroup>` wit
 
 `Currency` should be always rendered as a dropdown using `currency-select.tsx` component, this also applies to Preferences fields representing currency
 `Country` and `Countries` fields should always use `copuntry-combobox.tsx` component, this also applies to preferences fields representing a single country or multiple choices
+
+### @spree/core — Universal code
+
+Published package for code that is not tied to HTTP or a framework: the code lists (`pnpm generate:code-lists`) and code-shape checks, unit systems, display names, money helpers (arithmetic, percentages, reading typed amounts) and the filter vocabulary. The dashboard packages and the seller panel import it directly — never through `@spree/admin-sdk` / `@spree/seller-sdk`, which re-export the same code; `@spree/dashboard-core` still re-exports its money helpers for plugin authors. Code any client could use — a conversion, a format, a validation rule shared with the server — goes here, never into an SDK or a dashboard package. No runtime dependencies. `@spree/sdk-core` re-exports it and the SDKs bundle it, offering its code lists and money helpers under the same names as before. The code generators read it from source (the `@spree/source` export condition), so they run before anything is built.
 
 ### @spree/sdk-core — Shared HTTP Layer
 
