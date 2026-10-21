@@ -122,6 +122,43 @@ module Spree
       end
     end
 
+    # Replaces the token, revoking whoever held the old one. A completion
+    # interrupted after its draft order was created leaves that order (and a
+    # multi-seller group with its orders) holding the old token, which is
+    # what the orders lookup matches on — so the purchase moves with the cart.
+    #
+    # @return [String] the new token
+    def rotate_token!
+      old_token = token
+      regenerate_token
+
+      orders = Spree::Order.where(cart_id: id)
+      orders = orders.or(Spree::Order.where(order_group_id: order_group.id)) if order_group
+      orders.where(token: old_token).update_all(token: token, updated_at: Time.current)
+      order_group.update_columns(token: token, updated_at: Time.current) if order_group&.token == old_token
+
+      token
+    end
+
+    # A link that opens this cart in the store's own checkout, for a buyer
+    # handed over by an agent. It carries the token because the browser
+    # arriving has no other claim to the cart; the storefront checks the pair
+    # against the Store API before adopting it.
+    #
+    # @return [String, nil] nil when the store has no web storefront to open
+    def storefront_checkout_url
+      base = store.configured_storefront_url
+      "#{base}/cart/resume?#{{ id: prefixed_id, token: token }.to_query}" if base
+    end
+
+    # The storefront's confirmation page for what this cart became.
+    #
+    # @return [String, nil] nil when the store has no web storefront
+    def storefront_order_url
+      base = store.configured_storefront_url
+      "#{base}/order-placed/#{prefixed_id}" if base
+    end
+
     # A completed cart is an immutable audit record — post-checkout life
     # belongs to the order. Blocks save/update_columns/touch/destroy at the
     # model level; the completion write itself passes because it fires while

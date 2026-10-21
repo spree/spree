@@ -843,7 +843,8 @@
                       "developer/mcp/quick-start",
                       "developer/mcp/tools",
                       "developer/mcp/permissions",
-                      "developer/mcp/custom-tools"
+                      "developer/mcp/custom-tools",
+                      "developer/mcp/storefront"
                     ],
                     "icon": "plug"
                   },

@@ -6464,3 +6464,18 @@ in each gem's `post_install_message`, not in the CLI.
 the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
 already lists is reported as installed rather than ejecting the project to
 re-add it.
+
+## 2026-10-20 — The storefront MCP speaks UCP 2026-08-25, and checkout hands off
+
+The shopper's MCP surface (`docs/plans/6.1-store-mcp-server.md`) uses the
+Universal Commerce Protocol's tool names and objects rather than a Spree
+vocabulary: spec-following agents look for `search_catalog` and `create_cart`,
+and platforms with their own names renamed them after agents failed to find
+them. A UCP cart or
+checkout id is the cart's secure token, never its prefixed id, because the
+prefixed id encodes a sequential key and the id is the only credential a guest
+agent holds. Checkout answers `requires_escalation` with a link that opens the
+same cart in the store's own checkout; no payment passes through the server
+until in-agent completion is designed. The storefront replaces the cart token
+when it opens that link, so the link works once and its sender loses the
+buyer's details.

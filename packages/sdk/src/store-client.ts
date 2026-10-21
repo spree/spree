@@ -567,6 +567,16 @@ export class StoreClient {
       this.request<Cart>('PATCH', `/carts/${cartId}/associate`, options),
 
     /**
+     * Replace a guest cart's token, so whoever built the cart (an AI shopping
+     * agent, or anyone who sent its checkout link) loses access to it.
+     * Returns the cart carrying the new token; store it in place of the old one.
+     * @param cartId - Cart prefixed ID
+     * @param options - Must include `spreeToken` (the current cart token)
+     */
+    rotateToken: (cartId: string, options: RequestOptions): Promise<Cart> =>
+      this.request<Cart>('PATCH', `/carts/${cartId}/token`, options),
+
+    /**
      * Complete the cart and finalize the purchase.
      * Returns an Order (not Cart). In a marketplace, a cart holding several
      * sellers' goods divides into one order per seller, and the group it

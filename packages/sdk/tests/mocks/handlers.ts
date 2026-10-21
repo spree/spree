@@ -263,6 +263,7 @@ export const handlers = [
   http.delete(`${API_PREFIX}/carts/:cartId`, () => new HttpResponse(null, { status: 204 })),
 
   http.patch(`${API_PREFIX}/carts/:cartId/associate`, () => HttpResponse.json(fixtures.cart)),
+  http.patch(`${API_PREFIX}/carts/:cartId/token`, () => HttpResponse.json(fixtures.cart)),
 
   http.post(`${API_PREFIX}/carts/:cartId/complete`, () => HttpResponse.json(fixtures.order)),
 

@@ -61,6 +61,33 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
 
       expect(response.status).to eq(401)
     end
+
+    # The Store API rate-limits by key and client address, and prices and
+    # gates the catalog by channel. Without them every shopper behind one
+    # public key would share one bucket and see the default channel.
+    it 'carries the client address and channel along with it' do
+      key = create(:api_key, :publishable, store: store)
+      headers = { 'HTTP_X_SPREE_API_KEY' => key.token, 'HTTP_HOST' => 'www.example.com', 'REMOTE_ADDR' => '203.0.113.9',
+                  'HTTP_X_SPREE_CHANNEL' => 'wholesale' }
+      expect(Rails.application).to receive(:call).
+        with(hash_including('REMOTE_ADDR' => '203.0.113.9', 'HTTP_X_SPREE_CHANNEL' => 'wholesale')).and_call_original
+
+      dispatcher_for(key, headers: headers).call(method: :get, path: '/api/v3/store/products')
+    end
+
+    # A storefront tool adds the cart token of the cart it names; it never
+    # gets to choose who is asking.
+    it 'cannot be replaced by a header a single call adds' do
+      writer = create(:api_key, :secret, store: store, scopes: ['write_all'])
+      reader_key = create(:api_key, :secret, store: store, scopes: ['read_products'])
+
+      response = dispatcher_for(reader_key).call(
+        method: :post, path: '/api/v3/admin/products', body: { name: 'No' },
+        headers: { 'HTTP_X_SPREE_API_KEY' => writer.plaintext_token, 'HTTP_AUTHORIZATION' => 'Bearer x' }
+      )
+
+      expect(response.status).to eq(403)
+    end
   end
 
   # `Spree::Current` is a CurrentAttributes, which does not reset for a

@@ -61,7 +61,14 @@ module Spree
 
       # Only what the Admin API reads. Anything else a client sent is the MCP
       # request's business, not the operation's.
-      FORWARDED_HEADERS = %w[HTTP_AUTHORIZATION HTTP_X_SPREE_API_KEY HTTP_HOST].freeze
+      #
+      # The client's address travels too: a rate limit keyed by key and
+      # address would otherwise put every caller of a public key in one bucket.
+      FORWARDED_HEADERS = %w[HTTP_AUTHORIZATION HTTP_X_SPREE_API_KEY HTTP_X_SPREE_CHANNEL HTTP_HOST REMOTE_ADDR].freeze
+
+      # What a single call may add. Never the caller's credential: a tool
+      # names a record, it does not get to choose who is asking for it.
+      CALL_HEADERS = %w[HTTP_X_SPREE_TOKEN].freeze
 
       # @param context [Spree::AgentTools::Context]
       def initialize(context)
@@ -75,9 +82,12 @@ module Spree
       # @param body [Hash, nil] the request body for a write. A value that
       #   responds to `read` makes the request multipart, which is how the
       #   upload endpoint takes bytes.
+      # @param headers [Hash] Rack headers this one call adds — a storefront
+      #   cart's `HTTP_X_SPREE_TOKEN`, which belongs to the cart a tool names
+      #   rather than to the caller
       # @return [Response]
-      def call(method:, path:, params: {}, body: nil)
-        env = build_env(method, path, params, body)
+      def call(method:, path:, params: {}, body: nil, headers: {})
+        env = build_env(method, path, params, body, headers)
 
         # `Spree::Current` is an `ActiveSupport::CurrentAttributes`, which does
         # NOT reset for a request made inside another request — the executor
@@ -116,7 +126,7 @@ module Spree
 
       private
 
-      def build_env(method, path, params, body)
+      def build_env(method, path, params, body, headers)
         query = params.present? ? Rack::Utils.build_nested_query(stringify(params)) : nil
 
         env = Rack::MockRequest.env_for(
@@ -126,7 +136,7 @@ module Spree
           **payload_env(body)
         ).compact
 
-        forwarded.each { |name, value| env[name] = value }
+        forwarded.merge(headers.to_h.slice(*CALL_HEADERS)).each { |name, value| env[name] = value }
         env['HTTP_ACCEPT'] = 'application/json'
         env
       end

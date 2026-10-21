@@ -54,6 +54,7 @@ Spree::Core::Engine.add_routes do
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'carts/tax_identifiers'
           resource :po_document, only: [:show, :create, :destroy], controller: 'carts/po_documents'
+          resource :token, only: [:update], controller: 'carts/tokens'
         end
 
         # Delivery methods (pickup discovery)

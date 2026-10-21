@@ -329,6 +329,30 @@ describe Spree::Cart, type: :model do
     end
   end
 
+  describe '#rotate_token!' do
+    let(:cart) { create(:cart, store: store) }
+    let!(:old_token) { cart.token }
+
+    it 'replaces the token' do
+      expect(cart.rotate_token!).not_to eq(old_token)
+      expect(cart.reload.token).not_to eq(old_token)
+    end
+
+    # A completion interrupted after its draft order was created: the old
+    # token must not keep reading the purchase the cart turns into.
+    it 'moves the token of a draft order and a group made from the cart' do
+      order = create(:order, store: store, token: old_token, cart: cart)
+      group = create(:order_group, store: store, token: old_token, cart: cart)
+      child = create(:order, store: store, token: old_token, order_group: group)
+      unrelated = create(:order, store: store)
+
+      new_token = cart.rotate_token!
+
+      expect([order, group, child].map { |record| record.reload.token }).to all(eq(new_token))
+      expect(unrelated.reload.token).not_to eq(new_token)
+    end
+  end
+
   describe '#associate_customer!' do
     let(:cart) { create(:cart, store: store, customer: nil, email: nil) }
     let(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
