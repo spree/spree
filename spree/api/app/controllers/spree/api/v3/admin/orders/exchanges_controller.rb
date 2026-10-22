@@ -50,9 +50,14 @@ module Spree
             end
 
             before_action :set_resource, only: [:show, :update, :approve, :receive, :fulfill, :cancel]
-            # Fulfilling settles the price difference, which is a refund when
-            # the replacements cost less than what came back.
-            before_action :require_refund_permission!, only: :fulfill, if: -> { @resource.price_difference.negative? }
+            # Fulfilling settles the difference on the units that actually came
+            # back, a credit to the customer when the replacements cost less.
+            # That figure is only known once the tax rows are rewritten for
+            # those units, inside the fulfillment itself, so the gate cannot be
+            # narrowed on the announced difference: a line received at zero
+            # units would offset a credit still paid on another. Every
+            # fulfillment settles money, so all of them take the refund authority.
+            before_action :require_refund_permission!, only: :fulfill
 
             # PATCH /api/v3/admin/orders/:order_id/exchanges/:id
             #
