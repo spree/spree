@@ -195,11 +195,24 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
+    # The grant outlives the role it was approved under, so membership is
+    # asked on every request rather than trusted from consent.
+    it 'refuses a token whose owner no longer holds a role on the store' do
+      raw = oauth_token(scopes: 'read_products')
+      admin.role_users.destroy_all
+
+      post_with_token(raw)
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
     # An MCP client sends a URL and a bearer token and nothing else, so the
     # token has to select its own store — otherwise the endpoint would serve
-    # the default store whatever the grant said.
+    # the default store whatever the grant said. The owner holds a role on
+    # that store, as anyone who could have approved the grant does.
     it 'serves the store its application belongs to, with no store header' do
       other = create(:store, code: "other-#{SecureRandom.hex(4)}")
+      create(:role_user, user: admin, role: create(:role, resource: other))
       application = other.oauth_applications.create!(
         name: 'Other store client', redirect_uri: 'https://example.test/cb', confidential: false
       )

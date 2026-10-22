@@ -42,9 +42,12 @@ module Spree
           # API and the `spree api` CLI; it is deliberately not accepted
           # here.
           #
-          # The grant already bound the token to a real admin user and the
-          # audience check confirmed it was issued for this endpoint, which
-          # is the assurance `require_store_membership!` gives a JWT.
+          # The grant bound the token to a real admin user and the audience
+          # check confirmed it was issued for this endpoint. Whether that
+          # admin still belongs to the store is asked on every request all
+          # the same, as it is for a JWT: a grant is approved while its owner
+          # holds a role here and outlives it, and a staffer removed since
+          # must not keep working through an agent.
           def authenticate_admin!
             owner = oauth_resource_owner
             # A `before_action` halts on a render, not on a falsy return, so
@@ -55,6 +58,8 @@ module Spree
 
             @current_api_key = nil
             @current_user = owner
+            return refuse_unauthenticated unless current_user_member_of_store?
+
             true
           end
 

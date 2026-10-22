@@ -51,9 +51,12 @@ module Spree
           end
 
           # Then an OAuth token, which carries both the admin who granted it
-          # and the store its client was registered for, so neither a JWT's
-          # store-membership check nor a key's store selection applies.
-          return true if authenticate_admin_oauth_token
+          # and the store its client was registered for, so a key's store
+          # selection does not apply. The owner's membership is checked
+          # afresh all the same: a grant is approved while they hold a role
+          # here and outlives it, and a staffer removed since must not keep
+          # working through an agent.
+          return authenticate_admin_oauth_token if admin_oauth_token
 
           # Fall back to JWT authentication, then bind the admin to the store
           # they hold a role on (the token itself is store-agnostic).
@@ -70,17 +73,17 @@ module Spree
         # good across the rest — so a token naming only the MCP endpoint is
         # refused here, and the MCP controller refuses one naming only this.
         #
-        # @return [Boolean] true when the request is now authenticated
+        # @return [Boolean] true when the request is now authenticated; a
+        #   refusal has been rendered otherwise
         def authenticate_admin_oauth_token
-          token = admin_oauth_token
-          return false if token.nil?
-
-          owner = token.resource_owner
-          return false unless owner.is_a?(Spree.admin_user_class)
+          owner = admin_oauth_token.resource_owner
+          # A token owned by anything but an admin is no credential here, and
+          # is refused the way an unreadable bearer token is.
+          return require_authentication! unless owner.is_a?(Spree.admin_user_class)
 
           @current_api_key = nil
           @current_user = owner
-          true
+          require_store_membership!
         end
 
         # @return [Spree::OauthAccessToken, nil]

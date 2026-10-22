@@ -32,6 +32,18 @@ RSpec.describe 'Admin API OAuth access', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    # A grant is approved while its owner holds a role on the store and
+    # outlives that role. Only the JWT path asked whether the admin still
+    # belonged, so a staffer removed from the store kept working through
+    # their agent.
+    it 'is refused once its owner no longer holds a role on the store' do
+      admin.role_users.destroy_all
+
+      get_with(token, '/api/v3/admin/products')
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
     # The whole point of a grant: it subtracts from what the approver holds.
     # This regressed once because the module defining the narrowing hook was
     # included *after* the one overriding it, so the override was dead code
