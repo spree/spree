@@ -157,7 +157,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
     ```ruby config/initializers/spree.rb
     Spree.ransack.add_attribute(Spree::Product, :erp_id)
     Spree.ransack.add_association(Spree::Product, :brand)
-    Spree.ransack.add_scope(Spree::Product, :featured)
+    Spree.ransack.add_scope(Spree::Product, :featured, type: 'boolean')
     ```
 
     See [Search & Filtering](/developer/core-concepts/search-filtering).
