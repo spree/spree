@@ -72,8 +72,10 @@ module Spree
 
       # A capture takes some or all of what was authorized, never more: a
       # gateway may let a larger figure through, and the books would then
-      # carry a capture the authorization never covered.
+      # carry a capture the authorization never covered. Nor nothing, or less
+      # than nothing — every caller gets the same rule, not only the API.
       def ensure_within_payment_amount
+        failure(payment, :capture_amount_not_positive) unless @amount.positive?
         return if @amount <= payment.amount
 
         failure(payment, :capture_exceeds_payment_amount)

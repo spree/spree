@@ -62,6 +62,15 @@ RSpec.describe Spree::Payments::Capture do
       expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('10.04'))
     end
 
+    it 'refuses a capture of nothing' do
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('0'))
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:capture_amount_not_positive)
+    end
+
     it 'refuses to capture more than the payment amount' do
       expect(gateway).not_to receive(:capture)
 
