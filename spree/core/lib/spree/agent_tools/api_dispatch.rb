@@ -59,9 +59,25 @@ module Spree
         end
       end
 
-      # Only what the Admin API reads. Anything else a client sent is the MCP
-      # request's business, not the operation's.
-      FORWARDED_HEADERS = %w[HTTP_AUTHORIZATION HTTP_X_SPREE_API_KEY HTTP_HOST].freeze
+      # The header each kind of caller authenticates with. Both are listed
+      # because either kind can dispatch, but {#forwarded} repeats only the
+      # one this context actually holds: the Admin API tries a secret key
+      # before a bearer token, so a key sent beside a grant would otherwise
+      # authenticate every call a tool makes — in the key's store, under the
+      # key's scopes, recording the key as the actor — while the tool list
+      # was built from the grant.
+      CREDENTIAL_HEADERS = { user: 'HTTP_AUTHORIZATION', api_key: 'HTTP_X_SPREE_API_KEY' }.freeze
+
+      # What `ActionDispatch::RemoteIp` reads to work out the client address.
+      # Repeated so the inner request is throttled as the caller: an env
+      # built from nothing has no address at all, and every dispatched call
+      # in the process then counted against one shared rate-limit bucket.
+      ADDRESS_ENV = %w[REMOTE_ADDR HTTP_X_FORWARDED_FOR HTTP_CLIENT_IP].freeze
+
+      # Everything an edge may hand a context for a dispatched call to
+      # repeat. Anything else a client sent is the MCP request's business,
+      # not the operation's.
+      FORWARDED_ENV = (CREDENTIAL_HEADERS.values + %w[HTTP_HOST] + ADDRESS_ENV).freeze
 
       # @param context [Spree::AgentTools::Context]
       def initialize(context)
@@ -171,11 +187,14 @@ module Spree
           "\r\n--#{boundary}--\r\n".dup.force_encoding(Encoding::BINARY)
       end
 
-      # The credential the caller authenticated with, repeated verbatim. Never
-      # an internal header that skips authentication: that would rebuild the
-      # second security boundary this class exists to remove.
+      # The credential the caller authenticated with, repeated verbatim — and
+      # only that one. Never an internal header that skips authentication:
+      # that would rebuild the second security boundary this class exists to
+      # remove.
       def forwarded
-        @context.request_headers.slice(*FORWARDED_HEADERS)
+        credential = CREDENTIAL_HEADERS.fetch(@context.user_principal? ? :user : :api_key)
+
+        @context.request_headers.slice(credential, 'HTTP_HOST', *ADDRESS_ENV)
       end
 
       def read(rack_body)

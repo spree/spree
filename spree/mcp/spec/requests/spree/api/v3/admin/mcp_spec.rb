@@ -69,6 +69,19 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
+    # The Admin API tries a secret key before a bearer token, so a key sent
+    # beside the grant would have authenticated every call a tool makes — in
+    # the key's store and under its scopes — while the tool list was built
+    # from the grant. Two credentials never act at once.
+    it 'refuses a request carrying a secret key beside the grant' do
+      api_key = create(:api_key, :secret, store: store, scopes: ['write_all'])
+
+      post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{token}",
+                                        'X-Spree-API-Key' => api_key.plaintext_token })
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
     # Parsing the bearer header must not backtrack: this header arrives
     # unauthenticated, so a pathological value is free to send.
     it 'parses a bearer header of many spaces without stalling' do

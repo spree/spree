@@ -61,6 +61,83 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
 
       expect(response.status).to eq(401)
     end
+
+    # Reproduced before the fix: the Admin API tries a secret key before a
+    # bearer token, so a key sent beside the grant authenticated every
+    # dispatched call — in the key's store, under the key's scopes, with the
+    # key recorded as the actor — while the tool list was built from the
+    # grant.
+    it 'is the grant alone, even when a secret key for another store is sent beside it' do
+      admin = create(:admin_user)
+      other_store = create(:store, code: "other-#{SecureRandom.hex(4)}")
+      other_key = create(:api_key, :secret, store: other_store, scopes: ['read_products'])
+      create(:product, store: store, name: 'Ours')
+      create(:product, store: other_store, name: 'Theirs')
+      application = store.oauth_applications.create!(name: 'Probe', redirect_uri: 'https://example.test/cb',
+                                                     confidential: false)
+      grant = Spree::OauthAccessToken.create!(
+        application: application, resource_owner: admin, scopes: 'read_products',
+        expires_in: 7200, resource: 'http://www.example.com/api/v3/admin'
+      ).plaintext_token
+      context = Spree::AgentTools::Context.new(
+        store: store, user: admin, granted_scopes: ['read_products'],
+        request_headers: { 'HTTP_AUTHORIZATION' => "Bearer #{grant}",
+                           'HTTP_X_SPREE_API_KEY' => other_key.plaintext_token,
+                           'HTTP_HOST' => 'www.example.com' }
+      )
+
+      response = described_class.new(context).call(method: :get, path: '/api/v3/admin/products')
+      names = response.data.map { |row| row['name'] }
+
+      expect(response).to be_success
+      expect(names).to include('Ours')
+      expect(names).not_to include('Theirs')
+    end
+  end
+
+  describe 'what the inner request carries' do
+    def inner_env
+      captured = nil
+      allow(Rails.application).to receive(:call).and_wrap_original do |original, env|
+        captured = env
+        original.call(env)
+      end
+      yield
+      captured
+    end
+
+    it 'repeats the key, and not a bearer token sent beside it, for a caller acting under a key' do
+      headers = { 'HTTP_X_SPREE_API_KEY' => reader.plaintext_token, 'HTTP_AUTHORIZATION' => 'Bearer other',
+                  'HTTP_HOST' => 'www.example.com' }
+
+      env = inner_env { dispatcher_for(reader, headers: headers).call(method: :get, path: '/api/v3/admin/products') }
+
+      expect(env).to include('HTTP_X_SPREE_API_KEY' => reader.plaintext_token, 'HTTP_HOST' => 'www.example.com')
+      expect(env).not_to have_key('HTTP_AUTHORIZATION')
+    end
+
+    # The inner request runs through the same middleware as the outer one,
+    # so handing it the same address entries makes it count against the
+    # caller's own throttle bucket. Built from nothing it had no address at
+    # all, and every dispatched call in the process shared one bucket.
+    it 'carries the caller\'s address so the call is throttled as the caller' do
+      headers = { 'HTTP_X_SPREE_API_KEY' => reader.plaintext_token, 'REMOTE_ADDR' => '203.0.113.9',
+                  'HTTP_X_FORWARDED_FOR' => '198.51.100.7' }
+
+      env = inner_env { dispatcher_for(reader, headers: headers).call(method: :get, path: '/api/v3/admin/products') }
+
+      expect(env).to include('REMOTE_ADDR' => '203.0.113.9', 'HTTP_X_FORWARDED_FOR' => '198.51.100.7')
+    end
+
+    it 'forwards nothing else a client sent' do
+      headers = { 'HTTP_X_SPREE_API_KEY' => reader.plaintext_token, 'HTTP_COOKIE' => 'session=1',
+                  'HTTP_X_SPREE_STORE_ID' => 'store_x' }
+
+      env = inner_env { dispatcher_for(reader, headers: headers).call(method: :get, path: '/api/v3/admin/products') }
+
+      expect(env).not_to have_key('HTTP_COOKIE')
+      expect(env).not_to have_key('HTTP_X_SPREE_STORE_ID')
+    end
   end
 
   # `Spree::Current` is a CurrentAttributes, which does not reset for a

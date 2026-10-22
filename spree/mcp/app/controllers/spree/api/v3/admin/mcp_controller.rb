@@ -6,7 +6,7 @@ module Spree
         #
         # An ordinary admin API controller rather than the gem's Rack
         # transport, which takes one pre-built server for every request and so
-        # cannot carry a per-request principal. Here the key authenticates
+        # cannot carry a per-request principal. Here the grant authenticates
         # through the concern every other admin endpoint uses, selects the
         # store the same way, and gets a server built for it alone.
         #
@@ -87,7 +87,7 @@ module Spree
               # own credential, repeated. The grant is what bounds the agent,
               # so the inner request must be the same grant — not a wider one
               # minted on its behalf.
-              request_headers: request.env.slice(*Spree::AgentTools::ApiDispatch::FORWARDED_HEADERS)
+              request_headers: request.env.slice(*Spree::AgentTools::ApiDispatch::FORWARDED_ENV)
             )
           end
 
@@ -156,20 +156,27 @@ module Spree
             owner if owner.is_a?(Spree.admin_user_class)
           end
 
-          # The error text is what both the model and the person read, so it
-          # says which header to set and where the key comes from rather than
-          # only that something was missing.
-          # Two ways in: a secret key a developer configured, or an OAuth
-          # token a merchant approved. A 401 carries the OAuth challenge, so
-          # a consumer client that arrives with nothing discovers how to sign
-          # in rather than simply failing.
           # A 401 carrying the discovery header, which is how a client that
           # arrived with nothing learns where to sign in rather than simply
           # failing.
+          #
+          # A secret key beside the grant is refused outright rather than
+          # ignored: the Admin API tries a key before a bearer token, so one
+          # that slipped through to a dispatched tool call would authenticate
+          # it — in the key's store, under the key's scopes — while the tool
+          # list was built from the grant. Two credentials never act at once.
           def require_oauth_token!
+            return refuse_unauthenticated if extract_api_key.present?
             return if current_oauth_token.present?
 
             refuse_unauthenticated
+          end
+
+          # The token the rate limiter buckets this request by. Named for the
+          # hook RateLimitHeaders reads, and answered from the lookup this
+          # controller already memoized rather than a second query.
+          def admin_oauth_token
+            current_oauth_token
           end
 
           def refuse_unauthenticated

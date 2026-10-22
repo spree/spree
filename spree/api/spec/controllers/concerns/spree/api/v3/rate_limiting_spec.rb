@@ -107,6 +107,38 @@ RSpec.describe 'Rate Limiting', type: :controller do
         expect(Rails.cache).to have_received(:increment)
           .with('rate-limit:api_v3:0.0.0.0', 1, expires_in: 60.seconds)
       end
+
+      # Hosted connectors reach the API from a handful of shared addresses,
+      # so one merchant's agent would exhaust every other merchant's bucket
+      # on the same vendor. A grant is one caller the way a secret key is.
+      it 'counts a delegated grant against a bucket of its own' do
+        application = store.oauth_applications.create!(name: 'Probe', redirect_uri: 'https://example.test/cb',
+                                                       confidential: false)
+        token = Spree::OauthAccessToken.create!(
+          application: application, resource_owner: admin_user, scopes: 'read_settings',
+          expires_in: 3600, resource: 'http://test.host/api/v3/admin'
+        )
+        request.headers['Authorization'] = "Bearer #{token.plaintext_token}"
+        allow(Rails.cache).to receive(:increment).and_return(1)
+
+        get :index
+
+        expect(Rails.cache).to have_received(:increment)
+          .with("rate-limit:api_v3:oauth:#{token.id}", 1, expires_in: 60.seconds)
+      end
+
+      # A bearer value that resolves to no grant must not earn a bucket of
+      # its own, or a flood of invented tokens would escape the address
+      # bucket entirely.
+      it 'keeps an unknown bearer token in the address bucket' do
+        request.headers['Authorization'] = 'Bearer not-a-grant'
+        allow(Rails.cache).to receive(:increment).and_return(1)
+
+        get :index
+
+        expect(Rails.cache).to have_received(:increment)
+          .with('rate-limit:api_v3:0.0.0.0', 1, expires_in: 60.seconds)
+      end
     end
   end
 

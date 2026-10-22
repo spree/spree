@@ -8,9 +8,11 @@ module Spree
     # Two kinds of caller, because the registry serves two adapters. The
     # dashboard assistant asks on behalf of a signed-in admin, so its context
     # carries a user and that user's ability. The MCP server asks on behalf of
-    # a secret API key, so its context carries the key and the key's scopes.
-    # Whichever it is, {#principal} is the thing that acted — which is what a
-    # workflow records as the canceller or approver.
+    # the admin who approved a grant, so its context carries that user and
+    # the grant's scopes; a context built for a secret API key carries the key
+    # and the key's scopes instead. Whichever it is, {#principal} is the thing
+    # that acted — which is what a workflow records as the canceller or
+    # approver.
     #
     #   Context.new(store: store, user: admin)
     #   Context.new(store: store, api_key: key)
@@ -40,10 +42,12 @@ module Spree
       #   grant carries. They *narrow* the user's own authority and can never
       #   widen it, so a merchant who consented to reading products does not
       #   hand over everything their role could do.
-      # @return [Hash] the Rack headers the caller authenticated with, which a
-      #   dispatched Admin API call repeats verbatim. Empty for a caller that
-      #   arrived without a request — a job, a console, a spec — which can
-      #   only reach tools that do not dispatch.
+      # @return [Hash] the Rack env entries of the request the caller
+      #   authenticated with — its credential, host and client address — which
+      #   a dispatched Admin API call repeats (see
+      #   {ApiDispatch::FORWARDED_ENV}). Empty for a caller that arrived
+      #   without a request — a job, a console, a spec — which can only reach
+      #   tools that do not dispatch.
       attr_reader :request_headers
 
       def initialize(store:, user: nil, api_key: nil, ability: nil, granted_scopes: nil,

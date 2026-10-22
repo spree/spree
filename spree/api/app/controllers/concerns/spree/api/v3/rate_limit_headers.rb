@@ -9,8 +9,10 @@ module Spree
       # Secret keys (sk_*) are single server-to-server callers, so each key
       # gets one bucket across the whole API. Publishable keys (pk_*) are
       # shared by every storefront visitor, so their bucket includes the
-      # client IP — the limit is per visitor, never per storefront. Requests
-      # without an API key (admin JWT traffic) fall back to the client IP.
+      # client IP — the limit is per visitor, never per storefront. A
+      # delegated grant (an OAuth token) is one caller the way a secret key
+      # is, so it gets a bucket of its own. Requests without any of these
+      # (admin JWT traffic) fall back to the client IP.
       module RateLimitHeaders
         extend ActiveSupport::Concern
 
@@ -43,9 +45,21 @@ module Spree
             Spree::ApiKey.compute_token_digest(api_key)
           elsif api_key
             "#{api_key}:#{request.remote_ip}"
+          elsif (token = rate_limit_oauth_token)
+            "oauth:#{token.id}"
           else
             request.remote_ip
           end
+        end
+
+        # Hosted connectors reach the API from a handful of shared addresses,
+        # so an address bucket would let one merchant's agent exhaust every
+        # other merchant's on the same vendor. Only a token that resolves
+        # counts: a bearer value matching nothing stays in the address bucket,
+        # so a flood of invented tokens cannot escape it. The lookup is the
+        # one authentication memoizes, so it costs no second query.
+        def rate_limit_oauth_token
+          respond_to?(:admin_oauth_token, true) ? admin_oauth_token : nil
         end
 
         def set_rate_limit_headers
