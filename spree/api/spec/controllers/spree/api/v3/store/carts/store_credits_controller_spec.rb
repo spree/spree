@@ -63,6 +63,24 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
       end
     end
 
+    # The token proves the caller holds the cart, not that the balance it
+    # would spend is theirs.
+    context 'as another customer holding the cart token' do
+      let(:other_customer) { create(:user) }
+
+      before do
+        request.headers['Authorization'] = "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(other_customer)}"
+        request.headers['X-Spree-Token'] = order.token
+      end
+
+      it 'refuses to spend the owner\'s store credit' do
+        post :create, params: { cart_id: order.prefixed_id, amount: '10.00' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(order.reload.payments.store_credits).to be_empty
+      end
+    end
+
     context 'authentication' do
       it 'requires authentication' do
         request.headers['Authorization'] = nil
