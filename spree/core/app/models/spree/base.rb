@@ -46,13 +46,21 @@ class Spree::Base < ApplicationRecord
     select("#{klass.table_name}.*").select(*(fields || klass::TRANSLATABLE_FIELDS))
   }
 
+  # The store's own rows of this model, through the association named after
+  # it. A model the store has no association for answers nothing: a tenant
+  # boundary that quietly widened to every store's rows is how a cross-store
+  # read ships unnoticed. Global reference data (countries, roles) and
+  # records reached through a parent are fetched as such, never through here.
+  #
+  # @param store [Spree::Store]
+  # @return [ActiveRecord::Relation]
   def self.for_store(store)
     plural_model_name = model_name.plural.gsub(/spree_/, '').to_sym
 
     if store.respond_to?(plural_model_name)
       store.send(plural_model_name)
     else
-      self
+      none
     end
   end
 

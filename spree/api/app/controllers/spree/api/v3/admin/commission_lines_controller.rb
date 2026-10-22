@@ -23,8 +23,8 @@ module Spree
 
           # Reached through the store's own orders: the lines carry no store of
           # their own, and the order is what ties them to one.
-          def scope
-            super.where(order_id: current_store.orders.select(:id))
+          def store_scope
+            model_class.where(order_id: current_store.orders.select(:id))
           end
 
           # Every association the serializer reads, so a page of lines costs a

@@ -3,6 +3,7 @@ import { defineTable, Money } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
+import { ActorLabel } from '../components/spree/actor-label'
 import { adminUserAutocompleteProps } from '../hooks/use-admin-users'
 import { customerAutocompleteProps } from '../hooks/use-customers'
 import { erasedFieldValue } from '../lib/erased-customer'
@@ -140,7 +141,7 @@ defineTable<StoreCredit>('store-credits', {
       expand: 'created_by',
       sortable: false,
       default: false,
-      render: (credit) => credit.created_by?.email ?? '—',
+      render: (credit) => (credit.created_by ? <ActorLabel actor={credit.created_by} /> : '—'),
     },
     {
       key: 'created_at',

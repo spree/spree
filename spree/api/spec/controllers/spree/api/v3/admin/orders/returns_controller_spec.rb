@@ -266,6 +266,22 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       end
     end
 
+    context 'with a key that may refund' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders write_refunds]) }
+      let(:headers) { api_key_headers }
+
+      it 'refunds to store credit issued by the key' do
+        patch :refund, params: {
+          order_id: order.prefixed_id,
+          id: return_record.prefixed_id,
+          refund_method: 'store_credit'
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(Spree::StoreCredit.find_by(originator: return_record).created_by).to eq(secret_api_key)
+      end
+    end
+
     it 'rejects an unknown refund method' do
       patch :refund, params: {
         order_id: order.prefixed_id,

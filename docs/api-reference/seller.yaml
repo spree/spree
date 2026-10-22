@@ -12805,7 +12805,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -12854,7 +12856,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -12905,7 +12909,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -30493,6 +30499,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -30525,6 +30532,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -30570,6 +30578,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
