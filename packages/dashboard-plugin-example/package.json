@@ -43,6 +43,8 @@
     "@spree/admin-sdk": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
+    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-router": "^1.170.45",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "~7.0.2",

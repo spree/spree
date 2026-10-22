@@ -66,6 +66,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Two copies of a shared library (React Query, the router) break type
+      # checking across packages, and Dependabot can leave them behind when it
+      # bumps only some of the packages that use one. Run `pnpm dedupe` to fix.
+      - name: Check lockfile has no duplicate packages
+        run: pnpm dedupe --check
+
       # The pre-commit hook regenerates schemas, but it can be skipped or not
       # installed, so a commit can still carry types without matching schemas.
       - name: Check Zod schemas are up to date

@@ -84,6 +84,8 @@
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
+    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-router": "^1.170.45",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tsup": "^9.0.0",
