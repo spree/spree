@@ -88,6 +88,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
       expect(Spree::StoreCredit.find_by(originator: claim)).to be_present
     end
 
+    context 'with a key that may handle orders but not refund them' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders]) }
+      let(:headers) { api_key_headers }
+
+      it 'refuses a refund resolution' do
+        patch :resolve, params: { order_id: order.prefixed_id, id: claim.prefixed_id, resolution: 'refund', refund_method: 'store_credit' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_permission']).to eq('write_refunds')
+      end
+    end
+
     # A claim opened without per-item amounts has nothing to refund; the
     # dashboard collects them at creation, and the API says so plainly.
     it 'refuses a refund when no amount was recorded on the claim' do

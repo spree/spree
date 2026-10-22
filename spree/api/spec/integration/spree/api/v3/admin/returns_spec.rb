@@ -178,7 +178,7 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Pays the customer back for a received return, to store credit or through the original payment.'
-      admin_scope :write, :orders
+      admin_scope_note('`write_orders` and `write_refunds`')
 
       admin_sdk_example 'order-returns/refund'
 

@@ -7,6 +7,7 @@ module Spree
           # member action, because each carries different arguments.
           class ExchangesController < BaseController
             include Spree::Api::V3::Orders::ExchangeActions
+            include Spree::Api::V3::Admin::RefundAuthorization
 
             # Exchanges are a subject of the `orders` catalog resource, so
             # `read_orders`/`write_orders` gate these endpoints. `:exchanges`
@@ -49,6 +50,9 @@ module Spree
             end
 
             before_action :set_resource, only: [:show, :update, :approve, :receive, :fulfill, :cancel]
+            # Fulfilling settles the price difference, which is a refund when
+            # the replacements cost less than what came back.
+            before_action :require_refund_permission!, only: :fulfill, if: -> { @resource.price_difference.negative? }
 
             # PATCH /api/v3/admin/orders/:order_id/exchanges/:id
             #

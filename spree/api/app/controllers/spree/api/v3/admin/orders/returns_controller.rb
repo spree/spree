@@ -10,6 +10,7 @@ module Spree
           # an amount.
           class ReturnsController < BaseController
             include Spree::Api::V3::Orders::ReturnActions
+            include Spree::Api::V3::Admin::RefundAuthorization
 
             # Returns are a subject of the `orders` catalog resource (see
             # Spree::PermissionConfiguration), so `read_orders`/`write_orders`
@@ -57,6 +58,7 @@ module Spree
             end
 
             before_action :set_resource, only: [:show, :update, :approve, :receive, :refund, :cancel]
+            before_action :require_refund_permission!, only: :refund
 
             # PATCH /api/v3/admin/orders/:order_id/returns/:id
             #

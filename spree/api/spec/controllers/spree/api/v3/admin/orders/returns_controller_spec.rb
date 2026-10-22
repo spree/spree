@@ -247,6 +247,25 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(Spree::StoreCredit.find_by(originator: return_record)).to be_present
     end
 
+    # Settling a return is `orders` work; paying the customer back is the
+    # `refunds` key's, as on the nested refunds endpoint.
+    context 'with a key that may handle orders but not refund them' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders]) }
+      let(:headers) { api_key_headers }
+
+      it 'refuses to refund' do
+        patch :refund, params: {
+          order_id: order.prefixed_id,
+          id: return_record.prefixed_id,
+          refund_method: 'store_credit'
+        }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_permission']).to eq('write_refunds')
+        expect(Spree::StoreCredit.find_by(originator: return_record)).to be_nil
+      end
+    end
+
     it 'rejects an unknown refund method' do
       patch :refund, params: {
         order_id: order.prefixed_id,

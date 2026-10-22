@@ -174,7 +174,7 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Ships the replacements for a received exchange and settles any price difference.'
-      admin_scope :write, :orders
+      admin_scope_note('`write_orders`, plus `write_refunds` when the customer is owed a difference')
 
       admin_sdk_example 'order-exchanges/fulfill'
 

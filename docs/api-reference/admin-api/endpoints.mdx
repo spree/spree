@@ -389,7 +389,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/orders/{id}` | `write_orders` | Update an order |
 | `DELETE` | `/orders/{id}` | `write_orders` | Delete a draft order |
 | `PATCH` | `/orders/{id}/complete` | `write_orders` | Complete an order |
-| `PATCH` | `/orders/{id}/cancel` | `write_orders` | Cancel an order |
+| `PATCH` | `/orders/{id}/cancel` | `write_orders` (`write_refunds` with `refund_payments`) | Cancel an order |
 | `PATCH` | `/orders/{id}/approve` | `write_orders` | Approve an order |
 | `POST` | `/orders/{id}/resend_confirmation` | `write_orders` | Resend confirmation email |
 | `GET` | `/orders/{order_id}/payments` | `read_payments` | List payments |
