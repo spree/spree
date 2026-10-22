@@ -63,7 +63,9 @@ module Spree
               catalogs = Spree::Catalog.for_buyer(store: current_store, customer: current_user, channel: current_channel)
               return if catalogs.empty?
 
-              "catalogs-#{catalogs.map(&:id).sort.join('-')}"
+              # Versioned, since adding or removing a product touches the
+              # catalog without touching the product count or timestamps.
+              catalogs.map(&:cache_key_with_version).sort.join('/')
             end
 
             def filters_scope
