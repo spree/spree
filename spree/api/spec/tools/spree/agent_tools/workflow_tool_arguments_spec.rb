@@ -84,10 +84,10 @@ RSpec.describe 'agent workflow tool arguments' do
   end
 
   # Nothing shipped reaches this, but an extension registering a workflow
-  # whose key does not name a Spree model would: `can?(:create, nil)` answers
-  # true, so the authorization check passes for exactly the tool nobody can
-  # vouch for, and the attribute filter keyed off the same lookup falls open
-  # with it.
+  # whose key does not name a Spree model, and which no endpoint runs, would:
+  # `can?(:create, nil)` answers true, so the authorization check passes for
+  # exactly the tool nobody can vouch for, and the attribute filter keyed off
+  # the same lookup has nothing to check against.
   describe 'a workflow naming a resource that does not exist' do
     let(:tool_class) do
       Spree::AgentTools::WorkflowTool.for(:product_create_workflow, permission: 'write_products')
@@ -95,6 +95,7 @@ RSpec.describe 'agent workflow tool arguments' do
 
     let(:tool) do
       instance = tool_class.new(context)
+      allow(instance).to receive(:endpoint).and_return(nil)
       allow(instance).to receive(:created_model).and_return(nil)
       allow(instance).to receive(:subject_model).and_return(nil)
       instance
@@ -103,7 +104,7 @@ RSpec.describe 'agent workflow tool arguments' do
     it 'refuses rather than authorizing against nothing' do
       result = tool.call(attributes: { 'name' => 'Should not be created' })
 
-      expect(result[:error]).to include('does not exist').or include('not one an agent may write')
+      expect(result[:error]).to include('does not exist').or include('not declared')
       expect(Spree::Product.where(name: 'Should not be created')).to be_empty
     end
   end
@@ -217,6 +218,28 @@ RSpec.describe 'agent workflow tool arguments' do
       expect(Spree::Variant.where(sku: sku)).to exist
     end
 
+    # The body keys come from the controller's own declaration rather than
+    # the generated API document, which a packaged installation does not
+    # have — there, every dispatched workflow used to send an empty body.
+    it 'reads what the endpoint accepts from its controller' do
+      endpoint = Spree::AgentTools::WorkflowEndpoints.find(:order_cancel_workflow)
+
+      expect(endpoint.body_keys).to include('cancel_reason_id', 'cancel_note')
+    end
+
+    # A nested resource has no top-level body to check against, so its
+    # attributes used to pass unchecked and the controller dropped the
+    # unknown key silently — the model then reported a change it never made.
+    it 'checks an attributes hash against the endpoint it dispatches to' do
+      product = create(:product, store: store)
+
+      result = tool('variants_create').call(product: product.prefixed_id,
+                                            attributes: { 'sku' => 'probe', 'store_id' => create(:store).id })
+
+      expect(result[:error]).to include('store_id')
+      expect(Spree::Variant.where(sku: 'probe')).not_to exist
+    end
+
     it 'fills a path segment from a keyword of a different name' do
       order = create(:order_ready_to_ship, store: store)
 
@@ -225,6 +248,25 @@ RSpec.describe 'agent workflow tool arguments' do
       # The provider refuses in test, which is the endpoint answering — a
       # segment left unfilled would have been a 404 instead.
       expect(result[:error]).not_to match(/not found/i)
+    end
+  end
+
+  # A hash nobody can vouch for is refused rather than forwarded: an
+  # extension's workflow with no endpoint and no declared body would
+  # otherwise assign whatever it was handed, tenancy key included.
+  describe 'an attributes hash with no declared list to check it against' do
+    let(:tool) do
+      instance = Spree::AgentTools::WorkflowTool.for(:product_create_workflow, permission: 'write_products').new(context)
+      allow(instance).to receive(:endpoint).and_return(nil)
+      allow(instance).to receive(:subject_entry).and_return(Spree::AgentTools::ResourceMap.find('fulfillments'))
+      instance
+    end
+
+    it 'is refused rather than forwarded' do
+      result = tool.call(attributes: { 'name' => 'Unvouched' })
+
+      expect(result[:error]).to include('not declared')
+      expect(Spree::Product.where(name: 'Unvouched')).to be_empty
     end
   end
 end

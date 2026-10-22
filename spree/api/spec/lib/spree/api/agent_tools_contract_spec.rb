@@ -254,18 +254,17 @@ RSpec.describe 'agent tool contract' do
       expect(orders.write_permission).to eq('write_orders')
     end
 
-    it 'gives every generically writable resource a documented attribute list' do
+    it 'gives every generically writable resource a declared attribute list' do
       empty = Spree::AgentTools::ResourceMap.all.select(&:generic_writes?).
               select { |entry| entry.writable_attribute_names.empty? }
 
       expect(empty.map(&:key)).to be_empty, <<~MESSAGE
-        These resources accept generic writes but document no writable attributes
-        in docs/api-reference/admin.yaml, so an agent has nothing to fill in:
+        These resources accept generic writes but their controllers declare no
+        writable attributes with request_params, so an agent has nothing to fill in:
 
           #{empty.map(&:key).join("\n  ")}
 
-        Regenerate the spec (bundle exec rake rswag:specs:swaggerize), or give the
-        resource a write workflow.
+        Declare the body with request_params, or give the resource a write workflow.
       MESSAGE
     end
 
@@ -293,12 +292,12 @@ RSpec.describe 'agent tool contract' do
       end
     end
 
-    # The real guard on generic writes is the OpenAPI document, not the
-    # hand-written exclusion list: a resource the Admin API does not document a
-    # write body for cannot become writable, whether or not anyone remembered
-    # to list it. Asserting that keeps the list belt-and-braces rather than the
+    # The real guard on generic writes is the controller's declared body, not
+    # the hand-written exclusion list: a resource whose controller declares no
+    # write body cannot become writable, whether or not anyone remembered to
+    # list it. Asserting that keeps the list belt-and-braces rather than the
     # sole defence — a new service-written controller is refused by default.
-    it 'writes only what the Admin API documents a write body for' do
+    it 'writes only what a controller declares a write body for' do
       undocumented = Spree::AgentTools::ResourceMap.all.select(&:generic_writes?).reject do |entry|
         Spree::Api::AgentWriteSchemas.attribute_names(entry.key).any?
       end
@@ -306,11 +305,10 @@ RSpec.describe 'agent tool contract' do
       expect(undocumented.map(&:key)).to be_empty
     end
 
-    # The map keys resources by model name; the OpenAPI document keys them by
-    # URL segment. Where the two disagree a resource silently loses its
-    # writes, so a resource whose controller writes directly and documents a
-    # body must resolve in both.
-    it 'keys a writable resource the same way the OpenAPI document does' do
+    # A resource whose controller writes directly and declares a body at the
+    # top-level collection path is writable; one that declares none is not.
+    # Anything in between is a resource that silently lost its writes.
+    it 'is writable exactly when its controller declares a request body' do
       # Everything deliberately read-only, for a reason recorded elsewhere:
       # written through a workflow it declares, gated per request (imports
       # and exports), handing out authority, or contested between two
@@ -322,15 +320,13 @@ RSpec.describe 'agent tool contract' do
           contested_keys.include?(entry.key)
       end
 
-      # What is left should be writable exactly when the document says so, so
-      # the map's model-derived key and the document's URL segment agree.
       mismatched = (Spree::AgentTools::ResourceMap.all - deliberate).reject do |entry|
         entry.generic_writes? == Spree::Api::AgentWriteSchemas.attribute_names(entry.key).any?
       end
 
       expect(mismatched.map(&:key)).to be_empty, <<~MESSAGE
-        These resources are keyed one way in the map and another in
-        docs/api-reference/admin.yaml, so their writes are silently lost:
+        These resources declare a write body but are not writable, or the other
+        way round, so their writes are silently lost:
 
           #{mismatched.map(&:key).join("\n  ")}
       MESSAGE

@@ -498,7 +498,10 @@ module Spree
             return refusal if refusal
 
             resolved[name] = rows
-          elsif parameter[:json_type] == 'object'
+          elsif parameter[:json_type] == 'object' && name.to_s == 'attributes'
+            # The one hash a workflow assigns wholesale. Any other object
+            # parameter — a `metadata` column, a tracking `details` hash — is
+            # a single field with keys of its own choosing.
             filtered, refusal = permitted_attributes(value)
             return refusal if refusal
 
@@ -516,10 +519,13 @@ module Spree
       #
       # A workflow is an internal service that has always trusted its caller,
       # so it assigns the hash it is handed. The REST controllers filter first
-      # — `permitted_params` is a fixed list that never includes a tenancy
-      # key — and a tool must do the same before a workflow sees the payload.
+      # — a declared body is a fixed list that never includes a tenancy key —
+      # and a tool must do the same before a workflow sees the payload.
       # Without it a caller naming `store_id` writes into another merchant's
       # store, since the workflow assigns the hash after setting tenancy.
+      #
+      # So no list means no write: a hash nobody can vouch for is refused
+      # rather than forwarded, which is the direction the hole was in.
       #
       # Unknown keys are named back rather than dropped, matching
       # `ResourceWrite` so a model that guessed a field learns the real one.
@@ -528,23 +534,29 @@ module Spree
       def permitted_attributes(attributes)
         return [attributes, nil] unless attributes.is_a?(Hash)
 
-        entry = subject_entry
-        if entry.nil?
-          # No entry means no list of what the Admin API would accept, and
-          # forwarding the hash unchecked is what let a caller name
-          # `store_id` and write into another merchant's store.
-          return [nil, { error: 'This tool cannot be used: its resource is not one an agent may write.' }]
+        allowed = accepted_attribute_names
+        if allowed.blank?
+          return [nil, { error: 'This tool cannot be used: what its resource accepts is not declared, ' \
+                                'so no attributes can be sent.' }]
         end
 
         attributes = attributes.transform_keys(&:to_s)
-        allowed = entry.writable_attribute_names
-        return [attributes, nil] if allowed.blank?
-
         rejected = attributes.keys - allowed
         return [attributes, nil] if rejected.empty?
 
-        [nil, { error: "#{entry.key} does not accept #{rejected.to_sentence}. " \
+        [nil, { error: "#{subject_entry&.key || tool_name} does not accept #{rejected.to_sentence}. " \
                        "Accepted attributes: #{allowed.to_sentence}." }]
+      end
+
+      # What the write accepts: the operation's own body when the workflow
+      # runs through one, which covers a nested resource the generic tools
+      # cannot address; otherwise what the resource's own controller declares.
+      #
+      # @return [Array<String>]
+      def accepted_attribute_names
+        return endpoint.body_keys if endpoint && endpoint.body_keys.any?
+
+        subject_entry&.writable_attribute_names || []
       end
 
       # The map entry for what this workflow writes, which owns the list of

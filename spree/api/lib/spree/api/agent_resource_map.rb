@@ -142,6 +142,15 @@ module Spree
             transform_values { |pairs| pairs.map(&:last).min_by { |path| [path.count(':'), path.length] } }
         end
 
+        # The resource key a controller's model is addressed by.
+        #
+        # @param controller [Class]
+        # @return [String, nil] nil when the controller serves no model
+        def key_for_controller(controller)
+          model = safely(controller.allocate, :model_class)
+          model && key_for(model)
+        end
+
         def api_paths_for(controller)
           candidates = Spree::Core::Engine.routes.routes.filter_map do |route|
             next unless route.defaults[:controller] == controller.controller_path
@@ -256,15 +265,10 @@ module Spree
           Float::INFINITY
         end
 
-        # A resource is generically writable only when the Admin API writes it
-        # by saving the record, and the OpenAPI document says what a write may
-        # set. A workflow-written resource keeps its workflow key instead (so
-        # the refusal can name the tool); a service-written one is not writable
-        # at all; and a resource with no documented body is read-only here,
+        # Writable when the controller declares a body and does not hand out
+        # authority. A resource with no declared body is read-only here,
         # because a write tool with no attributes is one an agent can only get
         # wrong.
-        # Writable when the controller documents a body and does not hand out
-        # authority.
         #
         # The list of service-written models this used to consult is gone
         # (2026-10-10). It existed because a generic write assigned

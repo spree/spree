@@ -57,6 +57,7 @@ module Spree
       # not they run an agent client. The first caller pays instead.
       config.to_prepare do
         Spree::Api::AgentResourceMap.stale!
+        Spree::Api::AgentWriteSchemas.reset!
       end
 
       # Add API event subscribers

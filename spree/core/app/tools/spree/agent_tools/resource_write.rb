@@ -59,10 +59,10 @@ module Spree
       # the response is a 200, so a model would report a change that never
       # happened. Named back instead, the way an unknown filter is.
       #
-      # The list comes from the generated OpenAPI body, which is the contract
-      # clients already read — so an attribute the endpoint accepts and the
-      # document omits is a documentation bug, fixed in the integration spec
-      # that generates it, not worked around here.
+      # The list comes from the controller's own request declaration, which
+      # the API reference and the SDK types are generated from too — so an
+      # attribute the endpoint accepts and the declaration omits is a bug in
+      # that declaration, fixed there rather than worked around here.
       #
       # @return [Array(Hash, nil), Array(nil, Hash)]
       def body_for(entry, attributes)

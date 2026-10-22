@@ -4,8 +4,8 @@ module Spree
     #
     # Walk the admin routes; for each one, read the controller source and ask
     # whether the action behind it calls that workflow. The verb and path come
-    # from the route, and the body keys from the generated OpenAPI document —
-    # which is the only place that records a rename (a cancellation's
+    # from the route, and the body keys from the controller's own request
+    # declaration — which is where a rename is recorded (a cancellation's
     # `reason:` keyword travels as `cancel_reason_id`).
     #
     # Read off the controllers for the same reason {AgentResourceMap} is: a
@@ -22,7 +22,6 @@ module Spree
         def install(map: Spree::AgentTools::WorkflowEndpoints)
           map.reset!
           keys = Spree::AgentTools::DefaultCatalog::WORKFLOWS.keys
-          document = openapi_document
 
           admin_routes.each do |route|
             source = controller_source(route[:controller])
@@ -35,7 +34,7 @@ module Spree
               next unless action_calling(source, key) == route[:action]
 
               map.register(key: key, verb: route[:verb], path: route[:path],
-                           body_keys: body_keys_for(document, route))
+                           body_keys: body_keys_for(route))
             end
           end
 
@@ -80,32 +79,13 @@ module Spree
 
         # What the operation's request body accepts, in the names the wire
         # uses. A workflow keyword and its body key often differ, and the
-        # document is where that difference is recorded.
-        def body_keys_for(document, route)
-          operation = document.dig('paths', openapi_path(route[:path]), route[:verb].downcase)
-          schema = operation&.dig('requestBody', 'content', 'application/json', 'schema')
-          # Bodies are declared once and published as components, so the
-          # operation points at one rather than carrying its properties.
-          schema = Spree::Api::AgentWriteSchemas.resolve_schema(schema)
+        # controller's declaration is where that difference is recorded. An
+        # action that declares no body accepts none here.
+        def body_keys_for(route)
+          controller = "#{route[:controller].camelize}Controller".safe_constantize
+          return [] if controller.nil?
 
-          (schema&.dig('properties') || {}).keys
-        end
-
-        def openapi_path(path)
-          path.gsub(/:([a-z_]+)/) { "{#{Regexp.last_match(1)}}" }
-        end
-
-        # A packaged installation has no docs/ directory, and a body the
-        # document does not describe is simply passed through unchecked.
-        #
-        # `AgentWriteSchemas` already holds this file parsed, so it is read
-        # through there rather than a second time: the document is nearly a
-        # megabyte, and parsing it twice at boot is a second of nothing.
-        def openapi_document
-          Spree::Api::AgentWriteSchemas.document
-        rescue StandardError => e
-          Rails.logger.warn("[Spree] could not read the admin API document: #{e.class}: #{e.message}")
-          {}
+          Spree::Api::AgentWriteSchemas.body_properties(controller, route[:action]).keys
         end
       end
     end

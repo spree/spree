@@ -17,8 +17,8 @@ module Spree
       #   @return [String] with `:name` segments still in it
       # @!attribute body_keys
       #   @return [Array<String>] what the operation's request body accepts,
-      #     read from the generated OpenAPI document — which is where the
-      #     renames live (a cancellation's `reason:` keyword is
+      #     read from the controller's request declaration — which is where
+      #     the renames live (a cancellation's `reason:` keyword is
       #     `cancel_reason_id` on the wire)
       Entry = Struct.new(:verb, :path, :body_keys, keyword_init: true) do
         # The dynamic segments, in the order the path names them.
