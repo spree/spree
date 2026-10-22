@@ -366,6 +366,12 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
 
       after { Spree.admin_authentication_strategies.remove(:entra) }
 
+      it 'binds the minted states to this browser with a nonce cookie' do
+        get :providers
+
+        expect(response.cookies['spree_admin_oauth_nonce']).to be_present
+      end
+
       it 'describes it with a label and an authorization URL' do
         get :providers
 
@@ -412,16 +418,19 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
     end
 
     # The state binds to the provider it was minted for, so the callback can
-    # reject one provider's state replayed against another.
-    def state_for(provider, expires_in: 15.minutes)
+    # reject one provider's state replayed against another, and to the
+    # browser that started the login through the nonce cookie.
+    def state_for(provider, expires_in: 15.minutes, nonce: browser_nonce)
       Rails.application.message_verifier('spree/admin/oauth_state').generate(
-        { provider: provider.to_s, nonce: SecureRandom.hex(16) },
+        { provider: provider.to_s, nonce: nonce },
         expires_in: expires_in
       )
     end
 
+    let(:browser_nonce) { SecureRandom.hex(16) }
     let(:valid_state) { state_for('entra') }
 
+    before { cookies.signed[:spree_admin_oauth_nonce] = browser_nonce }
     before { Spree.admin_authentication_strategies.add(:entra, oidc_factory) }
 
     after { Spree.admin_authentication_strategies.remove(:entra) }
@@ -563,6 +572,31 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         get :callback, params: { provider: 'entra', code: 'auth-code', state: state_for('other') }
 
         expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      # A login the attacker started and completed with their own account
+      # must not finish in the victim's browser.
+      it 'rejects a state minted for another browser' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: state_for('entra', nonce: SecureRandom.hex(16)) }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+        expect(response.cookies['spree_admin_refresh_token']).to be_nil
+      end
+
+      it 'rejects a state when the browser holds no nonce' do
+        cookies.delete(:spree_admin_oauth_nonce)
+
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      it 'spends the nonce on use' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to redirect_to(%r{\Ahttps?://[^?]+\z})
+        expect(response.cookies).to have_key('spree_admin_oauth_nonce')
+        expect(response.cookies['spree_admin_oauth_nonce']).to be_nil
       end
     end
 

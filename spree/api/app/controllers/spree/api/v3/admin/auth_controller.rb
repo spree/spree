@@ -56,7 +56,13 @@ module Spree
           # anyone can log in — so it exposes only provider keys, kinds, labels
           # and authorization URLs.
           def providers
-            described = Spree.admin_authentication_strategies.describe { |key| issue_oauth_state(key) }
+            nonce = SecureRandom.hex(16)
+            minted = false
+            described = Spree.admin_authentication_strategies.describe do |key|
+              minted = true
+              issue_oauth_state(key, nonce)
+            end
+            set_oauth_nonce_cookie(nonce, expires_in: OAUTH_STATE_EXPIRY) if minted
 
             render json: { providers: described }
           end
@@ -72,6 +78,9 @@ module Spree
           # access token from it on load, so no token ever travels in a URL.
           def callback
             return redirect_to_dashboard(error: ERROR_CODES[:invalid_oauth_state]) unless valid_oauth_state?
+
+            # Used once: a state that signed in cannot sign in again.
+            clear_oauth_nonce_cookie
 
             strategy = Spree.admin_authentication_strategies.build(
               params[:provider],
@@ -158,10 +167,11 @@ module Spree
           # expired value fails verification.
           #
           # The provider key is signed into the payload so a state minted for one
-          # provider cannot be replayed against another's callback.
-          def issue_oauth_state(provider)
+          # provider cannot be replayed against another's callback, and the
+          # nonce ties it to the browser holding the matching cookie.
+          def issue_oauth_state(provider, nonce)
             Rails.application.message_verifier(OAUTH_STATE_PURPOSE).generate(
-              { provider: provider.to_s, nonce: SecureRandom.hex(16) },
+              { provider: provider.to_s, nonce: nonce },
               expires_in: OAUTH_STATE_EXPIRY
             )
           end
@@ -173,8 +183,10 @@ module Spree
             # The verifier round-trips through JSON, so payload keys come back as strings.
             payload = Rails.application.message_verifier(OAUTH_STATE_PURPOSE).verified(state)
             return false unless payload.is_a?(Hash)
+            return false unless payload['provider'].to_s == params[:provider].to_s
 
-            payload['provider'].to_s == params[:provider].to_s
+            nonce = oauth_nonce_from_cookie
+            nonce.present? && ActiveSupport::SecurityUtils.secure_compare(payload['nonce'].to_s, nonce)
           end
 
           # Sends the browser back to the dashboard. On failure the login page
