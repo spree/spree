@@ -103,7 +103,7 @@ curl 'https://api.mystore.com/api/v3/admin/delivery_methods/calculators' \
 
 Each calculator declares which settings it takes, so a form can be built for it without knowing the calculator in advance — which is how the dashboard renders these.
 
-A delivery charge states one amount per currency in `amounts`, and Spree never converts between them: a delivery method is offered only to carts in a currency it has an amount for. A Spree 5 method priced with a single `amount` and `currency` keeps quoting that currency until `amounts` holds an amount; from then on `amounts` alone decides.
+An amount-based delivery charge (flat rate, flat rate per item and digital delivery) states one amount per currency in `amounts`, and Spree never converts between them: a delivery method is offered only to carts in a currency it has an amount for. A Spree 5 method priced with a single `amount` and `currency` keeps quoting that currency until `amounts` holds an amount; from then on `amounts` alone decides.
 
 <Warning>
 A promotion calculator with an `amount` also has a **currency**. If it doesn't match the order's currency, the calculator contributes nothing rather than converting. Set up one calculator per currency you sell in, or a promotion will silently do nothing for some customers.

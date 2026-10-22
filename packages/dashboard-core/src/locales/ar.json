@@ -490,7 +490,7 @@
     "currency_amounts": {
       "amount_in_currency": "المبلغ بعملة {{currency}}",
       "help": "العملات المتروكة فارغة لا تُعرض لها طريقة التوصيل هذه.",
-      "label": "كمية",
+      "label": "المبلغ",
       "required": "أدخل مبلغًا بعملة واحدة على الأقل."
     },
     "custom_field_definitions": {
