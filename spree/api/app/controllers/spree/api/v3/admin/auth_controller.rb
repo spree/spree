@@ -56,7 +56,10 @@ module Spree
           # anyone can log in — so it exposes only provider keys, kinds, labels
           # and authorization URLs.
           def providers
-            nonce = SecureRandom.hex(16)
+            # The login page may load again while a sign-in is in flight, so a
+            # nonce the browser already holds is kept rather than replaced —
+            # replacing it would fail the callback of the state minted first.
+            nonce = oauth_nonce_from_cookie || SecureRandom.hex(16)
             minted = false
             described = Spree.admin_authentication_strategies.describe do |key|
               minted = true

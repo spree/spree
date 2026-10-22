@@ -372,6 +372,14 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         expect(response.cookies['spree_admin_oauth_nonce']).to be_present
       end
 
+      it 'keeps the nonce the browser already holds, so a sign-in in flight survives a reload' do
+        cookies.signed[:spree_admin_oauth_nonce] = 'held-nonce'
+
+        get :providers
+
+        expect(cookies.signed[:spree_admin_oauth_nonce]).to eq('held-nonce')
+      end
+
       it 'describes it with a label and an authorization URL' do
         get :providers
 
