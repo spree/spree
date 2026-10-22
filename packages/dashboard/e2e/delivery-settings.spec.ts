@@ -517,11 +517,18 @@ test.describe('delivery profiles', () => {
     })
     const sheet = page.getByRole('dialog')
     await sheet.locator('#name').fill(methodName)
+    // A flat rate left without amounts must not block a method whose pricing fields the provider hides.
+    const calculator = sheet.locator('#calculator-type')
+    await expect(calculator).toBeEnabled({ timeout: 15_000 })
+    await calculator.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue('')
     const rateProvider = fieldSelect(sheet, 'Rate provider')
     await expect(rateProvider).toContainText(/^internal$/i, { timeout: 15_000 })
     await rateProvider.click()
     await page.getByRole('option', { name: /^freight$/i }).click()
     await expect(rateProvider).toContainText(/^freight$/i)
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveCount(0)
     // A provider-priced method carries the store's markup on top of the quote.
     await sheet.locator('#markup_percent').fill('7.5')
     await sheet.locator('#markup_flat').fill('2.50')

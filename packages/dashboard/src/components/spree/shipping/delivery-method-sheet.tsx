@@ -92,7 +92,7 @@ export function DeliveryMethodSheet({
   const { data: method, isLoading: methodLoading } = useDeliveryMethod(methodId)
   const { data: ruleTypes, isLoading: ruleTypesLoading } = useDeliveryMethodRuleTypes()
   const { data: fulfillmentProviders } = useFulfillmentProviders()
-  const { data: rateProviders } = useDeliveryRateProviders()
+  const { data: rateProviders, isLoading: rateProvidersLoading } = useDeliveryRateProviders()
   const createMutation = useCreateDeliveryMethod()
   const updateMutation = useUpdateDeliveryMethod(methodId ?? '')
   // Edit only: a method being created has no id to hang values on yet.
@@ -101,8 +101,9 @@ export function DeliveryMethodSheet({
   // Saving sends the full rule set for reconciliation, so the form must not be
   // reachable until the existing rules have loaded — otherwise a quick save
   // would submit an empty set and delete them all. Rule types are needed too,
-  // since they decide which rules carry a product list.
-  const loading = editing ? methodLoading || ruleTypesLoading : ruleTypesLoading
+  // since they decide which rules carry a product list, and so are the rate
+  // providers, which decide whether the method is asked for an amount.
+  const loading = (editing && methodLoading) || ruleTypesLoading || rateProvidersLoading
 
   const carrierPricedProviders = useMemo(() => {
     const types = (rateProviders?.data ?? [])
