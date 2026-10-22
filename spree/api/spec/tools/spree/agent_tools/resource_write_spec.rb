@@ -58,6 +58,18 @@ RSpec.describe 'agent generic record writes' do
       expect(order.reload.email).to eq('new@example.com')
     end
 
+    # A `/` in the id would address a nested route under the record, so the
+    # approval card would describe one write and the operation perform
+    # another. The path backstop cannot tell that from a real nested route,
+    # so the tool refuses first.
+    it 'refuses an id that is not a single path segment' do
+      result = tool('update_resource').call(resource: 'markets', id: "#{market.prefixed_id}/x",
+                                            attributes: { 'name' => 'Northern Europe' })
+
+      expect(result[:error]).to include('not a record id')
+      expect(market.reload.name).not_to eq('Northern Europe')
+    end
+
     # Silently dropping an attribute leaves the model believing it set
     # something it did not; naming the real ones lets it correct itself.
     it 'names the accepted attributes when given one it does not know' do

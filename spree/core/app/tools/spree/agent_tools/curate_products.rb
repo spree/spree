@@ -35,6 +35,9 @@ module Spree
         return unknown_target(target) if entry.nil?
         return { error: "#{entry.target} cannot be curated." } if entry.api_path.blank?
 
+        refusal = invalid_id(id)
+        return refusal if refusal
+
         ids = Array(products).map(&:to_s).reject(&:blank?)
         return { error: 'Give at least one product.' } if ids.empty?
 

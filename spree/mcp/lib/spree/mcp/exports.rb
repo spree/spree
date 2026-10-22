@@ -48,7 +48,9 @@ module Spree
         #   export this caller may read
         def read(context, uri)
           id = uri.to_s.delete_prefix("#{URI_SCHEME}://")
-          return if id.blank?
+          # Placed in a path below, so it has to be one segment: a `/` in it
+          # would address another route under the export.
+          return unless Spree::AgentTools::ApiDispatch::RECORD_ID.match?(id)
 
           # The endpoint answers 404 for an export of another store and for
           # one this credential's scopes do not cover, so there is no second

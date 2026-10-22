@@ -14,6 +14,9 @@ module Spree
         entry, refusal = writable_entry(resource, :destroy)
         return refusal if refusal
 
+        refusal = invalid_id(id)
+        return refusal if refusal
+
         response = dispatch.call(method: :delete, path: entry.api_path(:destroy).sub(':id', id.to_s))
         return { error: response.error_message } unless response.success?
 

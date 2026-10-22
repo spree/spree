@@ -43,6 +43,15 @@ RSpec.describe Spree::Mcp::Exports do
       expect(described_class.read(context_for(['read_orders']),
                                   "spree+export://#{products.prefixed_id}")).to be_nil
     end
+
+    # The id lands in a path, so one carrying a `/` would address another
+    # route under the export rather than the export itself.
+    it 'refuses an id that is not a single path segment' do
+      products = Spree::Exports::Products.last
+
+      expect(described_class.read(context_for(['read_all']),
+                                  "spree+export://#{products.prefixed_id}/download")).to be_nil
+    end
   end
 
   # A gift card export that already exists — made in the dashboard, or by an

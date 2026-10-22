@@ -167,6 +167,20 @@ class AgentTool
 
     protected
 
+    # Refuses an id that is not one path segment, before it is placed in a
+    # path. A `/` in it would address a sibling route and a `?` a query
+    # string, so the record the approval card named would not be the one the
+    # operation reached.
+    #
+    # @param id [String]
+    # @return [Hash, nil] an error result to return, or nil when the id is usable
+    def invalid_id(id)
+      return if Spree::AgentTools::ApiDispatch::RECORD_ID.match?(id.to_s)
+
+      { error: "#{id.to_s.inspect} is not a record id. Ids contain only letters, digits, underscores and " \
+               'hyphens, as shown in search results.' }
+    end
+
     # Refuses unless this admin may take `action` on `record`.
     #
     # Holding `write_products` says an admin may edit products; it does not

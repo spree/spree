@@ -179,6 +179,27 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
     end
   end
 
+  describe 'the path' do
+    # Reproduced before the fix: get_resource checks its `expand` argument
+    # against the serializer's allowlist, and an id of `prod_x?expand=variants`
+    # walked straight past it — the Admin API read the query string and
+    # answered with the variants.
+    it 'refuses an id that smuggles a query string' do
+      product = create(:product, store: store)
+
+      response = dispatcher_for(reader).
+                 call(method: :get, path: "/api/v3/admin/products/#{product.prefixed_id}?expand=variants")
+
+      expect(response.status).to eq(400)
+      expect(response.error_message).to include('record id')
+    end
+
+    it 'refuses a path with an empty or dotted segment' do
+      expect(dispatcher_for(reader).call(method: :get, path: '/api/v3/admin//products').status).to eq(400)
+      expect(dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/../products').status).to eq(400)
+    end
+  end
+
   describe 'a failing call' do
     it 'carries the API error rather than raising' do
       response = dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products/prod_nope')

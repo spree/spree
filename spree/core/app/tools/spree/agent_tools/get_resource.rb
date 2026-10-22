@@ -24,6 +24,9 @@ module Spree
         path = entry.api_path(:show)
         return { error: "#{entry.key} cannot be fetched one at a time." } if path.blank? || path.include?('/:') && path.count(':') > 1
 
+        refusal = invalid_id(id)
+        return refusal if refusal
+
         requested, refusal = expansions(entry, expand)
         return refusal if refusal
 

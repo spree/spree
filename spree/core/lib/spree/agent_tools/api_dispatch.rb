@@ -79,6 +79,19 @@ module Spree
       # not the operation's.
       FORWARDED_ENV = (CREDENTIAL_HEADERS.values + %w[HTTP_HOST] + ADDRESS_ENV).freeze
 
+      # What a record id placed in a path may contain: a prefixed id, an
+      # order number, a plain number. A `/` would address a sibling route and
+      # a `?` a query string, so an approval card reading "delete product X"
+      # could have run something else entirely — `prod_x?expand=variants`
+      # walked straight past a tool's own expansion allowlist.
+      RECORD_ID = /\A[A-Za-z0-9_-]+\z/
+
+      # A dispatched path once a tool has filled its ids in: absolute, and
+      # every segment shaped like a record id or a route word. The backstop
+      # for a tool that forgot {RECORD_ID}; it cannot tell a `/` inside an id
+      # from a nested route, which is why the tools check first.
+      PATH = %r{\A(?:/[A-Za-z0-9_-]+)+\z}
+
       # @param context [Spree::AgentTools::Context]
       def initialize(context)
         @context = context
@@ -93,6 +106,8 @@ module Spree
       #   upload endpoint takes bytes.
       # @return [Response]
       def call(method:, path:, params: {}, body: nil)
+        return invalid_path unless PATH.match?(path.to_s)
+
         env = build_env(method, path, params, body)
 
         # `Spree::Current` is an `ActiveSupport::CurrentAttributes`, which does
@@ -132,6 +147,17 @@ module Spree
 
       private
 
+      # Refused the way the API refuses, so a tool repeats it like any other
+      # error rather than needing a case of its own.
+      def invalid_path
+        Response.new(
+          status: 400, headers: {}, raw: nil,
+          body: { 'error' => { 'code' => 'invalid_id',
+                               'message' => 'The id is not valid: a record id contains only letters, digits, ' \
+                                            'underscores and hyphens, as shown in search results.' } }
+        )
+      end
+
       def build_env(method, path, params, body)
         query = params.present? ? Rack::Utils.build_nested_query(stringify(params)) : nil
 
@@ -167,8 +193,8 @@ module Spree
       # dependency of neither gem and would be missing from a real install.
       def multipart_body(body, file, boundary)
         name, io = file
-        filename = body['filename'].presence || 'file'
-        content_type = body['content_type'].presence || 'application/octet-stream'
+        filename = header_safe(body['filename'].presence || 'file')
+        content_type = header_safe(body['content_type'].presence || 'application/octet-stream')
 
         parts = body.except(name).filter_map do |field, value|
           next if value.nil?
@@ -185,6 +211,13 @@ module Spree
         parts.join.dup.force_encoding(Encoding::BINARY) +
           io.read.dup.force_encoding(Encoding::BINARY) +
           "\r\n--#{boundary}--\r\n".dup.force_encoding(Encoding::BINARY)
+      end
+
+      # A caller-supplied value placed inside a multipart header. A quote or a
+      # line break in it would end the header early and let a filename add
+      # headers of its own.
+      def header_safe(value)
+        value.to_s.gsub(/[\r\n"\\]/, '_')
       end
 
       # The credential the caller authenticated with, repeated verbatim — and

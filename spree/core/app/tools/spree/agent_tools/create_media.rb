@@ -22,6 +22,9 @@ module Spree
       param :alt, description: 'Alt text describing the image, for accessibility and SEO'
 
       def call(file_id:, product_id: nil, alt: nil)
+        refusal = product_id.present? && invalid_id(product_id)
+        return refusal if refusal
+
         # Placement is the path: nested under a product puts the file in that
         # product's gallery, the flat one leaves it in the library. The
         # endpoint resolves the parent, checks it and verifies the signed id,

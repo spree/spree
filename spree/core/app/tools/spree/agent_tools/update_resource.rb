@@ -19,6 +19,9 @@ module Spree
         entry, refusal = writable_entry(resource, :update)
         return refusal if refusal
 
+        refusal = invalid_id(id)
+        return refusal if refusal
+
         body, rejection = body_for(entry, attributes)
         return rejection if rejection
 
