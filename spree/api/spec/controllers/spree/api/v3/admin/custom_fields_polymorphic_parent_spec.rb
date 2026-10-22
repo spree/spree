@@ -91,13 +91,13 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
     end
   end
 
-  # `Spree::Base.for_store` answers the bare class when the store has no
-  # association for a model; the lookup must refuse rather than search every
-  # store's records.
+  # `Spree::Base.for_store` answers nothing for a model the store has no
+  # association for; the lookup refuses rather than searching every store's
+  # records.
   describe 'a parent the store cannot scope' do
     let!(:promotion) { create(:promotion) }
 
-    before { allow(Spree::Promotion).to receive(:for_store).and_return(Spree::Promotion) }
+    before { allow(Spree::Promotion).to receive(:for_store).and_return(Spree::Promotion.none) }
 
     it 'returns not found' do
       get :index, params: { promotion_id: promotion.prefixed_id }, as: :json
