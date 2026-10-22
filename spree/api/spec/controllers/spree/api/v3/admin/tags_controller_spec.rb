@@ -64,6 +64,36 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
         expect(names).to include('bestseller')
         expect(names).not_to include('clearance')
       end
+
+      it 'includes tags added in bulk' do
+        Spree::Tags::BulkAdd.call(tag_names: ['bulk-added'], records: Spree::Product.where(id: own_product.id))
+
+        get :index, params: { taggable_type: 'product' }, as: :json
+
+        expect(json_response['data'].map { |t| t['name'] }).to include('bulk-added')
+      end
+    end
+
+    context 'a taggable that declares a store tenant' do
+      let(:headers) { bearer_headers }
+
+      let(:other_store) { create(:store) }
+      let!(:own_user) { create(:user, tag_list: ['newsletter']) }
+      let!(:foreign_user) { create(:user, tag_list: ['wholesale']) }
+
+      before do
+        own_user.taggings.update_all(tenant: store.id.to_s)
+        foreign_user.taggings.update_all(tenant: other_store.id.to_s)
+        allow(Spree.customer_class).to receive(:tenant_column).and_return(:store_id)
+      end
+
+      it 'bounds its vocabulary to the current store' do
+        get :index, params: { taggable_type: Spree.customer_class.api_type }, as: :json
+
+        names = json_response['data'].map { |t| t['name'] }
+        expect(names).to include('newsletter')
+        expect(names).not_to include('wholesale')
+      end
     end
 
     describe 'API-key scope enforcement' do
