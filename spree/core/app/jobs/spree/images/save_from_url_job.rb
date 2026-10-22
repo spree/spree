@@ -75,6 +75,7 @@ module Spree
 
       def download_and_attach_image(external_url, image)
         max_size = Spree::Config.max_image_download_size
+        streamed_body = nil
 
         response = SsrfFilter.get(
           external_url,
@@ -90,12 +91,12 @@ module Spree
             read_timeout: 60,
             open_timeout: 30
           }
-        )
+        ) { |fetched| streamed_body = read_within(fetched, max_size) }
 
-        body = response.body
-        if body.bytesize > max_size
-          raise StandardError, "Image file size exceeds the maximum allowed size of #{max_size} bytes"
-        end
+        # A fetch that did not stream (a test double, say) is read whole and
+        # held to the same limit.
+        body = streamed_body || response.body
+        raise_too_large(max_size) if body.bytesize > max_size
 
         uri = URI.parse(external_url)
         filename = File.basename(uri.path)
@@ -112,6 +113,24 @@ module Spree
           tempfile.close
           tempfile.unlink
         end
+      end
+
+      # Reads the body as it arrives and stops at the limit, so an oversized
+      # or endless response is refused mid-stream rather than held in memory
+      # first; a declared length over the limit is refused before any of it.
+      def read_within(response, max_size)
+        raise_too_large(max_size) if response['Content-Length'].to_i > max_size
+
+        buffer = +''
+        response.read_body do |chunk|
+          buffer << chunk
+          raise_too_large(max_size) if buffer.bytesize > max_size
+        end
+        buffer
+      end
+
+      def raise_too_large(max_size)
+        raise StandardError, "Image file size exceeds the maximum allowed size of #{max_size} bytes"
       end
 
       def image_already_saved?(image, external_url)
