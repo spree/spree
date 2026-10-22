@@ -1,0 +1,80 @@
+---
+title: "Connect ChatGPT"
+description: "Learn how to connect ChatGPT to your store so it can work in it on your behalf, in Spree Commerce."
+---
+
+ChatGPT connects to your store as a custom MCP server. Once connected, it can answer questions about your orders, search your catalog and make changes, bounded by the permissions you approve.
+
+Asking ChatGPT to look up records, produce reports or complete multi-step jobs can save a lot of time spent clicking around in the dashboard. Checking what a customer ordered, listing everything out of stock in one category, or reading last month's sales figures each mean opening a screen, applying a filter and reading the result off it. ChatGPT can answer all three from a single question. It can also carry out the work rather than only report on it, so cancelling an order and refunding the customer takes one request instead of several screens.
+
+The steps below are in the order that avoids going back and forth.
+
+## Step 1: Register ChatGPT in Your Store
+
+![The Connect an agent panel, with ChatGPT chosen](/docs/images/user/settings/connect-chatgpt/1-connect-agent.png)
+
+1. Navigate to **Settings → AI Agents** and click **Connect an agent**.
+2. Choose **ChatGPT** and click **Continue**.
+3. Keep the panel open. It shows **Your store's MCP address** and a **Client ID**, each with a button that copies it.
+
+![The address and client ID ChatGPT needs, each with a copy button](/docs/images/user/settings/connect-chatgpt/2-agent-credentials.png)
+
+See [<u>AI Agents</u>](/user/settings/ai-agents) for what the registration does and who is allowed to make one.
+
+## Step 2: Set ChatGPT Up
+
+![ChatGPT's form for a custom MCP server](/docs/images/user/settings/connect-chatgpt/3-chatgpt-new-mcp.png)
+
+1. In ChatGPT, open **Plugins → Add → Add custom MCP server**.
+2. Give it a name and a description your team will recognize, such as your store's name.
+3. Paste **Your store's MCP address** as the MCP URL.
+4. Set **Authentication** to **OAuth**.
+5. Open the advanced OAuth settings and paste the **Client ID**.
+
+![The advanced OAuth settings, showing the callback URL to copy](/docs/images/user/settings/connect-chatgpt/4-chatgpt-oauth.png)
+
+The advanced settings also show a **callback URL**, which is where ChatGPT expects to be sent back to after you sign in. Copy it. The next step registers it in your store.
+
+<Note>Leave the registration URL empty. It is for assistants that register themselves automatically, which Spree does not offer, and pasting the Client ID is what takes its place.</Note>
+
+<Warning>**Do not finish creating it yet**. The consent boxes have to be ticked before the button that creates it becomes available, and creating it before the callback URL is registered produces an error when you try to connect.</Warning>
+
+## Step 3: Register the Callback URL in Your Store
+
+![Editing the ChatGPT client in the Spree dashboard](/docs/images/user/settings/connect-chatgpt/5-oauth-client-edit.png)
+
+Registering ChatGPT in step 1 created a client under **Settings → OAuth clients**. That is where its callback URL is kept, so the one ChatGPT generated goes there.
+
+1. In the Spree dashboard, navigate to **Settings → OAuth clients**.
+2. Find the **ChatGPT** client, open its actions and choose **Edit**.
+3. Replace the redirect URI with the callback URL you copied from ChatGPT, and save.
+
+<Warning>Attempting to connect before this step is done results in an error.</Warning>
+
+## Step 4: Connect and Approve
+
+![The approval screen in the Spree dashboard, listing what ChatGPT is asking for](/docs/images/user/settings/connect-chatgpt/6-approve.png)
+
+Finish creating the MCP server in ChatGPT and connect. ChatGPT sends you to your store to sign in, and an approval screen lists the permissions it has asked for. Tick the ones you want it to have and click **Allow access**.
+
+ChatGPT asks for every permission your store offers, which is what the standard expects of a client that has not been told to ask for less. The approval screen is where the connection is narrowed, so approving a short list is normal rather than a sign that something is wrong.
+
+A connection never carries more than the person who made it. Anything your own role does not include is shown as withheld and cannot be approved, so two people connecting the same server can end up with very different access. See [<u>AI Agents</u>](/user/settings/ai-agents) for what is never offered to an agent at all.
+
+## How to Use It
+
+![Selecting the store's plugin from a chat's + menu](/docs/images/user/settings/connect-chatgpt/7-chatgpt-in-chat.png)
+
+A connected plugin is not used until it is selected for the chat it is needed in. In a new chat, open the **+** menu and select the store's plugin.
+
+Then ask it something straightforward to confirm the connection works, such as listing your last five orders.
+
+ChatGPT asks you to confirm before anything that changes data, because those jobs declare themselves as changes. Reading is answered without a prompt.
+
+<Note>ChatGPT is only shown the jobs it was approved for, so a connection approved for products alone offers a short list of product jobs rather than everything the store can do.</Note>
+
+## Further Reading
+
+- [<u>AI Agents</u>](/user/settings/ai-agents) - Reviewing connections, permissions and revoking access
+- [<u>Connect Claude</u>](/user/settings/connect-claude) - The same thing for Claude
+- [<u>Roles</u>](/user/settings/roles) - The permissions a role carries, which bound what ChatGPT can be given

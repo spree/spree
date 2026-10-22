@@ -1422,6 +1422,15 @@
                         ]
                       },
                       {
+                        "group": "AI Agents",
+                        "icon": "bot",
+                        "pages": [
+                          "user/settings/ai-agents",
+                          "user/settings/connect-claude",
+                          "user/settings/connect-chatgpt"
+                        ]
+                      },
+                      {
                         "group": "Developer",
                         "icon": "code",
                         "pages": [
@@ -3025,6 +3034,9 @@
               "user/settings/product-types",
               "user/settings/package-types",
               "user/settings/integrations",
+              "user/settings/ai-agents",
+              "user/settings/connect-claude",
+              "user/settings/connect-chatgpt",
               "user/settings/api-keys",
               "user/settings/webhooks",
               "user/settings/allowed-origins"
