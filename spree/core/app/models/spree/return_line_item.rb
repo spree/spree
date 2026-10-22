@@ -24,8 +24,7 @@ module Spree
     delegate :order, :currency, to: :return
 
     extend Spree::DisplayMoney
-    money_methods :pre_tax_amount, :included_tax_total, :additional_tax_total, :tax_total,
-                  :refund_amount, :refund_tax_amount
+    money_methods :pre_tax_amount, :tax_total, :refund_amount
 
     # What this line refunds, tax included. Once the warehouse has counted,
     # only the units that arrived are paid for — a customer who announced

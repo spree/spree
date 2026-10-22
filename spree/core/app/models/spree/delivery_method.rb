@@ -7,12 +7,7 @@ module Spree
     include Spree::CalculatedAdjustments
     include Spree::HasCustomFields
     include Spree::Metadata
-    include Spree::MemoizedData
     include Spree::TypedAssociations
-
-    extend Spree::DisplayMoney
-
-    MEMOIZED_METHODS = %w[display_estimated_price]
 
     # Audience a rate refresh is quoting for: the storefront sees only
     # customer-facing methods, the backoffice sees every method.
@@ -441,31 +436,6 @@ module Spree
         estimated_transit_business_days_min.to_s
       else
         [estimated_transit_business_days_min, estimated_transit_business_days_max].compact.join("-")
-      end
-    end
-
-    def display_estimated_price
-      return unless calculator
-
-      @display_estimated_price ||= begin
-        calculator.description + ': ' +
-
-        if calculator.is_a?(Spree::Calculator::Shipping::FlatRate)
-          amount = calculator.amount_for(calculator.preferred_currency)
-          if amount.nil?
-            ''
-          elsif amount.zero?
-            I18n.t('spree.free')
-          else
-            Spree::Money.new(amount, { currency: calculator.preferred_currency }).to_s
-          end
-        elsif calculator.is_a?(Spree::Calculator::Shipping::FlexiRate)
-          Spree::Money.new(calculator.preferred_first_item, { currency: calculator.preferred_currency }).to_s
-        elsif calculator.is_a?(Spree::Calculator::Shipping::FlatPercentItemTotal)
-          ActiveSupport::NumberHelper.number_to_percentage(calculator.preferred_flat_percent, precision: 2)
-        else
-          ''
-        end
       end
     end
 

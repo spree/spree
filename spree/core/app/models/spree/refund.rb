@@ -59,11 +59,6 @@ module Spree
     # back through a payment that may belong to several orders.
     before_validation :assign_order_from_payment, on: :create
 
-    def money
-      Spree::Money.new(amount, currency: currency)
-    end
-    alias display_amount money
-
     def description
       payment.payment_method.name
     end

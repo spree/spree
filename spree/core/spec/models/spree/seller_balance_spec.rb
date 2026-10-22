@@ -27,7 +27,6 @@ RSpec.describe Spree::SellerBalance, type: :model do
       expect(balance.paid).to eq(50)
       expect(balance.balance).to eq(65)
       expect(balance.pending).to eq(35)
-      expect(balance.display_balance.to_s).to eq('$65.00')
     end
 
     it 'answers what Seller#balance answers' do

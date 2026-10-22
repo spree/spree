@@ -564,7 +564,6 @@ fi:
     month: Kuukausi
     name: Nimi
     new_variant: Uusi variantti
-    no_cc_type: Ei saatavilla
     no_payment_found: Virhe. Maksua ei löytynyt.
     none: Ei yhtäkään
     number: Numero

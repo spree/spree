@@ -25,9 +25,6 @@ module Spree
 
     delegate :order, :currency, to: :exchange
 
-    extend Spree::DisplayMoney
-    money_methods :original_price, :new_variant_price, :price_difference, :original_tax_total, :new_tax_total
-
     # What the customer paid for the units coming back, after discounts and
     # with the tax charged on top — not the list price, which would
     # over-credit a discounted line.

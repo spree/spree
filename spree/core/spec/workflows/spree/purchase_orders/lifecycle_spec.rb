@@ -125,7 +125,6 @@ describe 'purchase order lifecycle', type: :model do
       expect(movement).to have_attributes(kind: 'received', quantity: 100, unit_cost: 12.5)
       expect(movement.purchase_order).to eq(purchase_order)
       expect(movement.stock_receipt).to eq(receipt)
-      expect(movement.display_unit_cost.to_s).to eq('$12.50')
     end
 
     it 'moves landed units from incoming to on hand, and stops expecting refused ones' do

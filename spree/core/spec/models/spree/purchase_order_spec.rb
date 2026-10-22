@@ -51,7 +51,6 @@ module Spree
         purchase_order.items.create!(variant: create(:variant), quantity_ordered: 3, unit_cost: 4)
 
         expect(purchase_order.subtotal).to eq(137)
-        expect(purchase_order.display_subtotal.to_s).to eq('$137.00')
       end
     end
 
@@ -81,7 +80,6 @@ module Spree
 
       it 'costs the whole line at the agreed unit price' do
         expect(item.total_cost).to eq(125)
-        expect(item.display_unit_cost.to_s).to eq('$12.50')
       end
 
       # Two of forty refused at the dock are still owed by the supplier, but

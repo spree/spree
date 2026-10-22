@@ -32,9 +32,6 @@ module Spree
     # How much of that has reached them, through settlements that completed.
     attribute :paid, :decimal, default: 0
 
-    extend Spree::DisplayMoney
-    money_methods :earned, :pending
-
     # @param seller [Spree::Seller]
     # @param currency [String] what the sales were priced in
     # @param settlement_currency [String] what the account settles in
@@ -73,14 +70,6 @@ module Spree
     # @return [Boolean] whether the provider converted this seller's earnings
     def converted?
       settlement_currency != currency
-    end
-
-    # Formatted in the settlement currency rather than the sale's, since these
-    # are what the account holds.
-    %i[payable paid balance].each do |figure|
-      define_method(:"display_#{figure}") do
-        Spree::Money.new(public_send(figure), currency: settlement_currency)
-      end
     end
   end
 end

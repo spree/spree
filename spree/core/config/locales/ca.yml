@@ -521,7 +521,6 @@ ca:
     month: Mes
     name: Nom
     new_variant: Nova Variant
-    no_cc_type: N/D
     none: Cap
     number: Número
     on_hand: Disponible

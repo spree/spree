@@ -218,7 +218,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['number']
 
     extend DisplayMoney
-    money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total, :discount_total
+    money_methods :additional_tax_total, :included_tax_total, :tax_total, :discount_total
 
     # True while the shipping price is still the forwarder's to quote — the
     # selected rate is a freight rate carrying logistics instead of an amount.
@@ -239,7 +239,6 @@ module Spree
 
       Spree::Money.new(cost, { currency: currency }.merge(options))
     end
-    alias display_amount display_cost
     # Standardized column name (renamed in 6.0); the legacy reader stays one
     # release.
     alias_attribute :promo_total, :discount_total

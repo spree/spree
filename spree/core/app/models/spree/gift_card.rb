@@ -85,7 +85,7 @@ module Spree
     #
     # Money
     #
-    money_methods :amount, :amount_used, :amount_authorized, :amount_remaining
+    money_methods :amount, :amount_used, :amount_remaining
 
     # Calculates the remaining amount
     # @return [Decimal]

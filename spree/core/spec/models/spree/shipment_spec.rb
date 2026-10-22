@@ -159,10 +159,10 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
-  context 'display_amount' do
+  context 'display_cost' do
     it 'retuns a Spree::Money' do
       allow(shipment).to receive(:cost).and_return(21.22)
-      expect(shipment.display_amount).to eq(Spree::Money.new(21.22))
+      expect(shipment.display_cost).to eq(Spree::Money.new(21.22))
     end
   end
 
@@ -170,13 +170,6 @@ describe Spree::Fulfillment, type: :model do
     it 'retuns a Spree::Money' do
       allow(shipment).to receive(:final_price).and_return(21.22)
       expect(shipment.display_final_price).to eq(Spree::Money.new(21.22))
-    end
-  end
-
-  context 'display_item_cost' do
-    it 'retuns a Spree::Money' do
-      allow(shipment).to receive(:item_cost).and_return(21.22)
-      expect(shipment.display_item_cost).to eq(Spree::Money.new(21.22))
     end
   end
 

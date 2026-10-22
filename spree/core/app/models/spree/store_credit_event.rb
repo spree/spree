@@ -19,7 +19,7 @@ module Spree
     delegate :currency, :store, to: :store_credit
 
     extend DisplayMoney
-    money_methods :amount, :user_total_amount
+    money_methods :amount
 
     def display_action
       case action

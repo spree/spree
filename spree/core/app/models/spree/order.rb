@@ -67,12 +67,8 @@ module Spree
 
     has_spree_rich_text :internal_note
 
-    money_methods :outstanding_balance, :item_total,           :adjustment_total,
-                  :included_tax_total,  :additional_tax_total, :tax_total,
-                  :delivery_total,      :discount_total,       :total,
-                  :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
-                  :payment_total,       :amount_due,           :fee_total,
-                  :commission_amount_total, :commission_tax_total, :commission_total
+    money_methods :item_total, :adjustment_total, :included_tax_total, :additional_tax_total,
+                  :discount_total, :fee_total, :delivery_total, :total, :tax_total, :amount_due
 
 
     # Transient warnings populated by remove_out_of_stock_items! and ensure_available_delivery_rates

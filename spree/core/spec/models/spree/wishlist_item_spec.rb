@@ -14,14 +14,6 @@ RSpec.describe Spree::WishlistItem, type: :model do
     describe '.total' do
       it { expect(wishlist_item_with_variant.total(currency: 'USD')).to eql(variant.amount_in('USD') * 3) }
     end
-
-    describe '.display_price' do
-      it { expect(wishlist_item_with_variant.display_price(currency: 'USD')).to eq Spree::Money.new(variant.amount_in('USD'), currency: 'USD') }
-    end
-
-    describe '.display_total' do
-      it { expect(wishlist_item_with_variant.display_total(currency: 'USD')).to eq Spree::Money.new((variant.amount_in('USD') * 3), currency: 'USD') }
-    end
   end
 
   describe 'the legacy Spree::WishedItem constant' do

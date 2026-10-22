@@ -1036,7 +1036,6 @@ en:
     month: Month
     name: Name
     new_variant: New Variant
-    no_cc_type: N/A
     no_maximum: No maximum
     no_payment_found: No payment found
     no_refundable_payments: There is no payment left on this order to refund.

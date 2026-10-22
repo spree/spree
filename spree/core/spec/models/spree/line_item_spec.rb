@@ -365,34 +365,6 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  describe '#discounted_money' do
-    it 'returns a money object with the discounted amount' do
-      expect(line_item.discounted_money.to_s).to eq '$10.00'
-    end
-  end
-
-  describe '#money' do
-    before do
-      line_item.price = 3.50
-      line_item.quantity = 2
-    end
-
-    it 'returns a Spree::Money representing the total for this line item' do
-      expect(line_item.money.to_s).to eq('$7.00')
-    end
-  end
-
-  describe '#single_money' do
-    before do
-      line_item.price = 3.50
-      line_item.quantity = 2
-    end
-
-    it 'returns a Spree::Money representing the price for one variant' do
-      expect(line_item.single_money.to_s).to eq('$3.50')
-    end
-  end
-
   context 'has inventory (completed order so items were already unstocked)' do
     let(:order) { Spree::Order.create(email: 'spree@example.com') }
     let(:variant) { create(:variant) }
@@ -623,15 +595,6 @@ describe Spree::LineItem, type: :model do
 
     it 'returns the amount for the line item' do
       expect(line_item.amount).to eq(20)
-    end
-  end
-
-  describe '#display_amount' do
-    let(:variant) { create(:variant, price: 10) }
-    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
-
-    it 'returns the amount for the line item' do
-      expect(line_item.display_amount.to_s).to eq('$20.00')
     end
   end
 

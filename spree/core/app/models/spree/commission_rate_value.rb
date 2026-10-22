@@ -25,9 +25,6 @@ module Spree
 
     normalizes :currency, with: ->(value) { value.to_s.strip.upcase.presence }
 
-    extend Spree::DisplayMoney
-    money_methods :amount, :min_amount, :max_amount
-
     # Whether this row states a floor or a cap, as opposed to only a flat fee.
     #
     # @return [Boolean]

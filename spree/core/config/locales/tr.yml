@@ -582,7 +582,6 @@ tr:
     month: Ay
     name: İsim
     new_variant: Yeni Değişken
-    no_cc_type: Yok
     no_payment_found: Hiçbir ödeme bulunamadı
     none: Hiçbiri
     number: Numara

@@ -94,30 +94,6 @@ module Spree
         Spree::Money.new(-store_credit_total, currency: currency)
       end
 
-      def display_total_applicable_store_credit
-        Spree::Money.new(-total_applicable_store_credit, currency: currency)
-      end
-
-      def display_total_applied_store_credit
-        Spree::Money.new(-total_applied_store_credit, currency: currency)
-      end
-
-      def display_order_total_after_store_credit
-        Spree::Money.new(order_total_after_store_credit, currency: currency)
-      end
-
-      def display_total_available_store_credit
-        Spree::Money.new(total_available_store_credit, currency: currency)
-      end
-
-      def display_store_credit_remaining_after_capture
-        Spree::Money.new(total_available_store_credit - total_applicable_store_credit, currency: currency)
-      end
-
-      def display_total_minus_store_credits
-        Spree::Money.new(total_minus_store_credits, currency: currency)
-      end
-
       private
 
       # @return [BigDecimal]

@@ -70,9 +70,6 @@ module Spree
     # payouts-only caller may not read.
     self.whitelisted_ransackable_associations = %w[seller]
 
-    extend Spree::DisplayMoney
-    money_methods :amount
-
     # @return [BigDecimal] what the transfers this payout holds actually come
     #   to, for checking a stored amount against its parts
     # Summed on what the seller's account actually received, since that is

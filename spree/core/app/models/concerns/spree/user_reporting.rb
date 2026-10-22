@@ -1,16 +1,5 @@
 module Spree
   module UserReporting
-    extend DisplayMoney
-    money_methods :lifetime_value, :average_order_value
-
-    def report_values_for(report_name, store)
-      store ||= Store.default
-
-      completed_orders_for_store(store).pluck(:currency).uniq.each_with_object([]) do |currency, arr|
-        arr << send("display_#{report_name}", store: store, currency: currency)
-      end
-    end
-
     def lifetime_value(**args)
       order_calculate(operation: :sum,
                       column: :total,
@@ -33,10 +22,6 @@ module Spree
 
     def amount_spent_in(currency)
       completed_orders.where(currency: currency).sum(:total)
-    end
-
-    def display_amount_spent_in(currency)
-      Money.new(amount_spent_in(currency), currency: currency).to_html
     end
 
     def completed_orders_for_store(store)

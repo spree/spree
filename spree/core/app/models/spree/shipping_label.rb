@@ -126,11 +126,6 @@ module Spree
       nil
     end
 
-    # @return [Spree::Money]
-    def display_cost
-      Spree::Money.new(cost, currency: currency.presence || store.default_currency)
-    end
-
     # @return [String] the filename a download is served under
     def download_filename
       return file.filename.to_s if file.attached?

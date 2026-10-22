@@ -135,7 +135,8 @@ namespace :spree do
       puts "Pending:  #{seller.invitations.pending.pluck(:email).join(', ')}"
       puts "Ledger:   #{seller.seller_transfers.count} earning(s), #{seller.seller_payouts.count} payout(s)"
       balances.each do |balance|
-        puts "Balance:  #{balance.display_balance} owed (#{balance.display_earned} earned, #{balance.display_paid} paid)"
+        owed, paid = [balance.balance, balance.paid].map { |amount| Spree::Money.new(amount, currency: balance.settlement_currency) }
+        puts "Balance:  #{owed} owed (#{Spree::Money.new(balance.earned, currency: balance.currency)} earned, #{paid} paid)"
       end
     end
   end

@@ -441,22 +441,6 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  describe '#display_brand' do
-    let(:credit_card) { build(:credit_card, cc_type: cc_type, customer_id: order.customer_id) }
-
-    context 'when the cc_type does not exist' do
-      let(:cc_type) { nil }
-
-      it { expect(credit_card.display_brand).to eq('N/A') }
-    end
-
-    context 'when the cc_type exist' do
-      let(:cc_type) { 'visa' }
-
-      it { expect(credit_card.display_brand).to eq(cc_type.upcase) }
-    end
-  end
-
   describe '#wallet_type' do
     let(:credit_card) { build(:credit_card, metadata: metadata) }
     let(:metadata) { {} }

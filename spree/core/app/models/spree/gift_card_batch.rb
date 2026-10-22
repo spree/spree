@@ -2,7 +2,6 @@ module Spree
   class GiftCardBatch < Spree.base_class
     has_prefix_id :gcb
 
-    extend DisplayMoney
     include Spree::SingleStoreResource
     include Spree::CanonicalDecimals
 
@@ -34,8 +33,6 @@ module Spree
     after_create :generate_gift_cards
 
     normalizes :prefix, with: ->(value) { value&.to_s&.squish&.presence }
-
-    money_methods :amount
 
     self.whitelisted_ransackable_attributes = %w[prefix]
 

@@ -96,12 +96,6 @@ describe Spree.customer_class, type: :model do
       end
     end
 
-    describe '#display_lifetime_value' do
-      it 'returns a Spree::Money version of lifetime_value' do
-        expect(subject.display_lifetime_value(store: store, currency: currency).money.fractional).to eq(order_count * order_value * 100)
-      end
-    end
-
     describe '#order_count' do
       it 'returns the count of completed orders for the user' do
         expect(subject.order_count(store)).to eq order_count
@@ -120,42 +114,6 @@ describe Spree.customer_class, type: :model do
 
         it 'returns 0.00' do
           expect(subject.average_order_value(store: store, currency: currency)).to eq BigDecimal('0.00')
-        end
-      end
-    end
-
-    describe '#display_average_order_value' do
-      it 'returns a Spree::Money version of average_order_value' do
-        value = BigDecimal('500.05')
-        allow(subject).to receive(:average_order_value).and_return(value)
-        expect(subject.display_average_order_value(store: store, currency: currency).money.fractional).to eq(value * 100)
-      end
-    end
-
-    describe '#report_values_for' do
-      context 'when order purchases in other currencies exist' do
-        let(:eur_currency) { 'EUR' }
-        let(:eur_order_value) { BigDecimal('12.34') }
-        let(:eur_order_count) { 2 }
-
-        before do
-          create_list(:order, eur_order_count, customer: subject, store: store, total: eur_order_value, completed_at: Date.today, currency: eur_currency)
-        end
-
-        context 'lifetime_value' do
-          it 'returns a list of store lifetime values' do
-            expect(subject.report_values_for(:lifetime_value, store)).to eq([Spree::Money.new(order_count * order_value, currency: currency),
-                                                                             Spree::Money.new(eur_order_count * eur_order_value, currency: eur_currency)])
-          end
-        end
-
-        context 'average_order_value' do
-          context 'with orders' do
-            it 'returns a list of average completed order prices for the user' do
-              expect(subject.report_values_for(:average_order_value, store)).to eq([Spree::Money.new(order_value, currency: currency),
-                                                                                    Spree::Money.new(eur_order_value, currency: eur_currency)])
-            end
-          end
         end
       end
     end

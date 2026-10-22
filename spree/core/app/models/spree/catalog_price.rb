@@ -79,15 +79,5 @@ module Spree
     def tiered?
       break_count.to_i.positive?
     end
-
-    # @return [Spree::Money]
-    def money
-      Spree::Money.new(amount, currency: currency)
-    end
-
-    # @return [String]
-    def display_amount
-      money.to_s
-    end
   end
 end

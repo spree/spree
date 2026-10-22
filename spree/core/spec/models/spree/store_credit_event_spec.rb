@@ -11,17 +11,6 @@ describe 'StoreCreditEvent' do
     end
   end
 
-  describe '#display_user_total_amount' do
-    subject { create(:store_credit_auth_event, user_total_amount: user_total_amount) }
-
-    let(:user_total_amount) { 300.0 }
-
-    it 'uses the events user_total_amount attribute' do
-      amount = Spree::Money.new(user_total_amount, currency: subject.currency)
-      expect(subject.display_user_total_amount).to eq amount
-    end
-  end
-
   describe '#display_action' do
     subject { create(:store_credit_auth_event, action: action) }
 

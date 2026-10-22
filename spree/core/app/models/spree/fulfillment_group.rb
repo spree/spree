@@ -77,14 +77,6 @@ module Spree
       primary.currency
     end
 
-    # @return [String, Spree::Money] the forwarder's placeholder while a
-    #   freight rate is unpriced, money otherwise
-    def display_cost(**options)
-      return primary.display_cost(**options) if unpriced?
-
-      Spree::Money.new(cost, { currency: currency }.merge(options))
-    end
-
     # @return [Boolean]
     def unpriced?
       fulfillments.any?(&:unpriced?)

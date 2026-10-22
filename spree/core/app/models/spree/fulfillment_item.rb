@@ -2,8 +2,6 @@ module Spree
   class FulfillmentItem < Spree.base_class
     has_prefix_id :fi
 
-    extend Spree::DisplayMoney
-
     with_options inverse_of: :fulfillment_items do
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
       # Optional because cart-phase items have no order yet — their owner is
@@ -31,8 +29,6 @@ module Spree
     alias_attribute :state, :status
 
     validates :quantity, numericality: { greater_than: 0 }
-
-    money_methods :charged_amount
 
     # No state machine — the moves are driven by the Spree::Fulfillments
     # workflows and by Spree::StockLevel when stock arrives for a backorder

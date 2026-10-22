@@ -432,7 +432,6 @@ ko:
     min_quantity: 최소 수량
     name: 이름
     new_variant: 새 품종
-    no_cc_type: 해당 없음
     none: 없음
     number: 번호
     on_hand: 재고

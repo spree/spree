@@ -122,9 +122,6 @@ module Spree
     # which a payouts-only caller may not read. `order_id` covers the lookup.
     self.whitelisted_ransackable_associations = %w[seller payout refund]
 
-    extend Spree::DisplayMoney
-    money_methods :amount
-
     # What is left of this earning to give back.
     #
     # Original less what reversals have already taken, floored at zero — a

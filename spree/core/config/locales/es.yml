@@ -617,7 +617,6 @@ es:
     month: Mes
     name: Nombre
     new_variant: Nueva Variante
-    no_cc_type: N/D
     no_payment_found: No se encontró pago
     none: Ninguno
     number: Número

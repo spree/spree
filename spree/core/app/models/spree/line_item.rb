@@ -204,12 +204,8 @@ module Spree
     end
 
     extend DisplayMoney
-    money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price, :discounted_price,
-                  :adjustment_total, :additional_tax_total, :discount_total, :included_tax_total,
-                  :pre_tax_amount, :delivery_cost, :tax_total, :compare_at_amount
-
-    alias single_money display_price
-    alias single_display_amount display_price
+    money_methods :discounted_amount, :total, :price, :adjustment_total, :additional_tax_total,
+                  :discount_total, :included_tax_total, :pre_tax_amount, :delivery_cost, :compare_at_amount
 
     # Standardized column name (renamed in 6.0); the legacy reader stays one
     # release.
@@ -252,7 +248,6 @@ module Spree
       included_tax_total + additional_tax_total
     end
 
-    alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
     # What +units+ of this line cost the customer after discounts. Multiplied
@@ -290,7 +285,6 @@ module Spree
     end
 
     alias total final_amount
-    alias money display_total
 
     # Returns true if the line item has sufficient stock
     #

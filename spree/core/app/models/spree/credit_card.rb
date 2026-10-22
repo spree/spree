@@ -149,18 +149,6 @@ module Spree
       verification_value.present?
     end
 
-    # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
-    # @return [String]
-    def display_number
-      "XXXX-XXXX-XXXX-#{last_digits}"
-    end
-
-    # Show the card brand, eg. "VISA", "MASTERCARD", etc.
-    # @return [String]
-    def display_brand
-      brand.present? ? brand.upcase : I18n.t('spree.no_cc_type')
-    end
-
     # Returns the first name of the cardholder.
     # @return [String]
     def first_name

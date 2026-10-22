@@ -112,8 +112,7 @@ module Spree
 
     delegate :currency, :store, to: :owner
 
-    money_methods :amount, :credit_allowed
-    alias money display_amount # for compatibility with older versions of Spree
+    money_methods :amount
 
     # No state machine — transitions run inside Spree::Payments workflows and
     # Spree::Payment::Processing (docs/plans/6.0-service-workflows.md). The

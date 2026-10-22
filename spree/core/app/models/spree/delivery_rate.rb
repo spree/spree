@@ -18,7 +18,7 @@ module Spree
 
     extend Spree::DisplayMoney
 
-    money_methods :base_price, :final_price, :tax_amount, :additional_tax_total, :included_tax_total, :tax_total
+    money_methods :base_price, :tax_amount, :additional_tax_total, :included_tax_total
 
     delegate :order, :currency, :with_free_shipping_promotion?, to: :fulfillment
     delegate :code, to: :delivery_method, prefix: true

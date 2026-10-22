@@ -127,17 +127,6 @@ module Spree
       persisted? && !being_created?
     end
 
-    # What the units on this row cost, when the movement was a purchase. Null
-    # on everything else: moving stock a merchant already owns is not a
-    # purchase, so a transfer or a return has no cost to record.
-    #
-    # @return [Spree::Money, nil]
-    def display_unit_cost
-      return nil if unit_cost.nil?
-
-      Spree::Money.new(unit_cost, currency: purchase_order&.currency)
-    end
-
     # @deprecated Use {#stock_level}; removed in 6.1.
     def stock_item
       Spree::Deprecation.warn('Spree::StockMovement#stock_item is deprecated and will be removed in Spree 6.1. Use #stock_level instead.')

@@ -26,15 +26,5 @@ module Spree
     def total_cost
       unit_cost.to_d * quantity_ordered.to_i
     end
-
-    # @return [Spree::Money]
-    def display_unit_cost
-      Spree::Money.new(unit_cost, currency: currency)
-    end
-
-    # @return [Spree::Money]
-    def display_total_cost
-      Spree::Money.new(total_cost, currency: currency)
-    end
   end
 end

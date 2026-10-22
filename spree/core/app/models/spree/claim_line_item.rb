@@ -23,8 +23,7 @@ module Spree
     delegate :order, :currency, to: :claim
 
     extend Spree::DisplayMoney
-    money_methods :refund_amount, :paid_amount, :pre_tax_amount, :included_tax_total,
-                  :additional_tax_total, :tax_total
+    money_methods :refund_amount
 
     # What the customer paid for the affected units, after discounts and with
     # the tax charged on top of the price — the ceiling for a refund on this

@@ -52,8 +52,7 @@ module Spree
     attribute :warnings, default: -> { [] }
 
     money_methods :item_total, :adjustment_total, :included_tax_total, :additional_tax_total,
-                  :discount_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
-                  :tax_total, :pre_tax_item_amount, :pre_tax_total, :amount_due
+                  :discount_total, :fee_total, :delivery_total, :total, :tax_total, :amount_due
 
     belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true
     # Codes are stored stripped + lowercased so lookups stay case-insensitive;

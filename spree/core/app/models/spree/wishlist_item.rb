@@ -7,9 +7,6 @@ module Spree
 
     include Spree::WishlistItem::CustomEvents
 
-    extend DisplayMoney
-    money_methods :total, :price
-
     publishes_lifecycle_events
 
     belongs_to :variant, class_name: 'Spree::Variant'

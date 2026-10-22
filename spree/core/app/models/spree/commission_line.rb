@@ -66,9 +66,6 @@ module Spree
     # which a commissions-only caller may not read. `order_id` covers the lookup.
     self.whitelisted_ransackable_associations = %w[seller commission_rate]
 
-    extend Spree::DisplayMoney
-    money_methods :amount, :tax_amount, :total
-
     # What this row was charged against.
     #
     # @return [Spree::LineItem, Spree::Fulfillment, nil]

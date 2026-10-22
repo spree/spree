@@ -45,10 +45,6 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[currency authorized_amount captured_amount refunded_amount]
     self.whitelisted_ransackable_associations = %w[payment order]
 
-    extend Spree::DisplayMoney
-    money_methods :authorized_amount, :captured_amount, :refunded_amount, :claimed_amount,
-                  :net_captured_amount, :refundable_amount
-
     # This child's reported position: what it has captured, less the refunds a
     # subscriber has already written back to {#refunded_amount}.
     #

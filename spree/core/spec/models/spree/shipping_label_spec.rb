@@ -58,11 +58,6 @@ RSpec.describe Spree::ShippingLabel, type: :model do
     end
   end
 
-  it 'displays the cost in the label currency' do
-    label = build(:shipping_label, owner: fulfillment, cost: 7.25, currency: 'EUR')
-
-    expect(label.display_cost.to_s).to eq('€7.25')
-  end
   # The value is whatever the provider wrote, and a browser follows it on a
   # print click — so anything but https is not a label URL.
   describe '#file_url' do

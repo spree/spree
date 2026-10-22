@@ -5,13 +5,10 @@ module Spree
     class AmountLine
       include ActiveModel::Model
       include ActiveModel::Attributes
-      extend Spree::DisplayMoney
 
       attribute :label, :string
       attribute :amount, :decimal
       attribute :currency, :string
-
-      money_methods :amount
 
       # Sums records sharing a label into one line each.
       #

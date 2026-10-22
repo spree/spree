@@ -70,11 +70,6 @@ module Spree
       items.sum(&:total_cost)
     end
 
-    # @return [Spree::Money]
-    def display_subtotal
-      Spree::Money.new(subtotal, currency: currency)
-    end
-
     # Whether the merchant may still edit the lines. Once the order is placed
     # with the supplier, what was ordered is a matter of record.
     #

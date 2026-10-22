@@ -195,7 +195,6 @@ de-CH:
     me_no_current_user: Diese Anfrage wurde mit keinem Admin-Benutzer authentifiziert
     meta_keywords: Meta-Schlüsselwörter
     min_quantity: Min. Menge
-    no_cc_type: N/A
     only_active_products_can_be_added_to_cart: Produkte im Entwurfsstatus oder archivierte Produkte können nicht in den Warenkorb gelegt werden. Bitte markieren Sie das Produkt zuerst als aktiv.
     order_routing:
       strategies:

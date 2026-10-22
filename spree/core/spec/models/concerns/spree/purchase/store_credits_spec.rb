@@ -480,43 +480,6 @@ RSpec.shared_examples 'a store credits host' do
       expect(subject.using_store_credit?).to be false
     end
   end
-
-  describe 'display money helpers' do
-    subject { new_record }
-
-    it '#display_total_applicable_store_credit returns a negative money amount' do
-      allow(subject).to receive(:total_applicable_store_credit).and_return(10.00)
-
-      expect(subject.display_total_applicable_store_credit).to be_a(Spree::Money)
-      expect(subject.display_total_applicable_store_credit.amount_in_cents).to eq(-1000)
-    end
-
-    it '#display_total_applied_store_credit returns a negative money amount' do
-      allow(subject).to receive(:total_applied_store_credit).and_return(10.00)
-
-      expect(subject.display_total_applied_store_credit).to be_a(Spree::Money)
-      expect(subject.display_total_applied_store_credit.amount_in_cents).to eq(-1000)
-    end
-
-    it '#display_order_total_after_store_credit returns the after-credit amount' do
-      allow(subject).to receive(:order_total_after_store_credit).and_return(10.00)
-
-      expect(subject.display_order_total_after_store_credit.amount_in_cents).to eq(1000)
-    end
-
-    it '#display_total_available_store_credit returns the available amount' do
-      allow(subject).to receive(:total_available_store_credit).and_return(10.00)
-
-      expect(subject.display_total_available_store_credit.amount_in_cents).to eq(1000)
-    end
-
-    it "#display_store_credit_remaining_after_capture returns available minus applied" do
-      allow(subject).to receive(:total_available_store_credit).and_return(10.00)
-      allow(subject).to receive(:total_applicable_store_credit).and_return(5.00)
-
-      expect(subject.display_store_credit_remaining_after_capture.amount_in_cents).to eq(500)
-    end
-  end
 end
 
 RSpec.describe Spree::Purchase::StoreCredits do

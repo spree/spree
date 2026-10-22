@@ -176,10 +176,6 @@ module Spree
       Spree::Money.new(refund_total, currency: currency)
     end
 
-    def display_refunded_total
-      Spree::Money.new(refunded_total, currency: currency)
-    end
-
     def display_refund_tax_total
       Spree::Money.new(refund_tax_total, currency: currency)
     end

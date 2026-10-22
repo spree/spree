@@ -41,12 +41,4 @@ RSpec.describe Spree::CommissionLine, type: :model do
     expect(line.commission_rate).to be_nil
     expect(line.rate).to eq(10)
   end
-
-  it 'renders its parts as money' do
-    line = build(:commission_line, amount: 10, tax_amount: 2.1, total: 12.1, currency: 'USD')
-
-    expect(line.display_amount.to_s).to eq('$10.00')
-    expect(line.display_tax_amount.to_s).to eq('$2.10')
-    expect(line.display_total.to_s).to eq('$12.10')
-  end
 end
