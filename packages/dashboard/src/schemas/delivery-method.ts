@@ -33,38 +33,48 @@ export const deliveryMethodServiceSchema = z.object({
 
 export type DeliveryMethodServiceDraft = z.infer<typeof deliveryMethodServiceSchema>
 
-export const deliveryMethodFormSchema = z
-  .object({
-    name: z.string().min(1),
-    admin_name: z.string().optional(),
-    code: z.string().optional(),
-    fulfillment_provider: z.string(),
-    // Empty string means the built-in Internal provider (calculator-priced).
-    rate_provider: z.string(),
-    storefront_visible: z.boolean(),
-    // Marketplace only: whether a seller's packages may be quoted by this
-    // method (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
-    available_to_sellers: z.boolean(),
-    tracking_url: z.string().optional(),
-    estimated_transit_business_days_min: z.string().optional(),
-    estimated_transit_business_days_max: z.string().optional(),
-    tax_category_id: z.string().optional(),
-    calculator: z.object({
-      type: z.string().optional(),
-      preferences: z.record(z.string(), z.unknown()).optional(),
-    }),
-    // Empty string means no destination restriction — the method serves
-    // everywhere its profile reaches.
-    delivery_zone_id: z.string(),
-    stock_location_ids: z.array(z.string()),
-    rules: z.array(deliveryMethodRuleSchema),
-    markup_flat: z.string().optional(),
-    markup_percent: z.string().optional(),
-    // Held as strings like the other decimals: what the merchant typed reaches
-    // the server intact, which is what parses it.
-    services: z.array(deliveryMethodServiceSchema),
-  })
-  .superRefine((values, ctx) => {
+const deliveryMethodFormObject = z.object({
+  name: z.string().min(1),
+  admin_name: z.string().optional(),
+  code: z.string().optional(),
+  fulfillment_provider: z.string(),
+  // Empty string means the built-in Internal provider (calculator-priced).
+  rate_provider: z.string(),
+  storefront_visible: z.boolean(),
+  // Marketplace only: whether a seller's packages may be quoted by this
+  // method (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+  available_to_sellers: z.boolean(),
+  tracking_url: z.string().optional(),
+  estimated_transit_business_days_min: z.string().optional(),
+  estimated_transit_business_days_max: z.string().optional(),
+  tax_category_id: z.string().optional(),
+  calculator: z.object({
+    type: z.string().optional(),
+    preferences: z.record(z.string(), z.unknown()).optional(),
+  }),
+  // Empty string means no destination restriction — the method serves
+  // everywhere its profile reaches.
+  delivery_zone_id: z.string(),
+  stock_location_ids: z.array(z.string()),
+  rules: z.array(deliveryMethodRuleSchema),
+  markup_flat: z.string().optional(),
+  markup_percent: z.string().optional(),
+  // Held as strings like the other decimals: what the merchant typed reaches
+  // the server intact, which is what parses it.
+  services: z.array(deliveryMethodServiceSchema),
+})
+
+export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormObject>
+
+/**
+ * The delivery method form's schema. `carrierPricedProviders` names the rate
+ * providers that quote their own rates (`''` when the default one does): their
+ * methods hide the calculator, so its amounts are not asked for.
+ */
+export function deliveryMethodFormSchema(carrierPricedProviders: readonly string[] = []) {
+  return deliveryMethodFormObject.superRefine((values, ctx) => {
+    if (carrierPricedProviders.includes(values.rate_provider)) return
+
     // A calculator-priced method with no amount in any currency would never be offered.
     const { type, preferences } = values.calculator
     if (!AMOUNT_BASED_CALCULATORS.includes(type ?? '')) return
@@ -76,8 +86,7 @@ export const deliveryMethodFormSchema = z
       message: i18n.t('admin.currency_amounts.required'),
     })
   })
-
-export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormSchema>
+}
 
 export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   name: '',
