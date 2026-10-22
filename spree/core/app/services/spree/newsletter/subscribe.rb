@@ -54,8 +54,16 @@ module Spree
         @existed_subscription ||= Spree::NewsletterSubscriber.verified.find_by(email: email, store: current_store)
       end
 
+      # The account the subscription belongs to: the signed-in customer only
+      # when the address is theirs. Linking it to whoever is signed in would
+      # hand them another person's subscription — and with it the right to
+      # cancel it.
       def known_user
-        @known_user ||= current_user || Spree.customer_class.find_by(email: email)
+        @known_user ||= if current_user&.email.to_s.casecmp?(email.to_s)
+                          current_user
+                        else
+                          Spree.customer_class.find_by(email: email)
+                        end
       end
     end
   end

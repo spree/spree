@@ -120,6 +120,17 @@ module Spree
           expect(user.reload.accepts_email_marketing).to eq(true)
         end
       end
+
+      context 'when a logged in user with another email subscribes it' do
+        let(:owner) { create(:user, email: email) }
+        let(:user) { create(:user, email: 'someone-else@example.com') }
+
+        before { subscriber.update!(customer: owner) }
+
+        it 'leaves the subscription with its owner' do
+          expect(service.customer).to eq(owner)
+        end
+      end
     end
 
     context 'when unverified subscription has been already created' do
