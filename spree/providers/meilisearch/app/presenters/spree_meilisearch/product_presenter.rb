@@ -93,10 +93,12 @@ module SpreeMeilisearch
     end
 
     # Flat cf_* hash for searchable ∪ sortable custom_fields (Meilisearch docs).
+    # Storefront-visible ones only: the index is the storefront's, and a value
+    # the serializer withholds has no business in a document it can search.
     def custom_field_document_attributes
       @custom_field_document_attributes ||= product.custom_fields.filter_map do |custom_field|
         definition = custom_field.custom_field_definition
-        next unless definition&.searchable? || definition&.sortable?
+        next unless definition&.storefront_visible? && (definition.searchable? || definition.sortable?)
 
         [definition.filter_key, custom_field_index_value(custom_field, definition.field_type)]
       end.to_h

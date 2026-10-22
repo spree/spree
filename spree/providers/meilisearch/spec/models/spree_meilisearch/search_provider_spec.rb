@@ -518,6 +518,16 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       expect(provider.send(:facet_attributes)).not_to include('cf_custom_label')
     end
 
+    it 'keeps admin-only definitions out of the index settings, whatever audience built the provider' do
+      create(:custom_field_definition, :number_field, :admin_only, :searchable, :sortable,
+             namespace: 'internal', key: 'margin')
+      back_office = described_class.new(store, audience: nil)
+
+      expect(back_office.send(:searchable_attributes)).not_to include('cf_internal_margin')
+      expect(back_office.send(:sortable_attributes)).not_to include('cf_internal_margin')
+      expect(back_office.send(:filterable_attributes)).not_to include('cf_internal_margin')
+    end
+
     it 'maps cf_* sort params without namespace resolution' do
       expect(provider.send(:sort_mapping, 'cf_custom_label')).to eq(['cf_custom_label:asc'])
       expect(provider.send(:sort_mapping, '-cf_custom_label')).to eq(['cf_custom_label:desc'])

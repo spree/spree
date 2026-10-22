@@ -101,7 +101,7 @@ module SpreeMeilisearch
     def reindex(scope = nil)
       full_reindex = scope.nil?
       scope ||= store.products
-      @custom_field_schema = Spree::SearchProvider::CustomFieldSchema.new(store, audience: audience)
+      @custom_field_schema = storefront_custom_field_schema
       ensure_index_settings!
 
       # On a full reindex, clear first so stale docs (e.g. membership docs for
@@ -283,6 +283,18 @@ module SpreeMeilisearch
 
     def index_name
       "#{store.code}_products"
+    end
+
+    # The index is the storefront's: shoppers search it and the back office
+    # never does, so its vocabulary is the storefront schema whatever audience
+    # this provider was built for. A back-office reindex must not teach the
+    # shared index about admin-only fields.
+    def custom_field_schema
+      @custom_field_schema ||= storefront_custom_field_schema
+    end
+
+    def storefront_custom_field_schema
+      Spree::SearchProvider::CustomFieldSchema.new(store, audience: :store)
     end
 
     def searchable_attributes
