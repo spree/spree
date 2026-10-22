@@ -67,8 +67,6 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Spree::Events.disable!
-    # Clean out the database state before the tests run
-    ActiveRecord::Base.connection_pool.with_connection { |connection| connection.truncate_tables(*connection.tables) }
   end
 
   # Re-enable events for specs that need them

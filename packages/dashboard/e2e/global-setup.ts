@@ -56,10 +56,17 @@ import {
 import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
 
 const PORT = process.env.E2E_RAILS_PORT || '3010'
-// Mirrors `spec/dummy/config/database.yml`.
-const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test.sqlite3')
+// A database of its own, so the seeded data left behind after a run never
+// reaches the API gem's RSpec suite, which shares the dummy app.
+const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')
 
-const RAILS_ENV = { ...process.env, RAILS_ENV: 'test', PORT, DASHBOARD_E2E: '1' }
+const RAILS_ENV = {
+  ...process.env,
+  RAILS_ENV: 'test',
+  PORT,
+  DASHBOARD_E2E: '1',
+  DATABASE_URL: `sqlite3:${TEST_SQLITE}`,
+}
 
 // Customer's last name is derived from the full name so the seeder and the
 // matching `full_name` assertion in promotions.spec stay in sync.

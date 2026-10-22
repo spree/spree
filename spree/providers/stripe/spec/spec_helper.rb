@@ -56,7 +56,6 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Spree::Events.disable!
-    ActiveRecord::Base.connection_pool.with_connection { |connection| connection.truncate_tables(*connection.tables) }
   end
 
   config.around(:each, events: true) do |example|

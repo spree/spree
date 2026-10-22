@@ -1,8 +1,11 @@
 require 'spec_helper'
 
 RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: true do
+  # The catalog is loaded once for the whole group, outside the per-example
+  # transactions, so the group wraps it in a transaction of its own and rolls
+  # it back afterwards.
   before(:all) do
-    ActiveRecord::Base.connection_pool.with_connection { |connection| connection.truncate_tables(*connection.tables) }
+    ActiveRecord::Base.lease_connection.begin_transaction(joinable: false)
     # The seed only mints an admin with explicit credentials (no dummy
     # defaults since 6.0), and the sample-data imports need one as owner.
     # ENV is process-global, so the originals are restored rather than
@@ -26,7 +29,7 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
   end
 
   after(:all) do
-    ActiveRecord::Base.connection_pool.with_connection { |connection| connection.truncate_tables(*connection.tables) }
+    ActiveRecord::Base.lease_connection.rollback_transaction
   end
 
   it 'creates products' do
