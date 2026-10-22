@@ -17,6 +17,7 @@ import { TrashIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../../lib/variant-search'
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext, PromotionActionLineItemParams } from './types'
 
@@ -189,6 +190,7 @@ export function CreateLineItemsActionEditor({
               for (const variant of res.data) variantById.current.set(variant.id, variant)
               return res
             }}
+            minSearchLength={VARIANT_SEARCH_MIN_LENGTH}
             hydrate={async () => ({ data: [] })}
             getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
             renderOption={(variant) => (

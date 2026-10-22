@@ -56,6 +56,7 @@ import { useChannels } from '../../../../hooks/use-channels'
 import { companyAutocompleteProps, useCompanyAddresses } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps, useCustomerAddresses } from '../../../../hooks/use-customers'
 import { useAllMarkets } from '../../../../hooks/use-markets'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../../../lib/variant-search'
 import {
   NEW_ORDER_DEFAULTS,
   type NewOrderFormValues,
@@ -528,6 +529,7 @@ function NewOrderPage() {
                         for (const v of res.data) variantById.current.set(v.id, v)
                         return res
                       }}
+                      minSearchLength={VARIANT_SEARCH_MIN_LENGTH}
                       hydrate={async () => ({ data: [] })}
                       getOptionLabel={(v) => v.product_name ?? v.sku ?? v.id}
                       renderOption={(v) => (

@@ -173,6 +173,8 @@
       "no_results": "无结果",
       "combobox_more_results_one": "还有 1 个结果未显示。输入以搜索。",
       "combobox_more_results_other": "还有 {{count}} 个结果未显示。输入以搜索。",
+      "search_min_length_one": "请至少输入 1 个字符以搜索。",
+      "search_min_length_other": "请至少输入 {{count}} 个字符以搜索。",
       "none": "无",
       "optional": "可选",
       "or": "或",

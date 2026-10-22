@@ -22,6 +22,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PackageIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../lib/variant-search'
 import { VariantLink } from './variant-link'
 
 /**
@@ -155,6 +156,7 @@ export function VariantLineEditor({
             ...(stockLocationId ? { available_at_stock_location: stockLocationId } : {}),
           })
         }
+        minSearchLength={VARIANT_SEARCH_MIN_LENGTH}
         getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
         getOptionImageUrl={(variant) => variant.thumbnail_url}
         getOptionSubtitle={(variant) =>
