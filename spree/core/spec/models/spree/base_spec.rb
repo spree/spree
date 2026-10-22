@@ -165,4 +165,19 @@ describe Spree::Base do
       expect { loaded.with_lock { nil } }.not_to raise_error
     end
   end
+
+  describe '.for_store' do
+    let(:store) { @default_store }
+
+    it 'reads through the association the store has for the model' do
+      expect(Spree::Product.for_store(store).to_sql).to eq(store.products.to_sql)
+    end
+
+    # A model the store cannot reach answers nothing: widening to every
+    # store's rows is how a cross-store read goes unnoticed.
+    it 'answers nothing for a model the store has no association for' do
+      expect(Spree::Zone.for_store(store)).to be_none
+    end
+  end
+
 end
