@@ -181,27 +181,38 @@ async function runBundleUpdate(projectDir: string, flags: UpgradeFlags): Promise
   return true
 }
 
+// A bundle out of sync with Gemfile.lock (a pulled lockfile change, a cold
+// bundle_cache volume, an un-checked-out git source) makes `bundle list` fail.
+// `bundle install` is the fix every time, so run it and list again rather than
+// sending the operator off to run it by hand.
 export async function detectSpreeGems(projectDir: string): Promise<string[]> {
   try {
-    // Filter in JS rather than piping through grep: `bundle list` exits 0 even
-    // with zero spree gems, so a nonzero exit unambiguously means bundler
-    // itself errored (out-of-sync lockfile, un-checked-out git source) — no
-    // exit-code disambiguation against grep's "no match" needed.
-    const stdout = await dockerComposeCapture(['bundle', 'list', '--name-only'], projectDir)
-    return stdout
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith('spree'))
+    return await listSpreeGems(projectDir)
+  } catch {
+    p.log.step(pc.bold('bundle install') + pc.dim(' — the bundle is out of sync with Gemfile.lock'))
+    await dockerComposeExecOrRun(['bundle', 'install'], projectDir)
+  }
+
+  try {
+    return await listSpreeGems(projectDir)
   } catch (err) {
     const e = err as { stderr?: string }
-    // Surface bundler's error + the real next step instead of laundering it
-    // into a misleading "No Spree gems detected".
     throw new Error(
-      'Could not list gems in the web container — the bundle looks out of sync.\n' +
-        'Run `spree bundle install` first, then re-run `spree upgrade`.' +
+      'Could not list gems in the web container, even after `bundle install`.' +
         (e.stderr?.trim() ? `\n\n${e.stderr.trim()}` : ''),
     )
   }
+}
+
+// Filter in JS rather than piping through grep: `bundle list` exits 0 even
+// with zero spree gems, so a nonzero exit unambiguously means bundler itself
+// errored.
+async function listSpreeGems(projectDir: string): Promise<string[]> {
+  const stdout = await dockerComposeCapture(['bundle', 'list', '--name-only'], projectDir)
+  return stdout
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('spree'))
 }
 
 async function runMigrate(projectDir: string, flags: UpgradeFlags): Promise<void> {
