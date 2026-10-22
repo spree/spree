@@ -1,5 +1,26 @@
 # @spree/seller-dashboard
 
+## 1.0.0-rc.6
+
+### Minor Changes
+
+- [#14940](https://github.com/spree/spree/pull/14940) [`44b1933`](https://github.com/spree/spree/commit/44b1933854a83f505b0b901b1fd57b1aa9ac167d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added product page slots for plugins: `product.form_main` at the end of the main column, `product.media.form_fields` in the media editor, `product.media.actions` in the Media card, and `product.variant.form_fields` in the variant editor, with `seller.product.*` counterparts in the seller panel. `product.form_sidebar` now also renders on the new product page, and both column slots receive `mode`. Fields on a media or variant row register under the `product.media` and `product.variant` form keys and save with the product.
+
+- [#14940](https://github.com/spree/spree/pull/14940) [`44b1933`](https://github.com/spree/spree/commit/44b1933854a83f505b0b901b1fd57b1aa9ac167d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `<resource>.form_fields` slots to the create and edit sheets for markets, stock locations, tax rates, tax categories, sales channels, policies, package types, product types, delivery zones, delivery methods, option types and customer groups. Fields a widget binds there save with the sheet. The seller panel's stock location and package type sheets use `seller.stock_location.form_fields` and `seller.package_type.form_fields`. `HostFormSlot` renders a slot that exposes a form which isn't wrapped in `FormProvider`.
+
+### Patch Changes
+
+- [#14938](https://github.com/spree/spree/pull/14938) [`7c295c4`](https://github.com/spree/spree/commit/7c295c4d40c8c130209cbdc54ade3914888987b3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Moved the money, percentage, typed-amount, display-name and code-shape helpers and the list of currencies still in use into `@spree/core`, which the dashboard packages and the seller panel now depend on. `@spree/dashboard-core` still exports them under the same names.
+  
+  - A customer's average order value is now worked out exactly.
+  - Calculator summaries show money with each currency's own number of decimals.
+  - The bulk variant editor now reads `1,500` as fifteen hundred and `1,234.5` correctly when you type or paste a weight or dimension.
+
+- [#14944](https://github.com/spree/spree/pull/14944) [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added every status, kind and other value list the Spree API returns to `@spree/core`, each as a list of its values (`PRODUCT_STATUSES`, `MEDIA_TYPES`, …) and a type (`ProductStatus`, `MediaType`, …) — open where extensions may add values, closed otherwise — plus `subsetOf` for picking the values an action accepts with each one checked at compile time. The SDKs re-export these types instead of each carrying its own copy, so their names and values are unchanged. The dashboards and the seller panel build their status filters and action checks from these lists, so a status added on the server shows up without a dashboard change. Value lists the SDKs used to spell out inline, such as a seller transfer's `kind`, now have names of their own; `MediaType`, `CollectionRuleMatchPolicy` and `CollectionSortOrder` in `@spree/admin-sdk`, and `ClaimResolution` in `@spree/dashboard-ui`, now come from the generated lists under the same names. A seller's `tax_remittance` and `payouts_schedule_interval`, a claim's `resolution`, a collection's `sort_order`, a shipping label's `format`, purchase order and stock transfer statuses, and tax and commission lines' `taxability_reason` are now typed with their lists instead of as plain strings.
+- Updated dependencies [[`1a86817`](https://github.com/spree/spree/commit/1a86817598711e5383d9acd663bbe808448a9dd2), [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1), [`06fc8b0`](https://github.com/spree/spree/commit/06fc8b06574742b63f15e355ea352f67655459c1)]:
+  - @spree/seller-sdk@1.0.0
+  - @spree/core@0.2.0
+
 ## 1.0.0-rc.5
 
 ### Minor Changes
