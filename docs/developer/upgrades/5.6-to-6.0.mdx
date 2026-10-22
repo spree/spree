@@ -1088,7 +1088,7 @@ Two enforcement changes on the Admin API:
 
 - **JWT staff pass the same per-controller key gate as secret keys.** A request whose principal lacks `<read|write>_<resource>` gets a 403 with `details.required_permission` naming the missing key.
 - **Staff endpoints moved out of the `settings` scope.** `/admin_users`, `/invitations`, and `/roles` now require the new `read_staff` / `write_staff` scopes; secret keys minted with `settings` before 6.0 lose those endpoints. `/countries` and `/locales` became scope-exempt reference data.
-- **The CORS allowlist moved out of the `settings` scope too.** `/allowed_origins` requires `read_api_keys` / `write_api_keys`: an allowed origin can read any signed-in admin's access token through the cookie-authenticated refresh endpoint, so it is managed like a credential.
+- **The CORS allowlist moved out of the `settings` scope too.** `/allowed_origins` requires `read_api_keys` / `write_api_keys` (6.0 release candidates briefly held it under `staff`): an allowed origin can read any signed-in admin's access token through the cookie-authenticated refresh endpoint, so it is managed like a credential.
 - **Paying a customer back needs `write_refunds`.** Refunding a return, resolving a claim with a refund, fulfilling an exchange and cancelling an order with `refund_payments` require it alongside `write_orders`, as the nested refunds endpoint always did. Roles and keys that only hold `write_orders` get a 403 on those calls; the dashboard hides the actions from them.
 
 ### Rich-text fields read as plain text plus HTML
