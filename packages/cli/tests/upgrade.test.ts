@@ -123,25 +123,36 @@ describe('detectSpreeGems', () => {
     await expect(detectSpreeGems('/proj')).resolves.toEqual([])
   })
 
-  it('throws a bundle-install hint when bundler itself errors', async () => {
-    routeBundleList(async () => {
-      throw Object.assign(new Error('x'), {
-        exitCode: 1,
-        stderr:
-          'The git source https://github.com/spree/spree.git is not yet checked out. Please run bundle install',
-      })
-    })
-    await expect(detectSpreeGems('/proj')).rejects.toThrow(/spree bundle install/)
-    await expect(detectSpreeGems('/proj')).rejects.toThrow(/not yet checked out/)
+  it('runs bundle install and lists again when the bundle is out of sync', async () => {
+    let listCalls = 0
+    const calls: string[] = []
+    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+      if (args.includes('ps')) return { stdout: 'running' }
+      if (args.includes('list')) {
+        listCalls += 1
+        if (listCalls === 1)
+          throw Object.assign(new Error('x'), {
+            exitCode: 1,
+            stderr: 'The git source https://github.com/spree/spree.git is not yet checked out.',
+          })
+        return { stdout: 'spree\nspree_core\n' }
+      }
+      calls.push(args.join(' '))
+      return { stdout: '' }
+    }) as never)
+
+    await expect(detectSpreeGems('/proj')).resolves.toEqual(['spree', 'spree_core'])
+    expect(calls).toEqual(['compose exec web bundle install'])
   })
 
-  it('wraps daemon-level failures (exitCode 255) with the bundle hint', async () => {
-    routeBundleList(async () => {
-      throw Object.assign(new Error('x'), { exitCode: 255, stderr: 'no such service: web' })
-    })
-    await expect(detectSpreeGems('/proj')).rejects.toThrow(
-      /bundle looks out of sync|no such service/,
-    )
+  it('throws with the bundler error when listing still fails after bundle install', async () => {
+    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+      if (args.includes('ps')) return { stdout: 'running' }
+      if (args.includes('install')) return { stdout: '' }
+      throw Object.assign(new Error('x'), { exitCode: 1, stderr: 'Could not find gem spree_core' })
+    }) as never)
+    await expect(detectSpreeGems('/proj')).rejects.toThrow(/even after `bundle install`/)
+    await expect(detectSpreeGems('/proj')).rejects.toThrow(/Could not find gem spree_core/)
   })
 })
 
