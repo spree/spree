@@ -28,8 +28,13 @@ module Spree
             def create
               with_order_lock do
                 payment_method = current_store.payment_methods.accessible_by(current_ability, :show).find_by_prefix_id!(params[:payment_method_id])
+                amount = money_param(:amount, @parent.currency)
+                unless amount.nil? || amount.positive?
+                  raise Spree::Money::InvalidFormat.new('must be greater than 0', field: :amount)
+                end
+
                 @resource = @parent.payments.build(
-                  amount: params[:amount] || @parent.order_total_after_store_credit,
+                  amount: amount || @parent.order_total_after_store_credit,
                   payment_method: payment_method
                 )
 

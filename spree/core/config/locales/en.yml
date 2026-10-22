@@ -685,6 +685,7 @@ en:
     canceler: Canceler
     cannot_be_destroyed: Order cannot be destroyed.
     capture: Capture
+    capture_exceeds_payment_amount: The capture amount cannot exceed the payment amount.
     cart: Cart
     cart_already_updated: The cart has already been updated.
     cart_completion_in_progress: The cart is being completed. Please retry in a moment.

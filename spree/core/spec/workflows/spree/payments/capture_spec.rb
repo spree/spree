@@ -62,6 +62,16 @@ RSpec.describe Spree::Payments::Capture do
       expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('10.04'))
     end
 
+    it 'refuses to capture more than the payment amount' do
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('100'))
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:capture_exceeds_payment_amount)
+      expect(payment.reload).to be_pending
+    end
+
     context 'with exact amounts' do
       %w[0.29 1.15 1234567.89].each do |amount|
         it "records a capture of #{amount} to the cent" do
