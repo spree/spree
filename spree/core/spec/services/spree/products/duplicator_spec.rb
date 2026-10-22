@@ -39,6 +39,14 @@ RSpec.describe Spree::Products::Duplicator do
     Timecop.return
   end
 
+  context 'when a variant in another store has a matching sku' do
+    before { create(:product, store: create(:store), sku: "OTHER-#{product.sku}") }
+
+    it 'names the copy after a variant of its own store' do
+      expect(duplicate.value.sku).to eq "COPY OF #{product.sku}"
+    end
+  end
+
   describe 'stock level duplication' do
     # A promise belongs to the order that made it. Copied onto the duplicate,
     # it would open holding stock for somebody else's order.
