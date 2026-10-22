@@ -2,6 +2,10 @@
 
 export type UpdateCustomerParams = {
   email?: string
+  /**
+   * Changing it signs the customer out everywhere: every refresh token is revoked, so sign in again
+   * once the access token expires.
+   */
   password?: string
   password_confirmation?: string
   /** Required when changing the email or the password. */
