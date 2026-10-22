@@ -3,7 +3,7 @@ title: "Translations"
 description: "Learn how to translate products, categories, collections and options into the languages your store sells in."
 ---
 
-A translation is a second version of your store's own wording in another language, kept alongside the original rather than replacing it. Four kinds of record can be translated: products, categories, collections and option types. Each one keeps its own name, description and web address in every language your store sells in, so a shopper reading the store in German sees a German product name, a German category in the menu and a German web address.
+A translation is a second version of your store's own wording in another language, kept alongside the original rather than replacing it. Four kinds of record can be translated: products, categories, collections and option types. Products, categories and collections each keep their own name, description and web address in every language your store sells in, and an option type keeps its label. A shopper reading the store in German therefore sees a German product name, a German category in the menu and a German web address.
 
 Translating matters wherever you sell across a language border, because a shopper reads faster, trusts more and buys sooner in their own language. The translated web address matters for a separate reason: search engines index it, and shoppers read it before they click.
 
@@ -44,6 +44,8 @@ Four kinds of record carry translations, and the fields differ by kind.
 | **Option types** | **Label**, and the label of each of its values |
 
 **Slug** and **Permalink** are the record's web address in that language. **Description** is rich text, with its own toolbar for bold, lists and links.
+
+<Warning>An option type and its values carry separate labels, and coverage counts only the option type's own. Translating the label of an option type called Size can therefore show it as fully translated while Small, Medium and Large are still in the original language. Check the values in the editor before treating an option type as finished.</Warning>
 
 Translating a record never changes what the dashboard shows. The admin always displays the original wording, whatever languages a record has been translated into, and the translated wording appears only on the storefront, to shoppers in a market that offers that language. Size stays Size for your team while a German shopper reads Größe.
 
@@ -102,7 +104,7 @@ A record's own **Translations** card counts languages it has been started in, wh
 2. Click **Continue** and match each column to the field it holds. **Slug** and **Locale** are required.
 3. Start the import.
 
-<Warning>The export only writes a row where a product already has at least one translated field in that language, so it is not a blank worksheet of everything still to do. Use the template to send untranslated products out for translation.</Warning>
+<Warning>The export only writes a row where a product already has at least one translated field in that language, so it is not a blank worksheet of everything still to do. A product with nothing translated yet has to be added to the file by hand, as a row carrying its original **slug** and the **locale** being translated into, before a translator has anything to fill in.</Warning>
 
 ## What Shoppers See
 

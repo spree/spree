@@ -103,11 +103,13 @@ Prices on a list are separate from the prices on the product itself, so changing
 
 ## How to Activate a Price List
 
-A new list starts as a **Draft** and reaches nobody. Click **Activate** to start enforcing it, the status changes to **Active**, and shoppers that match the rules criteria start to see its prices straight away on the product page and in the cart.
+A new list starts as a **Draft** and reaches nobody. Click **Activate** to start enforcing it.
+
+What happens next depends on the dates set on the list. With no start date, or one that has already passed, the status changes to **Active** and shoppers matching the rules see its prices straight away on the product page and in the cart. With a start date still in the future, the status changes to **Scheduled** instead, and the prices begin applying when that date arrives.
 
 **Deactivate** switches it off again and keeps everything it holds, so activating it later brings its prices back.
 
-Fill in every price you mean to charge before activating.
+Fill in every price you mean to charge before activating. A list carrying no rules, no products and no catalog cannot be activated at all, because it would price nothing.
 
 <Note>To verify a price list has taken effect, open your storefront as a shopper the list should reach and look at one of its products. That single check tests the rules and the prices together.</Note>
 
@@ -123,7 +125,9 @@ Fill in every price you mean to charge before activating.
 2. Click **Continue** and match each column to the field it holds. **SKU** and **Price** are required, and **Currency**, **Minimum quantity** and **Compare at Price** are optional.
 3. Click **Start import**.
 
-The result says how many rows were imported and how many failed, and the new amounts replace the old ones on the list.
+The result says how many rows were imported and how many failed.
+
+An import changes only the prices its rows name, rather than replacing everything on the list. A price whose row is left out of the file keeps the amount it already had, so deleting a row from an exported file does not remove that price. Clearing the **Price** on a row is what removes it.
 
 <Note>Because the minimum quantity is a column, quantity breaks travel as extra rows for the same SKU. The surest way to get a file the import accepts is to export the list first, change the amounts, and import the same file back.</Note>
 
