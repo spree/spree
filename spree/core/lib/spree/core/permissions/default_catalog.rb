@@ -165,7 +165,7 @@ module Spree
           [Spree::Store, Spree::PaymentMethod, Spree::Gateway,
            Spree::DeliveryZone, Spree::DeliveryZoneMember,
            Spree::StockLocation, Spree::DeliveryProfile,
-           Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
+           Spree::Market, Spree::TaxCategory, Spree::TaxRate,
            Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason,
            Spree::OrderCancellationReason, Spree::TaxExemptionReason, Spree::Channel,
            Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
@@ -207,8 +207,13 @@ module Spree
         # — a merchandiser who may edit a delivery zone is not thereby someone
         # who may connect Claude to the back office.
         catalog.register_scope(:oauth_applications, group: :access, resources: -> { [Spree::OauthApplication] })
+        # The CORS allowlist sits with staff rather than settings: an origin on
+        # it may call the cookie-authenticated refresh endpoint from a browser
+        # and read back any signed-in admin's access token, so whoever edits it
+        # can reach every staff session. That is the authority the staff scope
+        # already guards, and it is one a delegated OAuth token never holds.
         catalog.register_scope(:staff, group: :access, resources: -> {
-          [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
+          [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser, Spree::AllowedOrigin]
         })
 
         # The seller panel's own scopes. Their audience is the seller alone,
