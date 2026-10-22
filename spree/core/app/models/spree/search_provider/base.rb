@@ -5,7 +5,7 @@ module Spree
       # attributes. `price` also sorts descending as `-price`.
       SORT_FIELDS = %w[price best_selling manual].freeze
 
-      attr_reader :store
+      attr_reader :store, :audience
 
       # Whether this provider requires background indexing jobs.
       # Override in subclasses. Database provider returns false.
@@ -13,13 +13,18 @@ module Spree
         false
       end
 
-      def initialize(store)
+      # @param store [Spree::Store]
+      # @param audience [Symbol, nil] who searches: `:store` (shoppers) limits
+      #   filters and sorts to what the storefront may see; `nil` is the back
+      #   office
+      def initialize(store, audience: :store)
         @store = store
+        @audience = audience
       end
 
       # @return [CustomFieldSchema]
       def custom_field_schema
-        @custom_field_schema ||= CustomFieldSchema.new(store)
+        @custom_field_schema ||= CustomFieldSchema.new(store, audience: audience)
       end
 
       # Deprecated 6.0 name, removed in 6.1.

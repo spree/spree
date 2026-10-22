@@ -18,6 +18,14 @@ RSpec.describe Spree::SearchProvider::CustomFieldSchema do
       expect(schema.searchable_attribute_keys).to include('cf_custom_weight')
       expect(schema.sortable_attribute_keys).to include('cf_custom_weight')
     end
+
+    it 'keeps admin-only definitions out of the storefront vocabulary' do
+      create(:custom_field_definition, :number_field, :admin_only, :sortable, :searchable,
+             namespace: 'internal', key: 'margin')
+
+      expect(described_class.new(store, audience: :store).entry_for('cf_internal_margin')).to be_nil
+      expect(described_class.new(store).entry_for('cf_internal_margin')).to be_present
+    end
   end
 
   describe '#entries' do

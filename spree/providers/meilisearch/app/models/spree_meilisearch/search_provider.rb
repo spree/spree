@@ -101,7 +101,7 @@ module SpreeMeilisearch
     def reindex(scope = nil)
       full_reindex = scope.nil?
       scope ||= store.products
-      @custom_field_schema = Spree::SearchProvider::CustomFieldSchema.new(store)
+      @custom_field_schema = Spree::SearchProvider::CustomFieldSchema.new(store, audience: audience)
       ensure_index_settings!
 
       # On a full reindex, clear first so stale docs (e.g. membership docs for
