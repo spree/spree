@@ -7,6 +7,7 @@ module Spree
 
           typelize customer_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
+                   created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    memo: [:string, nullable: true],
                    amount: [:string, nullable: false], amount_used: [:string, nullable: false],
                    amount_remaining: [:string, nullable: false],
@@ -27,7 +28,8 @@ module Spree
           # money_attributes types its fields nullable for gated guests; the
           # Admin API never gates prices.
           typelize amount_authorized: [:string, nullable: false]
-          prefixed_id_attributes :customer, :created_by
+          prefixed_id_attributes :customer
+          actor_attributes :created_by
 
           # Why the credit exists: the return, exchange, claim or gift card
           # that issued it, or null when an admin issued it by hand. The type
@@ -50,10 +52,6 @@ module Spree
           one :customer,
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
-
-          one :created_by,
-              resource: proc { Spree.api.admin_admin_user_serializer },
-              if: proc { expand?('created_by') }
         end
       end
     end

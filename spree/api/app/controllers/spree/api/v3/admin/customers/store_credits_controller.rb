@@ -18,7 +18,7 @@ module Spree
             # POST /api/v3/admin/customers/:customer_id/store_credits
             def create
               @resource = @parent.store_credits.new(store_credit_attributes)
-              @resource.created_by = try_spree_current_user
+              @resource.created_by = current_actor
               @resource.store ||= current_store
               authorize_resource!(@resource, :create)
 
