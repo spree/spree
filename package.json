@@ -50,14 +50,14 @@
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@typescript/typescript6": "^6.0.2",
-    "turbo": "^2.11.8"
+    "turbo": "^2.11.9"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
-    "@base-ui/react": "1.8.0",
+    "@base-ui/react": "1.9.0",
     "@spree/cli": "workspace:*"
   }
 }
