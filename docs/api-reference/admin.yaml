@@ -2019,7 +2019,7 @@ paths:
         `docs/plans/5.5-admin-auth-cookie-refresh.md`).
 
 
-        **Required scope:** `read_staff` (for API-key authentication).
+        **Required scope:** `read_api_keys` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2164,7 +2164,7 @@ paths:
         `https`.
 
 
-        **Required scope:** `write_staff` (for API-key authentication).
+        **Required scope:** `write_api_keys` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2245,7 +2245,7 @@ paths:
       description: |-
         Returns a single allowed origin by prefixed ID.
 
-        **Required scope:** `read_staff` (for API-key authentication).
+        **Required scope:** `read_api_keys` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2311,7 +2311,7 @@ paths:
       description: |-
         Updates an existing allowed origin.
 
-        **Required scope:** `write_staff` (for API-key authentication).
+        **Required scope:** `write_api_keys` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2389,7 +2389,7 @@ paths:
         admin API from a browser.
 
 
-        **Required scope:** `write_staff` (for API-key authentication).
+        **Required scope:** `write_api_keys` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -7224,12 +7224,10 @@ paths:
 
           <Accordion title="Filters through associations">
 
-          Prefix an associated record's attribute with the association, as in `q[created_by_id_eq]`. The same predicates apply.
+          Prefix an associated record's attribute with the association, as in `q[customer_id_eq]`. The same predicates apply.
 
           | Prefix | Attributes |
           |---|---|
-          | `created_by_` | `created_at`, `email`, `first_name`, `id`, `last_name`, `updated_at` |
-          | `created_by_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
@@ -7273,6 +7271,7 @@ paths:
                   outstanding: true
                   customer_id: cust_UkLWZg9DAJ
                   created_by_id: adm_UkLWZg9DAJ
+                  created_by_type: admin_user
                   originator_type:
                   originator_id:
                 meta:
@@ -7351,6 +7350,7 @@ paths:
                 outstanding: true
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_gbHJdmfrXB
+                created_by_type: admin_user
                 originator_type:
                 originator_id:
       requestBody:
@@ -7429,6 +7429,7 @@ paths:
                 outstanding: true
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_UkLWZg9DAJ
+                created_by_type: admin_user
                 originator_type:
                 originator_id:
       requestBody:
@@ -34415,12 +34416,10 @@ paths:
 
           <Accordion title="Filters through associations">
 
-          Prefix an associated record's attribute with the association, as in `q[created_by_id_eq]`. The same predicates apply.
+          Prefix an associated record's attribute with the association, as in `q[customer_id_eq]`. The same predicates apply.
 
           | Prefix | Attributes |
           |---|---|
-          | `created_by_` | `created_at`, `email`, `first_name`, `id`, `last_name`, `updated_at` |
-          | `created_by_spree_roles_` | `created_at`, `id`, `name`, `updated_at` |
           | `customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
           | `customer_addresses_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `customer_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
@@ -34464,6 +34463,7 @@ paths:
                   outstanding: true
                   customer_id: cust_UkLWZg9DAJ
                   created_by_id: adm_UkLWZg9DAJ
+                  created_by_type: admin_user
                   originator_type:
                   originator_id:
                 meta:
@@ -34572,6 +34572,7 @@ paths:
                 outstanding: true
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_UkLWZg9DAJ
+                created_by_type: admin_user
                 originator_type:
                 originator_id:
               schema:
@@ -45450,7 +45451,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -45499,7 +45502,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -45550,7 +45555,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -72195,6 +72202,18 @@ components:
         created_by_id:
           type: string
           nullable: true
+        created_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        created_by:
+          "$ref": "#/components/schemas/Actor"
         originator_type:
           type: string
           nullable: true
@@ -72203,8 +72222,6 @@ components:
           nullable: true
         customer:
           "$ref": "#/components/schemas/Customer"
-        created_by:
-          "$ref": "#/components/schemas/AdminUser"
       required:
       - id
       - amount
@@ -72219,6 +72236,7 @@ components:
       - outstanding
       - customer_id
       - created_by_id
+      - created_by_type
       - originator_type
       - originator_id
       x-typelizer: true
@@ -75756,6 +75774,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -75788,6 +75807,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -75833,6 +75853,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -85748,7 +85769,6 @@ components:
         memo: text
         updated_at: datetime
       associations:
-        created_by: AdminUser
         customer: Customer
       scopes:
         from_gift_card: boolean
