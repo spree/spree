@@ -4440,7 +4440,9 @@
           "deny": "取消",
           "invalid_request": "此授权请求无效。请从引导您来此的应用重新开始。",
           "decision_failed": "无法记录此决定，请重试。",
-          "withheld": "未提供，因为您自己的角色不包含：{{permissions}}"
+          "withheld": "未提供，因为您自己的角色不包含：{{permissions}}",
+          "redirect_host": "允许后，{{client}} 将被送回 {{host}}。",
+          "redirect_mismatch": "此应用自称为 {{client}}，但它将在 {{host}} 而不是 {{expected}} 接收您的授权。只有在您亲自注册了它的情况下才继续。"
         }
       }
     },
@@ -6652,7 +6654,8 @@
       "continue": "继续",
       "run_label": "运行此命令",
       "copy_command": "复制命令",
-      "cli_then_sign_in": "它会打开浏览器，让您登录并批准代理可以执行的操作。"
+      "cli_then_sign_in": "它会打开浏览器，让您登录并批准代理可以执行的操作。",
+      "name_taken": "已有一个名为 {{client}} 的客户端使用不同的回调地址注册。请先在“设置 → OAuth 客户端”中将其删除再重新连接，或用其他名称注册此客户端。"
     }
   }
 }

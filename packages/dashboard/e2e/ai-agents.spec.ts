@@ -6,7 +6,9 @@ import {
   CONNECT_CTA,
   clearRegistrations,
   connectKnownClient,
+  consentPath,
   REGISTER_CTA,
+  registerClient,
   seedConnection,
 } from './oauth-helpers'
 
@@ -69,6 +71,76 @@ test.describe('connecting an agent', () => {
     await expect(page.getByText(/nobody is connected through this agent/i).first()).toBeVisible({
       timeout: 15_000,
     })
+  })
+})
+
+// The consent screen is where a person decides, so it has to say where the
+// authorization goes. Anyone who may register clients can call theirs
+// "Claude" and point it at a host of their own; without the destination on
+// the screen, a more privileged colleague approving it would never know.
+test.describe('deciding on the consent screen', () => {
+  test('says where the authorization will be sent', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    const application = await registerClient(page, creds.store_id, creds.accessToken, {
+      name: 'CI Consent',
+      redirectUri: 'https://example.test/callback',
+    })
+
+    await page.goto(
+      consentPath(creds.store_id, {
+        clientId: application.client_id,
+        redirectUri: 'https://example.test/callback',
+      }),
+    )
+
+    await expect(page.getByRole('button', { name: /allow access/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(/sent back to example\.test/i)).toBeVisible()
+    await expect(page.getByRole('alert').filter({ hasText: /calls itself/i })).toHaveCount(0)
+  })
+
+  test('warns when a registration borrows a known name but points elsewhere', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    const application = await registerClient(page, creds.store_id, creds.accessToken, {
+      name: 'Claude',
+      redirectUri: 'https://attacker.example/callback',
+    })
+
+    await page.goto(
+      consentPath(creds.store_id, {
+        clientId: application.client_id,
+        redirectUri: 'https://attacker.example/callback',
+      }),
+    )
+
+    await expect(
+      page.getByRole('alert').filter({ hasText: /calls itself Claude.*attacker\.example/i }),
+    ).toBeVisible({ timeout: 15_000 })
+  })
+
+  // The connect sheet reuses a registration with the same name rather than
+  // creating a second one. It must not hand over one that only borrowed the
+  // name, or the merchant would paste a look-alike's client id into Claude.
+  test('refuses to reconnect through a registration that only borrowed the name', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    await registerClient(page, creds.store_id, creds.accessToken, {
+      name: 'Claude',
+      redirectUri: 'https://attacker.example/callback',
+    })
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+
+    const sheet = await connectKnownClient(page)
+
+    await expect(
+      sheet.getByRole('alert').filter({ hasText: /already registered with a different callback/i }),
+    ).toBeVisible({ timeout: 15_000 })
+    await expect(sheet.getByText(/ready to connect/i)).toHaveCount(0)
   })
 })
 

@@ -12,7 +12,7 @@ import {
   ScrollArea,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { CircleAlertIcon, InfoIcon } from '@spree/dashboard-ui/icons'
+import { CircleAlertIcon, InfoIcon, TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,6 +24,7 @@ import {
   useOauthAuthorization,
 } from '../../../../hooks/use-oauth'
 import { usePermissionCatalog } from '../../../../hooks/use-roles'
+import { hostOf, knownClientNamed, publishedCallback } from '../../../../lib/mcp-clients'
 
 // Passed through to the authorization server untouched. Validated only for
 // shape — whether the request is authorizable is the server's call, and
@@ -76,6 +77,14 @@ function OauthAuthorizePage() {
   // hidden, so the merchant can see the client wanted it and that they could
   // not hand it over.
   const withheldKeys = useMemo(() => new Set(withheld), [withheld])
+
+  // Where the authorization goes once allowed. Named on the screen because it
+  // is the one fact the client's name cannot be trusted for: anyone who may
+  // register clients can call theirs "Claude" and point it at a host of their
+  // own, and the person deciding here would otherwise never see that.
+  const redirectHost = data ? (hostOf(data.redirect_uri) ?? data.redirect_uri) : null
+  const claimed = data ? knownClientNamed(data.client_name) : undefined
+  const impersonating = Boolean(data && claimed && !publishedCallback(claimed, data.redirect_uri))
   const approve = useApproveOauthAuthorization()
   const deny = useDenyOauthAuthorization()
 
@@ -141,6 +150,12 @@ function OauthAuthorizePage() {
               <CardDescription>
                 {t('admin.pages.oauth.authorize.intro', { client: data.client_name })}
               </CardDescription>
+              <CardDescription>
+                {t('admin.pages.oauth.authorize.redirect_host', {
+                  client: data.client_name,
+                  host: redirectHost,
+                })}
+              </CardDescription>
             </CardHeader>
           )}
           <CardContent className="flex flex-col gap-4">
@@ -152,6 +167,19 @@ function OauthAuthorizePage() {
               </div>
             ) : (
               <>
+                {impersonating && claimed ? (
+                  <Alert variant="warning">
+                    <TriangleAlertIcon />
+                    <AlertDescription>
+                      {t('admin.pages.oauth.authorize.redirect_mismatch', {
+                        client: claimed.name,
+                        host: redirectHost,
+                        expected: hostOf(claimed.redirectUris[0]),
+                      })}
+                    </AlertDescription>
+                  </Alert>
+                ) : null}
+
                 <div className="flex flex-col gap-3">
                   {/* The same grid the role editor and API-key picker use, so
                       a merchant reads one layout everywhere permissions are

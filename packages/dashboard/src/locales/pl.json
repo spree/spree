@@ -4507,7 +4507,9 @@
           "deny": "Anuluj",
           "invalid_request": "To żądanie autoryzacji jest nieprawidłowe. Zacznij ponownie z aplikacji, która Cię tu skierowała.",
           "decision_failed": "Nie udało się zapisać decyzji. Spróbuj ponownie.",
-          "withheld": "Niedostępne, ponieważ Twoja rola nie obejmuje: {{permissions}}"
+          "withheld": "Niedostępne, ponieważ Twoja rola nie obejmuje: {{permissions}}",
+          "redirect_host": "Po zatwierdzeniu {{client}} zostanie odesłany do {{host}}.",
+          "redirect_mismatch": "Ta aplikacja podaje się za {{client}}, ale Twoją zgodę otrzyma pod adresem {{host}}, a nie {{expected}}. Kontynuuj tylko wtedy, gdy sam ją zarejestrowałeś."
         }
       }
     },
@@ -6736,7 +6738,8 @@
       "continue": "Dalej",
       "run_label": "Uruchom to",
       "copy_command": "Kopiuj polecenie",
-      "cli_then_sign_in": "Otworzy przeglądarkę, abyś mógł się zalogować i zatwierdzić uprawnienia agenta."
+      "cli_then_sign_in": "Otworzy przeglądarkę, abyś mógł się zalogować i zatwierdzić uprawnienia agenta.",
+      "name_taken": "Klient o nazwie {{client}} jest już zarejestrowany z innym adresem zwrotnym. Usuń go w Ustawienia → Klienci OAuth przed ponownym połączeniem albo zarejestruj ten pod inną nazwą."
     }
   }
 }

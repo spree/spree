@@ -4451,7 +4451,9 @@
           "deny": "Cancel",
           "invalid_request": "This authorization request is not valid. Start again from the application that sent you here.",
           "decision_failed": "The decision could not be recorded. Try again.",
-          "withheld": "Not offered, because your own role does not include: {{permissions}}"
+          "withheld": "Not offered, because your own role does not include: {{permissions}}",
+          "redirect_host": "Once you allow it, {{client}} is sent back to {{host}}.",
+          "redirect_mismatch": "This application calls itself {{client}}, but it will receive your authorization at {{host}} rather than at {{expected}}. Only continue if you registered it yourself."
         }
       }
     },
@@ -6666,7 +6668,8 @@
       "continue": "Continue",
       "run_label": "Run this",
       "copy_command": "Copy command",
-      "cli_then_sign_in": "It will open your browser to sign in and approve what the agent may do."
+      "cli_then_sign_in": "It will open your browser to sign in and approve what the agent may do.",
+      "name_taken": "A client named {{client}} is already registered with a different callback. Remove it under Settings → OAuth clients before connecting again, or register this one under another name."
     }
   }
 }

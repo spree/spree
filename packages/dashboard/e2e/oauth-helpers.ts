@@ -45,6 +45,54 @@ export async function clearRegistrations(page: Page, storeId: string, accessToke
 }
 
 /**
+ * A fixed PKCE verifier and its S256 challenge. The pair only has to be
+ * self-consistent — the server checks one against the other.
+ */
+export const PKCE_VERIFIER = 'v'.repeat(64)
+export const PKCE_CHALLENGE = 'w1TpKUdYE9hUAcNSeeSRFioHDxfUxuHho_JHAfZ_vDM'
+
+/** Registers a client through the API, the way the developer screen does. */
+export async function registerClient(
+  page: Page,
+  storeId: string,
+  accessToken: string,
+  { name, redirectUri }: { name: string; redirectUri: string },
+) {
+  const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
+  const registered = await page.request.post('/api/v3/admin/oauth/applications', {
+    headers,
+    data: { name, redirect_uri: redirectUri },
+  })
+  if (!registered.ok()) {
+    throw new Error(`Registering ${name} failed: ${registered.status()} ${await registered.text()}`)
+  }
+  return registered.json()
+}
+
+/**
+ * The dashboard's consent page for one authorization request, as a client
+ * would send a merchant there.
+ */
+export function consentPath(
+  storeId: string,
+  {
+    clientId,
+    redirectUri,
+    scope = 'read_products',
+  }: { clientId: string; redirectUri: string; scope?: string },
+) {
+  const query = new URLSearchParams({
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope,
+    code_challenge: PKCE_CHALLENGE,
+    code_challenge_method: 'S256',
+  })
+  return `/${storeId}/oauth/authorize?${query}`
+}
+
+/**
  * Connects an agent for real: registers a client, then walks consent and the
  * token exchange exactly as a client does.
  *
@@ -59,26 +107,18 @@ export async function seedConnection(
   { name, scope = 'read_products' }: { name: string; scope?: string },
 ) {
   const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
-
-  const registered = await page.request.post('/api/v3/admin/oauth/applications', {
-    headers,
-    data: { name, redirect_uri: 'https://example.test/callback' },
+  const application = await registerClient(page, storeId, accessToken, {
+    name,
+    redirectUri: 'https://example.test/callback',
   })
-  if (!registered.ok()) {
-    throw new Error(`Registering ${name} failed: ${registered.status()} ${await registered.text()}`)
-  }
-  const application = await registered.json()
 
-  // A fixed verifier and its S256 challenge. The pair only has to be
-  // self-consistent — the server checks one against the other.
-  const verifier = 'v'.repeat(64)
-  const challenge = 'w1TpKUdYE9hUAcNSeeSRFioHDxfUxuHho_JHAfZ_vDM'
+  const verifier = PKCE_VERIFIER
   const query = new URLSearchParams({
     client_id: application.client_id,
     redirect_uri: 'https://example.test/callback',
     response_type: 'code',
     scope,
-    code_challenge: challenge,
+    code_challenge: PKCE_CHALLENGE,
     code_challenge_method: 'S256',
   })
 

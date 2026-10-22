@@ -24,55 +24,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOauthApplications } from '../../hooks/use-oauth'
+import { KNOWN_CLIENTS, type KnownClient } from '../../lib/mcp-clients'
 import { ChoiceCardPicker } from './choice-card-picker'
 
 type McpConnectSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
-
-/**
- * A client we can fill the callback in for.
- *
- * The redirect URI is where authorization codes are delivered, so a wrong
- * one sends them to whoever controls that host. For the clients we know the
- * merchant should never have to find or type it — they pick a name.
- *
- * `surfaces` are the ways that client connects. A desktop or web app takes
- * the address pasted into its settings; a terminal client takes a command.
- */
-/**
- * The loopback callback a terminal client listens on.
- *
- * Registered alongside the hosted one because Claude Code and Codex redirect
- * to a local port rather than the vendor's servers, and the port is chosen
- * at run time. RFC 8252 §7.3 says to compare loopback redirects ignoring the
- * port, which Doorkeeper does — but only for an IP literal, since it decides
- * by parsing the host as an address. `localhost` is a name, so it parses as
- * nothing and every ephemeral port is refused.
- */
-const LOOPBACK_CALLBACK = 'http://127.0.0.1/callback'
-
-const KNOWN_CLIENTS = [
-  {
-    value: 'claude',
-    name: 'Claude',
-    redirectUris: ['https://claude.ai/api/mcp/auth_callback', LOOPBACK_CALLBACK],
-    surfaces: [
-      { id: 'app', command: null },
-      { id: 'cli', command: (url: string) => `claude mcp add --transport http spree ${url}` },
-    ],
-  },
-  {
-    value: 'chatgpt',
-    name: 'ChatGPT',
-    redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect', LOOPBACK_CALLBACK],
-    surfaces: [
-      { id: 'app', command: null },
-      { id: 'cli', command: (url: string) => `codex mcp add spree --url ${url}` },
-    ],
-  },
-] as const
 
 const OTHER = 'other'
 
@@ -111,9 +69,17 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
 
     // Picking the same client twice is reconnecting it, not registering a
     // second one — two rows with two ids would leave a merchant guessing
-    // which to paste.
+    // which to paste. Only when it really is the same client, though: a
+    // registration that borrowed the name but delivers codes somewhere else
+    // must not be handed over as that client.
     const already = existing?.data?.find((candidate) => candidate.name === name)
     if (already) {
+      const registered = (already.redirect_uri ?? '').split('\n').map((uri) => uri.trim())
+      if (!redirectUri.split('\n').every((uri) => registered.includes(uri))) {
+        setFailure(t('admin.mcp_connect.name_taken', { client: name }))
+        return
+      }
+
       setCreated(already)
       return
     }
@@ -252,7 +218,7 @@ function ConnectInstructions({
   clientId,
   endpoint,
 }: {
-  client?: (typeof KNOWN_CLIENTS)[number]
+  client?: KnownClient
   clientId: string
   endpoint: string
 }) {

@@ -4452,7 +4452,9 @@
           "deny": "Annuler",
           "invalid_request": "Cette demande d’autorisation n’est pas valide. Recommencez depuis l’application qui vous a envoyé ici.",
           "decision_failed": "La décision n’a pas pu être enregistrée. Réessayez.",
-          "withheld": "Non proposé, car votre propre rôle ne comprend pas : {{permissions}}"
+          "withheld": "Non proposé, car votre propre rôle ne comprend pas : {{permissions}}",
+          "redirect_host": "Une fois autorisée, {{client}} sera renvoyée vers {{host}}.",
+          "redirect_mismatch": "Cette application se présente comme {{client}}, mais elle recevra votre autorisation à l’adresse {{host}} plutôt qu’à {{expected}}. Ne continuez que si vous l’avez enregistrée vous-même."
         }
       }
     },
@@ -6667,7 +6669,8 @@
       "continue": "Continuer",
       "run_label": "Exécutez ceci",
       "copy_command": "Copier la commande",
-      "cli_then_sign_in": "Votre navigateur s'ouvrira pour vous connecter et approuver ce que l'agent peut faire."
+      "cli_then_sign_in": "Votre navigateur s'ouvrira pour vous connecter et approuver ce que l'agent peut faire.",
+      "name_taken": "Un client nommé {{client}} est déjà enregistré avec une autre URL de rappel. Supprimez-le dans Paramètres → Clients OAuth avant de vous reconnecter, ou enregistrez celui-ci sous un autre nom."
     }
   }
 }

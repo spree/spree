@@ -1104,7 +1104,9 @@
           "deny": "Cancelar",
           "invalid_request": "Esta solicitud de autorización no es válida. Vuelva a empezar desde la aplicación que le envió aquí.",
           "decision_failed": "No se pudo registrar la decisión. Inténtelo de nuevo.",
-          "withheld": "No se ofrece porque su propio rol no incluye: {{permissions}}"
+          "withheld": "No se ofrece porque su propio rol no incluye: {{permissions}}",
+          "redirect_host": "Cuando lo permita, {{client}} volverá a {{host}}.",
+          "redirect_mismatch": "Esta aplicación se hace llamar {{client}}, pero recibirá su autorización en {{host}} en lugar de en {{expected}}. Continúe solo si la registró usted mismo."
         }
       }
     },
@@ -6667,7 +6669,8 @@
       "continue": "Continuar",
       "run_label": "Ejecute esto",
       "copy_command": "Copiar comando",
-      "cli_then_sign_in": "Se abrirá el navegador para iniciar sesión y aprobar lo que el agente puede hacer."
+      "cli_then_sign_in": "Se abrirá el navegador para iniciar sesión y aprobar lo que el agente puede hacer.",
+      "name_taken": "Ya hay un cliente llamado {{client}} registrado con otra URL de retorno. Elimínelo en Configuración → Clientes OAuth antes de volver a conectar, o registre este con otro nombre."
     }
   }
 }
