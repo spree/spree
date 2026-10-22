@@ -253,9 +253,9 @@ class Spree::Base < ApplicationRecord
   #   request the merchant is entitled to make. Asking for every side is no
   #   constraint at all, which is the `nil` below.
   #
-  # The scope must also be listed in the model's
-  # `ransackable_scopes_skip_sanitize_args`, or Ransack casts `false` itself
-  # and then declines to apply the scope at all.
+  # The scope must also be added to the model's
+  # `ransackable_scopes_skip_sanitize_args` (`super | %w[name]`), or Ransack
+  # casts `false` itself and then declines to apply the scope at all.
   #
   # @param values [Array<Object>] whatever Ransack passed through
   # @return [Boolean, nil] the side asked for, or nil when every side was

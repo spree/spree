@@ -119,7 +119,7 @@ module Spree
     # Two-state scopes: see Spree::Base.ransack_flag? for why the cast is
     # opted out of here and done inside each scope instead.
     def self.ransackable_scopes_skip_sanitize_args
-      %i[outstanding from_gift_card]
+      super | %w[outstanding from_gift_card]
     end
 
     def amount_remaining
