@@ -11,6 +11,36 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 
+  describe 'POST #create' do
+    let!(:account) { create(:user, email: 'member@example.com') }
+
+    it 'does not tell a guest whether an account exists for the email' do
+      post :create, params: { email: account.email }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['customer_id']).to be_nil
+    end
+
+    context 'as a signed-in customer subscribing someone else\'s verified address' do
+      let!(:subscriber) { create(:newsletter_subscriber, :verified, customer: account, email: account.email, store: store) }
+
+      before { request.headers['Authorization'] = "Bearer #{jwt_token}" }
+
+      it 'does not take over the subscription' do
+        post :create, params: { email: account.email }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['customer_id']).to be_nil
+        expect(subscriber.reload.customer).to eq(account)
+
+        delete :destroy, params: { id: subscriber.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Spree::NewsletterSubscriber.exists?(subscriber.id)).to be(true)
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     # Opt in via update_column, not the factory — setting accepts_email_marketing
     # at create time auto-subscribes the customer and collides with our subscriber.

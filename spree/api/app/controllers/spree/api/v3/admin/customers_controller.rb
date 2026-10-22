@@ -12,9 +12,13 @@ module Spree
             body.attribute :first_name, :string
             body.attribute :last_name, :string
             body.attribute :phone, :string
-            body.attribute :password, :string,
+            # On create only: once the account exists its password is the
+            # customer's, changed by them or through their own reset email —
+            # never set by staff, who would otherwise be able to sign in as
+            # any customer.
+            body.attribute :password, :string, only: :create,
               description: 'Optional: a customer created without one claims the account through a password reset.'
-            body.attribute :password_confirmation, :string,
+            body.attribute :password_confirmation, :string, only: :create,
               description: 'Optional: a customer created without one claims the account through a password reset.'
             body.attribute :selected_locale, :string
             body.attribute :avatar_signed_id, :string, description: 'A `signed_id` from `files.upload()`.'

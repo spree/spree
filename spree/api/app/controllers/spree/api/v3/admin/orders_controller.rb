@@ -4,6 +4,7 @@ module Spree
       module Admin
         class OrdersController < ResourceController
           include Spree::Api::V3::OrderLock
+          include Spree::Api::V3::Admin::RefundAuthorization
 
           scoped_resource :orders
 
@@ -86,6 +87,7 @@ module Spree
 
           skip_before_action :set_resource, only: [:index, :create]
           before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
+          before_action :require_refund_permission!, only: :cancel, if: -> { params[:refund_payments].to_b }
 
           # POST /api/v3/admin/orders
           def create

@@ -1170,6 +1170,26 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let!(:order) { create(:completed_order_with_totals, store: store) }
       let(:params) { { id: order.prefixed_id, refund_payments: 'true' } }
 
+      context 'with a key that may handle orders but not refund them' do
+        let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders]) }
+        let(:headers) { api_key_headers }
+
+        it 'refuses to cancel with a refund' do
+          subject
+
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['details']['required_permission']).to eq('write_refunds')
+          expect(order.reload).not_to be_canceled
+        end
+
+        it 'still cancels without one' do
+          patch :cancel, params: { id: order.prefixed_id }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(order.reload).to be_canceled
+        end
+      end
+
       it 'asks the workflow to refund what the order has been paid' do
         expect(Spree.order_cancel_workflow).to receive(:call)
           .with(hash_including(refund_payments: true, refund_amount: nil)).and_call_original

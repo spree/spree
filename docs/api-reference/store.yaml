@@ -8653,7 +8653,7 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                     verified: true
                     verified_at: '2026-01-15T12:00:00Z'
-                    customer_id: cust_UkLWZg9DAJ
+                    customer_id:
                   customer_groups: []
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -24702,6 +24702,8 @@ components:
           example: customer@example.com
         password:
           type: string
+          description: 'Changing it signs the customer out everywhere: every refresh
+            token is revoked, so sign in again once the access token expires.'
         password_confirmation:
           type: string
         current_password:

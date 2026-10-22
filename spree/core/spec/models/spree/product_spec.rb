@@ -2355,5 +2355,12 @@ describe Spree::Product, type: :model do
       expect(described_class.search('hong-ku')).to include(matching)
       expect(described_class.search('hong-ku')).not_to include(other)
     end
+
+    it 'skips admin-only custom fields for shoppers' do
+      definition.update!(storefront_visible: false)
+
+      expect(described_class.search('hong-ku', store, audience: :store)).not_to include(matching)
+      expect(described_class.search('hong-ku', store)).to include(matching)
+    end
   end
 end

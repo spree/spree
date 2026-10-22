@@ -896,6 +896,15 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.product_type).to eq(product_type)
     end
 
+    it 'refuses a product type from another store' do
+      product_type = create(:product_type, store: create(:store))
+
+      patch :update, params: { id: product.prefixed_id, product_type_id: product_type.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(product.reload.product_type).to be_nil
+    end
+
     it 'clears the product type with null' do
       product.update!(product_type: create(:product_type, store: store))
 

@@ -2019,7 +2019,7 @@ paths:
         `docs/plans/5.5-admin-auth-cookie-refresh.md`).
 
 
-        **Required scope:** `read_settings` (for API-key authentication).
+        **Required scope:** `read_staff` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2164,7 +2164,7 @@ paths:
         `https`.
 
 
-        **Required scope:** `write_settings` (for API-key authentication).
+        **Required scope:** `write_staff` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2245,7 +2245,7 @@ paths:
       description: |-
         Returns a single allowed origin by prefixed ID.
 
-        **Required scope:** `read_settings` (for API-key authentication).
+        **Required scope:** `read_staff` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2311,7 +2311,7 @@ paths:
       description: |-
         Updates an existing allowed origin.
 
-        **Required scope:** `write_settings` (for API-key authentication).
+        **Required scope:** `write_staff` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -2389,7 +2389,7 @@ paths:
         admin API from a browser.
 
 
-        **Required scope:** `write_settings` (for API-key authentication).
+        **Required scope:** `write_staff` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -15580,7 +15580,7 @@ paths:
       description: |-
         Settles an approved claim with money back, a replacement shipment, or both.
 
-        **Required scope:** `write_orders` (for API-key authentication).
+        **Required scope:** `write_orders`, plus `write_refunds` for a resolution that refunds (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -16663,7 +16663,7 @@ paths:
       description: |-
         Ships the replacements for a received exchange and settles any price difference.
 
-        **Required scope:** `write_orders` (for API-key authentication).
+        **Required scope:** `write_orders` and `write_refunds` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -19778,7 +19778,7 @@ paths:
         Set `notify_customer: true` to send the order cancellation email.
 
 
-        **Required scope:** `write_orders` (for API-key authentication).
+        **Required scope:** `write_orders`, plus `write_refunds` with `refund_payments` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -20809,7 +20809,7 @@ paths:
       description: |-
         Pays the customer back for a received return, to store credit or through the original payment.
 
-        **Required scope:** `write_orders` (for API-key authentication).
+        **Required scope:** `write_orders` and `write_refunds` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -32157,7 +32157,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.0.rc4
+                current_version: 6.0.0.rc5
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
@@ -78693,14 +78693,6 @@ components:
           type: string
         phone:
           type: string
-        password:
-          type: string
-          description: 'Optional: a customer created without one claims the account
-            through a password reset.'
-        password_confirmation:
-          type: string
-          description: 'Optional: a customer created without one claims the account
-            through a password reset.'
         selected_locale:
           type: string
         avatar_signed_id:

@@ -27,6 +27,7 @@ module Spree
           end
 
           REFRESH_COOKIE_NAME = :spree_admin_refresh_token
+          OAUTH_NONCE_COOKIE_NAME = :spree_admin_oauth_nonce
           COOKIE_PATH = '/api/v3/admin/auth'.freeze
 
           private
@@ -46,6 +47,28 @@ module Spree
 
           def refresh_token_from_cookie
             cookies.signed[REFRESH_COOKIE_NAME].presence
+          end
+
+          # Binds an SSO attempt to the browser that started it. The nonce
+          # signed into the state is kept here too, so a callback carrying a
+          # state minted in another browser — a login an attacker completed
+          # with their own account — is refused rather than signing the
+          # victim into it.
+          def set_oauth_nonce_cookie(nonce, expires_in:)
+            cookies.signed[OAUTH_NONCE_COOKIE_NAME] = base_cookie_attributes.merge(
+              value: nonce,
+              expires: expires_in.from_now,
+              path: COOKIE_PATH,
+              httponly: true
+            )
+          end
+
+          def oauth_nonce_from_cookie
+            cookies.signed[OAUTH_NONCE_COOKIE_NAME].presence
+          end
+
+          def clear_oauth_nonce_cookie
+            cookies.delete(OAUTH_NONCE_COOKIE_NAME, path: COOKIE_PATH)
           end
 
           # Keyed off the request scheme, not the Rails env: Rails silently refuses to

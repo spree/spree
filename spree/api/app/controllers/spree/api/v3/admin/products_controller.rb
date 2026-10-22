@@ -323,7 +323,24 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*permitted_attributes).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
+            params.permit(*permitted_attributes).tap do |attrs|
+              attrs.delete(:status) if review_status?(attrs[:status])
+              scope_store_references(attrs)
+            end
+          end
+
+          # Read through the store here because the model only checks that the
+          # record exists: another store's type or tax category would otherwise
+          # be accepted, and the type would seed its option types onto the
+          # product.
+          STORE_REFERENCES = { product_type_id: :product_types, tax_category_id: :tax_categories }.freeze
+
+          def scope_store_references(attrs)
+            STORE_REFERENCES.each do |key, association|
+              next if attrs[key].blank?
+
+              attrs[key] = current_store.public_send(association).find_by_param!(attrs[key]).id
+            end
           end
 
           # A review status is an outcome, not a value to assign: `proposed`

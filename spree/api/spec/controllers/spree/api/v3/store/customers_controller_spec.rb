@@ -402,6 +402,23 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
       end
+
+      it 'revokes every refresh token, so a stolen session does not outlive the change' do
+        refresh_token = Spree::RefreshToken.create_for(user, audience: 'store_api')
+
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret123' }
+
+        expect(response).to have_http_status(:ok)
+        expect(Spree::RefreshToken.exists?(refresh_token.id)).to be(false)
+      end
+
+      it 'keeps sessions when only the profile changes' do
+        refresh_token = Spree::RefreshToken.create_for(user, audience: 'store_api')
+
+        patch :update, params: { first_name: 'Updated' }
+
+        expect(Spree::RefreshToken.exists?(refresh_token.id)).to be(true)
+      end
     end
 
     context 'validation errors' do

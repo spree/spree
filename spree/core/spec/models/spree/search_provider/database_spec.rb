@@ -289,6 +289,34 @@ module Spree
         end
       end
 
+      # The storefront never shows an admin-only value, so a shopper must not
+      # be able to read it back through search, a sort or a range filter.
+      context 'with admin-only custom_fields' do
+        let!(:definition) do
+          create(:custom_field_definition, :number_field, :admin_only, :searchable, :sortable,
+                 namespace: 'internal', key: 'margin')
+        end
+
+        before do
+          product_1.set_custom_field(definition, '40')
+          product_2.set_custom_field(definition, '12')
+        end
+
+        it 'ignores them for shoppers' do
+          expect(provider.search_and_filter(scope: scope, query: '40').products).to be_empty
+          expect(provider.search_and_filter(scope: scope, filters: { 'cf_internal_margin_gteq' => '30' }).products).to match_array([product_1, product_2, product_3])
+          expect(provider.search_and_filter(scope: scope, sort: '-cf_internal_margin').products.to_a).
+            to eq(provider.search_and_filter(scope: scope).products.to_a)
+          expect(provider.filters(scope: scope).sort_options.map { |option| option[:id] }).not_to include('cf_internal_margin')
+        end
+
+        it 'keeps them for the back office' do
+          back_office = described_class.new(store, audience: nil)
+
+          expect(back_office.search_and_filter(scope: scope, filters: { 'cf_internal_margin_gteq' => '30' }).products).to eq([product_1])
+        end
+      end
+
       context 'with sortable custom_fields' do
         let!(:definition) do
           create(:custom_field_definition, :short_text_field, :sortable,

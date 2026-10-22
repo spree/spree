@@ -269,7 +269,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
 
         Set `notify_customer: true` to send the order cancellation email.
       DESC
-      admin_scope :write, :orders
+      admin_scope_note('`write_orders`, plus `write_refunds` with `refund_payments`')
 
       admin_sdk_example 'orders/cancel'
 
