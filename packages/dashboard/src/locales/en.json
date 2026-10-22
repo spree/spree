@@ -799,10 +799,6 @@
         "updated": "Delivery method updated"
       },
       "no_zone_restriction": "No restriction",
-      "pricing": {
-        "amount_in_currency": "Amount in {{currency}}",
-        "currency_amounts_help": "Currencies left blank are not offered this delivery method."
-      },
       "provider_needs_connection": "Connect {{name}} to use it",
       "provider_unavailable": "{{name}} (unavailable)",
       "rule_summary": {

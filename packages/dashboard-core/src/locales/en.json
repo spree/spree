@@ -489,6 +489,12 @@
         "discard_title": "Discard this draft?"
       }
     },
+    "currency_amounts": {
+      "amount_in_currency": "Amount in {{currency}}",
+      "help": "Currencies left blank are not offered this delivery method.",
+      "label": "Amount",
+      "required": "Enter an amount in at least one currency."
+    },
     "custom_field_definitions": {
       "errors": {
         "failed_to_create": "Failed to create custom field definition",

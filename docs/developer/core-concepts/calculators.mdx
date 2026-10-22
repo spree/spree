@@ -26,12 +26,12 @@ Each calculator takes a few settings — the amount, the percentage, the thresho
 
 | Calculator | What it charges | Settings |
 |---|---|---|
-| **Flat rate** | The same amount every time | `amount`, `currency` |
-| **Per item** | An amount for each item in the parcel | `amount`, `currency` |
+| **Flat rate** | The same amount every time | `amounts`, one per currency |
+| **Per item** | An amount for each item in the parcel | `amounts`, one per currency |
 | **Percent of item total** | A percentage of what's in the parcel | `flat_percent` |
 | **Price sack** | One amount above a threshold, another below — the usual "free delivery over $50" | `minimal_amount`, `discount_amount`, `normal_amount` |
 | **Flexi rate** | A charge for the first item, less for each one after | `first_item`, `additional_item`, `max_items` |
-| **Digital delivery** | Nothing, for downloads | — |
+| **Digital delivery** | A charge for downloads, usually nothing | `amounts`, one per currency |
 
 ### For promotion discounts
 
@@ -85,7 +85,7 @@ await adminClient.deliveryMethods.create({
   delivery_zone_id: 'dz_xxx',
   calculator: {
     type: 'flat_rate',
-    preferences: { amount: '7.00', currency: 'USD' },
+    preferences: { amounts: { USD: '7.00', EUR: '6.50' } },
   },
 })
 ```
@@ -103,8 +103,10 @@ curl 'https://api.mystore.com/api/v3/admin/delivery_methods/calculators' \
 
 Each calculator declares which settings it takes, so a form can be built for it without knowing the calculator in advance — which is how the dashboard renders these.
 
+An amount-based delivery charge (flat rate, flat rate per item and digital delivery) states one amount per currency in `amounts`, and Spree never converts between them: a delivery method is offered only to carts in a currency it has an amount for. A Spree 5 method priced with a single `amount` and `currency` keeps quoting that currency until `amounts` holds an amount; from then on `amounts` alone decides.
+
 <Warning>
-A calculator with an `amount` also has a **currency**. If it doesn't match the order's currency, the calculator contributes nothing rather than converting. Set up one calculator per currency you sell in, or a promotion will silently do nothing for some customers.
+A promotion calculator with an `amount` also has a **currency**. If it doesn't match the order's currency, the calculator contributes nothing rather than converting. Set up one calculator per currency you sell in, or a promotion will silently do nothing for some customers.
 </Warning>
 
 ## Writing your own

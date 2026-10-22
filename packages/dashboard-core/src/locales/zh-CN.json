@@ -487,6 +487,12 @@
         "discard_title": "放弃此草稿？"
       }
     },
+    "currency_amounts": {
+      "amount_in_currency": "{{currency}} 金额",
+      "help": "未填写金额的币种将不会提供该配送方式。",
+      "label": "金额",
+      "required": "请至少为一种货币输入金额。"
+    },
     "custom_field_definitions": {
       "errors": {
         "failed_to_create": "创建自定义字段定义失败",

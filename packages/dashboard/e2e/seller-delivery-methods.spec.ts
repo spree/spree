@@ -96,10 +96,12 @@ test.describe('seller delivery methods', () => {
       const calculator = sellerPage.locator('#delivery-method-calculator')
       await expect(calculator).toContainText(/flat rate/i, { timeout: 20_000 })
 
-      // The flat rate's own amount preference — blank would mean the method
-      // saves as free.
-      const amount = sellerPage.locator('#preference-amount')
+      // The flat rate prices per currency, the store's default first. With no
+      // amount anywhere the method would never be offered, so it is refused.
+      const amount = sellerPage.locator('[id^="calculator-amount-"]').first()
       await expect(amount).toBeVisible({ timeout: 20_000 })
+      await sellerPage.getByRole('button', { name: /^save$/i }).click()
+      await expect(sellerPage.getByText(/enter an amount in at least one currency/i)).toBeVisible()
       await amount.fill('9.99')
 
       await sellerPage.getByRole('button', { name: /^save$/i }).click()
@@ -113,7 +115,7 @@ test.describe('seller delivery methods', () => {
       await expect(sellerPage.locator('#delivery-method-calculator')).toContainText(/flat rate/i, {
         timeout: 20_000,
       })
-      await expect(sellerPage.locator('#preference-amount')).toHaveValue(/9\.99/)
+      await expect(sellerPage.locator('[id^="calculator-amount-"]').first()).toHaveValue(/9\.99/)
     } finally {
       await context.close()
     }

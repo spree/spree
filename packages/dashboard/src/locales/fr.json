@@ -799,10 +799,6 @@
         "updated": "Méthode de livraison mise à jour"
       },
       "no_zone_restriction": "Aucune restriction",
-      "pricing": {
-        "amount_in_currency": "Montant en {{currency}}",
-        "currency_amounts_help": "Les devises laissées vides ne se voient pas proposer cette méthode de livraison."
-      },
       "provider_needs_connection": "Connectez {{name}} pour l’utiliser",
       "provider_unavailable": "{{name}} (indisponible)",
       "rule_summary": {

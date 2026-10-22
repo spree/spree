@@ -1,3 +1,4 @@
+import { AMOUNT_BASED_CALCULATORS, hasCurrencyAmount, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 /**
@@ -32,7 +33,7 @@ export const deliveryMethodServiceSchema = z.object({
 
 export type DeliveryMethodServiceDraft = z.infer<typeof deliveryMethodServiceSchema>
 
-export const deliveryMethodFormSchema = z.object({
+const deliveryMethodFormObject = z.object({
   name: z.string().min(1),
   admin_name: z.string().optional(),
   code: z.string().optional(),
@@ -63,7 +64,29 @@ export const deliveryMethodFormSchema = z.object({
   services: z.array(deliveryMethodServiceSchema),
 })
 
-export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormSchema>
+export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormObject>
+
+/**
+ * The delivery method form's schema. `carrierPricedProviders` names the rate
+ * providers that quote their own rates (`''` when the default one does): their
+ * methods hide the calculator, so its amounts are not asked for.
+ */
+export function deliveryMethodFormSchema(carrierPricedProviders: readonly string[] = []) {
+  return deliveryMethodFormObject.superRefine((values, ctx) => {
+    if (carrierPricedProviders.includes(values.rate_provider)) return
+
+    // A calculator-priced method with no amount in any currency would never be offered.
+    const { type, preferences } = values.calculator
+    if (!AMOUNT_BASED_CALCULATORS.includes(type ?? '')) return
+    if (hasCurrencyAmount(preferences)) return
+
+    ctx.addIssue({
+      code: 'custom',
+      path: ['calculator', 'preferences'],
+      message: i18n.t('admin.currency_amounts.required'),
+    })
+  })
+}
 
 export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   name: '',

@@ -487,6 +487,12 @@
         "discard_title": "Abandonner ce brouillon ?"
       }
     },
+    "currency_amounts": {
+      "amount_in_currency": "Montant en {{currency}}",
+      "help": "Les devises laissées vides ne se voient pas proposer cette méthode de livraison.",
+      "label": "Montant",
+      "required": "Saisissez un montant dans au moins une devise."
+    },
     "custom_field_definitions": {
       "errors": {
         "failed_to_create": "Impossible de créer le champ personnalisé",
