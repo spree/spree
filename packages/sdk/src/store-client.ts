@@ -578,8 +578,9 @@ export class StoreClient {
 
     /**
      * Nested resource: the addresses this cart may be shipped or billed to —
-     * the buyer's own book, plus the book of the company the cart is for and
-     * the sites that company inherits from the ones above it. Every address
+     * the buyer's own book, plus the book of the company set as the cart's
+     * `company_id` and the sites that company inherits from the ones above
+     * it, limited to the countries the cart's market sells to. Every address
      * listed here is accepted as `shipping_address_id` or `billing_address_id`
      * on the cart.
      *

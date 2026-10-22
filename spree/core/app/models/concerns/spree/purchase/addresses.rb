@@ -124,10 +124,11 @@ module Spree
       end
 
       # Everything a checkout address picker may offer for this purchase: the
-      # buyer's own book plus the book of the company it is for, that node's
-      # own entries and the ones it inherits. The listing counterpart of
-      # {#selectable_address}, so what a picker shows is exactly what the
-      # writers accept.
+      # buyer's own book plus the book of the company it names, that node's
+      # own entries and the ones it inherits, limited to the countries the
+      # purchase's market sells to. A subset of what {#selectable_address}
+      # accepts, so a picker built from it never offers an address the
+      # checkout cannot deliver to.
       #
       # @return [ActiveRecord::Relation<Spree::Address>]
       def selectable_addresses
@@ -135,7 +136,10 @@ module Spree
         books << ::Spree::Address.not_deleted.where(owner_type: ::Spree.customer_class.to_s, owner_id: customer_id) if customer_id.present?
         books << readable_company&.address_book
 
-        books.compact.reduce { |left, right| left.or(right) } || ::Spree::Address.none
+        addresses = books.compact.reduce { |left, right| left.or(right) } || ::Spree::Address.none
+        return addresses if market.nil?
+
+        addresses.where(country_code: market.market_countries.select(:country_code))
       end
 
       # Whether an attached address row is this purchase's own to delete.
@@ -240,14 +244,14 @@ module Spree
 
       private
 
-      # The company whose book this purchase may read. A cart asks again
-      # rather than trusting the column, which nothing clears when a
+      # The company whose book this purchase may read: only the one the
+      # client named, never one inferred from a sole membership. A cart asks
+      # again rather than trusting the column, which nothing clears when a
       # membership is revoked; an order's authority is staff or a completed
       # cart, so it keeps what it was given.
       #
       # @return [Spree::Company, nil]
       def readable_company
-        company = resolved_company
         return company if company.nil? || !is_a?(Spree::Cart)
 
         company if customer&.standing_for?(company)

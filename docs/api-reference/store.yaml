@@ -1919,8 +1919,9 @@ paths:
         bearer_auth: []
       description: |
         Everything a checkout address step may offer for this cart: the buyer's own address
-        book, plus the address book of the company the cart is for — that company's own
-        sites and the ones it inherits from the companies above it.
+        book, plus the address book of the company set as the cart's `company_id` — that
+        company's own sites and the ones it inherits from the companies above it. Only
+        addresses in a country the cart's market sells to are listed.
 
         Requires a signed-in customer, unlike the rest of the cart endpoints. The response
         is the account's address books rather than the cart's own data, so a guest cart
@@ -1928,8 +1929,8 @@ paths:
         list in any case.
 
         Each entry carries the `owner` it was filed under — the customer, or the company
-        node that owns the site — so a picker can group and label them without asking
-        which company the cart is for. An inherited site names the node above, not the
+        node that owns the site — so a picker can group and label them from one
+        response. An inherited site names the node above, not the
         one the cart is for.
 
         Any address returned here is accepted as `shipping_address_id` or

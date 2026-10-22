@@ -184,12 +184,13 @@ RSpec.shared_examples 'an addresses host' do
         expect(record.ship_address_id).to eq(company_address.id)
       end
 
-      # Sole standing resolves the node without an explicit choice, so the
-      # book is selectable for a one-membership buyer who never picked.
-      it 'accepts the book of the sole standing company without an explicit choice' do
+      # The storefront names the company; a sole membership is not taken as
+      # a choice the buyer never made.
+      it 'refuses the company book until the purchase names the company' do
         record.ship_address_id = company_address.id
 
-        expect(record.ship_address_id).to eq(company_address.id)
+        expect(record.ship_address_id).to be_nil
+        expect(record.selectable_addresses).not_to include(company_address)
       end
 
       it 'refuses a company book to a buyer with no standing anywhere' do
@@ -282,6 +283,15 @@ RSpec.shared_examples 'an addresses host' do
 
     it 'is empty for a guest' do
       expect(guest_record.selectable_addresses).to be_empty
+    end
+
+    it 'omits an address in a country the purchase\'s market does not sell to' do
+      germany = Spree::Country.by_iso('DE')
+      record.market = create(:market, store: store, countries: [germany])
+      german_address = create(:address, customer: user, country: germany)
+
+      expect(record.selectable_addresses).to include(german_address)
+      expect(record.selectable_addresses).not_to include(own_address)
     end
 
     context 'when the purchase is for a company' do

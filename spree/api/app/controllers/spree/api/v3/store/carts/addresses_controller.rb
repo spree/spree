@@ -4,15 +4,13 @@ module Spree
       module Store
         module Carts
           # Every address this cart may be shipped or billed to, in one call:
-          # the buyer's own book, plus the book of the company the cart is for
+          # the buyer's own book, plus the book of the company the cart names
           # — that node's entries and the ones it inherits from the nodes above
-          # it.
+          # it — limited to the countries the cart's market sells to.
           #
-          # A checkout address step would otherwise have to reassemble the list
-          # itself, from the memberships, the company and the personal book,
-          # and reimplement the server's resolution of which company an
-          # unstated purchase is for. Asking the cart keeps the picker and the
-          # writer that accepts the chosen id from ever disagreeing.
+          # A checkout address step would otherwise merge two books and filter
+          # them by the market itself. Asking the cart keeps the picker and the
+          # checkout from ever disagreeing about what is usable.
           #
           # Signed in only, unlike the rest of the cart surface. What comes
           # back is not the cart's own data but the books behind it — every
