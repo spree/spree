@@ -63,6 +63,13 @@ module Spree
 
         REQUIRED_OPTIONS = %i[issuer client_id client_secret redirect_uri].freeze
 
+        # Algorithms an ID token may be signed with. Pinned rather than taken
+        # from the discovery document alone: that document is the provider's
+        # claim about itself, and one listing `none` or an HMAC algorithm
+        # would turn signature verification off, or into a check against a
+        # secret the provider also knows.
+        SIGNING_ALGORITHMS = %w[RS256 RS384 RS512 PS256 PS384 PS512 ES256 ES384 ES512].freeze
+
         # Builds a registry entry for one identity provider.
         #
         # @param issuer [String] OIDC issuer URL (discovery is read from it)
@@ -254,7 +261,7 @@ module Spree
             id_token,
             nil,
             true,
-            algorithms: discovery_document.fetch('id_token_signing_alg_values_supported', ['RS256']),
+            algorithms: signing_algorithms,
             iss: config[:issuer],
             verify_iss: true,
             aud: config[:client_id],
@@ -263,6 +270,19 @@ module Spree
           )
 
           claims
+        end
+
+        # What the provider advertises, narrowed to what is acceptable. A
+        # provider advertising nothing gets the one algorithm every OpenID
+        # provider must support.
+        def signing_algorithms
+          advertised = Array(discovery_document['id_token_signing_alg_values_supported']).map(&:to_s)
+          return ['RS256'] if advertised.empty?
+
+          allowed = advertised & SIGNING_ALGORITHMS
+          raise "#{config[:issuer]} advertises no acceptable ID token signing algorithm" if allowed.empty?
+
+          allowed
         end
 
         # A loader proc rather than a fetched set: the jwt gem re-invokes it with
@@ -287,8 +307,37 @@ module Spree
 
         def discovery_document
           @discovery_document ||= Rails.cache.fetch("#{cache_key_prefix}/discovery", expires_in: 12.hours) do
-            JSON.parse(http_get("#{config[:issuer]}/.well-known/openid-configuration"))
+            verified_discovery(JSON.parse(http_get("#{config[:issuer]}/.well-known/openid-configuration")))
           end
+        end
+
+        # OpenID Connect Discovery §4.3: the document has to name the issuer
+        # it was fetched for, and the endpoints it names are where the client
+        # secret and the authorization code are sent — so each has to be as
+        # trustworthy as the issuer itself. A document failing either is not
+        # cached, so a provider's mistake is retried on the next login rather
+        # than remembered for twelve hours.
+        def verified_discovery(document)
+          unless document['issuer'].to_s.chomp('/') == config[:issuer]
+            raise "discovery document names issuer #{document['issuer'].inspect}, expected #{config[:issuer]}"
+          end
+
+          %w[authorization_endpoint token_endpoint jwks_uri].each do |name|
+            endpoint = document[name].to_s
+            raise "discovery document has no #{name}" if endpoint.blank?
+            raise "#{name} #{endpoint} must use https" unless secure_endpoint?(endpoint)
+          end
+
+          document
+        end
+
+        # Plain http is accepted only when the issuer itself was configured
+        # over plain http — a development provider on localhost — in which
+        # case the integrator made that choice for the whole registration.
+        def secure_endpoint?(endpoint)
+          URI.parse(endpoint).scheme == 'https' || URI.parse(config[:issuer]).scheme == 'http'
+        rescue URI::InvalidURIError
+          false
         end
 
         def cache_key_prefix

@@ -202,6 +202,77 @@ describe Spree::Authentication::Strategies::OidcStrategy do
     end
   end
 
+  # OpenID Connect Discovery §4.3: the document must name the issuer it was
+  # fetched for, and the endpoints it names are where the client secret and
+  # the authorization code go — so each has to be as trustworthy as the
+  # issuer itself.
+  describe 'the discovery document' do
+    let(:strategy) { factory.build(params: {}, request_env: {}) }
+    let(:document) do
+      { 'issuer' => issuer, 'authorization_endpoint' => "#{issuer}/authorize",
+        'token_endpoint' => "#{issuer}/token", 'jwks_uri' => "#{issuer}/keys" }
+    end
+
+    before { Rails.cache.clear }
+
+    def discovery(overrides)
+      allow(strategy).to receive(:http_get).and_return(JSON.generate(document.merge(overrides)))
+      strategy.send(:discovery_document)
+    end
+
+    it 'accepts the document fetched for the configured issuer' do
+      expect(discovery({})['token_endpoint']).to eq("#{issuer}/token")
+    end
+
+    it 'refuses a document naming another issuer' do
+      expect { discovery('issuer' => 'https://evil.example.com') }.to raise_error(/issuer/)
+    end
+
+    # The client secret is posted to the token endpoint, so one over plain
+    # http would hand it to anyone on the path.
+    it 'refuses an endpoint that is not https' do
+      expect { discovery('token_endpoint' => 'http://idp.example.com/token') }.to raise_error(/https/)
+    end
+
+    it 'refuses a document missing an endpoint' do
+      expect { discovery('jwks_uri' => nil) }.to raise_error(/jwks_uri/)
+    end
+
+    context 'for an issuer configured over plain http' do
+      let(:issuer) { 'http://localhost:8080/realms/dev' }
+
+      it 'accepts plain-http endpoints, since the integrator chose that for the registration' do
+        expect(discovery({})['token_endpoint']).to eq("#{issuer}/token")
+      end
+    end
+  end
+
+  # The algorithm list is the provider's claim about itself, read from a
+  # document that could be substituted: `none` or an HMAC algorithm in it
+  # would turn signature verification off, or into a check against a secret
+  # the provider also knows.
+  describe 'the ID token signing algorithms' do
+    let(:strategy) { factory.build(params: {}, request_env: {}) }
+
+    def algorithms_for(advertised)
+      allow(strategy).to receive(:discovery_document).
+        and_return('id_token_signing_alg_values_supported' => advertised)
+      strategy.send(:signing_algorithms)
+    end
+
+    it 'keeps only the asymmetric algorithms the provider advertises' do
+      expect(algorithms_for(%w[none HS256 RS256 ES256])).to eq(%w[RS256 ES256])
+    end
+
+    it 'defaults to RS256 when the provider advertises none' do
+      expect(algorithms_for(nil)).to eq(['RS256'])
+    end
+
+    it 'refuses a provider advertising only unacceptable algorithms' do
+      expect { algorithms_for(%w[none HS256]) }.to raise_error(/signing algorithm/)
+    end
+  end
+
   describe '#authorization_url' do
     before do
       allow_any_instance_of(described_class).to receive(:discovery_document).and_return(
