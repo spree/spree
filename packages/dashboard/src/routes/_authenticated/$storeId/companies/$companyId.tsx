@@ -595,6 +595,9 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
               key={entry.id}
               address={entry}
               canEdit={canEdit}
+              inheritedFrom={
+                entry.owner && entry.owner.id !== company.id ? (entry.owner.name ?? '') : null
+              }
               onEdit={() => setEditing(entry)}
               onSetDefaultBilling={() => setDefault(entry.id, 'billing')}
               onSetDefaultShipping={() => setDefault(entry.id, 'shipping')}

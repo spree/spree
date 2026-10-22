@@ -175,6 +175,53 @@ test.describe('new order', () => {
     await expect(poCard.getByRole('button', { name: /test-image\.png/i })).toBeVisible()
   })
 
+  // A division buys for itself but ships to the sites it inherits, so the
+  // picker offers its parent's address and the order keeps it.
+  test("ships an order for a division to its parent company's address", async ({ page }) => {
+    const creds = await login(page)
+    const stamp = Date.now()
+    const street = `${stamp} Harbor Road`
+    const parent = await adminRequest<{ id: string }>(page, creds, 'post', '/companies', {
+      name: `E2E Group ${stamp}`,
+    })
+    await adminRequest(page, creds, 'post', `/companies/${parent.id}/addresses`, {
+      label: 'Headquarters',
+      first_name: 'Dana',
+      last_name: 'Reyes',
+      address1: street,
+      city: 'Los Angeles',
+      postal_code: '90001',
+      country_code: 'US',
+      state_code: 'CA',
+    })
+    const divisionName = `E2E Group West ${stamp}`
+    await adminRequest(page, creds, 'post', '/companies', {
+      name: divisionName,
+      kind: 'division',
+      parent_id: parent.id,
+    })
+
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await page.getByPlaceholder(/search companies/i).fill(divisionName)
+    await page
+      .getByRole('option', { name: new RegExp(divisionName) })
+      .first()
+      .click()
+    await fillNewOrderForm(page, `e2e-division-${stamp}@example.com`)
+
+    await page.getByRole('switch').click()
+    await page.locator('#order-shipping-address').click()
+    await page.getByRole('option', { name: new RegExp(street) }).click()
+    await expect(page.locator('#order-shipping-address')).toContainText(street)
+
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+    await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
+  })
+
   test('newly-created draft shows up in the drafts list', async ({ page }) => {
     const creds = await login(page)
     await page.goto(NEW_ORDER_PATH(creds.store_id))

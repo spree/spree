@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 export { AddressSchema, type Address } from './Address';
+export { AddressOwnerSchema, type AddressOwner } from './AddressOwner';
 export { AppliedPromotionSchema, type AppliedPromotion } from './AppliedPromotion';
 export { BaseSchema, type Base } from './Base';
 export { CartSchema, type Cart } from './Cart';

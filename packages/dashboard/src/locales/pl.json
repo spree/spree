@@ -3359,6 +3359,7 @@
           "sku": "SKU",
           "variant": "Wariant"
         },
+        "use_company_default_addresses": "Użyj domyślnych adresów rozliczeniowego i wysyłki zapisanych przez {{company}}",
         "use_default_addresses": "Użyj domyślnych adresów rozliczeniowego i wysyłki klienta"
       },
       "payment_statuses": {
@@ -3737,7 +3738,10 @@
         "drafts_title": "Wersje robocze zamówień",
         "new": {
           "add_line_item": "Dodaj pozycję",
+          "address_help": "Zostaw adres niewybrany, aby wpisać go później w zamówieniu. Zamówienie firmowe może korzystać z lokalizacji tej firmy oraz tych, które dziedziczy.",
+          "company_addresses": "Adresy firmy",
           "company_help": "Przypisz to zamówienie do firmy. Lista klientów pokaże wtedy tylko osoby, które mogą dla niej kupować.",
+          "customer_addresses": "Adresy klienta",
           "reset_items": {
             "confirm": "Zmień i usuń pozycje",
             "message_few": "{{count}} wybrane pozycje mogą nie być sprzedawane temu kupującemu, na tym rynku lub w tym kanale albo mieć inną cenę. Zostaną usunięte.",
@@ -3754,8 +3758,10 @@
           "section_market_help": "To, co można sprzedać i po jakiej cenie, zależy od kupującego, rynku i kanału.",
           "section_notes": "Notatki",
           "section_summary": "Podsumowanie",
+          "select_billing_address": "Adres rozliczeniowy",
           "select_company": "Firma (opcjonalnie)",
           "select_customer": "Wybierz klienta",
+          "select_shipping_address": "Adres dostawy",
           "title": "Nowe zamówienie"
         }
       },

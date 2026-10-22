@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Keine Adresse ausgewählt"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Breadcrumb",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Standard-Rechnung",
       "default_shipping": "Standard-Versand",
+      "inherited_from": "Geerbt von {{name}}",
       "set_default_billing": "Als Standard-Rechnungsadresse festlegen",
       "set_default_shipping": "Als Standard-Versandadresse festlegen"
     },

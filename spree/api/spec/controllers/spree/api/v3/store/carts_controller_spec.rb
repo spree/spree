@@ -708,6 +708,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(order.reload.ship_address_id).to eq(existing_address.id)
     end
 
+    it 'accepts shipping_address_id from the company the cart is for' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: user)
+      site = create(:company_address, owner: company, first_name: 'Dana', last_name: 'Reyes',
+                                      country: country, state: us_state)
+
+      patch :update, params: {
+        id: order.prefixed_id, company_id: company.prefixed_id, shipping_address_id: site.prefixed_id
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(order.reload.ship_address_id).to eq(site.id)
+    end
+
     context 'the buyer purchase order' do
       it 'persists the reference and reports it back' do
         patch :update, params: { id: order.prefixed_id, po_number: 'PO-4471' }

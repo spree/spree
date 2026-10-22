@@ -64,6 +64,10 @@ module Spree
               Spree.api.address_serializer
             end
 
+            def collection_includes
+              [:owner]
+            end
+
             def permitted_params
               params.permit(*permitted_attributes)
             end

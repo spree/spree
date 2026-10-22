@@ -206,10 +206,7 @@ module Spree
       end
 
       def resolve_address_id(prefixed_id)
-        return unless cart.customer
-
-        decoded = Spree::Address.decode_prefixed_id(prefixed_id)
-        decoded ? cart.customer.addresses.find_by(id: decoded)&.id : nil
+        cart.selectable_address(prefixed_id)&.id
       end
 
       def assign_market

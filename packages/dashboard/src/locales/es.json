@@ -348,7 +348,10 @@
         "drafts_title": "Pedidos en borrador",
         "new": {
           "add_line_item": "Agregar línea de pedido",
+          "address_help": "Deja una dirección sin elegir para introducirla en el pedido más adelante. Un pedido de empresa puede usar las sedes de esa empresa y las que hereda.",
+          "company_addresses": "Direcciones de la empresa",
           "company_help": "Vinculá este pedido a una empresa. La lista de clientes mostrará solo a quienes puedan comprar para ella.",
+          "customer_addresses": "Direcciones del cliente",
           "reset_items": {
             "confirm": "Cambiar y quitar artículos",
             "message_many": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
@@ -364,8 +367,10 @@
           "section_market_help": "Lo que se puede vender, y a qué precio, depende del comprador, el mercado y el canal.",
           "section_notes": "Notas",
           "section_summary": "Resumen",
+          "select_billing_address": "Dirección de facturación",
           "select_company": "Empresa (opcional)",
           "select_customer": "Seleccionar cliente",
+          "select_shipping_address": "Dirección de envío",
           "title": "Nuevo pedido"
         }
       },
@@ -2973,6 +2978,7 @@
           "sku": "SKU",
           "variant": "Variante"
         },
+        "use_company_default_addresses": "Usar las direcciones de facturación y envío predeterminadas guardadas por {{company}}",
         "use_default_addresses": "Usar las direcciones de facturación y envío predeterminadas del cliente"
       },
       "payment_statuses": {

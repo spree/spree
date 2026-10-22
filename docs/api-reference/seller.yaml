@@ -12324,7 +12324,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_117
+                  code: UPS_GROUND_118
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12347,7 +12347,7 @@ paths:
                       currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_118
+                  code: UPS_GROUND_119
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12516,7 +12516,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_123
+                code: UPS_GROUND_124
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12573,7 +12573,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_125
+                code: UPS_GROUND_126
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -14172,8 +14172,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2823250
-                  slug: product-2823250
+                  name: Product 2843250
+                  slug: product-2843250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14386,8 +14386,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2856710
-                slug: product-2856710
+                name: Product 2876710
+                slug: product-2876710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14477,7 +14477,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2888212
+                slug: product-2908212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14600,8 +14600,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 2917816
-                slug: product-2917816
+                name: Product 2937816
+                slug: product-2937816
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14711,8 +14711,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 293209
-                slug: product-293209
+                name: Product 295209
+                slug: product-295209
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14801,8 +14801,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2949405
-                slug: product-2949405
+                name: Product 2969405
+                slug: product-2969405
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15990,7 +15990,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--37ea8559a3ea6e9f4877608b795389de5d0a2325
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a9cd29e72a70654182038480207bd929343f6a07
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -15998,7 +15998,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--db026124d00ca5e74d7fe8d3b919aaf931a505f7
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--abe303073ba7e7a0de1e5dc55e6c2a9a162c265e
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -17453,7 +17453,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 128
+                  delivery_method_name: UPS Ground 129
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17461,13 +17461,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2509315
-                    sku: SKU-334
+                    name: Product 2529315
+                    sku: SKU-338
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 128
+                    name: UPS Ground 129
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17576,7 +17576,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 129
+                delivery_method_name: UPS Ground 130
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17584,13 +17584,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 251961
-                  sku: SKU-335
+                  name: Product 253961
+                  sku: SKU-339
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 129
+                  name: UPS Ground 130
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17674,7 +17674,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 130
+                delivery_method_name: UPS Ground 131
                 stock_location_name: Melony Block
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17682,13 +17682,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2522065
-                  sku: SKU-336
+                  name: Product 2542065
+                  sku: SKU-340
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 130
+                  name: UPS Ground 131
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17760,7 +17760,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 131
+                delivery_method_name: UPS Ground 132
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17768,13 +17768,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2533170
-                  sku: SKU-337
+                  name: Product 2553170
+                  sku: SKU-341
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 131
+                  name: UPS Ground 132
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17860,7 +17860,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 132
+                delivery_method_name: UPS Ground 133
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17868,13 +17868,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2547276
-                  sku: SKU-338
+                  name: Product 2567276
+                  sku: SKU-342
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 132
+                  name: UPS Ground 133
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17963,7 +17963,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 133
+                  delivery_method_name: UPS Ground 134
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17971,13 +17971,13 @@ paths:
                     quantity: 1
                     line_item_id: li_gbHJdmfrXB
                     variant_id: variant_gbHJdmfrXB
-                    name: Product 2561765
-                    sku: SKU-340
+                    name: Product 2581765
+                    sku: SKU-344
                     options_text: ''
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   delivery_rates:
                   - id: dr_EfhxLZ9ck8
-                    name: UPS Ground 133
+                    name: UPS Ground 134
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -18009,7 +18009,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 133
+                  delivery_method_name: UPS Ground 134
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -18017,13 +18017,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2553520
-                    sku: SKU-339
+                    name: Product 2573520
+                    sku: SKU-343
                     options_text: ''
                   selected_delivery_rate_id: dr_VqXmZF31wY
                   delivery_rates:
                   - id: dr_VqXmZF31wY
-                    name: UPS Ground 133
+                    name: UPS Ground 134
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -20763,7 +20763,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 26895
+                    name: Product 27095
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -20772,7 +20772,7 @@ paths:
                     additional_tax_total: '0.00'
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-352
+                    sku: SKU-356
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -20785,7 +20785,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 145
+                    delivery_method_name: UPS Ground 146
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -20793,13 +20793,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 26895
-                      sku: SKU-352
+                      name: Product 27095
+                      sku: SKU-356
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 145
+                      name: UPS Ground 146
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -20959,7 +20959,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2699755
+                  name: Product 2719755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -20968,7 +20968,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-353
+                  sku: SKU-357
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -20981,7 +20981,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 146
+                  delivery_method_name: UPS Ground 147
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -20989,13 +20989,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2699755
-                    sku: SKU-353
+                    name: Product 2719755
+                    sku: SKU-357
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 146
+                    name: UPS Ground 147
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21155,7 +21155,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2726554
+                  name: Product 2746554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21164,7 +21164,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-356
+                  sku: SKU-360
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21177,7 +21177,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 149
+                  delivery_method_name: UPS Ground 150
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21185,13 +21185,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2726554
-                    sku: SKU-356
+                    name: Product 2746554
+                    sku: SKU-360
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 149
+                    name: UPS Ground 150
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21341,7 +21341,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2735038
+                  name: Product 2755038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21350,7 +21350,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-357
+                  sku: SKU-361
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21363,7 +21363,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 150
+                  delivery_method_name: UPS Ground 151
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21371,13 +21371,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2735038
-                    sku: SKU-357
+                    name: Product 2755038
+                    sku: SKU-361
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 150
+                    name: UPS Ground 151
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21534,7 +21534,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2753962
+                  name: Product 2773962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21543,7 +21543,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-359
+                  sku: SKU-363
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21556,7 +21556,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 152
+                  delivery_method_name: UPS Ground 153
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21564,13 +21564,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2753962
-                    sku: SKU-359
+                    name: Product 2773962
+                    sku: SKU-363
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 152
+                    name: UPS Ground 153
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21704,7 +21704,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2765749
+                  name: Product 2785749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21713,7 +21713,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-360
+                  sku: SKU-364
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21726,7 +21726,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 153
+                  delivery_method_name: UPS Ground 154
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21734,13 +21734,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2765749
-                    sku: SKU-360
+                    name: Product 2785749
+                    sku: SKU-364
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 153
+                    name: UPS Ground 154
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22710,7 +22710,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 3017120 can be returned
+                  message: Only 1 of Product 3037120 can be returned
       requestBody:
         content:
           application/json:

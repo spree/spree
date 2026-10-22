@@ -470,6 +470,45 @@ module Spree
               expect(cart.reload.ship_address_id).to eq(existing_address.id)
             end
           end
+
+          context 'with an address from the company book' do
+            let(:company) { create(:company, store: store) }
+            let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+            let(:company_address) { create(:company_address, owner: company) }
+
+            before { create(:company_membership, company: company, customer: user) }
+
+            it 'accepts a site of the company the cart is for' do
+              result = described_class.call(
+                cart: cart,
+                params: { company_id: company.prefixed_id, shipping_address_id: company_address.prefixed_id }
+              )
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to eq(company_address.id)
+            end
+
+            it 'accepts a site the purchase node inherits from its parent' do
+              create(:company_membership, company: division, customer: user)
+
+              result = described_class.call(
+                cart: cart,
+                params: { company_id: division.prefixed_id, shipping_address_id: company_address.prefixed_id }
+              )
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to eq(company_address.id)
+            end
+
+            it 'refuses the book of a company the buyer has no standing over' do
+              outsider_address = create(:company_address, owner: create(:company, store: store))
+
+              result = described_class.call(cart: cart, params: { shipping_address_id: outsider_address.prefixed_id })
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to be_nil
+            end
+          end
         end
 
         describe 'billing_address' do

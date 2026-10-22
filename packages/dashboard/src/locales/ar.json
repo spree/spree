@@ -3345,6 +3345,7 @@
           "sku": "SKU",
           "variant": "البديل"
         },
+        "use_company_default_addresses": "استخدم عناوين الفوترة والشحن الافتراضية المحفوظة لدى {{company}}",
         "use_default_addresses": "استخدم عناوين الفواتير والشحن الافتراضية لـ العميل"
       },
       "payment_statuses": {
@@ -3727,7 +3728,10 @@
         "drafts_title": "Draft Orders",
         "new": {
           "add_line_item": "إضافة بند",
+          "address_help": "اترك العنوان دون اختيار لإدخاله في الطلب لاحقًا. يمكن لطلب الشركة استخدام مواقع تلك الشركة والمواقع التي ترثها.",
+          "company_addresses": "عناوين الشركة",
           "company_help": "اربط هذا الطلب بشركة. ستعرض قائمة العملاء عندئذ الأشخاص المخوّلين بالشراء لها فقط.",
+          "customer_addresses": "عناوين العميل",
           "reset_items": {
             "confirm": "تغيير وإزالة العناصر",
             "message_few": "قد لا تُباع العناصر المختارة ({{count}}) لهذا المشتري أو في هذا السوق أو هذه القناة، أو قد يختلف سعرها. ستتم إزالتها.",
@@ -3746,8 +3750,10 @@
           "section_market_help": "ما يمكن بيعه وسعره يعتمدان على المشتري والسوق والقناة.",
           "section_notes": "ملحوظات",
           "section_summary": "ملخص",
+          "select_billing_address": "عنوان الفوترة",
           "select_company": "الشركة (اختياري)",
           "select_customer": "اختر عميلًا",
+          "select_shipping_address": "عنوان الشحن",
           "title": "طلب جديد"
         }
       },

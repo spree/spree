@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Ninguna dirección seleccionada"
+    },
     "components": {
       "address_block": {
         "not_provided": "No proporcionado"
@@ -2003,6 +2006,7 @@
     "address_book": {
       "default_billing": "Facturación predeterminada",
       "default_shipping": "Envío predeterminado",
+      "inherited_from": "Heredada de {{name}}",
       "set_default_billing": "Establecer como facturación predeterminada",
       "set_default_shipping": "Establecer como envío predeterminado"
     },

@@ -11,10 +11,16 @@ module Spree
         # Find cart by prefixed ID and authorize read access (owner or guest
         # token). Completed carts are not carts anymore — they 404 unless the
         # caller opts in (idempotent completion, payment-session confirm races).
+        #
+        # Pass +token: nil+ to demand ownership. A guest token proves the
+        # caller holds this cart, which is the right bar for the cart's own
+        # contents and no higher — an endpoint reaching past the cart into
+        # something the account holds asks for the account instead.
+        #
         # @return [Spree::Cart]
-        def find_cart(include_completed: false)
+        def find_cart(include_completed: false, token: cart_token)
           @cart = resolve_cart(include_completed: include_completed)
-          authorize_storefront_read!(@cart, token: cart_token)
+          authorize_storefront_read!(@cart, token: token)
           @cart
         end
 

@@ -3325,6 +3325,7 @@
           "sku": "SKU",
           "variant": "Variante"
         },
+        "use_company_default_addresses": "Die von {{company}} gespeicherte Standard-Rechnungs- und Lieferadresse verwenden",
         "use_default_addresses": "Standard-Rechnungs- und Lieferadresse des Kunden verwenden"
       },
       "payment_statuses": {
@@ -3699,7 +3700,10 @@
         "drafts_title": "Bestellentwürfe",
         "new": {
           "add_line_item": "Position hinzufügen",
+          "address_help": "Lassen Sie eine Adresse frei, um sie später in der Bestellung einzugeben. Eine Firmenbestellung kann die Standorte dieser Firma und die geerbten Standorte verwenden.",
+          "company_addresses": "Firmenadressen",
           "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
+          "customer_addresses": "Kundenadressen",
           "reset_items": {
             "confirm": "Ändern und Artikel entfernen",
             "message_one": "Der ausgewählte Artikel ({{count}}) ist für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kostet etwas anderes. Er wird entfernt.",
@@ -3714,8 +3718,10 @@
           "section_market_help": "Was verkauft werden kann und zu welchem Preis, hängt vom Käufer, vom Markt und vom Kanal ab.",
           "section_notes": "Notizen",
           "section_summary": "Zusammenfassung",
+          "select_billing_address": "Rechnungsadresse",
           "select_company": "Firma (optional)",
           "select_customer": "Kunde auswählen",
+          "select_shipping_address": "Lieferadresse",
           "title": "Neue Bestellung"
         }
       },

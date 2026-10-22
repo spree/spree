@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "未选择地址"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "面包屑导航",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "默认账单",
       "default_shipping": "默认收货",
+      "inherited_from": "继承自 {{name}}",
       "set_default_billing": "设为默认账单地址",
       "set_default_shipping": "设为默认收货地址"
     },

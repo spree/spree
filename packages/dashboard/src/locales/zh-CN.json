@@ -3317,6 +3317,7 @@
           "sku": "SKU",
           "variant": "变体"
         },
+        "use_company_default_addresses": "使用 {{company}} 保存的默认账单和配送地址",
         "use_default_addresses": "使用客户的默认账单和配送地址"
       },
       "payment_statuses": {
@@ -3689,7 +3690,10 @@
         "drafts_title": "草稿订单",
         "new": {
           "add_line_item": "添加订单项",
+          "address_help": "不选择地址则可在订单创建后再填写。公司订单可使用该公司的地址及其继承的地址。",
+          "company_addresses": "公司地址",
           "company_help": "将此订单关联到某个公司。客户列表随后只显示可为其采购的人员。",
+          "customer_addresses": "客户地址",
           "reset_items": {
             "confirm": "更改并移除商品",
             "message_other": "已选的 {{count}} 件商品可能不向此买家、市场或渠道销售，或价格不同。它们将被移除。",
@@ -3703,8 +3707,10 @@
           "section_market_help": "可销售的商品及其价格取决于买家、市场和渠道。",
           "section_notes": "备注",
           "section_summary": "概览",
+          "select_billing_address": "账单地址",
           "select_company": "公司（可选）",
           "select_customer": "选择客户",
+          "select_shipping_address": "收货地址",
           "title": "新建订单"
         }
       },

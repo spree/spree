@@ -4,6 +4,10 @@
 export const ACTOR_KINDS = ['admin_user', 'api_key'] as const
 export type ActorKind = (typeof ACTOR_KINDS)[number] | (string & {})
 
+/** The built-in values of `AddressOwnerType`. Extensions may add more. */
+export const ADDRESS_OWNER_TYPES = ['customer', 'company', 'seller'] as const
+export type AddressOwnerType = (typeof ADDRESS_OWNER_TYPES)[number] | (string & {})
+
 /** Every value of `ApiKeyType`. */
 export const API_KEY_TYPES = ['publishable', 'secret'] as const
 export type ApiKeyType = (typeof API_KEY_TYPES)[number]

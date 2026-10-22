@@ -43,6 +43,7 @@ Spree::Core::Engine.add_routes do
             patch :associate
             post :complete
           end
+          resources :addresses, only: [:index], controller: 'carts/addresses'
           resources :items, only: [:create, :update, :destroy], controller: 'carts/items'
           resources :discount_codes, only: [:create, :destroy], controller: 'carts/discount_codes'
           resources :gift_cards, only: [:create, :destroy], controller: 'carts/gift_cards'

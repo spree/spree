@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Nie wybrano adresu"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Ścieżka nawigacji",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Domyślny rozliczeniowy",
       "default_shipping": "Domyślny wysyłkowy",
+      "inherited_from": "Dziedziczony z: {{name}}",
       "set_default_billing": "Ustaw jako domyślny adres rozliczeniowy",
       "set_default_shipping": "Ustaw jako domyślny adres wysyłkowy"
     },
