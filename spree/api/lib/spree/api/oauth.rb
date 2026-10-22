@@ -62,20 +62,6 @@ module Spree
         end
 
         # @param key [Symbol]
-        # @param path [String] absolute path this resource answers on
-        def register_resource(key, path)
-          resources[key.to_sym] = path
-        end
-
-        # @param origin [String, nil] scheme and host the client used
-        # @return [Array<String>] every resource identifier this installation
-        #   serves
-        def resource_identifiers(origin = nil)
-          base = origin.presence || application_origin
-          resources.values.map { |path| "#{base}#{path}" }
-        end
-
-        # @param key [Symbol]
         # @param origin [String, nil] scheme and host the client used
         # @return [String, nil]
         def resource_identifier(key, origin = nil)

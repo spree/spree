@@ -612,7 +612,11 @@ module Spree
           # everything they need to race the exchange.
           :code,
           :code_verifier,
-          :code_challenge
+          :code_challenge,
+          # An MCP tool call's arguments: record attributes, and for an
+          # upload the file's whole content, none of which belongs in a
+          # request log.
+          :arguments
         ]
       end
 
