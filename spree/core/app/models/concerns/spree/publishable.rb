@@ -44,6 +44,9 @@ module Spree
       class_attribute :lifecycle_event_actions, default: []
 
       after_update :mark_real_update_for_events
+      after_save :note_lifecycle_write
+      after_destroy :note_lifecycle_write
+      after_rollback :forget_lifecycle_write
     end
 
     # A bare `touch` (variant → product, price → variant, asset → variants)
@@ -91,9 +94,13 @@ module Spree
         end
 
         if events.include?(:delete)
-          before_destroy :capture_pre_destroy_payload, if: :should_publish_events?
+          before_destroy :capture_pre_destroy_payload, if: :lifecycle_publishing_enabled?
           after_commit :publish_delete_event, on: :destroy, if: :should_publish_events?
         end
+
+        # Actions this model does not publish still clear the write marker.
+        skipped_actions = (LIFECYCLE_ACTIONS.keys - events).map { |event| event == :delete ? :destroy : event }
+        after_commit :forget_lifecycle_write, on: skipped_actions if skipped_actions.any?
       end
 
       # A subclass publishes its lifecycle events under its own prefix, which may
@@ -308,7 +315,30 @@ module Spree
     end
 
     def should_publish_events?
+      silenced = silenced_lifecycle_write?
+      forget_lifecycle_write
+      !silenced && lifecycle_publishing_enabled?
+    end
+
+    def lifecycle_publishing_enabled?
       self.class.publish_events && Spree::Events.lifecycle_enabled?
+    end
+
+    # Lifecycle events publish at commit, which can come after the block that
+    # silenced the write ended — a default record created in its parent's
+    # `after_create` commits together with the parent. Each write records
+    # whether events were on, so a record written only while they were off
+    # stays silent at commit; one written with them on still publishes.
+    def note_lifecycle_write
+      @_spree_lifecycle_write_enabled ||= Spree::Events.lifecycle_enabled?
+    end
+
+    def silenced_lifecycle_write?
+      @_spree_lifecycle_write_enabled == false
+    end
+
+    def forget_lifecycle_write
+      @_spree_lifecycle_write_enabled = nil
     end
 
     # True when this commit was caused only by `touch` — no real save ran
