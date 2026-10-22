@@ -37,7 +37,6 @@ end
 require 'spree/api/testing_support/always_register_type_hints'
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 require 'ffaker'
 require 'webmock/rspec'
 require 'i18n/tasks'
@@ -86,7 +85,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     Spree::Events.disable!
     # Clean out the database state before the tests run
-    DatabaseCleaner.clean_with(:truncation)
+    ActiveRecord::Base.connection_pool.with_connection { |connection| connection.truncate_tables(*connection.tables) }
   end
 
   # Re-enable events for specs that need them

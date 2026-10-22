@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: true do
   before(:all) do
-    DatabaseCleaner.clean_with(:truncation)
+    ActiveRecord::Base.connection_pool.with_connection { |connection| connection.truncate_tables(*connection.tables) }
     # The seed only mints an admin with explicit credentials (no dummy
     # defaults since 6.0), and the sample-data imports need one as owner.
     # ENV is process-global, so the originals are restored rather than
@@ -26,7 +26,7 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
   end
 
   after(:all) do
-    DatabaseCleaner.clean_with(:truncation)
+    ActiveRecord::Base.connection_pool.with_connection { |connection| connection.truncate_tables(*connection.tables) }
   end
 
   it 'creates products' do
