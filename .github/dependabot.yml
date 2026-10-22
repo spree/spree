@@ -55,6 +55,10 @@ updates:
     open-pull-requests-limit: 5
     cooldown:
       default-days: 2
+    # Pinned in pnpm-workspace.yaml `overrides:` (see the comment there), so a
+    # Dependabot bump would change package.json but never the installed version.
+    ignore:
+      - dependency-name: "@base-ui/react"
     groups:
       typescript-packages:
         patterns:
