@@ -293,17 +293,24 @@ module Spree
       # be able to read it back through search, a sort or a range filter.
       context 'with admin-only custom_fields' do
         let!(:definition) do
-          create(:custom_field_definition, :number_field, :admin_only, :searchable, :sortable,
+          create(:custom_field_definition, :number_field, :admin_only, :sortable,
                  namespace: 'internal', key: 'margin')
+        end
+        # Text, so the search probe cannot collide with a generated SKU the
+        # way a short number can.
+        let!(:note) do
+          create(:custom_field_definition, :short_text_field, :admin_only, :searchable,
+                 namespace: 'internal', key: 'note')
         end
 
         before do
           product_1.set_custom_field(definition, '40')
           product_2.set_custom_field(definition, '12')
+          product_1.set_custom_field(note, 'zq-hidden-note')
         end
 
         it 'ignores them for shoppers' do
-          expect(provider.search_and_filter(scope: scope, query: '40').products).to be_empty
+          expect(provider.search_and_filter(scope: scope, query: 'zq-hidden-note').products).to be_empty
           expect(provider.search_and_filter(scope: scope, filters: { 'cf_internal_margin_gteq' => '30' }).products).to match_array([product_1, product_2, product_3])
           expect(provider.search_and_filter(scope: scope, sort: '-cf_internal_margin').products.to_a).
             to eq(provider.search_and_filter(scope: scope).products.to_a)
