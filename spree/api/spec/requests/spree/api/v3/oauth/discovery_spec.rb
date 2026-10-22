@@ -38,6 +38,30 @@ RSpec.describe 'OAuth discovery', type: :request do
     it 'offers Spree permission keys as scopes' do
       expect(document['scopes_supported']).to include('read_products', 'write_orders')
     end
+
+    # A client compares the issuer with the URL it fetched the document from
+    # and with the `iss` an authorization response carries. Read from the
+    # deployment's own configuration, a request arriving under some other
+    # `Host` header cannot make the server describe itself as living there.
+    context 'with an issuer configured' do
+      before { allow(::Doorkeeper.config).to receive(:issuer).and_return('https://shop.example.com') }
+
+      it 'names the configured issuer in the document and in every endpoint' do
+        expect(document['issuer']).to eq('https://shop.example.com')
+        expect(document['authorization_endpoint']).to start_with('https://shop.example.com/')
+        expect(document['token_endpoint']).to start_with('https://shop.example.com/')
+        expect(document['authorization_response_iss_parameter_supported']).to be(true)
+      end
+    end
+
+    context 'with no issuer configured' do
+      before { allow(::Doorkeeper.config).to receive(:issuer).and_return(nil) }
+
+      it 'falls back to the origin the request arrived on' do
+        expect(document['issuer']).to eq('http://www.example.com')
+        expect(document['token_endpoint']).to start_with('http://www.example.com/')
+      end
+    end
   end
 
   describe 'GET /api/v3/oauth/protected-resource/:resource_key' do

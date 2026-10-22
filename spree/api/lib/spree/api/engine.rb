@@ -39,9 +39,12 @@ module Spree
 
       # Extensions register their permission scopes from config initializers,
       # which run after the configuration above — so the grantable list is
-      # re-read once they have.
+      # re-read once they have. The issuer waits for the same reason: the
+      # host sets its own URL options in its environment files and
+      # initializers.
       config.after_initialize do
         Spree::Api::Oauth.refresh_scopes!
+        Spree::Api::Oauth.refresh_issuer!
       end
 
       initializer 'spree.api.request_size_limit' do |app|

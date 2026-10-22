@@ -7,6 +7,11 @@ RSpec.describe 'OAuth Protected Resource Metadata', type: :request,
   include_context 'API v3 Admin'
 
   before { Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp') }
+  # The issuer is the deployment's configured host. The dummy app names
+  # localhost for itself, which would put a developer's machine in the
+  # published example, so here it is the origin the request arrives on — as
+  # it is for an installation whose configured host is the one clients use.
+  before { allow(::Doorkeeper.config).to receive(:issuer).and_return('http://www.example.com') }
 
   path '/api/v3/oauth/protected-resource/{resource_key}' do
     parameter name: :resource_key, in: :path, type: :string, required: true,

@@ -73,7 +73,7 @@ Apps created from an older `spree-starter` also need `config/application.rb` to 
 
 ## URLs and Hosts
 
-`SPREE_HOST` is the canonical public host of your deployment. URLs Spree generates outside a request context use it — links in emails, webhook payloads, and image/attachment URLs in API responses (for the latter, `CDN_HOST` takes precedence when set).
+`SPREE_HOST` is the canonical public host of your deployment. URLs Spree generates outside a request context use it — links in emails, webhook payloads, and image/attachment URLs in API responses (for the latter, `CDN_HOST` takes precedence when set). It is also the issuer the OAuth authorization server names in its discovery document and authorization responses, which [MCP clients](/developer/mcp/overview) and other OAuth clients check; without it, those name whatever host a request arrived on.
 
 <Note>
   This setting used to be called `RAILS_HOST`. That name still works, so an existing deployment needs no change — `SPREE_HOST` wins when both are set.

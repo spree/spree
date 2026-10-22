@@ -1118,20 +1118,26 @@ Spree::Core::Engine.add_routes do
   #
   # The application-management controllers stay skipped: connected apps are
   # managed through /api/v3/admin/oauth/applications, under the Admin API's
-  # own authentication.
+  # own authentication. So does token info, which renders a token owner's raw
+  # database id and Ruby class name — neither crosses the API anywhere else,
+  # and nothing a client needs is answered there alone.
+  #
+  # The token endpoints are Spree's own subclass, which adds the throttle the
+  # rest of the API has; the code exchange is the one request that turns a
+  # code into a credential, and Doorkeeper's controllers sit outside the API
+  # base controller's limits.
   # `controllers` is a block method, not an option to `use_doorkeeper`.
   #
   # Doorkeeper's own controllers need a leading slash because these routes are
   # drawn inside Spree::Core::Engine, which isolates the namespace — a bare
   # `doorkeeper/tokens` resolves as `Spree::Doorkeeper::Tokens` and fails on
-  # the first request. Spree's own authorizations controller is named from the
-  # application root WITHOUT a slash, because the metadata document builds its
-  # URL with `url_for(controller: "/#{name}")` and adds the slash itself.
+  # the first request. Spree's own controllers are named from the application
+  # root WITHOUT a slash, because the metadata document builds their URLs with
+  # `url_for(controller: "/#{name}")` and adds the slash itself.
   use_doorkeeper scope: 'oauth' do
     controllers authorizations: 'api/v3/oauth/authorizations',
-                tokens: '/doorkeeper/tokens',
-                token_info: '/doorkeeper/token_info',
+                tokens: 'api/v3/oauth/tokens',
                 metadata: '/spree/api/v3/oauth/server_metadata'
-    skip_controllers :applications, :authorized_applications
+    skip_controllers :applications, :authorized_applications, :token_info
   end
 end

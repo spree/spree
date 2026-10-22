@@ -98,6 +98,20 @@ module Spree
           options[:port].present? ? "#{origin}:#{options[:port]}" : origin
         end
 
+        # The issuer the discovery documents and authorization responses name
+        # (RFC 8414, RFC 9207), read from the URL options a deployment sets
+        # for itself once the host's initializers have run. Without one,
+        # every document described whatever `Host` header the request
+        # arrived with, and no `iss` was emitted for a client to check.
+        # Left alone where a host configured its own, or configured no host
+        # at all — the request's own origin is used then, as before.
+        def refresh_issuer!
+          return if ::Doorkeeper.config.issuer.present?
+
+          origin = application_origin.presence
+          ::Doorkeeper.config.instance_variable_set(:@issuer, origin) if origin
+        end
+
         # The grantable scope list, re-read after host and extension
         # initializers have run.
         #

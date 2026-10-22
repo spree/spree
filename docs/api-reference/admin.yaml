@@ -48049,7 +48049,7 @@ paths:
           content:
             application/json:
               example:
-                redirect_uri: https://claude.ai/api/mcp/auth_callback?code=E03r-KpOOPijXr95wZcxmZf9x9ywVcSs9dLvUJHvWsU
+                redirect_uri: https://claude.ai/api/mcp/auth_callback?code=E03r-KpOOPijXr95wZcxmZf9x9ywVcSs9dLvUJHvWsU&iss=http%3A%2F%2Fwww.example.com
               schema:
                 type: object
                 properties:
@@ -48090,7 +48090,7 @@ paths:
           content:
             application/json:
               example:
-                redirect_uri: https://claude.ai/api/mcp/auth_callback?error=access_denied&error_description=The+resource+owner+or+authorization+server+denied+the+request.
+                redirect_uri: https://claude.ai/api/mcp/auth_callback?error=access_denied&error_description=The+resource+owner+or+authorization+server+denied+the+request.&iss=http%3A%2F%2Fwww.example.com
               schema:
                 type: object
                 properties:

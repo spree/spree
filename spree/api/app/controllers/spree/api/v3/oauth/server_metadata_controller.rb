@@ -14,9 +14,19 @@ module Spree
 
           def metadata_response
             @metadata_response ||= ::Doorkeeper::OAuth::MetadataResponse.new(
-              request.base_url,
+              origin.to_s,
               ->(**arguments) { resolve_endpoint(**arguments) }
             )
+          end
+
+          # The origin the document describes itself under: the configured
+          # issuer where there is one, so a request arriving under some other
+          # `Host` header cannot make the server describe itself as living
+          # there, and the request's own origin otherwise.
+          #
+          # @return [URI]
+          def origin
+            @origin ||= URI.parse(::Doorkeeper.config.issuer.presence || request.base_url)
           end
 
           # Doorkeeper hands over a controller name anchored at the
@@ -30,24 +40,13 @@ module Spree
             # doubled.
             name = arguments[:controller].to_s.sub(%r{\A/+}, '')
 
-            if name.start_with?('doorkeeper/')
-              return Spree::Core::Engine.routes.url_for(
-                **arguments.except(:controller),
-                controller: "/#{name}",
-                only_path: false,
-                host: request.host,
-                protocol: request.protocol,
-                port: request.optional_port
-              )
-            end
-
             Spree::Core::Engine.routes.url_for(
               **arguments.except(:controller),
-              controller: "spree/#{name}",
+              controller: name.start_with?('doorkeeper/') ? "/#{name}" : "spree/#{name}",
               only_path: false,
-              host: request.host,
-              protocol: request.protocol,
-              port: request.optional_port
+              host: origin.host,
+              protocol: "#{origin.scheme}://",
+              port: (origin.port unless origin.port == origin.default_port)
             )
           end
         end

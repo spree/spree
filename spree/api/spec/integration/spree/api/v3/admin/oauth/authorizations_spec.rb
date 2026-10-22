@@ -15,6 +15,11 @@ RSpec.describe 'Admin OAuth Consent API', type: :request, swagger_doc: 'api-refe
   let(:challenge) { Base64.urlsafe_encode64(Digest::SHA256.digest(verifier), padding: false) }
 
   before { Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp') }
+  # The issuer is the deployment's configured host. The dummy app names
+  # localhost for itself, which would put a developer's machine in the
+  # published example, so here it is the origin the request arrives on — as
+  # it is for an installation whose configured host is the one clients use.
+  before { allow(::Doorkeeper.config).to receive(:issuer).and_return('http://www.example.com') }
 
   path '/api/v3/admin/oauth/authorize' do
     parameter name: :client_id, in: :query, type: :string, required: true,
