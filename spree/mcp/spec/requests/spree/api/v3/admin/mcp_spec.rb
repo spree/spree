@@ -69,6 +69,33 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
+    # Deactivation revokes the account's tokens; this is the check that
+    # still refuses one that survived, as on the rest of the Admin API.
+    context 'when the owner has been deactivated without the token being revoked' do
+      before do
+        token
+        admin.update_column(:deactivated_at, Time.current)
+      end
+
+      it 'refuses to list tools' do
+        post_with_token(token)
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      # Product status moves run in this process, not through the Admin API,
+      # so the endpoint's own check is the only thing between the token and
+      # the write.
+      it 'refuses an in-process write' do
+        product = create(:product, store: store, status: 'active')
+
+        post_with_token(token, 'tools/call', { name: 'products_archive', arguments: { 'product' => product.prefixed_id } })
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(product.reload.status).to eq('active')
+      end
+    end
+
     # Parsing the bearer header must not backtrack: this header arrives
     # unauthenticated, so a pathological value is free to send.
     it 'parses a bearer header of many spaces without stalling' do

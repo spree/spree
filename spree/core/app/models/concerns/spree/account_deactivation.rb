@@ -22,16 +22,18 @@ module Spree
     # are deleted, and OAuth tokens and grants issued to apps on its behalf are
     # revoked. Access tokens already issued are refused from the next request.
     #
+    # Safe to call again. The first deactivation time is kept, but sessions
+    # are ended every time, so an account whose column was set some other way
+    # still loses the credentials it holds.
+    #
     # Skips validations: switching an account off must not fail because some
     # unrelated attribute no longer passes today's rules.
     #
     # @return [void]
     def deactivate!
-      return if deactivated?
-
       now = Time.current
       transaction do
-        update_columns(deactivated_at: now, updated_at: now)
+        update_columns(deactivated_at: now, updated_at: now) unless deactivated?
         Spree::RefreshToken.revoke_all_for(self)
         oauth_owner = { resource_owner_type: self.class.polymorphic_name, resource_owner_id: id, revoked_at: nil }
         Spree::OauthAccessToken.where(oauth_owner).update_all(revoked_at: now)

@@ -52,6 +52,15 @@ describe Spree.admin_user_class, type: :model do
       expect(admin_user.reload.deactivated_at).to eq(first)
     end
 
+    it 'ends the sessions of an account already marked deactivated' do
+      admin_user.update_column(:deactivated_at, 1.day.ago)
+      create(:refresh_token, :for_admin, user: admin_user)
+
+      admin_user.deactivate!
+
+      expect(Spree::RefreshToken.where(user: admin_user)).to be_empty
+    end
+
     # Switching an account off must not depend on its other attributes
     # passing today's validations.
     it 'deactivates an account that no longer validates' do

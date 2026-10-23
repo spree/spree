@@ -151,9 +151,13 @@ module Spree
             @current_oauth_token = token if token&.accessible? && admin_audience_matches?(token)
           end
 
+          # This endpoint resolves its own caller rather than through
+          # AdminAuthentication, so it refuses a deactivated account itself:
+          # the tools that run in this process would otherwise act as an
+          # account that has been switched off.
           def oauth_resource_owner
             owner = current_oauth_token.resource_owner
-            owner if owner.is_a?(Spree.admin_user_class)
+            owner if owner.is_a?(Spree.admin_user_class) && !account_deactivated?(owner)
           end
 
           # The error text is what both the model and the person read, so it
