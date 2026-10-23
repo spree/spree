@@ -196,6 +196,18 @@ Rows written before the upgrade carry an id and an empty type; this task fills
 the type in. Until it runs they still read as the staff member they always
 were, with a deprecation warning. Safe to re-run at any time.
 
+### Stamp the store on tags added in bulk
+
+```bash
+bundle exec rake spree:upgrade:backfill_tagging_tenants
+```
+
+Product and order taggings carry the store they belong to, and the admin tag
+list filters by it. Tags added through the bulk endpoints were written without
+the store, so they were missing from that list while tags added one at a time
+were not. This stamps the record's store on every tagging without one. Safe to
+re-run at any time.
+
 ### Move users onto the Customer and AdminUser models
 
 ```bash
