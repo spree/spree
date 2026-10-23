@@ -7,7 +7,7 @@ module SpreeMeilisearch
   class SearchProvider < Spree::SearchProvider::Base
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
-    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
+    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids in_stock_option_value_ids in_stock_option_value_combination_ids].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
     def self.indexing_required?
@@ -31,7 +31,7 @@ module SpreeMeilisearch
       # Intersect with AR scope for security/visibility, preserving Meilisearch sort order.
       # When the index could only pre-filter the option values, the database
       # answers the same-variant question exactly here.
-      scope = scope.with_option_value_ids(@inexact_option_value_ids) if @inexact_option_value_ids.present?
+      scope = scope.with_option_value_ids(@inexact_option_value_ids, variants: option_filter_variants(filters)) if @inexact_option_value_ids.present?
       products = if raw_ids.any?
                    records = scope.where(id: raw_ids).reorder(nil).index_by(&:id)
                    raw_ids.filter_map { |id| records[id] }
@@ -183,6 +183,7 @@ module SpreeMeilisearch
       filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
       filters = (filters || {}).stringify_keys
 
+      @in_stock_options = in_stock_filter?(filters)
       option_value_ids = extract_and_delete(filters, 'with_option_value_ids')
       grouped_options = group_option_values_by_type(Array(option_value_ids))
       # Handed back to the caller so it can narrow the record scope exactly
@@ -214,7 +215,7 @@ module SpreeMeilisearch
           option_type_ids_ordered = grouped_options.keys
           option_type_ids_ordered.each do |option_type_id|
             without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
-            queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], page: 1, hitsPerPage: 0 }
+            queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: [option_value_field], page: 1, hitsPerPage: 0 }
           end
 
           results = client.multi_search(queries)
@@ -246,12 +247,12 @@ module SpreeMeilisearch
     end
 
     def merge_disjunctive_facets(ms_result, disjunctive_results, option_type_ids_ordered)
-      main_ov_dist = ms_result.dig('facetDistribution', 'option_value_ids') || {}
+      main_ov_dist = ms_result.dig('facetDistribution', option_value_field) || {}
 
       all_ov_prefixed_ids = Set.new
       disjunctive_dists = {}
       disjunctive_results.each_with_index do |r, idx|
-        dist = r.dig('facetDistribution', 'option_value_ids') || {}
+        dist = r.dig('facetDistribution', option_value_field) || {}
         disjunctive_dists[option_type_ids_ordered[idx]] = dist
         all_ov_prefixed_ids.merge(dist.keys)
       end
@@ -270,7 +271,15 @@ module SpreeMeilisearch
         end
       end
 
-      (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
+      (ms_result['facetDistribution'] || {}).merge(option_value_field => merged_ov_dist)
+    end
+
+    def option_value_field
+      @in_stock_options ? 'in_stock_option_value_ids' : 'option_value_ids'
+    end
+
+    def option_combination_field
+      @in_stock_options ? 'in_stock_option_value_combination_ids' : 'option_value_combination_ids'
     end
 
     def presenter_class
@@ -310,9 +319,10 @@ module SpreeMeilisearch
     end
 
     # Facets stay built-in only — cf_* distributions aren't consumed by
-    # +build_facet_response+, so requesting them would be wasted work.
+    # +build_facet_response+, so requesting them would be wasted work; of the
+    # option fields only the one this request reads is asked for.
     def facet_attributes
-      BUILT_IN_FILTERABLE_ATTRIBUTES
+      BUILT_IN_FILTERABLE_ATTRIBUTES.grep_v(/option_value/) + [option_value_field]
     end
 
     # Collapses the per-grouping membership docs to one row per product on
@@ -404,7 +414,7 @@ module SpreeMeilisearch
         price_bound = price_filter_value(value)
         "price <= #{price_bound}" if price_bound
       when 'in_stock'
-        'in_stock = true' if value.to_s != '0'
+        'in_stock = true' if in_stock_filter?(key => value)
       when 'out_of_stock'
         'in_stock = false' if value.to_s != '0'
       when 'in_category'
@@ -530,7 +540,7 @@ module SpreeMeilisearch
     # the sanitizer would strip it.
     def option_combination_condition(prefixed_ids)
       token = prefixed_ids.map { |id| sanitize_prefixed_id(id) }.sort.join('|')
-      "option_value_combination_ids = '#{token}'"
+      "#{option_combination_field} = '#{token}'"
     end
 
     # Read off the presenter, since it is what decides how deep the tokens go.
@@ -546,7 +556,7 @@ module SpreeMeilisearch
 
     def single_axis_option_conditions(grouped)
       grouped.map do |_, prefixed_ids|
-        parts = prefixed_ids.map { |id| "option_value_ids = '#{sanitize_prefixed_id(id)}'" }
+        parts = prefixed_ids.map { |id| "#{option_value_field} = '#{sanitize_prefixed_id(id)}'" }
         parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first
       end
     end
@@ -591,7 +601,7 @@ module SpreeMeilisearch
       facets = []
       facets << build_price_facet(facet_distribution['price'], facet_stats['price']) if facet_distribution['price'].present?
       facets << build_availability_facet(facet_distribution['in_stock']) if facet_distribution['in_stock'].present?
-      facets.concat(build_option_facets(facet_distribution['option_value_ids'])) if facet_distribution['option_value_ids'].present?
+      facets.concat(build_option_facets(facet_distribution[option_value_field])) if facet_distribution[option_value_field].present?
       facets << build_category_facet(facet_distribution['category_ids']) if facet_distribution['category_ids'].present?
       facets.compact
     end
