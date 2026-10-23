@@ -47,7 +47,11 @@ Registering ChatGPT in step 1 created a client under **Settings → OAuth client
 
 1. In the Spree dashboard, navigate to **Settings → OAuth clients**.
 2. Find the **ChatGPT** client, open its actions and choose **Edit**.
-3. Replace the redirect URI with the callback URL you copied from ChatGPT, and save.
+3. Enter every address the client may be sent back to, separated by spaces: the ones already registered, followed by the one you copied from ChatGPT. Save.
+
+The **Callback URL** field holds a list rather than a single address. Keep whatever is already registered and add yours to it, rather than replacing it, so that anything already relying on those addresses carries on working.
+
+<Note>Read the addresses already registered from the **Callback URL** column on the OAuth clients list, where each is shown in full, and type the complete list into the field.</Note>
 
 <Warning>Attempting to connect before this step is done results in an error.</Warning>
 
@@ -55,7 +59,9 @@ Registering ChatGPT in step 1 created a client under **Settings → OAuth client
 
 ![The approval screen in the Spree dashboard, listing what ChatGPT is asking for](/docs/images/user/settings/connect-chatgpt/6-approve.png)
 
-Finish creating the MCP server in ChatGPT and connect. ChatGPT sends you to your store to sign in, and an approval screen lists the permissions it has asked for. Tick the ones you want it to have and click **Allow access**.
+Finish creating the MCP server in ChatGPT. Before it connects, ChatGPT shows a notice covering what it may share with the store and how that data may be used, and asks you to confirm. Click **Connect**, and ChatGPT sends you to your store to sign in.
+
+An approval screen then lists the permissions ChatGPT has asked for. Tick the ones you want it to have and click **Allow access**. The plugin is in place as soon as the approval goes through, so there is nothing further to install.
 
 ChatGPT asks for every permission your store offers, which is what the standard expects of a client that has not been told to ask for less. The approval screen is where the connection is narrowed, so approving a short list is normal rather than a sign that something is wrong.
 
@@ -69,7 +75,7 @@ A connected plugin is not used until it is selected for the chat it is needed in
 
 Then ask it something straightforward to confirm the connection works, such as listing your last five orders.
 
-ChatGPT asks you to confirm before anything that changes data, because those jobs declare themselves as changes. Reading is answered without a prompt.
+A job that changes data declares itself as a change, and ChatGPT may ask you to confirm before running one. Whether it asks depends on the permissions the plugin holds and on what is being done, so a change can also go through without a prompt. Reading is always answered without one.
 
 <Note>ChatGPT is only shown the jobs it was approved for, so a connection approved for products alone offers a short list of product jobs rather than everything the store can do.</Note>
 

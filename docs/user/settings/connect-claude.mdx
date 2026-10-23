@@ -31,14 +31,16 @@ On a personal plan the connector belongs to your own Claude account.
 
 ![Claude's custom connector dialog, with the name and the store's MCP address](/docs/images/user/settings/connect-claude/3-claude-add-connector.png)
 
-1. In Claude, open **Settings → Connectors** and choose to add a custom connector.
-2. Enter a name your team will recognize, such as your store's name, and paste **Your store's MCP address**. Confirm.
-3. Paste the **Client ID** into the connector's OAuth settings, and leave the remaining options as they are.
-4. Click **Connect**.
+1. In Claude, open **Connectors**, reached from either **Settings** or **Customize**, and choose to add a custom connector.
+2. Enter a name your team will recognize, such as your store's name, paste **Your store's MCP address**, and click **Continue**. Claude checks that it can reach the address before going on.
+3. On the next screen, leave **Authentication** set to **Sign in now** and **OAuth client** set to **Use your own OAuth client**. Claude works both out from your store, so they are normally chosen for you already.
+4. Paste the **Client ID** and continue.
+5. The connector is added at this point but not yet connected to anything. Click **Connect**.
+6. Claude opens your browser and asks you to confirm that you started this yourself. Continue, and your store's sign-in appears.
 
 ![The Client ID pasted into Claude's OAuth settings](/docs/images/user/settings/connect-claude/4-claude-client-id.png)
 
-Claude sends you to your store to sign in and approve what it may do.
+<Note>**Register automatically** is offered as an OAuth client option but does not work here. Spree registers clients in advance rather than letting them register themselves, which is why there is a Client ID to paste.</Note>
 
 <Note>A free Claude account allows one custom connector, so a store connected there uses the single slot available.</Note>
 
@@ -77,7 +79,7 @@ A connection never carries more than the person who made it. Anything your own r
 
 In a new chat, click **+ → Connectors** and switch the store on. Then ask it something straightforward to confirm the connection works, such as listing your last five orders.
 
-Claude asks you to confirm before anything that changes data, because those jobs declare themselves as changes. Reading is answered without a prompt.
+A job that changes data declares itself as a change, and Claude asks you to confirm before running one unless the connector has been set to allow that job automatically. Reading is always answered without a prompt.
 
 <Note>Claude is only shown the jobs it was approved for, so a connection approved for products alone offers a short list of product jobs rather than everything the store can do.</Note>
 
