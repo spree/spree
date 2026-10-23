@@ -87,7 +87,7 @@ module Spree
 
         store_product_ids = Product.with_deleted.where(store_id: variant.store_id).select(:id)
         sku_pattern = Variant.arel_table[:sku].matches("%#{Variant.sanitize_sql_like(variant.sku)}", '\\', true)
-        latest_match = Variant.with_deleted.where(product_id: store_product_ids).where(sku_pattern).order(:created_at).last
+        latest_match = Variant.with_deleted.where(product_id: store_product_ids).where(sku_pattern).order(:created_at, :id).last
 
         "COPY OF #{(latest_match || variant).sku}"
       end
