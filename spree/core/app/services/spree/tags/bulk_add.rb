@@ -27,17 +27,20 @@ module Spree
 
       private
 
+      # Mirrors the gem's own tagging save, which stores the taggable's tenant
+      # (its `store_id` for store-owned records) as a string on each tagging.
       def taggings_attributes(tags, records, context:, record_class:)
-        records.pluck(:id).map do |record_id|
+        records.flat_map do |record|
           tags.map do |tag|
             {
-              taggable_id: record_id,
+              taggable_id: record.id,
               taggable_type: record_class.to_s,
               context: context,
-              tag_id: tag.id
+              tag_id: tag.id,
+              tenant: record.taggable_tenant&.to_s
             }
           end
-        end.flatten.compact
+        end
       end
     end
   end

@@ -26,11 +26,22 @@ module Spree
           expect(products.pluck(:id)).to include(tagging.taggable_id)
           expect(tag_names).to include(tagging.tag.name)
           expect(tagging.context).to eq(context)
+          expect(tagging.tenant).to eq(tagging.taggable.store_id.to_s)
         end
       end
 
       it 'touches all products' do
         expect { subject }.to change { Spree::Product.where(id: products.pluck(:id)).pluck(:updated_at) }
+      end
+
+      context 'when the records declare no tenant' do
+        let(:products) { create_list(:user, 2) }
+
+        it 'leaves the tagging tenant empty' do
+          subject
+
+          expect(ActsAsTaggableOn::Tagging.where(taggable: products).pluck(:tenant)).to all(be_nil)
+        end
       end
 
       context 'when tag names are duplicated or have extra spaces' do

@@ -819,3 +819,13 @@ steps:
       Run AFTER the steps that create or move attachments (media, categories,
       returns), so their files are covered. Idempotent — files that already
       have a store are skipped.
+
+  - id: backfill_tagging_tenants
+    name: "Stamp the store on taggings written without one"
+    task: "spree:upgrade:backfill_tagging_tenants"
+    notes: |
+      Tags added through the bulk endpoints carried no store on their
+      taggings, and the admin tag list filters by it, so those tags were
+      missing from the list. This stamps the store of the record on every
+      tagging without one, for each taggable that keeps its taggings per
+      store. Idempotent — taggings that already carry a store are skipped.
