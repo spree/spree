@@ -44,9 +44,6 @@ module Spree
       class_attribute :lifecycle_event_actions, default: []
 
       after_update :mark_real_update_for_events
-      after_save :note_lifecycle_write
-      after_destroy :note_lifecycle_write
-      after_rollback :forget_lifecycle_write
     end
 
     # A bare `touch` (variant → product, price → variant, asset → variants)
@@ -98,9 +95,10 @@ module Spree
           after_commit :publish_delete_event, on: :destroy, if: :should_publish_events?
         end
 
-        # Actions this model does not publish still clear the write marker.
-        skipped_actions = (LIFECYCLE_ACTIONS.keys - events).map { |event| event == :delete ? :destroy : event }
-        after_commit :forget_lifecycle_write, on: skipped_actions if skipped_actions.any?
+        after_save :note_lifecycle_write
+        after_destroy :note_lifecycle_destroy
+        after_commit :close_lifecycle_write
+        after_rollback :close_lifecycle_write
       end
 
       # A subclass publishes its lifecycle events under its own prefix, which may
@@ -315,9 +313,7 @@ module Spree
     end
 
     def should_publish_events?
-      silenced = silenced_lifecycle_write?
-      forget_lifecycle_write
-      !silenced && lifecycle_publishing_enabled?
+      !silenced_lifecycle_write? && lifecycle_publishing_enabled?
     end
 
     def lifecycle_publishing_enabled?
@@ -329,15 +325,35 @@ module Spree
     # `after_create` commits together with the parent. Each write records
     # whether events were on, so a record written only while they were off
     # stays silent at commit; one written with them on still publishes.
+    #
+    # The marker is read, never cleared, at commit: Rails may check several
+    # commit callbacks for one commit (a soft delete is also an update), and
+    # the order commit callbacks run in is the host app's setting. A commit or
+    # rollback only closes it, and the next write starts a fresh one.
     def note_lifecycle_write
+      reopen_lifecycle_write
       @_spree_lifecycle_write_enabled ||= Spree::Events.lifecycle_enabled?
+    end
+
+    # A destroy commits as the delete event alone, so an earlier update made
+    # with events on must not carry it through.
+    def note_lifecycle_destroy
+      reopen_lifecycle_write
+      @_spree_lifecycle_write_enabled = Spree::Events.lifecycle_enabled?
     end
 
     def silenced_lifecycle_write?
       @_spree_lifecycle_write_enabled == false
     end
 
-    def forget_lifecycle_write
+    def close_lifecycle_write
+      @_spree_lifecycle_write_closed = true
+    end
+
+    def reopen_lifecycle_write
+      return unless @_spree_lifecycle_write_closed
+
+      @_spree_lifecycle_write_closed = false
       @_spree_lifecycle_write_enabled = nil
     end
 

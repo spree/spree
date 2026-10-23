@@ -364,6 +364,19 @@ RSpec.describe Spree::Publishable, events: true do
         expect(received).to be true
       end
 
+      it 'does not publish a silenced destroy after an update made with events on' do
+        received = false
+        Spree::Events.subscribe('product.deleted', async: false) { received = true }
+        Spree::Events.activate!
+
+        ApplicationRecord.transaction do
+          product.update!(name: 'Renamed')
+          Spree::Events.disable { product.destroy! }
+        end
+
+        expect(received).to be false
+      end
+
       it 'publishes a later write made with events on' do
         received = false
         Spree::Events.subscribe('product.updated', async: false) { received = true }
