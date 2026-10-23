@@ -2,6 +2,7 @@
 en:
   spree:
     api:
+      account_deactivated: This account has been deactivated. Contact an administrator to restore access.
       cannot_delete: "%{model} cannot be deleted"
       cannot_modify_seller_import: This import belongs to a seller. It can be viewed here, but only the seller can retry or delete it.
       current_password_invalid: Current password is invalid or missing
@@ -22,7 +23,6 @@ en:
       newsletter_verification_token_invalid: Newsletter verification token is invalid or has expired.
       password_reset_requested: If an account exists for that email, password reset instructions have been sent.
       password_reset_token_invalid: Password reset token is invalid or has expired.
-      account_deactivated: This account has been deactivated. Contact an administrator to restore access.
       record_not_found: "%{model} not found"
       unauthorized: You are not authorized to perform that action.
       v3:
