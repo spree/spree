@@ -108,6 +108,16 @@ module Spree
       def currency
         Spree::Current.currency || store.default_market&.currency
       end
+
+      def in_stock_filter?(filters)
+        ActiveModel::Type::Boolean.new.cast(filters['in_stock'] || filters[:in_stock]) == true
+      end
+
+      def option_filter_variants(filters)
+        return unless audience == :store
+
+        Spree::Variant.for_option_filters(currency, in_stock: in_stock_filter?(filters), store: store)
+      end
     end
   end
 end
