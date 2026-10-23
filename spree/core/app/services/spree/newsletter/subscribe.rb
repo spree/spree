@@ -2,7 +2,7 @@ module Spree
   module Newsletter
     class Subscribe
       def initialize(email:, current_user: nil, current_store: nil, redirect_url: nil)
-        @email = email
+        @email = email.to_s.strip.presence
         @current_user = current_user
         @current_store = current_store || Spree::Store.current
         @redirect_url = redirect_url
