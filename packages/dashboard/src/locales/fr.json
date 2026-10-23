@@ -4192,6 +4192,7 @@
               "error_type": "Type d'erreur",
               "event": "Événement",
               "execution_time": "Temps d'exécution",
+              "redirect_hint": "Les webhooks ne suivent pas les redirections. Remplacez l'URL du point de terminaison par l'adresse vers laquelle elle redirige.",
               "request_errors": "Erreur de transport",
               "request_payload": "Charge utile de la requête",
               "response_body": "Corps de la réponse",

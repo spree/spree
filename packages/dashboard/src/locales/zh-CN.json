@@ -4180,6 +4180,7 @@
               "error_type": "错误类型",
               "event": "事件",
               "execution_time": "执行耗时",
+              "redirect_hint": "Webhook 不会跟随重定向。请将端点 URL 改为其重定向到的地址。",
               "request_errors": "传输错误",
               "request_payload": "请求负载",
               "response_body": "响应正文",

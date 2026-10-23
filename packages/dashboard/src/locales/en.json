@@ -4191,6 +4191,7 @@
               "error_type": "Error type",
               "event": "Event",
               "execution_time": "Execution time",
+              "redirect_hint": "Webhooks don't follow redirects. Change the endpoint URL to the address it redirects to.",
               "request_errors": "Transport error",
               "request_payload": "Request payload",
               "response_body": "Response body",

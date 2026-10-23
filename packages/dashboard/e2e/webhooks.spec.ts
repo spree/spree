@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import { FIXTURE_REDIRECT_WEBHOOK, gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const WEBHOOKS_PATH = (storeId: string) => `/${storeId}/settings/webhooks`
 const CTA = /new endpoint/i
@@ -180,5 +180,41 @@ test.describe('webhooks', () => {
       .click()
 
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('refuses an endpoint at an internal address or without https', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, WEBHOOKS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Refused ${Date.now()}`
+    await createEndpoint(page, {
+      name,
+      url: 'https://metadata.google.internal/computeMetadata/v1/',
+    })
+    await expect(
+      page.getByText('must not point to an internal or private network address', { exact: true }),
+    ).toBeVisible({ timeout: 15_000 })
+
+    await page.locator('#webhook-url').fill('http://93.184.215.14/hook')
+    await page
+      .locator('[role="dialog"]')
+      .getByRole('button', { name: /^create$/i })
+      .click()
+    await expect(page.getByText('must use https', { exact: true })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: /save your signing secret/i })).toHaveCount(0)
+  })
+
+  test('explains a delivery the endpoint answered with a redirect', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(`${WEBHOOKS_PATH(creds.store_id)}/${creds.redirect_webhook_id}`)
+    await expect(page.getByRole('heading', { name: FIXTURE_REDIRECT_WEBHOOK })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: 'order.placed', exact: true }).first().click()
+
+    await expect(page.getByText(/webhooks don't follow redirects/i)).toBeVisible({
+      timeout: 15_000,
+    })
   })
 })
