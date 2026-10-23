@@ -1368,6 +1368,15 @@
                     ]
                   },
                   {
+                    "group": "AI Agents",
+                    "icon": "bot",
+                    "pages": [
+                      "user/ai-agents/ai-agents",
+                      "user/ai-agents/connect-claude",
+                      "user/ai-agents/connect-chatgpt"
+                    ]
+                  },
+                  {
                     "group": "Settings",
                     "icon": "settings",
                     "pages": [
@@ -1419,15 +1428,6 @@
                         "pages": [
                           "user/settings/staff",
                           "user/settings/roles"
-                        ]
-                      },
-                      {
-                        "group": "AI Agents",
-                        "icon": "bot",
-                        "pages": [
-                          "user/settings/ai-agents",
-                          "user/settings/connect-claude",
-                          "user/settings/connect-chatgpt"
                         ]
                       },
                       {
@@ -3034,9 +3034,9 @@
               "user/settings/product-types",
               "user/settings/package-types",
               "user/settings/integrations",
-              "user/settings/ai-agents",
-              "user/settings/connect-claude",
-              "user/settings/connect-chatgpt",
+              "user/ai-agents/ai-agents",
+              "user/ai-agents/connect-claude",
+              "user/ai-agents/connect-chatgpt",
               "user/settings/api-keys",
               "user/settings/webhooks",
               "user/settings/allowed-origins"
