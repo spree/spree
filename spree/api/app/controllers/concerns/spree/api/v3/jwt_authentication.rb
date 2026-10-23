@@ -111,7 +111,7 @@ module Spree
 
           case user_type
           when USER_TYPE_ADMIN
-            Spree.admin_user_class.find(user_id)
+            admin_user_from(user_id)
           else
             customer_from(user_id)
           end
@@ -126,6 +126,32 @@ module Spree
           customer = Spree.customer_class.find(user_id)
 
           customer.respond_to?(:anonymized?) && customer.anonymized? ? nil : customer
+        end
+
+        # A deactivated staff account stops answering to its old tokens on the
+        # next request, rather than when they expire.
+        def admin_user_from(user_id)
+          admin_user = Spree.admin_user_class.find(user_id)
+
+          account_deactivated?(admin_user) ? nil : admin_user
+        end
+
+        # Duck-typed, like the anonymized check above: a custom admin user
+        # class without Spree::AccountDeactivation is never refused.
+        def account_deactivated?(user)
+          user.respond_to?(:deactivated?) && user.deactivated?
+        end
+
+        # For a person who proved who they are: a password that matched, a
+        # provider that vouched for them, a reset or invitation link they hold.
+        # Anyone else gets the same answer as for any failed attempt, so this
+        # never tells a stranger which accounts are switched off.
+        def render_account_deactivated
+          render_error(
+            code: ErrorHandler::ERROR_CODES[:account_deactivated],
+            message: I18n.t('spree.api.account_deactivated'),
+            status: :forbidden
+          )
         end
 
         def determine_user_type(user)

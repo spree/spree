@@ -46,6 +46,8 @@ module Spree
 
             user = resolve_or_create_invitee(@invitation)
             return if performed?
+            # Checked before accepting: a deactivated account gains no role.
+            return render_account_deactivated if account_deactivated?(user)
 
             @invitation.invitee = user
             result = Spree.invitation_accept_workflow.call(invitation: @invitation)
