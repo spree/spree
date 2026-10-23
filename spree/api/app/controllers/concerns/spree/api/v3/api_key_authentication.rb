@@ -67,7 +67,8 @@ module Spree
           return @publishable_api_key if defined?(@publishable_api_key)
 
           @publishable_api_key = Spree::StoreScopeGuard.skip do
-            extract_api_key ? Spree::ApiKey.active.publishable.find_by(token: extract_api_key) : nil
+            api_key = extract_api_key ? Spree::ApiKey.active.publishable.find_by(token: extract_api_key) : nil
+            api_key if store_present?(api_key)
           end
         end
 
@@ -78,8 +79,19 @@ module Spree
           return @secret_api_key if defined?(@secret_api_key)
 
           @secret_api_key = Spree::StoreScopeGuard.skip do
-            Spree::ApiKey.find_by_secret_token(extract_api_key)
+            api_key = Spree::ApiKey.find_by_secret_token(extract_api_key)
+            api_key if store_present?(api_key)
           end
+        end
+
+        # A key selects its store, so a key whose store has been deleted no
+        # longer authenticates. Without this the request would run with no
+        # store at all, and fail deep in the first store-scoped query.
+        #
+        # @param api_key [Spree::ApiKey, nil]
+        # @return [Boolean]
+        def store_present?(api_key)
+          api_key&.store.present?
         end
 
         # Marks the API key as used at most once per hour
