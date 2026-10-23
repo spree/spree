@@ -1,3 +1,13 @@
+## 2026-10-22: Ransack casts a filter value to true or false only for a boolean scope
+
+**Context:** Ransack turns `1`, `t` and `true` into `true`, and `0`, `f` and `false` into `false`, before it calls a scope, and skips a scope it hands `false`. Spree publishes `search` and every other scope without a declared type as taking text, but only two models opted out of the cast. A merchant typing "1" into a variant picker got a 500 from `Variant.search`, the order and returns searches failed the same way, `q[price_gte]=1` raised, and a search for "false" returned the whole list unfiltered.
+
+**Decision:** `Spree::RansackableAttributes` answers `ransackable_scopes_skip_sanitize_args` with every ransackable scope whose type is known and is not `'boolean'`: declared, or read from a class method's signature through `ransackable_scope_type`, the lookup the filter table also publishes from. A `search` declared with `search_by` is text. An undeclared `scope` lambda keeps the cast, because Ruby hides its signature and it may be a flag; core declares its own (`Media.filename_cont`, `OptionType.search_by_name`). Scopes that read their own flag with `ransack_flag` extend the list with `super |`. The variant pickers in the dashboard stop searching below three characters, the floor `Variant.search` already applies, and show a hint instead.
+
+**Consequences:** A text, id or number scope receives the value exactly as sent. An app's undeclared text lambda still gets `true` for "1", as before, until its type is declared; treating every undeclared lambda as text was rejected because an app's undeclared flag scope would have started returning 400. A one- or two-character variant search still returns nothing.
+
+**Plan amended:** `6.0-typed-filters.md` (decision on Ransack's cast, Constraints on Current Work).
+
 ## 2026-10-19: A self-service data request is confirmed from its email address before Spree acts on it
 
 **Context:** A customer's own access or erasure request covers the guest orders, carts, cards and consent recorded at the account's email address, so that someone who checked out as a guest and registered later receives their whole history. Spree never confirms that an account's email address belongs to the account holder, so a request should not reach rows at that address until the address itself confirms it.

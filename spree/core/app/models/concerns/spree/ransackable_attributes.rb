@@ -100,6 +100,77 @@ module Spree::RansackableAttributes
     end
   end
 
+  # In `class_methods`, not `included`, so a model that opts a scope out of
+  # Ransack's cast can extend the list with `super`.
+  class_methods do
+    # The arguments a ransackable scope takes: what the model or
+    # `Spree.ransack.add_scope` declared, else what its signature shows. A
+    # `scope` lambda hides its signature, so an undeclared one reads as text.
+    #
+    # @param scope [String, Symbol]
+    # @return [String, Array<String>, Hash] one kind, a list of kinds
+    #   (positional arguments), or `{ 'list' => kind }` for any number of them
+    def ransackable_scope_type(scope)
+      declared_ransackable_scope_types.fetch(scope.to_s) do
+        Spree::RansackableAttributes.scope_type_from_signature(method(scope))
+      end
+    end
+
+    # Ransack turns `1`, `t` and `true` into `true`, and `0`, `f` and `false`
+    # into `false`, before calling a scope, and skips a scope given `false`.
+    # Only a flag wants that: a search for "1" must reach `search` as "1". A
+    # `scope` lambda declared without a type keeps the cast, since nothing
+    # shows whether it takes a value at all.
+    #
+    # @return [Array<String>]
+    def ransackable_scopes_skip_sanitize_args
+      declared = declared_ransackable_scope_types
+      ransackable_scopes.map(&:to_s).select do |scope|
+        next false unless respond_to?(scope)
+
+        signature = method(scope)
+        next false if !declared.key?(scope) && Spree::RansackableAttributes.signature_hidden?(signature)
+
+        declared.fetch(scope) { Spree::RansackableAttributes.scope_type_from_signature(signature) }.to_s != 'boolean'
+      end
+    end
+
+    private
+
+    def declared_ransackable_scope_types
+      declared = search_attributes.any? ? { 'search' => 'text' } : {}
+      declared.merge(ransackable_scope_types.stringify_keys, Spree.ransack.custom_scope_types_for(self).stringify_keys)
+    end
+  end
+
+  # What a method's signature says about the arguments a scope takes.
+  #
+  # @param method [Method]
+  # @return [String, Array<String>, Hash]
+  def self.scope_type_from_signature(method)
+    return 'text' if signature_hidden?(method)
+
+    parameters = method.parameters
+    return { 'list' => 'text' } if parameters.any? { |type, _| type == :rest }
+
+    required = parameters.count { |type, _| type == :req }
+    case required
+    when 0 then 'boolean'
+    when 1 then 'text'
+    else Array.new(required, 'text')
+    end
+  end
+
+  # A `scope` lambda is reached through a wrapper taking `(*args, **)`, which
+  # says nothing about the arguments the lambda takes. A named `**options` is
+  # a real signature.
+  #
+  # @param method [Method]
+  # @return [Boolean]
+  def self.signature_hidden?(method)
+    method.parameters.any? { |type, name| type == :keyrest && name == :** }
+  end
+
   # @param auth_object [Symbol, nil] the Ransack auth object a search ran with
   # @return [Boolean] whether it names a caller outside the back office
   def self.restricted_audience?(auth_object)

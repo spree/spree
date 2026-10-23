@@ -60,4 +60,54 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Collection.ransackable_scopes(:store)).to include('search')
     end
   end
+
+  describe '.ransackable_scopes_skip_sanitize_args' do
+    let(:store) { @default_store }
+
+    it 'hands a search for a word Ransack reads as true or false to the scope as text' do
+      truthy = create(:variant, sku: 'TRUE-100')
+      falsy = create(:variant, sku: 'FALSE-100')
+
+      expect(Spree::Variant.ransack(search: 'true').result).to contain_exactly(truthy)
+      expect(Spree::Variant.ransack(search: 'false').result).to contain_exactly(falsy)
+      expect(Spree::Variant.ransack(search: '1').result).to be_empty
+    end
+
+    it 'does the same for a search declared with search_by' do
+      supplier = create(:supplier, store: store, name: 'True Value')
+      create(:supplier, store: store, name: 'Globex')
+
+      expect(Spree::Supplier.ransack(search: 'true').result).to contain_exactly(supplier)
+      expect(Spree::Supplier.ransack(search: 't').result).to contain_exactly(supplier)
+    end
+
+    it 'leaves flags to the cast, except those that read the value themselves' do
+      expect(Spree::Order.ransackable_scopes_skip_sanitize_args).to include('search')
+      expect(Spree::Order.ransackable_scopes_skip_sanitize_args).not_to include('complete')
+      expect(Spree::Product.ransackable_scopes_skip_sanitize_args).to include('price_gte')
+      expect(Spree::Product.ransackable_scopes_skip_sanitize_args).not_to include('in_stock')
+      expect(Spree::StoreCredit.ransackable_scopes_skip_sanitize_args).to include('search', 'outstanding', 'from_gift_card')
+    end
+
+    it 'leaves a scope lambda declared without a type to the cast, since it may take no value' do
+      model = Class.new(Spree::Supplier) do
+        def self.name = 'Spree::Supplier'
+        scope :flagged, -> { all }
+        self.whitelisted_ransackable_scopes = %w[flagged]
+      end
+
+      expect(model.ransackable_scopes_skip_sanitize_args).not_to include('flagged')
+      expect { model.ransack(flagged: 'true').result.to_a }.not_to raise_error
+    end
+
+    it 'reads a class method taking named options as taking a value' do
+      model = Class.new(Spree::Supplier) do
+        def self.name = 'Spree::Supplier'
+        def self.named(term, **options) = where(name: term)
+        self.whitelisted_ransackable_scopes = %w[named]
+      end
+
+      expect(model.ransackable_scopes_skip_sanitize_args).to include('named')
+    end
+  end
 end

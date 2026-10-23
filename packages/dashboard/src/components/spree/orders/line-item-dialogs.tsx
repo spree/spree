@@ -22,6 +22,7 @@ import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../../lib/variant-search'
 
 /**
  * Catalog picker for the order edit screen. It writes nothing — the chosen
@@ -48,7 +49,7 @@ export function AddLineItemDialog({
   const { data: variantsData } = useQuery({
     queryKey: ['variants', 'search', orderId, search],
     queryFn: () => adminClient.variants.list({ search, limit: 10, order_id: orderId }),
-    enabled: search.length >= 3,
+    enabled: search.length >= VARIANT_SEARCH_MIN_LENGTH,
     staleTime: 30_000,
   })
 
@@ -86,37 +87,46 @@ export function AddLineItemDialog({
                   }}
                   autoFocus
                 />
-                {search.length >= 3 && variants.length > 0 && !selectedVariant && (
-                  <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
-                    {variants.map((v) => (
-                      <button
-                        key={v.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedVariant(v)
-                          setSearch('')
-                        }}
-                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-accent transition-colors border-b last:border-0"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="font-medium truncate">{v.product_name ?? v.sku}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {v.options_text && <span>{v.options_text} · </span>}
-                            {t('admin.orders.detail.variant_search.sku_prefix')}: {v.sku || '—'}
-                          </div>
-                        </div>
-                        <div className="text-sm font-medium whitespace-nowrap">
-                          {formatPrice(v.price)}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {search.length >= 3 && variants.length === 0 && !selectedVariant && (
+                {search.length > 0 && search.length < VARIANT_SEARCH_MIN_LENGTH && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {t('admin.orders.detail.variant_search.empty')}
+                    {t('admin.common.search_min_length', { count: VARIANT_SEARCH_MIN_LENGTH })}
                   </p>
                 )}
+                {search.length >= VARIANT_SEARCH_MIN_LENGTH &&
+                  variants.length > 0 &&
+                  !selectedVariant && (
+                    <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
+                      {variants.map((v) => (
+                        <button
+                          key={v.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedVariant(v)
+                            setSearch('')
+                          }}
+                          className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-accent transition-colors border-b last:border-0"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium truncate">{v.product_name ?? v.sku}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {v.options_text && <span>{v.options_text} · </span>}
+                              {t('admin.orders.detail.variant_search.sku_prefix')}: {v.sku || '—'}
+                            </div>
+                          </div>
+                          <div className="text-sm font-medium whitespace-nowrap">
+                            {formatPrice(v.price)}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                {search.length >= VARIANT_SEARCH_MIN_LENGTH &&
+                  variants.length === 0 &&
+                  !selectedVariant && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t('admin.orders.detail.variant_search.empty')}
+                    </p>
+                  )}
               </Field>
 
               {selectedVariant && (

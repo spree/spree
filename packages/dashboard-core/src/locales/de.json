@@ -173,6 +173,8 @@
       "no_results": "Keine Ergebnisse",
       "combobox_more_results_one": "1 weiteres Ergebnis nicht angezeigt. Tippen zum Suchen.",
       "combobox_more_results_other": "{{count}} weitere Ergebnisse nicht angezeigt. Tippen zum Suchen.",
+      "search_min_length_one": "Mindestens 1 Zeichen eingeben, um zu suchen.",
+      "search_min_length_other": "Mindestens {{count}} Zeichen eingeben, um zu suchen.",
       "none": "Keine",
       "optional": "Optional",
       "or": "oder",

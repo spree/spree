@@ -1660,6 +1660,8 @@
       "no_results": "Sin resultados",
       "combobox_more_results_one": "1 resultado más no se muestra. Escribí para buscar.",
       "combobox_more_results_other": "{{count}} resultados más no se muestran. Escribí para buscar.",
+      "search_min_length_one": "Escribí al menos 1 carácter para buscar.",
+      "search_min_length_other": "Escribí al menos {{count}} caracteres para buscar.",
       "none": "Ninguno",
       "optional": "Opcional",
       "or": "o",

@@ -173,6 +173,8 @@
       "no_results": "No results",
       "combobox_more_results_one": "1 more result not shown. Type to search.",
       "combobox_more_results_other": "{{count}} more results not shown. Type to search.",
+      "search_min_length_one": "Type at least 1 character to search.",
+      "search_min_length_other": "Type at least {{count}} characters to search.",
       "none": "None",
       "optional": "Optional",
       "or": "or",
