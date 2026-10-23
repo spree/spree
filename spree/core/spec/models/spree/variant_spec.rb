@@ -632,6 +632,21 @@ describe Spree::Variant, type: :model do
       end
     end
 
+    context 'when the prices were preloaded and the variant has none' do
+      it 'answers from memory without querying' do
+        unpriced = described_class.includes(:prices).find(create(:variant, price: nil).id)
+        queries = 0
+        subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+          queries += 1 if payload[:name].to_s.include?('Price') && !payload[:cached]
+        end
+
+        expect(unpriced.price_in('USD').amount).to be_nil
+        expect(queries).to eq(0)
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscription)
+      end
+    end
+
     context 'when there is no price with present amount in given currency' do
       let(:currency) { 'GBP' }
 
