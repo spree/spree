@@ -47,6 +47,18 @@ RSpec.describe Spree::Products::Duplicator do
     end
   end
 
+  context 'when the sku contains a wildcard character' do
+    before { product.default_variant.update!(sku: 'SKU_1') }
+
+    it 'advances the copy name on every duplication' do
+      first_copy = duplicate.value
+      second_copy = described_class.call(product: product.reload).value
+
+      expect(first_copy.sku).to eq 'COPY OF SKU_1'
+      expect(second_copy.sku).to eq 'COPY OF COPY OF SKU_1'
+    end
+  end
+
   describe 'stock level duplication' do
     # A promise belongs to the order that made it. Copied onto the duplicate,
     # it would open holding stock for somebody else's order.
