@@ -20,7 +20,7 @@ module Spree
 
           Spree::Newsletter::LinkUser.new(subscriber: subscriber, user: known_user).call
 
-          if subscriber.email == current_user&.email
+          if current_user&.email.to_s.casecmp?(subscriber.email.to_s)
             # User's email is already verified by login — skip the double opt-in.
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
           end

@@ -60,6 +60,21 @@ module Spree
       end
     end
 
+    context 'when logged in user enters their email with different casing' do
+      let(:user) { create(:user, email: 'Ada@example.com') }
+      let(:email) { 'ada@example.com' }
+
+      it 'creates a verified subscriber without requesting confirmation' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event)
+          .with('newsletter_subscriber.subscription_requested', anything)
+
+        subscriber = service
+
+        expect(subscriber).to be_verified
+        expect(subscriber.customer).to eq(user)
+      end
+    end
+
     context 'when logged in user inputs another email' do
       let(:user) { create(:user) }
       let(:email) { 'test@example.com' }
