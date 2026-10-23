@@ -161,6 +161,21 @@ module Spree
           expect(service.customer).to eq(owner)
         end
       end
+
+      context 'when the logged in email only matches through Unicode case folding' do
+        let(:email) { 'user@example.com' }
+        let(:owner) { create(:user, email: email) }
+        let(:user) { create(:user, email: 'uſer@example.com', accepts_email_marketing: false) }
+
+        before { subscriber.update!(customer: owner) }
+
+        it 'preserves ownership without granting marketing consent to the logged in user' do
+          service
+
+          expect(subscriber.reload.customer).to eq(owner)
+          expect(user.reload.accepts_email_marketing).to be(false)
+        end
+      end
     end
 
     context 'when unverified subscription has been already created' do
