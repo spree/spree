@@ -14,6 +14,14 @@ describe Spree::Customer, type: :model do
     end
   end
 
+  describe 'email' do
+    it 'is unique within the base uniqueness scope' do
+      validator = described_class.validators_on(:email).find { |candidate| candidate.kind == :uniqueness }
+
+      expect(validator.options).to include(case_sensitive: false, scope: described_class.spree_base_uniqueness_scope)
+    end
+  end
+
   describe 'password reset tokens' do
     it 'round-trips through find_by_password_reset_token' do
       token = customer.generate_token_for(:password_reset)
