@@ -62,7 +62,7 @@ module Spree
 
     context 'when logged in user enters their email with surrounding whitespace' do
       let(:user) { create(:user, email: 'ada@example.com', accepts_email_marketing: false) }
-      let(:email) { ' ada@example.com ' }
+      let(:email) { ' Ada@Example.com ' }
 
       it 'links and verifies the normalized subscriber address' do
         expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event)
@@ -74,6 +74,15 @@ module Spree
         expect(subscriber).to be_verified
         expect(subscriber.customer).to eq(user)
         expect(user.reload.accepts_email_marketing).to be(true)
+      end
+    end
+
+    context 'when a guest enters an existing customer email with surrounding whitespace' do
+      let(:email) { ' Ada@example.com ' }
+      let!(:existing_customer) { create(:user, email: 'Ada@example.com') }
+
+      it 'links the subscriber to the existing customer' do
+        expect(service.customer).to eq(existing_customer)
       end
     end
 

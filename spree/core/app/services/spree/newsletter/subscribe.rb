@@ -2,7 +2,9 @@ module Spree
   module Newsletter
     class Subscribe
       def initialize(email:, current_user: nil, current_store: nil, redirect_url: nil)
-        @email = email.to_s.strip.downcase.presence
+        # Customer emails preserve casing; newsletter subscriber emails are lowercased.
+        @submitted_email = email.to_s.strip.presence
+        @email = @submitted_email&.downcase
         @current_user = current_user
         @current_store = current_store || Spree::Store.current
         @redirect_url = redirect_url
@@ -32,7 +34,7 @@ module Spree
 
       private
 
-      attr_reader :email, :current_user, :current_store, :redirect_url
+      attr_reader :email, :submitted_email, :current_user, :current_store, :redirect_url
 
       def publish_subscription_requested
         event_name = 'newsletter_subscriber.subscription_requested'
@@ -62,7 +64,7 @@ module Spree
         @known_user ||= if current_user&.email.to_s.casecmp?(email.to_s)
                           current_user
                         else
-                          Spree.customer_class.find_by(email: email)
+                          Spree.customer_class.find_by(email: submitted_email)
                         end
       end
     end
