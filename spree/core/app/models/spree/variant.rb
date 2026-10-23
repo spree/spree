@@ -685,7 +685,9 @@ module Spree
     def price_in(currency)
       currency = currency&.upcase
 
-      price = if read_association_in_memory?(:prices) && prices.any?
+      # Loaded prices are trusted even when empty: a variant with none would
+      # otherwise cost a query per row on every listing that preloads them.
+      price = if read_association_in_memory?(:prices)
                 prices.detect { |p| p.currency == currency && p.price_list_id.nil? }
               else
                 prices.base_prices.find_by(currency: currency)
