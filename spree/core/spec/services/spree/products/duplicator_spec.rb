@@ -47,6 +47,14 @@ RSpec.describe Spree::Products::Duplicator do
     end
   end
 
+  context 'when a variant of another seller in the store has a matching sku' do
+    before { create(:product, seller: create(:seller, :approved), sku: "OTHER-#{product.sku}") }
+
+    it 'names the copy after a variant of its own seller' do
+      expect(duplicate.value.sku).to eq "COPY OF #{product.sku}"
+    end
+  end
+
   context 'when the sku contains a wildcard character' do
     before { product.default_variant.update!(sku: 'SKU_1') }
 
