@@ -16,8 +16,9 @@ module Spree
         # active
         grouping = manual_sort_grouping(filters)
 
+        variants = option_filter_variants(filters)
         scope = apply_search_and_filters(scope, query: query, filters: filters)
-        scope = scope.with_option_value_ids(Array(option_value_ids)) if option_value_ids.present?
+        scope = scope.with_option_value_ids(Array(option_value_ids), variants: variants) if option_value_ids.present?
 
         # Total count (before sorting to avoid computed column conflicts with count)
         total = scope.distinct.count
@@ -40,18 +41,19 @@ module Spree
         category = filters.delete('_category') || filters.delete(:_category)
         collection = filters.delete('_collection') || filters.delete(:_collection)
         option_value_ids = Array(filters.delete('with_option_value_ids') || filters.delete(:with_option_value_ids))
+        variants = option_filter_variants(filters)
 
         # Apply text search + ransack filters (without option values)
         scope_before_options = apply_search_and_filters(scope, query: query, filters: filters)
 
         # Apply option value filters for the final scope
         scope_with_options = if option_value_ids.present?
-                               scope_before_options.with_option_value_ids(option_value_ids)
+                               scope_before_options.with_option_value_ids(option_value_ids, variants: variants)
                              else
                                scope_before_options
                              end
 
-        filter_facets = build_facets(scope_with_options, category: category, sort_order: collection&.sort_order, option_value_ids: option_value_ids, scope_before_options: scope_before_options)
+        filter_facets = build_facets(scope_with_options, category: category, sort_order: collection&.sort_order, option_value_ids: option_value_ids, scope_before_options: scope_before_options, variants: variants)
         filter_facets[:sort_options] = filter_facets[:sort_options] + custom_field_sort_options
 
         FiltersResult.new(
@@ -83,7 +85,7 @@ module Spree
         Pagy::Offset.new(count: count, page: page, limit: limit)
       end
 
-      def build_facets(scope, category: nil, sort_order: nil, option_value_ids: [], scope_before_options: nil)
+      def build_facets(scope, category: nil, sort_order: nil, option_value_ids: [], scope_before_options: nil, variants: nil)
         return { filters: [], sort_options: built_in_sort_options, default_sort: 'manual', total_count: scope.distinct.count } unless defined?(Spree::Api::V3::FiltersAggregator)
 
         Spree::Api::V3::FiltersAggregator.new(
@@ -92,7 +94,8 @@ module Spree
           category: category,
           sort_order: sort_order,
           option_value_ids: option_value_ids,
-          scope_before_options: scope_before_options || scope
+          scope_before_options: scope_before_options || scope,
+          variants: variants
         ).call
       end
 
