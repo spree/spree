@@ -323,6 +323,8 @@ end
 
 Any response other than 2xx — including a timeout or a connection error — marks the delivery as failed. Spree then sends it again, waiting longer before each try, up to 5 attempts in total over about six minutes. The delivery log shows the outcome of the latest attempt. Retries stop as soon as the endpoint is turned off.
 
+Spree does not follow redirects. A `3xx` answer is a failed delivery, and the delivery log suggests pointing the endpoint at the address it redirects to. A delivery Spree refuses to send because of its URL — an internal address, or a URL that cannot be read — is recorded as `blocked` and not retried, since sending again cannot change the answer.
+
 Every attempt carries the same event `id`, so use it to ignore an event your receiver has already processed. To send a delivery again after the retries run out, re-send it from the delivery log (see below).
 
 If an endpoint fails 15 deliveries in a row, Spree disables it and emails the store staff. Fix the endpoint, then turn it back on by marking it active again.
@@ -365,7 +367,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints/whe_xxx/del
 | `response_code` | HTTP status code (nil if pending) |
 | `success` | Boolean indicating 2xx response |
 | `execution_time` | Delivery time in milliseconds |
-| `error_type` | `'timeout'`, `'connection_error'`, or nil |
+| `error_type` | `'timeout'`, `'connection_error'`, `'blocked'` (refused because of its URL), or nil |
 | `request_errors` | Error message details |
 | `response_body` | Response from endpoint (truncated) |
 | `delivered_at` | Timestamp of delivery attempt |
@@ -378,7 +380,7 @@ SSL certificates are verified in production, and not in development — so you c
 
 ### Internal endpoints
 
-Outside development, Spree refuses webhook URLs that resolve to a private or internal address — both when the endpoint is saved and when each delivery is sent — so an endpoint can't be used to reach your internal network.
+Outside development, a webhook endpoint's URL must use HTTPS and name a host that exists. Spree refuses internal host names — a name without a dot, or one ending in `.internal`, `.local`, `.localhost` or `.svc` — and any URL that points to a private or internal address, however the address is written. These rules are checked when an active endpoint is saved. The address is checked again when each delivery is sent, and Spree does not follow redirects, so an endpoint can't be used to reach your internal network.
 
 If the receiver is a service you run on a private network, such as a storefront in the same Kubernetes cluster, allow its host with `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS`:
 
@@ -387,7 +389,7 @@ If the receiver is a service you run on a private network, such as a storefront 
 SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS=storefront.internal,.svc.cluster.local
 ```
 
-An entry matches that exact host; an entry with a leading dot matches any host under it (`.svc.cluster.local` matches `storefront.shop.svc.cluster.local`, not `evil-svc.cluster.local`). Matching is case-insensitive. The list is installation config only — store admins can't change it — and every host not on it stays behind the guard.
+An entry matches that exact host; an entry with a leading dot matches any host under it (`.svc.cluster.local` matches `storefront.shop.svc.cluster.local`, not `evil-svc.cluster.local`). Matching is case-insensitive. A host on the list may also use plain http. The list is installation config only — store admins can't change it — and every host not on it stays behind the guard.
 
 ## Available Events
 
@@ -479,7 +481,8 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints' \
 2. Verify the endpoint is marked active
 3. Confirm the endpoint actually subscribes to the event you expect
 4. Check the event belongs to the same store as the endpoint
-5. If the endpoint is on a private network, check its host is in `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS` — otherwise every delivery fails with `has no public ip addresses`
+5. If the endpoint is on a private network, check its host is in `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS` — otherwise every delivery is `blocked` with `has no public ip addresses`
+6. If deliveries fail with a `3xx` response code, the endpoint redirects; change its URL to the address it redirects to
 
 ### Signature Verification Failing
 
