@@ -1368,6 +1368,15 @@
                     ]
                   },
                   {
+                    "group": "AI Agents",
+                    "icon": "bot",
+                    "pages": [
+                      "user/ai-agents/ai-agents",
+                      "user/ai-agents/connect-claude",
+                      "user/ai-agents/connect-chatgpt"
+                    ]
+                  },
+                  {
                     "group": "Settings",
                     "icon": "settings",
                     "pages": [
@@ -3004,6 +3013,15 @@
             "icon": "chart-column",
             "pages": [
               "user/reports/reports"
+            ]
+          },
+          {
+            "group": "AI Agents",
+            "icon": "bot",
+            "pages": [
+              "user/ai-agents/ai-agents",
+              "user/ai-agents/connect-claude",
+              "user/ai-agents/connect-chatgpt"
             ]
           },
           {
