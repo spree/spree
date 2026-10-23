@@ -22,6 +22,32 @@ RSpec.describe Spree::Api::V3::VariantSerializer do
       expect(subject.keys).not_to include('cost_price', 'cost_currency', 'total_on_hand', 'deleted_at', 'barcode')
     end
 
+    describe 'purchasable' do
+      before { variant.stock_levels.update_all(count_on_hand: 5, backorderable: false) }
+
+      it 'is true for a variant in stock with a price' do
+        expect(subject['purchasable']).to be true
+      end
+
+      # The cart refuses a variant with no price in its currency.
+      it 'is false for a variant in stock with no price in the currency' do
+        variant.prices.delete_all
+
+        expect(described_class.new(variant.reload, params: base_params).to_h['purchasable']).to be false
+      end
+
+      it 'is true for a variant priced only by a price list the shopper gets' do
+        price_list = create(:price_list, :active, store: store)
+        create(:price, variant: variant, currency: 'USD', amount: 50, price_list: price_list)
+        variant.prices.base_prices.delete_all
+
+        result = described_class.new(variant.reload, params: base_params.merge(price_list: price_list)).to_h
+
+        expect(result['price']['amount'].to_f).to eq(50.0)
+        expect(result['purchasable']).to be true
+      end
+    end
+
     describe 'original_price' do
       context 'without price list (base price only)' do
         it 'returns null when original_price equals calculated price' do

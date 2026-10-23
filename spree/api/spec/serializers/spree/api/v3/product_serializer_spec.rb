@@ -23,6 +23,27 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
       expect(subject.keys).not_to include('cost_price', 'cost_currency', 'deleted_at', 'sku', 'barcode')
     end
 
+    describe 'purchasable' do
+      before { Spree::StockLevel.where(variant: product.variants).update_all(count_on_hand: 5, backorderable: false) }
+
+      it 'is true when a variant in stock has a price' do
+        expect(subject['purchasable']).to be true
+      end
+
+      it 'is false when no variant in stock has a price in the currency' do
+        expect(described_class.new(product, params: base_params.merge(currency: 'EUR')).to_h['purchasable']).to be false
+      end
+
+      # The buy box still names a variant when no seller is selling.
+      it 'is false when the only priced, stocked variant is from a seller who is not selling' do
+        product.variants.destroy_all
+        variant = create(:variant, product: product, seller: create(:seller, :suspended, store: store), price: 5)
+        variant.stock_levels.update_all(count_on_hand: 5, backorderable: false)
+
+        expect(described_class.new(product.reload, params: base_params).to_h['purchasable']).to be false
+      end
+    end
+
     describe 'original_price' do
       context 'without price list (base price only)' do
         it 'returns null when original_price equals calculated price' do
