@@ -2,6 +2,7 @@
 en:
   spree:
     api:
+      account_deactivated: This account has been deactivated. Contact an administrator to restore access.
       cannot_delete: "%{model} cannot be deleted"
       cannot_modify_seller_import: This import belongs to a seller. It can be viewed here, but only the seller can retry or delete it.
       current_password_invalid: Current password is invalid or missing

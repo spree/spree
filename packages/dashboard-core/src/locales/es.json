@@ -1729,6 +1729,7 @@
         "title": "Restablecer tu contraseña"
       },
       "login": {
+        "account_deactivated": "Esta cuenta fue desactivada. Contactá a un administrador para recuperar el acceso.",
         "account_not_provisioned": "Esta cuenta no está autorizada para esta tienda. Pedile una invitación a un administrador.",
         "divider": "o",
         "invalid_oauth_state": "Esa sesión de inicio caducó o fue inválida. Empezá a iniciar sesión de nuevo.",

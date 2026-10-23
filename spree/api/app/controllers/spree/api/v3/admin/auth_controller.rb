@@ -36,6 +36,8 @@ module Spree
 
             if result.success?
               user = result.value
+              return render_account_deactivated if account_deactivated?(user)
+
               refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
               set_refresh_cookie(refresh_token)
               render json: auth_response(user)
@@ -99,6 +101,8 @@ module Spree
               return redirect_to_dashboard(error: callback_error_code(strategy))
             end
 
+            return redirect_to_dashboard(error: ERROR_CODES[:account_deactivated]) if account_deactivated?(result.value)
+
             set_refresh_cookie(
               Spree::RefreshToken.create_for(result.value, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
             )
@@ -131,6 +135,14 @@ module Spree
             end
 
             user = refresh_token.user
+            # Deactivating deletes the account's refresh tokens; this catches a
+            # refresh already under way when that happened.
+            if account_deactivated?(user)
+              refresh_token.destroy
+              clear_refresh_cookie
+              return render_account_deactivated
+            end
+
             new_refresh_token = refresh_token.rotate!(request_env: request_env_for_token)
             set_refresh_cookie(new_refresh_token)
 

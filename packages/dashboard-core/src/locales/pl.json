@@ -117,6 +117,7 @@
         "title": "Zresetuj hasło"
       },
       "login": {
+        "account_deactivated": "To konto zostało dezaktywowane. Skontaktuj się z administratorem, aby przywrócić dostęp.",
         "account_not_provisioned": "To konto nie ma dostępu do tego sklepu. Poproś administratora o zaproszenie.",
         "divider": "lub",
         "invalid_oauth_state": "Ta sesja logowania wygasła lub była nieprawidłowa. Zaloguj się ponownie.",

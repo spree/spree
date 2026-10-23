@@ -480,6 +480,21 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       end
     end
 
+    context 'when the matching account is deactivated' do
+      before do
+        admin.deactivate!
+        stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true')
+      end
+
+      it 'sends the browser back with account_deactivated and no session' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include('error=account_deactivated')
+        expect(set_cookie_for('spree_admin_refresh_token')).to be_nil
+      end
+    end
+
     context 'when the IdP does not assert a verified email' do
       before do
         stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'false')
