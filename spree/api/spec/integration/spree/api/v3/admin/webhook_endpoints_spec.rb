@@ -6,6 +6,8 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
   include_context 'API v3 Admin'
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
+  # The example hosts do not resolve; the model spec covers the URL rules.
+  before { allow(Resolv).to receive(:getaddresses).and_return(['93.184.215.14']) }
   let!(:webhook_endpoint) do
     create(
       :webhook_endpoint,

@@ -37,7 +37,7 @@ module Spree
       delivery.payload_secrets = payload_secrets
       Spree::Webhooks::DeliverWebhook.call(delivery: delivery, secret_key: endpoint.secret_key)
 
-      raise DeliveryFailed, "Webhook delivery #{delivery.prefixed_id} failed" if delivery.failed?
+      raise DeliveryFailed, "Webhook delivery #{delivery.prefixed_id} failed" if delivery.failed? && !delivery.blocked?
     end
   end
 end
