@@ -42,6 +42,21 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
 
         expect(described_class.new(product.reload, params: base_params).to_h['purchasable']).to be false
       end
+
+      # The buy box leads with the oldest variant when none has a regular price.
+      it 'is true when a variant priced only by the shopper\'s price list is in stock, though the leading one is not' do
+        product.variants.destroy_all
+        price_list = create(:price_list, :active, store: store)
+        sold_out, in_stock = Array.new(2) { create(:variant, product: product, price: nil) }
+        [sold_out, in_stock].each { |variant| create(:price, variant: variant, currency: 'USD', amount: 50, price_list: price_list) }
+        sold_out.stock_levels.update_all(count_on_hand: 0, backorderable: false)
+        in_stock.stock_levels.update_all(count_on_hand: 5, backorderable: false)
+
+        result = described_class.new(product.reload, params: base_params.merge(price_list: price_list)).to_h
+
+        expect(result['buy_box_variant_id']).to eq(sold_out.prefixed_id)
+        expect(result['purchasable']).to be true
+      end
     end
 
     describe 'original_price' do
