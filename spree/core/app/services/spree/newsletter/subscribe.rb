@@ -20,7 +20,7 @@ module Spree
 
           Spree::Newsletter::LinkUser.new(subscriber: subscriber, user: known_user).call
 
-          if current_user&.email.to_s.casecmp?(subscriber.email.to_s)
+          if email_matches_current_user?(subscriber.email)
             # User's email is already verified by login — skip the double opt-in.
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
           end
@@ -59,11 +59,18 @@ module Spree
       # hand them another person's subscription — and with it the right to
       # cancel it.
       def known_user
-        @known_user ||= if current_user&.email.to_s.casecmp?(email.to_s)
+        @known_user ||= if email_matches_current_user?(email)
                           current_user
                         else
                           Spree.customer_class.find_by(email: email)
                         end
+      end
+
+      # Fold ASCII letters only; Unicode case folding can equate distinct mailboxes.
+      def email_matches_current_user?(address)
+        return false unless current_user
+
+        current_user.email.to_s.downcase(:ascii) == address.to_s.downcase(:ascii)
       end
     end
   end

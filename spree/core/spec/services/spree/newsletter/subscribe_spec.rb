@@ -75,6 +75,21 @@ module Spree
       end
     end
 
+    context 'when emails only match through Unicode case folding' do
+      let(:user) { create(:user, email: 'uſer@example.com') }
+      let(:email) { 'user@example.com' }
+
+      it 'keeps double opt-in enabled' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event)
+          .with('newsletter_subscriber.subscription_requested', anything)
+
+        subscriber = service
+
+        expect(subscriber).not_to be_verified
+        expect(subscriber.customer).not_to eq(user)
+      end
+    end
+
     context 'when logged in user inputs another email' do
       let(:user) { create(:user) }
       let(:email) { 'test@example.com' }
