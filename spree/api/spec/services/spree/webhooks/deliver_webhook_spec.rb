@@ -293,13 +293,78 @@ module Spree
             allow(Rails.error).to receive(:report)
           end
 
-          it 'marks delivery as failed with connection error' do
+          it 'records the delivery as blocked without reporting the refusal' do
             described_class.call(delivery: delivery, secret_key: secret_key)
 
             delivery.reload
             expect(delivery.success).to be false
-            expect(delivery.error_type).to eq('connection_error')
+            expect(delivery.error_type).to eq('blocked')
             expect(delivery.request_errors).to include('blocked internal address')
+            expect(Rails.error).not_to have_received(:report)
+          end
+        end
+
+        context 'when the stored URL is malformed' do
+          before do
+            webhook_endpoint.update_column(:url, 'http://[https://example.com/x]/latest/meta-data/')
+            allow(Rails.error).to receive(:report)
+          end
+
+          it 'records the delivery as blocked without reporting the refusal' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(delivery.reload.error_type).to eq('blocked')
+            expect(Rails.error).not_to have_received(:report)
+          end
+        end
+
+        context 'when the host name does not resolve' do
+          before do
+            delivery
+            allow(Resolv).to receive(:getaddresses).and_return(['93.184.215.14'])
+            allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::UnresolvedHostname, "Could not resolve hostname 'example.com'")
+            allow(Rails.error).to receive(:report)
+          end
+
+          it 'records a connection error without reporting it' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(delivery.reload.error_type).to eq('connection_error')
+            expect(Rails.error).not_to have_received(:report)
+          end
+        end
+
+        # SsrfFilter cannot read these, so it answers as if DNS had failed.
+        %w[http://127.1:5432/ http://metadata.google.internal/computeMetadata/v1/].each do |url|
+          context "when the stored URL is #{url}" do
+            before do
+              webhook_endpoint.update_column(:url, url)
+              allow(Rails.error).to receive(:report)
+            end
+
+            it 'records the delivery as blocked rather than a DNS failure' do
+              described_class.call(delivery: delivery, secret_key: secret_key)
+
+              expect(delivery.reload.error_type).to eq('blocked')
+              expect(Rails.error).not_to have_received(:report)
+            end
+          end
+        end
+
+        context 'when the endpoint redirects' do
+          before do
+            stub_request(:post, delivery.url)
+              .to_return(status: 302, headers: { 'Location' => 'http://169.254.169.254/latest/meta-data/' })
+            stub_request(:any, /169\.254\.169\.254/)
+          end
+
+          it 'records the redirect as a failed answer without following it' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            delivery.reload
+            expect(delivery.success).to be false
+            expect(delivery.response_code).to eq(302)
+            expect(WebMock).not_to have_requested(:any, /169\.254\.169\.254/)
           end
         end
 
@@ -385,7 +450,7 @@ module Spree
             described_class.call(delivery: delivery, secret_key: secret_key)
 
             expect(SsrfFilter).to have_received(:post)
-            expect(delivery.reload.error_type).to eq('connection_error')
+            expect(delivery.reload.error_type).to eq('blocked')
           end
         end
       end

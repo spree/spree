@@ -15,11 +15,20 @@ module Spree
 
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 
+    # Host names only a private network answers for. `.local` also covers
+    # Kubernetes' `.cluster.local`.
+    INTERNAL_HOST_SUFFIXES = %w[.internal .local .localhost .svc].freeze
+    # URL errors no retry can change, unlike a host that fails to resolve,
+    # which may be a passing DNS outage.
+    REFUSED_URL_ERRORS = %i[invalid_url internal_address_not_allowed].freeze
+
     validates :url, presence: true
     validates_store_uniqueness :url
-    validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: :invalid_url }
     validates :active, inclusion: { in: [true, false] }
-    validate :url_must_not_resolve_to_private_ip, if: -> { !Rails.env.development? && url.present? && url_changed? }
+    # Checked on every save of an active endpoint, not only when the URL
+    # changes, so one saved under older rules cannot be renamed or re-enabled
+    # unchecked. Switching an endpoint off always succeeds.
+    validate :url_must_be_deliverable, if: -> { url.present? && (url_changed? || active?) }
 
     before_create :generate_secret_key
     after_create  { @reveal_secret_in_response = true }
@@ -68,6 +77,46 @@ module Spree
       end
     end
     private_class_method :allowed_internal_hosts
+
+    # Why Spree refuses to deliver to this endpoint's URL, or nil when it may.
+    #
+    # Outside development the host must exist and not be internal, and the URL
+    # must use HTTPS; hosts the operator trusts
+    # ({.allowed_internal_host?}) are exempt from all three. HTTPS is checked
+    # last, so a plain-http URL that is otherwise safe answers
+    # `:https_required` and nothing more serious.
+    #
+    # @return [Symbol, nil] an error key under +url+: `:invalid_url`,
+    #   `:internal_address_not_allowed`, `:unresolvable_host` or `:https_required`
+    def url_error
+      uri = URI.parse(url.to_s)
+      return :invalid_url unless uri.is_a?(URI::HTTP) && uri.hostname.present? && uri.userinfo.nil?
+      return if Rails.env.development? || self.class.allowed_internal_host?(url)
+
+      addresses = literal_addresses(uri.hostname)
+      if addresses.nil?
+        return :internal_address_not_allowed if internal_host_name?(uri.hostname)
+
+        addresses = Resolv.getaddresses(uri.hostname)
+        return :unresolvable_host if addresses.empty?
+      end
+      return :internal_address_not_allowed if addresses.any? { |address| private_address?(address) }
+
+      :https_required unless uri.scheme == 'https'
+    rescue URI::InvalidURIError, ArgumentError
+      :invalid_url
+    rescue IPAddr::InvalidAddressError
+      :internal_address_not_allowed
+    rescue Resolv::ResolvError
+      :unresolvable_host
+    end
+
+    # Whether Spree refuses this URL for good: malformed, or internal.
+    #
+    # @return [Boolean]
+    def url_refused?
+      REFUSED_URL_ERRORS.include?(url_error)
+    end
 
     # Returns the plaintext `secret_key` only on the create response.
     #
@@ -198,27 +247,27 @@ module Spree
       self.disabled_reason = nil
     end
 
-    def url_must_not_resolve_to_private_ip
-      return if self.class.allowed_internal_host?(url)
-
-      uri = URI.parse(url)
-      blacklist = SsrfFilter::IPV4_BLACKLIST + SsrfFilter::IPV6_BLACKLIST
-      addresses = host_addresses(uri.host)
-      if addresses.any? { |addr| blacklist.any? { |range| range.include?(IPAddr.new(addr)) } }
-        errors.add(:url, :internal_address_not_allowed)
-      end
-    rescue URI::InvalidURIError, Resolv::ResolvError, IPAddr::InvalidAddressError, ArgumentError
-      # URI format validation handles invalid URLs; DNS failures are not SSRF
+    def url_must_be_deliverable
+      error = url_error
+      errors.add(:url, error) if error
     end
 
-    # A literal address first — including the forms a resolver answers
-    # nothing for, such as a bracketed IPv6 address, `127.1`, or a decimal or
-    # hex IPv4 — then DNS for a hostname.
-    def host_addresses(host)
-      literal = host.to_s.delete_prefix('[').delete_suffix(']')
-      Socket.getaddrinfo(literal, nil, nil, Socket::SOCK_STREAM, nil, Socket::AI_NUMERICHOST).map { |entry| entry[3] }.uniq
+    # The forms a resolver answers nothing for — `127.1`, a decimal or hex
+    # IPv4, an IPv6 address — read as the address they are; nil for a name.
+    def literal_addresses(host)
+      Socket.getaddrinfo(host, nil, nil, Socket::SOCK_STREAM, nil, Socket::AI_NUMERICHOST).map { |entry| entry[3] }.uniq
     rescue SocketError
-      Resolv.getaddresses(host)
+      nil
+    end
+
+    def internal_host_name?(host)
+      name = host.downcase.chomp('.')
+      name.exclude?('.') || INTERNAL_HOST_SUFFIXES.any? { |suffix| name.end_with?(suffix) }
+    end
+
+    def private_address?(address)
+      ip = IPAddr.new(address)
+      (SsrfFilter::IPV4_BLACKLIST + SsrfFilter::IPV6_BLACKLIST).any? { |range| range.include?(ip) }
     end
   end
 end

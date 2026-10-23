@@ -15,7 +15,9 @@ module Spree
     validates :event_name, presence: true
     validates :payload, presence: true
 
-    ERROR_TYPES = %w[timeout connection_error].freeze
+    # `blocked`: the URL was refused before any request was sent — an internal
+    # address or a malformed URL. Retrying cannot change that.
+    ERROR_TYPES = %w[timeout connection_error blocked].freeze
 
     scope :successful, -> { where(success: true) }
     scope :failed, -> { where(success: false) }
@@ -74,6 +76,13 @@ module Spree
     # @return [Boolean]
     def pending?
       delivered_at.nil?
+    end
+
+    # Whether Spree refused to send the delivery because of its URL.
+    #
+    # @return [Boolean]
+    def blocked?
+      error_type == 'blocked'
     end
 
     # Mark delivery as completed with HTTP response.

@@ -464,8 +464,10 @@ en:
         spree/webhook_endpoint:
           attributes:
             url:
+              https_required: must use https
               internal_address_not_allowed: must not point to an internal or private network address
               invalid_url: must be a valid http or https URL
+              unresolvable_host: must point to a host name that exists
         spree/wishlist_item:
           attributes:
             variant:
