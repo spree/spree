@@ -7,6 +7,7 @@ import {
   returnOwesNothing,
   returnRefundSummary,
   useMoneyLocale,
+  usePermissions,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -67,6 +68,10 @@ export function OrderReturnsCard({ order }: { order: Order }) {
   const { data } = useOrderReturns(orderId)
   const { create, approve, receive, refund, cancel, buyLabel, refundLabel, deleteLabel } =
     useReturnActions(orderId)
+  // Paying the customer back is the refunds permission's, not the orders
+  // one's: the API refuses a refund without it, so the action is not offered.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
 
   const [creating, setCreating] = useState(false)
   const [receiving, setReceiving] = useState<Return | null>(null)
@@ -135,7 +140,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'received' && (
+                        {returnRecord.status === 'received' && canRefund && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
                             {returnOwesNothing(returnRecord.refundable_total) ? (
                               <>

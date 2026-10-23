@@ -23,11 +23,11 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
-| `GET` | `/allowed_origins` | `read_staff` | List allowed origins |
-| `POST` | `/allowed_origins` | `write_staff` | Create an allowed origin |
-| `GET` | `/allowed_origins/{id}` | `read_staff` | Get an allowed origin |
-| `PATCH` | `/allowed_origins/{id}` | `write_staff` | Update an allowed origin |
-| `DELETE` | `/allowed_origins/{id}` | `write_staff` | Delete an allowed origin |
+| `GET` | `/allowed_origins` | `read_api_keys` | List allowed origins |
+| `POST` | `/allowed_origins` | `write_api_keys` | Create an allowed origin |
+| `GET` | `/allowed_origins/{id}` | `read_api_keys` | Get an allowed origin |
+| `PATCH` | `/allowed_origins/{id}` | `write_api_keys` | Update an allowed origin |
+| `DELETE` | `/allowed_origins/{id}` | `write_api_keys` | Delete an allowed origin |
 
 ## Api keys
 

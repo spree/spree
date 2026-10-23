@@ -185,11 +185,12 @@ bundle exec rake spree:stock:recount_levels
 bundle exec rake spree:upgrade:backfill_actor_types
 ```
 
-Orders, refunds, returns, exchanges, claims and stock receipts remember who
-cancelled, approved, created or received them. In 6.0 that can be a member of
-staff **or an API key**, so each id column — `canceler_id`, `approver_id`,
-`created_by_id`, `refunder_id`, `received_by_id` — gained a type column beside
-it (`canceler_type`, and so on) naming which kind of actor the id points at.
+Orders, refunds, returns, exchanges, claims, stock receipts and store credits
+remember who cancelled, approved, created, received or issued them. In 6.0 that
+can be a member of staff **or an API key**, so each id column — `canceler_id`,
+`approver_id`, `created_by_id`, `refunder_id`, `received_by_id` — gained a type
+column beside it (`canceler_type`, and so on) naming which kind of actor the id
+points at.
 
 Rows written before the upgrade carry an id and an empty type; this task fills
 the type in. Until it runs they still read as the staff member they always
@@ -1087,6 +1088,8 @@ Two enforcement changes on the Admin API:
 
 - **JWT staff pass the same per-controller key gate as secret keys.** A request whose principal lacks `<read|write>_<resource>` gets a 403 with `details.required_permission` naming the missing key.
 - **Staff endpoints moved out of the `settings` scope.** `/admin_users`, `/invitations`, and `/roles` now require the new `read_staff` / `write_staff` scopes; secret keys minted with `settings` before 6.0 lose those endpoints. `/countries` and `/locales` became scope-exempt reference data.
+- **The CORS allowlist moved out of the `settings` scope too.** `/allowed_origins` requires `read_api_keys` / `write_api_keys` (6.0 release candidates briefly held it under `staff`): an allowed origin can read any signed-in admin's access token through the cookie-authenticated refresh endpoint, so it is managed like a credential.
+- **Paying a customer back needs `write_refunds`.** Refunding a return, resolving a claim with a refund, fulfilling an exchange and cancelling an order with `refund_payments` require it alongside `write_orders`, as the nested refunds endpoint always did. Roles and keys that only hold `write_orders` get a 403 on those calls; the dashboard hides the actions from them.
 
 ### Rich-text fields read as plain text plus HTML
 

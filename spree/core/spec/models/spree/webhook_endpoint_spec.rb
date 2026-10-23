@@ -37,6 +37,16 @@ describe Spree::WebhookEndpoint, type: :model do
         expect(webhook_endpoint).not_to be_valid
       end
 
+      # A resolver answers nothing for these spellings, so each must be read
+      # as the address it is.
+      %w[http://[::1]/hook http://2130706433/hook http://0x7f000001/hook http://127.1/hook].each do |literal|
+        it "rejects the loopback address written as #{literal}" do
+          webhook_endpoint.url = literal
+          expect(webhook_endpoint).not_to be_valid
+          expect(webhook_endpoint.errors[:url]).to include('must not point to an internal or private network address')
+        end
+      end
+
       it 'rejects urls resolving to private IPs' do
         allow(Resolv).to receive(:getaddresses).with('internal.example.com').and_return(['127.0.0.1'])
         webhook_endpoint.url = 'https://internal.example.com/webhooks'

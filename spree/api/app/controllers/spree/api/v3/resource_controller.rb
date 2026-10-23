@@ -481,11 +481,21 @@ module Spree
           base_scope = if @parent.present?
                          @parent.send(parent_association)
                        else
-                         model_class.for_store(current_store)
+                         store_scope
                        end
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
           base_scope = base_scope.preload_associations_lazily
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
+        end
+
+        # The store's rows of this model when the resource has no parent. A
+        # model the store reaches through another record rather than an
+        # association of its own — a commission line through its order —
+        # names that path here, since `for_store` answers nothing for it.
+        #
+        # @return [ActiveRecord::Relation]
+        def store_scope
+          model_class.for_store(current_store)
         end
 
         # Action names treated as reads. Override in subclasses with custom

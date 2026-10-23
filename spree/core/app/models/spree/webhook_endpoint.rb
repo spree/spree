@@ -203,12 +203,22 @@ module Spree
 
       uri = URI.parse(url)
       blacklist = SsrfFilter::IPV4_BLACKLIST + SsrfFilter::IPV6_BLACKLIST
-      addresses = Resolv.getaddresses(uri.host)
+      addresses = host_addresses(uri.host)
       if addresses.any? { |addr| blacklist.any? { |range| range.include?(IPAddr.new(addr)) } }
         errors.add(:url, :internal_address_not_allowed)
       end
     rescue URI::InvalidURIError, Resolv::ResolvError, IPAddr::InvalidAddressError, ArgumentError
       # URI format validation handles invalid URLs; DNS failures are not SSRF
+    end
+
+    # A literal address first — including the forms a resolver answers
+    # nothing for, such as a bracketed IPv6 address, `127.1`, or a decimal or
+    # hex IPv4 — then DNS for a hostname.
+    def host_addresses(host)
+      literal = host.to_s.delete_prefix('[').delete_suffix(']')
+      Socket.getaddrinfo(literal, nil, nil, Socket::SOCK_STREAM, nil, Socket::AI_NUMERICHOST).map { |entry| entry[3] }.uniq
+    rescue SocketError
+      Resolv.getaddresses(host)
     end
   end
 end

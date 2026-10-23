@@ -201,19 +201,19 @@ module Spree
         })
         catalog.register_scope(:integrations, group: :settings, resources: -> { [Spree::Integration] })
 
-        catalog.register_scope(:api_keys, group: :access, resources: -> { [Spree::ApiKey] })
+        # The CORS allowlist is a credential as much as a key is: an origin on
+        # it may call the cookie-authenticated refresh endpoint from a browser
+        # and read back any signed-in admin's access token. So it sits with
+        # API keys rather than settings, under a scope a delegated OAuth token
+        # never holds.
+        catalog.register_scope(:api_keys, group: :access, resources: -> { [Spree::ApiKey, Spree::AllowedOrigin] })
         # Connecting an AI agent hands a third party a standing credential to
         # the store, so it is its own permission rather than part of settings
         # — a merchandiser who may edit a delivery zone is not thereby someone
         # who may connect Claude to the back office.
         catalog.register_scope(:oauth_applications, group: :access, resources: -> { [Spree::OauthApplication] })
-        # The CORS allowlist sits with staff rather than settings: an origin on
-        # it may call the cookie-authenticated refresh endpoint from a browser
-        # and read back any signed-in admin's access token, so whoever edits it
-        # can reach every staff session. That is the authority the staff scope
-        # already guards, and it is one a delegated OAuth token never holds.
         catalog.register_scope(:staff, group: :access, resources: -> {
-          [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser, Spree::AllowedOrigin]
+          [Spree.admin_user_class, Spree::Invitation, Spree::Role, Spree::RoleUser]
         })
 
         # The seller panel's own scopes. Their audience is the seller alone,

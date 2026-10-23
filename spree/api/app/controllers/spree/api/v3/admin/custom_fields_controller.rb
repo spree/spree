@@ -66,18 +66,15 @@ module Spree
           # no-op), so the store boundary for customer parents is enforced by
           # the `authorize!(:update, @parent)` ability check above.
           #
-          # Fails closed: `Spree::Base.for_store` answers the bare class when the
-          # store has no association for the model, which would search every
-          # store's records.
+          # `Spree::Base.for_store` answers nothing for a model the store has
+          # no association for, so an unexpected parent type 404s rather than
+          # searching every store's records.
           def parent_relation
             klass = parent_lookup.klass
             return klass.where(id: current_store.id) if klass <= Spree::Store
             return klass if klass <= Spree.customer_class
 
-            relation = klass.for_store(current_store)
-            raise ActiveRecord::RecordNotFound, 'Parent resource not found' if relation.equal?(klass)
-
-            relation
+            klass.for_store(current_store)
           end
 
           # Product-family parents have no scope pair of their own — their

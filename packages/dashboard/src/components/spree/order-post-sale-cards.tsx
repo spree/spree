@@ -1,6 +1,6 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
 import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf } from '@spree/core'
-import { isPositiveMoney, Money } from '@spree/dashboard-core'
+import { isPositiveMoney, Money, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -59,6 +59,10 @@ export function OrderExchangesCard({ order }: { order: Order }) {
   const confirm = useConfirm()
   const { data } = useOrderExchanges(orderId)
   const { create, approve, receive, fulfill, cancel } = useExchangeActions(orderId)
+  // Fulfilling settles money on what came back, so the API wants the refunds
+  // permission for it; without it the action is not offered.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
   const [creating, setCreating] = useState(false)
 
   const exchanges = data?.data ?? []
@@ -126,7 +130,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {exchange.status === 'received' && (
+                        {exchange.status === 'received' && canRefund && (
                           <DropdownMenuItem
                             onClick={async () => {
                               // A dearer replacement leaves the customer owing
@@ -231,6 +235,10 @@ export function OrderClaimsCard({ order }: { order: Order }) {
   const confirm = useConfirm()
   const { data } = useOrderClaims(orderId)
   const { create, approve, resolve, deny, cancel } = useClaimActions(orderId)
+  // A resolution may pay the customer back, which takes the refunds
+  // permission; resolving is left to staff who hold it.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
   const [creatingClaim, setCreatingClaim] = useState(false)
   const [resolving, setResolving] = useState<Claim | null>(null)
 
@@ -289,7 +297,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.approve')}
                           </DropdownMenuItem>
                         )}
-                        {claim.status === 'approved' && (
+                        {claim.status === 'approved' && canRefund && (
                           <DropdownMenuItem onClick={() => setResolving(claim)}>
                             <BanknoteIcon className="size-4" />
                             {t('admin.pages.orders.detail.claims.actions.resolve')}

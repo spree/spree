@@ -3,10 +3,10 @@ module Spree
     module V3
       module Admin
         class AllowedOriginsController < ResourceController
-          # Staff, not settings: an allowed origin can read every admin's
-          # session through the cookie-authenticated refresh endpoint, so
-          # editing the list is staff-level authority (see the catalog).
-          scoped_resource :staff
+          # A credential, not a setting: an allowed origin can read every
+          # admin's session through the cookie-authenticated refresh endpoint,
+          # so the list is managed under the same scope as API keys.
+          scoped_resource :api_keys
 
           request_params :allowed_origin do |body|
             body.attribute :origin, :string,
