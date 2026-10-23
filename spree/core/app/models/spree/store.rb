@@ -729,7 +729,9 @@ module Spree
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.
     def create_default_delivery_profile
-      Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)
+      Spree::Events.disable do
+        Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)
+      end
     end
 
     def create_default_policies

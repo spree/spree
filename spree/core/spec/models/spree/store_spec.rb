@@ -187,6 +187,24 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
       end
 
+      describe 'default records', :events do
+        it 'are created without publishing events' do
+          published = []
+          allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+            published << name
+            original.call(name, *rest)
+          end
+
+          store = create(:store)
+
+          expect(store.policies).to be_present
+          expect(store.default_channel).to be_present
+          expect(store.default_delivery_profile).to be_present
+          expect(store.default_market).to be_present
+          expect(published).to be_empty
+        end
+      end
+
       describe '#default_channel' do
         let(:store) { create(:store) }
 
