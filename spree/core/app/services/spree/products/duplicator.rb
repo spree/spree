@@ -86,9 +86,10 @@ module Spree
         return '' if variant.sku.blank?
 
         store_product_ids = Product.with_deleted.where(store_id: variant.store_id).select(:id)
-        sku_pattern = Variant.arel_table[:sku].matches("%#{Variant.sanitize_sql_like(variant.sku)}", '\\', true)
-        # The same scope the SKU uniqueness check reads, so the name taken from
-        # the latest match is one this seller may use.
+        # Matched the way the SKU uniqueness check compares, without regard
+        # to case, and within the same seller scope it reads, so the name taken
+        # from the latest match is one this seller may use.
+        sku_pattern = Variant.arel_table[:sku].matches("%#{Variant.sanitize_sql_like(variant.sku)}", '\\', false)
         latest_match = Variant.with_deleted.for_seller(variant.resolved_seller_id).
                        where(product_id: store_product_ids).where(sku_pattern).order(:created_at, :id).last
 

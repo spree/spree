@@ -55,6 +55,17 @@ RSpec.describe Spree::Products::Duplicator do
     end
   end
 
+  context 'when an earlier copy differs from the sku only in case' do
+    before do
+      product.default_variant.update!(sku: 'ABC')
+      create(:product, sku: 'COPY OF abc')
+    end
+
+    it 'counts it as taken, as the SKU uniqueness check does' do
+      expect(duplicate.value.sku).to eq 'COPY OF COPY OF abc'
+    end
+  end
+
   context 'when the sku contains a wildcard character' do
     before { product.default_variant.update!(sku: 'SKU_1') }
 
