@@ -117,6 +117,7 @@
         "title": "Réinitialiser votre mot de passe"
       },
       "login": {
+        "account_deactivated": "Ce compte a été désactivé. Contactez un administrateur pour rétablir l'accès.",
         "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
         "divider": "ou",
         "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",

@@ -117,6 +117,7 @@
         "title": "Reset your password"
       },
       "login": {
+        "account_deactivated": "This account has been deactivated. Contact an administrator to restore access.",
         "account_not_provisioned": "This account is not authorized for this store. Ask an administrator for an invitation.",
         "divider": "or",
         "invalid_oauth_state": "That sign-in session expired or was invalid. Please start signing in again.",

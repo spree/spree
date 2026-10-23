@@ -117,6 +117,7 @@
         "title": "重置密码"
       },
       "login": {
+        "account_deactivated": "此账户已被停用。请联系管理员恢复访问权限。",
         "account_not_provisioned": "此账户无权访问该店铺。请向管理员申请邀请。",
         "divider": "或",
         "invalid_oauth_state": "登录会话已过期或无效。请重新登录。",

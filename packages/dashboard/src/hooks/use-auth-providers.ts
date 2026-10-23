@@ -38,6 +38,7 @@ export function useAuthProviders() {
  * to the identity provider — so each code says what actually needs to happen.
  */
 const CALLBACK_ERROR_KEYS: Record<string, string> = {
+  account_deactivated: 'admin.auth.login.account_deactivated',
   account_not_provisioned: 'admin.auth.login.account_not_provisioned',
   invalid_oauth_state: 'admin.auth.login.invalid_oauth_state',
   invalid_provider: 'admin.auth.login.sso_failed',

@@ -117,6 +117,7 @@
         "title": "Passwort zurücksetzen"
       },
       "login": {
+        "account_deactivated": "Dieses Konto wurde deaktiviert. Wenden Sie sich an einen Administrator, um den Zugang wiederherzustellen.",
         "account_not_provisioned": "Dieses Konto ist für diesen Shop nicht freigegeben. Bitten Sie einen Administrator um eine Einladung.",
         "divider": "oder",
         "invalid_oauth_state": "Die Anmeldesitzung ist abgelaufen oder ungültig. Bitte melden Sie sich erneut an.",
