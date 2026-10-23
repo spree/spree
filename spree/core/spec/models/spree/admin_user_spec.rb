@@ -20,6 +20,56 @@ describe Spree.admin_user_class, type: :model do
     end
   end
 
+  describe 'deactivation' do
+    it 'starts active' do
+      expect(admin_user).not_to be_deactivated
+    end
+
+    it 'records when the account was switched off' do
+      admin_user.deactivate!
+
+      expect(admin_user.reload).to be_deactivated
+      expect(admin_user.deactivated_at).to be_within(2.seconds).of(Time.current)
+    end
+
+    it 'ends every session the account holds, on every surface' do
+      create(:refresh_token, :for_admin, user: admin_user)
+      create(:refresh_token, user: admin_user, audience: 'seller_api')
+      someone_else = create(:refresh_token, :for_admin)
+
+      admin_user.deactivate!
+
+      expect(Spree::RefreshToken.where(user: admin_user)).to be_empty
+      expect(Spree::RefreshToken.exists?(someone_else.id)).to be(true)
+    end
+
+    it 'keeps the first deactivation time when called again' do
+      admin_user.deactivate!
+      first = admin_user.reload.deactivated_at
+
+      Timecop.travel(1.hour.from_now) { admin_user.deactivate! }
+
+      expect(admin_user.reload.deactivated_at).to eq(first)
+    end
+
+    # Switching an account off must not depend on its other attributes
+    # passing today's validations.
+    it 'deactivates an account that no longer validates' do
+      admin_user.update_column(:email, '')
+
+      admin_user.deactivate!
+
+      expect(admin_user.reload).to be_deactivated
+    end
+
+    it 'lets a reactivated account in again' do
+      admin_user.deactivate!
+      admin_user.reactivate!
+
+      expect(admin_user.reload).not_to be_deactivated
+    end
+  end
+
   describe '#can_be_deleted?' do
     subject { admin_user.can_be_deleted? }
 

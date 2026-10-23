@@ -8,6 +8,7 @@ module Spree
 
     include Spree::AdminUserMethods
     include Spree::AccountLockout
+    include Spree::AccountDeactivation
     include Spree::PasswordPolicy
 
     validates :email, presence: true, uniqueness: { case_sensitive: false }
