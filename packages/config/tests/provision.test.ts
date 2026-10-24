@@ -233,7 +233,8 @@ describe('provisionStore', () => {
         type: 'flat_rate',
         schema: {
           properties: {
-            amount: { type: 'string', pattern: '^-?\\d+(\\.\\d+)?$' },
+            // An amount may be left empty, so its type is a list.
+            amount: { type: ['string', 'null'], format: 'money', pattern: '^-?\\d+(\\.\\d+)?$' },
             currency: { type: 'string', pattern: '^[A-Z]{3}$' },
           },
         },
