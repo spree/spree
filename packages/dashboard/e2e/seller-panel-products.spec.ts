@@ -141,9 +141,13 @@ test.describe('seller panel — products', () => {
 
     // Replacing keeps the row and its limits; only the file changes.
     const replacementName = 'clean-tube-amp.nam'
-    const replaceChooser = page.waitForEvent('filechooser')
     await openRowMenu(page, fileName)
     await page.getByRole('menuitem', { name: /replace file/i }).click()
+    const replaceChooser = page.waitForEvent('filechooser')
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^confirm$/i })
+      .click()
     await (await replaceChooser).setFiles({
       name: replacementName,
       mimeType: 'application/octet-stream',

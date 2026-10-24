@@ -2087,7 +2087,9 @@
       "upload_failed": "فشل رفع {{name}}: {{message}}",
       "uploading": "جارٍ رفع {{name}}…",
       "uploading_short": "جارٍ الرفع…",
-      "replace": "استبدال الملف"
+      "replace": "استبدال الملف",
+      "replace_description": "سيُحذف \"{{name}}\" وسيحمّل كل من اشتراه الملف الجديد من روابطه الحالية. يسري فورًا.",
+      "replace_title": "استبدال هذا الملف؟"
     }
   }
 }

@@ -33,21 +33,27 @@ export function useDigitalAssetProviders(productId: string, enabled = true) {
   })
 }
 
-export function useCreateDigitalAsset(productId: string) {
+/**
+ * `errorMessage: false` hands every failure to the caller — the card names
+ * the file in its own toast, and two toasts for one refusal is noise.
+ */
+export function useCreateDigitalAsset(productId: string, options: { errorMessage?: false } = {}) {
   return useResourceMutation({
     mutationFn: (params: PanelDigitalAssetParams) =>
       digitalAssetsClient().create(productId, params),
     invalidate: [digitalAssetsKey(productId)],
     successMessage: i18n.t('admin.messages.digital_asset_saved'),
+    ...options,
   })
 }
 
-export function useUpdateDigitalAsset(productId: string) {
+export function useUpdateDigitalAsset(productId: string, options: { errorMessage?: false } = {}) {
   return useResourceMutation({
     mutationFn: ({ id, ...params }: PanelDigitalAssetParams & { id: string }) =>
       digitalAssetsClient().update(productId, id, params),
     invalidate: [digitalAssetsKey(productId)],
     successMessage: i18n.t('admin.messages.digital_asset_saved'),
+    ...options,
   })
 }
 

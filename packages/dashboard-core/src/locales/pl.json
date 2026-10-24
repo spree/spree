@@ -2111,7 +2111,9 @@
       "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
       "uploading": "Przesyłanie {{name}}…",
       "uploading_short": "Przesyłanie…",
-      "replace": "Zastąp plik"
+      "replace": "Zastąp plik",
+      "replace_description": "„{{name}}” zostanie usunięty, a wszyscy kupujący pobiorą nowy plik ze swoich dotychczasowych linków. Obowiązuje natychmiast.",
+      "replace_title": "Zastąpić ten plik?"
     }
   }
 }

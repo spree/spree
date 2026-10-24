@@ -2084,7 +2084,9 @@
       "upload_failed": "Failed to upload {{name}}: {{message}}",
       "uploading": "Uploading {{name}}…",
       "uploading_short": "Uploading…",
-      "replace": "Replace file"
+      "replace": "Replace file",
+      "replace_description": "\"{{name}}\" is removed and everyone who bought it downloads the new file from their existing links. This takes effect immediately.",
+      "replace_title": "Replace this file?"
     }
   }
 }

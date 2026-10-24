@@ -90,9 +90,11 @@ export function DigitalAssetsCard({
   const fileUpload = useFileUpload({ visibility: 'private' })
   const { data, isLoading } = useDigitalAssets(productId ?? '', page, Boolean(productId))
   const { data: providersData } = useDigitalAssetProviders(productId ?? '', Boolean(productId))
-  const createAsset = useCreateDigitalAsset(productId ?? '')
+  // The card toasts upload failures itself, naming the file, so the
+  // mutations stay quiet about theirs.
+  const createAsset = useCreateDigitalAsset(productId ?? '', { errorMessage: false })
   const deleteAsset = useDeleteDigitalAsset(productId ?? '')
-  const updateAsset = useUpdateDigitalAsset(productId ?? '')
+  const updateAsset = useUpdateDigitalAsset(productId ?? '', { errorMessage: false })
 
   const assets: PanelDigitalAsset[] = data?.data ?? []
   const meta = data?.meta
@@ -105,6 +107,25 @@ export function DigitalAssetsCard({
   // keeps its today behaviour — a single "Add file" button.
   const sourceProviders = providers.filter((p) => !p.requires_attachment)
 
+  // One path for a new file and a replacement: upload to private storage,
+  // hand the signed id on, and name the file when either step fails — a
+  // refused upload must never be silent.
+  async function uploadThen(file: File, persist: (signedId: string) => Promise<unknown>) {
+    try {
+      const { signedId, previewUrl } = await fileUpload.mutateAsync(file)
+      // The preview is for image cards; a download has nothing to show, and
+      // an unreleased object URL pins the whole file in memory.
+      URL.revokeObjectURL(previewUrl)
+      await persist(signedId)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
+      toastManager.add({
+        type: 'error',
+        title: t('admin.digital_assets.upload_failed', { name: file.name, message }),
+      })
+    }
+  }
+
   async function handleFiles(files: FileList | File[]) {
     const list = Array.from(files)
     if (list.length === 0 || !productId) return
@@ -112,19 +133,7 @@ export function DigitalAssetsCard({
     setUploading(true)
     try {
       for (const file of list) {
-        try {
-          const { signedId } = await fileUpload.mutateAsync(file)
-          await createAsset.mutateAsync({ signed_id: signedId })
-        } catch (err) {
-          // The create mutation suppresses its own toast for validation
-          // errors, so surface the failure here — otherwise a rejected upload
-          // is silent.
-          const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
-          toastManager.add({
-            type: 'error',
-            title: t('admin.digital_assets.upload_failed', { name: file.name, message }),
-          })
-        }
+        await uploadThen(file, (signedId) => createAsset.mutateAsync({ signed_id: signedId }))
       }
       setPage(1)
     } finally {
@@ -141,7 +150,17 @@ export function DigitalAssetsCard({
     if (files.length > 0) void handleFiles(files)
   }
 
-  function openReplace(asset: PanelDigitalAsset) {
+  // Replacing removes the current file for everyone who bought it, so it is
+  // confirmed before the picker opens, like deleting.
+  async function openReplace(asset: PanelDigitalAsset) {
+    const confirmed = await confirm({
+      title: t('admin.digital_assets.replace_title'),
+      message: t('admin.digital_assets.replace_description', {
+        name: asset.filename ?? t('admin.digital_assets.untitled'),
+      }),
+      variant: 'destructive',
+    })
+    if (!confirmed) return
     replacingRef.current = asset
     replaceInputRef.current?.click()
   }
@@ -157,14 +176,9 @@ export function DigitalAssetsCard({
 
     setUploading(true)
     try {
-      const { signedId } = await fileUpload.mutateAsync(file)
-      await updateAsset.mutateAsync({ id: asset.id, signed_id: signedId })
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
-      toastManager.add({
-        type: 'error',
-        title: t('admin.digital_assets.upload_failed', { name: file.name, message }),
-      })
+      await uploadThen(file, (signedId) =>
+        updateAsset.mutateAsync({ id: asset.id, signed_id: signedId }),
+      )
     } finally {
       setUploading(false)
     }
@@ -383,8 +397,10 @@ export function DigitalAssetsCard({
                             key: 'replace',
                             label: t('admin.digital_assets.replace'),
                             icon: <UploadIcon className="size-4" />,
-                            // A provider delivers its own deliverable; there is no file to swap.
-                            visible: canWrite && !asset.provider_type,
+                            // Only a stored file can be swapped; a provider's
+                            // own deliverable has none to download.
+                            visible: canWrite && Boolean(asset.download_url),
+                            disabled: uploading,
                             onSelect: () => openReplace(asset),
                           },
                           { key: 'edit', visible: canWrite, onSelect: () => setEditing(asset) },

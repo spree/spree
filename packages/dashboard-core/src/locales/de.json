@@ -2082,7 +2082,9 @@
       "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
       "uploading": "{{name}} wird hochgeladen…",
       "uploading_short": "Wird hochgeladen…",
-      "replace": "Datei ersetzen"
+      "replace": "Datei ersetzen",
+      "replace_description": "„{{name}}“ wird entfernt, und alle Käufer laden über ihre bestehenden Links die neue Datei herunter. Dies gilt sofort.",
+      "replace_title": "Diese Datei ersetzen?"
     }
   }
 }

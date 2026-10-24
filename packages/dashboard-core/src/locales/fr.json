@@ -2082,7 +2082,9 @@
       "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
       "uploading": "Téléversement de {{name}}…",
       "uploading_short": "Téléversement…",
-      "replace": "Remplacer le fichier"
+      "replace": "Remplacer le fichier",
+      "replace_description": "« {{name}} » est supprimé et tous les acheteurs téléchargent le nouveau fichier depuis leurs liens existants. Effet immédiat.",
+      "replace_title": "Remplacer ce fichier ?"
     }
   }
 }

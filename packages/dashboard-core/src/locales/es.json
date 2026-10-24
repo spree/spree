@@ -2084,7 +2084,9 @@
       "upload_failed": "No se pudo subir {{name}}: {{message}}",
       "uploading": "Subiendo {{name}}…",
       "uploading_short": "Subiendo…",
-      "replace": "Reemplazar archivo"
+      "replace": "Reemplazar archivo",
+      "replace_description": "\"{{name}}\" se elimina y todos los compradores descargan el archivo nuevo desde sus enlaces existentes. Tiene efecto inmediato.",
+      "replace_title": "¿Reemplazar este archivo?"
     }
   }
 }

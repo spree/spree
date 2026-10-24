@@ -51,9 +51,29 @@ test.describe('product digital files', () => {
     })
     await expect(fileRow.getByRole('cell', { name: '7', exact: true })).toBeVisible()
 
+    // Replacing is confirmed first, then picks the file; the row keeps its
+    // limits and only the name changes.
+    const replacementName = 'manual-v2.txt'
+    await openRowMenu(page, fileName)
+    await page.getByRole('menuitem', { name: /replace file/i }).click()
+    await expect(page.getByRole('heading', { name: /replace this file\?/i })).toBeVisible()
+    const replaceChooser = page.waitForEvent('filechooser')
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^confirm$/i })
+      .click()
+    await (await replaceChooser).setFiles({
+      name: replacementName,
+      mimeType: 'text/plain',
+      buffer: Buffer.from('second edition'),
+    })
+    const replacedRow = digitalCard.locator('tr').filter({ hasText: replacementName })
+    await expect(replacedRow).toBeVisible({ timeout: 30_000 })
+    await expect(replacedRow.getByRole('cell', { name: '5', exact: true })).toBeVisible()
+
     // Remove it — the row-menu delete goes through a destructive confirm whose
     // action button is the default "Confirm" (the card passes no confirmLabel).
-    await openRowMenu(page, fileName)
+    await openRowMenu(page, replacementName)
     await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete this file\?/i })).toBeVisible()
     await page
@@ -62,7 +82,7 @@ test.describe('product digital files', () => {
       .click()
 
     // The row is gone and the card falls back to its empty dropzone.
-    await expect(fileRow).toBeHidden({ timeout: 15_000 })
+    await expect(replacedRow).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(/drag & drop files here/i)).toBeVisible()
   })
 })
