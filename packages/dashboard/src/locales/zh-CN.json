@@ -2322,8 +2322,9 @@
         },
         "seller_digital_asset_content_types": {
           "label": "卖家可上传的文件类型",
-          "help": "每行一个内容类型，例如 application/pdf。按文件内容而非文件名判断。您自己的上传不受限制。",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+          "help": "每行一个内容类型，例如 application/pdf。按文件自身的签名（如有）判断，而非文件名。您自己的上传不受限制。",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
+          "invalid": "每行必须是一个内容类型，例如 application/pdf。"
         },
         "review_seller_digital_asset_changes": {
           "label": "审核在售商品的文件变更",

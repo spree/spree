@@ -77,8 +77,8 @@ export type StoreUpdateParams = {
   /** Lets sellers attach downloadable files to their own products. */
   seller_digital_assets_enabled?: boolean
   /**
-   * The content types a seller's file may have, judged from its bytes. The operator's own uploads
-   * are not restricted.
+   * The content types a seller's file may have, checked against the file's own signature where it
+   * has one. The operator's own uploads are not restricted.
    */
   seller_digital_asset_content_types?: string[]
   /**

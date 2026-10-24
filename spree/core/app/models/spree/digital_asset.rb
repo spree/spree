@@ -29,6 +29,8 @@ module Spree
     # formats digital goods usually come in. Executables, scripts and
     # unrecognised binaries are left out on purpose, as is SVG, which can
     # carry scripts. A marketplace selling a niche format adds it in settings.
+    # The text formats have no signature, so they are taken at the type the
+    # upload declared.
     DEFAULT_SELLER_CONTENT_TYPES = %w[
       application/pdf application/epub+zip application/zip application/x-7z-compressed application/gzip
       application/json text/plain text/csv

@@ -58,6 +58,7 @@ export function DigitalAssetsCard({
   variants,
   readOnly = false,
   accept,
+  notice,
 }: {
   productId?: string
   variants?: PanelVariant[]
@@ -70,6 +71,11 @@ export function DigitalAssetsCard({
   readOnly?: boolean
   /** The content types the picker offers, when the host restricts them. */
   accept?: string[]
+  /**
+   * What else a file change does here, shown under the description — the
+   * seller panel says that a listing on sale goes back to review.
+   */
+  notice?: string
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
@@ -293,6 +299,7 @@ export function DigitalAssetsCard({
 
       <CardContent className="flex flex-col gap-4">
         <p className="text-muted-foreground text-sm">{t('admin.digital_assets.description')}</p>
+        {notice && canWrite && <p className="text-sm">{notice}</p>}
 
         <input
           ref={fileInputRef}

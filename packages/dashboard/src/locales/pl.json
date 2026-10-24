@@ -2345,8 +2345,9 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Akceptowane typy plików dla sprzedawców",
-          "help": "Jeden typ zawartości w wierszu, na przykład application/pdf. Oceniany na podstawie bajtów pliku, nie jego nazwy. Twoje własne pliki nie podlegają ograniczeniom.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+          "help": "Jeden typ zawartości w wierszu, na przykład application/pdf. Sprawdzany na podstawie własnej sygnatury pliku, gdy ją ma, a nie jego nazwy. Twoje własne pliki nie podlegają ograniczeniom.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
+          "invalid": "Każdy wiersz musi być typem zawartości, na przykład application/pdf."
         },
         "review_seller_digital_asset_changes": {
           "label": "Weryfikuj zmiany plików w produktach już w sprzedaży",

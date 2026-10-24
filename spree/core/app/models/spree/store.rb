@@ -82,10 +82,13 @@ module Spree
     # same reason again: a file a buyer downloads under the marketplace's name
     # is something the marketplace vouches for, and that should be a choice.
     preference :seller_digital_assets_enabled, :boolean, default: false
-    # What a seller's file may be, judged from its bytes rather than its name.
-    # The operator's own uploads are not restricted.
+    # What a seller's file may be, checked against the file's own signature
+    # rather than its name. The operator's own uploads are not restricted.
     preference :seller_digital_asset_content_types, :array, of: :string,
                                                             default: Spree::DigitalAsset::DEFAULT_SELLER_CONTENT_TYPES
+    # A typo here would refuse every seller upload with a message about the
+    # file, so the list is checked for the type/subtype shape when written.
+    validate :seller_digital_asset_content_types_are_media_types
     # A file added to or replaced on a seller's product already on sale sends
     # the product back to review, so an approved listing cannot change what it
     # delivers without anyone looking. Moot when seller products auto-approve.
@@ -169,6 +172,8 @@ module Spree
     # B2B store collects it from everyone, a mixed store only offers it.
     preference :address_requires_company, :boolean, default: false
     preference :address_requires_phone, :boolean, default: false
+    MEDIA_TYPE_FORMAT = %r{\A[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+*-]*\z}i
+
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true
@@ -845,6 +850,14 @@ module Spree
       return unless Spree::NumberSequence.started?(store: self)
 
       errors.add(:preferred_order_number_sequence_start, :locked_after_first_number)
+    end
+
+    def seller_digital_asset_content_types_are_media_types
+      bad = Array(preferred_seller_digital_asset_content_types).reject { |type| type.to_s.match?(MEDIA_TYPE_FORMAT) }
+      return if bad.empty?
+
+      errors.add(:preferred_seller_digital_asset_content_types, :invalid,
+                 message: I18n.t('spree.digital_assets_content_type_list_invalid', types: bad.join(', ')))
     end
   end
 end

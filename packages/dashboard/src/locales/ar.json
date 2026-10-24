@@ -2345,8 +2345,9 @@
         },
         "seller_digital_asset_content_types": {
           "label": "أنواع الملفات المقبولة من البائعين",
-          "help": "نوع محتوى واحد في كل سطر، مثل application/pdf. يُحكم عليه من بايتات الملف لا من اسمه. ملفاتك أنت غير مقيدة.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+          "help": "نوع محتوى واحد في كل سطر، مثل application/pdf. يُتحقق منه من توقيع الملف نفسه إن وُجد، لا من اسمه. ملفاتك أنت غير مقيدة.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
+          "invalid": "يجب أن يكون كل سطر نوع محتوى مثل application/pdf."
         },
         "review_seller_digital_asset_changes": {
           "label": "مراجعة تغييرات الملفات في المنتجات المعروضة للبيع",

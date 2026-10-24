@@ -2327,8 +2327,9 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Accepted file types for sellers",
-          "help": "One content type per line, such as application/pdf. Judged from the file’s bytes, not its name. Your own uploads are not restricted.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+          "help": "One content type per line, such as application/pdf. Checked against the file’s own signature where it has one, not its name. Your own uploads are not restricted.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
+          "invalid": "Each line must be a content type such as application/pdf."
         },
         "review_seller_digital_asset_changes": {
           "label": "Review file changes on products already on sale",

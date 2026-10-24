@@ -1,4 +1,5 @@
 import { compareMoney, isDecimalString, PAYOUT_SCHEDULE_INTERVALS } from '@spree/core'
+import { i18n } from '@spree/dashboard-core'
 import { z } from 'zod'
 
 const nonNegativeDecimal = z
@@ -16,8 +17,13 @@ export const marketplaceSettingsFormSchema = z.object({
   auto_approve_sellers: z.boolean(),
   auto_approve_seller_products: z.boolean(),
   seller_digital_assets_enabled: z.boolean(),
-  // One content type per line in the form; sent as a list.
-  seller_digital_asset_content_types: z.string(),
+  // One content type per line in the form; sent as a list. Each line must
+  // be a type/subtype, or a typo would refuse every seller upload.
+  seller_digital_asset_content_types: z
+    .string()
+    .refine((value) => contentTypesFromLines(value).every((type) => MEDIA_TYPE.test(type)), {
+      message: i18n.t('admin.fields.store.seller_digital_asset_content_types.invalid'),
+    }),
   review_seller_digital_asset_changes: z.boolean(),
   send_seller_transactional_emails: z.boolean(),
   // A percentage, because that is how a merchant states a VAT rate. The
@@ -29,6 +35,8 @@ export const marketplaceSettingsFormSchema = z.object({
 })
 
 export type MarketplaceSettingsFormValues = z.infer<typeof marketplaceSettingsFormSchema>
+
+const MEDIA_TYPE = /^[a-z0-9][a-z0-9!#$&^_.+-]*\/[a-z0-9][a-z0-9!#$&^_.+*-]*$/i
 
 /** The textarea's lines as the list the API stores, blank lines dropped. */
 export function contentTypesFromLines(value: string): string[] {

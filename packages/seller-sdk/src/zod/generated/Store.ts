@@ -6,6 +6,7 @@ export const StoreSchema = z.object({
   name: z.string(),
   seller_digital_assets_enabled: z.boolean(),
   seller_digital_asset_content_types: z.array(z.string()),
+  review_seller_digital_asset_changes: z.boolean(),
 });
 
 export type Store = z.infer<typeof StoreSchema>;

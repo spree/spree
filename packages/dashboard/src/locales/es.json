@@ -2269,8 +2269,9 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Tipos de archivo aceptados para vendedores",
-          "help": "Un tipo de contenido por línea, por ejemplo application/pdf. Se juzga por los bytes del archivo, no por su nombre. Sus propias subidas no están restringidas.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+          "help": "Un tipo de contenido por línea, por ejemplo application/pdf. Se comprueba con la firma propia del archivo cuando la tiene, no con su nombre. Sus propias subidas no están restringidas.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
+          "invalid": "Cada línea debe ser un tipo de contenido como application/pdf."
         },
         "review_seller_digital_asset_changes": {
           "label": "Revisar cambios de archivos en productos ya en venta",

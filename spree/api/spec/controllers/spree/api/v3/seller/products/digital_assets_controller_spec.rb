@@ -182,14 +182,26 @@ RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: 
   end
 
   describe "the marketplace's rules for a seller's file" do
-    it 'refuses every file when the marketplace has not opened uploads to sellers' do
-      stub_store_preferences(seller_digital_assets_enabled: false)
+    context 'when the marketplace has not opened files to sellers' do
+      before { stub_store_preferences(seller_digital_assets_enabled: false) }
 
-      post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+      it 'refuses every upload' do
+        post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(response.parsed_body.dig('error', 'message')).to match(/does not accept files uploaded by sellers/)
-      expect(Spree::DigitalAsset.count).to eq(0)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.parsed_body.dig('error', 'message')).to match(/does not let sellers add or change digital files/)
+        expect(Spree::DigitalAsset.count).to eq(0)
+      end
+
+      # The operator attached it; the seller may look but not remove it.
+      it "keeps the marketplace's own file on the product" do
+        digital_asset = create(:digital_asset, variant: variant)
+
+        delete :destroy, params: { product_id: product.prefixed_id, id: digital_asset.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Spree::DigitalAsset.where(id: digital_asset.id)).to exist
+      end
     end
 
     # The blob declares itself a generic binary; its bytes are a JPEG, and the

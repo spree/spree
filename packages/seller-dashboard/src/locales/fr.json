@@ -738,7 +738,8 @@
     "variant_remove_confirm_description": "Elle sera retirée du produit à l’enregistrement.",
     "variant_remove_confirm_title": "Retirer cette variante ?",
     "variants": "Variantes",
-    "variants_empty": "Ce produit est vendu comme un article unique, au prix ci-dessus. Ajoutez une variante pour le vendre en plusieurs options, par exemple la taille ou la couleur."
+    "variants_empty": "Ce produit est vendu comme un article unique, au prix ci-dessus. Ajoutez une variante pour le vendre en plusieurs options, par exemple la taille ou la couleur.",
+    "digital_files_review_notice": "Ajouter ou remplacer un fichier renvoie ce produit en révision ; il n’est plus en vente jusqu’à ce que la place de marché l’approuve de nouveau."
   },
   "profile": {
     "about": "À propos",

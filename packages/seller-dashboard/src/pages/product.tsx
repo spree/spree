@@ -266,6 +266,11 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 variants={assignableVariants}
                 readOnly={!marketplace?.seller_digital_assets_enabled}
                 accept={marketplace?.seller_digital_asset_content_types}
+                notice={
+                  product?.status === 'active' && marketplace?.review_seller_digital_asset_changes
+                    ? t('products.digital_files_review_notice')
+                    : undefined
+                }
               />
               <Slot name="seller.product.form_main" context={{ product, mode }} />
             </>

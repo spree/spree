@@ -2327,8 +2327,9 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Types de fichiers acceptés pour les vendeurs",
-          "help": "Un type de contenu par ligne, par exemple application/pdf. Jugé d’après les octets du fichier, pas son nom. Vos propres téléversements ne sont pas restreints.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+          "help": "Un type de contenu par ligne, par exemple application/pdf. Vérifié d’après la signature propre du fichier quand il en a une, pas son nom. Vos propres téléversements ne sont pas restreints.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
+          "invalid": "Chaque ligne doit être un type de contenu tel que application/pdf."
         },
         "review_seller_digital_asset_changes": {
           "label": "Réexaminer les changements de fichiers sur les produits déjà en vente",

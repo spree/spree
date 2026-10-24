@@ -9,7 +9,8 @@ module Spree
 
           attributes :name
 
-          preference_attributes Spree::Store, :seller_digital_assets_enabled, :seller_digital_asset_content_types
+          preference_attributes Spree::Store, :seller_digital_assets_enabled, :seller_digital_asset_content_types,
+                                              :review_seller_digital_asset_changes
         end
       end
     end

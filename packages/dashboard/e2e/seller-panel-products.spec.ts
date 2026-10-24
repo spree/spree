@@ -97,12 +97,10 @@ test.describe('seller panel — products', () => {
     // replacement below is a format nothing recognises, which the default
     // type list refuses, so the marketplace admits unknown binaries too.
     const admin = await adminApiSession(page)
-    const store = await adminRequest<{ seller_digital_asset_content_types: string[] }>(
-      page,
-      admin,
-      'get',
-      '/store',
-    )
+    const store = await adminRequest<{
+      seller_digital_assets_enabled: boolean
+      seller_digital_asset_content_types: string[]
+    }>(page, admin, 'get', '/store')
     await adminRequest(page, admin, 'patch', '/store', {
       seller_digital_assets_enabled: true,
       seller_digital_asset_content_types: Array.from(
@@ -166,5 +164,11 @@ test.describe('seller panel — products', () => {
 
     await expect(replacedRow).toBeHidden({ timeout: 15_000 })
     await expect(digitalCard.getByText(/drag & drop files here/i)).toBeVisible()
+
+    // Put the store back so later specs read what the seed left.
+    await adminRequest(page, admin, 'patch', '/store', {
+      seller_digital_assets_enabled: store.seller_digital_assets_enabled,
+      seller_digital_asset_content_types: store.seller_digital_asset_content_types,
+    })
   })
 })

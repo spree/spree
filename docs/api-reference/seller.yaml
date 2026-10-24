@@ -592,6 +592,7 @@ paths:
                   - image/gif
                   - image/webp
                   - image/tiff
+                  review_seller_digital_asset_changes: true
                 permissions:
                 - allow: true
                   actions:
@@ -892,6 +893,7 @@ paths:
                   - image/gif
                   - image/webp
                   - image/tiff
+                  review_seller_digital_asset_changes: true
                 permissions: []
                 permission_keys: []
               schema:
@@ -29849,11 +29851,14 @@ components:
           type: array
           items:
             type: string
+        review_seller_digital_asset_changes:
+          type: boolean
       required:
       - id
       - name
       - seller_digital_assets_enabled
       - seller_digital_asset_content_types
+      - review_seller_digital_asset_changes
       x-typelizer: true
     TaxIdentifier:
       type: object
@@ -31916,8 +31921,8 @@ components:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
             On update it replaces the file for everyone who already bought it. A seller''s
-            file must be of a content type the marketplace accepts, judged from its
-            bytes.'
+            file must be of a content type the marketplace accepts, checked against
+            the file''s own signature.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.
@@ -31939,8 +31944,8 @@ components:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
             On update it replaces the file for everyone who already bought it. A seller''s
-            file must be of a content type the marketplace accepts, judged from its
-            bytes.'
+            file must be of a content type the marketplace accepts, checked against
+            the file''s own signature.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.

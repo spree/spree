@@ -735,7 +735,8 @@
     "variant_remove_confirm_description": "保存后它会从商品中移除。",
     "variant_remove_confirm_title": "移除此变体？",
     "variants": "变体",
-    "variants_empty": "此商品按上述价格作为单一款式销售。添加变体即可按尺码、颜色等选项销售。"
+    "variants_empty": "此商品按上述价格作为单一款式销售。添加变体即可按尺码、颜色等选项销售。",
+    "digital_files_review_notice": "添加或替换文件会将此商品重新送审，在平台再次批准前将暂停销售。"
   },
   "profile": {
     "about": "简介",

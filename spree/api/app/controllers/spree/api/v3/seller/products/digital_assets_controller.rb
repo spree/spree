@@ -25,6 +25,19 @@ module Spree
               body.require_attributes :signed_id, on: :create
             end
 
+            # DELETE /api/v3/seller/products/:product_id/digital_assets/:id
+            #
+            # Removing a file is covered by the same switch as adding one: a
+            # marketplace that keeps digital files to itself keeps the ones it
+            # attached to a seller's product.
+            def destroy
+              unless current_store.preferred_seller_digital_assets_enabled
+                return render_validation_error(I18n.t('spree.digital_assets_sellers_disabled'))
+              end
+
+              super
+            end
+
             protected
 
             def serializer_class

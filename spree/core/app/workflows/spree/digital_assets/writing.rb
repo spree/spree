@@ -43,7 +43,10 @@ module Spree
         end
 
         # A provider-backed asset delivers through its provider, so a file on
-        # it would show in the panel but never reach a buyer.
+        # it would show in the panel but never reach a buyer. An unregistered
+        # provider is left to the model's validation rather than asked.
+        return unless Spree.digital_asset_providers.include?(digital_asset.provider_class)
+
         refuse(:digital_assets_provider_takes_no_file) unless digital_asset.provider_class.requires_attachment?
       end
 
@@ -55,8 +58,9 @@ module Spree
         refuse(:digital_assets_sellers_disabled) unless store.preferred_seller_digital_assets_enabled
         return if blob.nil?
 
-        # Judged from the bytes: a direct upload arrives with the type the
-        # browser declared, and identifying reads the file's own signature.
+        # Identifying reads the file's own signature where it has one, so a
+        # renamed executable cannot pass as a PDF; a format with no signature
+        # (plain text) keeps the type the client declared.
         blob.identify_without_saving
         return if store.preferred_seller_digital_asset_content_types.include?(blob.content_type)
 

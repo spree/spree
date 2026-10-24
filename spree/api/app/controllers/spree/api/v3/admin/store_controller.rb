@@ -69,7 +69,7 @@ module Spree
               description: 'Lets sellers attach downloadable files to their own products.'
             body.attribute :seller_digital_asset_content_types, :array, of: :string,
               example: %w[application/pdf application/zip],
-              description: "The content types a seller's file may have, judged from its bytes. The operator's own uploads are not restricted."
+              description: "The content types a seller's file may have, checked against the file's own signature where it has one. The operator's own uploads are not restricted."
             body.attribute :review_seller_digital_asset_changes, :boolean,
               description: 'Sends a seller product already on sale back to review when the seller adds or replaces a file on it.'
             body.attribute :send_seller_transactional_emails, :boolean,
