@@ -38,6 +38,11 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
+/** The name a variant goes by in the picker, or undefined when there is none. */
+export function variantLabel(variant?: DigitalAssetVariantOption): string | undefined {
+  return variant ? variant.options_text || variant.sku || variant.id : undefined
+}
+
 /** Blank means "use the store's setting", so an empty box is a real value. */
 function toInput(value: number | null | undefined): string {
   return value == null ? '' : String(value)
@@ -132,7 +137,7 @@ export function DigitalAssetEditSheet({
                 <SelectTrigger id="digital-asset-variant">
                   <SelectValue>
                     {(value) =>
-                      variants?.find((v) => v.id === value)?.options_text ??
+                      variantLabel(variants?.find((v) => v.id === value)) ??
                       t('admin.digital_assets.all_variants')
                     }
                   </SelectValue>
@@ -140,7 +145,7 @@ export function DigitalAssetEditSheet({
                 <SelectContent>
                   {variants?.map((variant) => (
                     <SelectItem key={variant.id} value={variant.id}>
-                      {variant.options_text || variant.sku || variant.id}
+                      {variantLabel(variant)}
                     </SelectItem>
                   ))}
                 </SelectContent>

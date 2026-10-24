@@ -8,6 +8,12 @@ module Spree
       module DigitalAssetDetails
         extend ActiveSupport::Concern
 
+        # The request's store; the asset's own store covers serialization
+        # outside a request.
+        def self.store_for(digital_asset, params)
+          params&.dig(:store) || Spree::Current.store || digital_asset.store
+        end
+
         included do
           typelize byte_size: [:number, nullable: true],
                    authorized_clicks: [:number, nullable: true],
@@ -37,7 +43,7 @@ module Spree
           attribute :download_url do |digital_asset, params|
             next nil unless digital_asset.downloadable?
 
-            store = params&.dig(:store) || Spree::Current.store || digital_asset.store
+            store = DigitalAssetDetails.store_for(digital_asset, params)
             begin
               digital_asset.download_url(expires_in: store.preferred_digital_asset_link_expire_time.seconds)
             rescue ArgumentError
@@ -45,17 +51,13 @@ module Spree
             end
           end
 
-          # The limits actually applied, after the store-settings fallback. The
-          # request's store answers it; the asset's own store covers
-          # serialization outside a request.
+          # The limits actually applied, after the store-settings fallback.
           attribute :effective_authorized_clicks do |digital_asset, params|
-            store = params&.dig(:store) || Spree::Current.store || digital_asset.store
-            digital_asset.effective_authorized_clicks(store)
+            digital_asset.effective_authorized_clicks(DigitalAssetDetails.store_for(digital_asset, params))
           end
 
           attribute :effective_authorized_days do |digital_asset, params|
-            store = params&.dig(:store) || Spree::Current.store || digital_asset.store
-            digital_asset.effective_authorized_days(store)
+            digital_asset.effective_authorized_days(DigitalAssetDetails.store_for(digital_asset, params))
           end
         end
       end

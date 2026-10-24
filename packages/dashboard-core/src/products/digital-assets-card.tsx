@@ -1,5 +1,5 @@
 import type { DigitalAssetProvider } from '@spree/admin-sdk'
-import { formatFileSize, useFileUpload } from '@spree/dashboard-core'
+import { formatFileSize, Subject, useFileUpload, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -35,7 +35,11 @@ import {
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PanelDigitalAsset } from '../api-client'
-import { DigitalAssetEditSheet, type DigitalAssetVariantOption } from './digital-asset-edit-sheet'
+import {
+  DigitalAssetEditSheet,
+  type DigitalAssetVariantOption,
+  variantLabel,
+} from './digital-asset-edit-sheet'
 import { DigitalAssetProviderSheet } from './digital-asset-provider-sheet'
 import {
   useCreateDigitalAsset,
@@ -53,6 +57,10 @@ export function DigitalAssetsCard({
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
+  // Files are part of the product, so changing them needs the product write
+  // permission; a read-only role sees the list without the controls.
+  const { permissions } = usePermissions()
+  const canWrite = permissions.can('update', Subject.Product)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [page, setPage] = useState(1)
@@ -166,7 +174,7 @@ export function DigitalAssetsCard({
         </CardTitle>
         {/* The header action only appears once files exist — an empty card
             invites the first upload through its dropzone, not a button. */}
-        {assets.length > 0 && (
+        {canWrite && assets.length > 0 && (
           <CardAction>
             {sourceProviders.length === 0 ? (
               <Button
@@ -225,6 +233,8 @@ export function DigitalAssetsCard({
 
         {isLoading ? (
           <Skeleton className="h-24 w-full" />
+        ) : assets.length === 0 && !canWrite ? (
+          <p className="text-muted-foreground text-sm">{t('admin.digital_assets.empty')}</p>
         ) : assets.length === 0 ? (
           <button
             type="button"
@@ -282,7 +292,7 @@ export function DigitalAssetsCard({
                     </TableCell>
                     {hasVariants && (
                       <TableCell className="text-muted-foreground">
-                        {variants?.find((v) => v.id === asset.variant_id)?.options_text ?? '—'}
+                        {variantLabel(variants?.find((v) => v.id === asset.variant_id)) ?? '—'}
                       </TableCell>
                     )}
                     <TableCell className="tabular-nums">
@@ -304,9 +314,10 @@ export function DigitalAssetsCard({
                             visible: Boolean(asset.download_url),
                             onSelect: () => window.open(asset.download_url ?? '', '_blank'),
                           },
-                          { key: 'edit', onSelect: () => setEditing(asset) },
+                          { key: 'edit', visible: canWrite, onSelect: () => setEditing(asset) },
                           {
                             key: 'delete',
+                            visible: canWrite,
                             destructive: true,
                             onSelect: () => handleDelete(asset),
                           },

@@ -56,8 +56,11 @@ module Spree
           [:variant, { attachment_attachment: :blob }]
         end
 
+        # Not normalized: `provider_settings` carries the provider's own
+        # values, which may look like prefixed ids. Extension attributes are
+        # splatted in, the operator's or the seller's list by branch.
         def permitted_params
-          params.permit(*declared_permitted_attributes)
+          params.permit(*declared_permitted_attributes, *model_additional_permitted_attributes)
         end
 
         private

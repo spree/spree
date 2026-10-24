@@ -114,6 +114,37 @@ RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: 
   describe 'PATCH #update' do
     let!(:digital_asset) { create(:digital_asset, variant: variant, authorized_days: 7) }
 
+    context 'with attributes an extension opened' do
+      around do |example|
+        operator_attributes = Spree::DigitalAsset.additional_permitted_attributes
+        seller_attributes = Spree::DigitalAsset.additional_seller_permitted_attributes
+        example.run
+      ensure
+        Spree::DigitalAsset.additional_permitted_attributes = operator_attributes
+        Spree::DigitalAsset.additional_seller_permitted_attributes = seller_attributes
+      end
+
+      it 'saves one opened to sellers' do
+        Spree::DigitalAsset.additional_seller_permitted_attributes += [{ metadata: {} }]
+
+        patch :update, params: { product_id: product.prefixed_id, id: digital_asset.prefixed_id,
+                                 metadata: { 'note' => 'seller' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(digital_asset.reload.metadata).to include('note' => 'seller')
+      end
+
+      it 'ignores one opened to operators only' do
+        Spree::DigitalAsset.additional_permitted_attributes += [{ metadata: {} }]
+
+        patch :update, params: { product_id: product.prefixed_id, id: digital_asset.prefixed_id,
+                                 metadata: { 'note' => 'operator' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(digital_asset.reload.metadata).not_to include('note')
+      end
+    end
+
     it 'replaces the file and clears a limit back to the store default' do
       patch :update, params: {
         product_id: product.prefixed_id,
