@@ -17,6 +17,7 @@ import {
   productFormSchema,
   productToFormValues,
   Slot,
+  useAssignableVariants,
   VariantsCard,
   variantToWirePayload,
   withExtensionRowValues,
@@ -26,7 +27,7 @@ import type { ProductCreateParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { FormProvider, useForm, useWatch } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
@@ -97,14 +98,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('seller.product', null) },
   })
 
-  // A file is moved between variants as soon as its sheet saves, so it must
-  // not be offered a variant the seller removed in the form but not yet saved:
-  // saving would delete that variant and the file with it.
-  const liveVariants = useWatch({ control: form.control, name: 'variants' })
-  const liveVariantIds = new Set((liveVariants ?? []).map((variant) => variant.id).filter(Boolean))
-  const assignableVariants = (product?.variants ?? []).filter((variant) =>
-    liveVariantIds.has(variant.id),
-  )
+  const assignableVariants = useAssignableVariants(form.control, product?.variants)
 
   // Reset once the record arrives, so the inputs show what was last saved
   // rather than the blank defaults the form mounted with.
@@ -252,7 +246,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
               <VariantsCard form={form} formKey="seller.product" />
               <MediaCard
                 productId={productId}
-                variants={product?.variants ?? []}
+                variants={assignableVariants}
                 form={form}
                 formKey="seller.product"
               />

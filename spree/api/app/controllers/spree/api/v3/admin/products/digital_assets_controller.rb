@@ -47,7 +47,7 @@ module Spree
 
             def set_parent
               @parent = current_store.products.find_by_prefix_id!(params[:product_id])
-              authorize!(:show, @parent)
+              authorize_parent!(@parent)
             end
           end
         end

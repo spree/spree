@@ -2,8 +2,8 @@ module Spree
   module Api
     module V3
       # The downloadable files on one product, shared by the operator's and a
-      # seller's branch. What differs is only how the including controller
-      # reaches the product (`set_parent`) and which serializer answers.
+      # seller's branch. Each includer finds and authorizes the product in
+      # `set_parent` and names its serializer.
       module DigitalAssetWrites
         extend ActiveSupport::Concern
 
@@ -42,12 +42,8 @@ module Spree
           Spree::DigitalAsset
         end
 
-        # The parent association reaches assets through `variants`, which
-        # carries an ORDER BY on the variants table. Combined with the
-        # collection's DISTINCT, PostgreSQL rejects the query outright
-        # (ordering columns must appear in the select list), so order by
-        # the assets' own table instead. SQLite accepts either form, so
-        # this only fails on a real deployment.
+        # Assets reach the product through `variants`, whose ORDER BY
+        # PostgreSQL rejects alongside the collection's DISTINCT.
         def scope
           super.reorder(created_at: :asc)
         end
@@ -56,9 +52,8 @@ module Spree
           [:variant, { attachment_attachment: :blob }]
         end
 
-        # Not normalized: `provider_settings` carries the provider's own
-        # values, which may look like prefixed ids. Extension attributes are
-        # splatted in, the operator's or the seller's list by branch.
+        # Not normalized: `provider_settings` may hold values shaped like
+        # prefixed ids.
         def permitted_params
           params.permit(*declared_permitted_attributes, *model_additional_permitted_attributes)
         end

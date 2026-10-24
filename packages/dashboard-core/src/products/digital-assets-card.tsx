@@ -35,12 +35,10 @@ import {
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PanelDigitalAsset } from '../api-client'
-import {
-  DigitalAssetEditSheet,
-  type DigitalAssetVariantOption,
-  variantLabel,
-} from './digital-asset-edit-sheet'
+import { variantLabel } from './assignable-variants'
+import { DigitalAssetEditSheet } from './digital-asset-edit-sheet'
 import { DigitalAssetProviderSheet } from './digital-asset-provider-sheet'
+import type { PanelVariant } from './product-types'
 import {
   useCreateDigitalAsset,
   useDeleteDigitalAsset,
@@ -53,12 +51,10 @@ export function DigitalAssetsCard({
   variants,
 }: {
   productId?: string
-  variants?: DigitalAssetVariantOption[]
+  variants?: PanelVariant[]
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
-  // Files are part of the product, so changing them needs the product write
-  // permission; a read-only role sees the list without the controls.
   const { permissions } = usePermissions()
   const canWrite = permissions.can('update', Subject.Product)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -161,6 +157,11 @@ export function DigitalAssetsCard({
   // in force rather than an empty cell.
   function limitLabel(own: number | null | undefined, effective: number) {
     return own == null ? t('admin.digital_assets.store_default', { count: effective }) : String(own)
+  }
+
+  function assetVariantLabel(asset: PanelDigitalAsset) {
+    const variant = variants?.find((v) => v.id === asset.variant_id)
+    return variant ? variantLabel(variant) : '—'
   }
 
   if (!productId) return null
@@ -292,7 +293,7 @@ export function DigitalAssetsCard({
                     </TableCell>
                     {hasVariants && (
                       <TableCell className="text-muted-foreground">
-                        {variantLabel(variants?.find((v) => v.id === asset.variant_id)) ?? '—'}
+                        {assetVariantLabel(asset)}
                       </TableCell>
                     )}
                     <TableCell className="tabular-nums">

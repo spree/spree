@@ -146,8 +146,6 @@ export function createSellerApiClient({
       update: (id, params) => sellerClient().packageTypes.update(id, params),
       delete: (id) => sellerClient().packageTypes.delete(id),
     },
-    // No `providers`: a provider is the marketplace's own integration, so a
-    // seller's Digital files card offers file uploads alone.
     digitalAssets: {
       list: (productId, params) => sellerClient().products.digitalAssets.list(productId, params),
       create: (productId, params) =>
