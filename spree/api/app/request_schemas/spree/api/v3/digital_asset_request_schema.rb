@@ -12,7 +12,7 @@ module Spree
         # be pointed at a variant of another product or store.
         attribute :variant_id, :id,
           permit: false,
-          description: "Defaults to the product's default variant when omitted."
+          description: "On create, defaults to the product's default variant when omitted. On update, omitting it keeps the current variant."
         attribute :authorized_clicks, :integer,
           nullable: true,
           description: "Null means the store's download settings apply."

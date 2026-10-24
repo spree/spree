@@ -6,7 +6,10 @@ export type DigitalAssetCreateParams = {
    * file for everyone who already bought it.
    */
   signed_id: string
-  /** Defaults to the product's default variant when omitted. */
+  /**
+   * On create, defaults to the product's default variant when omitted. On update, omitting it keeps
+   * the current variant.
+   */
   variant_id?: string
   /** Null means the store's download settings apply. */
   authorized_clicks?: number | null

@@ -2083,7 +2083,8 @@
       "upload": "Agregar archivo",
       "upload_failed": "No se pudo subir {{name}}: {{message}}",
       "uploading": "Subiendo {{name}}…",
-      "uploading_short": "Subiendo…"
+      "uploading_short": "Subiendo…",
+      "replace": "Reemplazar archivo"
     }
   }
 }

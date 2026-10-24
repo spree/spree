@@ -31838,7 +31838,8 @@ components:
             On update it replaces the file for everyone who already bought it.'
         variant_id:
           type: string
-          description: Defaults to the product's default variant when omitted.
+          description: On create, defaults to the product's default variant when omitted.
+            On update, omitting it keeps the current variant.
         authorized_clicks:
           type: integer
           description: Null means the store's download settings apply.
@@ -31858,7 +31859,8 @@ components:
             On update it replaces the file for everyone who already bought it.'
         variant_id:
           type: string
-          description: Defaults to the product's default variant when omitted.
+          description: On create, defaults to the product's default variant when omitted.
+            On update, omitting it keeps the current variant.
         authorized_clicks:
           type: integer
           description: Null means the store's download settings apply.

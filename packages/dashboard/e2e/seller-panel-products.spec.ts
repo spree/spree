@@ -83,7 +83,9 @@ test.describe('seller panel — products', () => {
   })
 
   // A seller selling downloads manages the files on their own listing.
-  test('uploads a digital file, sets its download limits, then removes it', async ({ page }) => {
+  test('uploads a digital file, sets its download limits, replaces it, then removes it', async ({
+    page,
+  }) => {
     const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
     await listProduct(page, home, `E2E Amp Model ${Date.now()}`)
 
@@ -93,7 +95,9 @@ test.describe('seller panel — products', () => {
     await expect(digitalCard).toHaveCount(1)
 
     const fileName = path.basename(DIGITAL_FILE)
-    await digitalCard.locator('input[type="file"]').setInputFiles(DIGITAL_FILE)
+    const chooser = page.waitForEvent('filechooser')
+    await digitalCard.getByRole('button', { name: /drag & drop files here/i }).click()
+    await (await chooser).setFiles(DIGITAL_FILE)
 
     const fileRow = digitalCard.locator('tr').filter({ hasText: fileName })
     await expect(fileRow).toBeVisible({ timeout: 30_000 })
@@ -111,14 +115,28 @@ test.describe('seller panel — products', () => {
     })
     await expect(fileRow.getByRole('cell', { name: '30', exact: true })).toBeVisible()
 
+    // Replacing keeps the row and its limits; only the file changes.
+    const replacementName = 'clean-tube-amp.nam'
+    const replaceChooser = page.waitForEvent('filechooser')
     await openRowMenu(page, fileName)
+    await page.getByRole('menuitem', { name: /replace file/i }).click()
+    await (await replaceChooser).setFiles({
+      name: replacementName,
+      mimeType: 'application/octet-stream',
+      buffer: Buffer.from('replacement capture'),
+    })
+    const replacedRow = digitalCard.locator('tr').filter({ hasText: replacementName })
+    await expect(replacedRow).toBeVisible({ timeout: 30_000 })
+    await expect(replacedRow.getByRole('cell', { name: '3', exact: true })).toBeVisible()
+
+    await openRowMenu(page, replacementName)
     await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^confirm$/i })
       .click()
 
-    await expect(fileRow).toBeHidden({ timeout: 15_000 })
+    await expect(replacedRow).toBeHidden({ timeout: 15_000 })
     await expect(digitalCard.getByText(/drag & drop files here/i)).toBeVisible()
   })
 })

@@ -2110,7 +2110,8 @@
       "upload": "Dodaj plik",
       "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
       "uploading": "Przesyłanie {{name}}…",
-      "uploading_short": "Przesyłanie…"
+      "uploading_short": "Przesyłanie…",
+      "replace": "Zastąp plik"
     }
   }
 }

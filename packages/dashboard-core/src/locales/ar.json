@@ -2086,7 +2086,8 @@
       "upload": "إضافة ملف",
       "upload_failed": "فشل رفع {{name}}: {{message}}",
       "uploading": "جارٍ رفع {{name}}…",
-      "uploading_short": "جارٍ الرفع…"
+      "uploading_short": "جارٍ الرفع…",
+      "replace": "استبدال الملف"
     }
   }
 }

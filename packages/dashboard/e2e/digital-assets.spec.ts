@@ -23,10 +23,11 @@ test.describe('product digital files', () => {
       .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Digital files$/ }) })
     await expect(digitalCard).toHaveCount(1)
 
-    // The empty card is a dropzone with a hidden file input behind it — set the
-    // file directly rather than simulating the click-through.
+    // The empty card is a dropzone; clicking it opens the file picker.
     const fileName = path.basename(FIXTURE_FILE)
-    await digitalCard.locator('input[type="file"]').setInputFiles(FIXTURE_FILE)
+    const chooser = page.waitForEvent('filechooser')
+    await digitalCard.getByRole('button', { name: /drag & drop files here/i }).click()
+    await (await chooser).setFiles(FIXTURE_FILE)
 
     // The uploaded file appears as a row in this card once the asset is created.
     const fileRow = digitalCard.locator('tr').filter({ hasText: fileName })

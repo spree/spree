@@ -50,6 +50,7 @@ import {
   useDeleteDigitalAsset,
   useDigitalAssetProviders,
   useDigitalAssets,
+  useUpdateDigitalAsset,
 } from './use-digital-assets'
 
 export function DigitalAssetsCard({
@@ -64,6 +65,9 @@ export function DigitalAssetsCard({
   const { permissions } = usePermissions()
   const canWrite = permissions.can('update', Subject.Product)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const replaceInputRef = useRef<HTMLInputElement>(null)
+  // The file whose replacement the picker was opened for.
+  const replacingRef = useRef<PanelDigitalAsset | null>(null)
   const [uploading, setUploading] = useState(false)
   const [page, setPage] = useState(1)
   const [editing, setEditing] = useState<PanelDigitalAsset | null>(null)
@@ -77,6 +81,7 @@ export function DigitalAssetsCard({
   const { data: providersData } = useDigitalAssetProviders(productId ?? '', Boolean(productId))
   const createAsset = useCreateDigitalAsset(productId ?? '')
   const deleteAsset = useDeleteDigitalAsset(productId ?? '')
+  const updateAsset = useUpdateDigitalAsset(productId ?? '')
 
   const assets: PanelDigitalAsset[] = data?.data ?? []
   const meta = data?.meta
@@ -123,6 +128,35 @@ export function DigitalAssetsCard({
     const files = Array.from(event.target.files ?? [])
     event.target.value = ''
     if (files.length > 0) void handleFiles(files)
+  }
+
+  function openReplace(asset: PanelDigitalAsset) {
+    replacingRef.current = asset
+    replaceInputRef.current?.click()
+  }
+
+  // Replaces the file in place, so links buyers already received serve the
+  // new one.
+  async function handleReplaceInput(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    const asset = replacingRef.current
+    replacingRef.current = null
+    if (!file || !asset) return
+
+    setUploading(true)
+    try {
+      const { signedId } = await fileUpload.mutateAsync(file)
+      await updateAsset.mutateAsync({ id: asset.id, signed_id: signedId })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
+      toastManager.add({
+        type: 'error',
+        title: t('admin.digital_assets.upload_failed', { name: file.name, message }),
+      })
+    } finally {
+      setUploading(false)
+    }
   }
 
   function handleDrop(event: React.DragEvent) {
@@ -241,6 +275,7 @@ export function DigitalAssetsCard({
           className="hidden"
           onChange={handleFileInput}
         />
+        <input ref={replaceInputRef} type="file" className="hidden" onChange={handleReplaceInput} />
 
         {isLoading ? (
           <Skeleton className="h-24 w-full" />
@@ -324,6 +359,14 @@ export function DigitalAssetsCard({
                             icon: <DownloadIcon className="size-4" />,
                             visible: Boolean(asset.download_url),
                             onSelect: () => window.open(asset.download_url ?? '', '_blank'),
+                          },
+                          {
+                            key: 'replace',
+                            label: t('admin.digital_assets.replace'),
+                            icon: <UploadIcon className="size-4" />,
+                            // A provider delivers its own deliverable; there is no file to swap.
+                            visible: canWrite && !asset.provider_type,
+                            onSelect: () => openReplace(asset),
                           },
                           { key: 'edit', visible: canWrite, onSelect: () => setEditing(asset) },
                           {

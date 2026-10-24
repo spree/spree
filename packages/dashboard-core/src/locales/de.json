@@ -2081,7 +2081,8 @@
       "upload": "Datei hinzufügen",
       "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
       "uploading": "{{name}} wird hochgeladen…",
-      "uploading_short": "Wird hochgeladen…"
+      "uploading_short": "Wird hochgeladen…",
+      "replace": "Datei ersetzen"
     }
   }
 }
