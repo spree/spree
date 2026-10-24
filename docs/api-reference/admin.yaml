@@ -79252,8 +79252,7 @@ components:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            Required for an uploaded file, omitted for a provider-backed asset. On
-            update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it.'
         variant_id:
           type: string
           description: Defaults to the product's default variant when omitted.
@@ -79268,7 +79267,7 @@ components:
         provider_type:
           type: string
           description: A provider shorthand from the providers endpoint. Omit for
-            an uploaded file.
+            an uploaded file; a provider-backed asset sends no `signed_id`.
         provider_settings:
           type: object
           additionalProperties: true
@@ -79279,8 +79278,7 @@ components:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            Required for an uploaded file, omitted for a provider-backed asset. On
-            update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it.'
         variant_id:
           type: string
           description: Defaults to the product's default variant when omitted.
@@ -79295,7 +79293,7 @@ components:
         provider_type:
           type: string
           description: A provider shorthand from the providers endpoint. Omit for
-            an uploaded file.
+            an uploaded file; a provider-backed asset sends no `signed_id`.
         provider_settings:
           type: object
           additionalProperties: true

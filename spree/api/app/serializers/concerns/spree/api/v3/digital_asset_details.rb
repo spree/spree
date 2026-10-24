@@ -8,8 +8,12 @@ module Spree
       module DigitalAssetDetails
         extend ActiveSupport::Concern
 
-        # The request's store; the asset's own store covers serialization
-        # outside a request.
+        # The store whose download settings apply: the request's, or the
+        # asset's own outside a request.
+        #
+        # @param digital_asset [Spree::DigitalAsset]
+        # @param params [Hash, nil] the serializer params
+        # @return [Spree::Store]
         def self.store_for(digital_asset, params)
           params&.dig(:store) || Spree::Current.store || digital_asset.store
         end

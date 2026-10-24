@@ -12,7 +12,7 @@ module Spree
               body.include_attributes Spree::Api::V3::DigitalAssetRequestSchema
               # The model validates it names a registered provider.
               body.attribute :provider_type, :string,
-                description: 'A provider shorthand from the providers endpoint. Omit for an uploaded file.'
+                description: 'A provider shorthand from the providers endpoint. Omit for an uploaded file; a provider-backed asset sends no `signed_id`.'
               # Its keys are declared by the provider, so it lands verbatim
               # under one key in the asset's metadata.
               body.attribute :provider_settings, :hash,

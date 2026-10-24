@@ -102,6 +102,18 @@ RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: 
 
       after { Spree.digital_asset_providers.delete(stub_provider) }
 
+      it "refuses a file on an asset the operator's provider delivers" do
+        digital_asset = create(:digital_asset, variant: variant)
+        digital_asset.attachment.purge
+        digital_asset.update!(provider_type: 'Spree::DigitalAssetProvider::Stub')
+
+        patch :update, params: { product_id: product.prefixed_id, id: digital_asset.prefixed_id,
+                                 signed_id: blob.signed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(digital_asset.reload.attachment).not_to be_attached
+      end
+
       it 'cannot route a sale through it' do
         post :create, params: { product_id: product.prefixed_id, provider_type: 'stub' }, as: :json
 

@@ -1,5 +1,11 @@
 import type { DigitalAssetProvider } from '@spree/admin-sdk'
-import { formatFileSize, Subject, useFileUpload, usePermissions } from '@spree/dashboard-core'
+import {
+  formatFileSize,
+  getApiClient,
+  Subject,
+  useFileUpload,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -74,6 +80,8 @@ export function DigitalAssetsCard({
 
   const assets: PanelDigitalAsset[] = data?.data ?? []
   const meta = data?.meta
+  // Across every page, so emptying a later page does not read as no files.
+  const hasAssets = (meta?.count ?? assets.length) > 0
   const hasVariants = (variants?.length ?? 0) > 1
   const providers = providersData?.data ?? []
   // Only providers that resolve their own deliverable go in the source menu;
@@ -150,7 +158,9 @@ export function DigitalAssetsCard({
       }),
       variant: 'destructive',
     })
-    if (confirmed) await deleteAsset.mutateAsync(asset.id)
+    if (!confirmed) return
+    await deleteAsset.mutateAsync(asset.id)
+    if (assets.length === 1 && page > 1) setPage(page - 1)
   }
 
   // A blank limit means the store's setting applies — show the number actually
@@ -164,7 +174,7 @@ export function DigitalAssetsCard({
     return variant ? variantLabel(variant) : '—'
   }
 
-  if (!productId) return null
+  if (!productId || !getApiClient().digitalAssets) return null
 
   return (
     <Card>
@@ -175,7 +185,7 @@ export function DigitalAssetsCard({
         </CardTitle>
         {/* The header action only appears once files exist — an empty card
             invites the first upload through its dropzone, not a button. */}
-        {canWrite && assets.length > 0 && (
+        {canWrite && hasAssets && (
           <CardAction>
             {sourceProviders.length === 0 ? (
               <Button
@@ -234,9 +244,9 @@ export function DigitalAssetsCard({
 
         {isLoading ? (
           <Skeleton className="h-24 w-full" />
-        ) : assets.length === 0 && !canWrite ? (
+        ) : !hasAssets && !canWrite ? (
           <p className="text-muted-foreground text-sm">{t('admin.digital_assets.empty')}</p>
-        ) : assets.length === 0 ? (
+        ) : !hasAssets ? (
           <button
             type="button"
             onDrop={handleDrop}

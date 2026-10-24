@@ -2,9 +2,8 @@
 
 export type DigitalAssetUpdateParams = {
   /**
-   * A `signed_id` from `files.upload()` with `visibility: 'private'`. Required for an uploaded
-   * file, omitted for a provider-backed asset. On update it replaces the file for everyone who
-   * already bought it.
+   * A `signed_id` from `files.upload()` with `visibility: 'private'`. On update it replaces the
+   * file for everyone who already bought it.
    */
   signed_id?: string
   /** Defaults to the product's default variant when omitted. */

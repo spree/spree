@@ -5,15 +5,15 @@ interface LabelledVariant {
   id: string
   options_text?: string | null
   sku?: string | null
+  name?: string | null
 }
 
 /** The name a variant goes by in a picker. */
 export function variantLabel(variant: LabelledVariant): string {
-  const named = variant as LabelledVariant & { name?: string }
   return (
-    named.options_text ||
-    named.name ||
-    named.sku ||
+    variant.options_text ||
+    variant.name ||
+    variant.sku ||
     variant.id ||
     i18n.t('admin.products.variants.variant_label')
   )

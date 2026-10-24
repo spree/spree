@@ -15,7 +15,7 @@ export function useDigitalAssets(productId: string, page = 1, enabled = true) {
   return useQuery({
     queryKey: useResourceKey('products', productId, 'digital-assets', page),
     queryFn: () => digitalAssetsClient().list(productId, { page, limit: 25 }),
-    enabled: enabled && Boolean(productId),
+    enabled: enabled && Boolean(productId) && Boolean(getApiClient().digitalAssets),
   })
 }
 
@@ -25,7 +25,8 @@ export function useDigitalAssets(productId: string, page = 1, enabled = true) {
 export function useDigitalAssetProviders(productId: string, enabled = true) {
   const providers = getApiClient().digitalAssets?.providers
   return useQuery({
-    queryKey: useResourceKey('products', productId, 'digital-asset-providers'),
+    // Not keyed by product: the registry is the same for all of them.
+    queryKey: useResourceKey('digital-asset-providers'),
     queryFn: () => providers!(productId),
     enabled: enabled && Boolean(productId) && Boolean(providers),
     staleTime: Number.POSITIVE_INFINITY, // the registry doesn't change at runtime

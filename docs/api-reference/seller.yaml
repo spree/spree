@@ -31835,8 +31835,7 @@ components:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            Required for an uploaded file, omitted for a provider-backed asset. On
-            update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it.'
         variant_id:
           type: string
           description: Defaults to the product's default variant when omitted.
@@ -31848,14 +31847,15 @@ components:
           type: integer
           description: Null means the store's download settings apply.
           nullable: true
+      required:
+      - signed_id
     DigitalAssetUpdateParams:
       type: object
       properties:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            Required for an uploaded file, omitted for a provider-backed asset. On
-            update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it.'
         variant_id:
           type: string
           description: Defaults to the product's default variant when omitted.

@@ -148,8 +148,11 @@ export function createSellerApiClient({
     },
     digitalAssets: {
       list: (productId, params) => sellerClient().products.digitalAssets.list(productId, params),
-      create: (productId, params) =>
-        sellerClient().products.digitalAssets.create(productId, params),
+      // Sellers upload files only, so a file is the one thing a new asset must carry.
+      create: (productId, { signed_id, ...params }) => {
+        if (!signed_id) throw new Error('Upload a file first.')
+        return sellerClient().products.digitalAssets.create(productId, { ...params, signed_id })
+      },
       update: (productId, id, params) =>
         sellerClient().products.digitalAssets.update(productId, id, params),
       delete: (productId, id) => sellerClient().products.digitalAssets.delete(productId, id),

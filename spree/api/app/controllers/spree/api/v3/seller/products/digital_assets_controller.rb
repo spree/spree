@@ -17,6 +17,19 @@ module Spree
 
             request_params :digital_asset do |body|
               body.include_attributes Spree::Api::V3::DigitalAssetRequestSchema
+              body.require_attributes :signed_id, on: :create
+            end
+
+            # PATCH /api/v3/seller/products/:product_id/digital_assets/:id
+            #
+            # A provider-backed asset delivers through the operator's provider,
+            # so a file attached to it would show here but never reach a buyer.
+            def update
+              if params[:signed_id].present? && !@resource.provider_class.requires_attachment?
+                return render_validation_error(I18n.t('spree.digital_assets_provider_takes_no_file'))
+              end
+
+              super
             end
 
             protected
