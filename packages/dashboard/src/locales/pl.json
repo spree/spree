@@ -2580,7 +2580,9 @@
         },
         "subscriptions": {
           "help": "Wybierz, które zdarzenia mają wyzwalać webhook. Nie wybieraj nic, aby otrzymywać każde zdarzenie.",
-          "label": "Zdarzenia"
+          "invalid": "Użyj nazw zdarzeń lub wzorców z * w miejscu segmentu, np. order.* lub *.created.",
+          "label": "Zdarzenia",
+          "too_many": "Można wybrać najwyżej {{count}} zdarzeń."
         },
         "url": {
           "label": "Docelowy adres URL",

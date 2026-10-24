@@ -21,7 +21,7 @@ module Spree
               description: 'Defaults to true on create. Prefer the disable and enable endpoints to pause one.'
             body.attribute :subscriptions, :array, of: :string,
               example: %w[order.placed order.canceled],
-              description: 'Event names this endpoint receives. An empty list or `["*"]` subscribes to every event; otherwise list exact names (`order.completed`) or patterns (`order.*`).'
+              description: 'Event names this endpoint receives. An empty list or `["*"]` subscribes to every event; otherwise list exact names (`order.completed`) or patterns with `*` in place of a segment (`order.*`, `*.created`). At most 200 entries of up to 100 characters.'
           end
 
           request_params 'WebhookEndpointDisableParams', action: :disable do |body|

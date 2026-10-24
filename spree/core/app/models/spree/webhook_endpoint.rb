@@ -20,6 +20,10 @@ module Spree
     validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: :invalid_url }
     validates :active, inclusion: { in: [true, false] }
     validate :url_must_not_resolve_to_private_ip, if: -> { !Rails.env.development? && url.present? && url_changed? }
+    validate :subscriptions_must_be_event_patterns, if: :will_save_change_to_subscriptions?
+
+    attribute :subscriptions, default: -> { [] }
+    normalizes :subscriptions, apply_to_nil: true, with: ->(value) { Array(value).map { |entry| entry.to_s.strip }.reject(&:empty?).uniq }
 
     before_create :generate_secret_key
     after_create  { @reveal_secret_in_response = true }
@@ -83,6 +87,23 @@ module Spree
     # Number of consecutive failed deliveries before auto-disabling
     AUTO_DISABLE_THRESHOLD = 15
 
+    MAX_SUBSCRIPTIONS = 200
+    MAX_SUBSCRIPTION_LENGTH = 100
+    SUBSCRIPTION_SEGMENT = /\A[a-zA-Z0-9_-]+\z/
+
+    # Whether +value+ is a shape `subscriptions` accepts: `*`, an event name,
+    # or a name with `*` in place of whole segments (`order.*`, `*.created`).
+    # Anything else — regexp syntax above all — is refused before it is
+    # stored, so the matcher only ever sees names and segment wildcards.
+    #
+    # @param value [Object]
+    # @return [Boolean]
+    def self.event_pattern?(value)
+      return false unless value.is_a?(String) && value.length.between?(1, MAX_SUBSCRIPTION_LENGTH)
+
+      value.split('.', -1).all? { |segment| segment == '*' || segment.match?(SUBSCRIPTION_SEGMENT) }
+    end
+
     # Check if this endpoint is subscribed to a specific event.
     #
     # Events whose payload carries a live credential (a password reset token)
@@ -93,16 +114,9 @@ module Spree
     # @return [Boolean]
     def subscribed_to?(event_name)
       return subscriptions.to_a.include?(event_name) if Spree::Events.catalog.credential?(event_name)
-      return true if subscriptions.blank? || subscriptions.include?('*')
+      return true if subscriptions.blank?
 
-      subscriptions.any? do |subscription|
-        if subscription.include?('*')
-          pattern = Regexp.escape(subscription).gsub('\*', '.*')
-          event_name.match?(Regexp.new("^#{pattern}$"))
-        else
-          subscription == event_name
-        end
-      end
+      subscriptions.any? { |subscription| Spree::Event.matches?(event_name, subscription) }
     end
 
     # The credential-carrying events this endpoint names.
@@ -189,6 +203,16 @@ module Spree
 
     def generate_secret_key
       self.secret_key ||= SecureRandom.hex(32)
+    end
+
+    def subscriptions_must_be_event_patterns
+      entries = subscriptions.to_a
+      errors.add(:subscriptions, :too_many, count: MAX_SUBSCRIPTIONS) if entries.size > MAX_SUBSCRIPTIONS
+
+      rejected = entries.reject { |entry| self.class.event_pattern?(entry) }
+      return if rejected.empty?
+
+      errors.add(:subscriptions, :invalid_pattern, entries: rejected.first(5).map { |entry| entry.truncate(40) }.join(', '))
     end
 
     def clear_disabled_state_when_reactivated

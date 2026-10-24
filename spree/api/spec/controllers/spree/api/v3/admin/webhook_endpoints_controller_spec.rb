@@ -108,6 +108,16 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
         expect(json_response['error']['code']).to eq('validation_error')
       end
     end
+
+    context 'when a subscription is not an event name or pattern' do
+      let(:params) { { url: 'https://example.com/hook', subscriptions: ['order.(placed|canceled)'] } }
+
+      it 'returns a validation error on subscriptions' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']).to have_key('subscriptions')
+      end
+    end
   end
 
   describe 'PATCH #update' do

@@ -2562,7 +2562,9 @@
         },
         "subscriptions": {
           "help": "Sélectionnez les événements qui doivent déclencher un webhook. Ne choisissez rien pour recevoir tous les événements.",
-          "label": "Événements"
+          "invalid": "Utilisez des noms d'événements ou des motifs avec * à la place d'un segment, comme order.* ou *.created.",
+          "label": "Événements",
+          "too_many": "Au plus {{count}} événements sont acceptés."
         },
         "url": {
           "label": "URL de destination",

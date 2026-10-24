@@ -2562,7 +2562,9 @@
         },
         "subscriptions": {
           "help": "Wählen Sie aus, welche Ereignisse einen Webhook auslösen sollen. Wählen Sie nichts aus, um jedes Ereignis zu empfangen.",
-          "label": "Ereignisse"
+          "invalid": "Verwenden Sie Ereignisnamen oder Muster mit * anstelle eines Segments, z. B. order.* oder *.created.",
+          "label": "Ereignisse",
+          "too_many": "Es sind höchstens {{count}} Ereignisse möglich."
         },
         "url": {
           "label": "Ziel-URL",

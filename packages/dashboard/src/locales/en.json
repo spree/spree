@@ -2562,7 +2562,9 @@
         },
         "subscriptions": {
           "help": "Select which events should trigger a webhook. Choose nothing to receive every event.",
-          "label": "Events"
+          "invalid": "Use event names, or patterns with * in place of a segment, such as order.* or *.created.",
+          "label": "Events",
+          "too_many": "Can hold at most {{count}} events."
         },
         "url": {
           "label": "Destination URL",

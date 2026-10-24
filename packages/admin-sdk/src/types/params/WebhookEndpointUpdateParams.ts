@@ -9,7 +9,8 @@ export type WebhookEndpointUpdateParams = {
   active?: boolean
   /**
    * Event names this endpoint receives. An empty list or `["*"]` subscribes to every event;
-   * otherwise list exact names (`order.completed`) or patterns (`order.*`).
+   * otherwise list exact names (`order.completed`) or patterns with `*` in place of a segment
+   * (`order.*`, `*.created`). At most 200 entries of up to 100 characters.
    */
   subscriptions?: string[]
 }

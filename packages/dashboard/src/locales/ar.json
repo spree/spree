@@ -2580,7 +2580,9 @@
         },
         "subscriptions": {
           "help": "اختر الأحداث التي تُطلق Webhook. لا تختر شيئًا لاستقبال كل حدث.",
-          "label": "Events"
+          "invalid": "استخدم أسماء الأحداث أو أنماطًا تحل فيها * محل جزء من الاسم، مثل order.* أو *.created.",
+          "label": "Events",
+          "too_many": "يمكن اختيار {{count}} حدثًا على الأكثر."
         },
         "url": {
           "label": "Destination URL",

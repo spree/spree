@@ -84317,7 +84317,8 @@ components:
             type: string
           description: Event names this endpoint receives. An empty list or `["*"]`
             subscribes to every event; otherwise list exact names (`order.completed`)
-            or patterns (`order.*`).
+            or patterns with `*` in place of a segment (`order.*`, `*.created`). At
+            most 200 entries of up to 100 characters.
           example:
           - order.placed
           - order.canceled
@@ -84354,7 +84355,8 @@ components:
             type: string
           description: Event names this endpoint receives. An empty list or `["*"]`
             subscribes to every event; otherwise list exact names (`order.completed`)
-            or patterns (`order.*`).
+            or patterns with `*` in place of a segment (`order.*`, `*.created`). At
+            most 200 entries of up to 100 characters.
           example:
           - order.placed
           - order.canceled

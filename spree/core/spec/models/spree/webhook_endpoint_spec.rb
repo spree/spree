@@ -7,6 +7,57 @@ describe Spree::WebhookEndpoint, type: :model do
   let(:webhook_endpoint) { build(:webhook_endpoint, store: store) }
 
   describe 'validations' do
+    describe 'subscriptions' do
+      it 'accepts event names, segment wildcards and the catch-all' do
+        webhook_endpoint.subscriptions = ['*', 'order.placed', 'order.*', '*.created', 'order.line_item.*', 'my_app.Thing-done']
+        expect(webhook_endpoint).to be_valid
+      end
+
+      it 'rejects anything that is not an event name or a segment wildcard' do
+        ['order.(placed|canceled)', 'order.p*', 'order..placed', '.placed', 'order placed', 'order.placed$', "order.\n*"].each do |entry|
+          webhook_endpoint.subscriptions = [entry]
+          expect(webhook_endpoint).not_to be_valid, "expected #{entry.inspect} to be refused"
+          expect(webhook_endpoint.errors.details[:subscriptions]).to include(error: :invalid_pattern, entries: entry.truncate(40))
+        end
+      end
+
+      it 'caps the length of an entry and the number of entries' do
+        webhook_endpoint.subscriptions = ['a' * (described_class::MAX_SUBSCRIPTION_LENGTH + 1)]
+        expect(webhook_endpoint).not_to be_valid
+
+        webhook_endpoint.subscriptions = Array.new(described_class::MAX_SUBSCRIPTIONS + 1) { |index| "event_#{index}.created" } + ['order.pl*']
+        expect(webhook_endpoint).not_to be_valid
+        expect(webhook_endpoint.errors.details[:subscriptions]).to include(
+          { error: :too_many, count: described_class::MAX_SUBSCRIPTIONS },
+          { error: :invalid_pattern, entries: 'order.pl*' },
+        )
+      end
+
+      it 'names every rejected entry, not only the first' do
+        webhook_endpoint.subscriptions = ['order.placed', 'order.pl*', 'order.(a|b)']
+        expect(webhook_endpoint).not_to be_valid
+        expect(webhook_endpoint.errors[:subscriptions].first).to include('order.pl*, order.(a|b)')
+      end
+
+      it 'accepts only ASCII letters, so the dashboard and the matcher agree' do
+        webhook_endpoint.subscriptions = ['order.placeſ']
+        expect(webhook_endpoint).not_to be_valid
+      end
+
+      it 'strips, drops blanks and deduplicates on assignment' do
+        webhook_endpoint.subscriptions = [' order.placed ', '', 'order.placed', nil]
+        expect(webhook_endpoint.subscriptions).to eq(['order.placed'])
+      end
+
+      it 'stores an empty list when none is given' do
+        endpoint = described_class.create!(store: store, url: 'https://example.com/webhooks/unassigned')
+        expect(endpoint.reload.subscriptions).to eq([])
+
+        endpoint.update!(subscriptions: nil)
+        expect(endpoint.reload.subscriptions).to eq([])
+      end
+    end
+
     it 'requires a url unique within the store' do
       store = create(:store)
       create(:webhook_endpoint, url: 'https://example.com/hook', store: store)
@@ -204,6 +255,16 @@ describe Spree::WebhookEndpoint, type: :model do
       it 'does not match events outside the pattern' do
         expect(endpoint.subscribed_to?('product.created')).to be false
         expect(endpoint.subscribed_to?('shipment.shipped')).to be false
+      end
+    end
+
+    context 'with a leading wildcard' do
+      let(:endpoint) { build(:webhook_endpoint, subscriptions: ['*.created']) }
+
+      it 'matches on the trailing segment' do
+        expect(endpoint.subscribed_to?('order.created')).to be true
+        expect(endpoint.subscribed_to?('product.created')).to be true
+        expect(endpoint.subscribed_to?('order.updated')).to be false
       end
     end
   end

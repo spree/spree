@@ -147,6 +147,8 @@ The `subscriptions` array accepts exact event names and wildcard patterns:
 | `['order.*', 'payment.*', 'fulfillment.fulfilled']` | Multiple patterns |
 | `[]` or `['*']` | All events |
 
+A pattern is an event name with `*` standing in for whole segments, so `order.*` and `*.created` are accepted while `order.pl*` is not. An endpoint holds at most 200 entries of up to 100 characters each; anything else is refused with a validation error.
+
 An event that carries a credential — `customer.password_reset_requested`, which includes a reset token, and `data_request.confirmation_requested`, which includes the token that confirms a customer's data request — is never matched by a pattern. An endpoint receives it only when it names it, and naming it needs the permission to manage customers. Password reset requests for staff and sellers are never sent to webhooks: Spree emails those itself.
 
 To see every event you can subscribe to, including those your installed extensions add, list them:
