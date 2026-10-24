@@ -79319,7 +79319,7 @@ components:
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
             On update it replaces the file for everyone who already bought it. A seller''s
             file must be of a content type the marketplace accepts, checked against
-            the file''s own signature.'
+            the file''s own signature where it has one.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.
@@ -79348,7 +79348,7 @@ components:
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
             On update it replaces the file for everyone who already bought it. A seller''s
             file must be of a content type the marketplace accepts, checked against
-            the file''s own signature.'
+            the file''s own signature where it has one.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.
@@ -83690,8 +83690,9 @@ components:
           items:
             type: string
           description: The content types a seller's file may have, checked against
-            the file's own signature where it has one. The operator's own uploads
-            are not restricted.
+            the file's own signature where it has one. An entry names one type or,
+            with `*` as the subtype, a whole family. The operator's own uploads are
+            not restricted.
           example:
           - application/pdf
           - application/zip

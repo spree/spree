@@ -78,7 +78,8 @@ export type StoreUpdateParams = {
   seller_digital_assets_enabled?: boolean
   /**
    * The content types a seller's file may have, checked against the file's own signature where it
-   * has one. The operator's own uploads are not restricted.
+   * has one. An entry names one type or, with `*` as the subtype, a whole family. The operator's
+   * own uploads are not restricted.
    */
   seller_digital_asset_content_types?: string[]
   /**

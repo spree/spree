@@ -83,7 +83,8 @@ module Spree
     # is something the marketplace vouches for, and that should be a choice.
     preference :seller_digital_assets_enabled, :boolean, default: false
     # What a seller's file may be, checked against the file's own signature
-    # rather than its name. The operator's own uploads are not restricted.
+    # rather than its name. An entry names one type or, with `*` as the
+    # subtype, a whole family. The operator's own uploads are not restricted.
     preference :seller_digital_asset_content_types, :array, of: :string,
                                                             default: Spree::DigitalAsset::DEFAULT_SELLER_CONTENT_TYPES
     # A typo here would refuse every seller upload with a message about the

@@ -216,6 +216,14 @@ RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: 
       expect(Spree::DigitalAsset.count).to eq(0)
     end
 
+    it 'accepts a whole family named with a wildcard' do
+      stub_store_preferences(seller_digital_asset_content_types: %w[image/*])
+
+      post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+      expect(response).to have_http_status(:created)
+    end
+
     it 'leaves the limits editable when the type is no longer accepted' do
       digital_asset = create(:digital_asset, variant: variant)
       stub_store_preferences(seller_digital_asset_content_types: %w[application/pdf])

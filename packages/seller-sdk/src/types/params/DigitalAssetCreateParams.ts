@@ -4,7 +4,7 @@ export type DigitalAssetCreateParams = {
   /**
    * A `signed_id` from `files.upload()` with `visibility: 'private'`. On update it replaces the
    * file for everyone who already bought it. A seller's file must be of a content type the
-   * marketplace accepts, checked against the file's own signature.
+   * marketplace accepts, checked against the file's own signature where it has one.
    */
   signed_id: string
   /**

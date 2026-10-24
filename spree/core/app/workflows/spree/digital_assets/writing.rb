@@ -62,9 +62,15 @@ module Spree
         # renamed executable cannot pass as a PDF; a format with no signature
         # (plain text) keeps the type the client declared.
         blob.identify_without_saving
-        return if store.preferred_seller_digital_asset_content_types.include?(blob.content_type)
+        return if content_type_accepted?(blob.content_type)
 
         refuse(:digital_assets_content_type_not_accepted, content_type: blob.content_type)
+      end
+
+      # An entry names one type (`audio/mpeg`) or a whole family (`audio/*`).
+      def content_type_accepted?(content_type)
+        family = "#{content_type.to_s.split('/').first}/*"
+        store.preferred_seller_digital_asset_content_types.any? { |accepted| accepted.casecmp?(content_type.to_s) || accepted == family }
       end
 
       def attach_upload

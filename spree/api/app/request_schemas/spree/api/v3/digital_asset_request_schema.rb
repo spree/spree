@@ -7,7 +7,7 @@ module Spree
         # Names a blob rather than a column, so it is attached separately.
         attribute :signed_id, :string,
           permit: false,
-          description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. On update it replaces the file for everyone who already bought it. A seller's file must be of a content type the marketplace accepts, checked against the file's own signature."
+          description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. On update it replaces the file for everyone who already bought it. A seller's file must be of a content type the marketplace accepts, checked against the file's own signature where it has one."
         # Resolved through the parent rather than assigned, so an asset can't
         # be pointed at a variant of another product or store.
         attribute :variant_id, :id,
