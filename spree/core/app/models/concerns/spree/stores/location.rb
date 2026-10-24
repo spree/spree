@@ -13,8 +13,9 @@ module Spree
       # market directly, and the defaults built for the old country stay.
       #
       # @param country [Spree::Country] where the shop sells from
-      # @param locale [String, nil] storefront locale; defaults to the
-      #   country's own language when Spree translates it, then English
+      # @param locale [String, nil] storefront locale, a code from
+      #   `Spree::Locales::ALL` (another spelling or region moves to the listed
+      #   one); defaults to the country's own language, then English
       # @param currency [String, nil] ISO 4217 code; defaults to the country's
       #   own currency. An unknown code falls back rather than raising, so a
       #   seed reading STORE_CURRENCY does not fail an install over a typo.
@@ -23,18 +24,22 @@ module Spree
         currency = relocation_currency(currency, country)
         locale = relocation_locale(locale, country)
 
-        ApplicationRecord.transaction do
-          # The columns are not the source of truth once a market exists — the
-          # store reads through its default market — but they are kept in
-          # step for the stores that have none yet.
-          update_columns(
-            default_country_code: country.iso,
-            default_currency: currency,
-            default_locale: locale,
-            updated_at: Time.current
-          )
-          adopt_admin_locale(locale)
-          relocate_default_market(country, currency, locale)
+        # Setup bookkeeping, not a merchant action: webhooks and subscribers
+        # should not hear about the market moving here.
+        Spree::Events.disable do
+          ApplicationRecord.transaction do
+            # The columns are not the source of truth once a market exists — the
+            # store reads through its default market — but they are kept in
+            # step for the stores that have none yet.
+            update_columns(
+              default_country_code: country.iso,
+              default_currency: currency,
+              default_locale: locale,
+              updated_at: Time.current
+            )
+            adopt_admin_locale(locale)
+            relocate_default_market(country, currency, locale)
+          end
         end
 
         reload
