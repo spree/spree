@@ -80,6 +80,10 @@ const BOOTSTRAP_RUBY = [
   'admin = Spree.admin_user_class.first || Spree.admin_user_class.create!(email: "admin@example.com", password: "spree123", password_confirmation: "spree123")',
   'admin.update!(password: "spree123", password_confirmation: "spree123")',
   's.add_user(admin, Spree::Role.default_admin_role(s)) unless s.role_users.exists?(user: admin)',
+  // An order's locale has to be one its market offers, so the orders list can
+  // show a German-language order in the default US market. The default market
+  // comes with the store, so the fixture file does not name it.
+  `s.default_market.update!(supported_locales: s.default_market.supported_locales_list | ['de']) unless s.default_market.supported_locales_list.include?('de')`,
   // The deploy key: write_all so every section of the fixture file can be
   // written, printed once and never persisted anywhere else.
   'deploy_key = s.api_keys.create!(name: "e2e configurator", key_type: "secret", scopes: ["write_all"])',
@@ -260,7 +264,6 @@ export default async function globalSetup() {
       '',
     ].join('\n'),
   )
-
 
   const { config } = loadConfig(STORE_CONFIG)
   assertFixturesDeclared(config)

@@ -66,11 +66,14 @@ sellers:
 products:
   # Promotion rule/action editor specs pick this product; it is stocked at
   # the default warehouse so draft orders can add it without the
-  # "Quantity not available" validation kicking in.
+  # "Quantity not available" validation kicking in, and sold on the default
+  # channel so the new-order item search, which lists only what the order's
+  # channel sells, offers it.
   - slug: e2e-promo-product
     name: E2E Promo Product
     status: active
     categories: [e2e-promo-category]
+    channels: [online]
     sku: E2E-PROMO
     prices: { USD: 19.99 }
     stock: { Shop location: 100 }
