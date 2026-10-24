@@ -1,4 +1,4 @@
-import type { DigitalAsset, DigitalAssetProviderSettingField, Variant } from '@spree/admin-sdk'
+import type { DigitalAssetProviderSettingField } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -17,13 +17,16 @@ import {
 } from '@spree/dashboard-ui'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useUpdateDigitalAsset } from '../../../hooks/use-digital-assets'
+import type { PanelDigitalAsset } from '../api-client'
+import { variantLabel } from './assignable-variants'
+import type { PanelVariant } from './product-types'
 import { ProviderSettingsFields } from './provider-settings-fields'
+import { useUpdateDigitalAsset } from './use-digital-assets'
 
 interface Props {
   productId: string
-  asset: DigitalAsset | null
-  variants?: Variant[]
+  asset: PanelDigitalAsset | null
+  variants?: PanelVariant[]
   /** Fields for a provider-backed asset; empty for an uploaded file. */
   settingsSchema?: DigitalAssetProviderSettingField[]
   open: boolean
@@ -123,16 +126,18 @@ export function DigitalAssetEditSheet({
               <Select value={variantId} onValueChange={setVariantId}>
                 <SelectTrigger id="digital-asset-variant">
                   <SelectValue>
-                    {(value) =>
-                      variants?.find((v) => v.id === value)?.options_text ??
-                      t('admin.digital_assets.all_variants')
-                    }
+                    {(value) => {
+                      const variant = variants?.find((v) => v.id === value)
+                      return variant
+                        ? variantLabel(variant)
+                        : t('admin.digital_assets.all_variants')
+                    }}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {variants?.map((variant) => (
                     <SelectItem key={variant.id} value={variant.id}>
-                      {variant.options_text || variant.sku}
+                      {variantLabel(variant)}
                     </SelectItem>
                   ))}
                 </SelectContent>

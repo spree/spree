@@ -936,35 +936,6 @@
       "to_placeholder": "Bis",
       "toggle_states": "Bundesländer von {{country}} anzeigen"
     },
-    "digital_assets": {
-      "add": "Hinzufügen",
-      "all_variants": "Alle Varianten",
-      "columns": {
-        "file": "Datei",
-        "variant": "Variante",
-        "size": "Größe",
-        "downloads": "Downloads",
-        "days": "Tage"
-      },
-      "delete_description": "„{{name}}“ kann von niemandem mehr heruntergeladen werden, der sie gekauft hat. Dies wirkt sofort.",
-      "delete_title": "Diese Datei löschen?",
-      "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen Produkt, um eine Anleitung oder Garantie mitzuliefern.",
-      "download": "Herunterladen",
-      "drop_hint": "Dateien hierher ziehen und ablegen oder zum Durchsuchen klicken",
-      "empty": "Noch keine Dateien",
-      "limit_invalid": "Limits müssen ganze Zahlen ab 1 sein oder leer bleiben.",
-      "limits_help": "Lassen Sie die Download- und Tageslimits leer, um die Einstellungen des Shops zu verwenden.",
-      "source": {
-        "upload": "Datei hochladen"
-      },
-      "store_default": "{{count}} (Shop-Standard)",
-      "title": "Digitale Dateien",
-      "untitled": "Unbenannte Datei",
-      "upload": "Datei hinzufügen",
-      "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
-      "uploading": "{{name}} wird hochgeladen…",
-      "uploading_short": "Wird hochgeladen…"
-    },
     "digital_links": {
       "columns": {
         "file": "Datei",
@@ -2327,15 +2298,9 @@
           "help": "Aus bedeutet, dass Käufer beliebig oft herunterladen können.",
           "label": "Anzahl der Downloads begrenzen"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "Erlaubte Downloads"
-        },
         "limit_digital_download_days": {
           "help": "Aus bedeutet, dass Download-Links nie ablaufen.",
           "label": "Download-Zeitraum begrenzen"
-        },
-        "digital_asset_authorized_days": {
-          "label": "Verfügbare Tage"
         },
         "default_package_dimensions": {
           "height": "Höhe",
@@ -2355,6 +2320,28 @@
         "auto_approve_seller_products": {
           "label": "Produkte von Verkäufern automatisch veröffentlichen",
           "help": "Das Produkt eines Verkäufers ist sofort nach dem Einreichen im Verkauf, ohne dass es jemand prüft."
+        },
+        "seller_digital_assets_enabled": {
+          "label": "Verkäufern das Hochladen digitaler Dateien erlauben",
+          "help": "Verkäufer hängen herunterladbare Dateien an ihre eigenen Produkte an und legen Download-Limits fest. Ausgeschaltet können nur Sie Dateien hinzufügen, und Verkäufer sehen die von Ihnen hinzugefügten."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Zulässige Dateitypen für Verkäufer",
+          "help": "Wählen Sie die Formate, die Verkäufer hochladen dürfen, oder geben Sie einen Inhaltstyp wie application/pdf ein und drücken Sie die Eingabetaste. Eine ganze Familie wie audio/* ist ebenfalls zulässig. Geprüft anhand der eigenen Signatur der Datei, wo sie eine hat, nicht anhand ihres Namens. Ihre eigenen Uploads sind nicht eingeschränkt.",
+          "placeholder": "Formate suchen oder Inhaltstyp eingeben…",
+          "invalid": "Jeder Eintrag muss ein Inhaltstyp wie application/pdf sein.",
+          "empty_hint": "Kein passendes Format. Geben Sie einen Inhaltstyp wie application/pdf ein und drücken Sie die Eingabetaste, um ihn hinzuzufügen.",
+          "add_option": "{{type}} hinzufügen",
+          "families": {
+            "audio": "Alle Audiodateien · audio/*",
+            "video": "Alle Videodateien · video/*",
+            "image": "Alle Bilddateien · image/*",
+            "text": "Alle Textdateien · text/*"
+          }
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Dateiänderungen an bereits verkauften Produkten prüfen",
+          "help": "Fügt ein Verkäufer einem freigegebenen Produkt eine Datei hinzu oder ersetzt sie, geht das Produkt zurück in die Prüfung und aus dem Verkauf, bis Sie es erneut freigeben. Ohne Wirkung, wenn Verkäuferprodukte automatisch veröffentlicht werden."
         },
         "send_seller_transactional_emails": {
           "label": "E-Mails an Verkäufer senden",
@@ -4346,6 +4333,8 @@
           "payouts_description": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt. Ein Verkäufer kann stattdessen einen eigenen Rhythmus und Mindestbetrag haben.",
           "admission_title": "Verkäuferfreigabe",
           "admission_description": "Wenn Sie eine dieser Optionen aktivieren, entfällt eine menschliche Entscheidung. Für einen Marktplatz nur auf Einladung in Ordnung, für einen offenen riskant.",
+          "seller_files_title": "Dateien von Verkäufern",
+          "seller_files_description": "Ob Verkäufer herunterladbare Dateien an ihre Produkte anhängen dürfen, welche Arten, und ob eine Dateiänderung an einem freigegebenen Produkt erneut geprüft wird.",
           "communication_title": "Kommunikation",
           "commission_tax_title": "Steuer auf Provision"
         },

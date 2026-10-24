@@ -15,7 +15,12 @@ import type { PackageTypeKind, PickupStockPolicy } from '@spree/core'
  * promise the seller panel methods its API does not have.
  */
 
-import type { PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
+import type {
+  DigitalAssetProvider,
+  PaginationMeta,
+  PermissionRule,
+  UploadFileOptions,
+} from '@spree/admin-sdk'
 import type { CountryCode, DimensionUnit, WeightUnit } from '@spree/core'
 
 /** What a panel may change on the signed-in person's own account. */
@@ -229,6 +234,29 @@ export interface PanelApiClient {
   }
   /** Removing a file already on a product. */
   deleteProductMedia?(productId: string, mediaId: string): Promise<void>
+  /**
+   * The downloadable files a digital product delivers to its buyers.
+   *
+   * Registered rather than imported for the same reason as everything else
+   * here: the Digital files card is one component serving both panels.
+   * `providers` is operator-only — a provider is the marketplace's own code
+   * reaching into its internal systems — so a seller's client leaves it out
+   * and the card offers file uploads alone.
+   */
+  digitalAssets?: {
+    list(
+      productId: string,
+      params?: { page?: number; limit?: number },
+    ): Promise<{ data: PanelDigitalAsset[]; meta?: PaginationMeta }>
+    create(productId: string, params: PanelDigitalAssetParams): Promise<PanelDigitalAsset>
+    update(
+      productId: string,
+      id: string,
+      params: PanelDigitalAssetParams,
+    ): Promise<PanelDigitalAsset>
+    delete(productId: string, id: string): Promise<void>
+    providers?(productId: string): Promise<{ data: DigitalAssetProvider[] }>
+  }
   /**
    * The store-wide media library, for placing a file already uploaded onto
    * another product. Operator-only: a seller sees their own product's files,
@@ -495,6 +523,42 @@ export interface PanelExport {
   done: boolean
   download_url?: string | null
   filename?: string | null
+}
+
+/**
+ * A downloadable file, as the Digital files card reads it. Structural, like
+ * the other records here: both serializers carry these fields, and only the
+ * operator's adds `provider_settings`.
+ */
+export interface PanelDigitalAsset {
+  id: string
+  variant_id: string | null
+  filename: string | null
+  content_type: string | null
+  byte_size: number | null
+  /** Null means the store's download settings apply. */
+  authorized_clicks: number | null
+  authorized_days: number | null
+  /** The limits in force, after the store-settings fallback. */
+  effective_authorized_clicks: number
+  effective_authorized_days: number
+  provider_type: string | null
+  provider_name: string
+  download_url: string | null
+  provider_settings?: Record<string, unknown>
+}
+
+/**
+ * What either panel writes. The provider fields are the operator's alone; a
+ * seller's API refuses them.
+ */
+export interface PanelDigitalAssetParams {
+  signed_id?: string
+  variant_id?: string
+  authorized_clicks?: number | null
+  authorized_days?: number | null
+  provider_type?: string
+  provider_settings?: Record<string, unknown>
 }
 
 /** A library file, as the picker lists it. */

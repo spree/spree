@@ -154,9 +154,14 @@ module Spree
 
         def self.preference_type_hint(schema, name)
           types = Array(schema['type'])
-          hint = TYPELIZER_TYPES.fetch((types - ['null']).first, :unknown)
           options = {}
           options[:nullable] = true if types.include?('null')
+          if types.include?('array')
+            hint = TYPELIZER_TYPES.fetch(Array(schema.dig('items', 'type')).first, :unknown)
+            options[:multi] = true
+          else
+            hint = TYPELIZER_TYPES.fetch((types - ['null']).first, :unknown)
+          end
           if schema['enum']
             options[:enum] = schema['enum'].compact
             options[:enum_type_name] = PREFERENCE_LIST_NAMES[name.to_sym] if PREFERENCE_LIST_NAMES.key?(name.to_sym)

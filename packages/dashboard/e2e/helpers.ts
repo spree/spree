@@ -227,6 +227,28 @@ export function getCredentials(): E2ECredentials {
 }
 
 /**
+ * An Admin API session without opening the dashboard, for a spec that only
+ * needs `adminRequest` — a seller panel spec arranging a store setting, say.
+ */
+export async function adminApiSession(
+  page: Page,
+  account?: { email: string; password: string },
+): Promise<E2ELoginSession> {
+  const creds = getCredentials()
+  const res = await page.request.post('/api/v3/admin/auth/login', {
+    data: account ?? { email: creds.admin_email, password: creds.admin_password },
+  })
+  if (!res.ok()) {
+    throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
+  }
+  const { token: accessToken } = (await res.json()) as { token: string }
+  if (!accessToken) {
+    throw new Error('API login response missing token')
+  }
+  return { ...creds, accessToken }
+}
+
+/**
  * Establish an authenticated admin session as a precondition for any spec
  * that needs one. Returns the credentials so callers can immediately
  * navigate into a specific store (e.g. `/${creds.store_id}/products/options`).
@@ -245,17 +267,7 @@ export async function login(
   page: Page,
   account?: { email: string; password: string },
 ): Promise<E2ELoginSession> {
-  const creds = getCredentials()
-  const res = await page.request.post('/api/v3/admin/auth/login', {
-    data: account ?? { email: creds.admin_email, password: creds.admin_password },
-  })
-  if (!res.ok()) {
-    throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
-  }
-  const { token: accessToken } = (await res.json()) as { token: string }
-  if (!accessToken) {
-    throw new Error('API login response missing token')
-  }
+  const session = await adminApiSession(page, account)
   await page.goto('/')
   // Wait for the authenticated redirect to the store-scoped home — not just
   // "left /login", which is trivially true at `/` while the boot refresh is
@@ -264,8 +276,8 @@ export async function login(
   // loser of that race gets a 401 that clears the cookie and bounces the
   // page to /login. The redirect only fires after auth init settles, so it
   // doubles as the refresh-complete barrier.
-  await expect(page).toHaveURL(new RegExp(`/${creds.store_id}`), { timeout: 15_000 })
-  return { ...creds, accessToken }
+  await expect(page).toHaveURL(new RegExp(`/${session.store_id}`), { timeout: 15_000 })
+  return session
 }
 
 /**

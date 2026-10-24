@@ -822,6 +822,11 @@ en:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
     digital_assets_attachment_must_be_private: Upload the file to private storage before attaching it
+    digital_assets_content_type_list_invalid: 'Not a content type: %{types}. Use the type/subtype form, such as application/pdf'
+    digital_assets_content_type_not_accepted: "%{content_type} files are not accepted on this marketplace"
+    digital_assets_provider_takes_no_file: This file is delivered by the marketplace's own system, so a replacement file cannot be uploaded
+    digital_assets_sellers_disabled: This marketplace does not let sellers add or change digital files
+    digital_assets_upload_not_found: The uploaded file could not be found. Upload it again
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     display_delivery_range: Delivery in %{delivery_range} business days

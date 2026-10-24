@@ -954,35 +954,6 @@
       "to_placeholder": "Do",
       "toggle_states": "Pokaż regiony kraju {{country}}"
     },
-    "digital_assets": {
-      "add": "Dodaj",
-      "all_variants": "Wszystkie warianty",
-      "columns": {
-        "file": "Plik",
-        "variant": "Wariant",
-        "size": "Rozmiar",
-        "downloads": "Pobrania",
-        "days": "Dni"
-      },
-      "delete_description": "„{{name}}” nie będzie już dostępny do pobrania dla osób, które go kupiły. Zmiana działa natychmiast.",
-      "delete_title": "Usunąć ten plik?",
-      "description": "Pliki, które kupujący mogą pobrać po zakupie. Dołącz je do produktu cyfrowego lub do fizycznego, aby dostarczyć instrukcję albo gwarancję.",
-      "download": "Pobierz",
-      "drop_hint": "Przeciągnij i upuść pliki tutaj lub kliknij, aby wybrać",
-      "empty": "Brak plików",
-      "limit_invalid": "Limity muszą być liczbami całkowitymi od 1 lub puste.",
-      "limits_help": "Pozostaw limity pobrań i dni puste, aby użyć ustawień sklepu.",
-      "source": {
-        "upload": "Prześlij plik"
-      },
-      "store_default": "{{count}} (domyślne sklepu)",
-      "title": "Pliki cyfrowe",
-      "untitled": "Plik bez nazwy",
-      "upload": "Dodaj plik",
-      "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
-      "uploading": "Przesyłanie {{name}}…",
-      "uploading_short": "Przesyłanie…"
-    },
     "digital_links": {
       "columns": {
         "file": "Plik",
@@ -2345,15 +2316,9 @@
           "help": "Wyłączone oznacza, że kupujący mogą pobierać dowolną liczbę razy.",
           "label": "Ogranicz liczbę pobrań"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "Dozwolone pobrania"
-        },
         "limit_digital_download_days": {
           "help": "Wyłączone oznacza, że linki do pobrania nigdy nie wygasają.",
           "label": "Ogranicz okres pobierania"
-        },
-        "digital_asset_authorized_days": {
-          "label": "Dostępne dni"
         },
         "default_package_dimensions": {
           "height": "Wysokość",
@@ -2373,6 +2338,28 @@
         "auto_approve_seller_products": {
           "label": "Publikuj produkty sprzedawców automatycznie",
           "help": "Produkt sprzedawcy trafia do sprzedaży zaraz po zgłoszeniu, bez weryfikacji przez nikogo."
+        },
+        "seller_digital_assets_enabled": {
+          "label": "Pozwól sprzedawcom przesyłać pliki cyfrowe",
+          "help": "Sprzedawcy dołączają pliki do pobrania do własnych produktów i ustawiają limity pobrań. Gdy wyłączone, tylko Ty możesz dodawać pliki, a sprzedawcy widzą te, które dodałeś."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Akceptowane typy plików dla sprzedawców",
+          "help": "Wybierz formaty, które sprzedawcy mogą przesyłać, albo wpisz typ zawartości, na przykład application/pdf, i naciśnij Enter. Można też podać całą rodzinę, na przykład audio/*. Sprawdzane na podstawie własnej sygnatury pliku, gdy ją ma, a nie jego nazwy. Twoje własne pliki nie podlegają ograniczeniom.",
+          "placeholder": "Szukaj formatu lub wpisz typ zawartości…",
+          "invalid": "Każda pozycja musi być typem zawartości, na przykład application/pdf.",
+          "empty_hint": "Brak pasującego formatu. Wpisz typ zawartości, na przykład application/pdf, i naciśnij Enter, aby go dodać.",
+          "add_option": "Dodaj {{type}}",
+          "families": {
+            "audio": "Dowolny plik audio · audio/*",
+            "video": "Dowolny plik wideo · video/*",
+            "image": "Dowolny plik graficzny · image/*",
+            "text": "Dowolny plik tekstowy · text/*"
+          }
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Weryfikuj zmiany plików w produktach już w sprzedaży",
+          "help": "Gdy sprzedawca doda lub zastąpi plik w zatwierdzonym produkcie, produkt wraca do weryfikacji i znika ze sprzedaży do ponownego zatwierdzenia. Nie działa, gdy produkty sprzedawców publikują się automatycznie."
         },
         "send_seller_transactional_emails": {
           "label": "Wysyłaj e-maile do sprzedawców",
@@ -4402,6 +4389,8 @@
           "payouts_description": "Jak i kiedy ten marketplace płaci swoim sprzedawcom. Sprzedawca może mieć własny harmonogram i własną kwotę minimalną.",
           "admission_title": "Zatwierdzanie sprzedawców",
           "admission_description": "Włączenie którejkolwiek z tych opcji usuwa decyzję człowieka. To w porządku na marketplace tylko na zaproszenie, ale ryzykowne tam, gdzie dołączyć może każdy.",
+          "seller_files_title": "Pliki sprzedawców",
+          "seller_files_description": "Czy sprzedawcy mogą dołączać pliki do pobrania do swoich produktów, jakiego rodzaju, i czy zmiana pliku w zatwierdzonym produkcie wymaga ponownej weryfikacji.",
           "communication_title": "Komunikacja",
           "commission_tax_title": "Podatek od prowizji"
         },

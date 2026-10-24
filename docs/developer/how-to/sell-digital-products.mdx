@@ -56,6 +56,45 @@ await adminClient.products.digitalAssets.create('prod_86Rf07xd4z', { signed_id }
 
 Leave `authorized_clicks` and `authorized_days` off to inherit the store's download limits, or set them per file to mix evergreen downloads with time-limited ones. See [the allowance](/developer/core-concepts/products#downloading-and-the-allowance) for how the limits resolve.
 
+### On a marketplace
+
+A [seller](/developer/core-concepts/sellers) attaches files to their own products the same way, from the **Digital files** card on the product page in their seller panel, or through the Seller API. They can upload, replace and delete files and set per-file download limits. A product belonging to another seller answers `404`.
+
+Sellers upload files only. A [custom digital asset provider](/developer/how-to/custom-digital-asset-provider) is your own integration, so sellers cannot pick one. A file you attached with a provider still appears on the seller's product, without its provider settings, and the seller cannot replace it.
+
+Seller uploads are **off until you turn them on**, under Settings → Marketplace → Seller files, because a file a buyer downloads under your name is one you vouch for. Three settings shape them:
+
+- **Let sellers upload digital files** (`seller_digital_assets_enabled`). Off, the seller panel shows the files you attached and nothing else.
+- **Accepted file types for sellers** (`seller_digital_asset_content_types`). Checked against the file's own signature where it has one, not its name, so a renamed executable does not pass as a PDF; a format with no signature, such as plain text, is taken at the type the upload declared. An entry names one type, or a whole family with `*` as the subtype (`audio/*`). The default covers documents, ebooks, archives, audio, video, images and plain text; add `application/octet-stream` only if your sellers trade in a format nothing recognises, since it admits anything unknown. Your own uploads are never restricted.
+- **Review file changes on products already on sale** (`review_seller_digital_asset_changes`, on by default). A seller adding or replacing a file on an approved product sends it back to [review](/developer/core-concepts/products#submitting-as-a-seller) and off sale until you approve it again; the new submission says why. Changing download limits does not. The setting does nothing when seller products publish automatically.
+
+<Warning>
+None of this inspects a file for malware. The accepted type list is a policy, and ZIP is on it. To scan what sellers upload, register a handler on the `digital_assets.create.validate` hook, which fires with the file already in storage and can refuse it, or on `after_create` to queue a slower scan. The same hooks see the operator's uploads and files nested in a product write. See [Workflows → hooks](/developer/customization/workflows#extending-a-workflow-with-hooks).
+</Warning>
+
+<Tabs>
+  <Tab title="Seller SDK">
+    ```typescript
+    const { signed_id } = await sellerClient.files.upload(file, { visibility: 'private' })
+
+    await sellerClient.products.digitalAssets.create('prod_86Rf07xd4z', {
+      signed_id,
+      authorized_clicks: 5,
+      authorized_days: 30,
+    })
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X POST https://your-store.com/api/v3/seller/products/prod_86Rf07xd4z/digital_assets \
+      -H "Authorization: Bearer <seller_jwt>" \
+      -H "X-Spree-Seller-Id: sel_UkLWZg9DAJ" \
+      -H "Content-Type: application/json" \
+      -d '{ "signed_id": "<signed_id>", "authorized_clicks": 5, "authorized_days": 30 }'
+    ```
+  </Tab>
+</Tabs>
+
 <Tip>
 You can attach a file to a **physical** variant too — a manual or warranty PDF that ships alongside the goods. Carrying files and being digital are independent: the physical variant still needs an address, and it also grants a download link.
 </Tip>

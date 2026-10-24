@@ -936,35 +936,6 @@
       "to_placeholder": "À",
       "toggle_states": "Afficher les régions de {{country}}"
     },
-    "digital_assets": {
-      "add": "Ajouter",
-      "all_variants": "Toutes les variantes",
-      "columns": {
-        "file": "Fichier",
-        "variant": "Variante",
-        "size": "Taille",
-        "downloads": "Téléchargements",
-        "days": "Jours"
-      },
-      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
-      "delete_title": "Supprimer ce fichier ?",
-      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
-      "download": "Télécharger",
-      "drop_hint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
-      "empty": "Aucun fichier pour le moment",
-      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
-      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
-      "source": {
-        "upload": "Téléverser un fichier"
-      },
-      "store_default": "{{count}} (par défaut)",
-      "title": "Fichiers numériques",
-      "untitled": "Fichier sans nom",
-      "upload": "Ajouter un fichier",
-      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
-      "uploading": "Téléversement de {{name}}…",
-      "uploading_short": "Téléversement…"
-    },
     "digital_links": {
       "columns": {
         "file": "Fichier",
@@ -2327,15 +2298,9 @@
           "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
           "label": "Limiter le nombre de téléchargements"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "Téléchargements autorisés"
-        },
         "limit_digital_download_days": {
           "help": "Désactivé, les liens de téléchargement n'expirent jamais.",
           "label": "Limiter la période de téléchargement"
-        },
-        "digital_asset_authorized_days": {
-          "label": "Jours de disponibilité"
         },
         "default_package_dimensions": {
           "height": "Hauteur",
@@ -2355,6 +2320,28 @@
         "auto_approve_seller_products": {
           "label": "Publier les produits des vendeurs automatiquement",
           "help": "Le produit d’un vendeur est mis en vente dès qu’il le soumet, sans que personne ne l’examine."
+        },
+        "seller_digital_assets_enabled": {
+          "label": "Autoriser les vendeurs à téléverser des fichiers numériques",
+          "help": "Les vendeurs joignent des fichiers téléchargeables à leurs propres produits et en fixent les limites de téléchargement. Désactivé, vous seul pouvez ajouter des fichiers, et les vendeurs voient ceux que vous avez ajoutés."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Types de fichiers acceptés pour les vendeurs",
+          "help": "Choisissez les formats que les vendeurs peuvent téléverser, ou saisissez un type de contenu tel que application/pdf et appuyez sur Entrée. Une famille entière comme audio/* est aussi acceptée. Vérifié d’après la signature propre du fichier quand il en a une, pas son nom. Vos propres téléversements ne sont pas restreints.",
+          "placeholder": "Rechercher un format ou saisir un type de contenu…",
+          "invalid": "Chaque entrée doit être un type de contenu tel que application/pdf.",
+          "empty_hint": "Aucun format correspondant. Saisissez un type de contenu tel que application/pdf et appuyez sur Entrée pour l’ajouter.",
+          "add_option": "Ajouter {{type}}",
+          "families": {
+            "audio": "Tout fichier audio · audio/*",
+            "video": "Tout fichier vidéo · video/*",
+            "image": "Tout fichier image · image/*",
+            "text": "Tout fichier texte · text/*"
+          }
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Réexaminer les changements de fichiers sur les produits déjà en vente",
+          "help": "Quand un vendeur ajoute ou remplace un fichier sur un produit approuvé, celui-ci repasse en révision et sort de la vente jusqu’à ce que vous l’approuviez de nouveau. Sans effet quand les produits des vendeurs sont publiés automatiquement."
         },
         "send_seller_transactional_emails": {
           "label": "Envoyer des e-mails aux vendeurs",
@@ -4347,6 +4334,8 @@
           "payouts_description": "Comment et quand cette marketplace paie ses vendeurs. Un vendeur peut avoir sa propre fréquence et son propre minimum.",
           "admission_title": "Validation des vendeurs",
           "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",
+          "seller_files_title": "Fichiers des vendeurs",
+          "seller_files_description": "Si les vendeurs peuvent joindre des fichiers téléchargeables à leurs produits, de quels types, et si changer un fichier sur un produit approuvé demande un nouvel examen.",
           "communication_title": "Communication",
           "commission_tax_title": "Taxe sur la commission"
         },

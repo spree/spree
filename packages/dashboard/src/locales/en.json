@@ -936,35 +936,6 @@
       "to_placeholder": "To",
       "toggle_states": "Show states of {{country}}"
     },
-    "digital_assets": {
-      "add": "Add",
-      "all_variants": "All variants",
-      "columns": {
-        "file": "File",
-        "variant": "Variant",
-        "size": "Size",
-        "downloads": "Downloads",
-        "days": "Days"
-      },
-      "delete_description": "\"{{name}}\" will no longer be downloadable by anyone who bought it. This takes effect immediately.",
-      "delete_title": "Delete this file?",
-      "description": "Files buyers can download after purchase. Attach them to a digital product, or to a physical one to deliver a manual or warranty alongside the goods.",
-      "download": "Download",
-      "drop_hint": "Drag & drop files here, or click to browse",
-      "empty": "No files yet",
-      "limit_invalid": "Limits must be whole numbers of 1 or more, or blank.",
-      "limits_help": "Leave the download and day limits blank to use the store's settings.",
-      "source": {
-        "upload": "Upload a file"
-      },
-      "store_default": "{{count}} (store default)",
-      "title": "Digital files",
-      "untitled": "Untitled file",
-      "upload": "Add file",
-      "upload_failed": "Failed to upload {{name}}: {{message}}",
-      "uploading": "Uploading {{name}}…",
-      "uploading_short": "Uploading…"
-    },
     "digital_links": {
       "columns": {
         "file": "File",
@@ -2327,15 +2298,9 @@
           "help": "Off means buyers can download as often as they like.",
           "label": "Limit number of downloads"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "Downloads allowed"
-        },
         "limit_digital_download_days": {
           "help": "Off means download links never expire.",
           "label": "Limit download period"
-        },
-        "digital_asset_authorized_days": {
-          "label": "Days available"
         },
         "default_package_dimensions": {
           "height": "Height",
@@ -2355,6 +2320,28 @@
         "auto_approve_seller_products": {
           "label": "Publish seller products automatically",
           "help": "A seller’s product goes on sale the moment they submit it, without anyone reviewing it."
+        },
+        "seller_digital_assets_enabled": {
+          "label": "Let sellers upload digital files",
+          "help": "Sellers attach downloadable files to their own products and set download limits on them. Off, only you can add files, and sellers see the ones you added."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Accepted file types for sellers",
+          "help": "Pick the formats sellers may upload, or type a content type such as application/pdf and press Enter. A whole family such as audio/* is also accepted. Checked against the file’s own signature where it has one, not its name. Your own uploads are not restricted.",
+          "placeholder": "Search formats or type a content type…",
+          "invalid": "Each entry must be a content type such as application/pdf.",
+          "empty_hint": "No matching format. Type a content type such as application/pdf and press Enter to add it.",
+          "add_option": "Add {{type}}",
+          "families": {
+            "audio": "Any audio file · audio/*",
+            "video": "Any video file · video/*",
+            "image": "Any image file · image/*",
+            "text": "Any text file · text/*"
+          }
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Review file changes on products already on sale",
+          "help": "When a seller adds or replaces a file on an approved product, it goes back to review and off sale until you approve it again. Does nothing when seller products publish automatically."
         },
         "send_seller_transactional_emails": {
           "label": "Email sellers",
@@ -4346,6 +4333,8 @@
           "payouts_description": "How and when this marketplace pays its sellers. A seller can carry their own schedule and minimum instead.",
           "admission_title": "Seller admission",
           "admission_description": "Turning either of these on removes a human decision. Fine for an invite-only marketplace where you already know every seller; risky for one anyone can join.",
+          "seller_files_title": "Seller files",
+          "seller_files_description": "Whether sellers may attach downloadable files to their products, which kinds, and whether changing a file on an approved product needs another look.",
           "communication_title": "Communication",
           "commission_tax_title": "Commission tax"
         },

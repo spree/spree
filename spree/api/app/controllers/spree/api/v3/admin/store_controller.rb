@@ -65,6 +65,13 @@ module Spree
               description: 'Admits a seller as soon as they finish onboarding, with no operator review.'
             body.attribute :auto_approve_seller_products, :boolean,
               description: 'Puts a seller product on sale the moment it is submitted, with no review.'
+            body.attribute :seller_digital_assets_enabled, :boolean,
+              description: 'Lets sellers attach downloadable files to their own products.'
+            body.attribute :seller_digital_asset_content_types, :array, of: :string,
+              example: %w[application/pdf application/zip],
+              description: "The content types a seller's file may have, checked against the file's own signature where it has one. An entry names one type or, with `*` as the subtype, a whole family. The operator's own uploads are not restricted."
+            body.attribute :review_seller_digital_asset_changes, :boolean,
+              description: 'Sends a seller product already on sale back to review when the seller adds or replaces a file on it.'
             body.attribute :send_seller_transactional_emails, :boolean,
               description: 'When false, transactional seller emails (approval, payouts and so on) are not sent.'
             body.attribute :default_commission_tax_rate, :decimal,

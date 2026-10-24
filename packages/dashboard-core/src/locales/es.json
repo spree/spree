@@ -976,6 +976,14 @@
       "order_multiple": {
         "label": "Múltiplo de pedido",
         "help": "Cada escalón por encima del mínimo. Dejalo en blanco para cualquier cantidad."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Descargas permitidas"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Días disponibles"
+        }
       }
     },
     "products": {
@@ -2047,6 +2055,38 @@
     },
     "media_library": {
       "download": "Descargar"
+    },
+    "digital_assets": {
+      "add": "Agregar",
+      "all_variants": "Todas las variantes",
+      "columns": {
+        "file": "Archivo",
+        "variant": "Variante",
+        "size": "Tamaño",
+        "downloads": "Descargas",
+        "days": "Días"
+      },
+      "delete_description": "«{{name}}» ya no será descargable por nadie que lo haya comprado. Se aplica de inmediato.",
+      "delete_title": "¿Eliminar este archivo?",
+      "description": "Archivos que los compradores pueden descargar después de comprar. Adjuntalos a un producto digital, o a uno físico para entregar un manual o una garantía junto con la mercadería.",
+      "download": "Descargar",
+      "drop_hint": "Arrastrá y soltá los archivos acá, o hacé clic para explorar",
+      "empty": "Todavía no hay archivos",
+      "limit_invalid": "Los límites deben ser números enteros de 1 o más, o estar en blanco.",
+      "limits_help": "Dejá los límites de descarga y de días en blanco para usar la config de la tienda.",
+      "source": {
+        "upload": "Subir un archivo"
+      },
+      "store_default": "{{count}} (predeterminado de la tienda)",
+      "title": "Archivos digitales",
+      "untitled": "Archivo sin título",
+      "upload": "Agregar archivo",
+      "upload_failed": "No se pudo subir {{name}}: {{message}}",
+      "uploading": "Subiendo {{name}}…",
+      "uploading_short": "Subiendo…",
+      "replace": "Reemplazar archivo",
+      "replace_description": "\"{{name}}\" se elimina y todos los compradores descargan el archivo nuevo desde sus enlaces existentes. Tiene efecto inmediato.",
+      "replace_title": "¿Reemplazar este archivo?"
     }
   }
 }

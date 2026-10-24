@@ -78,6 +78,22 @@ module Spree
     # same reason as auto_approve_sellers: what the marketplace lists is what
     # it vouches for.
     preference :auto_approve_seller_products, :boolean, default: false
+    # Let sellers attach downloadable files to their own products. Off for the
+    # same reason again: a file a buyer downloads under the marketplace's name
+    # is something the marketplace vouches for, and that should be a choice.
+    preference :seller_digital_assets_enabled, :boolean, default: false
+    # What a seller's file may be, checked against the file's own signature
+    # rather than its name. An entry names one type or, with `*` as the
+    # subtype, a whole family. The operator's own uploads are not restricted.
+    preference :seller_digital_asset_content_types, :array, of: :string,
+                                                            default: Spree::DigitalAsset::DEFAULT_SELLER_CONTENT_TYPES
+    # A typo here would refuse every seller upload with a message about the
+    # file, so the list is checked for the type/subtype shape when written.
+    validate :seller_digital_asset_content_types_are_media_types
+    # A file added to or replaced on a seller's product already on sale sends
+    # the product back to review, so an approved listing cannot change what it
+    # delivers without anyone looking. Moot when seller products auto-approve.
+    preference :review_seller_digital_asset_changes, :boolean, default: true
     # Who pays this store's sellers. Blank means core's record-only provider,
     # so a marketplace that has connected nothing still keeps a correct ledger
     # and settles by hand.
@@ -157,6 +173,8 @@ module Spree
     # B2B store collects it from everyone, a mixed store only offers it.
     preference :address_requires_company, :boolean, default: false
     preference :address_requires_phone, :boolean, default: false
+    MEDIA_TYPE_FORMAT = %r{\A[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+*-]*\z}i
+
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true
@@ -186,7 +204,8 @@ module Spree
                         :pricing_provider, :inventory_provider, :pricing_provider_failure_policy,
                         :inventory_provider_failure_policy, :payout_provider, :default_payouts_schedule_interval,
                         :default_minimum_payout_amount, :auto_approve_sellers, :auto_approve_seller_products,
-                        :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
+                        :seller_digital_assets_enabled, :seller_digital_asset_content_types,
+                        :review_seller_digital_asset_changes, :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
                         :order_number_prefix, :order_number_suffix, :order_number_sequence_start,
                         :limit_digital_download_count, :digital_asset_authorized_clicks,
                         :limit_digital_download_days, :digital_asset_authorized_days,
@@ -832,6 +851,14 @@ module Spree
       return unless Spree::NumberSequence.started?(store: self)
 
       errors.add(:preferred_order_number_sequence_start, :locked_after_first_number)
+    end
+
+    def seller_digital_asset_content_types_are_media_types
+      bad = Array(preferred_seller_digital_asset_content_types).reject { |type| type.to_s.match?(MEDIA_TYPE_FORMAT) }
+      return if bad.empty?
+
+      errors.add(:preferred_seller_digital_asset_content_types, :invalid,
+                 message: I18n.t('spree.digital_assets_content_type_list_invalid', types: bad.join(', ')))
     end
   end
 end

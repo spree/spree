@@ -3,6 +3,7 @@ import { type Product, SpreeError } from '@spree/admin-sdk'
 import {
   adminClient,
   CategorizationCard,
+  DigitalAssetsCard,
   extensionFormValues,
   extensionSubmitValues,
   GeneralCard,
@@ -20,6 +21,7 @@ import {
   Slot,
   StatusCard,
   TaxCard,
+  useAssignableVariants,
   VariantsCard,
   variantToWirePayload,
   withExtensionRowValues,
@@ -41,7 +43,6 @@ import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import '../../../../components/spree/custom-fields/register'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
-import { DigitalAssetsCard } from '../../../../components/spree/products/digital-assets-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
@@ -118,18 +119,8 @@ function ProductForm({ product }: { product: Product }) {
 
   const selectedProductTypeId = form.watch('product_type_id')
 
-  // Variants the MediaCard can assign uploaded images to. Only server-persisted
-  // variants have an `id` that can ride media[].variant_ids on the PATCH, so we
-  // start from `product.variants`. But the merchant may have queued one of those
-  // for deletion in the current session (matrix Trash button) — drop those by
-  // intersecting against the live form `variants` ids. Newly-added variants
-  // without a server id are unassignable until save (no id to send).
-  const liveVariants = useWatch({ control: form.control, name: 'variants' })
   const formStatus = useWatch({ control: form.control, name: 'status' }) ?? product?.status
-  const liveVariantIds = new Set(
-    (liveVariants ?? []).map((v) => v.id).filter((id): id is string => !!id),
-  )
-  const assignableVariants = (product.variants ?? []).filter((v) => liveVariantIds.has(v.id))
+  const assignableVariants = useAssignableVariants(form.control, product.variants)
 
   // Reset the form whenever the source data changes — product itself (PATCH
   // refetch) and media (separate query). Both queries invalidate on save so

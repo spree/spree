@@ -738,7 +738,8 @@
     "variant_remove_confirm_description": "It comes off the product when you save.",
     "variant_remove_confirm_title": "Remove this variant?",
     "variants": "Variants",
-    "variants_empty": "This product is sold as one item, at the price above. Add a variant to sell it in options such as size or colour."
+    "variants_empty": "This product is sold as one item, at the price above. Add a variant to sell it in options such as size or colour.",
+    "digital_files_review_notice": "Adding or replacing a file sends this product back to review, and it is off sale until the marketplace approves it again."
   },
   "profile": {
     "about": "About",

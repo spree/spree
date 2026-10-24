@@ -931,35 +931,6 @@
       "to_placeholder": "止",
       "toggle_states": "显示 {{country}} 的省/州"
     },
-    "digital_assets": {
-      "add": "添加",
-      "all_variants": "所有变体",
-      "columns": {
-        "file": "文件",
-        "variant": "变体",
-        "size": "大小",
-        "downloads": "下载次数",
-        "days": "天数"
-      },
-      "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
-      "delete_title": "删除此文件？",
-      "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
-      "download": "下载",
-      "drop_hint": "将文件拖放到此处，或点击浏览",
-      "empty": "暂无文件",
-      "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
-      "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
-      "source": {
-        "upload": "上传文件"
-      },
-      "store_default": "{{count}}（商店默认）",
-      "title": "数字文件",
-      "untitled": "未命名文件",
-      "upload": "添加文件",
-      "upload_failed": "上传 {{name}} 失败：{{message}}",
-      "uploading": "正在上传 {{name}}…",
-      "uploading_short": "上传中…"
-    },
     "digital_links": {
       "columns": {
         "file": "文件",
@@ -2322,15 +2293,9 @@
           "help": "关闭后，买家可以不限次数下载。",
           "label": "限制下载次数"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "允许的下载次数"
-        },
         "limit_digital_download_days": {
           "help": "关闭后，下载链接永不过期。",
           "label": "限制下载期限"
-        },
-        "digital_asset_authorized_days": {
-          "label": "可用天数"
         },
         "default_package_dimensions": {
           "height": "高",
@@ -2350,6 +2315,28 @@
         "auto_approve_seller_products": {
           "label": "自动发布卖家商品",
           "help": "卖家提交后商品立即上架销售，无需任何人审核。"
+        },
+        "seller_digital_assets_enabled": {
+          "label": "允许卖家上传数字文件",
+          "help": "卖家可为自己的商品附加可下载文件并设置下载限制。关闭后，只有您可以添加文件，卖家只能看到您添加的文件。"
+        },
+        "seller_digital_asset_content_types": {
+          "label": "卖家可上传的文件类型",
+          "help": "选择卖家可以上传的格式，或输入内容类型（例如 application/pdf）后按 Enter。也可以填写整个类别，例如 audio/*。按文件自身的签名（如有）判断，而非文件名。您自己的上传不受限制。",
+          "placeholder": "搜索格式或输入内容类型…",
+          "invalid": "每一项必须是一个内容类型，例如 application/pdf。",
+          "empty_hint": "没有匹配的格式。输入内容类型（例如 application/pdf）后按 Enter 添加。",
+          "add_option": "添加 {{type}}",
+          "families": {
+            "audio": "任何音频文件 · audio/*",
+            "video": "任何视频文件 · video/*",
+            "image": "任何图片文件 · image/*",
+            "text": "任何文本文件 · text/*"
+          }
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "审核在售商品的文件变更",
+          "help": "卖家在已批准的商品上添加或替换文件时，商品将重新进入审核并下架，直到您再次批准。卖家商品自动发布时此项无效。"
         },
         "send_seller_transactional_emails": {
           "label": "向卖家发送邮件",
@@ -4335,6 +4322,8 @@
           "payouts_description": "本平台如何以及何时向卖家付款。卖家也可以使用自己的付款周期和最低金额。",
           "admission_title": "卖家审核",
           "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
+          "seller_files_title": "卖家文件",
+          "seller_files_description": "卖家是否可以为商品附加可下载文件、允许哪些类型，以及在已批准商品上更改文件是否需要再次审核。",
           "communication_title": "沟通",
           "commission_tax_title": "佣金税"
         },

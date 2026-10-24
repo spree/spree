@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   CategorizationCard,
+  DigitalAssetsCard,
   extensionFormValues,
   extensionRowValues,
   extensionSubmitValues,
@@ -16,6 +17,7 @@ import {
   productFormSchema,
   productToFormValues,
   Slot,
+  useAssignableVariants,
   VariantsCard,
   variantToWirePayload,
   withExtensionRowValues,
@@ -31,6 +33,7 @@ import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { ProductStatusCard } from '../components/product-status-card'
 import { RetryableError } from '../components/retryable-error'
+import { useAccount } from '../hooks/use-account'
 
 /** Everything the form edits, in one request. */
 const PRODUCT_EXPAND = [
@@ -95,6 +98,11 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     // price or stock a new listing at all.
     defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('seller.product', null) },
   })
+
+  const assignableVariants = useAssignableVariants(form.control, product?.variants)
+  // Whether this marketplace lets sellers upload files, and of which types,
+  // comes with the account the panel already holds.
+  const marketplace = useAccount().data?.store
 
   // Reset once the record arrives, so the inputs show what was last saved
   // rather than the blank defaults the form mounted with.
@@ -242,7 +250,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
               <VariantsCard form={form} formKey="seller.product" />
               <MediaCard
                 productId={productId}
-                variants={product?.variants ?? []}
+                variants={assignableVariants}
                 form={form}
                 formKey="seller.product"
               />
@@ -253,6 +261,17 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 defaultCurrency={profile?.default_currency}
               />
               <InventoryCard form={form} />
+              <DigitalAssetsCard
+                productId={productId}
+                variants={assignableVariants}
+                readOnly={!marketplace?.seller_digital_assets_enabled}
+                accept={marketplace?.seller_digital_asset_content_types}
+                notice={
+                  product?.status === 'active' && marketplace?.review_seller_digital_asset_changes
+                    ? t('products.digital_files_review_notice')
+                    : undefined
+                }
+              />
               <Slot name="seller.product.form_main" context={{ product, mode }} />
             </>
           }

@@ -48,6 +48,18 @@ RSpec.describe 'Spree::Products review workflows' do
       expect(product.reload).to be_proposed
     end
 
+    # A listing on sale reopens review only when the caller says what changed,
+    # and the queue then shows why it is back.
+    it 'reopens review on a product on sale when told why' do
+      product.update!(status: 'active')
+
+      result = Spree.product_propose_workflow.call(product: product, reason: 'digital_asset_changed')
+
+      expect(result).to be_success
+      expect(product.reload).to be_proposed
+      expect(product.submissions.latest_first.first.metadata).to include('reason' => 'digital_asset_changed')
+    end
+
     # The store that does not review listings says so once, rather than
     # leaving an operator to approve every submission by hand.
     it 'goes straight on sale when the store approves automatically' do

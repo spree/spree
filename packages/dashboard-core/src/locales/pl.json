@@ -949,6 +949,14 @@
       "order_multiple": {
         "label": "Wielokrotność zamówienia",
         "help": "Każdy kolejny krok powyżej minimum. Pozostaw puste, aby dopuścić dowolną ilość."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Dozwolone pobrania"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Dostępne dni"
+        }
       }
     },
     "image_upload": {
@@ -2074,6 +2082,38 @@
           "description": "Sprzedawca musi podać adres do zwrotów"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Dodaj",
+      "all_variants": "Wszystkie warianty",
+      "columns": {
+        "file": "Plik",
+        "variant": "Wariant",
+        "size": "Rozmiar",
+        "downloads": "Pobrania",
+        "days": "Dni"
+      },
+      "delete_description": "„{{name}}” nie będzie już dostępny do pobrania dla osób, które go kupiły. Zmiana działa natychmiast.",
+      "delete_title": "Usunąć ten plik?",
+      "description": "Pliki, które kupujący mogą pobrać po zakupie. Dołącz je do produktu cyfrowego lub do fizycznego, aby dostarczyć instrukcję albo gwarancję.",
+      "download": "Pobierz",
+      "drop_hint": "Przeciągnij i upuść pliki tutaj lub kliknij, aby wybrać",
+      "empty": "Brak plików",
+      "limit_invalid": "Limity muszą być liczbami całkowitymi od 1 lub puste.",
+      "limits_help": "Pozostaw limity pobrań i dni puste, aby użyć ustawień sklepu.",
+      "source": {
+        "upload": "Prześlij plik"
+      },
+      "store_default": "{{count}} (domyślne sklepu)",
+      "title": "Pliki cyfrowe",
+      "untitled": "Plik bez nazwy",
+      "upload": "Dodaj plik",
+      "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
+      "uploading": "Przesyłanie {{name}}…",
+      "uploading_short": "Przesyłanie…",
+      "replace": "Zastąp plik",
+      "replace_description": "„{{name}}” zostanie usunięty, a wszyscy kupujący pobiorą nowy plik ze swoich dotychczasowych linków. Obowiązuje natychmiast.",
+      "replace_title": "Zastąpić ten plik?"
     }
   }
 }

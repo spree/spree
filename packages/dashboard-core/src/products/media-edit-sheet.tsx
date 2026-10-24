@@ -20,9 +20,9 @@ import {
   SheetTitle,
 } from '@spree/dashboard-ui'
 import { CheckIcon } from '@spree/dashboard-ui/icons'
-import i18n from 'i18next'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
+import { variantLabel } from './assignable-variants'
 import type { PanelVariant as Variant } from './product-types'
 import { useSheetSaveHandlers } from './sheet-save-handlers'
 
@@ -380,16 +380,5 @@ export function MediaEditSheet({
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
-}
-
-function variantLabel(v: Variant): string {
-  const named = v as { options_text?: string; name?: string; sku?: string | null }
-  return (
-    named.options_text ||
-    named.name ||
-    named.sku ||
-    v.id ||
-    i18n.t('admin.products.variants.variant_label')
   )
 }

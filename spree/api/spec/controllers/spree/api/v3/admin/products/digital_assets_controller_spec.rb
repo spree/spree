@@ -179,6 +179,26 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
     end
   end
 
+  # Changing a product's files is a change to the product.
+  context 'with a role that can only view products' do
+    include_context 'API v3 Admin with custom permissions'
+
+    let(:custom_permissions) { %w[read_products] }
+    let!(:digital_asset) { create(:digital_asset, variant: variant) }
+
+    it 'lists the files' do
+      get :index, params: { product_id: product.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'cannot add one' do
+      post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
   context 'with a product from another store' do
     let(:other_product) { create(:product, store: create(:store)) }
 

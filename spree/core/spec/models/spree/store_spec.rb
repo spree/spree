@@ -327,6 +327,25 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'seller digital asset content types' do
+    let(:store) { build(:store) }
+
+    it 'accepts a list of media types' do
+      store.preferred_seller_digital_asset_content_types = %w[application/pdf audio/mpeg image/svg+xml]
+
+      expect(store).to be_valid
+    end
+
+    # A bare "pdf" would refuse every seller upload with a message about the
+    # file, so it is caught where the operator types it.
+    it 'refuses an entry that is not a type/subtype' do
+      store.preferred_seller_digital_asset_content_types = %w[application/pdf pdf]
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_seller_digital_asset_content_types].first).to include('pdf')
+    end
+  end
+
   describe 'order routing strategy preference' do
     it 'rejects an unregistered strategy' do
       store = build(:store, preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer')

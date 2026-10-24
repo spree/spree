@@ -950,6 +950,14 @@
       "order_multiple": {
         "label": "Order multiple",
         "help": "Each step up from the minimum. Leave blank for any quantity."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Downloads allowed"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Days available"
+        }
       }
     },
     "image_upload": {
@@ -2047,6 +2055,38 @@
           "description": "The seller must provide an address for returns"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Add",
+      "all_variants": "All variants",
+      "columns": {
+        "file": "File",
+        "variant": "Variant",
+        "size": "Size",
+        "downloads": "Downloads",
+        "days": "Days"
+      },
+      "delete_description": "\"{{name}}\" will no longer be downloadable by anyone who bought it. This takes effect immediately.",
+      "delete_title": "Delete this file?",
+      "description": "Files buyers can download after purchase. Attach them to a digital product, or to a physical one to deliver a manual or warranty alongside the goods.",
+      "download": "Download",
+      "drop_hint": "Drag & drop files here, or click to browse",
+      "empty": "No files yet",
+      "limit_invalid": "Limits must be whole numbers of 1 or more, or blank.",
+      "limits_help": "Leave the download and day limits blank to use the store's settings.",
+      "source": {
+        "upload": "Upload a file"
+      },
+      "store_default": "{{count}} (store default)",
+      "title": "Digital files",
+      "untitled": "Untitled file",
+      "upload": "Add file",
+      "upload_failed": "Failed to upload {{name}}: {{message}}",
+      "uploading": "Uploading {{name}}…",
+      "uploading_short": "Uploading…",
+      "replace": "Replace file",
+      "replace_description": "\"{{name}}\" is removed and everyone who bought it downloads the new file from their existing links. This takes effect immediately.",
+      "replace_title": "Replace this file?"
     }
   }
 }

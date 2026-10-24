@@ -18,6 +18,7 @@ import type {
   DeliveryMethod,
   DeliveryProfile,
   DeliveryZone,
+  DigitalAsset,
   Exchange,
   Export,
   FileUpload,
@@ -44,6 +45,7 @@ import type {
   SellerSummary,
   ShippingLabel,
   StockLocation,
+  Store,
   TaxIdentifier,
   TeamMember,
   Transfer,
@@ -53,6 +55,8 @@ import type {
   DeliveryMethodSort,
   DeliveryProfileFilters,
   DeliveryProfileSort,
+  DigitalAssetFilters,
+  DigitalAssetSort,
   OrderFilters,
   OrderSort,
   PackageTypeFilters,
@@ -80,6 +84,8 @@ import type {
   DeliveryMethodCreateParams,
   DeliveryMethodUpdateParams,
   DeliveryUpdateParams,
+  DigitalAssetCreateParams,
+  DigitalAssetUpdateParams,
   ExchangeCancelParams,
   ExchangeCreateParams,
   ExchangeFulfillParams,
@@ -493,6 +499,54 @@ export class SellerClient {
       options?: RequestOptions,
     ): Promise<BulkProductResult> =>
       this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
+
+    /**
+     * The downloadable files on one of this seller's products. Upload a file
+     * with `files.upload(file, { visibility: 'private' })` first and send its
+     * `signed_id`.
+     */
+    digitalAssets: {
+      list: (
+        productId: string,
+        params?: ListParams<DigitalAssetFilters, DigitalAssetSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DigitalAsset>> =>
+        this.request<PaginatedResponse<DigitalAsset>>(
+          'GET',
+          `/products/${productId}/digital_assets`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      get: (productId: string, id: string, options?: RequestOptions): Promise<DigitalAsset> =>
+        this.request<DigitalAsset>('GET', `/products/${productId}/digital_assets/${id}`, options),
+
+      create: (
+        productId: string,
+        params: DigitalAssetCreateParams,
+        options?: RequestOptions,
+      ): Promise<DigitalAsset> =>
+        this.request<DigitalAsset>('POST', `/products/${productId}/digital_assets`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        productId: string,
+        id: string,
+        params: DigitalAssetUpdateParams,
+        options?: RequestOptions,
+      ): Promise<DigitalAsset> =>
+        this.request<DigitalAsset>('PATCH', `/products/${productId}/digital_assets/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/products/${productId}/digital_assets/${id}`, options),
+    },
   }
 
   /**
@@ -1488,6 +1542,11 @@ export interface MeResponse {
    */
   user: Account
   sellers: SellerSummary[]
+  /**
+   * The marketplace's own settings that shape what the panel lets a seller
+   * do — whether sellers may upload digital files, and of which types.
+   */
+  store: Store
   /** Empty until a seller is named — capability is per seller. */
   permissions: PermissionRule[]
   permission_keys: string[]

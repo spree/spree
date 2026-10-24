@@ -910,6 +910,9 @@ Spree::Core::Engine.add_routes do
             post :bulk_status_update
             delete :bulk_destroy
           end
+
+          resources :digital_assets, controller: 'products/digital_assets',
+                                     only: [:index, :create, :show, :update, :destroy]
         end
 
 

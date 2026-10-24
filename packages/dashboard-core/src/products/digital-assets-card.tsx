@@ -1,5 +1,11 @@
-import type { DigitalAsset, DigitalAssetProvider, Variant } from '@spree/admin-sdk'
-import { formatFileSize, useFileUpload } from '@spree/dashboard-core'
+import type { DigitalAssetProvider } from '@spree/admin-sdk'
+import {
+  formatFileSize,
+  getApiClient,
+  Subject,
+  useFileUpload,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -34,28 +40,54 @@ import {
 } from '@spree/dashboard-ui/icons'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { PanelDigitalAsset } from '../api-client'
+import { variantLabel } from './assignable-variants'
+import { DigitalAssetEditSheet } from './digital-asset-edit-sheet'
+import { DigitalAssetProviderSheet } from './digital-asset-provider-sheet'
+import type { PanelVariant } from './product-types'
 import {
   useCreateDigitalAsset,
   useDeleteDigitalAsset,
   useDigitalAssetProviders,
   useDigitalAssets,
-} from '../../../hooks/use-digital-assets'
-import { DigitalAssetEditSheet } from './digital-asset-edit-sheet'
-import { DigitalAssetProviderSheet } from './digital-asset-provider-sheet'
+  useUpdateDigitalAsset,
+} from './use-digital-assets'
 
 export function DigitalAssetsCard({
   productId,
   variants,
+  readOnly = false,
+  accept,
+  notice,
 }: {
   productId?: string
-  variants?: Variant[]
+  variants?: PanelVariant[]
+  /**
+   * Shows the files without any way to change them, for a panel whose host
+   * has not opened file uploads to this user — the seller panel when the
+   * marketplace keeps digital files to itself. With nothing to show, the
+   * card renders nothing at all.
+   */
+  readOnly?: boolean
+  /** The content types the picker offers, when the host restricts them. */
+  accept?: string[]
+  /**
+   * What else a file change does here, shown under the description — the
+   * seller panel says that a listing on sale goes back to review.
+   */
+  notice?: string
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
+  const { permissions } = usePermissions()
+  const canWrite = !readOnly && permissions.can('update', Subject.Product)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const replaceInputRef = useRef<HTMLInputElement>(null)
+  // The file whose replacement the picker was opened for.
+  const replacingRef = useRef<PanelDigitalAsset | null>(null)
   const [uploading, setUploading] = useState(false)
   const [page, setPage] = useState(1)
-  const [editing, setEditing] = useState<DigitalAsset | null>(null)
+  const [editing, setEditing] = useState<PanelDigitalAsset | null>(null)
   // The provider whose settings sheet is open, before its asset is created.
   const [configuring, setConfiguring] = useState<DigitalAssetProvider | null>(null)
 
@@ -64,17 +96,41 @@ export function DigitalAssetsCard({
   const fileUpload = useFileUpload({ visibility: 'private' })
   const { data, isLoading } = useDigitalAssets(productId ?? '', page, Boolean(productId))
   const { data: providersData } = useDigitalAssetProviders(productId ?? '', Boolean(productId))
-  const createAsset = useCreateDigitalAsset(productId ?? '')
+  // The card toasts upload failures itself, naming the file, so the
+  // mutations stay quiet about theirs.
+  const createAsset = useCreateDigitalAsset(productId ?? '', { errorMessage: false })
   const deleteAsset = useDeleteDigitalAsset(productId ?? '')
+  const updateAsset = useUpdateDigitalAsset(productId ?? '', { errorMessage: false })
 
-  const assets: DigitalAsset[] = data?.data ?? []
+  const assets: PanelDigitalAsset[] = data?.data ?? []
   const meta = data?.meta
+  // Across every page, so emptying a later page does not read as no files.
+  const hasAssets = (meta?.count ?? assets.length) > 0
   const hasVariants = (variants?.length ?? 0) > 1
   const providers = providersData?.data ?? []
   // Only providers that resolve their own deliverable go in the source menu;
   // the file default is the plain upload button. With none of these, the card
   // keeps its today behaviour — a single "Add file" button.
   const sourceProviders = providers.filter((p) => !p.requires_attachment)
+
+  // One path for a new file and a replacement: upload to private storage,
+  // hand the signed id on, and name the file when either step fails — a
+  // refused upload must never be silent.
+  async function uploadThen(file: File, persist: (signedId: string) => Promise<unknown>) {
+    try {
+      const { signedId, previewUrl } = await fileUpload.mutateAsync(file)
+      // The preview is for image cards; a download has nothing to show, and
+      // an unreleased object URL pins the whole file in memory.
+      URL.revokeObjectURL(previewUrl)
+      await persist(signedId)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
+      toastManager.add({
+        type: 'error',
+        title: t('admin.digital_assets.upload_failed', { name: file.name, message }),
+      })
+    }
+  }
 
   async function handleFiles(files: FileList | File[]) {
     const list = Array.from(files)
@@ -83,19 +139,7 @@ export function DigitalAssetsCard({
     setUploading(true)
     try {
       for (const file of list) {
-        try {
-          const { signedId } = await fileUpload.mutateAsync(file)
-          await createAsset.mutateAsync({ signed_id: signedId })
-        } catch (err) {
-          // The create mutation suppresses its own toast for validation
-          // errors, so surface the failure here — otherwise a rejected upload
-          // is silent.
-          const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
-          toastManager.add({
-            type: 'error',
-            title: t('admin.digital_assets.upload_failed', { name: file.name, message }),
-          })
-        }
+        await uploadThen(file, (signedId) => createAsset.mutateAsync({ signed_id: signedId }))
       }
       setPage(1)
     } finally {
@@ -110,6 +154,40 @@ export function DigitalAssetsCard({
     const files = Array.from(event.target.files ?? [])
     event.target.value = ''
     if (files.length > 0) void handleFiles(files)
+  }
+
+  // Replacing removes the current file for everyone who bought it, so it is
+  // confirmed before the picker opens, like deleting.
+  async function openReplace(asset: PanelDigitalAsset) {
+    const confirmed = await confirm({
+      title: t('admin.digital_assets.replace_title'),
+      message: t('admin.digital_assets.replace_description', {
+        name: asset.filename ?? t('admin.digital_assets.untitled'),
+      }),
+      variant: 'destructive',
+    })
+    if (!confirmed) return
+    replacingRef.current = asset
+    replaceInputRef.current?.click()
+  }
+
+  // Replaces the file in place, so links buyers already received serve the
+  // new one.
+  async function handleReplaceInput(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    const asset = replacingRef.current
+    replacingRef.current = null
+    if (!file || !asset) return
+
+    setUploading(true)
+    try {
+      await uploadThen(file, (signedId) =>
+        updateAsset.mutateAsync({ id: asset.id, signed_id: signedId }),
+      )
+    } finally {
+      setUploading(false)
+    }
   }
 
   function handleDrop(event: React.DragEvent) {
@@ -137,7 +215,7 @@ export function DigitalAssetsCard({
     }
   }
 
-  async function handleDelete(asset: DigitalAsset) {
+  async function handleDelete(asset: PanelDigitalAsset) {
     const confirmed = await confirm({
       title: t('admin.digital_assets.delete_title'),
       message: t('admin.digital_assets.delete_description', {
@@ -145,7 +223,9 @@ export function DigitalAssetsCard({
       }),
       variant: 'destructive',
     })
-    if (confirmed) await deleteAsset.mutateAsync(asset.id)
+    if (!confirmed) return
+    await deleteAsset.mutateAsync(asset.id)
+    if (assets.length === 1 && page > 1) setPage(page - 1)
   }
 
   // A blank limit means the store's setting applies — show the number actually
@@ -154,7 +234,13 @@ export function DigitalAssetsCard({
     return own == null ? t('admin.digital_assets.store_default', { count: effective }) : String(own)
   }
 
-  if (!productId) return null
+  function assetVariantLabel(asset: PanelDigitalAsset) {
+    const variant = variants?.find((v) => v.id === asset.variant_id)
+    return variant ? variantLabel(variant) : '—'
+  }
+
+  if (!productId || !getApiClient().digitalAssets) return null
+  if (readOnly && !isLoading && !hasAssets) return null
 
   return (
     <Card>
@@ -165,7 +251,7 @@ export function DigitalAssetsCard({
         </CardTitle>
         {/* The header action only appears once files exist — an empty card
             invites the first upload through its dropzone, not a button. */}
-        {assets.length > 0 && (
+        {canWrite && hasAssets && (
           <CardAction>
             {sourceProviders.length === 0 ? (
               <Button
@@ -213,18 +299,29 @@ export function DigitalAssetsCard({
 
       <CardContent className="flex flex-col gap-4">
         <p className="text-muted-foreground text-sm">{t('admin.digital_assets.description')}</p>
+        {notice && canWrite && <p className="text-sm">{notice}</p>}
 
         <input
           ref={fileInputRef}
           type="file"
           multiple
+          accept={accept?.join(',')}
           className="hidden"
           onChange={handleFileInput}
+        />
+        <input
+          ref={replaceInputRef}
+          type="file"
+          accept={accept?.join(',')}
+          className="hidden"
+          onChange={handleReplaceInput}
         />
 
         {isLoading ? (
           <Skeleton className="h-24 w-full" />
-        ) : assets.length === 0 ? (
+        ) : !hasAssets && !canWrite ? (
+          <p className="text-muted-foreground text-sm">{t('admin.digital_assets.empty')}</p>
+        ) : !hasAssets ? (
           <button
             type="button"
             onDrop={handleDrop}
@@ -281,7 +378,7 @@ export function DigitalAssetsCard({
                     </TableCell>
                     {hasVariants && (
                       <TableCell className="text-muted-foreground">
-                        {variants?.find((v) => v.id === asset.variant_id)?.options_text ?? '—'}
+                        {assetVariantLabel(asset)}
                       </TableCell>
                     )}
                     <TableCell className="tabular-nums">
@@ -303,9 +400,20 @@ export function DigitalAssetsCard({
                             visible: Boolean(asset.download_url),
                             onSelect: () => window.open(asset.download_url ?? '', '_blank'),
                           },
-                          { key: 'edit', onSelect: () => setEditing(asset) },
+                          {
+                            key: 'replace',
+                            label: t('admin.digital_assets.replace'),
+                            icon: <UploadIcon className="size-4" />,
+                            // Only a stored file can be swapped; a provider's
+                            // own deliverable has none to download.
+                            visible: canWrite && Boolean(asset.download_url),
+                            disabled: uploading,
+                            onSelect: () => openReplace(asset),
+                          },
+                          { key: 'edit', visible: canWrite, onSelect: () => setEditing(asset) },
                           {
                             key: 'delete',
+                            visible: canWrite,
                             destructive: true,
                             onSelect: () => handleDelete(asset),
                           },
