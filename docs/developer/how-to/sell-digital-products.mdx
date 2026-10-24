@@ -56,6 +56,35 @@ await adminClient.products.digitalAssets.create('prod_86Rf07xd4z', { signed_id }
 
 Leave `authorized_clicks` and `authorized_days` off to inherit the store's download limits, or set them per file to mix evergreen downloads with time-limited ones. See [the allowance](/developer/core-concepts/products#downloading-and-the-allowance) for how the limits resolve.
 
+### On a marketplace
+
+A [seller](/developer/core-concepts/sellers) attaches files to their own products the same way, from the **Digital files** card on the product page in their seller panel, or through the Seller API. They can upload, replace and delete files and set per-file download limits. A product belonging to another seller answers `404`.
+
+Sellers upload files only. A [custom digital asset provider](/developer/how-to/custom-digital-asset-provider) is your own integration, so sellers cannot pick one. A file you attached with a provider still appears on the seller's product, without its provider settings.
+
+<Tabs>
+  <Tab title="Seller SDK">
+    ```typescript
+    const { signed_id } = await sellerClient.files.upload(file, { visibility: 'private' })
+
+    await sellerClient.products.digitalAssets.create('prod_86Rf07xd4z', {
+      signed_id,
+      authorized_clicks: 5,
+      authorized_days: 30,
+    })
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X POST https://your-store.com/api/v3/seller/products/prod_86Rf07xd4z/digital_assets \
+      -H "Authorization: Bearer <seller_jwt>" \
+      -H "X-Spree-Seller-Id: sel_UkLWZg9DAJ" \
+      -H "Content-Type: application/json" \
+      -d '{ "signed_id": "<signed_id>", "authorized_clicks": 5, "authorized_days": 30 }'
+    ```
+  </Tab>
+</Tabs>
+
 <Tip>
 You can attach a file to a **physical** variant too — a manual or warranty PDF that ships alongside the goods. Carrying files and being digital are independent: the physical variant still needs an address, and it also grants a download link.
 </Tip>

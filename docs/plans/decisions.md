@@ -1,3 +1,13 @@
+## 2026-10-24: Sellers manage the downloadable files on their own products, uploads only
+
+**Context:** A marketplace seller could list a digital product, but only the operator could attach the file it delivers (GitHub #14965). The Seller API had a file upload endpoint and nothing to attach the upload to a product.
+
+**Decision:** The Seller API gains `/api/v3/seller/products/:product_id/digital_assets` (index, show, create, update, destroy), rooted in `current_seller.products`, so another seller's or the marketplace's own product is a `404`. Writes need `:update` on the product, so a read-only seller role can list files but not change them. Sellers upload files and may set the per-file download limits. They cannot pick a digital asset provider and never see provider settings: a provider is the operator's own integration into internal systems, and letting a seller choose one would route the seller's sales through it. Files are added from the product's edit page only, not while creating a product. The admin and seller endpoints share their write logic, their request shape and their serialized fields, and both panels render one Digital files card from `@spree/dashboard-core`.
+
+**Consequences:** An asset the operator created with a provider still appears on the seller's product, and the seller may change its limits or delete it. Opening providers to sellers later means adding them to the seller request shape and registering `providers` on the seller panel's client; nothing else changes. Pre-save file attachment on the seller's new product form remains open until a seller asks for it.
+
+**Plan amended:** `6.0-digital-assets.md` (Seller panel decisions, Migration Path step 9).
+
 ## 2026-10-19: A self-service data request is confirmed from its email address before Spree acts on it
 
 **Context:** A customer's own access or erasure request covers the guest orders, carts, cards and consent recorded at the account's email address, so that someone who checked out as a guest and registered later receives their whole history. Spree never confirms that an account's email address belongs to the account holder, so a request should not reach rows at that address until the address itself confirms it.
