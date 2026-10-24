@@ -166,6 +166,18 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
         expect(response).to have_http_status(:ok)
       end
     end
+
+    context 'subscribing to customer password resets with a whitespace-padded name' do
+      let(:caller_key) { create(:api_key, :secret, store: store, scopes: %w[write_webhooks]) }
+      let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
+
+      it 'is forbidden with only the webhooks permission' do
+        patch :update, params: { id: endpoint.prefixed_id, subscriptions: [' customer.password_reset_requested '] }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(endpoint.reload.subscriptions).not_to include('customer.password_reset_requested')
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
