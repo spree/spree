@@ -2557,7 +2557,9 @@
         },
         "subscriptions": {
           "help": "选择哪些事件应触发 Webhook。不选择任何事件则接收所有事件。",
-          "label": "事件"
+          "invalid": "使用事件名称，或以 * 代替某一段的模式，例如 order.* 或 *.created。",
+          "label": "事件",
+          "too_many": "最多可选择 {{count}} 个事件。"
         },
         "url": {
           "label": "目标 URL",

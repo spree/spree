@@ -2473,7 +2473,9 @@
         },
         "subscriptions": {
           "help": "Elegí qué eventos deben disparar un webhook. No elijas nada para recibir todos los eventos.",
-          "label": "Eventos"
+          "invalid": "Usá nombres de eventos o patrones con * en lugar de un segmento, como order.* o *.created.",
+          "label": "Eventos",
+          "too_many": "Admite como máximo {{count}} eventos."
         },
         "url": {
           "label": "URL de destino",

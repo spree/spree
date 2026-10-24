@@ -463,6 +463,9 @@ en:
               required_for_carton_purchase_unit: is required when the purchase unit is cartons
         spree/webhook_endpoint:
           attributes:
+            subscriptions:
+              invalid_pattern: 'must hold event names or patterns such as order.* or *.created (rejected: %{entries})'
+              too_many: can hold at most %{count} entries
             url:
               internal_address_not_allowed: must not point to an internal or private network address
               invalid_url: must be a valid http or https URL
