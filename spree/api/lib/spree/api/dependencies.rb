@@ -51,7 +51,7 @@ module Spree
            order_line_item fulfillment fulfillment_item delivery delivery_rate shipping_label return
            return_line_item exchange exchange_line_item claim claim_line_item reason package_type stock_location
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping
-           requirement_submission export transfer payout balance payment_split price price_history file_upload
+           requirement_submission export transfer payout balance payment_split price price_history file_upload digital_asset
            file_upload_target].freeze
 
       INJECTION_POINTS_WITH_DEFAULTS = {

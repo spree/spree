@@ -13,6 +13,7 @@ export { DeliveryMethodRuleSchema, type DeliveryMethodRule } from './DeliveryMet
 export { DeliveryProfileSchema, type DeliveryProfile } from './DeliveryProfile';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';
 export { DeliveryZoneSchema, type DeliveryZone } from './DeliveryZone';
+export { DigitalAssetSchema, type DigitalAsset } from './DigitalAsset';
 export { ExchangeSchema, type Exchange } from './Exchange';
 export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { ExportSchema, type Export } from './Export';

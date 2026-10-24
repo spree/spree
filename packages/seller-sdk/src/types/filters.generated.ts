@@ -31,6 +31,9 @@ export type DeliveryZoneFields = Filter.RangeFilters<'created_at' | 'updated_at'
   & Filter.IdFilters<'delivery_profile_id' | 'id'>
   & Filter.TextFilters<'name'>
 
+export type DigitalAssetFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+
 export type ExchangeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'number'>
@@ -252,6 +255,26 @@ export type DeliveryZoneFilters = DeliveryZoneFields
   & DeliveryZoneFilterExtensions
 
 export type DeliveryZoneSort = Filter.SortKey<'created_at' | 'delivery_profile_id' | 'id' | 'name' | 'updated_at' | (keyof DeliveryZoneSortExtensions & string)>
+
+/**
+ * Filters your app adds to DigitalAsset lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/seller-sdk' {
+ *       interface DigitalAssetFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DigitalAssetFilterExtensions {}
+
+/** Sort fields your app adds to DigitalAsset lists, as keys: `{ erp_id: true }`. */
+export interface DigitalAssetSortExtensions {}
+
+export type DigitalAssetFilters = DigitalAssetFields
+  & Filter.OrFilters
+  & DigitalAssetFilterExtensions
+
+export type DigitalAssetSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof DigitalAssetSortExtensions & string)>
 
 /**
  * Filters your app adds to Exchange lists. Generate them with `spree filters types`,
