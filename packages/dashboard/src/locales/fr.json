@@ -2327,9 +2327,17 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Types de fichiers acceptés pour les vendeurs",
-          "help": "Un type de contenu par ligne, par exemple application/pdf. Vérifié d’après la signature propre du fichier quand il en a une, pas son nom. Vos propres téléversements ne sont pas restreints.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
-          "invalid": "Chaque ligne doit être un type de contenu tel que application/pdf."
+          "help": "Choisissez les formats que les vendeurs peuvent téléverser, ou saisissez un type de contenu tel que application/pdf et appuyez sur Entrée. Une famille entière comme audio/* est aussi acceptée. Vérifié d’après la signature propre du fichier quand il en a une, pas son nom. Vos propres téléversements ne sont pas restreints.",
+          "placeholder": "Rechercher un format ou saisir un type de contenu…",
+          "invalid": "Chaque entrée doit être un type de contenu tel que application/pdf.",
+          "empty_hint": "Aucun format correspondant. Saisissez un type de contenu tel que application/pdf et appuyez sur Entrée pour l’ajouter.",
+          "add_option": "Ajouter {{type}}",
+          "families": {
+            "audio": "Tout fichier audio · audio/*",
+            "video": "Tout fichier vidéo · video/*",
+            "image": "Tout fichier image · image/*",
+            "text": "Tout fichier texte · text/*"
+          }
         },
         "review_seller_digital_asset_changes": {
           "label": "Réexaminer les changements de fichiers sur les produits déjà en vente",

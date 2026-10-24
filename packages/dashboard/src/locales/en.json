@@ -2327,9 +2327,17 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Accepted file types for sellers",
-          "help": "One content type per line, such as application/pdf. Checked against the file’s own signature where it has one, not its name. Your own uploads are not restricted.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
-          "invalid": "Each line must be a content type such as application/pdf."
+          "help": "Pick the formats sellers may upload, or type a content type such as application/pdf and press Enter. A whole family such as audio/* is also accepted. Checked against the file’s own signature where it has one, not its name. Your own uploads are not restricted.",
+          "placeholder": "Search formats or type a content type…",
+          "invalid": "Each entry must be a content type such as application/pdf.",
+          "empty_hint": "No matching format. Type a content type such as application/pdf and press Enter to add it.",
+          "add_option": "Add {{type}}",
+          "families": {
+            "audio": "Any audio file · audio/*",
+            "video": "Any video file · video/*",
+            "image": "Any image file · image/*",
+            "text": "Any text file · text/*"
+          }
         },
         "review_seller_digital_asset_changes": {
           "label": "Review file changes on products already on sale",

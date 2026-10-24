@@ -2327,9 +2327,17 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Zulässige Dateitypen für Verkäufer",
-          "help": "Ein Inhaltstyp pro Zeile, zum Beispiel application/pdf. Geprüft anhand der eigenen Signatur der Datei, wo sie eine hat, nicht anhand ihres Namens. Ihre eigenen Uploads sind nicht eingeschränkt.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
-          "invalid": "Jede Zeile muss ein Inhaltstyp wie application/pdf sein."
+          "help": "Wählen Sie die Formate, die Verkäufer hochladen dürfen, oder geben Sie einen Inhaltstyp wie application/pdf ein und drücken Sie die Eingabetaste. Eine ganze Familie wie audio/* ist ebenfalls zulässig. Geprüft anhand der eigenen Signatur der Datei, wo sie eine hat, nicht anhand ihres Namens. Ihre eigenen Uploads sind nicht eingeschränkt.",
+          "placeholder": "Formate suchen oder Inhaltstyp eingeben…",
+          "invalid": "Jeder Eintrag muss ein Inhaltstyp wie application/pdf sein.",
+          "empty_hint": "Kein passendes Format. Geben Sie einen Inhaltstyp wie application/pdf ein und drücken Sie die Eingabetaste, um ihn hinzuzufügen.",
+          "add_option": "{{type}} hinzufügen",
+          "families": {
+            "audio": "Alle Audiodateien · audio/*",
+            "video": "Alle Videodateien · video/*",
+            "image": "Alle Bilddateien · image/*",
+            "text": "Alle Textdateien · text/*"
+          }
         },
         "review_seller_digital_asset_changes": {
           "label": "Dateiänderungen an bereits verkauften Produkten prüfen",

@@ -2345,9 +2345,17 @@
         },
         "seller_digital_asset_content_types": {
           "label": "أنواع الملفات المقبولة من البائعين",
-          "help": "نوع محتوى واحد في كل سطر، مثل application/pdf. يُتحقق منه من توقيع الملف نفسه إن وُجد، لا من اسمه. ملفاتك أنت غير مقيدة.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
-          "invalid": "يجب أن يكون كل سطر نوع محتوى مثل application/pdf."
+          "help": "اختر الصيغ التي يجوز للبائعين رفعها، أو اكتب نوع محتوى مثل application/pdf واضغط Enter. تُقبل أيضًا عائلة كاملة مثل audio/*. يُتحقق منه من توقيع الملف نفسه إن وُجد، لا من اسمه. ملفاتك أنت غير مقيدة.",
+          "placeholder": "ابحث عن صيغة أو اكتب نوع محتوى…",
+          "invalid": "يجب أن يكون كل عنصر نوع محتوى مثل application/pdf.",
+          "empty_hint": "لا توجد صيغة مطابقة. اكتب نوع محتوى مثل application/pdf واضغط Enter لإضافته.",
+          "add_option": "إضافة {{type}}",
+          "families": {
+            "audio": "أي ملف صوتي · audio/*",
+            "video": "أي ملف فيديو · video/*",
+            "image": "أي ملف صورة · image/*",
+            "text": "أي ملف نصي · text/*"
+          }
         },
         "review_seller_digital_asset_changes": {
           "label": "مراجعة تغييرات الملفات في المنتجات المعروضة للبيع",

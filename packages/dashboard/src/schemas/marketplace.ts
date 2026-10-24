@@ -17,11 +17,11 @@ export const marketplaceSettingsFormSchema = z.object({
   auto_approve_sellers: z.boolean(),
   auto_approve_seller_products: z.boolean(),
   seller_digital_assets_enabled: z.boolean(),
-  // One content type per line in the form; sent as a list. Each line must
-  // be a type/subtype, or a typo would refuse every seller upload.
+  // Each entry must be a type/subtype, or a typo would refuse every seller
+  // upload.
   seller_digital_asset_content_types: z
-    .string()
-    .refine((value) => contentTypesFromLines(value).every((type) => MEDIA_TYPE.test(type)), {
+    .array(z.string())
+    .refine((types) => types.every((type) => isMediaType(type)), {
       message: i18n.t('admin.fields.store.seller_digital_asset_content_types.invalid'),
     }),
   review_seller_digital_asset_changes: z.boolean(),
@@ -38,10 +38,68 @@ export type MarketplaceSettingsFormValues = z.infer<typeof marketplaceSettingsFo
 
 const MEDIA_TYPE = /^[a-z0-9][a-z0-9!#$&^_.+-]*\/[a-z0-9][a-z0-9!#$&^_.+*-]*$/i
 
-/** The textarea's lines as the list the API stores, blank lines dropped. */
-export function contentTypesFromLines(value: string): string[] {
-  return value
-    .split(/[\n,]/)
-    .map((line) => line.trim().toLowerCase())
-    .filter(Boolean)
+/** Whether a typed value has the `type/subtype` shape the store accepts. */
+export function isMediaType(value: string): boolean {
+  return MEDIA_TYPE.test(value)
 }
+
+export const CONTENT_TYPE_FAMILIES = ['audio', 'video', 'image', 'text'] as const
+export type ContentTypeFamily = (typeof CONTENT_TYPE_FAMILIES)[number]
+
+/**
+ * The formats digital goods usually come in, offered in the picker so an
+ * operator does not have to know the content type of a FLAC file. The format
+ * name is the label; it is the same in every language, like a currency code.
+ * Anything not listed can still be typed in.
+ */
+export const DIGITAL_FILE_CONTENT_TYPES: ReadonlyArray<{ value: string; format: string }> = [
+  { value: 'application/pdf', format: 'PDF' },
+  { value: 'application/epub+zip', format: 'EPUB' },
+  { value: 'application/zip', format: 'ZIP' },
+  { value: 'application/x-7z-compressed', format: '7Z' },
+  { value: 'application/gzip', format: 'GZIP' },
+  { value: 'application/x-tar', format: 'TAR' },
+  { value: 'application/vnd.rar', format: 'RAR' },
+  { value: 'application/json', format: 'JSON' },
+  { value: 'application/xml', format: 'XML' },
+  { value: 'text/plain', format: 'TXT' },
+  { value: 'text/csv', format: 'CSV' },
+  { value: 'text/markdown', format: 'Markdown' },
+  { value: 'application/msword', format: 'DOC' },
+  {
+    value: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    format: 'DOCX',
+  },
+  { value: 'application/vnd.ms-excel', format: 'XLS' },
+  { value: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', format: 'XLSX' },
+  { value: 'application/vnd.ms-powerpoint', format: 'PPT' },
+  {
+    value: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    format: 'PPTX',
+  },
+  { value: 'audio/mpeg', format: 'MP3' },
+  { value: 'audio/mp4', format: 'M4A' },
+  { value: 'audio/aac', format: 'AAC' },
+  { value: 'audio/flac', format: 'FLAC' },
+  { value: 'audio/ogg', format: 'OGG' },
+  { value: 'audio/wav', format: 'WAV' },
+  { value: 'audio/x-wav', format: 'WAV' },
+  { value: 'audio/aiff', format: 'AIFF' },
+  { value: 'audio/midi', format: 'MIDI' },
+  { value: 'video/mp4', format: 'MP4' },
+  { value: 'video/webm', format: 'WebM' },
+  { value: 'video/quicktime', format: 'MOV' },
+  { value: 'video/x-matroska', format: 'MKV' },
+  { value: 'image/jpeg', format: 'JPEG' },
+  { value: 'image/png', format: 'PNG' },
+  { value: 'image/gif', format: 'GIF' },
+  { value: 'image/webp', format: 'WebP' },
+  { value: 'image/tiff', format: 'TIFF' },
+  { value: 'image/svg+xml', format: 'SVG' },
+  { value: 'image/vnd.adobe.photoshop', format: 'PSD' },
+  { value: 'font/ttf', format: 'TTF' },
+  { value: 'font/otf', format: 'OTF' },
+  { value: 'font/woff', format: 'WOFF' },
+  { value: 'font/woff2', format: 'WOFF2' },
+  { value: 'application/octet-stream', format: 'BIN' },
+]

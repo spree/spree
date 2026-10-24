@@ -36,7 +36,6 @@ import {
   SelectValue,
   Skeleton,
   Switch,
-  Textarea,
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
@@ -52,13 +51,13 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { ContentTypeCombobox } from '../../../../components/spree/content-type-combobox'
 import {
   usePayoutProviders,
   useStoreSettings,
   useUpdateStoreSettings,
 } from '../../../../hooks/use-store-settings'
 import {
-  contentTypesFromLines,
   type MarketplaceSettingsFormValues,
   marketplaceSettingsFormSchema,
 } from '../../../../schemas/marketplace'
@@ -105,9 +104,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
       auto_approve_sellers: store.auto_approve_sellers ?? false,
       auto_approve_seller_products: store.auto_approve_seller_products ?? false,
       seller_digital_assets_enabled: store.seller_digital_assets_enabled ?? false,
-      seller_digital_asset_content_types: (store.seller_digital_asset_content_types ?? []).join(
-        '\n',
-      ),
+      seller_digital_asset_content_types: store.seller_digital_asset_content_types ?? [],
       review_seller_digital_asset_changes: store.review_seller_digital_asset_changes ?? true,
       send_seller_transactional_emails: store.send_seller_transactional_emails ?? true,
       commission_tax_rate_percentage:
@@ -165,9 +162,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
         auto_approve_sellers: values.auto_approve_sellers,
         auto_approve_seller_products: values.auto_approve_seller_products,
         seller_digital_assets_enabled: values.seller_digital_assets_enabled,
-        seller_digital_asset_content_types: contentTypesFromLines(
-          values.seller_digital_asset_content_types,
-        ),
+        seller_digital_asset_content_types: values.seller_digital_asset_content_types,
         review_seller_digital_asset_changes: values.review_seller_digital_asset_changes,
         send_seller_transactional_emails: values.send_seller_transactional_emails,
         default_commission_tax_rate: percentToFraction(values.commission_tax_rate_percentage),
@@ -188,6 +183,9 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const selectedProvider = payoutProviders?.data?.find(
     (provider) => provider.id === form.watch('payout_provider'),
   )
+  // The type list and the review rule only mean something once sellers may
+  // upload at all; shown before that they read as settings with no effect.
+  const sellerFilesEnabled = form.watch('seller_digital_assets_enabled')
 
   return (
     <FormProvider {...form}>
@@ -374,32 +372,38 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                       name="seller_digital_assets_enabled"
                       control={form.control}
                     />
-                    <Field>
-                      <FieldLabel htmlFor="marketplace-seller-content-types">
-                        {t('admin.fields.store.seller_digital_asset_content_types.label')}
-                      </FieldLabel>
-                      <Textarea
-                        id="marketplace-seller-content-types"
-                        rows={6}
-                        className="font-mono text-xs"
-                        placeholder={t(
-                          'admin.fields.store.seller_digital_asset_content_types.placeholder',
-                        )}
-                        aria-invalid={!!errors.seller_digital_asset_content_types}
-                        {...form.register('seller_digital_asset_content_types')}
-                      />
-                      <FieldDescription>
-                        {t('admin.fields.store.seller_digital_asset_content_types.help')}
-                      </FieldDescription>
-                      <FieldError errors={[errors.seller_digital_asset_content_types]} />
-                    </Field>
-                    <SwitchField
-                      id="marketplace-review-seller-file-changes"
-                      label={t('admin.fields.store.review_seller_digital_asset_changes.label')}
-                      help={t('admin.fields.store.review_seller_digital_asset_changes.help')}
-                      name="review_seller_digital_asset_changes"
-                      control={form.control}
-                    />
+                    {sellerFilesEnabled && (
+                      <>
+                        <Controller
+                          control={form.control}
+                          name="seller_digital_asset_content_types"
+                          render={({ field, fieldState }) => (
+                            <Field>
+                              <FieldLabel htmlFor="marketplace-seller-content-types">
+                                {t('admin.fields.store.seller_digital_asset_content_types.label')}
+                              </FieldLabel>
+                              <ContentTypeCombobox
+                                id="marketplace-seller-content-types"
+                                value={field.value}
+                                onChange={field.onChange}
+                                invalid={fieldState.invalid}
+                              />
+                              <FieldDescription>
+                                {t('admin.fields.store.seller_digital_asset_content_types.help')}
+                              </FieldDescription>
+                              <FieldError errors={[fieldState.error]} />
+                            </Field>
+                          )}
+                        />
+                        <SwitchField
+                          id="marketplace-review-seller-file-changes"
+                          label={t('admin.fields.store.review_seller_digital_asset_changes.label')}
+                          help={t('admin.fields.store.review_seller_digital_asset_changes.help')}
+                          name="review_seller_digital_asset_changes"
+                          control={form.control}
+                        />
+                      </>
+                    )}
                   </FieldGroup>
                 </CardContent>
               </Card>

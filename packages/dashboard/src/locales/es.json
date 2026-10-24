@@ -2269,9 +2269,17 @@
         },
         "seller_digital_asset_content_types": {
           "label": "Tipos de archivo aceptados para vendedores",
-          "help": "Un tipo de contenido por línea, por ejemplo application/pdf. Se comprueba con la firma propia del archivo cuando la tiene, no con su nombre. Sus propias subidas no están restringidas.",
-          "placeholder": "application/pdf\napplication/zip\naudio/mpeg",
-          "invalid": "Cada línea debe ser un tipo de contenido como application/pdf."
+          "help": "Elija los formatos que los vendedores pueden subir, o escriba un tipo de contenido como application/pdf y pulse Intro. También se acepta una familia completa como audio/*. Se comprueba con la firma propia del archivo cuando la tiene, no con su nombre. Sus propias subidas no están restringidas.",
+          "placeholder": "Buscar formatos o escribir un tipo de contenido…",
+          "invalid": "Cada entrada debe ser un tipo de contenido como application/pdf.",
+          "empty_hint": "Ningún formato coincide. Escriba un tipo de contenido como application/pdf y pulse Intro para añadirlo.",
+          "add_option": "Añadir {{type}}",
+          "families": {
+            "audio": "Cualquier archivo de audio · audio/*",
+            "video": "Cualquier archivo de vídeo · video/*",
+            "image": "Cualquier archivo de imagen · image/*",
+            "text": "Cualquier archivo de texto · text/*"
+          }
         },
         "review_seller_digital_asset_changes": {
           "label": "Revisar cambios de archivos en productos ya en venta",
