@@ -72,8 +72,13 @@ module Spree
               )
 
               if changer.run!
+                # One preload context for the order's fulfillments, so what
+                # each of them renders loads once for all of them.
+                fulfillments = @order.reload.fulfillments.to_a
+                ArLazyPreload::Context.register(records: fulfillments, auto_preload: true) if fulfillments.any?
+
                 render json: {
-                  data: @order.reload.fulfillments.map { |fulfillment| serialize_resource(fulfillment) }
+                  data: fulfillments.map { |fulfillment| serialize_resource(fulfillment) }
                 }
               else
                 render_validation_error(changer.errors)

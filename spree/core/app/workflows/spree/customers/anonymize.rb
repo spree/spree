@@ -318,7 +318,7 @@ module Spree
         }
 
         owner_ids.each do |owner_type, ids|
-          Spree::ShippingLabel.where(owner_type: owner_type, owner_id: ids).find_each do |label|
+          Spree::ShippingLabel.where(owner_type: owner_type, owner_id: ids).with_attached_file.find_each do |label|
             purge_after_commit(label.file)
           end
         end
@@ -408,7 +408,7 @@ module Spree
         # complete copy of everything being erased, sitting behind a link that
         # stays live for days. Rewriting the row's email would leave the
         # payload itself untouched and still fetchable.
-        requests.each do |data_request|
+        requests.with_attached_export_file.each do |data_request|
           purge_after_commit(data_request.export_file)
         end
 

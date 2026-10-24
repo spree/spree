@@ -76,6 +76,7 @@ module Spree
 
           # GET /api/v3/store/customer
           def show
+            preload_default_addresses
             render json: serialize_resource(current_user)
           end
 
@@ -119,6 +120,12 @@ module Spree
           end
 
           private
+
+          # Both default addresses live in one table, so they are fetched in one
+          # query rather than one each.
+          def preload_default_addresses
+            ActiveRecord::Associations::Preloader.new(records: [current_user], associations: %i[bill_address ship_address]).call
+          end
 
           def sensitive_update?
             (params[:email].present? && params[:email] != current_user.email) ||

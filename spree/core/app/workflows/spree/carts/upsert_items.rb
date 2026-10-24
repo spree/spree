@@ -90,9 +90,10 @@ module Spree
       # applied.
       def resolve_items
         store = cart.store || Spree::Current.store
+        requested_items = Array(items).map { |item_params| item_params.to_h.deep_symbolize_keys }
+        prefetch_added_variants(store, requested_items)
 
-        @resolved_items = Array(items).filter_map do |item_params|
-          item_params = item_params.to_h.deep_symbolize_keys
+        @resolved_items = requested_items.filter_map do |item_params|
           quantity = (item_params[:quantity] || 1).to_i
           variant = resolve_variant(store, item_params[:variant_id], removing: quantity <= 0)
           next if variant.nil?
@@ -105,6 +106,15 @@ module Spree
             price: parse_manual_price(item_params[:price])
           )
         end
+
+        # The variants were resolved one lookup at a time, so each arrives
+        # without a preload context and every later price, stock or option
+        # read would query for that variant alone. Registering them as one
+        # context makes those reads batch across the whole batch of items.
+        ArLazyPreload::Context.register(
+          records: @resolved_items.map(&:variant).uniq(&:id),
+          auto_preload: true
+        )
 
         # Price overrides are pre-placement only. reject! rather than
         # failure(cart, message), which would drop the message.
@@ -357,16 +367,42 @@ module Spree
           cart.line_items.detect { |line_item| line_item.variant_id.to_s == variant_id.to_s }&.variant ||
             Spree::Variant.with_deleted.find_by_param(variant_id)
         else
-          variant = store.variants.find_by_param(variant_id)
+          variant = @added_variants[variant_param_id(variant_id)]
           # +orderable_variants+ narrows what a request may add. A line already
           # in the cart is a quantity edit and resolves as before — checkout
           # judges it — so one stale line cannot fail a whole cart's update.
           if variant && orderable_variants && cart.line_items.none? { |line_item| line_item.variant_id == variant.id }
-            variant = orderable_variants.find_by(id: variant.id)
+            variant = nil unless @orderable_added_variant_ids.include?(variant.id)
           end
 
           variant || raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
         end
+      end
+
+      # Every variant the batch adds, looked up through the store in one
+      # query rather than one per item, and which of them the buyer may order.
+      def prefetch_added_variants(store, requested_items)
+        ids = requested_items.filter_map do |item_params|
+          variant_param_id(item_params[:variant_id]) if (item_params[:quantity] || 1).to_i.positive?
+        end
+
+        @added_variants = ids.empty? ? {} : store.variants.where(id: ids.uniq).index_by(&:id)
+        Spree::Stock::Quantifier.preload(@added_variants.values)
+        @orderable_added_variant_ids = if orderable_variants && @added_variants.any?
+                                         orderable_variants.where(id: @added_variants.keys).pluck(:id).to_set
+                                       else
+                                         Set.new
+                                       end
+      end
+
+      # The id a variant param names: a prefixed id, or a bare integer id
+      # kept for backwards compatibility.
+      #
+      # @return [Integer, nil]
+      def variant_param_id(param)
+        return nil if param.blank?
+
+        Spree::Variant.decode_prefixed_id(param) || (param.to_s.to_i if param.to_s.match?(/\A\d+\z/))
       end
 
       def warn(index, item, code, message)

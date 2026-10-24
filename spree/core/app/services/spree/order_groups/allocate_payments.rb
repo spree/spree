@@ -82,14 +82,16 @@ module Spree
         )
         captured = payment.completed?
 
+        allocated_order_ids = Spree::PaymentSplit.where(payment_id: payment.id, order_id: orders.map(&:id)).pluck(:order_id).to_set
+
         orders.each_with_index do |order, index|
-          split = Spree::PaymentSplit.find_or_initialize_by(payment_id: payment.id, order_id: order.id)
-          next if split.persisted?
+          next if allocated_order_ids.include?(order.id)
 
           share = Spree::Money::Rounding.from_minor_units(shares[index], currency)
-          # So re-summing its payment total on save reuses this instance rather
-          # than loading a second copy of the row per share.
-          split.order = order
+          # The payment and order are handed over rather than looked up, so
+          # validating and re-summing each share reuses these instances
+          # instead of loading a copy per share.
+          split = Spree::PaymentSplit.new(payment: payment, order: order)
           split.currency = payment.currency
           split.authorized_amount = share
           split.captured_amount = captured ? share : 0

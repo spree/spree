@@ -35,9 +35,10 @@ module Spree
         # means the later line, not the sum of both.
         deduped = keyed.reverse.uniq { |row| [row[:variant_id].to_s, row[:stock_location_id].to_s] }.reverse
 
+        existing = existing_stock_levels(deduped)
         count = 0
         Spree::StockLevel.transaction do
-          deduped.each { |row| count += 1 if apply_row(row) }
+          deduped.each { |row| count += 1 if apply_row(row, existing) }
         end
 
         success(stock_level_count: count)
@@ -52,27 +53,41 @@ module Spree
       # happens to name — including another merchant's. One caller decoding
       # ids correctly does not make the workflow safe for the next one.
       def resolve(rows)
-        variants = scoped_ids(store_variants, Spree::Variant, rows.map { |row| row[:variant_id] })
-        locations = scoped_ids(store_stock_locations, Spree::StockLocation,
-                               rows.map { |row| row[:stock_location_id] })
+        @variants = scoped_records(store_variants, Spree::Variant, rows.map { |row| row[:variant_id] })
+        @stock_locations = scoped_records(store_stock_locations, Spree::StockLocation,
+                                          rows.map { |row| row[:stock_location_id] })
+        @variants_by_id = @variants.values.index_by(&:id)
+        @stock_locations_by_id = @stock_locations.values.index_by(&:id)
 
         rows.map do |row|
           row.merge(
-            variant_id: variants[row[:variant_id]],
-            stock_location_id: locations[row[:stock_location_id]]
+            variant_id: @variants[row[:variant_id]]&.id,
+            stock_location_id: @stock_locations[row[:stock_location_id]]&.id
           ).compact
         end
       end
 
       # Accepts a prefixed id or a raw one: the Admin API speaks prefixed,
       # while the importer and seeds hold records they already loaded.
-      def scoped_ids(scope, model, values)
+      #
+      # @return [Hash{Object => ActiveRecord::Base}] each value as given => this store's record
+      def scoped_records(scope, model, values)
         decoded = values.compact.uniq.index_with do |value|
           model.decode_own_prefixed_id(value) || value
         end
-        found = scope.where(id: decoded.values.compact).pluck(:id).map(&:to_s).to_set
+        found = scope.where(id: decoded.values.compact).index_by { |record| record.id.to_s }
 
-        decoded.transform_values { |id| id if id && found.include?(id.to_s) }
+        decoded.transform_values { |id| found[id.to_s] if id }.compact
+      end
+
+      # Every shelf the feed names, in one query rather than one per row.
+      # Lowest id wins, as an unordered lookup per pair would return.
+      def existing_stock_levels(rows)
+        Spree::StockLevel.
+          where(variant_id: rows.map { |row| row[:variant_id] }.uniq,
+                stock_location_id: rows.map { |row| row[:stock_location_id] }.uniq).
+          order(id: :desc).
+          index_by { |stock_level| [stock_level.variant_id.to_s, stock_level.stock_location_id.to_s] }
       end
 
       def store_variants
@@ -83,10 +98,10 @@ module Spree
         @store.stock_locations
       end
 
-      def apply_row(row)
-        stock_level = Spree::StockLevel.find_or_initialize_by(
-          variant_id: row[:variant_id], stock_location_id: row[:stock_location_id]
-        )
+      def apply_row(row, existing)
+        stock_level = existing[[row[:variant_id].to_s, row[:stock_location_id].to_s]] || Spree::StockLevel.new
+        stock_level.variant = @variants_by_id.fetch(row[:variant_id])
+        stock_level.stock_location = @stock_locations_by_id.fetch(row[:stock_location_id])
         stock_level.backorderable = row[:backorderable] if row.key?(:backorderable)
         stock_level.save! if stock_level.new_record? || stock_level.changed?
 

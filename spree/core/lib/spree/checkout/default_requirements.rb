@@ -107,7 +107,11 @@ module Spree
       end
 
       def completion_line_items
-        @completion_line_items ||= @cart.line_items.includes(variant: :product).to_a
+        # Everything the discontinuation and stock checks read, for every line
+        # at once.
+        @completion_line_items ||= @cart.line_items.includes(
+          variant: [{ product: %i[store product_publications] }, { stock_levels: %i[stock_location active_stock_reservations] }]
+        ).to_a
       end
 
       def delivery_step_required?
@@ -125,7 +129,13 @@ module Spree
       # What checkout has to collect, which is the whole total unless an
       # arrangement collects only part of it up front.
       def payment_satisfied?
-        @cart.payments.valid.sum(:amount) >= @cart.amount_due_at_checkout
+        paid = if @cart.read_association_in_memory?(:payments)
+                 @cart.payments.reject(&:has_invalid_status?).sum(BigDecimal('0'), &:amount)
+               else
+                 @cart.payments.valid.sum(:amount)
+               end
+
+        paid >= @cart.amount_due_at_checkout
       end
 
       # Advisory rather than completion-only: the buyer has to be told the

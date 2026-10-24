@@ -393,7 +393,11 @@ module Spree
       @tax_category ||= if self[:tax_category_id].nil?
                           product.tax_category
                         else
-                          Spree::TaxCategory.find_by(id: self[:tax_category_id]) || product.tax_category
+                          # The association, so a page of variants loads its
+                          # categories together; one deleted since it was
+                          # assigned no longer counts.
+                          own = super
+                          own.nil? || own.destroyed? || own.try(:deleted?) ? product.tax_category : own
                         end
     end
 
@@ -466,7 +470,7 @@ module Spree
     # Returns the options text of the variant.
     # @return [String] the options text of the variant
     def options_text
-      @options_text ||= if option_values.loaded?
+      @options_text ||= if read_association_in_memory?(:option_values)
                           option_values.sort_by do |ov|
                             ov.option_type.position
                           end.map { |ov| "#{ov.option_type.label}: #{ov.label}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
@@ -663,7 +667,7 @@ module Spree
     def price_in(currency)
       currency = currency&.upcase
 
-      price = if read_association_in_memory?(:prices) && prices.any?
+      price = if read_association_in_memory?(:prices)
                 prices.detect { |p| p.currency == currency && p.price_list_id.nil? }
               else
                 prices.base_prices.find_by(currency: currency)
@@ -864,7 +868,12 @@ module Spree
     # @return [void]
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
       stock_location ||= default_stock_location
-      stock_level = stock_levels.find_or_initialize_by(stock_location: stock_location)
+      stock_level = if stock_levels.loaded?
+                      stock_levels.detect { |level| level.stock_location_id == stock_location.id } ||
+                        stock_levels.build(stock_location: stock_location)
+                    else
+                      stock_levels.find_or_initialize_by(stock_location: stock_location)
+                    end
       # `unless nil?`, not `if present?` — a caller passing false means it.
       stock_level.backorderable = backorderable unless backorderable.nil?
 
@@ -880,7 +889,10 @@ module Spree
       delta = count_on_hand.to_i - stock_level.count_on_hand.to_i
       return if delta.zero?
 
-      stock_location.adjust(self, delta, reason: Spree::StockMovement.default_adjustment_reason)
+      # Through the level already in hand rather than StockLocation#adjust,
+      # which would look the same row up again.
+      stock_level.stock_movements.create!(quantity: delta, kind: 'adjusted',
+                                          reason: Spree::StockMovement.default_adjustment_reason)
     end
 
     def default_stock_location
@@ -967,6 +979,11 @@ module Spree
     # Variants carry no store of their own; the product owns it.
     # @return [Spree::Store, nil]
     def preference_store
+      # The request's store instance when it is this one, so a page of
+      # variants reads its settings from one record rather than a copy each.
+      current_store = Spree::Current.store
+      return current_store if current_store && product&.store_id == current_store.id
+
       product&.store
     end
 
@@ -1188,7 +1205,7 @@ module Spree
     end
 
     def set_cost_currency
-      self.cost_currency = Spree::Store.default.default_currency if cost_currency.blank?
+      self.cost_currency = (product&.store || Spree::Store.default).default_currency if cost_currency.blank?
     end
 
     # Only the product's own store's locations — a new variant must not grow

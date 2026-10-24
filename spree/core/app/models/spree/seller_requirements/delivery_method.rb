@@ -11,9 +11,27 @@ module Spree
     # has shared at least one of theirs.
     class DeliveryMethod < Spree::SellerRequirement
       def met_by_seller?(seller)
-        return true if seller.delivery_methods.storefront_visible.exists?
+        return true if ships_own_methods?(seller)
 
-        store.delivery_methods.shared_with_sellers.storefront_visible.exists?
+        operator_shares_methods?
+      end
+
+      private
+
+      def ships_own_methods?(seller)
+        if seller.read_association_in_memory?(:delivery_methods)
+          seller.delivery_methods.any?(&:storefront_visible?)
+        else
+          seller.delivery_methods.storefront_visible.exists?
+        end
+      end
+
+      # The same answer for every seller of the store, so a list of them
+      # asks once.
+      def operator_shares_methods?
+        return @operator_shares_methods if defined?(@operator_shares_methods)
+
+        @operator_shares_methods = store.delivery_methods.shared_with_sellers.storefront_visible.exists?
       end
     end
   end

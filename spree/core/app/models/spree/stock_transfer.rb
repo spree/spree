@@ -87,7 +87,37 @@ module Spree
       in_transit? || partially_received?
     end
 
+    def source_location
+      load_both_locations
+      super
+    end
+
+    def destination_location
+      load_both_locations
+      super
+    end
+
     private
+
+    # Both ends live in one table, so they are fetched together — for every
+    # transfer of a lazily preloaded list at once — instead of one query per
+    # end, and the locations share a preload context of their own, so what
+    # each of them reads next is fetched for both. A transfer holding one end
+    # already (assigned, or loaded) is left alone, so an unsaved assignment is
+    # never overwritten.
+    def load_both_locations
+      return if association(:source_location).loaded? || association(:destination_location).loaded?
+
+      records = (lazy_preload_context&.records || [self]).reject do |record|
+        record.association(:source_location).loaded? || record.association(:destination_location).loaded?
+      end
+      ActiveRecord::Associations::Preloader.new(records: records, associations: %i[source_location destination_location]).call
+
+      locations = records.flat_map do |record|
+        [record.association(:source_location).target, record.association(:destination_location).target]
+      end
+      ArLazyPreload::Context.register(records: locations.compact, auto_preload: true)
+    end
 
     # The warehouse the goods are going to decides whose transfer this is,
     # which is a fact about the record rather than about the request that

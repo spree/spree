@@ -77,4 +77,83 @@ Dummy::Application.configure do
   config.active_record.encryption.key_derivation_salt = 'spree-test-key-derivation-salt'
 
   routes.default_url_options = { host: 'localhost', port: 3000 }
+
+  # An N+1 inside an API request fails the example instead of being logged,
+  # so a serializer or model method that queries once per record cannot land
+  # unnoticed. Wrap a deliberately repeated lookup in Prosopite.pause.
+  if defined?(Prosopite)
+    # Hooked from Spree's own test app rather than declared in the
+    # controller, so a host application that bundles Prosopite for itself is
+    # never opted into Spree's guard. Prepended so the lookups made by the
+    # authentication and parent callbacks are scanned too.
+    config.to_prepare do
+      if defined?(Spree::Api::V3::BaseController)
+        Spree::Api::V3::BaseController.prepend_around_action { |_controller, action| Prosopite.scan(&action) }
+      end
+    end
+
+    Prosopite.rails_logger = true
+    # Raise only under RSpec, where a report belongs to the example that
+    # caused it. The same dummy app serves a real server for the SDK and
+    # browser suites, and there a raise becomes a 500 the client cannot act
+    # on — those runs log instead. SPREE_N_PLUS_ONE_GUARD overrides either
+    # way ('raise', 'log').
+    running_specs = ENV.key?('TEST_ENV_NUMBER') || $PROGRAM_NAME.end_with?('rspec')
+    guard_mode = ENV.fetch('SPREE_N_PLUS_ONE_GUARD') { running_specs ? 'raise' : 'log' }
+    Prosopite.raise = guard_mode == 'raise'
+
+    # The Rails cleaner keeps only the host app's frames, which hides the
+    # serializer or model line that issued the repeated query.
+    Prosopite.backtrace_cleaner = ActiveSupport::BacktraceCleaner.new.tap do |cleaner|
+      cleaner.add_silencer { |line| line.include?('/gems/') || line.include?('/rspec') }
+    end
+
+    # The guard covers what a request reads. Writes run their callbacks one
+    # record at a time by design — a `dependent: :destroy` cascade, a number
+    # or uniqueness probe per created row — so statements issued under a
+    # save or destroy are not reported.
+    Prosopite.allow_stack_paths = [
+      %r{active_record/persistence\.rb:\d+:in '[^']*#(save|save!|destroy|destroy!|touch)'},
+      # A touch is a write too, and Spree overrides `touch` in its own
+      # concern, so the frame is Spree's rather than Active Record's.
+      %r{active_record/timestamp\.rb:\d+:in '[^']*#touch'},
+      %r{/spree/publishable\.rb:\d+:in '[^']*#touch'},
+      %r{/paranoia\.rb:\d+:in '[^']*destroy'},
+      # Validations run before the persistence frame starts, so a uniqueness
+      # or ladder probe on the row being saved needs its own entry.
+      %r{active_record/validations\.rb:\d+:in '[^']*#(save|save!)'},
+      # after_commit callbacks are the same per-record write work, deferred
+      # until the transaction that wrote the rows ends.
+      %r{active_record/transactions\.rb:\d+:in '[^']*#committed!'},
+      # Locking a row re-reads it, once per row the caller is about to write.
+      %r{active_record/locking/pessimistic\.rb:\d+:in '[^']*#lock!'},
+      # A product payload writes each nested variant and media row through its
+      # own workflow — SKU probe, option lookup, blob resolution — once per row.
+      %r{/spree/products/nested_attributes\.rb:\d+:in '[^']*#(write_variant|apply_media)'},
+      # A settlement is swept per currency, and each sweep writes its own payout.
+      %r{/spree/seller_payouts/sweep\.rb:\d+:in '[^']*#collect_transfers'},
+      # A split checkout re-sums and then places each seller's order it just
+      # wrote, one workflow run per order.
+      %r{/spree/carts/split_by_seller\.rb:\d+:in '[^']*#resum_totals'},
+      %r{/spree/orders/complete\.rb:\d+:in '[^']*#place_sibling'},
+      # Each requested line is priced, stock-checked, saved and taxed as it
+      # is written.
+      %r{/spree/carts/upsert_items\.rb:\d+:in '[^']*#apply_item'}
+    ]
+
+    # Prosopite fingerprints through pg_query, which rejects SQLite's `?`
+    # binds, so SQLite borrows the text normalizer written for MySQL. That
+    # normalizer blanks anything double-quoted, which is a string literal in
+    # MySQL but an identifier in SQLite — left alone it erases every table
+    # name, collapsing unrelated queries into one fingerprint and reporting
+    # a single record's distinct associations as an N+1. Re-quoting
+    # identifiers as backticks first keeps table names in the fingerprint.
+    Prosopite.singleton_class.prepend(Module.new do
+      def fingerprint(query)
+        return super unless ActiveRecord::Base.connection_db_config.adapter == 'sqlite3'
+
+        mysql_fingerprint(query.gsub(/"([^"]*)"/) { "`#{Regexp.last_match(1)}`" })
+      end
+    end)
+  end
 end

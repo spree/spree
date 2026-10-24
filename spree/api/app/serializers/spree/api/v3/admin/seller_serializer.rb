@@ -54,9 +54,7 @@ module Spree
           # so the minimum-products requirement asks the same question free.
           attributes :products_count
 
-          attribute :users_count do |seller|
-            seller.users.size
-          end
+          attributes :users_count
 
           # How far through the marketplace's checklist this seller is — what
           # the list's progress column and the profile's badge render. The

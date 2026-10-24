@@ -59,8 +59,11 @@ module Spree
         # rank order so the Prioritizer's first-package-wins-on-hand logic
         # honors the routing decision.
         def build_packages(locations)
+          stock_levels = Spree::Stock::Packer.stock_levels_by_location(locations, requested_variant_ids)
+
           locations.flat_map do |location|
-            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters, owner: order).packages
+            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters, owner: order,
+                                     stock_levels: stock_levels.fetch(location.id, {})).packages
           end
         end
 

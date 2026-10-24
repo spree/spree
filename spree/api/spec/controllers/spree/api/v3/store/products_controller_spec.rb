@@ -95,6 +95,10 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
   end
 
   describe 'GET #index' do
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index }
+    end
+
     it 'returns a list of products' do
       get :index
 

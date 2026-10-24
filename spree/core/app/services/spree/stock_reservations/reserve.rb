@@ -69,7 +69,7 @@ module Spree
       private
 
       def build_targets(cart)
-        cart.line_items.includes(variant: { stock_levels: :stock_location }).filter_map do |line_item|
+        cart.line_items.includes(variant: [:product, { stock_levels: :stock_location }]).filter_map do |line_item|
           variant = line_item.variant
           next unless variant&.should_track_inventory?
 

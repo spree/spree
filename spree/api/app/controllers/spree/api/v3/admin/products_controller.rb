@@ -219,7 +219,7 @@ module Spree
 
             channels = scoped_channels
             product_ids = bulk_collection.distinct.ids
-            channels.find_each { |channel| channel.add_products(product_ids) }
+            channels.add_products(product_ids)
 
             render json: { product_count: product_ids.size, channel_count: channels.size }
           end
@@ -231,7 +231,7 @@ module Spree
 
             channels = scoped_channels
             product_ids = bulk_collection.distinct.ids
-            removed = channels.sum { |channel| channel.remove_products(product_ids) }
+            removed = channels.remove_products(product_ids)
 
             render json: { product_count: product_ids.size, channel_count: channels.size, removed: removed }
           end
@@ -291,6 +291,14 @@ module Spree
 
           def nested_permitted_models
             { media: Spree::Media, variants: Spree::Variant }
+          end
+
+          # A written product is serialized from the instance the workflow
+          # returned, which no preload reached. Registering it lets each
+          # association it reads load once.
+          def serialize_resource(resource)
+            ArLazyPreload::Context.register(records: [resource], auto_preload: true) if resource.lazy_preload_context.nil?
+            super
           end
 
           # Use SearchProvider::Database for collection to handle price/best_selling

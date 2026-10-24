@@ -142,8 +142,10 @@ module Spree
                                                   submitted_by: try_spree_current_user)
 
               # A product Propose refused is untouched; one it accepted is in
-              # review or already through it.
-              product.reload.status != was
+              # review or already through it. The saved value, not the
+              # attribute: a refused update leaves the new status unsaved on
+              # the record, and a rolled-back one restores what was stored.
+              product.status_in_database != was
             }
           end
 
