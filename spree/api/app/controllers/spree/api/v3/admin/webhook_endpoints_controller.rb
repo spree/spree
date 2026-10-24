@@ -112,8 +112,11 @@ module Spree
             )
           end
 
+          # Checked after the model's normalization, so what the gate sees is
+          # exactly what would be stored.
           def requested_credential_events
-            Spree::Events.catalog.credential_events(Array(permitted_params[:subscriptions]))
+            subscriptions = Spree::WebhookEndpoint.normalize_value_for(:subscriptions, permitted_params[:subscriptions])
+            Spree::Events.catalog.credential_events(subscriptions)
           end
 
           def repointed_credential_events

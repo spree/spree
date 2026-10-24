@@ -87,6 +87,15 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
           expect { subject }.not_to change(Spree::WebhookEndpoint, :count)
           expect(response).to have_http_status(:forbidden)
         end
+
+        context 'when the event name is padded with whitespace the model strips' do
+          let(:params) { { url: 'https://example.com/hook', subscriptions: [' customer.password_reset_requested '] } }
+
+          it 'is forbidden' do
+            expect { subject }.not_to change(Spree::WebhookEndpoint, :count)
+            expect(response).to have_http_status(:forbidden)
+          end
+        end
       end
 
       context 'with permission to manage customers' do
