@@ -3,6 +3,7 @@ import { type Product, SpreeError } from '@spree/admin-sdk'
 import {
   adminClient,
   CategorizationCard,
+  DigitalAssetsCard,
   extensionFormValues,
   extensionSubmitValues,
   GeneralCard,
@@ -41,7 +42,6 @@ import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import '../../../../components/spree/custom-fields/register'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
-import { DigitalAssetsCard } from '../../../../components/spree/products/digital-assets-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'

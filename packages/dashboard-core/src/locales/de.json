@@ -948,6 +948,14 @@
       "order_multiple": {
         "label": "Bestellvielfaches",
         "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Erlaubte Downloads"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Verfügbare Tage"
+        }
       }
     },
     "image_upload": {
@@ -2045,6 +2053,35 @@
           "description": "Der Verkäufer muss eine Rücksendeadresse angeben"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Hinzufügen",
+      "all_variants": "Alle Varianten",
+      "columns": {
+        "file": "Datei",
+        "variant": "Variante",
+        "size": "Größe",
+        "downloads": "Downloads",
+        "days": "Tage"
+      },
+      "delete_description": "„{{name}}“ kann von niemandem mehr heruntergeladen werden, der sie gekauft hat. Dies wirkt sofort.",
+      "delete_title": "Diese Datei löschen?",
+      "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen Produkt, um eine Anleitung oder Garantie mitzuliefern.",
+      "download": "Herunterladen",
+      "drop_hint": "Dateien hierher ziehen und ablegen oder zum Durchsuchen klicken",
+      "empty": "Noch keine Dateien",
+      "limit_invalid": "Limits müssen ganze Zahlen ab 1 sein oder leer bleiben.",
+      "limits_help": "Lassen Sie die Download- und Tageslimits leer, um die Einstellungen des Shops zu verwenden.",
+      "source": {
+        "upload": "Datei hochladen"
+      },
+      "store_default": "{{count}} (Shop-Standard)",
+      "title": "Digitale Dateien",
+      "untitled": "Unbenannte Datei",
+      "upload": "Datei hinzufügen",
+      "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
+      "uploading": "{{name}} wird hochgeladen…",
+      "uploading_short": "Wird hochgeladen…"
     }
   }
 }

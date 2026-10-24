@@ -9,8 +9,8 @@ import {
 } from '@spree/dashboard-ui'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCreateDigitalAsset } from '../../../hooks/use-digital-assets'
 import { defaultProviderSettings, ProviderSettingsFields } from './provider-settings-fields'
+import { useCreateDigitalAsset } from './use-digital-assets'
 
 interface Props {
   productId: string

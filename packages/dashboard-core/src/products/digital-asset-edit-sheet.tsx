@@ -1,4 +1,4 @@
-import type { DigitalAsset, DigitalAssetProviderSettingField, Variant } from '@spree/admin-sdk'
+import type { DigitalAssetProviderSettingField } from '@spree/admin-sdk'
 import {
   Button,
   Field,
@@ -17,13 +17,21 @@ import {
 } from '@spree/dashboard-ui'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useUpdateDigitalAsset } from '../../../hooks/use-digital-assets'
+import type { PanelDigitalAsset } from '../api-client'
 import { ProviderSettingsFields } from './provider-settings-fields'
+import { useUpdateDigitalAsset } from './use-digital-assets'
+
+/** What the variant picker reads off either panel's variant. */
+export interface DigitalAssetVariantOption {
+  id: string
+  options_text?: string | null
+  sku?: string | null
+}
 
 interface Props {
   productId: string
-  asset: DigitalAsset | null
-  variants?: Variant[]
+  asset: PanelDigitalAsset | null
+  variants?: DigitalAssetVariantOption[]
   /** Fields for a provider-backed asset; empty for an uploaded file. */
   settingsSchema?: DigitalAssetProviderSettingField[]
   open: boolean
@@ -132,7 +140,7 @@ export function DigitalAssetEditSheet({
                 <SelectContent>
                   {variants?.map((variant) => (
                     <SelectItem key={variant.id} value={variant.id}>
-                      {variant.options_text || variant.sku}
+                      {variant.options_text || variant.sku || variant.id}
                     </SelectItem>
                   ))}
                 </SelectContent>

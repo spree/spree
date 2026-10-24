@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   CategorizationCard,
+  DigitalAssetsCard,
   extensionFormValues,
   extensionRowValues,
   extensionSubmitValues,
@@ -253,6 +254,11 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 defaultCurrency={profile?.default_currency}
               />
               <InventoryCard form={form} />
+              {/* Writes on its own, file by file, so it needs a saved product
+                  and stays outside the Save button's payload. */}
+              {productId && (
+                <DigitalAssetsCard productId={productId} variants={product?.variants ?? []} />
+              )}
               <Slot name="seller.product.form_main" context={{ product, mode }} />
             </>
           }

@@ -948,6 +948,14 @@
       "order_multiple": {
         "label": "订购倍数",
         "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "允许的下载次数"
+        },
+        "digital_asset_authorized_days": {
+          "label": "可用天数"
+        }
       }
     },
     "image_upload": {
@@ -2044,6 +2052,35 @@
           "description": "卖家必须提供退货地址"
         }
       }
+    },
+    "digital_assets": {
+      "add": "添加",
+      "all_variants": "所有变体",
+      "columns": {
+        "file": "文件",
+        "variant": "变体",
+        "size": "大小",
+        "downloads": "下载次数",
+        "days": "天数"
+      },
+      "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
+      "delete_title": "删除此文件？",
+      "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
+      "download": "下载",
+      "drop_hint": "将文件拖放到此处，或点击浏览",
+      "empty": "暂无文件",
+      "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
+      "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
+      "source": {
+        "upload": "上传文件"
+      },
+      "store_default": "{{count}}（商店默认）",
+      "title": "数字文件",
+      "untitled": "未命名文件",
+      "upload": "添加文件",
+      "upload_failed": "上传 {{name}} 失败：{{message}}",
+      "uploading": "正在上传 {{name}}…",
+      "uploading_short": "上传中…"
     }
   }
 }

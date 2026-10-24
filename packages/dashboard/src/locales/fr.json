@@ -936,35 +936,6 @@
       "to_placeholder": "À",
       "toggle_states": "Afficher les régions de {{country}}"
     },
-    "digital_assets": {
-      "add": "Ajouter",
-      "all_variants": "Toutes les variantes",
-      "columns": {
-        "file": "Fichier",
-        "variant": "Variante",
-        "size": "Taille",
-        "downloads": "Téléchargements",
-        "days": "Jours"
-      },
-      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
-      "delete_title": "Supprimer ce fichier ?",
-      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
-      "download": "Télécharger",
-      "drop_hint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
-      "empty": "Aucun fichier pour le moment",
-      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
-      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
-      "source": {
-        "upload": "Téléverser un fichier"
-      },
-      "store_default": "{{count}} (par défaut)",
-      "title": "Fichiers numériques",
-      "untitled": "Fichier sans nom",
-      "upload": "Ajouter un fichier",
-      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
-      "uploading": "Téléversement de {{name}}…",
-      "uploading_short": "Téléversement…"
-    },
     "digital_links": {
       "columns": {
         "file": "Fichier",
@@ -2327,15 +2298,9 @@
           "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
           "label": "Limiter le nombre de téléchargements"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "Téléchargements autorisés"
-        },
         "limit_digital_download_days": {
           "help": "Désactivé, les liens de téléchargement n'expirent jamais.",
           "label": "Limiter la période de téléchargement"
-        },
-        "digital_asset_authorized_days": {
-          "label": "Jours de disponibilité"
         },
         "default_package_dimensions": {
           "height": "Hauteur",

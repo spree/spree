@@ -1,0 +1,60 @@
+import { getApiClient, i18n, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
+import { useQuery } from '@tanstack/react-query'
+import type { PanelDigitalAssetParams } from '../api-client'
+
+// The logical invalidation key (tenant id auto-injected by useResourceMutation).
+const digitalAssetsKey = (productId: string) => ['products', productId, 'digital-assets']
+
+function digitalAssetsClient() {
+  const client = getApiClient().digitalAssets
+  if (!client) throw new Error('This panel cannot manage digital files.')
+  return client
+}
+
+export function useDigitalAssets(productId: string, page = 1, enabled = true) {
+  return useQuery({
+    queryKey: useResourceKey('products', productId, 'digital-assets', page),
+    queryFn: () => digitalAssetsClient().list(productId, { page, limit: 25 }),
+    enabled: enabled && Boolean(productId),
+  })
+}
+
+// The selectable sources for a new asset. Almost always just the File default,
+// so a host with no extra provider gets a one-entry list and the card keeps its
+// plain "Add file" button. A panel whose client registers no providers (a
+// seller's) never asks.
+export function useDigitalAssetProviders(productId: string, enabled = true) {
+  const providers = getApiClient().digitalAssets?.providers
+  return useQuery({
+    queryKey: useResourceKey('products', productId, 'digital-asset-providers'),
+    queryFn: () => providers!(productId),
+    enabled: enabled && Boolean(productId) && Boolean(providers),
+    staleTime: Number.POSITIVE_INFINITY, // the registry doesn't change at runtime
+  })
+}
+
+export function useCreateDigitalAsset(productId: string) {
+  return useResourceMutation({
+    mutationFn: (params: PanelDigitalAssetParams) =>
+      digitalAssetsClient().create(productId, params),
+    invalidate: [digitalAssetsKey(productId)],
+    successMessage: i18n.t('admin.messages.digital_asset_saved'),
+  })
+}
+
+export function useUpdateDigitalAsset(productId: string) {
+  return useResourceMutation({
+    mutationFn: ({ id, ...params }: PanelDigitalAssetParams & { id: string }) =>
+      digitalAssetsClient().update(productId, id, params),
+    invalidate: [digitalAssetsKey(productId)],
+    successMessage: i18n.t('admin.messages.digital_asset_saved'),
+  })
+}
+
+export function useDeleteDigitalAsset(productId: string) {
+  return useResourceMutation({
+    mutationFn: (id: string) => digitalAssetsClient().delete(productId, id),
+    invalidate: [digitalAssetsKey(productId)],
+    successMessage: i18n.t('admin.messages.digital_asset_removed'),
+  })
+}

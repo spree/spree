@@ -1,4 +1,4 @@
-import type { DigitalAsset, DigitalAssetProvider, Variant } from '@spree/admin-sdk'
+import type { DigitalAssetProvider } from '@spree/admin-sdk'
 import { formatFileSize, useFileUpload } from '@spree/dashboard-core'
 import {
   Button,
@@ -34,28 +34,29 @@ import {
 } from '@spree/dashboard-ui/icons'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { PanelDigitalAsset } from '../api-client'
+import { DigitalAssetEditSheet, type DigitalAssetVariantOption } from './digital-asset-edit-sheet'
+import { DigitalAssetProviderSheet } from './digital-asset-provider-sheet'
 import {
   useCreateDigitalAsset,
   useDeleteDigitalAsset,
   useDigitalAssetProviders,
   useDigitalAssets,
-} from '../../../hooks/use-digital-assets'
-import { DigitalAssetEditSheet } from './digital-asset-edit-sheet'
-import { DigitalAssetProviderSheet } from './digital-asset-provider-sheet'
+} from './use-digital-assets'
 
 export function DigitalAssetsCard({
   productId,
   variants,
 }: {
   productId?: string
-  variants?: Variant[]
+  variants?: DigitalAssetVariantOption[]
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [page, setPage] = useState(1)
-  const [editing, setEditing] = useState<DigitalAsset | null>(null)
+  const [editing, setEditing] = useState<PanelDigitalAsset | null>(null)
   // The provider whose settings sheet is open, before its asset is created.
   const [configuring, setConfiguring] = useState<DigitalAssetProvider | null>(null)
 
@@ -67,7 +68,7 @@ export function DigitalAssetsCard({
   const createAsset = useCreateDigitalAsset(productId ?? '')
   const deleteAsset = useDeleteDigitalAsset(productId ?? '')
 
-  const assets: DigitalAsset[] = data?.data ?? []
+  const assets: PanelDigitalAsset[] = data?.data ?? []
   const meta = data?.meta
   const hasVariants = (variants?.length ?? 0) > 1
   const providers = providersData?.data ?? []
@@ -137,7 +138,7 @@ export function DigitalAssetsCard({
     }
   }
 
-  async function handleDelete(asset: DigitalAsset) {
+  async function handleDelete(asset: PanelDigitalAsset) {
     const confirmed = await confirm({
       title: t('admin.digital_assets.delete_title'),
       message: t('admin.digital_assets.delete_description', {

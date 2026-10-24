@@ -136,6 +136,7 @@ export * from './pages/stock-locations'
 // Plugin facade — re-exported for convenience; same API as `/plugin` subpath
 // ---------------------------------------------------------------------------
 export * from './plugin'
+export * from './products/digital-assets-card'
 export * from './products/normalize-customs'
 export * from './products/normalize-quantity'
 export * from './products/product-form-cards'
