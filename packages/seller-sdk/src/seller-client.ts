@@ -45,6 +45,7 @@ import type {
   SellerSummary,
   ShippingLabel,
   StockLocation,
+  Store,
   TaxIdentifier,
   TeamMember,
   Transfer,
@@ -1541,6 +1542,11 @@ export interface MeResponse {
    */
   user: Account
   sellers: SellerSummary[]
+  /**
+   * The marketplace's own settings that shape what the panel lets a seller
+   * do — whether sellers may upload digital files, and of which types.
+   */
+  store: Store
   /** Empty until a seller is named — capability is per seller. */
   permissions: PermissionRule[]
   permission_keys: string[]

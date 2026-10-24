@@ -56,14 +56,25 @@ import {
 export function DigitalAssetsCard({
   productId,
   variants,
+  readOnly = false,
+  accept,
 }: {
   productId?: string
   variants?: PanelVariant[]
+  /**
+   * Shows the files without any way to change them, for a panel whose host
+   * has not opened file uploads to this user — the seller panel when the
+   * marketplace keeps digital files to itself. With nothing to show, the
+   * card renders nothing at all.
+   */
+  readOnly?: boolean
+  /** The content types the picker offers, when the host restricts them. */
+  accept?: string[]
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { permissions } = usePermissions()
-  const canWrite = permissions.can('update', Subject.Product)
+  const canWrite = !readOnly && permissions.can('update', Subject.Product)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const replaceInputRef = useRef<HTMLInputElement>(null)
   // The file whose replacement the picker was opened for.
@@ -209,6 +220,7 @@ export function DigitalAssetsCard({
   }
 
   if (!productId || !getApiClient().digitalAssets) return null
+  if (readOnly && !isLoading && !hasAssets) return null
 
   return (
     <Card>
@@ -272,10 +284,17 @@ export function DigitalAssetsCard({
           ref={fileInputRef}
           type="file"
           multiple
+          accept={accept?.join(',')}
           className="hidden"
           onChange={handleFileInput}
         />
-        <input ref={replaceInputRef} type="file" className="hidden" onChange={handleReplaceInput} />
+        <input
+          ref={replaceInputRef}
+          type="file"
+          accept={accept?.join(',')}
+          className="hidden"
+          onChange={handleReplaceInput}
+        />
 
         {isLoading ? (
           <Skeleton className="h-24 w-full" />

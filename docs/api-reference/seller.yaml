@@ -563,6 +563,35 @@ paths:
                   name: Seller 89
                   slug: seller-89
                   status: approved
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
+                  seller_digital_assets_enabled: false
+                  seller_digital_asset_content_types:
+                  - application/pdf
+                  - application/epub+zip
+                  - application/zip
+                  - application/x-7z-compressed
+                  - application/gzip
+                  - application/json
+                  - text/plain
+                  - text/csv
+                  - audio/mpeg
+                  - audio/mp4
+                  - audio/aac
+                  - audio/flac
+                  - audio/ogg
+                  - audio/wav
+                  - audio/x-wav
+                  - audio/midi
+                  - video/mp4
+                  - video/webm
+                  - video/quicktime
+                  - image/jpeg
+                  - image/png
+                  - image/gif
+                  - image/webp
+                  - image/tiff
                 permissions:
                 - allow: true
                   actions:
@@ -834,6 +863,35 @@ paths:
                   name: Seller 91
                   slug: seller-91
                   status: approved
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
+                  seller_digital_assets_enabled: false
+                  seller_digital_asset_content_types:
+                  - application/pdf
+                  - application/epub+zip
+                  - application/zip
+                  - application/x-7z-compressed
+                  - application/gzip
+                  - application/json
+                  - text/plain
+                  - text/csv
+                  - audio/mpeg
+                  - audio/mp4
+                  - audio/aac
+                  - audio/flac
+                  - audio/ogg
+                  - audio/wav
+                  - audio/x-wav
+                  - audio/midi
+                  - video/mp4
+                  - video/webm
+                  - video/quicktime
+                  - image/jpeg
+                  - image/png
+                  - image/gif
+                  - image/webp
+                  - image/tiff
                 permissions: []
                 permission_keys: []
               schema:
@@ -24401,6 +24459,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/SellerMeSummary"
+        store:
+          "$ref": "#/components/schemas/Store"
         permissions:
           type: array
           items:
@@ -24417,6 +24477,7 @@ components:
       required:
       - user
       - sellers
+      - store
       - permissions
       - permission_keys
     OnboardingProgress:
@@ -29775,6 +29836,25 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    Store:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        seller_digital_assets_enabled:
+          type: boolean
+        seller_digital_asset_content_types:
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - name
+      - seller_digital_assets_enabled
+      - seller_digital_asset_content_types
+      x-typelizer: true
     TaxIdentifier:
       type: object
       properties:
@@ -31835,7 +31915,9 @@ components:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            On update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it. A seller''s
+            file must be of a content type the marketplace accepts, judged from its
+            bytes.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.
@@ -31856,7 +31938,9 @@ components:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            On update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it. A seller''s
+            file must be of a content type the marketplace accepts, judged from its
+            bytes.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.

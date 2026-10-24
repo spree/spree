@@ -329,6 +329,7 @@ module Spree
                 # team list does not publish about a colleague.
                 user: { '$ref' => '#/components/schemas/Account' },
                 sellers: { type: :array, items: { '$ref' => '#/components/schemas/SellerMeSummary' } },
+                store: { '$ref' => '#/components/schemas/Store' },
                 permissions: { type: :array, items: { '$ref' => '#/components/schemas/PermissionRule' } },
                 permission_keys: {
                   type: :array,
@@ -337,7 +338,7 @@ module Spree
                   example: %w[read_products write_products]
                 }
               },
-              required: %w[user sellers permissions permission_keys]
+              required: %w[user sellers store permissions permission_keys]
             },
             OnboardingProgress: {
               type: :object,

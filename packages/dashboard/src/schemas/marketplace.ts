@@ -15,6 +15,10 @@ export const marketplaceSettingsFormSchema = z.object({
   default_minimum_payout_amount: nonNegativeDecimal,
   auto_approve_sellers: z.boolean(),
   auto_approve_seller_products: z.boolean(),
+  seller_digital_assets_enabled: z.boolean(),
+  // One content type per line in the form; sent as a list.
+  seller_digital_asset_content_types: z.string(),
+  review_seller_digital_asset_changes: z.boolean(),
   send_seller_transactional_emails: z.boolean(),
   // A percentage, because that is how a merchant states a VAT rate. The
   // preference behind it is a fraction bounded at 1, so the field is bounded
@@ -25,3 +29,11 @@ export const marketplaceSettingsFormSchema = z.object({
 })
 
 export type MarketplaceSettingsFormValues = z.infer<typeof marketplaceSettingsFormSchema>
+
+/** The textarea's lines as the list the API stores, blank lines dropped. */
+export function contentTypesFromLines(value: string): string[] {
+  return value
+    .split(/[\n,]/)
+    .map((line) => line.trim().toLowerCase())
+    .filter(Boolean)
+}

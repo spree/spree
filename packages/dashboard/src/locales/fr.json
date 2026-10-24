@@ -2321,6 +2321,19 @@
           "label": "Publier les produits des vendeurs automatiquement",
           "help": "Le produit d’un vendeur est mis en vente dès qu’il le soumet, sans que personne ne l’examine."
         },
+        "seller_digital_assets_enabled": {
+          "label": "Autoriser les vendeurs à téléverser des fichiers numériques",
+          "help": "Les vendeurs joignent des fichiers téléchargeables à leurs propres produits et en fixent les limites de téléchargement. Désactivé, vous seul pouvez ajouter des fichiers, et les vendeurs voient ceux que vous avez ajoutés."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Types de fichiers acceptés pour les vendeurs",
+          "help": "Un type de contenu par ligne, par exemple application/pdf. Jugé d’après les octets du fichier, pas son nom. Vos propres téléversements ne sont pas restreints.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Réexaminer les changements de fichiers sur les produits déjà en vente",
+          "help": "Quand un vendeur ajoute ou remplace un fichier sur un produit approuvé, celui-ci repasse en révision et sort de la vente jusqu’à ce que vous l’approuviez de nouveau. Sans effet quand les produits des vendeurs sont publiés automatiquement."
+        },
         "send_seller_transactional_emails": {
           "label": "Envoyer des e-mails aux vendeurs",
           "help": "Envoie aux vendeurs les e-mails sur la validation, les produits et les paiements. Désactivez si vous écrivez vous-même à vos vendeurs. Les e-mails clients ne sont pas concernés."
@@ -4312,6 +4325,8 @@
           "payouts_description": "Comment et quand cette marketplace paie ses vendeurs. Un vendeur peut avoir sa propre fréquence et son propre minimum.",
           "admission_title": "Validation des vendeurs",
           "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",
+          "seller_files_title": "Fichiers des vendeurs",
+          "seller_files_description": "Si les vendeurs peuvent joindre des fichiers téléchargeables à leurs produits, de quels types, et si changer un fichier sur un produit approuvé demande un nouvel examen.",
           "communication_title": "Communication",
           "commission_tax_title": "Taxe sur la commission"
         },

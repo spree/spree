@@ -11,6 +11,9 @@ RSpec.describe 'Seller Product Digital Assets API', type: :request, swagger_doc:
   let(:'X-Spree-Seller-Id') { seller.prefixed_id }
   let(:product_id) { product.prefixed_id }
 
+  # The marketplace opens uploads to sellers in its settings; off by default.
+  before { stub_store_preferences(seller_digital_assets_enabled: true) }
+
   path '/api/v3/seller/products/{product_id}/digital_assets' do
     parameter name: :product_id, in: :path, type: :string, required: true, description: 'Product ID'
 

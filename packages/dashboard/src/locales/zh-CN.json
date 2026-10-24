@@ -2316,6 +2316,19 @@
           "label": "自动发布卖家商品",
           "help": "卖家提交后商品立即上架销售，无需任何人审核。"
         },
+        "seller_digital_assets_enabled": {
+          "label": "允许卖家上传数字文件",
+          "help": "卖家可为自己的商品附加可下载文件并设置下载限制。关闭后，只有您可以添加文件，卖家只能看到您添加的文件。"
+        },
+        "seller_digital_asset_content_types": {
+          "label": "卖家可上传的文件类型",
+          "help": "每行一个内容类型，例如 application/pdf。按文件内容而非文件名判断。您自己的上传不受限制。",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "审核在售商品的文件变更",
+          "help": "卖家在已批准的商品上添加或替换文件时，商品将重新进入审核并下架，直到您再次批准。卖家商品自动发布时此项无效。"
+        },
         "send_seller_transactional_emails": {
           "label": "向卖家发送邮件",
           "help": "向卖家发送关于审核、商品和付款的邮件。如果你自行联系卖家，可以关闭。不影响发给顾客的邮件。"
@@ -4300,6 +4313,8 @@
           "payouts_description": "本平台如何以及何时向卖家付款。卖家也可以使用自己的付款周期和最低金额。",
           "admission_title": "卖家审核",
           "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
+          "seller_files_title": "卖家文件",
+          "seller_files_description": "卖家是否可以为商品附加可下载文件、允许哪些类型，以及在已批准商品上更改文件是否需要再次审核。",
           "communication_title": "沟通",
           "commission_tax_title": "佣金税"
         },

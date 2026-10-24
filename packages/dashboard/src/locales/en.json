@@ -2321,6 +2321,19 @@
           "label": "Publish seller products automatically",
           "help": "A seller’s product goes on sale the moment they submit it, without anyone reviewing it."
         },
+        "seller_digital_assets_enabled": {
+          "label": "Let sellers upload digital files",
+          "help": "Sellers attach downloadable files to their own products and set download limits on them. Off, only you can add files, and sellers see the ones you added."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Accepted file types for sellers",
+          "help": "One content type per line, such as application/pdf. Judged from the file’s bytes, not its name. Your own uploads are not restricted.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Review file changes on products already on sale",
+          "help": "When a seller adds or replaces a file on an approved product, it goes back to review and off sale until you approve it again. Does nothing when seller products publish automatically."
+        },
         "send_seller_transactional_emails": {
           "label": "Email sellers",
           "help": "Sends sellers transactional emails about approval, products and payouts. Turn this off if you write to your sellers yourself. Customer emails are unaffected."
@@ -4311,6 +4324,8 @@
           "payouts_description": "How and when this marketplace pays its sellers. A seller can carry their own schedule and minimum instead.",
           "admission_title": "Seller admission",
           "admission_description": "Turning either of these on removes a human decision. Fine for an invite-only marketplace where you already know every seller; risky for one anyone can join.",
+          "seller_files_title": "Seller files",
+          "seller_files_description": "Whether sellers may attach downloadable files to their products, which kinds, and whether changing a file on an approved product needs another look.",
           "communication_title": "Communication",
           "commission_tax_title": "Commission tax"
         },

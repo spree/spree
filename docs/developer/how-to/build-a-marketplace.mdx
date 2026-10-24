@@ -94,6 +94,9 @@ Admin API like the payout ones.
 |---|---|---|
 | `auto_approve_sellers` | `false` | Admit a seller the moment they finish the checklist, with nobody looking at them. |
 | `auto_approve_seller_products` | `false` | Put a seller's product on sale the moment they submit it. |
+| `seller_digital_assets_enabled` | `false` | Let sellers attach downloadable files to their own products. |
+| `seller_digital_asset_content_types` | documents, ebooks, archives, audio, video, images, plain text | The content types a seller's file may have, judged from its bytes. Your own uploads are not restricted. |
+| `review_seller_digital_asset_changes` | `true` | Send a seller product already on sale back to review when the seller adds or replaces a file on it. |
 | `send_seller_transactional_emails` | `true` | Whether Spree emails sellers. Turn it off if you front seller communications yourself. |
 | `default_commission_tax_rate` | `0` | Tax on your commission when neither the rate nor the tax provider names one. |
 
@@ -125,6 +128,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
 <Warning>
 Turning either auto-approve preference on removes a human decision from your marketplace. `auto_approve_sellers` lets any applicant who ticks every box start trading; `auto_approve_seller_products` puts their listings on sale without review. Both are appropriate for an invite-only marketplace where you already trust the sellers, and dangerous for an open one.
 </Warning>
+
+A file a buyer downloads under your marketplace's name is something your marketplace vouches for, so seller uploads are off until you turn them on. When you do, keep the accepted type list tight — executables and scripts are left out of the default — and leave file changes under review unless you auto-approve seller products anyway. See [Sell digital products → On a marketplace](/developer/how-to/sell-digital-products#on-a-marketplace) for what sellers can then do, and for scanning uploads with your own code.
 
 Commission tax is stored as a fraction — `0.23` means 23%. The dashboard asks for
 a percentage and converts, so you only meet the fraction through the API. See

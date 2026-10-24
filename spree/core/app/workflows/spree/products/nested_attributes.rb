@@ -195,6 +195,90 @@ module Spree
       # accumulate copies. Omitting an entry leaves it alone; removal is the
       # nested digital_assets DELETE endpoint's job.
       #
+      # Delegates to the digital asset workflows, so a file written as part of
+      # a product payload passes the same gate — and the same :validate
+      # handlers — as one written through the digital assets endpoint.
+      #
+      # @param product [Spree::Product]
+      # @param digital_assets_params [Array<Hash>, nil]
+      # @return [void]
+      def apply_digital_assets(product, digital_assets_params)
+        return if digital_assets_params.blank?
+
+        digital_assets_params.each do |raw|
+          attrs = (raw.respond_to?(:to_h) ? raw.to_h : raw).with_indifferent_access
+          asset_id = attrs.delete(:id)
+
+          result =
+            if asset_id.present?
+              # A patch for an asset that is gone is skipped rather than recreated.
+              asset = product.digital_assets.find_by_param(asset_id) || next
+              Spree.digital_asset_update_workflow.call(digital_asset: asset, attributes: attrs)
+            else
+              Spree.digital_asset_create_workflow.call(product: product, attributes: attrs)
+            end
+
+          raise ActiveRecord::RecordInvalid, result.value if result.failure?
+        end
+      end
+
+      # Places a file already in the store's library onto this product. The new
+      # row shares the source's blob rather than copying the file.
+      #
+      # The source is looked up through the product's own store, so an id from
+      # another store is ignored rather than copying a file across the tenancy
+      # boundary — the same rule the media endpoint enforces with a 404.
+      #
+      # @param product [Spree::Product]
+      # @param source_media_id [String] prefixed or raw id of the library row
+      # @param attrs [Hash] attributes for the new placement
+      # @return [void]
+      def place_from_library(product, source_media_id, attrs)
+        source = product.store&.media&.find_by_param(source_media_id)
+        return if source.blank?
+
+        copy = source.duplicate_for(product)
+        copy.assign_attributes(attrs)
+        copy.save!
+      end
+
+      # Downloading is a job rather than a step: it reaches out over the
+      # network, and the job already owns the parts that makes necessary —
+      # SSRF filtering, a size cap, and skipping a URL this product has
+      # already fetched.
+      #
+      # Enqueued after the transaction commits, because the job loads the
+      # product by id: a worker picking it up mid-transaction would not find
+      # a product that is not visible to its connection yet.
+      #
+      # The asset is always attached to the product so one file is not
+      # downloaded once per variant; `variant_id` links the resulting asset to
+      # a variant afterwards.
+      def enqueue_media_download(product, external_url, attrs)
+        arguments = [
+          product.id,
+          'Spree::Product',
+          external_url,
+          attrs[:external_id],
+          attrs[:position],
+          attrs[:variant_id]
+        ]
+
+        ActiveRecord.after_all_transactions_commit do
+          Spree::Images::SaveFromUrlJob.perform_later(*arguments)
+        end
+      end
+
+      # Attaches downloadable files a product write ships inline, so a new
+      # product can carry its digital files in the same request. Additive, like
+      # {#apply_media}: each entry carries a `signed_id` (an uploaded file) or a
+      # `provider_type` (a provider-backed asset), and attaches to the default
+      # variant unless `variant_id` names another. An entry carrying an `id`
+      # patches that asset rather than building a duplicate — so a client
+      # replaying a product's existing digital_assets list on update does not
+      # accumulate copies. Omitting an entry leaves it alone; removal is the
+      # nested digital_assets DELETE endpoint's job.
+      #
       # @param product [Spree::Product]
       # @param digital_assets_params [Array<Hash>, nil]
       # @return [void]

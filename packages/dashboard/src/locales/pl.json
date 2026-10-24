@@ -2339,6 +2339,19 @@
           "label": "Publikuj produkty sprzedawców automatycznie",
           "help": "Produkt sprzedawcy trafia do sprzedaży zaraz po zgłoszeniu, bez weryfikacji przez nikogo."
         },
+        "seller_digital_assets_enabled": {
+          "label": "Pozwól sprzedawcom przesyłać pliki cyfrowe",
+          "help": "Sprzedawcy dołączają pliki do pobrania do własnych produktów i ustawiają limity pobrań. Gdy wyłączone, tylko Ty możesz dodawać pliki, a sprzedawcy widzą te, które dodałeś."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Akceptowane typy plików dla sprzedawców",
+          "help": "Jeden typ zawartości w wierszu, na przykład application/pdf. Oceniany na podstawie bajtów pliku, nie jego nazwy. Twoje własne pliki nie podlegają ograniczeniom.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Weryfikuj zmiany plików w produktach już w sprzedaży",
+          "help": "Gdy sprzedawca doda lub zastąpi plik w zatwierdzonym produkcie, produkt wraca do weryfikacji i znika ze sprzedaży do ponownego zatwierdzenia. Nie działa, gdy produkty sprzedawców publikują się automatycznie."
+        },
         "send_seller_transactional_emails": {
           "label": "Wysyłaj e-maile do sprzedawców",
           "help": "Wysyła sprzedawcom e-maile o zatwierdzeniu, produktach i wypłatach. Wyłącz, jeśli piszesz do sprzedawców samodzielnie. Nie wpływa to na e-maile do klientów."
@@ -4367,6 +4380,8 @@
           "payouts_description": "Jak i kiedy ten marketplace płaci swoim sprzedawcom. Sprzedawca może mieć własny harmonogram i własną kwotę minimalną.",
           "admission_title": "Zatwierdzanie sprzedawców",
           "admission_description": "Włączenie którejkolwiek z tych opcji usuwa decyzję człowieka. To w porządku na marketplace tylko na zaproszenie, ale ryzykowne tam, gdzie dołączyć może każdy.",
+          "seller_files_title": "Pliki sprzedawców",
+          "seller_files_description": "Czy sprzedawcy mogą dołączać pliki do pobrania do swoich produktów, jakiego rodzaju, i czy zmiana pliku w zatwierdzonym produkcie wymaga ponownej weryfikacji.",
           "communication_title": "Komunikacja",
           "commission_tax_title": "Podatek od prowizji"
         },

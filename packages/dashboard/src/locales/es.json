@@ -731,6 +731,8 @@
           "payouts_description": "Cómo y cuándo paga este marketplace a sus vendedores. Un vendedor puede tener su propia frecuencia y su propio mínimo.",
           "admission_title": "Aprobación de vendedores",
           "admission_description": "Activar cualquiera de estas opciones elimina una decisión humana. Está bien en un marketplace solo por invitación; es arriesgado en uno abierto a cualquiera.",
+          "seller_files_title": "Archivos de vendedores",
+          "seller_files_description": "Si los vendedores pueden adjuntar archivos descargables a sus productos, de qué tipos, y si cambiar un archivo en un producto aprobado requiere otra revisión.",
           "communication_title": "Comunicación",
           "commission_tax_title": "Impuesto sobre la comisión"
         },
@@ -2260,6 +2262,19 @@
         "auto_approve_seller_products": {
           "label": "Publicar productos de vendedores automáticamente",
           "help": "El producto de un vendedor sale a la venta en cuanto lo envía, sin que nadie lo revise."
+        },
+        "seller_digital_assets_enabled": {
+          "label": "Permitir a los vendedores subir archivos digitales",
+          "help": "Los vendedores adjuntan archivos descargables a sus propios productos y fijan límites de descarga. Desactivado, solo usted puede añadir archivos, y los vendedores ven los que usted añadió."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Tipos de archivo aceptados para vendedores",
+          "help": "Un tipo de contenido por línea, por ejemplo application/pdf. Se juzga por los bytes del archivo, no por su nombre. Sus propias subidas no están restringidas.",
+          "placeholder": "application/pdf\napplication/zip\naudio/mpeg"
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Revisar cambios de archivos en productos ya en venta",
+          "help": "Cuando un vendedor añade o reemplaza un archivo en un producto aprobado, este vuelve a revisión y deja de venderse hasta que lo apruebe de nuevo. No hace nada cuando los productos de vendedores se publican automáticamente."
         },
         "send_seller_transactional_emails": {
           "label": "Enviar correos a los vendedores",

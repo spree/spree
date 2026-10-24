@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-# The writes themselves are shared with the operator's endpoint
-# (Spree::Api::V3::DigitalAssetWrites, covered by the admin controller spec);
-# this covers what the seller branch adds: tenancy, the seller's role, and
-# that providers stay the operator's.
+# The writes themselves run through the digital asset workflows (covered by
+# their own spec and the admin controller spec); this covers what the seller
+# branch adds: tenancy, the seller's role, the marketplace's rules for a
+# seller's file, and that providers stay the operator's.
 RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: :controller do
   render_views
 
@@ -22,7 +22,10 @@ RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: 
     )
   end
 
-  before { request.headers.merge!(headers) }
+  before do
+    request.headers.merge!(headers)
+    stub_store_preferences(seller_digital_assets_enabled: true)
+  end
 
   describe 'GET #index' do
     let!(:digital_asset) { create(:digital_asset, variant: variant, authorized_clicks: 5) }
@@ -72,6 +75,13 @@ RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: 
       expect(response).to have_http_status(:created)
       expect(json_response).to include('filename' => 'amp-model.nam', 'variant_id' => variant.prefixed_id,
                                        'authorized_clicks' => 3, 'authorized_days' => 30)
+    end
+
+    it 'refuses an upload it cannot find' do
+      post :create, params: { product_id: product.prefixed_id, signed_id: 'expired' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.parsed_body.dig('error', 'message')).to match(/could not be found/)
     end
 
     it "refuses a variant of another seller's product" do
@@ -168,6 +178,92 @@ RSpec.describe Spree::Api::V3::Seller::Products::DigitalAssetsController, type: 
       expect(response).to have_http_status(:ok)
       expect(json_response['filename']).to eq('amp-model.nam')
       expect(json_response['authorized_days']).to be_nil
+    end
+  end
+
+  describe "the marketplace's rules for a seller's file" do
+    it 'refuses every file when the marketplace has not opened uploads to sellers' do
+      stub_store_preferences(seller_digital_assets_enabled: false)
+
+      post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.parsed_body.dig('error', 'message')).to match(/does not accept files uploaded by sellers/)
+      expect(Spree::DigitalAsset.count).to eq(0)
+    end
+
+    # The blob declares itself a generic binary; its bytes are a JPEG, and the
+    # bytes are what the rule reads.
+    it 'judges the content type from the bytes against the accepted list' do
+      stub_store_preferences(seller_digital_asset_content_types: %w[application/pdf])
+
+      post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.parsed_body.dig('error', 'message')).to match(%r{image/jpeg files are not accepted})
+      expect(Spree::DigitalAsset.count).to eq(0)
+    end
+
+    it 'leaves the limits editable when the type is no longer accepted' do
+      digital_asset = create(:digital_asset, variant: variant)
+      stub_store_preferences(seller_digital_asset_content_types: %w[application/pdf])
+
+      patch :update, params: { product_id: product.prefixed_id, id: digital_asset.prefixed_id, authorized_clicks: 2 }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(digital_asset.reload.authorized_clicks).to eq(2)
+    end
+
+    context 'on a listing already on sale' do
+      before { product.update!(status: 'active') }
+
+      it 'sends the product back to review when a file is added, naming who did it and why' do
+        post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(product.reload).to be_proposed
+        submission = product.submissions.latest_first.first
+        expect(submission.status).to eq('pending')
+        expect(submission.submitted_by).to eq(seller_user)
+        expect(submission.metadata).to include('reason' => 'digital_asset_changed')
+      end
+
+      it 'sends the product back to review when a file is replaced' do
+        digital_asset = create(:digital_asset, variant: variant)
+
+        patch :update, params: { product_id: product.prefixed_id, id: digital_asset.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload).to be_proposed
+      end
+
+      it 'leaves the product on sale when only the limits change' do
+        digital_asset = create(:digital_asset, variant: variant)
+
+        patch :update, params: { product_id: product.prefixed_id, id: digital_asset.prefixed_id, authorized_clicks: 2 }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload).to be_active
+      end
+
+      it 'leaves the product on sale when the marketplace does not review file changes' do
+        stub_store_preferences(review_seller_digital_asset_changes: false)
+
+        post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(product.reload).to be_active
+      end
+
+      it 'leaves the product on sale when the marketplace approves seller products automatically' do
+        stub_store_preferences(auto_approve_seller_products: true)
+
+        post :create, params: { product_id: product.prefixed_id, signed_id: blob.signed_id }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(product.reload).to be_active
+        expect(product.submissions).to be_empty
+      end
     end
   end
 

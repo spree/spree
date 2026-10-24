@@ -36,6 +36,42 @@ test.describe('marketplace settings', () => {
     await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
   })
 
+  test('opens digital files to sellers with an accepted type list, and it survives a reload', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await page.goto(MARKETPLACE_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^marketplace$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const enabled = page.getByRole('switch', { name: /let sellers upload digital files/i })
+    const types = page.getByLabel(/accepted file types for sellers/i)
+    const review = page.getByRole('switch', { name: /review file changes on products/i })
+    const originalTypes = await types.inputValue()
+    const wasEnabled = (await enabled.getAttribute('aria-checked')) === 'true'
+
+    if (!wasEnabled) await enabled.click()
+    await types.fill('application/pdf\naudio/mpeg')
+    await review.click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/store settings updated/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.reload()
+    await expect(enabled).toHaveAttribute('aria-checked', 'true', { timeout: 15_000 })
+    await expect(types).toHaveValue('application/pdf\naudio/mpeg')
+    await expect(review).toHaveAttribute('aria-checked', 'false')
+
+    // Put the store back so the seller panel specs read the defaults.
+    if (!wasEnabled) await enabled.click()
+    await types.fill(originalTypes)
+    await review.click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
+  })
+
   test('the old payouts settings address opens this page', async ({ page }) => {
     const creds = await login(page)
     await page.goto(`/${creds.store_id}/settings/payouts`)

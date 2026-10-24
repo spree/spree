@@ -30505,6 +30505,33 @@ paths:
                 default_payouts_schedule_interval: monthly
                 auto_approve_sellers: false
                 auto_approve_seller_products: false
+                seller_digital_assets_enabled: false
+                seller_digital_asset_content_types:
+                - application/pdf
+                - application/epub+zip
+                - application/zip
+                - application/x-7z-compressed
+                - application/gzip
+                - application/json
+                - text/plain
+                - text/csv
+                - audio/mpeg
+                - audio/mp4
+                - audio/aac
+                - audio/flac
+                - audio/ogg
+                - audio/wav
+                - audio/x-wav
+                - audio/midi
+                - video/mp4
+                - video/webm
+                - video/quicktime
+                - image/jpeg
+                - image/png
+                - image/gif
+                - image/webp
+                - image/tiff
+                review_seller_digital_asset_changes: true
                 send_seller_transactional_emails: true
                 document_number_format: sequential
                 order_number_prefix: R
@@ -30848,6 +30875,33 @@ paths:
                 default_payouts_schedule_interval: monthly
                 auto_approve_sellers: false
                 auto_approve_seller_products: false
+                seller_digital_assets_enabled: false
+                seller_digital_asset_content_types:
+                - application/pdf
+                - application/epub+zip
+                - application/zip
+                - application/x-7z-compressed
+                - application/gzip
+                - application/json
+                - text/plain
+                - text/csv
+                - audio/mpeg
+                - audio/mp4
+                - audio/aac
+                - audio/flac
+                - audio/ogg
+                - audio/wav
+                - audio/x-wav
+                - audio/midi
+                - video/mp4
+                - video/webm
+                - video/quicktime
+                - image/jpeg
+                - image/png
+                - image/gif
+                - image/webp
+                - image/tiff
+                review_seller_digital_asset_changes: true
                 send_seller_transactional_emails: true
                 document_number_format: sequential
                 order_number_prefix: R
@@ -72744,6 +72798,14 @@ components:
           type: boolean
         auto_approve_seller_products:
           type: boolean
+        seller_digital_assets_enabled:
+          type: boolean
+        seller_digital_asset_content_types:
+          type: array
+          items:
+            type: string
+        review_seller_digital_asset_changes:
+          type: boolean
         send_seller_transactional_emails:
           type: boolean
         document_number_format:
@@ -73453,6 +73515,9 @@ components:
       - default_payouts_schedule_interval
       - auto_approve_sellers
       - auto_approve_seller_products
+      - seller_digital_assets_enabled
+      - seller_digital_asset_content_types
+      - review_seller_digital_asset_changes
       - send_seller_transactional_emails
       - document_number_format
       - order_number_prefix
@@ -79252,7 +79317,9 @@ components:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            On update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it. A seller''s
+            file must be of a content type the marketplace accepts, judged from its
+            bytes.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.
@@ -79279,7 +79346,9 @@ components:
         signed_id:
           type: string
           description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            On update it replaces the file for everyone who already bought it.'
+            On update it replaces the file for everyone who already bought it. A seller''s
+            file must be of a content type the marketplace accepts, judged from its
+            bytes.'
         variant_id:
           type: string
           description: On create, defaults to the product's default variant when omitted.
@@ -83613,6 +83682,22 @@ components:
           type: boolean
           description: Puts a seller product on sale the moment it is submitted, with
             no review.
+        seller_digital_assets_enabled:
+          type: boolean
+          description: Lets sellers attach downloadable files to their own products.
+        seller_digital_asset_content_types:
+          type: array
+          items:
+            type: string
+          description: The content types a seller's file may have, judged from its
+            bytes. The operator's own uploads are not restricted.
+          example:
+          - application/pdf
+          - application/zip
+        review_seller_digital_asset_changes:
+          type: boolean
+          description: Sends a seller product already on sale back to review when
+            the seller adds or replaces a file on it.
         send_seller_transactional_emails:
           type: boolean
           description: When false, transactional seller emails (approval, payouts

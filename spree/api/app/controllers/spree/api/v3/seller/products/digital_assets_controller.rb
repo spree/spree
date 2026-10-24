@@ -10,8 +10,13 @@ module Spree
           # one nor read its settings. An asset the operator set up with one
           # is still listed, since it is part of what the seller's product
           # delivers.
+          #
+          # The marketplace's rules for a seller's file — whether sellers may
+          # upload at all, which content types, and whether an approved
+          # listing goes back to review — apply because the workflow is told
+          # who is writing.
           class DigitalAssetsController < Seller::ResourceController
-            include Spree::Api::V3::DigitalAssetWrites
+            include Spree::Api::V3::DigitalAssetsResource
 
             scoped_resource :products
 
@@ -20,22 +25,18 @@ module Spree
               body.require_attributes :signed_id, on: :create
             end
 
-            # PATCH /api/v3/seller/products/:product_id/digital_assets/:id
-            #
-            # A provider-backed asset delivers through the operator's provider,
-            # so a file attached to it would show here but never reach a buyer.
-            def update
-              if params[:signed_id].present? && !@resource.provider_class.requires_attachment?
-                return render_validation_error(I18n.t('spree.digital_assets_provider_takes_no_file'))
-              end
-
-              super
-            end
-
             protected
 
             def serializer_class
               Spree.api.seller_digital_asset_serializer
+            end
+
+            def create_workflow_arguments
+              super.merge(seller: current_seller, submitted_by: current_user)
+            end
+
+            def update_workflow_arguments
+              super.merge(seller: current_seller, submitted_by: current_user)
             end
 
             # Rooted in the seller's own catalog, so another seller's product

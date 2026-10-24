@@ -4,7 +4,7 @@ module Spree
       module Admin
         module Products
           class DigitalAssetsController < ResourceController
-            include Spree::Api::V3::DigitalAssetWrites
+            include Spree::Api::V3::DigitalAssetsResource
 
             scoped_resource :products
 

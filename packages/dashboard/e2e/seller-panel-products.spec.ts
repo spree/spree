@@ -1,7 +1,14 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
-import { clickBulkAction, FIXTURE_SELLER_WRITER_EMAIL, openRowMenu, sellerLogin } from './helpers'
+import {
+  adminApiSession,
+  adminRequest,
+  clickBulkAction,
+  FIXTURE_SELLER_WRITER_EMAIL,
+  openRowMenu,
+  sellerLogin,
+} from './helpers'
 
 // The card serves whatever is attached, so the shared image fixture will do.
 const DIGITAL_FILE = path.join(
@@ -86,6 +93,23 @@ test.describe('seller panel — products', () => {
   test('uploads a digital file, sets its download limits, replaces it, then removes it', async ({
     page,
   }) => {
+    // Off by default: the marketplace opens file uploads to its sellers. The
+    // replacement below is a format nothing recognises, which the default
+    // type list refuses, so the marketplace admits unknown binaries too.
+    const admin = await adminApiSession(page)
+    const store = await adminRequest<{ seller_digital_asset_content_types: string[] }>(
+      page,
+      admin,
+      'get',
+      '/store',
+    )
+    await adminRequest(page, admin, 'patch', '/store', {
+      seller_digital_assets_enabled: true,
+      seller_digital_asset_content_types: Array.from(
+        new Set([...store.seller_digital_asset_content_types, 'application/octet-stream']),
+      ),
+    })
+
     const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
     await listProduct(page, home, `E2E Amp Model ${Date.now()}`)
 

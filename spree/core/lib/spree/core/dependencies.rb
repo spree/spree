@@ -186,6 +186,11 @@ module Spree
         # handler sees a nested payload and the variants endpoint alike
         variant_create_workflow: 'Spree::Variants::Create',
         variant_update_workflow: 'Spree::Variants::Update',
+
+        # digital assets — the operator's and the seller's endpoints and the
+        # nested list on a product write all run through these
+        digital_asset_create_workflow: 'Spree::DigitalAssets::Create',
+        digital_asset_update_workflow: 'Spree::DigitalAssets::Update',
         product_archive_workflow: 'Spree::Products::Archive',
         product_draft_workflow: 'Spree::Products::Draft',
 

@@ -36,6 +36,7 @@ import {
   SelectValue,
   Skeleton,
   Switch,
+  Textarea,
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
@@ -57,6 +58,7 @@ import {
   useUpdateStoreSettings,
 } from '../../../../hooks/use-store-settings'
 import {
+  contentTypesFromLines,
   type MarketplaceSettingsFormValues,
   marketplaceSettingsFormSchema,
 } from '../../../../schemas/marketplace'
@@ -102,6 +104,11 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
       default_minimum_payout_amount: String(store.default_minimum_payout_amount ?? '0'),
       auto_approve_sellers: store.auto_approve_sellers ?? false,
       auto_approve_seller_products: store.auto_approve_seller_products ?? false,
+      seller_digital_assets_enabled: store.seller_digital_assets_enabled ?? false,
+      seller_digital_asset_content_types: (store.seller_digital_asset_content_types ?? []).join(
+        '\n',
+      ),
+      review_seller_digital_asset_changes: store.review_seller_digital_asset_changes ?? true,
       send_seller_transactional_emails: store.send_seller_transactional_emails ?? true,
       commission_tax_rate_percentage:
         fractionToPercent(String(store.default_commission_tax_rate ?? '')) || '0',
@@ -157,6 +164,11 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
         default_minimum_payout_amount: values.default_minimum_payout_amount,
         auto_approve_sellers: values.auto_approve_sellers,
         auto_approve_seller_products: values.auto_approve_seller_products,
+        seller_digital_assets_enabled: values.seller_digital_assets_enabled,
+        seller_digital_asset_content_types: contentTypesFromLines(
+          values.seller_digital_asset_content_types,
+        ),
+        review_seller_digital_asset_changes: values.review_seller_digital_asset_changes,
         send_seller_transactional_emails: values.send_seller_transactional_emails,
         default_commission_tax_rate: percentToFraction(values.commission_tax_rate_percentage),
       })
@@ -340,6 +352,52 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                       label={t('admin.fields.store.auto_approve_seller_products.label')}
                       help={t('admin.fields.store.auto_approve_seller_products.help')}
                       name="auto_approve_seller_products"
+                      control={form.control}
+                    />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.marketplace.seller_files_title')}</CardTitle>
+                  <CardDescription>
+                    {t('admin.pages.settings.marketplace.seller_files_description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SwitchField
+                      id="marketplace-seller-digital-assets"
+                      label={t('admin.fields.store.seller_digital_assets_enabled.label')}
+                      help={t('admin.fields.store.seller_digital_assets_enabled.help')}
+                      name="seller_digital_assets_enabled"
+                      control={form.control}
+                    />
+                    <Field>
+                      <FieldLabel htmlFor="marketplace-seller-content-types">
+                        {t('admin.fields.store.seller_digital_asset_content_types.label')}
+                      </FieldLabel>
+                      <Textarea
+                        id="marketplace-seller-content-types"
+                        rows={6}
+                        className="font-mono text-xs"
+                        placeholder={t(
+                          'admin.fields.store.seller_digital_asset_content_types.placeholder',
+                        )}
+                        aria-invalid={!!errors.seller_digital_asset_content_types}
+                        {...form.register('seller_digital_asset_content_types')}
+                      />
+                      <FieldDescription>
+                        {t('admin.fields.store.seller_digital_asset_content_types.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.seller_digital_asset_content_types]} />
+                    </Field>
+                    <SwitchField
+                      id="marketplace-review-seller-file-changes"
+                      label={t('admin.fields.store.review_seller_digital_asset_changes.label')}
+                      help={t('admin.fields.store.review_seller_digital_asset_changes.help')}
+                      name="review_seller_digital_asset_changes"
                       control={form.control}
                     />
                   </FieldGroup>
