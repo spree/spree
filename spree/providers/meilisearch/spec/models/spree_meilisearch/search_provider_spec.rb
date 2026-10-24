@@ -109,6 +109,26 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
         provider.search_and_filter(scope: store.products, filters: { 'in_stock' => '1' })
       end
+
+      it 'reads it off as Ransack does, so false leaves it off' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          filter: satisfy { |conditions| conditions.exclude?('in_stock = true') }
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, filters: { 'in_stock' => 'false' })
+      end
+
+      # A value only a sold-out variant carries must not match while the
+      # shopper asks for stock.
+      it 'matches option values against the in-stock variants' do
+        value = create(:option_value)
+
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          filter: include("in_stock_option_value_ids = '#{value.prefixed_id}'")
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, filters: { 'in_stock' => '1', 'with_option_value_ids' => [value.prefixed_id] })
+      end
     end
 
     context 'with in_collection filter' do
@@ -388,6 +408,22 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         red_option = color_filter[:options].find { |o| o[:name] == 'red' }
 
         expect(red_option[:image_url]).to be_nil
+      end
+
+      context 'when the shopper asks for stock' do
+        let(:ms_response) do
+          super().merge('facetDistribution' => {
+                          'option_value_ids' => { red_value.prefixed_id => 3, blue_value.prefixed_id => 1 },
+                          'in_stock_option_value_ids' => { red_value.prefixed_id => 2 }
+                        })
+        end
+
+        it 'counts option values through the in-stock variants' do
+          result = provider.filters(scope: store.products, query: '', filters: { 'in_stock' => '1' })
+          color_filter = result.filters.find { |f| f[:name] == 'color' }
+
+          expect(color_filter[:options].to_h { |o| [o[:name], o[:count]] }).to eq('red' => 2)
+        end
       end
     end
 

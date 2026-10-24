@@ -24,7 +24,15 @@ module Spree
                    :variant_count,
                    available_on: :iso8601, preorder_ships_at: :iso8601
 
-        attribute :purchasable, &:purchasable?
+        # A variant priced only for this shopper (a price list, a pricing
+        # provider) has no base price, so when none has one the shopper's own
+        # quotes are asked, resolving them only for variants that have stock.
+        attribute :purchasable do |product|
+          product.any_variant_available?(current_currency) ||
+            product.sellable_variants.any? do |variant|
+              variant.purchasable? && variant.purchasable_in?(current_currency, quote: price_for(variant))
+            end
+        end
 
         # True when this product is currently offered as a pre-order on the
         # requesting channel.

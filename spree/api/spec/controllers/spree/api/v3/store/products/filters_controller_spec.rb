@@ -112,6 +112,56 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       expect(small_option['count']).to eq(1)
     end
 
+    # Every product here is listed, since each has something to sell, but a
+    # value carried only by a variant the shopper cannot buy is not on offer.
+    context 'with variants a shopper cannot buy' do
+      let!(:product3_red) { create(:variant, product: product3, option_values: [option_value_red]) }
+      let(:product3_blue) { product3.variants.detect { |variant| variant.option_values.include?(option_value_blue) } }
+
+      before do
+        Spree::StockLevel.update_all(count_on_hand: 5, backorderable: false)
+        Spree::StockLevel.where(variant: product3_blue).update_all(count_on_hand: 0)
+        product2.variants.detect { |variant| variant.option_values.include?(option_value_medium) }.prices.delete_all
+      end
+
+      def option_counts(filters, name)
+        filters.find { |f| f['name'] == name }['options'].to_h { |o| [o['label'], o['count']] }
+      end
+
+      it 'counts an out-of-stock value but not an unpriced one' do
+        get :index
+
+        expect(option_counts(json_response['filters'], 'size')).to eq('S' => 1)
+        expect(option_counts(json_response['filters'], 'color')).to eq('Red' => 2, 'Blue' => 1)
+      end
+
+      it 'leaves out an out-of-stock value when the shopper asks for stock' do
+        get :index, params: { q: { in_stock: true } }
+
+        expect(option_counts(json_response['filters'], 'color')).to eq('Red' => 2)
+      end
+
+      context 'with a real cache' do
+        around do |example|
+          original_cache = Rails.cache
+          Rails.cache = ActiveSupport::Cache::MemoryStore.new
+          example.run
+        ensure
+          Rails.cache = original_cache
+        end
+
+        it 'counts the unpriced value once the store starts showing products without a price' do
+          get :index
+          expect(option_counts(json_response['filters'], 'size')).to eq('S' => 1)
+
+          stub_store_preferences(show_products_without_price: true)
+
+          get :index
+          expect(option_counts(json_response['filters'], 'size')).to eq('S' => 1, 'M' => 1)
+        end
+      end
+    end
+
     # Facets describe the listing the buyer gets, so a buyer narrowed to a
     # catalog must not learn about products outside it.
     context 'for a buyer narrowed to a company catalog' do

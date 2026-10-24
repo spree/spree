@@ -8,13 +8,15 @@ module Spree
         # @param sort_order [String, nil] Optional grouping sort_order (space format, e.g. a collection's 'price asc') that drives default_sort
         # @param option_value_ids [Array<String>] Currently selected option value prefixed IDs (for disjunctive facet counts)
         # @param scope_before_options [ActiveRecord::Relation] Scope before option value filters (for disjunctive counts)
-        def initialize(scope:, currency:, category: nil, sort_order: nil, option_value_ids: [], scope_before_options: nil)
+        # @param variants [ActiveRecord::Relation<Spree::Variant>, nil] Variants an option value is counted through (see Spree::Variant.for_option_filters); every variant when nil
+        def initialize(scope:, currency:, category: nil, sort_order: nil, option_value_ids: [], scope_before_options: nil, variants: nil)
           @scope = scope
           @currency = currency
           @category = category
           @sort_order = sort_order
           @option_value_ids = option_value_ids
           @scope_before_options = scope_before_options || scope
+          @variants = variants
         end
 
         def call
@@ -139,13 +141,13 @@ module Spree
           ovv_table = Spree::OptionValueVariant.table_name
           var_table = Spree::Variant.table_name
 
-          Spree::OptionValueVariant
-            .joins("INNER JOIN #{var_table} ON #{var_table}.id = #{ovv_table}.variant_id AND #{var_table}.deleted_at IS NULL")
-            .where(var_table => { product_id: product_scope.reorder('').select(:id) })
-            .where(ovv_table => { option_value_id: option_value_ids })
-            .group("#{ovv_table}.option_value_id")
-            .distinct
-            .count("#{var_table}.product_id")
+          counted = Spree::OptionValueVariant
+                    .joins("INNER JOIN #{var_table} ON #{var_table}.id = #{ovv_table}.variant_id AND #{var_table}.deleted_at IS NULL")
+                    .where(var_table => { product_id: product_scope.reorder('').select(:id) })
+                    .where(ovv_table => { option_value_id: option_value_ids })
+          counted = counted.where(var_table => { id: @variants.select(:id) }) if @variants
+
+          counted.group("#{ovv_table}.option_value_id").distinct.count("#{var_table}.product_id")
         end
 
         # Load translated labels for option values.
@@ -224,16 +226,9 @@ module Spree
           # If this type has selections but no other types do, use scope before any option filters
           return @scope_before_options if other_groups.empty?
 
-          # Rebuild: start from scope before options, apply only other option types
-          scope = @scope_before_options
-          other_groups.each_value do |ov_ids|
-            matching = Spree::Variant.where(deleted_at: nil)
-                                     .joins(:option_value_variants)
-                                     .where(Spree::OptionValueVariant.table_name => { option_value_id: ov_ids })
-                                     .select(:product_id)
-            scope = scope.where(id: matching)
-          end
-          scope
+          # Rebuild: start from scope before options, apply only other option
+          # types — matched the way the listing matches them
+          @scope_before_options.with_option_value_ids(other_groups.values.flatten, variants: @variants)
         end
 
         # Group selected option value IDs by option type (cached, single query)

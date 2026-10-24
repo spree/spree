@@ -1067,7 +1067,13 @@ gem 'spree_meilisearch'
 Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 ```
 
-Your `MEILISEARCH_URL` and `MEILISEARCH_API_KEY` settings are unchanged, and **no reindex is needed** — the documents have the same shape. Applications that subclassed the document presenter should inherit from `SpreeMeilisearch::ProductPresenter` instead.
+Your `MEILISEARCH_URL` and `MEILISEARCH_API_KEY` settings are unchanged. The documents gained fields, so the upgrade rebuilds the index; an option filter can match nothing until it has. Applications that subclassed the document presenter should inherit from `SpreeMeilisearch::ProductPresenter` instead.
+
+## Option filters leave out unpriced and discontinued variants
+
+Option filters on the storefront (for example Size or Grade) now count and match only variants that are not discontinued and have a regular price in the shopper's currency. When the shopper turns on the "in stock" filter, the variant must also be in stock or backorderable. A store that turns on **Show products without a price** counts unpriced variants too; on Meilisearch, reindex after changing that setting. Filtering by an option value in the Admin API still finds every product that has it.
+
+The `purchasable` flag on products and variants in the Store API now also requires a price the cart would sell at, either a regular price in the request's currency or one a price list or pricing provider gives this shopper, since the cart refuses a variant without one. A storefront that enables its add-to-cart button from `purchasable` needs no change.
 
 The old class names keep working for one release, so an application that only names them in an initializer boots with a deprecation warning rather than an error — but the gem must be installed either way, since the classes now live there.
 

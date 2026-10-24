@@ -258,6 +258,62 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
       end
     end
 
+    # Mirrors Spree::Variant.for_option_filters, so both providers count the
+    # same products for a value.
+    context 'with variants a shopper cannot buy' do
+      let(:grade) { create(:option_type, name: 'grade', label: 'Grade', filterable: true) }
+      let(:in_stock_value) { create(:option_value, option_type: grade, name: 'mint', label: 'Mint') }
+      let(:sold_out_value) { create(:option_value, option_type: grade, name: 'good', label: 'Good') }
+      let(:backorder_value) { create(:option_value, option_type: grade, name: 'played', label: 'Played') }
+      let(:unpriced_value) { create(:option_value, option_type: grade, name: 'poor', label: 'Poor') }
+
+      let!(:in_stock_variant) { create(:variant, product: product, option_values: [in_stock_value]) }
+      let!(:sold_out_variant) { create(:variant, product: product, option_values: [sold_out_value]) }
+      let!(:backorder_variant) { create(:variant, product: product, option_values: [backorder_value]) }
+      let!(:unpriced_variant) { create(:variant, product: product, option_values: [unpriced_value], price: nil) }
+
+      let(:doc) { described_class.new(product.reload, store).call.first }
+
+      before do
+        Spree::StockLevel.where(variant: product.variants).update_all(count_on_hand: 0, backorderable: false)
+        Spree::StockLevel.where(variant: [in_stock_variant, unpriced_variant]).update_all(count_on_hand: 5)
+        Spree::StockLevel.where(variant: backorder_variant).update_all(backorderable: true)
+      end
+
+      it 'indexes only the values of priced variants' do
+        expect(doc[:option_value_ids]).to contain_exactly(in_stock_value.prefixed_id, sold_out_value.prefixed_id, backorder_value.prefixed_id)
+      end
+
+      it 'indexes the values the "in stock" filter keeps separately, counting backorders' do
+        expect(doc[:in_stock_option_value_ids]).to contain_exactly(in_stock_value.prefixed_id, backorder_value.prefixed_id)
+      end
+
+      it 'indexes unpriced values when the store lists products without a price' do
+        stub_store_preferences(show_products_without_price: true)
+
+        expect(doc[:option_value_ids]).to include(unpriced_value.prefixed_id)
+        expect(doc[:in_stock_option_value_ids]).to include(unpriced_value.prefixed_id)
+      end
+
+      it 'ignores checkout reservations, as the database search does' do
+        Spree::StockLevel.where(variant: in_stock_variant).update_all(reserved_count: 5)
+
+        expect(doc[:in_stock_option_value_ids]).to include(in_stock_value.prefixed_id)
+      end
+
+      it 'leaves out a discontinued variant' do
+        sold_out_variant.update_column(:discontinue_on, 1.day.ago)
+
+        expect(doc[:option_value_ids]).not_to include(sold_out_value.prefixed_id)
+      end
+
+      it 'marks a product with only backorderable stock as in stock' do
+        Spree::StockLevel.where(variant: [in_stock_variant, unpriced_variant]).update_all(count_on_hand: 0)
+
+        expect(doc[:in_stock]).to be true
+      end
+    end
+
     context 'with searchable / sortable custom_fields' do
       let!(:searchable_def) do
         create(:custom_field_definition, :short_text_field, :searchable,

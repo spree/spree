@@ -176,6 +176,28 @@ module Spree
     scope :backorderable, -> { left_joins(:stock_levels).where(Spree::StockLevel.table_name => { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
+    # The variants a storefront option filter matches and counts. The rules
+    # +Product.available+ (a base price, unless the store lists products
+    # without one) and +Product.in_stock+ apply to a product as a whole, so a
+    # value carried only by an unpriced, sold-out or discontinued variant
+    # would otherwise offer the shopper a product they cannot buy in it.
+    #
+    # @param currency [String, nil] defaults to the current currency
+    # @param in_stock [Boolean] whether the shopper asked for in-stock products
+    # @param store [Spree::Store, nil] whose price setting applies
+    # @return [ActiveRecord::Relation<Spree::Variant>]
+    def self.for_option_filters(currency = nil, in_stock: false, store: Spree::Current.store)
+      scope = not_discontinued
+
+      unless Spree::StorePreferences.read(store, :show_products_without_price)
+        priced = for_currency_and_available_price_amount(currency || Spree::Current.currency)
+        scope = scope.where(id: priced.select(:id))
+      end
+
+      scope = scope.where(id: in_stock_or_backorderable.select(:id)) if in_stock
+      scope
+    end
+
     # Variants one warehouse could actually send: it holds a level for them
     # with something available on it. Written for the transfer form's picker,
     # which would otherwise offer SKUs the source has none of — and
@@ -663,7 +685,9 @@ module Spree
     def price_in(currency)
       currency = currency&.upcase
 
-      price = if read_association_in_memory?(:prices) && prices.any?
+      # Loaded prices are trusted even when empty: a variant with none would
+      # otherwise cost a query per row on every listing that preloads them.
+      price = if read_association_in_memory?(:prices)
                 prices.detect { |p| p.currency == currency && p.price_list_id.nil? }
               else
                 prices.base_prices.find_by(currency: currency)
@@ -944,6 +968,17 @@ module Spree
 
     def purchasable?
       in_stock? || oversellable_now?
+    end
+
+    # Whether a shopper could put this in a cart in the currency. Stock alone
+    # is not enough: the cart refuses a variant unless it has a base price
+    # there or a price list or pricing provider quoted one for the shopper.
+    #
+    # @param currency [String]
+    # @param quote [Spree::Price, nil] the price resolved for the shopper, when known
+    # @return [Boolean]
+    def purchasable_in?(currency, quote: nil)
+      purchasable? && (quote&.amount.present? || amount_in(currency).present?)
     end
 
     # Whether the variant can currently be bought by overselling — via

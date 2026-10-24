@@ -632,6 +632,21 @@ describe Spree::Variant, type: :model do
       end
     end
 
+    context 'when the prices were preloaded and the variant has none' do
+      it 'answers from memory without querying' do
+        unpriced = described_class.includes(:prices).find(create(:variant, price: nil).id)
+        queries = 0
+        subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+          queries += 1 if payload[:name].to_s.include?('Price') && !payload[:cached]
+        end
+
+        expect(unpriced.price_in('USD').amount).to be_nil
+        expect(queries).to eq(0)
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscription)
+      end
+    end
+
     context 'when there is no price with present amount in given currency' do
       let(:currency) { 'GBP' }
 
@@ -1028,6 +1043,76 @@ describe Spree::Variant, type: :model do
         it 'returns true if stock_levels are backorderable' do
           expect(variant.purchasable?).to be true
         end
+      end
+    end
+  end
+
+  describe '#purchasable_in?' do
+    before { variant.stock_levels.update_all(count_on_hand: 10, backorderable: false) }
+
+    it 'is true for a variant in stock with a price in the currency' do
+      expect(variant.purchasable_in?('USD')).to be true
+    end
+
+    it 'is false for a variant in stock with no price in the currency' do
+      expect(variant.purchasable_in?('EUR')).to be false
+    end
+
+    # The cart sells at a price list's or a pricing provider's quote.
+    it 'is true for a variant priced only by the quote resolved for the shopper' do
+      expect(variant.purchasable_in?('EUR', quote: build(:price, currency: 'EUR', amount: 5))).to be true
+    end
+
+    it 'is false for a priced variant nobody can buy' do
+      variant.stock_levels.update_all(count_on_hand: 0)
+
+      expect(variant.reload.purchasable_in?('USD')).to be false
+    end
+  end
+
+  describe '.for_option_filters' do
+    let(:product) { create(:product) }
+    let!(:priced) { create(:variant, product: product) }
+    let!(:unpriced) { create(:variant, product: product, price: nil) }
+
+    it 'keeps only variants priced in the currency' do
+      expect(described_class.for_option_filters('USD')).to include(priced)
+      expect(described_class.for_option_filters('USD')).not_to include(unpriced)
+      expect(described_class.for_option_filters('EUR')).not_to include(priced)
+    end
+
+    it 'keeps unpriced variants when the store lists products without a price' do
+      stub_store_preferences(show_products_without_price: true)
+
+      expect(described_class.for_option_filters('USD')).to include(priced, unpriced)
+    end
+
+    it 'leaves out a discontinued variant' do
+      priced.update_column(:discontinue_on, 1.day.ago)
+
+      expect(described_class.for_option_filters('USD')).not_to include(priced)
+    end
+
+    context 'when the shopper asks for stock' do
+      subject(:variants) { described_class.for_option_filters('USD', in_stock: true) }
+
+      let!(:backorderable) { create(:variant, product: product) }
+      let!(:untracked) { create(:variant, product: product, track_inventory: false) }
+
+      before do
+        Spree::StockLevel.where(variant: [priced, backorderable, untracked]).update_all(count_on_hand: 0, backorderable: false)
+        backorderable.stock_levels.update_all(backorderable: true)
+      end
+
+      it 'keeps what Product.in_stock counts as in stock: backorderable or untracked' do
+        expect(variants).to include(backorderable, untracked)
+        expect(variants).not_to include(priced)
+      end
+
+      it 'keeps a variant with stock on hand' do
+        priced.stock_levels.update_all(count_on_hand: 2)
+
+        expect(variants).to include(priced)
       end
     end
   end
