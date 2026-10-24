@@ -56,21 +56,25 @@ module Spree
           render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
         end
 
-        # A record that was just written holds line items built one at a time,
-        # so their variants carry no preload context and the serializer's
-        # price and stock reads would query once per line. Registering them
-        # as one context keeps rendering flat however the record was built;
-        # a record read through a relation already has one.
+        # A record that was just written holds line items and fulfillments
+        # built one at a time, so they carry no preload context and every
+        # association the serializer reads off them — variants, prices,
+        # stock, delivery rates — would query once per row. Registering each
+        # set as one context keeps rendering flat however the record was
+        # built; a record read through a relation already has one.
         def preload_for_render(record)
           return unless record.respond_to?(:line_items)
 
-          # `preload(:variant)` first: reading the variant off each line one
-          # at a time is itself a query per line, before the context that
-          # would have batched them is even registered.
-          variants = record.line_items.preload(:variant).filter_map(&:variant).uniq(&:id)
-          return if variants.empty?
+          line_items = record.line_items.to_a
+          fulfillments = record.respond_to?(:fulfillments) ? record.fulfillments.to_a : []
+          ArLazyPreload::Context.register(records: line_items, auto_preload: true) if line_items.any?
+          ArLazyPreload::Context.register(records: fulfillments, auto_preload: true) if fulfillments.any?
 
-          ArLazyPreload::Context.register(records: variants, auto_preload: true)
+          # A variant the workflow assigned is already loaded and so sits
+          # outside the line items' context; it needs one of its own.
+          ActiveRecord::Associations::Preloader.new(records: line_items, associations: :variant).call
+          variants = line_items.filter_map(&:variant).uniq(&:object_id)
+          ArLazyPreload::Context.register(records: variants, auto_preload: true) if variants.any?
         end
 
         # Drops lines the customer can no longer buy — a discontinued product,
@@ -99,7 +103,10 @@ module Spree
         # storefront that knows nothing about groups still finds every order it
         # needs there.
         def render_order(status: :ok)
-          record = @cart.reload
+          # Read back through a lazily preloading relation rather than
+          # reloaded in place: a group's orders, and everything each of them
+          # renders, then load once for all of them instead of once per order.
+          record = @cart.class.preload_associations_lazily.find(@cart.id)
 
           preload_for_render(record)
 

@@ -81,7 +81,13 @@ module Spree
       validates :meta_description
       validates :meta_title
     end
-    validates :image, :square_image, content_type: Rails.application.config.active_storage.web_image_content_types
+    # Only a file assigned in this write is checked: a stored one passed when
+    # it was attached, and reading it back would cost a query per slot on
+    # every save — including each category a product write validates.
+    validates :image, content_type: Rails.application.config.active_storage.web_image_content_types,
+                      if: -> { attachment_changes.key?('image') }
+    validates :square_image, content_type: Rails.application.config.active_storage.web_image_content_types,
+                             if: -> { attachment_changes.key?('square_image') }
 
     #
     # Callbacks

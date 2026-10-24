@@ -288,7 +288,7 @@ module Spree
 
           product_categories = Spree::ProductCategory.table_name
           # product id => the categories it sits in, narrowed to this subtree
-          pairs = @scope.joins(:product_categories).
+          pairs = @scope.reorder('').joins(:product_categories).
                   where("#{product_categories}.category_id" => all_descendant_ids).
                   distinct.
                   pluck("#{product_categories}.category_id", "#{product_categories}.product_id")

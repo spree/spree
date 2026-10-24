@@ -47,16 +47,14 @@ module Spree
             end
           end
 
-          attribute :products_count do |record|
-            record.products.count
-          end
+          attribute :products_count, &:products_count
 
           attribute :delivery_methods_count do |record|
-            record.delivery_methods.count
+            record.delivery_methods.size
           end
 
           attribute :delivery_zones_count do |record|
-            record.delivery_zones.count
+            record.delivery_zones.size
           end
         end
       end

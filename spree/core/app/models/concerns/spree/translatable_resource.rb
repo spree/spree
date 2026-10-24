@@ -168,7 +168,12 @@ module Spree
     def translatable_store
       return self if is_a?(Spree::Store)
 
-      try(:store) || Spree::Current.store
+      current_store = Spree::Current.store
+      # The request's store instance already carries its markets, so a batch
+      # of records does not re-read them once per record's own store copy.
+      return current_store if current_store && try(:store_id) == current_store.id
+
+      try(:store) || current_store
     end
 
     private

@@ -28,11 +28,14 @@ module Spree
       end
 
       def build_packages(packages = [])
-        stock_locations_with_requested_variants.each do |stock_location|
+        stock_locations = stock_locations_with_requested_variants.to_a
+        stock_levels = Packer.stock_levels_by_location(stock_locations, requested_variant_ids)
+
+        stock_locations.each do |stock_location|
           units = allocatable_units_for(stock_location)
           next if units.empty?
 
-          packer = build_packer(stock_location, units)
+          packer = build_packer(stock_location, units, stock_levels: stock_levels.fetch(stock_location.id, {}))
           packages += packer.packages
         end
 
@@ -114,8 +117,8 @@ module Spree
         @estimator ||= Estimator.new(order)
       end
 
-      def build_packer(stock_location, inventory_units)
-        Packer.new(stock_location, inventory_units, splitters(stock_location), owner: order)
+      def build_packer(stock_location, inventory_units, stock_levels: nil)
+        Packer.new(stock_location, inventory_units, splitters(stock_location), owner: order, stock_levels: stock_levels)
       end
 
       def splitters(_stock_location)

@@ -48,6 +48,8 @@ module Spree
         return if prices_params.nil?
 
         currencies = []
+        # Loaded once so each currency's write finds its row in memory.
+        variant.prices.load if variant.persisted?
 
         Array(prices_params).each do |raw|
           price = raw.to_h.with_indifferent_access
@@ -59,7 +61,8 @@ module Spree
 
         return unless variant.persisted?
 
-        variant.prices.base_prices.where.not(currency: currencies).destroy_all
+        stale = variant.prices.select { |price| price.persisted? && price.price_list_id.nil? && currencies.exclude?(price.currency) }
+        variant.prices.destroy(*stale) if stale.any?
       end
 
       # @param variant [Spree::Variant]
@@ -73,6 +76,8 @@ module Spree
         return if rows.empty?
 
         locations = stock_locations_by_param(variant, rows.map { |row| row[:stock_location_id] })
+        # Loaded once so each row's write finds its level in memory.
+        variant.stock_levels.load if variant.persisted?
 
         rows.each do |row|
           location = locations[row[:stock_location_id].to_s]
@@ -80,6 +85,10 @@ module Spree
 
           variant.set_stock(row[:count_on_hand], row[:backorderable], location)
         end
+
+        # A count change locks and reloads its level, so the locations the
+        # response's stock figures read are loaded for every level afterwards.
+        ActiveRecord::Associations::Preloader.new(records: variant.stock_levels.to_a, associations: :stock_location).call
       end
 
       # Resolves every stock location the payload names in one read. Scoped

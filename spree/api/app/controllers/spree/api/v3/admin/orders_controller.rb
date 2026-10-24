@@ -233,7 +233,9 @@ module Spree
           # `fields` list names an order's attributes, and narrowing a group by
           # it can drop the very keys that say it is one.
           def serialize_completion(record)
-            return serialize_resource(record.reload) unless record.is_a?(Spree::OrderGroup)
+            # Read back lazily preloading, as #show is, so its fulfillments and
+            # their rows load once for all of them rather than per fulfillment.
+            return serialize_resource(Spree::Order.preload_associations_lazily.find(record.id)) unless record.is_a?(Spree::OrderGroup)
 
             Spree.api.admin_order_group_serializer.new(completed_group(record), params: serializer_params).to_h
           end
@@ -245,7 +247,7 @@ module Spree
               :customer, :ship_address, :bill_address,
               { payments: %i[payment_method source] },
               { orders: [:seller, :market, :gift_card, :customer, { line_items: { variant: :prices } }] }
-            ).find(group.id)
+            ).preload_associations_lazily.find(group.id)
           end
 
           # Override scope — Order uses SingleStoreResource (for_store).

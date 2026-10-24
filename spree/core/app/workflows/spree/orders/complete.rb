@@ -140,11 +140,16 @@ module Spree
       end
 
       def allocate_fulfillment_stock(fulfillment)
-        fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
+        items = fulfillment.manifest.select { |item| item.variant.track_inventory? && item.quantity.positive? }
+        return if items.empty?
 
-          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
+        stock_location = fulfillment.stock_location
+        # Lowest id first, as StockLocation#stock_level reads.
+        stock_levels = stock_location.stock_levels.where(variant_id: items.map { |item| item.variant.id }).order(:id).
+                       group_by(&:variant_id).transform_values(&:first)
+
+        items.each do |item|
+          stock_location.allocate(item.variant, item.quantity, fulfillment, stock_level: stock_levels[item.variant.id])
         end
       end
 
@@ -240,6 +245,11 @@ module Spree
       # wildcard subscribers dedupe on the metadata marker.
       def publish_order_placed
         metadata = { notify_customer: order.notify_customer }
+        # The payload renders every line and parcel; one preload context
+        # each loads what they read once rather than per row.
+        [order.line_items.to_a, order.fulfillments.to_a].each do |records|
+          ArLazyPreload::Context.register(records: records, auto_preload: true) if records.any?
+        end
         payload = order.event_payload
         order.publish_event('order.placed', payload, metadata)
         order.publish_event('order.completed', payload, metadata.merge(deprecated_alias_of: 'order.placed'))

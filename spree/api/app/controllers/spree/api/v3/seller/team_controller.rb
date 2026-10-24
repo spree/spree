@@ -86,7 +86,7 @@ module Spree
           private
 
           def members
-            @members ||= current_seller.users.to_a
+            @members ||= current_seller.users.with_attached_avatar.to_a
           end
 
           def set_member

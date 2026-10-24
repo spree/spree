@@ -82,6 +82,16 @@ Dummy::Application.configure do
   # so a serializer or model method that queries once per record cannot land
   # unnoticed. Wrap a deliberately repeated lookup in Prosopite.pause.
   if defined?(Prosopite)
+    # Hooked from Spree's own test app rather than declared in the
+    # controller, so a host application that bundles Prosopite for itself is
+    # never opted into Spree's guard. Prepended so the lookups made by the
+    # authentication and parent callbacks are scanned too.
+    config.to_prepare do
+      if defined?(Spree::Api::V3::BaseController)
+        Spree::Api::V3::BaseController.prepend_around_action { |_controller, action| Prosopite.scan(&action) }
+      end
+    end
+
     Prosopite.rails_logger = true
     # Raise only under RSpec, where a report belongs to the example that
     # caused it. The same dummy app serves a real server for the SDK and
@@ -108,7 +118,27 @@ Dummy::Application.configure do
       # concern, so the frame is Spree's rather than Active Record's.
       %r{active_record/timestamp\.rb:\d+:in '[^']*#touch'},
       %r{/spree/publishable\.rb:\d+:in '[^']*#touch'},
-      %r{/paranoia\.rb:\d+:in '[^']*destroy'}
+      %r{/paranoia\.rb:\d+:in '[^']*destroy'},
+      # Validations run before the persistence frame starts, so a uniqueness
+      # or ladder probe on the row being saved needs its own entry.
+      %r{active_record/validations\.rb:\d+:in '[^']*#(save|save!)'},
+      # after_commit callbacks are the same per-record write work, deferred
+      # until the transaction that wrote the rows ends.
+      %r{active_record/transactions\.rb:\d+:in '[^']*#committed!'},
+      # Locking a row re-reads it, once per row the caller is about to write.
+      %r{active_record/locking/pessimistic\.rb:\d+:in '[^']*#lock!'},
+      # A product payload writes each nested variant and media row through its
+      # own workflow — SKU probe, option lookup, blob resolution — once per row.
+      %r{/spree/products/nested_attributes\.rb:\d+:in '[^']*#(write_variant|apply_media)'},
+      # A settlement is swept per currency, and each sweep writes its own payout.
+      %r{/spree/seller_payouts/sweep\.rb:\d+:in '[^']*#collect_transfers'},
+      # A split checkout re-sums and then places each seller's order it just
+      # wrote, one workflow run per order.
+      %r{/spree/carts/split_by_seller\.rb:\d+:in '[^']*#resum_totals'},
+      %r{/spree/orders/complete\.rb:\d+:in '[^']*#place_sibling'},
+      # Each requested line is priced, stock-checked, saved and taxed as it
+      # is written.
+      %r{/spree/carts/upsert_items\.rb:\d+:in '[^']*#apply_item'}
     ]
 
     # Prosopite fingerprints through pg_query, which rejects SQLite's `?`
@@ -125,20 +155,5 @@ Dummy::Application.configure do
         mysql_fingerprint(query.gsub(/"([^"]*)"/) { "`#{Regexp.last_match(1)}`" })
       end
     end)
-
-    # Two `belongs_to` on one table — an order's billing and shipping
-    # address, a category's image and square image — are a single lookup
-    # each, but they normalize to one fingerprint, so a single record reads
-    # as a repeat. The cost there is per association, not per record, which
-    # is not what this guard is for.
-    #
-    # A real N+1 on a single-row lookup asks for a *different* row each time,
-    # so the row asked for is what separates the two. The id travels in the
-    # bind values rather than the SQL text; recording which rows a statement
-    # asked for lets the fingerprint keep them apart while a repeat of the
-    # same row still reports.
-    # A lookup of one specific row: keyed by a primary key, or by the
-    # (record, name) pair Active Storage uses for an attachment.
-
   end
 end
