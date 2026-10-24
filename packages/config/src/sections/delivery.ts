@@ -209,9 +209,30 @@ function numeric(value: unknown): unknown {
   return numericString(value) ?? value
 }
 
+interface PreferenceSchema {
+  type?: string | string[]
+  format?: string
+  pattern?: string
+}
+
 interface CalculatorType {
   type: string
-  schema?: { properties?: Record<string, { type?: string; pattern?: string }> }
+  schema?: { properties?: Record<string, PreferenceSchema> }
+}
+
+/**
+ * An amount, rate or percentage: a string (possibly nullable) in money or
+ * decimal format, or a percentage that only carries the decimal pattern.
+ */
+function isDecimalPreference(schema: PreferenceSchema | undefined): boolean {
+  if (!schema) return false
+  const types = Array.isArray(schema.type) ? schema.type : [schema.type]
+  if (!types.includes('string')) return false
+  return (
+    schema.format === 'money' ||
+    schema.format === 'decimal' ||
+    schema.pattern === String.raw`^-?\d+(\.\d+)?$`
+  )
 }
 
 const calculatorTypes = new WeakMap<RunContext, Promise<CalculatorType[]>>()
@@ -244,9 +265,7 @@ async function wireCalculator(
     preferences: Object.fromEntries(
       Object.entries(calculator.preferences).map(([key, value]) => [
         key,
-        properties[key]?.type === 'string' && properties[key]?.pattern
-          ? decimalString(value)
-          : value,
+        isDecimalPreference(properties[key]) ? decimalString(value) : value,
       ]),
     ),
   }
