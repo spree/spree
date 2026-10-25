@@ -21,7 +21,7 @@ import {
   usePauseMaintenanceTaskRun,
   useResumeMaintenanceTaskRun,
 } from '../../../hooks/use-maintenance-tasks'
-import { taskShortName } from '../../../lib/maintenance-tasks'
+import { runProgress, taskShortName } from '../../../lib/maintenance-tasks'
 
 // Mirrors what the pause service accepts: a run that is working, or one
 // queued with no execution yet to observe a request.
@@ -94,12 +94,7 @@ export function RunDetailSheet({
                   )}
                 </div>
 
-                {/* A task that could not count its collection gets an
-                  indeterminate bar rather than a fake percentage. */}
-                <Progress
-                  value={run.tick_total == null ? null : run.tick_count}
-                  max={run.tick_total ?? undefined}
-                >
+                <Progress {...runProgress(run)}>
                   <ProgressLabel>{t('admin.maintenance_tasks.run.progress_label')}</ProgressLabel>
                   <ProgressValue>
                     {() =>

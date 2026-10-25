@@ -10,7 +10,7 @@ module Spree
         # about operator-run data work is customer-facing.
         class MaintenanceTaskRunSerializer < BaseSerializer
           typelize task_name: :string,
-                   status: :string,
+                   status: [:string, enum: Spree::MaintenanceTaskRun.statuses, enum_type_name: 'MaintenanceTaskRunStatus'],
                    dry_run: :boolean,
                    initiated_via: :string,
                    cursor: [:string, nullable: true],

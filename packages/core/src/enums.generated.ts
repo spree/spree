@@ -204,6 +204,22 @@ export type ImportStatus = (typeof IMPORT_STATUSES)[number] | (string & {})
 export const INVITATION_STATUSES = ['pending', 'accepted'] as const
 export type InvitationStatus = (typeof INVITATION_STATUSES)[number] | (string & {})
 
+/** The built-in values of `MaintenanceTaskRunStatus`. Extensions may add more. */
+export const MAINTENANCE_TASK_RUN_STATUSES = [
+  'enqueued',
+  'running',
+  'pausing',
+  'paused',
+  'interrupted',
+  'cancelling',
+  'cancelled',
+  'succeeded',
+  'errored',
+] as const
+export type MaintenanceTaskRunStatus =
+  | (typeof MAINTENANCE_TASK_RUN_STATUSES)[number]
+  | (string & {})
+
 /** Every value of `MatchPolicy`. */
 export const MATCH_POLICIES = ['all', 'any'] as const
 export type MatchPolicy = (typeof MATCH_POLICIES)[number]
@@ -530,6 +546,7 @@ export type BuiltInStatus =
   | (typeof IMPORT_ROW_STATUSES)[number]
   | (typeof IMPORT_STATUSES)[number]
   | (typeof INVITATION_STATUSES)[number]
+  | (typeof MAINTENANCE_TASK_RUN_STATUSES)[number]
   | (typeof ORDER_FULFILLMENT_STATUSES)[number]
   | (typeof ORDER_PAYMENT_STATUSES)[number]
   | (typeof ORDER_STATUSES)[number]

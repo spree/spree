@@ -35,7 +35,7 @@ import {
   useMaintenanceTasks,
   useUpgradeSteps,
 } from '../../../../hooks/use-maintenance-tasks'
-import { taskShortName } from '../../../../lib/maintenance-tasks'
+import { runProgress, taskShortName } from '../../../../lib/maintenance-tasks'
 import '../../../../tables/maintenance-task-runs'
 
 // The page shares its URL with the run-history `<ResourceTable>`; `run` is the
@@ -164,6 +164,7 @@ function MaintenanceTasksPage() {
               })
             }
             searchParams={search}
+            hideHeader
           />
         </TabsContent>
       </Tabs>
@@ -238,10 +239,7 @@ function TaskCard({
             className="flex flex-col gap-1 text-left"
             onClick={() => onOpenRun(activeRun.id)}
           >
-            <Progress
-              value={activeRun.tick_total == null ? null : activeRun.tick_count}
-              max={activeRun.tick_total ?? undefined}
-            />
+            <Progress {...runProgress(activeRun)} />
             <span className="text-muted-foreground text-xs">
               {t('admin.maintenance_tasks.run.processed_count', { count: activeRun.tick_count })}
             </span>
