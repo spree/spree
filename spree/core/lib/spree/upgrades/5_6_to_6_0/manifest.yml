@@ -479,7 +479,7 @@ steps:
 
   - id: backfill_market_tax_inclusive
     name: "Decide whether each market's prices include tax"
-    task: "spree:markets:backfill_tax_inclusive"
+    task_class: "Spree::MaintenanceTasks::Upgrade::MarketTaxInclusive"
     notes: |
       In Spree 6 the market decides whether its prices include tax; tax rates
       no longer carry an "included in price" flag. Each market takes the
@@ -714,7 +714,7 @@ steps:
 
   - id: tax_exemption_reasons
     name: "Give every store the default tax exemption reasons and link certificates to them"
-    task: "spree:upgrade:tax_exemption_reasons"
+    task_class: "Spree::MaintenanceTasks::Upgrade::TaxExemptionReasons"
     notes: |
       Company tax exemption certificates point at one of the store's
       exemption reasons, so a store without any cannot record a certificate.
@@ -829,7 +829,7 @@ steps:
 
   - id: backfill_tagging_tenants
     name: "Stamp the store on taggings written without one"
-    task: "spree:upgrade:backfill_tagging_tenants"
+    task_class: "Spree::MaintenanceTasks::Upgrade::TaggingTenants"
     notes: |
       Tags added through the bulk endpoints carried no store on their
       taggings, and the admin tag list filters by it, so those tags were

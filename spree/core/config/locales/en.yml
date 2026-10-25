@@ -1070,6 +1070,8 @@ en:
           description: Move incomplete orders onto the Cart model
         library_media_placements:
           description: Record where each media file is used
+        market_tax_inclusive:
+          description: Decide whether each market's prices include tax
         master_images_to_product_media:
           description: Move variant-pinned images onto product media
         media_class_names:
@@ -1108,6 +1110,10 @@ en:
           description: Copy moved settings from the global config onto each store
         stripe_webhook_keys:
           description: Move Stripe webhook signing secrets onto the gateway
+        tagging_tenants:
+          description: Stamp the store on taggings written without one
+        tax_exemption_reasons:
+          description: Add tax exemption reasons and link certificates to them
         tax_store_ids:
           description: Assign tax categories and rates to the default store
         tax_zones:
