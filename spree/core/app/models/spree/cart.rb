@@ -203,10 +203,13 @@ module Spree
     # delivery_unavailable warning per affected line item (parity with the
     # order-side ensure_available_delivery_rates).
     def prune_undeliverable_fulfillments!
-      undeliverable = fulfillments.reload.select { |fulfillment| fulfillment.delivery_rates.empty? }
+      candidates = fulfillments.reload.to_a
+      ActiveRecord::Associations::Preloader.new(records: candidates, associations: :delivery_rates).call
+      undeliverable = candidates.select { |fulfillment| fulfillment.delivery_rates.empty? }
       return if undeliverable.empty?
 
       affected_line_items = undeliverable.flat_map(&:line_items).uniq
+      ActiveRecord::Associations::Preloader.new(records: affected_line_items, associations: { variant: :product }).call
       undeliverable.each(&:destroy)
       self.warnings |= affected_line_items.map do |line_item|
         {

@@ -62,7 +62,11 @@ module Spree
       #
       # @return [Boolean]
       def shipping_address_required?
-        selected_methods = fulfillments.filter_map(&:delivery_method)
+        candidates = fulfillments.to_a
+        if candidates.many? && candidates.all?(ActiveRecord::Base)
+          ActiveRecord::Associations::Preloader.new(records: candidates, associations: { selected_delivery_rate: :delivery_method }).call
+        end
+        selected_methods = candidates.filter_map(&:delivery_method)
         return selected_methods.any?(&:requires_address?) if selected_methods.any?
 
         return false if preferred_stock_location_id.present?
@@ -270,9 +274,20 @@ module Spree
           cache[profile] = profile.present? && profile.requires_shipping_address?
         end
 
-        # Both profile paths are preloaded: the variant's own override, and the
-        # product's for the variants that inherit it.
-        line_items.includes(variant: [:delivery_profile, { product: :delivery_profile }]).any? do |line_item|
+        # On a list the association batches across the page, so a fresh
+        # `includes` query would load every cart's items separately. Read
+        # alone, both profile paths are preloaded: the variant's own override,
+        # and the product's for the variants that inherit it.
+        profile_paths = { variant: [:delivery_profile, { product: :delivery_profile }] }
+        items = if !read_association_in_memory?(:line_items)
+                  line_items.includes(profile_paths)
+                elsif lazy_preload_context.nil?
+                  line_items.tap { |loaded| ActiveRecord::Associations::Preloader.new(records: loaded.to_a, associations: profile_paths).call }
+                else
+                  line_items
+                end
+
+        items.any? do |line_item|
           profile_requires_address[line_item.variant&.resolved_delivery_profile]
         end
       end

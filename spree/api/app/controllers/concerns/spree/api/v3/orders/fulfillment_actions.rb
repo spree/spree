@@ -72,8 +72,13 @@ module Spree
               )
 
               if changer.run!
+                # Read back through a lazily preloading query: what each parcel
+                # renders, its number included, then loads once for all of them.
+                order = current_store.orders.where(id: @order.id).preload_associations_lazily.take!
+                fulfillments = order.fulfillments.to_a
+
                 render json: {
-                  data: @order.reload.fulfillments.map { |fulfillment| serialize_resource(fulfillment) }
+                  data: fulfillments.map { |fulfillment| serialize_resource(fulfillment) }
                 }
               else
                 render_validation_error(changer.errors)

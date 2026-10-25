@@ -62,6 +62,47 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[name code active default store_id]
     search_by :name
 
+    # Publishes the given products on every channel in the current scope
+    # (`store.channels.where(id: ids).add_products(product_ids)`), touching
+    # and reindexing each product once rather than once per channel.
+    # @param product_ids [Array<Integer>, Integer]
+    # @return [Integer] the number of ProductPublications created or updated
+    def self.add_products(product_ids)
+      product_ids = Array(product_ids).map(&:to_s).uniq
+      channels = all.to_a
+      return 0 if product_ids.empty? || channels.empty?
+
+      count = channels.sum { |channel| channel.send(:upsert_publications, product_ids) }
+      refresh_products(product_ids)
+      channels.each(&:touch)
+      count
+    end
+
+    # Unpublishes the given products from every channel in the current scope.
+    # @param product_ids [Array<Integer>, Integer]
+    # @return [Integer] the number of ProductPublications destroyed
+    def self.remove_products(product_ids)
+      product_ids = Array(product_ids).map(&:to_s).uniq
+      channels = all.to_a
+      return 0 if product_ids.empty? || channels.empty?
+
+      removed = Spree::ProductPublication.includes(:product).where(channel_id: channels.map(&:id), product_id: product_ids).destroy_all
+      refresh_products(product_ids)
+      emptied_channel_ids = removed.map(&:channel_id).uniq
+      channels.select { |channel| emptied_channel_ids.include?(channel.id) }.each(&:touch)
+      removed.size
+    end
+
+    # @param product_ids [Array<String>]
+    # @return [void]
+    def self.refresh_products(product_ids)
+      products = Spree::Product.where(id: product_ids)
+      products.touch_all
+      # `to_a` once: `touch_all` does not load the relation, so iterating it
+      # afterwards would re-run the query.
+      products.to_a.each(&:enqueue_search_index)
+    end
+
     # Publishes the given products on this channel by creating/upserting ProductPublications.
     # Optionally sets the publication window; if not given, the products will be published immediately
     # with no end date.
@@ -73,42 +114,10 @@ module Spree
       product_ids = Array(product_ids).map(&:to_s).uniq
       return 0 if product_ids.empty?
 
-      now = Time.current
-      # Only include window columns in the upsert payload when the caller
-      # explicitly passed a value. Leaving them out keeps existing
-      # publication schedules intact on re-publish — otherwise +on_duplicate:
-      # :update+ + +update_only+ would rewrite scheduled +published_at+ /
-      # +unpublished_at+ to NULL whenever the bulk action re-runs without
-      # dates.
-      base = { channel_id: id, created_at: now, updated_at: now }
-      base[:published_at] = published_at unless published_at.nil?
-      base[:unpublished_at] = unpublished_at unless unpublished_at.nil?
-
-      records_to_upsert = product_ids.map { |product_id| base.merge(product_id: product_id) }
-
-      # Only update the window columns the caller passed. When neither was
-      # passed, treat re-publish as a no-op (+on_duplicate: :skip+ → MySQL
-      # +INSERT IGNORE+, PG/SQLite +ON CONFLICT DO NOTHING+).
-      update_columns = []
-      update_columns << :published_at unless published_at.nil?
-      update_columns << :unpublished_at unless unpublished_at.nil?
-      opts = if update_columns.empty?
-               { on_duplicate: :skip }
-             else
-               { record_timestamps: false, update_only: update_columns, on_duplicate: :update }
-             end
-      # MySQL infers the conflict target from the table's unique constraints
-      # and rejects an explicit +unique_by+; PostgreSQL/SQLite require it.
-      opts[:unique_by] = %i[product_id channel_id] unless mysql_adapter?
-
-      Spree::ProductPublication.upsert_all(records_to_upsert, **opts)
-
-      products = Spree::Product.where(id: product_ids)
-      products.touch_all
-      products.each(&:enqueue_search_index)
+      count = upsert_publications(product_ids, published_at: published_at, unpublished_at: unpublished_at)
+      self.class.refresh_products(product_ids)
       touch
-
-      records_to_upsert.size
+      count
     end
 
     # Unpublishes the given products from this channel.
@@ -118,12 +127,9 @@ module Spree
       product_ids = Array(product_ids).map(&:to_s).uniq
       return 0 if product_ids.empty?
 
-      count = publications.where(product_id: product_ids).destroy_all.size
+      count = publications.includes(:product).where(product_id: product_ids).destroy_all.size
 
-      products = Spree::Product.where(id: product_ids)
-      products.touch_all
-      products.each(&:enqueue_search_index)
-
+      self.class.refresh_products(product_ids)
       touch if count.positive?
       count
     end
@@ -160,6 +166,39 @@ module Spree
     end
 
     private
+
+    def upsert_publications(product_ids, published_at: nil, unpublished_at: nil)
+      now = Time.current
+      # Only include window columns in the upsert payload when the caller
+      # explicitly passed a value. Leaving them out keeps existing
+      # publication schedules intact on re-publish — otherwise +on_duplicate:
+      # :update+ + +update_only+ would rewrite scheduled +published_at+ /
+      # +unpublished_at+ to NULL whenever the bulk action re-runs without
+      # dates.
+      base = { channel_id: id, created_at: now, updated_at: now }
+      base[:published_at] = published_at unless published_at.nil?
+      base[:unpublished_at] = unpublished_at unless unpublished_at.nil?
+
+      records_to_upsert = product_ids.map { |product_id| base.merge(product_id: product_id) }
+
+      # Only update the window columns the caller passed. When neither was
+      # passed, treat re-publish as a no-op (+on_duplicate: :skip+ → MySQL
+      # +INSERT IGNORE+, PG/SQLite +ON CONFLICT DO NOTHING+).
+      update_columns = []
+      update_columns << :published_at unless published_at.nil?
+      update_columns << :unpublished_at unless unpublished_at.nil?
+      opts = if update_columns.empty?
+               { on_duplicate: :skip }
+             else
+               { record_timestamps: false, update_only: update_columns, on_duplicate: :update }
+             end
+      # MySQL infers the conflict target from the table's unique constraints
+      # and rejects an explicit +unique_by+; PostgreSQL/SQLite require it.
+      opts[:unique_by] = %i[product_id channel_id] unless mysql_adapter?
+
+      Spree::ProductPublication.upsert_all(records_to_upsert, **opts)
+      records_to_upsert.size
+    end
 
     def ensure_not_default
       return unless default?

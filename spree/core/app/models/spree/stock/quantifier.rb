@@ -3,6 +3,22 @@ module Spree
     class Quantifier
       attr_reader :variant, :stock_location, :excluded_order, :provided_stock_levels
 
+      # What a quantifier reads, preloaded for many variants at once, so
+      # quantifying each of them reads memory instead of querying per variant.
+      # Variants whose levels are loaded already are left as they are.
+      #
+      # @param variants [Enumerable<Spree::Variant>]
+      # @return [void]
+      def self.preload(variants)
+        unloaded = variants.compact.reject { |variant| variant.association(:stock_levels).loaded? }
+        return if unloaded.empty?
+
+        ActiveRecord::Associations::Preloader.new(
+          records: unloaded,
+          associations: { stock_levels: [:stock_location, :active_stock_reservations] }
+        ).call
+      end
+
       # @param excluded_order [Spree::Cart, Spree::Order, nil] when given,
       #   reservations belonging to this cart/order are not counted against
       #   availability. Used when checking a cart's own line items so the

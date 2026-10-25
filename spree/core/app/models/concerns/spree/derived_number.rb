@@ -58,7 +58,7 @@ module Spree
     end
 
     def sibling_association_name
-      self.class.name.demodulize.underscore.pluralize
+      self.class.name.demodulize.underscore.pluralize.to_sym
     end
   end
 end

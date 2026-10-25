@@ -497,7 +497,9 @@ module Spree
     def purchasable?
       return @purchasable unless @purchasable.nil?
 
-      @purchasable = sellable_variants.any?(&:purchasable?)
+      variants_to_check = sellable_variants
+      Spree::Stock::Quantifier.preload(variants_to_check)
+      @purchasable = variants_to_check.any?(&:purchasable?)
     end
 
     def in_stock?

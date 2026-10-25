@@ -58,6 +58,20 @@ module Spree
           expect(quantifier.available_stock).to eq(described_class.new(variant).available_stock)
         end
 
+        it 'answers from memory for variants loaded through .preload' do
+          loaded = Spree::Variant.find(variant.id)
+          described_class.preload([loaded])
+          quantifier = described_class.new(loaded)
+
+          queries = count_queries do
+            quantifier.available_stock
+            quantifier.reserved_quantity
+          end
+
+          expect(queries).to eq(0)
+          expect(quantifier.available_stock).to eq(described_class.new(variant).available_stock)
+        end
+
         it 'queries when the rows are not loaded' do
           quantifier = described_class.new(Spree::Variant.find(variant.id))
 

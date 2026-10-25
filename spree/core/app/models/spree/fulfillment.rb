@@ -653,7 +653,14 @@ module Spree
     #
     # @return [Spree::DeliveryMethod]
     def delivery_method
-      selected_delivery_rate&.delivery_method || delivery_rates.first&.delivery_method
+      selected = selected_delivery_rate
+      # The same row read through the rate list, when that list is to hand,
+      # so its method loads with every other rate's instead of on its own.
+      if selected && read_association_in_memory?(:delivery_rates)
+        selected = delivery_rates.detect { |rate| rate.id == selected.id } || selected
+      end
+
+      selected&.delivery_method || delivery_rates.first&.delivery_method
     end
 
     # The fulfillment provider strategy handling this fulfillment's

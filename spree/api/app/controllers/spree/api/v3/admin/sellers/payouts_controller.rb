@@ -30,7 +30,8 @@ module Spree
                 # because another went through: the payout row exists and is
                 # failed or unresolved, and an operator reading "settled" would
                 # not know to go looking for it.
-                body = { data: settled.map { |payout| serialize_payout(payout) } }
+                transfer_counts = Spree::SellerTransfer.where(payout_id: settled.map(&:id)).group(:payout_id).count
+                body = { data: settled.map { |payout| serialize_payout(payout, transfer_counts) } }
                 body[:meta] = { failures: failures } if failures.any?
 
                 render json: body, status: :created
@@ -96,8 +97,8 @@ module Spree
               @seller.payable_currencies
             end
 
-            def serialize_payout(payout)
-              Spree.api.admin_seller_payout_serializer.new(payout, params: { store: current_store }).to_h
+            def serialize_payout(payout, transfer_counts)
+              Spree.api.admin_seller_payout_serializer.new(payout, params: { store: current_store, transfer_counts: transfer_counts }).to_h
             end
           end
         end

@@ -179,12 +179,12 @@ module Spree
           # Bulk add the given customers to the given groups. Idempotent —
           # customers already in a group are skipped at the model layer.
           def bulk_add_to_groups
-            apply_groups(:add_customers)
+            apply_groups(:add_customers_to)
           end
 
           # Bulk remove the given customers from the given groups.
           def bulk_remove_from_groups
-            apply_groups(:remove_customers)
+            apply_groups(:remove_customers_from)
           end
 
           protected
@@ -295,8 +295,9 @@ module Spree
           end
 
           # Authorises bulk group mutation, decodes prefixed IDs, then dispatches
-          # to `add_customers` / `remove_customers` per group. Returns the
-          # counts of records actually affected so the UI can show a toast.
+          # to `add_customers_to` / `remove_customers_from` for all groups at
+          # once. Returns the counts of records actually affected so the UI can
+          # show a toast.
           def apply_groups(method)
             authorize! :update, model_class
 
@@ -304,9 +305,9 @@ module Spree
             group_ids = decode_ids(params[:customer_group_ids])
 
             scoped_user_ids = scope.where(id: user_ids).pluck(:id)
-            scoped_groups = Spree::CustomerGroup.for_store(current_store).where(id: group_ids)
+            scoped_groups = Spree::CustomerGroup.for_store(current_store).where(id: group_ids).to_a
 
-            scoped_groups.find_each { |group| group.public_send(method, scoped_user_ids) }
+            Spree::CustomerGroup.public_send(method, scoped_groups, scoped_user_ids)
 
             render json: { customer_count: scoped_user_ids.size, customer_group_count: scoped_groups.size }
           end

@@ -50,8 +50,15 @@ module Spree
         # Render the cart as JSON using the cart serializer. Rendering never
         # mutates: an action that wants unbuyable lines swept calls
         # +sweep_unbuyable_lines!+ itself first.
+        #
+        # Serialized from a fresh, lazily preloading read, since lazy
+        # preloading does not reach lines and fulfillments a write built. The
+        # warnings exist only in memory, so they are carried over.
         def render_cart(status: :ok)
-          render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
+          cart = current_store.carts.where(id: @cart.id).preload_associations_lazily.take!
+          cart.warnings = @cart.warnings
+
+          render json: Spree.api.cart_serializer.new(cart, params: serializer_params).to_h, status: status
         end
 
         # Drops lines the customer can no longer buy — a discontinued product,
@@ -80,7 +87,13 @@ module Spree
         # storefront that knows nothing about groups still finds every order it
         # needs there.
         def render_order(status: :ok)
-          record = @cart.reload
+          # Read back through a lazily preloading relation rather than
+          # reloaded in place: a group's orders, and everything each of them
+          # renders, then load once for all of them instead of once per order.
+          purchases = @cart.is_a?(Spree::OrderGroup) ? current_store.order_groups : current_store.orders
+          # Chained through `where` first: an association collection drops the
+          # lazy flag when `find` rebuilds the query from the association.
+          record = purchases.where(id: @cart.id).preload_associations_lazily.take!
 
           render json: purchase_serializer_for(record).new(record, params: serializer_params).to_h, status: status
         end

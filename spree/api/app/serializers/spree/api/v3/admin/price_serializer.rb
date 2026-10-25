@@ -17,7 +17,7 @@ module Spree
           attributes :min_quantity
 
           attribute :variant_id do |price|
-            price&.variant&.prefixed_id
+            Spree::Variant.prefixed_id_for(price&.variant_id)
           end
 
           attributes created_at: :iso8601, updated_at: :iso8601

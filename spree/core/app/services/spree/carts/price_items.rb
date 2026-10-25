@@ -31,6 +31,9 @@ module Spree
         items = items.reject(&:manual_price?)
         return success([]) if items.empty?
 
+        # One read of every line's prices rather than one per variant.
+        ActiveRecord::Associations::Preloader.new(records: items.filter_map(&:variant).uniq, associations: :prices).call
+
         resolutions = items.filter_map do |line_item|
           price = resolve_price(line_item, cart)
           next if price.blank?

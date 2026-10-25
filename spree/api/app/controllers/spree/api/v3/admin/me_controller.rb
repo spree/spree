@@ -103,6 +103,8 @@ module Spree
           # role would both disclose more than was handed over and mislead a
           # client that reads /me to decide what to attempt.
           def me_response
+            ActiveRecord::Associations::Preloader.new(records: [current_user], associations: { spree_roles: :resource }).call
+
             {
               user: admin_user_serializer.new(current_user, params: serializer_params).to_h,
               permissions: serialize_permissions(current_ability),
