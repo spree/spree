@@ -78,7 +78,8 @@ module Spree
         # Core's defaults are concatenated in after_initialize below.
         %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
            delivery_rate_providers tax_providers pricing_providers inventory_providers
-           payout_providers digital_asset_providers delivery_profile_types pickup_point_providers].each do |registry|
+           payout_providers digital_asset_providers delivery_profile_types pickup_point_providers
+           maintenance_tasks].each do |registry|
           app.config.spree[registry] = []
         end
         app.config.spree.line_item_comparison_hooks = Set.new
@@ -543,10 +544,10 @@ module Spree
 
         # Upgrade steps backed by a task class are registered from the manifests
         # that name them, so adding a step never means editing a second list.
-        Rails.application.config.spree.maintenance_tasks = [
+        Rails.application.config.spree.maintenance_tasks.concat [
           'Spree::MaintenanceTasks::UpgradeStep',
           *Spree::Upgrade.steps.filter_map { |step| step['task_class'] }
-        ].uniq
+        ]
 
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator

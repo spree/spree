@@ -74,6 +74,23 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     end
   end
 
+  # A secret key passes every CanCanCan check by design, so whether it may see
+  # a backtrace has to be read from its scopes.
+  context 'a secret key with read scope only' do
+    let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_maintenance_tasks]) }
+    let(:headers) { api_key_headers }
+
+    it 'does not see error backtraces' do
+      run.update!(status: 'errored', error_class: 'ArgumentError',
+                  error_message: 'boom', error_backtrace: "app/models/secret.rb:42")
+
+      get :show, params: { id: run.prefixed_id }
+
+      expect(json_response['error_message']).to eq('boom')
+      expect(json_response['error_backtrace']).to be_nil
+    end
+  end
+
   context 'a role granted write access' do
     let(:custom_permissions) { %w[write_maintenance_tasks] }
 

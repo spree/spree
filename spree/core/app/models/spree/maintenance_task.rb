@@ -331,13 +331,26 @@ module Spree
     # one would append its blocks to every task it defines, which is the very
     # duplication this avoids.
     #
+    # Searches every engine and the host application, since a step may ship in
+    # an extension gem. When two files define the same task name, the one
+    # that also declares the task's namespaces wins.
+    #
     # @return [String, nil]
     def rake_file_defining(task_name)
-      leaf = task_name.split(':').last
-
-      Dir.glob(Spree::Core::Engine.root.join('lib/tasks/**/*.rake')).sort.find do |path|
+      *namespaces, leaf = task_name.split(':')
+      candidates = rake_files.select do |path|
         File.read(path).match?(/^\s*(?:desc\s.*\n\s*)?task\s+:?["']?#{Regexp.escape(leaf)}["']?\b/)
       end
+
+      candidates.find do |path|
+        source = File.read(path)
+        namespaces.all? { |name| source.match?(/namespace\s+:?["']?#{Regexp.escape(name)}["']?\b/) }
+      end || candidates.first
+    end
+
+    def rake_files
+      roots = Rails.application.railties.grep(Rails::Engine).map(&:root) + [Rails.root]
+      roots.uniq.flat_map { |root| Dir.glob(File.join(root, 'lib/tasks/**/*.rake')).sort }
     end
 
     def after_start; end

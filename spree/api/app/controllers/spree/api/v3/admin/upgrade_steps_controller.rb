@@ -81,7 +81,7 @@ module Spree
               # was invoked with is what distinguishes one run from another.
               arguments: step['task_class'] ? {} : { step_id: step['id'] },
               last_run: run && Spree.api.admin_maintenance_task_run_serializer.new(
-                run, params: { show_backtrace: can?(:update, Spree::MaintenanceTaskRun) }
+                run, params: { show_backtrace: holds_permission?('write_maintenance_tasks') }
               ).to_h
             }
           end

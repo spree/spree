@@ -78,7 +78,7 @@ module Spree
           # A backtrace names internal paths and class names, so it rides with
           # the permission to act on runs rather than the one to read them.
           def serializer_params
-            super.merge(show_backtrace: can?(:update, Spree::MaintenanceTaskRun))
+            super.merge(show_backtrace: holds_permission?('write_maintenance_tasks'))
           end
 
           private

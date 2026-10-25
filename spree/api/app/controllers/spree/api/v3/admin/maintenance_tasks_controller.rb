@@ -54,7 +54,7 @@ module Spree
           # endpoint: visible to callers who may act on a run, not to those
           # who may only read one.
           def serializer_params
-            { show_backtrace: can?(:update, Spree::MaintenanceTaskRun) }
+            { show_backtrace: holds_permission?('write_maintenance_tasks') }
           end
 
           # Every task any manifest names, regardless of whether this

@@ -11,4 +11,12 @@ RSpec.describe 'the Stripe upgrade step' do
     expect(SpreeStripe::MaintenanceTasks::MigrateWebhookKeys.rake_task_name).
       to eq('spree:upgrade:migrate_stripe_webhook_keys')
   end
+
+  # A web or worker process never loads the Rakefile, so a run started from
+  # the dashboard has to find the task in this gem, not only in core.
+  it 'finds the rake task outside the command line' do
+    path = SpreeStripe::MaintenanceTasks::MigrateWebhookKeys.new.rake_file_defining('spree:upgrade:migrate_stripe_webhook_keys')
+
+    expect(path).to start_with(SpreeStripe::Engine.root.to_s)
+  end
 end
