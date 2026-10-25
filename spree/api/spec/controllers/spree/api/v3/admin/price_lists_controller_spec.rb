@@ -107,6 +107,19 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       expect(json_response['data'].pluck('name')).to eq(['Third list', 'Wholesale', 'Second list'])
       expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
     end
+
+    it 'counts a product priced on several variants once' do
+      product = create(:product, store: store)
+      [product.default_variant, create(:variant, product: product)].each do |variant|
+        create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: 10)
+      end
+
+      get :index, as: :json
+      expect(json_response['data'].first).to include('products_count' => 1, 'prices_count' => 2)
+
+      get :show, params: { id: price_list.prefixed_id }, as: :json
+      expect(json_response).to include('products_count' => 1, 'prices_count' => 2)
+    end
   end
 
   describe 'POST #create — one-shot creation' do

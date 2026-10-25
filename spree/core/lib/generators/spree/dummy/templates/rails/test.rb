@@ -141,6 +141,14 @@ Dummy::Application.configure do
       %r{/spree/carts/upsert_items\.rb:\d+:in '[^']*#apply_item'}
     ]
 
+    # A purchase's billing and shipping addresses, and a transfer's two
+    # warehouses, are two links into one table read through the same code,
+    # so one record reads as a repeat. Lists still load each link in one
+    # query for the whole page.
+    Prosopite.ignore_queries = [
+      /FROM [`"]?(spree_addresses|spree_stock_locations)[`"]? WHERE (.+ AND )?[`"]?\1[`"]?\.[`"]?id[`"]? (=|IN)/
+    ]
+
     # Prosopite fingerprints through pg_query, which rejects SQLite's `?`
     # binds, so SQLite borrows the text normalizer written for MySQL. That
     # normalizer blanks anything double-quoted, which is a string literal in

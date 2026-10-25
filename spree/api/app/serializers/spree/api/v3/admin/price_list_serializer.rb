@@ -39,7 +39,7 @@ module Spree
           attribute :products_count do |pl|
             counts = params[:products_counts]
 
-            counts ? counts.fetch(pl.id, 0) : pl.products.count
+            (counts || Spree::PriceList.products_count_by_list(pl.id)).fetch(pl.id, 0)
           end
 
           attribute :prices_count do |pl|

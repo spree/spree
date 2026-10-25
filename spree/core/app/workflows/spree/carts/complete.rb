@@ -432,8 +432,6 @@ module Spree
           records: cart_line_items,
           associations: { variant: [{ product: %i[store product_publications tax_category] }, { stock_levels: %i[stock_location active_stock_reservations] }] }
         ).call
-        variants = cart_line_items.filter_map(&:variant)
-        ArLazyPreload::Context.register(records: variants, auto_preload: true) if variants.any?
 
         cart_line_items.index_with do |cart_line_item|
           attributes = cart_line_item.attributes.except('id', 'cart_id', 'created_at', 'updated_at')

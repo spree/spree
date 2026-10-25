@@ -293,11 +293,11 @@ module Spree
             { media: Spree::Media, variants: Spree::Variant }
           end
 
-          # A written product is serialized from the instance the workflow
-          # returned, which no preload reached. Registering it lets each
-          # association it reads load once.
+          # A written product is serialized from a fresh read: lazy preloading
+          # does not reach records a write built, so the instance the workflow
+          # returned would query once per variant.
           def serialize_resource(resource)
-            ArLazyPreload::Context.register(records: [resource], auto_preload: true) if resource.lazy_preload_context.nil?
+            resource = scope.where(id: resource.id).preload_associations_lazily.take! if resource.lazy_preload_context.nil?
             super
           end
 

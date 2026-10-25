@@ -28,8 +28,10 @@ module Spree
         accepts_nested_attributes_for :bill_address
         accepts_nested_attributes_for :ship_address
 
+        alias_method :billing_address, :bill_address
         alias_method :billing_address=, :bill_address=
         alias_attribute :billing_address_id, :bill_address_id
+        alias_method :shipping_address, :ship_address
         alias_method :shipping_address=, :ship_address=
         alias_attribute :shipping_address_id, :ship_address_id
 
@@ -43,27 +45,11 @@ module Spree
         before_validation :clone_shipping_address, if: :use_shipping?
       end
 
-      # The public readers are what renderers ask for, one after the other,
-      # so the first read loads both.
-      #
-      # @return [Spree::Address, nil]
-      def billing_address
-        load_both_addresses if persisted?
-        bill_address
-      end
-
-      # @return [Spree::Address, nil]
-      def shipping_address
-        load_both_addresses if persisted?
-        ship_address
-      end
-
       # Whether both addresses are present and match. With neither present
       # there is nothing to call the same.
       #
       # @return [Boolean]
       def shipping_eq_billing_address?
-        load_both_addresses
         ship_address.present? && bill_address == ship_address
       end
 
@@ -261,18 +247,6 @@ module Spree
       end
 
       private
-
-      # Both addresses live in one table, so they are fetched together — for
-      # every record of a lazily preloaded list at once — instead of one
-      # query per address.
-      def load_both_addresses
-        return if association(:bill_address).loaded? && association(:ship_address).loaded?
-
-        ActiveRecord::Associations::Preloader.new(
-          records: lazy_preload_context&.records || [self],
-          associations: %i[bill_address ship_address]
-        ).call
-      end
 
       # The company whose book this purchase may read: only the one the
       # client named, never one inferred from a sole membership. A cart asks

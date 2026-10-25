@@ -107,15 +107,6 @@ module Spree
           )
         end
 
-        # The variants were resolved one lookup at a time, so each arrives
-        # without a preload context and every later price, stock or option
-        # read would query for that variant alone. Registering them as one
-        # context makes those reads batch across the whole batch of items.
-        ArLazyPreload::Context.register(
-          records: @resolved_items.map(&:variant).uniq(&:id),
-          auto_preload: true
-        )
-
         # Price overrides are pre-placement only. reject! rather than
         # failure(cart, message), which would drop the message.
         if cart.completed? && @resolved_items.any?(&:price_provided)
@@ -386,7 +377,7 @@ module Spree
           variant_param_id(item_params[:variant_id]) if (item_params[:quantity] || 1).to_i.positive?
         end
 
-        @added_variants = ids.empty? ? {} : store.variants.where(id: ids.uniq).index_by(&:id)
+        @added_variants = ids.empty? ? {} : store.variants.where(id: ids.uniq).preload_associations_lazily.index_by(&:id)
         Spree::Stock::Quantifier.preload(@added_variants.values)
         @orderable_added_variant_ids = if orderable_variants && @added_variants.any?
                                          orderable_variants.where(id: @added_variants.keys).pluck(:id).to_set

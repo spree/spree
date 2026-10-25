@@ -84,7 +84,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'wannabe_bool'
   s.add_dependency 'safely_block', '>= 0.4', '< 2.0'
   s.add_dependency 'phonelib', '~> 0.10'
-  s.add_dependency 'ar_lazy_preload', '~> 2.0'
+  s.add_dependency 'ar_lazy_preload', '~> 2.1'
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'sqids', '~> 0.2'
   s.add_dependency 'ssrf_filter', '~> 1.0'

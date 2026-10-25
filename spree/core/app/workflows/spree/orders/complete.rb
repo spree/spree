@@ -245,12 +245,9 @@ module Spree
       # wildcard subscribers dedupe on the metadata marker.
       def publish_order_placed
         metadata = { notify_customer: order.notify_customer }
-        # The payload renders every line and parcel; one preload context
-        # each loads what they read once rather than per row.
-        [order.line_items.to_a, order.fulfillments.to_a].each do |records|
-          ArLazyPreload::Context.register(records: records, auto_preload: true) if records.any?
-        end
-        payload = order.event_payload
+        # The payload renders every line and parcel, read back through a lazily
+        # preloading query so each association loads once rather than per row.
+        payload = Spree::Order.where(id: order.id).preload_associations_lazily.take!.event_payload
         order.publish_event('order.placed', payload, metadata)
         order.publish_event('order.completed', payload, metadata.merge(deprecated_alias_of: 'order.placed'))
       end

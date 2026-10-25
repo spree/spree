@@ -72,10 +72,10 @@ module Spree
               )
 
               if changer.run!
-                # One preload context for the order's fulfillments, so what
-                # each of them renders loads once for all of them.
-                fulfillments = @order.reload.fulfillments.to_a
-                ArLazyPreload::Context.register(records: fulfillments, auto_preload: true) if fulfillments.any?
+                # Read back through a lazily preloading query: what each parcel
+                # renders, its number included, then loads once for all of them.
+                order = current_store.orders.where(id: @order.id).preload_associations_lazily.take!
+                fulfillments = order.fulfillments.to_a
 
                 render json: {
                   data: fulfillments.map { |fulfillment| serialize_resource(fulfillment) }

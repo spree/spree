@@ -42,8 +42,8 @@ module Spree
     # @param price_list_ids [Array<Integer>]
     # @return [Hash{Integer => Integer}] keyed by price list id; lists with no products are absent
     def self.products_count_by_list(price_list_ids)
-      where(id: price_list_ids).joins(:products).group(arel_table[:id]).
-        distinct.count(Spree::Product.arel_table[:id])
+      where(id: price_list_ids).joins(:variants).group(arel_table[:id]).
+        distinct.count(Spree::Variant.arel_table[:product_id])
     end
 
     # Prices per list for a page of lists, in one grouped query.
