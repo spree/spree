@@ -32,6 +32,10 @@ module Spree
     # A rake body that stopped itself with `abort`.
     class RakeTaskAborted < StandardError; end
 
+    # Two threads of one worker must not both find a task undefined and both
+    # load its file — the second load would make the task run twice.
+    RAKE_LOAD_LOCK = Mutex.new
+
     DEFAULT_BATCH_SIZE = 100
 
     # How long one execution may run before the runner checkpoints and
@@ -199,12 +203,14 @@ module Spree
     def load_engine_rake_tasks(task_name)
       require 'rake'
 
-      return if ::Rake::Task.task_defined?(task_name)
+      RAKE_LOAD_LOCK.synchronize do
+        next if ::Rake::Task.task_defined?(task_name)
 
-      ::Rake::Task.define_task(:environment) unless ::Rake::Task.task_defined?(:environment)
+        ::Rake::Task.define_task(:environment) unless ::Rake::Task.task_defined?(:environment)
 
-      path = rake_file_defining(task_name)
-      load(path) if path
+        path = rake_file_defining(task_name)
+        load(path) if path
+      end
     end
 
     def rake_files

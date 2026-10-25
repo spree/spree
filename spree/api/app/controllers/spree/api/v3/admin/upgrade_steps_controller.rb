@@ -86,17 +86,21 @@ module Spree
             }
           end
 
-          # The most recent run per step. Loaded in one query and reduced in
-          # Ruby rather than grouped in SQL: wrapper runs are told apart by the
-          # step id inside their `arguments` JSON, and grouping on a JSON column
-          # is not portable across the adapters Spree supports.
+          # The most recent run per step. Reduced in Ruby rather than grouped
+          # in SQL: rake-backed runs are told apart by the step id inside their
+          # `arguments` JSON, and grouping on a JSON column is not portable
+          # across the adapters Spree supports. Only the three columns that
+          # pick the latest run are read for the whole history; the runs kept
+          # are then loaded in full.
           def latest_runs
-            @latest_runs ||= Spree::MaintenanceTaskRun.
-                             includes(:admin_user).
-                             where(task_name: manifest_task_names).
-                             order(:id).
-                             each_with_object({}) do |run, result|
-              result[[run.task_name, run.arguments&.dig('step_id')]] = run
+            @latest_runs ||= begin
+              latest_ids = Spree::MaintenanceTaskRun.where(task_name: manifest_task_names).order(:id).
+                           pluck(:id, :task_name, :arguments).
+                           each_with_object({}) do |(id, task_name, arguments), result|
+                             result[[task_name, arguments&.dig('step_id')]] = id
+                           end
+              runs = Spree::MaintenanceTaskRun.includes(:admin_user).where(id: latest_ids.values).index_by(&:id)
+              latest_ids.transform_values { |id| runs[id] }
             end
           end
 

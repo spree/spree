@@ -28,12 +28,15 @@ namespace :spree do
 
       run = result.value.reload
       puts "  #{run.task_name}: #{run.status} — #{run.tick_count} processed#{run.dry_run? ? ' (dry run)' : ''}"
-      run.tallies.each { |key, value| puts "    #{key}: #{value}" }
+      (run.tallies || {}).each { |key, value| puts "    #{key}: #{value}" }
 
       if run.errored?
         puts "  #{run.error_class}: #{run.error_message}"
         abort '  The run failed. Fix the cause, then re-run this task.'
       end
+
+      # A refused duplicate or a cancellation did not do the work either.
+      abort "  The run did not finish (#{run.status})." unless run.succeeded?
     end
   end
 end

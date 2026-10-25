@@ -64,10 +64,34 @@ RSpec.describe Spree::Upgrade do
       expect(described_class.pending_steps).to be_empty
     end
 
+    # The Stripe step ships in spree_stripe, which this suite does not load;
+    # offered here it could never start, and the checklist never finishes.
+    it 'leaves out an optional step whose gem is not installed' do
+      Spree::UpgradeRecord.stamp!('5.6', source: 'walk')
+
+      expect(described_class.pending_steps.map { |step| step['id'] }).not_to include('migrate_stripe_webhook_keys')
+    end
+
     it 'never offers steps of a release beyond the installed one' do
       versions = described_class.pending_steps.map { |step| step['to'] }.uniq
 
       expect(versions).to all(satisfy { |v| described_class.compare(v, described_class.installed_minor_version) <= 0 })
+    end
+  end
+
+  describe '.relevant?' do
+    it 'is false for a store installed fresh with nothing to run' do
+      described_class.manifests.each { |m| Spree::UpgradeRecord.stamp!(m['to'], source: 'install') }
+
+      expect(described_class).not_to be_relevant
+    end
+
+    # A later release ships steps a store installed fresh still has to run.
+    it 'is true for a store installed fresh once a later release has steps' do
+      described_class.manifests.each { |m| Spree::UpgradeRecord.stamp!(m['to'], source: 'install') }
+      allow(described_class).to receive(:pending_steps).and_return([{ 'id' => 'later_step' }])
+
+      expect(described_class).to be_relevant
     end
   end
 

@@ -120,11 +120,25 @@ module Spree
     #
     # False for a store installed fresh at its current version: it has no
     # historical data to convert, so neither the outstanding steps nor the
-    # history of past releases describes anything real for it.
+    # history of past releases describes anything real for it. True again
+    # once a later release ships steps it has not run.
     #
     # @return [Boolean]
     def self.relevant?
-      !Spree::UpgradeRecord.exists? || Spree::UpgradeRecord.upgraded?
+      !Spree::UpgradeRecord.exists? || Spree::UpgradeRecord.upgraded? || pending_steps.any?
+    end
+
+    # Whether a step can run here. An optional step belongs to a gem that may
+    # not be installed — a payment gateway, for instance — and is skipped
+    # where it is absent rather than offered as work that cannot start.
+    #
+    # @param step [Hash] a manifest step
+    # @return [Boolean]
+    def self.available?(step)
+      return true unless step['optional']
+      return Spree::MaintenanceTask.find_registered(step['task_class']).present? if step['task_class']
+
+      Spree::MaintenanceTask.new.rake_file_defining(step['task']).present?
     end
 
     # Steps this installation still has to run: every manifest above the
@@ -136,6 +150,7 @@ module Spree
 
       steps.select do |step|
         next false if compare(step['to'], installed_minor_version) > 0
+        next false unless available?(step)
         next true if boundary.nil?
 
         compare(step['from'], boundary) >= 0

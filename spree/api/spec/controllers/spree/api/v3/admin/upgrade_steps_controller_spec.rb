@@ -8,6 +8,23 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index }
+
+      # Runs of a class-backed step and of rake-backed steps, each started by
+      # someone different, so a per-step lookup would repeat.
+      let!(:runs) do
+        [
+          ['Spree::MaintenanceTasks::Upgrade::CaptureMethods', {}],
+          ['Spree::MaintenanceTasks::UpgradeStep', { 'step_id' => 'migrate_tax_zones' }],
+          ['Spree::MaintenanceTasks::UpgradeStep', { 'step_id' => 'backfill_tax_store_ids' }]
+        ].map do |task_name, arguments|
+          create(:maintenance_task_run, task_name: task_name, arguments: arguments, status: 'succeeded',
+                                        admin_user: create(:admin_user))
+        end
+      end
+    end
+
     it 'lists the manifest steps in the order they must run' do
       get :index
 

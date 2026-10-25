@@ -31,11 +31,13 @@ module Spree
 
       private
 
+      # A step with a task class of its own runs as that class, so only a
+      # step that names a rake task can be run here.
       def step_must_exist
         return if step_id.blank?
-        return if manifest_step.present?
+        return if manifest_step&.dig('task').present?
 
-        errors.add(:step_id, "no upgrade step with id #{step_id}")
+        errors.add(:step_id, "no upgrade step with id #{step_id} runs a rake task")
       end
     end
   end

@@ -51,6 +51,12 @@ module Spree
         # with no continuation at all.
         step :process_collection, start: @run.cursor
         step :finish
+      rescue SignalException => e
+        # Ctrl-C or a deploy stopping an inline run. No job was queued for it,
+        # so nothing would ever come back to a run left `running`, and it
+        # would block every later run of its task.
+        record_error(e) if @inline && run&.reload&.active?
+        raise
       end
 
       private

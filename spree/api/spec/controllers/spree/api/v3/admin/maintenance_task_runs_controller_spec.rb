@@ -97,6 +97,16 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
   describe 'GET #index' do
     let!(:run) { create(:maintenance_task_run, task_name: 'TestMaintenance::Runs', status: 'succeeded') }
 
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index, params: { expand: 'admin_user' } }
+
+      let!(:started_runs) do
+        create_list(:admin_user, 2).map do |user|
+          create(:maintenance_task_run, task_name: 'TestMaintenance::Runs', status: 'succeeded', admin_user: user)
+        end
+      end
+    end
+
     it 'lists runs' do
       get :index
 

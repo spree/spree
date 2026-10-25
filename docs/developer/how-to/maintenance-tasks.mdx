@@ -7,7 +7,7 @@ description: How Spree runs the data steps of an upgrade — from the dashboard 
 
 An upgrade between Spree releases changes data as well as code: values move to new columns, records gain the store they belong to, old formats are converted. Each of those data steps runs as a **maintenance task**.
 
-A maintenance task gives an upgrade step what a bare rake task lacks. It runs in batches with a cursor that survives a deploy, it can be cancelled, and every run is recorded: who started it, from where, what it reported and, if it stopped, why. A half-finished upgrade therefore tells you exactly which step stopped and what already ran.
+A maintenance task gives an upgrade step what a bare rake task lacks. A step that walks rows runs in batches with a checkpoint that survives a deploy, any step can be cancelled, and every run is recorded: who started it, from where, what it reported and, if it stopped, why. A half-finished upgrade therefore tells you exactly which step stopped and what already ran.
 
 The steps of each upgrade are listed in its manifest, in the order they must run. See the [5.6 to 6.0 upgrade guide](/developer/upgrades/5.6-to-6.0) for what each one does.
 
@@ -57,9 +57,9 @@ ARGS='batch_size=200' bin/rake "spree:maintenance_tasks:perform[deliveries]"
 
 ## While a step is running
 
-The run page shows progress and what the step has reported so far. **Cancel** stops the run at its next checkpoint, for good. Work already committed stays committed — cancelling is not an undo.
+The run page shows progress and what the step has reported so far. **Cancel** stops the run for good: a step that walks rows stops at its next batch, and a single-pass step stops once its pass ends. Work already committed stays committed — cancelling is not an undo.
 
-A step that fails or is cancelled is started again rather than resumed. Every step only changes data that still needs it, so a new run skips what the last one finished. Only one run of a step can be in flight at a time, so a second start is refused.
+A step that fails or is cancelled is started again rather than resumed, and the new run starts from the beginning. Every step is written to be safe to repeat, so running it again leaves data that is already converted as it is. Only one run of a step can be in flight at a time, so a second start is refused.
 
 ## Permissions
 
@@ -89,29 +89,6 @@ A step is declared once, in the upgrade's `manifest.yml`, and names exactly one 
 - **`task`** — a rake task, for a step that is a single pass of updates. It runs through a shared runner that records it like any other run.
 - **`task_class`** — a `Spree::MaintenanceTask` subclass, for a step that walks rows and benefits from progress, checkpoints and a dry run, or that takes parameters.
 
-```ruby
-# app/maintenance_tasks/spree/maintenance_tasks/upgrade/capture_methods.rb
-module Spree
-  module MaintenanceTasks
-    module Upgrade
-      class CaptureMethods < Spree::MaintenanceTask
-        supports_dry_run
-        collection_batch_size 5_000
+A task class lists the records it walks and handles them one at a time, recording counts the run page shows. `Spree::MaintenanceTasks::Upgrade::CaptureMethods` is a worked example with a dry run.
 
-        def collection
-          Spree::PaymentMethod.where(capture_method: nil, auto_capture: true).order(:id)
-        end
-
-        def process(payment_method)
-          return tally(:would_convert) if dry_run?
-
-          payment_method.update_columns(capture_method: 'checkout')
-          tally(:converted)
-        end
-      end
-    end
-  end
-end
-```
-
-The collection must have an explicit, stable order, since the cursor is a value from that ordering. Each batch must be safe to run again: an interruption between applying a batch and recording its cursor repeats that batch. A task class named by a manifest is registered from it, so it needs no other wiring.
+Its records must come in primary-key order, since the checkpoint is the last record handled, and they must include every record the conversion applies to, soft-deleted ones too. Each batch must be safe to run again: an interruption between applying a batch and recording its checkpoint repeats that batch. A task class named by a manifest is registered from it, so it needs no other wiring.

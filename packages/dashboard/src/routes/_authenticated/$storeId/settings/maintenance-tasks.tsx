@@ -56,7 +56,10 @@ function MaintenanceTasksPage() {
     setDefaultTab(pendingUpgradeSteps.length > 0 ? 'upgrade' : 'history')
   }, [isLoading, defaultTab, pendingUpgradeSteps.length])
 
-  const activeTab = search.tab ?? defaultTab
+  // A bookmarked Upgrade tab falls back to History once there is no upgrade
+  // to show, rather than selecting a tab that is not rendered.
+  const requestedTab = search.tab === 'upgrade' && !hasUpgrade ? 'history' : search.tab
+  const activeTab = isLoading ? undefined : (requestedTab ?? defaultTab)
 
   return (
     <div className="flex flex-col gap-6">

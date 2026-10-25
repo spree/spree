@@ -18,17 +18,21 @@ module Spree
       # @param run [Spree::MaintenanceTaskRun]
       # @return [Spree::ServiceModule::Base::Result] the run
       def call(run:)
-        return failure(run, not_cancelable_error(run)) unless run.active?
+        # Locked so the status read here is still the status when it is
+        # written: the runner may finish the run in between, and a finished
+        # run overwritten with `cancelling` would stay active for good.
+        run.with_lock do
+          return failure(run, not_cancelable_error(run)) unless run.active?
 
-        # A running run has a worker mid-batch, so it, not this service,
-        # records that the run stopped.
-        if run.running?
-          run.update(status: 'cancelling')
-        else
-          run.update(status: 'cancelled', ended_at: Time.current)
+          # A running run has a worker mid-batch, so it, not this service,
+          # records that the run stopped.
+          if run.running?
+            run.update!(status: 'cancelling')
+          else
+            run.update!(status: 'cancelled', ended_at: Time.current)
+            run.publish_event('maintenance_task_run.cancelled')
+          end
         end
-
-        return failure(run, run.errors) if run.errors.any?
 
         success(run.reload)
       end

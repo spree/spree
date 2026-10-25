@@ -33,6 +33,26 @@ RSpec.describe Spree::MaintenanceTasks::Cancel do
       expect(result).to be_cancelled
       expect(result.ended_at).to be_present
     end
+
+    it 'publishes the cancellation, since the runner never will' do
+      expect(run).to receive(:publish_event).with('maintenance_task_run.cancelled')
+
+      described_class.call(run: run)
+    end
+  end
+
+  # The runner can finish the run between the caller loading it and the
+  # service writing; a finished run marked `cancelling` would stay active.
+  context 'when the run finished after it was loaded' do
+    let(:status) { 'running' }
+
+    it 'is refused and leaves the outcome alone' do
+      run
+      Spree::MaintenanceTaskRun.where(id: run.id).update_all(status: 'succeeded')
+
+      expect(described_class.call(run: run)).to be_failure
+      expect(run.reload).to be_succeeded
+    end
   end
 
   # The way out when the worker that should answer the first request is

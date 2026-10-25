@@ -207,6 +207,22 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
     end
   end
 
+  # Ctrl-C or a deploy stopping a command-line upgrade: no job was queued,
+  # so a run left `running` would block every later run of its task.
+  describe 'an inline run stopped by a signal' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    it 'is recorded as failed before the signal carries on' do
+      run = start_run
+      allow_any_instance_of(SpecMaintenanceTask).to receive(:process).and_raise(Interrupt)
+
+      expect { described_class.perform_now(run.id, inline: true) }.to raise_error(Interrupt)
+
+      expect(run.reload).to be_errored
+      expect(run).not_to be_active
+    end
+  end
+
   describe 'a task removed from the registry' do
     it 'fails the run rather than retrying forever' do
       run = start_run

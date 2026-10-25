@@ -211,17 +211,8 @@ module Spree
       # are absent unless that gem is installed. Skipping keeps the upgrade
       # runnable on installs that never had the gem, while an install that
       # does have it still gets the backfill.
-      #
-      # The check reads the rake task even for a class-backed step, since an
-      # optional step's task class ships in the same absent gem.
       def skip_uninstalled?(step)
-        return false unless step['optional']
-
-        if step['task_class']
-          return false if Spree::MaintenanceTask.find_registered(step['task_class'])
-        elsif Rake::Task.task_defined?(step['task'])
-          return false
-        end
+        return false if Spree::Upgrade.available?(step)
 
         puts "    Skipping #{step_label(step)} — not installed."
         true

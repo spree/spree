@@ -103,6 +103,19 @@ RSpec.describe 'the upgrade manifest' do
       expect(result.error.to_s).to include('no upgrade step')
     end
 
+    # Such a step runs as its own class; accepting it here would fail the
+    # run at work time instead of refusing it up front.
+    it 'refuses the id of a step that has a task class of its own' do
+      result = Spree::MaintenanceTasks::Start.call(
+        task_name: described_class.name,
+        arguments: { 'step_id' => 'migrate_capture_methods' },
+        initiated_via: 'cli'
+      )
+
+      expect(result).to be_failure
+      expect(Spree::MaintenanceTaskRun.count).to be_zero
+    end
+
     it 'runs the rake task the step names' do
       run = Spree::MaintenanceTasks::Start.call(
         task_name: described_class.name,
