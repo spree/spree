@@ -1,19 +1,11 @@
 module Spree
   module MaintenanceTasks
     module Upgrade
-      # Base for the 5.6 → 6.0 steps whose work is a single set-based pass:
-      # a handful of UPDATEs that finish in seconds and have nothing to
-      # checkpoint (docs/plans/6.0-maintenance-tasks.md).
-      #
-      # These keep their rake body as the implementation rather than being
-      # rewritten. The bodies are covered by a spec suite that invokes them by
-      # task name, and reimplementing set-based SQL as a row walk would trade
-      # tested code for a progress bar on work that has no rows to report.
-      # What they gain here is the run row: who ran the step, when, and what it
-      # reported.
-      #
-      # Steps that genuinely walk rows are collection tasks in their own right
-      # — see `Upgrade::CaptureMethods` and its siblings.
+      # Base for the one-pass upgrade steps that ask the operator for parameters
+      # (docs/plans/6.0-maintenance-tasks.md). The rake body stays the
+      # implementation; this class only maps its parameters onto the environment
+      # variables the body reads. A step without parameters runs through
+      # `UpgradeStep` and needs no class at all.
       class RakeStep < Spree::MaintenanceTask
         no_collection
 

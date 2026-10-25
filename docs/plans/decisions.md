@@ -18,6 +18,16 @@
 
 **Plan amended:** `6.0-beta-release.md` (Key Decisions 2 and 3).
 
+## 2026-10-25: An upgrade step is a rake task or a task class, never both
+
+**Context:** The 2026-08-15 maintenance tasks decision made every 5.6 → 6.0 upgrade step a task class. In practice most steps are one-pass updates that kept their rake body, so each step was declared in up to five places: the manifest, the rake task, a ten-line wrapper class naming that rake task, a line in the engine's registration list and a translated description repeating the manifest name. Six steps went further and carried the same logic twice, once in the rake task and once in the class, so a fix to one could miss the other.
+
+**Decision:** The manifest is the only list of steps, and each step names exactly one of `task` or `task_class`. A one-pass step names its rake task and runs through the shared `UpgradeStep` runner, which records it like any other run. A step gets a class of its own only when it walks rows (progress, resume, dry run) or asks the operator for parameters, and then it has no rake twin. Task classes named by a manifest are registered from it, so neither core nor a provider gem keeps a second list. The history labels a one-pass step by its step id.
+
+**Consequences:** Adding a step is a manifest entry plus either a rake task or a class. One-pass steps share one task name, so the history filter cannot single one out and two of them cannot run at once, which an ordered upgrade does not need. 38 classes (34 wrappers and four one-pass steps), their registrations and descriptions, and two duplicate rake tasks are removed; seven classes remain (five with parameters, two row walks).
+
+**Plan amended:** `6.0-maintenance-tasks.md` (Key Decisions, Upgrade manifest integration).
+
 ## 2026-10-24: A marketplace decides whether, what and under review its sellers may upload
 
 **Context:** With sellers able to attach downloadable files to their products (the entry below), any approved seller can put a file on the marketplace's domain that buyers download trusting the marketplace's brand. Nothing in Spree scans a file's contents, and before this there was no way to keep seller uploads off, to narrow what they may be, or to re-check an approved listing whose file changed. Digital asset writes were also plain model saves in two places, so a host had no point at which to refuse an upload.

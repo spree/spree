@@ -31,20 +31,27 @@ RSpec.describe 'the upgrade manifest' do
       Spree::Upgrade.manifests.find { |candidate| candidate['to'] == '6.0' }
     end
 
-    # Every step of this manifest is a maintenance task, so a walk records what
-    # it did. The rake names it used to carry never shipped in a release, which
-    # is why they could be replaced rather than bridged.
-    it 'names a task class for every step' do
-      task_classes = manifest['steps'].map { |step| step['task_class'] }
+    # A one-pass step is a rake task run through UpgradeStep; a step that walks
+    # rows is a task class of its own. Never both, so its logic lives in one
+    # place.
+    it 'names either a rake task or a task class for every step' do
+      manifest['steps'].each do |step|
+        expect([step['task'], step['task_class']].compact.size).to eq(1), "#{step['id']} must name exactly one"
+      end
+    end
 
-      expect(task_classes).to all(be_present)
+    it 'names rake tasks the engine defines, except the optional ones' do
+      manifest['steps'].select { |step| step['task'] && !step['optional'] }.each do |step|
+        expect(Spree::MaintenanceTask.new.rake_file_defining(step['task'])).
+          to be_present, "#{step['id']} names #{step['task']}, which no rake file defines"
+      end
     end
 
     # An optional step's task class ships in the gem that owns it, so it is
     # absent here by design — that absence is exactly what makes the walk skip
     # the step instead of failing on an installation without the gem.
     it 'registers every task class it names, except the optional ones' do
-      manifest['steps'].reject { |step| step['optional'] }.each do |step|
+      manifest['steps'].select { |step| step['task_class'] && !step['optional'] }.each do |step|
         expect(Spree::MaintenanceTask.find_registered(step['task_class'])).
           to be_present, "#{step['id']} names #{step['task_class']}, which is not registered"
       end
@@ -160,21 +167,6 @@ RSpec.describe 'the upgrade manifest' do
     end
   end
 
-  describe Spree::MaintenanceTasks::Upgrade::TaxStoreIds do
-    it 'binds soft-deleted rows too' do
-      rate = create(:tax_rate, store: store)
-      rate.destroy
-      rate.update_columns(store_id: nil)
-
-      run = Spree::MaintenanceTasks::Start.call(
-        task_name: described_class.name, initiated_via: 'cli', inline: true
-      ).value.reload
-
-      expect(rate.reload.store_id).to eq(store.id)
-      expect(run.tallies['tax_rates']).to be >= 1
-    end
-  end
-
   describe Spree::MaintenanceTasks::Upgrade::RakeStep do
     before do
       require 'rake'
@@ -254,20 +246,6 @@ RSpec.describe 'the upgrade manifest' do
       run = Spree::MaintenanceTaskRun.last
       expect(run.task_name).to eq('Spree::MaintenanceTasks::UpgradeStep')
       expect(run.arguments['step_id']).to eq('taxon_store_id')
-    end
-  end
-
-  describe 'a step whose precondition fails' do
-    it 'is refused before a run row is created' do
-      allow(Spree::Store).to receive(:default).and_return(nil)
-
-      result = Spree::MaintenanceTasks::Start.call(
-        task_name: 'Spree::MaintenanceTasks::Upgrade::ReasonStoreIds', initiated_via: 'cli'
-      )
-
-      expect(result).to be_failure
-      expect(result.error.to_s).to include('No default store')
-      expect(Spree::MaintenanceTaskRun.count).to be_zero
     end
   end
 end

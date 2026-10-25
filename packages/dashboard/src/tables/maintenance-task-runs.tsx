@@ -3,7 +3,7 @@ import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { HistoryIcon } from 'lucide-react'
-import { taskShortName } from '../lib/maintenance-tasks'
+import { runTitle } from '../lib/maintenance-tasks'
 
 defineTable<MaintenanceTaskRun>('maintenance-task-runs', {
   title: i18n.t('admin.maintenance_tasks.history.title'),
@@ -23,7 +23,7 @@ defineTable<MaintenanceTaskRun>('maintenance-task-runs', {
         <ResourceNameCell
           id={run.id}
           dataAttr="data-maintenance-task-run-id"
-          name={taskShortName(run.task_name)}
+          name={runTitle(run)}
         />
       ),
     },

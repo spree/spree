@@ -541,54 +541,12 @@ module Spree
 
         Rails.application.config.spree.integrations = []
 
+        # Upgrade steps backed by a task class are registered from the manifests
+        # that name them, so adding a step never means editing a second list.
         Rails.application.config.spree.maintenance_tasks = [
           'Spree::MaintenanceTasks::UpgradeStep',
-          'Spree::MaintenanceTasks::Upgrade::ConsolidateMetadata',
-          'Spree::MaintenanceTasks::Upgrade::RemoveMasterVariant',
-          'Spree::MaintenanceTasks::Upgrade::TaxonsToCategoriesAndCollections',
-          'Spree::MaintenanceTasks::Upgrade::UsersToCustomers',
-          'Spree::MaintenanceTasks::Upgrade::RichTextToColumns',
-          'Spree::MaintenanceTasks::Upgrade::ShippingToDelivery',
-          'Spree::MaintenanceTasks::Upgrade::DeliveryProfiles',
-          'Spree::MaintenanceTasks::Upgrade::FulfillmentStatuses',
-          'Spree::MaintenanceTasks::Upgrade::ZonesToDeliveryZones',
-          'Spree::MaintenanceTasks::Upgrade::CountryStateCodes',
-          'Spree::MaintenanceTasks::Upgrade::AdjustmentsToTypedRows',
-          'Spree::MaintenanceTasks::Upgrade::ReasonStoreIds',
-          'Spree::MaintenanceTasks::Upgrade::Returns',
-          'Spree::MaintenanceTasks::Upgrade::DeliveryAndStockStoreIds',
-          'Spree::MaintenanceTasks::Upgrade::TaxZones',
-          'Spree::MaintenanceTasks::Upgrade::TaxStoreIds',
-          'Spree::MaintenanceTasks::Upgrade::MarketTaxInclusive',
-          'Spree::MaintenanceTasks::Upgrade::TaxExemptionReasons',
-          'Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets',
-          'Spree::MaintenanceTasks::Upgrade::IncompleteOrdersToCarts',
-          'Spree::MaintenanceTasks::Upgrade::CalculatorBoundsToDeliveryMethodRules',
-          'Spree::MaintenanceTasks::Upgrade::StoreSettingsFromConfig',
-          'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
-          'Spree::MaintenanceTasks::Upgrade::ProductTypes',
-          'Spree::MaintenanceTasks::Upgrade::SearchReindex',
-          'Spree::MaintenanceTasks::Upgrade::MediaClassNames',
-          'Spree::MaintenanceTasks::Upgrade::MasterImagesToProductMedia',
-          'Spree::MaintenanceTasks::Upgrade::MediaStoreIds',
-          'Spree::MaintenanceTasks::Upgrade::LibraryMediaPlacements',
-          'Spree::MaintenanceTasks::Upgrade::TaggingTenants',
-          'Spree::MaintenanceTasks::Upgrade::StoreCreditCategories',
-          'Spree::MaintenanceTasks::Upgrade::StockMovementsToTypedRows',
-          'Spree::MaintenanceTasks::Upgrade::Deliveries',
-          'Spree::MaintenanceTasks::Upgrade::PromotionOptionValueRules',
-          'Spree::MaintenanceTasks::Upgrade::ImportExportTenancy',
-          'Spree::MaintenanceTasks::Upgrade::CustomFieldDefinitionStores',
-          'Spree::MaintenanceTasks::Upgrade::PackageTypes',
-          'Spree::MaintenanceTasks::Upgrade::ExternalReceivesToPurchaseOrders',
-          'Spree::MaintenanceTasks::Upgrade::RecountStockLevels',
-          'Spree::MaintenanceTasks::Upgrade::PreferencesJson',
-          'Spree::MaintenanceTasks::Upgrade::CheckoutZonesToMarkets',
-          'Spree::MaintenanceTasks::Upgrade::OrderCouponCodes',
-          'Spree::MaintenanceTasks::Upgrade::ActorTypes',
-          'Spree::MaintenanceTasks::Upgrade::EncryptSecretPreferences',
-          'Spree::MaintenanceTasks::Upgrade::UploadStores'
-        ]
+          *Spree::Upgrade.steps.filter_map { |step| step['task_class'] }
+        ].uniq
 
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator

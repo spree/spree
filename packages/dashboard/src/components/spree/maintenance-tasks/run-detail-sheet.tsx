@@ -21,7 +21,7 @@ import {
   usePauseMaintenanceTaskRun,
   useResumeMaintenanceTaskRun,
 } from '../../../hooks/use-maintenance-tasks'
-import { runProgress, taskShortName } from '../../../lib/maintenance-tasks'
+import { runProgress, runTitle } from '../../../lib/maintenance-tasks'
 
 // Mirrors what the pause service accepts: a run that is working, or one
 // queued with no execution yet to observe a request.
@@ -64,9 +64,7 @@ export function RunDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>
-            {run ? taskShortName(run.task_name) : t('admin.maintenance_tasks.run.loading')}
-          </SheetTitle>
+          <SheetTitle>{run ? runTitle(run) : t('admin.maintenance_tasks.run.loading')}</SheetTitle>
           <SheetDescription>
             {run && t(`admin.maintenance_tasks.initiated_via.${run.initiated_via}`)}
           </SheetDescription>

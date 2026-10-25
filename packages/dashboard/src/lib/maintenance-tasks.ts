@@ -9,6 +9,15 @@ export function taskShortName(taskName: string): string {
 }
 
 /**
+ * A run's label. A one-pass upgrade step runs through the shared
+ * `upgrade_step` task, so its own step id is what tells the runs apart.
+ */
+export function runTitle(run: Pick<MaintenanceTaskRun, 'task_name' | 'arguments'>): string {
+  const stepId = run.task_name === 'upgrade_step' ? run.arguments?.step_id : undefined
+  return taskShortName(typeof stepId === 'string' && stepId !== '' ? stepId : run.task_name)
+}
+
+/**
  * The value and maximum for a run's progress bar.
  *
  * A task that could not count its collection gets an indeterminate bar while

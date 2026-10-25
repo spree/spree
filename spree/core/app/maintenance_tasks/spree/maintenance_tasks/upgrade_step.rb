@@ -4,11 +4,10 @@ module Spree
     # dashboard run leave the same audit record
     # (docs/plans/6.0-maintenance-tasks.md).
     #
-    # Released manifests (5.4→5.5, 5.5→5.6) name rake tasks, and their steps
-    # stay that way: the task names have shipped, so operators may have scripted
-    # them. This wrapper gives those steps a run row without rewriting them.
-    # Steps of unreleased manifests are task classes in their own right and are
-    # named directly by the manifest.
+    # Every one-pass step names its rake task in the manifest and runs here, so
+    # the rake body stays the only implementation. A step gets a task class of
+    # its own only when it walks rows (progress, resume, dry run) or asks the
+    # operator for parameters.
     class UpgradeStep < Spree::MaintenanceTask
       description 'maintenance_tasks.upgrade_step.description'
       no_collection

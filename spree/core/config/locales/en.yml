@@ -1034,98 +1034,22 @@ en:
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
     maintenance_tasks:
       upgrade:
-        actor_types:
-          description: Fill in the actor type on past records
-        adjustments_to_typed_rows:
-          description: Map adjustments onto tax lines, discounts and fees
         backfill_order_markets:
           description: Assign a market to orders placed before markets existed
-        calculator_bounds_to_delivery_method_rules:
-          description: Convert calculator bounds into delivery method rules
         capture_methods:
           description: Convert payment method auto capture into capture methods
-        checkout_zones_to_markets:
-          description: Convert checkout zones to markets
-        consolidate_metadata:
-          description: Check for leftover split metadata columns
-        country_state_codes:
-          description: Fill ISO country and state codes from the legacy records
-        custom_field_definition_stores:
-          description: Scope custom field definitions to a store
         deliveries:
           description: Create a delivery for every tracked fulfillment
-        delivery_and_stock_store_ids:
-          description: Assign delivery methods and stock locations to the default store
-        delivery_profiles:
-          description: Convert shipping categories into delivery profiles
-        encrypt_secret_preferences:
-          description: Encrypt gateway and integration secrets
-        external_receives_to_purchase_orders:
-          description: Turn 5.x supplier receives into purchase orders
-        fulfillment_statuses:
-          description: Collapse fulfillment statuses onto the 6.0 set
-        import_export_tenancy:
-          description: Give imports and exports their store and author
-        incomplete_orders_to_carts:
-          description: Move incomplete orders onto the Cart model
-        library_media_placements:
-          description: Record where each media file is used
-        market_tax_inclusive:
-          description: Decide whether each market's prices include tax
-        master_images_to_product_media:
-          description: Move variant-pinned images onto product media
-        media_class_names:
-          description: Rename stored Asset class names to Media
-        media_store_ids:
-          description: Assign a store to media rows
         order_coupon_codes:
           description: Copy coupon codes onto placed orders
-        package_types:
-          description: Add the default package types to every store
-        preferences_json:
-          description: Convert leftover YAML preferences to JSON
-        product_types:
-          description: Bind product types to the default store and reset counters
         promotion_option_value_rules:
           description: Rewrite Option Value promotion rules
-        reason_store_ids:
-          description: Assign return and refund reasons to the default store
-        recount_stock_levels:
-          description: Recount reserved and incoming stock
-        remove_master_variant:
-          description: Migrate products off the master variant
         returns:
           description: Move return authorizations onto the Return and Exchange models
-        rich_text_to_columns:
-          description: Move rich text out of Action Text into its own columns
-        search_reindex:
-          description: Rebuild the search index
-        shipping_to_delivery:
-          description: Rename the shipping vocabulary to delivery
-        stock_movements_to_typed_rows:
-          description: Type stock movements and reconcile open fulfillments
-        store_credit_categories:
-          description: Fold store credit categories into the credit memo
-        store_settings_from_config:
-          description: Copy moved settings from the global config onto each store
         stripe_webhook_keys:
           description: Move Stripe webhook signing secrets onto the gateway
-        tagging_tenants:
-          description: Stamp the store on taggings written without one
-        tax_exemption_reasons:
-          description: Add tax exemption reasons and link certificates to them
-        tax_store_ids:
-          description: Assign tax categories and rates to the default store
-        tax_zones:
-          description: Convert zone-scoped tax rates to country and state codes
-        taxons_to_categories_and_collections:
-          description: Migrate taxons to categories and collections
-        upload_stores:
-          description: Record which store owns every uploaded file
         users_to_customers:
           description: Move users onto the gem-owned customer model
-        zones_to_delivery_zones:
-          description: Convert shipping zones into delivery zones
       upgrade_step:
         description: Run one step of the upgrade manifest
     manual: Manual
