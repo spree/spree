@@ -7,13 +7,7 @@ module Spree
                    payment_method_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
-          attribute :customer_id do |credit_card|
-            credit_card.customer&.prefixed_id
-          end
-
-          attribute :payment_method_id do |credit_card|
-            credit_card.payment_method&.prefixed_id
-          end
+          prefixed_id_attributes :customer, :payment_method
 
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601

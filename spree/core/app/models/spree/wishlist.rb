@@ -6,15 +6,10 @@ module Spree
 
     publishes_lifecycle_events
 
-    if Rails::VERSION::STRING >= '7.1.0'
-      has_secure_token on: :save
-    else
-      has_secure_token
-    end
+    has_secure_token on: :save
 
     belongs_to :customer, class_name: "::#{Spree.customer_class}", touch: true
     include Spree::DeprecatedCustomerAlias
-    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :wishlist_items, class_name: 'Spree::WishlistItem', dependent: :destroy
     has_many :wished_items, class_name: 'Spree::WishlistItem', inverse_of: :wishlist, deprecated: true

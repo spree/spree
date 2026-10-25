@@ -1,5 +1,39 @@
 # create-spree-app
 
+## 2.4.0
+
+### Minor Changes
+
+- [#14906](https://github.com/spree/spree/pull/14906) [`6bcdb66`](https://github.com/spree/spree/commit/6bcdb66e72b73777dbff5b6f6487e649f5b54c43) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New projects now ask whether to install the Spree agent skills (default yes; `--agent-skills` / `--no-agent-skills` skip the question). The generated `AGENTS.md` is now the main instructions file for coding agents, with `CLAUDE.md` importing it, and it requires agents to run every command through the Spree CLI. `spree add dashboard` and `spree add seller-dashboard` now include a `CLAUDE.md` that imports the app's `AGENTS.md`, so Claude Code reads it too.
+
+- [#14908](https://github.com/spree/spree/pull/14908) [`02ac2cf`](https://github.com/spree/spree/commit/02ac2cf3c34c09235132b3a5ef7724d4a78ccb89) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree add ai`, which installs the Spree agent skills and connects Claude Code, Cursor and VS Code to the Spree docs MCP server, so existing projects can get the same AI agent setup as new ones. It keeps the servers a project's config files already list and is safe to re-run. New projects now run it during setup: the agent skills question reads "Set up AI coding agents?" and covers both, and `--docs-mcp` / `--no-docs-mcp` answer the docs half on their own.
+
+### Patch Changes
+
+- [#14926](https://github.com/spree/spree/pull/14926) [`e0e980e`](https://github.com/spree/spree/commit/e0e980e3443f871c1be1f043766987948b019115) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree add <extension>` installs an official extension in one step: Stripe, PayPal, Adyen, Avalara AvaTax, Klaviyo, EasyPost, Meilisearch, the MCP server and OpenTelemetry. It ejects a project still on the prebuilt image (after asking), adds the gem at the right version, runs the extension's installer and migrations, installs its dashboard plugin when it has one, and restarts a running server. A failed install puts the Gemfile back as it was. Extensions outside the list install with `spree add --gem <name> --npm <package>`, after a confirmation. New projects' agent instructions point coding agents at `spree add`.
+
+## 2.3.1
+
+### Patch Changes
+
+- Released alongside Spree 6.0.0.rc2 and `@spree/cli` 3.3.0. No changes of its own.
+
+## 2.3.0
+
+### Minor Changes
+
+- [#14847](https://github.com/spree/spree/pull/14847) [`7d9bc01`](https://github.com/spree/spree/commit/7d9bc01dd82ba12938453caf76aa04e1b0c2637f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added the `--seller-dashboard` option, which includes the Seller Panel without asking. Together with `--no-start` and `--no-storefront` it lets scripts and CI create a project with no prompts.
+
+## 2.2.0
+
+### Minor Changes
+
+- [#14814](https://github.com/spree/spree/pull/14814) [`992b25e`](https://github.com/spree/spree/commit/992b25e00dc6b3ba9941f7223dd4d8cd17a25271) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Made the marketplace seller panel optional: `create-spree-app` now asks whether to install it (yes by default) and accepts `--no-seller-dashboard`. Added `--no-dashboard` for projects that are happy with the built-in admin dashboard; `--react-dashboard` is deprecated and does nothing. Apps are now set up in a consistent order — dashboard, seller panel, then storefront — and the storefront step looks the same as the others. `spree init` also installs the seller panel's dependencies, and both tools now point projects without their own dashboard at the built-in one instead of saying no admin is installed.
+
+### Patch Changes
+
+- [#14828](https://github.com/spree/spree/pull/14828) [`f61ff68`](https://github.com/spree/spree/commit/f61ff68db21d08385f743dc0bf46575fba0b284a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Merged `spree update` into `spree upgrade`, which now upgrades both prebuilt-image and ejected projects and also updates the `@spree/*` packages of the project root and the dashboard apps. `spree update` keeps working for one release with a deprecation warning. New projects get an `upgrade` script instead of `update`.
+
 ## 2.1.0
 
 ### Minor Changes

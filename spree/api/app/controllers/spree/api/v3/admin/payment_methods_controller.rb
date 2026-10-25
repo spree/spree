@@ -10,27 +10,48 @@ module Spree
           subclassed_via -> { Spree::PaymentMethod.providers },
                          unknown_type_error: 'unknown_payment_method_type'
 
+          request_params :payment_method do |body|
+            body.attribute :type, :string,
+              required: true,
+              only: :create,
+              permit: false,
+              example: 'check',
+              description: 'Wire shorthand from the payment method types endpoint.'
+            body.attribute :name, :string, required: true, on: :create
+            body.attribute :description, :string, nullable: true
+            body.attribute :active, :boolean
+            body.attribute :storefront_visible, :boolean,
+              description: 'False keeps the method to the dashboard; true also offers it on the storefront.'
+            body.attribute :capture_method, :string,
+              nullable: true,
+              choices: Spree::CaptureMethod::CAPTURE_METHODS,
+              description: 'When customers are charged for this method. Null inherits the store setting.'
+            body.attribute :position, :integer
+            body.attribute :metadata, :hash
+            body.attribute :preferences, :hash,
+              description: "Values for the provider's preference schema, from the payment method types endpoint."
+          end
+
           # Lists available payment provider subclasses for the create form.
-          # Returns: { data: [{ type, label, description, preference_schema }] }.
-          # The preference_schema array describes the provider-specific
+          # Returns: { data: [{ type, label, description, schema }] }.
+          # `schema` is the JSON Schema of the provider-specific
           # configuration fields, so admin UIs can render a generic
           # preferences form without hard-coding per-provider knowledge.
-          # Filters out subclasses already installed in the current store —
-          # mirrors the legacy admin's "available_payment_methods" helper, so
-          # admins don't see (and accidentally double-install) the same
-          # provider twice.
+          # Every provider, `installed` when the store already has one: the
+          # create picker leaves those out so a provider is not installed
+          # twice, and the edit form still finds an installed one's schema.
           def types
-            authorize! :create, model_class
+            authorize! :show, model_class
 
             installed_class_names = current_store.payment_methods.pluck(:type)
             installed_shorthands = installed_class_names.filter_map do |name|
               name.safe_constantize&.api_type
             end
-            available = model_class.subclasses_with_preference_schema.reject do |entry|
-              installed_shorthands.include?(entry[:type])
+            entries = model_class.subclasses_with_preference_schema.map do |entry|
+              entry.merge(installed: installed_shorthands.include?(entry[:type]))
             end
 
-            render json: { data: available }
+            render json: { data: entries }
           end
 
           protected
@@ -43,19 +64,14 @@ module Spree
             Spree.api.admin_payment_method_serializer
           end
 
-          # Explicit allowlist per the v3 convention — flat params. `type` and
-          # `preferences` are added by `SubclassedResource` on top.
-          # Deliberately NOT routed through `normalize_params`: gateway
-          # `preferences` are opaque provider values, and prefixed-ID resolution
-          # recurses into nested hashes — a Stripe `webhook_endpoint_id` like
-          # `we_1MqJ8b...` matches the prefixed-ID shape and would be decoded to
-          # an integer. `type` and `preferences` are added by `SubclassedResource`.
+          # `type` is read by `SubclassedResource` from the raw params.
+          # Deliberately NOT routed through `normalize_params`: `metadata` holds
+          # opaque merchant values, and prefixed-ID resolution recurses into
+          # nested hashes — a value like `we_1MqJ8b...` matches the prefixed-ID
+          # shape and would be decoded to an integer. `preferences` decode their
+          # own ids from their schema.
           def permitted_params
-            params.permit(
-              :name, :description, :active, :storefront_visible, :auto_capture, :capture_method, :position,
-              *model_additional_permitted_attributes,
-              metadata: {}, preferences: {}
-            )
+            params.permit(*permitted_attributes)
           end
 
           def scope

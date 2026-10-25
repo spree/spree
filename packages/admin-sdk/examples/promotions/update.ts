@@ -26,7 +26,7 @@ await client.promotions.update(promotionId, {
     // Add a new rule
     {
       type: 'item_total',
-      preferences: { amount_min: 50, operator_min: 'gte' },
+      preferences: { amount_min: '50.00', operator_min: 'gte' },
     },
   ],
   actions: [
@@ -36,7 +36,7 @@ await client.promotions.update(promotionId, {
       type: 'create_item_adjustments',
       calculator: {
         type: 'percent_on_line_item',
-        preferences: { percent: 15 },
+        preferences: { percent: '15' },
       },
     },
   ],

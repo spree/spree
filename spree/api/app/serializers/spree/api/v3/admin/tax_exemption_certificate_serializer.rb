@@ -5,23 +5,27 @@ module Spree
         # Admin-only: certificates are back-office evidence with no storefront
         # surface, so there is no store serializer to extend.
         class TaxExemptionCertificateSerializer < V3::BaseSerializer
-          typelize certificate_number: :string, reason_code: :string, status: [:string, enum: Spree::TaxExemptionCertificate.statuses, enum_type_name: 'TaxExemptionCertificateStatus'],
+          typelize certificate_number: :string, tax_exemption_reason_id: :string, status: [:string, enum: Spree::TaxExemptionCertificate.statuses, enum_type_name: 'TaxExemptionCertificateStatus'],
                    issuing_authority: [:string, nullable: true],
+                   issued_at: [:string, nullable: true], expires_at: [:string, nullable: true],
+                   verified_at: [:string, nullable: true],
                    company_id: :string,
-                   country_code: [:string, nullable: true], state_code: [:string, nullable: true],
+                   country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'], state_code: [:string, nullable: true],
                    active: :boolean, lapsed: :boolean, can_be_deleted: :boolean,
                    document_filename: [:string, nullable: true],
                    document_byte_size: ['number | null'],
                    document_url: [:string, nullable: true],
                    metadata: 'Record<string, unknown> | null'
 
-          attributes :certificate_number, :reason_code, :status, :issuing_authority, :metadata,
+          attributes :certificate_number, :status, :issuing_authority, :metadata,
                      issued_at: :iso8601, expires_at: :iso8601, verified_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :company_id do |certificate|
-            certificate.company&.prefixed_id
-          end
+          prefixed_id_attributes :company, :tax_exemption_reason
+
+          one :tax_exemption_reason,
+              resource: proc { Spree.api.admin_tax_exemption_reason_serializer },
+              if: proc { expand?('tax_exemption_reason') }
 
           # The jurisdiction the certificate holds in, in the same vocabulary the
           # tax lines use.
@@ -33,14 +37,10 @@ module Spree
             certificate.verified? && !certificate.lapsed?
           end
 
-          attribute :lapsed do |certificate|
-            certificate.lapsed?
-          end
+          attribute :lapsed, &:lapsed?
 
           # Lets the dashboard hide a delete the model will refuse.
-          attribute :can_be_deleted do |certificate|
-            certificate.can_be_deleted?
-          end
+          attribute :can_be_deleted, &:can_be_deleted?
 
           attribute :document_filename do |certificate|
             certificate.document.blob&.filename&.to_s if certificate.document.attached?

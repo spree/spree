@@ -16,7 +16,7 @@ module Spree
     let!(:zone)   { create(:zone) }
     let!(:other_zone)  { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |sm|
+      create(:delivery_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
@@ -27,6 +27,14 @@ module Spree
 
     describe '#call' do
       subject { described_class.call(order: order, params: params) }
+
+      context 'with a channel from another store' do
+        let(:params) { { channel_id: create(:channel, store: create(:store)).prefixed_id } }
+
+        it 'refuses it' do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
 
       context 'with empty params' do
         let(:params) { {} }
@@ -158,7 +166,7 @@ module Spree
 
         it 'starts with shipments built from the seeded data' do
           expect(order.shipments).not_to be_empty
-          expect(order.shipment_total).to eq(5)
+          expect(order.delivery_total).to eq(5)
         end
 
         context 'when items change' do
@@ -176,7 +184,7 @@ module Spree
             expect(new_shipment_ids).not_to be_empty
             expect(new_shipment_ids & old_shipment_ids).to be_empty
             expect(order.fulfillments.first.inventory_units.sum(:quantity)).to eq(3)
-            expect(order.shipment_total).to eq(5)
+            expect(order.delivery_total).to eq(5)
           end
         end
 
@@ -210,7 +218,7 @@ module Spree
         context 'when an admin chose a rate' do
           let(:initial_address) { create(:address, customer: user, country: country, state: state) }
           let!(:express) do
-            create(:shipping_method, name: 'Express').tap do |method|
+            create(:delivery_method, name: 'Express').tap do |method|
               method.calculator.preferred_amount = 15
               method.calculator.save
             end
@@ -386,7 +394,7 @@ module Spree
           order.reload
           expect(order.line_items.first.quantity).to eq(2)
           expect(order.item_total).to eq(variant.amount_in(order.currency) * 2)
-          expect(order.total).to eq(order.item_total + order.shipment_total + order.adjustment_total)
+          expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
         end
       end
 
@@ -402,7 +410,7 @@ module Spree
           shipment = order.fulfillments.first
           expect(shipment).to be_present
           expect(shipment.adjustment_total).to eq(-5)
-          expect(order.shipping_discount).to eq(5)
+          expect(order.fulfillment_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
         end
 
@@ -410,7 +418,7 @@ module Spree
           # Seed: order with line item + shipments + promo applied
           described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
           order.reload
-          expect(order.shipping_discount).to eq(5)
+          expect(order.fulfillment_discount).to eq(5)
 
           # Move to a different country — shipments rebuild, promo must re-apply
           described_class.call(order: order, params: {
@@ -425,7 +433,7 @@ module Spree
 
           order.reload
           expect(order.fulfillments.first.adjustment_total).to eq(-5)
-          expect(order.shipping_discount).to eq(5)
+          expect(order.fulfillment_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
         end
       end

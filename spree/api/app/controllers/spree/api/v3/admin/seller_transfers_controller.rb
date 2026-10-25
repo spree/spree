@@ -20,10 +20,6 @@ module Spree
             Spree.api.admin_seller_transfer_serializer
           end
 
-          def scope
-            super.for_store(current_store)
-          end
-
           # Every association the serializer reads, so a page of rows costs a
           # fixed number of queries rather than one per row.
           def collection_includes

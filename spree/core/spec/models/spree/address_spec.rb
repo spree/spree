@@ -95,43 +95,11 @@ describe Spree::Address, type: :model do
       let(:country) { @default_store.default_country }
       let(:address) { create(:address, country: country) }
 
-      context '#country_name' do
-        it 'return proper country_iso_name' do
-          expect(address.country_name).to eq 'United States'
-        end
-      end
-
-      context '#country_iso_name' do
-        it 'return proper country_iso_name' do
-          expect(address.country_iso_name).to eq 'UNITED STATES OF AMERICA'
-        end
-      end
-
-      context '#country_code' do
-        it 'return proper country_iso_name' do
-          expect(address.country_code).to eq 'US'
-        end
-      end
-
       context '#country_iso3' do
         it 'return proper country_iso_name' do
           expect(address.country_iso3).to eq 'USA'
         end
       end
-    end
-  end
-
-  context 'aliased attributes' do
-    let(:address) { Spree::Address.new }
-
-    it 'first_name' do
-      address.first_name = 'Ryan'
-      expect(address.first_name).to eq('Ryan')
-    end
-
-    it 'last_name' do
-      address.last_name = 'Bigg'
-      expect(address.last_name).to eq('Bigg')
     end
   end
 
@@ -215,12 +183,6 @@ describe Spree::Address, type: :model do
       address.postal_code = Spree::TestingSupport::CountryPool.postal_code_for(stateless_country.iso)
       address.state_code = nil
       address.state_name = nil
-      expect(address).to be_valid
-    end
-
-    it 'does not require phone' do
-      address.state_code = state.abbr
-      address.phone = ''
       expect(address).to be_valid
     end
 
@@ -342,16 +304,6 @@ describe Spree::Address, type: :model do
       end
     end
 
-    context 'phone not required' do
-      before { allow(address).to receive_messages require_phone?: false }
-
-      it 'shows no errors when phone is blank' do
-        address.phone = ''
-        address.valid?
-        expect(address.errors[:phone].size).to eq 0
-      end
-    end
-
     context 'postal code not required' do
       before { allow(address).to receive_messages require_postal_code?: false }
 
@@ -415,26 +367,6 @@ describe Spree::Address, type: :model do
 
       specify { expect(address.state_name_text).to eq('Somewhere Else') }
     end
-  end
-
-  describe '#country_code' do
-    let(:address) { build(:address, country: country) }
-    let(:country) { Spree::Country.by_iso('US') }
-
-    it 'returns the country iso' do
-      expect(address.country_code).to eq('US')
-    end
-
-    it 'returns nil if the country is nil' do
-      address.country_code = nil
-      expect(address.country_code).to be_nil
-    end
-  end
-
-  context 'defines require_phone? helper method' do
-    let(:address) { create(:address) }
-
-    specify { expect(address.instance_eval { require_phone? }).to be(false) }
   end
 
   context '#clear_state' do
@@ -594,18 +526,14 @@ describe Spree::Address, type: :model do
     end
 
     it 'can be deleted when there is an incomplete associated order' do
+      create(:order, customer: user, bill_address: address3)
+
       expect(address3).to be_can_be_deleted
     end
 
     it 'is destroyed without saving used' do
       address.destroy
       expect(Spree::Address.where(['id = (?)', address.id])).to be_empty
-    end
-
-    it 'is destroyed deleted timestamp' do
-      address2.destroy
-      expect(Spree::Address.where(['id = (?)', address2.id])).not_to be_empty
-      expect(Spree::Address.not_deleted.where(['id = (?)', address2.id])).to be_empty
     end
 
     context 'when an incomplete order references the address' do
@@ -880,15 +808,6 @@ describe Spree::Address, type: :model do
         address.valid?
         expect(address.country).to be_nil
       end
-
-      it 'clears the input after normalization' do
-        address = build(:address, country: nil)
-        address.country_code = 'US'
-        address.valid?
-        # The input should be cleared so it doesn't re-run on next validation
-        address.valid?
-        expect(address.country).to eq(country)
-      end
     end
 
     describe '#state_code=' do
@@ -1073,6 +992,45 @@ describe Spree::Address, type: :model do
     it 'lets two snapshots of the same labelled address be saved side by side' do
       expect(address.snapshot.save).to be(true)
       expect(address.snapshot.save).to be(true)
+    end
+
+    context 'of a company site' do
+      let(:company) { create(:company, name: 'Acme Logistics') }
+      let(:address) do
+        create(:company_address, owner: company, company: nil, first_name: 'Dana', last_name: 'Reyes')
+      end
+
+      it 'freezes the company line the owner was supplying' do
+        expect(snapshot.company).to eq('Acme Logistics')
+      end
+
+      it 'keeps a line the entry stored for itself' do
+        address.update!(company: 'Acme Logistics — Dock B')
+
+        expect(snapshot.company).to eq('Acme Logistics — Dock B')
+      end
+
+      # A company site names the business, not a person, and the model exempts
+      # it from needing a name. The copy has to stay exempt or placing the
+      # order fails on a first name the site never had.
+      context 'with no contact name on it' do
+        let(:address) { create(:company_address, owner: company, first_name: nil, last_name: nil) }
+
+        it 'is valid and saveable' do
+          expect(snapshot).to be_valid
+          expect(snapshot.save).to be(true)
+        end
+
+        it 'stays recognisably a business address' do
+          expect(snapshot).to be_business_owned
+        end
+      end
+
+      it 'keeps the copy out of the book it came from' do
+        expect(snapshot.owner_id).to be_nil
+        expect(snapshot.owner).to be_nil
+        expect(company.addresses.reload).not_to include(snapshot.tap(&:save!))
+      end
     end
   end
 

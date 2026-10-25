@@ -55,11 +55,19 @@ describe 'core:migrate_newsletter_subscribers' do
     expect(Spree::NewsletterSubscriber.verified.count).to eq(7)
     expect(Spree::NewsletterSubscriber.find_by(customer: user).attributes).to include(
       'email' => user.email,
+      'customer_id' => user.id,
       'verified_at' => user.updated_at,
       'verification_token' => nil,
       'updated_at' => kind_of(ActiveSupport::TimeWithZone),
       'created_at' => kind_of(ActiveSupport::TimeWithZone)
     )
+  end
+
+  it 'does not duplicate subscribers when run again' do
+    subject.invoke
+    subject.reenable
+
+    expect { subject.invoke }.not_to change(Spree::NewsletterSubscriber, :count)
   end
 end
 
@@ -73,25 +81,25 @@ describe 'core:archive_products' do
   end
 
   it 'draft, discontinue_on in the past -> archived' do
-    product.update(status: 'draft', discontinue_on: 1.day.ago)
+    product.update_columns(status: 'draft', discontinue_on: 1.day.ago)
     subject.invoke
     expect(product.reload.status).to eq('archived')
   end
 
   it 'draft, discontinue_on in the future -> draft' do
-    product.update(status: 'draft', discontinue_on: 1.day.from_now)
+    product.update_columns(status: 'draft', discontinue_on: 1.day.from_now)
     subject.invoke
     expect(product.reload.status).to eq('draft')
   end
 
   it 'active, discontinue_on in the past -> archived' do
-    product.update(status: 'active', discontinue_on: 1.day.ago)
+    product.update_columns(status: 'active', discontinue_on: 1.day.ago)
     subject.invoke
     expect(product.reload.status).to eq('archived')
   end
 
   it 'active, discontinue_on in the future -> active' do
-    product.update(status: 'active', discontinue_on: 1.day.from_now)
+    product.update_columns(status: 'active', discontinue_on: 1.day.from_now)
     subject.invoke
     expect(product.reload.status).to eq('active')
   end

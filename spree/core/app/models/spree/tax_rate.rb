@@ -9,12 +9,20 @@ module Spree
     # zone_id any more, but the column stays in the database through 6.0: it is
     # what `spree:migrate_tax_zones` converts from, and that task runs after
     # db:migrate. The physical drop lands in 6.1.
+    #
+    # The same goes for included_in_price: whether tax sits inside a price is
+    # the market's choice (Spree::Market#tax_inclusive), and the column is read
+    # only by `spree:markets:backfill_tax_inclusive`, which clears it.
 
     acts_as_paranoid
 
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::SingleStoreResource
+    include Spree::CanonicalDecimals
+
+    # A fraction (0.07125), held to the column's five decimals.
+    canonical_decimals :amount, places: 5
 
     with_options inverse_of: :tax_rates do
       belongs_to :tax_category,
@@ -48,60 +56,48 @@ module Spree
     }
     # The same question asked with an address in hand.
     scope :for_address, ->(address) { for_jurisdiction(address&.country_code, address&.state_code) }
-    # Country-wide: unlike for_jurisdiction(country_code, nil) this leaves the
-    # state unconstrained, so it sums a country's state-level rates too. Used
-    # where the state is irrelevant — backing VAT out of a gross price.
-    scope :for_country, ->(country_code) { where(country_code: [country_code.presence, nil].uniq) }
     scope :for_tax_category,
           ->(category) { where(tax_category_id: category.try(:id)) }
-    scope :included_in_price, -> { where(included_in_price: true) }
 
-    self.whitelisted_ransackable_attributes = %w[amount country_code state_code tax_category_id included_in_price name]
+    self.whitelisted_ransackable_attributes = %w[amount rate country_code state_code tax_category_id name]
+    ransack_alias :rate, :amount
+    search_by :name
 
-    # Virtual attribute for percentage display in admin forms
-    def amount_percentage
-      return nil if amount.nil?
+    # The rate as a fraction (0.23); the column is +amount+.
+    alias_attribute :rate, :amount
 
-      (amount * 100).round(2)
-    end
-
-    def amount_percentage=(value)
-      self.amount = value.present? ? (value.to_f / 100) : nil
-    end
-
-    # The included-in-price rate to back out of a gross price.
+    # The rate as a percentage (23), what a merchant types.
     #
-    # @param options [Hash] +:country+ (or +:address+) and +:tax_category+
-    # @return [BigDecimal] 0 when the jurisdiction or category is unknown
-    def self.included_tax_amount_for(options)
-      # +:country+ is a documented override point and the VAT path still hands
-      # it a Spree::Country, so take the code off whichever arrives.
-      country = options[:country]
-      country_code = country.try(:iso) || country.presence || options[:address]&.country_code
-      return 0 unless country_code && options[:tax_category]
-
-      scope = options[:address] ? for_address(options[:address]) : for_country(country_code)
-      # Per-store tax configuration is the norm since 6.0, so without this the
-      # sum would add up every store's rate for the same country.
-      store = options[:store] || Spree::Current.store
-      scope = scope.for_store(store) if store
-      scope.included_in_price.for_tax_category(options[:tax_category]).sum(:amount)
+    # @return [BigDecimal, nil]
+    def rate_percent
+      amount && amount * 100
     end
 
-    def included?
-      included_in_price
+    # @param value [String, Numeric, nil]
+    def rate_percent=(value)
+      parsed = Spree::Money::Rounding.parse_decimal(value)
+      self.amount = parsed && parsed / 100
     end
 
-    def additional?
-      !included_in_price
+    # @deprecated Use {#rate_percent}; removed in 6.1.
+    def amount_percentage
+      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage is deprecated and will be removed in Spree 6.1. Use #rate_percent instead.')
+      rate_percent
+    end
+
+    # @deprecated Use {#rate_percent=}; removed in 6.1.
+    def amount_percentage=(value)
+      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage= is deprecated and will be removed in Spree 6.1. Use #rate_percent= instead.')
+      self.rate_percent = value
     end
 
     # The customer-facing label snapshotted onto TaxLine rows.
     #
+    # @param included [Boolean] whether the tax sits inside the price, which
+    #   the sale's market decides (Spree::Market#tax_inclusive)
     # @return [String]
-    def adjustment_label
-      Spree.t included_in_price? ? :including_tax : :excluding_tax,
-              scope: 'adjustment_labels.tax_rates',
+    def adjustment_label(included: false)
+      I18n.t "spree.adjustment_labels.tax_rates.#{included ? :including_tax : :excluding_tax}",
               name: name.presence || tax_category.name,
               amount: amount_for_label
     end

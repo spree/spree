@@ -8,6 +8,17 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'CreatePaymentParams', action: :create do |body|
+              body.attribute :payment_method_id, :id,
+                required: true,
+                example: 'pm_abc123',
+                description: 'A payment method that needs no payment session.'
+              body.attribute :amount, :decimal,
+                example: '99.99',
+                description: 'Defaults to the order total minus store credits.'
+              body.attribute :metadata, :hash, description: 'Key-value metadata to attach to the payment.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/payments
             # Creates a payment for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer)
             def create
@@ -20,7 +31,7 @@ module Spree
               if payment_method.session_required?
                 return render_error(
                   code: 'payment_session_required',
-                  message: Spree.t('api.v3.payments.session_required'),
+                  message: I18n.t('spree.api.v3.payments.session_required'),
                   status: :unprocessable_content
                 )
               end
@@ -30,7 +41,7 @@ module Spree
               unless @cart.payment_methods.include?(payment_method)
                 return render_error(
                   code: 'payment_method_unavailable',
-                  message: Spree.t('api.v3.payments.method_unavailable'),
+                  message: I18n.t('spree.api.v3.payments.method_unavailable'),
                   status: :unprocessable_content
                 )
               end

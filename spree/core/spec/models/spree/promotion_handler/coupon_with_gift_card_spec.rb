@@ -190,16 +190,6 @@ describe Spree::PromotionHandler::Coupon, type: :model do
           expect(order.reload.gift_card).to eq(gift_card)
         end
       end
-
-      context 'when enable_gift_cards is not specified (default)' do
-        it 'applies gift card for backwards compatibility' do
-          order.coupon_code = gift_card.code
-          handler = described_class.new(order)
-          handler.apply
-
-          expect(order.reload.gift_card).to eq(gift_card)
-        end
-      end
     end
 
     describe '#remove' do
@@ -220,15 +210,6 @@ describe Spree::PromotionHandler::Coupon, type: :model do
       context 'when enable_gift_cards: true (explicit)' do
         it 'removes gift card' do
           handler = described_class.new(order, enable_gift_cards: true)
-          handler.remove(gift_card.code)
-
-          expect(order.reload.gift_card).to be_nil
-        end
-      end
-
-      context 'when enable_gift_cards is not specified (default)' do
-        it 'removes gift card for backwards compatibility' do
-          handler = described_class.new(order)
           handler.remove(gift_card.code)
 
           expect(order.reload.gift_card).to be_nil

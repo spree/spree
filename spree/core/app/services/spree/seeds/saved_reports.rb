@@ -86,8 +86,8 @@ module Spree
           next if known_names(report[:key]).intersect?(existing)
 
           store.saved_reports.create!(
-            name: Spree.t("reporting.seeds.#{report[:key]}.name"),
-            description: Spree.t("reporting.seeds.#{report[:key]}.description"),
+            name: I18n.t("spree.reporting.seeds.#{report[:key]}.name"),
+            description: I18n.t("spree.reporting.seeds.#{report[:key]}.description"),
             query: report[:query],
             seeded: true
           )
@@ -98,7 +98,7 @@ module Spree
       def known_names(key)
         @known_names ||= {}
         @known_names[key] ||= Spree.available_locales.filter_map do |locale|
-          Spree.t("reporting.seeds.#{key}.name", locale: locale, default: nil)&.downcase
+          I18n.t("spree.reporting.seeds.#{key}.name", locale: locale, default: nil)&.downcase
         end.to_set
       end
     end

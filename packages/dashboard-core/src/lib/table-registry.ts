@@ -67,6 +67,11 @@ interface ColumnDefBase<T = any> {
  * can show human-readable names instead of raw prefixed IDs.
  */
 export interface ResourceFilterConfig<R extends { id: string } = { id: string }> {
+  /**
+   * Leads every cache entry the filter creates, ahead of the tenant. Naming
+   * it after the resource (`'markets'`) lets that resource's writes, which
+   * invalidate `[resource, tenant]`, refresh the filter's lists too.
+   */
   queryKey: string
   search: (query: string) => Promise<{ data: R[] }>
   hydrate: (ids: string[]) => Promise<{ data: R[] }>
@@ -75,23 +80,27 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
   emptyText?: string
   /**
    * Fetches the whole list, for a resource small enough to show in full —
-   * a store's warehouses, its channels. The control then opens as a plain
-   * list of options instead of an empty box waiting to be typed into, and
-   * still searches once the operator types. Leave it off for anything that
-   * could run to hundreds of rows.
+   * a store's warehouses, its channels. It is fetched once and cached under
+   * `[queryKey, tenant, 'all']`; the filter narrows it as the operator types
+   * and labels its chips from it, without further requests. Use the same
+   * request as the resource's own full-list hook, which shares that key.
+   * Leave it off for anything that could run to hundreds of rows.
    */
   listAll?: () => Promise<{ data: R[] }>
+  /**
+   * How long fetched options stay fresh, in milliseconds. Raise it for
+   * rarely-changing resources whose writes invalidate `queryKey`.
+   */
+  staleTime?: number
 }
 
 /**
- * Models that `TagCombobox` can target for tag autocomplete. The three
- * first-class taggables (Product, Customer, Order) get autocomplete hints, but
- * the union is open — apps can pass any Ruby class string the backend's
- * `TagsController#allowed_taggable_types` accepts (override that method
- * server-side to extend). Use `Subject.Product` etc. to avoid stringly-typed
- * callsites for the built-ins.
+ * Resources that `TagCombobox` can target for tag autocomplete, by API
+ * shorthand. The three first-class taggables get autocomplete hints, but the
+ * union is open — apps can pass the shorthand of any type registered in
+ * `Spree.taggable_types` on the server.
  */
-export type TaggableType = 'Spree::Product' | 'Spree::Customer' | 'Spree::Order' | (string & {})
+export type TaggableType = 'product' | 'customer' | 'order' | (string & {})
 
 /**
  * Column definition. Discriminated union on `filterType`:
@@ -102,7 +111,7 @@ export type TaggableType = 'Spree::Product' | 'Spree::Customer' | 'Spree::Order'
  */
 export type ColumnDef<T = any> =
   | (ColumnDefBase<T> & {
-      filterType?: 'string' | 'boolean' | 'number' | 'date' | 'currency'
+      filterType?: 'string' | 'boolean' | 'number' | 'date' | 'currency' | 'locale'
       filterOptions?: never
       filterResource?: never
       taggableType?: never

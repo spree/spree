@@ -5,7 +5,7 @@ description: Add your own structured, typed data to products, orders and other r
 
 ## Overview
 
-Sooner or later you need to store something Spree doesn't have a field for. A fabric composition. A care instruction. A gift message. An ID from the system you sync with.
+Sooner or later you need to store something Spree doesn't have a field for. A fabric composition. A care instruction. A gift message.
 
 Custom fields are how you do that without changing the database. You declare a field once — its name, its type, who can see it — and from then on it can be set on any record of that kind, edited in the dashboard, returned by the API, and searched or filtered like any built-in field.
 
@@ -74,7 +74,7 @@ Because the definition carries the type and the label, the dashboard can build a
 
 ```typescript Admin SDK
 const definition = await adminClient.customFieldDefinitions.create({
-  resource_type: 'Spree::Product',
+  resource_type: 'product',
   namespace: 'properties',
   key: 'material',
   label: 'Material',
@@ -86,7 +86,7 @@ const definition = await adminClient.customFieldDefinitions.create({
 
 ```bash CLI
 spree api post /custom_field_definitions -d '{
-  "resource_type": "Spree::Product",
+  "resource_type": "product",
   "namespace": "properties",
   "key": "material",
   "label": "Material",
@@ -197,7 +197,35 @@ In the dashboard, fields with these flags become available in the product table'
 
 ## What can carry custom fields
 
-Most things you'd want to annotate: products, variants, orders, line items, customers, categories, payments, fulfillments, gift cards and store credits, among others.
+Most things you'd want to annotate: products, variants, orders, line items, customers, categories, payments, fulfillments, gift cards and store credits, among others. **Settings → Custom Fields** lists every type your installation supports; types no dashboard screen edits appear under **Through the API only**, for integrations to fill in.
+
+Merchants fill values in from the record's own screen in the dashboard:
+
+| Where | Records | How values save |
+|---|---|---|
+| Detail page | Products, categories, collections, promotions, store settings | With the page's Save button |
+| Detail page | Orders, customers, companies, sellers, stock transfers, purchase orders | With the card's own Edit and Save |
+| Edit sheet | Option types, product types, tax rates, payment methods, delivery methods, gift cards, media | With the sheet's Save button |
+| Product page sheet | Variants, product media | With the sheet's Done (Cancel discards) |
+| Detail sheet | Store credits | With the card's own Edit and Save |
+
+Sheets show the card only once the store defines a field for that type, so a store that uses none sees no empty sections. Staff who can view a record but not edit it don't see its custom fields: reading them needs edit access.
+
+Each record type in the table above has the same nested endpoint. The Admin SDK reaches any of them through one accessor, named by the record's type:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: customFields } = await adminClient
+  .customFields('stock_transfer', 'st_xxx')
+  .list()
+```
+
+```bash CLI
+spree api get /stock_transfers/st_xxx/custom_fields
+```
+
+</CodeGroup>
 
 ## Definitions belong to a store
 
@@ -219,11 +247,12 @@ Spree has two ways to store your own data, and they are not competing — they s
 | **Visibility** | Configurable per field | Never read by the Store API |
 | **Searchable** | Yes, opt in | Not through the product search |
 
-Put it simply: **custom fields are for people, metadata is for machines.** If a merchant should type it, define a custom field. If it is a sync token or an external ID that only your integration reads, use metadata.
+Put it simply: **custom fields are for people, metadata is for machines.** If a merchant should type it, define a custom field. If it is a sync token that only your integration reads, use metadata. If it is the key another system knows the record by, use an [external reference](/developer/core-concepts/external-references).
 
 ## Related
 
 - [Metadata](/developer/customization/metadata) — the machine-readable alternative
+- [External References](/developer/core-concepts/external-references) — keys from your ERP, PIM or CRM
 - [Products](/developer/core-concepts/products) — the most common place for custom fields
 - [Search & Filtering](/developer/core-concepts/search-filtering) — how filters and search work
 - [Admin SDK](/developer/sdk/admin/resources) — managing definitions and values in TypeScript

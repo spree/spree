@@ -1,0 +1,40 @@
+---
+zh-TW:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: 重設密碼
+        expiry_notice: 此重設密碼連結將很快失效。若您並未提出此要求，則無需採取任何行動。
+        greeting: 您好 %{name}，
+        ignore_notice: 若您並未要求重設密碼，可放心忽略此電子郵件。您的密碼不會被變更。
+        instructions: 我們收到了重設您密碼的要求。請點選下方按鈕設定新密碼。
+        subject: 密碼重設說明
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: 您好，
+        ignore_disclaimer: 若您並未提出此要求，請忽略此電子郵件。
+        instructions: 請點選下方按鈕以驗證您的電子郵件地址。
+        message_copy_link: 若按鈕無法運作，請複製並貼上以下連結至您的瀏覽器：
+        subject: 驗證您的電子郵件地址
+        verify_email_address_link: 驗證電子郵件地址
+    order_mailer:
+      cancel_email:
+        instructions: 你的訂單已取消。請你保留好此信件做為紀錄。
+        order_summary_canceled: 訂單編號 %{number} 總結 [CANCELED]
+        subject: 訂單取消
+      confirm_email:
+        instructions: 請你保留好此信件做為紀錄。
+        order_summary: 訂單編號 %{number} 總結
+        subject: 訂單確認信件
+      payment_link_email:
+        message: 請點選下方按鈕為您的訂單付款。
+        message_copy_link: 若按鈕無法運作，請複製並貼上以下連結至您的瀏覽器：
+        pay_for_order: 為訂單付款
+        subject: '訂單 #%{number} 的付款連結'
+      store_owner_notification_email:
+        heading: 新訂單
+        instructions: 一筆新訂單
+        order_summary: 訂單 %{number} 總結
+        subject: "%{store_name}收到了一筆新訂單"
+      subtotal: '小記:'
+      total: '總計:'

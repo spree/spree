@@ -6,6 +6,9 @@ module Spree
     include Spree::SingleStoreResource
 
     publishes_lifecycle_events
+    publishes_event :verified
+    publishes_events :subscription_requested, :unsubscribe_requested,
+                     serializer: 'Spree::Api::V3::NewsletterSubscriberRequestEventSerializer'
 
     has_secure_token :verification_token
 
@@ -45,6 +48,7 @@ module Spree
     #
     self.whitelisted_ransackable_attributes = %w[email verified_at]
     self.whitelisted_ransackable_scopes = %w[verified unverified]
+    self.ransackable_scope_types = %w[verified unverified].index_with('boolean')
 
     def accepts_email_marketing
       return customer.accepts_email_marketing if customer.present?

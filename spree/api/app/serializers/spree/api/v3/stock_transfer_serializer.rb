@@ -15,13 +15,7 @@ module Spree
         attributes :number, :reference,
                    created_at: :iso8601, updated_at: :iso8601
 
-        attribute :source_location_id do |transfer|
-          transfer.source_location&.prefixed_id
-        end
-
-        attribute :destination_location_id do |transfer|
-          transfer.destination_location&.prefixed_id
-        end
+        prefixed_id_attributes :source_location, :destination_location
       end
     end
   end

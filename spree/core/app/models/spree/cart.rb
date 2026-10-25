@@ -161,11 +161,13 @@ module Spree
 
     # Idempotent delivery-proposal rebuild — replaces the destructive
     # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
-    # the current items/address; nothing here touches a completed cart.
+    # the current items/address; nothing here touches a completed cart. Until
+    # deliveries can be proposed the cart gets none: preselecting the pickup
+    # rate that is all a destination-less quote finds would choose pickup for
+    # a customer who had not been offered anything.
     #
     # @param keep_selection [Boolean] false when the destination changed: a
-    #   choice made for one address is not a choice for another, and before an
-    #   address is known the only rate on offer is a pickup default
+    #   choice made for one address is not a choice for another
     def rebuild_fulfillments!(keep_selection: true)
       return if completed?
 
@@ -177,8 +179,10 @@ module Spree
 
       fulfillment_ids = fulfillments.map(&:id)
       DeliveryRate.where(fulfillment_id: fulfillment_ids).delete_all
+      Spree::ExternalReference.where(resource_type: Spree::Fulfillment.name, resource_id: fulfillment_ids).delete_all if fulfillment_ids.any?
       fulfillments.delete_all
       fulfillment_items.reset
+      return fulfillments.reload unless can_propose_deliveries?
 
       # Appended rather than assigned: setting `cart` on each proposal already
       # files it under this cart's `fulfillments` (the association is
@@ -199,15 +203,18 @@ module Spree
     # delivery_unavailable warning per affected line item (parity with the
     # order-side ensure_available_delivery_rates).
     def prune_undeliverable_fulfillments!
-      undeliverable = fulfillments.reload.select { |fulfillment| fulfillment.delivery_rates.empty? }
+      candidates = fulfillments.reload.to_a
+      ActiveRecord::Associations::Preloader.new(records: candidates, associations: :delivery_rates).call
+      undeliverable = candidates.select { |fulfillment| fulfillment.delivery_rates.empty? }
       return if undeliverable.empty?
 
       affected_line_items = undeliverable.flat_map(&:line_items).uniq
+      ActiveRecord::Associations::Preloader.new(records: affected_line_items, associations: { variant: :product }).call
       undeliverable.each(&:destroy)
       self.warnings |= affected_line_items.map do |line_item|
         {
           code: 'delivery_unavailable',
-          message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),
+          message: I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
           line_item_id: line_item.prefixed_id
         }
       end
@@ -215,7 +222,7 @@ module Spree
 
     def ensure_available_delivery_rates
       if fulfillments.empty? || fulfillments.any? { |fulfillment| fulfillment.delivery_rates.blank? }
-        errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
+        errors.add(:base, :items_cannot_be_shipped, message: I18n.t('spree.items_cannot_be_shipped'))
         return false
       end
       true
@@ -272,11 +279,24 @@ module Spree
       reload
     end
 
+    # The variants this cart's buyer may order: the channel's live
+    # publications, narrowed to the catalogs the cart's company, customer
+    # group or channel resolve to. Status, stock and currency are left to the
+    # add and checkout checks, which explain a refusal rather than reading as
+    # not found.
+    #
+    # @return [ActiveRecord::Relation<Spree::Variant>]
+    def orderable_variants
+      Spree::SalesContext.new(
+        store: store, channel: channel, customer: customer, company: resolved_company, resolve_company: false
+      ).orderable_variants
+    end
+
     # Removes out-of-stock/discontinued items and populates warnings
     # (mirrors Order#remove_out_of_stock_items!).
     def remove_out_of_stock_items!
       existing_warnings = warnings
-      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
+      result = Spree.cart_remove_out_of_stock_items_service.call(cart: self)
       return self unless result.success?
 
       cart, _messages, new_warnings = result.value
@@ -318,7 +338,7 @@ module Spree
         true
       end
       self.warnings = existing_warnings
-      self.warnings |= [{ code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }] if removed
+      self.warnings |= [{ code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable') }] if removed
       self
     end
 

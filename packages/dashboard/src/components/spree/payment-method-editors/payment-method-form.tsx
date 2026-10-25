@@ -1,4 +1,5 @@
-import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
+import type { PaymentMethod, PreferenceSchema } from '@spree/admin-sdk'
+import { CAPTURE_METHODS } from '@spree/core'
 import { PreferencesForm, Slot, useSlotEntries } from '@spree/dashboard-core'
 import {
   Field,
@@ -17,7 +18,6 @@ import {
 } from '@spree/dashboard-ui'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CAPTURE_METHODS } from '../../../schemas/store'
 import {
   type PaymentMethodEditorContext,
   type PaymentMethodFormMode,
@@ -30,7 +30,7 @@ import {
 interface ProviderOption {
   type: string
   label: string
-  preference_schema: PreferenceField[]
+  schema: PreferenceSchema
 }
 
 interface PaymentMethodFormProps {
@@ -44,7 +44,7 @@ interface PaymentMethodFormProps {
    * `providerTypes` against the selected `type` (the parent does this so
    * it can also seed `preferences` with defaults on type change).
    */
-  preferenceSchema: PreferenceField[]
+  preferenceSchema: PreferenceSchema | undefined
   /** Current provider's STI shorthand — drives slot lookups. */
   providerType: string
   /** Loaded server record in edit mode; null while creating. */
@@ -53,6 +53,8 @@ interface PaymentMethodFormProps {
   onPreferencesChange: (next: Record<string, unknown>) => void
   /** Called when the user picks a different provider in the create dropdown. */
   onProviderTypeChange?: (next: string) => void
+  /** Create mode with the provider already chosen by the caller: no dropdown. */
+  providerLocked?: boolean
 }
 
 export function PaymentMethodForm({
@@ -66,6 +68,7 @@ export function PaymentMethodForm({
   preferences,
   onPreferencesChange,
   onProviderTypeChange,
+  providerLocked = false,
 }: PaymentMethodFormProps) {
   const { t } = useTranslation()
   // Per-provider slot lookups. If a plugin has registered a `form` slot
@@ -92,7 +95,7 @@ export function PaymentMethodForm({
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      {mode === 'create' && (
+      {mode === 'create' && !providerLocked && (
         <Field>
           <FieldLabel htmlFor="type">{t('admin.fields.payment_method.type.label')}</FieldLabel>
           <Controller
@@ -144,7 +147,8 @@ export function PaymentMethodForm({
 
       {providerType && <Slot name={paymentMethodGuideSlot(providerType)} context={slotContext} />}
 
-      {providerType && (customFormRegistered || preferenceSchema.length > 0) ? (
+      {providerType &&
+      (customFormRegistered || Object.keys(preferenceSchema?.properties ?? {}).length > 0) ? (
         <div className="rounded-md border bg-muted/30 p-3">
           <h3 className="mb-2 text-sm font-medium">
             {t('admin.fields.payment_method.provider_configuration')}

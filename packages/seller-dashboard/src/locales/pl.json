@@ -148,6 +148,7 @@
             "receive_title": "Przyjmij zwrócone pozycje",
             "received_quantity": "Przyjęto",
             "refund_amount": "Kwota",
+            "refund_includes_tax": "Pełna kwota zawiera {{tax}} podatku. Przy mniejszej kwocie podatek zostanie zwrócony proporcjonalnie.",
             "refund_method": "Zwrot na",
             "refund_methods": {
               "original_payment": "Pierwotna płatność",
@@ -471,6 +472,7 @@
       "packing_slip_title": "List przewozowy — zamówienie {{number}}",
       "print_label": "Drukuj etykietę",
       "print_packing_slip": "Drukuj list przewozowy",
+      "quoted_after_review": "Wycena po weryfikacji",
       "ship_to": "Wysyłka do",
       "ships_from_label": "Wysyłka z",
       "split": "Podziel",
@@ -521,6 +523,7 @@
         "cancel_message": "Klient dostanie informację, że sprawa nie będzie kontynuowana.",
         "cancel_title": "Anulować tę wymianę?",
         "fulfill": "Wyślij wymianę",
+        "balance_due_confirm": "Zamiennik kosztuje więcej niż zwrócony towar. Jego wysłanie doda różnicę do zamówienia jako kwotę do zapłaty. Nic nie zostanie pobrane automatycznie.",
         "price_difference": "Różnica w cenie: {{amount}}",
         "receive": "Przyjmij",
         "title": "Wymiany"
@@ -536,6 +539,8 @@
         "receive": "Przyjmij",
         "refund": "Zwrot pieniędzy",
         "refund_total": "Łączny zwrot: {{amount}}",
+        "refunded": "Zwrócono: {{amount}}",
+        "refunded_of": "Zwrócono: {{amount}} z {{total}}",
         "title": "Zwroty"
       },
       "statuses": {
@@ -739,7 +744,8 @@
     "variant_remove_confirm_description": "Zniknie z produktu po zapisaniu.",
     "variant_remove_confirm_title": "Usunąć ten wariant?",
     "variants": "Warianty",
-    "variants_empty": "Ten produkt sprzedajesz jako jedną pozycję, w cenie powyżej. Dodaj wariant, aby sprzedawać go w opcjach takich jak rozmiar czy kolor."
+    "variants_empty": "Ten produkt sprzedajesz jako jedną pozycję, w cenie powyżej. Dodaj wariant, aby sprzedawać go w opcjach takich jak rozmiar czy kolor.",
+    "digital_files_review_notice": "Dodanie lub zastąpienie pliku wysyła ten produkt ponownie do weryfikacji; do ponownego zatwierdzenia przez marketplace nie jest w sprzedaży."
   },
   "profile": {
     "about": "O sprzedawcy",

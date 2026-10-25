@@ -1,4 +1,5 @@
 import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
+import { FEE_KINDS, isDecimalString, multiplyMoney, subsetOf, sumMoney } from '@spree/core'
 import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
@@ -26,6 +27,11 @@ export const newOrderFormSchema = z.object({
   // Empty string = "use store default" (resolved server-side via
   // Order#ensure_channel_presence).
   channel_id: z.string(),
+  // Empty strings fall back to the store's default market, the market's
+  // currency and its default language. A market has exactly one currency.
+  market_id: z.string(),
+  currency: z.string(),
+  locale: z.string(),
 })
 
 export type NewOrderFormValues = z.infer<typeof newOrderFormSchema>
@@ -41,15 +47,23 @@ export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
   po_number: '',
   coupon_code: '',
   channel_id: '',
+  market_id: '',
+  currency: '',
+  locale: '',
 }
 
 /**
- * Fee kinds offered when adding a manual fee to an order. The backend accepts
- * any string, so this is the curated admin-facing set, not a DB constraint.
+ * Fee kinds offered when adding a manual fee to an order. `exchange` is left
+ * out: Spree writes it itself, so it is labelled on the order but never offered.
  */
-export const FEE_KINDS = ['surcharge', 'handling', 'gift_wrap', 'cod', 'payment', 'duty'] as const
-
-export type FeeKind = (typeof FEE_KINDS)[number]
+export const MANUAL_FEE_KINDS = subsetOf(FEE_KINDS, [
+  'surcharge',
+  'handling',
+  'gift_wrap',
+  'cod',
+  'payment',
+  'duty',
+])
 
 /**
  * One row of the order edit table. Everything here is a primitive on purpose:
@@ -93,13 +107,17 @@ export const orderEditItemSchema = z
     name: z.string(),
     options_text: z.string(),
     thumbnail_url: z.string().nullable(),
-    display_price: z.string(),
-    display_total: z.string(),
+    /** The line's saved total; null for a line added in this edit. */
+    total: z.string().nullable(),
   })
   .superRefine((item, ctx) => {
     // Neither case sends a price, so refusing the form over one would block a
     // legitimate removal.
-    if (!item.removed && !item.revert_price && !/^\d+(\.\d+)?$/.test(item.price)) {
+    if (
+      !item.removed &&
+      !item.revert_price &&
+      !(isDecimalString(item.price) && !item.price.startsWith('-'))
+    ) {
       ctx.addIssue({
         code: 'custom',
         path: ['price'],
@@ -148,8 +166,7 @@ export function lineItemToEditRow(item: LineItem, fulfilledQuantity = 0): OrderE
     name: item.name,
     options_text: item.options_text ?? '',
     thumbnail_url: item.thumbnail_url,
-    display_price: item.display_price,
-    display_total: item.display_total,
+    total: item.total,
   }
 }
 
@@ -162,37 +179,26 @@ export function orderToEditForm(
   return { items: items.map((item) => lineItemToEditRow(item, fulfilled.get(item.id) ?? 0)) }
 }
 
-/** Formats a client-computed preview amount; server money arrives as `display_*`. */
-export function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat(i18n.language, { style: 'currency', currency }).format(amount)
-}
-
 /** The price a row lands on once saved, or null when it cannot be known. */
-export function projectedPrice(item: OrderEditItemValues): number | null {
+export function projectedPrice(item: OrderEditItemValues): string | null {
   const source = item.revert_price ? item.catalog_price : item.price
-  if (source == null || source === '') return null
-
-  const parsed = Number(source)
-  return Number.isFinite(parsed) ? parsed : null
+  return isDecimalString(source) ? source : null
 }
 
 /** What the line costs after saving; null propagates so a total is never partial. */
-export function projectedLineTotal(item: OrderEditItemValues): number | null {
-  if (item.removed) return 0
+export function projectedLineTotal(item: OrderEditItemValues): string | null {
+  if (item.removed) return '0'
 
   const price = projectedPrice(item)
-  return price === null ? null : price * item.quantity
+  return price === null || !Number.isInteger(item.quantity)
+    ? null
+    : multiplyMoney(price, item.quantity)
 }
 
 /** Projected item subtotal; null if any row is unprojectable. */
-export function projectedSubtotal(items: OrderEditItemValues[]): number | null {
-  let sum = 0
-  for (const item of items) {
-    const total = projectedLineTotal(item)
-    if (total === null) return null
-    sum += total
-  }
-  return sum
+export function projectedSubtotal(items: OrderEditItemValues[]): string | null {
+  const totals = items.map(projectedLineTotal)
+  return totals.includes(null) ? null : sumMoney(totals)
 }
 
 export type OrderItemsPayload = NonNullable<OrderUpdateParams['items']>
@@ -226,3 +232,19 @@ export function buildOrderItemsPayload(items: OrderEditItemValues[]): OrderItems
 
   return payload
 }
+
+/** What a purchase order plausibly arrives as — mirrors the server allowlist. */
+export const PO_DOCUMENT_ACCEPT = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/heic',
+  'image/webp',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.oasis.opendocument.spreadsheet',
+  'text/csv',
+  '.csv',
+].join(',')

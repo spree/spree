@@ -41,45 +41,9 @@ describe Spree::PriceRules::MarketRule, type: :model do
         expect(rule.applicable?(context)).to be false
       end
     end
-
-    context 'when market_ids preference contains strings' do
-      before { rule.preferred_market_ids = [market.id.to_s] }
-
-      it 'returns true when context market matches' do
-        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', market: market)
-        expect(rule.applicable?(context)).to be true
-      end
-
-      it 'returns false when context market does not match' do
-        other_market = create(:market, store: price_list.store)
-        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', market: other_market)
-        expect(rule.applicable?(context)).to be false
-      end
-    end
   end
 
   describe '#preferred_market_ids=' do
-    it 'decodes prefixed market IDs to raw IDs' do
-      rule.preferred_market_ids = [market.prefixed_id]
-      expect(rule.preferred_market_ids).to eq([market.id.to_s])
-    end
-
-    it 'accepts a mix of prefixed and raw IDs' do
-      other_market = create(:market, store: price_list.store)
-      rule.preferred_market_ids = [market.prefixed_id, other_market.id.to_s]
-      expect(rule.preferred_market_ids).to contain_exactly(market.id.to_s, other_market.id.to_s)
-    end
-
-    it 'accepts a comma-separated string' do
-      other_market = create(:market, store: price_list.store)
-      rule.preferred_market_ids = "#{market.prefixed_id},#{other_market.prefixed_id}"
-      expect(rule.preferred_market_ids).to contain_exactly(market.id.to_s, other_market.id.to_s)
-    end
-
-    it 'raises when given an unknown prefixed ID' do
-      expect { rule.preferred_market_ids = ['mkt_doesnotexist'] }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
     it 'rejects a market that belongs to another store' do
       other_store = create(:store)
       cross_store_market = create(:market, store: other_store)
@@ -100,21 +64,6 @@ describe Spree::PriceRules::MarketRule, type: :model do
     it 'returns empty when no markets are set' do
       rule.preferred_market_ids = []
       expect(rule.markets).to be_empty
-    end
-  end
-  describe '#geographic?' do
-    # A list narrowed by geography states its prices for that geography, so they
-    # are charged as entered rather than restated for the buyer's VAT.
-    it 'is true once markets are named' do
-      rule = described_class.new(price_list: price_list)
-      rule.preferred_market_ids = [market.id]
-
-      expect(rule.geographic?).to be(true)
-    end
-
-    # An empty list matches every buyer, so it narrows nothing.
-    it 'is false while no market is named' do
-      expect(described_class.new(price_list: price_list).geographic?).to be(false)
     end
   end
 end

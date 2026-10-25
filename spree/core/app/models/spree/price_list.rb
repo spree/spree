@@ -7,10 +7,12 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasListPosition
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :price_adjustment_percentage, places: 3
 
     MATCH_POLICIES = %w[all any].freeze
 
-    belongs_to :store, class_name: 'Spree::Store'
     # The owning agreement, or nil for a standalone list. An owned list is
     # reached only through its catalog — generic rule matching skips it in
     # SQL (see .for_context) — so a deactivated catalog's list goes dormant
@@ -35,6 +37,21 @@ module Spree
     # set that a write in the same request has already superseded — a status
     # flip or a catalog attach/detach changes which lists match generically.
     after_commit -> { Spree::Current.price_lists = nil }
+
+    # Distinct products per list for a page of lists, in one grouped query.
+    # @param price_list_ids [Array<Integer>]
+    # @return [Hash{Integer => Integer}] keyed by price list id; lists with no products are absent
+    def self.products_count_by_list(price_list_ids)
+      where(id: price_list_ids).joins(:variants).group(arel_table[:id]).
+        distinct.count(Spree::Variant.arel_table[:product_id])
+    end
+
+    # Prices per list for a page of lists, in one grouped query.
+    # @param price_list_ids [Array<Integer>]
+    # @return [Hash{Integer => Integer}] keyed by price list id; lists with no prices are absent
+    def self.prices_count_by_list(price_list_ids)
+      Spree::Price.where(price_list_id: price_list_ids).group(:price_list_id).count
+    end
 
     # Flat-payload writer for `rules`. See
     # {Spree::TypedAssociations#assign_typed_association}.
@@ -95,6 +112,7 @@ module Spree
     # `catalog_id` is queryable so a picker can offer the lists that are
     # actually available — unowned, plus the one the catalog already holds.
     self.whitelisted_ransackable_attributes = %w[status match_policy starts_at ends_at catalog_id]
+    search_by :name
 
     scope :by_position, -> { ordered }
     scope :for_store, ->(store) { where(store: store) }
@@ -155,7 +173,7 @@ module Spree
     end
 
     def self.match_policies
-      MATCH_POLICIES.map { |key| [Spree.t(key), key] }
+      MATCH_POLICIES.map { |key| [I18n.t("spree.#{key}"), key] }
     end
 
     # Returns true if the price list is applicable to the context
@@ -334,9 +352,9 @@ module Spree
 
       return if prices_to_insert.empty?
 
-      # Use upsert_all with on_duplicate: :skip to handle race conditions
+      # Use upsert_all with on_duplicate: :skip to handle race conditions.
+      # Placeholders charge nothing, so the variants are not touched.
       Spree::Price.upsert_all(prices_to_insert, on_duplicate: :skip)
-      touch_variants(variant_ids)
       touch
     end
 
@@ -355,10 +373,13 @@ module Spree
       variant_ids = Spree::Variant.where(product_id: product_ids).distinct.pluck(:id)
       return if variant_ids.empty?
 
+      removed_prices = prices.where(variant_id: variant_ids)
+      priced_variant_ids = removed_prices.where.not(amount: nil).distinct.pluck(:variant_id)
+
       # Use delete_all for hard delete - this bypasses acts_as_paranoid
       # which is required for the unique index to work when re-adding products
-      prices.where(variant_id: variant_ids).delete_all
-      touch_variants(variant_ids)
+      removed_prices.delete_all
+      touch_variants(priced_variant_ids)
       touch
     end
 
@@ -387,9 +408,8 @@ module Spree
 
         current = current_values[price_id]
 
-        # Parse amounts using LocalizedNumber for proper decimal handling
-        amount = attrs[:amount].present? ? Spree::LocalizedNumber.parse(attrs[:amount]) : nil
-        compare_at_amount = attrs[:compare_at_amount].present? ? Spree::LocalizedNumber.parse(attrs[:compare_at_amount]) : nil
+        amount = Spree::Money::Rounding.parse_decimal(attrs[:amount])
+        compare_at_amount = Spree::Money::Rounding.parse_decimal(attrs[:compare_at_amount])
 
         # Clear compare_at_amount if it equals amount
         compare_at_amount = nil if compare_at_amount == amount

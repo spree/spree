@@ -23,11 +23,11 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
-| `GET` | `/allowed_origins` | `read_settings` | List allowed origins |
-| `POST` | `/allowed_origins` | `write_settings` | Create an allowed origin |
-| `GET` | `/allowed_origins/{id}` | `read_settings` | Get an allowed origin |
-| `PATCH` | `/allowed_origins/{id}` | `write_settings` | Update an allowed origin |
-| `DELETE` | `/allowed_origins/{id}` | `write_settings` | Delete an allowed origin |
+| `GET` | `/allowed_origins` | `read_api_keys` | List allowed origins |
+| `POST` | `/allowed_origins` | `write_api_keys` | Create an allowed origin |
+| `GET` | `/allowed_origins/{id}` | `read_api_keys` | Get an allowed origin |
+| `PATCH` | `/allowed_origins/{id}` | `write_api_keys` | Update an allowed origin |
+| `DELETE` | `/allowed_origins/{id}` | `write_api_keys` | Delete an allowed origin |
 
 ## Api keys
 
@@ -389,7 +389,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/orders/{id}` | `write_orders` | Update an order |
 | `DELETE` | `/orders/{id}` | `write_orders` | Delete a draft order |
 | `PATCH` | `/orders/{id}/complete` | `write_orders` | Complete an order |
-| `PATCH` | `/orders/{id}/cancel` | `write_orders` | Cancel an order |
+| `PATCH` | `/orders/{id}/cancel` | `write_orders` (`write_refunds` with `refund_payments`) | Cancel an order |
 | `PATCH` | `/orders/{id}/approve` | `write_orders` | Approve an order |
 | `POST` | `/orders/{id}/resend_confirmation` | `write_orders` | Resend confirmation email |
 | `GET` | `/orders/{order_id}/payments` | `read_payments` | List payments |

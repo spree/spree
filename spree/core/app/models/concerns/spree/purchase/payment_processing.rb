@@ -46,7 +46,7 @@ module Spree
       #
       # @return [Boolean]
       def payment_required?
-        total.to_f > 0.0
+        total.to_d.positive?
       end
 
       # Whether a confirm/review pass is expected before completion —
@@ -55,7 +55,7 @@ module Spree
       # @return [Boolean]
       def confirmation_required?
         Spree::StorePreferences.read(store, :always_include_confirm_step) ||
-          payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?)
+          valid_payments.filter_map(&:payment_method).any?(&:confirmation_required?)
       end
 
       def unprocessed_payments
@@ -63,6 +63,12 @@ module Spree
       end
 
       private
+
+      # On a list the association batches across the page, so the loaded rows
+      # are filtered rather than queried through `valid` once per record.
+      def valid_payments
+        read_association_in_memory?(:payments) ? payments.reject(&:has_invalid_status?) : payments.valid
+      end
 
       def process_payments_with(action)
         # Don't run if there is nothing to pay. Read from the database, not
@@ -75,7 +81,7 @@ module Spree
         # Don't run if there are authorized payments
         return if pending_payments.any? && unprocessed_payments.empty?
         # Never complete without a successfully processed payment.
-        raise Spree::Core::GatewayError, Spree.t(:no_payment_found) if unprocessed_payments.empty?
+        raise Spree::Core::GatewayError, I18n.t('spree.no_payment_found') if unprocessed_payments.empty?
 
         unprocessed_payments.each do |payment|
           break if settled_payment_total >= total

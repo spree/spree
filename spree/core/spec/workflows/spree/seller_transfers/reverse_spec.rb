@@ -123,11 +123,38 @@ RSpec.describe Spree::SellerTransfers::Reverse do
         line_item.update!(additional_tax_total: 2)
       end
 
-      # The seller never received the tax, so it is not theirs to give back.
-      it 'takes the tax off the attributed lines too' do
-        earn(order.total - 1.8)
+      # A return opened before returns carried tax cannot say what part of its
+      # refund was tax, so the line is read as it always was.
+      context 'on a return opened before returns carried tax' do
+        before { create(:tax_line, line_item: line_item, order: order, amount: 2) }
 
-        expect(described_class.call(order: order, amount: 18, refund: refund).value.amount).to eq(-14.2)
+        # The seller never received the tax, so it is not theirs to give back.
+        it 'takes the tax off the attributed lines too' do
+          earn(order.total - 1.8)
+
+          expect(described_class.call(order: order, amount: 18, refund: refund).value.amount).to eq(-14.2)
+        end
+      end
+
+      # The refund gave back the 2.00 of tax with the 18.00 of goods. Measured
+      # against the list price the line read as more than wholly refunded.
+      context 'on a return that refunded the tax' do
+        let(:refund) { create(:refund, amount: 20, tax_amount: 2, originator: return_record) }
+
+        before { return_record.return_line_items.first.update_columns(additional_tax_total: 2) }
+
+        it 'takes back the goods less their commission, and none of the tax' do
+          earn(order.total - 1.8 - 2)
+
+          expect(described_class.call(order: order, amount: 20, refund: refund).value.amount).to eq(-16.2)
+        end
+
+        it 'takes the tax back too when the seller collected it' do
+          seller.update!(tax_remittance: 'seller')
+          earn(order.total - 1.8)
+
+          expect(described_class.call(order: order, amount: 20, refund: refund).value.amount).to eq(-18.2)
+        end
       end
     end
   end

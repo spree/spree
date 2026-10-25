@@ -87,7 +87,7 @@ describe Spree::PriceRules::CustomerGroupRule, type: :model do
 
   describe '.description' do
     it 'returns the translated description' do
-      expect(Spree::PriceRules::CustomerGroupRule.description).to eq(Spree.t('price_rules.customer_group_rule.description'))
+      expect(Spree::PriceRules::CustomerGroupRule.description).to eq(I18n.t('spree.price_rules.customer_group_rule.description'))
     end
   end
 

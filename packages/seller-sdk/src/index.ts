@@ -1,6 +1,29 @@
-export type { RequestOptions, RetryConfig } from '@spree/sdk-core'
+export type {
+  AuthProvider,
+  AuthProvidersResponse,
+  FileUploadCreateParams,
+  RequestOptions,
+  RetryConfig,
+  UploadFileOptions,
+} from '@spree/sdk-core'
 // Request infrastructure (re-exported from sdk-core)
-export { SpreeError } from '@spree/sdk-core'
+export {
+  CountryCode,
+  CurrencyCode,
+  compareMoney,
+  DimensionUnit,
+  decimalPlaces,
+  formatMoney,
+  isDecimalString,
+  isZeroMoney,
+  LocaleCode,
+  multiplyMoney,
+  negateMoney,
+  SpreeError,
+  subtractMoney,
+  sumMoney,
+  WeightUnit,
+} from '@spree/sdk-core'
 // `Client` is the whole configured client (auth + resources + token/seller
 // setters); `SellerClient` below is just the resource group. Exported under
 // both names so hosts can say what they mean.
@@ -10,25 +33,29 @@ export type {
   AccountUpdateParams,
   BulkProductResult,
   DeliveryCalculatorType,
-  DeliveryMethodParams,
+  DeliveryMethodCreateParams,
   DeliveryMethodRuleParams,
   DeliveryMethodRuleType,
-  DeliveryPreferenceField,
+  DeliveryMethodUpdateParams,
   DeliveryZoneListParams,
   MeResource,
   MeResponse,
   OnboardingResponse,
   OrderAddressParams,
-  PackageTypeParams,
+  PackageTypeCreateParams,
+  PackageTypeUpdateParams,
   PermissionRule,
-  ProductParams,
+  ProductCreateParams,
+  ProductUpdateParams,
   ProfileUpdateParams,
   RequirementSubmissionParams,
   SellerAddressParams,
   SellerCountry,
   SellerExportCreateParams,
   SellerExportType,
-  StockLocationParams,
+  SellerProductVariantParams,
+  StockLocationCreateParams,
+  StockLocationUpdateParams,
 } from './seller-client'
 // Client class, for advanced use and subclassing
 export { SellerClient } from './seller-client'

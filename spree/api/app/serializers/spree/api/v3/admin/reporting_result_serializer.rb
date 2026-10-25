@@ -2,8 +2,9 @@ module Spree
   module Api
     module V3
       module Admin
-        # Decorates a Spree::Reporting::Result for the wire: money display
-        # strings, ISO ranges, and dimension hydration (raw group keys become
+        # Decorates a Spree::Reporting::Result for the wire: money as decimal
+        # strings in the result's currency, ratios and growth as plain decimal
+        # strings, counts as integers, money display strings, ISO ranges, and dimension hydration (raw group keys become
         # { id, label, meta } display payloads — see Spree::Reporting::Hydration).
         class ReportingResultSerializer
           attr_reader :result, :store, :params
@@ -39,7 +40,13 @@ module Spree
           end
 
           def metric_payload(name, payload)
+            metric = Spree.reporting.metrics[name]
             output = payload.dup
+            if metric
+              output[:value] = metric.format_value(payload[:value], result.meta[:currency])
+              output[:previous] = metric.format_value(payload[:previous], result.meta[:currency]) if payload.key?(:previous)
+            end
+            output[:growth] = Spree::Money::Rounding.format_decimal(payload[:growth]) if payload.key?(:growth)
             output[:display] = money(payload[:value]) if money_metrics.include?(name)
             output
           end

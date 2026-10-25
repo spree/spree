@@ -39,7 +39,7 @@ module Spree
               @status_code = :gift_card_not_applied
               # The rejection message is what the hook author wrote for the
               # shopper; fall back to the generic string if it says nothing.
-              @error = result.error.to_s.presence || Spree.t(:gift_card_not_applied)
+              @error = result.error.to_s.presence || I18n.t('spree.gift_card_not_applied')
             end
           end
 
@@ -120,12 +120,12 @@ module Spree
 
       def set_success_code(code)
         @status_code = code
-        @success = Spree.t(code)
+        @success = I18n.t("spree.#{code}")
       end
 
       def set_error_code(code, locale_options = {})
         @status_code = code
-        @error = Spree.t(code, locale_options)
+        @error = I18n.t("spree.#{code}", **locale_options)
       end
 
       # Returns the promotion for the order

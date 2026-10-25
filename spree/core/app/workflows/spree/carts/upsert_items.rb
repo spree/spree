@@ -33,8 +33,10 @@ module Spree
       #   amount negotiates the line (+price_source: 'manual'+), an explicit
       #   nil reverts a negotiated line to catalog pricing. Admin surface
       #   only (draft orders); refused once the order is placed.
+      # @param orderable_variants [ActiveRecord::Relation<Spree::Variant>, nil]
+      #   what an add may name; the store's variants when nil
       # @return [Spree::ServiceModule::Result] value is the cart
-      def perform(cart:, items:)
+      def perform(cart:, items:, orderable_variants: nil)
         super
         @warnings = []
 
@@ -88,9 +90,10 @@ module Spree
       # applied.
       def resolve_items
         store = cart.store || Spree::Current.store
+        requested_items = Array(items).map { |item_params| item_params.to_h.deep_symbolize_keys }
+        prefetch_added_variants(store, requested_items)
 
-        @resolved_items = Array(items).filter_map do |item_params|
-          item_params = item_params.to_h.deep_symbolize_keys
+        @resolved_items = requested_items.filter_map do |item_params|
           quantity = (item_params[:quantity] || 1).to_i
           variant = resolve_variant(store, item_params[:variant_id], removing: quantity <= 0)
           next if variant.nil?
@@ -107,7 +110,7 @@ module Spree
         # Price overrides are pre-placement only. reject! rather than
         # failure(cart, message), which would drop the message.
         if cart.completed? && @resolved_items.any?(&:price_provided)
-          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          errors.add(:base, :price_override_not_allowed, message: I18n.t('spree.cart_line_item.price_override_not_allowed'))
           reject!(nil, cart)
         end
       end
@@ -121,19 +124,19 @@ module Spree
         return nil if value.nil?
 
         if cart.completed?
-          errors.add(:base, :price_override_not_allowed, message: Spree.t('cart_line_item.price_override_not_allowed'))
+          errors.add(:base, :price_override_not_allowed, message: I18n.t('spree.cart_line_item.price_override_not_allowed'))
           reject!(nil, cart)
         end
 
         parsed = BigDecimal(value.to_s)
         if parsed.negative? || !parsed.finite?
-          errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+          errors.add(:base, :invalid_price, message: I18n.t('spree.cart_line_item.invalid_price'))
           reject!(nil, cart)
         end
 
         parsed
       rescue ArgumentError
-        errors.add(:base, :invalid_price, message: Spree.t('cart_line_item.invalid_price'))
+        errors.add(:base, :invalid_price, message: I18n.t('spree.cart_line_item.invalid_price'))
         reject!(nil, cart)
       end
 
@@ -230,7 +233,7 @@ module Spree
           # external system can be the only source for a currency. A
           # negotiated price is a quote too, made by the merchant.
           if !item.manual_price? && resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
-            message = Spree.t('cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
+            message = I18n.t('spree.cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
             failure(item.variant, message) unless partial_success?
 
             warn(index, item, :currency_unavailable, message)
@@ -238,7 +241,7 @@ module Spree
           end
 
           if unsupplyable?(item)
-            message = Spree.t(:selected_quantity_not_available, item: item.variant.name.inspect)
+            message = I18n.t('spree.selected_quantity_not_available', item: item.variant.name.inspect)
             failure(item.variant, message) unless partial_success?
 
             warn(index, item, :selected_quantity_not_available, message)
@@ -355,9 +358,42 @@ module Spree
           cart.line_items.detect { |line_item| line_item.variant_id.to_s == variant_id.to_s }&.variant ||
             Spree::Variant.with_deleted.find_by_param(variant_id)
         else
-          store.variants.find_by_param(variant_id) ||
-            raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
+          variant = @added_variants[variant_param_id(variant_id)]
+          # +orderable_variants+ narrows what a request may add. A line already
+          # in the cart is a quantity edit and resolves as before — checkout
+          # judges it — so one stale line cannot fail a whole cart's update.
+          if variant && orderable_variants && cart.line_items.none? { |line_item| line_item.variant_id == variant.id }
+            variant = nil unless @orderable_added_variant_ids.include?(variant.id)
+          end
+
+          variant || raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
         end
+      end
+
+      # Every variant the batch adds, looked up through the store in one
+      # query rather than one per item, and which of them the buyer may order.
+      def prefetch_added_variants(store, requested_items)
+        ids = requested_items.filter_map do |item_params|
+          variant_param_id(item_params[:variant_id]) if (item_params[:quantity] || 1).to_i.positive?
+        end
+
+        @added_variants = ids.empty? ? {} : store.variants.where(id: ids.uniq).preload_associations_lazily.index_by(&:id)
+        Spree::Stock::Quantifier.preload(@added_variants.values)
+        @orderable_added_variant_ids = if orderable_variants && @added_variants.any?
+                                         orderable_variants.where(id: @added_variants.keys).pluck(:id).to_set
+                                       else
+                                         Set.new
+                                       end
+      end
+
+      # The id a variant param names: a prefixed id, or a bare integer id
+      # kept for backwards compatibility.
+      #
+      # @return [Integer, nil]
+      def variant_param_id(param)
+        return nil if param.blank?
+
+        Spree::Variant.decode_prefixed_id(param) || (param.to_s.to_i if param.to_s.match?(/\A\d+\z/))
       end
 
       def warn(index, item, code, message)

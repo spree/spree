@@ -19,12 +19,12 @@ RSpec.describe 'Admin Tags API', type: :request, swagger_doc: 'api-reference/adm
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :taggable_type, in: :query, type: :string, required: true,
-                description: 'Taggable type (`Spree::Product`, `Spree::Order`, or `Spree::User`)'
+                description: 'Shorthand of the tagged resource: `product`, `order` or `customer`'
       parameter name: :q, in: :query, type: :string, required: false,
                 description: 'Optional case-insensitive substring filter'
 
       response '200', 'tags found' do
-        let(:taggable_type) { Spree.customer_class.to_s }
+        let(:taggable_type) { Spree.customer_class.api_type }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         before do
@@ -42,7 +42,7 @@ RSpec.describe 'Admin Tags API', type: :request, swagger_doc: 'api-reference/adm
       end
 
       response '422', 'invalid taggable type' do
-        let(:taggable_type) { 'Spree::Foo' }
+        let(:taggable_type) { 'foo' }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         run_test! do |response|

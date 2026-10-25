@@ -175,7 +175,7 @@ attribute(:brand_id) { |product| product.brand&.prefixed_id }
 has_one :brand, serializer: Spree::Api::V3::BrandSerializer
 ```
 
-The model has to allow filtering by it, or `?q[brand_id_eq]=…` is rejected:
+The model has to allow filtering by it, or `?q[brand_id_eq]=…` is ignored:
 
 ```ruby server/app/models/spree/product_decorator.rb
 base.whitelisted_ransackable_attributes |= %w[brand_id]

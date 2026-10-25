@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "未选择地址"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "面包屑导航",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "默认账单",
       "default_shipping": "默认收货",
+      "inherited_from": "继承自 {{name}}",
       "set_default_billing": "设为默认账单地址",
       "set_default_shipping": "设为默认收货地址"
     },
@@ -113,6 +117,7 @@
         "title": "重置密码"
       },
       "login": {
+        "account_deactivated": "此账户已被停用。请联系管理员恢复访问权限。",
         "account_not_provisioned": "此账户无权访问该店铺。请向管理员申请邀请。",
         "divider": "或",
         "invalid_oauth_state": "登录会话已过期或无效。请重新登录。",
@@ -183,7 +188,9 @@
       "searching": "搜索中…",
       "select_placeholder": "请选择…",
       "unsaved_changes": "您有未保存的更改。",
-      "yes": "是"
+      "yes": "是",
+      "done": "完成",
+      "error": "出了点问题。"
     },
     "components": {
       "address_block": {
@@ -480,6 +487,12 @@
         "discard_message": "已填写的内容将全部丢失，且无法恢复。",
         "discard_title": "放弃此草稿？"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "{{currency}} 金额",
+      "help": "未填写金额的币种将不会提供该配送方式。",
+      "label": "金额",
+      "required": "请至少为一种货币输入金额。"
     },
     "custom_field_definitions": {
       "errors": {
@@ -935,6 +948,14 @@
       "order_multiple": {
         "label": "订购倍数",
         "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "允许的下载次数"
+        },
+        "digital_asset_authorized_days": {
+          "label": "可用天数"
+        }
       }
     },
     "image_upload": {
@@ -1401,7 +1422,7 @@
       "create_description": "添加仓库、门店或自提点，用于履行订单。",
       "create_label": "创建库存地点",
       "delete_confirm": {
-        "message": "{{name}} 将被移除。此地点的库存项不会被删除。",
+        "message": "{{name}} 将被移除。此地点的库存水平也将被删除。",
         "title": "删除库存地点？"
       },
       "edit_description": "更新名称、地址、自提或库存策略。",
@@ -1463,11 +1484,13 @@
         "seeded_report_read_only": "这是内置报表，无法修改。请改为保存副本。",
         "taken": "已被占用",
         "too_long": "太长（最多 {{count}} 个字符）",
+        "too_many_decimals": "超过 {{count}} 位小数",
         "too_short": "太短（最少 {{count}} 个字符）",
         "wrong_length": "长度不正确（应为 {{count}} 个字符）"
       },
       "country_required": "请选择国家/地区",
       "currency_required": "请选择货币",
+      "locale_required": "请选择语言",
       "first_name_required": "名字为必填项",
       "invalid_email": "请输入有效的邮箱地址",
       "invalid_email_or_password": "邮箱或密码无效",
@@ -1479,7 +1502,8 @@
       "passwords_dont_match": "两次输入的密码不一致",
       "positive_number": "{{field}} 必须大于 0",
       "required": "{{field}} 为必填项",
-      "store_name_required": "商店名称为必填项"
+      "store_name_required": "商店名称为必填项",
+      "too_many_decimals": "{{field}}最多只能有 {{count}} 位小数"
     },
     "products": {
       "autocomplete": {
@@ -1575,6 +1599,12 @@
         "slug_placeholder": "product-url-handle"
       },
       "tax_category_placeholder": "选择税务类别",
+      "tax": {
+        "apply_to_variants_help": "此分类适用于未设置专属税务分类的每个变体。保存后，这些变体将使用此设置。",
+        "variant_overrides_heading": "已设置专属税务分类的变体",
+        "variant_overrides_description": "这些变体将保留其分类，直到您清除覆盖。其他变体遵循上方的产品分类。",
+        "clear_variant_override": "使用产品分类"
+      },
       "transfers": {
         "create_description": "在库存地点之间调拨库存，或从外部供应商收货。",
         "delete_confirm": {
@@ -2022,6 +2052,38 @@
           "description": "卖家必须提供退货地址"
         }
       }
+    },
+    "digital_assets": {
+      "add": "添加",
+      "all_variants": "所有变体",
+      "columns": {
+        "file": "文件",
+        "variant": "变体",
+        "size": "大小",
+        "downloads": "下载次数",
+        "days": "天数"
+      },
+      "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
+      "delete_title": "删除此文件？",
+      "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
+      "download": "下载",
+      "drop_hint": "将文件拖放到此处，或点击浏览",
+      "empty": "暂无文件",
+      "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
+      "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
+      "source": {
+        "upload": "上传文件"
+      },
+      "store_default": "{{count}}（商店默认）",
+      "title": "数字文件",
+      "untitled": "未命名文件",
+      "upload": "添加文件",
+      "upload_failed": "上传 {{name}} 失败：{{message}}",
+      "uploading": "正在上传 {{name}}…",
+      "uploading_short": "上传中…",
+      "replace": "替换文件",
+      "replace_description": "“{{name}}”将被移除，所有买家将通过现有链接下载新文件。立即生效。",
+      "replace_title": "替换此文件？"
     }
   }
 }

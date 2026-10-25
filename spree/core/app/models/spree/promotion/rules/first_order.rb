@@ -4,10 +4,6 @@ module Spree
       class FirstOrder < Spree::PromotionRule
         attr_reader :user, :email, :store
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def eligible?(order, options = {})
           @user = order.try(:customer) || options[:user]
           @email = if options[:email].present?

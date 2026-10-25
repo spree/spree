@@ -35,36 +35,6 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  describe 'Validations' do
-    describe 'ensure_proper_currency' do
-      context 'order is present' do
-        context "when line_item's currency matches with order's" do
-          it { expect(line_item).to be_valid }
-        end
-
-        context "when line_item's currency does not matches with order's" do
-          before do
-            line_item.currency = 'Invalid Currency'
-          end
-
-          it { expect(line_item).not_to be_valid }
-        end
-      end
-    end
-  end
-
-  describe '#quantity' do
-    it 'has a default quantity of 1' do
-      line_item = build(:line_item)
-      expect(line_item.quantity).to eq(1)
-    end
-
-    it 'allows to set different value for quantity' do
-      line_item = build(:line_item, quantity: 5)
-      expect(line_item.quantity).to eq(5)
-    end
-  end
-
   describe '#ensure_valid_quantity' do
     context 'quantity.nil?' do
       before do
@@ -105,13 +75,6 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  context '#save' do
-    it 'touches the order' do
-      expect(line_item.order).to receive(:touch)
-      line_item.touch
-    end
-  end
-
   context '#discontinued' do
     it 'fetches discontinued products' do
       line_item.product.discontinue!
@@ -149,10 +112,6 @@ describe Spree::LineItem, type: :model do
       order.line_items.destroy_all
       create(:line_item, order: order, variant: licence_variant, quantity: 1)
       order.reload
-    end
-
-    it 'is an all-digital order' do
-      expect(order).to be_digital
     end
 
     it 'builds fulfillment items for a stock-limited digital variant' do
@@ -258,7 +217,7 @@ describe Spree::LineItem, type: :model do
 
     context 'target_fulfillment is provided' do
       it 'verifies inventory' do
-        line_item.target_fulfillment = Spree::Shipment.new
+        line_item.target_fulfillment = Spree::Fulfillment.new
         expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
         line_item.save
       end
@@ -397,9 +356,12 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  describe '.currency' do
-    it 'returns the globally configured currency' do
-      line_item.currency == 'USD'
+  describe '#currency' do
+    it "defaults to the order's currency" do
+      line_item = build(:line_item, order: build(:order, currency: 'EUR'), currency: nil)
+      line_item.valid?
+
+      expect(line_item.currency).to eq('EUR')
     end
   end
 
@@ -440,7 +402,7 @@ describe Spree::LineItem, type: :model do
         variant.stock_levels.update_all count_on_hand: 5, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.rebuild_fulfillments!
-        order.finalize!
+        Spree.order_complete_workflow.call(order: order, payment_pending: true)
         order.reload
       end
 
@@ -469,7 +431,7 @@ describe Spree::LineItem, type: :model do
         variant.stock_levels.update_all count_on_hand: 7, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.rebuild_fulfillments!
-        order.finalize!
+        Spree.order_complete_workflow.call(order: order, payment_pending: true)
         order.reload
       end
 
@@ -516,10 +478,6 @@ describe Spree::LineItem, type: :model do
   end
 
   describe '#options=' do
-    it 'can handle updating a blank line item with no order' do
-      line_item.options = { price: 123 }
-    end
-
     it 'updates the data provided in the options' do
       line_item.options = { price: 123 }
       expect(line_item.price).to eq 123
@@ -591,8 +549,8 @@ describe Spree::LineItem, type: :model do
 
   describe '#shipments' do
     let(:line_item) { create(:line_item) }
-    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
-    let!(:shipment) { create(:shipment, inventory_units: [inventory_unit]) }
+    let(:inventory_unit) { create(:fulfillment_item, line_item: line_item) }
+    let!(:shipment) { create(:fulfillment, inventory_units: [inventory_unit]) }
 
     it 'returns the shipments for the line item' do
       expect(line_item.shipments).to eq([shipment])
@@ -601,8 +559,8 @@ describe Spree::LineItem, type: :model do
 
   describe '#delivery_cost' do
     let(:line_item) { create(:line_item) }
-    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
-    let(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
+    let(:inventory_unit) { create(:fulfillment_item, line_item: line_item) }
+    let(:shipment) { create(:fulfillment, inventory_units: [inventory_unit], cost: 10) }
 
     it 'returns the shipping cost for the line item' do
       shipment
@@ -633,7 +591,7 @@ describe Spree::LineItem, type: :model do
       let(:line_item) { create(:line_item, quantity: 2) }
 
       it 'counts that fulfillment once, not once per unit' do
-        second_unit = create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+        second_unit = create(:fulfillment_item, line_item: line_item, variant: inventory_unit.variant)
         shipment.fulfillment_items << second_unit
 
         expect(line_item.reload.delivery_cost).to eq(10)
@@ -648,8 +606,8 @@ describe Spree::LineItem, type: :model do
       it 'still charges the active fulfillment' do
         shipment.update_columns(cost: 10, status: 'canceled')
 
-        active = create(:shipment, cost: 10, order: shipment.order, stock_location: shipment.stock_location)
-        active.fulfillment_items << create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+        active = create(:fulfillment, cost: 10, order: shipment.order, stock_location: shipment.stock_location)
+        active.fulfillment_items << create(:fulfillment_item, line_item: line_item, variant: inventory_unit.variant)
 
         line_item.reload
         expect(line_item.fulfillments.first).to eq(shipment)
@@ -723,58 +681,6 @@ describe Spree::LineItem, type: :model do
 
     it 'returns the weight for the line item' do
       expect(line_item.item_weight).to eq(20)
-    end
-  end
-
-  describe '#dimensions_unit' do
-    let(:variant) { create(:variant, dimensions_unit: 'cm') }
-    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
-
-    it 'returns the dimension unit for the line item' do
-      expect(line_item.dimensions_unit).to eq('cm')
-    end
-  end
-
-  describe '#weight_unit' do
-    let(:variant) { create(:variant, weight_unit: 'kg') }
-    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
-
-    it 'returns the weight unit for the line item' do
-      expect(line_item.weight_unit).to eq('kg')
-    end
-  end
-
-  describe '#should_update_price?' do
-    let(:variant) { create(:variant, price: 10) }
-    let(:order) { create(:order, store: store) }
-    let(:line_item) { create(:line_item, order: order, variant: variant) }
-
-    context 'when order is not completed' do
-      it 'returns true' do
-        expect(order.completed?).to be false
-        expect(line_item.send(:should_update_price?)).to be true
-      end
-    end
-
-    context 'when order is completed' do
-      before do
-        order.update_column(:completed_at, Time.current)
-      end
-
-      it 'returns false' do
-        expect(order.completed?).to be true
-        expect(line_item.send(:should_update_price?)).to be false
-      end
-    end
-
-    context 'when the line carries a negotiated (manual) price' do
-      before do
-        line_item.update_columns(price: 7.2, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
-      end
-
-      it 'returns false' do
-        expect(line_item.send(:should_update_price?)).to be false
-      end
     end
   end
 
@@ -976,5 +882,12 @@ describe Spree::LineItem, type: :model do
         expect(line_item.reload.seller_id).to be_nil
       end
     end
+  end
+
+  describe 'external references' do
+    let(:other_store) { create(:store) }
+    let(:record) { create(:order_with_line_items, line_items_count: 1, store: other_store).line_items.first }
+
+    it_behaves_like 'files external references under its store'
   end
 end

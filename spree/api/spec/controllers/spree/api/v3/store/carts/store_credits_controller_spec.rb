@@ -16,11 +16,37 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
 
   describe 'POST #create' do
     it 'applies store credit to the cart' do
-      post :create, params: { cart_id: order.prefixed_id, amount: 10 }
+      post :create, params: { cart_id: order.prefixed_id, amount: '10.00' }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to start_with('cart_')
       expect(order.reload.payments.store_credits.count).to eq(1)
+    end
+
+    context 'with an amount' do
+      it 'applies a decimal string exactly' do
+        post :create, params: { cart_id: order.prefixed_id, amount: '5.05' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('5.05'))
+      end
+
+      # 5.6 storefronts sent a number; it keeps working until 6.1.
+      it 'still applies a JSON number exactly, with a deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/JSON number is deprecated/)
+
+        post :create, params: { cart_id: order.prefixed_id, amount: 5.05 }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('5.05'))
+      end
+
+      it 'refuses a localized amount' do
+        post :create, params: { cart_id: order.prefixed_id, amount: '10,10' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+      end
     end
 
     context 'without available store credit' do
@@ -34,6 +60,24 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']).to be_present
+      end
+    end
+
+    # The token proves the caller holds the cart, not that the balance it
+    # would spend is theirs.
+    context 'as another customer holding the cart token' do
+      let(:other_customer) { create(:user) }
+
+      before do
+        request.headers['Authorization'] = "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(other_customer)}"
+        request.headers['X-Spree-Token'] = order.token
+      end
+
+      it 'refuses to spend the owner\'s store credit' do
+        post :create, params: { cart_id: order.prefixed_id, amount: '10.00' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(order.reload.payments.store_credits).to be_empty
       end
     end
 

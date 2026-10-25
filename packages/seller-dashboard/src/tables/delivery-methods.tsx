@@ -6,7 +6,7 @@ import i18n from 'i18next'
 
 defineTable<DeliveryMethod>('seller-delivery-methods', {
   title: i18n.t('delivery_methods.title'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('delivery_methods.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <TruckIcon className="size-8 text-muted-foreground" />,

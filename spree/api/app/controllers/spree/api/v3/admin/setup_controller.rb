@@ -14,6 +14,35 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:show, :countries, :create]
 
+          request_params 'SetupParams', action: :create do |body|
+            body.attribute :setup_token, :string,
+              required: true,
+              permit: false,
+              description: 'The one-time token from the install output.'
+            body.attribute :email, :string, required: true, format: :email, example: 'owner@example.com'
+            body.attribute :password, :string, required: true
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string, example: 'Olivia'
+            body.attribute :last_name, :string, example: 'Owner'
+            body.attribute :store_name, :string, permit: false, example: 'My Store'
+            body.attribute :country_code, :country,
+              required: true,
+              permit: false,
+              example: 'US',
+              description: 'ISO 3166-1 alpha-2 country the store sells from. It determines the default market, the warehouse, the delivery zones and the currency.'
+            body.attribute :locale, :locale,
+              permit: false,
+              example: 'en',
+              description: "Storefront locale. Defaults to the country's own language."
+            body.attribute :currency, :currency,
+              permit: false,
+              example: 'USD',
+              description: "ISO 4217 currency. Defaults to the country's own currency: pass one only when the store prices in something else."
+            body.attribute :sample_data, :boolean,
+              permit: false,
+              description: 'Load the demo catalog, customers and orders in the background once the admin account exists. The load takes minutes, so the response does not wait for it.'
+          end
+
           # Only create checks the setup token, so only create needs the strict
           # login budget against guessing. The status and countries reads stay
           # on the general per-caller limit: sharing the login budget with them
@@ -43,15 +72,13 @@ module Spree
           end
 
           # POST /api/v3/admin/auth/setup
-          # Body: { setup_token, email, password, password_confirmation?,
-          #         first_name?, last_name?, store_name, country_code,
-          #         locale?, currency?, sample_data? }
           # Currency defaults to the country's own; an unknown code is refused
           # rather than ignored, since the token is spent in the same request.
           def create
             return render_setup_unavailable unless setup_token_usable?
             return render_missing_country if country.nil?
             return render_unknown_currency if unknown_currency?
+            return render_unknown_locale if unknown_locale?
 
             user = nil
             store = Spree::Store.default
@@ -135,34 +162,38 @@ module Spree
             )
           end
 
+          # Blank means "use the country's own language"; another spelling or a
+          # region Spree does not list moves to the listed locale, but a code
+          # Spree cannot place at all is refused before the token is spent.
+          def unknown_locale?
+            params[:locale].present? && Spree::Locales.listed(params[:locale]).nil?
+          end
+
+          def render_unknown_locale
+            message = "Unknown locale #{params[:locale]}"
+
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content,
+              details: { locale: [message] }
+            )
+          end
+
           def country_payload(country)
             {
               code: country.iso,
-              name: country.name,
               currency: country.default_currency,
               locales: offerable_locales(country)
             }
           end
 
-          # A country's official languages, minus any Spree has no translations
-          # for — Switzerland speaks Romansh and Spree does not, so offering it
-          # would point a storefront at a language with nothing behind it.
-          # English closes the gap for countries whose languages all fall
-          # through, and is always offered alongside.
-          #
-          # Installs without spree_i18n only have English, and filtering
-          # against that would leave every country English-only. There the
-          # unfiltered list is the better answer: the merchant's own language
-          # is still the right default for their storefront, whether or not
-          # this install carries a translation bundle for it.
+          # A country's official languages, as the locales Spree lists for them
+          # (Switzerland gives de, fr, it and rm) — content locales, whether
+          # or not Spree ships translations, since the storefront and dashboard
+          # carry their own. English stands in for a country with none listed.
           def offerable_locales(country)
-            return country.official_locales if translated_locales.size <= 1
-
-            (country.official_locales & translated_locales).presence || ['en']
-          end
-
-          def translated_locales
-            @translated_locales ||= Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
+            country.official_locales.filter_map { |language| Spree::Locales.for_language(language) }.uniq.presence || ['en']
           end
 
           # Token mismatch, spent token, and already-set-up all render the
@@ -180,7 +211,7 @@ module Spree
           end
 
           def admin_user_params
-            params.permit(:email, :password, :password_confirmation, :first_name, :last_name)
+            params.permit(*declared_permitted_attributes)
           end
 
           # The seed already created the default store (every downstream seed

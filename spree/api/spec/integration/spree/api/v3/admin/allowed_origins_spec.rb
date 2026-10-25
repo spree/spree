@@ -20,7 +20,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
         the admin cookie session (see
         `docs/plans/5.5-admin-auth-cookie-refresh.md`).
       DESC
-      admin_scope :read, :settings
+      admin_scope :read, :api_keys
 
       admin_sdk_example 'allowed-origins/list'
 
@@ -29,8 +29,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[origin_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by origin (contains)'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'
       parameter name: :fields, in: :query, type: :string, required: false,
@@ -68,20 +67,14 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
         `scheme://host[:port]` (no path, query, or fragment) and use `http` or
         `https`.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'allowed-origins/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          origin: { type: :string, example: 'https://admin.example.com' }
-        },
-        required: %w[origin]
-      }
+      request_body_for
 
       response '201', 'allowed origin created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -114,7 +107,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single allowed origin by prefixed ID.'
-      admin_scope :read, :settings
+      admin_scope :read, :api_keys
 
       admin_sdk_example 'allowed-origins/get'
 
@@ -152,19 +145,14 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Updates an existing allowed origin.'
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'allowed-origins/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          origin: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'allowed origin updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -198,7 +186,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
         admin SPA running at that origin will no longer be able to call the
         admin API from a browser.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'allowed-origins/delete'
 

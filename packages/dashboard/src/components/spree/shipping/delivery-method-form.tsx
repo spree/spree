@@ -5,13 +5,17 @@ import type {
   DeliveryRateProviderOption,
   DeliveryZone,
   IntegrationTypeDefinition,
-  PreferenceField,
   Product,
 } from '@spree/admin-sdk'
 import {
+  AMOUNT_BASED_CALCULATORS,
   type adminClient,
   Can,
+  CURRENCY_AMOUNT_KEYS,
+  CurrencyAmountsField,
   currencyParts,
+  defaultPreferences,
+  filterPreferenceSchema,
   PreferencesForm,
   ResourceMultiAutocomplete,
   Subject,
@@ -36,6 +40,10 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -67,25 +75,9 @@ import { useIntegrations, useIntegrationTypes } from '../../../hooks/use-integra
 import { productAutocompleteProps } from '../../../hooks/use-products'
 import { useSellers } from '../../../hooks/use-sellers'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
-import { amountForCurrency, applyCurrencyAmount } from '../../../lib/delivery-method-summary'
 import type { DeliveryMethodFormValues } from '../../../schemas/delivery-method'
 import { ConfigureIntegrationSheet } from '../integrations/configure-integration-sheet'
 import { StockLocationScopeField } from './stock-location-scope-field'
-
-/**
- * Calculators whose price is a plain amount, which a multi-currency store
- * quotes per currency through the `amounts` preference. Every other
- * calculator (percent, tiered) is currency-neutral and keeps the generic
- * preference rendering.
- */
-const AMOUNT_BASED_CALCULATORS = ['flat_rate', 'per_item', 'digital_delivery']
-
-/**
- * Preference keys the per-currency editor owns on those calculators. `amount`
- * and `currency` are the pre-6.0 single-currency pair: they belong to the
- * currency the method names, not automatically to the store default.
- */
-const CURRENCY_AMOUNT_KEYS = ['amount', 'currency', 'amounts']
 
 /** One entry from the delivery-method-rule discovery endpoint. */
 type DeliveryMethodRuleType = Awaited<
@@ -596,24 +588,25 @@ function ProvidersCard({
       )}
 
       {connectableIntegrations.map((integrationType) => (
-        <div
-          key={integrationType.type}
-          className="flex items-center justify-between gap-3 rounded-md border border-dashed p-3"
-        >
-          <span className="text-sm text-muted-foreground">
-            {t('admin.delivery_methods.connect_provider_hint', { name: integrationType.name })}
-          </span>
+        <Item key={integrationType.type} variant="outline" className="border-dashed">
+          <ItemContent>
+            <ItemDescription>
+              {t('admin.delivery_methods.connect_provider_hint', { name: integrationType.name })}
+            </ItemDescription>
+          </ItemContent>
           <Can I="create" a={Subject.Integration}>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setConnectingType(integrationType)}
-            >
-              {t('admin.integrations.connect_cta')}
-            </Button>
+            <ItemActions>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setConnectingType(integrationType)}
+              >
+                {t('admin.integrations.connect_cta')}
+              </Button>
+            </ItemActions>
           </Can>
-        </div>
+        </Item>
       ))}
 
       {connectingType && (
@@ -894,7 +887,7 @@ function ServiceOverridesSheet({
               <InputGroupInput
                 id={`service-markup-flat-${index}`}
                 type="number"
-                step="0.01"
+                step="any"
                 min="0"
                 placeholder="0"
                 {...form.register(`services.${index}.markup_flat`)}
@@ -909,7 +902,7 @@ function ServiceOverridesSheet({
               <InputGroupInput
                 id={`service-markup-percent-${index}`}
                 type="number"
-                step="0.01"
+                step="any"
                 min="0"
                 placeholder="0"
                 {...form.register(`services.${index}.markup_percent`)}
@@ -935,92 +928,14 @@ function ServiceOverridesSheet({
 // carrier-quoted ones
 // ---------------------------------------------------------------------------
 
-/**
- * The amount an amount-based calculator charges, one input per currency the
- * store sells in. Each row shows the amount for that currency — the
- * per-currency `amounts` hash, or the pre-6.0 single `amount` when its
- * `currency` preference names this row. A currency left blank has no
- * amount, and the method is simply not offered to those carts.
- *
- * A single-currency store sees one plain amount field, exactly as before.
- */
-function CurrencyAmountsField({
-  values,
-  onChange,
-}: {
-  values: Record<string, unknown>
-  onChange: (next: Record<string, unknown>) => void
-}) {
-  const { t } = useTranslation()
-  const { currencies, defaultCurrency } = useStore()
-
-  // The store's currency list is the source of truth, but a method may already
-  // carry an amount in a currency the store has since stopped selling in —
-  // dropping that input would silently discard the amount on the next save.
-  const amounts = (values.amounts ?? {}) as Record<string, unknown>
-  const extraCodes = Object.keys(amounts).join(',')
-  const codes = useMemo(() => {
-    const supported = currencies.length > 0 ? currencies : [defaultCurrency]
-    const extra = extraCodes.split(',').filter((code) => code && !supported.includes(code))
-    return [defaultCurrency, ...supported.filter((code) => code !== defaultCurrency), ...extra]
-  }, [currencies, defaultCurrency, extraCodes])
-
-  const multiCurrency = codes.length > 1
-
-  function amountFor(code: string): string {
-    const raw = amountForCurrency(values, code, defaultCurrency)
-    return raw === null ? '' : String(raw)
-  }
-
-  function setAmount(code: string, raw: string) {
-    onChange(applyCurrencyAmount(values, code, raw, defaultCurrency))
-  }
-
-  return (
-    <Field>
-      <FieldLabel htmlFor={`calculator-amount-${defaultCurrency}`}>
-        {t('admin.preferences.amount')}
-      </FieldLabel>
-      <div className="flex flex-col gap-2">
-        {codes.map((code) => (
-          <InputGroup key={code}>
-            <InputGroupAddon>
-              <InputGroupText>{currencyParts(code, i18n.language).symbol}</InputGroupText>
-            </InputGroupAddon>
-            <InputGroupInput
-              id={`calculator-amount-${code}`}
-              type="number"
-              step="any"
-              min="0"
-              aria-label={t('admin.delivery_methods.pricing.amount_in_currency', {
-                currency: code,
-              })}
-              value={amountFor(code)}
-              onChange={(event) => setAmount(code, event.target.value)}
-            />
-            <InputGroupAddon align="inline-end">
-              <InputGroupText>{code}</InputGroupText>
-            </InputGroupAddon>
-          </InputGroup>
-        ))}
-      </div>
-      {multiCurrency && (
-        <span className="text-muted-foreground text-xs">
-          {t('admin.delivery_methods.pricing.currency_amounts_help')}
-        </span>
-      )}
-    </Field>
-  )
-}
-
 function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
-  const { defaultCurrency } = useStore()
+  const { currencies, defaultCurrency } = useStore()
   const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
   const { data: calculators } = useDeliveryCalculators()
   const { data: taxCategories } = useTaxCategories()
   const selectedRateProvider = useSelectedRateProvider(form)
-  const calculatorType = form.watch('calculator_type')
+  const calculatorType = form.watch('calculator.type')
 
   // Carrier providers quote live rates, so the calculator's amount is never
   // read — the field is hidden rather than offering pricing that does nothing.
@@ -1033,15 +948,19 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
     label: typeLabel('calculator', calculator.type, calculator.name),
   }))
   const selectedCalculator = (calculators?.data ?? []).find((c) => c.type === calculatorType)
-  const preferenceSchema = (selectedCalculator?.preference_schema ?? []) as PreferenceField[]
+  const preferenceSchema = selectedCalculator?.schema
 
   // An amount-based calculator prices per currency, so its amount fields are
   // rendered by the editor below rather than one-by-one from the schema. The
   // rest of its preferences (weight and total bounds) still render generically.
   const amountBased = AMOUNT_BASED_CALCULATORS.includes(calculatorType ?? '')
-  const genericSchema = amountBased
-    ? preferenceSchema.filter((field) => !CURRENCY_AMOUNT_KEYS.includes(field.key))
-    : preferenceSchema
+  const genericSchema = useMemo(
+    () =>
+      amountBased && preferenceSchema
+        ? filterPreferenceSchema(preferenceSchema, (key) => !CURRENCY_AMOUNT_KEYS.includes(key))
+        : preferenceSchema,
+    [amountBased, preferenceSchema],
+  )
 
   const taxCategoryOptions = [
     { value: '', label: t('admin.common.none') },
@@ -1057,13 +976,32 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
               {t('admin.fields.delivery_method.calculator.label')}
             </FieldLabel>
             <Controller
-              name="calculator_type"
+              name="calculator.type"
               control={form.control}
               render={({ field }) => (
                 <Select
                   items={calculatorOptions}
                   value={field.value ?? ''}
-                  onValueChange={field.onChange}
+                  onValueChange={(next) => {
+                    field.onChange(next)
+                    // Each calculator declares its own settings, and the server
+                    // refuses any it does not, so a switch starts from the new
+                    // calculator's defaults rather than the old one's values.
+                    const schema = (calculators?.data ?? []).find((c) => c.type === next)?.schema
+                    const defaults = schema
+                      ? defaultPreferences(schema, { currency: defaultCurrency })
+                      : {}
+                    // The single amount's default is 0, which would read as a
+                    // price someone set; a new amount-based method starts with
+                    // no amount in any currency.
+                    form.setValue(
+                      'calculator.preferences',
+                      AMOUNT_BASED_CALCULATORS.includes(next)
+                        ? { ...defaults, amount: null }
+                        : defaults,
+                      { shouldDirty: true },
+                    )
+                  }}
                 >
                   <SelectTrigger id="calculator-type">
                     <SelectValue />
@@ -1081,14 +1019,17 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
           </Field>
 
           <Controller
-            name="calculator_preferences"
+            name="calculator.preferences"
             control={form.control}
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <>
                 {amountBased && (
                   <CurrencyAmountsField
                     values={(field.value ?? {}) as Record<string, unknown>}
                     onChange={field.onChange}
+                    currencies={currencies}
+                    defaultCurrency={defaultCurrency}
+                    error={fieldState.error}
                   />
                 )}
                 <PreferencesForm
@@ -1111,7 +1052,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                 <InputGroupInput
                   id="markup_percent"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   placeholder="0"
                   {...form.register('markup_percent')}
@@ -1132,7 +1073,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                 <InputGroupInput
                   id="markup_flat"
                   type="number"
-                  step="0.01"
+                  step="any"
                   min="0"
                   placeholder="0"
                   {...form.register('markup_flat')}
@@ -1312,13 +1253,11 @@ function ConditionRuleRow({
   const productBacked = ruleType?.association_fields?.includes('product_ids') ?? false
   // Channel ids ride in preferences rather than an association field, but a
   // bare id array is unusable as a text input — it needs the same picker.
-  const channelBacked = (ruleType?.preference_schema ?? []).some(
-    (preference) => preference.key === 'channel_ids',
-  )
+  const channelBacked = Boolean(ruleType?.schema?.properties?.channel_ids)
   const label = ruleType
     ? typeLabel('delivery_method_rule', ruleType.type, ruleType.name)
     : fallbackLabel
-  const schema = ruleType?.preference_schema ?? []
+  const schema = ruleType?.schema
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">

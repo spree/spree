@@ -101,7 +101,7 @@ module SpreeMeilisearch
     def reindex(scope = nil)
       full_reindex = scope.nil?
       scope ||= store.products
-      @custom_field_schema = Spree::SearchProvider::CustomFieldSchema.new(store)
+      @custom_field_schema = storefront_custom_field_schema
       ensure_index_settings!
 
       # On a full reindex, clear first so stale docs (e.g. membership docs for
@@ -285,6 +285,18 @@ module SpreeMeilisearch
       "#{store.code}_products"
     end
 
+    # The index is the storefront's: shoppers search it and the back office
+    # never does, so its vocabulary is the storefront schema whatever audience
+    # this provider was built for. A back-office reindex must not teach the
+    # shared index about admin-only fields.
+    def custom_field_schema
+      @custom_field_schema ||= storefront_custom_field_schema
+    end
+
+    def storefront_custom_field_schema
+      Spree::SearchProvider::CustomFieldSchema.new(store, audience: :store)
+    end
+
     def searchable_attributes
       %w[name description sku option_values category_names tags] + custom_field_schema.searchable_attribute_keys
     end
@@ -386,9 +398,11 @@ module SpreeMeilisearch
     def build_filter_condition(key, value)
       case key
       when 'price_gte'
-        "price >= #{value.to_f}"
+        price_bound = price_filter_value(value)
+        "price >= #{price_bound}" if price_bound
       when 'price_lte'
-        "price <= #{value.to_f}"
+        price_bound = price_filter_value(value)
+        "price <= #{price_bound}" if price_bound
       when 'in_stock'
         'in_stock = true' if value.to_s != '0'
       when 'out_of_stock'
@@ -436,6 +450,16 @@ module SpreeMeilisearch
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
       end
+    end
+
+    # The bound as a plain decimal, or nil for anything else, so a malformed
+    # or enormous price never reaches the filter expression.
+    def price_filter_value(value)
+      return if value.to_s.length > 32
+
+      Spree::Money::Rounding.format_decimal(Spree::Money::Rounding.parse_decimal(value.to_s))
+    rescue Spree::Money::InvalidFormat
+      nil
     end
 
     def format_custom_field_filter_value(value, numeric)

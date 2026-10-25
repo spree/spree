@@ -37,7 +37,6 @@ module Spree
         order_update_item_service: 'Spree::Orders::UpdateItem',
         order_remove_line_item_service: 'Spree::Orders::RemoveLineItem',
         order_remove_item_service: 'Spree::Orders::RemoveItem',
-        cart_empty_service: 'Spree::Carts::Empty',
         cart_destroy_service: 'Spree::Carts::Destroy',
         cart_associate_service: 'Spree::Carts::Associate',
         cart_remove_out_of_stock_items_service: 'Spree::Carts::RemoveOutOfStockItems',
@@ -71,6 +70,11 @@ module Spree
         order_fee_create_service: 'Spree::Orders::Fees::Create',
         order_fee_update_service: 'Spree::Orders::Fees::Update',
         order_fee_destroy_service: 'Spree::Orders::Fees::Destroy',
+        # A workflow since 6.0: its `perform` signature is what the agent
+        # tools derive their schema from, which a service's opaque `params`
+        # hash could not provide. The `_service` key still resolves it, so a
+        # host app that overrode or called it keeps working.
+        order_create_workflow: 'Spree::Orders::Create',
         order_create_service: 'Spree::Orders::Create',
         order_create_from_cart_service: 'Spree::Orders::CreateFromCart',
         order_update_service: 'Spree::Orders::Update',
@@ -83,7 +87,6 @@ module Spree
         fulfillment_fulfill_workflow: 'Spree::Fulfillments::Fulfill',
         fulfillment_cancel_workflow: 'Spree::Fulfillments::Cancel',
         fulfillment_mark_delivered_workflow: 'Spree::Fulfillments::MarkDelivered',
-        fulfillment_purchase_label_workflow: 'Spree::Fulfillments::PurchaseLabel',
 
         # shipping labels + deliveries
         shipping_label_purchase_workflow: 'Spree::ShippingLabels::Purchase',
@@ -97,10 +100,13 @@ module Spree
         fulfillment_stand_down_service: 'Spree::Fulfillments::StandDownProvider',
         fulfillment_recalculate_delivery_service: 'Spree::Fulfillments::RecalculateDelivery',
         delivery_destroy_service: 'Spree::Deliveries::Destroy',
-        return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 
         # inventory operations
         stock_level_correct_service: 'Spree::StockLevels::Correct',
+        # A workflow since 6.0: its signature is what the agent tool derives
+        # its schema from, which `Spree::ServiceModule` could not provide.
+        # The `_service` key still resolves it.
+        stock_level_bulk_upsert_workflow: 'Spree::StockLevels::BulkUpsert',
         stock_level_bulk_upsert_service: 'Spree::StockLevels::BulkUpsert',
         stock_level_recount_service: 'Spree::StockLevels::Recount',
         stock_transfer_create_workflow: 'Spree::StockTransfers::Create',
@@ -180,6 +186,11 @@ module Spree
         # handler sees a nested payload and the variants endpoint alike
         variant_create_workflow: 'Spree::Variants::Create',
         variant_update_workflow: 'Spree::Variants::Update',
+
+        # digital assets — the operator's and the seller's endpoints and the
+        # nested list on a product write all run through these
+        digital_asset_create_workflow: 'Spree::DigitalAssets::Create',
+        digital_asset_update_workflow: 'Spree::DigitalAssets::Update',
         product_archive_workflow: 'Spree::Products::Archive',
         product_draft_workflow: 'Spree::Products::Draft',
 
@@ -242,7 +253,6 @@ module Spree
         # payment is arranged (deposits, net terms).
         purchase_amount_due_at_checkout_service: 'Spree::Purchases::AmountDueAtCheckout',
 
-        payment_create_service: 'Spree::Payments::Create',
         payment_process_workflow: 'Spree::Payments::Process',
         payment_capture_workflow: 'Spree::Payments::Capture',
         payment_void_workflow: 'Spree::Payments::Void',
@@ -253,6 +263,11 @@ module Spree
         seller_payout_complete_workflow: 'Spree::SellerPayouts::Complete',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
         payment_session_complete_workflow: 'Spree::PaymentSessions::Complete',
+        email_template_save_draft_workflow: 'Spree::EmailTemplates::SaveDraft',
+        email_template_publish_workflow: 'Spree::EmailTemplates::Publish',
+        email_template_revert_workflow: 'Spree::EmailTemplates::Revert',
+        email_template_discard_draft_workflow: 'Spree::EmailTemplates::DiscardDraft',
+        email_template_restore_revision_workflow: 'Spree::EmailTemplates::RestoreRevision',
 
         # finders
         current_store_finder: 'Spree::Stores::FindDefault',

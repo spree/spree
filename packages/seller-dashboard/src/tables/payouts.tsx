@@ -1,4 +1,5 @@
-import { defineTable, formatStoreDateTime } from '@spree/dashboard-core'
+import { SELLER_PAYOUT_STATUSES } from '@spree/core'
+import { defineTable, formatMoney, formatStoreDateTime } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import type { Payout } from '@spree/seller-sdk'
@@ -18,11 +19,9 @@ function LedgerDate({ iso }: { iso: string }) {
   return <>{formatStoreDateTime(iso, timezone)}</>
 }
 
-const STATUSES = ['pending', 'processing', 'completed', 'failed', 'unresolved'] as const
-
 defineTable<Payout>('seller-payouts', {
   title: i18n.t('payouts.title'),
-  searchParam: 'reference_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('payouts.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <HandCoinsIcon className="size-8 text-muted-foreground" />,
@@ -50,7 +49,7 @@ defineTable<Payout>('seller-payouts', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: STATUSES.map((status) => ({
+      filterOptions: SELLER_PAYOUT_STATUSES.map((status) => ({
         value: status,
         label: i18n.t(`earnings.statuses.${status}`),
       })),
@@ -81,7 +80,7 @@ defineTable<Payout>('seller-payouts', {
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
-      render: (payout) => payout.display_amount,
+      render: (payout) => formatMoney(payout.amount, payout.currency, i18n.language),
     },
   ],
 })

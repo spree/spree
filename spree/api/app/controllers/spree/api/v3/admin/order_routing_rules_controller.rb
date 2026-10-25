@@ -13,6 +13,18 @@ module Spree
           subclassed_via -> { Spree.order_routing.rules },
                          unknown_type_error: 'unknown_order_routing_rule_type'
 
+          request_params :order_routing_rule do |body|
+            body.attribute :type, :string,
+              required: true,
+              only: :create,
+              example: 'preferred_location',
+              description: 'Wire shorthand for the rule kind, from the order routing rule types endpoint.'
+            body.attribute :active, :boolean
+            body.attribute :position, :integer,
+              description: "1-based priority in the channel's rule list. Omitted on create, the rule goes last; a new position reorders the rest of the list around it."
+            body.attribute :preferences, :hash, description: "Values for the rule kind's preference schema."
+          end
+
           def types
             authorize! :read, model_class
 
@@ -30,7 +42,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :active, :position, preferences: {})
+            params.permit(*permitted_attributes)
           end
 
           # `types` is read-only discovery — maps to the read scope + :show ability.
@@ -47,10 +59,6 @@ module Spree
 
             @parent = current_store.channels.accessible_by(current_ability, parent_ability_action)
                                    .find_by_prefix_id!(params[:channel_id])
-          end
-
-          def parent_association
-            :order_routing_rules
           end
 
           private

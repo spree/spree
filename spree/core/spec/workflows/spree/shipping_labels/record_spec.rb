@@ -50,7 +50,7 @@ module Spree
 
       result = subject.call(owner: fulfillment, file: file, tracking_number: 'X-1')
 
-      expect(result.error.to_s).to eq(Spree.t('shipping_labels.errors.already_purchased'))
+      expect(result.error.to_s).to eq(I18n.t('spree.shipping_labels.errors.already_purchased'))
     end
 
     it 'refuses a file whose bytes are not a label' do

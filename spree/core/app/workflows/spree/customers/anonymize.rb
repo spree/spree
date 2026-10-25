@@ -91,7 +91,7 @@ module Spree
         # release gateway data, and hand back success, for a row that is still
         # fully identified.
         unless committed
-          return failure(customer, Spree.t('customer_errors.anonymize_failed'))
+          return failure(customer, I18n.t('spree.customer_errors.anonymize_failed'))
         end
 
         purge_collected_attachments
@@ -103,9 +103,8 @@ module Spree
         customer.reload
 
         customer.publish_event(
-          'customer.anonymized',
-          store_id: store&.prefixed_id,
-          requested_by_id: requested_by&.prefixed_id
+          'customer.anonymized', nil,
+          store_id: store&.prefixed_id, requested_by_id: requested_by&.prefixed_id
         )
 
         run_hooks :after_anonymize
@@ -213,9 +212,15 @@ module Spree
         # redacting that would overwrite the shared address for every other
         # member and every other order. Only rows this person owns, or rows
         # nobody owns, are this erasure's to rewrite.
+        #
+        # Ownership is the id alone, never the type. A snapshot taken from a
+        # company site keeps its owner_type so the copy stays addressed to a
+        # business rather than to a person, so matching on the type too would
+        # skip exactly those copies — and an erasure that quietly covers less
+        # than it did raises nothing.
         snapshots = Spree::Address.where(id: address_ids)
         mine = snapshots.where(owner_type: customer.class.base_class.to_s, owner_id: customer.id)
-        unowned = snapshots.where(owner_type: nil, owner_id: nil)
+        unowned = snapshots.where(owner_id: nil)
 
         mine.or(unowned).find_each do |address|
           redact_address(address, deleted: false)
@@ -313,7 +318,7 @@ module Spree
         }
 
         owner_ids.each do |owner_type, ids|
-          Spree::ShippingLabel.where(owner_type: owner_type, owner_id: ids).find_each do |label|
+          Spree::ShippingLabel.where(owner_type: owner_type, owner_id: ids).with_attached_file.find_each do |label|
             purge_after_commit(label.file)
           end
         end
@@ -403,12 +408,14 @@ module Spree
         # complete copy of everything being erased, sitting behind a link that
         # stays live for days. Rewriting the row's email would leave the
         # payload itself untouched and still fetchable.
-        requests.each do |data_request|
+        requests.with_attached_export_file.each do |data_request|
           purge_after_commit(data_request.export_file)
         end
 
         # The token goes too, so a link already emailed stops resolving rather
-        # than waiting out its expiry.
+        # than waiting out its expiry. Confirmation links are bound to it, so
+        # a request still waiting for one can never be confirmed.
+        requests.awaiting_confirmation.update_all(status: 'lapsed', updated_at: Time.current)
         requests.update_all(
           email: customer.email,
           download_token: nil,
@@ -459,22 +466,35 @@ module Spree
 
       # @param address [Spree::Address]
       # @param deleted [Boolean] whether to soft-delete it as well
+      # What the person left on an address, rewritten; the address itself kept
+      # readable enough to answer a tax enquiry.
+      #
+      # A snapshot copied from a company site is the narrower case. The dock
+      # and the trading name on it are the business's, not this person's, and
+      # erasing them would take the merchant's record of a lawful sale with
+      # them — so only the contact details go. A business address is allowed
+      # to name nobody, which is why those fields are emptied rather than
+      # stamped: writing "Redacted" where a company never named anyone would
+      # invent a person who was not there.
       def redact_address(address, deleted:)
-        attributes = {
-          first_name: REDACTED_NAME,
-          last_name: REDACTED_NAME,
-          address1: REDACTED_NAME,
-          address2: nil,
-          phone: nil,
-          alternative_phone: nil,
-          company: nil,
-          label: nil,
-          latitude: nil,
-          longitude: nil,
-          postal_code: truncated_postal_code(address.postal_code),
-          metadata: {},
-          updated_at: Time.current
-        }
+        attributes =
+          if address.business_owned?
+            { first_name: nil, last_name: nil }
+          else
+            {
+              first_name: REDACTED_NAME,
+              last_name: REDACTED_NAME,
+              address1: REDACTED_NAME,
+              address2: nil,
+              company: nil,
+              label: nil,
+              latitude: nil,
+              longitude: nil,
+              postal_code: truncated_postal_code(address.postal_code)
+            }
+          end
+
+        attributes.merge!(phone: nil, alternative_phone: nil, metadata: {}, updated_at: Time.current)
         attributes[:deleted_at] = Time.current if deleted && address.deleted_at.nil?
 
         address.update_columns(attributes)

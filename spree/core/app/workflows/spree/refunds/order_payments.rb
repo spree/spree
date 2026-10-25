@@ -91,9 +91,12 @@ module Spree
       # @param record [Spree::Return, Spree::Claim, Spree::Exchange] what asked
       #   for the refund; it originates the rows and carries any failure
       # @param refunder [Object, nil] whoever is issuing it
+      # @param tax_amount [BigDecimal] the tax inside +amount+, divided across
+      #   the rows in proportion to what each refunds
       # @return [Array<Spree::Refund>] the refunds written, in drain order
-      def refund_order_payments(order:, amount:, record:, refunder: nil)
+      def refund_order_payments(order:, amount:, record:, refunder: nil, tax_amount: 0)
         remaining = amount.to_d
+        tax_remaining = tax_amount.to_d
         refunds = []
         shares = refundable_shares(order)
         # With no payment to draw on the caller reports that instead.
@@ -109,13 +112,21 @@ module Spree
           creditable = [refundable, remaining].min
           next unless creditable.positive?
 
+          # The last row takes what is left, so the rows' tax adds up exactly.
+          row_tax = if creditable == remaining
+                      tax_remaining
+                    else
+                      Spree::Money::Rounding.to_currency(tax_amount.to_d * creditable / amount.to_d, order.currency)
+                    end
+
           result = Spree.refund_create_workflow.call(
             payment: payment,
             amount: creditable,
             order: order,
             reason: reason,
             refunder: refunder,
-            originator: record
+            originator: record,
+            tax_amount: row_tax
           )
           # `failure` raises, so this ends the drain — the caller's own error
           # vocabulary decorates the 422.
@@ -123,6 +134,7 @@ module Spree
 
           refunds << result.value
           remaining -= creditable
+          tax_remaining -= row_tax
         end
 
         refunds

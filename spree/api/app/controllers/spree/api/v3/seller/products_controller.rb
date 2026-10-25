@@ -43,6 +43,61 @@ module Spree
 
           scoped_resource :products
 
+          request_params :product do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Hand-thrown mug'
+            body.attribute :description, :string
+            body.attribute :slug, :string, example: 'hand-thrown-mug'
+            body.attribute :meta_title, :string
+            body.attribute :meta_description, :string
+            body.attribute :meta_keywords, :string
+            body.attribute :metadata, :hash
+            body.attribute :product_type_id, :id,
+              nullable: true,
+              description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."
+            body.attribute :delivery_profile_id, :id,
+              description: "Which of the marketplace's delivery profiles the product ships under. A new product sent without one lands on the profile marked default."
+            body.attribute :prices, :array, of: Spree::Api::V3::Seller::PriceRequestSchema,
+              description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant."
+            # `external_url` stays out for the same reason it does on the
+            # operator's endpoint: it would make the server fetch a URL the
+            # caller chose.
+            body.attribute :media, :array,
+              as: 'SellerProductMediaParams',
+              description: 'The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh upload; `id` updates one already there.' do |media_item|
+              media_item.attribute :id, :id
+              media_item.attribute :signed_id, :string, description: 'A `signed_id` from `POST /files`.'
+              media_item.include_attributes Spree::Api::V3::MediaRequestSchema
+              media_item.attribute :variant_ids, :array, of: :id,
+                description: 'Replaces the variants this media is linked to. An empty list clears them.'
+            end
+            body.attribute :variants, :array,
+              as: 'ProductVariantParams',
+              description: 'The variants, as a whole: one absent from the list is removed. Pass `id` to update an existing variant.' do |variant|
+              variant.extends Spree::Api::V3::Seller::VariantRequestSchema
+              variant.attribute :id, :id
+            end
+          end
+
+          request_params 'ProductBulkSubmitParams', action: :bulk_submit do |body|
+            body.attribute :ids, :array, of: :id,
+              required: true,
+              description: 'Only drafts and rejected listings are submitted; the rest are counted in `skipped_count`.'
+          end
+
+          request_params 'ProductBulkDestroyParams', action: :bulk_destroy do |body|
+            body.attribute :ids, :array, of: :id,
+              required: true,
+              description: "Ids outside this seller's catalog are ignored; products the store refuses to delete are counted in `skipped_count`."
+          end
+
+          request_params 'ProductBulkStatusParams', action: :bulk_status_update do |body|
+            body.attribute :ids, :array, of: :id, required: true, example: ['prod_UkLWZg9DAJ']
+            body.attribute :status, :string,
+              required: true,
+              choices: SELLER_BULK_STATUS_WORKFLOWS.keys,
+              description: 'A listing goes on sale only when the marketplace approves it, so there is no bulk route onto `active`.'
+          end
+
           before_action :set_status_resource, only: [:submit, :draft, :archive]
           before_action :require_ids!, only: [:bulk_submit, :bulk_status_update, :bulk_destroy]
 
@@ -87,8 +142,10 @@ module Spree
                                                   submitted_by: try_spree_current_user)
 
               # A product Propose refused is untouched; one it accepted is in
-              # review or already through it.
-              product.reload.status != was
+              # review or already through it. The saved value, not the
+              # attribute: a refused update leaves the new status unsaved on
+              # the record, and a rolled-back one restores what was stored.
+              product.status_in_database != was
             }
           end
 
@@ -107,7 +164,7 @@ module Spree
             if resolve_workflow.nil?
               return render_error(
                 code: 'invalid_status',
-                message: Spree.t(:invalid_status, scope: 'errors.messages', default: 'Invalid status'),
+                message: I18n.t('spree.errors.messages.invalid_status'),
                 status: :unprocessable_content
               )
             end
@@ -157,6 +214,10 @@ module Spree
             Spree.product_update_workflow
           end
 
+          def nested_permitted_models
+            { media: Spree::Media, variants: Spree::Variant }
+          end
+
           # The workflow builds its own product, which would leave a seller's
           # listing unowned. Handing it one built through `current_seller.products`
           # keeps the seller on the record, whatever the payload claims.
@@ -165,33 +226,7 @@ module Spree
           end
 
           def permitted_params
-            attrs = params.permit(
-              :name, :description, :slug,
-              :meta_title, :meta_description, :meta_keywords,
-              :product_type_id, :delivery_profile_id,
-              metadata: {},
-              prices: [:amount, :compare_at_amount, :currency],
-              # Inline media, the same shape the operator sends. `external_url`
-              # stays out for the same reason it does there — it would make the
-              # server fetch a URL the caller chose.
-              media: [*Spree::Media::WRITABLE_ATTRIBUTES, :id, :signed_id, { variant_ids: [] }],
-              # A seller's variants. Narrower than the operator's set:
-              # `seller_id` would let a payload hand a variant to somebody else,
-              # and `tax_category_id`/`delivery_profile_id` are marketplace
-              # configuration.
-              variants: [
-                :id, :sku, :barcode,
-                :cost_price, :cost_currency,
-                :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-                :hs_code, :country_of_origin, :customs_description,
-                :minimum_order_quantity, :order_multiple, :purchase_unit, :units_per_carton,
-                :carton_package_type_id, :carton_weight, :cartons_per_pallet,
-                :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :position,
-                options: [:name, :value],
-                prices: [:amount, :compare_at_amount, :currency],
-                stock_levels: [:id, :stock_location_id, :count_on_hand, :backorderable]
-              ]
-            )
+            attrs = params.permit(*permitted_attributes)
 
             # Assigned only when present: writing a nil `prices` or
             # `stock_levels` key reaches the association setter as nil, which

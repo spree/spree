@@ -26,7 +26,7 @@ module Spree
           def pickup_points
             provider = find_resource.pickup_point_provider_instance
             if provider.nil?
-              return render_error(code: ERROR_CODES[:record_not_found], message: Spree.t('errors.messages.no_pickup_point_provider'), status: :not_found)
+              return render_error(code: ERROR_CODES[:record_not_found], message: I18n.t('spree.errors.messages.no_pickup_point_provider'), status: :not_found)
             end
 
             latitude = params[:latitude].presence&.to_f
@@ -93,13 +93,18 @@ module Spree
           def covers_cart?(location, cart)
             return true if location.pickup_stock_policy == 'any'
 
-            cart.line_items.includes(variant: :product).all? do |line_item|
+            pickup_line_items(cart).all? do |line_item|
               next true if line_item.variant.digital?
               next true unless line_item.variant.should_track_inventory?
 
               stock_level = location.stock_level(line_item.variant)
               stock_level.present? && stock_level.available_count >= line_item.quantity
             end
+          end
+
+          # Loaded once for every location the cart is checked against.
+          def pickup_line_items(cart)
+            @pickup_line_items ||= cart.line_items.includes(variant: [:delivery_profile, { product: %i[delivery_profile store] }]).to_a
           end
         end
       end

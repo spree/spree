@@ -1,3 +1,4 @@
+import { DimensionUnit, normalizeMoneyInput, WeightUnit } from '@spree/core'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import { useCountries, useCountryDisplayName } from '@spree/dashboard-core'
 import {
@@ -22,9 +23,6 @@ import {
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
 import { composeOptionsText } from './variants-matrix'
-
-const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
-const DIMENSION_UNITS = ['mm', 'cm', 'in'] as const
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,7 +61,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
     () =>
       countries.map((country) => ({
         value: country.iso,
-        label: countryName({ iso: country.iso, iso3: country.iso3, name: country.name }),
+        label: countryName(country),
       })),
     [countries, countryName],
   )
@@ -171,39 +169,24 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
           set(`variants.${idx}.cartons_per_pallet`, change.value)
           break
         case 'cartonWeight': {
-          if (change.value == null || change.value.trim() === '') {
-            set(`variants.${idx}.carton_weight`, null)
-            break
-          }
-          const parsed = Number(change.value.trim().replace(',', '.'))
-          if (!Number.isFinite(parsed) || parsed < 0) break
-          set(`variants.${idx}.carton_weight`, parsed)
+          const parsed = readMeasure(change.value)
+          if (parsed !== undefined) set(`variants.${idx}.carton_weight`, parsed)
           break
         }
         case 'preorderable':
           set(`variants.${idx}.preorderable`, change.value)
           break
         case 'backorderLimit': {
-          if (change.value == null || change.value.trim() === '') {
-            set(`variants.${idx}.backorder_limit`, null)
-            break
+          const parsed = readMeasure(change.value)
+          if (parsed !== undefined) {
+            set(`variants.${idx}.backorder_limit`, parsed === null ? null : Math.trunc(parsed))
           }
-          const parsed = Number(change.value.trim().replace(',', '.'))
-          if (!Number.isFinite(parsed) || parsed < 0) break
-          set(`variants.${idx}.backorder_limit`, Math.trunc(parsed))
           break
         }
         default: {
-          // weight / height / width / depth — decimals. Accept a comma
-          // decimal (the cell ships raw input); ignore anything that doesn't
-          // parse to a non-negative number rather than mangling it.
-          if (change.value == null || change.value.trim() === '') {
-            set(`variants.${idx}.${change.field}`, null)
-            break
-          }
-          const parsed = Number(change.value.trim().replace(',', '.'))
-          if (!Number.isFinite(parsed) || parsed < 0) break
-          set(`variants.${idx}.${change.field}`, parsed)
+          // weight / height / width / depth
+          const parsed = readMeasure(change.value)
+          if (parsed !== undefined) set(`variants.${idx}.${change.field}`, parsed)
           break
         }
       }
@@ -215,13 +198,7 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? onOpenChange(true) : handleCancel())} modal>
-      <DialogContent
-        // Edge-to-edge minus a 3-unit gutter, same overrides as the bulk
-        // price dialog (see BulkPriceEditorDialog for why each is needed).
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
+      <DialogContent fullScreen showCloseButton={false}>
         <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
           <DialogTitle className="truncate">
             {t('admin.products.variants.bulk_edit.title')}
@@ -248,8 +225,8 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
           <BulkVariantsTable
             rows={rows}
             onChange={handleChange}
-            weightUnitOptions={unitOptions(WEIGHT_UNITS)}
-            dimensionUnitOptions={unitOptions(DIMENSION_UNITS)}
+            weightUnitOptions={unitOptions(Object.values(WeightUnit))}
+            dimensionUnitOptions={unitOptions(Object.values(DimensionUnit))}
             taxCategoryOptions={
               taxCategories.length > 0
                 ? taxCategories.map((c) => ({ value: c.id, label: c.name }))
@@ -298,4 +275,20 @@ export function BulkVariantsDialog({ form, open, onOpenChange }: Props) {
       </DialogContent>
     </Dialog>
   )
+}
+
+// Cells show numbers with a period, so they read back the same way, with
+// comma grouping (`1,500`) or a lone decimal comma (`2,5`) also accepted.
+const MEASURE_INPUT = /^(?:(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?|\d+,\d+)$/
+
+/**
+ * A measurement typed or pasted into a cell: `null` when cleared, `undefined`
+ * when it is not a non-negative number, so the cell keeps its value rather
+ * than being mangled.
+ */
+function readMeasure(value: string | null | undefined): number | null | undefined {
+  const typed = value?.trim() ?? ''
+  if (typed === '') return null
+  if (!MEASURE_INPUT.test(typed)) return undefined
+  return Number(normalizeMoneyInput(typed, 'en'))
 }

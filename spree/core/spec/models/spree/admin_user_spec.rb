@@ -18,14 +18,64 @@ describe Spree.admin_user_class, type: :model do
       admin_user.update!(password: 'new-secret-123', password_confirmation: 'new-secret-123')
       expect(described_class.find_by_password_reset_token(token)).to be_nil
     end
+  end
 
-    # The token payload keys off the password salt/digest so it invalidates
-    # when the password changes. has_secure_password provides #password_salt
-    # (derived from password_digest); the generator also falls back through
-    # encrypted_password for a legacy bcrypt column on a custom model without a
-    # password_salt, so it never raises NameError.
-    it 'generates a password reset token from the password digest' do
-      expect(admin_user.generate_token_for(:password_reset)).to be_present
+  describe 'deactivation' do
+    it 'starts active' do
+      expect(admin_user).not_to be_deactivated
+    end
+
+    it 'records when the account was switched off' do
+      admin_user.deactivate!
+
+      expect(admin_user.reload).to be_deactivated
+      expect(admin_user.deactivated_at).to be_within(2.seconds).of(Time.current)
+    end
+
+    it 'ends every session the account holds, on every surface' do
+      create(:refresh_token, :for_admin, user: admin_user)
+      create(:refresh_token, user: admin_user, audience: 'seller_api')
+      someone_else = create(:refresh_token, :for_admin)
+
+      admin_user.deactivate!
+
+      expect(Spree::RefreshToken.where(user: admin_user)).to be_empty
+      expect(Spree::RefreshToken.exists?(someone_else.id)).to be(true)
+    end
+
+    it 'keeps the first deactivation time when called again' do
+      admin_user.deactivate!
+      first = admin_user.reload.deactivated_at
+
+      Timecop.travel(1.hour.from_now) { admin_user.deactivate! }
+
+      expect(admin_user.reload.deactivated_at).to eq(first)
+    end
+
+    it 'ends the sessions of an account already marked deactivated' do
+      admin_user.update_column(:deactivated_at, 1.day.ago)
+      create(:refresh_token, :for_admin, user: admin_user)
+
+      admin_user.deactivate!
+
+      expect(Spree::RefreshToken.where(user: admin_user)).to be_empty
+    end
+
+    # Switching an account off must not depend on its other attributes
+    # passing today's validations.
+    it 'deactivates an account that no longer validates' do
+      admin_user.update_column(:email, '')
+
+      admin_user.deactivate!
+
+      expect(admin_user.reload).to be_deactivated
+    end
+
+    it 'lets a reactivated account in again' do
+      admin_user.deactivate!
+      admin_user.reactivate!
+
+      expect(admin_user.reload).not_to be_deactivated
     end
   end
 

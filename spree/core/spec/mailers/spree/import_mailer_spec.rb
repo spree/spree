@@ -15,7 +15,7 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        Spree.t('import_mailer.import_done.subject', import_number: import.number)
+        I18n.t('spree.import_mailer.import_done.subject', import_number: import.number)
       )
     end
 
@@ -25,7 +25,7 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
 
     it 'includes the completed row count' do
       expect(email_body(mail)).to include(
-        Spree.t('import_mailer.import_done.message', completed_count: 1)
+        I18n.t('spree.import_mailer.import_done.message', completed_count: 1)
       )
     end
 
@@ -36,7 +36,7 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
 
       it 'calls out the failed row count' do
         expect(email_body(mail)).to include(
-          Spree.t('import_mailer.import_done.failed_message', failed_count: 1)
+          I18n.t('spree.import_mailer.import_done.failed_message', failed_count: 1)
         )
       end
     end
@@ -56,7 +56,7 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
     context 'without a results_url' do
       it 'renders no results button' do
         expect(email_body(mail)).not_to include(
-          Spree.t('import_mailer.import_done.view_results')
+          I18n.t('spree.import_mailer.import_done.view_results')
         )
       end
     end

@@ -13,6 +13,18 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
+/**
+ * Every event a webhook endpoint can subscribe to, extensions' included.
+ * Fixed per server boot, so it is cached for the session.
+ */
+export function useWebhookEventCatalog() {
+  return useQuery({
+    queryKey: useResourceKey('webhook-events'),
+    queryFn: () => adminClient.webhookEvents.list(),
+    staleTime: 30 * 60 * 1000,
+  })
+}
+
 export function useWebhookEndpoint(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('webhook-endpoints', id ?? 'noop'),

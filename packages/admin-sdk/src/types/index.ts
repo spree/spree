@@ -1,12 +1,27 @@
-// Re-export shared types from sdk-core
+// Re-export shared types from sdk-core, including the building blocks of the
+// generated filter types for a declaration file that extends them (see
+// `spree filters types`).
 export type {
+  BooleanFilters,
+  CodeFilters,
+  CustomFieldValueFilters,
+  EnumFilters,
   ErrorResponse,
+  IdFilters,
   ListParams,
   ListResponse,
   LocaleDefaults,
+  OrFilters,
   PaginatedResponse,
   PaginationMeta,
+  PreferencePropertySchema,
+  PreferenceSchema,
+  Prefixed,
+  RangeFilters,
+  SortKey,
+  TextFilters,
 } from '@spree/sdk-core'
+export * from './filters.generated'
 // Hand-written discovery-endpoint types (controller-shaped, not generated):
 // entries returned by the delivery-method provider discovery endpoints.
 export type {
@@ -41,6 +56,7 @@ export type { default as CommissionRule } from './generated/CommissionRule'
 export type { default as Company } from './generated/Company'
 export type { default as CompanyInvitation } from './generated/CompanyInvitation'
 export type { default as CompanyMembership } from './generated/CompanyMembership'
+export type { default as ConsentRecord } from './generated/ConsentRecord'
 export type { default as Country } from './generated/Country'
 export type { default as CouponCode } from './generated/CouponCode'
 export type { default as CreditCard } from './generated/CreditCard'
@@ -49,6 +65,7 @@ export type { default as CustomerGroup } from './generated/CustomerGroup'
 export type { default as CustomField } from './generated/CustomField'
 export type { default as CustomFieldDefinition } from './generated/CustomFieldDefinition'
 export type { default as DashboardCounter } from './generated/DashboardCounter'
+export type { default as DataRequest } from './generated/DataRequest'
 export type { default as Delivery } from './generated/Delivery'
 export type { default as DeliveryMethod } from './generated/DeliveryMethod'
 export type { default as DeliveryMethodRule } from './generated/DeliveryMethodRule'
@@ -60,12 +77,45 @@ export type { default as DeliveryZoneMember } from './generated/DeliveryZoneMemb
 export type { default as DigitalAsset } from './generated/DigitalAsset'
 export type { default as DigitalLink } from './generated/DigitalLink'
 export type { default as Discount } from './generated/Discount'
+export type { default as EmailTemplate } from './generated/EmailTemplate'
+export type { default as EmailTemplateDraft } from './generated/EmailTemplateDraft'
+export type { default as EmailTemplatePreview } from './generated/EmailTemplatePreview'
+export type { default as EmailTemplateRevision } from './generated/EmailTemplateRevision'
+export type { default as EmailTemplateSampleRecord } from './generated/EmailTemplateSampleRecord'
 // Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
 export type * from './generated/Enums'
 export type { default as Exchange } from './generated/Exchange'
 export type { default as ExchangeLineItem } from './generated/ExchangeLineItem'
 export type { default as Export } from './generated/Export'
+// The data customer email templates render with (generated from spree_emails)
+export type { default as EmailAddress } from './generated/emails/EmailAddress'
+export type { default as EmailAmountLine } from './generated/emails/EmailAmountLine'
+export type { default as EmailAppliedPromotion } from './generated/emails/EmailAppliedPromotion'
+export type { default as EmailCustomer } from './generated/emails/EmailCustomer'
+export type { default as EmailCustomerGroup } from './generated/emails/EmailCustomerGroup'
+export type { default as EmailDelivery } from './generated/emails/EmailDelivery'
+export type { default as EmailDeliveryMethod } from './generated/emails/EmailDeliveryMethod'
+export type { default as EmailDeliveryRate } from './generated/emails/EmailDeliveryRate'
+export type { default as EmailFee } from './generated/emails/EmailFee'
+export type { default as EmailFreightSummary } from './generated/emails/EmailFreightSummary'
+export type { default as EmailFulfillment } from './generated/emails/EmailFulfillment'
+export type { default as EmailFulfillmentGroup } from './generated/emails/EmailFulfillmentGroup'
+export type { default as EmailGiftCard } from './generated/emails/EmailGiftCard'
+export type { default as EmailLineItem } from './generated/emails/EmailLineItem'
+export type { default as EmailMarket } from './generated/emails/EmailMarket'
+export type { default as EmailNewsletterSubscriber } from './generated/emails/EmailNewsletterSubscriber'
+export type { default as EmailOptionValue } from './generated/emails/EmailOptionValue'
+export type { default as EmailOrder } from './generated/emails/EmailOrder'
+export type { default as EmailOrderGroup } from './generated/emails/EmailOrderGroup'
+export type { default as EmailParcelItem } from './generated/emails/EmailParcelItem'
+export type { default as EmailPayment } from './generated/emails/EmailPayment'
+export type { default as EmailPaymentMethod } from './generated/emails/EmailPaymentMethod'
+export type { default as EmailReturn } from './generated/emails/EmailReturn'
+export type { default as EmailStockLocation } from './generated/emails/EmailStockLocation'
+export type { default as EmailStore } from './generated/emails/EmailStore'
 export type { default as Fee } from './generated/Fee'
+export type { default as FileUpload } from './generated/FileUpload'
+export type { default as FileUploadTarget } from './generated/FileUploadTarget'
 export type { default as FreightSummary } from './generated/FreightSummary'
 export type { default as FreightSummaryLine } from './generated/FreightSummaryLine'
 export type { default as Fulfillment } from './generated/Fulfillment'
@@ -79,8 +129,13 @@ export type { default as Integration } from './generated/Integration'
 export type { default as Invitation } from './generated/Invitation'
 export type { default as InvitationAcceptanceLink } from './generated/InvitationAcceptanceLink'
 export type { default as LineItem } from './generated/LineItem'
+export type { default as Locale } from './generated/Locale'
 export type { default as Market } from './generated/Market'
 export type { default as Media } from './generated/Media'
+export type { default as OauthAccessToken } from './generated/OauthAccessToken'
+export type { default as OauthApplication } from './generated/OauthApplication'
+export type { default as OauthConsentRequest } from './generated/OauthConsentRequest'
+export type { default as OauthRedirect } from './generated/OauthRedirect'
 export type { default as OptionType } from './generated/OptionType'
 export type { default as OptionValue } from './generated/OptionValue'
 export type { default as Order } from './generated/Order'
@@ -139,15 +194,19 @@ export type { default as StoreCreditEvent } from './generated/StoreCreditEvent'
 export type { default as Supplier } from './generated/Supplier'
 export type { default as TaxCategory } from './generated/TaxCategory'
 export type { default as TaxExemptionCertificate } from './generated/TaxExemptionCertificate'
+export type { default as TaxExemptionReason } from './generated/TaxExemptionReason'
 export type { default as TaxIdentifier } from './generated/TaxIdentifier'
 export type { default as TaxLine } from './generated/TaxLine'
 export type { default as TaxRate } from './generated/TaxRate'
+export type { default as UpdateStatus } from './generated/UpdateStatus'
 export type { default as Variant } from './generated/Variant'
 export type { default as WebhookDelivery } from './generated/WebhookDelivery'
 export type { default as WebhookEndpoint } from './generated/WebhookEndpoint'
+export type { default as WebhookEvent } from './generated/WebhookEvent'
+// Each configurable family's `preferences`, typed by `type` (generated by `rake typelizer:generate`).
+export type * from './preferences'
 // Hand-written translation-management types (controller-shaped, not generated)
 export type {
-  Locale,
   LocaleTranslations,
   ResourceTranslations,
   ResourceTranslationsNode,

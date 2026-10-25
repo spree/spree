@@ -38,9 +38,9 @@ module Spree
     include Spree::StorePreferences
 
     publishes_lifecycle_events
+    publishes_events :activated, :approved, :archived, :back_in_stock, :drafted, :out_of_stock, :proposed, :rejected
 
-    MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
-                          default_variant_id tax_category default_variant variant_for_images
+    MEMOIZED_METHODS = %w[total_on_hand default_variant_id tax_category default_variant variant_for_images
                           primary_category buy_box_variants resolved_delivery_profile
                           purchasable? in_stock? backorderable? digital?]
 
@@ -242,8 +242,6 @@ module Spree
     after_create :set_default_variant
 
     after_save :auto_promote_default_variant
-    after_save :run_touch_callbacks, if: :saved_changes?
-    after_touch :touch_categories
 
     after_commit :auto_match_collections, if: :eligible_for_collection_matching?
 
@@ -279,7 +277,9 @@ module Spree
     #   the search. Definitions are store-owned, so the caller says which store
     #   is searching; `Spree::Current.store` is the request's answer and a
     #   background caller (an export, say) passes its own.
-    scope :search, ->(query, store = Spree::Current.store) {
+    # @param audience [Symbol, nil] `:store` keeps a shopper's search off the
+    #   custom fields hidden from the storefront; `nil` is the back office
+    scope :search, ->(query, store = Spree::Current.store, audience: nil) {
       next none if query.blank?
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
@@ -287,6 +287,7 @@ module Spree
       searchable_definitions = store.custom_field_definitions.
                                for_resource_type('Spree::Product').
                                searchable
+      searchable_definitions = searchable_definitions.storefront_visible if audience == :store
 
       # Only pay for the custom_field scan when some definition opts into search;
       # the leading-wildcard LIKE over spree_custom_fields can't use an index.
@@ -301,9 +302,6 @@ module Spree
 
       where(id: (product_ids + custom_field_ids).uniq.compact)
     }
-
-    # Backward compatibility alias — remove in Spree 6.0
-    scope :multi_search, ->(*args) { search(*args) }
 
     scope :archivable, -> { where(status: %w[active draft]) }
     scope :by_source, ->(source) { send(source) }
@@ -366,7 +364,21 @@ module Spree
       super(manual_ids | collections.automatic.ids)
     end
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id price]
+
+    # The default variant's base price in the current currency — what the
+    # product lists show — so a list can filter on it like a column.
+    ransacker :price, type: :decimal do |parent|
+      prices = Spree::Price.arel_table
+      Arel::Nodes::Grouping.new(
+        prices.project(prices[:amount]).
+          where(prices[:variant_id].eq(parent.table[:default_variant_id])).
+          where(prices[:currency].eq(Spree::Current.currency)).
+          where(prices[:price_list_id].eq(nil)).
+          where(prices[:deleted_at].eq(nil)).
+          take(1)
+      )
+    end
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
                                                    product_type product_categories option_types seller]
     # The storefront filters by tag, category and collection; every other hop
@@ -375,9 +387,15 @@ module Spree
     self.storefront_ransackable_associations = %w[tags categories collections]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
-                                             search multi_search in_stock out_of_stock with_option_value_ids
+                                             search in_stock out_of_stock with_option_value_ids
 
                                              ascend_by_price descend_by_price]
+    self.ransackable_scope_types = {
+      'in_taxon' => 'id', 'in_category' => 'id', 'in_collection' => 'id',
+      'in_categories' => { list: 'id' }, 'with_option_value_ids' => { list: 'id' },
+      'price_between' => %w[decimal decimal], 'price_lte' => 'decimal', 'price_gte' => 'decimal',
+      'ascend_by_price' => 'boolean', 'descend_by_price' => 'boolean'
+    }
 
     # All product-level convenience attributes delegate to the default variant —
     # one target, no branching. Reads resolve the existing default variant
@@ -479,7 +497,9 @@ module Spree
     def purchasable?
       return @purchasable unless @purchasable.nil?
 
-      @purchasable = sellable_variants.any?(&:purchasable?)
+      variants_to_check = sellable_variants
+      Spree::Stock::Quantifier.preload(variants_to_check)
+      @purchasable = variants_to_check.any?(&:purchasable?)
     end
 
     def in_stock?
@@ -693,12 +713,12 @@ module Spree
     # variant), reading preloaded associations to avoid an N+1.
     # @return [ActiveSupport::TimeWithZone, nil]
     def preorder_ships_at
-      candidates = has_variants? ? variants : [master]
+      candidates = has_variants? ? variants : [default_variant]
       candidates.select(&:preorder?).filter_map(&:preorder_ships_at).max
     end
 
     def discontinue!
-      self.discontinue_on = Time.current
+      write_publication_date(:discontinue_on, Time.current)
       self.status = 'archived'
       save(validate: false)
     end
@@ -817,7 +837,13 @@ module Spree
       Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
     end
 
-    def to_csv(store = nil)
+    # @param seller [Spree::Seller, nil] the seller exporting their own
+    #   products, whose rows cover only their own locations; nil for the
+    #   operator, whose rows cover the marketplace's and the product's seller's
+    # @param default_stock_location [Spree::StockLocation, nil] the location
+    #   the full rows carry; further locations get stock-only rows. The
+    #   store's default when nil
+    def to_csv(store = nil, seller: nil, default_stock_location: nil)
       store ||= self.store
       properties_for_csv = if respond_to?(:product_properties) && Spree::Config.respond_to?(:product_properties_enabled) && Spree::Config[:product_properties_enabled]
                              Spree::Property.order(:position).flat_map do |property|
@@ -840,11 +866,12 @@ module Spree
       all_variants = variants.to_a
       default_currency = store.default_currency
       additional_currencies = store.supported_currencies_list.map(&:iso_code) - [default_currency]
+      default_stock_location ||= store.default_stock_location
 
       # Primary rows in the store's default currency
       all_variants.each_with_index do |variant, index|
         csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, categories_for_csv, store,
-                                                             custom_field_values).call
+                                                             custom_field_values, default_stock_location: default_stock_location).call
       end
 
       # Price-only rows for each additional currency
@@ -854,6 +881,25 @@ module Spree
 
           csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, 0, [], [], store,
                                                                [], currency).call
+        end
+      end
+
+      # Stock-only rows for every other location the importer can name back. A
+      # row the import cannot route to its variant is left out: with no SKU it
+      # would land on the default variant.
+      location_owner_ids = seller ? [seller.id] : [nil, seller_id].uniq
+      all_variants.each do |variant|
+        next unless variant.should_track_inventory?
+        next if variant.sku.blank? && variant != default_variant
+
+        variant.stock_levels.sort_by(&:id).each do |stock_level|
+          location = stock_level.stock_location
+          next if location.nil? || location == default_stock_location
+          next unless location.store_id == store.id && location_owner_ids.include?(location.seller_id)
+          next if stock_level.count_on_hand.zero?
+
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, 0, [], [], store,
+                                                               stock_level: stock_level).call
         end
       end
 
@@ -970,23 +1016,6 @@ module Spree
       return if seller.store_id == store_id
 
       errors.add(:seller, :invalid)
-    end
-
-    def run_touch_callbacks
-      run_callbacks(:touch)
-    end
-
-    def category_and_ancestors
-      @category_and_ancestors ||= categories.map(&:self_and_ancestors).flatten.uniq
-    end
-
-    # Iterate through this product's categories and touch their timestamps in a batch
-    def touch_categories
-      if categories.any?
-        Spree::Products::TouchCategoriesJob.
-          set(wait: 5.seconds).
-          perform_later(category_and_ancestors.map(&:id))
-      end
     end
 
     def ensure_not_in_complete_orders

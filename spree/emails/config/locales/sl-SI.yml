@@ -1,0 +1,31 @@
+---
+sl-SI:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Ponastavi geslo
+        expiry_notice: Ta povezava za ponastavitev gesla bo kmalu potekla. Če tega niste zahtevali, ni potrebno nobeno dejanje.
+        greeting: Pozdravljeni %{name},
+        ignore_notice: Če niste zahtevali ponastavitve gesla, lahko to e-pošto brez skrbi prezrete. Vaše geslo ne bo spremenjeno.
+        instructions: Prejeli smo zahtevo za ponastavitev vašega gesla. Kliknite spodnji gumb, da izberete novo geslo.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Pozdravljeni,
+        ignore_disclaimer: Če tega niste zahtevali, prezrite to e-pošto.
+        instructions: Kliknite spodnji gumb za potrditev svojega e-poštnega naslova.
+        message_copy_link: 'Če gumb ne deluje, kopirajte in prilepite naslednjo povezavo v svoj brskalnik:'
+        subject: Potrdite svoj e-poštni naslov
+        verify_email_address_link: Potrdi e-poštni naslov
+    order_mailer:
+      payment_link_email:
+        message: Kliknite spodnji gumb za plačilo svojega naročila.
+        message_copy_link: 'Če gumb ne deluje, kopirajte in prilepite naslednjo povezavo v svoj brskalnik:'
+        pay_for_order: Plačaj naročilo
+        subject: 'Povezava za plačilo naročila #%{number}'
+      store_owner_notification_email:
+        heading: Prejeto novo naročilo
+        instructions: Prejeli ste novo naročilo.
+        order_summary: Povzetek naročila %{number}
+        subject: "%{store_name} je prejela novo naročilo"
+      subtotal: 'Vmesni seštevek:'
+      total: 'Skupni znesek naročila:'

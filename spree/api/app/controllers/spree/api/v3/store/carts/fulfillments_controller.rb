@@ -9,13 +9,12 @@ module Spree
 
             before_action :find_cart!
 
-            # GET /api/v3/store/carts/:cart_id/fulfillments
-            def index
-              fulfillments = @cart.fulfillments.includes(delivery_rates: :delivery_method)
-              render json: {
-                data: fulfillments.map { |s| Spree.api.fulfillment_serializer.new(s, params: serializer_params).to_h },
-                meta: { count: fulfillments.size }
-              }
+            request_params 'UpdateFulfillmentParams', action: :update do |body|
+              body.attribute :selected_delivery_rate_id, :id,
+                example: 'dr_abc123',
+                description: 'The delivery rate to select.'
+              body.attribute :pickup_point_external_id, :string,
+                description: "For a pickup point delivery method: the provider's id of the point to collect from."
             end
 
             # PATCH /api/v3/store/carts/:cart_id/fulfillments/:id
@@ -44,7 +43,7 @@ module Spree
             private
 
             def permitted_params
-              params.permit(:selected_delivery_rate_id, :pickup_point_external_id)
+              params.permit(*declared_permitted_attributes)
             end
 
             def recalculate
@@ -63,8 +62,8 @@ module Spree
               if provider.nil?
                 render_error(
                   code: ERROR_CODES[:validation_error],
-                  message: Spree.t('errors.messages.no_pickup_point_provider'),
-                  status: :unprocessable_entity
+                  message: I18n.t('spree.errors.messages.no_pickup_point_provider'),
+                  status: :unprocessable_content
                 )
                 return false
               end
@@ -73,7 +72,7 @@ module Spree
               if point.nil?
                 render_error(
                   code: ERROR_CODES[:record_not_found],
-                  message: Spree.t('errors.messages.pickup_point_not_found'),
+                  message: I18n.t('spree.errors.messages.pickup_point_not_found'),
                   status: :not_found
                 )
                 return false

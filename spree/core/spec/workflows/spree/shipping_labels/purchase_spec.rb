@@ -87,7 +87,7 @@ module Spree
       result = subject.call(owner: fulfillment)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('shipping_labels.errors.already_purchased'))
+      expect(result.error.to_s).to eq(I18n.t('spree.shipping_labels.errors.already_purchased'))
     end
 
     it 'buys again once the previous label was refunded' do
@@ -105,7 +105,7 @@ module Spree
       result = subject.call(owner: fulfillment)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.label_purchase_failed'))
+      expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.label_purchase_failed'))
       expect(fulfillment.reload.shipping_labels).to be_empty
     end
 
@@ -128,7 +128,7 @@ module Spree
       result = subject.call(owner: fulfillment)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('shipping_labels.errors.provider_has_no_labels'))
+      expect(result.error.to_s).to eq(I18n.t('spree.shipping_labels.errors.provider_has_no_labels'))
     end
 
     it 'refuses a fulfillment that already shipped' do
@@ -142,7 +142,7 @@ module Spree
 
       result = subject.call(owner: fulfillment)
 
-      expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.order_draft'))
+      expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.order_draft'))
     end
 
     describe 'for a return' do

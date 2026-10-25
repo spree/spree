@@ -1,11 +1,33 @@
 // Main client
 
-export type { RequestOptions, RetryConfig, ValidationErrorDetail } from '@spree/sdk-core'
-// Request infrastructure (re-export from sdk-core)
-export { SpreeError } from '@spree/sdk-core'
 export type {
   AuthProvider,
   AuthProvidersResponse,
+  FileUploadCreateParams,
+  RequestOptions,
+  RetryConfig,
+  UploadFileOptions,
+  ValidationErrorDetail,
+} from '@spree/sdk-core'
+// Request infrastructure (re-export from sdk-core)
+export {
+  CountryCode,
+  CurrencyCode,
+  compareMoney,
+  DimensionUnit,
+  decimalPlaces,
+  formatMoney,
+  isDecimalString,
+  isZeroMoney,
+  LocaleCode,
+  multiplyMoney,
+  negateMoney,
+  SpreeError,
+  subtractMoney,
+  sumMoney,
+  WeightUnit,
+} from '@spree/sdk-core'
+export type {
   AuthTokens,
   DashboardCounters,
   LoginCredentials,

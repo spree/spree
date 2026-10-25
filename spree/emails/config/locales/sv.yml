@@ -1,0 +1,37 @@
+---
+sv:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Återställ lösenord
+        expiry_notice: Den här länken för lösenordsåterställning går snart ut. Om du inte begärde detta behöver du inte göra något.
+        greeting: Hej %{name},
+        ignore_notice: Om du inte begärde en lösenordsåterställning kan du bortse från detta e-postmeddelande. Ditt lösenord ändras inte.
+        instructions: Vi har fått en begäran om att återställa ditt lösenord. Klicka på knappen nedan för att välja ett nytt lösenord.
+        subject: Instruktioner för återställning av lösenord
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hej,
+        ignore_disclaimer: Om du inte begärde detta kan du bortse från detta e-postmeddelande.
+        instructions: Klicka på knappen nedan för att verifiera din e-postadress.
+        message_copy_link: 'Om knappen inte fungerar, kopiera och klistra in följande länk i din webbläsare:'
+        subject: Verifiera din e-postadress
+        verify_email_address_link: Verifiera e-postadress
+    order_mailer:
+      cancel_email:
+        instructions: Din order är AVBRUTEN. Spara denna information.
+        subject: Annullering av order
+      confirm_email:
+        instructions: Kontrollera och spara denna orderinformation.
+        subject: Orderbekräftelse
+      payment_link_email:
+        message: Klicka på knappen nedan för att betala för din order.
+        message_copy_link: 'Om knappen inte fungerar, kopiera och klistra in följande länk i din webbläsare:'
+        pay_for_order: Betala för ordern
+        subject: 'Betalningslänk för order #%{number}'
+      store_owner_notification_email:
+        heading: Ny order mottagen
+        instructions: Du har fått en ny beställning.
+        subject: "%{store_name} fick en ny beställning"
+      subtotal: 'Delsumma:'
+      total: 'Ordersumma:'

@@ -13,7 +13,7 @@ const buttonVariants = cva(
         // and it was the only variant with no lift at all.
         default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85',
         outline:
-          'border-border bg-card shadow-xs text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
+          'border-border/80 bg-card shadow-xs text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
         // `group-hover/row:` — inside a hovered table row the row already wears
         // --accent, so repeating it here leaves the button at 1.03:1 against its
         // own background: invisible exactly when the pointer is on it. On a

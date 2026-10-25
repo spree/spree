@@ -8,6 +8,7 @@ module Spree
     # commerce and deliberately does not live in core.
     class Create < Spree::Workflow
       include Spree::Returns::ReturnableQuantity
+      include Spree::Refunds::TaxCredit
 
       hooks :validate, :after_create
 
@@ -32,8 +33,11 @@ module Spree
         # is written.
         run_hooks :validate
 
+        # The tax is worked out with the return rather than after it, so no
+        # return ever offers a refund whose tax nobody calculated.
         ApplicationRecord.transaction do
           step :build_return
+          step :calculate_tax
         end
 
         run_hooks :after_create
@@ -91,6 +95,10 @@ module Spree
         end
 
         failure(@return_record) unless @return_record.save
+      end
+
+      def calculate_tax
+        with_tax_provider(return_record) { return_record.calculate_tax! }
       end
 
       # Where goods come back to when nobody said. Goods return where they

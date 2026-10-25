@@ -10,7 +10,6 @@ module Spree
     TRANSLATABLE_FIELDS = %i[name].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
-    belongs_to :store, class_name: 'Spree::Store'
     # Creation-time template only: stamped onto the product when it is
     # created with this type, never managed through it afterwards — the same
     # doctrine as every other type-driven attribute. Nil means the store's
@@ -38,6 +37,7 @@ module Spree
     validates :store, presence: true
 
     self.whitelisted_ransackable_attributes = %w[name]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[option_types]
 
     # Replace-set writer for the flat API payload. Each entry is

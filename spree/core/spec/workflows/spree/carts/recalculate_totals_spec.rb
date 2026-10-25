@@ -19,6 +19,47 @@ module Spree
         expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
       end
 
+      context 'rounding conformance across currencies' do
+        def priced_order(currency, price, quantity)
+          order = create(:order_with_line_items, store: store, line_items_count: 1)
+          order.update_columns(currency: currency)
+          order.line_items.first.update_columns(currency: currency, price: BigDecimal(price), quantity: quantity)
+          described_class.call(cart: order.reload)
+          order.reload
+        end
+
+        it 'keeps a dinar total to the thousandth' do
+          order = priced_order('KWD', '1.505', 3)
+
+          expect(order.item_total).to eq(BigDecimal('4.515'))
+        end
+
+        it 'holds a dong total above one hundred million' do
+          order = priced_order('VND', '150000000', 2)
+
+          expect(order.item_total).to eq(BigDecimal('300000000'))
+        end
+
+        it 'rounds a line priced below the cent to whole cents' do
+          order = priced_order('USD', '0.0125', 3)
+
+          expect(order.item_total).to eq(BigDecimal('0.04'))
+        end
+
+        it 'keeps a sub-cent unit price exact when the quantity makes it whole' do
+          order = priced_order('USD', '0.0125', 1000)
+
+          expect(order.line_items.first.price).to eq(BigDecimal('0.0125'))
+          expect(order.item_total).to eq(BigDecimal('12.5'))
+        end
+
+        it 'rounds a yen total to whole yen' do
+          order = priced_order('JPY', '100.5', 1)
+
+          expect(order.item_total).to eq(BigDecimal('101'))
+        end
+      end
+
       it 'nets refunds out of the payment total' do
         order = create(:completed_order_with_totals, store: store)
         payment = create(:payment, order: order, amount: order.total, status: 'completed')
@@ -59,6 +100,22 @@ module Spree
 
         expect { described_class.call(cart: order) }
           .to change { order.reload.discount_total }.by(0).and change { order.reload.adjustment_total }.by(-3)
+      end
+
+      # Tax given back on a return is not tax charged: claims and exchanges
+      # re-sum the order after settling, and a credit row counted here would
+      # raise the order's total by the very tax it refunded.
+      it 'leaves the tax a return gave back out of the order' do
+        line_item = order.line_items.first
+        create(:tax_line, order: order, line_item: line_item, amount: 3)
+        described_class.call(cart: order)
+        return_line = create(:return, order: order, store: order.store).return_line_items.first
+
+        expect do
+          create(:tax_line, order: order, line_item: nil, return_line_item: return_line, credit: true, amount: 3)
+          described_class.call(cart: order)
+        end.not_to(change { [order.reload.additional_tax_total, order.total, line_item.reload.additional_tax_total] })
+        expect(order.additional_tax_total).to eq(3)
       end
 
       # A commission settles between the platform and the seller, so the
@@ -186,7 +243,7 @@ module Spree
           line_item.update_column(:price, 25)
           described_class.call(cart: cart)
 
-          gift_card_payment.purchase!
+          Spree.payment_process_workflow.call(payment: gift_card_payment, action: :purchase)
 
           expect(gift_card_payment.reload).to be_completed
         end

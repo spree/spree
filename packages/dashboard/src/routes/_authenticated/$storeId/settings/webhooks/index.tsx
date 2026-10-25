@@ -10,6 +10,8 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Button,
   Dialog,
   DialogBody,
@@ -325,10 +327,10 @@ function SecretRevealDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogBody className="flex flex-col gap-3">
-          <div className="flex items-start gap-2 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-900 dark:border-yellow-900/40 dark:bg-yellow-950/40 dark:text-yellow-200">
-            <AlertTriangleIcon className="size-4 shrink-0" />
-            <span>{t('admin.api_keys.warning_treat_like_password')}</span>
-          </div>
+          <Alert variant="warning">
+            <AlertTriangleIcon />
+            <AlertDescription>{t('admin.api_keys.warning_treat_like_password')}</AlertDescription>
+          </Alert>
           {endpoint?.secret_key && (
             <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 p-3">
               <code className="flex-1 truncate font-mono text-sm">{endpoint.secret_key}</code>

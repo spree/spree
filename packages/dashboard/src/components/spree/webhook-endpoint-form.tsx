@@ -1,4 +1,8 @@
+import { isWebhookEventPattern } from '@spree/core'
 import {
+  Alert,
+  AlertAction,
+  AlertDescription,
   Badge,
   Button,
   Checkbox,
@@ -9,13 +13,13 @@ import {
   Input,
   Switch,
 } from '@spree/dashboard-ui'
+import { CircleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import {
-  WEBHOOK_EVENT_GROUPS,
-  type WebhookEndpointFormValues,
-} from '../../schemas/webhook-endpoint'
+import { useWebhookEventCatalog } from '../../hooks/use-webhook-endpoints'
+import { translatedLabel } from '../../lib/translated-label'
+import type { WebhookEndpointFormValues } from '../../schemas/webhook-endpoint'
 
 /**
  * The webhook endpoint form fields — Name / URL / Active toggle / Events
@@ -95,6 +99,11 @@ export function WebhookEndpointFormFields({
           control={form.control}
           render={({ field }) => <EventPicker value={field.value} onChange={field.onChange} />}
         />
+        <FieldError
+          errors={
+            Array.isArray(errors.subscriptions) ? errors.subscriptions : [errors.subscriptions]
+          }
+        />
       </Field>
     </>
   )
@@ -103,8 +112,22 @@ export function WebhookEndpointFormFields({
 function EventPicker({ value, onChange }: { value: string[]; onChange: (next: string[]) => void }) {
   const { t } = useTranslation()
   const [customEvent, setCustomEvent] = useState('')
-  const allBuiltIn = WEBHOOK_EVENT_GROUPS.flatMap((g) => g.events)
-  const customEvents = value.filter((e) => !allBuiltIn.includes(e))
+  const [customEventInvalid, setCustomEventInvalid] = useState(false)
+  const { data: catalog, isPending, isError, refetch } = useWebhookEventCatalog()
+  const events = catalog?.data ?? []
+  const subscribed = new Set(value)
+  const declared = new Set(events.map((event) => event.name))
+  const customEvents = value.filter((event) => !declared.has(event))
+
+  // A deprecated event is offered only to an endpoint still subscribed to it,
+  // so it can be swapped for its replacement but never newly picked.
+  const groups = new Map<string, typeof events>()
+  for (const event of events) {
+    if (event.deprecated && !subscribed.has(event.name)) continue
+    const group = groups.get(event.group)
+    if (group) group.push(event)
+    else groups.set(event.group, [event])
+  }
 
   function toggle(event: string) {
     onChange(value.includes(event) ? value.filter((e) => e !== event) : [...value, event])
@@ -113,8 +136,13 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
   function addCustom() {
     const trimmed = customEvent.trim()
     if (!trimmed || value.includes(trimmed)) return
+    if (!isWebhookEventPattern(trimmed)) {
+      setCustomEventInvalid(true)
+      return
+    }
     onChange([...value, trimmed])
     setCustomEvent('')
+    setCustomEventInvalid(false)
   }
 
   return (
@@ -125,26 +153,52 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
           : t('admin.pages.settings.webhooks.events_count', { count: value.length })}
       </div>
       <div className="flex max-h-72 flex-col gap-4 overflow-y-auto p-3">
-        {WEBHOOK_EVENT_GROUPS.map((group) => (
-          <div key={group.labelKey} className="flex flex-col gap-1">
+        {isPending && <p className="text-xs text-muted-foreground">{t('admin.common.loading')}</p>}
+        {isError && (
+          <Alert variant="destructive" className="has-data-[slot=alert-action]:pr-28">
+            <CircleAlertIcon />
+            <AlertDescription>
+              {t('admin.pages.settings.webhooks.events_load_failed')}
+            </AlertDescription>
+            <AlertAction>
+              <Button type="button" variant="outline" size="sm" onClick={() => refetch()}>
+                {t('admin.common.retry')}
+              </Button>
+            </AlertAction>
+          </Alert>
+        )}
+        {[...groups].map(([group, groupEvents]) => (
+          <div key={group} className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              {t(group.labelKey)}
+              {translatedLabel('admin.pages.settings.webhooks.event_groups', group)}
             </span>
             <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-              {group.events.map((event) => {
-                const checkboxId = `webhook-event-${event.replace(/[^a-z0-9]/gi, '-')}`
+              {groupEvents.map((event) => {
+                const checkboxId = `webhook-event-${event.name.replace(/[^a-z0-9]/gi, '-')}`
                 return (
                   <label
-                    key={event}
+                    key={event.name}
                     htmlFor={checkboxId}
                     className="flex cursor-pointer items-center gap-2 rounded p-1 text-sm hover:bg-accent"
                   >
                     <Checkbox
                       id={checkboxId}
-                      checked={value.includes(event)}
-                      onCheckedChange={() => toggle(event)}
+                      checked={subscribed.has(event.name)}
+                      onCheckedChange={() => toggle(event.name)}
                     />
-                    <span className="font-mono text-xs">{event}</span>
+                    <span className="font-mono text-xs">{event.name}</span>
+                    {event.credential && (
+                      <Badge variant="outline">
+                        {t('admin.pages.settings.webhooks.events_credential')}
+                      </Badge>
+                    )}
+                    {event.deprecated && (
+                      <Badge variant="secondary">
+                        {t('admin.pages.settings.webhooks.events_deprecated', {
+                          event: event.replaced_by,
+                        })}
+                      </Badge>
+                    )}
                   </label>
                 )
               })}
@@ -175,22 +229,31 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
         )}
       </div>
 
-      <div className="flex items-center gap-2 border-t border-border p-3">
-        <Input
-          placeholder={t('admin.pages.settings.webhooks.events_custom_input_placeholder')}
-          value={customEvent}
-          onChange={(e) => setCustomEvent(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              addCustom()
-            }
-          }}
-          className="font-mono text-xs"
-        />
-        <Button type="button" variant="outline" size="sm" onClick={addCustom}>
-          {t('admin.actions.add')}
-        </Button>
+      <div className="flex flex-col gap-2 border-t border-border p-3">
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder={t('admin.pages.settings.webhooks.events_custom_input_placeholder')}
+            value={customEvent}
+            aria-invalid={customEventInvalid || undefined}
+            onChange={(e) => {
+              setCustomEvent(e.target.value)
+              setCustomEventInvalid(false)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                addCustom()
+              }
+            }}
+            className="font-mono text-xs"
+          />
+          <Button type="button" variant="outline" size="sm" onClick={addCustom}>
+            {t('admin.actions.add')}
+          </Button>
+        </div>
+        {customEventInvalid && (
+          <FieldError>{t('admin.fields.webhook_endpoint.subscriptions.invalid')}</FieldError>
+        )}
       </div>
     </div>
   )

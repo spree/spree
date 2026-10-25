@@ -129,7 +129,7 @@ module Spree
         # Password login is not available through an OIDC provider — the browser
         # redirect is the only entry point.
         def authenticate
-          failure(Spree.t('errors.messages.oidc_requires_redirect'))
+          failure(I18n.t('spree.errors.messages.oidc_requires_redirect'))
         end
 
         # Completes the login started by +#authorization_url+: exchanges the
@@ -138,13 +138,13 @@ module Spree
         # @return [Spree::ServiceModule::Result]
         def callback
           code = params[:code]
-          return authentication_failure(Spree.t('errors.messages.oidc_missing_code')) if code.blank?
+          return authentication_failure(I18n.t('spree.errors.messages.oidc_missing_code')) if code.blank?
 
           claims = verify_id_token(exchange_code_for_tokens(code).fetch('id_token'))
           resolve_user(claims)
         rescue StandardError => e
           Rails.logger.error("[Spree] OIDC callback failed for #{config[:label] || config[:issuer]}: #{e.message}")
-          authentication_failure(Spree.t('errors.messages.oidc_authentication_failed'))
+          authentication_failure(I18n.t('spree.errors.messages.oidc_authentication_failed'))
         end
 
         # True when the last +#callback+ failed because no account here is
@@ -168,7 +168,7 @@ module Spree
         #    every member of a corporate tenant would become store staff.
         def resolve_user(claims)
           subject = claims['sub']
-          return authentication_failure(Spree.t('errors.messages.oidc_authentication_failed')) if subject.blank?
+          return authentication_failure(I18n.t('spree.errors.messages.oidc_authentication_failed')) if subject.blank?
 
           identity = Spree::UserIdentity.find_by(
             provider: registry_key,
@@ -191,7 +191,7 @@ module Spree
 
         def not_provisioned_failure
           @account_not_provisioned = true
-          failure(Spree.t('errors.messages.oidc_account_not_provisioned'))
+          failure(I18n.t('spree.errors.messages.oidc_account_not_provisioned'))
         end
 
         # Only an email the provider asserts as verified may claim an existing

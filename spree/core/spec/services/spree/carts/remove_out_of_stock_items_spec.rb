@@ -25,7 +25,7 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
 
     it 'removes line item and returns discontinued message' do
       _cart, messages, _warnings = execute.value
-      expect(messages.to_sentence).to eq(Spree.t('cart_line_item.discontinued', li_name: product.name))
+      expect(messages.to_sentence).to eq(I18n.t('spree.cart_line_item.discontinued', li_name: product.name))
     end
 
     it 'returns structured warning with line_item_removed code' do
@@ -41,7 +41,7 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
 
     it 'removes line item and returns out of stock message' do
       _cart, messages, _warnings = execute.value
-      expect(messages.to_sentence).to eq(Spree.t('cart_line_item.out_of_stock', li_name: product.name))
+      expect(messages.to_sentence).to eq(I18n.t('spree.cart_line_item.out_of_stock', li_name: product.name))
     end
 
     it 'returns structured warning with line_item_removed code' do
@@ -56,7 +56,7 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
 
     it 'removes line item and returns discontinued message' do
       _cart, messages, _warnings = execute.value
-      expect(messages.to_sentence).to eq(Spree.t('cart_line_item.discontinued', li_name: product.name))
+      expect(messages.to_sentence).to eq(I18n.t('spree.cart_line_item.discontinued', li_name: product.name))
     end
   end
 
@@ -65,7 +65,7 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
 
     it 'removes line item and returns discontinued message' do
       _cart, messages, _warnings = execute.value
-      expect(messages.to_sentence).to eq(Spree.t('cart_line_item.discontinued', li_name: product.name))
+      expect(messages.to_sentence).to eq(I18n.t('spree.cart_line_item.discontinued', li_name: product.name))
     end
   end
 
@@ -74,7 +74,7 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
 
     it 'removes line item and returns discontinued message' do
       _cart, messages, _warnings = execute.value
-      expect(messages.to_sentence).to eq(Spree.t('cart_line_item.discontinued', li_name: variant.product.name))
+      expect(messages.to_sentence).to eq(I18n.t('spree.cart_line_item.discontinued', li_name: variant.product.name))
     end
   end
 

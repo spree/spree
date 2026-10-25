@@ -93,7 +93,7 @@ module Spree
       result = subject.call(fulfillment: fulfillment)
 
       expect(result.success?).to eq(false)
-      expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.cannot_cancel'))
+      expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.cannot_cancel'))
       expect(fulfillment.reload).to be_fulfilled
     end
 

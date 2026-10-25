@@ -13,7 +13,7 @@ module Spree
       attr_reader :shipping_label
 
       # @param owner [Spree::Fulfillment, Spree::Return]
-      # @param file [ActionDispatch::Http::UploadedFile, String] the file, or a signed blob id from a direct upload
+      # @param file [ActionDispatch::Http::UploadedFile, String] the file, or a signed id from POST /files
       # @param tracking_number [String] the number printed on the label
       # @param carrier [String, nil] free text; detected from the number when omitted
       # @param service [String, nil]
@@ -41,15 +41,15 @@ module Spree
       private
 
       def ensure_recordable
-        failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
-        failure(owner, Spree.t('shipping_labels.errors.tracking_number_required')) if tracking_number.blank?
-        failure(owner, Spree.t('shipping_labels.errors.file_required')) if file.blank?
+        failure(owner, I18n.t('spree.shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
+        failure(owner, I18n.t('spree.shipping_labels.errors.tracking_number_required')) if tracking_number.blank?
+        failure(owner, I18n.t('spree.shipping_labels.errors.file_required')) if file.blank?
 
         case owner
         when Spree::Fulfillment
-          failure(owner, Spree.t('fulfillments.errors.cannot_purchase_label')) if owner.canceled? || owner.delivered?
+          failure(owner, I18n.t('spree.fulfillments.errors.cannot_purchase_label')) if owner.canceled? || owner.delivered?
         when Spree::Return
-          failure(owner, Spree.t('shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
+          failure(owner, I18n.t('spree.shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
         end
       end
 
@@ -69,7 +69,7 @@ module Spree
         failure(@shipping_label) unless @shipping_label.save
       end
 
-      # A direct-upload blob carries the type the client declared, which the
+      # An uploaded blob carries the type the client declared, which the
       # attachment validator re-decides from the bytes; either way the
       # extension is the merchant-visible answer, so it wins when it names a
       # format Spree knows.

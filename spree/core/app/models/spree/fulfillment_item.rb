@@ -15,11 +15,7 @@ module Spree
       belongs_to :line_item, class_name: 'Spree::LineItem'
     end
 
-    scope :backordered, -> { where status: 'backordered' }
-    scope :on_hand, -> { where status: 'on_hand' }
     scope :on_hand_or_backordered, -> { where status: ['backordered', 'on_hand'] }
-    scope :shipped, -> { where status: 'shipped' }
-    scope :returned, -> { where status: 'returned' }
     scope :backordered_per_variant, ->(stock_level) do
       includes(:fulfillment, :order).
         where.not(Spree::Fulfillment.table_name => { status: 'canceled' }).
@@ -109,6 +105,17 @@ module Spree
       split.quantity = extract_quantity
       original_inventory_unit.quantity -= extract_quantity
       split
+    end
+
+    # `dup` copies the foreign keys but not the loaded records, so every copy
+    # made while packing and splitting would look its line item and variant
+    # up again.
+    def initialize_dup(other)
+      super
+      %i[line_item variant].each do |name|
+        association = other.association(name)
+        self.association(name).target = association.target if association.loaded?
+      end
     end
 
     # This will fail if extract >= available_quantity

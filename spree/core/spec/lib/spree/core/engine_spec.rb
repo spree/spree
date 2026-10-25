@@ -29,4 +29,13 @@ RSpec.describe Spree::Core::Engine do
       expect(Spree.hooks.for('exchanges.create.validate').map(&:class)).to eq([Spree::Returns::EligibilityValidator])
     end
   end
+
+  describe "'spree.deprecated_aliases.skip_eager_load' initializer" do
+    it 'keeps every deprecated alias file out of eager loading, so booting does not warn' do
+      paths = described_class::DEPRECATED_ALIAS_FILES.map { |path| described_class.root.join(path).to_s }
+
+      expect(paths).to all(satisfy { |path| File.exist?(path) })
+      expect(Rails.autoloaders.main.send(:eager_load_exclusions)).to include(*paths)
+    end
+  end
 end

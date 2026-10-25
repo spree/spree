@@ -7,17 +7,15 @@ module Spree
         # The file is streamed through +download_url+, never linked to storage.
         class ShippingLabelSerializer < V3::BaseSerializer
           typelize owner_id: :string,
-                   owner_type: [:string, enum: Spree::ShippingLabel::OWNER_TYPES],
-                   source: [:string, enum: Spree::ShippingLabel::SOURCES],
+                   owner_type: [:string, enum: Spree::ShippingLabel::OWNER_TYPES.map { |type| Spree::Base.polymorphic_api_type(type) }, enum_type_name: 'ShippingLabelOwnerType'],
+                   source: [:string, enum: Spree::ShippingLabel::SOURCES, enum_type_name: 'ShippingLabelSource'],
                    status: [:string, enum: Spree::ShippingLabel.statuses, enum_type_name: 'ShippingLabelStatus'],
                    carrier: [:string, nullable: true],
                    carrier_name: [:string, nullable: true],
                    service: [:string, nullable: true],
                    tracking_number: [:string, nullable: true],
-                   cost: :string,
-                   currency: [:string, nullable: true],
-                   display_cost: :string,
-                   format: [:string, nullable: true],
+                   currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   format: [:string, nullable: true, enum: Spree::ShippingLabel::FORMATS, enum_type_name: 'ShippingLabelFormat'],
                    external_id: [:string, nullable: true],
                    integration_id: [:string, nullable: true],
                    download_url: [:string, nullable: true],
@@ -28,31 +26,20 @@ module Spree
           attributes :source, :status, :carrier, :carrier_name, :service, :tracking_number, :currency, :format,
                      :external_id, :metadata, refunded_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :owner_id do |shipping_label|
-            shipping_label.owner&.prefixed_id
-          end
+          prefixed_id_attributes :owner
 
           attribute :owner_type do |shipping_label|
-            shipping_label.owner_type == 'Spree::Return' ? 'return' : 'fulfillment'
+            Spree::Base.polymorphic_api_type(shipping_label.owner_type)
           end
 
-          attribute :cost do |shipping_label|
-            shipping_label.cost.to_s
-          end
+          money_attributes :cost, currency: ->(label) { label.currency.presence || label.store.default_currency }
+          typelize cost: [:string, nullable: false]
 
-          attribute :display_cost do |shipping_label|
-            shipping_label.display_cost.to_s
-          end
-
-          attribute :integration_id do |shipping_label|
-            shipping_label.integration&.prefixed_id
-          end
+          prefixed_id_attributes :integration
 
           # Whether the file is still being fetched from the carrier; the
           # download proxies the provider's copy meanwhile.
-          attribute :file_pending do |shipping_label|
-            shipping_label.file_pending?
-          end
+          attribute :file_pending, &:file_pending?
 
           # Our own endpoint rather than a storage URL: the controller streams
           # the bytes, so admin auth runs on every print.

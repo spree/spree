@@ -1,4 +1,6 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
+import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf } from '@spree/core'
+import { isPositiveMoney, Money, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -46,8 +48,9 @@ import {
 
 // Statuses that still offer an action. A terminal record would otherwise
 // show a menu button that opens onto nothing.
-const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
-const CLAIM_ACTIONABLE = ['open', 'approved']
+const EXCHANGE_ACTIONABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved', 'received'])
+const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
+const EXCHANGE_CANCELABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved'])
 
 /** Exchanges on an order, with the actions available at each status. */
 export function OrderExchangesCard({ order }: { order: Order }) {
@@ -56,6 +59,10 @@ export function OrderExchangesCard({ order }: { order: Order }) {
   const confirm = useConfirm()
   const { data } = useOrderExchanges(orderId)
   const { create, approve, receive, fulfill, cancel } = useExchangeActions(orderId)
+  // Fulfilling settles money on what came back, so the API wants the refunds
+  // permission for it; without it the action is not offered.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
   const [creating, setCreating] = useState(false)
 
   const exchanges = data?.data ?? []
@@ -123,15 +130,32 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {exchange.status === 'received' && (
+                        {exchange.status === 'received' && canRefund && (
                           <DropdownMenuItem
-                            onClick={() => fulfill.mutate({ exchangeId: exchange.id })}
+                            onClick={async () => {
+                              // A dearer replacement leaves the customer owing
+                              // the difference, which fulfilling puts on the order.
+                              if (
+                                isPositiveMoney(exchange.price_difference) &&
+                                !(await confirm({
+                                  message: t(
+                                    'admin.pages.orders.detail.exchanges.confirm.balance_due',
+                                  ),
+                                  confirmLabel: t(
+                                    'admin.pages.orders.detail.exchanges.actions.fulfill',
+                                  ),
+                                }))
+                              ) {
+                                return
+                              }
+                              fulfill.mutate({ exchangeId: exchange.id })
+                            }}
                           >
                             <TruckIcon className="size-4" />
                             {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
                           </DropdownMenuItem>
                         )}
-                        {['requested', 'approved'].includes(exchange.status) && (
+                        {EXCHANGE_CANCELABLE.includes(exchange.status) && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -181,7 +205,9 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.exchanges.price_difference')}
                 </span>
-                <span className="font-medium">{exchange.display_price_difference}</span>
+                <span className="font-medium">
+                  <Money amount={exchange.price_difference} currency={order.currency} />
+                </span>
               </CardFooter>
             </Card>
           ))}
@@ -209,6 +235,10 @@ export function OrderClaimsCard({ order }: { order: Order }) {
   const confirm = useConfirm()
   const { data } = useOrderClaims(orderId)
   const { create, approve, resolve, deny, cancel } = useClaimActions(orderId)
+  // A resolution may pay the customer back, which takes the refunds
+  // permission; resolving is left to staff who hold it.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
   const [creatingClaim, setCreatingClaim] = useState(false)
   const [resolving, setResolving] = useState<Claim | null>(null)
 
@@ -267,13 +297,13 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.approve')}
                           </DropdownMenuItem>
                         )}
-                        {claim.status === 'approved' && (
+                        {claim.status === 'approved' && canRefund && (
                           <DropdownMenuItem onClick={() => setResolving(claim)}>
                             <BanknoteIcon className="size-4" />
                             {t('admin.pages.orders.detail.claims.actions.resolve')}
                           </DropdownMenuItem>
                         )}
-                        {['open', 'approved'].includes(claim.status) && <DropdownMenuSeparator />}
+                        {CLAIM_ACTIONABLE.includes(claim.status) && <DropdownMenuSeparator />}
                         {claim.status === 'open' && (
                           <DropdownMenuItem
                             variant="destructive"
@@ -293,7 +323,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.claims.actions.deny')}
                           </DropdownMenuItem>
                         )}
-                        {['open', 'approved'].includes(claim.status) && (
+                        {CLAIM_ACTIONABLE.includes(claim.status) && (
                           <DropdownMenuItem
                             variant="destructive"
                             onClick={async () => {
@@ -341,7 +371,9 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.returns.refund_total')}
                 </span>
-                <span className="font-medium">{claim.display_refund_total}</span>
+                <span className="font-medium">
+                  <Money amount={claim.refund_total} currency={order.currency} />
+                </span>
               </CardFooter>
             </Card>
           ))}

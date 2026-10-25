@@ -181,13 +181,6 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
       Spree::Current.store = nil
     end
 
-    it 'is reachable through the store association' do
-      custom_field_definition = create(:custom_field_definition, store: other_store)
-
-      expect(other_store.custom_field_definitions).to include(custom_field_definition)
-      expect(@default_store.custom_field_definitions).not_to include(custom_field_definition)
-    end
-
     it 'allows the same namespace and key in two stores' do
       create(:custom_field_definition, store: @default_store, resource_type: 'Spree::Product',
                                        namespace: 'custom', key: 'material')
@@ -216,15 +209,6 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
 
       expect(colliding).not_to be_valid
       expect(colliding.errors[:filter_key]).to be_present
-    end
-
-    it 'allows the same filter_key in a different store' do
-      create(:custom_field_definition, store: @default_store, resource_type: 'Spree::Product',
-                                       namespace: 'a_b', key: 'c')
-      other_store = build(:custom_field_definition, store: create(:store), resource_type: 'Spree::Product',
-                                                    namespace: 'a', key: 'b_c')
-
-      expect(other_store).to be_valid
     end
 
     it 'allows the same namespace/key split on a different resource type' do

@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { AddressOwnerSchema } from './AddressOwner';
 
 export const AddressSchema = z.object({
   id: z.string(),
@@ -20,17 +21,14 @@ export const AddressSchema = z.object({
   quick_checkout: z.boolean(),
   is_default_billing: z.boolean(),
   is_default_shipping: z.boolean(),
-  state_abbr: z.string().nullable(),
-  country_iso: z.string(),
   state_name: z.string().nullable(),
+  owner: AddressOwnerSchema.nullable(),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
   updated_at: z.string(),
   latitude: z.number().nullable(),
   longitude: z.number().nullable(),
   customer_id: z.string().nullable(),
-  owner_id: z.string().nullable(),
-  owner_type: z.string().nullable(),
 });
 
 export type Address = z.infer<typeof AddressSchema>;

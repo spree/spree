@@ -28,7 +28,7 @@ module Spree
         # Preferences
         #
         MATCH_POLICIES = %w(any all none)
-        preference :match_policy, :string, default: MATCH_POLICIES.first
+        preference :match_policy, :string, default: MATCH_POLICIES.first, choices: MATCH_POLICIES
 
         #
         # Attributes
@@ -47,10 +47,6 @@ module Spree
 
         def eligible_product_ids
           @eligible_product_ids ||= product_promotion_rules.pluck(:product_id)
-        end
-
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, _options = {})

@@ -68,7 +68,7 @@ RSpec.describe 'Spree::Products nested attributes' do
 
   describe 'media given as a library file' do
     let(:product) { create(:product, store: store) }
-    let(:library_file) { create(:image, viewable: create(:product, store: store)) }
+    let(:library_file) { create(:media, viewable: create(:product, store: store)) }
 
     it 'places a copy sharing the source file' do
       expect {
@@ -108,7 +108,7 @@ RSpec.describe 'Spree::Products nested attributes' do
 
     # The same tenancy rule the media endpoint enforces with a 404.
     it 'ignores a file from another store' do
-      foreign = create(:image, viewable: create(:product, store: create(:store)))
+      foreign = create(:media, viewable: create(:product, store: create(:store)))
 
       expect {
         Spree.product_update_workflow.call(

@@ -36,9 +36,12 @@ module Spree
   module Publishable
     extend ActiveSupport::Concern
 
+    LIFECYCLE_ACTIONS = { create: :created, update: :updated, delete: :deleted }.freeze
+
     included do
       class_attribute :publish_events, default: true
       class_attribute :lifecycle_events_enabled, default: false
+      class_attribute :lifecycle_event_actions, default: []
 
       after_update :mark_real_update_for_events
     end
@@ -76,6 +79,9 @@ module Spree
         events &= Array(options[:only]) if options[:only]
         events -= Array(options[:except]) if options[:except]
 
+        self.lifecycle_event_actions = events.map { |event| LIFECYCLE_ACTIONS.fetch(event) }
+        lifecycle_event_actions.each { |action| publishes_event(action) }
+
         if events.include?(:create)
           after_commit :publish_create_event, on: :create, if: :should_publish_events?
         end
@@ -85,9 +91,59 @@ module Spree
         end
 
         if events.include?(:delete)
-          before_destroy :capture_pre_destroy_payload, if: :should_publish_events?
+          before_destroy :capture_pre_destroy_payload, if: :lifecycle_publishing_enabled?
           after_commit :publish_delete_event, on: :destroy, if: :should_publish_events?
         end
+
+        after_save :note_lifecycle_write
+        after_destroy :note_lifecycle_destroy
+        after_commit :close_lifecycle_write
+        after_rollback :close_lifecycle_write
+      end
+
+      # A subclass publishes its lifecycle events under its own prefix, which may
+      # differ from its parent's, so they are declared again for it.
+      def inherited(subclass)
+        super
+        subclass.lifecycle_event_actions.each { |action| subclass.publishes_event(action) }
+      end
+
+      # Declare events this model publishes, each carrying this model's Store
+      # serializer as its payload.
+      #
+      # @param names [Array<Symbol, String>] actions (`:placed`, prefixed with
+      #   {event_prefix}) or full dotted names (`'customer.password_reset'`)
+      # @param options [Hash] see {publishes_event}
+      # @return [void]
+      #
+      # @example
+      #   publishes_events :placed, :paid, :shipped
+      def publishes_events(*names, **options)
+        names.each { |name| publishes_event(name, **options) }
+      end
+
+      # Declare one event this model publishes. Publishing a name no model
+      # declared raises in development and test.
+      #
+      # @param name [Symbol, String] an action or a full dotted name
+      # @param serializer [String, nil] payload serializer class name, when the
+      #   payload is not this model's Store serializer
+      # @param credential [String, nil] for a payload carrying a live credential,
+      #   the permission key needed to point a webhook endpoint at it; such an
+      #   event reaches only endpoints that name it outright
+      # @param deprecated_alias_of [String, nil] the event this one duplicates
+      # @param webhook [Boolean] false for an event no webhook endpoint may
+      #   receive, even one subscribed to `*`
+      # @return [void]
+      #
+      # @example
+      #   publishes_event :canceled, serializer: 'Spree::Api::V3::OrderCanceledEventSerializer'
+      #   publishes_event 'customer.password_reset_requested', serializer: '...', credential: 'write_customers'
+      def publishes_event(name, serializer: nil, credential: nil, deprecated_alias_of: nil, webhook: true)
+        Spree::Events.catalog.declare(
+          self, name,
+          serializer: serializer, credential: credential, deprecated_alias_of: deprecated_alias_of, webhook: webhook
+        )
       end
 
       # Disable lifecycle events for this model
@@ -145,10 +201,13 @@ module Spree
     #   order.publish_event('order.placed', metadata: { user_id: 1 })
     #
     def publish_event(event_name, payload = nil, metadata = {})
+      # Checked even while events are disabled, so every spec that reaches a
+      # publish also proves the event is declared.
+      Spree::Events.catalog.verify_declared!(event_name)
       return unless Spree::Events.enabled?
 
       @_current_event_name = event_name
-      payload ||= event_payload
+      payload ||= event_payload_for(event_name)
       Spree::Events.publish(event_name, payload, metadata)
     ensure
       @_current_event_name = nil
@@ -161,20 +220,19 @@ module Spree
     #
     # @return [Hash]
     def event_payload
-      serializer = event_serializer_class
+      build_event_payload(event_serializer_class)
+    end
 
-      unless serializer
-        return {
-          id: respond_to?(:prefixed_id) ? prefixed_id : id,
-          created_at: created_at&.iso8601,
-          updated_at: updated_at&.iso8601
-        }
-      end
-
-      # Use as_json to ensure all values are JSON-safe primitives.
-      # Alba's to_h can return raw Ruby objects (e.g., Spree::Money) which
-      # ActiveJob cannot serialize for async event subscribers.
-      serializer.new(self, params: event_serializer_params).to_h.as_json
+    # The payload for one event, built with the serializer the catalog declares
+    # for it, falling back to this model's Store serializer.
+    #
+    # @param event_name [String]
+    # @param params [Hash] extra serializer params the event serializer reads,
+    #   e.g. the reset token of a password reset request
+    # @return [Hash]
+    def event_payload_for(event_name, **params)
+      serializer = Spree::Events.catalog.find(event_name)&.serializer_name&.safe_constantize
+      build_event_payload(serializer || event_serializer_class, params)
     end
 
     # Find the event serializer class for this model
@@ -223,6 +281,21 @@ module Spree
 
     private
 
+    def build_event_payload(serializer, params = {})
+      unless serializer
+        return {
+          id: respond_to?(:prefixed_id) ? prefixed_id : id,
+          created_at: created_at&.iso8601,
+          updated_at: updated_at&.iso8601
+        }
+      end
+
+      # Use as_json to ensure all values are JSON-safe primitives.
+      # Alba's to_h can return raw Ruby objects (e.g., Spree::Money) which
+      # ActiveJob cannot serialize for async event subscribers.
+      serializer.new(self, params: event_serializer_params.merge(params)).to_h.as_json
+    end
+
     # Build params for V3 serializers
     #
     # @return [Hash]
@@ -240,7 +313,48 @@ module Spree
     end
 
     def should_publish_events?
+      !silenced_lifecycle_write? && lifecycle_publishing_enabled?
+    end
+
+    def lifecycle_publishing_enabled?
       self.class.publish_events && Spree::Events.lifecycle_enabled?
+    end
+
+    # Lifecycle events publish at commit, which can come after the block that
+    # silenced the write ended — a default record created in its parent's
+    # `after_create` commits together with the parent. Each write records
+    # whether events were on, so a record written only while they were off
+    # stays silent at commit; one written with them on still publishes.
+    #
+    # The marker is read, never cleared, at commit: Rails may check several
+    # commit callbacks for one commit (a soft delete is also an update), and
+    # the order commit callbacks run in is the host app's setting. A commit or
+    # rollback only closes it, and the next write starts a fresh one.
+    def note_lifecycle_write
+      reopen_lifecycle_write
+      @_spree_lifecycle_write_enabled ||= Spree::Events.lifecycle_enabled?
+    end
+
+    # A destroy commits as the delete event alone, so an earlier update made
+    # with events on must not carry it through.
+    def note_lifecycle_destroy
+      reopen_lifecycle_write
+      @_spree_lifecycle_write_enabled = Spree::Events.lifecycle_enabled?
+    end
+
+    def silenced_lifecycle_write?
+      @_spree_lifecycle_write_enabled == false
+    end
+
+    def close_lifecycle_write
+      @_spree_lifecycle_write_closed = true
+    end
+
+    def reopen_lifecycle_write
+      return unless @_spree_lifecycle_write_closed
+
+      @_spree_lifecycle_write_closed = false
+      @_spree_lifecycle_write_enabled = nil
     end
 
     # True when this commit was caused only by `touch` — no real save ran

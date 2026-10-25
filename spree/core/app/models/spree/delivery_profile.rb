@@ -13,6 +13,7 @@ module Spree
     include Spree::HasListPosition
 
     has_prefix_id :fp
+    search_by :name
 
     acts_as_list scope: :store
 
@@ -121,6 +122,24 @@ module Spree
     def default_origin_group
       delivery_origin_groups.first
     end
+
+    # How many products use this profile. Counted for every profile of a
+    # lazily preloaded list in one grouped query, since loading the products
+    # themselves to count them would fetch the whole catalog.
+    #
+    # @return [Integer]
+    def products_count
+      return @products_count if defined?(@products_count)
+
+      profiles = lazy_preload_context&.records.presence || [self]
+      counts = Spree::Product.where(delivery_profile_id: profiles.map(&:id)).group(:delivery_profile_id).count
+      profiles.each { |profile| profile.products_count = counts.fetch(profile.id, 0) }
+      @products_count
+    end
+
+    protected
+
+    attr_writer :products_count
 
     private
 

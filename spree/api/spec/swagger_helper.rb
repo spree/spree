@@ -5,6 +5,7 @@ require 'rswag/specs'
 
 # Load OpenAPI helpers
 require 'spree/api/openapi/schema_helper'
+require 'spree/api/openapi/filter_documentation'
 
 RSpec.configure do |config|
   # Output to the main spree docs directory at /docs/api-reference/
@@ -166,7 +167,9 @@ RSpec.configure do |config|
         { name: 'Custom Fields', description: 'Custom field definitions for products, variants, customers, and other resources' },
         { name: 'Customer Groups', description: 'Customer groups for segmenting customers (e.g. wholesale, VIP) used by pricing and promotions' },
         { name: 'Customers', description: 'Customer profiles, addresses, credit cards, and store credits' },
+        { name: 'Email Templates', description: 'Customer email templates, the email layout and shared partials: drafts, previews, publishing and history' },
         { name: 'Exports', description: 'Async CSV exports of admin resources' },
+        { name: 'Files', description: 'Uploading the files that product media, imports, logos and documents use' },
         { name: 'Fulfillments', description: 'Order fulfillments — shipments, fulfill, cancel, resume, split' },
         { name: 'Gift Cards', description: 'Gift cards and gift card batches' },
         { name: 'Imports', description: 'Async CSV imports of admin resources, with per-row status and failed-row retry' },
@@ -178,7 +181,7 @@ RSpec.configure do |config|
         { name: 'Pricing', description: 'Prices and price lists for currency-, market-, and customer-group-specific pricing' },
         { name: 'Products', description: 'Products, taxons/categories, product custom field values, and bulk product operations' },
         { name: 'Policies', description: "The store's legal documents — terms of service, privacy, returns, shipping" },
-        { name: 'Reasons', description: 'Merchant-owned vocabularies for why a return, claim, refund or cancellation happened' },
+        { name: 'Reasons', description: 'Merchant-owned vocabularies for why a return, claim, refund, cancellation or tax exemption happened' },
         { name: 'Promotions', description: 'Promotions, promotion rules, promotion actions, and coupon codes' },
         { name: 'Refunds', description: 'Order refunds' },
         { name: 'Settings', description: 'Store-level settings — store profile, tags, and configuration' },
@@ -293,7 +296,7 @@ RSpec.configure do |config|
         { name: 'Profile', description: "The seller's own record — presentation, contact details, addresses, and tax registration" },
         { name: 'Stock Locations', description: 'Where the seller keeps stock, and so where their returns are sent' },
         { name: 'Team', description: 'Who runs this seller, and the invitations nobody has accepted yet' },
-        { name: 'Uploads', description: 'Presigned direct uploads for the documents onboarding asks for' }
+        { name: 'Files', description: 'Uploading the files a profile, a submission or an import uses' }
       ],
       components: {
         securitySchemes: {
@@ -322,9 +325,12 @@ RSpec.configure do |config|
     next unless respond_to?(:response) && response.present? && response.body.present?
 
     begin
+      # Parsed before the entry is created: a file download would otherwise
+      # leave an empty JSON media type on a response that never returns JSON.
+      example_body = JSON.parse(response.body, symbolize_names: true)
       content = response_metadata[:content] ||= {}
       content['application/json'] ||= {}
-      content['application/json'][:example] = JSON.parse(response.body, symbolize_names: true)
+      content['application/json'][:example] = example_body
     rescue JSON::ParserError
       # Skip if response body is not valid JSON
     end

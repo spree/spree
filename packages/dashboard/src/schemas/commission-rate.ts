@@ -3,18 +3,21 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
 } from '@spree/admin-sdk'
-import { blankToNull, i18n } from '@spree/dashboard-core'
+import { COMMISSION_KINDS, compareMoney, isDecimalString } from '@spree/core'
+import { blankToNull, fractionToPercent, i18n, percentToFraction } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-
-export const COMMISSION_RATE_KINDS = ['percentage', 'fixed'] as const
 
 const commissionRateFieldsSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   code: z.string().optional(),
   enabled: z.boolean(),
-  kind: z.enum(COMMISSION_RATE_KINDS),
-  value: z.coerce.number().min(0),
+  kind: z.enum(COMMISSION_KINDS),
+  // A canonical decimal string from a number input, sent as typed.
+  value: z
+    .string()
+    .trim()
+    .refine((value) => isDecimalString(value) && !value.startsWith('-')),
   // What a flat fee charges, keyed by currency. Held as strings because they
   // come from number inputs and an empty one means "not charged here".
   amounts: z.record(z.string(), z.string()).default({}),
@@ -47,7 +50,11 @@ const commissionRateFieldsSchema = z.object({
 })
 
 export const commissionRateFormSchema = commissionRateFieldsSchema.superRefine((values, ctx) => {
-  if (values.kind === 'percentage' && values.value > 100) {
+  if (
+    values.kind === 'percentage' &&
+    isDecimalString(values.value) &&
+    compareMoney(values.value, '100') > 0
+  ) {
     ctx.addIssue({
       code: 'custom',
       path: ['value'],
@@ -63,7 +70,7 @@ export const COMMISSION_RATE_DEFAULTS: CommissionRateFormValues = {
   code: '',
   enabled: true,
   kind: 'percentage',
-  value: 10,
+  value: '10',
   amounts: {},
   bounds: {},
   tax_inclusive: false,
@@ -78,7 +85,7 @@ export function commissionRateToFormValues(rate: CommissionRate): CommissionRate
     code: rate.code ?? '',
     enabled: rate.enabled,
     kind: (rate.kind as CommissionRateFormValues['kind']) ?? 'percentage',
-    value: Number(rate.value ?? 0),
+    value: rate.value ?? '0',
     amounts: Object.fromEntries(
       Object.entries(rate.amounts ?? {}).map(([code, amount]) => [code, String(amount ?? '')]),
     ),
@@ -93,8 +100,7 @@ export function commissionRateToFormValues(rate: CommissionRate): CommissionRate
     ),
     tax_inclusive: rate.tax_inclusive,
     include_shipping: rate.include_shipping,
-    commission_tax_rate:
-      rate.commission_tax_rate == null ? '' : String(Number(rate.commission_tax_rate) * 100),
+    commission_tax_rate: fractionToPercent(rate.commission_tax_rate),
     rules: (rate.rules ?? []).map((rule) => {
       const preferences = { ...(rule.preferences ?? {}) } as Record<string, unknown>
       // Top-level id lists are the picker source of truth; raw ids in
@@ -114,16 +120,13 @@ export function commissionRateToFormValues(rate: CommissionRate): CommissionRate
   }
 }
 
-function decimalOrNull(value: string | undefined): number | null {
-  const trimmed = value?.trim()
-  return trimmed ? Number(trimmed) : null
+function decimalOrNull(value: string | undefined): string | null {
+  return value?.trim() || null
 }
 
 export function commissionRateValuesToParams(
   v: CommissionRateFormValues,
 ): CommissionRateCreateParams & CommissionRateUpdateParams {
-  const taxPercentage = decimalOrNull(v.commission_tax_rate)
-
   return {
     name: v.name,
     code: blankToNull(v.code),
@@ -154,7 +157,7 @@ export function commissionRateValuesToParams(
         .filter((entry) => {
           const [currencyCode, bound] = entry as [
             string,
-            { min_amount: number | null; max_amount: number | null },
+            { min_amount: string | null; max_amount: string | null },
           ]
           const { min_amount, max_amount } = bound
           const hasBound = min_amount !== null || max_amount !== null
@@ -166,7 +169,7 @@ export function commissionRateValuesToParams(
           return true
         }),
     ),
-    commission_tax_rate: taxPercentage === null ? null : taxPercentage / 100,
+    commission_tax_rate: percentToFraction(v.commission_tax_rate) || null,
     rules: v.rules.map((rule) => {
       const preferences = { ...rule.preferences }
 

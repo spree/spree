@@ -25,6 +25,8 @@ module Spree
     MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count returns_location].freeze
 
     publishes_lifecycle_events
+    publishes_events :approved, :invited, :onboarding_reopened, :onboarding_started, :rejected,
+                     :submitted_for_review, :suspended
 
     # Where a seller is in its life on the marketplace. Transitions belong to
     # workflows (Spree::Sellers::Approve and friends) rather than a state
@@ -38,6 +40,12 @@ module Spree
     include Spree::HasStatus
     has_status :pending, :invited, :canceled, :onboarding, :ready_for_review,
                :approved, :rejected, :suspended, default: :pending
+
+    # The storefront lists approved sellers only, and a seller's contact
+    # address is back-office data.
+    self.whitelisted_ransackable_attributes = %w[status contact_email]
+    search_by :name
+    self.private_ransackable_attributes = { store: %w[status contact_email], seller: %w[status contact_email] }
 
     # Who remits consumer tax on this seller's sales. `seller` means they are
     # merchant of record; `platform` is the marketplace-facilitator case, and
@@ -62,7 +70,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     # The address knows it is a seller's from its owner, so it is read back
     # with the business rules — no personal name insisted on, the company line
     # required. Not `dependent: :destroy`: a seller is paranoid, so destroy is
@@ -195,6 +202,7 @@ module Spree
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :square_logo, service: Spree.public_storage_service_name
     has_one_attached :cover_photo, service: Spree.public_storage_service_name
+    signed_id_attachments :logo, :square_logo, :cover_photo
 
     #
     # Validations
@@ -302,10 +310,7 @@ module Spree
     #
     # @return [Array<Spree::SellerBalance>]
     def balances
-      pairs = seller_transfers.where.not(status: 'failed').
-              distinct.pluck(:currency, :settled_currency)
-
-      pairs.sort.map { |currency, settlement| Spree::SellerBalance.for(self, currency, settlement) }
+      Spree::SellerBalance.all_for(self)
     end
 
     # The seller's account with whichever provider pays them — a Stripe Connect
@@ -339,7 +344,7 @@ module Spree
     # A seller keeps no clock of their own: a date means whatever the
     # marketplace says it means, so their panel reads timestamps in the
     # store's zone rather than in whichever one their browser sits in.
-    delegate :preferred_timezone, to: :store, allow_nil: true
+    delegate :preferred_timezone, :timezone, to: :store, allow_nil: true
 
     # Sellers holding an account with one provider, for the reverse lookup a
     # provider webhook does — it knows the account, not the seller.
@@ -391,6 +396,10 @@ module Spree
     # returns; falls back to any active one, since a seller with none marked
     # still has to receive what customers send back.
     def returns_location
+      if stock_locations.loaded? || lazy_preload_context
+        return @returns_location ||= returns_location_from_loaded
+      end
+
       @returns_location ||= stock_locations.active.returns_enabled.order_default.first ||
                             stock_locations.active.order_default.first
     end
@@ -409,9 +418,24 @@ module Spree
       location.address
     end
 
+    # A team is small, so on a list its members are loaded for every seller
+    # at once rather than counted one seller at a time.
+    #
+    # @return [Integer] how many people are on this seller's team
+    def users_count
+      users.loaded? || lazy_preload_context ? users.to_a.size : users.count
+    end
+
     # @return [Integer] how many products this seller lists
     def products_count
-      @products_count ||= products.count
+      return @products_count if @products_count
+
+      siblings = lazy_preload_context&.records&.grep(self.class)
+      return @products_count = products.count if siblings.blank?
+
+      counts = Spree::Product.where(seller_id: siblings.map(&:id)).group(:seller_id).count
+      siblings.each { |seller| seller.preloaded_products_count = counts.fetch(seller.id, 0) }
+      @products_count
     end
 
     # Where this seller stands against the marketplace's checklist
@@ -457,7 +481,21 @@ module Spree
       onboarding_requirements.none?(&:blocking?)
     end
 
+    protected
+
+    def preloaded_products_count=(count)
+      @products_count = count
+    end
+
     private
+
+    # The same choice as the query in {#returns_location}, made over the
+    # preloaded locations.
+    def returns_location_from_loaded
+      active_locations = stock_locations.select(&:active?).sort_by { |location| [location.default? ? 0 : 1, location.name.to_s] }
+
+      active_locations.find(&:returns_enabled?) || active_locations.first
+    end
 
 
     def normalize_slug

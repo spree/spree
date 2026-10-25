@@ -25,15 +25,7 @@ RSpec.describe 'Cart Payments API', type: :request, swagger_doc: 'api-reference/
       parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          payment_method_id: { type: :string, example: 'pm_abc123', description: 'Payment method ID (must be a non-session payment method)' },
-          amount: { type: :string, example: '99.99', description: 'Payment amount (defaults to order total minus store credits)' },
-          metadata: { type: :object, description: 'Arbitrary metadata to attach to the payment' }
-        },
-        required: %w[payment_method_id]
-      }
+      request_body_for
 
       response '201', 'payment created' do
         let(:'x-spree-api-key') { api_key.token }

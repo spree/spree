@@ -12,7 +12,7 @@ const client = createAdminClient({
 // Every rule has to hold, so this charges 15% only on camera sales worth 50 or
 // more. Call ruleTypes() for the kinds this marketplace has.
 const commissionRate = await client.commissionRates.update('crate_a1b2c3', {
-  value: 15,
+  value: '15',
   position: 1,
   rules: [
     { type: 'category_rule', preferences: { category_ids: ['ctg_d4e5f6'] } },

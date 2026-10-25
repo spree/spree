@@ -31,6 +31,7 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
                 description: 'Comma-separated associations to expand (e.g., custom_field_definition). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., key,value,namespace). id is always included.'
+      filter_parameters_for
 
       response '200', 'custom fields found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -58,14 +59,7 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :product_id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[custom_field_definition_id value],
-        properties: {
-          custom_field_definition_id: { type: :string, description: 'Prefixed `cfdef_…` id' },
-          value: { description: 'Value matching the definition\'s `field_type`' }
-        }
-      }
+      request_body_for
 
       response '201', 'custom field created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -141,11 +135,7 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :product_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[value],
-        properties: { value: { description: 'New value' } }
-      }
+      request_body_for
 
       response '200', 'custom field updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

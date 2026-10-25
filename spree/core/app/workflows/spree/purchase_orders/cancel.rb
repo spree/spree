@@ -40,7 +40,7 @@ module Spree
       def ensure_cancelable
         return unless purchase_order.closed?
 
-        failure(purchase_order, Spree.t('purchase_order.errors.already_closed'))
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.already_closed'))
       end
 
       def uncount_awaited_units

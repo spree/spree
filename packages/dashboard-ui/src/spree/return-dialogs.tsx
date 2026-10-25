@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
-import { Field, FieldLabel } from '../ui/field'
+import { Field, FieldDescription, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -139,26 +139,28 @@ export function ReturnReceiveDialog({
   )
 }
 
-/** True when a received return is owed nothing, so completing it moves no money. */
-export function returnOwesNothing(refundableTotal: string): boolean {
-  return Number(refundableTotal) === 0
-}
-
 /**
  * Gives the money back: how much, and by what means. A return owed nothing
  * (a free gift sent back) is completed instead, with nothing to choose.
  *
  * The currency symbol comes from the caller — the operator's panel reads it
  * from the store it is looking at, and a seller has no currency of their own.
+ * `refundTaxTotal` is the formatted tax inside `refundableTotal`, shown so a
+ * merchant knows the pre-filled amount gives the tax back too.
  */
 export function ReturnRefundDialog({
   refundableTotal,
+  owesNothing,
+  refundTaxTotal,
   currencySymbol,
   onClose,
   onSubmit,
   pending = false,
 }: {
   refundableTotal: string
+  /** True when the return is owed nothing, so it is completed rather than refunded. */
+  owesNothing: boolean
+  refundTaxTotal?: string
   currencySymbol: string
   onClose: () => void
   onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
@@ -167,7 +169,6 @@ export function ReturnRefundDialog({
   const { t } = useTranslation()
   const [refundMethod, setRefundMethod] = useState<RefundMethod>('original_payment')
   const [amount, setAmount] = useState(refundableTotal)
-  const owesNothing = returnOwesNothing(refundableTotal)
 
   const methodOptions = [
     {
@@ -208,12 +209,19 @@ export function ReturnRefundDialog({
                   <InputGroupInput
                     id="refund-amount"
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     value={amount}
                     onChange={(event) => setAmount(event.target.value)}
                   />
                 </InputGroup>
+                {refundTaxTotal && (
+                  <FieldDescription>
+                    {t('admin.pages.orders.detail.returns.refund_includes_tax', {
+                      tax: refundTaxTotal,
+                    })}
+                  </FieldDescription>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="refund-method">

@@ -26,14 +26,16 @@ namespace :core do
 
   desc 'Migrate newsletter subscribers'
   task migrate_newsletter_subscribers: :environment do |_t, _args|
-    Spree.customer_class.where(accepts_email_marketing: true).in_batches(of: 500) do |user_batch|
-      subscriber_attributes = user_batch.pluck(:id, :email, :updated_at).map do |id, email, updated_at|
+    store_id = Spree::Store.default&.id
+
+    Spree.customer_class.where(accepts_email_marketing: true).in_batches(of: 500) do |customer_batch|
+      subscriber_attributes = customer_batch.pluck(:id, :email, :updated_at).map do |id, email, updated_at|
         {
           email: Spree::NewsletterSubscriber.new(email: email).email, # normalized email
-          user_id: id,
+          customer_id: id,
           verified_at: updated_at,
           verification_token: nil,
-          store_id: Spree::Store.default&.id,
+          store_id: store_id,
           updated_at: DateTime.current,
           created_at: DateTime.current
         }

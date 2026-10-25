@@ -1,15 +1,15 @@
-require_dependency 'spree/shipping_calculator'
-
 module Spree
   module Calculator::Shipping
     class PerItem < ShippingCalculator
       include Spree::Calculator::CurrencyAmounts
 
-      preference :amount, :decimal, default: 0
-      preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+      # Blank once its figure has moved into `amounts`, so the method quotes
+      # nothing outside the hash.
+      preference :amount, :money, default: 0, nullable: true
+      preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
       def self.description
-        Spree.t(:shipping_flat_rate_per_item)
+        I18n.t('spree.shipping_flat_rate_per_item')
       end
 
       def compute_package(package)

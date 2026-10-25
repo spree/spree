@@ -104,6 +104,8 @@ module Spree
         # accuse a completed sale of breaking a rule written after it.
         return [] if staff_initiated? || (is_a?(Spree::Order) && completed?)
 
+        ActiveRecord::Associations::Preloader.new(records: line_items.to_a, associations: { variant: :product }).call
+
         line_items.filter_map do |line_item|
           variant = line_item.variant
           next if variant.nil?

@@ -8,7 +8,7 @@ module Spree
 
           typelize id: :string, kind: [:string, comment: 'Requirement kind. Built-in: accept_terms, complete_profile, billing_address, returns_address, delivery_method, package_type, minimum_products, payout_account, required_custom_fields, policy, attestation, operator_review, document. Extensions may register more.'], name: :string,
                    description: [:string, nullable: true],
-                   required: :boolean, position: :number, status: [:string, enum: Spree::SellerRequirementStatus::STATUSES],
+                   required: :boolean, position: :number, status: [:string, enum: Spree::SellerRequirementStatus::STATUSES, enum_type_name: 'SellerRequirementState'],
                    blocking: :boolean, action_url: [:string, nullable: true],
                    blocker: ['{ state: string; message: string | null } | null'],
                    accepts_submissions: :boolean, requires_file: :boolean,
@@ -18,9 +18,7 @@ module Spree
 
           attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
 
-          attribute :blocking do |status|
-            status.blocking?
-          end
+          attribute :blocking, &:blocking?
 
           attribute :accepts_submissions do |status|
             status.requirement.class.accepts_submissions?
@@ -36,15 +34,11 @@ module Spree
 
           # The document this line asks for, so the panel can offer to create
           # exactly that policy. Null for every other kind.
-          attribute :required_policy_name do |status|
-            status.required_policy_name
-          end
+          attributes :required_policy_name
 
           # The marketplace terms this line asks the seller to accept. Null
           # for every other kind, and null while nothing has been written.
-          attribute :terms_html do |status|
-            status.terms_html
-          end
+          attributes :terms_html
 
           one :submission,
               resource: proc { Spree.api.seller_requirement_submission_serializer },

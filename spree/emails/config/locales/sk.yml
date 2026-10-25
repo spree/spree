@@ -1,0 +1,31 @@
+---
+sk:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Obnoviť heslo
+        expiry_notice: Tento odkaz na obnovenie hesla čoskoro vyprší. Ak ste o to nežiadali, nemusíte nič robiť.
+        greeting: Ahoj %{name},
+        ignore_notice: Ak ste nežiadali o obnovenie hesla, tento e-mail môžete pokojne ignorovať. Vaše heslo sa nezmení.
+        instructions: Dostali sme žiadosť o obnovenie vášho hesla. Kliknutím na tlačidlo nižšie si zvoľte nové heslo.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Ahoj,
+        ignore_disclaimer: Ak ste o to nežiadali, tento e-mail prosím ignorujte.
+        instructions: Kliknutím na tlačidlo nižšie overte svoju e-mailovú adresu.
+        message_copy_link: 'Ak tlačidlo nefunguje, skopírujte a vložte nasledujúci odkaz do svojho prehliadača:'
+        subject: Overte svoju e-mailovú adresu
+        verify_email_address_link: Overiť e-mailovú adresu
+    order_mailer:
+      payment_link_email:
+        message: Kliknutím na tlačidlo nižšie zaplaťte za svoju objednávku.
+        message_copy_link: 'Ak tlačidlo nefunguje, skopírujte a vložte nasledujúci odkaz do svojho prehliadača:'
+        pay_for_order: Zaplatiť za objednávku
+        subject: Platobný odkaz pre objednávku č. %{number}
+      store_owner_notification_email:
+        heading: Prijatá nová objednávka
+        instructions: Dostali ste novú objednávku.
+        order_summary: Súhrn objednávky %{number}
+        subject: "%{store_name} prijal novú objednávku"
+      subtotal: 'Medzisúčet:'
+      total: 'Celková suma objednávky:'

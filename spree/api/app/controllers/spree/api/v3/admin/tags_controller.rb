@@ -45,52 +45,60 @@ module Spree
 
           private
 
+          # The class name taggings store for the requested shorthand
+          # (`product` → `Spree::Product`), or nil when it is not taggable.
           def taggable_type
-            params[:taggable_type].to_s
+            @taggable_type ||= Spree::Base.polymorphic_type_for(params[:taggable_type], allowed_taggable_types)
           end
 
           def valid_taggable_type?
-            return true if allowed_taggable_types.include?(taggable_type)
+            return true if taggable_type
 
+            allowed = allowed_taggable_types.map { |type| Spree::Base.polymorphic_api_type(type) }
             render_error(
               code: 'invalid_taggable_type',
-              message: "taggable_type must be one of #{allowed_taggable_types.join(', ')}",
+              message: "taggable_type must be one of #{allowed.join(', ')}",
               status: :unprocessable_content
             )
             false
           end
 
-          # Tagging filter. Store-owned taggables (`Spree::Product`,
-          # `Spree::Order`) tenant their taggings by `store_id` via
-          # `acts_as_taggable_tenant`, so their vocabulary is bounded to the
-          # current store with a single indexed `tenant` filter. Global
-          # taggables like the customer/user type carry no store, so their tags
-          # are not store-scoped here.
+          # Tagging filter. A taggable declaring `acts_as_taggable_tenant :store_id`
+          # stores the owning store on each tagging, so its vocabulary is bounded
+          # to the current store with a single indexed `tenant` filter. Taggables
+          # without a store tenant are not store-scoped here.
           def taggings_conditions
             conditions = { taggable_type: taggable_type, context: 'tags' }
             conditions[:tenant] = current_store.id.to_s if store_tenanted_taggable?
             conditions
           end
 
-          # True for taggables whose taggings carry a store `tenant`
-          # (`acts_as_taggable_tenant :store_id`), i.e. store-owned records.
           def store_tenanted_taggable?
-            %w[Spree::Product Spree::Order].include?(taggable_type)
+            taggable_class.try(:tenant_column).to_s == 'store_id'
+          end
+
+          # `taggable_type` is already matched against `Spree.taggable_types`,
+          # so only a registered class name is ever constantized.
+          def taggable_class
+            taggable_type.constantize
           end
 
           # Per-type scope check for API-key principals: a key listing product
-          # tags needs `read_products`, order tags `read_orders`, etc. JWT
-          # admins are gated by store membership + CanCanCan, not scopes.
+          # tags needs `read_products`, order tags `read_orders`, etc.
+          #
+          # Asked of the credential, not of its kind: an OAuth grant carries
+          # no API key, so a check that began `return unless current_api_key`
+          # skipped itself entirely and handed an agent every order and
+          # customer tag the approver could see.
           def authorize_taggable_scope!
-            return unless current_api_key
-            return unless allowed_taggable_types.include?(taggable_type)
+            return unless taggable_type
 
             required = self.class.scope_for_taggable_type.fetch(taggable_type, 'read_all')
-            return if current_api_key.has_scope?(required)
+            return if holds_permission?(required)
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: "API key lacks scope: #{required}",
+              message: "Missing permission: #{required}",
               status: :forbidden,
               details: { required_scope: required }
             )
@@ -101,7 +109,7 @@ module Spree
           # list in an initializer without overriding this controller:
           #   Spree.taggable_types << 'MyApp::Seller'
           def allowed_taggable_types
-            Spree.taggable_types
+            Spree.taggable_types.map(&:to_s)
           end
         end
       end

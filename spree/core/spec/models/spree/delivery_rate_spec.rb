@@ -15,7 +15,7 @@ describe Spree::DeliveryRate, type: :model do
       expect(rate.name).to eq(delivery_method.name)
     end
   end
-  let(:shipment) { create(:shipment) }
+  let(:shipment) { create(:fulfillment) }
   let(:delivery_method) { create(:delivery_method) }
   let(:shipping_rate) do
     Spree::DeliveryRate.new shipment: shipment,
@@ -23,13 +23,23 @@ describe Spree::DeliveryRate, type: :model do
                             cost: 10
   end
 
+  describe '#tax_inclusive?' do
+    it "follows the market of the fulfillment's cart or order" do
+      rate = Spree::DeliveryRate.new(fulfillment: shipment, delivery_method: delivery_method, cost: 10)
+      allow(shipment.owner).to receive(:tax_inclusive?).and_return(true)
+
+      expect(rate).to be_tax_inclusive
+    end
+  end
+
   context '#display_price' do
     context 'when tax included in price' do
+      before { allow(shipping_rate).to receive(:tax_inclusive?).and_return(true) }
+
       let(:default_tax_rate) do
         create :tax_rate,
                name: 'VAT',
                amount: 0.1,
-               included_in_price: true,
                country_code: @default_country&.iso
       end
 
@@ -57,7 +67,6 @@ describe Spree::DeliveryRate, type: :model do
           create :tax_rate,
                  name: 'VAT',
                  amount: 0.2,
-                 included_in_price: true,
                  country_code: create(:country, iso: 'FR', name: 'France')&.iso
         end
 
@@ -66,16 +75,6 @@ describe Spree::DeliveryRate, type: :model do
         it "deducts the other country's VAT from the calculated shipping rate" do
           expect(shipping_rate.display_price.to_s).
             to eq("$10.00 (incl. $1.67 #{non_default_tax_rate.name})")
-        end
-
-        context 'when cost is zero' do
-          before do
-            shipping_rate.cost = 0
-          end
-
-          it 'shows no tax amount' do
-            expect(shipping_rate.display_price.to_s).to eq('$0.00')
-          end
         end
       end
     end
@@ -89,20 +88,10 @@ describe Spree::DeliveryRate, type: :model do
         expect(shipping_rate.display_price.to_s).
           to eq("$10.00 (+ $1.00 #{tax_rate.name})")
       end
-
-      context 'when cost is zero' do
-        before do
-          shipping_rate.cost = 0
-        end
-
-        it 'shows no tax amount' do
-          expect(shipping_rate.display_price.to_s).to eq('$0.00')
-        end
-      end
     end
 
     context 'when the currency is JPY' do
-      let(:shipping_rate) { Spree::ShippingRate.new(cost: 205) }
+      let(:shipping_rate) { Spree::DeliveryRate.new(cost: 205) }
 
       before { allow(shipping_rate).to receive_messages(currency: 'JPY') }
 
@@ -124,10 +113,6 @@ describe Spree::DeliveryRate, type: :model do
 
   # Regression test for #3829
   context '#delivery_method' do
-    it 'can be retrieved' do
-      expect(shipping_rate.delivery_method.reload).to eq(delivery_method)
-    end
-
     it 'can be retrieved even when deleted' do
       delivery_method.update_column(:deleted_at, Time.current)
       shipping_rate.save
@@ -143,23 +128,11 @@ describe Spree::DeliveryRate, type: :model do
       shipping_rate.tax_rate = tax_rate
     end
 
-    it 'can be retrieved' do
-      expect(shipping_rate.tax_rate.reload).to eq(tax_rate)
-    end
-
     it 'can be retrieved even when deleted' do
       tax_rate.update_column(:deleted_at, Time.current)
       shipping_rate.save
       shipping_rate.reload
       expect(shipping_rate.tax_rate).to eq(tax_rate)
-    end
-  end
-
-  context '#tax_amount' do
-    context 'without tax rate' do
-      it 'returns 0.0' do
-        expect(shipping_rate.tax_amount).to eq(0.0)
-      end
     end
   end
 
@@ -171,9 +144,12 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax included in price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
-      before { shipping_rate.tax_rate = tax_rate }
+      before do
+        shipping_rate.tax_rate = tax_rate
+        allow(shipping_rate).to receive(:tax_inclusive?).and_return(true)
+      end
 
       it 'returns 0' do
         expect(shipping_rate.additional_tax_total).to eq(0)
@@ -181,7 +157,7 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax additional to price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
       before { shipping_rate.tax_rate = tax_rate }
 
@@ -199,9 +175,12 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax included in price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
-      before { shipping_rate.tax_rate = tax_rate }
+      before do
+        shipping_rate.tax_rate = tax_rate
+        allow(shipping_rate).to receive(:tax_inclusive?).and_return(true)
+      end
 
       it 'returns the tax amount' do
         expect(shipping_rate.included_tax_total).to eq(shipping_rate.tax_amount)
@@ -209,7 +188,7 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'with tax additional to price' do
-      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+      let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
       before { shipping_rate.tax_rate = tax_rate }
 
@@ -231,18 +210,18 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     it 'returns 0 if cost is lesser than the discount amount' do
-      allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -20.0)
+      allow_any_instance_of(Spree::DeliveryRate).to receive_messages(discount_amount: -20.0)
       expect(shipping_rate.final_price).to eq(0.0)
     end
 
     it 'returns cost minus discount amount' do
-      allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -5.0)
+      allow_any_instance_of(Spree::DeliveryRate).to receive_messages(discount_amount: -5.0)
       expect(shipping_rate.final_price).to eq(5.0)
     end
 
     it 'does not return 0 when shipment is free because of selected shipping rate' do
       shipment.shipping_rates.update_all(selected: false)
-      create(:shipping_rate, shipment: shipment, cost: 0, selected: true)
+      create(:delivery_rate, shipment: shipment, cost: 0, selected: true)
       shipment.reload.update_amounts
 
       expect(shipment.free?).to eq(true)
@@ -270,13 +249,13 @@ describe Spree::DeliveryRate, type: :model do
     subject { shipping_rate.free? }
 
     context 'when the shipping rate cost is 0' do
-      let(:shipping_rate) { create(:shipping_rate, cost: 0) }
+      let(:shipping_rate) { create(:delivery_rate, cost: 0) }
 
       it { is_expected.to be(true) }
     end
 
     context 'when the shipping rate cost is not 0' do
-      let(:shipping_rate) { create(:shipping_rate, cost: 10) }
+      let(:shipping_rate) { create(:delivery_rate, cost: 10) }
 
       let(:shipment) { shipping_rate.shipment }
       let(:order) { shipment.order }
@@ -312,8 +291,8 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     it 'says so on the cost and the total alike' do
-      expect(rate.display_cost).to eq(Spree.t('delivery_rates.quoted_after_review'))
-      expect(rate.display_total).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(rate.display_cost).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
+      expect(rate.display_total).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
   end
 

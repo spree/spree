@@ -1,0 +1,36 @@
+---
+ja:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: パスワードをリセット
+        expiry_notice: このパスワードリセットリンクはまもなく期限切れになります。心当たりがない場合は、何もする必要はありません。
+        greeting: "%{name}様、こんにちは。"
+        ignore_notice: パスワードのリセットをリクエストしていない場合は、このメールを無視してかまいません。パスワードは変更されません。
+        instructions: パスワードのリセットのリクエストを受け付けました。下のボタンをクリックして新しいパスワードを設定してください。
+        subject: パスワード再設定の手順
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: こんにちは、
+        ignore_disclaimer: 心当たりがない場合は、このメールを無視してください。
+        instructions: 下のボタンをクリックしてメールアドレスを確認してください。
+        message_copy_link: ボタンが機能しない場合は、次のリンクをコピーしてブラウザに貼り付けてください：
+        subject: メールアドレスを確認してください
+        verify_email_address_link: メールアドレスを確認
+    order_mailer:
+      cancel_email:
+        subject: 注文のキャンセル
+      confirm_email:
+        subject: 注文確認
+      payment_link_email:
+        message: 下のボタンをクリックして注文のお支払いを行ってください。
+        message_copy_link: ボタンが機能しない場合は、次のリンクをコピーしてブラウザに貼り付けてください：
+        pay_for_order: 注文を支払う
+        subject: '注文 #%{number} の支払いリンク'
+      store_owner_notification_email:
+        heading: 新規注文を受け付けました
+        instructions: 新しい注文を受け付けました。
+        order_summary: 注文 %{number} の概要
+        subject: "%{store_name}が新規注文を受け付けました"
+      subtotal: 小計：
+      total: 注文合計：

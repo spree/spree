@@ -537,10 +537,9 @@ test.describe('price lists', () => {
     await dialog.getByRole('button', { name: /^save prices$/i }).click()
     await expect(dialog.getByText(/unsaved change/i)).toBeHidden({ timeout: 15_000 })
 
-    // Switch to EUR — the grid reloads with that currency's (empty) prices and
-    // formats in the EUR market locale (de: comma decimal). A period typed
-    // there is still a decimal point: `19.50` shows and saves as 19,50, never
-    // 1950.
+    // Switch to EUR — the grid reloads with that currency's (empty) prices,
+    // still in the admin's own (English) number format: `19.50` saves as
+    // 19.50, never 1950.
     await currencyTrigger.click()
     await page.getByRole('option', { name: 'EUR' }).click()
     await expect(currencyTrigger).toContainText('EUR')
@@ -548,27 +547,27 @@ test.describe('price lists', () => {
     await priceCell().dblclick()
     await priceCell().fill('19.50')
     await priceCell().press('Enter')
-    await expect(priceCell()).toHaveValue('19,50')
+    await expect(priceCell()).toHaveValue('19.50')
     await dialog.getByRole('button', { name: /^save prices$/i }).click()
     await expect(dialog.getByText(/unsaved change/i)).toBeHidden({ timeout: 15_000 })
 
-    // Reload EUR from the server, then enter a localized amount `55,55`; it
-    // must persist as 55.55 (not 5555).
+    // Reload EUR from the server, then enter `55,55`: a comma before two digits
+    // cannot be grouping, so it is read as the decimal and persists as 55.55,
+    // not 5555.
     await currencyTrigger.click()
     await page.getByRole('option', { name: 'USD' }).click()
     await expect(currencyTrigger).toContainText('USD')
     await currencyTrigger.click()
     await page.getByRole('option', { name: 'EUR' }).click()
     await expect(currencyTrigger).toContainText('EUR')
-    await expect(priceCell()).toHaveValue(/^19,50?$/, { timeout: 15_000 })
+    await expect(priceCell()).toHaveValue(/^19\.50?$/, { timeout: 15_000 })
 
     await priceCell().dblclick()
     await priceCell().fill('55,55')
     await priceCell().press('Enter')
     await dialog.getByRole('button', { name: /^save prices$/i }).click()
     await expect(dialog.getByText(/unsaved change/i)).toBeHidden({ timeout: 15_000 })
-    // Round-trips as the comma-decimal `55,55`, proving locale-aware parsing.
-    await expect(priceCell()).toHaveValue('55,55')
+    await expect(priceCell()).toHaveValue('55.55')
 
     // Switch back to USD — its value is independent of the EUR edit and shown
     // period-decimal.

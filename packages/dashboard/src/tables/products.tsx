@@ -1,5 +1,5 @@
 import type { Channel } from '@spree/admin-sdk'
-import { defineTable, formatPrice, Subject } from '@spree/dashboard-core'
+import { ASSIGNABLE_PRODUCT_STATUSES, defineTable, formatPrice } from '@spree/dashboard-core'
 import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -13,7 +13,7 @@ defineTable('products', {
   docsPath: 'products/creating-products',
   description: i18n.t('admin.table_descriptions.products'),
   title: i18n.t('admin.nav.products'),
-  searchParam: 'multi_search',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'updated_at', direction: 'desc' },
   emptyIcon: <PackageIcon className="size-8 text-muted-foreground" />,
@@ -45,11 +45,10 @@ defineTable('products', {
       default: true,
       filterType: 'enum',
       quickFilter: true,
-      filterOptions: [
-        { value: 'draft', label: i18n.t('admin.pages.products.status_options.draft') },
-        { value: 'active', label: i18n.t('admin.fields.active.label') },
-        { value: 'archived', label: i18n.t('admin.pages.products.status_options.archived') },
-      ],
+      filterOptions: ASSIGNABLE_PRODUCT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.pages.products.status_options.${status}`),
+      })),
       render: (product) => <StatusBadge status={product.status} />,
     },
     {
@@ -111,7 +110,6 @@ defineTable('products', {
       filterable: true,
       default: true,
       filterType: 'number',
-      ransackAttribute: 'master_price',
       className: 'text-right tabular-nums whitespace-nowrap',
       render: (product) => formatPrice(product.price),
     },
@@ -121,7 +119,7 @@ defineTable('products', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: Subject.Product,
+      taggableType: 'product',
       default: false,
       render: (product) => <TagList tags={product.tags} />,
     },
@@ -133,8 +131,8 @@ defineTable('products', {
     // separate scope. Restoring this needs `filtersToRansack` to learn how to
     // emit a bare scope key, which is a change to the filter contract rather
     // than a column flag.
-    // Filter-only — Ransack joins through `products.taxons`, so the predicate
-    // emitted is `taxons_id_in`. We don't render a categories cell on the
+    // Filter-only — Ransack joins through `products.categories`, so the
+    // predicate emitted is `categories_id_in`. We don't render a categories cell on the
     // index to avoid expanding categories on every list refetch; users can
     // see attached categories on the product edit page.
     // On a marketplace this list holds the operator's own products and every
@@ -169,7 +167,7 @@ defineTable('products', {
       filterable: true,
       filterType: 'resource',
       filterResource: categoryAutocompleteProps('products-table-category-filter'),
-      ransackAttribute: 'taxons_id',
+      ransackAttribute: 'categories_id',
       displayable: false,
       default: false,
     },
@@ -179,7 +177,7 @@ defineTable('products', {
       sortable: false,
       filterable: true,
       filterType: 'resource',
-      filterResource: channelAutocompleteProps('products-table-channel-filter'),
+      filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channels_id',
       default: false,
       render: (product) => product.channels?.map((c: Channel) => c.name).join(', ') ?? '—',

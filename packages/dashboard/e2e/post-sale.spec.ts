@@ -58,7 +58,14 @@ test.describe('post-sale', () => {
       .getByRole('dialog')
       .getByRole('button', { name: /^refund$/i })
       .click()
-    await expect(returns.getByText(/^refunded$/i)).toBeVisible({ timeout: 15_000 })
+    // The status badge, and the footer naming what went back rather than what
+    // was owed.
+    await expect(
+      returns.locator('[data-slot="status-badge"]').filter({ hasText: /^refunded$/i }),
+    ).toBeVisible({ timeout: 15_000 })
+    await expect(
+      returns.locator('[data-slot="card-footer"]').getByText(/^refunded$/i),
+    ).toBeVisible()
 
     // The cross-order list is where the team sees what is still in flight.
     await page.goto(`/${creds.store_id}/returns`)
@@ -95,6 +102,39 @@ test.describe('post-sale', () => {
     await expect(page.getByRole('row').filter({ hasText: order.number })).toBeVisible({
       timeout: 15_000,
     })
+  })
+
+  test('resolves a claim with a refund once the amount is above zero', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createShippedOrder(page, creds.accessToken, 1)
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    const claims = card(page, /^claims/i)
+    await claims.getByRole('button', { name: /new claim/i }).click({ timeout: 15_000 })
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('spinbutton', { name: new RegExp(FIXTURE_PROMO_PRODUCT) }).fill('1')
+    await dialog.locator('#reason-claim-reasons').click()
+    await page.getByRole('option', { name: 'Never arrived' }).click()
+    await dialog.getByRole('button', { name: /new claim/i }).click()
+    await expect(claims.getByText(/^open$/i)).toBeVisible({ timeout: 15_000 })
+
+    await recordAction(page, /^claims/i, /^approve$/i)
+    await expect(claims.getByText(/^approved$/i)).toBeVisible({ timeout: 15_000 })
+
+    await recordAction(page, /^claims/i, /^resolve$/i)
+    const resolve = page.getByRole('dialog')
+    await expect(resolve.getByRole('heading', { name: /^resolve claim$/i })).toBeVisible()
+    const amount = resolve.getByLabel(/^refund amount$/i)
+    const submit = resolve.getByRole('button', { name: /^resolve$/i })
+
+    await amount.fill('0')
+    await expect(submit).toBeDisabled()
+    // Typed without the leading zero, as a number field allows.
+    await amount.fill('.5')
+    await expect(submit).toBeEnabled()
+    await submit.click()
+
+    await expect(claims.getByText(/^resolved$/i)).toBeVisible({ timeout: 15_000 })
   })
 
   test('lists exchanges store-wide', async ({ page }) => {

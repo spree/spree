@@ -7,8 +7,14 @@ module Spree
     # whole history, and a customer holding the button down should not be able
     # to queue a hundred of them. It is also the honest answer — the request
     # they already made is still being worked on.
+    #
+    # A request the customer raised themselves waits for confirmation from its
+    # email address instead of being queued, because it reaches guest orders
+    # placed at that address. Asking again while it waits sends the email again.
     class Create
       prepend Spree::ServiceModule::Base
+
+      CONFIRMATION_EVENT = 'data_request.confirmation_requested'.freeze
 
       # @param store [Spree::Store]
       # @param customer [Spree::Customer]
@@ -19,14 +25,18 @@ module Spree
       #   caller fulfils the request itself — the admin export renders the file
       #   inline for a waiting staffer, and queueing would additionally email
       #   the customer a copy of something they did not ask for
+      # @param confirm_by_email [Boolean] hold the request until it is
+      #   confirmed from its email address; true for the customer's own requests
+      # @param redirect_url [String, nil] the storefront page the confirmation
+      #   link opens, already checked against the store's allowed origins
       # @return [Spree::ServiceModule::Result]
-      def call(store:, customer:, kind:, requested_by: nil, process: true)
+      def call(store:, customer:, kind:, requested_by: nil, process: true, confirm_by_email: false, redirect_url: nil)
         # Nothing useful is left to answer with: an export would return the
         # tombstone and email a link to an address that no longer receives,
         # and a second erasure has nothing to erase.
         if customer.anonymized?
           data_request = Spree::DataRequest.new(customer: customer)
-          data_request.errors.add(:base, Spree.t('data_request_errors.already_anonymized'))
+          data_request.errors.add(:base, I18n.t('spree.data_request_errors.already_anonymized'))
           return failure(data_request)
         end
 
@@ -38,7 +48,9 @@ module Spree
         # of the same person's whole history; taking the lock closes it without
         # a partial unique index, which MySQL does not support.
         customer.with_lock do
-          existing = in_flight_request(store: store, customer: customer, kind: kind)
+          lapse_unconfirmed_requests(store: store, customer: customer, kind: kind, staff_request: !confirm_by_email)
+          existing = in_flight_request(store: store, customer: customer, kind: kind,
+                                       include_unconfirmed: confirm_by_email)
 
           unless existing
             data_request = Spree::DataRequest.new(
@@ -46,20 +58,27 @@ module Spree
               customer: customer,
               kind: kind.to_s,
               email: customer.email,
-              requested_by: requested_by
+              requested_by: requested_by,
+              status: confirm_by_email ? 'awaiting_confirmation' : 'pending'
             )
             data_request.save
           end
         end
 
-        return success(existing) if existing
-        return failure(data_request) unless data_request.persisted?
+        return failure(data_request) if data_request && !data_request.persisted?
 
-        # Enqueued after the lock is released: the job may start immediately,
-        # and it should not contend for the row this flow still holds.
-        Spree::DataRequests::ProcessJob.perform_later(data_request.prefixed_id) if process
+        request = existing || data_request
 
-        success(data_request)
+        # Both happen after the lock is released: the job may start at once and
+        # should not contend for the row this flow holds, and the email must
+        # not go out before the row is committed.
+        if request.awaiting_confirmation?
+          request_confirmation(request, redirect_url: redirect_url)
+        elsif data_request && process
+          Spree::DataRequests::ProcessJob.perform_later(data_request.prefixed_id)
+        end
+
+        success(request)
       end
 
       private
@@ -67,10 +86,39 @@ module Spree
       # Only the person's own requests. A staff member exporting from the admin
       # opens their own row and answers it inline, and handing that back here
       # would close the customer's request with a file they can never download.
-      def in_flight_request(store:, customer:, kind:)
-        Spree::DataRequest.where(store_id: store.id, customer_id: customer.id, kind: kind.to_s,
-                                 requested_by_id: nil).
-          in_progress.recent_first.first
+      # A request still waiting for confirmation is returned only to the
+      # customer: staff have checked who they are dealing with, so theirs
+      # proceeds on its own row (see lapse_unconfirmed_requests).
+      def in_flight_request(store:, customer:, kind:, include_unconfirmed:)
+        requests = Spree::DataRequest.where(store_id: store.id, customer_id: customer.id, kind: kind.to_s,
+                                            requested_by_id: nil)
+        open_requests = include_unconfirmed ? requests.in_progress.or(requests.confirmable) : requests.in_progress
+
+        open_requests.recent_first.first
+      end
+
+      # Lapses what can no longer be confirmed: requests past the window, and
+      # requests naming an address the account has since moved away from, so
+      # asking again emails the current address. A staff request of the same
+      # kind replaces the customer's unconfirmed one, which would otherwise
+      # run the same work a second time once confirmed.
+      def lapse_unconfirmed_requests(store:, customer:, kind:, staff_request:)
+        unconfirmed = Spree::DataRequest.where(store_id: store.id, customer_id: customer.id).awaiting_confirmation
+        stale = unconfirmed.past_confirmation_window.or(unconfirmed.where.not(email: customer.email))
+        stale = stale.or(unconfirmed.where(kind: kind.to_s)) if staff_request
+
+        stale.find_each { |data_request| data_request.update!(status: 'lapsed') }
+      end
+
+      # The token travels in a credential event, which reaches only webhook
+      # endpoints that name it and keeps the token out of the delivery log.
+      def request_confirmation(data_request, redirect_url:)
+        payload = data_request.event_payload_for(
+          CONFIRMATION_EVENT,
+          confirmation_token: data_request.generate_token_for(:confirmation),
+          redirect_url: redirect_url.presence
+        )
+        data_request.publish_event(CONFIRMATION_EVENT, payload)
       end
     end
   end

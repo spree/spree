@@ -58,7 +58,7 @@ module Spree
 
       # @return [BigDecimal]
       def total_applied_store_credit
-        if payments.loaded?
+        if read_association_in_memory?(:payments)
           payments.
             find_all(&:store_credit?).
             reject(&:has_invalid_status?).
@@ -68,8 +68,30 @@ module Spree
         end
       end
 
+      # Balance still to collect, never negative. Store credit already applied
+      # but not yet captured is taken off; captured credit is a completed
+      # payment, so the balance has counted it already.
+      #
+      # @return [BigDecimal]
+      def amount_due
+        [outstanding_balance - uncaptured_store_credit, 0].max
+      end
+
+      # What store credit paid, apart from gift cards. A gift card is redeemed
+      # as store credit, but it is reported on its own as +gift_card_total+, so
+      # a summary showing both rows deducts each amount once.
+      #
+      # @return [BigDecimal]
+      def store_credit_total
+        total_applied_store_credit - gift_card_total
+      end
+
       def using_store_credit?
         total_applied_store_credit > 0
+      end
+
+      def display_store_credit_total
+        Spree::Money.new(-store_credit_total, currency: currency)
       end
 
       def display_total_applicable_store_credit
@@ -94,6 +116,19 @@ module Spree
 
       def display_total_minus_store_credits
         Spree::Money.new(total_minus_store_credits, currency: currency)
+      end
+
+      private
+
+      # @return [BigDecimal]
+      def uncaptured_store_credit
+        if read_association_in_memory?(:payments)
+          payments.
+            select { |payment| payment.store_credit? && !payment.has_invalid_status? && !payment.completed? }.
+            sum(BigDecimal('0'), &:amount)
+        else
+          payments.store_credits.valid.where.not(status: 'completed').sum(:amount)
+        end
       end
     end
   end

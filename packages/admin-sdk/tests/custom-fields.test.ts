@@ -47,6 +47,7 @@ describe('custom fields', () => {
     ['variants', 'variant_1', 'variants'],
     ['categories', 'ctg_1', 'categories'],
     ['optionTypes', 'opt_1', 'option_types'],
+    ['sellers', 'sel_1', 'sellers'],
   ] as const)('first-class parent: %s', (resource, parentId, routeSegment) => {
     it('lists via the dedicated accessor and hits the matching route', async () => {
       const accessor = client[resource].customFields
@@ -79,7 +80,7 @@ describe('custom fields', () => {
         key: 'fabric',
         label: 'Fabric',
         field_type: 'short_text',
-        resource_type: 'Spree::Product',
+        resource_type: 'product',
         storefront_visible: true,
       })
       expect(defn.id).toBe('cfdef_1')
@@ -98,24 +99,30 @@ describe('custom fields', () => {
   })
 
   describe('generic escape hatch — customFields(ownerType, ownerId)', () => {
-    it('routes Spree::Product to /products', async () => {
-      const accessor = client.customFields('Spree::Product', 'prod_1')
+    it('routes product to /products', async () => {
+      const accessor = client.customFields('product', 'prod_1')
       const result = await accessor.list()
       expect(result.data[0].id).toBe('cf_1')
       const echoed = (result.data[0] as { _route?: { parent: string; parent_id: string } })._route
       expect(echoed).toEqual({ parent: 'products', parent_id: 'prod_1' })
     })
 
-    it('routes Spree::Customer to /customers', async () => {
-      const accessor = client.customFields('Spree::Customer', 'cus_1')
+    it('routes customer to /customers', async () => {
+      const accessor = client.customFields('customer', 'cus_1')
       const result = await accessor.list()
       expect(result.data[0].id).toBe('cf_1')
       const echoed = (result.data[0] as { _route?: { parent: string; parent_id: string } })._route
       expect(echoed).toEqual({ parent: 'customers', parent_id: 'cus_1' })
     })
 
+    it('routes the store to /stores', async () => {
+      const result = await client.customFields('store', 'store_1').list()
+      const echoed = (result.data[0] as { _route?: { parent: string; parent_id: string } })._route
+      expect(echoed).toEqual({ parent: 'stores', parent_id: 'store_1' })
+    })
+
     it('supports CRUD via the curried accessor', async () => {
-      const accessor = client.customFields('Spree::Order', 'or_1')
+      const accessor = client.customFields('order', 'or_1')
 
       const cf = await accessor.create({ custom_field_definition_id: 'cfdef_1', value: 'wool' })
       expect(cf.id).toBe('cf_1')
@@ -127,7 +134,7 @@ describe('custom fields', () => {
     })
 
     it('throws on unknown owner type', () => {
-      expect(() => client.customFields('Spree::Sasquatch' as never, 'sas_1')).toThrow(
+      expect(() => client.customFields('sasquatch' as never, 'sas_1')).toThrow(
         /Unknown custom-field owner type/,
       )
     })

@@ -11,6 +11,14 @@ module Spree
         class DataRequestsController < ResourceController
           scoped_resource :customers
 
+          request_params 'DataRequestCreateParams', action: :create do |body|
+            body.attribute :customer_id, :id, required: true
+            body.attribute :kind, :string,
+              required: true,
+              choices: Spree::DataRequest::KINDS,
+              description: "`access` asks for a copy of the customer's personal data; `erasure` asks for it to be erased."
+          end
+
           def create
             authorize! :create, Spree::DataRequest
 

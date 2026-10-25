@@ -46,7 +46,7 @@ RSpec.describe Spree::Purchases::AmountDueAtCheckout do
         address = create(:address)
         cart.update!(ship_address: address, bill_address: address)
         create(:line_item, cart: cart, order: nil, price: 100, quantity: 1)
-        create(:shipment, cart: cart, order: nil)
+        create(:fulfillment, cart: cart, order: nil)
         Spree::Carts::RecalculateTotals.call(cart: cart.reload)
       end
     end

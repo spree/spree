@@ -32,7 +32,6 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 require 'ffaker'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
@@ -57,7 +56,6 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Spree::Events.disable!
-    DatabaseCleaner.clean_with(:truncation)
   end
 
   config.around(:each, events: true) do |example|

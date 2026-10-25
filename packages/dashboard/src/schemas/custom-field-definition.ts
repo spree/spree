@@ -40,33 +40,44 @@ export function fieldTypeLabel(value: string): string {
   })
 }
 
-// Owner types that have a first-class admin UI. The server allows more (see
-// `Spree.custom_fields.enabled_resources`); these are the ones admins can pick
-// when defining a field. Extending this is a one-line add — the API already
-// accepts any resource type registered in core.
+// Owner types whose values merchants can edit in the dashboard. The server
+// allows more (see `Spree.custom_fields.enabled_resources`); the definition
+// picker lists those under "Through the API only", since nothing here edits
+// them. A type gains a place here when a screen gets the custom fields card.
 export const DEFAULT_RESOURCE_TYPES = [
-  'Spree::Product',
-  'Spree::Variant',
-  'Spree::Order',
-  'Spree::Customer',
-  // Category custom-field definitions are stored under Spree::Taxon (the API
-  // exposes taxons as categories — the custom_fields controller maps the
-  // category route segment to the Spree::Taxon class). Listing Spree::Category
-  // here would orphan definitions: the inline category card reads under Taxon.
-  'Spree::Taxon',
-  'Spree::OptionType',
+  'product',
+  'variant',
+  'order',
+  'customer',
+  'category',
+  'collection',
+  'option_type',
+  'seller',
+  'promotion',
+  'gift_card',
+  'store_credit',
+  'stock_transfer',
+  'purchase_order',
+  'company',
+  'payment_method',
+  'delivery_method',
+  'tax_rate',
+  'product_type',
+  'media',
+  'store',
 ] as const
 
 export type ResourceType = (typeof DEFAULT_RESOURCE_TYPES)[number] | (string & {})
 
-export function resourceTypeLabel(value: string): string {
-  // `nsSeparator: false` because resource type keys contain `::`, which
-  // i18next would otherwise parse as a namespace separator and miss the
-  // lookup. `defaultValue` strips the `Spree::` prefix for any owner the
-  // i18n bundle doesn't enumerate (plugin-defined resource types).
+/**
+ * @param fallback shown for an owner the i18n bundle doesn't enumerate
+ *   (plugin-defined resource types) — the server's name for it, when known;
+ *   otherwise the value is humanized.
+ */
+export function resourceTypeLabel(value: string, fallback?: string): string {
   return i18n.t(`admin.fields.custom_field_definition.resource_type.options.${value}`, {
-    nsSeparator: false,
-    defaultValue: value.replace(/^Spree::/, ''),
+    defaultValue:
+      fallback ?? value.replace(/_/g, ' ').replace(/^\w/, (letter) => letter.toUpperCase()),
   })
 }
 
@@ -95,7 +106,7 @@ export const CUSTOM_FIELD_DEFINITION_DEFAULTS: CustomFieldDefinitionFormValues =
   namespace: 'custom',
   key: '',
   field_type: 'short_text',
-  resource_type: 'Spree::Product',
+  resource_type: 'product',
   storefront_visible: false,
   searchable: false,
   sortable: false,

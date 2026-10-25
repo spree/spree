@@ -19,7 +19,7 @@ export function rootPackageJsonContent(name: string, pm: PackageManager = 'pnpm'
       dev: 'spree dev',
       stop: 'spree stop',
       down: 'docker compose down',
-      update: 'spree update',
+      upgrade: 'spree upgrade',
       eject: 'spree eject',
       logs: 'spree logs',
       'logs:worker': 'spree logs worker',
@@ -40,7 +40,7 @@ export function rootPackageJsonContent(name: string, pm: PackageManager = 'pnpm'
       // SPREE_CLI_VERSION overrides the spec for testing unreleased CLIs —
       // a range, or a `file:`/`link:` path to a packed tarball / checkout
       // (mirrors the starter Dockerfile's ARG of the same name).
-      '@spree/cli': process.env.SPREE_CLI_VERSION ?? '^3.0.0',
+      '@spree/cli': process.env.SPREE_CLI_VERSION ?? '^3.4.0',
       '@spree/docs': 'latest',
     },
   }

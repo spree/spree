@@ -4,7 +4,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
   let(:store) { @default_store }
   let(:base_params) { { store: store, currency: store.default_currency } }
 
-  let(:shipment) { create(:shipment) }
+  let(:shipment) { create(:fulfillment) }
   let(:shipping_rate) { shipment.shipping_rates.first }
 
   subject { described_class.new(shipping_rate, params: base_params).to_h }
@@ -45,8 +45,8 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
     end
 
     it 'returns cost and total' do
-      expect(subject['cost']).to eq(shipping_rate.cost)
-      expect(subject['total']).to eq(shipping_rate.total)
+      expect(subject['cost']).to eq(Spree::Money::Rounding.format(shipping_rate.cost, 'USD'))
+      expect(subject['total']).to eq(Spree::Money::Rounding.format(shipping_rate.total, 'USD'))
     end
 
     it 'returns display_cost and display_total' do
@@ -55,9 +55,9 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
     end
 
     it 'returns tax totals as zero when no tax rate' do
-      expect(subject['tax_total']).to eq(0)
-      expect(subject['additional_tax_total']).to eq(0)
-      expect(subject['included_tax_total']).to eq(0)
+      expect(subject['tax_total']).to eq('0.00')
+      expect(subject['additional_tax_total']).to eq('0.00')
+      expect(subject['included_tax_total']).to eq('0.00')
     end
 
     it 'returns prefixed delivery_method_id' do
@@ -66,26 +66,29 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
   end
 
   context 'with additional tax' do
-    let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+    let(:tax_rate) { create(:tax_rate, amount: 0.1) }
 
     before { shipping_rate.update!(tax_rate: tax_rate) }
 
     it 'returns the tax in additional_tax_total' do
-      expect(subject['tax_total']).to be > 0
-      expect(subject['additional_tax_total']).to be > 0
-      expect(subject['included_tax_total']).to eq(0)
+      expect(subject['tax_total'].to_d).to be > 0
+      expect(subject['additional_tax_total'].to_d).to be > 0
+      expect(subject['included_tax_total']).to eq('0.00')
     end
   end
 
   context 'with included tax' do
-    let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true, country_code: @default_country&.iso) }
+    let(:tax_rate) { create(:tax_rate, amount: 0.1, country_code: @default_country&.iso) }
 
-    before { shipping_rate.update!(tax_rate: tax_rate) }
+    before do
+      shipping_rate.update!(tax_rate: tax_rate)
+      allow(shipping_rate).to receive(:tax_inclusive?).and_return(true)
+    end
 
     it 'returns the tax in included_tax_total' do
-      expect(subject['tax_total']).to be > 0
-      expect(subject['additional_tax_total']).to eq(0)
-      expect(subject['included_tax_total']).to be > 0
+      expect(subject['tax_total'].to_d).to be > 0
+      expect(subject['additional_tax_total']).to eq('0.00')
+      expect(subject['included_tax_total'].to_d).to be > 0
     end
   end
 
@@ -100,15 +103,15 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
     end
 
     it 'returns total as 0' do
-      expect(subject['total']).to eq(0)
+      expect(subject['total']).to eq('0.00')
     end
 
     it 'returns display_total as $0.00' do
-      expect(subject['display_total']).to eq('$0.00')
+      expect(subject['display_total'].to_s).to eq('$0.00')
     end
 
     it 'preserves original cost' do
-      expect(subject['cost']).to be > 0
+      expect(subject['cost'].to_d).to be > 0
     end
   end
 end

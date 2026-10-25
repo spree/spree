@@ -1,8 +1,6 @@
 module Spree
   module Stock
     class Estimator
-      include Spree::VatPriceCalculation
-
       attr_reader :order, :currency
 
       def initialize(order)
@@ -69,7 +67,7 @@ module Spree
       # through the calculator, carrier providers call their API and may
       # return several estimates (one per carrier service). An empty result
       # suppresses the method, matching the calculator contract. Service
-      # filtering, markup, naming, VAT gross-up, tax resolution and sorting
+      # filtering, markup, naming, tax resolution and sorting
       # stay here so every provider gets them identically.
       def calculate_delivery_rates(package, audience)
         delivery_methods(package, audience).flat_map do |delivery_method|
@@ -103,14 +101,12 @@ module Spree
       end
 
       # An unpriced quote has no amount to mark up or tax — a percentage of an
-      # unknown price is still unknown, and rounding zero through the VAT
-      # gross-up would only invent a number. Its cost stays zero and every
-      # display surface reads +unpriced+ instead.
+      # unknown price is still unknown. Its cost stays zero and every display
+      # surface reads +unpriced+ instead.
       def rate_cost(estimate, delivery_method, service_row, provider)
         return 0 if estimate.unpriced
 
-        cost = apply_markup(estimate.cost, delivery_method, service_row, provider)
-        gross_amount(cost, taxation_options_for(delivery_method))
+        apply_markup(estimate.cost, delivery_method, service_row, provider)
       end
 
       # Handling fee on top of provider quotes: the service row's values when
@@ -121,7 +117,7 @@ module Spree
 
         percent = service_row&.markup_percent || delivery_method.markup_percent || 0
         flat = service_row&.markup_flat || delivery_method.markup_flat || 0
-        (cost * (1 + (percent / 100)) + flat).round(2)
+        Spree::Money::Rounding.to_currency(cost * (1 + (percent / 100)) + flat, currency)
       end
 
       # Display name for provider-priced rates: the merchant's label override,
@@ -130,18 +126,6 @@ module Spree
       def rate_name(estimate, service_row)
         service_row&.label.presence || estimate.name.presence ||
           [estimate.carrier, estimate.service_level].compact.join(' ').presence
-      end
-
-      # Override this if you need the prices for delivery methods to be handled just like the
-      # prices for products in terms of included tax manipulation.
-      #
-      def taxation_options_for(delivery_method)
-        {
-          tax_category: delivery_method.tax_category,
-          address: @order.tax_address,
-          country: @order.tax_country,
-          market: @order.market
-        }
       end
 
       def first_tax_rate_for(tax_category)
@@ -178,6 +162,12 @@ module Spree
         methods = package.eligible_delivery_methods
         # Storeless orders exist only in specs; real orders always carry one.
         methods = methods.merge(order.store.delivery_methods) if order.store
+        # Read for every method below and when its rates are built. Through the
+        # preloader because an overridden package may hand back an Array.
+        methods = methods.to_a
+        ActiveRecord::Associations::Preloader.new(
+          records: methods, associations: %i[delivery_method_rules calculator services delivery_zone]
+        ).call
 
         # On a marketplace, a package's seller is its stock location's, and it
         # is quoted by that seller's own methods plus whatever the operator

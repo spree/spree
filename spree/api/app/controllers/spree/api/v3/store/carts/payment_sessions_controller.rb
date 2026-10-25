@@ -10,6 +10,24 @@ module Spree
             before_action :find_cart!
             before_action :set_payment_session, only: [:show, :update, :complete]
 
+            request_params 'CreatePaymentSessionParams', action: :create do |body|
+              body.attribute :payment_method_id, :id, required: true, example: 'pm_abc123'
+              body.attribute :amount, :decimal,
+                example: '99.99',
+                description: 'Defaults to the order total minus store credits.'
+              body.attribute :external_data, :hash, description: 'Provider-specific data passed to the gateway.'
+            end
+
+            request_params 'UpdatePaymentSessionParams', action: :update do |body|
+              body.attribute :amount, :decimal, example: '50.00'
+              body.attribute :external_data, :hash, description: 'Provider-specific data to update.'
+            end
+
+            request_params 'CompletePaymentSessionParams', action: :complete do |body|
+              body.attribute :session_result, :string, description: 'Provider-specific session result token.'
+              body.attribute :external_data, :hash, description: 'Provider-specific completion data.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/payment_sessions
             def create
               with_order_lock do
@@ -19,7 +37,7 @@ module Spree
                 unless payment_method.available_for_order?(@cart)
                   return render_error(
                     code: 'payment_method_unavailable',
-                    message: Spree.t('api.v3.payments.method_unavailable'),
+                    message: I18n.t('spree.api.v3.payments.method_unavailable'),
                     status: :unprocessable_content
                   )
                 end
@@ -94,15 +112,11 @@ module Spree
             end
 
             def permitted_params
-              params.permit(
-                :amount, :payment_method_id,
-                *Spree::PaymentSession.additional_permitted_attributes,
-                { external_data: {} }
-              )
+              params.permit(*declared_permitted_attributes, *Spree::PaymentSession.additional_permitted_attributes)
             end
 
             def complete_params
-              params.permit(:session_result, { external_data: {} })
+              params.permit(*declared_permitted_attributes)
             end
 
             private

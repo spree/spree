@@ -1,4 +1,4 @@
-import type { TaxRate, TaxRateParams } from '@spree/admin-sdk'
+import type { TaxRate, TaxRateCreateParams, TaxRateUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -7,6 +7,14 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+
+export function useTaxRates({ page = 1, limit = 100 }: { page?: number; limit?: number } = {}) {
+  return useQuery({
+    queryKey: useResourceKey('tax-rates', { page, limit }),
+    queryFn: () => adminClient.taxRates.list({ page, limit, sort: 'name' }),
+    staleTime: 1000 * 60 * 5,
+  })
+}
 
 export function useTaxRate(id: string | undefined) {
   return useQuery({
@@ -17,7 +25,7 @@ export function useTaxRate(id: string | undefined) {
 }
 
 export function useCreateTaxRate() {
-  return useResourceMutation<TaxRate, Error, TaxRateParams>({
+  return useResourceMutation<TaxRate, Error, TaxRateCreateParams>({
     mutationFn: (params) => adminClient.taxRates.create(params),
     invalidate: [['tax-rates']],
     successMessage: i18n.t('admin.tax_rates.messages.created'),
@@ -26,7 +34,7 @@ export function useCreateTaxRate() {
 }
 
 export function useUpdateTaxRate(id: string) {
-  return useResourceMutation<TaxRate, Error, TaxRateParams>({
+  return useResourceMutation<TaxRate, Error, TaxRateUpdateParams>({
     mutationFn: (params) => adminClient.taxRates.update(id, params),
     invalidate: [['tax-rates'], ['tax-rates', id]],
     successMessage: i18n.t('admin.tax_rates.messages.updated'),

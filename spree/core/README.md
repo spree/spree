@@ -28,8 +28,8 @@ All models are namespaced under `Spree::` and include:
 - `Spree::Product` / `Spree::Variant` - Product catalog
 - `Spree::Order` / `Spree::LineItem` - Order management
 - `Spree::Payment` / `Spree::PaymentMethod` - Payment processing
-- `Spree::Shipment` / `Spree::ShippingMethod` - Shipping and fulfillment
-- `Spree::Taxon` / `Spree::Taxonomy` - Product categorization
+- `Spree::Fulfillment` / `Spree::DeliveryMethod` - Shipping and fulfillment
+- `Spree::Category` / `Spree::Collection` - Product categorization
 - `Spree::Store` - Multi-store support
 - `Spree::Promotion` - Promotions and discounts
 - `Spree::GiftCard` - Gift card functionality
@@ -40,8 +40,8 @@ Services follow a consistent interface pattern and are located in `app/services/
 
 ```ruby
 # Add item to cart
-Spree.cart_add_item_service.call(
-  order: order,
+Spree.cart_add_item_workflow.call(
+  cart: cart,
   variant: variant,
   quantity: 1
 )
@@ -76,7 +76,7 @@ Swap out default implementations with custom services:
 
 ```ruby
 # config/initializers/spree.rb
-Spree::Dependencies.cart_add_item_service = 'MyCustom::CartAddItem'
+Spree::Dependencies.cart_add_item_workflow = 'MyCustom::CartAddItem'
 ```
 
 ## Configuration

@@ -4,7 +4,7 @@ sidebarTitle: LLM-Ready Docs
 description: "Every page of the Spree docs is consumable by LLMs — llms.txt indexes, per-page Markdown, and a local npm package for offline agent reads."
 ---
 
-Beyond the [MCP server](/developer/agentic/mcp), the Spree documentation is published in formats designed for direct LLM consumption. Use these when you want to feed docs into a prompt, point a custom agent at an index, or give agents fast local file access.
+Beyond the [MCP server](/developer/agentic/docs-mcp), the Spree documentation is published in formats designed for direct LLM consumption. Use these when you want to feed docs into a prompt, point a custom agent at an index, or give agents fast local file access.
 
 ## llms.txt
 
@@ -50,9 +50,9 @@ node_modules/@spree/docs/dist/
 Projects scaffolded with [create-spree-app](/developer/create-spree-app/quickstart) install it automatically.
 
 <Note>
-  The package tracks the docs published at install time and is versioned independently of your Spree gems — run your package manager's update to refresh it, and prefer the [MCP server](/developer/agentic/mcp) when you need the absolute latest.
+  The package tracks the docs published at install time and is versioned independently of your Spree gems — run your package manager's update to refresh it, and prefer the [MCP server](/developer/agentic/docs-mcp) when you need the absolute latest.
 </Note>
 
 ## Generated agent instructions
 
-`create-spree-app` scaffolds every project with a `CLAUDE.md` that tells coding agents where the local docs live, which CLI commands to use (`spree dev`, `spree migrate`, `spree console`), and the customization patterns to follow — so an agent dropped into a fresh project is productive without any prompting. The scaffold's next-steps also suggest installing the [agent skills](/developer/agentic/agent-skills) for the full experience.
+`create-spree-app` scaffolds every project with an `AGENTS.md` that tells coding agents where the local docs live, how to inspect live data with `spree api`, and that every command goes through the [Spree CLI](/developer/cli/quickstart) — `spree migrate`, `spree console`, `spree test` — never `bin/rails`, `bundle` or `rake` directly. `server/AGENTS.md` adds the customization patterns to follow. Each directory also has a `CLAUDE.md` that imports its `AGENTS.md`, so Claude Code reads the same instructions as every other agent. The scaffold also installs the [agent skills](/developer/agentic/agent-skills) unless you opt out.

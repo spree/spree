@@ -10,6 +10,10 @@ module Spree
           # orders are frozen; their discounts change only through manual rows
           # (see DiscountsController).
           class DiscountCodesController < BaseController
+            request_params 'DiscountCodeApplyParams' do |body|
+              body.attribute :code, :string, required: true
+            end
+
             skip_before_action :set_resource, raise: false
 
             # POST /api/v3/admin/orders/:order_id/discount_codes
@@ -70,13 +74,13 @@ module Spree
             def render_completed_order_error
               render_error(
                 code: ERROR_CODES[:discount_not_editable],
-                message: Spree.t('errors.messages.coupon_code_frozen_after_completion'),
+                message: I18n.t('spree.errors.messages.coupon_code_frozen_after_completion'),
                 status: :unprocessable_content
               )
             end
 
             def permitted_params
-              params.permit(:code)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

@@ -8,6 +8,14 @@ module Spree
         class PoliciesController < ResourceController
           scoped_resource :settings
 
+          request_params :policy do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Wholesale Policy'
+            body.attribute :slug, :string, example: 'wholesale-policy'
+            body.attribute :body, :string,
+              nullable: true,
+              example: '<p>Trade orders ship within five working days.</p>'
+          end
+
           protected
 
           def model_class
@@ -16,10 +24,6 @@ module Spree
 
           def serializer_class
             Spree.api.admin_policy_serializer
-          end
-
-          def resource_permitted_attributes
-            [:name, :slug, :body]
           end
 
           # Accept slug (e.g. returns-policy) or prefixed ID (e.g. pol_abc123),

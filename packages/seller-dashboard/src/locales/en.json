@@ -162,6 +162,7 @@
             "complete_title": "Complete return",
             "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_amount": "Amount",
+            "refund_includes_tax": "The full amount includes {{tax}} of tax. A smaller amount gives back tax in the same proportion.",
             "refund_method": "Refund to",
             "refund_methods": {
               "original_payment": "Original payment",
@@ -469,6 +470,7 @@
       "packing_slip_title": "Packing slip — order {{number}}",
       "print_label": "Print label",
       "print_packing_slip": "Print packing slip",
+      "quoted_after_review": "Quoted after review",
       "ship_to": "Ship to",
       "ships_from_label": "Ships from",
       "split": "Split",
@@ -519,6 +521,7 @@
         "title": "Exchanges",
         "receive": "Receive",
         "fulfill": "Send replacement",
+        "balance_due_confirm": "The replacement costs more than what came back. Sending it adds the difference to the order as a balance due. Nothing is charged automatically.",
         "price_difference": "Price difference: {{amount}}",
         "cancel_title": "Cancel this exchange?",
         "cancel_message": "The customer is told it will not go ahead."
@@ -534,6 +537,8 @@
         "receive": "Receive",
         "refund": "Refund",
         "refund_total": "Refund total: {{amount}}",
+        "refunded": "Refunded: {{amount}}",
+        "refunded_of": "Refunded: {{amount}} of {{total}}",
         "title": "Returns"
       },
       "statuses": {
@@ -733,7 +738,8 @@
     "variant_remove_confirm_description": "It comes off the product when you save.",
     "variant_remove_confirm_title": "Remove this variant?",
     "variants": "Variants",
-    "variants_empty": "This product is sold as one item, at the price above. Add a variant to sell it in options such as size or colour."
+    "variants_empty": "This product is sold as one item, at the price above. Add a variant to sell it in options such as size or colour.",
+    "digital_files_review_notice": "Adding or replacing a file sends this product back to review, and it is off sale until the marketplace approves it again."
   },
   "profile": {
     "about": "About",

@@ -4,14 +4,6 @@ module SpreeMeilisearch
   class Engine < Rails::Engine
     engine_name 'spree_meilisearch'
 
-    # Gem name and module disagree on word boundaries (spree_meilisearch →
-    # SpreeMeilisearch), so Zeitwerk needs telling once.
-    initializer 'spree_meilisearch.inflections', before: :set_autoload_paths do
-      Rails.autoloaders.each do |autoloader|
-        autoloader.inflector.inflect('spree_meilisearch' => 'SpreeMeilisearch')
-      end
-    end
-
     config.after_initialize do
       # The document shape is Meilisearch's own — one document per locale and
       # currency, plus per-grouping membership documents carrying the position a

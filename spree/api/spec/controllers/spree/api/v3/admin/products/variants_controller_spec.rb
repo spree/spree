@@ -39,6 +39,28 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(json_response['id']).to eq(variant.prefixed_id)
       expect(json_response['sku']).to eq(variant.sku)
     end
+
+    it 'returns a nil tax_category_id when the variant inherits from the product' do
+      books = create(:tax_category, name: 'Books')
+      product.update!(tax_category: books)
+      variant.update_columns(tax_category_id: nil)
+
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['tax_category_id']).to be_nil
+      expect(variant.tax_category).to eq(books)
+    end
+
+    it 'returns the stored tax_category_id when the variant overrides the product' do
+      default_category = create(:tax_category, name: 'Default')
+      books = create(:tax_category, name: 'Books')
+      product.update!(tax_category: default_category)
+      variant.update!(tax_category: books)
+
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['tax_category_id']).to eq(books.prefixed_id)
+    end
   end
 
   describe 'POST #create' do
@@ -52,7 +74,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
         post :create, params: {
           product_id: product.prefixed_id,
           sku: 'NEW-SKU-001',
-          prices: [{ currency: 'USD', amount: 29.99 }],
+          prices: [{ currency: 'USD', amount: '29.99' }],
           options: [{ name: option_type.name, value: option_value.name }]
         }, as: :json
       }.to change(product.variants, :count).by(1)
@@ -72,8 +94,8 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
             sku: 'MULTI-001',
             options: [{ name: option_type.name, value: 'New Value' }],
             prices: [
-              { currency: 'USD', amount: 19.99, compare_at_amount: 24.99 },
-              { currency: 'EUR', amount: 17.99 }
+              { currency: 'USD', amount: '19.99', compare_at_amount: '24.99' },
+              { currency: 'EUR', amount: '17.99' }
             ],
             stock_levels: [
               { stock_location_id: stock_location_1.prefixed_id, count_on_hand: 50, backorderable: false },
@@ -132,7 +154,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
           product_id: product.prefixed_id,
           id: variant.prefixed_id,
           prices: [
-            { currency: 'GBP', amount: 15.99 }
+            { currency: 'GBP', amount: '15.99' }
           ]
         }, as: :json
 
@@ -151,7 +173,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
           product_id: product.prefixed_id,
           id: variant.prefixed_id,
           prices: [
-            { currency: existing_currency, amount: 42.50 }
+            { currency: existing_currency, amount: '42.50' }
           ]
         }, as: :json
 

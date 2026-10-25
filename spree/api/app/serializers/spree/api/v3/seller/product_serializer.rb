@@ -13,6 +13,8 @@ module Spree
         # both from the marketplace's list
         # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
         class ProductSerializer < V3::ProductSerializer
+          without_formatted_money(:seller)
+
           typelize status: [:string, enum: Spree::Product.statuses, enum_type_name: 'ProductStatus'], metadata: 'Record<string, unknown>',
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
@@ -20,13 +22,7 @@ module Spree
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :product_type_id do |product|
-            product.product_type&.prefixed_id
-          end
-
-          attribute :delivery_profile_id do |product|
-            product.delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes :product_type, :delivery_profile
 
           many :variants,
                resource: proc { Spree.api.seller_variant_serializer },

@@ -62,9 +62,9 @@ RSpec.describe 'v3 Store serializer price gating' do
       it 'states the threshold and shortfall when not gated' do
         hash = serialize(described_class, cart.reload, hide: false)
 
-        expect(hash['order_minimum']).to eq(500.0)
+        expect(hash['order_minimum']).to eq('500.00')
         # What is left to add, so the cart's own items count against it.
-        expect(hash['order_minimum_shortfall']).to eq(500.0 - cart.item_total.to_f)
+        expect(hash['order_minimum_shortfall']).to eq(Spree::Money::Rounding.format(500 - cart.item_total, 'USD'))
         expect(hash['below_order_minimum']).to be(true)
         expect(hash['requirements'].map { |r| r['code'] }).to include('order_minimum_not_met')
       end
@@ -122,6 +122,27 @@ RSpec.describe 'v3 Store serializer price gating' do
     end
   end
 
+  describe Spree::Api::V3::OrderGroupSerializer do
+    let(:group) { create(:order_group, :with_parcels, store: store) }
+
+    before { create(:payment, order: nil, order_group: group, amount: group.reload.total, status: 'completed') }
+
+    it 'nulls the summary and the payment amounts for gated guests' do
+      hash = serialize(described_class, Spree::OrderGroup.find(group.id), hide: true)
+
+      expect(hash.values_at('total', 'amount_due', 'store_credit_total', 'gift_card_total')).to all(be_nil)
+      expect(hash['payments'].map { |payment| payment['amount'] }).to eq([nil])
+    end
+
+    # Written as every other amount is: to the currency's decimals.
+    it 'writes the store credit total as canonical money when not gated' do
+      hash = serialize(described_class, Spree::OrderGroup.find(group.id), hide: false)
+
+      expect(hash['store_credit_total']).to eq('0.00')
+      expect(hash['amount_due']).to eq('0.00')
+    end
+  end
+
   # Nested records embedded in a cart/order must honor hide_prices too, so a
   # gated guest can't recover amounts through discounts, payments, fulfillments,
   # or an applied gift card.
@@ -142,7 +163,7 @@ RSpec.describe 'v3 Store serializer price gating' do
     end
 
     describe Spree::Api::V3::FulfillmentSerializer do
-      let(:shipment) { create(:shipment) }
+      let(:shipment) { create(:fulfillment) }
 
       it 'nulls every money field for gated guests' do
         hash = serialize(described_class, shipment, hide: true)
@@ -182,8 +203,9 @@ RSpec.describe 'v3 Store serializer price gating' do
       # The record is a lightweight applied-promotion presenter responding to
       # the money methods; a struct keeps the gating assertion factory-free.
       let(:applied_promotion) do
-        Struct.new(:name, :description, :code, :amount, :display_amount, :promotion, keyword_init: true).new(
-          name: 'Promo', description: nil, code: 'SAVE10', amount: '5.0', display_amount: '$5.00', promotion: nil
+        Struct.new(:name, :description, :code, :amount, :display_amount, :promotion, :currency, keyword_init: true).new(
+          name: 'Promo', description: nil, code: 'SAVE10', amount: '5.0', display_amount: '$5.00', promotion: nil,
+          currency: 'USD'
         )
       end
 
@@ -202,9 +224,9 @@ RSpec.describe 'v3 Store serializer price gating' do
     describe Spree::Api::V3::DiscountSerializer do
       let(:discount) do
         Struct.new(:label, :kind, :code, :value, :value_type, :amount, :display_amount,
-                   :promotion, :line_item, :fulfillment, keyword_init: true).new(
+                   :promotion, :line_item, :fulfillment, :currency, keyword_init: true).new(
           label: 'Promo', kind: 'promotion', code: 'SAVE10', value: '10.0', value_type: 'flat',
-          amount: '-5.0', display_amount: '-$5.00', promotion: nil, line_item: nil, fulfillment: nil
+          amount: '-5.0', display_amount: '-$5.00', promotion: nil, line_item: nil, fulfillment: nil, currency: 'USD'
         )
       end
 

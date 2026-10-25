@@ -1,157 +1,77 @@
 ---
 title: "Categories"
-description: "Organize products into a browsable tree of categories in the Spree Commerce dashboard."
+description: "Learn how to organize your products into the tree customers browse in Spree Commerce."
 ---
 
-Categories are how you file products into a browsable tree — Fashion, then Men, then Footwear. A product can sit in several categories, and each category can hold subcategories as deep as your range needs.
+A category is a group of products customers browse by, such as Kitchen, with Coffee Machines and Toasters underneath it. Categories form a tree: a category can hold subcategories, and those can also hold their own subcategories. One product can sit in several categories at once.
 
-Categories are the shelves of your store. For groupings that cut across them — "Summer 2025", "Best Sellers", "Under $50" — use [Collections](/user/products/collections), which can fill themselves from rules.
+Each category has its own page in your shop, with a breadcrumb back through its parents, and a parent's page also shows the products filed under its subcategories. That tree is how a customer who does not know what they want finds their way from a department to a shelf.
 
-A well-planned category tree improves search, guides customers through a logical shopping journey, and is what most storefront navigation is built from.
+Categories hold only the products you file in them, by hand. For a group that fills itself from a rule, such as everything on sale or everything tagged for summer, use a [<u>collection</u>](/user/products/collections) instead. Collections are a flat list rather than a tree, and the two are independent: a product keeps its categories whatever collections it joins.
 
-To set up categories, open the **Categories** tab of the admin dashboard, found under Products.
+To manage categories, navigate to **Products → Categories** in the admin dashboard.
 
-![](/docs/images/user/products/categories/1.tab.png)
+## Reviewing Categories
 
-Here you will see three automatically created categories that are commonly used in ecommerce:
+![The Categories list with Kitchen expanded to show its subcategories and their product counts](/docs/images/user/products/categories/1-categories-overview.png)
 
-- Categories - Groups of products based on type or purpose for easy navigation
-- Brands - Organizes products by their manufacturer or label
-- Collections - Curated groups of products based on themes or trends
+The list shows your top-level categories in the order you have set. Click **Expand** on a row to show the subcategories inside it, and click a category's name to open it. The menu at the end of each row holds **Edit** and **Delete**.
 
-## Add a category
+The **Products** count beside a category covers everything filed under its subcategories too, so a top-level category shows the total for its whole branch. Open the category and its own **Products** card lists only what is filed directly in it.
 
-To add a category, click **New Category** in the top right corner — or, on an empty list, **Add One** in the middle of the page.
+## How to Create a Category
 
-![](/docs/images/user/products/categories/3.new-category.png)
+![The New category form, with its name, description, image, parent category and search listing fields](/docs/images/user/products/categories/2-new-category-form.png)
 
-This opens up the category editor page which allows you to define the category and add media.
+Click **New category**. The form has these fields:
 
-### Presentation
+| Field | What it holds |
+|---|---|
+| **Name** | What customers see the category called. **Save** is disabled until you fill it in. |
+| **Description** | Formatted text introducing the category, with bold, lists, links and images. |
+| **Image** and **Square image** | A wide image for the category banner and a square one for compact navigation. Each takes an upload or a file from your [<u>media library</u>](/user/products/media). |
+| **Parent category** | Where the category sits in the tree. Leave it at **Top level**, or pick the category this one belongs under. |
+| **Slug** | The category page's web address. Leave it blank and it is built from the name when you save. A subcategory's slug carries its parent's, such as `outdoor/tents`. |
+| **Meta title** and **Meta description** | How the category page appears in search results. |
 
-There are four sections that affect how the category is presented on the storefront:
+Click **Save**. The category opens with further cards for its products, custom fields, translations and metadata, and it sits in the tree with no products until you add some.
 
-- Name - Add a name to be displayed on the frontend and backend
-- Description - Add text describing the category, optionally displayed on the storefront
-- Image - Upload a complimentary image to be displayed on the categories storefront page
-- Square Image - Upload a complimentary square image to optionally be displayed in page sections featuring that category
+## How to Add Products to a Category
 
-### Automatic grouping
+![Three products added to a category and marked New, waiting for Save](/docs/images/user/products/categories/3-products-added.png)
 
-Categories are curated by hand. If you want a grouping that fills itself — everything on sale, everything tagged `organic` — create a [Collection](/user/products/collections) instead.
+1. Open the category and click **Add products** in its **Products** card.
+2. Tick the products you want. The dialog has a search box, a tick for everything on the page, a tick for every matching product, and **Load more** at the foot.
+3. Click **Add**, which counts what you have ticked. The products appear in the card marked **New**.
+4. Click **Save**.
 
-### Navigation
+<Warning>Closing the dialog does not save anything. The products join the category only when you click **Save** on the category itself, so make that your last step before leaving the page.</Warning>
 
-Here you can select where the new category should be nested.
+A product can also be filed from its own page, in the **Categorization** card. See [<u>Adding Products</u>](/user/products/adding-products).
 
-![](/docs/images/user/products/categories/7.navigation.png)
+## How to Set the Order of Products in a Category
 
-The dropdown list will show a list of all categories available within the category you're currently managing. Simply select the category you’d like to nest the new category in.
+The order of products in a category's **Products** card is the order customers see on that category's page, so put what you most want to sell at the top.
 
-Start typing the name of the category you’d like to nest within to filter the results.
+Drag a product by the handle at the start of its row. From the keyboard, move to the handle, press Space, move the row with the arrow keys, and press Space again to drop it.
 
-![](/docs/images/user/products/categories/8.navigation-filtering.png)
+<Note>A reorder saves itself as soon as you drop the row. Unlike the rest of the page, it does not wait for **Save**.</Note>
 
-### Search Engine Listing
+## How to Reorder Categories
 
-Here you can set the meta title, meta description, and the slug for the new category.
+Categories are reordered the same way, by dragging a row's handle on the list, and the move saves itself immediately. This is why the list has no **Save** button.
 
-![](/docs/images/user/products/categories/9.seo.png)
+The order you set is the order customers see in your shop's navigation.
 
-### Create Category
+## How to Delete a Category
 
-Once you’ve added the name and defined the category type, click **Create** at the bottom of the page to create the category, and you’ll receive a notification that the category was successfully created.
+Choose **Delete** from a row's menu on the list, or **Delete category** from **More actions** on the category's own page. Either way a box asks you to confirm.
 
-### Add Products
+<Warning>Deleting a category deletes every subcategory beneath it. The products are not deleted: they drop out of the deleted categories and keep every other category they were filed under. Customers who follow an old link to the category's page see a page saying it could not be found.</Warning>
 
-Once the category is created, you can add products to the category directly in category editor page by clicking **Add Products**, if and only if you chose the manual Category Type.
+## Further Reading
 
-This will open a window that allows you to search for and select the products you’d like to add.
-
-![](/docs/images/user/products/categories/10.add-products.png)
-
-Start typing to show suggested products, then simply check the boxes of the products you’d like to add and then click **Add selected products**
-
-![](/docs/images/user/products/categories/11.select-products.png)
-
-You should now see those products listed in the Products section of the category editor.
-
-<Note>You can remove individual products by clicking on the **red trash can button** in the far right column.</Note>
-
-![](/docs/images/user/products/categories/12.products-added.png)
-
-### Sort Order
-
-For merchandising purposes, you may want to change the order in which products in a category are presented in the storefront.
-
-To do so, you can select the sort order from the dropdown menu in the Products section of the category editor.
-
-![](/docs/images/user/products/categories/13.sort-order.png)
-
-If you choose manual sort order, you can rearrange the ordering by clicking on the 6 dots on the far left and drag and dropping the products into the desired order.
-
-![](/docs/images/user/products/categories/14.manual-ordering.png)
-
-<Note>Make sure to click **Update** at the bottom of the page if you want to save any changes you’ve made to category.</Note>
-
-## Build A Category Tree
-
-If you’d like to create multiple levels of the category tree, you can add subcategories (i.e. nested categories) to an existing category.
-
-Simply click on the 3 dots on the far left of the category's row and select **New Nested Category**.
-
-![](/docs/images/user/products/categories/15.nested-categories.png)
-
-The rest of the process is the same as adding any other category.
-
-With some careful consideration, time and little effort, you can create a very deep and detailed category tree.
-
-![](/docs/images/user/products/categories/16.category-tree.png)
-
-If you’d like to reorganize your category later, you can do so by drag and dropping categories into their new positions.
-
-![](/docs/images/user/products/categories/17.move-categories.png)
-
-## Import Categories
-
-Categories can be automatically imported if you add the appropriate values to the category columns in a product import file. Just make sure to use the correct naming convention for the categories to make sure nesting is respected after import, e.g.:
-
-- Categories -\> Fashion -\> Men
-- Categories -\> Fashion -\> Women -\> Footwear
-- Categories -\> Electronics -\> TVs
-- Categories -\> Nutrition -\> Supplements -\> Vitamins
-
-To learn more about imports, please refer to the [Import Products](https://spreecommerce.org/docs/user/manage-products/import-products) article.
-
-## Renaming a category
-
-If you’d like to change the name of a category, navigate back to the main Categories tab.
-
-![](/docs/images/user/products/categories/18.edit-categories.png)
-
-Find the category you’d like to rename, and click **Edit** on the far-right side.
-
-![](/docs/images/user/products/categories/19.renamed-category.png)
-
-Enter the new category name and click **Update** to save changes.
-
-## Editing a category
-
-To edit a category, find it in the tree and click **Edit** on its row.
-
-Feel free to edit the name and description, swap out images, change the nesting, and update search engine listing settings. Make sure to click **Update** to save your changes.
-
-
-## Translations
-
-If your store is multi-language, you can add translations for both categories and collections.
-
-To learn more, see the [Translations](/user/translations/translations) guide.
-
-## Real-Life Examples of Categories, Collections, and Brands
-
-1. [Industry-Specific Category Needs](https://spreecommerce.org/improving-product-discovery-and-conversions-with-product-categories-categories-collections-and-brands/#Industry-Specific)
-2. [Multiple Category Trees](https://spreecommerce.org/improving-product-discovery-and-conversions-with-product-categories-categories-collections-and-brands/#Multiple-Category-Trees)
-3. [Collection Merchandising](https://spreecommerce.org/improving-product-discovery-and-conversions-with-product-categories-categories-collections-and-brands/#Collection-Merchandising)
-4. [Category Visibility & Product Discovery](https://spreecommerce.org/improving-product-discovery-and-conversions-with-product-categories-categories-collections-and-brands/#Category-Visibility-Product-Discovery)
-5. [Category Tools](https://spreecommerce.org/improving-product-discovery-and-conversions-with-product-categories-categories-collections-and-brands/#Category-Tools)
+- [<u>Collections</u>](/user/products/collections) - Flat groups of products, filled by hand or by rule
+- [<u>Adding Products</u>](/user/products/adding-products) - Filing a product from its own page
+- [<u>Products</u>](/user/products/products) - Adding many products to a category at once
+- [<u>Media</u>](/user/products/media) - The images a category shows

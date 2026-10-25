@@ -1,5 +1,6 @@
 import { SidebarTrigger, Skeleton } from '@spree/dashboard-ui'
 import { SearchIcon } from '@spree/dashboard-ui/icons'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOptionalCommandPalette } from '../hooks/use-command-palette'
 import { useOptionalStore } from '../providers/store-provider'
@@ -23,9 +24,12 @@ export function MobileTopBar({
   uiLocales = [],
   onEditProfile,
   title,
+  notifications,
 }: {
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
   onEditProfile?: () => void
+  /** Shown before the account menu, such as a notifications bell. */
+  notifications?: ReactNode
   /** Name shown beside the controls. Defaults to the store's, for panels that have one. */
   title?: string
 } = {}) {
@@ -68,6 +72,8 @@ export function MobileTopBar({
           <SearchIcon className="size-5" />
         </button>
       )}
+
+      {notifications}
 
       <SidebarUser variant="bar" uiLocales={uiLocales} onEditProfile={onEditProfile} />
     </div>

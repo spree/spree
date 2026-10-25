@@ -1,5 +1,5 @@
 import type { DeliveryMethod, DeliveryZone, DeliveryZoneMember } from '@spree/admin-sdk'
-import { Can, Subject, usePermissions } from '@spree/dashboard-core'
+import { Can, Subject, useCountryDisplayName, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -146,11 +146,14 @@ export function UnrestrictedMethodsCard({
  */
 function ZoneMembersSummary({ zone }: { zone: DeliveryZone }) {
   const { t } = useTranslation()
+  const countryName = useCountryDisplayName()
 
   const names = useMemo(() => {
     const members = zone.members ?? []
     const label = (member: DeliveryZoneMember): string | null => {
-      if (member.member_type === 'country') return member.country_name ?? member.country_code
+      if (member.member_type === 'country') {
+        return member.country_code ? countryName({ iso: member.country_code }) : member.country_name
+      }
       if (member.member_type === 'state') return member.state_name ?? member.state_code
       if (member.postal_code_prefix) return `${member.postal_code_prefix}*`
       if (member.postal_code_from && member.postal_code_to) {
@@ -164,7 +167,7 @@ function ZoneMembersSummary({ zone }: { zone: DeliveryZone }) {
       .sort((a, b) => (order[a.member_type] ?? 2) - (order[b.member_type] ?? 2))
       .map(label)
       .filter((name): name is string => !!name)
-  }, [zone.members])
+  }, [zone.members, countryName])
 
   if (names.length === 0) return null
 

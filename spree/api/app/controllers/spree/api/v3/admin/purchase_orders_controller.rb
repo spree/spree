@@ -16,6 +16,54 @@ module Spree
 
           scoped_resource :purchasing
 
+          # The supplier, the warehouse and the lines are read from the raw
+          # params and resolved through the store (see ReceivableActions), so
+          # only the document's own fields are permitted.
+          request_params :purchase_order do |body|
+            body.attribute :supplier_id, :id, required: true, on: :create, permit: false, example: 'sup_1234567890'
+            body.attribute :destination_location_id, :id,
+              required: true, on: :create,
+              permit: false,
+              example: 'sloc_1234567890'
+            body.attribute :currency, :currency,
+              nullable: true,
+              example: 'USD',
+              description: "Defaults to the store's currency; set it for a foreign-currency order."
+            body.attribute :expected_at, :date,
+              nullable: true,
+              example: '2026-10-01',
+              description: 'The day the supplier promised. `null` clears it.'
+            body.attribute :cancel_by, :date,
+              nullable: true,
+              description: 'The day after which the goods are no longer wanted. `null` clears it.'
+            body.attribute :reference, :string,
+              nullable: true,
+              description: "The supplier's own order number. `null` clears it."
+            body.attribute :notes, :string, nullable: true
+            body.attribute :items, :array,
+              permit: false,
+              as: 'PurchaseOrderItemParams',
+              description: 'Sending the list replaces whatever the order currently holds.' do |item|
+              item.attribute :variant_id, :id, required: true, example: 'variant_1234567890'
+              item.attribute :quantity_ordered, :integer, required: true, example: 100
+              item.attribute :unit_cost, :decimal,
+                required: true,
+                example: '12.50',
+                description: 'What the merchant agreed to pay per unit.'
+            end
+            body.attribute :metadata, :hash, nullable: true
+          end
+
+          request_params 'ReceivableCloseParams', action: :close do |body|
+            body.attribute :reason, :string, nullable: true, description: 'Why the balance is not coming.'
+          end
+
+          request_params 'PurchaseOrderCancelParams', action: :cancel do |body|
+            body.attribute :reason, :string,
+              example: 'Supplier went under',
+              description: "Appended to the order's notes."
+          end
+
           # The base registers this for show/update/destroy; a second
           # `before_action :set_resource` replaces that registration rather than
           # adding to it, so those three are listed again here.
@@ -31,7 +79,7 @@ module Spree
 
             render_error(
               code: 'invalid_status',
-              message: Spree.t('purchase_order.errors.only_draft_can_be_deleted'),
+              message: I18n.t('spree.purchase_order.errors.only_draft_can_be_deleted'),
               status: :unprocessable_content
             )
           end
@@ -109,6 +157,7 @@ module Spree
               cancel_by: params[:cancel_by],
               reference: params[:reference],
               notes: params[:notes],
+              metadata: metadata_from_params,
               created_by: try_spree_current_user
             }
           end
@@ -119,13 +168,6 @@ module Spree
               attributes: editable_attributes,
               items: items_from_params(:quantity_ordered, :unit_cost)
             }
-          end
-
-          # The supplier and the warehouse are resolved through the store
-          # instead, since an id the payload names has to be proved to belong
-          # here.
-          def resource_permitted_attributes
-            [:currency, :expected_at, :cancel_by, :reference, :notes, { metadata: {} }]
           end
 
           def editable_attributes
@@ -142,6 +184,12 @@ module Spree
           end
 
           private
+
+          # Merchant data, stored as sent: never through the prefixed-id decoding
+          # `permitted_params` applies.
+          def metadata_from_params
+            params.permit(*declared_permitted_attributes)[:metadata]&.to_h
+          end
 
           # Read through `current_store` rather than the model constant: a
           # supplier id belonging to another store must 404, which no ability

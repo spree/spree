@@ -9,6 +9,7 @@ module Spree
     # a crash leaves a refunded return with no credit issued.
     class Refund < Spree::Workflow
       include Spree::Refunds::OrderPayments
+      include Spree::Refunds::TaxCredit
 
       hooks :validate, :before_refund, :after_refund
 
@@ -29,6 +30,8 @@ module Spree
 
         run_hooks :validate
         run_hooks :before_refund
+
+        step :settle_tax unless @amount_to_refund.zero?
 
         # Nothing is owed (a free gift sent back), so the return closes
         # without a refund row, store credit or tax credit.
@@ -62,12 +65,28 @@ module Spree
       # The refunded amount goes with them, because it can be less than those
       # lines are worth — a restocking fee, or an agreed part-refund. Without it
       # a provider would credit the tax on goods whose value the merchant kept.
+      # Reported rather than raised, as filing and voiding are: the money has
+      # moved and the return is marked refunded by now, and `return.refunded`
+      # follows — so raising failed a refund that had gone through, and lost the
+      # event with it.
       def refund_tax
         received = return_record.return_line_items.select { |line| line.refund_amount.positive? }
         return if received.empty?
 
-        order = return_record.order
-        order.tax_provider.refund(order, received, amount: @amount_to_refund, tax_date: order.completed_at)
+        file_tax_credit(return_record, received, @amount_to_refund)
+      end
+
+      # Rewrites the credit rows for what actually goes back — the units that
+      # arrived, and of those only the part of their worth being refunded —
+      # before any money moves, so the refund carries exactly the tax the rows
+      # record.
+      def settle_tax
+        lines = return_record.return_line_items.to_a
+        short = @amount_to_refund < return_record.refund_total
+        amounts = allocate_refund(@amount_to_refund, lines.index_with(&:refund_amount), return_record.currency) if short
+
+        with_tax_provider(return_record) { return_record.settle_tax!(amounts: amounts) }
+        @tax_amount = return_record.credited_tax_total
       end
 
       def internal_refund?
@@ -80,7 +99,7 @@ module Spree
           # attribute, and ActiveModel raises when an error names one that
           # does not exist on the record.
           return_record.errors.add(:base, :invalid_refund_method,
-                           message: Spree.t('errors.messages.invalid_refund_method'))
+                           message: I18n.t('spree.errors.messages.invalid_refund_method'))
           failure(return_record)
         end
         failure(return_record, :not_received) unless return_record.received?
@@ -118,7 +137,8 @@ module Spree
           order: return_record.order,
           amount: @amount_to_refund,
           record: return_record,
-          refunder: refunder
+          refunder: refunder,
+          tax_amount: @tax_amount
         )
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?

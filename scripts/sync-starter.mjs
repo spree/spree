@@ -153,9 +153,20 @@ const standaloneBiome = {
   // monorepo root's list is irrelevant outside the workspace.
   files: starterBiome.files,
 }
-fs.writeFileSync(
-  path.join(targetDir, 'biome.json'),
-  `${JSON.stringify(standaloneBiome, null, 2)}\n`,
-)
+fs.writeFileSync(path.join(targetDir, 'biome.json'), `${formatJson(standaloneBiome)}\n`)
+
+// Biome keeps an array of plain values on one line when it fits the line
+// width; JSON.stringify always breaks it up, so a fresh app would fail
+// `biome check` on its own config.
+function formatJson(value) {
+  const lineWidth = rootBiome.formatter.lineWidth
+  return JSON.stringify(value, null, 2).replace(
+    /^( *)(.*)\[\n([^[\]{}]*?)\n *\]/gm,
+    (expanded, indent, key, items) => {
+      const inline = `${indent}${key}[${items.trim().split(/,\n */).join(', ')}]`
+      return inline.length <= lineWidth ? inline : expanded
+    },
+  )
+}
 
 console.log(`Synced ${starterDir} → ${targetDir}`)

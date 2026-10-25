@@ -128,7 +128,7 @@ module Spree
 
       unless type == custom_field_definition.field_type_class_name
         errors.add(:type, :custom_field_definition_mismatch,
-                   message: Spree.t('errors.messages.custom_field_definition_mismatch'))
+                   message: I18n.t('spree.errors.messages.custom_field_definition_mismatch'))
       end
     end
 
@@ -144,7 +144,7 @@ module Spree
       return if definition_type.safe_constantize&.base_class&.name == resource_type
 
       errors.add(:resource_type, :custom_field_definition_mismatch,
-                 message: Spree.t('errors.messages.custom_field_definition_mismatch'))
+                 message: I18n.t('spree.errors.messages.custom_field_definition_mismatch'))
     end
 
     # Definitions are store-owned, so a record may only carry its own store's.

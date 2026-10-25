@@ -79,10 +79,8 @@ export function SettingsSidebar({
         // the sheet rather than an extension of the nav rail beside it, so it
         // reads as part of the page it is navigating rather than as a second
         // band of chrome.
-        'z-30 hidden h-full shrink-0 overflow-hidden bg-muted text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
-        open
-          ? 'lg:w-(--spacing-sidebar-width) border-e border-border-subtle'
-          : 'lg:w-0 border-e-0 border-transparent',
+        'z-30 hidden vh-full shrink-0 overflow-hidden bg-muted m-1.5 rounded-lg text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
+        open ? 'lg:w-(--spacing-sidebar-width)' : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
       <div
@@ -360,8 +358,15 @@ function SettingsItem({
       <SidebarMenuButton asChild isActive={isActive}>
         <Link to={url} tabIndex={tabIndex}>
           <NavIcon icon={Icon} isActive={isActive} />
-          <span>{label}</span>
+          {/* `truncate` so a long translated label gives way to the badge
+              rather than pushing it out of the sidebar. */}
+          <span className="truncate">{label}</span>
           {entry.comingSoon && <SidebarMenuBadge className="ms-auto">Soon</SidebarMenuBadge>}
+          {entry.badge && (
+            <span className="ms-auto shrink-0">
+              <entry.badge />
+            </span>
+          )}
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

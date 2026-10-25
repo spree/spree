@@ -17,13 +17,14 @@ module Spree
     include Spree::HasStatus
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::PostSale::Taxation
 
     publishes_lifecycle_events
+    publishes_events :approved, :canceled, :fulfilled, :received, :requested
 
     has_status :requested, :approved, :received, :fulfilled, :canceled,
                default: :requested
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :exchanges
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
     belongs_to :reason, class_name: 'Spree::ReturnReason', optional: true, inverse_of: :exchanges
@@ -41,6 +42,7 @@ module Spree
     delegate :currency, to: :order
 
     self.whitelisted_ransackable_attributes = %w[number status created_at]
+    search_by :number
     self.whitelisted_ransackable_associations = %w[order reason]
 
     # Positive when the replacements cost more than what came back (the
@@ -52,6 +54,19 @@ module Spree
 
     def display_price_difference
       Spree::Money.new(price_difference, currency: currency)
+    end
+
+    def taxed_lines
+      exchange_line_items
+    end
+
+    private
+
+    # The replacement is a sale of its own, taxed as the order would be today
+    # rather than read off the original line, whose category it may not share.
+    def estimate_tax(lines, amounts: nil)
+      super
+      order.tax_provider.estimate_replacement(order, lines, **order.tax_estimate_inputs)
     end
   end
 end

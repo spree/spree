@@ -4,17 +4,90 @@ module Spree
       module Admin
         class OrdersController < ResourceController
           include Spree::Api::V3::OrderLock
+          include Spree::Api::V3::Admin::RefundAuthorization
 
           scoped_resource :orders
 
-          # The order accepts a `po_document` signed blob id and streams it back.
+          # The order accepts a `po_document_signed_id` and streams it back.
           include ActiveStorage::SetCurrent
 
-          # A tampered signed id would otherwise surface as a 500.
-          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
+          ADDRESS = Spree::Api::V3::RequestSchema.shape('AddressInputParams') do |schema|
+            schema.include_attributes Spree::Api::V3::Admin::AddressRequestSchema
+          end
+
+          request_params :order do |body|
+            body.external_references
+            body.attribute :email, :string, example: 'customer@example.com'
+            body.attribute :customer_id, :id,
+              nullable: true,
+              description: 'Null detaches the customer, leaving a guest order under its `email`.'
+            body.attribute :use_customer_default_address, :boolean,
+              only: :create,
+              description: "Copies the saved default billing and shipping addresses onto the order. Sent with `company_id`, it takes that company's defaults, inherited from its parent nodes when the company holds none of its own; otherwise it takes the customer's."
+            body.attribute :currency, :currency, example: 'USD'
+            body.attribute :market_id, :id
+            body.attribute :channel_id, :id, description: 'Defaults to the store primary channel when omitted.'
+            body.attribute :locale, :locale, example: 'en-US'
+            body.attribute :customer_note, :string, description: 'Public, customer-visible note.'
+            body.attribute :internal_note, :string,
+              description: 'Staff-only note. Rich text HTML; reads come back as this plus `internal_note_html`.'
+            body.attribute :po_number, :string,
+              description: "The buyer's own purchase-order reference. Searchable alongside the order number, and rendered on every order-facing document."
+            body.attribute :po_document_signed_id, :string,
+              nullable: true,
+              description: "The `signed_id` of the buyer's purchase order, from `files.upload()` with `visibility: 'private'`. Null removes the document the order carries."
+            body.attribute :shipping_address_id, :id,
+              only: :create,
+              description: "An existing address from the customer's address book, or from the address book of the company the order is for."
+            body.attribute :billing_address_id, :id,
+              only: :create,
+              description: "An existing address from the customer's address book, or from the address book of the company the order is for."
+            body.attribute :preferred_stock_location_id, :id,
+              description: "Stock location to prefer for fulfillment. Order Routing's built-in preferred-location rule ranks it first; routing falls back to the next rule when the location can't cover the cart."
+            body.attribute :company_id, :id,
+              nullable: true,
+              description: "Makes the order a company purchase, with that company's catalog prices and tax treatment. Null makes a draft a plain customer order again."
+            body.attribute :coupon_code, :string,
+              only: :create,
+              description: 'Applied non-fatally: an invalid code does not block creation.'
+            body.attribute :metadata, :hash
+            body.attribute :tags, :array, of: :string
+            body.attribute :shipping_address, :object, shape: ADDRESS
+            body.attribute :billing_address, :object, shape: ADDRESS
+            body.attribute :use_shipping, :boolean,
+              description: 'When true, copies the shipping address to the billing address.'
+            body.attribute :items, :array,
+              description: 'Line items to upsert, keyed by variant. An entry sets that variant\'s quantity, creating the line item when the order has none; `quantity: 0` removes it. Variants you do not send are left alone.' do |item|
+              item.attribute :variant_id, :id, required: true
+              item.attribute :quantity, :integer, example: 1
+              item.attribute :price, :decimal,
+                nullable: true,
+                description: "Negotiated unit price; stamps `price_source: 'manual'`. Null reverts the line to catalog pricing. Draft orders only."
+              item.attribute :metadata, :hash
+            end
+          end
+
+          request_params 'OrderCompleteParams', action: :complete do |body|
+            body.attribute :payment_pending, :boolean
+            body.attribute :notify_customer, :boolean,
+              description: 'Send the order confirmation email after completion.'
+          end
+
+          request_params 'OrderCancelParams', action: :cancel do |body|
+            body.attribute :cancel_reason_id, :id,
+              description: "Why the order was canceled: the id of one of the store's cancellation reasons."
+            body.attribute :cancel_note, :string, description: 'Staff-facing note about the cancellation.'
+            body.attribute :refund_payments, :boolean,
+              description: "Whether this order's share of a payment shared across a split checkout is handed back."
+            body.attribute :refund_amount, :decimal,
+              description: 'How much of that share to return. Defaults to all of it; refused on an order whose payment is not shared.'
+            body.attribute :notify_customer, :boolean,
+              description: 'Send the order cancellation email after canceling.'
+          end
 
           skip_before_action :set_resource, only: [:index, :create]
           before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
+          before_action :require_refund_permission!, only: :cancel, if: -> { params[:refund_payments].to_b }
 
           # POST /api/v3/admin/orders
           def create
@@ -58,7 +131,7 @@ module Spree
           # are nested inside it.
           def complete
             with_order_lock do
-              result = Spree.order_complete_service.call(
+              result = Spree.order_complete_workflow.call(
                 order: @resource,
                 payment_pending: params[:payment_pending].to_b,
                 notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer])
@@ -121,7 +194,7 @@ module Spree
             unless @resource.po_document.attached?
               return render_error(
                 code: ERROR_CODES[:validation_error],
-                message: Spree.t(:po_document_missing),
+                message: I18n.t('spree.po_document_missing'),
                 status: :unprocessable_content
               )
             end
@@ -160,7 +233,9 @@ module Spree
           # `fields` list names an order's attributes, and narrowing a group by
           # it can drop the very keys that say it is one.
           def serialize_completion(record)
-            return serialize_resource(record.reload) unless record.is_a?(Spree::OrderGroup)
+            # Read back lazily preloading, as #show is, so its fulfillments and
+            # their rows load once for all of them rather than per fulfillment.
+            return serialize_resource(Spree::Order.preload_associations_lazily.find(record.id)) unless record.is_a?(Spree::OrderGroup)
 
             Spree.api.admin_order_group_serializer.new(completed_group(record), params: serializer_params).to_h
           end
@@ -172,7 +247,7 @@ module Spree
               :customer, :ship_address, :bill_address,
               { payments: %i[payment_method source] },
               { orders: [:seller, :market, :gift_card, :customer, { line_items: { variant: :prices } }] }
-            ).find(group.id)
+            ).preload_associations_lazily.find(group.id)
           end
 
           # Override scope — Order uses SingleStoreResource (for_store).
@@ -227,9 +302,13 @@ module Spree
             # are loaded with their selected rate because the freight summary
             # reads it — otherwise a page of orders costs a query per
             # fulfillment for a field that is nil on every parcel order.
+            # Both addresses are named because they are two associations on
+            # one table, so a row that reads them separately costs a lookup
+            # each.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
-             :market, { fulfillments: :selected_delivery_rate },
-             { line_items: [{ variant: :prices }, { price_list: :catalog }] },
+             :market, { fulfillments: %i[selected_delivery_rate external_references] },
+             :bill_address, :ship_address,
+             { line_items: [:external_references, { variant: :prices }, { price_list: :catalog }] },
              { po_document_attachment: :blob }]
           end
 
@@ -243,14 +322,6 @@ module Spree
           end
 
           private
-
-          def render_invalid_po_document
-            render_error(
-              code: ERROR_CODES[:validation_error],
-              message: Spree.t(:po_document_invalid_signed_id),
-              status: :unprocessable_content
-            )
-          end
 
           def resolve_customer
             customer_param = params[:customer_id].presence
@@ -271,44 +342,22 @@ module Spree
           end
 
           def order_create_params
-            permitted = normalize_params(
-              params.permit(
-                :email, :customer_id, :use_customer_default_address,
-                :currency, :market_id, :channel_id, :locale,
-                :customer_note, :internal_note,
-                # The buyer's own purchase-order reference, and the signed blob
-                # id of the document behind it — a PO arriving by email and
-                # keyed in is the draft-order flow plus these two fields.
-                :po_number, :po_document,
-                :shipping_address_id, :billing_address_id,
-                :preferred_stock_location_id, :company_id,
-                :coupon_code,
-                metadata: {},
-                tags: [],
-                shipping_address: address_permitted_keys,
-                billing_address: address_permitted_keys,
-                items: item_permitted_keys
-              )
-            )
-            resolve_company_param(permitted)
+            resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:create))))
           end
 
+          # `items` is the public name for line items, so the normalizer needs
+          # telling which model the rows describe — otherwise a `prod_` id in
+          # `variant_id` is not recognised as the wrong kind.
+          def nested_param_models
+            { 'items' => Spree::LineItem }
+          end
+
+          # Named rather than read from the action, since an upsert reaches
+          # update from the create action.
           def order_update_params
-            permitted = normalize_params(
-              params.permit(
-                :email, :customer_id,
-                :customer_note, :internal_note,
-                :po_number, :po_document,
-                :currency, :locale, :market_id, :channel_id,
-                :preferred_stock_location_id, :company_id,
-                metadata: {},
-                tags: [],
-                shipping_address: address_permitted_keys,
-                billing_address: address_permitted_keys,
-                items: item_permitted_keys
-              )
-            )
-            resolve_company_param(permitted)
+            permitted = resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:update))))
+            permitted[:customer_id] = resolve_customer&.id if permitted.key?(:customer_id)
+            permitted
           end
 
           # An incidental lookup like any other: resolved through the store so
@@ -325,20 +374,6 @@ module Spree
                 nil
               end
             permitted
-          end
-
-          def address_permitted_keys
-            [
-              :firstname, :lastname, :first_name, :last_name,
-              :address1, :address2, :city,
-              :country_code, :state_code,
-              :zipcode, :postal_code, :phone, :alternative_phone,
-              :state_name, :company, :label
-            ]
-          end
-
-          def item_permitted_keys
-            [:variant_id, :quantity, :price, { metadata: {} }]
           end
         end
       end

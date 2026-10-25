@@ -7,7 +7,7 @@ module Spree
       # back-office fields stay in one place.
       class CompanySerializer < BaseSerializer
         typelize name: :string,
-                 kind: [:string, enum: Spree::Company::KINDS], parent_id: [:string, nullable: true],
+                 kind: [:string, enum: Spree::Company::KINDS, enum_type_name: 'CompanyKind'], parent_id: [:string, nullable: true],
                  po_number_required: :boolean,
                  ancestors: 'Array<{id: string, name: string, kind: string}>'
 
@@ -15,9 +15,7 @@ module Spree
         # the PO field required from it.
         attributes :name, :kind, :po_number_required
 
-        attribute :parent_id do |company|
-          company.parent&.prefixed_id
-        end
+        prefixed_id_attributes :parent
 
         # The path above this node, root first — lets a client render
         # "Acme / EMEA / Berlin" without a request per level. Bounded by the

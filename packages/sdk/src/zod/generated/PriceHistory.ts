@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 export const PriceHistorySchema = z.object({
   id: z.string(),
-  amount: z.string(),
-  amount_in_cents: z.number(),
   currency: z.string(),
+  amount: z.string().nullable(),
+  amount_in_cents: z.number().nullable(),
   display_amount: z.string(),
   recorded_at: z.string(),
 });

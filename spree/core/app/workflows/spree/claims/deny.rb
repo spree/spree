@@ -1,6 +1,8 @@
 module Spree
   module Claims
     class Deny < Spree::Workflow
+      include Spree::Refunds::TaxCredit
+
       hooks :validate, :after_deny
 
       # @param claim [Spree::Claim]
@@ -13,6 +15,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_denied
+          step :clear_tax
         end
 
         run_hooks :after_deny
@@ -29,6 +32,10 @@ module Spree
       def mark_denied
         memo = [claim.memo, reason].compact_blank.join("\n")
         claim.update!(status: 'denied', denied_at: Time.current, memo: memo.presence)
+      end
+
+      def clear_tax
+        clear_tax_credit(claim)
       end
     end
   end

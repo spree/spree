@@ -1,24 +1,25 @@
 import type { CommissionLine, Order } from '@spree/admin-sdk'
-import { formatPrice } from '@spree/dashboard-core'
-import type { TFunction } from 'i18next'
+import { isDecimalString } from '@spree/core'
+import { formatAmount, prorateMoney } from '@spree/dashboard-core'
+import i18n, { type TFunction } from 'i18next'
 
 function snapshottedFixedAmount(line: CommissionLine, order: Order, t: TFunction) {
   if (line.line_item_id) {
     const item = order.items?.find((row) => row.id === line.line_item_id)
     const quantity = item?.quantity ?? 1
-    if (quantity <= 0) return line.display_amount || t('admin.common.empty_value')
+    if (quantity <= 0)
+      return formatAmount(line.amount, line.currency, i18n.language, t('admin.common.empty_value'))
 
-    const perUnit = Number.parseFloat(line.amount) / quantity
-    if (!Number.isFinite(perUnit)) return t('admin.common.empty_value')
+    if (!isDecimalString(line.amount)) return t('admin.common.empty_value')
 
-    return formatPrice({
-      amount: perUnit.toFixed(2),
-      currency: line.currency,
-      display_amount: null,
-    })
+    return formatAmount(
+      prorateMoney(line.amount, 1, quantity, line.currency),
+      line.currency,
+      i18n.language,
+    )
   }
 
-  return line.display_amount || t('admin.common.empty_value')
+  return formatAmount(line.amount, line.currency, i18n.language, t('admin.common.empty_value'))
 }
 
 export function commissionRateLabel(line: CommissionLine, order: Order, t: TFunction) {

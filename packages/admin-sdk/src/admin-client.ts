@@ -1,18 +1,227 @@
 import type {
+  AuthProvidersResponse,
   EmailPasswordLogin,
+  FileUploadCreateParams,
   ListParams,
   LoginCredentials,
   PaginatedResponse,
   PaginationMeta,
+  PreferenceSchema,
   ProviderLogin,
   RequestFn,
   RequestOptions,
+  UploadFileOptions,
 } from '@spree/sdk-core'
-import { getParams, transformListParams } from '@spree/sdk-core'
+import { getParams, transformListParams, uploadFile } from '@spree/sdk-core'
+import type {
+  AddressFilters,
+  AddressSort,
+  AdminUserFilters,
+  AdminUserSort,
+  AllowedOriginFilters,
+  AllowedOriginSort,
+  ApiKeyFilters,
+  ApiKeySort,
+  CatalogFilters,
+  CatalogOrderMinimumFilters,
+  CatalogOrderMinimumSort,
+  CatalogSort,
+  CategoryFilters,
+  CategorySort,
+  ChannelFilters,
+  ChannelSort,
+  ClaimFilters,
+  ClaimReasonFilters,
+  ClaimReasonSort,
+  ClaimSort,
+  CollectionFilters,
+  CollectionSort,
+  CommissionLineFilters,
+  CommissionLineSort,
+  CommissionRateFilters,
+  CommissionRateSort,
+  CompanyFilters,
+  CompanyInvitationFilters,
+  CompanyInvitationSort,
+  CompanyMembershipFilters,
+  CompanyMembershipSort,
+  CompanySort,
+  ConsentRecordFilters,
+  ConsentRecordSort,
+  CouponCodeFilters,
+  CouponCodeSort,
+  CreditCardFilters,
+  CreditCardSort,
+  CustomerFilters,
+  CustomerGroupFilters,
+  CustomerGroupSort,
+  CustomerSort,
+  CustomFieldDefinitionFilters,
+  CustomFieldDefinitionSort,
+  CustomFieldFilters,
+  CustomFieldSort,
+  DataRequestFilters,
+  DataRequestSort,
+  DeliveryMethodFilters,
+  DeliveryMethodSort,
+  DeliveryProfileFilters,
+  DeliveryProfileSort,
+  DeliveryZoneFilters,
+  DeliveryZoneSort,
+  DigitalAssetFilters,
+  DigitalAssetSort,
+  DigitalLinkFilters,
+  DigitalLinkSort,
+  DiscountFilters,
+  DiscountSort,
+  ExchangeFilters,
+  ExchangeSort,
+  ExportFilters,
+  ExportSort,
+  FeeFilters,
+  FeeSort,
+  FulfillmentFilters,
+  FulfillmentSort,
+  GiftCardBatchFilters,
+  GiftCardBatchSort,
+  GiftCardFilters,
+  GiftCardSort,
+  ImportFilters,
+  ImportRowFilters,
+  ImportRowSort,
+  ImportSort,
+  IntegrationFilters,
+  IntegrationSort,
+  InvitationFilters,
+  InvitationSort,
+  LineItemFilters,
+  LineItemSort,
+  MarketFilters,
+  MarketSort,
+  MediaFilters,
+  MediaSort,
+  OptionTypeFilters,
+  OptionTypeSort,
+  OrderCancellationReasonFilters,
+  OrderCancellationReasonSort,
+  OrderFilters,
+  OrderGroupFilters,
+  OrderGroupSort,
+  OrderRoutingRuleFilters,
+  OrderRoutingRuleSort,
+  OrderSort,
+  PackageTypeFilters,
+  PackageTypeSort,
+  PaymentFilters,
+  PaymentMethodFilters,
+  PaymentMethodSort,
+  PaymentSort,
+  PolicyFilters,
+  PolicySort,
+  PriceFilters,
+  PriceListFilters,
+  PriceListSort,
+  PriceSort,
+  ProductFilters,
+  ProductSearchFilters,
+  ProductSearchSort,
+  ProductSort,
+  ProductTypeFilters,
+  ProductTypeSort,
+  PromotionActionFilters,
+  PromotionActionSort,
+  PromotionFilters,
+  PromotionRuleFilters,
+  PromotionRuleSort,
+  PromotionSort,
+  PurchaseOrderFilters,
+  PurchaseOrderSort,
+  RefundFilters,
+  RefundReasonFilters,
+  RefundReasonSort,
+  RefundSort,
+  ReturnFilters,
+  ReturnReasonFilters,
+  ReturnReasonSort,
+  ReturnSort,
+  RoleFilters,
+  RoleSort,
+  SavedReportFilters,
+  SavedReportSort,
+  SellerFilters,
+  SellerPayoutFilters,
+  SellerPayoutSort,
+  SellerRequirementFilters,
+  SellerRequirementSort,
+  SellerRequirementSubmissionFilters,
+  SellerRequirementSubmissionSort,
+  SellerSort,
+  SellerTransferFilters,
+  SellerTransferSort,
+  StockLevelFilters,
+  StockLevelSort,
+  StockLocationFilters,
+  StockLocationSort,
+  StockMovementFilters,
+  StockMovementSort,
+  StockReservationFilters,
+  StockReservationSort,
+  StockTransferFilters,
+  StockTransferSort,
+  StoreCreditEventFilters,
+  StoreCreditEventSort,
+  StoreCreditFilters,
+  StoreCreditSort,
+  SupplierFilters,
+  SupplierSort,
+  TaxCategoryFilters,
+  TaxCategorySort,
+  TaxExemptionCertificateFilters,
+  TaxExemptionCertificateSort,
+  TaxExemptionReasonFilters,
+  TaxExemptionReasonSort,
+  TaxIdentifierFilters,
+  TaxIdentifierSort,
+  TaxLineFilters,
+  TaxLineSort,
+  TaxRateFilters,
+  TaxRateSort,
+  VariantFilters,
+  VariantSort,
+  WebhookDeliveryFilters,
+  WebhookDeliverySort,
+  WebhookEndpointFilters,
+  WebhookEndpointSort,
+} from './types/filters.generated'
 
 // ============================================
 // Semantic reporting contract (docs/plans/6.0-analytics-semantic-layer.md)
 // ============================================
+
+// Every sales context field, so adding one to `VariantSalesContextParams`
+// fails to compile until it is listed here too.
+const VARIANT_SALES_CONTEXT_FIELDS: Record<keyof VariantSalesContextParams, true> = {
+  order_id: true,
+  market_id: true,
+  channel_id: true,
+  customer_id: true,
+  company_id: true,
+  currency: true,
+}
+
+// The sales context scopes and prices the list, so it stays out of the Ransack filters.
+function variantListQuery(
+  params: ListParams<VariantFilters, VariantSort> & VariantSalesContextParams,
+): ReturnType<typeof transformListParams> {
+  const filters: Record<string, unknown> = { ...params }
+  const context: Record<string, string> = {}
+  for (const field of Object.keys(VARIANT_SALES_CONTEXT_FIELDS)) {
+    const value = filters[field]
+    if (typeof value === 'string' && value) context[field] = value
+    delete filters[field]
+  }
+  return { ...transformListParams(filters), ...context }
+}
 
 export type ReportingGrain = 'hour' | 'day' | 'week' | 'month'
 
@@ -20,7 +229,7 @@ export type ReportingCompare = 'previous_period' | 'previous_year'
 
 export type ReportingMetricFilterOp = 'eq' | 'gt' | 'gte' | 'lt' | 'lte'
 
-export interface ReportingQuery {
+export type ReportingQuery = {
   /** Registered metric names — discover via `reporting.schema()`. */
   metrics: string[]
   dimensions?: Array<
@@ -167,32 +376,12 @@ export interface AuthTokens {
   user: AdminUser
 }
 
-/**
- * One authentication provider the store accepts.
- *
- * `password` providers are driven by the login form; `redirect` providers send
- * the browser to `authorization_url` and come back through the OAuth callback.
- */
-export interface AuthProvider {
-  /** Registry key, e.g. "email" or "entra". Identifies the provider on login. */
-  key: string
-  kind: 'password' | 'redirect'
-  /** Button label for redirect providers. Absent for password providers. */
-  label?: string
-  /** Where to send the browser. Absent if the provider is misconfigured or unreachable. */
-  authorization_url?: string
-}
-
-export interface AuthProvidersResponse {
-  providers: AuthProvider[]
-}
-
 export interface PermissionRule {
   /** true for `can`, false for `cannot` */
   allow: boolean
   /** Action names, e.g. ["read", "update"] or ["manage"] */
   actions: string[]
-  /** Subject class names, e.g. ["Spree::Product"] or ["all"] */
+  /** Subject short names, e.g. ["product"] or ["all"] */
   subjects: string[]
   /** Whether the server rule has per-record conditions. If true, the action may be denied at the record level and the SPA should expect possible 403. */
   has_conditions: boolean
@@ -221,16 +410,22 @@ import type {
   AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
+  BulkTagsParams,
   CatalogAssignParams,
+  CatalogCreateParams,
   CatalogOrderMinimumParams,
-  CatalogParams,
   CatalogProductTermsParams,
+  CatalogUpdateParams,
   CategoryCreateParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
+  ChannelAddProductsParams,
   ChannelCreateParams,
+  ChannelRemoveProductsParams,
   ChannelUpdateParams,
+  ClaimCancelParams,
   ClaimCreateParams,
+  ClaimDenyParams,
   ClaimResolveParams,
   ClaimUpdateParams,
   CollectionCreateParams,
@@ -238,10 +433,14 @@ import type {
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
   CommissionRuleType,
-  CompanyAddressParams,
+  CompanyAddressCreateParams,
+  CompanyAddressUpdateParams,
+  CompanyCreateParams,
   CompanyMembershipCreateParams,
-  CompanyParams,
-  CustomerAddressParams,
+  CompanyUpdateParams,
+  CustomerAddressCreateParams,
+  CustomerAddressUpdateParams,
+  CustomerBulkGroupsParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
   CustomerGroupUpdateParams,
@@ -254,22 +453,38 @@ import type {
   CustomFieldOwnerType,
   CustomFieldResourceType,
   CustomFieldUpdateParams,
+  DataRequestCreateParams,
   DeliveryCreateParams,
   DeliveryMarkDeliveredParams,
-  DeliveryMethodParams,
+  DeliveryMethodCreateParams,
+  DeliveryMethodRuleCreateParams,
+  DeliveryMethodRuleUpdateParams,
+  DeliveryMethodUpdateParams,
   DeliveryOriginGroupParams,
-  DeliveryProfileParams,
+  DeliveryProfileCreateParams,
+  DeliveryProfileUpdateParams,
   DeliveryUpdateParams,
-  DeliveryZoneParams,
+  DeliveryZoneCreateParams,
+  DeliveryZoneUpdateParams,
   DigitalAssetCreateParams,
   DigitalAssetProvider,
   DigitalAssetUpdateParams,
-  DirectUploadCreateParams,
+  DiscountCodeApplyParams,
+  DiscountCreateParams,
+  DiscountUpdateParams,
+  EmailTemplateDraftParams,
+  EmailTemplateLanguageParams,
+  EmailTemplatePreviewParams,
+  EmailTemplateRestoreParams,
+  EmailTemplateVersionParams,
+  ExchangeCancelParams,
   ExchangeCreateParams,
   ExchangeFulfillParams,
   ExchangeReceiveParams,
   ExchangeUpdateParams,
   ExportCreateParams,
+  FeeCreateParams,
+  FeeUpdateParams,
   FulfillmentCreateParams,
   FulfillmentFulfillParams,
   FulfillmentMarkDeliveredParams,
@@ -292,9 +507,11 @@ import type {
   MarketUpdateParams,
   MediaCreateParams,
   MediaLibraryCreateParams,
+  MediaLibraryUpdateParams,
   MediaUpdateParams,
   MediaUsageReference,
   MeUpdateParams,
+  OauthAuthorizationParams,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
   OrderCancelParams,
@@ -307,20 +524,27 @@ import type {
   PackageTypeUpdateParams,
   PasswordResetParams,
   PasswordResetRequestParams,
+  PaymentCaptureParams,
   PaymentCreateParams,
   PaymentMethodCreateParams,
   PaymentMethodType,
   PaymentMethodUpdateParams,
   PolicyCreateParams,
   PolicyUpdateParams,
-  PreferenceField,
-  PriceBulkUpsertRow,
+  PriceBulkDestroyParams,
+  PriceBulkUpsertParams,
   PriceCreateParams,
   PriceListCreateParams,
   PriceListUpdateParams,
   PriceUpdateParams,
+  ProductBulkCategoriesParams,
+  ProductBulkChannelsParams,
+  ProductBulkCollectionsParams,
+  ProductBulkDestroyParams,
+  ProductBulkStatusParams,
   ProductCreateParams,
   ProductMembershipRepositionParams,
+  ProductRejectParams,
   ProductTypeApplyToProductsResponse,
   ProductTypeCreateParams,
   ProductTypeUpdateParams,
@@ -332,6 +556,7 @@ import type {
   PromotionRuleCreateParams,
   PromotionRuleUpdateParams,
   PromotionUpdateParams,
+  PurchaseOrderCancelParams,
   PurchaseOrderCreateParams,
   PurchaseOrderUpdateParams,
   ReasonCreateParams,
@@ -339,6 +564,7 @@ import type {
   ReceivableCloseParams,
   RefundCreateParams,
   ResourceTypeDefinition,
+  ReturnCancelParams,
   ReturnCreateParams,
   ReturnReceiveParams,
   ReturnRefundParams,
@@ -351,6 +577,7 @@ import type {
   SellerCreateParams,
   SellerInviteParams,
   SellerOnboarding,
+  SellerPayoutCompleteParams,
   SellerRejectParams,
   SellerReopenOnboardingParams,
   SellerRequirementCreateParams,
@@ -364,13 +591,14 @@ import type {
   SetupParams,
   SetupStatus,
   ShippingLabelCreateParams,
-  StockLevelBulkUpsertRow,
+  StockLevelBulkUpsertParams,
   StockLevelUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
   StockReceiptCreateParams,
   StockTransferCancelParams,
   StockTransferCreateParams,
+  StockTransferMarkInTransitParams,
   StockTransferUpdateParams,
   StoreCreditApplyParams,
   StoreCreditListResponse,
@@ -381,11 +609,18 @@ import type {
   SupplierUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
-  TaxExemptionCertificateParams,
-  TaxIdentifierParams,
-  TaxRateParams,
+  TaxExemptionCertificateCreateParams,
+  TaxExemptionCertificateUpdateParams,
+  TaxExemptionReasonCreateParams,
+  TaxExemptionReasonUpdateParams,
+  TaxIdentifierCreateParams,
+  TaxIdentifierUpdateParams,
+  TaxProviderOption,
+  TaxRateCreateParams,
+  TaxRateUpdateParams,
   TrackingCarrierOption,
   VariantCreateParams,
+  VariantSalesContextParams,
   VariantUpdateParams,
   WebhookEndpointCreateParams,
   WebhookEndpointDisableParams,
@@ -410,6 +645,7 @@ import type {
   Company,
   CompanyInvitation,
   CompanyMembership,
+  ConsentRecord,
   Country,
   CouponCode,
   CreditCard,
@@ -418,6 +654,7 @@ import type {
   CustomField,
   CustomFieldDefinition,
   DashboardCounter,
+  DataRequest,
   Delivery,
   DeliveryMethod,
   DeliveryMethodRule,
@@ -428,9 +665,14 @@ import type {
   DigitalAsset,
   DigitalLink,
   Discount,
+  EmailTemplate,
+  EmailTemplatePreview,
+  EmailTemplateRevision,
+  EmailTemplateSampleRecord,
   Exchange,
   Export,
   Fee,
+  FileUpload,
   Fulfillment,
   FulfillmentProviderOption,
   GiftCard,
@@ -444,6 +686,10 @@ import type {
   Locale,
   Market,
   Media,
+  OauthAccessToken,
+  OauthApplication,
+  OauthConsentRequest,
+  OauthRedirect,
   OptionType,
   Order,
   OrderCancellationReason,
@@ -483,6 +729,7 @@ import type {
   StockLocation,
   StockMovement,
   StockReceipt,
+  StockReservation,
   StockTransfer,
   Store,
   StoreCredit,
@@ -490,19 +737,22 @@ import type {
   Supplier,
   TaxCategory,
   TaxExemptionCertificate,
+  TaxExemptionReason,
   TaxIdentifier,
   TaxLine,
   TaxRate,
   TranslatableResource,
   TranslationBatchEntry,
   TranslationCoverage,
+  UpdateStatus,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
+  WebhookEvent,
 } from './types'
 
 /**
- * Maps a built-in CustomField owner type (e.g. `Spree::Product`) to its admin
+ * Maps a built-in CustomField owner type (e.g. `product`) to its admin
  * route segment. The generic `client.customFields(ownerType, ownerId)` escape
  * hatch reads this map; plugin owners that aren't registered here hit the
  * runtime "Unknown owner type" error and should use the first-class accessor
@@ -513,15 +763,26 @@ import type {
  * and the union in `params.ts`; the type system flags the map side.
  */
 const CUSTOM_FIELD_OWNER_PATHS = {
-  'Spree::Product': '/products',
-  'Spree::Variant': '/variants',
-  'Spree::Order': '/orders',
-  'Spree::Customer': '/customers',
-  // Pre-6.0 customer class name, kept so existing callers still resolve.
-  'Spree::User': '/customers',
-  'Spree::Category': '/categories',
-  'Spree::Collection': '/collections',
-  'Spree::OptionType': '/option_types',
+  product: '/products',
+  variant: '/variants',
+  order: '/orders',
+  customer: '/customers',
+  category: '/categories',
+  collection: '/collections',
+  option_type: '/option_types',
+  seller: '/sellers',
+  promotion: '/promotions',
+  gift_card: '/gift_cards',
+  store_credit: '/store_credits',
+  stock_transfer: '/stock_transfers',
+  purchase_order: '/purchase_orders',
+  company: '/companies',
+  payment_method: '/payment_methods',
+  delivery_method: '/delivery_methods',
+  tax_rate: '/tax_rates',
+  product_type: '/product_types',
+  media: '/media',
+  store: '/stores',
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
 export class AdminClient {
@@ -565,7 +826,7 @@ export class AdminClient {
     return {
       list: (
         parentId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CustomFieldFilters, CustomFieldSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CustomField>> =>
         this.request<PaginatedResponse<CustomField>>(
@@ -638,7 +899,7 @@ export class AdminClient {
        */
       list: (
         parentId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ProductFilters, ProductSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Row>> =>
         this.request<PaginatedResponse<Row>>('GET', `${basePath}/${parentId}/products`, {
@@ -699,7 +960,7 @@ export class AdminClient {
    * plugin-registered resource without a dedicated accessor.
    *
    * ```ts
-   * await client.customFields('Spree::Product', 'prod_xxx').list()
+   * await client.customFields('product', 'prod_xxx').list()
    * ```
    */
   customFields(ownerType: CustomFieldOwnerType, ownerId: string) {
@@ -711,7 +972,7 @@ export class AdminClient {
     }
     const scoped = this.parentScopedCustomFields(ownerPath)
     return {
-      list: (params?: ListParams & Record<string, unknown>, options?: RequestOptions) =>
+      list: (params?: ListParams<CustomFieldFilters, CustomFieldSort>, options?: RequestOptions) =>
         scoped.list(ownerId, params, options),
       get: (id: string, options?: RequestOptions) => scoped.get(ownerId, id, options),
       create: (params: CustomFieldCreateParams, options?: RequestOptions) =>
@@ -728,7 +989,7 @@ export class AdminClient {
 
   readonly customFieldDefinitions = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CustomFieldDefinitionFilters, CustomFieldDefinitionSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CustomFieldDefinition>> =>
       this.request<PaginatedResponse<CustomFieldDefinition>>('GET', '/custom_field_definitions', {
@@ -904,6 +1165,16 @@ export class AdminClient {
       this.request<MeResponse>('PATCH', '/me', { ...options, body: params }),
   }
 
+  readonly updates = {
+    /**
+     * Whether a newer Spree release exists, from the server's daily update
+     * check. Needs a client created with `jwtToken` for an admin who can
+     * manage the store; a secret key gets a 404.
+     */
+    get: (options?: RequestOptions): Promise<UpdateStatus> =>
+      this.request<UpdateStatus>('GET', '/updates', options),
+  }
+
   // ============================================
   // Dashboard
   // ============================================
@@ -920,7 +1191,7 @@ export class AdminClient {
     /** Store-wide saved reports: a contract query plus visualization config. */
     savedReports: {
       list: (
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<SavedReportFilters, SavedReportSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<SavedReport>> =>
         this.request<PaginatedResponse<SavedReport>>('GET', '/reporting/saved_reports', {
@@ -1051,7 +1322,7 @@ export class AdminClient {
 
   readonly products = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ProductSearchFilters, ProductSearchSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Product>> =>
       this.request<PaginatedResponse<Product>>('GET', '/products', {
@@ -1095,7 +1366,7 @@ export class AdminClient {
      */
     reject: (
       id: string,
-      params?: { reason?: string },
+      params?: ProductRejectParams,
       options?: RequestOptions,
     ): Promise<Product> =>
       this.request<Product>('PATCH', `/products/${id}/reject`, { ...options, body: params }),
@@ -1105,21 +1376,21 @@ export class AdminClient {
      * against the product status enum and reindexes affected products.
      */
     bulkStatusUpdate: (
-      params: { ids: string[]; status: 'draft' | 'active' | 'archived' },
+      params: ProductBulkStatusParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; status: string }> =>
       this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
 
     /** Attach every product in `ids` to every category in `category_ids`. */
     bulkAddToCategories: (
-      params: { ids: string[]; category_ids: string[] },
+      params: ProductBulkCategoriesParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; category_count: number }> =>
       this.request('POST', '/products/bulk_add_to_categories', { ...options, body: params }),
 
     /** Detach every product in `ids` from every category in `category_ids`. */
     bulkRemoveFromCategories: (
-      params: { ids: string[]; category_ids: string[] },
+      params: ProductBulkCategoriesParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; category_count: number }> =>
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
@@ -1130,49 +1401,49 @@ export class AdminClient {
      * `collection_count` reports how many were actually applied.
      */
     bulkAddToCollections: (
-      params: { ids: string[]; collection_ids: string[] },
+      params: ProductBulkCollectionsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; collection_count: number }> =>
       this.request('POST', '/products/bulk_add_to_collections', { ...options, body: params }),
 
     /** Detach every product in `ids` from every collection in `collection_ids`. */
     bulkRemoveFromCollections: (
-      params: { ids: string[]; collection_ids: string[] },
+      params: ProductBulkCollectionsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; collection_count: number }> =>
       this.request('POST', '/products/bulk_remove_from_collections', { ...options, body: params }),
 
     /** Publish every product in `ids` on every channel in `channel_ids`. */
     bulkAddToChannels: (
-      params: { ids: string[]; channel_ids: string[] },
+      params: ProductBulkChannelsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; channel_count: number }> =>
       this.request('POST', '/products/bulk_add_to_channels', { ...options, body: params }),
 
     /** Unpublish every product in `ids` from every channel in `channel_ids`. */
     bulkRemoveFromChannels: (
-      params: { ids: string[]; channel_ids: string[] },
+      params: ProductBulkChannelsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; channel_count: number; removed: number }> =>
       this.request('POST', '/products/bulk_remove_from_channels', { ...options, body: params }),
 
     /** Add each tag name to every product. Tags are upserted by name. */
     bulkAddTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; tag_count: number }> =>
       this.request('POST', '/products/bulk_add_tags', { ...options, body: params }),
 
     /** Remove each tag name from every product. No-op for non-tagged. */
     bulkRemoveTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number; tag_count: number }> =>
       this.request('POST', '/products/bulk_remove_tags', { ...options, body: params }),
 
     /** Soft-delete a list of products. */
     bulkDestroy: (
-      params: { ids: string[] },
+      params: ProductBulkDestroyParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number }> =>
       this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
@@ -1180,7 +1451,7 @@ export class AdminClient {
     media: {
       list: (
         productId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<MediaFilters, MediaSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Media>> =>
         this.request<PaginatedResponse<Media>>('GET', `/products/${productId}/media`, {
@@ -1213,7 +1484,7 @@ export class AdminClient {
     digitalAssets: {
       list: (
         productId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<DigitalAssetFilters, DigitalAssetSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<DigitalAsset>> =>
         this.request<PaginatedResponse<DigitalAsset>>(
@@ -1268,7 +1539,7 @@ export class AdminClient {
     variants: {
       list: (
         productId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<VariantFilters, VariantSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Variant>> =>
         this.request<PaginatedResponse<Variant>>('GET', `/products/${productId}/variants`, {
@@ -1315,7 +1586,7 @@ export class AdminClient {
         list: (
           productId: string,
           variantId: string,
-          params?: ListParams & Record<string, unknown>,
+          params?: ListParams<MediaFilters, MediaSort>,
           options?: RequestOptions,
         ): Promise<PaginatedResponse<Media>> =>
           this.request<PaginatedResponse<Media>>(
@@ -1364,7 +1635,7 @@ export class AdminClient {
       },
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Product']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.product),
 
     translations: this.parentScopedTranslations('/products'),
   }
@@ -1379,7 +1650,7 @@ export class AdminClient {
    */
   readonly digitalLinks = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DigitalLinkFilters, DigitalLinkSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DigitalLink>> =>
       this.request<PaginatedResponse<DigitalLink>>('GET', '/digital_links', {
@@ -1400,7 +1671,7 @@ export class AdminClient {
 
   readonly orders = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OrderFilters, OrderSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Order>> =>
       this.request<PaginatedResponse<Order>>('GET', '/orders', {
@@ -1417,11 +1688,7 @@ export class AdminClient {
     create: (params: OrderCreateParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('POST', '/orders', { ...options, body: params }),
 
-    update: (
-      id: string,
-      params: OrderUpdateParams | Record<string, unknown>,
-      options?: RequestOptions,
-    ): Promise<Order> =>
+    update: (id: string, params: OrderUpdateParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -1485,7 +1752,7 @@ export class AdminClient {
     items: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<LineItemFilters, LineItemSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<LineItem>> =>
         this.request<PaginatedResponse<LineItem>>('GET', `/orders/${orderId}/items`, {
@@ -1529,7 +1796,7 @@ export class AdminClient {
     fulfillments: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<FulfillmentFilters, FulfillmentSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Fulfillment>> =>
         this.request<PaginatedResponse<Fulfillment>>('GET', `/orders/${orderId}/fulfillments`, {
@@ -1603,7 +1870,7 @@ export class AdminClient {
       /**
        * The carrier documents bought or uploaded for a parcel. Creating one
        * with no body buys it through the parcel's carrier account; creating it
-       * with a `file` (a signed blob id from `directUploads.create()`) records
+       * with a `file_signed_id` (from `files.upload()`) records
        * postage the merchant bought elsewhere. To print one, fetch
        * `download_url` with the `Authorization` header and drive the browser
        * download from a Blob — the bytes are streamed through the API rather
@@ -1784,7 +2051,7 @@ export class AdminClient {
     returns: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ReturnFilters, ReturnSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Return>> =>
         this.request<PaginatedResponse<Return>>('GET', `/orders/${orderId}/returns`, {
@@ -1852,7 +2119,7 @@ export class AdminClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ReturnCancelParams,
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, {
@@ -1934,7 +2201,7 @@ export class AdminClient {
     exchanges: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ExchangeFilters, ExchangeSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Exchange>> =>
         this.request<PaginatedResponse<Exchange>>('GET', `/orders/${orderId}/exchanges`, {
@@ -2002,7 +2269,7 @@ export class AdminClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ExchangeCancelParams,
         options?: RequestOptions,
       ): Promise<Exchange> =>
         this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/cancel`, {
@@ -2014,7 +2281,7 @@ export class AdminClient {
     claims: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ClaimFilters, ClaimSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Claim>> =>
         this.request<PaginatedResponse<Claim>>('GET', `/orders/${orderId}/claims`, {
@@ -2071,7 +2338,7 @@ export class AdminClient {
       deny: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ClaimDenyParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/deny`, {
@@ -2082,7 +2349,7 @@ export class AdminClient {
       cancel: (
         orderId: string,
         id: string,
-        params?: { reason?: string },
+        params?: ClaimCancelParams,
         options?: RequestOptions,
       ): Promise<Claim> =>
         this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/cancel`, {
@@ -2094,7 +2361,7 @@ export class AdminClient {
     payments: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<PaymentFilters, PaymentSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Payment>> =>
         this.request<PaginatedResponse<Payment>>('GET', `/orders/${orderId}/payments`, {
@@ -2120,8 +2387,17 @@ export class AdminClient {
       ): Promise<Payment> =>
         this.request<Payment>('POST', `/orders/${orderId}/payments`, { ...options, body: params }),
 
-      capture: (orderId: string, id: string, options?: RequestOptions): Promise<Payment> =>
-        this.request<Payment>('PATCH', `/orders/${orderId}/payments/${id}/capture`, options),
+      /** Captures the payment: the full authorized amount, or `amount` for a partial capture. */
+      capture: (
+        orderId: string,
+        id: string,
+        params?: PaymentCaptureParams,
+        options?: RequestOptions,
+      ): Promise<Payment> =>
+        this.request<Payment>('PATCH', `/orders/${orderId}/payments/${id}/capture`, {
+          ...options,
+          body: params,
+        }),
 
       void: (orderId: string, id: string, options?: RequestOptions): Promise<Payment> =>
         this.request<Payment>('PATCH', `/orders/${orderId}/payments/${id}/void`, options),
@@ -2130,7 +2406,7 @@ export class AdminClient {
     refunds: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<RefundFilters, RefundSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Refund>> =>
         this.request<PaginatedResponse<Refund>>('GET', `/orders/${orderId}/refunds`, {
@@ -2149,7 +2425,7 @@ export class AdminClient {
     taxLines: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<TaxLineFilters, TaxLineSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<TaxLine>> =>
         this.request<PaginatedResponse<TaxLine>>('GET', `/orders/${orderId}/tax_lines`, {
@@ -2164,7 +2440,7 @@ export class AdminClient {
     discounts: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<DiscountFilters, DiscountSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Discount>> =>
         this.request<PaginatedResponse<Discount>>('GET', `/orders/${orderId}/discounts`, {
@@ -2182,12 +2458,7 @@ export class AdminClient {
        */
       create: (
         orderId: string,
-        params: {
-          label: string
-          value: string | number
-          value_type?: 'flat' | 'percent'
-          line_item_id?: string
-        },
+        params: DiscountCreateParams,
         options?: RequestOptions,
       ): Promise<{ data: Discount[] }> =>
         this.request<{ data: Discount[] }>('POST', `/orders/${orderId}/discounts`, {
@@ -2199,7 +2470,7 @@ export class AdminClient {
       update: (
         orderId: string,
         id: string,
-        params: { label?: string; amount?: string | number },
+        params: DiscountUpdateParams,
         options?: RequestOptions,
       ): Promise<Discount> =>
         this.request<Discount>('PATCH', `/orders/${orderId}/discounts/${id}`, {
@@ -2221,7 +2492,7 @@ export class AdminClient {
     discountCodes: {
       create: (
         orderId: string,
-        params: { code: string },
+        params: DiscountCodeApplyParams,
         options?: RequestOptions,
       ): Promise<Order> =>
         this.request<Order>('POST', `/orders/${orderId}/discount_codes`, {
@@ -2241,7 +2512,7 @@ export class AdminClient {
     fees: {
       list: (
         orderId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<FeeFilters, FeeSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Fee>> =>
         this.request<PaginatedResponse<Fee>>('GET', `/orders/${orderId}/fees`, {
@@ -2252,23 +2523,13 @@ export class AdminClient {
       get: (orderId: string, id: string, options?: RequestOptions): Promise<Fee> =>
         this.request<Fee>('GET', `/orders/${orderId}/fees/${id}`, options),
 
-      create: (
-        orderId: string,
-        params: {
-          label: string
-          amount: string | number
-          kind?: string
-          line_item_id?: string
-          fulfillment_id?: string
-        },
-        options?: RequestOptions,
-      ): Promise<Fee> =>
+      create: (orderId: string, params: FeeCreateParams, options?: RequestOptions): Promise<Fee> =>
         this.request<Fee>('POST', `/orders/${orderId}/fees`, { ...options, body: params }),
 
       update: (
         orderId: string,
         id: string,
-        params: { label?: string; amount?: string | number; kind?: string },
+        params: FeeUpdateParams,
         options?: RequestOptions,
       ): Promise<Fee> =>
         this.request<Fee>('PATCH', `/orders/${orderId}/fees/${id}`, { ...options, body: params }),
@@ -2277,7 +2538,7 @@ export class AdminClient {
         this.request<void>('DELETE', `/orders/${orderId}/fees/${id}`, options),
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Order']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.order),
   }
 
   // ============================================
@@ -2286,7 +2547,7 @@ export class AdminClient {
 
   readonly optionTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OptionTypeFilters, OptionTypeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<OptionType>> =>
       this.request<PaginatedResponse<OptionType>>('GET', '/option_types', {
@@ -2317,7 +2578,7 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/option_types/${id}`, options),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::OptionType']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.option_type),
 
     translations: this.parentScopedTranslations('/option_types'),
   }
@@ -2328,7 +2589,7 @@ export class AdminClient {
 
   readonly deliveryMethods = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DeliveryMethodFilters, DeliveryMethodSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DeliveryMethod>> =>
       this.request<PaginatedResponse<DeliveryMethod>>('GET', '/delivery_methods', {
@@ -2339,12 +2600,15 @@ export class AdminClient {
     get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
 
-    create: (params: DeliveryMethodParams, options?: RequestOptions): Promise<DeliveryMethod> =>
+    create: (
+      params: DeliveryMethodCreateParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('POST', '/delivery_methods', { ...options, body: params }),
 
     update: (
       id: string,
-      params: DeliveryMethodParams,
+      params: DeliveryMethodUpdateParams,
       options?: RequestOptions,
     ): Promise<DeliveryMethod> =>
       this.request<DeliveryMethod>('PATCH', `/delivery_methods/${id}`, {
@@ -2355,11 +2619,11 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/delivery_methods/${id}`, options),
 
-    /** Registered delivery calculator classes with preference schemas. */
+    /** Registered delivery calculator classes, each with the JSON Schema of its preferences. */
     calculators: (
       options?: RequestOptions,
-    ): Promise<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }> =>
-      this.request<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }>(
+    ): Promise<{ data: Array<{ type: string; name: string; schema: PreferenceSchema }> }> =>
+      this.request<{ data: Array<{ type: string; name: string; schema: PreferenceSchema }> }>(
         'GET',
         '/delivery_methods/calculators',
         options,
@@ -2403,13 +2667,7 @@ export class AdminClient {
 
       create: (
         deliveryMethodId: string,
-        params: {
-          type: string
-          active?: boolean
-          preferences?: Record<string, unknown>
-          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
-          product_ids?: string[]
-        },
+        params: DeliveryMethodRuleCreateParams,
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>('POST', `/delivery_methods/${deliveryMethodId}/rules`, {
@@ -2420,12 +2678,7 @@ export class AdminClient {
       update: (
         deliveryMethodId: string,
         id: string,
-        params: {
-          active?: boolean
-          preferences?: Record<string, unknown>
-          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
-          product_ids?: string[]
-        },
+        params: DeliveryMethodRuleUpdateParams,
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>(
@@ -2446,7 +2699,7 @@ export class AdminClient {
         type: string
         name: string
         description: string
-        preference_schema: PreferenceField[]
+        schema: PreferenceSchema
         /** Association-backed config the rule accepts, e.g. `['product_ids']`. */
         association_fields: string[]
       }>
@@ -2456,7 +2709,7 @@ export class AdminClient {
           type: string
           name: string
           description: string
-          preference_schema: PreferenceField[]
+          schema: PreferenceSchema
           association_fields: string[]
         }>
       }>('GET', '/delivery_method_rules/types', options),
@@ -2464,7 +2717,7 @@ export class AdminClient {
 
   readonly deliveryProfiles = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DeliveryProfileFilters, DeliveryProfileSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DeliveryProfile>> =>
       this.request<PaginatedResponse<DeliveryProfile>>('GET', '/delivery_profiles', {
@@ -2476,7 +2729,7 @@ export class AdminClient {
       this.request<DeliveryProfile>('GET', `/delivery_profiles/${id}`, options),
 
     create: (
-      params: DeliveryProfileParams & { name: string },
+      params: DeliveryProfileCreateParams,
       options?: RequestOptions,
     ): Promise<DeliveryProfile> =>
       this.request<DeliveryProfile>('POST', '/delivery_profiles', {
@@ -2487,7 +2740,7 @@ export class AdminClient {
     /** `stock_location_ids` replaces the profile's full location set. */
     update: (
       id: string,
-      params: DeliveryProfileParams,
+      params: DeliveryProfileUpdateParams,
       options?: RequestOptions,
     ): Promise<DeliveryProfile> =>
       this.request<DeliveryProfile>('PATCH', `/delivery_profiles/${id}`, {
@@ -2500,12 +2753,8 @@ export class AdminClient {
       this.request<void>('DELETE', `/delivery_profiles/${id}`, options),
 
     /** Registered profile kinds (shipping, digital, extension kinds). */
-    kinds: (options?: RequestOptions): Promise<{ data: Array<{ type: string; kind: string }> }> =>
-      this.request<{ data: Array<{ type: string; kind: string }> }>(
-        'GET',
-        '/delivery_profiles/kinds',
-        options,
-      ),
+    kinds: (options?: RequestOptions): Promise<{ data: Array<{ kind: string }> }> =>
+      this.request<{ data: Array<{ kind: string }> }>('GET', '/delivery_profiles/kinds', options),
 
     /** Origin groups partition a profile's fulfillment origins; its zones and methods each belong to one. */
     originGroups: {
@@ -2564,7 +2813,7 @@ export class AdminClient {
 
   readonly deliveryZones = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<DeliveryZoneFilters, DeliveryZoneSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<DeliveryZone>> =>
       this.request<PaginatedResponse<DeliveryZone>>('GET', '/delivery_zones', {
@@ -2583,13 +2832,13 @@ export class AdminClient {
         params: getParams(params),
       }),
 
-    create: (params: DeliveryZoneParams, options?: RequestOptions): Promise<DeliveryZone> =>
+    create: (params: DeliveryZoneCreateParams, options?: RequestOptions): Promise<DeliveryZone> =>
       this.request<DeliveryZone>('POST', '/delivery_zones', { ...options, body: params }),
 
     /** `members` replaces the zone's full member set atomically. */
     update: (
       id: string,
-      params: DeliveryZoneParams,
+      params: DeliveryZoneUpdateParams,
       options?: RequestOptions,
     ): Promise<DeliveryZone> =>
       this.request<DeliveryZone>('PATCH', `/delivery_zones/${id}`, { ...options, body: params }),
@@ -2600,7 +2849,7 @@ export class AdminClient {
 
   readonly packageTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PackageTypeFilters, PackageTypeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PackageType>> =>
       this.request<PaginatedResponse<PackageType>>('GET', '/package_types', {
@@ -2629,7 +2878,7 @@ export class AdminClient {
 
   readonly paymentMethods = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PaymentMethodFilters, PaymentMethodSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PaymentMethod>> =>
       this.request<PaginatedResponse<PaymentMethod>>('GET', '/payment_methods', {
@@ -2670,7 +2919,7 @@ export class AdminClient {
 
   readonly integrations = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<IntegrationFilters, IntegrationSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Integration>> =>
       this.request<PaginatedResponse<Integration>>('GET', '/integrations', {
@@ -2726,7 +2975,7 @@ export class AdminClient {
    */
   readonly priceLists = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PriceListFilters, PriceListSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PriceList>> =>
       this.request<PaginatedResponse<PriceList>>('GET', '/price_lists', {
@@ -2771,7 +3020,7 @@ export class AdminClient {
       this.request<PriceList>('PATCH', `/price_lists/${id}/deactivate`, options),
 
     /**
-     * Returns `[{ type, label, description, preference_schema }]` for
+     * Returns `[{ type, label, description, schema }]` for
      * every registered subclass in `Spree.pricing.rules`. Used to build
      * the "Add rule" picker + render a generic preferences form per
      * subclass. Rules themselves are not a separate REST resource —
@@ -2798,7 +3047,7 @@ export class AdminClient {
    */
   readonly prices = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PriceFilters, PriceSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Price>> =>
       this.request<PaginatedResponse<Price>>('GET', '/prices', {
@@ -2828,13 +3077,13 @@ export class AdminClient {
      * number of rows the DB touched.
      */
     bulkUpsert: (
-      params: { prices: PriceBulkUpsertRow[] },
+      params: PriceBulkUpsertParams,
       options?: RequestOptions,
     ): Promise<{ price_count: number }> =>
       this.request('POST', '/prices/bulk_upsert', { ...options, body: params }),
 
     bulkDestroy: (
-      params: { ids: string[] },
+      params: PriceBulkDestroyParams,
       options?: RequestOptions,
     ): Promise<{ price_count: number }> =>
       this.request('DELETE', '/prices/bulk_destroy', { ...options, body: params }),
@@ -2846,7 +3095,7 @@ export class AdminClient {
 
   readonly promotions = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PromotionFilters, PromotionSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Promotion>> =>
       this.request<PaginatedResponse<Promotion>>('GET', '/promotions', {
@@ -2880,7 +3129,7 @@ export class AdminClient {
     actions: {
       list: (
         promotionId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<PromotionActionFilters, PromotionActionSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<PromotionAction>> =>
         this.request<PaginatedResponse<PromotionAction>>(
@@ -2925,7 +3174,7 @@ export class AdminClient {
     rules: {
       list: (
         promotionId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<PromotionRuleFilters, PromotionRuleSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<PromotionRule>> =>
         this.request<PaginatedResponse<PromotionRule>>(
@@ -2969,7 +3218,7 @@ export class AdminClient {
     couponCodes: {
       list: (
         promotionId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CouponCodeFilters, CouponCodeSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CouponCode>> =>
         this.request<PaginatedResponse<CouponCode>>(
@@ -3008,6 +3257,7 @@ export class AdminClient {
 
   readonly tags = {
     list: (
+      /** `taggable_type` is the tagged resource's shorthand: `product`, `order` or `customer`. */
       params: { taggable_type: string; q?: string },
       options?: RequestOptions,
     ): Promise<{ data: Array<{ name: string }> }> =>
@@ -3023,7 +3273,7 @@ export class AdminClient {
 
   readonly customerGroups = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CustomerGroupFilters, CustomerGroupSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CustomerGroup>> =>
       this.request<PaginatedResponse<CustomerGroup>>('GET', '/customer_groups', {
@@ -3070,7 +3320,7 @@ export class AdminClient {
    */
   readonly sellers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerFilters, SellerSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Seller>> =>
       this.request<PaginatedResponse<Seller>>('GET', '/sellers', {
@@ -3134,7 +3384,7 @@ export class AdminClient {
         this.request<{ data: SellerTeamMember[] }>('GET', `/sellers/${sellerId}/team`, options),
 
       /** Revokes a member's access. */
-      remove: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
+      delete: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/sellers/${sellerId}/team/${id}`, options),
     },
 
@@ -3144,7 +3394,7 @@ export class AdminClient {
         this.request<{ data: Invitation[] }>('GET', `/sellers/${sellerId}/invitations`, options),
 
       /** Withdraws an offer. */
-      remove: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
+      delete: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/sellers/${sellerId}/invitations/${id}`, options),
 
       /** Sends the email again; refused once the offer has lapsed. */
@@ -3168,7 +3418,7 @@ export class AdminClient {
     requirementSubmissions: {
       list: (
         sellerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<SellerRequirementSubmissionFilters, SellerRequirementSubmissionSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<SellerRequirementSubmission>> =>
         this.request<PaginatedResponse<SellerRequirementSubmission>>(
@@ -3252,6 +3502,8 @@ export class AdminClient {
      */
     settle: (id: string, options?: RequestOptions): Promise<{ data: SellerPayout[] }> =>
       this.request<{ data: SellerPayout[] }>('POST', `/sellers/${id}/payouts`, options),
+
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.seller),
   }
 
   // ============================================
@@ -3266,7 +3518,7 @@ export class AdminClient {
    */
   readonly sellerRequirements = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerRequirementFilters, SellerRequirementSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<SellerRequirement>> =>
       this.request<PaginatedResponse<SellerRequirement>>('GET', '/seller_requirements', {
@@ -3312,7 +3564,7 @@ export class AdminClient {
    */
   readonly commissionRates = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CommissionRateFilters, CommissionRateSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CommissionRate>> =>
       this.request<PaginatedResponse<CommissionRate>>('GET', '/commission_rates', {
@@ -3365,7 +3617,7 @@ export class AdminClient {
    */
   readonly commissionLines = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CommissionLineFilters, CommissionLineSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<CommissionLine>> =>
       this.request<PaginatedResponse<CommissionLine>>('GET', '/commission_lines', {
@@ -3391,7 +3643,7 @@ export class AdminClient {
    */
   readonly orderGroups = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OrderGroupFilters, OrderGroupSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<OrderGroup>> =>
       this.request<PaginatedResponse<OrderGroup>>('GET', '/order_groups', {
@@ -3421,7 +3673,7 @@ export class AdminClient {
    */
   readonly sellerTransfers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerTransferFilters, SellerTransferSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<SellerTransfer>> =>
       this.request<PaginatedResponse<SellerTransfer>>('GET', '/seller_transfers', {
@@ -3448,7 +3700,7 @@ export class AdminClient {
    */
   readonly sellerPayouts = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SellerPayoutFilters, SellerPayoutSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<SellerPayout>> =>
       this.request<PaginatedResponse<SellerPayout>>('GET', '/seller_payouts', {
@@ -3468,7 +3720,7 @@ export class AdminClient {
 
     complete: (
       id: string,
-      data?: { reference?: string },
+      data?: SellerPayoutCompleteParams,
       options?: RequestOptions,
     ): Promise<SellerPayout> =>
       this.request<SellerPayout>('PATCH', `/seller_payouts/${id}/complete`, {
@@ -3489,7 +3741,7 @@ export class AdminClient {
    */
   readonly giftCards = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<GiftCardFilters, GiftCardSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<GiftCard>> =>
       this.request<PaginatedResponse<GiftCard>>('GET', '/gift_cards', {
@@ -3537,7 +3789,7 @@ export class AdminClient {
    */
   readonly storeCredits = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StoreCreditFilters, StoreCreditSort>,
       options?: RequestOptions,
     ): Promise<StoreCreditListResponse> =>
       this.request<StoreCreditListResponse>('GET', '/store_credits', {
@@ -3559,7 +3811,7 @@ export class AdminClient {
     events: {
       list: (
         storeCreditId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<StoreCreditEventFilters, StoreCreditEventSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<StoreCreditEvent>> =>
         this.request<PaginatedResponse<StoreCreditEvent>>(
@@ -3580,7 +3832,7 @@ export class AdminClient {
 
   readonly returns = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ReturnFilters, ReturnSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Return>> =>
       this.request<PaginatedResponse<Return>>('GET', '/returns', {
@@ -3597,7 +3849,7 @@ export class AdminClient {
 
   readonly exchanges = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ExchangeFilters, ExchangeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Exchange>> =>
       this.request<PaginatedResponse<Exchange>>('GET', '/exchanges', {
@@ -3618,7 +3870,7 @@ export class AdminClient {
 
   readonly claims = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ClaimFilters, ClaimSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Claim>> =>
       this.request<PaginatedResponse<Claim>>('GET', '/claims', {
@@ -3646,7 +3898,7 @@ export class AdminClient {
    */
   readonly giftCardBatches = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<GiftCardBatchFilters, GiftCardBatchSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<GiftCardBatch>> =>
       this.request<PaginatedResponse<GiftCardBatch>>('GET', '/gift_card_batches', {
@@ -3672,7 +3924,7 @@ export class AdminClient {
    */
   readonly taxRates = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<TaxRateFilters, TaxRateSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<TaxRate>> =>
       this.request<PaginatedResponse<TaxRate>>('GET', '/tax_rates', {
@@ -3683,10 +3935,10 @@ export class AdminClient {
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<TaxRate> =>
       this.request<TaxRate>('GET', `/tax_rates/${id}`, { ...options, params: getParams(params) }),
 
-    create: (params: TaxRateParams, options?: RequestOptions): Promise<TaxRate> =>
+    create: (params: TaxRateCreateParams, options?: RequestOptions): Promise<TaxRate> =>
       this.request<TaxRate>('POST', '/tax_rates', { ...options, body: params }),
 
-    update: (id: string, params: TaxRateParams, options?: RequestOptions): Promise<TaxRate> =>
+    update: (id: string, params: TaxRateUpdateParams, options?: RequestOptions): Promise<TaxRate> =>
       this.request<TaxRate>('PATCH', `/tax_rates/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -3700,8 +3952,8 @@ export class AdminClient {
    * letting a merchant discover it at checkout.
    */
   readonly taxProviders = {
-    list: (options?: RequestOptions): Promise<PaginatedResponse<Record<string, unknown>>> =>
-      this.request<PaginatedResponse<Record<string, unknown>>>('GET', '/tax_providers', options),
+    list: (options?: RequestOptions): Promise<PaginatedResponse<TaxProviderOption>> =>
+      this.request<PaginatedResponse<TaxProviderOption>>('GET', '/tax_providers', options),
   }
 
   /**
@@ -3737,7 +3989,7 @@ export class AdminClient {
    */
   readonly companies = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CompanyFilters, CompanySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Company>> =>
       this.request<PaginatedResponse<Company>>('GET', '/companies', {
@@ -3748,11 +4000,11 @@ export class AdminClient {
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('GET', `/companies/${id}`, { ...options, params: getParams(params) }),
 
-    create: (params: CompanyParams, options?: RequestOptions): Promise<Company> =>
+    create: (params: CompanyCreateParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('POST', '/companies', { ...options, body: params }),
 
     /** Re-parenting is an ordinary update — depth, cycle and store revalidate. */
-    update: (id: string, params: CompanyParams, options?: RequestOptions): Promise<Company> =>
+    update: (id: string, params: CompanyUpdateParams, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('PATCH', `/companies/${id}`, { ...options, body: params }),
 
     /** Destroys the node and its whole subtree. */
@@ -3762,7 +4014,7 @@ export class AdminClient {
     addresses: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<AddressFilters, AddressSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Address>> =>
         this.request<PaginatedResponse<Address>>('GET', `/companies/${companyId}/addresses`, {
@@ -3772,7 +4024,7 @@ export class AdminClient {
 
       create: (
         companyId: string,
-        params: CompanyAddressParams,
+        params: CompanyAddressCreateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('POST', `/companies/${companyId}/addresses`, {
@@ -3787,7 +4039,7 @@ export class AdminClient {
       update: (
         companyId: string,
         id: string,
-        params: CompanyAddressParams,
+        params: CompanyAddressUpdateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/companies/${companyId}/addresses/${id}`, {
@@ -3808,7 +4060,7 @@ export class AdminClient {
     memberships: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CompanyMembershipFilters, CompanyMembershipSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyMembership>> =>
         this.request<PaginatedResponse<CompanyMembership>>(
@@ -3843,7 +4095,7 @@ export class AdminClient {
     invitations: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CompanyInvitationFilters, CompanyInvitationSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CompanyInvitation>> =>
         this.request<PaginatedResponse<CompanyInvitation>>(
@@ -3873,7 +4125,7 @@ export class AdminClient {
     taxIdentifiers: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<TaxIdentifierFilters, TaxIdentifierSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<TaxIdentifier>> =>
         this.request<PaginatedResponse<TaxIdentifier>>(
@@ -3894,7 +4146,7 @@ export class AdminClient {
 
       create: (
         companyId: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierCreateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('POST', `/companies/${companyId}/tax_identifiers`, {
@@ -3905,7 +4157,7 @@ export class AdminClient {
       update: (
         companyId: string,
         id: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierUpdateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('PATCH', `/companies/${companyId}/tax_identifiers/${id}`, {
@@ -3935,8 +4187,8 @@ export class AdminClient {
      * sale, since a verified certificate stops counting once its expiry date
      * passes.
      *
-     * Upload the document via `directUploads.create()` first and pass the
-     * returned `signed_id` as `document`. To read it back, fetch
+     * Upload the document via `files.upload()` first and pass the
+     * returned `signed_id` as `document_signed_id`. To read it back, fetch
      * `document_url` with the `Authorization` header and drive the browser
      * download from a Blob — the bytes are streamed through the API rather
      * than served from storage, so a top-level navigation carrying no JWT
@@ -3945,7 +4197,7 @@ export class AdminClient {
     taxExemptionCertificates: {
       list: (
         companyId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<TaxExemptionCertificateFilters, TaxExemptionCertificateSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<TaxExemptionCertificate>> =>
         this.request<PaginatedResponse<TaxExemptionCertificate>>(
@@ -3968,7 +4220,7 @@ export class AdminClient {
 
       create: (
         companyId: string,
-        params: TaxExemptionCertificateParams,
+        params: TaxExemptionCertificateCreateParams,
         options?: RequestOptions,
       ): Promise<TaxExemptionCertificate> =>
         this.request<TaxExemptionCertificate>(
@@ -3980,7 +4232,7 @@ export class AdminClient {
       update: (
         companyId: string,
         id: string,
-        params: TaxExemptionCertificateParams,
+        params: TaxExemptionCertificateUpdateParams,
         options?: RequestOptions,
       ): Promise<TaxExemptionCertificate> =>
         this.request<TaxExemptionCertificate>(
@@ -4043,7 +4295,7 @@ export class AdminClient {
    */
   readonly catalogs = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CatalogFilters, CatalogSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Catalog>> =>
       this.request<PaginatedResponse<Catalog>>('GET', '/catalogs', {
@@ -4054,10 +4306,10 @@ export class AdminClient {
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Catalog> =>
       this.request<Catalog>('GET', `/catalogs/${id}`, { ...options, params: getParams(params) }),
 
-    create: (params: CatalogParams, options?: RequestOptions): Promise<Catalog> =>
+    create: (params: CatalogCreateParams, options?: RequestOptions): Promise<Catalog> =>
       this.request<Catalog>('POST', '/catalogs', { ...options, body: params }),
 
-    update: (id: string, params: CatalogParams, options?: RequestOptions): Promise<Catalog> =>
+    update: (id: string, params: CatalogUpdateParams, options?: RequestOptions): Promise<Catalog> =>
       this.request<Catalog>('PATCH', `/catalogs/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -4132,7 +4384,7 @@ export class AdminClient {
     orderMinimums: {
       list: (
         catalogId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CatalogOrderMinimumFilters, CatalogOrderMinimumSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CatalogOrderMinimum>> =>
         this.request<PaginatedResponse<CatalogOrderMinimum>>(
@@ -4186,7 +4438,7 @@ export class AdminClient {
    */
   readonly exports = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ExportFilters, ExportSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Export>> =>
       this.request<PaginatedResponse<Export>>('GET', '/exports', {
@@ -4210,8 +4462,8 @@ export class AdminClient {
 
   /**
    * Queues asynchronous CSV imports and drives the mapping flow. Upload the
-   * file via `directUploads.create()` first, then `create()` the import with
-   * the returned `signed_id` — the response is in the `mapping` state and
+   * file via `files.upload()` first, then `create()` the import with
+   * the returned `signed_id` as `attachment_signed_id` — the response is in the `mapping` state and
    * carries `schema_fields`, `csv_headers`, a `sample_row` and the
    * auto-assigned `mappings`. Adjust mappings if needed and call
    * `completeMapping(id)` to start processing, then poll `get(id)` while
@@ -4222,7 +4474,7 @@ export class AdminClient {
    */
   readonly imports = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ImportFilters, ImportSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Import>> =>
       this.request<PaginatedResponse<Import>>('GET', '/imports', {
@@ -4255,7 +4507,7 @@ export class AdminClient {
     rows: {
       list: (
         importId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<ImportRowFilters, ImportRowSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<ImportRow>> =>
         this.request<PaginatedResponse<ImportRow>>('GET', `/imports/${importId}/rows`, {
@@ -4271,7 +4523,7 @@ export class AdminClient {
 
   readonly customers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CustomerFilters, CustomerSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Customer>> =>
       this.request<PaginatedResponse<Customer>>('GET', '/customers', {
@@ -4292,7 +4544,7 @@ export class AdminClient {
     creditCards: {
       list: (
         customerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<CreditCardFilters, CreditCardSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<CreditCard>> =>
         this.request<PaginatedResponse<CreditCard>>(
@@ -4351,7 +4603,7 @@ export class AdminClient {
      * prefixed IDs; the server decodes them. Idempotent.
      */
     bulkAddToGroups: (
-      params: { ids: string[]; customer_group_ids: string[] },
+      params: CustomerBulkGroupsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; customer_group_count: number }> =>
       this.request('POST', '/customers/bulk_add_to_groups', { ...options, body: params }),
@@ -4361,21 +4613,21 @@ export class AdminClient {
      * non-members. Same shape as `bulkAddToGroups`.
      */
     bulkRemoveFromGroups: (
-      params: { ids: string[]; customer_group_ids: string[] },
+      params: CustomerBulkGroupsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; customer_group_count: number }> =>
       this.request('POST', '/customers/bulk_remove_from_groups', { ...options, body: params }),
 
     /** Add each tag name to every customer. Tags are upserted by name. */
     bulkAddTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; tag_count: number }> =>
       this.request('POST', '/customers/bulk_add_tags', { ...options, body: params }),
 
     /** Remove each tag name from every customer. No-op for non-tagged. */
     bulkRemoveTags: (
-      params: { ids: string[]; tags: string[] },
+      params: BulkTagsParams,
       options?: RequestOptions,
     ): Promise<{ customer_count: number; tag_count: number }> =>
       this.request('POST', '/customers/bulk_remove_tags', { ...options, body: params }),
@@ -4383,7 +4635,7 @@ export class AdminClient {
     addresses: {
       list: (
         customerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<AddressFilters, AddressSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<Address>> =>
         this.request<PaginatedResponse<Address>>('GET', `/customers/${customerId}/addresses`, {
@@ -4404,7 +4656,7 @@ export class AdminClient {
 
       create: (
         customerId: string,
-        params: CustomerAddressParams,
+        params: CustomerAddressCreateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('POST', `/customers/${customerId}/addresses`, {
@@ -4415,7 +4667,7 @@ export class AdminClient {
       update: (
         customerId: string,
         id: string,
-        params: CustomerAddressParams,
+        params: CustomerAddressUpdateParams,
         options?: RequestOptions,
       ): Promise<Address> =>
         this.request<Address>('PATCH', `/customers/${customerId}/addresses/${id}`, {
@@ -4435,7 +4687,7 @@ export class AdminClient {
     taxIdentifiers: {
       list: (
         customerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<TaxIdentifierFilters, TaxIdentifierSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<TaxIdentifier>> =>
         this.request<PaginatedResponse<TaxIdentifier>>(
@@ -4453,7 +4705,7 @@ export class AdminClient {
 
       create: (
         customerId: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierCreateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('POST', `/customers/${customerId}/tax_identifiers`, {
@@ -4464,7 +4716,7 @@ export class AdminClient {
       update: (
         customerId: string,
         id: string,
-        params: TaxIdentifierParams,
+        params: TaxIdentifierUpdateParams,
         options?: RequestOptions,
       ): Promise<TaxIdentifier> =>
         this.request<TaxIdentifier>('PATCH', `/customers/${customerId}/tax_identifiers/${id}`, {
@@ -4494,7 +4746,7 @@ export class AdminClient {
     storeCredits: {
       list: (
         customerId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<StoreCreditFilters, StoreCreditSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<StoreCredit>> =>
         this.request<PaginatedResponse<StoreCredit>>(
@@ -4542,7 +4794,39 @@ export class AdminClient {
         this.request<void>('DELETE', `/customers/${customerId}/store_credits/${id}`, options),
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Customer']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.customer),
+  }
+
+  /** The consents customers gave or withdrew — evidence of what each one agreed to and when. */
+  readonly consentRecords = {
+    list: (
+      params?: ListParams<ConsentRecordFilters, ConsentRecordSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ConsentRecord>> =>
+      this.request<PaginatedResponse<ConsentRecord>>('GET', '/consent_records', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+  }
+
+  /** Requests customers made to export (`access`) or erase (`erasure`) their personal data. */
+  readonly dataRequests = {
+    list: (
+      params?: ListParams<DataRequestFilters, DataRequestSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DataRequest>> =>
+      this.request<PaginatedResponse<DataRequest>>('GET', '/data_requests', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    /**
+     * Records a request the customer made to the merchant directly and starts
+     * answering it. A request of the same kind already in progress is returned
+     * instead of a second one.
+     */
+    create: (params: DataRequestCreateParams, options?: RequestOptions): Promise<DataRequest> =>
+      this.request<DataRequest>('POST', '/data_requests', { ...options, body: params }),
   }
 
   // ============================================
@@ -4557,7 +4841,7 @@ export class AdminClient {
    */
   readonly media = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<MediaFilters, MediaSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Media>> =>
       this.request<PaginatedResponse<Media>>('GET', '/media', {
@@ -4572,8 +4856,11 @@ export class AdminClient {
     create: (params: MediaLibraryCreateParams, options?: RequestOptions): Promise<Media> =>
       this.request<Media>('POST', '/media', { ...options, body: params }),
 
-    update: (id: string, params: MediaUpdateParams, options?: RequestOptions): Promise<Media> =>
-      this.request<Media>('PATCH', `/media/${id}`, { ...options, body: params }),
+    update: (
+      id: string,
+      params: MediaLibraryUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Media> => this.request<Media>('PATCH', `/media/${id}`, { ...options, body: params }),
 
     /**
      * Deletes the file. A file still in use is refused (422 with its usage)
@@ -4597,7 +4884,7 @@ export class AdminClient {
 
   readonly categories = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CategoryFilters, CategorySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Category>> =>
       this.request<PaginatedResponse<Category>>('GET', '/categories', {
@@ -4639,7 +4926,7 @@ export class AdminClient {
     /** Manual product membership + ordering within a category. */
     products: this.positionedProductMembership('/categories'),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Category']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.category),
 
     translations: this.parentScopedTranslations('/categories'),
   }
@@ -4650,7 +4937,7 @@ export class AdminClient {
 
   readonly collections = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<CollectionFilters, CollectionSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Collection>> =>
       this.request<PaginatedResponse<Collection>>('GET', '/collections', {
@@ -4693,7 +4980,7 @@ export class AdminClient {
      */
     products: this.positionedProductMembership('/collections'),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Collection']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.collection),
 
     translations: this.parentScopedTranslations('/collections'),
   }
@@ -4714,12 +5001,12 @@ export class AdminClient {
 
   readonly variants = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<VariantFilters, VariantSort> & VariantSalesContextParams,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Variant>> =>
       this.request<PaginatedResponse<Variant>>('GET', '/variants', {
         ...options,
-        params: params ? transformListParams(params) : undefined,
+        params: params ? variantListQuery(params) : undefined,
       }),
 
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Variant> =>
@@ -4728,7 +5015,7 @@ export class AdminClient {
         params: getParams(params),
       }),
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Variant']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.variant),
   }
 
   // ============================================
@@ -4737,7 +5024,7 @@ export class AdminClient {
 
   readonly productTypes = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ProductTypeFilters, ProductTypeSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ProductType>> =>
       this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
@@ -4779,7 +5066,7 @@ export class AdminClient {
 
   readonly taxCategories = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<TaxCategoryFilters, TaxCategorySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<TaxCategory>> =>
       this.request<PaginatedResponse<TaxCategory>>('GET', '/tax_categories', {
@@ -4824,7 +5111,7 @@ export class AdminClient {
    */
   readonly policies = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PolicyFilters, PolicySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Policy>> =>
       this.request<PaginatedResponse<Policy>>('GET', '/policies', {
@@ -4856,7 +5143,7 @@ export class AdminClient {
   /** Why a customer sent something back. Shared by returns and exchanges. */
   readonly returnReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ReturnReasonFilters, ReturnReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ReturnReason>> =>
       this.request<PaginatedResponse<ReturnReason>>('GET', '/return_reasons', {
@@ -4884,7 +5171,7 @@ export class AdminClient {
   /** What went wrong with a delivery — damaged, missing, wrong item. */
   readonly claimReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ClaimReasonFilters, ClaimReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ClaimReason>> =>
       this.request<PaginatedResponse<ClaimReason>>('GET', '/claim_reasons', {
@@ -4912,7 +5199,7 @@ export class AdminClient {
   /** Why an order was called off before it shipped. */
   readonly orderCancellationReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<OrderCancellationReasonFilters, OrderCancellationReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<OrderCancellationReason>> =>
       this.request<PaginatedResponse<OrderCancellationReason>>(
@@ -4951,12 +5238,53 @@ export class AdminClient {
   }
 
   /**
+   * Why a business buys without tax — the reasons a merchant records on a tax
+   * exemption certificate. `code` is what the certificate stores and the tax
+   * engine receives; `taxProviders.list()` says which codes an engine reads.
+   */
+  readonly taxExemptionReasons = {
+    list: (
+      params?: ListParams<TaxExemptionReasonFilters, TaxExemptionReasonSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<TaxExemptionReason>> =>
+      this.request<PaginatedResponse<TaxExemptionReason>>('GET', '/tax_exemption_reasons', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<TaxExemptionReason> =>
+      this.request<TaxExemptionReason>('GET', `/tax_exemption_reasons/${id}`, options),
+
+    create: (
+      params: TaxExemptionReasonCreateParams,
+      options?: RequestOptions,
+    ): Promise<TaxExemptionReason> =>
+      this.request<TaxExemptionReason>('POST', '/tax_exemption_reasons', {
+        ...options,
+        body: params,
+      }),
+
+    update: (
+      id: string,
+      params: TaxExemptionReasonUpdateParams,
+      options?: RequestOptions,
+    ): Promise<TaxExemptionReason> =>
+      this.request<TaxExemptionReason>('PATCH', `/tax_exemption_reasons/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/tax_exemption_reasons/${id}`, options),
+  }
+
+  /**
    * Why money went back. Some rows are seeded and immutable: core looks
    * them up by name, so `can_be_deleted` is false and renaming is refused.
    */
   readonly refundReasons = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<RefundReasonFilters, RefundReasonSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<RefundReason>> =>
       this.request<PaginatedResponse<RefundReason>>('GET', '/refund_reasons', {
@@ -4987,7 +5315,7 @@ export class AdminClient {
 
   readonly channels = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ChannelFilters, ChannelSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Channel>> =>
       this.request<PaginatedResponse<Channel>>('GET', '/channels', {
@@ -5021,11 +5349,7 @@ export class AdminClient {
      */
     addProducts: (
       id: string,
-      params: {
-        product_ids: string[]
-        published_at?: string | null
-        unpublished_at?: string | null
-      },
+      params: ChannelAddProductsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number }> =>
       this.request<{ product_count: number }>('POST', `/channels/${id}/add_products`, {
@@ -5036,7 +5360,7 @@ export class AdminClient {
     /** Unpublishes the listed products from this channel. */
     removeProducts: (
       id: string,
-      params: { product_ids: string[] },
+      params: ChannelRemoveProductsParams,
       options?: RequestOptions,
     ): Promise<{ product_count: number }> =>
       this.request<{ product_count: number }>('POST', `/channels/${id}/remove_products`, {
@@ -5052,7 +5376,7 @@ export class AdminClient {
     orderRoutingRules: {
       list: (
         channelId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<OrderRoutingRuleFilters, OrderRoutingRuleSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<OrderRoutingRule>> =>
         this.request<PaginatedResponse<OrderRoutingRule>>(
@@ -5112,7 +5436,7 @@ export class AdminClient {
    */
   readonly markets = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<MarketFilters, MarketSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Market>> =>
       this.request<PaginatedResponse<Market>>('GET', '/markets', {
@@ -5142,7 +5466,7 @@ export class AdminClient {
 
   readonly stockLocations = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockLocationFilters, StockLocationSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockLocation>> =>
       this.request<PaginatedResponse<StockLocation>>('GET', '/stock_locations', {
@@ -5180,7 +5504,7 @@ export class AdminClient {
 
   readonly stockLevels = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockLevelFilters, StockLevelSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockLevel>> =>
       this.request<PaginatedResponse<StockLevel>>('GET', '/stock_levels', {
@@ -5218,7 +5542,7 @@ export class AdminClient {
      * intact. Response is `{ stock_level_count }`.
      */
     bulkUpsert: (
-      params: { stock_levels: StockLevelBulkUpsertRow[] },
+      params: StockLevelBulkUpsertParams,
       options?: RequestOptions,
     ): Promise<{ stock_level_count: number }> =>
       this.request('POST', '/stock_levels/bulk_upsert', { ...options, body: params }),
@@ -5233,7 +5557,7 @@ export class AdminClient {
   // caused it.
   readonly stockMovements = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockMovementFilters, StockMovementSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockMovement>> =>
       this.request<PaginatedResponse<StockMovement>>('GET', '/stock_movements', {
@@ -5253,6 +5577,26 @@ export class AdminClient {
   }
 
   // ============================================
+  // Stock Reservations
+  // ============================================
+
+  /**
+   * Stock held for orders being checked out, so it cannot be sold twice
+   * before they complete or the hold expires. Read-only: holds are placed and
+   * released by checkout.
+   */
+  readonly stockReservations = {
+    list: (
+      params?: ListParams<StockReservationFilters, StockReservationSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<StockReservation>> =>
+      this.request<PaginatedResponse<StockReservation>>('GET', '/stock_reservations', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+  }
+
+  // ============================================
   // Stock Transfers
   // ============================================
 
@@ -5265,7 +5609,7 @@ export class AdminClient {
    */
   readonly stockTransfers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<StockTransferFilters, StockTransferSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<StockTransfer>> =>
       this.request<PaginatedResponse<StockTransfer>>('GET', '/stock_transfers', {
@@ -5309,7 +5653,7 @@ export class AdminClient {
      */
     markInTransit: (
       id: string,
-      params?: { force?: boolean },
+      params?: StockTransferMarkInTransitParams,
       options?: RequestOptions,
     ): Promise<StockTransfer> =>
       this.request<StockTransfer>('PATCH', `/stock_transfers/${id}/mark_in_transit`, {
@@ -5388,7 +5732,7 @@ export class AdminClient {
   /** The merchant's supplier address book. */
   readonly suppliers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<SupplierFilters, SupplierSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Supplier>> =>
       this.request<PaginatedResponse<Supplier>>('GET', '/suppliers', {
@@ -5431,7 +5775,7 @@ export class AdminClient {
    */
   readonly purchaseOrders = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<PurchaseOrderFilters, PurchaseOrderSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<PurchaseOrder>> =>
       this.request<PaginatedResponse<PurchaseOrder>>('GET', '/purchase_orders', {
@@ -5522,7 +5866,7 @@ export class AdminClient {
     },
     cancel: (
       id: string,
-      params?: { reason?: string },
+      params?: PurchaseOrderCancelParams,
       options?: RequestOptions,
     ): Promise<PurchaseOrder> =>
       this.request<PurchaseOrder>('PATCH', `/purchase_orders/${id}/cancel`, {
@@ -5557,17 +5901,38 @@ export class AdminClient {
   }
 
   // ============================================
-  // Direct Uploads (Active Storage)
+  // Files
   // ============================================
 
-  readonly directUploads = {
+  /**
+   * Uploading the files other endpoints use — product media, imports, logos,
+   * documents. Each upload returns a `signed_id`: pass it unchanged to the
+   * endpoint that uses the file (`signed_id`, `avatar_signed_id`,
+   * `attachment_signed_id`, …) within a day, after which it expires.
+   */
+  readonly files = {
+    /**
+     * Creates an upload. JSON metadata returns `upload`, the storage target to
+     * send the bytes to; a `FormData` body with a `file` part stores the bytes
+     * directly and returns `upload: null`. `upload()` does both steps for you.
+     */
     create: (
-      params: DirectUploadCreateParams,
+      params: FileUploadCreateParams | FormData,
       options?: RequestOptions,
-    ): Promise<{
-      direct_upload: { url: string; headers: Record<string, string> }
-      signed_id: string
-    }> => this.request('POST', '/direct_uploads', { ...options, body: params }),
+    ): Promise<FileUpload> =>
+      this.request<FileUpload>('POST', '/files', { ...options, body: params }),
+
+    /**
+     * Uploads a file and resolves to the response; its `signed_id` is what the
+     * endpoint that uses the file takes. Pass `visibility: 'private'` for
+     * documents, imports and digital products.
+     */
+    upload: (
+      file: Blob,
+      options: UploadFileOptions = {},
+      requestOptions?: RequestOptions,
+    ): Promise<FileUpload> =>
+      uploadFile((body) => this.files.create(body, requestOptions), file, options),
   }
 
   // ============================================
@@ -5576,7 +5941,7 @@ export class AdminClient {
 
   readonly adminUsers = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<AdminUserFilters, AdminUserSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<AdminUser>> =>
       this.request<PaginatedResponse<AdminUser>>('GET', '/admin_users', {
@@ -5617,7 +5982,7 @@ export class AdminClient {
 
   readonly invitations = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<InvitationFilters, InvitationSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Invitation>> =>
       this.request<PaginatedResponse<Invitation>>('GET', '/invitations', {
@@ -5657,9 +6022,101 @@ export class AdminClient {
   // API Keys (publishable + secret)
   // ============================================
 
+  /**
+   * OAuth 2.1 consent, for the screen a merchant approves when an agent or an
+   * app asks for access to the store.
+   *
+   * `authorization` describes what is being asked for; `approve` and `deny`
+   * both answer with the `redirect_uri` the browser should then be sent to.
+   * These require a signed-in admin: a secret key authenticates but is not a
+   * person, so it can never grant authority on someone's behalf.
+   */
+  readonly oauth = {
+    authorization: (
+      params: OauthAuthorizationParams,
+      options?: RequestOptions,
+    ): Promise<OauthConsentRequest> =>
+      this.request<OauthConsentRequest>('GET', '/oauth/authorize', {
+        ...options,
+        // The authorization request is a flat set of strings by construction,
+        // so it travels as query params untouched — no Ransack wrapping, and
+        // nothing re-derived on the way.
+        params: { ...params } as Record<string, string | undefined>,
+      }),
+
+    approve: (params: OauthAuthorizationParams, options?: RequestOptions): Promise<OauthRedirect> =>
+      this.request<OauthRedirect>('POST', '/oauth/authorize', { ...options, body: params }),
+
+    deny: (params: OauthAuthorizationParams, options?: RequestOptions): Promise<OauthRedirect> =>
+      this.request<OauthRedirect>('DELETE', '/oauth/authorize', { ...options, body: params }),
+
+    /** The OAuth clients registered against this store. */
+    applications: {
+      list: (
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OauthApplication>> =>
+        this.request<PaginatedResponse<OauthApplication>>('GET', '/oauth/applications', {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      create: (
+        params: { name: string; redirect_uri: string },
+        options?: RequestOptions,
+      ): Promise<OauthApplication> =>
+        this.request<OauthApplication>('POST', '/oauth/applications', {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        id: string,
+        params: Partial<{ name: string; redirect_uri: string }>,
+        options?: RequestOptions,
+      ): Promise<OauthApplication> =>
+        this.request<OauthApplication>('PATCH', `/oauth/applications/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Removes the registration, and every grant and token with it. */
+      delete: (id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/oauth/applications/${id}`, options ?? {}),
+
+      /**
+       * The live access a connected client holds, one entry per person who
+       * connected it. A store registers a client once and everyone connects
+       * to that same registration, so this is who is actually connected.
+       */
+      tokens: {
+        list: (
+          applicationId: string,
+          params?: ListParams,
+          options?: RequestOptions,
+        ): Promise<PaginatedResponse<OauthAccessToken>> =>
+          this.request<PaginatedResponse<OauthAccessToken>>(
+            'GET',
+            `/oauth/applications/${applicationId}/tokens`,
+            { ...(options ?? {}), params: params ? transformListParams(params) : undefined },
+          ),
+
+        /**
+         * Revokes one person's access, leaving their colleagues connected.
+         */
+        delete: (applicationId: string, id: string, options?: RequestOptions): Promise<void> =>
+          this.request<void>(
+            'DELETE',
+            `/oauth/applications/${applicationId}/tokens/${id}`,
+            options ?? {},
+          ),
+      },
+    },
+  }
+
   readonly apiKeys = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<ApiKeyFilters, ApiKeySort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<ApiKey>> =>
       this.request<PaginatedResponse<ApiKey>>('GET', '/api_keys', {
@@ -5717,7 +6174,7 @@ export class AdminClient {
    */
   readonly allowedOrigins = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<AllowedOriginFilters, AllowedOriginSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<AllowedOrigin>> =>
       this.request<PaginatedResponse<AllowedOrigin>>('GET', '/allowed_origins', {
@@ -5753,6 +6210,159 @@ export class AdminClient {
   // Webhook Endpoints + Deliveries
   // ============================================
 
+  readonly emailTemplates = {
+    /** Every editable email template: customer emails, the layout and shared partials. */
+    list: (
+      params?: EmailTemplateLanguageParams,
+      options?: RequestOptions,
+    ): Promise<{ data: EmailTemplate[] }> =>
+      this.request<{ data: EmailTemplate[] }>('GET', '/email_templates', { ...options, params }),
+
+    /** One template in one language, with the draft (`expand: ['draft.updated_by']` names who saved it). */
+    get: (
+      id: string,
+      params?: EmailTemplateLanguageParams & { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<EmailTemplate> =>
+      this.request<EmailTemplate>('GET', `/email_templates/${id}`, {
+        ...options,
+        // getParams keeps only expand and fields, so the language is added back.
+        params: {
+          ...getParams(params),
+          ...(params?.language ? { language: params.language } : {}),
+        },
+      }),
+
+    /** Goes back to Spree's default and discards the draft. Published versions stay in the history. */
+    revert: (
+      id: string,
+      params?: EmailTemplateVersionParams,
+      options?: RequestOptions,
+    ): Promise<EmailTemplate> =>
+      this.request<EmailTemplate>('DELETE', `/email_templates/${id}`, { ...options, params }),
+
+    draft: {
+      /** Saves the draft. A save from a stale `lock_version` is refused with 409. */
+      update: (
+        id: string,
+        params: EmailTemplateDraftParams,
+        options?: RequestOptions,
+      ): Promise<EmailTemplate> =>
+        this.request<EmailTemplate>('PUT', `/email_templates/${id}/draft`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (
+        id: string,
+        params?: EmailTemplateVersionParams,
+        options?: RequestOptions,
+      ): Promise<EmailTemplate> =>
+        this.request<EmailTemplate>('DELETE', `/email_templates/${id}/draft`, {
+          ...options,
+          params,
+        }),
+    },
+
+    /** Makes the draft live; refused with 422 and each problem's email and line when it does not render. */
+    publish: (
+      id: string,
+      params?: EmailTemplateVersionParams,
+      options?: RequestOptions,
+    ): Promise<EmailTemplate> =>
+      this.request<EmailTemplate>('POST', `/email_templates/${id}/publication`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    /** Renders the template, or unsaved changes to it, with sample data. */
+    preview: (
+      id: string,
+      params?: EmailTemplatePreviewParams,
+      options?: RequestOptions,
+    ): Promise<EmailTemplatePreview> =>
+      this.request<EmailTemplatePreview>('POST', `/email_templates/${id}/preview`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    /** Sends the rendered template to the signed-in admin. */
+    sendTest: (
+      id: string,
+      params?: EmailTemplatePreviewParams,
+      options?: RequestOptions,
+    ): Promise<{ sent_to: string }> =>
+      this.request<{ sent_to: string }>('POST', `/email_templates/${id}/test_email`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    sampleRecords: {
+      /** The store's latest records the template can be previewed with, newest first. */
+      list: (
+        id: string,
+        params?: { email_key?: string },
+        options?: RequestOptions,
+      ): Promise<{ data: EmailTemplateSampleRecord[] }> =>
+        this.request<{ data: EmailTemplateSampleRecord[] }>(
+          'GET',
+          `/email_templates/${id}/sample_records`,
+          { ...options, params },
+        ),
+    },
+
+    revisions: {
+      /** Published versions in one language, newest first. */
+      list: (
+        id: string,
+        params?: ListParams & EmailTemplateLanguageParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<EmailTemplateRevision>> =>
+        this.request<PaginatedResponse<EmailTemplateRevision>>(
+          'GET',
+          `/email_templates/${id}/revisions`,
+          {
+            ...options,
+            // The language picks the version, so it stays out of the Ransack filters.
+            params: params
+              ? (({ language, ...list }) => ({
+                  ...transformListParams(list),
+                  ...(language ? { language } : {}),
+                }))(params)
+              : undefined,
+          },
+        ),
+
+      /** Copies a revision into the draft, to publish like any change. */
+      restore: (
+        id: string,
+        revisionId: string,
+        params?: EmailTemplateRestoreParams,
+        options?: RequestOptions,
+      ): Promise<EmailTemplate> =>
+        this.request<EmailTemplate>(
+          'POST',
+          `/email_templates/${id}/revisions/${revisionId}/restoration`,
+          { ...options, body: params ?? {} },
+        ),
+    },
+  }
+
+  /**
+   * The events a webhook endpoint can subscribe to, including those installed
+   * extensions declare. A `credential` event carries a live credential and
+   * needs `credential_permission` to subscribe to; a `deprecated` one names the
+   * event that replaces it in `replaced_by`.
+   */
+  readonly webhookEvents = {
+    list: (options?: RequestOptions): Promise<{ data: WebhookEvent[]; meta: { count: number } }> =>
+      this.request<{ data: WebhookEvent[]; meta: { count: number } }>(
+        'GET',
+        '/webhook_events',
+        options,
+      ),
+  }
+
   /**
    * Outbound webhook subscriptions: each endpoint receives a signed POST when
    * any subscribed event fires (`subscriptions` is a list of event names or
@@ -5762,7 +6372,7 @@ export class AdminClient {
    */
   readonly webhookEndpoints = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<WebhookEndpointFilters, WebhookEndpointSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<WebhookEndpoint>> =>
       this.request<PaginatedResponse<WebhookEndpoint>>('GET', '/webhook_endpoints', {
@@ -5821,7 +6431,7 @@ export class AdminClient {
     deliveries: {
       list: (
         endpointId: string,
-        params?: ListParams & Record<string, unknown>,
+        params?: ListParams<WebhookDeliveryFilters, WebhookDeliverySort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<WebhookDelivery>> =>
         this.request<PaginatedResponse<WebhookDelivery>>(
@@ -5860,7 +6470,7 @@ export class AdminClient {
 
   readonly roles = {
     list: (
-      params?: ListParams & Record<string, unknown>,
+      params?: ListParams<RoleFilters, RoleSort>,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Role>> =>
       this.request<PaginatedResponse<Role>>('GET', '/roles', {

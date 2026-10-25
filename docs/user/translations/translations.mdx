@@ -1,68 +1,123 @@
 ---
 title: "Translations"
-description: "Learn how to manage and track product translations across all your store's locales in Spree Commerce."
+description: "Learn how to translate products, categories, collections and options into the languages your store sells in."
 ---
 
-The Translations page gives you a single place to see how well your product catalog is translated across every language your store supports. Rather than hunting through individual product pages, you can see at a glance which products have been translated and which still need attention — and use bulk import/export to handle translations in volume.
+A translation is a second version of your store's own wording in another language, kept alongside the original rather than replacing it. Four kinds of record can be translated: products, categories, collections and option types. Products, categories and collections each keep their own name, description and web address in every language your store sells in, and an option type keeps its label. A shopper reading the store in German therefore sees a German product name, a German category in the menu and a German web address.
 
-To access Translations, navigate to **Products → Translations** in the admin dashboard.
+Translating matters wherever you sell across a language border, because a shopper reads faster, trusts more and buys sooner in their own language. The translated web address matters for a separate reason: search engines index it, and shoppers read it before they click.
 
-![The Translations overview page showing coverage by locale and product translation status](/docs/images/user/products/translations/1-translations-overview.png)
+The Translations screen does two jobs. It reports the proportion of each record kind that has already been translated into each language, and it is where the gaps get filled. A record can also be translated from its own page, such as the product form, which is the quicker route when you are already editing it.
 
-<Note>The languages shown on this page are determined by your Markets configuration. If you don't see any locales listed, you'll need to set up additional markets first. See [<u>Settings → Markets</u>](https://spreecommerce.org/docs/user/settings/markets) for more details.</Note>
+To manage translations, navigate to **Products → Translations** in the admin dashboard.
 
-## Translation Coverage
+<Note>A language only reaches shoppers when a market offers it. Check your [<u>Markets</u>](/user/settings/markets) before translating, so the work goes to the countries that will see it.</Note>
 
-At the top of the page, you'll see a coverage summary table with one row per locale your store supports (excluding your default language). Each row shows:
+## Reviewing Translations
 
-- **Locale** - The language code (e.g., `fr`, `de`, `es`)
-- **Translated** - How many products have a translation for that locale
-- **Total** - The total number of products in your catalog
-- **Coverage** - The percentage translated, shown as both a number and a visual progress bar
+![The Translations screen, with coverage per language above the list of records](/docs/images/user/translations/translations/1-translations-screen.png)
 
-This gives you a quick health check on your localization progress without needing to export any data.
+The top of the screen is a coverage table with one row per language, each named in its own language with its code beside it.
 
-![Translation coverage summary table showing locale, translated count, total products, and coverage percentage](/docs/images/user/products/translations/2-coverage-table.png)
+| Column | What it means |
+|---|---|
+| **Locale** | The language, such as Deutsch (de). |
+| **Translated** | How many records are translated in full into it. |
+| **Total** | How many records of the chosen kind the store has. |
+| **Progress** | The same figure as a bar and a percentage. |
 
-## Product Translation Status
+Below it, **Records** lists one row per record with a column per language. A dash means nothing has been translated, a count such as 2/5 means two of that record's five fields are filled, and a green checkmark means every field is done.
 
-Below the coverage table, you'll see a paginated list of all your products. Each product has a column for every configured locale, showing either a checkmark (✓) if a translation exists or a dash (—) if it's missing.
+The dropdown above the list chooses which kind of record you are working on. Changing it changes the coverage table too, so the figures always answer how much of that one kind is translated rather than how much of the store.
 
-![Product list with locale columns showing checkmarks and dashes for translation status](/docs/images/user/products/translations/3-product-grid.png)
+<Note>Coverage counts only records translated in full. A product with its name translated but its description still in the original language adds nothing to **Translated**, even though the work has started. The **Records** list is where part-finished work shows up.</Note>
 
-To edit a product's translations, click on the product name. This will open the translation drawer where you can add or update translated content for that product.
+## What Can Be Translated
 
-![Translation side panel allowing users to edit locale translations for products](/docs/images/user/products/translations/4-translation-drawer.png)
+Four kinds of record carry translations, and the fields differ by kind.
 
-## Bulk Export Translations
+| Record | Fields |
+|---|---|
+| **Products** | **Name**, **Description**, **Slug**, **Meta description** and **Meta title** |
+| **Categories** | **Name**, **Full name**, **Description** and **Permalink** |
+| **Collections** | **Name**, **Description** and **Permalink** |
+| **Option types** | **Label**, and the label of each of its values |
 
-If you prefer to manage translations in a spreadsheet, you can export your entire translation dataset as a CSV file.
+**Slug** and **Permalink** are the record's web address in that language. **Description** is rich text, with its own toolbar for bold, lists and links.
 
-Click **Export** in the top-right corner of the page.
+<Warning>An option type and its values carry separate labels, and coverage counts only the option type's own. Translating the label of an option type called Size can therefore show it as fully translated while Small, Medium and Large are still in the original language. Check the values in the editor before treating an option type as finished.</Warning>
 
-![The export confirmation modal for translations](/docs/images/user/products/translations/5-export-modal.png)
+Translating a record never changes what the dashboard shows. The admin always displays the original wording, whatever languages a record has been translated into, and the translated wording appears only on the storefront, to shoppers in a market that offers that language. Size stays Size for your team while a German shopper reads Größe.
 
-Click **Export** to confirm, and a download link will be sent to the email address associated with your admin account.
+<Note>A category's **Full name** is its name with its parents in front of it, so a Kitchen category sitting under Home reads Home → Kitchen. The store maintains it, so it is not a field to compose by hand.</Note>
 
-## Bulk Import Translations
+## How to Translate a Record
 
-Once you've updated your translations in the exported file (or built a new file from scratch), you can import them back in bulk.
+A record can be translated from its own page or from the Translations screen. Both routes open the same editor, which shows the original wording in one column and the language you are filling in beside it, and both save one language at a time.
 
-Click **Import** in the top-right corner of the page. This opens the import side panel.
+### From the Record's Own Page
 
-![The import side panel for translations](/docs/images/user/products/translations/6-import-panel.png)
+![The Translations card on a product, showing how many locales are translated](/docs/images/user/translations/translations/2-manage-translations-card.png)
 
-1. Drag and drop your CSV file into the upload area, or click **browse files** to select it from your computer.
-2. Select the correct delimiter used in your file (comma, pipe, semicolon, or tab).
-3. Click **Create** to proceed to the field mapping step.
-4. Review the field mapping and adjust any columns that weren't matched automatically, then click **Continue** to submit.
+Products, categories, collections and option types each carry a **Translations** card or a **Manage translations** button on their own page. This is the quicker route if you are already working on a record and have the translations at hand.
 
-Once submitted, you'll be redirected to a processing screen where you can monitor the import progress. Any rows with errors will be flagged with a message so you can fix and re-import them.
+1. Open the record and click **Manage translations**.
+2. Pick the language at the top of the editor.
+3. Fill in the fields beside the original wording.
+4. Click **Save translations**.
 
-<Note>The translation import uses the same importer infrastructure as the product importer. If you're familiar with importing products, the process will feel very similar.</Note>
+![The translation editor, with the original wording beside the language being filled in](/docs/images/user/translations/translations/3-translation-panel.png)
 
-## Next Steps
+The editor stays open after saving, so several languages can be done in one sitting.
 
-- [<u>Settings → Markets</u>](https://spreecommerce.org/docs/user/settings/markets) — Configure which languages and locales your store supports
-- [<u>Import Products</u>](https://spreecommerce.org/docs/user/manage-products/import-products) — Learn how to bulk import product data
-- [<u>Export Products</u>](https://spreecommerce.org/docs/user/manage-products/export-products) — Learn how to export your product catalog
+<Note>The **Translations** card appears only once a record exists. A product, category or collection has to be saved before it can be translated.</Note>
+
+### From the Translations Screen
+
+Working from the Translations screen suits translating a batch of records in one sitting, because the coverage figures show how much is left as you go.
+
+1. Choose the kind of record from the dropdown above **Records**.
+2. Find the record, using the search box, and click its name.
+3. Fill in the fields and click **Save translations**.
+
+Back on the list, the record's cell for that language shows how many of its fields are now filled, or a green checkmark once they all are.
+
+<Note>Translating a product's name fills its slug in for you, so the translated address follows the translated name without being typed. Changing the name later does not rewrite a slug already in use.</Note>
+
+A record's own **Translations** card counts languages it has been started in, while the Translations screen counts fields. The same product can therefore read as one language translated on its page and 2/5 on the translations screen, and both are correct: one language has been started, and two of its five fields are filled.
+
+## How to Import and Export Product Translations
+
+**Import** and **Export** at the top of the Translations screen move translations as a CSV file. Exporting gives you a file to send to a translator, and importing loads their finished work back into the store.
+
+<Warning>Import and export cover products only. Categories, collections and option types are translated in the editor, whichever route you take to it.</Warning>
+
+**Export** offers **Current filter** or **All records**, and prepares the file in the background. The file carries one row per product per language, with these columns:
+
+- **slug** - Which product the row is for. It is the identifier rather than a field to translate, so a translated slug cannot travel in the file.
+- **locale** - Which language the row holds, such as `de`.
+- **name**, **description**, **meta_title** and **meta_description** - The translated wording.
+
+**Import** takes the file back:
+
+1. Click **Import**, drop the file in or browse for it, and set the **Column separator** your file uses. **Download CSV template** gives an empty file in the right shape.
+2. Click **Continue** and match each column to the field it holds. **Slug** and **Locale** are required.
+3. Start the import.
+
+<Warning>The export only writes a row where a product already has at least one translated field in that language, so it is not a blank worksheet of everything still to do. A product with nothing translated yet has to be added to the file by hand, as a row carrying its original **slug** and the **locale** being translated into, before a translator has anything to fill in.</Warning>
+
+## What Shoppers See
+
+A translation reaches the storefront as soon as it is saved. A shopper browsing in German sees the translated category name in the menu, the translated product name on the card and the page heading, and the translated slug in the address. The original address still opens the same page, shown in the shopper's own language.
+
+A field left untranslated falls back to the original language rather than appearing blank, which is why a half-translated product reads as a mix of the two.
+
+<Note>A product whose **Meta title** is untranslated keeps its original browser tab title and search listing even when its name is translated. Fill in the meta fields on anything you want found in that language.</Note>
+
+## Further Reading
+
+- [<u>Markets</u>](/user/settings/markets) - Choosing which languages each market offers
+- [<u>Set Up Multiple Languages</u>](/user/how-to/multiple-languages) - Getting a second language running across the store
+- [<u>Categories</u>](/user/products/categories) - The categories translated here
+- [<u>Collections</u>](/user/products/collections) - The collections translated here
+- [<u>Product Options</u>](/user/products/options) - The option types and values translated here

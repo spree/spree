@@ -38,12 +38,10 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
   end
 
   describe '#amount=' do
-    let(:amount) { '1,599,99' }
-
-    it 'is expected to equal to localized number' do
+    it 'stores a canonical decimal exactly under a comma-decimal locale' do
       gift_card_batch = build(:gift_card_batch, codes_count: 2, prefix: 'batch_')
-      gift_card_batch.amount = amount
-      expect(gift_card_batch.amount).to eq(Spree::LocalizedNumber.parse(amount))
+      I18n.with_locale(:nl) { gift_card_batch.amount = '49.50' }
+      expect(gift_card_batch.amount).to eq(BigDecimal('49.50'))
     end
   end
 

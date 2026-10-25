@@ -1,10 +1,47 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import * as p from '@clack/prompts'
 import { execa } from 'execa'
+import pc from 'picocolors'
 import { STOREFRONT_REPO } from './constants.js'
 import { storefrontEnvContent } from './templates/env.js'
 import type { PackageManager } from './types.js'
 import { installCommand, storefrontPm } from './utils.js'
+
+/**
+ * Clone the storefront into `apps/storefront/` and install its dependencies,
+ * printing the same steps `spree add dashboard` does so every app section of
+ * the scaffold reads alike. Throws on failure; the caller decides recovery.
+ */
+export async function scaffoldStorefront(
+  projectDir: string,
+  port: number,
+  pm: PackageManager,
+): Promise<void> {
+  p.intro(pc.bgCyan(pc.black(' Spree Storefront ')))
+  const s = p.spinner()
+
+  s.start('Fetching storefront starter...')
+  try {
+    await downloadStorefront(projectDir)
+  } catch (err) {
+    s.stop('Fetch failed.')
+    throw err
+  }
+  s.stop(`Created ${pc.cyan('apps/storefront/')}`)
+
+  writeStorefrontEnv(projectDir, port)
+
+  s.start(`Installing dependencies with ${storefrontPm(pm)}...`)
+  try {
+    await installStorefrontDeps(projectDir, pm)
+  } catch (err) {
+    s.stop(pc.yellow(`${storefrontPm(pm)} install failed.`))
+    throw err
+  }
+  s.stop('Dependencies installed.')
+  p.outro('Done!')
+}
 
 export async function downloadStorefront(projectDir: string): Promise<void> {
   const storefrontDir = path.join(projectDir, 'apps', 'storefront')

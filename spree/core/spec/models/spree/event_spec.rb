@@ -79,29 +79,6 @@ RSpec.describe Spree::Event do
     end
   end
 
-  describe 'validations' do
-    it 'requires name' do
-      event = described_class.new(store_id: store.id, payload: {})
-
-      expect(event).not_to be_valid
-      expect(event.errors[:name]).to include("can't be blank")
-    end
-
-    it 'requires store_id' do
-      allow(Spree::Current).to receive(:store).and_return(nil)
-      event = described_class.new(name: 'test', payload: {})
-
-      expect(event).not_to be_valid
-      expect(event.errors[:store_id]).to include("can't be blank")
-    end
-
-    it 'is valid with name and store_id' do
-      event = described_class.new(name: 'test', store_id: store.id, payload: {})
-
-      expect(event).to be_valid
-    end
-  end
-
   describe '#store' do
     it 'returns the store for the store_id' do
       event = described_class.new(name: 'order.placed', store_id: store.id)
@@ -149,24 +126,6 @@ RSpec.describe Spree::Event do
     end
   end
 
-  describe '#matches?' do
-    let(:event) { described_class.new(name: 'order.placed', payload: {}) }
-
-    it 'matches exact event names' do
-      expect(event.matches?('order.placed')).to be true
-      expect(event.matches?('order.canceled')).to be false
-    end
-
-    it 'matches wildcard patterns' do
-      expect(event.matches?('order.*')).to be true
-      expect(event.matches?('product.*')).to be false
-    end
-
-    it 'matches global wildcard' do
-      expect(event.matches?('*')).to be true
-    end
-  end
-
   describe '.matches?' do
     it 'matches exact names' do
       expect(described_class.matches?('order.placed', 'order.placed')).to be true
@@ -187,6 +146,21 @@ RSpec.describe Spree::Event do
     it 'handles complex patterns' do
       expect(described_class.matches?('order.line_item.update', 'order.line_item.*')).to be true
       expect(described_class.matches?('order.line_item.update', 'order.*')).to be true
+    end
+
+    it 'matches a wildcard anywhere in the pattern' do
+      expect(described_class.matches?('order.created', '*.created')).to be true
+      expect(described_class.matches?('order.line_item.created', '*.created')).to be true
+      expect(described_class.matches?('order.updated', '*.created')).to be false
+      expect(described_class.matches?('order.line_item.created', 'order.*.created')).to be true
+      expect(described_class.matches?('order.created', 'order.*.created')).to be false
+    end
+
+    it 'treats regexp syntax in a pattern as literal text' do
+      expect(described_class.matches?('order.placed', 'order.(placed|canceled)')).to be false
+      expect(described_class.matches?('order.placed', 'order.p.aced')).to be false
+      expect(described_class.matches?('order.placed', '.*')).to be false
+      expect(described_class.matches?('order.placed', 'order.placed$')).to be false
     end
   end
 

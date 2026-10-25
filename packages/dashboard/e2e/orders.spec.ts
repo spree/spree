@@ -1,7 +1,17 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, fillAddressForm, login } from './helpers'
+import {
+  adminRequest,
+  createPlacedOrder,
+  FIXTURE_BOGUS_GATEWAY,
+  FIXTURE_BOGUS_ORDER_EMAIL,
+  FIXTURE_BOGUS_TRANSACTION_ID,
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
+  FIXTURE_PROMO_PRODUCT,
+  fillAddressForm,
+  login,
+} from './helpers'
 
 // A PNG is in the PO document allowlist, so the shared fixture works and no
 // new binary ships with the suite.
@@ -90,6 +100,44 @@ test.describe('new order', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
       timeout: 15_000,
     })
+    // The main column's plugin slot, filled by src/testing/slot-probes.tsx.
+    await expect(page.getByText('Slot probe: order.form_main')).toBeVisible()
+  })
+
+  test('picking a market switches the currency and locale to that market', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+
+    await expect(page.locator('#order-currency')).toContainText('EUR')
+    await expect(page.locator('#order-currency')).toBeDisabled()
+    await expect(page.locator('#order-locale')).toContainText('DE')
+  })
+
+  test('asks before a market change removes the picked items', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-context-${Date.now()}@example.com`)
+    const itemRow = page.getByRole('cell', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    await expect(itemRow).toBeVisible()
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('button', { name: /cancel/i }).click()
+    await expect(itemRow).toBeVisible()
+    await expect(page.locator('#order-currency')).not.toContainText('EUR')
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+    await dialog.getByRole('button', { name: /change and remove items/i }).click()
+    await expect(itemRow).toBeHidden()
+    await expect(page.locator('#order-currency')).toContainText('EUR')
   })
 
   // The motivating case for this form: a purchase order arrives by email and
@@ -125,6 +173,53 @@ test.describe('new order', () => {
       .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Purchase order$/ }) })
     await expect(poCard.getByText(poNumber)).toBeVisible({ timeout: 15_000 })
     await expect(poCard.getByRole('button', { name: /test-image\.png/i })).toBeVisible()
+  })
+
+  // A division buys for itself but ships to the sites it inherits, so the
+  // picker offers its parent's address and the order keeps it.
+  test("ships an order for a division to its parent company's address", async ({ page }) => {
+    const creds = await login(page)
+    const stamp = Date.now()
+    const street = `${stamp} Harbor Road`
+    const parent = await adminRequest<{ id: string }>(page, creds, 'post', '/companies', {
+      name: `E2E Group ${stamp}`,
+    })
+    await adminRequest(page, creds, 'post', `/companies/${parent.id}/addresses`, {
+      label: 'Headquarters',
+      first_name: 'Dana',
+      last_name: 'Reyes',
+      address1: street,
+      city: 'Los Angeles',
+      postal_code: '90001',
+      country_code: 'US',
+      state_code: 'CA',
+    })
+    const divisionName = `E2E Group West ${stamp}`
+    await adminRequest(page, creds, 'post', '/companies', {
+      name: divisionName,
+      kind: 'division',
+      parent_id: parent.id,
+    })
+
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await page.getByPlaceholder(/search companies/i).fill(divisionName)
+    await page
+      .getByRole('option', { name: new RegExp(divisionName) })
+      .first()
+      .click()
+    await fillNewOrderForm(page, `e2e-division-${stamp}@example.com`)
+
+    await page.getByRole('switch').click()
+    await page.locator('#order-shipping-address').click()
+    await page.getByRole('option', { name: new RegExp(street) }).click()
+    await expect(page.locator('#order-shipping-address')).toContainText(street)
+
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+    await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
   })
 
   test('newly-created draft shows up in the drafts list', async ({ page }) => {
@@ -266,13 +361,7 @@ test.describe('order addresses', () => {
       timeout: 15_000,
     })
 
-    // Several cards on the order page carry an Actions menu, so reach the
-    // customer card's through the heading that names it.
-    const customerCard = page.locator('[data-slot="card"]').filter({
-      has: page.locator('[data-slot="card-title"]', { hasText: /^Customer$/ }),
-    })
-    await customerCard.getByRole('button', { name: /actions/i }).click()
-    await page.getByRole('menuitem', { name: /edit shipping address/i }).click()
+    await page.getByRole('button', { name: /edit shipping address/i }).click()
 
     // Named, because the country and state comboboxes inside the sheet are
     // themselves dialogs.
@@ -295,5 +384,196 @@ test.describe('order addresses', () => {
 
     await expect(dialog).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('uses the shipping address for billing', async ({ page }) => {
+    const creds = await login(page)
+    const street = `${Date.now()} Paryska Street`
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-order-same-address-${Date.now()}@example.com`,
+      shipping_address: {
+        first_name: 'Ada',
+        last_name: 'Lovelace',
+        address1: street,
+        city: 'Los Angeles',
+        country_code: 'US',
+        state_code: 'CA',
+        postal_code: '90001',
+        phone: '5555555555',
+      },
+    })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const sameAsShipping = page.getByRole('button', { name: /same as shipping address/i })
+    await expect(sameAsShipping).toBeVisible({ timeout: 15_000 })
+    await sameAsShipping.click()
+
+    await expect(sameAsShipping).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(/^same as shipping address$/i)).toBeVisible()
+    await expect(page.getByText(street)).toHaveCount(1)
+  })
+})
+
+test.describe('order customer', () => {
+  test("changes a guest order's email", async ({ page }) => {
+    const creds = await login(page)
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-guest-${Date.now()}@example.com`,
+    })
+    const newEmail = `e2e-guest-renamed-${Date.now()}@example.com`
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.getByLabel(/email/i).fill(newEmail)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(newEmail)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('detaches the customer, leaving a guest order', async ({ page }) => {
+    const creds = await login(page)
+    const customers = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
+    )
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      customer_id: customers.data[0].id,
+    })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const customerLink = page.getByRole('link', { name: 'Promo Customer', exact: true })
+    await expect(customerLink).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.locator('[data-slot="combobox-clear"]').click()
+    await expect(dialog.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(customerLink).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
+  })
+
+  test('asks before removing the customer from a placed order', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const customerLink = page.getByRole('link', { name: 'Promo Customer', exact: true })
+    await expect(customerLink).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.locator('[data-slot="combobox-clear"]').click()
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await page.getByRole('button', { name: /^remove customer$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(customerLink).toBeHidden({ timeout: 15_000 })
+  })
+})
+
+test.describe('order tags', () => {
+  async function createDraft(page: Page, storeId: string, email: string) {
+    await page.goto(NEW_ORDER_PATH(storeId))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await fillNewOrderForm(page, email)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${storeId}/orders/or_[^/]+$`), { timeout: 15_000 })
+  }
+
+  function tagsCard(page: Page) {
+    return page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^tags$/i }) })
+  }
+
+  // The order tag vocabulary is fetched by its short name (`order`); a tag
+  // saved on one order is offered as an existing tag on the next.
+  test('tags an order and offers the tag on another order', async ({ page }) => {
+    const creds = await login(page)
+    const suffix = Date.now()
+    const tagName = `e2e-order-tag-${suffix}`
+
+    await createDraft(page, creds.store_id, `e2e-order-tag-a-${suffix}@example.com`)
+    await tagsCard(page)
+      .getByRole('button', { name: /^edit$/i })
+      .click()
+    const input = tagsCard(page).getByPlaceholder(/type to add tags/i)
+    await input.fill(tagName)
+    await input.press('Enter')
+    await tagsCard(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    await expect(tagsCard(page).getByText(tagName, { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(tagsCard(page).getByPlaceholder(/type to add tags/i)).toHaveCount(0)
+
+    await createDraft(page, creds.store_id, `e2e-order-tag-b-${suffix}@example.com`)
+    await tagsCard(page)
+      .getByRole('button', { name: /^edit$/i })
+      .click()
+    await tagsCard(page)
+      .getByPlaceholder(/type to add tags/i)
+      .fill(tagName)
+    await expect(page.getByRole('option', { name: tagName, exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+})
+
+test.describe('order payments', () => {
+  test("links a card payment to its page at the gateway's dashboard", async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    const link = page.getByRole('menuitem', { name: `View at ${FIXTURE_BOGUS_GATEWAY}` })
+    await expect(link).toHaveAttribute(
+      'href',
+      `https://dashboard.bogus.example/payments/${FIXTURE_BOGUS_TRANSACTION_ID}`,
+    )
+    await expect(link).toHaveAttribute('target', '_blank')
+  })
+
+  test("shows a card payment's checks and captures", async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    const row = page.locator('tr').filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+    await expect(row.getByText('Failed card checks')).toBeVisible({ timeout: 15_000 })
+
+    await row.getByRole('button', { name: /^actions$/i }).click()
+    await page.getByRole('menuitem', { name: 'View details' }).click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText(FIXTURE_BOGUS_TRANSACTION_ID)).toBeVisible()
+    await expect(dialog.getByText('Did not pass')).toHaveCount(2)
+    await expect(dialog.getByText('CVV does not match')).toBeVisible()
+    await expect(dialog.getByRole('row').filter({ hasText: '€10.00' })).toBeVisible()
   })
 })

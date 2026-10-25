@@ -1,4 +1,9 @@
-import type { Customer, TaxIdentifier, TaxIdentifierParams } from '@spree/admin-sdk'
+import type {
+  Customer,
+  TaxIdentifier,
+  TaxIdentifierCreateParams,
+  TaxIdentifierUpdateParams,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   i18n,
@@ -121,6 +126,15 @@ export function useCustomerOrders(customerId: string, params: { limit: number; s
 type AddressCreateParams = Parameters<typeof adminClient.customers.addresses.create>[1]
 type AddressUpdateParams = Parameters<typeof adminClient.customers.addresses.update>[2]
 
+/** The customer's own book, for a picker that offers it. */
+export function useCustomerAddresses(customerId: string | undefined, limit = 50) {
+  return useQuery({
+    queryKey: useResourceKey('customers', customerId ?? 'noop', 'addresses', `${limit}`),
+    queryFn: () => adminClient.customers.addresses.list(customerId as string, { limit }),
+    enabled: !!customerId,
+  })
+}
+
 export function useCreateCustomerAddress(customerId: string) {
   return useResourceMutation({
     mutationFn: (params: AddressCreateParams) =>
@@ -201,7 +215,7 @@ export function useCustomerTaxIdentifiers(customerId: string | undefined) {
 }
 
 export function useCreateCustomerTaxIdentifier(customerId: string) {
-  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierParams>({
+  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierCreateParams>({
     mutationFn: (params) => adminClient.customers.taxIdentifiers.create(customerId, params),
     invalidate: [['customers', customerId, 'tax-identifiers']],
     successMessage: i18n.t('admin.tax_identifiers.messages.created'),
@@ -211,7 +225,11 @@ export function useCreateCustomerTaxIdentifier(customerId: string) {
 
 /** The id travels with the variables so one hook serves every row. */
 export function useUpdateCustomerTaxIdentifier(customerId: string) {
-  return useResourceMutation<TaxIdentifier, Error, { id: string; params: TaxIdentifierParams }>({
+  return useResourceMutation<
+    TaxIdentifier,
+    Error,
+    { id: string; params: TaxIdentifierUpdateParams }
+  >({
     mutationFn: ({ id, params }) =>
       adminClient.customers.taxIdentifiers.update(customerId, id, params),
     invalidate: [['customers', customerId, 'tax-identifiers']],

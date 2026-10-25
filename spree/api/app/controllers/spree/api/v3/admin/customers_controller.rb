@@ -7,6 +7,44 @@ module Spree
 
           scoped_resource :customers
 
+          request_params :customer do |body|
+            body.attribute :email, :string, required: true, on: :create, example: 'new@example.com'
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+            body.attribute :phone, :string
+            # On create only: once the account exists its password is the
+            # customer's, changed by them or through their own reset email —
+            # never set by staff, who would otherwise be able to sign in as
+            # any customer.
+            body.attribute :password, :string, only: :create,
+              description: 'Optional: a customer created without one claims the account through a password reset.'
+            body.attribute :password_confirmation, :string, only: :create,
+              description: 'Optional: a customer created without one claims the account through a password reset.'
+            body.attribute :selected_locale, :string
+            body.attribute :avatar_signed_id, :string, description: 'A `signed_id` from `files.upload()`.'
+            body.attribute :accepts_email_marketing, :boolean
+            body.attribute :internal_note, :string,
+              description: 'Rich text HTML. Reads come back as this plus `internal_note_html`.'
+            body.attribute :metadata, :hash
+            body.attribute :tags, :array, of: :string
+            body.attribute :customer_group_ids, :array, of: :id,
+              description: "Replaces the customer's group membership."
+          end
+
+          %i[bulk_add_to_groups bulk_remove_from_groups].each do |action|
+            request_params 'CustomerBulkGroupsParams', action: action do |body|
+              body.attribute :ids, :array, of: :id, required: true, example: %w[cus_UkLWZg9DAJ cus_QrLWXg9CAJ]
+              body.attribute :customer_group_ids, :array, of: :id,
+                required: true,
+                example: %w[cg_UkLWZg9DAJ],
+                description: 'Groups from other stores are ignored.'
+            end
+          end
+
+          %i[bulk_add_tags bulk_remove_tags].each do |action|
+            request_params('BulkTagsParams', action: action) { |body| body.include_attributes Spree::Api::V3::Admin::BulkTagsRequestSchema }
+          end
+
           # Re-declaring a `before_action` for the same method REPLACES the
           # inherited registration rather than adding to it, so the inherited
           # actions have to be repeated here or show/update/destroy silently
@@ -51,7 +89,7 @@ module Spree
           rescue Spree::Core::DestroyWithOrdersError => e
             render_error(
               code: 'customer_has_orders',
-              message: e.message.presence || Spree.t(:error_user_destroy_with_orders),
+              message: e.message.presence || I18n.t('spree.error_user_destroy_with_orders'),
               status: :unprocessable_content
             )
           end
@@ -108,7 +146,7 @@ module Spree
             if @resource.anonymized?
               return render_error(
                 code: ERROR_CODES[:validation_error],
-                message: Spree.t('data_request_errors.already_anonymized'),
+                message: I18n.t('spree.data_request_errors.already_anonymized'),
                 status: :unprocessable_content
               )
             end
@@ -141,12 +179,12 @@ module Spree
           # Bulk add the given customers to the given groups. Idempotent —
           # customers already in a group are skipped at the model layer.
           def bulk_add_to_groups
-            apply_groups(:add_customers)
+            apply_groups(:add_customers_to)
           end
 
           # Bulk remove the given customers from the given groups.
           def bulk_remove_from_groups
-            apply_groups(:remove_customers)
+            apply_groups(:remove_customers_from)
           end
 
           protected
@@ -214,12 +252,7 @@ module Spree
             missing = EXPORT_PERMISSIONS.reject { |permission| holds_permission?(permission) }
             return true if missing.empty?
 
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: "Missing permission: #{missing.first}",
-              status: :forbidden,
-              details: { required_permission: missing.first }
-            )
+            render_missing_permission(missing.first)
             false
           end
 
@@ -258,18 +291,13 @@ module Spree
           end
 
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :email, :first_name, :last_name, :phone,
-              :password, :password_confirmation, :selected_locale,
-              :avatar, :accepts_email_marketing, :internal_note,
-              metadata: {}, tags: [], customer_group_ids: []
-            )
+            params.permit(*permitted_attributes)
           end
 
           # Authorises bulk group mutation, decodes prefixed IDs, then dispatches
-          # to `add_customers` / `remove_customers` per group. Returns the
-          # counts of records actually affected so the UI can show a toast.
+          # to `add_customers_to` / `remove_customers_from` for all groups at
+          # once. Returns the counts of records actually affected so the UI can
+          # show a toast.
           def apply_groups(method)
             authorize! :update, model_class
 
@@ -277,9 +305,9 @@ module Spree
             group_ids = decode_ids(params[:customer_group_ids])
 
             scoped_user_ids = scope.where(id: user_ids).pluck(:id)
-            scoped_groups = Spree::CustomerGroup.for_store(current_store).where(id: group_ids)
+            scoped_groups = Spree::CustomerGroup.for_store(current_store).where(id: group_ids).to_a
 
-            scoped_groups.find_each { |group| group.public_send(method, scoped_user_ids) }
+            Spree::CustomerGroup.public_send(method, scoped_groups, scoped_user_ids)
 
             render json: { customer_count: scoped_user_ids.size, customer_group_count: scoped_groups.size }
           end

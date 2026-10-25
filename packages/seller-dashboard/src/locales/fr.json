@@ -148,6 +148,7 @@
             "receive_title": "Réceptionner les articles retournés",
             "received_quantity": "Reçu",
             "refund_amount": "Montant",
+            "refund_includes_tax": "Le montant total comprend {{tax}} de taxes. Un montant inférieur rembourse les taxes dans la même proportion.",
             "refund_method": "Rembourser sur",
             "refund_methods": {
               "original_payment": "Paiement d’origine",
@@ -469,6 +470,7 @@
       "packing_slip_title": "Bon de livraison — commande {{number}}",
       "print_label": "Imprimer l’étiquette",
       "print_packing_slip": "Imprimer le bon de livraison",
+      "quoted_after_review": "Prix après vérification",
       "ship_to": "Livrer à",
       "ships_from_label": "Expédié depuis",
       "split": "Scinder",
@@ -519,6 +521,7 @@
         "cancel_message": "Le client est informé que cela n’aura pas lieu.",
         "cancel_title": "Annuler cet échange ?",
         "fulfill": "Envoyer le remplacement",
+        "balance_due_confirm": "Le remplacement coûte plus cher que l'article retourné. Son envoi ajoute la différence à la commande comme solde dû. Rien n'est débité automatiquement.",
         "price_difference": "Différence de prix : {{amount}}",
         "receive": "Réceptionner",
         "title": "Échanges"
@@ -534,6 +537,8 @@
         "receive": "Réceptionner",
         "refund": "Rembourser",
         "refund_total": "Total du remboursement : {{amount}}",
+        "refunded": "Remboursé : {{amount}}",
+        "refunded_of": "Remboursé : {{amount}} sur {{total}}",
         "title": "Retours"
       },
       "statuses": {
@@ -733,7 +738,8 @@
     "variant_remove_confirm_description": "Elle sera retirée du produit à l’enregistrement.",
     "variant_remove_confirm_title": "Retirer cette variante ?",
     "variants": "Variantes",
-    "variants_empty": "Ce produit est vendu comme un article unique, au prix ci-dessus. Ajoutez une variante pour le vendre en plusieurs options, par exemple la taille ou la couleur."
+    "variants_empty": "Ce produit est vendu comme un article unique, au prix ci-dessus. Ajoutez une variante pour le vendre en plusieurs options, par exemple la taille ou la couleur.",
+    "digital_files_review_notice": "Ajouter ou remplacer un fichier renvoie ce produit en révision ; il n’est plus en vente jusqu’à ce que la place de marché l’approuve de nouveau."
   },
   "profile": {
     "about": "À propos",

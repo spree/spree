@@ -13,26 +13,35 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
-export function usePaymentMethodTypes() {
-  // Store-scoped because the server filters out providers already installed
-  // on the current store. Matches the +['payment-methods', 'types']+ shape
+export function usePaymentMethodTypes({ enabled = true }: { enabled?: boolean } = {}) {
+  // Every provider, with `installed` set for those this store already has:
+  // pickers filter (see `filterPaymentMethodProviderTypes`), while an edit form
+  // reads an installed provider's schema from the same list. Store-scoped
+  // because `installed` is. Matches the +['payment-methods', 'types']+ shape
   // that +useResourceMutation+ expands to +['payment-methods', storeId, 'types']+.
   return useQuery({
     queryKey: useResourceKey('payment-methods', 'types'),
     queryFn: () => adminClient.paymentMethods.types(),
     staleTime: Infinity,
+    enabled,
   })
 }
 
 interface UsePaymentMethodsParams {
   page?: number
   limit?: number
+  enabled?: boolean
 }
 
-export function usePaymentMethods({ page = 1, limit = 100 }: UsePaymentMethodsParams = {}) {
+export function usePaymentMethods({
+  page = 1,
+  limit = 100,
+  enabled = true,
+}: UsePaymentMethodsParams = {}) {
   return useQuery({
     queryKey: useResourceKey('payment-methods', { page, limit }),
     queryFn: () => adminClient.paymentMethods.list({ page, limit }),
+    enabled,
   })
 }
 
@@ -56,8 +65,12 @@ export function useCreatePaymentMethod() {
   })
 }
 
-export function useUpdatePaymentMethod(id: string) {
+export function useUpdatePaymentMethod(
+  id: string,
+  { showValidationErrors = false }: { showValidationErrors?: boolean } = {},
+) {
   return useResourceMutation<PaymentMethod, Error, PaymentMethodUpdateParams>({
+    showValidationErrors,
     mutationFn: (params) => adminClient.paymentMethods.update(id, params),
     invalidate: [['payment-methods'], ['payment-methods', id], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.payment_methods.messages.updated'),

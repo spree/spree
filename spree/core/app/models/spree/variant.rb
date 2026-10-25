@@ -8,6 +8,7 @@ module Spree
     include Spree::MemoizedData
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
     include Spree::HasExternalReferences
     include Spree::Searchable
     include Spree::StorePreferences
@@ -231,6 +232,10 @@ module Spree
 
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
+    # The variants of a product relation, as a subquery. Unordered, because a
+    # listing's sort would otherwise land inside the IN.
+    scope :for_products, ->(products) { where(product_id: products.reorder(nil).select(Spree::Product.arel_table[:id])) }
+
     # Variants the shop sells in this currency. Base prices only: a price
     # list's rows are what one audience pays under an agreement, and a ladder
     # holds several rows for one variant, so a contract-only variant is not
@@ -285,17 +290,9 @@ module Spree
       relation.where(conditions.reduce(:or)).distinct
     end
 
-    # Backward compatibility alias — remove in Spree 6.0
-    scope :multi_search, ->(*args) { search(*args) }
-
-    # FIXME: cost price should be represented with DisplayMoney class
-    LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
-
-    LOCALIZED_NUMBERS.each do |m|
-      define_method("#{m}=") do |argument|
-        self[m] = Spree::LocalizedNumber.parse(argument) if argument.present?
-      end
-    end
+    # A blank value leaves these as they were rather than clearing them.
+    canonical_decimals :cost_price, places: Spree::Money::Rounding::UNIT_PRICE_DECIMALS, ignore_blank: true
+    canonical_decimals :weight, :depth, :width, :height, places: nil, ignore_blank: true
 
     accepts_nested_attributes_for(
       :stock_levels,
@@ -330,6 +327,7 @@ module Spree
                                                  carton_package_type_id carton_weight cartons_per_pallet]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
                                              available_at_stock_location)
+    self.ransackable_scope_types = { 'available_at_stock_location' => 'id' }
     self.private_ransackable_attributes = { store: %w[cost_price cost_currency deleted_at] }
 
     def self.product_name_or_sku_cont(query)
@@ -395,7 +393,11 @@ module Spree
       @tax_category ||= if self[:tax_category_id].nil?
                           product.tax_category
                         else
-                          Spree::TaxCategory.find_by(id: self[:tax_category_id]) || product.tax_category
+                          # The association, so a page of variants loads its
+                          # categories together; one deleted since it was
+                          # assigned no longer counts.
+                          own = super
+                          own.nil? || own.destroyed? || own.try(:deleted?) ? product.tax_category : own
                         end
     end
 
@@ -468,7 +470,7 @@ module Spree
     # Returns the options text of the variant.
     # @return [String] the options text of the variant
     def options_text
-      @options_text ||= if option_values.loaded?
+      @options_text ||= if read_association_in_memory?(:option_values)
                           option_values.sort_by do |ov|
                             ov.option_type.position
                           end.map { |ov| "#{ov.option_type.label}: #{ov.label}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
@@ -665,7 +667,7 @@ module Spree
     def price_in(currency)
       currency = currency&.upcase
 
-      price = if prices.loaded? && prices.any?
+      price = if read_association_in_memory?(:prices)
                 prices.detect { |p| p.currency == currency && p.price_list_id.nil? }
               else
                 prices.base_prices.find_by(currency: currency)
@@ -866,7 +868,12 @@ module Spree
     # @return [void]
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
       stock_location ||= default_stock_location
-      stock_level = stock_levels.find_or_initialize_by(stock_location: stock_location)
+      stock_level = if stock_levels.loaded?
+                      stock_levels.detect { |level| level.stock_location_id == stock_location.id } ||
+                        stock_levels.build(stock_location: stock_location)
+                    else
+                      stock_levels.find_or_initialize_by(stock_location: stock_location)
+                    end
       # `unless nil?`, not `if present?` — a caller passing false means it.
       stock_level.backorderable = backorderable unless backorderable.nil?
 
@@ -882,7 +889,10 @@ module Spree
       delta = count_on_hand.to_i - stock_level.count_on_hand.to_i
       return if delta.zero?
 
-      stock_location.adjust(self, delta, reason: Spree::StockMovement.default_adjustment_reason)
+      # Through the level already in hand rather than StockLocation#adjust,
+      # which would look the same row up again.
+      stock_level.stock_movements.create!(quantity: delta, kind: 'adjusted',
+                                          reason: Spree::StockMovement.default_adjustment_reason)
     end
 
     def default_stock_location
@@ -969,6 +979,11 @@ module Spree
     # Variants carry no store of their own; the product owns it.
     # @return [Spree::Store, nil]
     def preference_store
+      # The request's store instance when it is this one, so a page of
+      # variants reads its settings from one record rather than a copy each.
+      current_store = Spree::Current.store
+      return current_store if current_store && product&.store_id == current_store.id
+
       product&.store
     end
 
@@ -1190,7 +1205,7 @@ module Spree
     end
 
     def set_cost_currency
-      self.cost_currency = Spree::Store.default.default_currency if cost_currency.blank?
+      self.cost_currency = (product&.store || Spree::Store.default).default_currency if cost_currency.blank?
     end
 
     # Only the product's own store's locations — a new variant must not grow

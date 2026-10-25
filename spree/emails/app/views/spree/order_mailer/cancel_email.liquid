@@ -1,5 +1,5 @@
 ---
-subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'order_mailer.cancel_email.subject' | t }} #{{ order.number }}"
+subject: "{% if resend %}[{{ 'resend' | t }}] {% endif %}{{ store.name }} {{ 'order_mailer.cancel_email.subject' | t }} #{{ order.number }}"
 ---
 {% assign heading = 'order_mailer.cancel_email.order_summary_canceled' | t: number: order.number %}
 <mj-section>

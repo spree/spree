@@ -10,16 +10,14 @@ module Spree
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, preorder: :boolean,
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
-                 weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS],
+                 weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS, enum_type_name: 'WeightUnit'], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS, enum_type_name: 'DimensionUnit'],
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  minimum_order_quantity: :number, order_multiple: :number,
-                 purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS], units_per_carton: ['number | null'],
+                 purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS, enum_type_name: 'PurchaseUnit'], units_per_carton: ['number | null'],
                  seller_id: [:string, nullable: true]
 
-        attribute :product_id do |variant|
-          variant.product&.prefixed_id
-        end
+        prefixed_id_attributes :product
 
         attributes :sku, :options_text, :track_inventory, :media_count
 
@@ -34,21 +32,13 @@ module Spree
           image_url_for(variant.primary_media)
         end
 
-        attribute :purchasable do |variant|
-          variant.purchasable?
-        end
+        attribute :purchasable, &:purchasable?
 
-        attribute :in_stock do |variant|
-          variant.in_stock?
-        end
+        attribute :in_stock, &:in_stock?
 
-        attribute :backorderable do |variant|
-          variant.backorderable?
-        end
+        attribute :backorderable, &:backorderable?
 
-        attribute :preorder do |variant|
-          variant.preorder?
-        end
+        attribute :preorder, &:preorder?
 
         attribute :weight do |variant|
           variant.weight&.to_f
@@ -93,14 +83,12 @@ module Spree
           variant.purchase_unit.presence || 'unit'
         end
 
-        attribute :units_per_carton do |variant|
-          variant.units_per_carton
-        end
+        attributes :units_per_carton
 
         # Price object - calculated price with price list resolution
         attribute :price do |variant|
           price = price_for(variant)
-          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
+          price_serializer.new(price, params: params).to_h if price.present?
         end
 
         # Original price - base price without price list resolution (for showing strikethrough)
@@ -110,7 +98,7 @@ module Spree
           base = price_in(variant)
 
           if calculated.present? && base.present? && calculated.id != base.id
-            Spree.api.price_serializer.new(base, params: params).to_h
+            price_serializer.new(base, params: params).to_h
           end
         end
 
@@ -119,9 +107,7 @@ module Spree
         # listing) or the row itself (a master shared by several sellers). Nil
         # is first-party. Shoppers comparing offers on one page group by this,
         # so it is a plain attribute rather than an expand.
-        attribute :seller_id do |variant|
-          variant.resolved_seller&.prefixed_id
-        end
+        prefixed_id_attributes seller_id: :resolved_seller
 
         one :seller,
             resource: proc { Spree.api.seller_serializer },
@@ -151,7 +137,7 @@ module Spree
         attribute :prior_price,
                   if: proc { expand?('prior_price') } do |variant|
           record = price_in(variant)&.prior_price
-          Spree.api.price_history_serializer.new(record, params: params).to_h if record
+          price_history_serializer.new(record, params: params).to_h if record
         end
       end
     end

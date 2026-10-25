@@ -3,7 +3,7 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+gem 'tzinfo-data', platforms: [:windows]
 gem 'rails', ENV.fetch('RAILS_VERSION', '~> 8.1.0'), require: false
 
 # Held below 3.0: json 3.0 made JSON.parse's options keyword-only, and Active
@@ -17,15 +17,14 @@ platforms :jruby do
 end
 
 platforms :ruby do
-  gem 'mysql2' if ENV['DB'] == 'mysql' || ENV['CI']
-  gem 'pg' if ENV['DB'] == 'postgres' || ENV['CI']
+  gem 'mysql2' if ENV['DB'] == 'mysql'
+  gem 'pg' if ENV['DB'] == 'postgres'
 
   gem 'sqlite3', '>= 2.0'
 end
 
 group :test do
   gem 'parallel_tests'
-  gem 'database_cleaner-active_record'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.2.0'
   gem 'rspec-rails'
@@ -40,6 +39,14 @@ group :test do
   gem 'webmock'
   gem 'timecop'
   gem 'rails-controller-testing'
+  # N+1 tripwire for API requests (see Spree::Api::V3::BaseController).
+  # pg_query is Prosopite's SQL fingerprinter for every adapter but MySQL.
+  # It has a C extension and no JRuby build, so it is scoped like the
+  # database adapters above; the guard is inert where it is missing.
+  gem 'prosopite'
+  platforms :ruby do
+    gem 'pg_query'
+  end
 end
 
 group :test, :development do

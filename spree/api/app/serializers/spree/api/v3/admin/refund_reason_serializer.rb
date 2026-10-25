@@ -17,9 +17,7 @@ module Spree
 
           # Lets the dashboard hide destructive controls instead of offering a
           # delete that the model will refuse.
-          attribute :can_be_deleted do |reason|
-            reason.can_be_deleted?
-          end
+          attribute :can_be_deleted, &:can_be_deleted?
         end
       end
     end

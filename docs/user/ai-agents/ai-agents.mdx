@@ -1,0 +1,106 @@
+---
+title: "AI Agents"
+description: "Learn how to connect Claude, ChatGPT and other AI assistants to your store, and control what they are allowed to do, in Spree Commerce."
+---
+
+An AI agent is an assistant such as Claude or ChatGPT that you connect to your store so it can work in it on your behalf. Once connected, it can answer questions about your orders, search your catalog, run a report or make a change, by calling your store directly rather than by being told what your store contains.
+
+A connection belongs to one person rather than to the store. It carries that person's own permissions, never more, and only the permissions they approved when they connected it. Two members of staff connecting the same agent get two separate connections, each held to what that person can do.
+
+Agents are worth connecting when your team already asks the same questions of the dashboard every day, or when a job takes more clicks than it deserves. Asking an assistant which products are out of stock, or to cancel an order and tell the customer, is faster than finding the screens for it.
+
+To manage AI agents, navigate to **Settings → AI Agents** in the admin dashboard.
+
+<Note>Connecting an agent needs permission to manage connected applications. A staff member without it sees **You do not have permission to connect an agent to this store** instead of the connection screen.</Note>
+
+## Reviewing Connected Agents
+
+![The AI Agents screen, with one connected agent and the people connected through it](/docs/images/user/ai-agents/ai-agents/1-ai-agents.png)
+
+The screen lists one card per agent that has been connected to the store. Each card shows:
+
+- **Access** - What the agent is allowed to do.
+- **Status** - Whether anyone is currently connected through it.
+- **People connected** - How many members of staff have connected it, and who they are.
+
+An agent with nobody connected through it is a registration that is no longer in use. Before anyone has connected anything, the screen reads **No agents have been connected yet**.
+
+## How to Connect an Agent
+
+Connecting takes two parts. First the agent is registered in Spree, which produces the two values the agent needs. Then those values are entered in the agent itself, which sends you back to Spree to sign in and approve what it may do.
+
+### Registering the Agent in Spree
+
+![The Connect an agent panel, with Claude, ChatGPT and Something else to choose from](/docs/images/user/ai-agents/ai-agents/2-connect-agent.png)
+
+1. Click **Connect an agent**.
+2. Choose the assistant you are connecting. **Claude** covers claude.ai, Claude Desktop and Claude Code. **ChatGPT** covers ChatGPT and Codex. **Something else** covers any other assistant that speaks MCP.
+3. Click **Continue**.
+
+![The address and client ID a connected agent needs](/docs/images/user/ai-agents/ai-agents/3-agent-ready.png)
+
+The panel then shows two values, each with a button that copies it:
+
+- **Your store's MCP address** - Where the agent sends its requests. It is your store's own address followed by `/api/v3/admin/mcp`.
+- **Client ID** - What identifies this agent to your store. Some assistants ask for it and some do not.
+
+<Note>Choosing **Something else** asks for a name and the agent's redirect URI, which is where the agent expects to be sent back to after you sign in. It comes from that agent's own documentation. For Claude and ChatGPT this is filled in for you, so there is nothing to look up.</Note>
+
+<Note>Registering the same assistant twice reconnects the one already registered rather than creating a second. One Claude registration covers claude.ai, Claude Desktop and Claude Code together, and everyone on your team connects through it.</Note>
+
+<Note>Registering an agent creates an entry under **Settings → OAuth clients**, which holds its Client ID and the address the assistant is sent back to. For Claude and ChatGPT that entry is filled in for you, and the only reason to open it is to look the Client ID up again or to remove the agent outright.</Note>
+
+### Connecting It to the Assistant
+
+What happens next depends on the assistant, because each keeps its connector settings in a different place and asks for the two values in a different order.
+
+- [<u>Connect Claude</u>](/user/ai-agents/connect-claude) - claude.ai and Claude Desktop, on a personal plan or a Team or Enterprise plan
+- [<u>Connect ChatGPT</u>](/user/ai-agents/connect-chatgpt) - ChatGPT, which also needs a callback URL copied back into your store
+
+For anything else, paste **Your store's MCP address** into wherever that assistant keeps its MCP or connector settings, supplying the **Client ID** if it asks for one. It will send you to your store to sign in and approve.
+
+## What an Agent Is Allowed to Do
+
+![The approval screen, listing what the agent is asking for](/docs/images/user/ai-agents/ai-agents/4-consent.png)
+
+Signing in brings up an approval screen listing the permissions the agent has asked for. Tick the ones you want it to have and click **Allow access**. Approving fewer than it asked for is allowed, and the agent simply works without the rest.
+
+Three limits apply to every connection, whoever makes it.
+
+**An agent never gets more permissions than the person connecting it.** The approval screen offers only the permissions you hold yourself. Anything the agent asked for that your role does not include is listed as withheld and cannot be approved. Someone on a merchandiser role connecting the same agent as an owner is offered a much shorter list.
+
+**Some permissions are never offered to an agent at all.** Managing connected applications, API keys, integrations, webhooks and staff are all withheld from every connection, including an owner's. An agent therefore cannot connect another agent, create a key that outlives its own connection, or change who works at your store.
+
+**A connection is personal.** Each member of staff connects for themselves and approves their own permissions, even when everyone is using the same connector. What one person approved has no effect on anyone else.
+
+<Note>An agent is never shown the jobs it was not approved for, so a connection approved for products alone sees a short list of product jobs rather than everything the store can do.</Note>
+
+## How to Revoke Access
+
+Access can be taken back from one person, or from everybody at once. The two are done on different screens.
+
+### Revoking Access from a User
+
+1. Navigate to **Settings → AI Agents** and find the agent's card.
+2. Find the person whose access you are removing.
+3. Click **Revoke access** and confirm.
+
+That person loses access immediately and everyone else stays connected. The agent's registration is kept, so they can connect again later and approve a fresh set of permissions.
+
+<Note>Approving more permissions for an agent you have already connected is done by revoking your own access and connecting again, because the approval screen appears only when a connection is made.</Note>
+
+### Removing an Agent Entirely
+
+Deleting the agent's registration disconnects everybody at once and leaves nothing for anyone to reconnect to.
+
+1. Navigate to **Settings → OAuth clients** and find the agent.
+2. Open its actions and choose **Delete**.
+3. Confirm.
+
+<Warning>Deleting a registration stops the agent working for every member of staff immediately, not only for you, and takes every connection made through it with it. Reconnecting afterwards means registering the agent again, which produces a new Client ID that everyone has to enter.</Warning>
+
+## Further Reading
+
+- [<u>Staff</u>](/user/settings/staff) - The people who can connect an agent
+- [<u>Roles</u>](/user/settings/roles) - The permissions a role carries, which bound what an agent can be given
+- [<u>API Keys</u>](/user/settings/api-keys) - Standing credentials for integrations, which work differently from an agent

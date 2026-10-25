@@ -8,12 +8,6 @@ describe Spree::CustomFields::RichText, type: :model do
                         value: '<p>Rich text with <strong>formatting</strong></p>')
   end
 
-  describe '#value' do
-    it 'stores HTML in the shared value column' do
-      expect(custom_field.value).to eq('<p>Rich text with <strong>formatting</strong></p>')
-    end
-  end
-
   describe '#serialize_value' do
     it 'returns the stored HTML' do
       expect(custom_field.serialize_value).to eq('<p>Rich text with <strong>formatting</strong></p>')

@@ -3,12 +3,36 @@ module Spree
     module V3
       module Store
         class NewsletterSubscribersController < Store::BaseController
+          include Spree::Api::V3::AllowedRedirectUrl
+
           allow_guest_storefront_access!
           rate_limit to: Spree::Api::Config[:rate_limit_register],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
                      only: [:create, :verify, :request_unsubscribe],
                      with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_register]) }
+
+          request_params 'CreateNewsletterSubscriberParams', action: :create do |body|
+            body.attribute :email, :string, required: true, format: :email, example: 'subscriber@example.com'
+            body.attribute :redirect_url, :string,
+              format: :uri,
+              example: 'https://your-store.com/newsletter/confirm',
+              description: "The storefront URL the verification token is appended to. Left out of the webhook payload unless it matches one of the store's allowed origins."
+          end
+
+          request_params 'VerifyNewsletterSubscriberParams', action: :verify do |body|
+            body.attribute :token, :string,
+              required: true,
+              example: 'abc123def456',
+              description: 'The verification token from the confirmation email.'
+          end
+
+          request_params 'RequestNewsletterUnsubscribeParams', action: :request_unsubscribe do |body|
+            body.attribute :email, :string, format: :email, example: 'subscriber@example.com'
+            body.attribute :redirect_url, :string,
+              format: :uri,
+              description: "The storefront URL the unsubscribe token is appended to in the email. Left out of the event payload unless it matches one of the store's allowed origins."
+          end
 
           # POST /api/v3/store/newsletter_subscribers
           def create
@@ -43,7 +67,7 @@ module Spree
             unless subscriber
               return render_error(
                 code: ERROR_CODES[:invalid_token],
-                message: Spree.t(:newsletter_verification_token_invalid, scope: :api),
+                message: I18n.t('spree.api.newsletter_verification_token_invalid'),
                 status: :unprocessable_content
               )
             end
@@ -64,7 +88,7 @@ module Spree
             if subscriber.blank?
               return render_error(
                 code: ERROR_CODES[:invalid_token],
-                message: Spree.t(:newsletter_unsubscribe_token_invalid, scope: :api),
+                message: I18n.t('spree.api.newsletter_unsubscribe_token_invalid'),
                 status: :unprocessable_content
               )
             end
@@ -87,18 +111,9 @@ module Spree
             subscriber = Spree::NewsletterSubscriber.for_store(current_store).find_by(email: params[:email])
 
             if subscriber
-              payload = {
-                id: subscriber.prefixed_id,
-                email: subscriber.email,
-                unsubscribe_token: subscriber.generate_token_for(:unsubscribe),
-                store_id: current_store.prefixed_id,
-                customer_id: subscriber.customer&.prefixed_id
-              }
-
-              redirect_url = validated_redirect_url
-              payload[:redirect_url] = redirect_url if redirect_url.present?
-
-              subscriber.publish_event('newsletter_subscriber.unsubscribe_requested', payload)
+              event_name = 'newsletter_subscriber.unsubscribe_requested'
+              payload = subscriber.event_payload_for(event_name, store: current_store, redirect_url: validated_redirect_url.presence)
+              subscriber.publish_event(event_name, payload)
             end
 
             head :accepted
@@ -125,17 +140,6 @@ module Spree
 
             subscriber = Spree::NewsletterSubscriber.for_store(current_store).find_by_token_for(:unsubscribe, params[:token])
             subscriber if subscriber&.prefixed_id == params[:id]
-          end
-
-          # Drop redirect_url when it isn't in the store's allow-list — secure-by-default,
-          # mirrors password_resets. Returning nil omits it from the webhook payload rather
-          # than rejecting the request, so callers can't probe the allow-list via 4xx errors.
-          def validated_redirect_url
-            redirect_url = params[:redirect_url]
-            return nil if redirect_url.blank?
-            return nil unless current_store.allowed_origin?(redirect_url)
-
-            redirect_url
           end
         end
       end

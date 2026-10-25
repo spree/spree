@@ -78,7 +78,7 @@ module Spree
         it 'publishes order.canceled event', :events do
           allow(Spree::Events).to receive(:publish)
           result
-          expect(Spree::Events).to have_received(:publish).with('order.canceled', hash_including(:notify_customer), any_args)
+          expect(Spree::Events).to have_received(:publish).with('order.canceled', kind_of(Hash), hash_including(:notify_customer))
         end
       end
 
@@ -91,7 +91,7 @@ module Spree
 
         it 'says why it refused' do
           expect(result.error.value.full_messages.join).
-            to include(Spree.t('errors.messages.not_cancellable'))
+            to include(I18n.t('spree.errors.messages.not_cancellable'))
         end
       end
 
@@ -129,6 +129,24 @@ module Spree
         result
 
         expect(provider).to have_received(:void).with(order)
+      end
+
+      # The cancellation and its payments are settled before the void runs, and
+      # the steps after it update statuses and announce it — so raising left a
+      # cancelled order half-recorded and reported a failure.
+      it 'cancels the order even when the tax engine cannot be reached' do
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(provider).to receive(:void).
+          and_raise(Spree::Tax::ProviderUnavailable.new('Failed to open TCP connection'))
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow(Rails.error).to receive(:report)
+
+        expect(result).to be_success
+        expect(order.reload).to be_canceled
+        # Void is idempotent, so a standing document can follow — but the gap
+        # is reported rather than dropped.
+        expect(Rails.error).to have_received(:report).
+          with(instance_of(Spree::Tax::ProviderUnavailable), hash_including(source: 'spree.orders.cancel'))
       end
     end
 

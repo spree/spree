@@ -127,7 +127,7 @@ export function LabelUploadDialog({
                   <InputGroupInput
                     id="label-cost"
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     {...form.register('cost')}
                   />

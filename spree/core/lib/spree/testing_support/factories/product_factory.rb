@@ -15,8 +15,11 @@ FactoryBot.define do
     end
     after(:create) do |product|
       if product.store&.default_channel && product.product_publications.empty?
-        Spree::ProductPublication.create!(
-          product: product,
+        # Built through the association, not Spree::ProductPublication.create!:
+        # the `empty?` above loads and caches the collection, so a row written
+        # around it leaves the product holding an association that reads empty
+        # while the table has the row.
+        product.product_publications.create!(
           channel: product.store.default_channel,
           published_at: product.available_on,
           unpublished_at: product.discontinue_on
@@ -38,8 +41,17 @@ FactoryBot.define do
       price { 19.99 }
       compare_at_price { nil }
       currency { nil }
+      published_at { nil }
+      unpublished_at { nil }
     end
 
+    # The deprecated +available_on=+/+discontinue_on=+ setters warn, so the
+    # dates go straight onto the legacy columns, which code still reads and
+    # which seed the default-channel publication created below.
+    after(:build) do |product, evaluator|
+      product[:available_on] = evaluator.published_at if evaluator.published_at
+      product[:discontinue_on] = evaluator.unpublished_at if evaluator.unpublished_at
+    end
     before(:create) do |_product|
       create(:stock_location) unless Spree::StockLocation.any?
     end
@@ -60,8 +72,11 @@ FactoryBot.define do
       # keep passing. Production callers must publish explicitly via the
       # Admin SDK / Dashboard create form.
       if product.store&.default_channel && product.product_publications.empty?
-        Spree::ProductPublication.create!(
-          product: product,
+        # Built through the association, not Spree::ProductPublication.create!:
+        # the `empty?` above loads and caches the collection, so a row written
+        # around it leaves the product holding an association that reads empty
+        # while the table has the row.
+        product.product_publications.create!(
           channel: product.store.default_channel,
           published_at: product.available_on,
           unpublished_at: product.discontinue_on

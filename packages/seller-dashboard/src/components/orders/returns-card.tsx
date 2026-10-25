@@ -1,4 +1,12 @@
-import { currencyParts } from '@spree/dashboard-core'
+import { RETURN_STATUSES, subsetOf } from '@spree/core'
+import {
+  currencyParts,
+  formatMoney,
+  isPositiveMoney,
+  returnOwesNothing,
+  returnRefundSummary,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -14,7 +22,6 @@ import {
   DropdownMenuTrigger,
   ReturnReceiveDialog,
   ReturnRefundDialog,
-  returnOwesNothing,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -29,7 +36,7 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Refunded and canceled returns are finished; offering a menu on them would
 // open onto nothing.
-const ACTIONABLE = ['requested', 'approved', 'received']
+const ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
 
 /**
  * Goods coming back on this order.
@@ -137,11 +144,7 @@ export function ReturnsCard({ order }: { order: Order }) {
                 {returnRecord.return_line_items?.map((line) => (
                   <ReturnLineRow key={line.id} line={line} />
                 ))}
-                <p className="text-muted-foreground text-sm">
-                  {t('orders.post_sale.returns.refund_total', {
-                    amount: returnRecord.display_refund_total,
-                  })}
-                </p>
+                <RefundSummary returnRecord={returnRecord} currency={order.currency} />
               </CardContent>
             </Card>
           ))
@@ -165,6 +168,23 @@ export function ReturnsCard({ order }: { order: Order }) {
         />
       )}
     </Card>
+  )
+}
+
+function RefundSummary({ returnRecord, currency }: { returnRecord: Return; currency: string }) {
+  const { t } = useTranslation()
+  const locale = useMoneyLocale()
+  const summary = returnRefundSummary(returnRecord, currency, locale)
+
+  return (
+    <p className="text-muted-foreground text-sm">
+      {summary.kind === 'owed' &&
+        t('orders.post_sale.returns.refund_total', { amount: summary.amount })}
+      {summary.kind === 'refunded' &&
+        t('orders.post_sale.returns.refunded', { amount: summary.amount })}
+      {summary.kind === 'refunded_short' &&
+        t('orders.post_sale.returns.refunded_of', { amount: summary.amount, total: summary.total })}
+    </p>
   )
 }
 
@@ -247,6 +267,12 @@ function RefundDialog({
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      owesNothing={returnOwesNothing(returnRecord.refundable_total)}
+      refundTaxTotal={
+        isPositiveMoney(returnRecord.refund_tax_total)
+          ? formatMoney(returnRecord.refund_tax_total, order.currency, i18n.language)
+          : undefined
+      }
       currencySymbol={currencySymbol}
       onClose={() => onOpenChange(false)}
       pending={refund.isPending}

@@ -19,9 +19,13 @@ module Spree
     has_spree_number prefix: 'DSR'
 
     publishes_lifecycle_events
+    publishes_event :completed
+    publishes_event :confirmation_requested,
+                    serializer: 'Spree::Api::V3::DataRequestConfirmationRequestedEventSerializer',
+                    credential: 'write_customers'
 
     include Spree::HasStatus
-    has_status :pending, :processing, :completed, :failed, default: :pending
+    has_status :awaiting_confirmation, :pending, :processing, :completed, :failed, :lapsed, default: :pending
 
     ACCESS = 'access'.freeze
     ERASURE = 'erasure'.freeze
@@ -32,12 +36,23 @@ module Spree
     # about them is not left lying around.
     DEFAULT_EXPIRY = 7.days
 
+    # How long a request a customer raised waits for confirmation from its
+    # email address before it lapses.
+    CONFIRMATION_WINDOW = 24.hours
+
     # Addresses the finished export. Plaintext like the digital-link token:
     # the URL is the credential, it is only ever sent to the address that
     # asked, and it stops working when the request expires.
     has_secure_token :download_token
 
-    belongs_to :store, class_name: 'Spree::Store'
+    # Proves that whoever confirms reads mail at the address the request
+    # names. Bound to
+    # the download token, so an erasure, which clears it, voids every link
+    # already sent.
+    generates_token_for :confirmation do
+      download_token
+    end
+
     belongs_to :customer, class_name: Spree.customer_class.to_s
     # Null when the subject asked for it themselves; set when staff acted on a
     # request that arrived by email.
@@ -52,10 +67,13 @@ module Spree
     scope :access, -> { where(kind: ACCESS) }
     scope :erasure, -> { where(kind: ERASURE) }
     scope :in_progress, -> { with_status(:pending, :processing) }
+    scope :confirmable, -> { awaiting_confirmation.where(requested_at: CONFIRMATION_WINDOW.ago..) }
+    scope :past_confirmation_window, -> { awaiting_confirmation.where(requested_at: ...CONFIRMATION_WINDOW.ago) }
     scope :recent_first, -> { order(requested_at: :desc) }
 
     self.whitelisted_ransackable_attributes = %w[number kind status email requested_at completed_at]
     self.whitelisted_ransackable_scopes = %w[access erasure in_progress]
+    self.ransackable_scope_types = %w[access erasure in_progress].index_with('boolean')
 
     before_validation :set_defaults, on: :create
 
@@ -86,6 +104,22 @@ module Spree
     # @return [Boolean]
     def expired?
       expires_at.present? && expires_at.past?
+    end
+
+    # Whether the request is still waiting for confirmation, within the window
+    # to receive it, and still names the account's address.
+    # @return [Boolean]
+    def confirmable?
+      awaiting_confirmation? && requested_at > CONFIRMATION_WINDOW.ago && addressed_to_customer?
+    end
+
+    # Whether the request names the address the account has now. The work
+    # matches guest rows by the account's address when it runs, so a request
+    # for an address the account has since left would reach rows it never
+    # named.
+    # @return [Boolean]
+    def addressed_to_customer?
+      customer.present? && email.to_s.casecmp?(customer.email.to_s)
     end
 
     private

@@ -33,18 +33,7 @@ RSpec.describe 'Admin Store Credits API', type: :request, swagger_doc: 'api-refe
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[customer_id_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by the customer holding the credit'
-      parameter name: :'q[customer_email_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by customer email (contains)'
-      parameter name: :'q[currency_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by currency'
-      parameter name: :'q[memo_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by the free-text reason (contains)'
-      parameter name: :'q[outstanding]', in: :query, type: :boolean, required: false,
-                description: 'True for credits with money left, false for credits already spent'
-      parameter name: :'q[from_gift_card]', in: :query, type: :boolean, required: false,
-                description: 'True for credits a gift card redemption created, false for every other origin'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (customer, created_by).'
       parameter name: :sort, in: :query, type: :string, required: false,
@@ -131,6 +120,7 @@ RSpec.describe 'Admin Store Credits API', type: :request, swagger_doc: 'api-refe
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
+      filter_parameters_for
 
       response '200', 'events found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

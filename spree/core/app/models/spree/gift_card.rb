@@ -5,9 +5,13 @@ module Spree
     extend DisplayMoney
     include Spree::SingleStoreResource
     include Spree::HasCustomFields
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
     publishes_lifecycle_events
+    publishes_events :canceled, :partially_redeemed, :redeemed
 
     #
     # Status
@@ -35,7 +39,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
     include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
@@ -62,10 +65,12 @@ module Spree
     # Ransack
     #
     ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
-    self.whitelisted_ransackable_attributes = %w[code customer_id status state gift_card_batch_id created_by_id]
+    self.whitelisted_ransackable_attributes = %w[code customer_id status state gift_card_batch_id created_by_id currency expires_at]
+    search_by :code
     # `users` is the pre-6.0 name for `customers` — removed in 6.1.
     self.whitelisted_ransackable_associations = %w[customers users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
+    self.ransackable_scope_types = %w[active expired redeemed partially_redeemed].index_with('boolean')
 
     normalizes :code, with: ->(value) { value&.to_s&.squish&.presence }
 
@@ -81,12 +86,6 @@ module Spree
     # Money
     #
     money_methods :amount, :amount_used, :amount_authorized, :amount_remaining
-
-    # Sets the amount
-    # @param amount [String]
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
 
     # Calculates the remaining amount
     # @return [Decimal]

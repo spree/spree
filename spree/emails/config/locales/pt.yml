@@ -1,0 +1,34 @@
+---
+pt:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Repor palavra-passe
+        expiry_notice: Esta ligação de reposição de palavra-passe expira em breve. Se não solicitou esta ação, não é necessário fazer nada.
+        greeting: Olá %{name},
+        ignore_notice: Se não solicitou uma reposição de palavra-passe, pode ignorar este e-mail em segurança. A sua palavra-passe não será alterada.
+        instructions: Recebemos um pedido para repor a sua palavra-passe. Clique no botão abaixo para escolher uma nova palavra-passe.
+        subject: Instruções para redefinição de palavra-passe
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Olá,
+        ignore_disclaimer: Se não solicitou isto, ignore este e-mail.
+        instructions: Clique no botão abaixo para verificar o seu endereço de e-mail.
+        message_copy_link: 'Se o botão não funcionar, copie e cole a seguinte ligação no seu navegador:'
+        subject: Verifique o seu endereço de e-mail
+        verify_email_address_link: Verificar endereço de e-mail
+    order_mailer:
+      cancel_email:
+        subject: Cancelamento da Encomenda
+      payment_link_email:
+        message: Clique no botão abaixo para pagar a sua encomenda.
+        message_copy_link: 'Se o botão não funcionar, copie e cole a seguinte ligação no seu navegador:'
+        pay_for_order: Pagar encomenda
+        subject: Ligação de pagamento para a encomenda n.º %{number}
+      store_owner_notification_email:
+        heading: Nova encomenda recebida
+        instructions: Recebeu uma nova encomenda.
+        order_summary: Resumo da encomenda %{number}
+        subject: "%{store_name} recebeu uma nova encomenda"
+      subtotal: 'Subtotal:'
+      total: 'Total da encomenda:'

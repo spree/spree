@@ -5,13 +5,13 @@ module Spree
       preference :apply_only_on_full_priced_items, :boolean, default: false
 
       def self.description
-        Spree.t(:percent_per_item)
+        I18n.t('spree.percent_per_item')
       end
 
       def compute(object)
         return 0 if preferred_apply_only_on_full_priced_items && object.variant.compare_at_amount_in(object.currency).present?
 
-        computed_amount = (object.amount * preferred_percent / 100).round(2)
+        computed_amount = Spree::Money::Rounding.to_currency(object.amount * preferred_percent / 100, object.currency)
 
         # We don't want to cause the promotion adjustments to push the order into a negative total.
         if computed_amount > object.amount

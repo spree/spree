@@ -1,6 +1,9 @@
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
+  FIXTURE_BOGUS_GATEWAY,
+  FIXTURE_BOGUS_ORDER_EMAIL,
+  FIXTURE_BOGUS_TRANSACTION_ID,
   FIXTURE_BULK_CATEGORY,
   FIXTURE_BULK_CATEGORY_PERMALINK,
   FIXTURE_BULK_CHANNEL_CODE,
@@ -43,14 +46,27 @@ import {
   FIXTURE_TRANSFER_SKU,
   FIXTURE_TRANSFER_SOURCE,
 } from './helpers'
-import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, RAILS_PID_FILE } from './paths'
+import {
+  ASYNC_JOBS_INITIALIZER,
+  CREDENTIALS_FILE,
+  RAILS_PID_FILE,
+  SLOT_PROBES_INITIALIZER,
+  TEST_INTEGRATION_INITIALIZER,
+} from './paths'
 import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
 
 const PORT = process.env.E2E_RAILS_PORT || '3010'
-// Mirrors `spec/dummy/config/database.yml`.
-const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test.sqlite3')
+// A database of its own, so the seeded data left behind after a run never
+// reaches the API gem's RSpec suite, which shares the dummy app.
+const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')
 
-const RAILS_ENV = { ...process.env, RAILS_ENV: 'test', PORT, DASHBOARD_E2E: '1' }
+const RAILS_ENV = {
+  ...process.env,
+  RAILS_ENV: 'test',
+  PORT,
+  DASHBOARD_E2E: '1',
+  DATABASE_URL: `sqlite3:${TEST_SQLITE}`,
+}
 
 // Customer's last name is derived from the full name so the seeder and the
 // matching `full_name` assertion in promotions.spec stay in sync.
@@ -74,13 +90,16 @@ const BOOTSTRAP_RUBY = [
   `category = s.categories.where(permalink: '${FIXTURE_PROMO_TAXON_PERMALINK}').first_or_create!(name: '${FIXTURE_PROMO_TAXON}', parent: nil)`,
   `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(store: s, status: 'active')`,
   `product.default_variant.set_price(s.default_currency, 19.99)`,
+  // Published on the default channel, so the new-order item search — which
+  // lists only what the order's channel sells — offers it.
+  `Spree::ProductPublication.find_or_create_by!(product: product, channel: s.default_channel)`,
   `product.default_variant.update!(sku: '${FIXTURE_PROMO_SKU}') if product.default_variant.sku != '${FIXTURE_PROMO_SKU}'`,
-  `product.taxons << category unless product.taxons.include?(category)`,
+  `product.categories << category unless product.categories.include?(category)`,
   // Stock the promo product on the store's default stock location so
   // order-creation tests can add it to a draft order without the
   // +"Quantity not available"+ validation kicking in.
   `default_location = s.default_stock_location`,
-  `product.variants_including_master.each { |v| default_location.stock_levels.where(variant: v).first_or_create!.update!(count_on_hand: 100, backorderable: true) }`,
+  `product.variants.each { |v| default_location.stock_levels.where(variant: v).first_or_create!.update!(count_on_hand: 100, backorderable: true) }`,
   // Disjoint product fixtures for products-bulk.spec.ts. Each test owns its
   // own pair (A/B → status, C/D → categories, E/F → tags, G/H → delete,
   // I → row-action clone/delete) so the serial suite can mutate them in any
@@ -124,6 +143,9 @@ const BOOTSTRAP_RUBY = [
   // market would otherwise surface later as opaque multi-currency failures.
   `germany = Spree::Country.find_by_iso!('DE')`,
   `s.markets.find_or_create_by!(name: 'Europe') { |m| m.currency = 'EUR'; m.default_locale = 'de'; m.countries = [germany] } unless s.markets.exists?(currency: 'EUR')`,
+  // An order's locale has to be one its market offers, so the orders list can
+  // show a German-language order in the default US market.
+  `s.default_market.update!(supported_locales: s.default_market.supported_locales_list | ['de']) unless s.default_market.supported_locales_list.include?('de')`,
   // A seller with one settled earning and one payout still owed, so the
   // marketplace ledger screens have rows to read and a settlement to mark
   // paid. Written directly: both are produced by fulfilment and the payout
@@ -164,8 +186,28 @@ const BOOTSTRAP_RUBY = [
   'transfer_source.stock_levels.where(variant: inventory_product.default_variant).first_or_create!.update!(count_on_hand: 500)',
   'inventory_level = transfer_destination.stock_levels.where(variant: inventory_product.default_variant).first_or_create!',
   `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_product.default_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
+  // A store whose market writes a comma decimal (Dutch) and prices in EUR: the
+  // server reads every request in the market's language, so this is where a
+  // price is misread if anything parses money by locale. Its name sorts after
+  // the default store's, so signing in still opens the default store first, and
+  // its dashboard stays in English so the specs' labels match.
+  `comma_store = Spree::Store.find_by(code: 'e2e-nl') || Spree::Store.create!(code: 'e2e-nl', name: 'Winkel', url: 'nl.example.com', mail_from_address: 'no-reply@example.com', preferred_admin_locale: 'en')`,
+  'Spree::Seeds::StoreResources.call(store: comma_store); Spree::Stores::ProvisionDefaults.call(store: comma_store, country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.stock_locations.exists?',
+  // A second market in USD, so the store sells in a currency written with a
+  // period as well as its own.
+  `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
+  'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
+  // A card payment the Bogus gateway has charged, so its page at the gateway's
+  // dashboard has an address, and whose card failed both of the issuer's
+  // checks. On this store because the payment method specs install Bogus on the
+  // default one, and a store holds each provider once. Written directly:
+  // charging a card needs a full checkout.
+  `comma_bogus = comma_store.payment_methods.where(type: 'Spree::Gateway::Bogus').first_or_create!(name: '${FIXTURE_BOGUS_GATEWAY}', active: true, storefront_visible: false)`,
+  `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
+  "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
+  `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
   'port = ENV.fetch("PORT", 3010)',
-  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name)',
+  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
 ].join('; ')
 
 export default async function globalSetup() {
@@ -181,6 +223,49 @@ export default async function globalSetup() {
     [
       '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
       "ActiveJob::Base.queue_adapter = :async if ENV['DASHBOARD_E2E'] == '1'",
+      '',
+    ].join('\n'),
+  )
+
+  // One setting of each kind the connect form renders, so the integrations
+  // spec can prove each saves and reads back. Registered after Spree's own
+  // integrations list is set up, the way a provider gem registers its own.
+  writeFileSync(
+    TEST_INTEGRATION_INITIALIZER,
+    [
+      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
+      "if ENV['DASHBOARD_E2E'] == '1'",
+      '  Rails.application.config.after_initialize do',
+      '    unless defined?(::E2eRelay)',
+      '      class ::E2eRelay < Spree::Integration',
+      '        preference :account_id, :string',
+      '        preference :api_secret, :password',
+      '        preference :sync_interval, :integer, default: 15',
+      '        preference :sandbox_mode, :boolean, default: true',
+      '',
+      "        def self.integration_name = 'E2E Relay'",
+      '      end',
+      '    end',
+      "    Spree.integrations << 'E2eRelay' unless Spree.integrations.include?('E2eRelay')",
+      '  end',
+      'end',
+      '',
+    ].join('\n'),
+  )
+
+  writeFileSync(
+    SLOT_PROBES_INITIALIZER,
+    [
+      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
+      "if ENV['DASHBOARD_E2E'] == '1'",
+      '  Rails.application.config.after_initialize do',
+      '    [Spree::Media, Spree::TaxRate, Spree::Variant].each do |model|',
+      '      next if model.additional_permitted_attributes.include?({ metadata: {} })',
+      '',
+      '      model.additional_permitted_attributes += [{ metadata: {} }]',
+      '    end',
+      '  end',
+      'end',
       '',
     ].join('\n'),
   )

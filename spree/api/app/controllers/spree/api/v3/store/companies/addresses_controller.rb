@@ -9,6 +9,18 @@ module Spree
           class AddressesController < BaseController
             include Spree::Api::V3::CompanyAddressWrites
 
+            request_params :company_address do |body|
+              body.include_attributes Spree::Api::V3::AddressRequestSchema
+              body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
+              body.attribute :zipcode, :string, deprecated: 'Use `postal_code`. Removed in 6.1.'
+              body.attribute :default_billing, :boolean,
+                permit: false,
+                description: "True makes this the node's default billing address, false gives that up, and leaving it out changes nothing."
+              body.attribute :default_shipping, :boolean,
+                permit: false,
+                description: "True makes this the node's default shipping address, false gives that up, and leaving it out changes nothing."
+            end
+
             # POST /api/v3/store/companies/:company_id/addresses
             def create
               result = Spree.address_create_service.call(
@@ -57,6 +69,10 @@ module Spree
               Spree.api.address_serializer
             end
 
+            def collection_includes
+              [:owner]
+            end
+
             # Reading a book and keeping one are different rights: the listing
             # includes what this node inherits, writes stay with the node that
             # owns the row. The Store API authorizes purely by what this scope
@@ -64,14 +80,6 @@ module Spree
             # member rename or re-point its parent's entries.
             def scope
               action_name == 'index' ? @parent.address_book : @parent.addresses
-            end
-
-            def parent_association
-              :addresses
-            end
-
-            def permitted_params
-              params.permit(:label, *Spree::Api::V3::AddressParams::ADDRESS_KEYS)
             end
           end
         end

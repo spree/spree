@@ -33,6 +33,8 @@ module SpreeAcmeCarrier
     preference :test_mode, :boolean, default: true
 
     def self.integration_group = 'shipping'
+    def self.logo_url = 'https://acme-carrier.example.com/logo.svg'
+    def self.docs_url = 'https://acme-carrier.example.com/docs/spree'
 
     # Called when an admin activates the integration. Returning false blocks
     # activation and shows your message in the dashboard.
@@ -50,6 +52,8 @@ module SpreeAcmeCarrier
   end
 end
 ```
+
+`logo_url` and `docs_url` are optional. They put your logo and a "Setup guide" link on the integration's card under **Settings > Integrations**. Payment methods declare them the same way.
 
 Declare secrets as `:password` preferences. Spree masks them on read and guards the round-trip on write, so an API key never leaves the server in plain text.
 

@@ -8,11 +8,18 @@ module Spree
 
     include FriendlyId
     include Spree::TranslatableResource
+
+    # The store itself is settings — see Admin::StoreController.
+    def self.translation_write_permission
+      'write_settings'
+    end
+
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Stores::Setup
     include Spree::Stores::Markets
     include Spree::Stores::Channels
+    include Spree::Stores::EmailBranding
     include Spree::StoreDataSources
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
@@ -40,11 +47,16 @@ module Spree
     #
     # Preferences
     #
+    UNIT_SYSTEMS = %w[metric imperial].freeze
+
     # general preferences
-    preference :admin_locale, :string
-    preference :timezone, :string, default: Time.zone.name
-    preference :weight_unit, :string, default: 'lb'
-    preference :unit_system, :string, default: 'imperial'
+    preference :admin_locale, :string, format: :locale
+    preference :timezone, :string, format: :timezone, default: Time.zone.name
+    preference :weight_unit, :string, default: 'lb', choices: -> { Spree::Variant::WEIGHT_UNITS }
+    preference :unit_system, :string, default: 'imperial', choices: -> { UNIT_SYSTEMS }
+    # Anonymous identifier of this installation, kept on the default store
+    # (see Spree.install_id). Written by Spree, never by the operator.
+    preference :install_id, :string, internal: true, nullable: true
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
     # Sellers are a different audience from shoppers, with their own reasons to
@@ -66,10 +78,27 @@ module Spree
     # same reason as auto_approve_sellers: what the marketplace lists is what
     # it vouches for.
     preference :auto_approve_seller_products, :boolean, default: false
+    # Let sellers attach downloadable files to their own products. Off for the
+    # same reason again: a file a buyer downloads under the marketplace's name
+    # is something the marketplace vouches for, and that should be a choice.
+    preference :seller_digital_assets_enabled, :boolean, default: false
+    # What a seller's file may be, checked against the file's own signature
+    # rather than its name. An entry names one type or, with `*` as the
+    # subtype, a whole family. The operator's own uploads are not restricted.
+    preference :seller_digital_asset_content_types, :array, of: :string,
+                                                            default: Spree::DigitalAsset::DEFAULT_SELLER_CONTENT_TYPES
+    # A typo here would refuse every seller upload with a message about the
+    # file, so the list is checked for the type/subtype shape when written.
+    validate :seller_digital_asset_content_types_are_media_types
+    # A file added to or replaced on a seller's product already on sale sends
+    # the product back to review, so an approved listing cannot change what it
+    # delivers without anyone looking. Moot when seller products auto-approve.
+    preference :review_seller_digital_asset_changes, :boolean, default: true
     # Who pays this store's sellers. Blank means core's record-only provider,
     # so a marketplace that has connected nothing still keeps a correct ledger
     # and settles by hand.
-    preference :payout_provider, :string, default: nil
+    preference :payout_provider, :string, default: nil,
+                                          parse_on_set: ->(value) { Spree::ApiTyped.class_name_for(Spree.payout_providers, value) }
     # Refused at write time rather than silently falling back at read time: an
     # operator who mistypes a provider would otherwise get a bookkeeping-only
     # ledger and no indication anywhere that their choice was ignored.
@@ -78,22 +107,22 @@ module Spree
     # How often sellers are settled, unless one carries its own schedule.
     # Monthly by default because it is the interval that needs least of an
     # operator paying by hand, which is what the built-in provider expects.
-    preference :default_payouts_schedule_interval, :string, default: 'monthly'
+    preference :default_payouts_schedule_interval, :string, default: 'monthly', choices: -> { Spree::Seller::PAYOUT_INTERVALS }
     validates :preferred_default_payouts_schedule_interval,
               inclusion: { in: Spree::Seller::PAYOUT_INTERVALS }, allow_blank: true
     # What a seller's balance must reach before a settlement is worth sending;
     # below it the balance carries to the next period. Zero pays whatever is
     # owed, which is right for a provider that moves money for free.
-    preference :default_minimum_payout_amount, :decimal, default: 0
+    preference :default_minimum_payout_amount, :money, default: 0
     # Checkout preferences
     # Store-level fallback for the channel-owned `guest_checkout` preference
     # (see Spree::Channel::Gating). Retained so existing accessors keep working.
     preference :guest_checkout, :boolean, default: true
     # Store-level fallback for the channel-owned `storefront_access` posture.
-    preference :storefront_access, :string, default: 'public'
+    preference :storefront_access, :string, default: 'public', choices: -> { Spree::Channel::Gating::STOREFRONT_ACCESS }
     # Canonical storefront origin used in customer-facing emails and links,
     # e.g. "https://myshop.com" — see #storefront_url for the fallback chain.
-    preference :storefront_url, :string
+    preference :storefront_url, :string, format: :url
     preference :special_instructions_enabled, :boolean, default: false
     # Advertises a confirm/review step for every checkout, even when no
     # payment method asks for one. Payment methods that require confirmation
@@ -103,7 +132,8 @@ module Spree
     # Store-wide default for when a customer is charged rather than only
     # authorized. A payment method's own capture_method wins when set.
     # See Spree::CaptureMethod.
-    preference :capture_method, :string, default: Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
+    preference :capture_method, :string, default: Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD,
+                                       choices: -> { Spree::CaptureMethod::CAPTURE_METHODS }
     preference :stock_reservations_enabled, :boolean, default: true
     # Which address a sale's tax is computed against. Stores selling where tax
     # follows the destination keep this on; billing-address jurisdictions turn
@@ -115,9 +145,9 @@ module Spree
     preference :inventory_provider, :string, default: 'internal'
     # What happens when an external source cannot be reached.
     preference :pricing_provider_failure_policy, :string,
-               default: Spree::ProviderFailurePolicy::DEFAULT_PRICING_POLICY
+               default: Spree::ProviderFailurePolicy::DEFAULT_PRICING_POLICY, choices: -> { Spree::ProviderFailurePolicy::VALUES }
     preference :inventory_provider_failure_policy, :string,
-               default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
+               default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY, choices: -> { Spree::ProviderFailurePolicy::VALUES }
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
     # On-hand quantity at or below which a tracked variant counts as running
@@ -143,6 +173,8 @@ module Spree
     # B2B store collects it from everyone, a mixed store only offers it.
     preference :address_requires_company, :boolean, default: false
     preference :address_requires_phone, :boolean, default: false
+    MEDIA_TYPE_FORMAT = %r{\A[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+*-]*\z}i
+
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true
@@ -151,16 +183,34 @@ module Spree
     preference :digital_asset_link_expire_time, :integer, default: 300
     # Class name of the Spree::OrderRouting::Strategy::Base subclass that
     # decides which StockLocation fulfills which items.
-    preference :order_routing_strategy, :string, default: 'Spree::OrderRouting::Strategy::Rules'
+    preference :order_routing_strategy, :string, default: 'Spree::OrderRouting::Strategy::Rules',
+                                                 parse_on_set: ->(value) { Spree::ApiTyped.class_name_for(Spree.order_routing.strategies, value) }
 
     # Document numbering (docs/plans/6.0-document-numbers.md). The format
     # applies to every numbered document; prefix, suffix and starting value
     # are order-only — other document types keep their code-level prefixes.
     # Changes affect future numbers only; existing numbers are permanent.
-    preference :document_number_format, :string, default: 'sequential'
+    preference :document_number_format, :string, default: 'sequential', choices: -> { Spree::NumberGenerators::Registry::FORMATS.keys }
     preference :order_number_prefix, :string, default: 'R'
     preference :order_number_suffix, :string, default: ''
     preference :order_number_sequence_start, :integer, default: 1001
+
+    # The settings the API reads and writes under their plain names.
+    exposes_preferences :admin_locale, :timezone, :storefront_url, :weight_unit, :unit_system, :storefront_access, :guest_checkout,
+                        :always_include_confirm_step, :company_field_enabled, :address_requires_company,
+                        :address_requires_phone, :capture_method, :track_inventory_levels, :stock_reservations_enabled,
+                        :low_stock_threshold, :tax_using_ship_address, :track_price_history,
+                        :show_products_without_price, :disable_sku_validation, :order_routing_strategy,
+                        :pricing_provider, :inventory_provider, :pricing_provider_failure_policy,
+                        :inventory_provider_failure_policy, :payout_provider, :default_payouts_schedule_interval,
+                        :default_minimum_payout_amount, :auto_approve_sellers, :auto_approve_seller_products,
+                        :seller_digital_assets_enabled, :seller_digital_asset_content_types,
+                        :review_seller_digital_asset_changes, :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
+                        :order_number_prefix, :order_number_suffix, :order_number_sequence_start,
+                        :limit_digital_download_count, :digital_asset_authorized_clicks,
+                        :limit_digital_download_days, :digital_asset_authorized_days,
+                        :send_consumer_transactional_emails, :email_accent_color, :email_background_color,
+                        :email_card_color, :email_text_color, :email_heading_color, :email_font
 
     #
     # Associations
@@ -184,6 +234,7 @@ module Spree
     has_many :claim_reasons, class_name: 'Spree::ClaimReason', inverse_of: :store, dependent: :destroy
     has_many :refund_reasons, class_name: 'Spree::RefundReason', inverse_of: :store, dependent: :destroy
     has_many :order_cancellation_reasons, class_name: 'Spree::OrderCancellationReason', inverse_of: :store, dependent: :destroy
+    has_many :tax_exemption_reasons, class_name: 'Spree::TaxExemptionReason', inverse_of: :store, dependent: :destroy
 
     # :nullify (not :destroy) — clearing the collection must not cascade into
     # Promotion#not_used? / payment records; orphaned rows are detached, not deleted.
@@ -300,6 +351,8 @@ module Spree
     has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
 
     has_many :webhook_endpoints, class_name: 'Spree::WebhookEndpoint', dependent: :destroy, inverse_of: :store
+    has_many :email_templates, class_name: 'Spree::EmailTemplate', dependent: :destroy, inverse_of: :store
+    has_many :email_template_drafts, class_name: 'Spree::EmailTemplateDraft', dependent: :destroy, inverse_of: :store
     has_many :webhook_deliveries, through: :webhook_endpoints, class_name: 'Spree::WebhookDelivery'
 
     has_many :channels, class_name: 'Spree::Channel', dependent: :destroy
@@ -312,6 +365,7 @@ module Spree
     has_many :catalogs, class_name: 'Spree::Catalog', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
+    has_many :oauth_applications, class_name: 'Spree::OauthApplication', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
 
     #
@@ -335,6 +389,10 @@ module Spree
     validates :preferred_default_commission_tax_rate,
               numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
+    # Blank falls back to the defaults where they are read, so a store saved
+    # with one before these checks existed stays savable.
+    validates :preferred_unit_system, inclusion: { in: UNIT_SYSTEMS }, allow_blank: true
+    validates :preferred_weight_unit, inclusion: { in: Spree::Variant::WEIGHT_UNITS }, allow_blank: true
     validates :preferred_document_number_format,
               inclusion: { in: Spree::NumberGenerators::Registry::FORMATS.keys }
     validates :preferred_order_number_sequence_start,
@@ -362,6 +420,7 @@ module Spree
     #
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :mailer_logo, service: Spree.public_storage_service_name
+    signed_id_attachments :logo, :mailer_logo
 
     # First-run setup credential (docs/plans/6.0-store-context-and-first-run-setup.md):
     # printed by the installer, only consulted by the setup endpoint while no
@@ -384,6 +443,7 @@ module Spree
     before_validation :set_default_code, on: :create
     before_validation :normalize_preferred_storefront_url
     before_save :ensure_default_exists_and_is_unique
+    before_save :set_install_id
     after_create :create_default_policies
     after_create :create_default_delivery_profile
 
@@ -475,14 +535,12 @@ module Spree
     #
     # @return [Class]
     def payout_provider_class
-      configured = preferred_payout_provider.presence
       # A name no longer in the registry — a typo, or a gem since removed —
       # would otherwise raise inside a subscriber on every fulfillment and stop
       # the ledger recording anything. The built-in provider keeps the books
       # until an operator fixes the setting.
-      configured = nil unless Spree.payout_providers.any? { |provider| provider.to_s == configured }
-
-      (configured || Spree.default_payout_provider.to_s).constantize
+      Spree::ApiTyped.registered_class(Spree.payout_providers, preferred_payout_provider) ||
+        Spree.default_payout_provider.to_s.constantize
     end
 
     def formatted_url
@@ -521,6 +579,7 @@ module Spree
     end
 
     # Returns the storefront origin URL for use in customer-facing emails and links.
+    # Replaces the plain `storefront_url` reader `exposes_preferences` defines.
     # Uses the `storefront_url` preference when set, then the oldest non-loopback
     # allowed origin (the `http://localhost` origin seeded on install must never
     # leak into customer emails), otherwise falls back to formatted_url.
@@ -628,7 +687,7 @@ module Spree
       @default_stock_location ||= begin
         stock_location_scope = stock_locations.first_party.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
-          stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
+          stock_location_scope.create(default: true, name: I18n.t('spree.default_stock_location_name'),
                                       country_code: default_country&.iso)
         end
       end
@@ -689,7 +748,9 @@ module Spree
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.
     def create_default_delivery_profile
-      Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)
+      Spree::Events.disable do
+        Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)
+      end
     end
 
     def create_default_policies
@@ -712,6 +773,10 @@ module Spree
     def translate_with_store_locale_fallback(key)
       locale = default_locale.presence&.to_sym || :en
       I18n.t(key, locale: locale, default: I18n.t(key, locale: :en))
+    end
+
+    def set_install_id
+      self.preferred_install_id = SecureRandom.uuid if preferred_install_id.blank?
     end
 
     def ensure_default_exists_and_is_unique
@@ -786,6 +851,14 @@ module Spree
       return unless Spree::NumberSequence.started?(store: self)
 
       errors.add(:preferred_order_number_sequence_start, :locked_after_first_number)
+    end
+
+    def seller_digital_asset_content_types_are_media_types
+      bad = Array(preferred_seller_digital_asset_content_types).reject { |type| type.to_s.match?(MEDIA_TYPE_FORMAT) }
+      return if bad.empty?
+
+      errors.add(:preferred_seller_digital_asset_content_types, :invalid,
+                 message: I18n.t('spree.digital_assets_content_type_list_invalid', types: bad.join(', ')))
     end
   end
 end

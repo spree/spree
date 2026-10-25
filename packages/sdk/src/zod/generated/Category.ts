@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Category from '../../types/generated/Category';
 import { CustomFieldSchema } from './CustomField';
 
 export const CategorySchema = z.object({
@@ -24,6 +25,28 @@ export const CategorySchema = z.object({
   get children() { return z.array(CategorySchema).optional(); },
   get ancestors() { return z.array(CategorySchema).optional(); },
   custom_fields: z.array(CustomFieldSchema).optional(),
-});
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Category['id']>;
+  name: z.ZodType<Category['name']>;
+  permalink: z.ZodType<Category['permalink']>;
+  position: z.ZodType<Category['position']>;
+  depth: z.ZodType<Category['depth']>;
+  meta_title: z.ZodType<Category['meta_title']>;
+  meta_description: z.ZodType<Category['meta_description']>;
+  meta_keywords: z.ZodType<Category['meta_keywords']>;
+  children_count: z.ZodType<Category['children_count']>;
+  parent_id: z.ZodType<Category['parent_id']>;
+  description: z.ZodType<Category['description']>;
+  description_html: z.ZodType<Category['description_html']>;
+  image_url: z.ZodType<Category['image_url']>;
+  square_image_url: z.ZodType<Category['square_image_url']>;
+  is_root: z.ZodType<Category['is_root']>;
+  is_child: z.ZodType<Category['is_child']>;
+  is_leaf: z.ZodType<Category['is_leaf']>;
+  parent: z.ZodOptional<z.ZodType<Exclude<Category['parent'], undefined>>>;
+  children: z.ZodOptional<z.ZodType<Exclude<Category['children'], undefined>>>;
+  ancestors: z.ZodOptional<z.ZodType<Exclude<Category['ancestors'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Category['custom_fields'], undefined>>>;
+}>;
 
-export type Category = z.infer<typeof CategorySchema>;
+export type { Category };

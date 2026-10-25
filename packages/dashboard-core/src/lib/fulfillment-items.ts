@@ -1,3 +1,7 @@
+import { ORDER_FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
+import i18n from 'i18next'
+import { formatMoney } from './formatters'
+
 /**
  * Which line items sit in which fulfillment, and which units nobody has
  * claimed yet. The order payload describes the two halves separately —
@@ -14,8 +18,8 @@ export interface GroupableLineItem {
   options_text?: string | null
   quantity: number
   thumbnail_url?: string | null
-  display_price?: string | null
-  display_total?: string | null
+  price?: string | null
+  currency?: string | null
 }
 
 /** The fulfillment-item fields the grouping reads. */
@@ -83,6 +87,16 @@ function claimedQuantities(fulfillments: GroupableFulfillment[]): Map<string, nu
  */
 export const GONE_STATUSES = ['fulfilled', 'delivered']
 
+/** The order-level fulfillment statuses the order lists filter on. */
+export const FILTERABLE_ORDER_FULFILLMENT_STATUSES = subsetOf(ORDER_FULFILLMENT_STATUSES, [
+  'backorder',
+  'canceled',
+  'partial',
+  'unfulfilled',
+  'fulfilled',
+  'delivered',
+])
+
 export function fulfilledQuantities(fulfillments: GroupableFulfillment[]): Map<string, number> {
   const fulfilled = new Map<string, number>()
 
@@ -130,7 +144,10 @@ function buildRow(
     name: copy?.name ?? fallback?.name ?? '',
     optionsText: copy?.options_text ?? fallback?.options_text ?? null,
     thumbnailUrl: copy?.thumbnail_url ?? null,
-    displayPrice: copy?.display_price ?? null,
+    displayPrice:
+      copy?.price && copy.currency
+        ? formatMoney(copy.price, copy.currency, i18n.language || 'en', { unitPrice: true })
+        : null,
     quantity,
   }
 }

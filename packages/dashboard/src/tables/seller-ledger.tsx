@@ -1,5 +1,10 @@
 import type { SellerPayout, SellerTransfer } from '@spree/admin-sdk'
-import { defineTable, formatStoreDateTime, useStore } from '@spree/dashboard-core'
+import {
+  SELLER_PAYOUT_STATUSES,
+  SELLER_TRANSFER_KINDS,
+  SELLER_TRANSFER_STATUSES,
+} from '@spree/core'
+import { defineTable, formatStoreDateTime, Money, useStore } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { BanknoteIcon, HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -19,11 +24,8 @@ function LedgerDate({ iso }: { iso: string }) {
   return <>{formatStoreDateTime(iso, timezone)}</>
 }
 
-const LEDGER_STATUSES = ['pending', 'processing', 'completed', 'failed', 'unresolved'] as const
-const TRANSFER_KINDS = ['earning', 'refund_reversal'] as const
-
-function statusOptions() {
-  return LEDGER_STATUSES.map((status) => ({
+function statusOptions(statuses: readonly string[]) {
+  return statuses.map((status) => ({
     value: status,
     label: i18n.t(`admin.payouts.statuses.${status}`),
   }))
@@ -97,7 +99,7 @@ defineTable<SellerTransfer>('seller-transfers', {
       label: i18n.t('admin.payouts.columns.kind'),
       filterable: true,
       filterType: 'enum',
-      filterOptions: TRANSFER_KINDS.map((kind) => ({
+      filterOptions: SELLER_TRANSFER_KINDS.map((kind) => ({
         value: kind,
         label: i18n.t(`admin.payouts.kinds.${kind}`),
       })),
@@ -112,7 +114,7 @@ defineTable<SellerTransfer>('seller-transfers', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: statusOptions(),
+      filterOptions: statusOptions(SELLER_TRANSFER_STATUSES),
       quickFilter: true,
       default: true,
       render: (transfer) => (
@@ -137,7 +139,7 @@ defineTable<SellerTransfer>('seller-transfers', {
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
-      render: (transfer) => transfer.display_amount,
+      render: (transfer) => <Money amount={transfer.amount} currency={transfer.currency} />,
     },
   ],
 })
@@ -195,7 +197,7 @@ defineTable<SellerPayout>('seller-payouts', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: statusOptions(),
+      filterOptions: statusOptions(SELLER_PAYOUT_STATUSES),
       quickFilter: true,
       default: true,
       render: (payout) => (
@@ -224,7 +226,7 @@ defineTable<SellerPayout>('seller-payouts', {
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
-      render: (payout) => payout.display_amount,
+      render: (payout) => <Money amount={payout.amount} currency={payout.currency} />,
     },
   ],
 })

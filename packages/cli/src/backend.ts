@@ -20,7 +20,7 @@ export const DATABASE_RESET = [
   'db:seed',
 ]
 
-export const UPGRADE = ['bin/rails', 'spree:upgrade']
+export const UPGRADE = ['bin/rake', 'spree:upgrade']
 
 export const PREPARE_DATABASE = ['bin/rails', 'db:prepare']
 
@@ -59,6 +59,8 @@ export function updatePackagesCommand(names: string[]): string[] {
 }
 
 export const LIST_PACKAGES = ['bundle', 'list', '--name-only']
+
+export const INSTALL_PACKAGES = ['bundle', 'install']
 
 export const LIST_GENERATORS = ['bin/rails', 'generate', '--help']
 

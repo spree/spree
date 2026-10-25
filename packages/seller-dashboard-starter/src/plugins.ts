@@ -7,26 +7,30 @@
 // before the panel renders.
 //
 // Keep this file a map of what you added: the registrations live here, the
-// implementations live in pages/, hooks/, tables/ and schemas/ — one file per
+// implementations live in slots/, pages/, hooks/, tables/ and schemas/ — one file per
 // resource, the same layout the seller panel uses internally. Translations go
 // in locales/ and merge in with `i18n.addResourceBundle`.
 //
-// Example — add a payouts page and drop the built-in team screen:
+// Example — add a card to the team screen and drop the built-in team entry
+// from the navigation (the seller panel does not support new pages yet):
 //
 //   import { defineDashboardPlugin } from '@spree/seller-dashboard'
-//   import { PayoutsPage } from './pages/payouts'
+//   import { TeamAuditCard } from './slots/team-audit-card'
 //
 //   defineDashboardPlugin({
-//     nav: {
-//       add: [{ key: 'payouts', label: 'Payouts', path: '/payouts', position: 300 }],
-//       remove: ['team'],
-//     },
+//     nav: { remove: ['team'] },
 //     slots: {
 //       'seller.team.after': [{ id: 'audit', component: TeamAuditCard }],
 //     },
 //   })
 //
-// Slots the built-in screens expose: `seller.team.actions`, `seller.team.after`.
+// Slots the built-in screens expose: `seller.team.actions`, `seller.team.after`,
+// `seller.product.form_main`, `seller.product.form_sidebar`,
+// `seller.product.media.form_fields`, `seller.product.media.actions`,
+// `seller.product.variant.form_fields`, `seller.stock_location.form_fields`,
+// `seller.package_type.form_fields`, `seller.order.form_sidebar`,
+// `seller.payout.form_sidebar`, `seller.profile.form_main`,
+// `seller.profile.form_sidebar`.
 //
 // `@spree/dashboard-core` and `@spree/dashboard-ui` are already installed —
 // import hooks, providers and UI primitives straight from them.

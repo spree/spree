@@ -21,7 +21,7 @@ module Spree
         price_provided = !price.equal?(PRICE_NOT_PROVIDED)
 
         if price_provided && order.completed?
-          return reject_price(line_item, :price_override_not_allowed, Spree.t('cart_line_item.price_override_not_allowed'))
+          return reject_price(line_item, :price_override_not_allowed, I18n.t('spree.cart_line_item.price_override_not_allowed'))
         end
 
         attributes = {}
@@ -30,7 +30,7 @@ module Spree
 
         if price_provided && !price.nil?
           manual_price = parse_manual_price(price)
-          return reject_price(line_item, :invalid_price, Spree.t('cart_line_item.invalid_price')) if manual_price.nil?
+          return reject_price(line_item, :invalid_price, I18n.t('spree.cart_line_item.invalid_price')) if manual_price.nil?
 
           attributes[:price] = manual_price
           attributes[:price_source] = Spree::LineItem::MANUAL_PRICE_SOURCE

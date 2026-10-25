@@ -101,6 +101,7 @@ module Spree
     }
 
     self.whitelisted_ransackable_attributes = %w[name kind parent_id po_number_required]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[parent children memberships external_references]
 
     # The node a buyer browses and buys as when they name none: the single
@@ -176,10 +177,47 @@ module Spree
       self_and_descendants.where.not(id: id)
     end
 
+    # Distinct members across each node's whole subtree, for many nodes in
+    # one query.
+    #
+    # @param company_ids [Array] the subtree roots
+    # @return [Hash{Integer => Integer}] member count by root id; roots with none are absent
+    def self.members_counts_for(company_ids)
+      return {} if company_ids.empty?
+
+      membership_table = Spree::CompanyMembership.table_name
+      subtree_sql = sanitize_sql_array([<<~SQL.squish, company_ids])
+        WITH RECURSIVE subtree(root_id, id) AS (
+          SELECT id, id FROM #{table_name} WHERE id IN (?)
+          UNION
+          SELECT subtree.root_id, child.id FROM #{table_name} child
+          INNER JOIN subtree ON child.parent_id = subtree.id
+        )
+        SELECT root_id, id FROM subtree
+      SQL
+
+      Spree::CompanyMembership.
+        joins("INNER JOIN (#{subtree_sql}) company_subtree ON company_subtree.id = #{membership_table}.company_id").
+        group('company_subtree.root_id').
+        distinct.count(:customer_id)
+    end
+
+    # On a lazily preloaded list, the first call counts every node of the
+    # list at once.
+    #
     # @return [Integer]
     def members_count
-      Spree::CompanyMembership.where(company_id: self_and_descendants.select(:id)).
-        distinct.count(:customer_id)
+      return @members_count if defined?(@members_count)
+
+      siblings = lazy_preload_context&.records&.grep(self.class)
+      if siblings.blank?
+        return Spree::CompanyMembership.where(company_id: self_and_descendants.select(:id)).
+            distinct.count(:customer_id)
+      end
+
+      counts = self.class.members_counts_for(siblings.map(&:id))
+      siblings.each { |company| company.preloaded_members_count = counts.fetch(company.id, 0) }
+      @members_count
     end
 
     # The single tax anchor: the nearest self-or-ancestor +company+ node. Tax
@@ -244,7 +282,13 @@ module Spree
     #
     # @return [ActiveRecord::Relation]
     def address_book
-      Spree::Address.where(owner_type: 'Spree::Company', owner_id: self_and_ancestors.map(&:id))
+      Spree::Address.not_deleted.where(owner_type: 'Spree::Company', owner_id: self_and_ancestors.map(&:id))
+    end
+
+    protected
+
+    def preloaded_members_count=(count)
+      @members_count = count
     end
 
     private

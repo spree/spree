@@ -59,11 +59,7 @@ describe('deprecated Rails-named commands', () => {
       ['bin/rake', 'db:rollback', 'STEP=2'],
       'spree exec bin/rake',
     ],
-    [
-      ['bundle', 'add', 'spree_stripe'],
-      ['bundle', 'add', 'spree_stripe'],
-      'spree add spree_stripe',
-    ],
+    [['bundle', 'add', 'spree_stripe'], ['bundle', 'add', 'spree_stripe'], 'spree add stripe'],
     [['bundle', 'outdated'], ['bundle', 'outdated'], 'spree exec bundle outdated'],
     [['routes'], ['bin/rails', 'routes'], 'spree api endpoints'],
   ])('spree %j still runs and points at the replacement', async (argv, inner, replacement) => {
@@ -128,6 +124,6 @@ describe('spree generate', () => {
       ['bin/rails', 'generate', 'spree_stripe:install'],
       '/proj',
     )
-    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('spree add spree_stripe'))
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('spree add stripe'))
   })
 })

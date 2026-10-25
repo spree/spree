@@ -10,6 +10,14 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:lookup, :accept]
 
+          request_params 'InvitationAcceptParams', action: :accept do |body|
+            body.attribute :password, :string,
+              description: 'Required when the invitee has no account yet: it creates one. An existing account signs in without it.'
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+          end
+
           rate_limit to: Spree::Api::Config[:rate_limit_login],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
@@ -24,12 +32,13 @@ module Spree
           end
 
           # POST /api/v3/admin/auth/invitations/:id/accept?token=:token
-          # Body: { password?, password_confirmation?, first_name?, last_name? }
           def accept
             return unless load_invitation
 
             user = resolve_or_create_invitee(@invitation)
             return if performed?
+            # Checked before accepting: a deactivated account gains no role.
+            return render_account_deactivated if account_deactivated?(user)
 
             @invitation.invitee = user
             result = Spree.invitation_accept_workflow.call(invitation: @invitation)
@@ -99,7 +108,7 @@ module Spree
           end
 
           def signup_params(invitation)
-            params.permit(:password, :password_confirmation, :first_name, :last_name).
+            params.permit(*declared_permitted_attributes).
               merge(email: invitation.email)
           end
 

@@ -124,6 +124,32 @@ spree user create --email admin@example.com --password secret123
 
 The created user gets the `admin` role on the default store.
 
+## Deactivating Admin Users
+
+When someone should lose access, deactivate their account rather than deleting it. Records keep naming the person who approved, refunded or created them, so the history stays intact, and the account can be reactivated later.
+
+```ruby
+admin_user = Spree.admin_user_class.find_by!(email: 'ada@example.com')
+
+admin_user.deactivate!   # switches the account off and ends its sessions
+admin_user.deactivated?  # => true
+admin_user.reactivate!   # lets the account sign in again
+```
+
+Deactivating ends every session the account holds. Its refresh tokens are deleted, OAuth tokens and grants issued to apps on its behalf are revoked, and access tokens already issued are refused from the next request. While deactivated, the account cannot:
+
+- sign in to the dashboard or the seller panel, with a password or any identity provider;
+- accept an invitation;
+- request or complete a password reset. A reset request answers as it would for an unknown address and sends nothing.
+
+A sign-in is refused with `403` and the error code `account_deactivated`, but only after the password or identity provider has proven who the person is. A wrong password gets the usual `authentication_failed`, so the response never tells a stranger which accounts are switched off.
+
+Reactivating does not restore the sessions that deactivation ended; the person signs in again. Secret API keys belong to the store rather than the person who created them, so deactivation leaves them working. Revoke any the person should no longer control from the store's API keys settings.
+
+<Note>
+A custom admin user class opts in by including `Spree::AccountDeactivation` and adding a `deactivated_at` datetime column. The checks are duck-typed, so a class without them is never refused.
+</Note>
+
 ## Authentication & identity providers
 
 Staff authenticate against the Admin API, which issues a short-lived JWT used for subsequent requests. How a staff member proves who they are is **pluggable** — Spree ships email/password out of the box, and you can plug in any external identity provider (Okta, Microsoft Entra ID, Google Workspace, a custom JWT issuer, SAML, etc.) without changing the rest of the API.

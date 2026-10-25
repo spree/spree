@@ -7,9 +7,7 @@ module Spree
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
-          attribute :shipping_label_id do |delivery|
-            delivery.shipping_label&.prefixed_id
-          end
+          prefixed_id_attributes :shipping_label
         end
       end
     end

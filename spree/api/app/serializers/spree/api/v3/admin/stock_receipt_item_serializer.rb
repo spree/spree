@@ -7,9 +7,9 @@ module Spree
         class StockReceiptItemSerializer < V3::BaseSerializer
           typelize quantity_accepted: :number,
                    quantity_rejected: :number,
-                   rejection_reason: [:string, enum: Spree::StockReceiptItem::REJECTION_REASONS, nullable: true],
+                   rejection_reason: [:string, enum: Spree::StockReceiptItem::REJECTION_REASONS, nullable: true, enum_type_name: 'StockReceiptRejectionReason'],
                    notes: 'string | null',
-                   line_type: [:string, enum: %w[purchase_order_item stock_transfer_item]],
+                   line_type: [:string, enum: %w[purchase_order_item stock_transfer_item], enum_type_name: 'StockReceiptLineType'],
                    line_id: 'string | null',
                    product_id: 'string | null',
                    variant_id: 'string | null',
@@ -25,13 +25,7 @@ module Spree
             item.line_type.demodulize.underscore
           end
 
-          attribute :line_id do |item|
-            item.line&.prefixed_id
-          end
-
-          attribute :variant_id do |item|
-            item.variant&.prefixed_id
-          end
+          prefixed_id_attributes :line, :variant
 
           # The product the line's variant belongs to, so a delivery's line
           # can link to the screen where that SKU's stock lives.

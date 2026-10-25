@@ -7,14 +7,25 @@ RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
     let(:usd_package) { double(currency: 'USD', weight: 1, item_total: 50) }
     let(:eur_package) { double(currency: 'EUR', weight: 1, item_total: 50) }
 
-    it 'quotes each currency its own amount and hides currencies without one' do
+    it 'quotes from the per-currency amounts alone once they hold one, hiding every other currency' do
       subject.preferred_amounts = { 'EUR' => 4 }
 
-      expect(subject.compute_package(usd_package)).to eq(5)
       expect(subject.compute_package(eur_package)).to eq(4)
-      expect(subject.supports_currency?('USD')).to be true
-      expect(subject.supports_currency?('EUR')).to be true
+      expect(subject.compute_package(usd_package)).to be_nil
+      expect(subject.supports_currency?('USD')).to be false
       expect(subject.supports_currency?('GBP')).to be false
+    end
+
+    it 'never reads the untouched single amount as a price beside the per-currency amounts' do
+      calculator = described_class.new(preferred_amounts: { 'EUR' => 4 })
+
+      expect(calculator.supports_currency?(calculator.preferred_currency)).to be false
+    end
+
+    it 'quotes nothing for a blank single amount' do
+      subject.preferred_amount = nil
+
+      expect(subject.supports_currency?('USD')).to be false
     end
 
     it 'keeps the legacy single amount+currency pair working unchanged' do
@@ -36,8 +47,8 @@ RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
   let(:line_item1) { build(:line_item, variant: variant1, price: 10) }
   let(:line_item2) { build(:line_item, variant: variant2, price: 15) }
 
-  let(:inventory_unit1) { build(:inventory_unit, quantity: 2, variant: variant1, line_item: line_item1) }
-  let(:inventory_unit2) { build(:inventory_unit, quantity: 1, variant: variant2, line_item: line_item2) }
+  let(:inventory_unit1) { build(:fulfillment_item, quantity: 2, variant: variant1, line_item: line_item1) }
+  let(:inventory_unit2) { build(:fulfillment_item, quantity: 1, variant: variant2, line_item: line_item2) }
   let(:inventory_units) { [inventory_unit1, inventory_unit2] }
 
   let(:package) { build(:stock_package, contents: inventory_units.map { |iu| ::Spree::Stock::ContentItem.new(iu) }) }
@@ -51,6 +62,8 @@ RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
   end
 
   context 'with weight constraints' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     let(:calculator_1) { described_class.new(preferred_amount: 5, preferred_minimum_weight: 2, preferred_maximum_weight: 4) }
     let(:calculator_2) { described_class.new(preferred_amount: 5, preferred_minimum_weight: 4, preferred_maximum_weight: 8) }
 
@@ -71,10 +84,13 @@ RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
       expect(calculator_5.compute(package)).to eq(5.00)
       expect(calculator_6.compute(package)).to be_nil
       expect(calculator_7.compute(package)).to be_nil
+      expect(Spree::Deprecation).to have_received(:warn).with(/`minimum_weight` is deprecated/).at_least(:once)
     end
   end
 
   context 'with price constraints' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     let(:calculator_1) { described_class.new(preferred_amount: 5, preferred_minimum_item_total: 20, preferred_maximum_item_total: 35) }
     let(:calculator_2) { described_class.new(preferred_amount: 5, preferred_minimum_item_total: 35, preferred_maximum_item_total: 80) }
 
@@ -95,10 +111,13 @@ RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
       expect(calculator_5.compute(package)).to eq(5.00)
       expect(calculator_6.compute(package)).to be_nil
       expect(calculator_7.compute(package)).to be_nil
+      expect(Spree::Deprecation).to have_received(:warn).with(/`minimum_item_total` is deprecated/).at_least(:once)
     end
   end
 
   context 'with both weight and price constraints' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
     let(:calculator_1) do
       described_class.new(
         preferred_amount: 5,

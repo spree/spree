@@ -4,10 +4,24 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 type MediaListSnapshot = { data: Media[] }
 
+/**
+ * Every media item of a product, across pages. The media card edits the
+ * whole list at once and a save re-baselines the form from it, so reading
+ * one page would silently drop the rest from the form.
+ */
+export async function listAllProductMedia(productId: string) {
+  const first = await adminClient.products.media.list(productId, { limit: 100 })
+  const data = [...first.data]
+  for (let page = 2; page <= first.meta.pages; page++) {
+    data.push(...(await adminClient.products.media.list(productId, { limit: 100, page })).data)
+  }
+  return { ...first, data }
+}
+
 export function useProductMedia(productId: string) {
   return useQuery({
     queryKey: useResourceKey('products', productId, 'media'),
-    queryFn: () => adminClient.products.media.list(productId),
+    queryFn: () => listAllProductMedia(productId),
     enabled: !!productId,
   })
 }

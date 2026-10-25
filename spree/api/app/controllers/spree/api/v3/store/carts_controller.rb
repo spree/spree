@@ -5,14 +5,63 @@ module Spree
         class CartsController < Store::ResourceController
           include Spree::Api::V3::CartResolvable
           include Spree::Api::V3::OrderLock
-          # The cart accepts a `po_document` signed blob id.
+          # The cart accepts a `po_document_signed_id`.
           include ActiveStorage::SetCurrent
-
-          # A tampered signed id would otherwise surface as a 500.
-          rescue_from ActiveSupport::MessageVerifier::InvalidSignature, with: :render_invalid_po_document
 
           skip_before_action :set_resource
           prepend_before_action :require_authentication!, only: [:index, :associate]
+
+          CART_ADDRESS = Spree::Api::V3::RequestSchema.shape('CartAddressParams') do |schema|
+            schema.attribute :id, :id,
+              description: "An existing address from the buyer's address book, or from the book of the company the cart is for. The other fields are then ignored."
+            schema.include_attributes Spree::Api::V3::Store::AddressRequestSchema
+          end
+
+          # Creating and updating a cart accept the same fields.
+          CART_FIELDS = Spree::Api::V3::RequestSchema.new do |schema|
+            schema.attribute :email, :string, format: :email, example: 'customer@example.com'
+            schema.attribute :customer_note, :string, example: 'Leave at door'
+            schema.attribute :market_id, :id
+            schema.attribute :currency, :currency
+            schema.attribute :locale, :locale
+            schema.attribute :shipping_address_id, :id,
+              description: "An existing address to ship to, from the buyer's address book or from the book of the company the cart is for. List both with `GET /store/carts/:id/addresses`.",
+              example: 'addr_abc123'
+            schema.attribute :billing_address_id, :id,
+              description: "An existing address to bill, from the buyer's address book or from the book of the company the cart is for. List both with `GET /store/carts/:id/addresses`.",
+              example: 'addr_def456'
+            schema.attribute :preferred_stock_location_id, :id
+            schema.attribute :company_id, :id, nullable: true, description: <<~TEXT.squish
+              The company node this purchase is for. The buyer must have standing over it: a membership
+              on that node or one of its ancestors. Null clears it, and with it the company's catalog,
+              pricing and tax anchoring.
+            TEXT
+            schema.attribute :po_number, :string, nullable: true, description: <<~TEXT.squish
+              The buyer's own purchase-order reference. Their accounting reconciles the order, the
+              invoice and the payment against it. Blank clears it.
+            TEXT
+            schema.attribute :po_document_signed_id, :string, nullable: true, description: <<~TEXT.squish
+              The `signed_id` of the buyer's purchase order, from `POST /store/carts/:id/po_document`.
+              Blank detaches the document.
+            TEXT
+            schema.attribute :use_shipping, :boolean,
+              description: 'When true, copies the shipping address to the billing address.'
+            schema.attribute :shipping_address, :object, shape: CART_ADDRESS, description: 'A new shipping address.'
+            schema.attribute :billing_address, :object, shape: CART_ADDRESS, description: 'A new billing address.'
+            schema.attribute :metadata, :hash,
+              description: 'Write-only key-value metadata, merged with what the cart has.'
+            schema.attribute :items, :array,
+              as: 'LineItemInputParams',
+              description: 'Items to upsert: sets the quantity of a variant already in the cart, adds the others.' do |item|
+              item.attribute :variant_id, :id, required: true, example: 'variant_abc123'
+              item.attribute :quantity, :integer, example: 2, description: 'Defaults to 1.'
+              item.attribute :metadata, :hash, description: 'Key-value metadata, merged with what the line item has.'
+              item.attribute :options, :hash
+            end
+          end
+
+          request_params('CreateCartParams', action: :create) { |body| body.include_attributes CART_FIELDS }
+          request_params('UpdateCartParams', action: :update) { |body| body.include_attributes CART_FIELDS }
 
           # GET /api/v3/store/carts/:id
           # Returns cart by prefixed ID
@@ -26,7 +75,7 @@ module Spree
             # with_order_lock, and a read must not 409 against the fence.
             if @cart.ship_address_id.present? && @cart.fulfillments.empty? && !@cart.completion_claimed?
               ActiveRecord::Base.connected_to(role: :writing) do
-                with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
+                with_order_lock { Spree.checkout_advance_service.call(order: @cart) }
               end
             end
 
@@ -40,7 +89,7 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            result = Spree::Carts::Create.call(
+            result = Spree.carts_create_service.call(
               params: permitted_params.merge(
                 customer: current_user,
                 store: current_store,
@@ -63,9 +112,10 @@ module Spree
           # Auto-advances to the next checkout step when possible.
           def update
             find_cart!
+            authorize_address_book_access!
 
             with_order_lock do
-              result = Spree::Carts::Update.call(
+              result = Spree.carts_update_service.call(
                 cart: @cart,
                 params: permitted_params
               )
@@ -74,7 +124,7 @@ module Spree
                 sweep_unavailable_coupon_code!
                 render_cart
               else
-                render_service_error(result.error, code: ERROR_CODES[:validation_error])
+                render_result_failure(result, code: ERROR_CODES[:validation_error])
               end
             end
           end
@@ -124,7 +174,7 @@ module Spree
             find_cart!(include_completed: true)
 
             if @cart.guest_checkout_disallowed?
-              return render_authentication_required('api.errors.guest_checkout_not_allowed', 'You must be signed in to complete checkout')
+              return render_authentication_required(I18n.t('spree.api.errors.guest_checkout_not_allowed'))
             end
 
             result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: @cart)
@@ -132,11 +182,10 @@ module Spree
             if result.success?
               @cart = result.value
               render_order
+            elsif result.error.to_s.present?
+              render_result_failure(result, code: ERROR_CODES[:cart_cannot_complete])
             else
-              render_service_error(
-                result.error.to_s.presence || 'Could not complete checkout',
-                code: ERROR_CODES[:cart_cannot_complete]
-              )
+              render_service_error('Could not complete checkout', code: ERROR_CODES[:cart_cannot_complete])
             end
           rescue ActiveRecord::RecordNotFound
             # Gateway-race retry with the id the client got back: the webhook
@@ -184,54 +233,25 @@ module Spree
 
           private
 
-          def render_invalid_po_document
-            render_error(
-              code: ERROR_CODES[:validation_error],
-              message: Spree.t(:po_document_invalid_signed_id),
-              status: :unprocessable_content
-            )
-          end
-
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              :email,
-              :customer_note,
-              :market_id,
-              :currency,
-              :locale,
-              :shipping_address_id,
-              :billing_address_id,
-              :preferred_stock_location_id,
-              :company_id,
-              # The buyer's own purchase-order reference, and the signed blob id
-              # of the document behind it (from POST .../carts/:id/po_document).
-              :po_number,
-              :po_document,
-              :use_shipping,
-              shipping_address: address_params,
-              billing_address: address_params,
-              metadata: {},
-              items: item_params
-            )
-          end
-
-          def address_params
-            [
-              :id, :first_name, :last_name,
-              :address1, :address2,
-              :city, :postal_code, :phone, :company,
-              # country_iso and state_abbr are the legacy write names, accepted until 6.1.
-              :country_code, :country_iso, :state_code, :state_abbr, :state_name, :quick_checkout
-            ]
-          end
-
-          def item_params
-            [:variant_id, :quantity, { metadata: {}, options: {} }]
+            params.permit(*permitted_attributes)
           end
 
           # Find incomplete cart for associate action.
           # Only finds guest carts (no user) or carts already owned by current user (idempotent).
+          ADDRESS_BOOK_PARAMS = %i[shipping_address billing_address shipping_address_id billing_address_id].freeze
+
+          # A typed address on a customer's cart is saved into that customer's
+          # address book and may become their default, and an address id names
+          # an entry of that book. The guest token proves the caller holds the
+          # cart, not the account, so those writes need the owner.
+          def authorize_address_book_access!
+            return if @cart.customer.nil?
+            return unless ADDRESS_BOOK_PARAMS.any? { |key| params.key?(key) }
+
+            authorize_storefront_write!(@cart, token: nil)
+          end
+
           def find_cart_for_association
             current_store.carts.incomplete.where(customer: [nil, current_user]).find_by_prefix_id!(params[:id])
           end

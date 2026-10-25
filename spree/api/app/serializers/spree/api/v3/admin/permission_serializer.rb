@@ -4,13 +4,13 @@ module Spree
       module Admin
         # Serializes one permission catalog entry
         # (Spree::PermissionConfiguration::Entry) for the discovery endpoint.
-        # Labels and descriptions resolve through Spree.t so backend extensions
+        # Labels and descriptions resolve through I18n so backend extensions
         # localize without shipping dashboard translations.
         class PermissionSerializer
           include Alba::Resource
           include Typelizer::DSL
 
-          typelize key: :string, resource: :string, kind: [:string, enum: %w[read write]], group: :string,
+          typelize key: :string, resource: :string, kind: [:string, enum: %w[read write], enum_type_name: 'PermissionKind'], group: :string,
                    group_label: :string, label: :string, description: :string
 
           attributes :key
@@ -20,17 +20,17 @@ module Spree
           attribute(:group) { |entry| entry.scope.group.to_s }
 
           attribute(:group_label) do |entry|
-            Spree.t("permissions_catalog.groups.#{entry.scope.group}",
+            I18n.t("spree.permissions_catalog.groups.#{entry.scope.group}",
                     default: entry.scope.group.to_s.humanize)
           end
 
           attribute(:label) do |entry|
-            Spree.t("permissions_catalog.resources.#{entry.scope.name}.label",
+            I18n.t("spree.permissions_catalog.resources.#{entry.scope.name}.label",
                     default: entry.scope.name.to_s.humanize)
           end
 
           attribute(:description) do |entry|
-            Spree.t("permissions_catalog.resources.#{entry.scope.name}.description", default: '')
+            I18n.t("spree.permissions_catalog.resources.#{entry.scope.name}.description", default: '')
           end
         end
       end

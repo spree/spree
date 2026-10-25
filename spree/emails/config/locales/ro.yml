@@ -1,0 +1,37 @@
+---
+ro:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Resetează parola
+        expiry_notice: Acest link de resetare a parolei va expira în curând. Dacă nu ați solicitat acest lucru, nu este nevoie de nicio acțiune.
+        greeting: Bună %{name},
+        ignore_notice: Dacă nu ați solicitat o resetare a parolei, puteți ignora în siguranță acest e-mail. Parola dvs. nu va fi modificată.
+        instructions: Am primit o solicitare de resetare a parolei dvs. Faceți clic pe butonul de mai jos pentru a alege o parolă nouă.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Bună,
+        ignore_disclaimer: Dacă nu ați solicitat acest lucru, vă rugăm să ignorați acest e-mail.
+        instructions: Vă rugăm să faceți clic pe butonul de mai jos pentru a vă verifica adresa de e-mail.
+        message_copy_link: 'Dacă butonul nu funcționează, vă rugăm să copiați și să lipiți următorul link în browserul dvs.:'
+        subject: Verificați-vă adresa de e-mail
+        verify_email_address_link: Verifică adresa de e-mail
+    order_mailer:
+      cancel_email:
+        instructions: Comanda Dvs. a fost anulată. Vă rugăm păstrați această notă de anulare.
+        subject: Anularea comenzii
+      confirm_email:
+        instructions: Vă rugăm să verificați și să păstrați informațiile despre comanda Dvs.
+        subject: Confirmarea comenzii
+      payment_link_email:
+        message: Vă rugăm să faceți clic pe butonul de mai jos pentru a plăti comanda.
+        message_copy_link: 'Dacă butonul nu funcționează, vă rugăm să copiați și să lipiți următorul link în browserul dvs.:'
+        pay_for_order: Plătește comanda
+        subject: 'Link de plată pentru comanda #%{number}'
+      store_owner_notification_email:
+        heading: Comandă nouă primită
+        instructions: Ați primit o comandă nouă.
+        order_summary: Rezumat comandă %{number}
+        subject: "%{store_name} a primit o comandă nouă"
+      subtotal: 'Subtotal:'
+      total: 'Total comandă:'

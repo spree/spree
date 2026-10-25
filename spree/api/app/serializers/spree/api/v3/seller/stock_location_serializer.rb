@@ -3,6 +3,9 @@ module Spree
     module V3
       module Seller
         class StockLocationSerializer < V3::StockLocationSerializer
+          # The Store API keeps these deprecated names until 6.1.
+          %i[country_iso state_abbr].each { |key| _attributes.delete(key) }
+
           typelize address2: [:string, nullable: true], state_name: [:string, nullable: true],
                    phone: [:string, nullable: true], company: [:string, nullable: true],
                    active: :boolean, default: :boolean, kind: [:string, enum: Spree::StockLocation::KINDS, enum_type_name: 'StockLocationKind'],

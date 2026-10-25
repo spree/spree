@@ -1,0 +1,35 @@
+---
+ca:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Restableix la contrasenya
+        expiry_notice: Aquest enllaç per restablir la contrasenya caducarà aviat. Si no ho heu sol·licitat, no cal fer res.
+        greeting: Hola %{name},
+        ignore_notice: Si no heu sol·licitat restablir la contrasenya, podeu ignorar aquest correu electrònic amb tota tranquil·litat. La vostra contrasenya no es canviarà.
+        instructions: Hem rebut una sol·licitud per restablir la vostra contrasenya. Feu clic al botó de sota per triar-ne una de nova.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hola,
+        ignore_disclaimer: Si no ho heu sol·licitat, ignoreu aquest correu electrònic.
+        instructions: Feu clic al botó de sota per verificar la vostra adreça de correu electrònic.
+        message_copy_link: 'Si el botó no funciona, copieu i enganxeu l''enllaç següent al vostre navegador:'
+        subject: Verifiqueu la vostra adreça de correu electrònic
+        verify_email_address_link: Verifica l'adreça de correu electrònic
+    order_mailer:
+      cancel_email:
+        subject: Cancel·lació de comanda
+      confirm_email:
+        subject: Confirmació de comanda
+      payment_link_email:
+        message: Feu clic al botó de sota per pagar la vostra comanda.
+        message_copy_link: 'Si el botó no funciona, copieu i enganxeu l''enllaç següent al vostre navegador:'
+        pay_for_order: Paga la comanda
+        subject: 'Enllaç de pagament per a la comanda #%{number}'
+      store_owner_notification_email:
+        heading: Nova comanda rebuda
+        instructions: Heu rebut una comanda nova.
+        order_summary: Resum de la comanda %{number}
+        subject: "%{store_name} ha rebut una comanda nova"
+      subtotal: 'Subtotal:'
+      total: 'Total de la comanda:'

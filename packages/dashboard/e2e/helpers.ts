@@ -73,7 +73,7 @@ export async function seedCatalogPickerProducts(
       const name = `${prefix} ${String(index + 1).padStart(2, '0')}`
       const res = await page.request.post('/api/v3/admin/products', {
         headers,
-        data: { name, status: 'active', price: 9.99 },
+        data: { name, status: 'active', price: '9.99' },
       })
       if (!res.ok()) {
         throw new Error(
@@ -193,6 +193,11 @@ export const FIXTURE_PANEL_SELLER = 'E2E Panel Seller'
 /** The marketplace seller panel, its own app on its own origin (see playwright.config.ts). */
 export const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
 
+/** A placed order on the comma store, paid by a card the Bogus gateway charged. */
+export const FIXTURE_BOGUS_GATEWAY = 'E2E Bogus Gateway'
+export const FIXTURE_BOGUS_ORDER_EMAIL = 'e2e-gateway-link@example.com'
+export const FIXTURE_BOGUS_TRANSACTION_ID = 'BGS-E2E-PAYMENT'
+
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'
@@ -205,6 +210,8 @@ export interface E2ECredentials {
   admin_password: string
   store_id: string
   store_name: string
+  /** A store whose market writes a comma decimal (nl) and prices in EUR. */
+  comma_store_id: string
 }
 
 /** Credentials plus the JWT from the login response (Admin API Bearer auth). */
@@ -220,6 +227,28 @@ export function getCredentials(): E2ECredentials {
 }
 
 /**
+ * An Admin API session without opening the dashboard, for a spec that only
+ * needs `adminRequest` — a seller panel spec arranging a store setting, say.
+ */
+export async function adminApiSession(
+  page: Page,
+  account?: { email: string; password: string },
+): Promise<E2ELoginSession> {
+  const creds = getCredentials()
+  const res = await page.request.post('/api/v3/admin/auth/login', {
+    data: account ?? { email: creds.admin_email, password: creds.admin_password },
+  })
+  if (!res.ok()) {
+    throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
+  }
+  const { token: accessToken } = (await res.json()) as { token: string }
+  if (!accessToken) {
+    throw new Error('API login response missing token')
+  }
+  return { ...creds, accessToken }
+}
+
+/**
  * Establish an authenticated admin session as a precondition for any spec
  * that needs one. Returns the credentials so callers can immediately
  * navigate into a specific store (e.g. `/${creds.store_id}/products/options`).
@@ -232,19 +261,13 @@ export function getCredentials(): E2ECredentials {
  * are single-use (rotated on every refresh), so each context needs its own.
  *
  * Not used by `auth.spec.ts` — that spec exercises the login form itself.
+ * Pass `account` to sign in as a teammate rather than the seeded admin.
  */
-export async function login(page: Page): Promise<E2ELoginSession> {
-  const creds = getCredentials()
-  const res = await page.request.post('/api/v3/admin/auth/login', {
-    data: { email: creds.admin_email, password: creds.admin_password },
-  })
-  if (!res.ok()) {
-    throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
-  }
-  const { token: accessToken } = (await res.json()) as { token: string }
-  if (!accessToken) {
-    throw new Error('API login response missing token')
-  }
+export async function login(
+  page: Page,
+  account?: { email: string; password: string },
+): Promise<E2ELoginSession> {
+  const session = await adminApiSession(page, account)
   await page.goto('/')
   // Wait for the authenticated redirect to the store-scoped home — not just
   // "left /login", which is trivially true at `/` while the boot refresh is
@@ -253,8 +276,8 @@ export async function login(page: Page): Promise<E2ELoginSession> {
   // loser of that race gets a 401 that clears the cookie and bounces the
   // page to /login. The redirect only fires after auth init settles, so it
   // doubles as the refresh-complete barrier.
-  await expect(page).toHaveURL(new RegExp(`/${creds.store_id}`), { timeout: 15_000 })
-  return { ...creds, accessToken }
+  await expect(page).toHaveURL(new RegExp(`/${session.store_id}`), { timeout: 15_000 })
+  return session
 }
 
 /**
@@ -409,6 +432,119 @@ export async function fillAddressForm(page: Page, address: AddressInput) {
 }
 
 /**
+ * Defines a short text custom field for one resource type and answers its
+ * id and label. Seeded through the API: defining fields has its own spec, and the
+ * specs calling this drive the record's own custom fields card.
+ */
+export async function createCustomFieldDefinition(
+  page: Page,
+  accessToken: string,
+  resourceType: string,
+): Promise<{ id: string; label: string }> {
+  const suffix = `${Date.now()}${Math.floor(Math.random() * 1000)}`
+  const label = `E2E ${resourceType} field ${suffix}`
+  const created = await page.request.post('/api/v3/admin/custom_field_definitions', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    data: {
+      namespace: 'e2e',
+      key: `field_${suffix}`,
+      label,
+      field_type: 'short_text',
+      resource_type: resourceType,
+    },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+
+  return { id: (await created.json()).id as string, label }
+}
+
+/**
+ * Definitions are store-wide and outlive a spec, so one a sheet would render
+ * goes once the spec is done — a leftover field adds inputs other specs'
+ * selectors did not expect.
+ */
+export async function deleteCustomFieldDefinition(page: Page, accessToken: string, id: string) {
+  const res = await page.request.delete(`/api/v3/admin/custom_field_definitions/${id}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+  expect(res.ok(), `DELETE custom_field_definitions/${id}: ${await res.text()}`).toBeTruthy()
+}
+
+/**
+ * Runs `test` with a short text custom field defined for `resourceType`, and
+ * deletes the definition afterwards however the test ends.
+ */
+export async function withCustomFieldDefinition(
+  page: Page,
+  session: E2ELoginSession,
+  resourceType: string,
+  test: (label: string) => Promise<void>,
+) {
+  const definition = await createCustomFieldDefinition(page, session.accessToken, resourceType)
+  try {
+    await test(definition.label)
+  } finally {
+    await deleteCustomFieldDefinition(page, session.accessToken, definition.id)
+  }
+}
+
+function customFieldsCardOn(page: Page) {
+  return page
+    .locator('[data-slot="card"]')
+    .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Custom fields$/ }) })
+}
+
+/**
+ * Sets a value through a custom fields card that edits and saves itself (a
+ * detail page with no form of its own), and checks it survives a reload.
+ */
+export async function saveCustomFieldOnCard(page: Page, label: string, value: string) {
+  const card = customFieldsCardOn(page)
+  await card.getByRole('button', { name: /^edit$/i }).click()
+  await card.getByLabel(label).fill(value)
+  await card.getByRole('button', { name: /^save$/i }).click()
+  await expect(card.getByText(value)).toBeVisible({ timeout: 15_000 })
+
+  await page.reload()
+  await expect(customFieldsCardOn(page).getByText(value)).toBeVisible({ timeout: 15_000 })
+}
+
+/**
+ * Sets a value on a page whose own Save also saves its custom fields, and
+ * checks it survives a reload. A custom field alone must enable that Save.
+ */
+export async function saveCustomFieldWithPage(page: Page, label: string, value: string) {
+  await page.getByLabel(label).fill(value)
+  const save = page.getByRole('button', { name: /^save$/i })
+  await save.click()
+  await expect(save).toBeDisabled({ timeout: 15_000 })
+
+  await page.reload()
+  await expect(page.getByLabel(label)).toHaveValue(value, { timeout: 15_000 })
+}
+
+/**
+ * Sets a value in the open edit sheet and saves it with the sheet's own Save,
+ * then reopens the sheet at `url` to check it stuck.
+ */
+export async function saveCustomFieldInSheet(
+  page: Page,
+  url: string,
+  label: string,
+  value: string,
+) {
+  const sheet = page.getByRole('dialog')
+  await sheet.getByLabel(label).fill(value)
+  await sheet.getByRole('button', { name: /^save$/i }).click()
+  await expect(sheet).toBeHidden({ timeout: 15_000 })
+  // Only the custom field changed, so the record's own save toast never fires.
+  await expect(page.getByText(/^custom fields saved$/i).first()).toBeVisible()
+
+  await page.goto(url)
+  await expect(page.getByRole('dialog').getByLabel(label)).toHaveValue(value, { timeout: 15_000 })
+}
+
+/**
  * Opens a transfer of `quantity` units of `sku` from the fixture source
  * warehouse to the fixture destination and marks it in transit, through the
  * API: the trip's middle is what these specs test, not the two warehouse
@@ -488,6 +624,32 @@ export async function invitationAcceptancePath(
  * has; it also saves spec time over driving checkout.
  */
 export async function createShippedOrder(page: Page, accessToken: string, quantity = 2) {
+  return createPlacedOrder(page, accessToken, { quantity })
+}
+
+/**
+ * Places an order for the promo customer, paid by store credit, and ships it
+ * unless `ship` is false. `firstName` / `lastName` set the billing name, so a
+ * list test can tell its own orders apart from everyone else's. `locale`
+ * places it in another of the store's languages.
+ */
+export async function createPlacedOrder(
+  page: Page,
+  accessToken: string,
+  {
+    quantity = 2,
+    ship = true,
+    firstName = 'Promo',
+    lastName = 'Customer',
+    locale,
+  }: {
+    quantity?: number
+    ship?: boolean
+    firstName?: string
+    lastName?: string
+    locale?: string
+  } = {},
+) {
   const headers = { Authorization: `Bearer ${accessToken}` }
   const request = async (method: 'get' | 'post' | 'patch', path: string, data?: object) => {
     const res = await page.request[method](path, { headers, data })
@@ -502,8 +664,8 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
   const customerId = customers.data[0].id
   const variants = await request('get', `/api/v3/admin/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`)
   const address = {
-    first_name: 'Promo',
-    last_name: 'Customer',
+    first_name: firstName,
+    last_name: lastName,
     address1: '1 Main St',
     city: 'Los Angeles',
     country_code: 'US',
@@ -517,6 +679,7 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
     items: [{ variant_id: variants.data[0].id, quantity }],
     shipping_address: address,
     billing_address: address,
+    ...(locale ? { locale } : {}),
   })
   await request('post', `/api/v3/admin/customers/${customerId}/store_credits`, {
     amount: order.total,
@@ -527,12 +690,161 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
   await request('patch', `/api/v3/admin/orders/${order.id}/complete`)
 
   const fulfillments = await request('get', `/api/v3/admin/orders/${order.id}/fulfillments`)
-  for (const fulfillment of fulfillments.data) {
+  for (const fulfillment of ship ? fulfillments.data : []) {
     await request(
       'patch',
       `/api/v3/admin/orders/${order.id}/fulfillments/${fulfillment.id}/fulfill`,
     )
   }
 
-  return order as { id: string; number: string }
+  return order as { id: string; number: string; total: string }
+}
+
+/**
+ * An Admin API call as the signed-in admin, for seeding the records a list
+ * test filters. Fails the test with the response body when the call fails.
+ */
+export async function adminRequest<T = Record<string, unknown>>(
+  page: Page,
+  session: E2ELoginSession,
+  method: 'get' | 'post' | 'patch' | 'delete',
+  path: string,
+  data?: object,
+): Promise<T> {
+  const res = await page.request[method](`/api/v3/admin${path}`, {
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+      'X-Spree-Store-Id': session.store_id,
+    },
+    data,
+  })
+  expect(res.ok(), `${method.toUpperCase()} ${path}: ${await res.text()}`).toBeTruthy()
+  return (res.status() === 204 ? {} : await res.json()) as T
+}
+
+/** Types into a list's search box. */
+export async function searchList(page: Page, placeholder: RegExp, text: string) {
+  await page.getByPlaceholder(placeholder).fill(text)
+}
+
+/**
+ * Adds a typed filter from the list's Add filter panel: a text, number or
+ * date field, an operator, then the value.
+ */
+export async function addTextFilter(page: Page, field: RegExp, operator: RegExp, value: string) {
+  await page.getByRole('button', { name: /add filter/i }).click()
+  await page.locator('[data-slot="filter-panel-item"]').getByText(field).click()
+  const controls = page.locator('[data-slot="filter-panel-controls"]')
+  await controls.getByRole('combobox').click()
+  await page.getByRole('option', { name: operator }).click()
+  await controls.getByPlaceholder(/filter…/i).fill(value)
+  await controls.getByRole('button', { name: /^apply$/i }).click()
+  await expect(controls).toBeHidden()
+}
+
+/** Adds a filter whose values are listed (a status, yes or no) by picking one. */
+export async function addListFilter(page: Page, field: RegExp, value: RegExp) {
+  await page.getByRole('button', { name: /add filter/i }).click()
+  const items = page.locator('[data-slot="filter-panel-item"]')
+  await items.getByText(field).click()
+  await items.getByText(value).click()
+}
+
+/** Adds a filter on related records (categories, tags) by searching for one and ticking it. */
+export async function addRecordFilter(page: Page, field: RegExp, value: string) {
+  await page.getByRole('button', { name: /add filter/i }).click()
+  await page.locator('[data-slot="filter-panel-item"]').getByText(field).click()
+  await page.getByPlaceholder(/filter to…/i).fill(value)
+  await page.getByRole('button', { name: value }).click()
+  await page.keyboard.press('Escape')
+}
+
+/**
+ * Narrows a quick filter in the toolbar to one value. Every value starts
+ * ticked, so narrowing means unticking the rest.
+ */
+export async function narrowQuickFilter(page: Page, trigger: RegExp, keep: RegExp) {
+  await page.getByRole('button', { name: trigger }).click()
+  const items = page.getByRole('menuitemcheckbox')
+  await expect(items.first()).toBeVisible()
+  for (const item of await items.all()) {
+    const name = (await item.textContent()) ?? ''
+    if (!keep.test(name.trim()) && (await item.getAttribute('aria-checked')) === 'true') {
+      await item.click()
+    }
+  }
+  await page.keyboard.press('Escape')
+}
+
+/** Sorts a list by one of its columns, through the toolbar's Sort menu. */
+export async function sortList(page: Page, field: RegExp, direction: 'ascending' | 'descending') {
+  const trigger = page.getByRole('button', { name: /^sort$/i })
+  await trigger.click()
+  await page.getByRole('menuitemradio', { name: field }).click()
+  const order = page.getByRole('menuitemradio', { name: new RegExp(`^${direction}$`, 'i') })
+  if (!(await order.isVisible())) await trigger.click()
+  await order.click()
+  await page.keyboard.press('Escape')
+}
+
+/**
+ * Switches the shared admin account and this browser to a dashboard language
+ * together, and returns a function that hands the account back its previous
+ * language. Call it before the page next loads (before `login`, or before a
+ * `reload`), and the returned function in `afterEach`.
+ *
+ * Both must agree: when they differ the auth provider reloads to bring the
+ * browser in line with the account, and a reload during the boot refresh
+ * spends the single-use cookie twice — the loser is bounced to `/`
+ * unauthenticated. Other specs leave the shared account on whatever language
+ * they last saved, so this cannot assume it is unset.
+ */
+export async function switchAdminLocale(page: Page, locale: string): Promise<() => Promise<void>> {
+  const authHeaders = async () => {
+    const creds = getCredentials()
+    const res = await page.request.post('/api/v3/admin/auth/login', {
+      data: { email: creds.admin_email, password: creds.admin_password },
+    })
+    const { token } = (await res.json()) as { token: string }
+    return { Authorization: `Bearer ${token}` }
+  }
+
+  await page.addInitScript((value) => localStorage.setItem('spree-admin-locale', value), locale)
+  const headers = await authHeaders()
+  const me = await page.request.get('/api/v3/admin/me', { headers })
+  const saved = ((await me.json()) as { user: { selected_locale: string | null } }).user
+    .selected_locale
+  await page.request.patch('/api/v3/admin/me', { headers, data: { selected_locale: locale } })
+
+  return async () => {
+    await page.request.patch('/api/v3/admin/me', {
+      headers: await authHeaders(),
+      data: { selected_locale: saved },
+    })
+  }
+}
+
+// Records a list test seeded, deleted after the test so later specs in the
+// shard see the store they expect (the products index's first page, the
+// payment-method picker's providers).
+let seededRecords: { path: string; session: E2ELoginSession }[] = []
+
+/** Creates a record through the Admin API and deletes it after the test. */
+export async function seedRecord<T extends { id: string } = { id: string }>(
+  page: Page,
+  session: E2ELoginSession,
+  path: string,
+  data: object,
+): Promise<T> {
+  const record = await adminRequest<T>(page, session, 'post', path, data)
+  seededRecords.push({ path: `${path}/${record.id}`, session })
+  return record
+}
+
+/** Deletes what {@link seedRecord} created; call from `test.afterEach`. */
+export async function deleteSeededRecords(page: Page) {
+  for (const { path, session } of seededRecords.reverse()) {
+    await adminRequest(page, session, 'delete', path).catch(() => undefined)
+  }
+  seededRecords = []
 }

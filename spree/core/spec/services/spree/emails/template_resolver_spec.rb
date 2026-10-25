@@ -36,7 +36,47 @@ describe Spree::Emails::TemplateResolver do
   it 'finds a partial named without a folder' do
     partial = write(gem_views, '_greeting.liquid')
 
-    expect(resolver.find_partial('greeting')).to eq(partial)
+    expect(resolver.find_partial('greeting').path).to eq(partial)
+  end
+
+  describe 'with a store' do
+    include_context 'with an editable email template'
+
+    let(:store) { @default_store }
+    let(:views) { [Spree::Core::Engine.root.join('app/views')] }
+    let(:german) { described_class.new(views, store: store, locale: 'de') }
+
+    it "puts the store's published version in front of the file" do
+      create(:email_template, store: store, key: editable_key, body: 'Stored')
+
+      expect(german.find(editable_key).body).to eq('Stored')
+      expect(german.find_default(editable_key).path).to end_with("#{editable_key}.liquid")
+    end
+
+    it "prefers the email's language over the version for every language" do
+      create(:email_template, store: store, key: editable_key, body: 'Any')
+      create(:email_template, store: store, key: editable_key, locale: 'de', body: 'German')
+
+      expect(german.find(editable_key).body).to eq('German')
+      expect(described_class.new(views, store: store, locale: 'fr').find(editable_key).body).to eq('Any')
+    end
+
+    it 'ignores a reverted version' do
+      create(:email_template, store: store, key: editable_key, body: 'Stored', status: :reverted)
+
+      expect(german.find(editable_key).path).to end_with("#{editable_key}.liquid")
+    end
+
+    it 'never reads the store for a template merchants may not edit' do
+      expect(described_class.new(views, store: store).find('spree/webhook_mailer/endpoint_disabled').path).to be_present
+    end
+
+    it 'puts an unsaved draft in front of everything' do
+      create(:email_template, store: store, key: editable_key, body: 'Stored')
+      draft = Spree::Emails::Template.new(key: editable_key, subject: 'S', body: 'Draft')
+
+      expect(described_class.new(views, store: store, drafts: { editable_key => draft }).find(editable_key).body).to eq('Draft')
+    end
   end
 
   it 'refuses a key that could leave the view paths' do

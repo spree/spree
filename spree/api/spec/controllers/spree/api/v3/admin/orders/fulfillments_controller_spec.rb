@@ -32,6 +32,35 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(json_response['number']).to eq(shipment.number)
       expect(json_response['status']).to eq(shipment.state)
     end
+
+    it 'finds the fulfillment by the key the shipping system knows it by' do
+      shipment.set_external_id('wms', 'SHIP-1')
+
+      get :show, params: { order_id: order.prefixed_id, id: 'external:wms:SHIP-1' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(shipment.prefixed_id)
+      expect(json_response['external_references']).to eq('wms' => 'SHIP-1')
+    end
+
+    # A replayed create becomes an update, which must not receive the keys
+    # that only shape a new fulfillment.
+    it 'updates rather than re-creating when a shipping system replays a known key' do
+      shipment.set_external_id('wms', 'SHIP-1')
+
+      expect do
+        post :create, params: {
+          order_id: order.prefixed_id, stock_location_id: shipment.stock_location.prefixed_id, tracking: 'TRACK-9',
+          status: 'shipped', cost: '9.99', items: [{ item_id: order.line_items.first.prefixed_id, quantity: 1 }],
+          external_references: { wms: 'SHIP-1' }
+        }, as: :json
+      end.not_to change(Spree::Fulfillment, :count)
+
+      expect(response).to have_http_status(:ok)
+      shipment.reload
+      expect(shipment.tracking).to eq('TRACK-9')
+      expect(shipment.status).to eq('unfulfilled')
+    end
   end
 
   describe 'POST #create' do
@@ -47,7 +76,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(json_response['tracking']).to eq('INPOST-123')
       expect(json_response['items'].sum { |item| item['quantity'] }).to eq(order.line_items.sum(:quantity))
       expect(order.reload.shipments.count).to eq(1)
-      expect(Spree::Shipment.exists?(shipment.id)).to be(false)
+      expect(Spree::Fulfillment.exists?(shipment.id)).to be(false)
     end
 
     it 'creates a fulfillment for explicit items, keeping the source shipment' do
@@ -68,7 +97,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
 
     it 'attaches the delivery method as the selected rate' do
-      delivery_method = create(:shipping_method)
+      delivery_method = create(:delivery_method)
 
       post :create, params: {
         order_id: order.prefixed_id,
@@ -79,6 +108,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(response).to have_http_status(:created)
       fulfillment = order.reload.shipments.first
       expect(fulfillment.delivery_method).to eq(delivery_method)
+    end
+
+    it 'refuses a delivery method from another store' do
+      delivery_method = create(:delivery_method, store: create(:store))
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        delivery_method_id: delivery_method.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
     end
 
     it "registers an already-shipped fulfillment with status: 'shipped' and an explicit cost" do
@@ -106,7 +147,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['message']).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+      expect(json_response['error']['message']).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
     end
 
     it 'returns 422 when the requested quantity exceeds the unfulfilled quantity' do
@@ -147,6 +188,36 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 're-sends a canceled replacement fulfillment named as the source' do
+      line_item = order.line_items.first
+      replacement_variant = create(:variant, product: line_item.product)
+      canceled = order.fulfillments.create!(stock_location: shipment.stock_location, cost: 0, status: 'canceled')
+      canceled.fulfillment_items.create!(order: order, line_item: line_item, variant: replacement_variant, quantity: 1, status: 'on_hand', replacement: true)
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        source_fulfillment_id: canceled.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:created), response.body
+      expect(json_response['items']).to contain_exactly(include('variant_id' => replacement_variant.prefixed_id, 'quantity' => 1))
+      expect(shipment.reload.fulfillment_items.where(line_item: line_item).sum(:quantity)).to eq(line_item.quantity)
+    end
+
+    it 'returns 404 for a source fulfillment belonging to another order' do
+      foreign_fulfillment = create(:order_ready_to_ship, store: store).fulfillments.first
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        source_fulfillment_id: foreign_fulfillment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(foreign_fulfillment.reload.fulfillment_items).to be_present
     end
   end
 
@@ -222,7 +293,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
 
     it 'selects a delivery rate by prefixed ID' do
-      new_rate = create(:shipping_rate, shipment: shipment, cost: 20, selected: false)
+      new_rate = create(:delivery_rate, shipment: shipment, cost: 20, selected: false)
 
       patch :update, params: {
         order_id: order.prefixed_id,
@@ -400,7 +471,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
         id: shipment.prefixed_id
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

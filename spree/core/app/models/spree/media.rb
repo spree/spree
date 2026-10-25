@@ -31,15 +31,6 @@ module Spree
     EXTERNAL_URL_CUSTOM_FIELD_KEY = 'external.url'
     MEDIA_TYPES = %w[image video external_video].freeze
 
-    # Domain attributes a client may write, shared by every write path — the
-    # media endpoints and the inline `media:` list on a product. Each path adds
-    # its own transport keys (an upload's signed id, a row id) on top. Adding a
-    # field here reaches both, so it can't be dropped on the one a client uses.
-    WRITABLE_ATTRIBUTES = %i[
-      alt position media_type external_video_url poster_signed_id
-      focal_point_x focal_point_y
-    ].freeze
-
     after_initialize { self.media_type ||= 'image' }
 
     belongs_to :viewable, polymorphic: true, touch: true, optional: true
@@ -93,6 +84,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[alt media_type created_at updated_at]
     self.whitelisted_ransackable_scopes = %w[attached unattached filename_cont]
+    self.ransackable_scope_types = { 'attached' => 'boolean', 'unattached' => 'boolean' }
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, :variation, to: :attachment
 

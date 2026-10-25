@@ -40,11 +40,14 @@ module SpreeStripe
           next
         end
 
+        # Through the preference writers, so the signing secret lands in the
+        # encrypted column; saved without callbacks, which would re-register
+        # the endpoint the secret belongs to.
+        gateway.preferred_webhook_endpoint_id = key.stripe_id
+        gateway.preferred_webhook_signing_secret = key.signing_secret
         gateway.update_columns(
-          preferences: gateway.preferences.merge(
-            webhook_endpoint_id: key.stripe_id,
-            webhook_signing_secret: key.signing_secret
-          ),
+          preferences: gateway.preferences,
+          secret_preferences: gateway.secret_preferences,
           updated_at: Time.current
         )
         migrated += 1

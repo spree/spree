@@ -4,7 +4,7 @@ describe Spree::Media::Usage do
   subject(:usage) { described_class.call(media: media).value }
 
   let(:product) { create(:product, name: 'Original product') }
-  let(:media) { create(:image, viewable: product) }
+  let(:media) { create(:media, viewable: product) }
 
   # The library shows a file, not a placement, so the product it sits on is
   # part of the answer. Omitting it read as "not used anywhere" for a file that
@@ -18,7 +18,7 @@ describe Spree::Media::Usage do
   end
 
   it 'is empty for a file placed nowhere' do
-    unplaced = create(:image, viewable: nil)
+    unplaced = create(:media, viewable: nil)
 
     expect(described_class.call(media: unplaced).value).to be_empty
   end

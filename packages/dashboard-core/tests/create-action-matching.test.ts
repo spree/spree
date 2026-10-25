@@ -177,13 +177,13 @@ describe('permittedCreateActions', () => {
     {
       key: 'product',
       labelKey: 'nouns.product',
-      subject: 'Spree::Product',
+      subject: 'product',
       getRoute: () => ({ to: '/products/new' }),
     },
     {
       key: 'customer',
       labelKey: 'nouns.customer',
-      subject: 'Spree::Customer',
+      subject: 'customer',
       getRoute: (storeId) => ({ to: `/${storeId}/customers`, search: { new: true } }),
     },
     { key: 'ungated', labelKey: 'nouns.promotion', getRoute: () => ({ to: '/promotions/new' }) },
@@ -206,7 +206,7 @@ describe('permittedCreateActions', () => {
   })
 
   it('checks each entry against its own subject', () => {
-    const onlyCustomers = (_action: string, subject: string) => subject === 'Spree::Customer'
+    const onlyCustomers = (_action: string, subject: string) => subject === 'customer'
     expect(permitted('new', onlyCustomers)).toEqual(['customer', 'ungated'])
   })
 

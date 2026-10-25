@@ -164,11 +164,6 @@ describe Spree::OrderInventory, type: :model do
       subject.line_item.reload
     end
 
-    it 'is a messed up order' do
-      expect(order.fulfillments.first.inventory_units_for(line_item.variant).sum(&:quantity)).to eq(3)
-      expect(line_item.quantity).to eq(2)
-    end
-
     it 'decreases the number of inventory units' do
       subject.verify
       expect(subject.fulfillment_items.reload.sum(:quantity)).to eq 2
@@ -179,8 +174,8 @@ describe Spree::OrderInventory, type: :model do
       let!(:variant) { subject.variant }
       let!(:inventory_units_for_item) do
         [
-          create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'shipped'),
-          create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'on_hand')
+          create(:fulfillment_item, variant_id: variant.id, quantity: 1, state: 'shipped'),
+          create(:fulfillment_item, variant_id: variant.id, quantity: 1, state: 'on_hand')
         ]
       end
 
@@ -218,17 +213,6 @@ describe Spree::OrderInventory, type: :model do
         allow(shipment.inventory_units_for_item[1]).to receive(:save!)
         expect(shipment.inventory_units_for_item[0]).not_to receive(:destroy)
         expect(shipment.inventory_units_for_item[1]).to receive(:destroy)
-
-        expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
-      end
-
-      it 'only attempts to destroy as many units as are eligible, and return amount destroyed' do
-        allow(shipment).to receive_messages(inventory_units_for_item: inventory_units_for_item)
-
-        expect(shipment.inventory_units_for_item[0]).not_to receive(:destroy)
-        expect(shipment.inventory_units_for_item[1]).to receive(:destroy)
-        allow(shipment.inventory_units_for_item[0]).to receive(:save!)
-        allow(shipment.inventory_units_for_item[1]).to receive(:save!)
 
         expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
       end

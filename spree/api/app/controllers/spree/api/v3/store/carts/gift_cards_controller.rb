@@ -9,6 +9,13 @@ module Spree
 
             before_action :find_cart!
 
+            request_params 'ApplyGiftCardParams', action: :create do |body|
+              body.attribute :code, :string,
+                required: true,
+                example: 'GC-ABCD-1234',
+                description: 'The gift card code to apply.'
+            end
+
             # POST /api/v3/store/carts/:cart_id/gift_cards
             def create
               with_order_lock do
@@ -46,17 +53,17 @@ module Spree
               gift_card = @cart.store.gift_cards.find_by(code: permitted_params[:code]&.downcase)
 
               if gift_card.nil?
-                render_error(code: ERROR_CODES[:gift_card_not_found], message: Spree.t(:gift_card_not_found), status: :not_found)
+                render_error(code: ERROR_CODES[:gift_card_not_found], message: I18n.t('spree.gift_card_not_found'), status: :not_found)
                 return
               end
 
               if gift_card.expired?
-                render_error(code: ERROR_CODES[:gift_card_expired], message: Spree.t(:gift_card_expired), status: :unprocessable_content)
+                render_error(code: ERROR_CODES[:gift_card_expired], message: I18n.t('spree.gift_card_expired'), status: :unprocessable_content)
                 return
               end
 
               if gift_card.redeemed?
-                render_error(code: ERROR_CODES[:gift_card_already_redeemed], message: Spree.t(:gift_card_already_redeemed), status: :unprocessable_content)
+                render_error(code: ERROR_CODES[:gift_card_already_redeemed], message: I18n.t('spree.gift_card_already_redeemed'), status: :unprocessable_content)
                 return
               end
 
@@ -64,7 +71,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:code)
+              params.permit(*declared_permitted_attributes)
             end
           end
         end

@@ -288,6 +288,10 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `products.archive` | `validate` | validate | Before the product is taken off sale |
 | `products.archive` | `after_archive` | lifecycle | After the status is written (in transaction) |
 | `products.draft` | `validate` | validate | Before the product returns to draft |
+| `digital_assets.create` | `validate` | validate | After the upload is resolved and the marketplace's seller rules pass, before anything is attached — `blob` is the file, already in storage, so a scanner can read it here. Fires for the operator's and the seller's endpoints and for files nested in a product write |
+| `digital_assets.create` | `after_create` | lifecycle | After the asset is saved (in transaction) — queue a slower scan here |
+| `digital_assets.update` | `validate` | validate | With the pending attributes assigned, so `digital_asset.changes` describes the edit; `blob` is the replacement file, or nil |
+| `digital_assets.update` | `after_update` | lifecycle | After the asset is saved (in transaction) |
 | `products.draft` | `after_draft` | lifecycle | After the status is written (in transaction) |
 | `gift_cards.apply` | `validate` | validate | Before a card is drawn against — who may spend a card, on what, up to how much |
 | `gift_cards.apply` | `after_apply` | lifecycle | After the store credit and payment exist (in transaction) |

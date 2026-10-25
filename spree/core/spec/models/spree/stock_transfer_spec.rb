@@ -45,7 +45,7 @@ module Spree
                                           destination_location: source_location)
 
         expect(transfer).to be_invalid
-        expect(transfer.errors[:source_location]).to include(Spree.t('stock_transfer.errors.same_location'))
+        expect(transfer.errors[:source_location]).to include(I18n.t('spree.stock_transfer.errors.same_location'))
       end
 
       # Two locations from different stores would take units out of one
@@ -57,7 +57,7 @@ module Spree
 
         expect(transfer).to be_invalid
         expect(transfer.errors[:destination_location]).to include(
-          Spree.t('stock_transfer.errors.locations_in_different_stores')
+          I18n.t('spree.stock_transfer.errors.locations_in_different_stores')
         )
       end
 
@@ -71,7 +71,7 @@ module Spree
         ]
 
         expect(transfer).to be_invalid
-        expect(transfer.errors[:items]).to include(Spree.t('errors.messages.duplicate_variant'))
+        expect(transfer.errors[:items]).to include(I18n.t('spree.errors.messages.duplicate_variant'))
       end
 
       # A draft is a packing list the merchant is still filling in; anything

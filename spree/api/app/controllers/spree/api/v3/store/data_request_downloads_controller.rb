@@ -30,7 +30,7 @@ module Spree
             unless data_request&.downloadable?
               return render_error(
                 code: 'data_request_expired',
-                message: Spree.t('data_request_errors.download_unavailable'),
+                message: I18n.t('spree.data_request_errors.download_unavailable'),
                 status: :forbidden
               )
             end

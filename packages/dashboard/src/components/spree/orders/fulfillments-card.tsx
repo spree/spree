@@ -1,8 +1,13 @@
 import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
+import { FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
 import {
   type FulfillmentItemRow,
+  formatAmount,
   fulfillmentItemRows,
+  isPositiveMoney,
+  Money,
   unfulfilledItemRows,
+  useMoneyLocale,
   useStockLocations,
 } from '@spree/dashboard-core'
 import {
@@ -34,6 +39,9 @@ import {
   type FulfillmentItemRowData,
   FulfillmentPanel,
   Input,
+  type PostSaleSelection,
+  type PostSaleUnit,
+  QuantityPicker,
   RelativeTime,
   Select,
   SelectContent,
@@ -41,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
   StatusBadge,
+  selectedUnits,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -110,9 +119,9 @@ function unitsOf(fulfillment: Fulfillment): FulfillmentUnit[] {
  * unclaimed remainder is offered: units already sitting in a fulfillment move
  * via Split, and shipped ones do not move at all.
  */
-function orderUnits(order: Order): Array<{ itemId: string; label: string; quantity: number }> {
+function orderUnits(order: Order): PostSaleUnit[] {
   return unfulfilledItemRows(order.items ?? [], order.fulfillments ?? []).map((row) => ({
-    itemId: row.key,
+    id: row.key,
     label: [row.name, row.optionsText].filter(Boolean).join(' — ') || row.key,
     quantity: row.quantity,
   }))
@@ -296,11 +305,12 @@ function CreateFulfillmentDialog({
   const locations = data?.data ?? []
   const [stockLocationId, setStockLocationId] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [selection, setSelection] = useState<Record<string, number>>({})
+  const [selection, setSelection] = useState<PostSaleSelection>({})
 
-  const items = Object.entries(selection)
-    .filter(([, quantity]) => quantity > 0)
-    .map(([itemId, quantity]) => ({ item_id: itemId, quantity }))
+  const items = selectedUnits(selection).map(([itemId, quantity]) => ({
+    item_id: itemId,
+    quantity,
+  }))
 
   const locationOptions = locations.map((location) => ({
     value: location.id,
@@ -378,33 +388,7 @@ function CreateFulfillmentDialog({
 
             <Field>
               <FieldLabel>{t('admin.orders.detail.fulfillments.create_items')}</FieldLabel>
-              <div className="flex flex-col gap-2">
-                {units.map((unit) => (
-                  <div
-                    key={unit.itemId}
-                    className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-                  >
-                    <span className="text-sm truncate">{unit.label}</span>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={unit.quantity}
-                      className="w-20"
-                      aria-label={unit.label}
-                      value={selection[unit.itemId] ?? 0}
-                      onChange={(event) =>
-                        setSelection((current) => ({
-                          ...current,
-                          [unit.itemId]: Math.max(
-                            0,
-                            Math.min(Number(event.target.value), unit.quantity),
-                          ),
-                        }))
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
+              <QuantityPicker units={units} selection={selection} onChange={setSelection} />
             </Field>
           </FieldGroup>
         </DialogBody>
@@ -427,14 +411,15 @@ function CreateFulfillmentDialog({
 
 // Which transitions the workflows actually accept, so the card does not
 // present an action that can only 422.
-const CAN_SHIP = ['unfulfilled']
-const CAN_CANCEL = ['unfulfilled']
-const CAN_EDIT = ['unfulfilled']
+const CAN_SHIP = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_CANCEL = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 // Receipt is confirmed after handover, never before.
-const CAN_MARK_DELIVERED = ['fulfilled']
+const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const confirm = useConfirm()
   const orderId = order.id
   const { cancel, markDelivered, buyLabel, refundLabel, deleteLabel } =
@@ -562,7 +547,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           is still pending. */}
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
-        Number.parseFloat(fulfillment.cost) > 0) && (
+        isPositiveMoney(fulfillment.cost)) && (
         <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually
@@ -573,7 +558,13 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               fulfillment.delivery_method?.name ??
               t('admin.pages.orders.detail.no_delivery_method')}
           </span>
-          <span>{fulfillment.display_cost}</span>
+          <span>
+            {fulfillment.unpriced ? (
+              t('admin.orders.detail.fulfillments.quoted_after_review')
+            ) : (
+              <Money amount={fulfillment.cost} currency={order.currency} />
+            )}
+          </span>
         </CardContent>
       )}
 
@@ -632,7 +623,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                         message: selectedRate
                           ? t('admin.orders.detail.fulfillments.buy_label_confirm_rate', {
                               rate: selectedRate.name,
-                              cost: selectedRate.display_cost,
+                              cost: formatAmount(selectedRate.cost, order.currency, moneyLocale),
                             })
                           : t('admin.orders.detail.fulfillments.buy_label_confirm'),
                         confirmLabel: t('admin.orders.detail.fulfillments.buy_label'),

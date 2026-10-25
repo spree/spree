@@ -12,6 +12,11 @@ module Spree
 
     TRANSLATABLE_FIELDS = Spree::LabelTranslatable::TRANSLATABLE_FIELDS
 
+    # Option types are managed under the catalog, so the products permission guards them — see Admin::OptionTypesController.
+    def self.translation_write_permission
+      'write_products'
+    end
+
     # Option values are translated alongside their type — the translations
     # endpoint nests their matrices so the editor fetches both in one read.
     def self.translatable_children
@@ -24,7 +29,8 @@ module Spree
     self.whitelisted_ransackable_scopes = %w[search_by_name]
     # `label` is what admin surfaces display, so it has to be filterable —
     # matching Spree::OptionValue, which already allows it.
-    self.whitelisted_ransackable_attributes = %w[label name]
+    self.whitelisted_ransackable_attributes = %w[label name kind]
+    search_by :name, :label
 
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 

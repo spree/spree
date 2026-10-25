@@ -11,6 +11,17 @@
 //     import { AuthProvider } from '@spree/dashboard-core/providers/auth-provider'
 //     import { useResourceMutation } from '@spree/dashboard-core/hooks/use-resource-mutation'
 
+// Money helpers from @spree/core, offered here as before for plugin authors
+export {
+  currencyParts,
+  fractionToPercent,
+  isPositiveMoney,
+  normalizeMoneyInput,
+  percentOf,
+  percentToFraction,
+  prorateMoney,
+  shiftDecimalPoint,
+} from '@spree/core'
 export * from './api-client'
 // ---------------------------------------------------------------------------
 // Admin SDK client (Vite-aware singleton; reads VITE_SPREE_API_URL at build)
@@ -23,6 +34,7 @@ export * from './components/bulk-action-bar'
 export * from './components/can'
 export * from './components/country-combobox'
 export * from './components/country-state-fields'
+export * from './components/currency-amounts-field'
 export * from './components/currency-select'
 export * from './components/export-button'
 export * from './components/file-upload-field'
@@ -33,6 +45,7 @@ export * from './components/locale-select'
 export * from './components/market-combobox'
 export * from './components/media-picker-sheet'
 export * from './components/mobile-top-bar'
+export * from './components/money'
 export * from './components/nav-main'
 export * from './components/page-header'
 export * from './components/page-tabs'
@@ -62,12 +75,13 @@ export * from './hooks/use-auto-collapse-sidebar'
 export * from './hooks/use-command-palette'
 export * from './hooks/use-countries'
 export * from './hooks/use-custom-fields'
-export * from './hooks/use-direct-upload'
 export * from './hooks/use-display-name'
 export * from './hooks/use-export'
+export * from './hooks/use-file-upload'
 export * from './hooks/use-global-search'
 export * from './hooks/use-host-form'
 export * from './hooks/use-import'
+export * from './hooks/use-money-locale'
 export * from './hooks/use-package-types'
 export * from './hooks/use-resource-mutation'
 export * from './hooks/use-stock-locations'
@@ -75,6 +89,7 @@ export * from './hooks/use-switch-admin-locale'
 export * from './hooks/use-visual-viewport-offset'
 export * from './lib/cancel-order-form'
 export * from './lib/create-action-registry'
+export * from './lib/currency-amounts'
 // ---------------------------------------------------------------------------
 // Registries — pluggable extension points (nav, route, slot, table,
 // settings-nav, form fields, custom field components)
@@ -98,16 +113,19 @@ export * from './lib/fulfillment-items'
 // `i18n.addResourceBundle`) get it via the named re-export.
 export * from './lib/i18n'
 export * from './lib/import-types'
+export * from './lib/iso-codes'
 export * from './lib/label-upload-form'
 export * from './lib/nav-registry'
 export * from './lib/permissions'
 export * from './lib/progress'
 export * from './lib/query-client'
 export * from './lib/query-keys'
+export * from './lib/return-refunds'
 export * from './lib/route-registry'
 export * from './lib/search-registry'
 export * from './lib/settings-nav-registry'
 export * from './lib/slot-registry'
+export * from './lib/store-config'
 export * from './lib/table-registry'
 export { ensureTimestampColumns } from './lib/timestamp-columns'
 export * from './lib/type-labels'
@@ -118,14 +136,15 @@ export * from './pages/stock-locations'
 // Plugin facade — re-exported for convenience; same API as `/plugin` subpath
 // ---------------------------------------------------------------------------
 export * from './plugin'
-export * from './products/currency-parts'
+export * from './products/assignable-variants'
+export * from './products/digital-assets-card'
 export * from './products/normalize-customs'
-export * from './products/normalize-money'
 export * from './products/normalize-quantity'
 export * from './products/product-form-cards'
 export * from './products/product-form-mapping'
 export * from './products/product-schema'
 export * from './products/product-types'
+export type { SheetSaveHandler } from './products/sheet-save-handlers'
 export * from './products/use-product-form-data'
 export * from './products/variants-matrix'
 export * from './products/video-url'

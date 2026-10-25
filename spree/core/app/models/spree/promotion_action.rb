@@ -2,6 +2,10 @@
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.promotion_action_types'
+
     has_prefix_id :pact
 
     registers_subclasses_via { Spree.promotions.actions }
@@ -66,24 +70,13 @@ module Spree
       when :line_item
         %w[Spree::Promotion::Actions::CreateItemAdjustments Spree::Promotion::Actions::CreateLineItems]
       when :fulfillment
-        %w[Spree::Promotion::Actions::FreeShipping Spree::Promotion::Actions::FreeShipping]
+        %w[Spree::Promotion::Actions::FreeShipping]
       when :order
-        %w[Spree::Promotion::Actions::CreateAdjustment Spree::Promotion::Actions::CreateAdjustment]
+        %w[Spree::Promotion::Actions::CreateAdjustment]
       else
         []
       end
     end
-
-    def self.human_name
-      Spree.t("promotion_action_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    def self.human_description
-      Spree.t("promotion_action_types.#{api_type}.description", default: '')
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
 
     # Returns the key of the promotion action
     #
@@ -109,7 +102,7 @@ module Spree
     end
 
     def label
-      Spree.t(:promotion_label, name: promotion.name)
+      I18n.t('spree.promotion_label', name: promotion.name)
     end
   end
 end

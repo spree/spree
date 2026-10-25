@@ -341,3 +341,146 @@ html:not(.dark) h4 {
 .dark #content-container .link:hover {
   color: #7fb8ff !important;
 }
+
+/* --- Changelog ------------------------------------------------------------ */
+/* The changelog runs in custom mode so it has no empty sidebar, and custom
+   mode drops Mintlify's article typography — these rules restore it. The
+   <Update> entries must stay top-level in the MDX (the RSS feed skips nested
+   ones), so the page is styled through the container holding the header. */
+
+:has(> .changelog-header) {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 4rem 1.25rem 6rem;
+}
+
+.changelog-header h1 {
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.changelog-header > p,
+.changelog-header > [data-as="p"] {
+  color: var(--spree-ink-muted);
+  font-size: 1.0625rem;
+  margin-bottom: 1.25rem;
+}
+
+.changelog-header .changelog-rss {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 3.5rem;
+  padding: 0.375rem 0.875rem;
+  border: 1px solid var(--spree-border);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.changelog-header .changelog-rss:hover {
+  border-color: var(--spree-accent);
+}
+
+:has(> .changelog-header) p,
+:has(> .changelog-header) [data-as="p"] {
+  display: block !important;
+  margin: 0 0 1rem;
+  line-height: 1.7;
+}
+
+:has(> .changelog-header) ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+}
+
+:has(> .changelog-header) li {
+  margin: 0.25rem 0;
+  line-height: 1.65;
+}
+
+:has(> .changelog-header) li::marker {
+  color: var(--spree-neutral-400);
+}
+
+:has(> .changelog-header) a {
+  color: var(--spree-accent);
+}
+
+:has(> .changelog-header) a:hover {
+  color: var(--spree-accent-strong);
+}
+
+.dark :has(> .changelog-header) a {
+  color: #4d9fff;
+}
+
+/* Tables, styled after the dashboard's: a filled header row, a rule between
+   rows and an outer border, so a wide table reads as one block rather than
+   drifting columns.
+   
+   `!important` throughout because Mintlify ships its own table rules and
+   loads this stylesheet before them. Fixed colours rather than CSS variables
+   for the same reason — the theme's own variables are not in scope here. */
+table {
+  border: 1px solid #d0d7de !important;
+  border-radius: 0.5rem !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden !important;
+  width: 100%;
+}
+
+table thead {
+  background-color: #f3f4f6 !important;
+}
+
+table th {
+  font-weight: 500 !important;
+  text-align: left;
+  color: #4b5563 !important;
+  padding: 0.625rem 0.875rem !important;
+  border-bottom: 1px solid #d0d7de !important;
+}
+
+/* Vertical rules too, so columns in a wide table stay readable across. */
+table th + th,
+table td + td {
+  border-left: 1px solid #e8ebee !important;
+}
+
+table td {
+  padding: 0.75rem 0.875rem !important;
+  border-bottom: 1px solid #e8ebee !important;
+  vertical-align: middle;
+}
+
+table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+.dark table {
+  border-color: #3d444d !important;
+}
+
+.dark table thead {
+  background-color: #21262d !important;
+}
+
+.dark table th {
+  color: #9198a1 !important;
+  border-bottom-color: #3d444d !important;
+}
+
+.dark table th + th,
+.dark table td + td {
+  border-left-color: #2a3038 !important;
+}
+
+.dark table td {
+  border-bottom-color: #2a3038 !important;
+}

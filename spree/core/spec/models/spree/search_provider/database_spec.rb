@@ -5,9 +5,9 @@ module Spree
     let(:store) { @default_store }
     let(:provider) { described_class.new(store) }
 
-    let!(:product_1) { create(:product, name: 'Blue Shirt') }
-    let!(:product_2) { create(:product, name: 'Red Pants') }
-    let!(:product_3) { create(:product, name: 'Blue Jacket') }
+    let!(:product_1) { create(:product, name: 'Blue Shirt', price: 30) }
+    let!(:product_2) { create(:product, name: 'Red Pants', price: 10) }
+    let!(:product_3) { create(:product, name: 'Blue Jacket', price: 20) }
 
     describe '#search_and_filter' do
       let(:scope) { store.products }
@@ -91,11 +91,28 @@ module Spree
         end
       end
 
+      context 'with a name sort in a non-default locale' do
+        let(:category) { create(:category, name: 'Clothing') }
+
+        before do
+          create(:product_translation, translated_model: product_2, locale: 'de', name: 'Anzug')
+          [product_1, product_2, product_3].each { |product| product.categories << category }
+        end
+
+        it 'sorts filtered products by the translation, falling back to the base name' do
+          products = Mobility.with_locale(:de) do
+            provider.search_and_filter(scope: scope, filters: { 'in_category' => category.prefixed_id }, sort: 'name').products.to_a
+          end
+
+          expect(products).to eq([product_2, product_3, product_1])
+        end
+      end
+
       context 'with custom price sort' do
         subject(:result) { provider.search_and_filter(scope: scope, sort: 'price') }
 
-        it 'returns all products' do
-          expect(result.total_count).to eq(3)
+        it 'sorts by price ascending' do
+          expect(result.products.to_a).to eq([product_2, product_3, product_1])
         end
       end
 
@@ -269,6 +286,41 @@ module Spree
           result = provider.search_and_filter(scope: scope, query: 'wool')
           expect(result.products).to include(product_2)
           expect(result.products).not_to include(product_1, product_3)
+        end
+      end
+
+      # The storefront never shows an admin-only value, so a shopper must not
+      # be able to read it back through search, a sort or a range filter.
+      context 'with admin-only custom_fields' do
+        let!(:definition) do
+          create(:custom_field_definition, :number_field, :admin_only, :sortable,
+                 namespace: 'internal', key: 'margin')
+        end
+        # Text, so the search probe cannot collide with a generated SKU the
+        # way a short number can.
+        let!(:note) do
+          create(:custom_field_definition, :short_text_field, :admin_only, :searchable,
+                 namespace: 'internal', key: 'note')
+        end
+
+        before do
+          product_1.set_custom_field(definition, '40')
+          product_2.set_custom_field(definition, '12')
+          product_1.set_custom_field(note, 'zq-hidden-note')
+        end
+
+        it 'ignores them for shoppers' do
+          expect(provider.search_and_filter(scope: scope, query: 'zq-hidden-note').products).to be_empty
+          expect(provider.search_and_filter(scope: scope, filters: { 'cf_internal_margin_gteq' => '30' }).products).to match_array([product_1, product_2, product_3])
+          expect(provider.search_and_filter(scope: scope, sort: '-cf_internal_margin').products.to_a).
+            to eq(provider.search_and_filter(scope: scope).products.to_a)
+          expect(provider.filters(scope: scope).sort_options.map { |option| option[:id] }).not_to include('cf_internal_margin')
+        end
+
+        it 'keeps them for the back office' do
+          back_office = described_class.new(store, audience: nil)
+
+          expect(back_office.search_and_filter(scope: scope, filters: { 'cf_internal_margin_gteq' => '30' }).products).to eq([product_1])
         end
       end
 
@@ -473,8 +525,8 @@ module Spree
 
         it 'includes human-readable labels for custom_field sort options' do
           by_id = result.sort_options.index_by { |o| o[:id] }
-          expect(by_id['cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
-          expect(by_id['-cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
+          expect(by_id['cf_custom_label'][:label]).to eq("Material (#{I18n.t('spree.sort_a_to_z')})")
+          expect(by_id['-cf_custom_label'][:label]).to eq("Material (#{I18n.t('spree.sort_z_to_a')})")
         end
       end
 
@@ -490,30 +542,5 @@ module Spree
         end
       end
     end
-
-    describe '#index' do
-      it 'is a no-op' do
-        expect { provider.index(product_1) }.not_to raise_error
-      end
-    end
-
-    describe '#remove' do
-      it 'is a no-op' do
-        expect { provider.remove(product_1) }.not_to raise_error
-      end
-    end
-
-    describe '#remove_by_id' do
-      it 'is a no-op' do
-        expect { provider.remove_by_id(product_1.id) }.not_to raise_error
-      end
-    end
-
-    describe '#reindex' do
-      it 'is a no-op' do
-        expect { provider.reindex(store.products) }.not_to raise_error
-      end
-    end
-
   end
 end

@@ -82,7 +82,7 @@ export function StorefrontConnectSheet({
   initialUrl,
 }: StorefrontConnectSheetProps) {
   const { t } = useTranslation()
-  const [url, setUrl] = useState(() => initialUrl ?? store.preferred_storefront_url ?? '')
+  const [url, setUrl] = useState(() => initialUrl ?? store.storefront_url ?? '')
   const [showKey, setShowKey] = useState(false)
 
   const {

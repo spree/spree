@@ -1,3 +1,4 @@
+import { AMOUNT_BASED_CALCULATORS, hasCurrencyAmount, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 /**
@@ -32,7 +33,7 @@ export const deliveryMethodServiceSchema = z.object({
 
 export type DeliveryMethodServiceDraft = z.infer<typeof deliveryMethodServiceSchema>
 
-export const deliveryMethodFormSchema = z.object({
+const deliveryMethodFormObject = z.object({
   name: z.string().min(1),
   admin_name: z.string().optional(),
   code: z.string().optional(),
@@ -47,8 +48,10 @@ export const deliveryMethodFormSchema = z.object({
   estimated_transit_business_days_min: z.string().optional(),
   estimated_transit_business_days_max: z.string().optional(),
   tax_category_id: z.string().optional(),
-  calculator_type: z.string().optional(),
-  calculator_preferences: z.record(z.string(), z.unknown()).optional(),
+  calculator: z.object({
+    type: z.string().optional(),
+    preferences: z.record(z.string(), z.unknown()).optional(),
+  }),
   // Empty string means no destination restriction — the method serves
   // everywhere its profile reaches.
   delivery_zone_id: z.string(),
@@ -61,13 +64,35 @@ export const deliveryMethodFormSchema = z.object({
   services: z.array(deliveryMethodServiceSchema),
 })
 
-export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormSchema>
+export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormObject>
+
+/**
+ * The delivery method form's schema. `carrierPricedProviders` names the rate
+ * providers that quote their own rates (`''` when the default one does): their
+ * methods hide the calculator, so its amounts are not asked for.
+ */
+export function deliveryMethodFormSchema(carrierPricedProviders: readonly string[] = []) {
+  return deliveryMethodFormObject.superRefine((values, ctx) => {
+    if (carrierPricedProviders.includes(values.rate_provider)) return
+
+    // A calculator-priced method with no amount in any currency would never be offered.
+    const { type, preferences } = values.calculator
+    if (!AMOUNT_BASED_CALCULATORS.includes(type ?? '')) return
+    if (hasCurrencyAmount(preferences)) return
+
+    ctx.addIssue({
+      code: 'custom',
+      path: ['calculator', 'preferences'],
+      message: i18n.t('admin.currency_amounts.required'),
+    })
+  })
+}
 
 export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   name: '',
   admin_name: '',
   code: '',
-  fulfillment_provider: 'Spree::FulfillmentProvider::Manual',
+  fulfillment_provider: 'manual',
   rate_provider: '',
   storefront_visible: true,
   available_to_sellers: false,
@@ -75,8 +100,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   estimated_transit_business_days_min: '',
   estimated_transit_business_days_max: '',
   tax_category_id: '',
-  calculator_type: '',
-  calculator_preferences: {},
+  calculator: { type: '', preferences: {} },
   delivery_zone_id: '',
   stock_location_ids: [],
   rules: [],
@@ -85,6 +109,14 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   services: [],
 }
 
+/** The `calculator` part of a write, or nothing when the form names neither a type nor a setting. */
+function calculatorParams({ type, preferences }: DeliveryMethodFormValues['calculator']) {
+  const hasPreferences = !!preferences && Object.keys(preferences).length > 0
+  if (!type && !hasPreferences) return {}
+  return {
+    calculator: { type: type || undefined, preferences: hasPreferences ? preferences : undefined },
+  }
+}
 export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
   return {
     name: values.name,
@@ -102,10 +134,7 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       ? Number(values.estimated_transit_business_days_max)
       : null,
     tax_category_id: values.tax_category_id || null,
-    ...(values.calculator_type ? { calculator_type: values.calculator_type } : {}),
-    ...(values.calculator_preferences && Object.keys(values.calculator_preferences).length > 0
-      ? { calculator_preferences: values.calculator_preferences }
-      : {}),
+    ...calculatorParams(values.calculator),
     delivery_zone_id: values.delivery_zone_id || null,
     stock_location_ids: values.stock_location_ids,
     // Rules ride along with the method so one request saves the whole page.

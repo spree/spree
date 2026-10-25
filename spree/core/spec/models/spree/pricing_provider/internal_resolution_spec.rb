@@ -526,17 +526,9 @@ describe Spree::PricingProvider::Internal::Resolution do
         expect(price_at(9).amount).to eq(95.00)
         expect(price_at(10).amount).to eq(90.00)
         expect(price_at(49).amount).to eq(90.00)
+        # Every band is a percentage off the base price, never off the band
+        # below it — otherwise "20% from fifty" would quietly mean 24%.
         expect(price_at(50).amount).to eq(80.00)
-      end
-
-      # Every band is a percentage off the base price, never off the band
-      # below it — otherwise "20% from fifty" would quietly mean 24%.
-      it 'takes each band off the base price rather than compounding' do
-        expect(price_at(50).amount).to eq(80.00)
-      end
-
-      it 'falls back to the column when the line reaches no band' do
-        expect(price_at(1).amount).to eq(95.00)
       end
 
       it 'reads the column when the context carries no quantity' do

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Company, CompanyInvitation, CompanyMembership } from '@spree/admin-sdk'
+import { COMPANY_KINDS } from '@spree/core'
 import {
   adminClient,
   mapSpreeErrorsToForm,
@@ -53,6 +54,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CompanyAddressSheet } from '../../../../components/spree/company-address-sheet'
 import { CompanyKindBadge } from '../../../../components/spree/company-kind-badge'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EnterpriseUpsell } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { TaxExemptionCertificatesCard } from '../../../../components/spree/tax-exemption-certificates-card'
@@ -81,7 +83,6 @@ import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   COMPANY_CHILD_DEFAULTS,
   COMPANY_DEFAULTS,
-  COMPANY_KINDS,
   type CompanyChildFormValues,
   type CompanyFormValues,
   companyChildFormSchema,
@@ -170,6 +171,7 @@ function CompanyBody({ company }: { company: Company }) {
           ) : (
             <CompanyTaxIdentifiersCard companyId={company.id} canEdit={canEdit} />
           )}
+          <ApiCustomFieldsCard ownerType="company" ownerId={company.id} />
           <Slot name="company.form_sidebar" context={{ company, kind: company.kind, canEdit }} />
         </>
       }
@@ -593,6 +595,9 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
               key={entry.id}
               address={entry}
               canEdit={canEdit}
+              inheritedFrom={
+                entry.owner && entry.owner.id !== company.id ? (entry.owner.name ?? '') : null
+              }
               onEdit={() => setEditing(entry)}
               onSetDefaultBilling={() => setDefault(entry.id, 'billing')}
               onSetDefaultShipping={() => setDefault(entry.id, 'shipping')}

@@ -11,13 +11,14 @@ module Spree
       # Scope-friendly so controllers can chain it onto an already store-scoped
       # relation: `current_store.products.with_external_id('erp', 'MAT-100')`.
       # Scoping the lookup to the store is the caller's job, exactly as with any
-      # other id coming off a request.
+      # other id coming off a request. A subquery rather than a join, so a
+      # relation that also preloads `external_references` still loads every
+      # key, not only the matched one.
       scope :with_external_id, lambda { |system, external_id|
-        joins(:external_references).where(
-          spree_external_references: {
-            system: Spree::ExternalReference.normalize_system(system),
-            external_id: external_id.to_s.strip
-          }
+        where(
+          id: Spree::ExternalReference.for_system(system).
+            where(resource_type: polymorphic_name, external_id: external_id.to_s.strip).
+            select(:resource_id)
         )
       }
     end
@@ -42,8 +43,31 @@ module Spree
     # @return [Spree::ExternalReference, nil] nil when the reference was removed
     def set_external_id(system, external_id, metadata: nil)
       key = Spree::ExternalReference.normalize_system(system)
-      reference = external_references.for_system(key).first
+      write_external_reference(key, external_references.for_system(key).first, external_id, metadata)
+    end
 
+    # Writes several references at once, leaving systems the payload does not
+    # mention untouched — a connector states its own key without disturbing
+    # another system's. Accepts the `{ system => external_id }` map the admin
+    # serializers render, or a list of `{ system:, external_id: }` entries.
+    #
+    # @param references [Hash{String,Symbol=>String}, Array<Hash>]
+    # @return [void]
+    def assign_external_references(references)
+      entries = Spree::ExternalReference.normalize_references(references)
+      return if entries.empty?
+
+      keys = entries.map { |entry| Spree::ExternalReference.normalize_system(entry[:system]) }
+      existing = external_references.where(system: keys).order(:id).group_by(&:system).transform_values(&:first)
+
+      entries.zip(keys).each do |entry, key|
+        existing[key] = write_external_reference(key, existing[key], entry[:external_id], entry[:metadata])
+      end
+    end
+
+    private
+
+    def write_external_reference(key, reference, external_id, metadata)
       if external_id.to_s.strip.blank?
         reference&.destroy
         external_references.reset
@@ -62,21 +86,6 @@ module Spree
       external_references.reset
       reference
     end
-
-    # Writes several references at once, leaving systems the payload does not
-    # mention untouched — a connector states its own key without disturbing
-    # another system's. Accepts the `{ system => external_id }` map the admin
-    # serializers render, or a list of `{ system:, external_id: }` entries.
-    #
-    # @param references [Hash{String,Symbol=>String}, Array<Hash>]
-    # @return [void]
-    def assign_external_references(references)
-      Spree::ExternalReference.normalize_references(references).each do |reference|
-        set_external_id(reference[:system], reference[:external_id], metadata: reference[:metadata])
-      end
-    end
-
-    private
 
     # A reference belongs to the same store as the record it identifies.
     #

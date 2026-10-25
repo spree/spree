@@ -1,16 +1,16 @@
 import type { Seller } from '@spree/admin-sdk'
+import { SELLER_STATUSES } from '@spree/core'
 import { defineTable, progressPercentage } from '@spree/dashboard-core'
 import { Progress, RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { StoreIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { SELLER_STATUSES } from '../schemas/seller'
 
 defineTable<Seller>('sellers', {
   docsPath: 'sellers/managing-sellers',
   description: i18n.t('admin.table_descriptions.sellers'),
   title: i18n.t('admin.nav.sellers'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.sellers.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <StoreIcon className="size-8 text-muted-foreground" />,

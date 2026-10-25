@@ -1,15 +1,13 @@
-import { defineTable } from '@spree/dashboard-core'
+import { PRODUCT_STATUSES } from '@spree/core'
+import { defineTable, formatPrice } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Product } from '@spree/seller-sdk'
 import i18n from 'i18next'
 
-/** Mirrors the operator dashboard's product statuses. */
-const PRODUCT_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived'] as const
-
 defineTable<Product>('seller-products', {
   title: i18n.t('products.title'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('products.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <PackageIcon className="size-8 text-muted-foreground" />,
@@ -50,7 +48,7 @@ defineTable<Product>('seller-products', {
       key: 'price',
       label: i18n.t('products.columns.price'),
       default: true,
-      render: (product) => product.price?.display_amount ?? '—',
+      render: (product) => formatPrice(product.price ?? null),
     },
   ],
 })

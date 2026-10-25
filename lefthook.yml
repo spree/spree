@@ -5,14 +5,20 @@ pre-commit:
       stage_fixed: true
       run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     typelizer-and-zod:
-      glob: "spree/api/app/serializers/**/*.rb"
+      glob:
+        - "spree/api/app/serializers/**/*.rb"
+        - "spree/api/lib/spree/api/webhook_event_types.rb"
+        - "spree/emails/app/serializers/**/*.rb"
+        - "spree/core/app/serializers/spree/emails/**/*.rb"
+        - "spree/*/config/initializers/typelizer.rb"
       run: |
         echo "Serializer changes detected — regenerating TypeScript types and Zod schemas..."
         cd spree/api && bundle exec rake typelizer:generate && cd ../..
         pnpm generate:zod
-        git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/
+        git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/ packages/sdk/src/webhooks/generated/
         git add packages/admin-sdk/src/types/generated/ packages/admin-sdk/src/zod/generated/
         git add packages/seller-sdk/src/types/generated/ packages/seller-sdk/src/zod/generated/
+        git add packages/core/src/enums.generated.ts
     zod:
       # Types regenerated or edited without a serializer change, and changes to
       # the generator itself, still need fresh schemas.
@@ -22,6 +28,38 @@ pre-commit:
       run: |
         pnpm generate:zod
         git add packages/sdk/src/zod/generated/ packages/admin-sdk/src/zod/generated/ packages/seller-sdk/src/zod/generated/
+
+    filters:
+      # The API reference carries the filter tables; regenerating it, or
+      # changing the generator, needs fresh SDK filter types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-filters.ts"
+      run: |
+        pnpm generate:filters
+        git add packages/sdk/src/types/filters.generated.ts packages/admin-sdk/src/types/filters.generated.ts packages/seller-sdk/src/types/filters.generated.ts
+
+    params:
+      # The API reference carries the request schemas; regenerating it, or
+      # changing the generator, needs fresh SDK request types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-params.ts"
+        - "packages/sdk-core/src/params-types.ts"
+      run: |
+        pnpm generate:params
+        git add packages/sdk/src/types/params/ packages/admin-sdk/src/types/params/ packages/seller-sdk/src/types/params/
+
+    code-lists:
+      # The country, currency, locale and unit lists come from the Store and
+      # Admin API references; regenerating them, or changing the generator,
+      # needs fresh lists.
+      glob:
+        - "docs/api-reference/{store,admin}.yaml"
+        - "packages/core/scripts/generate-code-lists.ts"
+      run: |
+        pnpm generate:code-lists
+        git add packages/core/src/code-lists.generated.ts
 
 pre-push:
   commands:

@@ -38,7 +38,7 @@ my-store/
 ├── docker-compose.yml      # The local stack
 ├── package.json            # Scripts and the pinned @spree/cli
 ├── AGENTS.md               # Instructions for coding agents
-├── CLAUDE.md               # Project layout and conventions
+├── CLAUDE.md               # Imports AGENTS.md for Claude Code
 └── README.md               # How to run everything
 ```
 
@@ -71,7 +71,7 @@ See the [Spree CLI guide](/developer/cli/quickstart) for all commands and the [A
 In a hurry? Jump straight to the [tutorial](/developer/tutorial/introduction) to build a feature end to end, the [Next.js Storefront](/developer/storefront/nextjs/quickstart) to put a storefront in front of it, or the [API reference](/api-reference/admin-api/introduction) to see what you can do with the Admin API.
 
 <Tip>
-  Using an AI coding agent? Run `npx skills add spree/agent-skills` in your new project — it teaches your agent the customization patterns before you write a line of code. See [Agentic Development](/developer/agentic/overview).
+  Using an AI coding agent? `create-spree-app` installs the [Spree agent skills](/developer/agentic/agent-skills) and connects your agent to the [docs MCP server](/developer/agentic/docs-mcp) unless you said no — if you skipped them, run `npx spree add ai` in your project. Your agent then knows the customization patterns before you write a line of code. See [Agentic Development](/developer/agentic/overview).
 </Tip>
 
 ---

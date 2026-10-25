@@ -1,6 +1,8 @@
+import { MEDIA_TYPES, type MediaType, PRODUCT_STATUSES, subsetOf } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
+import { countryCodeSchema, currencyCodeSchema } from '../lib/iso-codes'
 import { normalizeQuantityRule } from './normalize-quantity'
 import { isSupportedVideoUrl } from './video-url'
 
@@ -33,13 +35,10 @@ export const variantOptionPairSchema = z.object({
 
 export type VariantOptionPair = z.infer<typeof variantOptionPairSchema>
 
-// Form-side prices use raw STRING amounts (the merchant's typed input).
-// The backend's `Spree::LocalizedNumber.parse` handles locale-aware parsing
-// (comma decimals, grouped digits, etc.), so the frontend ships exactly what
-// the merchant typed — no `Number(...)` coercion that mangles `"1.234,56"`
-// into `NaN` and silently drops the price.
+// Form-side prices are canonical decimal STRINGS ("1234.56"), never numbers:
+// `Number(...)` coercion loses precision and turns `"1.234,56"` into `NaN`.
 export const variantPriceFormSchema = z.object({
-  currency: z.string(),
+  currency: currencyCodeSchema,
   amount: z.string(),
   compare_at_amount: z.string().nullable().optional(),
 })
@@ -61,7 +60,7 @@ export const variantFormSchema = z.object({
   weight_unit: z.string().nullable().optional(),
   dimensions_unit: z.string().nullable().optional(),
   hs_code: z.string().nullable().optional(),
-  country_of_origin: z.string().nullable().optional(),
+  country_of_origin: countryCodeSchema.nullable().optional(),
   customs_description: z.string().nullable().optional(),
   // Held as strings so an unusable entry can be reported rather than
   // silently coerced away: normalizing `0` straight to null would clear the
@@ -101,13 +100,11 @@ export const customFieldFormSchema = z.object({
 export type CustomFieldFormValues = z.infer<typeof customFieldFormSchema>
 
 // Media in form state. Persisted entries carry an `id`; pre-save entries carry
-// a `signed_id` (from a completed ActiveStorage direct upload) or a
+// a `signed_id` (from a completed upload) or a
 // `source_media_id` (a file picked from the library). All can hold edits to
 // alt, position, and variant_ids that the parent product PATCH/POST ships
 // inline. previewUrl + uploadId are UI-only; stripped at submit.
-export const MEDIA_TYPES = ['image', 'video', 'external_video'] as const
-
-export type MediaType = (typeof MEDIA_TYPES)[number]
+export { MEDIA_TYPES, type MediaType }
 
 export const mediaFormSchema = z
   .object({
@@ -171,6 +168,13 @@ export const productPublicationFormSchema = z.object({
 
 export type ProductPublicationFormValues = z.infer<typeof productPublicationFormSchema>
 
+/** Statuses a merchant sets by hand; the rest come from the review workflow. */
+export const ASSIGNABLE_PRODUCT_STATUSES = subsetOf(PRODUCT_STATUSES, [
+  'draft',
+  'active',
+  'archived',
+])
+
 export const productFormSchema = z.object({
   // General
   name: z.string().min(1, { error: requiredMessage('name') }),
@@ -178,10 +182,11 @@ export const productFormSchema = z.object({
 
   // Status
   // Every status the API may answer, not just the ones a form sets. A
-  // marketplace product also comes back `proposed` or `rejected`, and a schema
-  // that rejects those makes the whole form unsavable rather than flagging a
-  // field (docs/plans/6.0-seller-product-submission.md).
-  status: z.enum(['draft', 'active', 'archived', 'proposed', 'rejected']).optional(),
+  // marketplace product also comes back `proposed` or `rejected`, an extension
+  // may add statuses of its own, and a schema that rejects any of those makes
+  // the whole form unsavable rather than flagging a field
+  // (docs/plans/6.0-seller-product-submission.md).
+  status: z.string().optional(),
 
   // Categorization
   category_ids: z.array(z.string()).optional(),

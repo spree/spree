@@ -1,9 +1,35 @@
-import type { AddressParams, ListParams } from '@spree/sdk-core'
-import type { Cart as CartType } from './generated'
+import type { ListParams } from '@spree/sdk-core'
+import type {
+  CategoryFilters,
+  CategorySort,
+  CollectionFilters,
+  CollectionSort,
+  OrderFilters,
+  OrderSort,
+  ProductFilters,
+  ProductSort,
+} from './filters.generated'
+import type {
+  AppliedPromotion,
+  Cart as CartType,
+  ProductFilterAvailability,
+  ProductFilterAvailabilityOption,
+  ProductFilterCategory,
+  ProductFilterCategoryOption,
+  ProductFilterOption,
+  ProductFilterOptionValue,
+  ProductFilterPriceRange,
+  ProductFilterSortOption,
+  ProductFilters as ProductFiltersResult,
+} from './generated'
+import type { AddressUpdateParams, CompanyAddressUpdateParams, LineItemInputParams } from './params'
 
+export * from './filters.generated'
 // Re-export all generated types (unprefixed: Product, Order, etc.)
 export type {
   Address,
+  AddressOwner,
+  AppliedPromotion,
   Base,
   Cart,
   Category,
@@ -20,11 +46,13 @@ export type {
   Customer,
   CustomerGroup,
   CustomField,
+  DataRequest,
+  Delivery,
   DeliveryMethod,
   DeliveryRate,
   DigitalAsset,
   DigitalLink,
-  Discount,
+  Fee,
   FreightSummary,
   Fulfillment,
   GiftCard,
@@ -55,10 +83,12 @@ export type {
   State,
   StockLocation,
   StoreCredit,
+  TaxLine,
   Variant,
   Wishlist,
   WishlistItem,
 } from './generated'
+export type * from './params'
 
 // Checkout requirement — a single unsatisfied checkout prerequisite
 export interface CheckoutRequirement {
@@ -75,7 +105,6 @@ export type CartWarning = CartType['warnings'][number]
 
 // Hand-written domain types
 export type {
-  AddressParams,
   ErrorResponse,
   ListParams,
   ListResponse,
@@ -98,271 +127,58 @@ export interface AuthTokens {
 
 export type { EmailPasswordLogin, LoginCredentials, ProviderLogin } from '@spree/sdk-core'
 
-export interface RequestPasswordResetParams {
-  email: string
-  redirect_url?: string
-}
+export type ProductListParams = ListParams<ProductFilters, ProductSort>
 
-export interface ResetPasswordParams {
-  password: string
-  password_confirmation: string
-}
+export type CategoryListParams = ListParams<CategoryFilters, CategorySort>
 
-export interface RegisterParams {
-  email: string
-  password: string
-  password_confirmation: string
-  first_name?: string
-  last_name?: string
-  phone?: string
-  accepts_email_marketing?: boolean
-  /** Arbitrary key-value metadata (stored, not returned in responses) */
-  metadata?: Record<string, unknown>
-}
+export type CollectionListParams = ListParams<CollectionFilters, CollectionSort>
 
-export interface ProductListParams extends ListParams {
-  /** Sort: 'price', '-price', 'best_selling', 'name', '-name', '-available_on', 'available_on' */
-  sort?: string
-  /** Full-text search across name and SKU */
-  search?: string
-  /** Filter: name contains */
-  name_cont?: string
-  /** Filter: price >= value */
-  price_gte?: number
-  /** Filter: price <= value */
-  price_lte?: number
-  /** Filter by option value prefix IDs */
-  with_option_value_ids?: string[]
-  /** Filter: only in-stock products */
-  in_stock?: boolean
-  /** Filter: only out-of-stock products */
-  out_of_stock?: boolean
-  /** Filter: products in category (includes descendants) */
-  in_category?: string
-  /** Filter: products in any of the given categories (includes descendants, OR logic) */
-  in_categories?: string[]
-  /**
-   * Filter: products in a collection (flat — collections have no hierarchy).
-   * Prefer `client.collections.products.list()` for a collection listing: it
-   * applies the collection's own `sort_order` as the default.
-   */
-  in_collection?: string
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+export type OrderListParams = ListParams<OrderFilters, OrderSort>
 
-export interface CategoryListParams extends ListParams {
-  /** Sort order, e.g. 'name', '-created_at' */
-  sort?: string
-  /** Filter: name contains */
-  name_cont?: string
-  parent_id_eq?: string | number
-  depth_eq?: number
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+/** @deprecated Renamed to `LineItemInputParams`. Removed in 6.1. */
+export type LineItemInput = LineItemInputParams
 
-export interface CollectionListParams extends ListParams {
-  /** Sort order, e.g. 'position', 'name', '-created_at' */
-  sort?: string
-  /** Filter: name contains */
-  name_cont?: string
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+/** @deprecated Split by action: `AddressCreateParams` and `AddressUpdateParams`. Removed in 6.1. */
+export type AddressParams = AddressUpdateParams
 
-export interface OrderListParams extends ListParams {
-  /** Sort order, e.g. 'completed_at desc' */
-  sort?: string
-  /** Full-text search across number, email, customer name */
-  search?: string
-  state_eq?: string
-  completed_at_gte?: string
-  completed_at_lte?: string
-  /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | (string | number)[] | undefined
-}
+/** @deprecated Split by action: `CompanyAddressCreateParams` and `CompanyAddressUpdateParams`. Removed in 6.1. */
+export type CompanyAddressParams = CompanyAddressUpdateParams
 
-// Line item input for bulk cart/order operations
-export interface LineItemInput {
-  /** Prefixed variant ID (e.g., "variant_k5nR8xLq") */
-  variant_id: string
-  /** Quantity to set (defaults to 1 if omitted) */
-  quantity?: number
-  /** Arbitrary key-value metadata (merged with existing on upsert) */
-  metadata?: Record<string, unknown>
-}
+/** @deprecated Renamed to `AppliedPromotion`, the type of `cart.discounts` and `order.discounts`. Removed in 6.1. */
+export type Discount = AppliedPromotion
 
-// Cart operations
-export interface CreateCartParams {
-  /** Arbitrary key-value metadata (stored, not returned in responses) */
-  metadata?: Record<string, unknown>
-  /** Items to add to the cart on creation */
-  items?: LineItemInput[]
-}
-
-export interface AddLineItemParams {
-  variant_id: string
-  quantity: number
-  /** Arbitrary key-value metadata (stored, not returned in responses) */
-  metadata?: Record<string, unknown>
-}
-
-export interface UpdateLineItemParams {
-  quantity?: number
-  /** Arbitrary key-value metadata (merged with existing) */
-  metadata?: Record<string, unknown>
-}
-
-export interface UpdateCartParams {
-  email?: string
-  currency?: string
-  locale?: string
-  customer_note?: string
-  /** Arbitrary key-value metadata (merged with existing) */
-  metadata?: Record<string, unknown>
-  /** Existing address ID to use as billing address */
-  billing_address_id?: string
-  /** Existing address ID to use as shipping address */
-  shipping_address_id?: string
-  /** New billing address */
-  billing_address?: AddressParams
-  /** New shipping address */
-  shipping_address?: AddressParams
-  /** When true, copies shipping address to billing address */
-  use_shipping?: boolean
-  /** Items to upsert (sets quantity for existing, creates new) */
-  items?: LineItemInput[]
-  /**
-   * The company node this purchase is for. The buyer must have standing over
-   * it — a membership on that node or one of its ancestors. Null clears it,
-   * and with it the company's catalog, pricing and tax anchoring.
-   */
-  company_id?: string | null
-  /**
-   * The buyer's own purchase-order reference. Their accounting reconciles the
-   * order, the invoice and the payment against it. Blank clears it.
-   */
-  po_number?: string | null
-  /**
-   * ActiveStorage signed blob id of the buyer's purchase order, from
-   * `POST /store/carts/:id/po_document`. Blank detaches the document.
-   */
-  po_document?: string | null
-}
-
-// Payments
-export interface CreatePaymentParams {
-  payment_method_id: string
-  amount?: string
-  metadata?: Record<string, unknown>
-}
-
-// Payment Sessions
-export interface CreatePaymentSessionParams {
-  payment_method_id: string
-  amount?: string
-  external_data?: Record<string, unknown>
-}
-
-export interface UpdatePaymentSessionParams {
-  amount?: string
-  external_data?: Record<string, unknown>
-}
-
-export interface CompletePaymentSessionParams {
-  session_result?: string
-  external_data?: Record<string, unknown>
-}
-
-// Payment Setup Sessions
-export interface CreatePaymentSetupSessionParams {
-  payment_method_id: string
-  external_data?: Record<string, unknown>
-}
-
-export interface CompletePaymentSetupSessionParams {
-  external_data?: Record<string, unknown>
-}
-
-// Product Filters types
-export interface FilterOption {
-  id: string
-  count: number
-}
-
-export interface OptionFilterOption extends FilterOption {
-  name: string
-  label: string
-  position: number
-  color_code: string | null
-  image_url: string | null
-}
-
-export interface CategoryFilterOption {
-  id: string
-  name: string
-  permalink: string
-  count: number
-}
-
-export interface PriceRangeFilter {
-  id: 'price'
-  type: 'price_range'
-  min: number
-  max: number
-  currency: string
-}
-
-export interface AvailabilityFilter {
-  id: 'availability'
-  type: 'availability'
-  options: FilterOption[]
-}
-
-export interface OptionFilter {
-  id: string
-  type: 'option'
-  name: string
-  label: string
-  kind: string
-  options: OptionFilterOption[]
-}
-
-export interface CategoryFilter {
-  id: 'categories'
-  type: 'category'
-  options: CategoryFilterOption[]
-}
-
+// Product filters: the names storefronts import, kept as aliases of the generated types
+export type FilterOption = ProductFilterAvailabilityOption
+export type OptionFilterOption = ProductFilterOptionValue
+export type CategoryFilterOption = ProductFilterCategoryOption
+export type PriceRangeFilter = ProductFilterPriceRange
+export type AvailabilityFilter = ProductFilterAvailability
+export type OptionFilter = ProductFilterOption
+export type CategoryFilter = ProductFilterCategory
 export type ProductFilter = PriceRangeFilter | AvailabilityFilter | OptionFilter | CategoryFilter
-
-export interface SortOption {
-  id: string
-}
-
-export interface ProductFiltersResponse {
-  filters: ProductFilter[]
-  sort_options: SortOption[]
-  default_sort: string
-  total_count: number
-}
+export type SortOption = ProductFilterSortOption
+export type ProductFiltersResponse = ProductFiltersResult
 
 export interface ProductFiltersParams {
   category_id?: string
-  q?: Record<string, unknown>
+  collection_id?: string
+  /** The listing's active filters, so the counts describe the products it shows. */
+  q?: ProductFilters & Record<string, unknown>
 }
 
-/**
- * An address book entry for a company node: address fields, plus the two
- * things only a book entry has — what it is filed under, and which defaults
- * it holds for its node.
- */
-export type CompanyAddressParams = AddressParams & {
-  label?: string
-  default_billing?: boolean
-  default_shipping?: boolean
-}
-
+// The building blocks of the generated filter types, for a declaration file
+// that extends them (see `spree filters types`).
+export type {
+  BooleanFilters,
+  CodeFilters,
+  CustomFieldValueFilters,
+  EnumFilters,
+  IdFilters,
+  OrFilters,
+  Prefixed,
+  RangeFilters,
+  SortKey,
+  TextFilters,
+} from '@spree/sdk-core'
 // Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
 export type * from './generated/Enums'

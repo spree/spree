@@ -5,6 +5,27 @@ module Spree
         class MediaController < ResourceController
           scoped_resource :products
 
+          # The media file, a URL to fetch one from, and the library row to copy
+          # are transport, not attributes (+media_attributes+ drops them).
+          request_params :media do |body|
+            body.external_references
+            body.include_attributes Spree::Api::V3::MediaRequestSchema
+            body.attribute :attachment, :string,
+              description: 'The file itself, sent as multipart form data. JSON clients upload first and send `signed_id`.'
+            # How the file arrives, so creating only: an update keeps its file.
+            body.attribute :url, :string,
+              only: :create,
+              description: 'Fetch an image from this URL, in the background. Images only: an external video uses `external_video_url`.'
+            body.attribute :signed_id, :string,
+              only: :create,
+              description: 'A `signed_id` from `files.upload()` for the media file itself.'
+            body.attribute :source_media_id, :id,
+              only: :create,
+              description: 'Place a file that is already in the library. The new row shares the source file rather than copying it, and takes its own alt, position and variant links from here.'
+            body.attribute :variant_ids, :array, of: :id,
+              description: 'Variants to link this product-level media to. Variants of other products are dropped.'
+          end
+
           def create
             # An external video has no file, so it takes the plain create path
             # even though a URL is present — `url` means "fetch this image from
@@ -91,16 +112,8 @@ module Spree
             permitted_params.except(:attachment, :url, :signed_id, :source_media_id)
           end
 
-          # The media file, a URL to fetch one from, and the library row to copy
-          # are transport, not attributes — everything a client can set lives on
-          # the model.
           def permitted_params
-            params.permit(
-              *model_additional_permitted_attributes,
-              *Spree::Media::WRITABLE_ATTRIBUTES,
-              :attachment, :url, :signed_id, :source_media_id,
-              variant_ids: []
-            )
+            params.permit(*permitted_attributes)
           end
 
           def external_video_request?

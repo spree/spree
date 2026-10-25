@@ -20,13 +20,52 @@ describe Spree::Base do
     end
 
     # A row written by an extension that is no longer installed must not be
-    # constantized — it passes through as-is.
-    it 'passes an unregistered value through untouched' do
-      expect(Spree::Export.api_type_for('Spree::Exports::Gone')).to eq('Spree::Exports::Gone')
+    # constantized, nor sent as a class name.
+    it 'shortens an unregistered value without constantizing it' do
+      expect(Spree::Export.api_type_for('Spree::Exports::Gone')).to eq('gone')
     end
 
-    it 'passes through on a class with no type registry' do
-      expect(Spree::Address.api_type_for('Whatever')).to eq('Whatever')
+    it 'shortens on a class with no type registry' do
+      expect(Spree::Address.api_type_for('Spree::Whatever')).to eq('whatever')
+    end
+  end
+
+  describe '.class_name_for_api_type' do
+    it 'resolves a shorthand to its registered subclass' do
+      expect(Spree::Export.class_name_for_api_type('orders')).to eq('Spree::Exports::Orders')
+      expect(Spree::PromotionRule.class_name_for_api_type('currency')).to eq('Spree::Promotion::Rules::Currency')
+    end
+
+    it 'rejects a class name and an unknown shorthand' do
+      expect(Spree::Export.class_name_for_api_type('Spree::Exports::Orders')).to be_nil
+      expect(Spree::Export.class_name_for_api_type('nope')).to be_nil
+      expect(Spree::Address.class_name_for_api_type('address')).to be_nil
+    end
+  end
+
+  describe '.polymorphic_type_for' do
+    it 'resolves against the given candidates' do
+      expect(described_class.polymorphic_type_for('order', [Spree::Product, Spree::Order])).to eq('Spree::Order')
+      expect(described_class.polymorphic_type_for('variant', [Spree::Product])).to be_nil
+    end
+
+    it 'falls back to the Spree model of that name and the configured user classes' do
+      expect(described_class.polymorphic_type_for('purchase_order')).to eq('Spree::PurchaseOrder')
+      expect(described_class.polymorphic_type_for('customer')).to eq(Spree.customer_class.to_s)
+    end
+
+    context "with a host app's own customer class" do
+      before { allow(Spree).to receive(:customer_class).with(constantize: false).and_return('User') }
+
+      it 'still names it `customer`, both ways' do
+        expect(described_class.polymorphic_api_type('User')).to eq('customer')
+        expect(described_class.polymorphic_type_for('customer')).to eq('User')
+      end
+    end
+
+    it 'rejects anything that is not a shorthand' do
+      expect(described_class.polymorphic_type_for('Spree::Product')).to be_nil
+      expect(described_class.polymorphic_type_for('')).to be_nil
     end
   end
 
@@ -34,9 +73,6 @@ describe Spree::Base do
     # Backwards-compatible alias retained for extensions that still call
     # the old name; must delegate so subclass overrides (e.g.
     # `Spree::Gateway.api_type`) propagate.
-    it { expect(Spree::FulfillmentItem.json_api_type).to eq('fulfillment_item') }
-    it { expect(Spree::Address.json_api_type).to eq('address') }
-
     it 'honors subclass overrides of .api_type' do
       klass = Class.new(Spree::Base) do
         def self.api_type
@@ -55,7 +91,6 @@ describe Spree::Base do
     end
 
     it { expect(Spree::Address.json_api_columns).to contain_exactly('address1', 'address2', 'alternative_phone', 'city', 'company', 'country_code', 'created_at', 'deleted_at', 'first_name', 'label', 'last_name', 'phone', 'postal_code', 'state_code', 'state_name', 'updated_at', 'metadata', 'quick_checkout', 'latitude', 'longitude') }
-    it { expect(Spree::Address.json_api_columns).not_to include('country_id') }
   end
 
   describe '.json_api_permitted_attributes' do
@@ -105,14 +140,16 @@ describe Spree::Base do
   end
 
   describe 'preference defaults on load' do
-    let(:store) { Spree::Store.default }
+    let(:store) { create(:store) }
 
-    it 'backfills preferences added since the record was last saved' do
-      store.update_column(:preferences, store.preferences.except(:timezone))
+    it 'backfills preferences added since the record was last saved, without marking the record changed' do
+      store.update_column(:preferences, store.preferences.except(:timezone, :install_id))
 
       loaded = Spree::Store.find(store.id)
 
       expect(loaded.preferences[:timezone]).to eq(loaded.preference_default(:timezone))
+      expect(loaded).not_to be_changed
+      expect { loaded.with_lock { nil } }.not_to raise_error
     end
 
     # `preferences` is a YAML-serialized Hash, so the dirty check compares the
@@ -126,6 +163,47 @@ describe Spree::Base do
 
       expect(loaded).not_to be_changed
       expect { loaded.with_lock { nil } }.not_to raise_error
+    end
+  end
+
+  describe '.for_store' do
+    let(:store) { @default_store }
+
+    it 'reads through the association the store has for the model' do
+      expect(Spree::Product.for_store(store).to_sql).to eq(store.products.to_sql)
+    end
+
+    # A model the store cannot reach answers nothing: widening to every
+    # store's rows is how a cross-store read goes unnoticed.
+    it 'answers nothing for a model the store has no association for' do
+      expect(Spree::Zone.for_store(store)).to be_none
+    end
+  end
+
+  describe '.reset_counters_in_bulk' do
+    let(:store) { @default_store }
+    let(:collections) { create_list(:collection, 2, store: store) }
+    let(:products) { create_list(:product, 3, store: store) }
+
+    before do
+      Spree::ProductCollection.insert_all([
+        { collection_id: collections.first.id, product_id: products.first.id, position: 1 },
+        { collection_id: collections.first.id, product_id: products.second.id, position: 2 },
+        { collection_id: collections.second.id, product_id: products.first.id, position: 1 }
+      ])
+      Spree::Product.where(id: products.map(&:id)).update_all(collections_count: 9)
+    end
+
+    it 'recounts each record from its own rows, including the ones with none' do
+      Spree::Product.reset_counters_in_bulk(products.map(&:id), :product_collections)
+
+      expect(products.map { |product| product.reload.collections_count }).to eq([2, 1, 0])
+    end
+
+    it 'reads the counter column from the other side of the association' do
+      Spree::Collection.reset_counters_in_bulk(collections.map(&:id), :product_collections)
+
+      expect(collections.map { |collection| collection.reload.products_count }).to eq([2, 1])
     end
   end
 end

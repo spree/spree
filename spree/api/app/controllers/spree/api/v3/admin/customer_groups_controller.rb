@@ -7,6 +7,14 @@ module Spree
         class CustomerGroupsController < ResourceController
           scoped_resource :customers
 
+          request_params :customer_group do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'Wholesale'
+            body.attribute :description, :string, nullable: true, example: 'B2B accounts'
+            body.attribute :customer_ids, :array, of: :id,
+              example: %w[cus_UkLWZg9DAJ],
+              description: "Replaces the group's members."
+          end
+
           protected
 
           def model_class
@@ -17,12 +25,12 @@ module Spree
             Spree.api.admin_customer_group_serializer
           end
 
-          def scope
-            super.for_store(current_store)
+          def collection_includes
+            [:customer_group_users]
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :description, customer_ids: [])
+            params.permit(*permitted_attributes)
           end
         end
       end

@@ -426,7 +426,7 @@ test.describe('catalogs', () => {
     await saveCatalog(page)
 
     await page.reload()
-    await expect(page.getByLabel(/minimum amount/i)).toHaveValue('500.0', { timeout: 15_000 })
+    await expect(page.getByLabel(/minimum amount/i)).toHaveValue('500.00', { timeout: 15_000 })
   })
 
   test('renames a catalog from the header Save', async ({ page }) => {

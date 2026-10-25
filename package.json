@@ -7,6 +7,9 @@
     "build": "turbo build",
     "test": "turbo test",
     "generate:zod": "pnpm --recursive --filter \"./packages/*\" run generate:zod",
+    "generate:filters": "pnpm --recursive --filter \"./packages/*\" run generate:filters",
+    "generate:params": "pnpm --recursive --filter \"./packages/*\" run generate:params",
+    "generate:code-lists": "pnpm --filter @spree/core run generate:code-lists",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "turbo format",
@@ -44,9 +47,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
-    "turbo": "^2.9.14",
-    "@changesets/cli": "^2.31.0",
-    "@changesets/changelog-github": "^0.7.0"
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3",
+    "@typescript/typescript6": "^6.0.2",
+    "turbo": "^2.11.9"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {

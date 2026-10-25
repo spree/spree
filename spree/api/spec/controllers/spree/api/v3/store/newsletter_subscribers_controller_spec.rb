@@ -11,6 +11,36 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 
+  describe 'POST #create' do
+    let!(:account) { create(:user, email: 'member@example.com') }
+
+    it 'does not tell a guest whether an account exists for the email' do
+      post :create, params: { email: account.email }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['customer_id']).to be_nil
+    end
+
+    context 'as a signed-in customer subscribing someone else\'s verified address' do
+      let!(:subscriber) { create(:newsletter_subscriber, :verified, customer: account, email: account.email, store: store) }
+
+      before { request.headers['Authorization'] = "Bearer #{jwt_token}" }
+
+      it 'does not take over the subscription' do
+        post :create, params: { email: account.email }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['customer_id']).to be_nil
+        expect(subscriber.reload.customer).to eq(account)
+
+        delete :destroy, params: { id: subscriber.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Spree::NewsletterSubscriber.exists?(subscriber.id)).to be(true)
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     # Opt in via update_column, not the factory — setting accepts_email_marketing
     # at create time auto-subscribes the customer and collides with our subscriber.
@@ -43,7 +73,7 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
 
       it 'publishes newsletter_subscriber.unsubscribe_requested with the unsubscribe_token' do
         expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event)
-          .with('newsletter_subscriber.unsubscribe_requested', hash_including(:unsubscribe_token, :id, :email, :store_id))
+          .with('newsletter_subscriber.unsubscribe_requested', hash_including('unsubscribe_token', 'id', 'email', 'store_id'))
 
         post :request_unsubscribe, params: { email: subscriber.email }
       end
@@ -54,14 +84,14 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
 
           it 'includes redirect_url in the event payload' do
             expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event)
-              .with('newsletter_subscriber.unsubscribe_requested', hash_including(redirect_url: 'https://myshop.com/unsubscribe'))
+              .with('newsletter_subscriber.unsubscribe_requested', hash_including('redirect_url' => 'https://myshop.com/unsubscribe'))
 
             post :request_unsubscribe, params: { email: subscriber.email, redirect_url: 'https://myshop.com/unsubscribe' }
           end
 
           it 'silently drops redirect_url when it does not match allowed origins' do
             expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event)
-              .with('newsletter_subscriber.unsubscribe_requested', hash_not_including(:redirect_url))
+              .with('newsletter_subscriber.unsubscribe_requested', hash_not_including('redirect_url'))
 
             post :request_unsubscribe, params: { email: subscriber.email, redirect_url: 'https://evil.com/phish' }
 
@@ -72,7 +102,7 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
         context 'when the store has no allowed origins' do
           it 'silently drops redirect_url' do
             expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event)
-              .with('newsletter_subscriber.unsubscribe_requested', hash_not_including(:redirect_url))
+              .with('newsletter_subscriber.unsubscribe_requested', hash_not_including('redirect_url'))
 
             post :request_unsubscribe, params: { email: subscriber.email, redirect_url: 'https://anything.com/unsubscribe' }
           end

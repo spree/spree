@@ -31,7 +31,7 @@ FactoryBot.define do
           country = Spree::Country.by_iso('US')
 
           if Spree::DeliveryMethod.none?
-            create(:shipping_method).tap do |delivery_method|
+            create(:delivery_method).tap do |delivery_method|
               delivery_method.calculator.preferred_amount = evaluator.shipping_cost
               delivery_method.calculator.preferred_currency = cart.store.default_currency
               delivery_method.calculator.save!

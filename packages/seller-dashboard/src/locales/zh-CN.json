@@ -148,6 +148,7 @@
             "receive_title": "接收退货商品",
             "received_quantity": "已接收",
             "refund_amount": "金额",
+            "refund_includes_tax": "全额包含 {{tax}} 税费。退款金额较小时，税费按相同比例退还。",
             "refund_method": "退款至",
             "refund_methods": {
               "original_payment": "原支付方式",
@@ -468,6 +469,7 @@
       "packing_slip_title": "装箱单 — 订单 {{number}}",
       "print_label": "打印面单",
       "print_packing_slip": "打印装箱单",
+      "quoted_after_review": "审核后报价",
       "ship_to": "收货地址",
       "ships_from_label": "发货地",
       "split": "拆分",
@@ -518,6 +520,7 @@
         "cancel_message": "客户会收到不再继续处理的通知。",
         "cancel_title": "取消此换货？",
         "fulfill": "寄出替换件",
+        "balance_due_confirm": "替换商品比退回的商品更贵。发出替换商品会将差额作为待付余额添加到订单中。不会自动扣款。",
         "price_difference": "差价：{{amount}}",
         "receive": "接收",
         "title": "换货"
@@ -533,6 +536,8 @@
         "receive": "接收",
         "refund": "退款",
         "refund_total": "退款合计：{{amount}}",
+        "refunded": "已退款：{{amount}}",
+        "refunded_of": "已退款：{{amount}} / {{total}}",
         "title": "退货"
       },
       "statuses": {
@@ -730,7 +735,8 @@
     "variant_remove_confirm_description": "保存后它会从商品中移除。",
     "variant_remove_confirm_title": "移除此变体？",
     "variants": "变体",
-    "variants_empty": "此商品按上述价格作为单一款式销售。添加变体即可按尺码、颜色等选项销售。"
+    "variants_empty": "此商品按上述价格作为单一款式销售。添加变体即可按尺码、颜色等选项销售。",
+    "digital_files_review_notice": "添加或替换文件会将此商品重新送审，在平台再次批准前将暂停销售。"
   },
   "profile": {
     "about": "简介",

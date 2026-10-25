@@ -28,6 +28,14 @@ module Spree
             described_class.new.handle(event)
           }.not_to change(Spree::WebhookDelivery, :count)
         end
+
+        it 'never delivers them to an endpoint that names the event either' do
+          webhook_endpoint.update!(subscriptions: [event_name])
+
+          expect {
+            described_class.new.handle(event)
+          }.not_to change(Spree::WebhookDelivery, :count)
+        end
       end
 
       context 'with an event carrying a live credential' do

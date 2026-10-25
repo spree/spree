@@ -40,6 +40,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'benchmark' # needed for ruby 4.0 and benchmark gem
   s.add_dependency 'cancancan', '~> 3.2'
   s.add_dependency 'countries'
+  # OAuth 2.1 authorization server. Pinned to a release candidate because it
+  # is the first version carrying RFC 8707 resource indicators, which the MCP
+  # authorization spec requires and which cannot be added from outside — the
+  # audience has to be bound when the token is issued. Relax to '~> 6.0' once
+  # 6.0.0 is final.
+  s.add_dependency 'doorkeeper', '~> 6.0.0.rc2'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
   s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator
@@ -49,6 +55,7 @@ Gem::Specification.new do |s|
   # touching a JSON column raises ArgumentError. Rails' bug, not ours — unpin
   # once activesupport passes those options as keywords.
   s.add_dependency 'json', '< 3'
+  s.add_dependency 'json_schemer', '~> 2.4'
   s.add_dependency 'jwt', '~> 3.1'
   s.add_dependency 'liquid', '~> 5.14'
   s.add_dependency 'money', '~> 6.13'
@@ -57,10 +64,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'name_of_person', '~> 1.1'
   s.add_dependency 'nokogiri', '~> 1.18'
   s.add_dependency 'oj', '~> 3.16'
-  s.add_dependency 'ostruct'
   s.add_dependency 'paranoia', '>= 2.4'
   s.add_dependency 'loofah', '~> 2.21'
   s.add_dependency 'rails-html-sanitizer', '~> 1.6'
+  s.add_dependency 'rails-i18n', '~> 8.0'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'request_store', '~> 1.5'
   s.add_dependency 'rexml'
@@ -77,9 +84,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'wannabe_bool'
   s.add_dependency 'safely_block', '>= 0.4', '< 2.0'
   s.add_dependency 'phonelib', '~> 0.10'
-  s.add_dependency 'ar_lazy_preload', '~> 2.0'
+  s.add_dependency 'ar_lazy_preload', '~> 2.1'
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'sqids', '~> 0.2'
   s.add_dependency 'ssrf_filter', '~> 1.0'
-  s.add_dependency 'pagy', '>= 43.3'
+  s.add_dependency 'pagy', '>= 43.6.3'
 end

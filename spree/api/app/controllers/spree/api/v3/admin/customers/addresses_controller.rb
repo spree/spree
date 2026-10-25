@@ -4,6 +4,17 @@ module Spree
       module Admin
         module Customers
           class AddressesController < BaseController
+            request_params :customer_address do |body|
+              body.include_attributes Spree::Api::V3::Admin::AddressRequestSchema
+              body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
+              body.attribute :quick_checkout, :boolean
+              body.attribute :is_default_billing, :boolean,
+                permit: false,
+                description: "Makes this the customer's default address of that kind."
+              body.attribute :is_default_shipping, :boolean,
+                permit: false,
+                description: "Makes this the customer's default address of that kind."
+            end
 
             # POST /api/v3/admin/customers/:customer_id/addresses
             def create
@@ -50,10 +61,6 @@ module Spree
 
             protected
 
-            def parent_association
-              :addresses
-            end
-
             def model_class
               Spree::Address
             end
@@ -62,16 +69,14 @@ module Spree
               Spree.api.admin_address_serializer
             end
 
+            def collection_includes
+              [:owner]
+            end
+
             private
 
             def address_attrs
-              params.permit(
-                :firstname, :lastname, :first_name, :last_name,
-                :address1, :address2, :city,
-                :country_code, :state_code,
-                :zipcode, :postal_code, :phone, :alternative_phone,
-                :state_name, :company, :label, :quick_checkout
-              )
+              params.permit(*declared_permitted_attributes)
             end
 
             def default_billing_flag

@@ -109,15 +109,17 @@ module Spree
           end
         end
 
-        context 'when empty service is called first' do
-          before { Spree::Carts::Empty.call(cart: cart) }
+        context 'when an address belongs to an address book' do
+          let(:ship_address) { create(:company_address) }
+          let(:bill_address) { create(:address, customer: create(:customer)) }
 
-          it 'destroys the cart' do
-            expect(cart.destroyed?).not_to be true
-
+          it 'destroys the cart but leaves the book entries in place' do
             subject
 
             expect(cart.destroyed?).to be true
+            expect(Spree::Address.where(id: address_ids)).to contain_exactly(ship_address, bill_address)
+            expect(ship_address.reload.deleted_at).to be_nil
+            expect(bill_address.reload.deleted_at).to be_nil
           end
         end
 
@@ -151,7 +153,7 @@ module Spree
 
           it 'returns failure' do
             expect(subject.success?).to be false
-            expect(subject.error.value).to eq Spree.t(:cannot_be_destroyed)
+            expect(subject.error.value).to eq I18n.t('spree.cannot_be_destroyed')
           end
         end
 
@@ -161,7 +163,7 @@ module Spree
 
           it 'returns failure' do
             expect(subject.success?).to be false
-            expect(subject.error.value).to eq Spree.t(:cannot_be_destroyed)
+            expect(subject.error.value).to eq I18n.t('spree.cannot_be_destroyed')
           end
         end
       end
@@ -174,7 +176,7 @@ module Spree
 
       it 'returns failure' do
         expect(subject.success?).to be false
-        expect(subject.error.value).to eq Spree.t(:cannot_be_destroyed)
+        expect(subject.error.value).to eq I18n.t('spree.cannot_be_destroyed')
       end
     end
   end

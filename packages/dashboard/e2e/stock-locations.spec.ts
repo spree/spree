@@ -8,6 +8,8 @@ async function createStockLocation(page: Page, name: string) {
   await page.getByRole('button', { name: /add stock location/i }).click()
   await expect(page.getByRole('heading', { name: /add stock location/i })).toBeVisible()
   await page.locator('#name').fill(name)
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: stock_location.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create stock location/i }).click()
 }
 
@@ -60,6 +62,9 @@ test.describe('stock locations', () => {
     await openRowMenu(page, name)
     await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete stock location\?/i })).toBeVisible()
+    await expect(page.getByRole('dialog')).toContainText(
+      /stock levels at this location will be deleted as well/i,
+    )
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^delete$/i })

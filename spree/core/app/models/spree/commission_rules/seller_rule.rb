@@ -7,11 +7,8 @@ module Spree
       # Ids are checked against the rate's own store on write, so a rule can
       # never be pointed at another marketplace's seller — and the client is
       # told, rather than having the id quietly dropped.
-      preference :seller_ids, :array, default: [],
-                 parse_on_set: normalize_id_preference(
-                   klass: Spree::Seller,
-                   scope: ->(rule) { rule.store.sellers }
-                 )
+      preference :seller_ids, :array, of: :id, model: 'Spree::Seller', default: [],
+                 scope: ->(rule) { rule.store.sellers }
 
       # @return [Array<Spree::Seller>]
       def sellers

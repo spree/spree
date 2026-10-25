@@ -63,38 +63,38 @@ RSpec.describe Spree::Imports::RowProcessors::PurchaseOrder, type: :service do
 
   it 'names suppliers and warehouses rather than creating them' do
     expect { process(line.merge('supplier' => 'Nobody')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_unknown_supplier, name: 'Nobody'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_unknown_supplier', name: 'Nobody'))
     expect { process(line.merge('destination' => 'Mars')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_unknown_destination, name: 'Mars'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_unknown_destination', name: 'Mars'))
     expect(Spree::Supplier.count).to eq(1)
     expect(Spree::PurchaseOrder.count).to eq(0)
   end
 
   it 'needs the SKU to exist, once' do
     expect { process(line.merge('sku' => 'NOPE')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_unknown_sku, sku: 'NOPE'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_unknown_sku', sku: 'NOPE'))
 
     # Past the SKU validation, the way a legacy catalogue can be.
     create(:variant, product: create(:product, store: store)).update_columns(sku: 'denim-m')
     expect { process(line) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_ambiguous_sku, sku: 'DENIM-M'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_ambiguous_sku', sku: 'DENIM-M'))
   end
 
   it 'refuses a reference-less row, since nothing could group it' do
     expect { process(line.merge('reference' => ' ')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_reference_required))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_reference_required'))
   end
 
   it 'refuses quantities, costs, currencies and dates it cannot read' do
     expect { process(line.merge('quantity' => '0')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_invalid_quantity, value: '0'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_invalid_quantity', value: '0'))
     expect { process(line.merge('quantity' => 'ten')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_invalid_quantity, value: 'ten'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_invalid_quantity', value: 'ten'))
     expect { process(line.merge('unit_cost' => '')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_invalid_cost, value: ''))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_invalid_cost', value: ''))
     expect { process(line.merge('currency' => 'XXX')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_unsupported_currency, currency: 'XXX'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_unsupported_currency', currency: 'XXX'))
     expect { process(line.merge('expected_at' => 'March')) }.
-      to raise_error(ArgumentError, Spree.t(:purchase_order_import_invalid_date, column: 'expected_at', value: 'March'))
+      to raise_error(ArgumentError, I18n.t('spree.purchase_order_import_invalid_date', column: 'expected_at', value: 'March'))
   end
 end

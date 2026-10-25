@@ -1,5 +1,5 @@
 import * as p from '@clack/prompts'
-import { Command } from 'commander'
+import { Command, Option } from 'commander'
 import getPort, { portNumbers } from 'get-port'
 import pc from 'picocolors'
 import { DEFAULT_SPREE_PORT } from './constants.js'
@@ -12,11 +12,19 @@ const program = new Command()
   .name('create-spree-app')
   .description('Create a new Spree Commerce project')
   .argument('[directory]', 'project directory')
+  .option('--no-dashboard', 'skip the admin dashboard (the built-in one stays at /dashboard)')
+  // Defined before its negation so that passing neither leaves the value
+  // undefined and the prompt asks.
+  .option('--seller-dashboard', 'include the marketplace seller dashboard')
+  .option('--no-seller-dashboard', 'skip the marketplace seller dashboard')
   .option('--no-storefront', 'skip Next.js storefront setup')
-  .option(
-    '--react-dashboard',
-    'no-op: the React Dashboard is always included (kept so existing scripts keep working)',
-  )
+  .option('--agent-skills', 'install the Spree agent skills without asking')
+  .option('--no-agent-skills', 'skip installing the Spree agent skills')
+  .option('--docs-mcp', 'connect coding agents to the Spree docs MCP server without asking')
+  .option('--no-docs-mcp', 'skip connecting coding agents to the Spree docs MCP server')
+  // Deprecated: the dashboard is included by default. Hidden, kept so
+  // existing scripts keep working.
+  .addOption(new Option('--react-dashboard').hideHelp())
   .option('--no-start', 'do not start Docker services')
   .option('--port <number>', 'port for the Spree server', String(DEFAULT_SPREE_PORT))
   .option('--use-npm', 'use npm as package manager')
@@ -39,7 +47,11 @@ const program = new Command()
       const options = await runPrompts({
         directory,
         noStorefront: flags.storefront === false ? true : undefined,
-        reactDashboard: flags.reactDashboard === true,
+        noSellerDashboard:
+          flags.sellerDashboard === undefined ? undefined : flags.sellerDashboard === false,
+        noDashboard: flags.dashboard === false,
+        noAgentSkills: flags.agentSkills === undefined ? undefined : flags.agentSkills === false,
+        noDocsMcp: flags.docsMcp === undefined ? undefined : flags.docsMcp === false,
         noStart: flags.start === false ? true : undefined,
         packageManager,
       })

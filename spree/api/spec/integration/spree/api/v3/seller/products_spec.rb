@@ -20,10 +20,13 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         first-party.
       DESC
 
+      seller_sdk_example 'products/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
       parameter name: :sort, in: :query, type: :string, required: false, description: 'Sort field; prefix with `-` for descending'
+      filter_parameters_for
 
       response '200', 'products listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -59,35 +62,10 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         marketplace, not the seller.
       DESC
 
+      seller_sdk_example 'products/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Hand-thrown mug' },
-          description: { type: :string },
-          slug: { type: :string, example: 'hand-thrown-mug' },
-          status: { type: :string, example: 'draft' },
-          meta_title: { type: :string },
-          meta_description: { type: :string },
-          meta_keywords: { type: :string },
-          product_type_id: { type: :string, example: 'ptype_abc123' },
-          tags: { type: :array, items: { type: :string }, example: %w[ceramics handmade] },
-          category_ids: { type: :array, items: { type: :string }, example: ['cat_abc123'] },
-          metadata: { type: :object, additionalProperties: true },
-          prices: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                amount: { type: :string, example: '24.00' },
-                compare_at_amount: { type: :string, example: '30.00' },
-                currency: { type: :string, example: 'USD' }
-              }
-            }
-          }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'product created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -127,6 +105,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         is not told the record exists.
       DESC
 
+      seller_sdk_example 'products/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'product returned' do
@@ -158,19 +138,10 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
       security [bearer_auth: []]
       description 'Edits a product the acting seller owns.'
 
+      seller_sdk_example 'products/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Hand-thrown mug, large' },
-          description: { type: :string },
-          slug: { type: :string },
-          status: { type: :string, example: 'active' },
-          tags: { type: :array, items: { type: :string } },
-          category_ids: { type: :array, items: { type: :string } },
-          metadata: { type: :object, additionalProperties: true }
-        }
-      }
+      request_body_for
 
       response '200', 'product updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -192,6 +163,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
       security [bearer_auth: []]
       description 'Deletes a product the acting seller owns.'
 
+      seller_sdk_example 'products/delete'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '204', 'product deleted' do
@@ -200,6 +173,197 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         let(:id) { product.prefixed_id }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/{id}/submit' do
+    parameter name: :id, in: :path, type: :string, description: 'Product ID'
+
+    patch 'Submit a product for review' do
+      tags 'Products'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Asks the marketplace to put a product on sale. Whether a listing goes
+        live is the operator's decision, so a seller submits it for review
+        rather than setting its status. Only drafts and rejected listings can
+        be submitted.
+
+        Where the marketplace approves seller products automatically, the
+        product comes back already `active`.
+      DESC
+
+      seller_sdk_example 'products/submit'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'product submitted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { create(:product, store: store, seller: seller, status: 'draft').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('proposed')
+        end
+      end
+
+      response '422', 'product cannot be submitted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/{id}/draft' do
+    parameter name: :id, in: :path, type: :string, description: 'Product ID'
+
+    patch 'Move a product back to draft' do
+      tags 'Products'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Takes a listing down. Withdrawing your own product is not a review
+        decision, so it needs nobody's approval.
+      DESC
+
+      seller_sdk_example 'products/draft'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'product moved to draft' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('draft')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/{id}/archive' do
+    parameter name: :id, in: :path, type: :string, description: 'Product ID'
+
+    patch 'Archive a product' do
+      tags 'Products'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description 'Retires a product the acting seller owns, taking it off sale without deleting it.'
+
+      seller_sdk_example 'products/archive'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'product archived' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('archived')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/bulk_submit' do
+    post 'Submit products for review' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Submits a selection for the marketplace to review. Only drafts and
+        rejected listings can be submitted, so a mixed selection moves what it
+        can: `product_count` is what was submitted, and `skipped_count`, present
+        only when something was skipped, is the rest.
+      DESC
+
+      seller_sdk_example 'products/bulk-submit'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'products submitted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let!(:draft) { create(:product, store: store, seller: seller, status: 'draft') }
+        let(:body) { { ids: [draft.prefixed_id] } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['product_count']).to eq(1)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/bulk_status_update' do
+    post 'Change the status of products' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Moves a selection to `draft` or `archived`. There is no bulk route onto
+        `active`: a listing goes on sale when the marketplace approves it.
+      DESC
+
+      seller_sdk_example 'products/bulk-status-update'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'statuses changed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:body) { { ids: [product.prefixed_id], status: 'archived' } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['product_count']).to eq(1)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/products/bulk_destroy' do
+    delete 'Delete products' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Deletes a selection of the acting seller's products. Ids outside this
+        seller's catalog are ignored. A product the marketplace refuses to
+        delete is skipped: `product_count` is what was deleted, and
+        `skipped_count`, present only when something was skipped, is the rest.
+      DESC
+
+      seller_sdk_example 'products/bulk-destroy'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'products deleted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:body) { { ids: [product.prefixed_id] } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['product_count']).to eq(1)
+        end
       end
     end
   end

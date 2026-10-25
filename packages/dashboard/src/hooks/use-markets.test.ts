@@ -1,7 +1,11 @@
 import { STORE_QUERY_RESOURCE, withStoreScope } from '@spree/dashboard-core'
 import { QueryClient } from '@tanstack/react-query'
 import { describe, expect, it } from 'vitest'
-import { marketUpdateInvalidations, marketWriteInvalidations } from './use-markets'
+import {
+  marketAutocompleteProps,
+  marketUpdateInvalidations,
+  marketWriteInvalidations,
+} from './use-markets'
 
 const STORE_ID = 'store_abc123'
 
@@ -36,19 +40,25 @@ function staleKeysAfter(invalidate: ReturnType<typeof marketUpdateInvalidations>
 }
 
 describe('market write invalidations', () => {
-  // A store's supported currencies and locales are the union of its markets',
-  // so a market write leaves the cached store payload stale. Without this,
-  // pickers reading `useStore()` keep offering removed currencies/locales.
-  it('invalidates the store payload so derived currencies and locales refresh', () => {
+  // The store payload still carries fields the server derives from markets.
+  it('invalidates the store payload', () => {
     expect(staleKeysAfter(marketWriteInvalidations)).toContain('store')
     expect(staleKeysAfter(marketUpdateInvalidations('market_1'))).toContain('store')
   })
 
+  // `marketList` is the shared list `useStore()` reads currencies and
+  // languages from, so pickers drop a removed one at once.
   it('invalidates every market query', () => {
     const stale = staleKeysAfter(marketWriteInvalidations)
 
     expect(stale).toContain('marketList')
     expect(stale).toContain('market')
+  })
+
+  // The store shell and the market list filter read the same cached list,
+  // so these writes refresh both without waiting for its hour to pass.
+  it('names the filter cache after markets so these writes reach it', () => {
+    expect(marketAutocompleteProps().queryKey).toBe('markets')
   })
 
   it('leaves unrelated resources cached', () => {

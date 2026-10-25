@@ -21,9 +21,7 @@ module Spree
           Spree::RichTextHelper.to_plain_text(seller.about)
         end
 
-        attribute :about_html do |seller|
-          seller.about_html
-        end
+        attributes :about_html
 
         attribute :logo_url do |seller|
           image_url_for(seller.logo)

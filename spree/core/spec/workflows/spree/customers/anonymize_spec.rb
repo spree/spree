@@ -190,6 +190,39 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(shared.reload.address1).to eq('1 Shared Company Way')
     end
 
+    # Completion copies the company's site onto the order. The copy keeps its
+    # owner_type so it stays addressed to a business, and belongs to no book —
+    # which is what makes it this erasure's to rewrite, unlike the shared row
+    # above.
+    context 'with a snapshot taken from a company site' do
+      let(:company) { create(:company, store: store) }
+      let(:snapshot) do
+        create(:company_address, owner: company, company: 'Acme Logistics', address1: '14 Dock Road',
+                                 first_name: 'Dana', last_name: 'Reyes', phone: '555-0100').
+          snapshot.tap(&:save!)
+      end
+      let!(:order) { create(:order, customer: customer, store: store, ship_address: snapshot) }
+
+      it 'erases the contact the person left on it' do
+        result
+        snapshot.reload
+
+        expect(snapshot.first_name).to be_nil
+        expect(snapshot.last_name).to be_nil
+        expect(snapshot.phone).to be_nil
+      end
+
+      # The dock and the trading name are the company's, and the merchant's
+      # record of a lawful sale goes with them.
+      it 'keeps where the business took delivery' do
+        result
+        snapshot.reload
+
+        expect(snapshot.address1).to eq('14 Dock Road')
+        expect(snapshot.company).to eq('Acme Logistics')
+      end
+    end
+
     it 'purges the carrier label, which prints the name and street' do
       shipped = create(:order_ready_to_ship, customer: customer, store: store)
       label = create(:shipping_label, :with_file, owner: shipped.fulfillments.first, store: store)
@@ -646,6 +679,16 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(data_request.reload).to be_completed
       expect(data_request.requested_at).to be_present
     end
+
+    it 'voids the link of a request still waiting for confirmation' do
+      waiting = create(:data_request, :awaiting_confirmation, store: store, customer: customer)
+      token = waiting.generate_token_for(:confirmation)
+
+      result
+
+      expect(waiting.reload).to be_lapsed
+      expect(Spree::DataRequest.find_by_token_for(:confirmation, token)).to be_nil
+    end
   end
 
   # The access export discloses all three as this person's data, so leaving
@@ -685,7 +728,7 @@ RSpec.describe Spree::Customers::Anonymize do
   end
 
   it 'announces the erasure' do
-    expect(customer).to receive(:publish_event).with('customer.anonymized', hash_including(:store_id))
+    expect(customer).to receive(:publish_event).with('customer.anonymized', nil, hash_including(:store_id))
 
     described_class.call(customer: customer, store: store)
   end

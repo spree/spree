@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'events/registry'
+require_relative 'events/catalog'
 require_relative 'events/adapters/base'
 require_relative 'events/adapters/active_support_notifications'
 
@@ -33,6 +34,24 @@ module Spree
       # reloads in development don't orphan the subscription and cause events to
       # be logged multiple times.
       attr_accessor :log_subscription
+
+      # Whether publishing an undeclared event raises (development and test) or
+      # only logs a warning (production), see {Catalog#verify_declared!}.
+      attr_writer :raise_on_undeclared_events
+
+      # @return [Boolean]
+      def raise_on_undeclared_events
+        return @raise_on_undeclared_events unless @raise_on_undeclared_events.nil?
+
+        Rails.env.development? || Rails.env.test?
+      end
+
+      # Every event Spree publishes, see {Catalog}.
+      #
+      # @return [Spree::Events::Catalog]
+      def catalog
+        @catalog ||= Catalog.new
+      end
 
       # Publish an event to all matching subscribers
       #

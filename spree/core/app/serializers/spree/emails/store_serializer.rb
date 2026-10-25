@@ -21,6 +21,11 @@ module Spree
         width, height = store.email_logo&.metadata.to_h.values_at('width', 'height').map(&:to_f)
         (LOGO_HEIGHT * width / height).round if height.to_f.positive?
       end
+
+      # Colors and font (see Spree::Emails::Branding).
+      attribute :branding do |store|
+        store.email_branding(params[:branding] || {}).to_h
+      end
     end
   end
 end

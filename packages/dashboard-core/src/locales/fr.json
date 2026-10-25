@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Aucune adresse sélectionnée"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Fil d'Ariane",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Facturation par défaut",
       "default_shipping": "Livraison par défaut",
+      "inherited_from": "Héritée de {{name}}",
       "set_default_billing": "Définir comme adresse de facturation par défaut",
       "set_default_shipping": "Définir comme adresse de livraison par défaut"
     },
@@ -113,6 +117,7 @@
         "title": "Réinitialiser votre mot de passe"
       },
       "login": {
+        "account_deactivated": "Ce compte a été désactivé. Contactez un administrateur pour rétablir l'accès.",
         "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
         "divider": "ou",
         "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",
@@ -183,7 +188,9 @@
       "searching": "Recherche…",
       "select_placeholder": "Sélectionner…",
       "unsaved_changes": "Vous avez des modifications non enregistrées.",
-      "yes": "Oui"
+      "yes": "Oui",
+      "done": "Terminé",
+      "error": "Une erreur s'est produite."
     },
     "components": {
       "address_block": {
@@ -480,6 +487,12 @@
         "discard_message": "Tout ce que vous avez saisi sera perdu. Cette action est irréversible.",
         "discard_title": "Abandonner ce brouillon ?"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Montant en {{currency}}",
+      "help": "Les devises laissées vides ne se voient pas proposer cette méthode de livraison.",
+      "label": "Montant",
+      "required": "Saisissez un montant dans au moins une devise."
     },
     "custom_field_definitions": {
       "errors": {
@@ -935,6 +948,14 @@
       "order_multiple": {
         "label": "Multiple de commande",
         "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Téléchargements autorisés"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Jours de disponibilité"
+        }
       }
     },
     "image_upload": {
@@ -1401,7 +1422,7 @@
       "create_description": "Ajoutez un entrepôt, un magasin ou un point de retrait pour traiter les commandes.",
       "create_label": "Créer un emplacement de stock",
       "delete_confirm": {
-        "message": "{{name}} sera supprimé. Les articles en stock à cet emplacement ne sont pas supprimés.",
+        "message": "{{name}} sera supprimé. Les niveaux de stock à cet emplacement seront également supprimés.",
         "title": "Supprimer l'emplacement de stock ?"
       },
       "edit_description": "Mettez à jour le nom, l'adresse, le retrait ou les politiques de stock.",
@@ -1463,11 +1484,13 @@
         "seeded_report_read_only": "Ce rapport est intégré et ne peut pas être modifié. Enregistrez plutôt une copie.",
         "taken": "est déjà utilisé",
         "too_long": "est trop long ({{count}} caractères maximum)",
+        "too_many_decimals": "a plus de {{count}} décimales",
         "too_short": "est trop court ({{count}} caractères minimum)",
         "wrong_length": "n'a pas la bonne longueur ({{count}} caractères attendus)"
       },
       "country_required": "Le pays est requis",
       "currency_required": "La devise est requise",
+      "locale_required": "La langue est requise",
       "first_name_required": "Le prénom est obligatoire",
       "invalid_email": "Saisissez une adresse e-mail valide",
       "invalid_email_or_password": "E-mail ou mot de passe invalide",
@@ -1479,7 +1502,8 @@
       "passwords_dont_match": "Les mots de passe ne correspondent pas",
       "positive_number": "{{field}} doit être supérieur à 0",
       "required": "{{field}} est obligatoire",
-      "store_name_required": "Le nom de la boutique est requis"
+      "store_name_required": "Le nom de la boutique est requis",
+      "too_many_decimals": "{{field}} peut avoir au plus {{count}} décimales"
     },
     "products": {
       "autocomplete": {
@@ -1576,6 +1600,12 @@
         "slug_placeholder": "url-du-produit"
       },
       "tax_category_placeholder": "Sélectionner une catégorie de taxe",
+      "tax": {
+        "apply_to_variants_help": "Cette catégorie s'applique à chaque variante qui n'a pas sa propre catégorie de taxe. À l'enregistrement, ces variantes utilisent ce réglage.",
+        "variant_overrides_heading": "Variantes avec leur propre catégorie de taxe",
+        "variant_overrides_description": "Ces variantes conservent leur catégorie jusqu'à ce que vous supprimiez l'exception. Les autres variantes suivent la catégorie du produit ci-dessus.",
+        "clear_variant_override": "Utiliser la catégorie du produit"
+      },
       "transfers": {
         "create_description": "Déplacer du stock entre les emplacements, ou recevoir du nouveau stock d’un fournisseur externe.",
         "delete_confirm": {
@@ -2023,6 +2053,38 @@
           "description": "Le vendeur doit fournir une adresse pour les retours"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Ajouter",
+      "all_variants": "Toutes les variantes",
+      "columns": {
+        "file": "Fichier",
+        "variant": "Variante",
+        "size": "Taille",
+        "downloads": "Téléchargements",
+        "days": "Jours"
+      },
+      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
+      "delete_title": "Supprimer ce fichier ?",
+      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
+      "download": "Télécharger",
+      "drop_hint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+      "empty": "Aucun fichier pour le moment",
+      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
+      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "source": {
+        "upload": "Téléverser un fichier"
+      },
+      "store_default": "{{count}} (par défaut)",
+      "title": "Fichiers numériques",
+      "untitled": "Fichier sans nom",
+      "upload": "Ajouter un fichier",
+      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
+      "uploading": "Téléversement de {{name}}…",
+      "uploading_short": "Téléversement…",
+      "replace": "Remplacer le fichier",
+      "replace_description": "« {{name}} » est supprimé et tous les acheteurs téléchargent le nouveau fichier depuis leurs liens existants. Effet immédiat.",
+      "replace_title": "Remplacer ce fichier ?"
     }
   }
 }

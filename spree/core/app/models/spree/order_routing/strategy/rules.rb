@@ -23,7 +23,7 @@ module Spree
           estimate_rates(packages)
         end
 
-        # Stock decrement / restock today happens via Spree::Shipment's state
+        # Stock decrement / restock today happens via Spree::Fulfillment's state
         # machine (after_ship / after_cancel). The strategy methods below are
         # part of the contract for the future reservation + typed-movement
         # phase — see 6.0-stock-reservations.md and 6.0-typed-stock-movements.md.
@@ -59,8 +59,11 @@ module Spree
         # rank order so the Prioritizer's first-package-wins-on-hand logic
         # honors the routing decision.
         def build_packages(locations)
+          stock_levels = Spree::Stock::Packer.stock_levels_by_location(locations, requested_variant_ids)
+
           locations.flat_map do |location|
-            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters, owner: order).packages
+            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters, owner: order,
+                                     stock_levels: stock_levels.fetch(location.id, {})).packages
           end
         end
 

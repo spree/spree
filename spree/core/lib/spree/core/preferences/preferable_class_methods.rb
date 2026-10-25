@@ -1,169 +1,221 @@
 module Spree::Preferences
   module PreferableClassMethods
-    # Declaration order, so an admin form can present preferences the way
-    # their author grouped them — credentials before the optional settings
-    # that depend on them. `defined_preferences` reads Ruby's own `methods`,
-    # whose order is an implementation detail, so it cannot answer this.
-    def declared_preference_order
-      @declared_preference_order ||= begin
-        inherited = superclass.respond_to?(:declared_preference_order) ? superclass.declared_preference_order : []
-        inherited.dup
+    # Bumped by every declaration anywhere, so a class's cached view of its
+    # preferences is rebuilt when an ancestor gains one after the class was
+    # loaded — a decorator adding a secret to Spree::PaymentMethod, say.
+    @declarations = 0
+
+    class << self
+      attr_accessor :declarations
+    end
+
+    # Every preference the class declares, inherited ones included, in
+    # declaration order — so an admin form can present them the way their
+    # author grouped them.
+    #
+    # @return [Hash{Symbol => Hash}] name => `{ type:, default:, deprecated:, internal:, choices:, nullable:, parse_on_set: }`
+    def preference_definitions
+      preference_declarations_cache[:definitions] ||= begin
+        inherited = superclass.respond_to?(:preference_definitions) ? superclass.preference_definitions : {}
+        inherited.merge(own_preference_definitions).freeze
       end
     end
 
+    # Each declared preference's type, known from the declarations alone —
+    # without building a record.
+    #
+    # @return [Hash{Symbol => Symbol}]
+    def declared_preference_types
+      preference_declarations_cache[:types] ||= preference_definitions.transform_values { |definition| definition[:type] }.freeze
+    end
+
+    # Names of the `:password` preferences, which a model including
+    # {Spree::SecretPreferences} stores encrypted in `secret_preferences`.
+    #
+    # @return [Array<Symbol>]
+    def secret_preference_names
+      preference_declarations_cache[:secrets] ||= declared_preference_types.filter_map { |name, type| name if type == :password }.freeze
+    end
+
+    # The value types a list item, a hash value or an object property may
+    # declare — what {Spree::PreferenceSchema::JsonSchema} compiles to JSON
+    # Schema, along with its `FORMATS`.
+    ITEM_TYPES = %i[string integer decimal money boolean id object].freeze
+
+    # Declares a typed preference with a `preferred_<name>` reader and writer
+    # and a `prefers_<name>?` query. On a model, the value lives in the
+    # `preferences` column (`secret_preferences` for a `:password` one) as a
+    # Rails store accessor, which brings the change methods with it:
+    # `preferred_<name>_changed?`, `_change`, `_was`,
+    # `saved_change_to_preferred_<name>?` and `preferred_<name>_before_last_save`.
+    #
+    # The declaration is the preference's contract on the wire, so it states
+    # the full type:
+    #
+    #   preference :amount_min,    :money
+    #   preference :channel_ids,   :array, of: :id, model: 'Spree::Channel', scope: ->(rule) { rule.store.channels }
+    #   preference :country_codes, :array, of: :string, format: :iso_country
+    #   preference :match_policy,  :string, choices: %w[any all none]
+    #   preference :amounts,       :hash, keys: :currency, values: :money
+    #   preference :tiers,         :array, of: :object, properties: { threshold: :money, value: :decimal }
+    #
+    # @param name [Symbol]
+    # @param type [Symbol] `:string`, `:text`, `:boolean`, `:integer`, `:decimal`, `:money`,
+    #   `:array`, `:hash`, `:password`, `:date` or `:datetime`
+    # @option options [Symbol] :of the type of each item of an `:array`
+    # @option options [Symbol] :keys the type of a `:hash`'s keys (`:string` or `:currency`)
+    # @option options [Symbol] :values the type of a `:hash`'s values
+    # @option options [Hash{Symbol => Symbol}] :properties the fields of each `of: :object` item
+    # @option options [Symbol] :format a string's domain format (see {Spree::PreferenceSchema::JsonSchema::FORMATS})
+    # @option options [String, Proc] :model the record class an `of: :id` list points at
+    # @option options [Proc] :scope `->(owner) { relation }` the ids must be found in
+    # @option options [Array, Proc] :choices the fixed set a value must come from
+    # @option options [Symbol] :currency where a `:money` preference's currency comes
+    #   from: another preference or a method of the record. Defaults to the
+    #   record's `currency` preference; with neither, the amount is in any currency.
     def preference(name, type, *args)
-      declared_preference_order << name.to_sym unless declared_preference_order.include?(name.to_sym)
+      name = name.to_sym
+      secret = type == :password
+      if secret && !include?(Spree::SecretPreferences)
+        raise ArgumentError, "#{self.name} declares the secret preference `#{name}` but cannot encrypt it. " \
+                             'Include Spree::SecretPreferences and add a `secret_preferences` text column to its table.'
+      end
+
       options = args.extract_options!
-      options.assert_valid_keys(:default, :deprecated, :in, :internal, :nullable, :parse_on_set)
+      options.assert_valid_keys(:default, :deprecated, :in, :choices, :internal, :nullable, :parse_on_set,
+                                :of, :keys, :values, :properties, :format, :model, :scope, :currency)
+      if options.key?(:in)
+        Spree::Deprecation.warn("`preference :#{name}, in:` is deprecated. Use `choices:` instead.")
+        options[:choices] ||= options.delete(:in)
+      end
+      check_preference_declaration(name, type, options)
+
       default = options[:default]
-      default = -> { options[:default] } unless default.is_a?(Proc)
-      deprecated = options[:deprecated]
-      internal = options[:internal]
-      # The fixed set a value must come from. Turns a text box into a picker
-      # in every admin form, and is what the inclusion validation would have
-      # told the operator only after a failed save.
-      choices = options[:in]
-      nullable = options[:nullable]
-      parse_on_set = options[:parse_on_set]
+      dynamic_default = default.is_a?(Proc)
+      default = -> { options[:default] } unless dynamic_default
+      own_preference_definitions[name] = {
+        type: type,
+        default: default,
+        # Computed when read (the default store's currency, say), so it
+        # differs between stores and is not part of the preference's schema.
+        dynamic_default: dynamic_default,
+        deprecated: options[:deprecated],
+        # Whether the system writes the value rather than the operator — a
+        # value a provider hands back, kept out of every admin form.
+        internal: options[:internal],
+        # The fixed set a value must come from; turns a text box into a picker.
+        choices: options[:choices],
+        nullable: options[:nullable],
+        parse_on_set: options[:parse_on_set],
+        of: options[:of],
+        keys: options[:keys],
+        values: options[:values],
+        properties: options[:properties],
+        format: options[:format],
+        model: options[:model],
+        scope: options[:scope],
+        currency: options[:currency]
+      }
+      PreferableClassMethods.declarations += 1
 
-      # cache_key will be nil for new objects, then if we check if there
-      # is a pending preference before going to default
-      define_method preference_getter_method(name) do
-        # Rows persisted before the model gained preferences can load with a
-        # NULL column — treat that as "no stored preferences".
-        (preferences || {}).fetch(name) do
-          default.call
-        end
+      store_accessor(secret ? :secret_preferences : :preferences, name, prefix: :preferred)
+
+      # Overrides the store accessor's reader and writer, which treat a missing
+      # key as nil; here a missing key means the declared default.
+      define_method(:"preferred_#{name}") do
+        Spree::Preferences::Preferable.restore_value(stored_preference(name) { stored_default(name) }, type)
       end
 
-      define_method preference_setter_method(name) do |value|
-        if parse_on_set.is_a?(Proc)
-          # Procs that accept more than one arg opt into receiving the
-          # owning record so they can scope (e.g. `normalize_id_preference`
-          # rejecting cross-store IDs). `arity.abs > 1` covers both the
-          # `(value, owner)` and `(value, owner = nil)` shapes.
-          value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
-        end
-        value = convert_preference_value(value, type, nullable: nullable)
-        self.preferences = {} if preferences.nil?
-        preferences[name] = value
-
-        Spree::Deprecation.warn("`#{name}` is deprecated. #{deprecated}") if deprecated
-
-        # If this is an activerecord object, we need to inform
-        # ActiveRecord::Dirty that this value has changed, since this is an
-        # in-place update to the preferences hash.
-        preferences_will_change! if respond_to?(:preferences_will_change!)
+      define_method(:"preferred_#{name}=") do |value|
+        write_preference(name, cast_preference(name, value))
       end
 
-      define_method preference_default_getter_method(name), &default
-
-      define_method preference_type_getter_method(name) do
-        type
-      end
-
-      define_method preference_deprecated_getter_method(name) do
-        deprecated
-      end
-
-      # Whether this preference is the system's to write rather than the
-      # operator's to supply — a value a provider hands back to us, not one
-      # anybody could know in advance.
-      define_method preference_internal_getter_method(name) do
-        internal
-      end
-
-      define_method preference_choices_getter_method(name) do
-        choices.respond_to?(:call) ? choices.call : choices
-      end
-
-      define_method prefers_query_method(name) do
-        preferences.fetch(name).to_b
-      end
-
-      define_method preference_change_method(name) do
-        preference_change(name, changes) if respond_to?(:changes)
-      end
-
-      define_method preference_was_method(name) do
-        return unless respond_to?(:changes)
-
-        preference_change(name, changes)&.first || get_preference(name)
-      end
-
-      define_method preference_changed_method(name) do
-        respond_to?(:changes) && preference_change(name, changes).present?
-      end
-
-      define_method preference_previous_change_method(name) do
-        preference_change(name, previous_changes) if respond_to?(:previous_changes)
-      end
-
-      define_method preference_previous_was_method(name) do
-        return unless respond_to?(:previous_changes)
-
-        preference_change(name, previous_changes)&.first
-      end
-
-      define_method preference_previous_changed_method(name) do
-        respond_to?(:previous_changes) && preference_change(name, previous_changes).present?
+      define_method(:"prefers_#{name}?") do
+        stored_preference(name) { raise KeyError, "key not found: #{name.inspect}" }.to_b
       end
     end
 
-    def preference_getter_method(name)
-      "preferred_#{name}".to_sym
+    # Gives each named preference a plain reader, writer and predicate, so the
+    # API reads and writes `guest_checkout` rather than the DSL's
+    # `preferred_guest_checkout` — the methods Rails' `has_delegated_json`
+    # defines, so callers would not change if the storage ever moved to it.
+    # Grants no write access: each API controller still lists what it permits.
+    #
+    #   exposes_preferences :guest_checkout, :timezone
+    #
+    # @param names [Array<Symbol>]
+    # @return [void]
+    def exposes_preferences(*names)
+      names.each do |name|
+        name = name.to_sym
+        raise ArgumentError, "#{self.name} has no preference `#{name}` to expose" unless preference_definitions.key?(name)
+        raise ArgumentError, "#{self.name} cannot expose the preference `#{name}`: a method of that name exists" if method_defined?(name)
+
+        define_method(name) { public_send(:"preferred_#{name}") }
+        define_method(:"#{name}=") { |value| public_send(:"preferred_#{name}=", value) }
+        # As `has_json` defines one; a predicate the model already has (one
+        # that falls back to another setting, say) is kept.
+        define_method(:"#{name}?") { public_send(:"preferred_#{name}").present? } unless method_defined?(:"#{name}?")
+      end
+      self.exposed_preference_names = (exposed_preference_names | names.map(&:to_sym)).freeze
     end
 
-    def preference_setter_method(name)
-      "preferred_#{name}=".to_sym
+    # The plain name an exposed preference goes by, for a key still using the
+    # DSL's `preferred_` prefix — an error key or a 5.x request parameter.
+    #
+    # @param key [Symbol, String] e.g. `preferred_guest_checkout`
+    # @return [Symbol, nil] e.g. `:guest_checkout`, or nil when the key names no exposed preference
+    def exposed_preference_name(key)
+      name = key.to_s.delete_prefix('preferred_')
+      name.to_sym if name != key.to_s && exposed_preference_names.include?(name.to_sym)
     end
 
-    def preference_default_getter_method(name)
-      "preferred_#{name}_default".to_sym
+    private
+
+    # A declaration is the preference's contract on the wire. One Spree ships
+    # is always complete (a spec enforces it); an incomplete one from an
+    # extension still works in 6.0, with a schema that accepts any value.
+    def check_preference_declaration(name, type, options)
+      if options[:of] && type != :array
+        raise ArgumentError, "`of:` applies to an :array preference, not `#{name}` (#{type})"
+      end
+      if (options[:keys] || options[:values]) && type != :hash
+        raise ArgumentError, "`keys:` and `values:` apply to a :hash preference, not `#{name}` (#{type})"
+      end
+      [options[:of], options[:values], *options[:properties]&.values].compact.each do |item_type|
+        raise ArgumentError, "Unknown item type `#{item_type}` on preference `#{name}`" unless ITEM_TYPES.include?(item_type)
+      end
+      if options[:format] && !Spree::PreferenceSchema::JsonSchema::FORMATS.key?(options[:format])
+        raise ArgumentError, "Unknown format `#{options[:format]}` on preference `#{name}`"
+      end
+      raise ArgumentError, "`of: :id` needs `model:` on preference `#{name}`" if options[:of] == :id && options[:model].blank?
+      raise ArgumentError, "`currency:` applies to a :money preference, not `#{name}` (#{type})" if options[:currency] && type != :money
+      raise ArgumentError, "`of: :object` needs `properties:` on preference `#{name}`" if options[:of] == :object && options[:properties].blank?
+
+      missing = case type
+                when :any then 'a type other than :any'
+                when :array then '`of:`' unless options[:of]
+                when :hash then '`keys:` and `values:`' unless options[:keys] && options[:values]
+                end
+      return unless missing
+
+      Spree::Deprecation.warn(
+        "#{self.name} preference `#{name}` (#{type}) needs #{missing}; until it has one, its schema accepts any value. " \
+        'Spree 6.1 will raise for an incomplete declaration.'
+      )
     end
 
-    def preference_deprecated_getter_method(name)
-      "preferred_#{name}_deprecated".to_sym
+    def own_preference_definitions
+      @own_preference_definitions ||= {}
     end
 
-    def preference_internal_getter_method(name)
-      "preferred_#{name}_internal".to_sym
-    end
-
-    def preference_choices_getter_method(name)
-      "preferred_#{name}_choices".to_sym
-    end
-
-    def preference_type_getter_method(name)
-      "preferred_#{name}_type".to_sym
-    end
-
-    def prefers_query_method(name)
-      "prefers_#{name}?".to_sym
-    end
-
-    def preference_change_method(name)
-      "preferred_#{name}_change".to_sym
-    end
-
-    def preference_was_method(name)
-      "preferred_#{name}_was".to_sym
-    end
-
-    def preference_changed_method(name)
-      "preferred_#{name}_changed?".to_sym
-    end
-
-    def preference_previous_change_method(name)
-      "preferred_#{name}_previous_change".to_sym
-    end
-
-    def preference_previous_was_method(name)
-      "preferred_#{name}_previously_was".to_sym
-    end
-
-    def preference_previous_changed_method(name)
-      "preferred_#{name}_previously_changed?".to_sym
+    def preference_declarations_cache
+      generation = PreferableClassMethods.declarations
+      unless @preference_declarations_generation == generation
+        @preference_declarations_generation = generation
+        @preference_declarations_cache = {}
+      end
+      @preference_declarations_cache
     end
   end
 end

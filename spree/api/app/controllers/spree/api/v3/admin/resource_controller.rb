@@ -9,6 +9,7 @@ module Spree
           include Spree::Api::V3::Admin::StoreContext
           include Spree::Api::V3::AdminAuthentication
           include Spree::Api::V3::ScopedAuthorization
+          include Spree::Api::V3::StrictMoneyParams
           # External-identity addressing for every admin resource whose model
           # opts in via Spree::HasExternalReferences — the concern's guards
           # no-op for everything else. Sitting here rather than per controller
@@ -84,7 +85,7 @@ module Spree
           def render_invalid_position
             render_error(
               code: ERROR_CODES[:validation_error],
-              message: Spree.t('api.errors.invalid_position', default: 'new_position must be an integer'),
+              message: I18n.t('spree.api.errors.invalid_position'),
               status: :unprocessable_content
             )
           end

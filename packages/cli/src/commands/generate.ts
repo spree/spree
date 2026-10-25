@@ -3,6 +3,7 @@ import { runGeneratorCommand, SUPPORTED_GENERATORS } from '../backend.js'
 import { detectProject } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
+import { addCommandFor } from '../lib/extensions.js'
 
 // Rails's own generators, forwarded as-is during the deprecation window so
 // `spree generate migration AddX` keeps hitting Rails rather than the
@@ -44,7 +45,7 @@ export function registerGenerateCommand(program: Command): void {
         warnDeprecated(
           `spree generate ${name}`,
           name.endsWith(':install')
-            ? `spree add ${name.slice(0, -':install'.length)}`
+            ? addCommandFor(name.slice(0, -':install'.length))
             : `spree exec bin/rails generate ${[generator, ...args].join(' ')}`,
         )
       }

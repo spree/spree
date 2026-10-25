@@ -17,6 +17,7 @@ module Spree
       'https://raw.githubusercontent.com/spree/spree/refs/tags/v%<version>s/spree/core/db/sample_data'.freeze
 
     publishes_lifecycle_events
+    publishes_events :completed, :progress
 
     # Set event prefix for all Import subclasses
     # This ensures Spree::Imports::Products publishes 'import.create' not 'products.create'
@@ -54,6 +55,7 @@ module Spree
     # Ransack configuration
     #
     self.whitelisted_ransackable_attributes = %w[number type status seller_id]
+    search_by :number
     # Lets an operator filter their list by who ran the job — the seller's
     # name, not an id they would have to look up first.
     self.whitelisted_ransackable_associations = %w[seller]
@@ -71,6 +73,7 @@ module Spree
     # Attachments
     #
     has_one_attached :attachment, service: Spree.private_storage_service_name
+    signed_id_attachments :attachment
 
     #
     # Status
@@ -86,6 +89,7 @@ module Spree
     # Preferences
     #
     preference :delimiter, :string, default: ','
+    exposes_preferences :delimiter
     # Run the pipeline in-process instead of enqueuing it. For rake tasks, seeds
     # and the console, where the caller needs the data to exist when the call
     # returns and there may be no worker attached. Never set it from a request:
@@ -191,12 +195,6 @@ module Spree
       Spree.import_retry_failed_rows_workflow.call(import: self).success?
     end
 
-    # Returns true if the import is in mapping state
-    # @return [Boolean]
-    def mapping?
-      status == 'mapping'
-    end
-
     # Returns true if the import is processing or completed mapping
     # @return [Boolean]
     def processing?
@@ -217,10 +215,22 @@ module Spree
     end
 
     # Per-status row counts for API status payloads, memoized so one request
-    # issues a single grouped COUNT instead of one per status.
+    # issues a single grouped COUNT instead of one per status — and, on a
+    # lazily preloaded list, one for every import of the list.
     # @return [Hash{String => Integer}]
     def rows_status_counts
-      @rows_status_counts ||= rows.group(:status).count
+      return @rows_status_counts if @rows_status_counts
+
+      siblings = lazy_preload_context&.records&.grep(Spree::Import)
+      return @rows_status_counts = rows.group(:status).count if siblings.blank?
+
+      counts = Spree::ImportRow.where(import_id: siblings.map(&:id)).group(:import_id, :status).count
+      siblings.each do |import|
+        import.preloaded_rows_status_counts = counts.each_with_object({}) do |((import_id, status), count), by_status|
+          by_status[status] = count if import_id == import.id
+        end
+      end
+      @rows_status_counts
     end
 
     # Public API name for the +results_url+ preference (read/write symmetry).
@@ -331,7 +341,7 @@ module Spree
     # Returns the display name for the import
     # @return [String]
     def display_name
-      "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
+      "#{self.class.model_name.human(count: 2)} #{number}"
     end
 
     # Returns the headers of the csv file
@@ -474,6 +484,12 @@ module Spree
 
         klass
       end
+    end
+
+    protected
+
+    def preloaded_rows_status_counts=(counts)
+      @rows_status_counts = counts
     end
 
     private

@@ -49,7 +49,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
     end
 
     context "when image already exists with the given external_url" do
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       before do
         image.external_url = external_url.strip
@@ -108,7 +108,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
         image.save!
       end
 
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       it "does not download the image" do
         expect(SsrfFilter).not_to receive(:get)
@@ -135,6 +135,33 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
 
       it 'raises an error about file size' do
+        expect { subject }.to raise_error(StandardError, /exceeds the maximum allowed size/)
+      end
+
+      # The limit applies to what is downloaded, not only to what is attached:
+      # an endless response is cut off once it passes the limit.
+      it 'stops reading a streamed body once it passes the limit' do
+        chunks_read = 0
+        streamed = double('response')
+        allow(streamed).to receive(:[]).with('Content-Length').and_return(nil)
+        allow(streamed).to receive(:read_body) do |&block|
+          loop do
+            chunks_read += 1
+            block.call('x' * 512)
+          end
+        end
+        allow(SsrfFilter).to receive(:get) { |&block| block.call(streamed); response }
+
+        expect { subject }.to raise_error(StandardError, /exceeds the maximum allowed size/)
+        expect(chunks_read).to eq(3)
+      end
+
+      it 'refuses a declared length over the limit before reading' do
+        streamed = double('response')
+        allow(streamed).to receive(:[]).with('Content-Length').and_return((max_size + 1).to_s)
+        expect(streamed).not_to receive(:read_body)
+        allow(SsrfFilter).to receive(:get) { |&block| block.call(streamed); response }
+
         expect { subject }.to raise_error(StandardError, /exceeds the maximum allowed size/)
       end
     end

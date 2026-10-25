@@ -9,6 +9,15 @@ module Spree
             skip_before_action :set_resource
             before_action :set_payment_setup_session, only: [:show, :complete]
 
+            request_params 'CreatePaymentSetupSessionParams', action: :create do |body|
+              body.attribute :payment_method_id, :id, required: true, example: 'pm_abc123'
+              body.attribute :external_data, :hash, description: 'Provider-specific data passed to the gateway.'
+            end
+
+            request_params 'CompletePaymentSetupSessionParams', action: :complete do |body|
+              body.attribute :external_data, :hash, description: 'Provider-specific completion data.'
+            end
+
             # POST /api/v3/store/customer/payment_setup_sessions
             def create
               payment_method = current_store.payment_methods.find_by_prefix_id!(params[:payment_method_id])
@@ -50,10 +59,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :payment_setup_sessions
-            end
-
             def model_class
               Spree::PaymentSetupSession
             end
@@ -62,12 +67,8 @@ module Spree
               Spree.api.payment_setup_session_serializer
             end
 
-            def resource_permitted_attributes
-              [:payment_method_id, { external_data: {} }]
-            end
-
             def complete_params
-              params.permit({ external_data: {} })
+              params.permit(*declared_permitted_attributes)
             end
 
             private

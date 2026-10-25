@@ -14,6 +14,35 @@ module Spree
         class PackageTypesController < ResourceController
           scoped_resource :package_types
 
+          request_params :package_type do |body|
+            body.attribute :name, :string,
+              required: true, on: :create,
+              example: 'Euro pallet',
+              description: 'Unique within the store.'
+            body.attribute :kind, :string,
+              required: true, on: :create,
+              choices: Spree::PackageType::KINDS,
+              example: 'pallet',
+              description: 'What this packaging is: the box parcels ship in, or the carton, pallet or container a wholesale order leaves on.'
+            body.attribute :length, :number, nullable: true
+            body.attribute :width, :number, nullable: true
+            body.attribute :height, :number, nullable: true
+            body.attribute :dimensions_unit, :dimension_unit,
+              nullable: true,
+              example: 'cm',
+              description: "Unit the three dimensions are in; falls back to the store's unit system."
+            body.attribute :weight, :number,
+              nullable: true,
+              description: "The empty package's own weight, added to content weight on every quote."
+            body.attribute :max_weight, :number,
+              nullable: true,
+              description: 'What the package can hold, not the same as its own weight.'
+            body.attribute :weight_unit, :weight_unit, nullable: true, example: 'kg'
+            body.attribute :default, :boolean,
+              description: 'The box every parcel quote is built on. Setting this demotes whichever row held it.'
+            body.attribute :metadata, :hash
+          end
+
           protected
 
           def model_class
@@ -26,11 +55,6 @@ module Spree
 
           def collection_includes
             [:seller]
-          end
-
-          def resource_permitted_attributes
-            [:name, :kind, :length, :width, :height, :dimensions_unit,
-             :weight, :max_weight, :weight_unit, :default, { metadata: {} }]
           end
         end
       end

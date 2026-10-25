@@ -1,5 +1,6 @@
 import type { DeliveryZone } from '@spree/admin-sdk'
-import { useStore } from '@spree/dashboard-core'
+import type { CountryCode } from '@spree/core'
+import { useCountryDisplayName, useSortByCountryName, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
@@ -20,7 +21,7 @@ import {
 import { Link } from '@tanstack/react-router'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCountryNames, useCountryStates, useMarketCountries } from '../../../hooks/use-geography'
+import { useCountryStates, useMarketCountries } from '../../../hooks/use-geography'
 import type { DeliveryZoneMemberValues } from '../../../schemas/delivery-zone'
 import {
   type CountryRow,
@@ -49,7 +50,8 @@ export function DeliveryZoneRegionPicker({
   const { t } = useTranslation()
   const { storeId } = useStore()
   const { countries: marketCountries, isLoading } = useMarketCountries()
-  const countryNames = useCountryNames()
+  const countryName = useCountryDisplayName()
+  const sortByName = useSortByCountryName()
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<string[]>([])
   const [postalOpen, setPostalOpen] = useState(false)
@@ -58,12 +60,12 @@ export function DeliveryZoneRegionPicker({
   const claimed = useMemo(() => claimedByOtherZones(siblingZones), [siblingZones])
 
   const rows = useMemo<CountryRow[]>(() => {
-    const byIso = new Map<string, CountryRow>()
+    const byIso = new Map<CountryCode, CountryRow>()
 
     for (const country of marketCountries) {
       byIso.set(country.iso, {
         iso: country.iso,
-        name: country.name,
+        name: countryName(country),
         statesRequired: country.states_required,
         offMarket: false,
         claimed: claimed.countries.has(country.iso),
@@ -76,15 +78,15 @@ export function DeliveryZoneRegionPicker({
       if (byIso.has(iso)) continue
       byIso.set(iso, {
         iso,
-        name: countryNames.get(iso) ?? iso,
+        name: countryName({ iso }),
         statesRequired: selection.states.has(iso),
         offMarket: true,
         claimed: false,
       })
     }
 
-    return [...byIso.values()].sort((left, right) => left.name.localeCompare(right.name))
-  }, [marketCountries, countryNames, claimed, selection])
+    return sortByName([...byIso.values()], (row) => row.iso)
+  }, [marketCountries, countryName, sortByName, claimed, selection])
 
   const visibleRows = useMemo(() => {
     const term = search.trim().toLowerCase()
@@ -98,7 +100,7 @@ export function DeliveryZoneRegionPicker({
     onChange(writeSelection({ ...selection, ...next }))
   }
 
-  function toggleCountry(iso: string, checked: boolean) {
+  function toggleCountry(iso: CountryCode, checked: boolean) {
     if (checked) {
       apply(supersedeCountry(selection, iso))
       return
@@ -114,7 +116,7 @@ export function DeliveryZoneRegionPicker({
    * of a wholly-selected country: that country member has to become an
    * explicit member per remaining state before one can be dropped.
    */
-  function toggleState(iso: string, abbr: string, checked: boolean, allAbbrs: string[]) {
+  function toggleState(iso: CountryCode, abbr: string, checked: boolean, allAbbrs: string[]) {
     const countries = new Set(selection.countries)
     const states = new Map(selection.states)
     const wholeCountry = countries.has(iso)
@@ -414,7 +416,11 @@ function PostalRulesSection({
             <Select
               items={countryOptions}
               value={rule.country_code ?? ''}
-              onValueChange={(next) => update(index, { country_code: next as string })}
+              onValueChange={(next) =>
+                update(index, {
+                  country_code: countryOptions.find((option) => option.value === next)?.value,
+                })
+              }
             >
               <SelectTrigger className="flex-1">
                 <SelectValue>

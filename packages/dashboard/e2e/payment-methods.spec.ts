@@ -1,5 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  adminRequest,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const PAYMENT_METHODS_PATH = (storeId: string) => `/${storeId}/settings/payment-methods`
 const CTA = /add payment method/i
@@ -42,7 +50,35 @@ test.describe('payment methods', () => {
     await expect(page.getByText(/dummy secret key/i)).toHaveCount(0)
   })
 
-  test('creates a new payment method (Bogus provider)', async ({ page }) => {
+  // Runs before create/edit so Check is still in the picker. Custom payment
+  // source is hidden from the UI and store credit is seeded — Check is the
+  // spare installable provider for this lifecycle test.
+  test('deletes a payment method', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Delete PM ${Date.now()}`
+
+    await page.getByRole('button', { name: /add payment method/i }).click()
+    await selectProvider(page, 'Check')
+    await page.locator('#name').fill(name)
+    await page.getByRole('button', { name: /create payment method/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await openRowMenu(page, name)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
+    await expect(page.getByRole('heading', { name: /delete payment method\?/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+
+    await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('creates a payment method with provider settings, keeping its secret on edit', async ({
+    page,
+  }) => {
     const creds = await login(page)
     await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
 
@@ -53,9 +89,40 @@ test.describe('payment methods', () => {
 
     await selectProvider(page, 'Bogus')
     await page.locator('#name').fill(name)
+    await page.locator('#preference-dummy_key').fill('E2EPUBLIC')
+    await page.locator('#preference-dummy_secret_key').fill('e2e-secret-9876')
     await page.getByRole('button', { name: /create payment method/i }).click()
 
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    // The installed provider's settings come back on edit: the plain one as
+    // typed, the secret only as a mask of its last characters.
+    await rowButton(page, name).click()
+    await expect(page.locator('#preference-dummy_key')).toHaveValue('E2EPUBLIC', {
+      timeout: 15_000,
+    })
+    const secret = page.locator('#preference-dummy_secret_key')
+    await expect(secret).toHaveText(/^•+9876$/)
+
+    // Saving without touching the secret keeps it.
+    const updated = `${name} (updated)`
+    await page.locator('#name').fill(updated)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await rowButton(page, updated).click()
+    await expect(page.locator('#preference-dummy_key')).toHaveValue('E2EPUBLIC', {
+      timeout: 15_000,
+    })
+    await expect(secret).toHaveText(/^•+9876$/)
+    await page.keyboard.press('Escape')
+
+    // A provider is installed once per store, so the picker stops offering it.
+    await page.getByRole('button', { name: /add payment method/i }).click()
+    await page.locator('#type').click()
+    await expect(page.getByRole('option', { name: 'Check' })).toBeVisible()
+    await expect(page.getByRole('option', { name: 'Bogus' })).toHaveCount(0)
   })
 
   test('edits a payment method', async ({ page }) => {
@@ -82,27 +149,20 @@ test.describe('payment methods', () => {
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
   })
 
-  test('deletes a payment method', async ({ page }) => {
+  // An existing method: saving only a custom field leaves the method itself
+  // untouched, so the shared fixture stays as it was.
+  test('saves a custom field with the payment method', async ({ page }) => {
     const creds = await login(page)
-    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
-
-    const name = `E2E Delete PM ${Date.now()}`
-
-    await page.getByRole('button', { name: /add payment method/i }).click()
-    await selectProvider(page, 'Custom Payment Source Method')
-    await page.locator('#name').fill(name)
-    await page.getByRole('button', { name: /create payment method/i }).click()
-    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
-
-    // Delete now lives on the row-action kebab.
-    await openRowMenu(page, name)
-    await page.getByRole('menuitem', { name: /^delete$/i }).click()
-    await expect(page.getByRole('heading', { name: /delete payment method\?/i })).toBeVisible()
-    await page
-      .getByRole('dialog')
-      .getByRole('button', { name: /^delete$/i })
-      .click()
-
-    await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+    await withCustomFieldDefinition(page, creds, 'payment_method', async (label) => {
+      const methods = await adminRequest<{ data: { id: string }[] }>(
+        page,
+        creds,
+        'get',
+        '/payment_methods?limit=1',
+      )
+      const url = `${PAYMENT_METHODS_PATH(creds.store_id)}?edit=${methods.data[0].id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'NET30')
+    })
   })
 })

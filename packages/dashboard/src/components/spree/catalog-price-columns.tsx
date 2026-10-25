@@ -1,4 +1,6 @@
 import type { CatalogPrice } from '@spree/admin-sdk'
+import { CATALOG_PRICE_SOURCES, subsetOf } from '@spree/core'
+import { Money } from '@spree/dashboard-core'
 import type { ProductMembershipRow, SubRowLayout } from '@spree/dashboard-ui'
 import {
   Badge,
@@ -10,7 +12,7 @@ import {
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 
-const AGREEMENT_SOURCES = ['explicit', 'automatic'] as const
+const AGREEMENT_SOURCES = subsetOf(CATALOG_PRICE_SOURCES, ['explicit', 'automatic'])
 
 /** Where the copy comes from: the catalog's strings, or a page's own. */
 const CATALOG_NAMESPACE = 'admin.catalogs.prices'
@@ -82,7 +84,7 @@ export function catalogPriceColumns({
  * catalog has every reason to assume it prices what it lists.
  */
 function PriceSourceBadge({ source, namespace }: { source: string; namespace: string }) {
-  const fromAgreement = (AGREEMENT_SOURCES as readonly string[]).includes(source)
+  const fromAgreement = AGREEMENT_SOURCES.includes(source)
   const help = text(namespace, `source_help.${source}`)
 
   return (
@@ -147,14 +149,18 @@ function TierBadge({ price, namespace }: { price: CatalogPrice; namespace: strin
               <td className="whitespace-nowrap pr-4 text-muted-foreground">
                 {text(namespace, 'tier_from', { count: 1 })}
               </td>
-              <td className="whitespace-nowrap text-right">{price.display_amount}</td>
+              <td className="whitespace-nowrap text-right">
+                <Money amount={price.amount} currency={price.currency} />
+              </td>
             </tr>
             {tiers.map((tier) => (
               <tr key={tier.min_quantity}>
                 <td className="whitespace-nowrap pr-4 text-muted-foreground">
                   {text(namespace, 'tier_from', { count: tier.min_quantity })}
                 </td>
-                <td className="whitespace-nowrap text-right">{tier.display_amount}</td>
+                <td className="whitespace-nowrap text-right">
+                  <Money amount={tier.amount} currency={price.currency} />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -229,7 +235,7 @@ export function catalogVariantRows<Row extends { id: string }>({
         </TableCell>
         <TableCell className="text-right tabular-nums">
           <span className="inline-flex items-center justify-end gap-1.5">
-            {price.display_amount}
+            <Money amount={price.amount} currency={price.currency} />
             {price.break_count > 0 && <TierBadge price={price} namespace={namespace} />}
           </span>
         </TableCell>

@@ -16,9 +16,7 @@ module Spree
 
           attributes :name, :description, :query, :seeded, :created_at, :updated_at
 
-          attribute :user_id do |report|
-            report.user&.prefixed_id
-          end
+          prefixed_id_attributes :user
 
           # The same "name, else email" rule every actor answers, so a report's
           # author and an order's canceler read alike.

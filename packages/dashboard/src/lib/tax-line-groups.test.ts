@@ -40,10 +40,10 @@ describe('taxLineExemption', () => {
 
 describe('groupTaxLines', () => {
   it('sums lines that share a label and the same treatment', () => {
-    const groups = groupTaxLines([taxLine({ amount: '4.35' }), taxLine({ amount: '4.35' })])
+    const groups = groupTaxLines([taxLine({ amount: '4.35' }), taxLine({ amount: '4.35' })], 'USD')
 
     expect(groups).toHaveLength(1)
-    expect(groups[0]?.amount).toBeCloseTo(8.7)
+    expect(groups[0]?.amount).toBe('8.70')
     expect(groups[0]?.taxabilityReason).toBe('standard_rated')
   })
 
@@ -58,8 +58,8 @@ describe('groupTaxLines', () => {
     ])
 
     expect(groups.map((group) => [group.taxabilityReason, group.amount])).toEqual([
-      ['standard_rated', 8.7],
-      ['customer_exempt', 0],
+      ['standard_rated', '8.70'],
+      ['customer_exempt', '0.00'],
     ])
     expect(groups[1]?.exemption).toEqual({
       reason_code: 'resale',

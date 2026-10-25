@@ -32,7 +32,7 @@ module Spree
           metrics: metrics.map { |m| metric_entry(m) },
           dimensions: dimensions.map { |d| dimension_entry(d, metrics) },
           time_range: {
-            presets: (Query::PRESETS + Query::RELATIVE_PRESETS).map { |p| { name: p, label: translate('presets', p, :label) } },
+            presets: (Query::PRESETS + Query::RELATIVE_PRESETS).map { |p| { name: p, label: catalog_text('presets', p, :label) } },
             relative: %w[last_<n>_days last_<n>_weeks last_<n>_months],
             absolute: 'ISO 8601 dates or datetimes in `since` / `until`, resolved in the store timezone'
           },
@@ -50,7 +50,7 @@ module Spree
       # @param group [Symbol] :metrics | :dimensions
       # @return [String] localized label (humanized name when none registered)
       def label_for(group, name)
-        translate(group, name, :label)
+        catalog_text(group, name, :label)
       end
 
       private
@@ -61,7 +61,7 @@ module Spree
         metrics.group_by { |metric| @registry.family_of(metric) }.map do |family, family_metrics|
           {
             name: family,
-            label: translate('families', family, :label),
+            label: catalog_text('families', family, :label),
             metrics: family_metrics.map(&:name),
             dimensions: @registry.dimensions.values.
               select { |d| @allowed.call(d) && @registry.base!(d.base).family == family }.map(&:name)
@@ -73,8 +73,8 @@ module Spree
         {
           name: metric.name,
           family: @registry.family_of(metric),
-          label: translate('metrics', metric.name, :label),
-          description: translate('metrics', metric.name, :description),
+          label: catalog_text('metrics', metric.name, :label),
+          description: catalog_text('metrics', metric.name, :description),
           format: metric.format,
           currency: (metric.money? ? @store.default_currency : nil),
           derived: metric.derived?,
@@ -88,8 +88,8 @@ module Spree
       def dimension_entry(dimension, metrics)
         {
           name: dimension.name,
-          label: translate('dimensions', dimension.name, :label),
-          description: translate('dimensions', dimension.name, :description),
+          label: catalog_text('dimensions', dimension.name, :label),
+          description: catalog_text('dimensions', dimension.name, :description),
           type: dimension.type,
           grains: dimension.grains,
           lookup: dimension.lookup,
@@ -104,8 +104,8 @@ module Spree
         }.compact
       end
 
-      def translate(group, name, facet)
-        Spree.t("reporting.#{group}.#{name}.#{facet}", default: (facet == :label ? name.to_s.humanize : nil))
+      def catalog_text(group, name, facet)
+        I18n.t("spree.reporting.#{group}.#{name}.#{facet}", default: (facet == :label ? name.to_s.humanize : nil))
       end
 
 
@@ -117,7 +117,7 @@ module Spree
       # @param value [String]
       # @return [String]
       def self.value_label(dimension, value)
-        Spree.t("reporting.values.#{dimension.name}.#{value}", default: value.to_s.humanize)
+        I18n.t("spree.reporting.values.#{dimension.name}.#{value}", default: value.to_s.humanize)
       end
     end
   end

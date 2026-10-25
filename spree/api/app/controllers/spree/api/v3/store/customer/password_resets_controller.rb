@@ -6,6 +6,8 @@ module Spree
       module Store
         module Customer
           class PasswordResetsController < Store::BaseController
+            include Spree::Api::V3::AllowedRedirectUrl
+
             allow_guest_storefront_access!
             rate_limit to: Spree::Api::Config[:rate_limit_password_reset],
                        within: Spree::Api::Config[:rate_limit_window].seconds,
@@ -14,32 +16,38 @@ module Spree
 
             skip_before_action :authenticate_user
 
+            request_params 'RequestPasswordResetParams', action: :create do |body|
+              body.attribute :email, :string,
+                required: true,
+                format: :email,
+                example: 'customer@example.com',
+                description: 'The email of the account to reset.'
+              body.attribute :redirect_url, :string,
+                format: :uri,
+                example: 'https://myshop.com/reset-password',
+                description: "Where the reset link sends the customer. Ignored unless it matches one of the store's allowed origins."
+            end
+
+            request_params 'ResetPasswordParams', action: :update do |body|
+              body.attribute :password, :string, required: true, example: 'newsecurepassword'
+              body.attribute :password_confirmation, :string, required: true, example: 'newsecurepassword'
+            end
+
             # POST /api/v3/store/password_resets
             def create
-              redirect_url = params[:redirect_url]
-
-              # Validate redirect_url against allowed origins (secure by default).
-              # If no allowed origins are configured, redirect_url is silently ignored
-              # to prevent open redirect / token exfiltration attacks.
-              if redirect_url.present?
-                if current_store.allowed_origins.exists? && current_store.allowed_origin?(redirect_url)
-                  # redirect_url is valid — keep it
-                else
-                  redirect_url = nil
-                end
-              end
-
               user = Spree.customer_class.find_by(email: params[:email])
 
               if user
-                token = user.generate_token_for(:password_reset)
-                event_payload = { reset_token: token, email: user.email, store_id: current_store.prefixed_id }
-                event_payload[:redirect_url] = redirect_url if redirect_url.present?
-                user.publish_event('customer.password_reset_requested', event_payload)
+                event_name = 'customer.password_reset_requested'
+                payload = user.event_payload_for(
+                  event_name,
+                  reset_token: user.generate_token_for(:password_reset), store: current_store, redirect_url: validated_redirect_url
+                )
+                user.publish_event(event_name, payload)
               end
 
               # Always return 202 to prevent email enumeration
-              render json: { message: Spree.t(:password_reset_requested, scope: :api) }, status: :accepted
+              render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
             end
 
             # PATCH /api/v3/store/password_resets/:id
@@ -49,7 +57,7 @@ module Spree
               unless user
                 return render_error(
                   code: ERROR_CODES[:password_reset_token_invalid],
-                  message: Spree.t(:password_reset_token_invalid, scope: :api),
+                  message: I18n.t('spree.api.password_reset_token_invalid'),
                   status: :unprocessable_content
                 )
               end

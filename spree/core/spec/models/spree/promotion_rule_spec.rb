@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Spree::PromotionRule, type: :model do
+    it_behaves_like 'type labels'
+
     class BadTestRule < Spree::PromotionRule; end
 
     class TestRule < Spree::PromotionRule
@@ -13,7 +15,7 @@ module Spree
     let!(:promotion) { create(:promotion) }
 
     it 'forces developer to implement eligible? method' do
-      expect { BadTestRule.new.eligible? }.to raise_error(ArgumentError)
+      expect { BadTestRule.new.eligible?(build(:order)) }.to raise_error(RuntimeError, /eligible\? should be implemented/)
     end
 
     it 'validates unique rules for a promotion' do

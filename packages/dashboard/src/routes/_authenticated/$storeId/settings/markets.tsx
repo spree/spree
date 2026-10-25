@@ -6,6 +6,9 @@ import {
   Can,
   CountryMultiCombobox,
   CurrencySelect,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   LocaleSelect,
   mapSpreeErrorsToForm,
   ResourceTable,
@@ -36,7 +39,7 @@ import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { Controller, type DefaultValues, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { TaxProviderField } from '../../../../components/spree/tax-provider-field'
@@ -159,11 +162,12 @@ function CreateMarketSheet({
 
   // Seed the form with the store defaults so a typical "Europe" / "ROW"
   // setup is mostly pre-filled — the merchant only edits name + countries.
-  const initialDefaults: MarketFormValues = useMemo(
+  const initialDefaults: DefaultValues<MarketFormValues> = useMemo(
     () => ({
       ...MARKET_DEFAULTS,
       currency: defaultCurrency,
       default_locale: defaultLocale,
+      ...extensionFormValues('market', null),
     }),
     [defaultCurrency, defaultLocale],
   )
@@ -176,7 +180,10 @@ function CreateMarketSheet({
 
   async function onSubmit(values: MarketFormValues) {
     try {
-      await createMutation.mutateAsync(marketValuesToParams(values))
+      await createMutation.mutateAsync({
+        ...marketValuesToParams(values),
+        ...extensionSubmitValues('market', form),
+      })
       form.reset(initialDefaults)
       onOpenChange(false)
     } catch (err) {
@@ -200,6 +207,11 @@ function CreateMarketSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <MarketFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="market.form_fields"
+              context={{ market: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -252,13 +264,17 @@ function EditMarketSheet({
         default: market.default,
         country_codes: market.country_codes,
         tax_provider: market.tax_provider ?? '',
+        ...extensionFormValues('market', market),
       })
     }
   }, [market, form])
 
   async function onSubmit(values: MarketFormValues) {
     try {
-      await updateMutation.mutateAsync(marketValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...marketValuesToParams(values),
+        ...extensionSubmitValues('market', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -281,6 +297,11 @@ function EditMarketSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <MarketFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="market.form_fields"
+                context={{ market, mode: 'edit' }}
+              />
             </div>
             <SheetFooter>
               <Button
@@ -400,6 +421,7 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
         <span className="text-xs text-muted-foreground">
           {t('admin.fields.market.supported_locales.help')}
         </span>
+        <FieldError errors={[errors.supported_locales]} />
       </Field>
 
       <Field>

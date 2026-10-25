@@ -44,6 +44,16 @@ module Spree
     # identified outright and never reaches the tie-break at all.
     CONTAINER_CONTENT_TYPES = %w[application/zip application/x-ole-storage].freeze
 
+    # Plain-text formats carry no signature at all, so the bytes can only prove
+    # what they are not. Marcel names anything it recognises — HTML, XML, SVG,
+    # scripts with a shebang, executables — and those never reach this
+    # tie-break. What is left is accepted under a text extension only when it
+    # is free of the control bytes every binary format carries. No particular
+    # encoding is required, since spreadsheet tools still export in legacy ones.
+    TEXT_CONTENT_TYPES = %w[text/csv].freeze
+    UNIDENTIFIED_CONTENT_TYPES = %w[application/octet-stream text/plain].freeze
+    BINARY_BYTES = /[\x00-\x08\x0B\x0E-\x1F\x7F]/n
+
     # A misspelled or forgotten option would otherwise leave this validator
     # silently accepting everything, on the one path whose whole purpose is
     # refusing hostile files. An allowlist that resolves to empty at runtime is
@@ -116,9 +126,16 @@ module Spree
       # read, which would hand the decision back to whoever uploaded the file.
       detected = Marcel::MimeType.for(StringIO.new(head))
       return true if permitted.include?(detected)
+      return permitted_plain_text?(blob, head, permitted) if UNIDENTIFIED_CONTENT_TYPES.include?(detected)
       return false unless CONTAINER_CONTENT_TYPES.include?(detected)
 
-      permitted.include?(office_type_from_extension(blob))
+      permitted.include?(type_from_extension(blob))
+    end
+
+    def permitted_plain_text?(blob, head, permitted)
+      text_type = type_from_extension(blob)
+
+      TEXT_CONTENT_TYPES.include?(text_type) && permitted.include?(text_type) && !head.b.match?(BINARY_BYTES)
     end
 
     # Asks the extension alone, rather than re-reading the bytes with a filename
@@ -129,7 +146,7 @@ module Spree
     # bytes we read.
     #
     # @return [String, nil]
-    def office_type_from_extension(blob)
+    def type_from_extension(blob)
       filename = blob.filename.to_s
       return if File.extname(filename).blank?
 

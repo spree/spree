@@ -31,6 +31,11 @@ module Spree
 
           protected
 
+          # The model, and so the filters, follow `resource_type`.
+          def filterable?
+            false
+          end
+
           # Resolved from the required `resource_type` param. An unknown or
           # untranslatable type is a 404 rather than a 500 from a nil class.
           def model_class

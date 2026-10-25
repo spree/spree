@@ -1,3 +1,4 @@
+import type { PackageTypeKind, PickupStockPolicy } from '@spree/core'
 /**
  * The client registry.
  *
@@ -14,7 +15,13 @@
  * promise the seller panel methods its API does not have.
  */
 
-import type { PermissionRule } from '@spree/admin-sdk'
+import type {
+  DigitalAssetProvider,
+  PaginationMeta,
+  PermissionRule,
+  UploadFileOptions,
+} from '@spree/admin-sdk'
+import type { CountryCode, DimensionUnit, WeightUnit } from '@spree/core'
 
 /** What a panel may change on the signed-in person's own account. */
 export interface PanelAccountParams {
@@ -23,11 +30,11 @@ export interface PanelAccountParams {
   /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
   selected_locale?: string
   /**
-   * ActiveStorage signed id to set the photo, or `null` to remove it. Omit to
+   * A `signed_id` from an upload to set the photo, or `null` to remove it. Omit to
    * leave the current one alone — the only field here where `null` means
    * something the API acts on.
    */
-  avatar?: string | null
+  avatar_signed_id?: string | null
 }
 
 /**
@@ -105,19 +112,15 @@ export interface PanelApiClient {
    * fulfillments, so they retire one by deactivating it.
    */
   /**
-   * Exchanges blob metadata for a presigned upload URL.
+   * Uploads a file through the panel's own `POST /files` and resolves to its
+   * `signed_id`.
    *
    * Registered rather than imported for the same reason as everything else
    * here: the shared upload field would otherwise work only in the
    * operator's panel, and a seller uploading an onboarding document would
    * get a 401 from an API they hold no key for.
    */
-  createDirectUpload?(params: {
-    blob: { filename: string; byte_size: number; checksum: string; content_type: string }
-  }): Promise<{
-    direct_upload: { url: string; headers: Record<string, string> }
-    signed_id: string
-  }>
+  uploadFile?(file: File, options: UploadFileOptions): Promise<{ signed_id: string }>
   /**
    * Writes the signed-in person's own account — their name, photo and the
    * panel's language.
@@ -232,6 +235,29 @@ export interface PanelApiClient {
   /** Removing a file already on a product. */
   deleteProductMedia?(productId: string, mediaId: string): Promise<void>
   /**
+   * The downloadable files a digital product delivers to its buyers.
+   *
+   * Registered rather than imported for the same reason as everything else
+   * here: the Digital files card is one component serving both panels.
+   * `providers` is operator-only — a provider is the marketplace's own code
+   * reaching into its internal systems — so a seller's client leaves it out
+   * and the card offers file uploads alone.
+   */
+  digitalAssets?: {
+    list(
+      productId: string,
+      params?: { page?: number; limit?: number },
+    ): Promise<{ data: PanelDigitalAsset[]; meta?: PaginationMeta }>
+    create(productId: string, params: PanelDigitalAssetParams): Promise<PanelDigitalAsset>
+    update(
+      productId: string,
+      id: string,
+      params: PanelDigitalAssetParams,
+    ): Promise<PanelDigitalAsset>
+    delete(productId: string, id: string): Promise<void>
+    providers?(productId: string): Promise<{ data: DigitalAssetProvider[] }>
+  }
+  /**
    * The store-wide media library, for placing a file already uploaded onto
    * another product. Operator-only: a seller sees their own product's files,
    * never the marketplace's library, so their client registers none and the
@@ -304,16 +330,6 @@ export interface PanelApiClient {
   tags?: {
     list(params?: Record<string, unknown>): Promise<{ data: Array<{ name: string }> }>
   }
-  /**
-   * Currency-to-locale pairs, which is what tells a money field whether
-   * `34,56` is thirty-four and a half or three thousand. The operator's
-   * markets answer it; a panel that registers none falls back to the UI
-   * language, the same answer the operator's hook gives for an unmatched
-   * currency.
-   */
-  markets?: {
-    list(params?: Record<string, unknown>): Promise<{ data: PanelMarket[] }>
-  }
 }
 
 export interface PanelDeliveryProfile extends PanelNamedRecord {
@@ -368,10 +384,10 @@ export interface PanelPackageTypeParams {
   length?: number | null
   width?: number | null
   height?: number | null
-  dimensions_unit?: PanelPackageDimensionUnit | null
+  dimensions_unit?: DimensionUnit | null
   weight?: number | null
   max_weight?: number | null
-  weight_unit?: PanelPackageWeightUnit | null
+  weight_unit?: WeightUnit | null
   default?: boolean
   /**
    * Not nullable: both SDKs take a merge, so clearing a key is sending the
@@ -400,9 +416,12 @@ export interface PanelPackageTypeWrites extends PanelPackageTypeReads {
   delete?(id: string): Promise<void>
 }
 
-export type PanelPackageTypeKind = 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
-export type PanelPackageDimensionUnit = 'mm' | 'cm' | 'in' | 'ft'
-export type PanelPackageWeightUnit = 'g' | 'kg' | 'lb' | 'oz'
+/** @deprecated Use `PackageTypeKind` from `@spree/core`. */
+export type PanelPackageTypeKind = PackageTypeKind
+/** @deprecated Use `DimensionUnit` from `@spree/core`. */
+export type PanelPackageDimensionUnit = DimensionUnit
+/** @deprecated Use `WeightUnit` from `@spree/core`. */
+export type PanelPackageWeightUnit = WeightUnit
 
 /**
  * A new row must say what it is and what to call it — packaging without
@@ -427,7 +446,7 @@ export interface PanelImport {
   completed_rows_count: number
   failed_rows_count: number
   processing_errors?: string | null
-  preferred_delimiter?: string
+  delimiter?: string
   schema_fields: Array<{ name: string; label: string; required: boolean }>
   csv_headers: string[]
   sample_row: Record<string, string | null>
@@ -465,10 +484,10 @@ export interface PanelImportRow {
 
 export interface PanelImportCreateParams {
   type: string
-  /** Signed blob id of the already direct-uploaded CSV. */
-  attachment: string
+  /** The `signed_id` of the already uploaded CSV. */
+  attachment_signed_id: string
   /** CSV column separator — the four both APIs accept. */
-  preferred_delimiter?: PanelImportDelimiter
+  delimiter?: PanelImportDelimiter
   /** The price list a `price_list_prices` import merges into. */
   price_list_id?: string
   results_url?: string
@@ -479,13 +498,6 @@ export type PanelImportDelimiter = ',' | ';' | '|' | '\t'
 
 export interface PanelImportCompleteMappingParams {
   mappings?: Array<{ schema_field: string; file_column: string | null }>
-}
-
-/** A market, as the money fields read it. */
-export interface PanelMarket {
-  id: string
-  currency?: string | null
-  default_locale?: string | null
 }
 
 /**
@@ -511,6 +523,42 @@ export interface PanelExport {
   done: boolean
   download_url?: string | null
   filename?: string | null
+}
+
+/**
+ * A downloadable file, as the Digital files card reads it. Structural, like
+ * the other records here: both serializers carry these fields, and only the
+ * operator's adds `provider_settings`.
+ */
+export interface PanelDigitalAsset {
+  id: string
+  variant_id: string | null
+  filename: string | null
+  content_type: string | null
+  byte_size: number | null
+  /** Null means the store's download settings apply. */
+  authorized_clicks: number | null
+  authorized_days: number | null
+  /** The limits in force, after the store-settings fallback. */
+  effective_authorized_clicks: number
+  effective_authorized_days: number
+  provider_type: string | null
+  provider_name: string
+  download_url: string | null
+  provider_settings?: Record<string, unknown>
+}
+
+/**
+ * What either panel writes. The provider fields are the operator's alone; a
+ * seller's API refuses them.
+ */
+export interface PanelDigitalAssetParams {
+  signed_id?: string
+  variant_id?: string
+  authorized_clicks?: number | null
+  authorized_days?: number | null
+  provider_type?: string
+  provider_settings?: Record<string, unknown>
 }
 
 /** A library file, as the picker lists it. */
@@ -593,7 +641,7 @@ export interface PanelStockLocation {
   zipcode?: string | null
   phone?: string | null
   company?: string | null
-  country_code?: string | null
+  country_code?: CountryCode | null
   state_code?: string | null
   state_name?: string | null
   /** Rendered read-only in the table; either panel's serializer derives it. */
@@ -619,7 +667,7 @@ export type PanelStockLocationParams = Partial<
    * because plugins register their own, but the pickup policy is a fixed pair
    * the server validates, and both SDKs type it that way.
    */
-  pickup_stock_policy?: 'local' | 'any'
+  pickup_stock_policy?: PickupStockPolicy
 }
 
 /**
@@ -635,9 +683,8 @@ export type PanelStockLocationCreateParams = PanelStockLocationParams & { name: 
  * install.
  */
 export interface PanelCountry {
-  iso: string
+  iso: CountryCode
   iso3: string
-  name: string
   states_required?: boolean
   zipcode_required?: boolean
   states?: Array<{ abbr: string; name: string }>
@@ -683,4 +730,14 @@ export function getApiClient(): PanelApiClient {
 /** Whether a client has been registered. For tests and conditional boot paths. */
 export function hasApiClient(): boolean {
   return registered !== null
+}
+
+/**
+ * Hands filters built at runtime to a typed SDK list method. A table builds
+ * its filters from its column definitions, and a page shared by both panels
+ * sends the same keys to two APIs with different filter types, so neither can
+ * be checked by the compiler; the API validates them instead.
+ */
+export function runtimeListParams<P>(params?: Record<string, unknown>): P {
+  return params as P
 }

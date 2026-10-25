@@ -1,5 +1,3 @@
-require_dependency 'spree/payment/processing'
-
 module Spree
   class Payment < Spree.base_class
     has_prefix_id :py  # Stripe: py_
@@ -8,6 +6,9 @@ module Spree
     derives_number infix: 'P'
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
     end
@@ -18,6 +19,7 @@ module Spree
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
+    publishes_events :captured, :completed, :paid, :refunded, :voided
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -244,6 +246,9 @@ module Spree
       return amount if owner.nil?
 
       amount_from_order = owner.total - owner.payment_total
+      # A refund for returned goods settled what was owed for them; without
+      # this the order would accept a fresh charge for goods it took back.
+      amount_from_order -= owner.returned_items_refund_total if owner.respond_to?(:returned_items_refund_total)
 
       if payment_method&.store_credit?
         store_credits = owner.available_store_credits
@@ -251,16 +256,6 @@ module Spree
       else
         amount_from_order
       end
-    end
-
-    def amount=(amount)
-      self[:amount] =
-        case amount
-        when String
-          separator = I18n.t('number.currency.format.separator')
-          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
-          number.to_d if number.present?
-        end || amount
     end
 
     # Resizes a store credit payment that has not been taken yet. Completion
@@ -331,16 +326,28 @@ module Spree
       true
     end
 
+    # Matches +Payment.risky+: any result other than a match counts, whatever
+    # message the gateway sent with it.
     def is_cvv_risky?
       return false if cvv_response_code == 'M'
       return false if cvv_response_code.nil?
-      return false if cvv_response_message.present?
 
       true
     end
 
+    # The payment's page in the provider's dashboard. Only https links are
+    # returned, since staff open it from the admin and a gateway may build it
+    # from values the provider sent back.
+    #
+    # @return [String, nil]
     def gateway_dashboard_payment_url
-      payment_method.try(:gateway_dashboard_payment_url, self)
+      url = payment_method.try(:gateway_dashboard_payment_url, self)
+      return if url.blank?
+
+      uri = URI.parse(url)
+      url if uri.is_a?(URI::HTTPS) && uri.host.present?
+    rescue URI::InvalidURIError
+      nil
     end
 
     def captured_amount
@@ -515,7 +522,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
     end
 
     def set_amount
@@ -545,8 +552,8 @@ module Spree
     end
 
     def add_source_error(field, message)
-      field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-      errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{message}")
+      field_name = source.class.human_attribute_name(field)
+      errors.add(source.class.model_name.human, "#{field_name} #{message}")
     end
 
 

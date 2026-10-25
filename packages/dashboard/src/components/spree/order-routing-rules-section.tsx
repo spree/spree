@@ -15,7 +15,12 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { OrderRoutingRule, PaginatedResponse, ResourceTypeDefinition } from '@spree/admin-sdk'
+import type {
+  OrderRoutingRule,
+  PaginatedResponse,
+  PreferenceSchema,
+  ResourceTypeDefinition,
+} from '@spree/admin-sdk'
 import {
   Can,
   PreferencesForm,
@@ -25,7 +30,16 @@ import {
   usePermissions,
   useResourceKeyBuilder,
 } from '@spree/dashboard-core'
-import { Button, DragHandle, Switch, useConfirm } from '@spree/dashboard-ui'
+import {
+  Button,
+  DragHandle,
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+  Switch,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { PlusIcon, SlidersHorizontalIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { type CSSProperties, useMemo, useState } from 'react'
@@ -217,7 +231,7 @@ function SortableRuleRow({
     disabled: !canUpdate,
   })
   const style: CSSProperties = { transform: CSS.Transform.toString(transform), transition }
-  const hasPreferences = rule.preference_schema.length > 0
+  const hasPreferences = Object.keys(definition?.schema?.properties ?? {}).length > 0
   const label = typeLabel('order_routing_rule', rule.type, definition?.label)
   const description = typeDescription('order_routing_rule', rule.type, definition?.description)
 
@@ -268,7 +282,12 @@ function SortableRuleRow({
         )}
       </div>
       {editing && hasPreferences && (
-        <RulePreferencesEditor rule={rule} onSave={onSavePreferences} onCancel={onToggleEdit} />
+        <RulePreferencesEditor
+          rule={rule}
+          schema={definition?.schema}
+          onSave={onSavePreferences}
+          onCancel={onToggleEdit}
+        />
       )}
     </li>
   )
@@ -276,10 +295,12 @@ function SortableRuleRow({
 
 function RulePreferencesEditor({
   rule,
+  schema,
   onSave,
   onCancel,
 }: {
   rule: OrderRoutingRule
+  schema: PreferenceSchema | undefined
   onSave: (preferences: Record<string, unknown>) => void
   onCancel: () => void
 }) {
@@ -288,7 +309,7 @@ function RulePreferencesEditor({
 
   return (
     <div className="flex flex-col gap-3 border-t p-3">
-      <PreferencesForm schema={rule.preference_schema} values={values} onChange={setValues} />
+      <PreferencesForm schema={schema} values={values} onChange={setValues} />
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" size="sm" onClick={onCancel}>
           {t('admin.actions.cancel')}
@@ -322,20 +343,18 @@ function RuleTypePicker({
       {types.map((type) => {
         const description = typeDescription('order_routing_rule', type.type, type.description ?? '')
         return (
-          <button
+          <Item
             key={type.type}
-            type="button"
-            disabled={disabled}
-            className="rounded-md px-2 py-1.5 text-left hover:bg-accent disabled:opacity-50"
+            size="xs"
+            render={<button type="button" disabled={disabled} />}
+            className="cursor-pointer text-left hover:bg-accent disabled:cursor-default disabled:opacity-50"
             onClick={() => onPick(type)}
           >
-            <span className="block text-sm">
-              {typeLabel('order_routing_rule', type.type, type.label)}
-            </span>
-            {description && (
-              <span className="block text-xs text-muted-foreground">{description}</span>
-            )}
-          </button>
+            <ItemContent>
+              <ItemTitle>{typeLabel('order_routing_rule', type.type, type.label)}</ItemTitle>
+              {description && <ItemDescription>{description}</ItemDescription>}
+            </ItemContent>
+          </Item>
         )
       })}
       <Button type="button" variant="outline" size="sm" className="self-start" onClick={onCancel}>

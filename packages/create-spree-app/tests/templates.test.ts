@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { rootClaudeMdContent } from '../src/templates/claude-md'
+import { agentsMdContent, claudeMdContent } from '../src/templates/agents-md'
 import { dependabotContent } from '../src/templates/dependabot'
 import { envContent, storefrontEnvContent } from '../src/templates/env'
 import { gitignoreContent } from '../src/templates/gitignore'
@@ -90,13 +90,13 @@ describe('rootPackageJsonContent', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     // The floor must admit every CLI capability the scaffold calls — the
     // seller-dashboard component landed in 3.0.
-    expect(pkg.dependencies['@spree/cli']).toBe('^3.0.0')
+    expect(pkg.dependencies['@spree/cli']).toBe('^3.4.0')
   })
 
   it('includes convenience scripts using spree cli', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     expect(pkg.scripts.dev).toBe('spree dev')
-    expect(pkg.scripts.update).toBe('spree update')
+    expect(pkg.scripts.upgrade).toBe('spree upgrade')
     expect(pkg.scripts.eject).toBe('spree eject')
     expect(pkg.scripts.logs).toBe('spree logs')
     expect(pkg.scripts.console).toBe('spree console')
@@ -168,7 +168,7 @@ describe('readmeContent', () => {
     expect(content).toContain('`spree eject`')
     expect(content).toContain('`spree logs`')
     expect(content).toContain('`spree console`')
-    expect(content).toContain('`spree update`')
+    expect(content).toContain('`spree upgrade`')
     expect(content).toContain('`spree user create`')
     expect(content).toContain('`spree api-key create`')
   })
@@ -201,11 +201,9 @@ describe('readmeContent', () => {
     expect(content).toContain('cd apps/dashboard\nyarn run dev')
   })
 
-  it('includes the React Dashboard section when included', () => {
+  it('includes the Admin Dashboard section when included', () => {
     const content = readmeContent('my-store', true, 3000, true)
-    expect(content).toContain('### The React Dashboard')
-    // The dashboard's dev server IS the admin in Spree 6 — the Rails admin
-    // engine is gone, so the README must not point at /admin.
+    expect(content).toContain('### The Admin Dashboard')
     expect(content).toContain('http://localhost:5173')
     expect(content).not.toMatch(/classic admin/i)
     expect(content).not.toContain('localhost:3000/admin')
@@ -213,30 +211,52 @@ describe('readmeContent', () => {
     expect(content).toContain('docs/developer/dashboard')
   })
 
-  it('omits the React Dashboard section by default', () => {
+  it('points at the built-in dashboard when apps/dashboard was skipped', () => {
     const content = readmeContent('my-store', true, 3000)
-    expect(content).not.toContain('React Dashboard')
+    expect(content).not.toContain('### The Admin Dashboard')
+    expect(content).toContain('http://localhost:3000/dashboard')
   })
 })
 
-describe('rootClaudeMdContent', () => {
+describe('agentsMdContent', () => {
   it('lists apps/dashboard when the dashboard is included', () => {
-    const content = rootClaudeMdContent(true, true)
+    const content = agentsMdContent(true, true)
     expect(content).toContain('`apps/dashboard/`')
     // Each app carries its own instructions; the root file points at them.
+    expect(content).toContain('server/AGENTS.md')
     expect(content).toContain('apps/dashboard/AGENTS.md')
     expect(content).toContain('apps/seller-dashboard/AGENTS.md')
   })
 
-  it('renders commands for the chosen package manager', () => {
-    const content = rootClaudeMdContent(true, true, 'pnpm')
-    expect(content).toContain('pnpm run dev')
+  it('renders CLI commands for the chosen package manager', () => {
+    const content = agentsMdContent(true, true, 'pnpm')
+    expect(content).toContain('pnpm spree dev')
     expect(content).toContain('pnpm spree api get products')
     expect(content).not.toContain('npx spree')
   })
 
+  // Agents must drive the stack through the CLI, never through Rails
+  // binaries or the root package.json shortcuts.
+  it('forbids running Rails commands directly', () => {
+    const content = agentsMdContent(false)
+    expect(content).toContain('Never run `bin/rails`')
+    expect(content).toContain("Don't use the `package.json` scripts")
+  })
+
   it('omits apps/dashboard by default', () => {
-    expect(rootClaudeMdContent(true)).not.toContain('apps/dashboard')
+    expect(agentsMdContent(true)).not.toContain('apps/dashboard')
+  })
+
+  it('omits the seller panel when it was not installed', () => {
+    const content = agentsMdContent(true, true, 'pnpm', false)
+    expect(content).toContain('apps/dashboard/AGENTS.md')
+    expect(content).not.toContain('apps/seller-dashboard')
+  })
+})
+
+describe('claudeMdContent', () => {
+  it('imports AGENTS.md', () => {
+    expect(claudeMdContent()).toBe('@AGENTS.md\n')
   })
 })
 
@@ -280,6 +300,13 @@ describe('dependabotContent', () => {
     const content = dependabotContent(true, true)
     expect(content).toContain('package-ecosystem: npm\n    directory: "/apps/dashboard"')
     expect(content).toContain('dashboard-security:')
+  })
+
+  it('adds the seller panel npm ecosystem only when it was installed', () => {
+    expect(dependabotContent(true, true, true)).toContain(
+      'package-ecosystem: npm\n    directory: "/apps/seller-dashboard"',
+    )
+    expect(dependabotContent(true, true)).not.toContain('/apps/seller-dashboard')
   })
 
   it('omits the dashboard ecosystem by default', () => {

@@ -6,7 +6,7 @@ const client = createClient({
 })
 
 // region:example
-const cart = await client.carts.storeCredits.apply('cart_abc123', 10.0, {
+const cart = await client.carts.storeCredits.apply('cart_abc123', '10.00', {
   token: '<token>',
 })
 

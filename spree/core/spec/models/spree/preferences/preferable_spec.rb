@@ -2,18 +2,12 @@ require 'spec_helper'
 
 describe Spree::Preferences::Preferable, type: :model do
   before :all do
-    class A
-      include ActiveModel::Model
-      include Spree::Preferences::Preferable
-      attr_reader :id
+    ActiveRecord::Migration.suppress_messages do
+      ActiveRecord::Migration.create_table(:preferable_spec_records, force: true) { |t| t.json :preferences }
+    end
 
-      def initialize
-        @id = rand(999)
-      end
-
-      def preferences
-        @preferences ||= default_preferences
-      end
+    class A < Spree::Base
+      self.table_name = 'preferable_spec_records'
 
       preference :color, :string, default: 'green', deprecated: 'Please use colour instead'
     end
@@ -23,16 +17,13 @@ describe Spree::Preferences::Preferable, type: :model do
     end
   end
 
+  after :all do
+    ActiveRecord::Migration.suppress_messages { ActiveRecord::Migration.drop_table(:preferable_spec_records) }
+  end
+
   before do
     @a = A.new
-    allow(@a).to receive_messages(persisted?: true)
     @b = B.new
-    allow(@b).to receive_messages(persisted?: true)
-
-    # ensure we're persisting as that is the default
-    #
-    store = Spree::Preferences::Store.instance
-    store.persistence = true
   end
 
   describe 'preference definitions' do
@@ -52,11 +43,6 @@ describe Spree::Preferences::Preferable, type: :model do
       expect(@b.preferred_flavor).to be_nil
     end
 
-    it 'can be asked if it has a preference definition' do
-      expect(@a.has_preference?(:color)).to be true
-      expect(@a.has_preference?(:bad)).to be false
-    end
-
     it 'can be asked and raises' do
       expect do
         @a.has_preference! :flavor
@@ -64,17 +50,14 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'has a type' do
-      expect(@a.preferred_color_type).to eq :string
       expect(@a.preference_type(:color)).to eq :string
     end
 
     it 'has a default' do
-      expect(@a.preferred_color_default).to eq 'green'
       expect(@a.preference_default(:color)).to eq 'green'
     end
 
     it 'can have a deprecation message' do
-      expect(@a.preferred_color_deprecated).to eq 'Please use colour instead'
       expect(@a.preference_deprecated(:color)).to eq 'Please use colour instead'
     end
 
@@ -87,11 +70,18 @@ describe Spree::Preferences::Preferable, type: :model do
 
   describe 'preference access' do
     it 'handles ghost methods for preferences' do
+      @b.preferred_flavor = 'mint'
+      expect(@b.preferred_flavor).to eq 'mint'
+    end
+
+    it 'warns when a deprecated preference is written' do
+      expect(Spree::Deprecation).to receive(:warn).with(/`color` is deprecated. Please use colour instead/)
       @a.preferred_color = 'blue'
       expect(@a.preferred_color).to eq 'blue'
     end
 
     it 'parent and child instances have their own prefs' do
+      allow(Spree::Deprecation).to receive(:warn)
       @a.preferred_color = 'red'
       @b.preferred_color = 'blue'
 
@@ -114,11 +104,6 @@ describe Spree::Preferences::Preferable, type: :model do
     it 'builds a hash of preference defaults' do
       expect(@b.default_preferences).to eq(flavor: nil,
                                            color: 'green')
-    end
-
-    it 'builds an array of deprecated preferences' do
-      expect(@b.deprecated_preferences).to eq([{ name: :color,
-                                                 message: 'Please use colour instead' }])
     end
 
     context 'converts integer preferences to integer values' do
@@ -166,17 +151,44 @@ describe Spree::Preferences::Preferable, type: :model do
         A.preference :if_decimal, :decimal
       end
 
-      it 'returns a BigDecimal' do
+      it 'returns a BigDecimal, stored as its exact string' do
         @a.set_preference(:if_decimal, 3.3)
-        expect(@a.preferences[:if_decimal].class).to eq(BigDecimal)
+        expect(@a.get_preference(:if_decimal)).to eq(BigDecimal('3.3'))
+        expect(@a.preferences[:if_decimal]).to eq('3.3')
       end
 
       it 'with strings' do
         @a.set_preference(:if_decimal, '3.3')
-        expect(@a.preferences[:if_decimal]).to eq(3.3)
+        expect(@a.get_preference(:if_decimal)).to eq(3.3)
 
         @a.set_preference(:if_decimal, '')
-        expect(@a.preferences[:if_decimal]).to eq(0.0)
+        expect(@a.get_preference(:if_decimal)).to eq(0.0)
+      end
+
+      it 'refuses text it would otherwise misread' do
+        expect { @a.set_preference(:if_decimal, '1,599.99') }.to raise_error(Spree::Money::InvalidFormat)
+      end
+
+      it 'stores and returns a decimal default as a BigDecimal, so setting the same amount is not a change' do
+        A.preference :decimal_with_default, :decimal, default: 0.0
+        record = A.create!
+        loaded = A.find(record.id)
+
+        expect(loaded.preferences[:decimal_with_default]).to eq('0.0')
+        expect(loaded.preferred_decimal_with_default).to be_a(BigDecimal)
+
+        loaded.preferred_decimal_with_default = 0
+        expect(loaded).not_to be_changed
+      end
+
+      it 'treats a money preference the same way' do
+        A.preference :money_with_default, :money, default: 0
+        loaded = A.find(A.create!.id)
+
+        expect(loaded.preferred_money_with_default).to be_a(BigDecimal)
+
+        loaded.preferred_money_with_default = '0'
+        expect(loaded).not_to be_changed
       end
     end
 
@@ -197,13 +209,13 @@ describe Spree::Preferences::Preferable, type: :model do
 
       it 'converts string to BigDecimal when present' do
         @a.set_preference(:nullable_decimal, '3.14')
-        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('3.14'))
-        expect(@a.preferences[:nullable_decimal].class).to eq(BigDecimal)
+        expect(@a.get_preference(:nullable_decimal)).to eq(BigDecimal('3.14'))
+        expect(@a.get_preference(:nullable_decimal).class).to eq(BigDecimal)
       end
 
       it 'preserves decimal values' do
         @a.set_preference(:nullable_decimal, 9.99)
-        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('9.99'))
+        expect(@a.get_preference(:nullable_decimal)).to eq(BigDecimal('9.99'))
       end
     end
 
@@ -269,7 +281,7 @@ describe Spree::Preferences::Preferable, type: :model do
 
     context 'converts array preferences to array values' do
       before do
-        A.preference :is_array, :array, default: []
+        Spree::Deprecation.silence { A.preference :is_array, :array, default: [] }
       end
 
       it 'with arrays' do
@@ -290,7 +302,7 @@ describe Spree::Preferences::Preferable, type: :model do
 
     context 'converts hash preferences to hash values' do
       before do
-        A.preference :is_hash, :hash, default: {}
+        Spree::Deprecation.silence { A.preference :is_hash, :hash, default: {} }
       end
 
       it 'with hash' do
@@ -298,9 +310,9 @@ describe Spree::Preferences::Preferable, type: :model do
         expect(@a.preferences[:is_hash]).to be_is_a(Hash)
       end
 
-      it 'with hash and keys are integers' do
+      it 'with hash and keys are integers, which JSON keeps as strings' do
         @a.set_preference(:is_hash, 1 => 2, 3 => 4)
-        expect(@a.preferences[:is_hash]).to eql(1 => 2, 3 => 4)
+        expect(@a.preferences[:is_hash]).to eql('1' => 2, '3' => 4)
       end
 
       it 'with string' do
@@ -331,6 +343,21 @@ describe Spree::Preferences::Preferable, type: :model do
 
       it 'with single array' do
         expect { @a.set_preference(:is_hash, ['key']) }.to raise_error(ArgumentError)
+      end
+
+      it 'with permitted strong parameters' do
+        parameters = ActionController::Parameters.new(amounts: { 'EUR' => '15.0' }).permit(amounts: {})
+
+        @a.set_preference(:is_hash, parameters[:amounts])
+
+        expect(@a.preferences[:is_hash]).to eq('EUR' => '15.0')
+        expect(@a.preferences[:is_hash]).to be_is_a(Hash)
+      end
+
+      it 'with unpermitted strong parameters' do
+        parameters = ActionController::Parameters.new('EUR' => '15.0')
+
+        expect { @a.set_preference(:is_hash, parameters) }.to raise_error(ActionController::UnfilteredParameters)
       end
     end
 
@@ -366,8 +393,11 @@ describe Spree::Preferences::Preferable, type: :model do
 
     context 'converts any preferences to any values' do
       before do
-        A.preference :product_ids, :any, default: []
-        A.preference :product_attributes, :any, default: {}
+        Spree::Deprecation.silence do
+          A.preference :product_ids, :any, default: []
+          A.preference :product_attributes, :any, default: {}
+        end
+        @a = A.new
       end
 
       it 'with array' do
@@ -379,8 +409,197 @@ describe Spree::Preferences::Preferable, type: :model do
       it 'with hash' do
         expect(@a.preferences[:product_attributes]).to eq({})
         @a.set_preference(:product_attributes, id: 1, name: 2)
-        expect(@a.preferences[:product_attributes]).to eq(id: 1, name: 2)
+        expect(@a.preferences[:product_attributes]).to eq('id' => 1, 'name' => 2)
       end
+    end
+  end
+
+  describe 'typed declarations' do
+    let(:preferable_class) do
+      Class.new(Spree::Base) do
+        self.table_name = 'preferable_spec_records'
+
+        def self.name
+          'TypedPreferable'
+        end
+
+        preference :channel_ids, :array, of: :id, model: 'Spree::Channel', default: [],
+                                         scope: ->(_record) { Spree::Store.default.channels }
+        preference :quantities, :array, of: :integer, default: []
+        preference :amounts, :hash, keys: :currency, values: :money, default: {}
+        preference :tiers, :array, of: :object, properties: { threshold: :money, value: :decimal }, default: []
+        preference :flavor, :string, default: 'vanilla'
+        exposes_preferences :flavor
+      end
+    end
+    let(:record) { preferable_class.new }
+    let(:channel) { create(:channel) }
+
+    it 'decodes prefixed ids to the raw primary keys it stores' do
+      record.set_preference(:channel_ids, [channel.prefixed_id])
+      expect(record.preferences[:channel_ids]).to eq([channel.id.to_s])
+    end
+
+    it 'accepts a comma-separated list' do
+      record.set_preference(:channel_ids, "#{channel.prefixed_id}, #{channel.id}")
+      expect(record.preferences[:channel_ids]).to eq([channel.id.to_s, channel.id.to_s])
+    end
+
+    it 'refuses an id carrying another model\'s prefix, even when it decodes to an existing row' do
+      market_id = "mkt_#{Spree::PrefixedId::SQIDS.encode([channel.id])}"
+      expect { record.set_preference(:channel_ids, [market_id]) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'refuses an id outside the declared scope' do
+      other_channel = create(:channel, store: create(:store))
+      expect { record.set_preference(:channel_ids, [other_channel.prefixed_id]) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'casts list items to their declared type' do
+      record.set_preference(:quantities, ['1', 2])
+      expect(record.preferences[:quantities]).to eq([1, 2])
+    end
+
+    it 'keeps an item that does not cast, for validation to name' do
+      record.set_preference(:quantities, ['many'])
+      expect(record.preferences[:quantities]).to eq(['many'])
+    end
+
+    it 'stores hash values in their declared type, with currency keys upcased' do
+      record.set_preference(:amounts, 'eur' => 15, 'USD' => '9.99')
+      expect(record.preferences[:amounts]).to eq('EUR' => '15.0', 'USD' => '9.99')
+    end
+
+    it 'keeps only the declared properties of each object, typed' do
+      record.set_preference(:tiers, [{ threshold: 100, value: '10', note: 'dropped' }])
+      expect(record.preferences[:tiers]).to eq([{ 'threshold' => '100.0', 'value' => '10.0' }])
+    end
+
+    it 'exposes a preference under its plain name' do
+      expect(record.flavor).to eq('vanilla')
+      expect(record.flavor?).to be(true)
+      record.flavor = 'mint'
+      expect(record.preferred_flavor).to eq('mint')
+    end
+
+    it 'casts strings, integers and booleans the way Rails casts attributes' do
+      preferable_class.preference :enabled, :boolean, default: true
+      preferable_class.preference :limit, :integer, default: 1
+
+      record.set_preference(:enabled, 'off')
+      record.set_preference(:limit, '42')
+
+      expect(record.preferred_enabled).to be(false)
+      expect(record.preferred_limit).to eq(42)
+    end
+
+    it 'treats whitespace alone as unset for a nullable number' do
+      preferable_class.preference :cap, :integer, default: 5, nullable: true
+
+      record.set_preference(:cap, '   ')
+
+      expect(record.preferences[:cap]).to be_nil
+    end
+
+    it 'refuses to expose a name that is not a preference or is already a method' do
+      expect { preferable_class.exposes_preferences :not_declared }.to raise_error(ArgumentError, /no preference/)
+      expect { preferable_class.exposes_preferences :flavor }.to raise_error(ArgumentError, /a method of that name exists/)
+    end
+
+    it 'raises for an option that does not fit the type' do
+      expect { preferable_class.preference :wrong_of, :string, of: :integer }.to raise_error(ArgumentError, /`of:` applies to an :array/)
+      expect { preferable_class.preference :id_without_model, :array, of: :id }.to raise_error(ArgumentError, /needs `model:`/)
+      expect { preferable_class.preference :unknown_item, :array, of: :thing }.to raise_error(ArgumentError, /Unknown item type/)
+      expect { preferable_class.preference :wrong_currency, :decimal, currency: :currency }.to raise_error(ArgumentError, /`currency:` applies to a :money/)
+    end
+
+    describe '#assign_preferences' do
+      it 'writes a payload that matches the schema' do
+        record.assign_preferences({ 'quantities' => [1, 2], 'channel_ids' => [channel.prefixed_id] })
+
+        expect(record.preferred_quantities).to eq([1, 2])
+        expect(record.preferences[:channel_ids]).to eq([channel.id.to_s])
+      end
+
+      it 'refuses the whole payload, naming each failing value, when any value does not match' do
+        expect { record.assign_preferences({ 'flavor' => 'mint', 'quantities' => ['many'], 'colour' => 'red' }) }.to raise_error(
+          Spree::Preferences::InvalidPreferences
+        ) { |error| expect(error.failures.pluck(:pointer)).to contain_exactly('/preferences/quantities/0', '/preferences/colour') }
+        expect(record.preferred_flavor).to eq('vanilla')
+      end
+
+      it 'refuses an id of another model by its prefix' do
+        expect { record.assign_preferences({ 'channel_ids' => ["mkt_#{Spree::PrefixedId::SQIDS.encode([channel.id])}"] }) }
+          .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/channel_ids/0})
+      end
+
+      context 'with an amount of money' do
+        before do
+          preferable_class.preference :fee, :money, default: 0
+          preferable_class.preference :currency, :string, default: 'USD'
+        end
+
+        it 'refuses more decimals than the currency has, naming the value' do
+          expect { record.assign_preferences({ 'fee' => '12.505' }) }
+            .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/fee}) { |error| expect(error.failures.first[:message]).to match(/2 decimal places for USD/) }
+          expect { record.assign_preferences({ 'fee' => '12.50' }) }.not_to raise_error
+        end
+
+        it 'reads the currency sent with the amount before the stored one' do
+          expect { record.assign_preferences({ 'fee' => '12.50', 'currency' => 'JPY' }) }
+            .to raise_error(Spree::Preferences::InvalidPreferences, /0 decimal places for JPY/)
+          expect { record.assign_preferences({ 'fee' => '1250', 'currency' => 'JPY' }) }.not_to raise_error
+          expect(record.money_preference_currency(:fee, { 'currency' => '' })).to be_nil
+        end
+
+        it 'takes the currency from the source its declaration names' do
+          preferable_class.preference :surcharge, :money, default: 0, currency: :settlement_currency
+          preferable_class.define_method(:settlement_currency) { 'KWD' }
+
+          expect(record.money_preference_currency(:surcharge)).to eq('KWD')
+          expect { record.assign_preferences({ 'surcharge' => '1.250' }) }.not_to raise_error
+          expect { record.assign_preferences({ 'surcharge' => '1.2505' }) }.to raise_error(Spree::Preferences::InvalidPreferences)
+        end
+      end
+
+      it 'leaves an amount in any currency to the format check' do
+        preferable_class.preference :threshold, :money, default: 0
+
+        expect(record.money_preference_currency(:threshold)).to be_nil
+        expect { record.assign_preferences({ 'threshold' => '12.505' }) }.not_to raise_error
+      end
+
+      it 'refuses an id outside the declared scope' do
+        other_channel = create(:channel, store: create(:store))
+
+        expect { record.assign_preferences({ 'channel_ids' => [other_channel.prefixed_id] }) }
+          .to raise_error(Spree::Preferences::InvalidPreferences, %r{/preferences/channel_ids})
+      end
+    end
+
+    it 'still decodes prefixed ids in an id list declared without `of:`, for one release' do
+      Spree::Deprecation.silence { preferable_class.preference :warehouse_ids, :array, default: [] }
+
+      record.set_preference(:warehouse_ids, [channel.prefixed_id])
+
+      expect(record.preferences[:warehouse_ids]).to eq([channel.id])
+    end
+
+    it 'reads back an integer or boolean stored as a string by older code as its type' do
+      expect(record.wire_preference_value('5', type: :integer)).to eq(5)
+      expect(record.wire_preference_value('true', type: :boolean)).to be(true)
+      expect(record.wire_preference_value('', type: :integer, nullable: true)).to be_nil
+    end
+
+    it 'warns about a declaration that does not state its full type' do
+      expect(Spree::Deprecation).to receive(:warn).with(/needs `of:`/)
+      preferable_class.preference :untyped_list, :array, default: []
+    end
+
+    it 'accepts the legacy `in:` option with a warning' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Use `choices:` instead/)
+      preferable_class.preference :legacy_choice, :string, in: %w[a b]
+      expect(preferable_class.preference_definitions[:legacy_choice][:choices]).to eq(%w[a b])
     end
   end
 
@@ -390,7 +609,7 @@ describe Spree::Preferences::Preferable, type: :model do
         def self.up
           create_table :pref_tests do |t|
             t.string :col
-            t.text :preferences
+            t.json :preferences
           end
         end
 
@@ -405,7 +624,9 @@ describe Spree::Preferences::Preferable, type: :model do
 
       class PrefTest < Spree::Base
         preference :pref_test_pref, :string, default: 'abc'
-        preference :pref_test_any, :any, default: []
+        Spree::Deprecation.silence { preference :pref_test_any, :any, default: [] }
+        preference :pref_test_decimal, :decimal, default: 0
+        preference :pref_test_datetime, :datetime
       end
     end
 
@@ -438,22 +659,42 @@ describe Spree::Preferences::Preferable, type: :model do
       end
     end
 
-    it 'clear preferences' do
-      @pt.set_preference(:pref_test_pref, 'xyz')
-      expect(@pt.preferred_pref_test_pref).to eq('xyz')
-      @pt.clear_preferences
-      expect(@pt.preferred_pref_test_pref).to eq('abc')
-    end
+    describe 'JSON storage' do
+      it 'restores a decimal exactly after a round trip' do
+        @pt.update!(preferred_pref_test_decimal: '19.99')
 
-    it 'clear preferences when record is deleted' do
-      @pt.save!
-      @pt.preferred_pref_test_pref = 'lmn'
-      @pt.save!
-      @pt.destroy
-      @pt1 = PrefTest.new(col: 'aaaa')
-      @pt1.id = @pt.id
-      @pt1.save!
-      expect(@pt1.get_preference(:pref_test_pref)).to eq('abc')
+        expect(PrefTest.find(@pt.id).preferred_pref_test_decimal).to eq(BigDecimal('19.99'))
+      end
+
+      it 'restores a time after a round trip' do
+        time = Time.zone.parse('2026-03-01 09:30:00')
+        @pt.update!(preferred_pref_test_datetime: time)
+        reloaded = PrefTest.find(@pt.id)
+
+        expect(reloaded.preferred_pref_test_datetime).to eq(time)
+        reloaded.preferred_pref_test_datetime = time
+        expect(reloaded.preferred_pref_test_datetime_changed?).to be(false)
+      end
+
+      it 'reads stored keys with indifferent access' do
+        @pt.update!(preferred_pref_test_pref: 'xyz')
+        reloaded = PrefTest.find(@pt.id)
+
+        expect(reloaded.preferences[:pref_test_pref]).to eq('xyz')
+        expect(reloaded.preferences['pref_test_pref']).to eq('xyz')
+      end
+
+      it 'does not mark a loaded record as changed' do
+        expect(PrefTest.find(@pt.id).changed?).to be(false)
+      end
+
+      it 'does not report a change when a decimal is set to the value it holds' do
+        @pt.update!(preferred_pref_test_decimal: '19.99')
+        reloaded = PrefTest.find(@pt.id)
+        reloaded.preferred_pref_test_decimal = BigDecimal('19.99')
+
+        expect(reloaded.preferred_pref_test_decimal_changed?).to be(false)
+      end
     end
 
     describe 'preference change tracking methods' do
@@ -468,9 +709,9 @@ describe Spree::Preferences::Preferable, type: :model do
         @pt.preferred_pref_test_pref = 'xyz'
         @pt.save!
 
-        expect(@pt.preferred_pref_test_pref_previously_changed?).to be true
-        expect(@pt.preferred_pref_test_pref_previous_change).to eq(['abc', 'xyz'])
-        expect(@pt.preferred_pref_test_pref_previously_was).to eq('abc')
+        expect(@pt.saved_change_to_preferred_pref_test_pref?).to be true
+        expect(@pt.saved_change_to_preferred_pref_test_pref).to eq(['abc', 'xyz'])
+        expect(@pt.preferred_pref_test_pref_before_last_save).to eq('abc')
       end
 
       it 'reports no changes when preference is set to same value' do

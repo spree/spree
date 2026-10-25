@@ -41,9 +41,17 @@ export function useCreateIntegration() {
   })
 }
 
-/** Updates credentials or activation. Masked secrets round-trip safely. */
-export function useUpdateIntegration(id: string) {
+/**
+ * Updates credentials or activation. Masked secrets round-trip safely.
+ * `showValidationErrors` toasts a failed activation for callers with no form
+ * to show it in, such as the gallery card's switch.
+ */
+export function useUpdateIntegration(
+  id: string,
+  { showValidationErrors = false }: { showValidationErrors?: boolean } = {},
+) {
   return useResourceMutation<Integration, Error, IntegrationUpdateParams>({
+    showValidationErrors,
     mutationFn: (params) => adminClient.integrations.update(id, params),
     invalidate: [['integrations'], ['delivery-methods']],
     successMessage: i18n.t('admin.integrations.messages.updated'),

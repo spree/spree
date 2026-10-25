@@ -1,0 +1,35 @@
+---
+vi:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Đặt lại mật khẩu
+        expiry_notice: Liên kết đặt lại mật khẩu này sẽ sớm hết hạn. Nếu bạn không yêu cầu điều này, bạn không cần làm gì.
+        greeting: Chào %{name},
+        ignore_notice: Nếu bạn không yêu cầu đặt lại mật khẩu, bạn có thể yên tâm bỏ qua email này. Mật khẩu của bạn sẽ không bị thay đổi.
+        instructions: Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu của bạn. Nhấp vào nút bên dưới để chọn mật khẩu mới.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Xin chào,
+        ignore_disclaimer: Nếu bạn không yêu cầu điều này, vui lòng bỏ qua email này.
+        instructions: Vui lòng nhấp vào nút bên dưới để xác minh địa chỉ email của bạn.
+        message_copy_link: 'Nếu nút không hoạt động, vui lòng sao chép và dán liên kết sau vào trình duyệt của bạn:'
+        subject: Xác minh địa chỉ email của bạn
+        verify_email_address_link: Xác minh địa chỉ email
+    order_mailer:
+      cancel_email:
+        instructions: Đơn đặt hàng của quý khách bị hủy. Vui lòng kiểm tra lại đơn hàng của bạn.
+      confirm_email:
+        instructions: Vui lòng kiểm tra đơn đặt hàng của bạn.
+      payment_link_email:
+        message: Vui lòng nhấp vào nút bên dưới để thanh toán cho đơn hàng của bạn.
+        message_copy_link: 'Nếu nút không hoạt động, vui lòng sao chép và dán liên kết sau vào trình duyệt của bạn:'
+        pay_for_order: Thanh toán đơn hàng
+        subject: 'Liên kết thanh toán cho đơn hàng #%{number}'
+      store_owner_notification_email:
+        heading: Đã nhận đơn hàng mới
+        instructions: Bạn đã nhận được một đơn hàng mới.
+        order_summary: Tóm tắt đơn hàng %{number}
+        subject: "%{store_name} đã nhận được một đơn hàng mới"
+      subtotal: 'Tạm tính:'
+      total: 'Tổng đơn hàng:'

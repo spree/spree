@@ -8,6 +8,28 @@ module Spree
         class WebhookEndpointsController < ResourceController
           scoped_resource :webhooks
 
+          request_params :webhook_endpoint do |body|
+            body.attribute :name, :string,
+              nullable: true,
+              example: 'Order pipeline',
+              description: 'A label shown in the dashboard list.'
+            body.attribute :url, :string,
+              required: true, on: :create,
+              example: 'https://example.com/webhooks/orders',
+              description: 'HTTPS destination URL. It cannot resolve to a private IP address outside development.'
+            body.attribute :active, :boolean,
+              description: 'Defaults to true on create. Prefer the disable and enable endpoints to pause one.'
+            body.attribute :subscriptions, :array, of: :string,
+              example: %w[order.placed order.canceled],
+              description: 'Event names this endpoint receives. An empty list or `["*"]` subscribes to every event; otherwise list exact names (`order.completed`) or patterns with `*` in place of a segment (`order.*`, `*.created`). At most 200 entries of up to 100 characters.'
+          end
+
+          request_params 'WebhookEndpointDisableParams', action: :disable do |body|
+            body.attribute :reason, :string,
+              example: 'Investigating elevated 5xx rate',
+              description: 'Shown next to the disabled indicator. Defaults to "Manually disabled".'
+          end
+
           before_action :reject_unauthorized_credential_subscription!, only: [:create, :update]
 
           # POST /api/v3/admin/webhook_endpoints/:id/send_test
@@ -68,32 +90,40 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :name, :url, :active, subscriptions: [])
+            params.permit(*permitted_attributes)
           end
 
           private
 
-          # Customer password reset tokens are account credentials, so the
-          # webhooks permission alone cannot subscribe an endpoint to them, or
-          # repoint an endpoint that already receives them.
+          # A customer's password reset token is an account credential, so the
+          # webhooks permission alone cannot subscribe an endpoint to it, or
+          # repoint an endpoint that already receives it: that needs the
+          # permission the event catalog names for it (`write_customers`).
           def reject_unauthorized_credential_subscription!
-            return if holds_permission?('write_customers')
-
-            requested = Array(permitted_params[:subscriptions]) & Spree::WebhookEndpoint::CREDENTIAL_EVENTS
-            return if requested.empty? && !repoints_credential_endpoint?
+            events = requested_credential_events | repointed_credential_events
+            missing = events.reject { |entry| holds_permission?(entry.credential_permission) }
+            return if missing.empty?
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: "Receiving #{Spree::WebhookEndpoint::CREDENTIAL_EVENTS.to_sentence} requires permission to manage customers",
+              message: "Receiving #{missing.map(&:name).to_sentence} requires the " \
+                       "#{missing.map(&:credential_permission).uniq.to_sentence} permission",
               status: :forbidden
             )
           end
 
-          def repoints_credential_endpoint?
-            return false unless action_name == 'update'
-            return false unless permitted_params.key?(:url) || permitted_params.key?(:subscriptions)
+          # Checked after the model's normalization, so what the gate sees is
+          # exactly what would be stored.
+          def requested_credential_events
+            subscriptions = Spree::WebhookEndpoint.normalize_value_for(:subscriptions, permitted_params[:subscriptions])
+            Spree::Events.catalog.credential_events(subscriptions)
+          end
 
-            current_store.webhook_endpoints.find_by_prefix_id(params[:id])&.receives_credentials?
+          def repointed_credential_events
+            return [] unless action_name == 'update'
+            return [] unless permitted_params.key?(:url) || permitted_params.key?(:subscriptions)
+
+            current_store.webhook_endpoints.find_by_prefix_id(params[:id])&.credential_subscriptions || []
           end
         end
       end

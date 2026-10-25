@@ -5,9 +5,10 @@ module Spree
         # The products a storefront buyer may see: available now (or on
         # pre-order) in the current currency, narrowed to the catalogs their
         # company, customer group or channel resolve to. The product listing
-        # reads through it, and so does anything else that accepts a product
-        # or variant from the buyer, so an id cannot reach what the listing
-        # would never show.
+        # and wishlist items read through it, so an id cannot reach what the
+        # listing would never show. Carts narrow through
+        # {Spree::Cart#orderable_variants} instead, which asks the same
+        # catalogs about the cart's own buyer and company.
         module StorefrontProducts
           extend ActiveSupport::Concern
 
@@ -26,7 +27,7 @@ module Spree
 
           # @return [ActiveRecord::Relation<Spree::Variant>]
           def storefront_variants
-            Spree::Variant.where(product_id: storefront_products.reorder(nil).select(Spree::Product.arel_table[:id]))
+            Spree::Variant.for_products(storefront_products)
           end
         end
       end

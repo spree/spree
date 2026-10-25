@@ -1,5 +1,7 @@
 module Spree
   class PaymentMethod::Check < ::Spree::PaymentMethod
+    self.accepts_money_amounts = true
+
     def actions
       %w{capture void}
     end

@@ -3,8 +3,7 @@ module Spree
     module V3
       module Admin
         # Admin CRUD for `Spree::PriceList`, plus the lifecycle transitions
-        # (`activate` / `deactivate`) and the spreadsheet's data feed
-        # (`prices`).
+        # (`activate` / `deactivate`).
         #
         # Everything writable on the list itself — name, schedule, match
         # policy, nested rules (`rules: [...]`), and individual price
@@ -25,11 +24,37 @@ module Spree
           # before_actions by method name, so this would otherwise
           # *replace* the parent's narrower filter and break the standard
           # actions. Wrapping it under a different name keeps both.
-          before_action :load_member_resource, only: [:activate, :deactivate, :prices]
+          before_action :load_member_resource, only: [:activate, :deactivate]
+
+          request_params :price_list do |body|
+            body.attribute :name, :string, required: true, on: :create, example: 'EU wholesale'
+            body.attribute :description, :string, nullable: true
+            body.attribute :position, :integer, example: 1
+            body.attribute :starts_at, :datetime,
+              nullable: true,
+              example: '2026-06-01T00:00:00Z',
+              description: 'Pair with `ends_at` to schedule the list: activating a list whose start is in the future marks it `scheduled`.'
+            body.attribute :ends_at, :datetime, nullable: true, example: '2026-09-01T00:00:00Z'
+            body.attribute :match_policy, :string,
+              choices: Spree::PriceList::MATCH_POLICIES,
+              example: 'all',
+              description: '`all`: every rule must match. `any`: one matching rule is enough.'
+            body.attribute :price_adjustment_percentage, :decimal,
+              nullable: true,
+              example: '-15.0',
+              description: 'Signed: negative discounts off base prices, positive marks up.'
+            body.attribute :adjust_compare_at, :boolean
+            body.attribute :rules, :array, of: Spree::Api::V3::Admin::PriceListRuleRequestSchema,
+              description: 'The complete rule set: rules are matched by `id` and updated, new ones are built, and rules left out are removed.'
+            body.attribute :price_adjustment_tiers, :array, of: Spree::Api::V3::Admin::PriceAdjustmentTierRequestSchema,
+              description: "Quantity bands on the list's percentage. The payload is the whole ladder: a band left out is removed."
+            body.attribute :prices, :array, of: Spree::Api::V3::Admin::PriceListPriceRequestSchema,
+              description: 'Per-variant price overrides. Each row upserts, so the variants it names become part of the list. Curating whole products goes through the nested products endpoint instead.'
+          end
 
           # GET /api/v3/admin/price_lists/price_rule_types
           #
-          # Returns `[{ type, label, description, preference_schema }]`
+          # Returns `[{ type, label, description, schema }]`
           # for every registered subclass in `Spree.pricing.rules`. The
           # SPA uses this to build the "Add rule" picker + render a
           # generic preferences form per subclass. Rules themselves are
@@ -69,29 +94,6 @@ module Spree
             end
           end
 
-          # GET /api/v3/admin/price_lists/:id/prices
-          #
-          # The spreadsheet editor's data source. Returns every Price row
-          # in this list (filtered by `?currency=`), eager-loading
-          # `variant.product` + option values so each cell can render
-          # product name, variant options and SKU without N+1.
-          def prices
-            authorize! :read, @resource
-            currency = params[:currency].presence || current_store.default_currency
-            prices = @resource.prices
-                              .includes(variant: [:product, { option_values: :option_type }])
-                              .where(currency: currency)
-                              .joins(variant: :product)
-                              .order(Arel.sql("#{Spree::Product.table_name}.name ASC"))
-                              .order(Arel.sql("#{Spree::Variant.table_name}.position ASC"))
-                              .order(min_quantity: :asc)
-
-            render json: {
-              data: prices.map { |p| serialize_price(p) },
-              meta: { currency: currency, count: prices.size }
-            }
-          end
-
           protected
 
           def model_class
@@ -121,53 +123,34 @@ module Spree
             [:price_adjustment_tiers]
           end
 
-          def permitted_params
-            normalize_params(
-              params.permit(
-                :name, :description, :position,
-                :starts_at, :ends_at, :match_policy,
-                :price_adjustment_percentage, :adjust_compare_at,
-                rules: [:id, :type, { preferences: {} }],
-                price_adjustment_tiers: [:min_quantity, :percentage],
-                prices: [:id, :variant_id, :currency, :min_quantity, :amount, :compare_at_amount]
-              )
-            )
+          def serializer_params
+            return super unless action_name == 'index'
+
+            super.merge(page_counts)
           end
 
           private
 
+          # One grouped count per figure for the whole page rather than two
+          # queries per list.
+          def page_counts
+            @page_counts ||= begin
+              price_list_ids = collection.map(&:id)
+              {
+                products_counts: Spree::PriceList.products_count_by_list(price_list_ids),
+                prices_counts: Spree::PriceList.prices_count_by_list(price_list_ids)
+              }
+            end
+          end
+
           # Loads the record without the action-derived authorization
           # `set_resource` runs (which would check `:activate` /
-          # `:deactivate` / `:prices` — actions that abilities don't
-          # grant). The per-action methods below explicitly call
-          # `authorize!` with the standard action that ability rules
-          # actually mention (`:update` / `:read`).
+          # `:deactivate` — actions that abilities don't grant). The
+          # per-action methods explicitly call `authorize!` with
+          # `:update`, which ability rules actually mention.
           def load_member_resource
             @resource = find_resource
           end
-
-          # Hand-rolled flat shape for the spreadsheet — keeps the payload
-          # narrow (no nested variant/product/option_value objects) and
-          # avoids paying for the admin Price serializer when we only need
-          # ~6 fields per row. The grouping the UI does (rows → product
-          # header) is driven entirely off `product_id`/`product_name`.
-          def serialize_price(price)
-            variant = price.variant
-            product = variant.product
-            {
-              id: price.prefixed_id,
-              variant_id: variant.prefixed_id,
-              product_id: product.prefixed_id,
-              product_name: product.name,
-              variant_label: variant.options_text.presence,
-              sku: variant.sku,
-              currency: price.currency,
-              min_quantity: price.min_quantity,
-              amount: price.amount&.to_s,
-              compare_at_amount: price.compare_at_amount&.to_s
-            }
-          end
-
         end
       end
     end

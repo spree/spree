@@ -25,9 +25,7 @@ module Spree
             Spree::StockTransfer.prefixed_id_for(item.stock_transfer_id)
           end
 
-          attribute :variant_id do |item|
-            item.variant&.prefixed_id
-          end
+          prefixed_id_attributes :variant
 
           # The product the line's variant belongs to, so a line can link
           # straight to the screen where that SKU's stock lives.

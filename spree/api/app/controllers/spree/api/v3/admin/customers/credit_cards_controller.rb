@@ -6,10 +6,6 @@ module Spree
           class CreditCardsController < BaseController
             protected
 
-            def parent_association
-              :credit_cards
-            end
-
             # Customers are global; a saved card belongs to the store-scoped
             # payment method it was created against, so the nested collection is
             # bound to the current store's payment methods.

@@ -1,13 +1,12 @@
 import type {
-  CompanyParams,
-  TaxExemptionCertificateParams,
-  TaxIdentifierParams,
+  CompanyCreateParams,
+  TaxExemptionCertificateCreateParams,
+  TaxIdentifierCreateParams,
 } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { COMPANY_KINDS } from '@spree/core'
+import { blankToNull, countryCodeSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-
-export const COMPANY_KINDS = ['company', 'division'] as const
 
 export const companyFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
@@ -20,7 +19,7 @@ export type CompanyFormValues = z.infer<typeof companyFormSchema>
 
 export const COMPANY_DEFAULTS: CompanyFormValues = { name: '', po_number_required: false }
 
-export function companyValuesToParams(values: CompanyFormValues): CompanyParams {
+export function companyValuesToParams(values: CompanyFormValues): CompanyCreateParams {
   return {
     name: values.name,
     po_number_required: values.po_number_required,
@@ -47,7 +46,9 @@ export type TaxIdentifierFormValues = z.infer<typeof taxIdentifierFormSchema>
 
 export const TAX_IDENTIFIER_DEFAULTS: TaxIdentifierFormValues = { kind: '', value: '' }
 
-export function taxIdentifierValuesToParams(values: TaxIdentifierFormValues): TaxIdentifierParams {
+export function taxIdentifierValuesToParams(
+  values: TaxIdentifierFormValues,
+): TaxIdentifierCreateParams {
   return { kind: values.kind, value: values.value }
 }
 
@@ -60,8 +61,8 @@ export const TAX_IDENTIFIER_KINDS = ['eu_vat', 'gb_vat', 'ch_vat', 'au_abn', 'us
 
 export const taxExemptionCertificateFormSchema = z.object({
   certificate_number: z.string().min(1, { error: requiredMessage('certificate_number') }),
-  reason_code: z.string().min(1, { error: requiredMessage('reason_code') }),
-  country_code: z.string().optional(),
+  tax_exemption_reason_id: z.string().min(1, { error: requiredMessage('tax_exemption_reason_id') }),
+  country_code: countryCodeSchema.or(z.literal('')).optional(),
   state_code: z.string().optional(),
   issued_at: z.string().optional(),
   expires_at: z.string().optional(),
@@ -73,7 +74,7 @@ export type TaxExemptionCertificateFormValues = z.infer<typeof taxExemptionCerti
 
 export const TAX_EXEMPTION_CERTIFICATE_DEFAULTS: TaxExemptionCertificateFormValues = {
   certificate_number: '',
-  reason_code: '',
+  tax_exemption_reason_id: '',
   country_code: '',
   state_code: '',
   issued_at: '',
@@ -82,31 +83,17 @@ export const TAX_EXEMPTION_CERTIFICATE_DEFAULTS: TaxExemptionCertificateFormValu
   document_signed_id: null,
 }
 
-/**
- * Reason codes become the tax provider's entity use code. These are the ones in
- * common circulation; the field stays free text because the set is the
- * provider's, not Spree's.
- */
-export const TAX_EXEMPTION_REASON_CODES = [
-  'resale',
-  'government',
-  'charitable',
-  'educational',
-  'manufacturing',
-  'agricultural',
-] as const
-
 export function taxExemptionCertificateValuesToParams(
   values: TaxExemptionCertificateFormValues,
-): TaxExemptionCertificateParams {
+): TaxExemptionCertificateCreateParams {
   return {
     certificate_number: values.certificate_number,
-    reason_code: values.reason_code,
-    country_code: blankToNull(values.country_code),
+    tax_exemption_reason_id: values.tax_exemption_reason_id,
+    country_code: values.country_code || null,
     state_code: blankToNull(values.state_code),
     issued_at: blankToNull(values.issued_at),
     expires_at: blankToNull(values.expires_at),
     issuing_authority: blankToNull(values.issuing_authority),
-    ...(values.document_signed_id ? { document: values.document_signed_id } : {}),
+    ...signedIdParam('document', values.document_signed_id),
   }
 }

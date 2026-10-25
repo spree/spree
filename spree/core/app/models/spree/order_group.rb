@@ -39,11 +39,11 @@ module Spree
     has_spree_number prefix: 'R', key: :order
 
     publishes_lifecycle_events
+    publishes_events :completed, :resend_confirmation_email
 
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true
     # The cart this group was completed from — unique, and the replay key that
     # makes a retried completion return this group instead of building another.
@@ -100,9 +100,14 @@ module Spree
     # the children loaded already (a serializer renders them, a gateway call
     # reads four of these in a row), and an aggregate per figure would issue a
     # query each time even against rows sitting in memory.
+    #
+    # +tax_total+ is each child's own derivation rather than a column, summed
+    # like the rest: asking the children keeps the group's answer the one they
+    # gave, where re-deriving it here from the two halves above would be a
+    # second way to reach the same figure.
     ROLLED_UP_TOTALS = %i[
       total item_total delivery_total additional_tax_total included_tax_total
-      discount_total fee_total
+      tax_total discount_total fee_total
     ].freeze
 
     ROLLED_UP_TOTALS.each do |figure|
@@ -112,7 +117,7 @@ module Spree
     end
 
     money_methods(*ROLLED_UP_TOTALS)
-    money_methods :gift_card_total
+    money_methods :gift_card_total, :amount_due
 
     alias ship_total delivery_total
 
@@ -255,9 +260,18 @@ module Spree
       association(:orders).reset
     end
 
+    # Refunds for goods that came back settle what was owed for them, as on
+    # {Spree::Order#outstanding_balance}, so they do not count as uncollected.
+    #
     # @return [BigDecimal] still to collect across the whole checkout
     def outstanding_balance
-      total - payment_total
+      total - payment_total - returned_items_refund_total
+    end
+
+    # @return [BigDecimal] what refunds for returns, claims and exchanges on
+    #   this checkout's payments have given back
+    def returned_items_refund_total
+      Spree::Refund.for_returned_items.where(payment_id: payments.completed.select(:id)).sum(:amount)
     end
 
     # @return [Boolean]

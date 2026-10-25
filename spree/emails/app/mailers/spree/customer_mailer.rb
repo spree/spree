@@ -11,8 +11,26 @@ module Spree
 
       with_store_locale(store) do
         mail_template(
-          { customer: email_data(user, Spree.api.customer_serializer), reset_url: @reset_url },
+          { customer: email_data(user, Spree::Emails::CustomerSerializer), reset_url: @reset_url },
           to: user.email, store_url: store.storefront_url
+        )
+      end
+    end
+
+    # Asks the person to confirm a data request raised from their account
+    # (`data_request.confirmation_requested`). The link goes to the validated
+    # redirect URL when the storefront supplied one, falling back to the store's
+    # storefront URL, with the confirmation token appended.
+    def data_request_confirmation_email(data_request, confirmation_token, redirect_url: nil)
+      @data_request = data_request
+      @current_store = data_request.store
+      @confirmation_url = append_token(redirect_url.presence || @current_store.storefront_url, confirmation_token)
+      @expires_at = data_request.requested_at + Spree::DataRequest::CONFIRMATION_WINDOW
+
+      with_store_locale(@current_store) do
+        mail_template(
+          { kind: data_request.kind, confirmation_url: @confirmation_url, expires_at: @expires_at.iso8601 },
+          to: data_request.email, store_url: @current_store.storefront_url
         )
       end
     end

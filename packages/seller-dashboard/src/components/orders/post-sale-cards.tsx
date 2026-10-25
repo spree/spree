@@ -1,4 +1,5 @@
-import { currencyParts } from '@spree/dashboard-core'
+import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf, sumMoney } from '@spree/core'
+import { currencyParts, formatMoney, isPositiveMoney, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -35,8 +36,8 @@ import {
 import { lineLabel } from './line-label'
 import { CreateClaimDialog } from './post-sale-create-dialogs'
 
-const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
-const CLAIM_ACTIONABLE = ['open', 'approved']
+const EXCHANGE_ACTIONABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved', 'received'])
+const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
 
 /**
  * Goods swapped for different ones.
@@ -47,6 +48,7 @@ const CLAIM_ACTIONABLE = ['open', 'approved']
  */
 export function ExchangesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
   const confirm = useConfirm()
   const { data } = useOrderExchanges(order.id)
   const { approve, receive, fulfill, cancel } = useExchangeActions(order.id)
@@ -109,7 +111,20 @@ export function ExchangesCard({ order }: { order: Order }) {
                       )}
                       {exchange.status === 'received' && (
                         <DropdownMenuItem
-                          onClick={() => fulfill.mutate({ exchangeId: exchange.id })}
+                          onClick={async () => {
+                            // A dearer replacement leaves the customer owing the
+                            // difference, which fulfilling puts on the order.
+                            if (
+                              isPositiveMoney(exchange.price_difference) &&
+                              !(await confirm({
+                                message: t('orders.post_sale.exchanges.balance_due_confirm'),
+                                confirmLabel: t('orders.post_sale.exchanges.fulfill'),
+                              }))
+                            ) {
+                              return
+                            }
+                            fulfill.mutate({ exchangeId: exchange.id })
+                          }}
                         >
                           {t('orders.post_sale.exchanges.fulfill')}
                         </DropdownMenuItem>
@@ -139,7 +154,7 @@ export function ExchangesCard({ order }: { order: Order }) {
               ))}
               <p className="text-muted-foreground text-sm">
                 {t('orders.post_sale.exchanges.price_difference', {
-                  amount: exchange.display_price_difference,
+                  amount: formatMoney(exchange.price_difference, order.currency, locale),
                 })}
               </p>
             </CardContent>
@@ -309,14 +324,9 @@ function ResolveClaimDialog({
   // A claim opened without per-item amounts has a refund_total of zero, and
   // the workflow refuses to refund nothing — offer what the customer paid for
   // the claimed items instead, which is also the ceiling it enforces.
-  const recorded = Number(claim.refund_total)
-  const paid = lines.reduce((sum, line) => sum + Number(line.paid_amount ?? 0), 0)
+  const paid = sumMoney(lines.map((line) => line.paid_amount))
   const defaultAmount =
-    Number.isFinite(recorded) && recorded > 0
-      ? claim.refund_total
-      : paid > 0
-        ? paid.toFixed(2)
-        : claim.refund_total
+    isPositiveMoney(claim.refund_total) || !isPositiveMoney(paid) ? claim.refund_total : paid
 
   return (
     <ClaimResolveDialog

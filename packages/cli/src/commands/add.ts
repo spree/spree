@@ -5,23 +5,26 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import {
-  addPackageCommand,
-  extensionInstallGenerator,
-  LIST_GENERATORS,
-  runGeneratorCommand,
-} from '../backend.js'
 import { isNotFound } from '../config.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT } from '../constants.js'
 import { detectProject } from '../context.js'
 import {
-  appServices,
-  dockerCompose,
-  dockerComposeCapture,
-  dockerComposeExecOrRun,
-  isServiceRunning,
-} from '../docker.js'
+  AGENT_SKILLS_REPO,
+  addDocsMcpServer,
+  addDocsSectionToAgentInstructions,
+  dlxCommand,
+  installAgentSkills,
+} from '../lib/ai.js'
+import {
+  EXTENSIONS,
+  extensionNames,
+  isValidGemName,
+  isValidNpmName,
+  resolveExtension,
+} from '../lib/extensions.js'
+import { confirmOrExit } from '../lib/prompt.js'
 import type { ProjectContext } from '../types.js'
+import { type AddExtensionOptions, addExtension } from './add-extension.js'
 
 /**
  * The two admin SPAs `spree add` can scaffold. They differ only in where they
@@ -68,33 +71,82 @@ interface AddDashboardOptions {
   quiet?: boolean
 }
 
-// `spree add <thing>` — bolt an optional component onto an existing project:
-// the dashboard or seller panel apps (storefront parity is planned, see
-// docs/plans/5.6-project-layout-and-dashboard.md), or any Spree extension by
-// its package name (`spree add spree_stripe`).
+interface AddAiOptions {
+  /** Install the Spree agent skills. */
+  skills: boolean
+  /** Connect coding agents to the Spree docs MCP server. */
+  mcp: boolean
+  /** Skip the final summary note — create-spree-app prints its own. */
+  quiet?: boolean
+}
+
+// `spree add <thing>` — bolt an optional component or an extension onto an
+// existing project. Components (dashboard, seller panel, AI coding agent
+// setup) are built in; extensions come from the catalog in extensions.json
+// (see docs/plans/6.0-cli-add-extensions.md).
 export function registerAddCommand(program: Command) {
   program
     .command('add')
-    .description('Add an app (dashboard, seller-dashboard) or an extension to your project')
-    .argument('<thing>', 'dashboard, seller-dashboard, or an extension package (e.g. spree_stripe)')
+    .description('Add an optional component or an extension to your project')
+    .argument(
+      '[thing]',
+      `Component (dashboard, seller-dashboard, ai) or extension (${extensionNames().join(', ')})`,
+    )
+    .option('--gem <name>', 'Install a gem that is not in the extension catalog')
+    .option('--npm <package>', 'Install a dashboard plugin that is not in the extension catalog')
+    .option('-y, --yes', 'Agree to ejecting the project and to installing outside the catalog')
     .option(
       '--template <src>',
       'Starter template: git URL or local path (default: the template bundled with the CLI; env SPREE_DASHBOARD_TEMPLATE / SPREE_SELLER_DASHBOARD_TEMPLATE overrides)',
     )
     .option('--no-install', 'Skip dependency install')
+    .option('--no-skills', 'ai: skip installing the Spree agent skills')
+    .option('--no-mcp', 'ai: skip connecting coding agents to the Spree docs MCP server')
     .option('--quiet', 'Skip the final summary note (for wrapping tools that print their own)')
     .action(
-      async (thing: string, flags: { template?: string; install: boolean; quiet?: boolean }) => {
-        const app = APPS[thing]
+      async (
+        thing: string | undefined,
+        flags: {
+          template?: string
+          install: boolean
+          skills: boolean
+          mcp: boolean
+          quiet?: boolean
+          gem?: string
+          npm?: string
+          yes?: boolean
+        },
+      ) => {
+        if (flags.gem || flags.npm) {
+          if (thing) usageError('Pass either a name or --gem/--npm, not both.')
+          await addUncataloguedExtension(flags.gem, flags.npm, { yes: Boolean(flags.yes) })
+          return
+        }
+        if (!thing) usageError('Name a component or an extension to add.')
+
+        if (thing === 'ai') {
+          if (!flags.quiet) p.intro(pc.bgCyan(pc.black(' Spree AI coding agents ')))
+          const ready = await addAi(detectProject(), flags)
+          if (!flags.quiet) p.outro(ready ? 'Done!' : 'Done, with warnings.')
+          if (!ready) process.exit(1)
+          return
+        }
+
+        const app = Object.hasOwn(APPS, thing) ? APPS[thing] : undefined
         if (!app) {
-          if (!EXTENSION_NAME.test(thing)) {
-            console.error(
-              `\n${pc.red('Error:')} Unknown component: ${thing}. Try ${Object.keys(APPS).join(', ')}, or an extension package name such as spree_stripe.\n`,
+          const extension = resolveExtension(thing)
+          if (!extension) {
+            usageError(
+              [
+                `Unknown component or extension: ${thing}.`,
+                `Components: ${[...Object.keys(APPS), 'ai'].join(', ')}`,
+                `Extensions: ${extensionNames().join(', ')}`,
+                `For a gem that is not listed, use ${pc.bold('spree add --gem <name>')}.`,
+              ].join('\n'),
             )
-            process.exit(2)
           }
-          p.intro(pc.bgCyan(pc.black(` Spree extension: ${thing} `)))
-          await addExtension(detectProject(), thing)
+          p.intro(pc.bgCyan(pc.black(` Spree ${extension.label} `)))
+          await addExtension(detectProject(), extension, { yes: Boolean(flags.yes) })
           p.outro('Done!')
           return
         }
@@ -112,31 +164,109 @@ export function registerAddCommand(program: Command) {
     )
 }
 
-const EXTENSION_NAME = /^[a-z][a-z0-9_-]*$/
+function usageError(message: string): never {
+  console.error(`\n${pc.red('Error:')} ${message}\n`)
+  process.exit(2)
+}
 
 /**
- * Install an extension package and run its install generator when it ships
- * one, then restart a running stack so the server loads it.
+ * Install a gem or dashboard plugin named on the command line rather than
+ * through the catalog. Names are checked so neither can be read as a flag,
+ * and the developer confirms, since nothing vouches for the package.
  */
-export async function addExtension(ctx: ProjectContext, name: string): Promise<void> {
-  p.log.step(`Adding ${pc.bold(name)}...`)
-  await dockerComposeExecOrRun(addPackageCommand(name), ctx.projectDir, {
-    edgeHint: 'the edge stack installs extensions from the monorepo',
-  })
+async function addUncataloguedExtension(
+  gem: string | undefined,
+  npm: string | undefined,
+  opts: AddExtensionOptions,
+): Promise<void> {
+  if (gem && !isValidGemName(gem)) usageError(`Not a valid gem name: ${gem}`)
+  if (npm && !isValidNpmName(npm)) usageError(`Not a valid npm package name: ${npm}`)
 
-  const installer = extensionInstallGenerator(name)
-  const generators = await dockerComposeCapture(LIST_GENERATORS, ctx.projectDir)
-  if (generators.split(/\s+/).includes(installer)) {
-    p.log.step(`Running the ${pc.bold(name)} installer...`)
-    await dockerComposeExecOrRun(runGeneratorCommand(installer), ctx.projectDir)
+  // An official gem named with --gem still installs as the catalog says
+  // (pinned to the Spree version where it is released with Spree).
+  const catalogued = Object.values(EXTENSIONS).find((entry) => entry.gem === gem)
+  const uncatalogued = [catalogued ? undefined : gem, npm].filter(Boolean)
+  const label = catalogued?.label ?? uncatalogued.join(' and ')
+
+  p.intro(pc.bgCyan(pc.black(` ${label} `)))
+  if (uncatalogued.length > 0) {
+    await confirmOrExit(
+      `${uncatalogued.join(' and ')} ${uncatalogued.length > 1 ? 'are' : 'is'} not in the Spree extension catalog. Install anyway?`,
+      opts.yes,
+    )
+  }
+  await addExtension(
+    detectProject(),
+    { ...catalogued, label, gem, dashboard: npm ?? catalogued?.dashboard },
+    opts,
+  )
+  p.outro('Done!')
+}
+
+/**
+ * Set a project up for AI coding agents: connect each agent to the Spree docs
+ * MCP server, point the agent instructions at it, and install the Spree agent
+ * skills. Safe to re-run — servers already configured are kept as they are.
+ *
+ * @return false when a step failed and the project is only partly set up
+ */
+export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<boolean> {
+  let ready = true
+
+  if (opts.mcp) {
+    const outcomes = addDocsMcpServer(ctx.projectDir)
+    for (const [file, outcome] of Object.entries(outcomes)) {
+      if (outcome === 'unreadable' || outcome === 'unwritable') {
+        ready = false
+        p.log.warn(
+          `Could not ${outcome === 'unreadable' ? 'read' : 'write'} ${pc.bold(file)}${outcome === 'unreadable' ? ' as JSON' : ''}, so it was left as it is. Add the server by hand: https://spreecommerce.org/docs/developer/agentic/mcp`,
+        )
+      } else if (!opts.quiet) {
+        p.log.info(
+          outcome === 'added'
+            ? `Added the Spree docs MCP server to ${pc.bold(file)}`
+            : `${pc.bold(file)} already lists the Spree docs MCP server`,
+        )
+      }
+    }
+    const instructions = addDocsSectionToAgentInstructions(ctx.projectDir)
+    for (const file of instructions.updated) {
+      if (!opts.quiet) p.log.info(`Pointed ${pc.bold(file)} at the Spree docs MCP server`)
+    }
+    for (const file of instructions.failed) {
+      ready = false
+      p.log.warn(`Could not update ${pc.bold(file)}, so agents may not know about the docs server.`)
+    }
   }
 
-  if (await isServiceRunning('web', ctx.projectDir)) {
+  if (opts.skills) {
+    const packageManager = detectPackageManager(ctx.projectDir, ctx.projectDir)
     const s = p.spinner()
-    s.start('Restarting the app to load the extension...')
-    await dockerCompose(['restart', ...(await appServices(ctx.projectDir))], ctx.projectDir)
-    s.stop('App restarted.')
+    s.start('Installing Spree agent skills...')
+    try {
+      await installAgentSkills(ctx.projectDir, packageManager)
+      s.stop('Spree agent skills installed.')
+    } catch (err) {
+      ready = false
+      s.stop(pc.yellow('Spree agent skills were not installed.'))
+      p.log.warn(
+        `Install them later with ${pc.bold(`${dlxCommand(packageManager).join(' ')} skills add ${AGENT_SKILLS_REPO}`)}.\n${err instanceof Error ? err.message : String(err)}`,
+      )
+    }
   }
+
+  if (!opts.quiet && opts.mcp) {
+    p.note(
+      [
+        'Claude Code asks you to approve the docs server the first time you open',
+        'the project; Cursor and VS Code list it in their MCP settings.',
+        'Commit the new files so your team gets the same setup.',
+      ].join('\n'),
+      'AI coding agents set up',
+    )
+  }
+
+  return ready
 }
 
 /**
@@ -251,7 +381,7 @@ function resolveBundledTemplate(app: AppSpec): string {
  * Vite config runs the same generator, with the same extensions, without
  * starting a server, so that first start finds nothing to change.
  */
-async function generateRouteTree(appDir: string): Promise<void> {
+export async function generateRouteTree(appDir: string): Promise<void> {
   // Best effort: the dev server generates the file on start regardless.
   await execa(
     'node',

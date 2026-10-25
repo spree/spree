@@ -7,6 +7,15 @@ module Spree
 
           skip_scope_check!
 
+          request_params :me do |body|
+            body.attribute :selected_locale, :string, example: 'de', description: 'The dashboard display language.'
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+            body.attribute :avatar_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `files.upload()` to set the avatar, or null to remove it. Omit it to keep the current photo.'
+          end
+
           before_action :require_current_user!
 
           # GET /api/v3/admin/me
@@ -33,9 +42,11 @@ module Spree
           # name, admin UI language, and avatar) — it operates on `current_user`
           # directly, so it needs no per-record authorization. Distinct from
           # PATCH /admin_users/:id, which is store-scoped staff management of
-          # *other* users. `avatar` accepts an ActiveStorage direct-upload
-          # signed id to set the photo, or `null` to remove it.
+          # *other* users. `avatar_signed_id` takes a signed id from
+          # POST /files to set the photo, or `null` to remove it.
           def update
+            return refuse_delegated_write if current_oauth_token.present?
+
             if current_user.update(permitted_params)
               render json: me_response
             else
@@ -45,6 +56,20 @@ module Spree
 
           private
 
+          # A grant acts *for* a staff member, not *as* one. This action is
+          # unguarded because it was only ever the person at the keyboard
+          # editing their own profile — but a delegated credential reaches it
+          # too, and the name it could rewrite is the one audit trails show
+          # as the actor. There is no catalog permission for "edit my own
+          # profile", so the answer is that an agent has no business here.
+          def refuse_delegated_write
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+              message: 'A connected agent cannot change the profile of the person who connected it.',
+              status: :forbidden
+            )
+          end
+
           # A request authenticated by a secret API key has no Spree user to
           # describe/update, so it gets a 404 pointing at the key endpoint
           # rather than a 500 from a nil user — mirroring ApiKeysController#current.
@@ -53,7 +78,7 @@ module Spree
 
             render_error(
               code: ERROR_CODES[:record_not_found],
-              message: Spree.t(:me_no_current_user),
+              message: I18n.t('spree.me_no_current_user'),
               status: :not_found
             )
           end
@@ -70,14 +95,20 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:selected_locale, :first_name, :last_name, :avatar)
+            params.permit(*declared_permitted_attributes)
           end
 
+          # What this credential may do, which is not always what its owner
+          # may do: a grant narrows the approver's role, so reporting the
+          # role would both disclose more than was handed over and mislead a
+          # client that reads /me to decide what to attempt.
           def me_response
+            ActiveRecord::Associations::Preloader.new(records: [current_user], associations: { spree_roles: :resource }).call
+
             {
               user: admin_user_serializer.new(current_user, params: serializer_params).to_h,
               permissions: serialize_permissions(current_ability),
-              permission_keys: serialize_permission_keys(current_ability)
+              permission_keys: staff_permission_keys
             }
           end
 

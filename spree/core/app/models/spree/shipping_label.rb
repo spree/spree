@@ -20,6 +20,7 @@ module Spree
     include Spree::Metadata
 
     publishes_lifecycle_events
+    publishes_events :purchased, :refunded
 
     has_status :purchased, :refund_requested, :refunded, default: :purchased
 
@@ -38,6 +39,7 @@ module Spree
     # merchant's account details, and is served only through an
     # authenticated, streamed download.
     has_one_attached :file, service: Spree.private_storage_service_name
+    signed_id_attachments :file
 
     validates :source, inclusion: { in: SOURCES }
     validates :owner_type, inclusion: { in: OWNER_TYPES }

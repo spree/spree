@@ -1,21 +1,18 @@
+import { type CurrencyCode, currencyParts, normalizeMoneyInput } from '@spree/core'
 import type { ProductFormValues, VariantPriceFormValues } from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useMoneyLocale } from '../hooks/use-money-locale'
 import { composeOptionsText } from '../products/variants-matrix'
-import { currencyParts } from './currency-parts'
-import { normalizeMoneyInput } from './normalize-money'
-import {
-  useFormCurrencyLocale as useCurrencyLocale,
-  useFormOptionTypes as useOptionTypes,
-} from './use-product-form-data'
+import { useFormOptionTypes as useOptionTypes } from './use-product-form-data'
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<ProductFormValues, any, any>
   /** ISO currency code (e.g. "USD", "EUR"). */
-  currency: string
+  currency: CurrencyCode
   /** Display label for the product, used as the table's section header. */
   productName: string
 }
@@ -27,33 +24,23 @@ interface Props {
  * in form state the same way. No server fetch, no edit-tracking map: the
  * parent form's `isDirty` is the single source of truth for save gating.
  *
- * Amounts are STRINGS, not numbers. The merchant's raw input flows straight
- * through to the API; the backend's `Spree::LocalizedNumber.parse` handles
- * locale-aware parsing (comma decimals, grouped digits, etc.) so the
- * frontend doesn't have to reimplement it. Frontend coercion via `Number()`
- * would silently mangle inputs like `"1.234,56"` into `NaN` and drop the
- * price entirely.
+ * Amounts are STRINGS, not numbers: canonical `"1234.56"` in form state and
+ * on the wire, normalized from the admin's own number format as each cell
+ * commits. `Number()` coercion would lose precision and turn `"1.234,56"`
+ * into `NaN`.
  */
 export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
   const { t } = useTranslation()
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
   const { data: optionTypesData } = useOptionTypes()
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
-  const localeForCurrency = useCurrencyLocale()
-
-  // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
-  // decimal). The same locale normalizes the merchant's input back to canonical
-  // form on commit (see `handleChange`), so form state — like the API value it
-  // hydrates from — is ALWAYS canonical `"1234.56"`. Untouched prices therefore
-  // never get re-normalized on save.
-  //
-  // Fall back to `en` (canonical period-decimal), NOT the UI language: money
-  // formatting/parsing must never depend on the dashboard's language, or a USD
-  // value under a German UI would be parsed as `40.00` → 4000.
-  const marketLocale = localeForCurrency(currency) || 'en'
+  // Shown and read in the person's own number format (see useMoneyLocale). Form
+  // state, like the API value it hydrates from, is always canonical "1234.56",
+  // so an untouched price is never re-read on save.
+  const moneyLocale = useMoneyLocale()
   const { symbol, decimal } = useMemo(
-    () => currencyParts(currency, marketLocale),
-    [currency, marketLocale],
+    () => currencyParts(currency, moneyLocale),
+    [currency, moneyLocale],
   )
 
   // Project the form's variants into BulkPriceRow[] for the picked currency.
@@ -95,7 +82,7 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
       // whitespace, OR malformed input (normalizes to `''`) all mean "no value"
       // — never persist `''` as a real amount.
       const trimmed = next == null ? '' : next.trim()
-      const normalized = trimmed === '' ? '' : normalizeMoneyInput(trimmed, marketLocale)
+      const normalized = trimmed === '' ? '' : normalizeMoneyInput(trimmed, moneyLocale)
       const raw = normalized === '' ? null : normalized
 
       const nextPrices: VariantPriceFormValues[] = [...current]
@@ -132,7 +119,7 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
         shouldDirty: true,
       })
     },
-    [form, currency, marketLocale],
+    [form, currency, moneyLocale],
   )
 
   return (

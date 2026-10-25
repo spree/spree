@@ -67,6 +67,27 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           expect(ids).to include(pos_order.prefixed_id, default_channel_order.prefixed_id)
         end
       end
+
+      context 'filtering by market and locale' do
+        let(:market) { create(:market, store: store) }
+        let!(:market_order) do
+          allow(store).to receive(:supported_locales_list).and_return(%w[de en])
+          create(:order, store: store, market: market, locale: 'de')
+        end
+
+        it 'returns only orders in the requested market via a prefixed market_id_in' do
+          get :index, params: { q: { market_id_in: [market.prefixed_id] } }, as: :json
+
+          expect(json_response['data'].map { |o| o['id'] }).to eq([market_order.prefixed_id])
+          expect(json_response['data'].first['market']['name']).to eq(market.name)
+        end
+
+        it 'returns only orders in the requested locale via locale_in' do
+          get :index, params: { q: { locale_in: ['de'] } }, as: :json
+
+          expect(json_response['data'].map { |o| o['id'] }).to eq([market_order.prefixed_id])
+        end
+      end
     end
 
     context 'with q[search] (full-text search)' do
@@ -218,7 +239,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       row = json_response['payment_splits'].first
       expect(row['id']).to eq(split.prefixed_id)
       expect(row).to include('payment_id' => payment.prefixed_id, 'payment_number' => payment.number,
-                             'order_id' => child.prefixed_id, 'captured_amount' => '100.0')
+                             'order_id' => child.prefixed_id, 'captured_amount' => '100.00')
     end
 
     subject { get :show, params: { id: order.prefixed_id }, as: :json }
@@ -400,14 +421,14 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         let(:create_params) do
           {
             email: 'test@example.com',
-            items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+            items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '-1' }]
           }
         end
 
         it 'refuses with an actionable message' do
           expect { subject }.not_to change(Spree::Order, :count)
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(response.body).to include('non-negative number')
         end
       end
@@ -418,7 +439,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:state)   { country.states.first || create(:state, country: country) }
       let!(:zone)   { create(:zone) }
       let!(:shipping_method) do
-        create(:shipping_method).tap do |sm|
+        create(:delivery_method).tap do |sm|
           sm.calculator.preferred_amount = 5
           sm.calculator.save
         end
@@ -433,9 +454,9 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           email: 'test@example.com',
           items: [{ variant_id: variant.prefixed_id, quantity: 2 }],
           shipping_address: {
-            firstname: 'Jane', lastname: 'Doe',
+            first_name: 'Jane', last_name: 'Doe',
             address1: '350 Fifth Avenue', city: 'New York',
-            zipcode: '10118', phone: '555-555-0199',
+            postal_code: '10118', phone: '555-555-0199',
             country_code: country.iso, state_code: state.abbr
           }
         }
@@ -450,11 +471,11 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(created.shipments).not_to be_empty
         expect(created.shipments.first.shipping_rates).not_to be_empty
         expect(created.shipments.first.selected_shipping_rate).to be_present
-        expect(created.shipment_total).to eq(5)
-        expect(created.total).to eq(created.item_total + created.shipment_total + created.adjustment_total)
+        expect(created.delivery_total).to eq(5)
+        expect(created.total).to eq(created.item_total + created.delivery_total + created.adjustment_total)
 
-        expect(json_response['delivery_total']).to eq('5.0')
-        expect(json_response['total']).to eq(created.total.to_s)
+        expect(json_response['delivery_total']).to eq('5.00')
+        expect(json_response['total']).to eq(Spree::Money::Rounding.format(created.total, created.currency))
       end
     end
 
@@ -513,7 +534,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:state)   { country.states.first || create(:state, country: country) }
       let!(:zone)   { create(:zone) }
       let!(:shipping_method) do
-        create(:shipping_method).tap do |sm|
+        create(:delivery_method).tap do |sm|
           sm.calculator.preferred_amount = 5
           sm.calculator.save
         end
@@ -539,9 +560,9 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           preferred_stock_location_id: preferred_location.prefixed_id,
           items: [{ variant_id: variant.prefixed_id, quantity: 2 }],
           shipping_address: {
-            firstname: 'Jane', lastname: 'Doe',
+            first_name: 'Jane', last_name: 'Doe',
             address1: '350 Fifth Avenue', city: 'New York',
-            zipcode: '10118', phone: '555-555-0199',
+            postal_code: '10118', phone: '555-555-0199',
             country_code: country.iso, state_code: state.abbr
           }
         }
@@ -706,6 +727,18 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    context 'with use_shipping' do
+      let(:order) { create(:order, store: store, ship_address: create(:address), bill_address: nil) }
+
+      it 'copies the shipping address to the billing address' do
+        patch :update, params: { id: order.prefixed_id, use_shipping: true }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['shipping_eq_billing_address']).to be(true)
+        expect(order.reload.bill_address).to eq(order.ship_address)
+      end
+    end
+
     # Staff assigning the business an order is for. A buyer with several
     # memberships names the node on their own cart; this is the back-office
     # equivalent.
@@ -765,6 +798,21 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(order.reload.customer).to eq(new_customer)
       end
+
+      it 'detaches the customer, keeping the order email' do
+        patch :update, params: { id: order.prefixed_id, customer_id: nil }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.customer).to be_nil
+        expect(order.email).to be_present
+      end
+
+      it 'refuses a customer that does not exist' do
+        patch :update, params: { id: order.prefixed_id, customer_id: 'cus_missing' }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload.customer).to eq(original_customer)
+      end
     end
 
     context 'with tags' do
@@ -811,10 +859,10 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       it 'refuses with an actionable message' do
         patch :update, params: {
           id: order.prefixed_id,
-          items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '12,50' }]
+          items: [{ variant_id: variant.prefixed_id, quantity: 1, price: '-1' }]
         }, as: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include('non-negative number')
         expect(order.reload.line_items).to be_empty
       end
@@ -825,7 +873,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let(:state)   { country.states.first || create(:state, country: country) }
       let!(:zone)   { create(:zone) }
       let!(:shipping_method) do
-        create(:shipping_method).tap do |sm|
+        create(:delivery_method).tap do |sm|
           sm.calculator.preferred_amount = 5
           sm.calculator.save
         end
@@ -850,10 +898,10 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(order.shipments).not_to be_empty
         expect(order.fulfillments.first.shipping_rates).not_to be_empty
         expect(order.fulfillments.first.selected_shipping_rate).to be_present
-        expect(order.shipment_total).to eq(5)
+        expect(order.delivery_total).to eq(5)
 
-        expect(json_response['delivery_total']).to eq('5.0')
-        expect(json_response['total']).to eq(order.total.to_s)
+        expect(json_response['delivery_total']).to eq('5.00')
+        expect(json_response['total']).to eq(Spree::Money::Rounding.format(order.total, order.currency))
       end
 
       context 'when the order already has shipments' do
@@ -933,7 +981,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
     it 'passes notify_customer flag to the service' do
       service_double = instance_double(Spree::Orders::Complete)
-      allow(Spree).to receive(:order_complete_service).and_return(service_double)
+      allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
       expect(service_double).to receive(:call).with(
         hash_including(order: order, notify_customer: true)
       ).and_return(Spree::ServiceModule::Result.new(true, order, nil))
@@ -945,7 +993,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
     it 'omits notify_customer when not given (service defaults to false)' do
       service_double = instance_double(Spree::Orders::Complete)
-      allow(Spree).to receive(:order_complete_service).and_return(service_double)
+      allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
       expect(service_double).to receive(:call) do |args|
         expect(args[:notify_customer]).to be_nil # service default kicks in (false)
         expect(args[:order]).to eq(order)
@@ -971,7 +1019,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       it 'surfaces validation errors from the order' do
         service_double = instance_double(Spree::Orders::Complete)
-        allow(Spree).to receive(:order_complete_service).and_return(service_double)
+        allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
         allow(service_double).to receive(:call) do |args|
           args[:order].errors.add(:base, 'Custom failure reason')
           Spree::ServiceModule::Result.new(false, args[:order], 'service error')
@@ -987,7 +1035,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       it 'falls back to the service error when the order has no errors' do
         service_double = instance_double(Spree::Orders::Complete)
-        allow(Spree).to receive(:order_complete_service).and_return(service_double)
+        allow(Spree).to receive(:order_complete_workflow).and_return(service_double)
         allow(service_double).to receive(:call).and_return(
           Spree::ServiceModule::Result.new(false, order, 'Order is canceled')
         )
@@ -1121,6 +1169,26 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'with refund_payments' do
       let!(:order) { create(:completed_order_with_totals, store: store) }
       let(:params) { { id: order.prefixed_id, refund_payments: 'true' } }
+
+      context 'with a key that may handle orders but not refund them' do
+        let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders]) }
+        let(:headers) { api_key_headers }
+
+        it 'refuses to cancel with a refund' do
+          subject
+
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['details']['required_permission']).to eq('write_refunds')
+          expect(order.reload).not_to be_canceled
+        end
+
+        it 'still cancels without one' do
+          patch :cancel, params: { id: order.prefixed_id }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(order.reload).to be_canceled
+        end
+      end
 
       it 'asks the workflow to refund what the order has been paid' do
         expect(Spree.order_cancel_workflow).to receive(:call)

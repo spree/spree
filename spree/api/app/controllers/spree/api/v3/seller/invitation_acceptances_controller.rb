@@ -22,6 +22,14 @@ module Spree
                      only: [:lookup, :accept],
                      with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
 
+          request_params 'InvitationAcceptParams', action: :accept do |body|
+            body.attribute :password, :string,
+              description: 'Sets the password of a new account, or confirms the password of an existing one.'
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string, description: 'Used only when the invitation creates a new account.'
+            body.attribute :last_name, :string, description: 'Used only when the invitation creates a new account.'
+          end
+
           # GET /api/v3/seller/auth/invitations/:id/lookup?token=:token
           def lookup
             return unless load_invitation
@@ -38,6 +46,8 @@ module Spree
 
             user = resolve_or_create_invitee(@invitation)
             return if performed?
+            # Checked before accepting: a deactivated account gains no role.
+            return render_account_deactivated if account_deactivated?(user)
 
             @invitation.invitee = user
             result = Spree.invitation_accept_workflow.call(invitation: @invitation)
@@ -74,7 +84,7 @@ module Spree
             unless @invitation
               render_error(
                 code: ErrorHandler::ERROR_CODES[:record_not_found],
-                message: Spree.t(:invitation_not_acceptable),
+                message: I18n.t('spree.invitation_not_acceptable'),
                 status: :not_found
               )
               return false
@@ -101,7 +111,7 @@ module Spree
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:authentication_failed],
-              message: Spree.t(:invalid_password),
+              message: I18n.t('spree.invalid_password'),
               status: :unauthorized
             )
             nil
@@ -111,7 +121,7 @@ module Spree
             if params[:password].blank?
               render_error(
                 code: ErrorHandler::ERROR_CODES[:parameter_missing],
-                message: Spree.t(:password_required_to_create_account),
+                message: I18n.t('spree.password_required_to_create_account'),
                 status: :unprocessable_content
               )
               return nil
@@ -121,7 +131,7 @@ module Spree
           end
 
           def signup_params(invitation)
-            params.permit(:password, :password_confirmation, :first_name, :last_name).
+            params.permit(*declared_permitted_attributes).
               merge(email: invitation.email)
           end
 

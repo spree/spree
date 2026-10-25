@@ -3,6 +3,9 @@ import type { CustomerGroup, CustomerGroupCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceTable,
   resourceSearchSchema,
@@ -15,6 +18,11 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
   RowActions,
   Sheet,
   SheetContent,
@@ -150,14 +158,15 @@ function CreateCustomerGroupSheet({
   const form = useForm<CustomerGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(customerGroupFormSchema) as any,
-    defaultValues: CUSTOMER_GROUP_DEFAULTS,
+    defaultValues: { ...CUSTOMER_GROUP_DEFAULTS, ...extensionFormValues('customer_group', null) },
   })
 
   async function onSubmit(values: CustomerGroupFormValues) {
     try {
-      await createMutation.mutateAsync(
-        customerGroupValuesToParams(values) as CustomerGroupCreateParams,
-      )
+      await createMutation.mutateAsync({
+        ...(customerGroupValuesToParams(values) as CustomerGroupCreateParams),
+        ...extensionSubmitValues('customer_group', form),
+      })
       form.reset(CUSTOMER_GROUP_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -181,6 +190,11 @@ function CreateCustomerGroupSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <NameDescriptionFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="customer_group.form_fields"
+              context={{ customerGroup: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -228,13 +242,17 @@ function EditCustomerGroupSheet({
       form.reset({
         name: group.name,
         description: group.description ?? '',
+        ...extensionFormValues('customer_group', group),
       })
     }
   }, [group, form])
 
   async function onSubmit(values: CustomerGroupFormValues) {
     try {
-      await updateMutation.mutateAsync(customerGroupValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...customerGroupValuesToParams(values),
+        ...extensionSubmitValues('customer_group', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -263,6 +281,11 @@ function EditCustomerGroupSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <NameDescriptionFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="customer_group.form_fields"
+                context={{ customerGroup: group, mode: 'edit' }}
+              />
               <MembersSummary
                 count={group?.customers_count ?? 0}
                 href={`/${storeId}/customers?filters=${encodeURIComponent(membersFilter)}`}
@@ -333,14 +356,20 @@ function NameDescriptionFields({ form }: { form: UseFormReturn<CustomerGroupForm
 function MembersSummary({ count, href }: { count: number; href: string }) {
   const { t } = useTranslation()
   return (
-    <div className="flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2">
-      <div className="flex items-center gap-2 text-sm">
-        <UsersIcon className="size-4 text-muted-foreground" />
-        <span>{t('admin.customers.groups.count', { count })}</span>
-      </div>
-      <Link to={href as never} className="text-sm font-medium text-primary hover:underline">
-        {t('admin.customers.groups.view_members')}
-      </Link>
-    </div>
+    <Item variant="muted" size="sm">
+      <ItemMedia variant="icon">
+        <UsersIcon className="text-muted-foreground" />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle className="font-normal">
+          {t('admin.customers.groups.count', { count })}
+        </ItemTitle>
+      </ItemContent>
+      <ItemActions>
+        <Link to={href as never} className="text-sm font-medium text-primary hover:underline">
+          {t('admin.customers.groups.view_members')}
+        </Link>
+      </ItemActions>
+    </Item>
   )
 }

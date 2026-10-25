@@ -34,10 +34,15 @@ module Spree
       # recorded about the purchase (copied from the cart), so every child gets
       # the same hash — and so does the group. Once split, each order's
       # metadata is its own: edits never propagate between siblings.
+      #
+      # `applied_tax_exemptions` rides along, or a sibling resolves again and
+      # takes override ids that match nothing it owns. Line items keep their ids
+      # here; a divided fulfillment and its money rows do not, so an override
+      # naming one is stale — latent while nothing supplies overrides.
       CARRIED_TO_SIBLING = %w[
         email currency locale market_id channel_id company_id
         customer_id token accept_marketing preferred_stock_location_id
-        customer_note last_ip_address po_number metadata
+        customer_note last_ip_address po_number metadata applied_tax_exemptions
       ].freeze
 
       # @param order [Spree::Order] the paid draft order, adopted as the
@@ -242,7 +247,7 @@ module Spree
       end
 
       def clone_fulfillment(fulfillment, sibling)
-        attributes = fulfillment.attributes.except('id', 'cart_id', 'number', 'created_at', 'updated_at')
+        attributes = fulfillment.attributes.except('id', 'cart_id', 'number', 'tracking', 'created_at', 'updated_at')
         replacement = sibling.fulfillments.create!(
           attributes.merge('order_id' => sibling.id, 'address_id' => sibling.ship_address_id)
         )
@@ -265,8 +270,10 @@ module Spree
       # describe what they held before the split, and the new one holds nothing
       # at all.
       def restate_freight_summaries(*fulfillments)
+        selected_rates = Spree::DeliveryRate.where(fulfillment_id: fulfillments.map(&:id), selected: true).order(:cost).to_a
+
         fulfillments.each do |fulfillment|
-          rate = fulfillment.reload.selected_delivery_rate
+          rate = selected_rates.find { |selected_rate| selected_rate.fulfillment_id == fulfillment.id }
           next if rate.nil?
 
           metadata = rate.metadata

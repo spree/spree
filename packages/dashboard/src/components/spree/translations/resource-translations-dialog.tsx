@@ -185,11 +185,7 @@ export function ResourceTranslationsDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange} modal>
-      <DialogContent
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
+      <DialogContent fullScreen showCloseButton={false}>
         <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
           <div className="flex min-w-0 items-center gap-3">
             <Button

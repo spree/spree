@@ -7,13 +7,57 @@ module Spree
           # member action, because each carries different arguments.
           class ExchangesController < BaseController
             include Spree::Api::V3::Orders::ExchangeActions
+            include Spree::Api::V3::Admin::RefundAuthorization
 
             # Exchanges are a subject of the `orders` catalog resource, so
             # `read_orders`/`write_orders` gate these endpoints. `:exchanges`
             # would name a key no catalog knows.
             scoped_resource :orders
 
+            request_params :exchange do |body|
+              body.attribute :items, :array,
+                required: true, on: :create,
+                only: :create,
+                description: 'Items coming back, and what goes out in their place.' do |item|
+                item.attribute :fulfillment_item_id, :id, required: true
+                item.attribute :new_variant_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+              end
+              body.attribute :stock_location_id, :id, description: 'Where the goods come back to.'
+              body.attribute :reason_id, :id, description: "One of the store's return reasons."
+              body.attribute :memo, :string
+              body.attribute :metadata, :hash, only: :update
+            end
+
+            request_params 'ExchangeReceiveParams', action: :receive do |body|
+              body.attribute :items, :array,
+                description: 'What actually arrived. Omit to receive everything as requested and resellable.' do |item|
+                item.attribute :exchange_line_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+                item.attribute :resellable, :boolean,
+                  description: 'Goods that cannot be resold are received but never restocked. Defaults to true.'
+              end
+            end
+
+            request_params 'ExchangeFulfillParams', action: :fulfill do |body|
+              body.attribute :refund_method, :string,
+                choices: Spree::RefundMethods::METHODS,
+                description: 'How a credit is returned when the replacements cost less than what came back. Defaults to `store_credit`. A balance the customer owes is left for the merchant to collect.'
+            end
+
+            request_params 'ExchangeCancelParams', action: :cancel do |body|
+              body.attribute :reason, :string, description: 'A note on why the exchange was canceled.'
+            end
+
             before_action :set_resource, only: [:show, :update, :approve, :receive, :fulfill, :cancel]
+            # Fulfilling settles the difference on the units that actually came
+            # back, a credit to the customer when the replacements cost less.
+            # That figure is only known once the tax rows are rewritten for
+            # those units, inside the fulfillment itself, so the gate cannot be
+            # narrowed on the announced difference: a line received at zero
+            # units would offset a credit still paid on another. Every
+            # fulfillment settles money, so all of them take the refund authority.
+            before_action :require_refund_permission!, only: :fulfill
 
             # PATCH /api/v3/admin/orders/:order_id/exchanges/:id
             #
@@ -37,7 +81,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:memo, :reason_id, :stock_location_id, metadata: {})
+              params.permit(*permitted_attributes)
             end
 
             private

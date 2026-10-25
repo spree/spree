@@ -35,6 +35,22 @@ steps:
 
       Idempotent, and a no-op on an already-consolidated schema.
 
+  - id: preferences_json
+    name: "Check for preferences still stored as YAML"
+    task: "spree:upgrade:preferences_json"
+    notes: |
+      Spree 6.0 stores preferences as JSON instead of YAML, and keeps secrets
+      (preferences declared as passwords, such as gateway API keys) in a
+      separate secret_preferences column. The migration converts every row and
+      moves every secret itself, so a normal db:migrate needs nothing from this
+      step.
+
+      This is a safety net: it converts any row still holding YAML, and moves
+      the secrets of a class that was not loaded when the migration ran, such
+      as one from an extension gem installed afterwards.
+
+      Idempotent, and a no-op once everything is converted.
+
   - id: migrate_media_class_names
     name: "Rewrite stored Spree::Asset and Spree::Image class names"
     task: "spree:migrate_media_class_names"
@@ -149,7 +165,9 @@ steps:
       that has_secure_password reads directly only when unpeppered; the task
       aborts if Devise.pepper is set. Because Devise is gone in 6.0 a former
       pepper can't be introspected, so when Devise is absent the task aborts until
-      you confirm none was used with CONFIRM_NO_PEPPER=true. Peppered / SSO /
+      you confirm none was used with CONFIRM_NO_PEPPER=true. The check is skipped
+      when there are no passwords to copy (e.g. an empty spree_users table), so
+      new projects pass without the flag. Peppered / SSO /
       non-bcrypt installs keep a custom customer_class instead (see the 5.6-to-6.0
       upgrade guide) and skip this step.
 
@@ -287,6 +305,20 @@ steps:
       present to be backfilled. Idempotent and resumable: each table is filled
       with one statement scoped to the rows still missing a code, so an
       interrupted run picks up where it stopped.
+
+  - id: migrate_checkout_zones
+    name: "Convert checkout zones to markets"
+    task: "spree:markets:migrate_checkout_zones"
+    notes: |
+      Markets replace the store's checkout zone in Spree 6. Stores that have
+      no market yet get a default one covering their checkout zone's
+      countries, or their default country when no zone was set, and the
+      checkout zone is cleared.
+
+      Run before migrate_tax_zones, which matches zone price rules against a
+      store's markets, and before backfill_order_markets, which assigns each
+      store's default market to its orders. Idempotent: stores that already
+      have a market are skipped.
 
   - id: migrate_promotion_option_value_rules
     name: "Rewrite Option Value promotion rules to stable option value ids"
@@ -437,6 +469,28 @@ steps:
       so installs that relied on global names may need to reconcile duplicates
       once several stores hold tax configuration. The NOT NULL constraints land
       in 6.1. Idempotent.
+
+  - id: backfill_market_tax_inclusive
+    name: "Decide whether each market's prices include tax"
+    task: "spree:markets:backfill_tax_inclusive"
+    notes: |
+      In Spree 6 the market decides whether its prices include tax; tax rates
+      no longer carry an "included in price" flag. Each market takes the
+      convention its rates had: all included sets it to include tax, all added
+      on top sets it to add tax at checkout, and a market with no rates keeps
+      its setting. A market whose rates mixed the two is left unchanged and
+      named in the output, to be set by hand.
+
+      Prices are no longer adjusted for buyers abroad. A store that had a
+      default tax zone in 5.x and prices including tax now charges buyers
+      outside that zone the price as entered, with their own tax inside it.
+      Prices with tax added on top were never adjusted, and still have tax
+      added at checkout.
+
+      Run after migrate_tax_zones and backfill_tax_store_ids, which give each
+      rate its country and store; it stops if a rate still has no store.
+      Idempotent: each rate's old flag is read once and then cleared, so a
+      re-run leaves every market as it is.
 
   - id: backfill_order_coupon_codes
     name: "Backfill coupon codes on placed orders"
@@ -651,6 +705,22 @@ steps:
       Idempotent — a store that already has a default package type is left
       alone, so a box edited since the upgrade is never overwritten.
 
+  - id: tax_exemption_reasons
+    name: "Give every store the default tax exemption reasons and link certificates to them"
+    task: "spree:upgrade:tax_exemption_reasons"
+    notes: |
+      Company tax exemption certificates point at one of the store's
+      exemption reasons, so a store without any cannot record a certificate.
+      Existing reason codes are saved in capitals, the way tax engines compare
+      them. Certificates recorded before reasons existed are linked to the
+      reason matching their old reason code; a code no reason holds gets a
+      reason of its own. Merchants using an external tax engine change each
+      reason's code to that engine's under Settings → Taxes → Exemption
+      reasons.
+
+      Idempotent — a reason the merchant already has under the same code or
+      name is left alone, and a certificate already linked is skipped.
+
   - id: migrate_external_receives_to_purchase_orders
     name: "Turn 5.x supplier receives into purchase orders, and give every transfer a store"
     task: "spree:upgrade:migrate_external_receives_to_purchase_orders"
@@ -715,3 +785,47 @@ steps:
       predates the upgrade.
 
       Idempotent, and safe to re-run at any time to repair drift.
+
+  - id: encrypt_secret_preferences
+    name: "Encrypt gateway and integration secrets"
+    task: "spree:upgrade:encrypt_secret_preferences"
+    notes: |
+      The 6.0 migration moves existing secrets into the secret_preferences
+      column in plain text, so it never needs encryption keys. They stay
+      readable and are encrypted the next time their record is saved. This step
+      encrypts them all now.
+
+      Skips with a note when Active Record encryption keys are not configured;
+      see the encryption section of the upgrade guide to add them, then run
+      this step again.
+
+      Idempotent.
+
+  - id: assign_upload_stores
+    name: "Record which store owns every uploaded file"
+    task: "spree:uploads:assign_stores"
+    notes: |
+      Spree 6.0 records the store that owns every uploaded file, so a file from
+      one store cannot be attached in another and storage can be measured and
+      cleaned up per store. New files get their store when they are uploaded;
+      this gives existing files the store of the record they are attached to.
+
+      Files attached in more than one store are listed and left unchanged for
+      you to resolve. Files attached to nothing keep no store and are left
+      alone: the daily purge of never-attached uploads
+      (Spree::Uploads::PurgeUnattachedJob, see the upgrade guide) only
+      deletes files that belong to a store.
+
+      Run AFTER the steps that create or move attachments (media, categories,
+      returns), so their files are covered. Idempotent — files that already
+      have a store are skipped.
+
+  - id: backfill_tagging_tenants
+    name: "Stamp the store on taggings written without one"
+    task: "spree:upgrade:backfill_tagging_tenants"
+    notes: |
+      Tags added through the bulk endpoints carried no store on their
+      taggings, and the admin tag list filters by it, so those tags were
+      missing from the list. This stamps the store of the record on every
+      tagging without one, for each taggable that keeps its taggings per
+      store. Idempotent — taggings that already carry a store are skipped.

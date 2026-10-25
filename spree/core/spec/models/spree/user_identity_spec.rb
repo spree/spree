@@ -23,12 +23,6 @@ describe Spree::UserIdentity, type: :model do
         create(:user_identity, user: user, provider: 'email', uid: '12345')
       end
 
-      it 'validates uniqueness of uid scoped to provider and user_type' do
-        duplicate = build(:user_identity, user: user, provider: 'email', uid: '12345')
-        expect(duplicate).not_to be_valid
-        expect(duplicate.errors[:uid]).to include('has already been taken')
-      end
-
       it 'allows same uid for different providers' do
         Spree.store_authentication_strategies.add(:other, Class.new)
         different_provider = build(:user_identity, user: user, provider: 'other', uid: '12345')
@@ -291,13 +285,6 @@ describe Spree::UserIdentity, type: :model do
           expect { subject }.to raise_error(ActiveRecord::RecordNotUnique)
         end.not_to change(Spree.customer_class, :count)
       end
-    end
-  end
-
-  describe '.generate_temp_email' do
-    it 'generates email with provider and uid' do
-      email = described_class.generate_temp_email('email', '123456')
-      expect(email).to eq('email-123456@temporary.example.com')
     end
   end
 

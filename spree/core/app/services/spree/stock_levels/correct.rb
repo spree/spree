@@ -24,13 +24,18 @@ module Spree
       # @return [Spree::ServiceModule::Result] the corrected stock level
       def call(stock_level:, count_on_hand: nil, adjustment: nil, reason: nil)
         if count_on_hand.present? && adjustment.present?
-          return failure(stock_level, Spree.t('stock_level.errors.adjustment_exclusive_with_count_on_hand'))
+          return failure(stock_level, I18n.t('spree.stock_level.errors.adjustment_exclusive_with_count_on_hand'))
         end
 
         target = parse(count_on_hand)
         delta = parse(adjustment)
-        return failure(stock_level, Spree.t('stock_level.errors.count_on_hand_not_an_integer')) if count_on_hand.present? && target.nil?
-        return failure(stock_level, Spree.t('stock_level.errors.adjustment_not_an_integer')) if adjustment.present? && delta.nil?
+        return failure(stock_level, I18n.t('spree.stock_level.errors.count_on_hand_not_an_integer')) if count_on_hand.present? && target.nil?
+        return failure(stock_level, I18n.t('spree.stock_level.errors.adjustment_not_an_integer')) if adjustment.present? && delta.nil?
+
+        # Read before locking, which reloads the level and with it drops the
+        # variant and location a bulk caller loaded for every row at once.
+        stock_location = stock_level.stock_location
+        variant = stock_level.variant
 
         # Locked around the read: the delta is worked out from the count this
         # caller first saw, so two admins correcting the same level at once
@@ -42,12 +47,14 @@ module Spree
 
           # Through the location's own mover rather than building a movement
           # by hand: it types the row as an adjustment and records the reason,
-          # so a correction reads like every other change in the history.
-          stock_level.stock_location.adjust(stock_level.variant, move,
-                                            reason: Spree::StockMovement.adjustment_reason_text(reason))
+          # so a correction reads like every other change in the history. The
+          # movement writes through this locked instance, which leaves it
+          # current without another reload.
+          stock_location.adjust(variant, move, reason: Spree::StockMovement.adjustment_reason_text(reason),
+                                               stock_level: stock_level)
         end
 
-        success(stock_level.reload)
+        success(stock_level)
       end
 
       private

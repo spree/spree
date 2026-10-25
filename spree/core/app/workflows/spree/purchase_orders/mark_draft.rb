@@ -32,8 +32,8 @@ module Spree
       private
 
       def ensure_returnable
-        failure(purchase_order, Spree.t('purchase_order.errors.already_receiving')) if purchase_order.stock_receipts.exists?
-        failure(purchase_order, Spree.t('purchase_order.errors.not_ordered_for_draft')) unless purchase_order.ordered?
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.already_receiving')) if purchase_order.stock_receipts.exists?
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.not_ordered_for_draft')) unless purchase_order.ordered?
       end
 
       # Nothing has been received, so this is every unit the order placed.

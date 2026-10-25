@@ -4,12 +4,34 @@ module Spree
   RSpec.describe Carts::Update do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let!(:store_stock_location) { create(:stock_location, store: store, backorderable_default: true) }
-    let!(:store_delivery_method) { create(:shipping_method, store: store) }
+    let!(:store_delivery_method) { create(:delivery_method, store: store) }
     let(:user) { create(:user) }
     let(:cart) { create(:cart_with_line_items, customer: user, store: store, currency: 'USD') }
 
     describe '#call' do
       subject { described_class.call(cart: cart, params: params) }
+
+      # Swallowing this used to save the address and show a total with no tax,
+      # so the customer only met the problem when they tried to pay — and met it
+      # as an exception. A destination whose tax nobody could compute is not a
+      # destination worth keeping.
+      it 'refuses an address change when the tax engine cannot be reached' do
+        address = create(:address, state_code: 'NY', country_code: 'US', zipcode: '10001')
+        cart_under_test = cart
+        provider = instance_double(Spree::TaxProvider::Internal)
+        allow(provider).to receive(:estimate).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached'))
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart_under_test,
+                                      params: { shipping_address_id: address.prefixed_id })
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include('Tax could not be calculated')
+        # The API answers this code with 503, the status a client retries.
+        expect(result.error.code).to eq('tax_provider_unavailable')
+        expect(cart_under_test.reload.ship_address_id).not_to eq(address.id)
+      end
 
       describe 'updating email' do
         let(:params) { { email: 'new@example.com' } }
@@ -369,8 +391,8 @@ module Spree
             # A guest's edit updates the address row in place, so only the
             # fields a quote reads can tell a new destination from a correction.
             context 'when a guest who chose a rate edits the address' do
-              let!(:standard) { create(:shipping_method, name: 'Standard', store: store).tap { |method| method.calculator.update!(preferred_amount: 5) } }
-              let!(:express) { create(:shipping_method, name: 'Express', store: store).tap { |method| method.calculator.update!(preferred_amount: 15) } }
+              let!(:standard) { create(:delivery_method, name: 'Standard', store: store).tap { |method| method.calculator.update!(preferred_amount: 5) } }
+              let!(:express) { create(:delivery_method, name: 'Express', store: store).tap { |method| method.calculator.update!(preferred_amount: 15) } }
               let(:cart) do
                 create(:cart_with_line_items, store: store, customer: nil, email: 'guest@example.com',
                                               ship_address: create(:address, country: country, state: state),
@@ -446,6 +468,45 @@ module Spree
 
               expect(subject).to be_success
               expect(cart.reload.ship_address_id).to eq(existing_address.id)
+            end
+          end
+
+          context 'with an address from the company book' do
+            let(:company) { create(:company, store: store) }
+            let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+            let(:company_address) { create(:company_address, owner: company) }
+
+            before { create(:company_membership, company: company, customer: user) }
+
+            it 'accepts a site of the company the cart is for' do
+              result = described_class.call(
+                cart: cart,
+                params: { company_id: company.prefixed_id, shipping_address_id: company_address.prefixed_id }
+              )
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to eq(company_address.id)
+            end
+
+            it 'accepts a site the purchase node inherits from its parent' do
+              create(:company_membership, company: division, customer: user)
+
+              result = described_class.call(
+                cart: cart,
+                params: { company_id: division.prefixed_id, shipping_address_id: company_address.prefixed_id }
+              )
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to eq(company_address.id)
+            end
+
+            it 'refuses the book of a company the buyer has no standing over' do
+              outsider_address = create(:company_address, owner: create(:company, store: store))
+
+              result = described_class.call(cart: cart, params: { shipping_address_id: outsider_address.prefixed_id })
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to be_nil
             end
           end
         end
@@ -715,11 +776,10 @@ module Spree
       end
 
       describe 'setting line items' do
-        let(:variant) { create(:variant) }
+        let(:variant) { create(:variant, product: create(:product, store: store)) }
 
         before do
           variant.stock_levels.first.update!(count_on_hand: 10)
-          store.products << variant.product unless store.products.include?(variant.product)
         end
 
         context 'with new line_items' do
@@ -778,6 +838,47 @@ module Spree
             end
           end
         end
+
+        context "with a variant outside the buyer's catalogs" do
+          let(:hidden) { create(:product, store: store).default_variant }
+          let(:company) { create(:company, store: store) }
+          let(:open_company) { create(:company, store: store) }
+          let(:params) { { items: [{ variant_id: hidden.prefixed_id, quantity: 1 }] } }
+
+          before do
+            hidden.stock_levels.first.update!(count_on_hand: 10)
+            catalog = create(:catalog, store: store)
+            create(:catalog_product, catalog: catalog, product: create(:product, store: store))
+            create(:catalog_assignment, catalog: catalog, assignable: company)
+            create(:company_membership, company: company, customer: user)
+          end
+
+          it 'refuses the item and leaves the cart as it was' do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+            expect(cart.reload.line_items.map(&:variant)).not_to include(hidden)
+          end
+
+          it 'checks the items against a company named in the same request' do
+            create(:company_membership, company: open_company, customer: user)
+            cart.update!(company: open_company)
+
+            expect {
+              described_class.call(cart: cart, params: params.merge(company_id: company.prefixed_id))
+            }.to raise_error(ActiveRecord::RecordNotFound)
+          end
+
+          # A claimed guest cart can already hold the line; resending the cart
+          # must not fail every other change in the request. Checkout judges it.
+          it 'still applies a quantity edit to a line already in the cart' do
+            line_item = create(:line_item, cart: cart, order: nil, variant: hidden)
+
+            result = described_class.call(cart: cart, params: params.merge(email: 'buyer@example.com', items: [{ variant_id: hidden.prefixed_id, quantity: 3 }]))
+
+            expect(result).to be_success
+            expect(line_item.reload.quantity).to eq(3)
+            expect(cart.reload.email).to eq('buyer@example.com')
+          end
+        end
       end
 
       describe 'error handling' do
@@ -820,7 +921,7 @@ module Spree
         let(:country) { Spree::Country.by_iso('US') }
         let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
         let!(:zone) { create(:zone) }
-        let!(:shipping_method) { create(:shipping_method) }
+        let!(:shipping_method) { create(:delivery_method) }
         let(:address_params) do
           {
             first_name: 'Buyer', last_name: 'McGee',
@@ -895,7 +996,7 @@ module Spree
         subject { described_class.call(cart: cart, params: params) }
 
         let!(:cart) { create(:cart_with_line_items, store: store) }
-        let!(:shipping_method) { create(:shipping_method) }
+        let!(:shipping_method) { create(:delivery_method) }
         let(:country) { Spree::Country.by_iso('US') }
         let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
         let(:params) do
@@ -968,7 +1069,7 @@ module Spree
       end
     end
 
-    # An abandoned direct upload leaves the blob row behind without its bytes,
+    # An abandoned presigned upload leaves the blob row behind without its bytes,
     # and the buyer's client may still send back the signed id it was handed.
     describe 'a purchase order document whose upload never completed' do
       let(:orphan_blob) do
@@ -979,10 +1080,10 @@ module Spree
       end
 
       it 'reports a readable message instead of an exception class name' do
-        result = described_class.call(cart: cart, params: { po_document: orphan_blob.signed_id })
+        result = described_class.call(cart: cart, params: { po_document_signed_id: orphan_blob.signed_id })
 
         expect(result).to be_failure
-        expect(result.error.to_s).to include(Spree.t(:po_document_upload_incomplete))
+        expect(result.error.to_s).to include(I18n.t('spree.po_document_upload_incomplete'))
         expect(result.error.to_s).not_to include('ActiveStorage')
       end
     end

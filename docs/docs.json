@@ -38,11 +38,11 @@
     },
     {
       "source": "/user/orders/order-states",
-      "destination": "/user/orders/order-statuses"
+      "destination": "/user/orders/orders"
     },
     {
       "source": "/user/orders/order-adjustments",
-      "destination": "/user/orders/discounts-fees-and-taxes"
+      "destination": "/user/orders/orders"
     },
     {
       "source": "/developer/core-concepts/companies-and-catalogs",
@@ -433,11 +433,35 @@
       "destination": "/user/loyalty/gift-cards"
     },
     {
+      "source": "/user/loyalty/issue-gift-card",
+      "destination": "/user/loyalty/gift-cards"
+    },
+    {
       "source": "/user/customers/issue-gift-card",
-      "destination": "/user/loyalty/issue-gift-card"
+      "destination": "/user/loyalty/gift-cards"
     },
     {
       "source": "/user/customers/assign-store-credits",
+      "destination": "/user/loyalty/store-credits"
+    },
+    {
+      "source": "/user/customers/create-customer",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/searching-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/exporting-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/edit-customer",
+      "destination": "/user/customers/customer-profile"
+    },
+    {
+      "source": "/user/loyalty/store-credits-list",
       "destination": "/user/loyalty/store-credits"
     },
     {
@@ -579,6 +603,126 @@
     {
       "source": "/developer/tutorial/dashboard-plugin",
       "destination": "/developer/tutorial/dashboard"
+    },
+    {
+      "source": "/user/settings/users",
+      "destination": "/user/settings/staff"
+    },
+    {
+      "source": "/user/settings/tax",
+      "destination": "/user/settings/taxes"
+    },
+    {
+      "source": "/user/settings/returns-configuration",
+      "destination": "/user/settings/returns-and-reasons"
+    },
+    {
+      "source": "/user/settings/metafields",
+      "destination": "/user/settings/custom-fields"
+    },
+    {
+      "source": "/user/settings/shipping-methods",
+      "destination": "/user/settings/delivery-profiles"
+    },
+    {
+      "source": "/user/settings/zones",
+      "destination": "/user/settings/delivery-profiles"
+    },
+    {
+      "source": "/user/manage-products/product-metafields",
+      "destination": "/user/products/custom-product-fields"
+    },
+    {
+      "source": "/user/manage-products/search-products",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/manage-products/bulk-product-operations",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/products/creating-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/cloning-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/deleting-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-multi-variant-products",
+      "destination": "/user/products/variants"
+    },
+    {
+      "source": "/user/manage-products/import-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/export-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/multi-currency-import-export",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/product-options",
+      "destination": "/user/products/options"
+    },
+    {
+      "source": "/user/manage-products/product-import-file-template",
+      "destination": "/user/products/import-template"
+    },
+    {
+      "source": "/user/manage-products/custom-product-fields",
+      "destination": "/user/products/custom-product-fields"
+    },
+    {
+      "source": "/user/orders/order-statuses",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/exporting-orders",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/searching-orders",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/discounts-fees-and-taxes",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/editing-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/cancelling-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/refunding-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/creating-orders",
+      "destination": "/user/orders/draft-orders"
+    },
+    {
+      "source": "/developer/agentic/admin-mcp",
+      "destination": "/developer/mcp/overview"
+    },
+    {
+      "source": "/developer/agentic/mcp",
+      "destination": "/developer/agentic/docs-mcp"
     }
   ],
   "contextual": {
@@ -673,6 +817,7 @@
                           "developer/core-concepts/translations",
                           "developer/core-concepts/slugs",
                           "developer/core-concepts/metafields",
+                          "developer/core-concepts/external-references",
                           "developer/core-concepts/imports-exports",
                           "developer/core-concepts/reporting"
                         ]
@@ -685,11 +830,22 @@
                     "pages": [
                       "developer/agentic/overview",
                       "developer/agentic/agent-skills",
-                      "developer/agentic/mcp",
+                      "developer/agentic/docs-mcp",
                       "developer/agentic/llm-docs",
                       "developer/cli/admin-api"
                     ],
                     "icon": "sparkles"
+                  },
+                  {
+                    "group": "MCP Server",
+                    "pages": [
+                      "developer/mcp/overview",
+                      "developer/mcp/quick-start",
+                      "developer/mcp/tools",
+                      "developer/mcp/permissions",
+                      "developer/mcp/custom-tools"
+                    ],
+                    "icon": "plug"
                   },
                   {
                     "group": "Tutorial",
@@ -949,7 +1105,8 @@
                       "developer/deployment/cdn",
                       "developer/deployment/background_jobs",
                       "developer/deployment/caching",
-                      "developer/deployment/database"
+                      "developer/deployment/database",
+                      "developer/deployment/usage-data"
                     ],
                     "icon": "server"
                   },
@@ -1039,6 +1196,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -1107,21 +1265,16 @@
                     "group": "Products",
                     "icon": "package",
                     "pages": [
-                      "user/products/creating-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products",
-                      "user/products/deleting-products",
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
+                      "user/products/products",
+                      "user/products/adding-products",
+                      "user/products/variants",
+                      "user/products/options",
+                      "user/products/media",
                       "user/products/categories",
                       "user/products/collections",
-                      "user/manage-products/product-options",
-                      "user/manage-products/custom-product-fields",
-                      "user/manage-products/import-products",
-                      "user/manage-products/export-products",
-                      "user/manage-products/product-import-file-template",
-                      "user/manage-products/multi-currency-import-export"
+                      "user/products/custom-product-fields",
+                      "user/products/import-and-export",
+                      "user/products/import-template"
                     ]
                   },
                   {
@@ -1158,15 +1311,9 @@
                   {
                     "group": "Orders",
                     "pages": [
-                      "user/orders/order-statuses",
+                      "user/orders/orders",
                       "user/orders/processing-orders",
-                      "user/orders/creating-orders",
-                      "user/orders/editing-orders",
-                      "user/orders/discounts-fees-and-taxes",
-                      "user/orders/exporting-orders",
-                      "user/orders/cancelling-orders",
-                      "user/orders/refunding-orders",
-                      "user/orders/searching-orders",
+                      "user/orders/draft-orders",
                       "user/orders/returns",
                       "user/orders/exchanges",
                       "user/orders/claims"
@@ -1176,11 +1323,8 @@
                   {
                     "group": "Customers",
                     "pages": [
-                      "user/customers/create-customer",
+                      "user/customers/customers",
                       "user/customers/customer-profile",
-                      "user/customers/edit-customer",
-                      "user/customers/searching-customers",
-                      "user/customers/exporting-customers",
                       "user/customers/customer-groups",
                       "user/customers/companies"
                     ],
@@ -1203,9 +1347,7 @@
                     "group": "Loyalty",
                     "pages": [
                       "user/loyalty/gift-cards",
-                      "user/loyalty/issue-gift-card",
-                      "user/loyalty/store-credits",
-                      "user/loyalty/store-credits-list"
+                      "user/loyalty/store-credits"
                     ],
                     "icon": "gift"
                   },
@@ -1223,6 +1365,15 @@
                     "icon": "chart-column",
                     "pages": [
                       "user/reports/reports"
+                    ]
+                  },
+                  {
+                    "group": "AI Agents",
+                    "icon": "bot",
+                    "pages": [
+                      "user/ai-agents/ai-agents",
+                      "user/ai-agents/connect-claude",
+                      "user/ai-agents/connect-chatgpt"
                     ]
                   },
                   {
@@ -1247,6 +1398,7 @@
                         "pages": [
                           "user/settings/markets",
                           "user/settings/payments",
+                          "user/settings/taxes",
                           "user/settings/tax-categories",
                           "user/settings/tax-rates"
                         ]
@@ -1319,6 +1471,12 @@
                   }
                 ]
               }
+            ]
+          },
+          {
+            "tab": "Changelog",
+            "pages": [
+              "changelog"
             ]
           }
         ]
@@ -1734,7 +1892,7 @@
                     "pages": [
                       "v5/developer/agentic/overview",
                       "v5/developer/agentic/agent-skills",
-                      "v5/developer/agentic/mcp",
+                      "v5/developer/agentic/docs-mcp",
                       "v5/developer/agentic/llm-docs"
                     ]
                   }
@@ -1788,6 +1946,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -2130,6 +2289,7 @@
                   "developer/core-concepts/translations",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/metafields",
+                  "developer/core-concepts/external-references",
                   "developer/core-concepts/imports-exports",
                   "developer/core-concepts/reporting"
                 ]
@@ -2529,7 +2689,7 @@
                 "pages": [
                   "developer/agentic/overview",
                   "developer/agentic/agent-skills",
-                  "developer/agentic/mcp",
+                  "developer/agentic/docs-mcp",
                   "developer/agentic/llm-docs"
                 ]
               }
@@ -2583,6 +2743,7 @@
                   "api-reference/admin-api/errors",
                   "api-reference/admin-api/querying",
                   "api-reference/admin-api/monetary-amounts",
+                  "api-reference/admin-api/uploads",
                   "api-reference/admin-api/endpoints"
                 ]
               },
@@ -2756,21 +2917,16 @@
             "group": "Products",
             "icon": "package",
             "pages": [
-              "user/products/creating-products",
-              "user/products/editing-products",
-              "user/products/editing-multi-variant-products",
-              "user/products/cloning-products",
-              "user/products/deleting-products",
-              "user/manage-products/search-products",
-              "user/manage-products/bulk-product-operations",
+              "user/products/products",
+              "user/products/adding-products",
+              "user/products/variants",
+              "user/products/options",
+              "user/products/media",
               "user/products/categories",
               "user/products/collections",
-              "user/manage-products/product-options",
-              "user/manage-products/product-metafields",
-              "user/manage-products/import-products",
-              "user/manage-products/export-products",
-              "user/manage-products/product-import-file-template",
-              "user/manage-products/multi-currency-import-export"
+              "user/products/custom-product-fields",
+              "user/products/import-and-export",
+              "user/products/import-template"
             ]
           },
           {
@@ -2807,15 +2963,9 @@
           {
             "group": "Orders",
             "pages": [
-              "user/orders/order-statuses",
+              "user/orders/orders",
               "user/orders/processing-orders",
-              "user/orders/creating-orders",
-              "user/orders/editing-orders",
-              "user/orders/discounts-fees-and-taxes",
-              "user/orders/exporting-orders",
-              "user/orders/cancelling-orders",
-              "user/orders/refunding-orders",
-              "user/orders/searching-orders",
+              "user/orders/draft-orders",
               "user/orders/returns",
               "user/orders/exchanges",
               "user/orders/claims"
@@ -2824,11 +2974,8 @@
           {
             "group": "Customers",
             "pages": [
-              "user/customers/create-customer",
+              "user/customers/customers",
               "user/customers/customer-profile",
-              "user/customers/edit-customer",
-              "user/customers/searching-customers",
-              "user/customers/exporting-customers",
               "user/customers/customer-groups",
               "user/customers/companies"
             ]
@@ -2850,9 +2997,7 @@
             "group": "Loyalty",
             "pages": [
               "user/loyalty/gift-cards",
-              "user/loyalty/issue-gift-card",
-              "user/loyalty/store-credits",
-              "user/loyalty/store-credits-list"
+              "user/loyalty/store-credits"
             ]
           },
           {
@@ -2868,6 +3013,15 @@
             "icon": "chart-column",
             "pages": [
               "user/reports/reports"
+            ]
+          },
+          {
+            "group": "AI Agents",
+            "icon": "bot",
+            "pages": [
+              "user/ai-agents/ai-agents",
+              "user/ai-agents/connect-claude",
+              "user/ai-agents/connect-chatgpt"
             ]
           },
           {

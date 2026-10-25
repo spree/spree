@@ -4,7 +4,12 @@ import type { SetupCountry } from '@spree/admin-sdk'
 // installed app, which leaves Base UI's CommonJS shim unconverted and stops
 // the dashboard from starting. The monorepo cannot show this: its workspace
 // links are treated as source.
-import { ALL_CURRENCY_CODES, useDisplayName } from '@spree/dashboard-core'
+import {
+  ALL_CURRENCY_CODES,
+  useCountryDisplayName,
+  useDisplayName,
+  useSortByCountryName,
+} from '@spree/dashboard-core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -26,39 +31,6 @@ import {
 import { useCallback, useEffect, useMemo } from 'react'
 import { Controller, type FieldErrors, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-
-/**
- * Enough of ISO 4217 to stay useful on runtimes without
- * `Intl.supportedValuesOf` — the country's own currency is prepended to
- * whichever list is used, so the recommendation is never missing.
- */
-const FALLBACK_CURRENCY_CODES = [
-  'USD',
-  'EUR',
-  'GBP',
-  'CHF',
-  'PLN',
-  'SEK',
-  'NOK',
-  'DKK',
-  'CZK',
-  'RON',
-  'CAD',
-  'AUD',
-  'NZD',
-  'JPY',
-  'CNY',
-  'HKD',
-  'SGD',
-  'INR',
-  'BRL',
-  'MXN',
-  'ZAR',
-  'AED',
-  'TRY',
-  'ILS',
-  'KRW',
-]
 
 /** `PLN — Polish Zloty`, with the name in the admin UI language. */
 function useCurrencyLabel() {
@@ -114,10 +86,21 @@ export interface StoreSetupFieldsProps<Values extends StoreSetupValues> {
  */
 export function StoreSetupFields<Values extends StoreSetupValues>({
   form,
-  countries,
+  countries: unsortedCountries,
   countriesPending = false,
 }: StoreSetupFieldsProps<Values>) {
   const { t } = useTranslation()
+  const countryName = useCountryDisplayName()
+  const sortByName = useSortByCountryName()
+  const nameOf = useCallback(
+    (country: SetupCountry) => countryName({ iso: country.code }),
+    [countryName],
+  )
+  // Sorted by the name the merchant reads, which the API cannot know.
+  const countries = useMemo(
+    () => sortByName(unsortedCountries, (country) => country.code),
+    [unsortedCountries, sortByName],
+  )
   // The generic form's errors are keyed by the caller's value type; these four
   // fields are guaranteed present by the StoreSetupValues constraint.
   const errors = form.formState.errors as FieldErrors<StoreSetupValues>
@@ -161,8 +144,9 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
   // pricing in a currency other than the local one is one scroll away.
   const currencyOptions = useMemo(() => {
     const recommended = selectedCountry?.currency
-    const all = ALL_CURRENCY_CODES.length > 0 ? ALL_CURRENCY_CODES : FALLBACK_CURRENCY_CODES
-    return recommended ? [recommended, ...all.filter((code) => code !== recommended)] : all
+    return recommended
+      ? [recommended, ...ALL_CURRENCY_CODES.filter((code) => code !== recommended)]
+      : ALL_CURRENCY_CODES
   }, [selectedCountry])
 
   // The store most likely sells from wherever it is being set up, so a region
@@ -204,7 +188,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
               onValueChange={(country: SetupCountry | null) =>
                 handleCountryChange(country?.code ?? '')
               }
-              itemToStringLabel={(country: SetupCountry | null) => country?.name ?? ''}
+              itemToStringLabel={(country: SetupCountry | null) => (country ? nameOf(country) : '')}
               itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
               disabled={countriesPending}
             >
@@ -216,7 +200,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                 {selectedCountry ? (
                   <>
                     <CountryFlag iso={selectedCountry.code} />
-                    <span className="truncate">{selectedCountry.name}</span>
+                    <span className="truncate">{nameOf(selectedCountry)}</span>
                   </>
                 ) : (
                   <ComboboxTriggerPlaceholder>
@@ -232,7 +216,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                     <ComboboxItem key={country.code} value={country}>
                       <span className="flex items-center gap-2">
                         <CountryFlag iso={country.code} />
-                        {country.name}
+                        {nameOf(country)}
                       </span>
                     </ComboboxItem>
                   )}

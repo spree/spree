@@ -1,7 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { SpreeError } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, useAuth } from '@spree/dashboard-core'
-import { Button, Checkbox, Input, Label, toastManager } from '@spree/dashboard-ui'
+import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  Button,
+  Checkbox,
+  Input,
+  Label,
+  toastManager,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -129,7 +139,6 @@ function SetupForm({
       password: '',
       password_confirmation: '',
       store_name: '',
-      country_code: '',
       locale: 'en',
       currency: 'USD',
       sample_data: true,
@@ -194,18 +203,21 @@ function SetupForm({
             needs saying out loud and a way back — otherwise the country box
             is simply empty and the merchant is stuck with no explanation. */}
         {countriesQuery.isError && (
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-destructive/50 px-3 py-2">
-            <p className="text-sm text-destructive">{t('admin.setup.countries_failed')}</p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => countriesQuery.refetch()}
-              disabled={countriesQuery.isFetching}
-            >
-              {t('admin.common.retry')}
-            </Button>
-          </div>
+          <Alert variant="destructive" className="has-data-[slot=alert-action]:pr-28">
+            <CircleAlertIcon />
+            <AlertDescription>{t('admin.setup.countries_failed')}</AlertDescription>
+            <AlertAction>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => countriesQuery.refetch()}
+                disabled={countriesQuery.isFetching}
+              >
+                {t('admin.common.retry')}
+              </Button>
+            </AlertAction>
+          </Alert>
         )}
         <StoreSetupFields
           form={form}

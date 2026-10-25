@@ -7,6 +7,16 @@ module Spree
         # class is inferred from whichever `<segment>_id` route param matches a
         # registered owner.
         class CustomFieldsController < ResourceController
+          # Only `value` is mutable. Switching the linked definition is a
+          # delete-and-create: the model rejects it (definition + resource
+          # uniqueness) and the type wouldn't match.
+          request_params :custom_field do |body|
+            body.attribute :custom_field_definition_id, :id, required: true, only: :create, example: 'cfdef_abc123'
+            body.attribute :value, :any,
+              required: true,
+              description: "A value matching the definition's `field_type`: a scalar for text, number and boolean fields; a list or a hash for JSON fields."
+          end
+
           # POST /api/v3/admin/<parent>/<parent_id>/custom_fields
           def create
             @resource = @parent.custom_fields.new(permitted_params)
@@ -20,9 +30,6 @@ module Spree
           end
 
           # PATCH /api/v3/admin/<parent>/<parent_id>/custom_fields/:id
-          # Only `value` is mutable. Switching the linked definition is a
-          # delete-and-create — the model rejects it (definition + resource
-          # uniqueness) and the type wouldn't match.
           def update
             authorize_resource!(@resource)
 
@@ -43,10 +50,6 @@ module Spree
             Spree.api.admin_custom_field_serializer
           end
 
-          def parent_association
-            :custom_fields
-          end
-
           def set_parent
             # Routes always mount this controller under a recognized parent, so
             # `parent_lookup` matches in normal flows. The explicit raise is a
@@ -61,16 +64,34 @@ module Spree
           # store can't read or write custom fields on another store's records.
           # Users are intentionally global in Spree (`User.for_store` is a
           # no-op), so the store boundary for customer parents is enforced by
-          # the `authorize!(:show, @parent)` ability check above.
+          # the `authorize!(:update, @parent)` ability check above.
+          #
+          # `Spree::Base.for_store` answers nothing for a model the store has
+          # no association for, so an unexpected parent type 404s rather than
+          # searching every store's records.
           def parent_relation
             klass = parent_lookup.klass
-            klass.respond_to?(:for_store) ? klass.for_store(current_store) : klass
+            return klass.where(id: current_store.id) if klass <= Spree::Store
+            return klass if klass <= Spree.customer_class
+
+            klass.for_store(current_store)
           end
 
           # Product-family parents have no scope pair of their own — their
           # custom fields are catalog data, gated by `products` like the rest
           # of the variant/option-type surface.
-          SCOPE_OVERRIDES = { 'option_type' => :products, 'variant' => :products }.freeze
+          # Parents whose own controller is gated by a scope other than their
+          # plural name share that controller's scope.
+          SCOPE_OVERRIDES = {
+            'option_type' => :products,
+            'variant' => :products,
+            'company' => :customers,
+            'stock_transfer' => :stock,
+            'purchase_order' => :purchasing,
+            'payment_method' => :settings,
+            'tax_rate' => :settings,
+            'store' => :settings
+          }.freeze
 
           # Per-parent scope check: a key holding `write_products` may write a
           # product's custom fields, `write_orders` may write an order's, etc.
@@ -86,11 +107,11 @@ module Spree
           # `custom_field_definition_id` is an alias_attribute on Spree::CustomField;
           # AR resolves the prefixed-ID and the alias to the canonical FK on assign.
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :custom_field_definition_id, :value)
+            params.permit(*permitted_attributes)
           end
 
           def update_permitted_params
-            params.permit(:value)
+            params.permit(*declared_permitted_attributes)
           end
 
           private
@@ -101,12 +122,13 @@ module Spree
           # code reloads — `enabled_resources` is captured at boot and its
           # class references go stale. Aliases `'customer'` because the route
           # uses `customer_id` while user_class.model_name.element is `'user'`,
-          # and `'category'` because the routes expose taxons as categories
-          # (5.5 rename) while the model's element is still `'taxon'`.
+          # `'category'` because the routes expose taxons as categories
+          # (5.5 rename) while the model's element is still `'taxon'`, and
+          # `'medium'` because Rails singularizes the `media` route to `medium_id`.
           def parent_route_map
             @parent_route_map ||= Spree.custom_fields.enabled_resources.each_with_object({}) do |klass, m|
               m[klass.model_name.element.to_s] = klass.name
-            end.merge('customer' => Spree.customer_class.name, 'category' => 'Spree::Category')
+            end.merge('customer' => Spree.customer_class.name, 'category' => 'Spree::Category', 'medium' => 'Spree::Media')
           end
 
           # Returns the first segment whose `<segment>_id` is in the route,
@@ -114,8 +136,8 @@ module Spree
           # by both `set_parent` and `scoped_resource_name`.
           #
           # Read from the path only: a `store_id` or `refund_id` added to the
-          # query string or body must not switch the parent to a type that is
-          # never routed here and has no store scope to narrow it.
+          # query string or body must not switch the parent away from the record
+          # the route names.
           def parent_lookup
             return @parent_lookup if defined?(@parent_lookup)
 

@@ -22,11 +22,14 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :read, :products
 
+      admin_sdk_example 'product-types/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
+      filter_parameters_for
 
       response '200', 'product types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -65,43 +68,12 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'product-types/create'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Hoodie' },
-          delivery_profile_id: {
-            type: :string,
-            nullable: true,
-            example: 'fp_86Rf07xd4z',
-            description: 'Fulfillment profile stamped onto products created with this type. Null leaves new products on the store default profile.'
-          },
-          option_type_ids: {
-            type: :array,
-            items: { type: :string },
-            description: 'Option types seeded onto products created with this type.'
-          },
-          category_ids: {
-            type: :array,
-            items: { type: :string },
-            description: 'Categories seeded onto products created with this type.'
-          },
-          custom_field_definitions: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, description: 'Prefixed custom field definition id.' },
-                required: { type: :boolean },
-                sort_order: { type: :integer }
-              }
-            }
-          }
-        },
-        required: ['name']
-      }
+      request_body_for
 
       response '201', 'product type created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -136,6 +108,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description 'Returns a single product type with its option types, categories and custom fields.'
       admin_scope :read, :products
+
+      admin_sdk_example 'product-types/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -176,29 +150,12 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'product-types/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Premium T-Shirt' },
-          delivery_profile_id: { type: :string, nullable: true },
-          option_type_ids: { type: :array, items: { type: :string } },
-          category_ids: { type: :array, items: { type: :string } },
-          custom_field_definitions: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                required: { type: :boolean },
-                sort_order: { type: :integer }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'product type updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -220,6 +177,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description 'Deletes a product type. Types still used by products cannot be deleted.'
       admin_scope :write, :products
+
+      admin_sdk_example 'product-types/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -250,6 +209,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
         currently has.
       DESC
       admin_scope :write, :products
+
+      admin_sdk_example 'product-types/apply-to-products'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,

@@ -36,6 +36,7 @@ module Spree
         super
 
         step :ensure_pending
+        step :ensure_addressed_to_customer
         step :mark_processing
 
         run_hooks :before_fulfill
@@ -53,7 +54,16 @@ module Spree
       def ensure_pending
         return if data_request.pending?
 
-        failure(data_request, Spree.t('data_request_errors.not_pending'))
+        failure(data_request, I18n.t('spree.data_request_errors.not_pending'))
+      end
+
+      # An account already erased has a replaced address by design, and
+      # erase_customer counts that as done.
+      def ensure_addressed_to_customer
+        customer = data_request.customer
+        return if customer.nil? || customer.anonymized? || data_request.addressed_to_customer?
+
+        failure(data_request, I18n.t('spree.data_request_errors.address_changed'))
       end
 
       def mark_processing
@@ -78,21 +88,25 @@ module Spree
         # anonymizer starts after the check and finishes its attachment scan
         # before this attaches, stranding a full personal-data file it will
         # never see.
+        #
+        # The address is checked again under the same lock, so it cannot change
+        # between the check and the export reading it.
         return attach_export unless customer
 
-        refused = false
+        refusal = nil
 
         customer.with_lock do
-          if customer.reload.anonymized?
-            refused = true
+          customer.reload
+          if customer.anonymized?
+            refusal = 'spree.data_request_errors.already_anonymized'
+          elsif !data_request.addressed_to_customer?
+            refusal = 'spree.data_request_errors.address_changed'
           else
             attach_export
           end
         end
 
-        return unless refused
-
-        failure(data_request, Spree.t('data_request_errors.already_anonymized'))
+        failure(data_request, I18n.t(refusal)) if refusal
       end
 
       def attach_export

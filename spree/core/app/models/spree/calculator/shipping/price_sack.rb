@@ -1,12 +1,10 @@
-require_dependency 'spree/shipping_calculator'
-
 module Spree
   module Calculator::Shipping
     class PriceSack < ShippingCalculator
-      preference :minimal_amount, :decimal, default: 0
-      preference :normal_amount, :decimal, default: 0
-      preference :discount_amount, :decimal, default: 0
-      preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+      preference :minimal_amount, :money, default: 0
+      preference :normal_amount, :money, default: 0
+      preference :discount_amount, :money, default: 0
+      preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
       # Single-currency amounts: quoting another currency would mislabel
       # the configured numbers, so the method stays hidden there.
@@ -15,7 +13,7 @@ module Spree
       end
 
       def self.description
-        Spree.t(:shipping_price_sack)
+        I18n.t('spree.shipping_price_sack')
       end
 
       def compute_package(package)

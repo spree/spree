@@ -3,6 +3,7 @@ import { type ProductCreateParams, SpreeError } from '@spree/admin-sdk'
 import {
   CategorizationCard,
   extensionFormValues,
+  extensionRowValues,
   extensionSubmitValues,
   GeneralCard,
   InventoryCard,
@@ -13,12 +14,16 @@ import {
   PageHeader,
   PricesCard,
   type ProductFormValues,
+  prepareVariantsTaxForProductSave,
   productFormSchema,
   SEOCard,
+  Slot,
   StatusCard,
   TaxCard,
+  type VariantFormValues,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import {
   FormActions,
@@ -53,14 +58,21 @@ function NewProductPage() {
     defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('product', null) },
   })
 
-  const onSubmit = async (data: ProductFormValues) => {
+  const onSubmit = async (submitted: ProductFormValues) => {
+    // Before the placeholder variant is filtered out below, so row `i` of the
+    // parse still lines up with row `i` of the form.
+    const data = withExtensionRowValues('product', submitted, form.getValues())
     const { variants, custom_fields, media, digital_assets, ...rest } = data
 
     // Strip the placeholder default variant if the merchant didn't touch it.
     // Spree::Product#variants= auto-creates the canonical default variant
     // server-side when none is provided. Any variant with options, SKU,
-    // prices, or stock_levels survives as merchant intent.
-    const meaningful = (variants ?? []).filter((v) => !isPlaceholderDefaultVariant(v))
+    // prices, stock_levels or a plugin's field survives as merchant intent.
+    const hasExtensionValues = (variant: VariantFormValues) =>
+      Object.keys(extensionRowValues('product.variant', variant)).length > 0
+    const meaningful = (variants ?? []).filter(
+      (v) => !isPlaceholderDefaultVariant(v) || hasExtensionValues(v),
+    )
 
     const payload: ProductCreateParams = {
       ...(rest as ProductCreateParams),
@@ -108,14 +120,19 @@ function NewProductPage() {
     //   field — including prices — so we MUST NOT also ship top-level
     //   `prices` (would double-record the price on both the default variant
     //   and the inline variant).
-    const isSingleOptionlessVariant = meaningful.length === 1 && meaningful[0].options.length === 0
+    const productTaxCategoryId = rest.tax_category_id as string | null | undefined
+    const meaningfulForTax = prepareVariantsTaxForProductSave(meaningful, productTaxCategoryId)
+
+    const isSingleOptionlessVariant =
+      meaningfulForTax.length === 1 && meaningfulForTax[0].options.length === 0
     if (isSingleOptionlessVariant) {
-      const v = meaningful[0]
+      const v = meaningfulForTax[0]
       // Mirrors isPlaceholderDefaultVariant — any variant-only field the
       // merchant edited should ride inline so the backend's apply_variants
       // upserts onto the default variant rather than leaving the field at its
       // default.
       const hasVariantOnlyData =
+        hasExtensionValues(v) ||
         v.sku != null ||
         v.barcode != null ||
         v.weight != null ||
@@ -149,9 +166,9 @@ function NewProductPage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(payload as any).prices = v.prices.filter((p) => p.currency != null)
       }
-    } else if (meaningful.length > 0) {
+    } else if (meaningfulForTax.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(payload as any).variants = meaningful.map((v, i) => variantToWirePayload(v, i))
+      ;(payload as any).variants = meaningfulForTax.map((v, i) => variantToWirePayload(v, i))
     }
 
     try {
@@ -211,6 +228,7 @@ function NewProductPage() {
               >
                 <CustomFieldsInlineCard />
               </ProductCustomFieldsProvider>
+              <Slot name="product.form_main" context={{ product: undefined, mode: 'new' }} />
             </>
           }
           sidebar={
@@ -220,6 +238,7 @@ function NewProductPage() {
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} />
+              <Slot name="product.form_sidebar" context={{ product: undefined, mode: 'new' }} />
             </>
           }
         />

@@ -6,6 +6,13 @@ module Spree
           class VariantsController < ResourceController
             scoped_resource :products
 
+            request_params :variant do |body|
+              body.extends Spree::Api::V3::Admin::VariantRequestSchema
+              body.external_references
+              body.require_attributes :options, on: :create
+              body.describe_attribute :options, 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing. On update, omit to leave the option values untouched.'
+            end
+
             protected
 
             def model_class
@@ -21,12 +28,11 @@ module Spree
               authorize!(:show, @parent)
             end
 
-            def parent_association
-              :variants
-            end
-
+            # `active_stock_reservations` is what lets the quantifier count
+            # held stock in memory; without it the serializer's availability
+            # column sums reservations once per variant.
             def scope_includes
-              [:prices, stock_levels: :stock_location]
+              [:prices, { stock_levels: [:stock_location, :active_stock_reservations] }]
             end
 
             def create_workflow
@@ -46,20 +52,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(
-                *model_additional_permitted_attributes,
-                :sku, :barcode,
-                :cost_price, :cost_currency,
-                :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-                :hs_code, :country_of_origin, :customs_description,
-                :minimum_order_quantity, :order_multiple, :purchase_unit, :units_per_carton,
-                :carton_package_type_id, :carton_weight, :cartons_per_pallet,
-                :seller_id, :delivery_profile_id,
-                :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id, :position,
-                options: [:name, :value],
-                prices: [:amount, :compare_at_amount, :currency],
-                stock_levels: [:stock_location_id, :count_on_hand, :backorderable]
-              )
+              params.permit(*permitted_attributes)
             end
           end
         end

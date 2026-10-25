@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
 
       get :show, params: { id: owned.prefixed_id }, as: :json
 
-      expect(json_response['price_adjustment_percentage']).to eq('-15.0')
+      expect(json_response['price_adjustment_percentage']).to eq('-15')
       expect(json_response['automatic_pricing']).to be true
     end
   end
@@ -106,6 +106,19 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].pluck('name')).to eq(['Third list', 'Wholesale', 'Second list'])
       expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
+    end
+
+    it 'counts a product priced on several variants once' do
+      product = create(:product, store: store)
+      [product.default_variant, create(:variant, product: product)].each do |variant|
+        create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: 10)
+      end
+
+      get :index, as: :json
+      expect(json_response['data'].first).to include('products_count' => 1, 'prices_count' => 2)
+
+      get :show, params: { id: price_list.prefixed_id }, as: :json
+      expect(json_response).to include('products_count' => 1, 'prices_count' => 2)
     end
   end
 
@@ -283,7 +296,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(rule.customer_groups).to contain_exactly(customer_group, other_group)
       end
 
-      it 'returns 404 for an unknown customer-group ID' do
+      it 'refuses an unknown customer-group ID' do
         post :create,
              params: base_params.merge(
                rules: [{
@@ -293,7 +306,8 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
              ),
              as: :json
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_preferences')
       end
     end
 
@@ -321,14 +335,15 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(rule.users).to contain_exactly(user, other_user)
       end
 
-      it 'returns 404 for an unknown user ID' do
+      it 'refuses an unknown user ID' do
         post :create,
              params: base_params.merge(
                rules: [{ type: 'user_rule', preferences: { user_ids: ['cus_doesnotexist'] } }]
              ),
              as: :json
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_preferences')
       end
     end
 
@@ -463,6 +478,28 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       rules = price_list.reload.price_rules
       expect(rules.length).to eq(1)
       expect(rules.first).to be_a(Spree::PriceRules::VolumeRule)
+    end
+  end
+
+  describe 'extension-contributed attributes' do
+    around do |example|
+      original = Spree::PriceList.additional_permitted_attributes
+      example.run
+      Spree::PriceList.additional_permitted_attributes = original
+    end
+
+    it 'permits an attribute the model declares' do
+      Spree::PriceList.additional_permitted_attributes += [:erp_reference]
+
+      expect_any_instance_of(described_class).to receive(:permitted_params).at_least(:once).and_wrap_original do |original|
+        result = original.call
+        expect(result.keys).to include('erp_reference')
+        result.except('erp_reference')
+      end
+
+      patch :update, params: { id: price_list.prefixed_id, erp_reference: 'PL-42' }, as: :json
+
+      expect(response).to have_http_status(:ok)
     end
   end
 

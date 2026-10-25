@@ -153,7 +153,7 @@
      sheet rather than a surface floating above it, so its edge only has to
      suggest where the region ends. Used by `CardContent`'s frame; a dialog or
      the sheet itself must keep --border, or the shell loses its outline. */
-  --border-card: color-mix(in srgb, var(--border-base) 60%, transparent);
+  --border-card: color-mix(in srgb, var(--border-base) 70%, transparent);
   /* Dividers *inside* a container — card header/footer splits, dialog and
      sheet separators, table row rules.
 
@@ -224,11 +224,9 @@
   --sidebar-foreground: oklch(26.8% 0.007 34.298);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: var(--accent-foreground);
-  --sidebar-accent-strong: var(--accent-strong);
+  --sidebar-accent: oklch(92.3% 0.003 48.717);
+  --sidebar-accent-foreground: var(--accent-foreground);;
   --sidebar-accent-hover: var(--accent-strong);
-  --sidebar-accent-strong-hover: var(--accent-strong-hover);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
   --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
@@ -327,7 +325,7 @@
      hairline weight. */
   --border-base: oklch(1 0 0 / 16%);
   --border: var(--border-base);
-  --border-card: color-mix(in srgb, var(--border-base) 50%, transparent);
+  --border-card: color-mix(in srgb, var(--border-base) 70%, transparent);
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
   /* Light mode darkens the control edge away from the card; dark mode lightens
      it. Not the light value inverted — measured on this theme's own surfaces:
@@ -376,9 +374,7 @@
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
-  --sidebar-accent-strong: var(--accent-strong);
   --sidebar-accent-hover: var(--accent-hover);
-  --sidebar-accent-strong-hover: var(--accent-strong-hover);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
   --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
@@ -486,9 +482,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent-strong: var(--sidebar-accent-strong);
   --color-sidebar-accent-hover: var(--sidebar-accent-hover);
-  --color-sidebar-accent-strong-hover: var(--sidebar-accent-strong-hover);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

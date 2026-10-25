@@ -47,7 +47,7 @@ describe 'spree:store_settings:backfill_from_config' do
     # merchant's later change from being undone by a second run.
     it 'does not re-copy after the merchant changes the value back' do
       run_task
-      store.update!(preferred_address_requires_phone: false)
+      store.reload.update!(preferred_address_requires_phone: false)
 
       expect { run_task }.not_to change { store.reload.preferred_address_requires_phone }.from(false)
     end

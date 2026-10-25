@@ -11,13 +11,9 @@ module Spree
           payment_method.class.api_type
         end
 
-        attribute :session_required do |payment_method|
-          payment_method.session_required?
-        end
+        attribute :session_required, &:session_required?
 
-        attribute :source_required do |payment_method|
-          payment_method.source_required?
-        end
+        attribute :source_required, &:source_required?
       end
     end
   end

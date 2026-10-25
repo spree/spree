@@ -1,0 +1,36 @@
+---
+ko:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: 비밀번호 재설정
+        expiry_notice: 이 비밀번호 재설정 링크는 곧 만료됩니다. 요청하지 않으셨다면 별도의 조치가 필요하지 않습니다.
+        greeting: 안녕하세요 %{name}님,
+        ignore_notice: 비밀번호 재설정을 요청하지 않으셨다면 이 이메일을 무시하셔도 됩니다. 비밀번호는 변경되지 않습니다.
+        instructions: 비밀번호 재설정 요청을 받았습니다. 아래 버튼을 클릭하여 새 비밀번호를 설정하세요.
+        subject: 비밀번호 재설정 안내
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: 안녕하세요,
+        ignore_disclaimer: 요청하지 않으셨다면 이 이메일을 무시하세요.
+        instructions: 아래 버튼을 클릭하여 이메일 주소를 확인하세요.
+        message_copy_link: '버튼이 작동하지 않으면 아래 링크를 복사하여 브라우저에 붙여넣으세요:'
+        subject: 이메일 주소 확인
+        verify_email_address_link: 이메일 주소 확인
+    order_mailer:
+      cancel_email:
+        subject: 주문 취소
+      confirm_email:
+        subject: 주문 확인
+      payment_link_email:
+        message: 아래 버튼을 클릭하여 주문 대금을 결제하세요.
+        message_copy_link: '버튼이 작동하지 않으면 아래 링크를 복사하여 브라우저에 붙여넣으세요:'
+        pay_for_order: 주문 결제
+        subject: '주문 #%{number} 결제 링크'
+      store_owner_notification_email:
+        heading: 신규 주문 접수
+        instructions: 새 주문을 받았습니다.
+        order_summary: 주문 %{number} 요약
+        subject: "%{store_name}에 새 주문이 접수되었습니다"
+      subtotal: '소계:'
+      total: '주문 총액:'

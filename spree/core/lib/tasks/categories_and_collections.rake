@@ -80,7 +80,7 @@ namespace :spree do
           # otherwise purge/destroy: ActionText description, images, custom fields, slugs.
           move_polymorphic.call(ActionText::RichText, :record_type, :record_id, category, collection)
           move_polymorphic.call(ActiveStorage::Attachment, :record_type, :record_id, category, collection, name: %w[image square_image])
-          move_polymorphic.call(Spree::Metafield, :resource_type, :resource_id, category, collection)
+          move_polymorphic.call(Spree::CustomField, :resource_type, :resource_id, category, collection)
           move_polymorphic.call(FriendlyId::Slug, :sluggable_type, :sluggable_id, category, collection)
 
           # Rules -> collection_rules (remap the STI type; insert_all bypasses the
@@ -169,8 +169,8 @@ namespace :spree do
     # category rows that still hold the pre-6.0 names.
     puts 'Backfilling renamed class-name strings...'
     [
-      [Spree::Metafield, :resource_type, 'Spree::Taxon', 'Spree::Category'],
-      [Spree::MetafieldDefinition, :resource_type, 'Spree::Taxon', 'Spree::Category'],
+      [Spree::CustomField, :resource_type, 'Spree::Taxon', 'Spree::Category'],
+      [Spree::CustomFieldDefinition, :resource_type, 'Spree::Taxon', 'Spree::Category'],
       [ActiveStorage::Attachment, :record_type, 'Spree::Taxon', 'Spree::Category'],
       # description is an ActionText field (translates :description, backend: :action_text);
       # surviving categories keep their rich-text description without this.

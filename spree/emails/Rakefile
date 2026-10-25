@@ -13,3 +13,26 @@ task :test_app do
   ENV['LIB_NAME'] = 'spree/emails'
   Rake::Task['common:test_app'].invoke
 end
+
+namespace :typelizer do
+  desc 'Generate TypeScript types for every SDK, the email template types included'
+  task :generate do
+    ENV['RAILS_ENV'] ||= 'test'
+    ENV['DISABLE_TYPELIZER'] = 'false'
+    ENV['ENABLE_TYPELIZER'] = '1'
+
+    dummy = File.expand_path('spec/dummy/config/environment.rb', __dir__)
+    abort 'Build the test app first: cd spree/emails && bundle exec rake test_app' unless File.exist?(dummy)
+
+    require dummy
+    require 'spree/api/typelizer_generation'
+
+    Spree::Api::TypelizerGeneration.call([
+      Spree::Api::Engine.root.join('app/serializers/spree/api/v3'),
+      Spree::Emails::Engine.root.join('app/serializers/spree/emails'),
+      Spree::Core::Engine.root.join('app/serializers/spree/emails')
+    ])
+
+    puts 'Generated types → packages/sdk, packages/admin-sdk and packages/seller-sdk'
+  end
+end

@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_session.prefixed_id)
       expect(json_response['status']).to eq('pending')
-      expect(json_response['amount']).to eq(payment_session.amount.to_s)
+      expect(json_response['amount']).to eq(Spree::Money::Rounding.format(payment_session.amount, payment_session.currency))
       expect(json_response['external_data']).to eq({ 'client_secret' => 'secret_123' })
     end
 
@@ -154,7 +154,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_session.prefixed_id)
-      expect(json_response['amount']).to eq('50.0')
+      expect(json_response['amount']).to eq('50.00')
     end
 
     context 'when the cart is already completed' do

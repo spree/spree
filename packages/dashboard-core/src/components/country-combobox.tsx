@@ -1,3 +1,4 @@
+import { type CountryCode, isCountryCode } from '@spree/core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -19,13 +20,13 @@ import { useTranslation } from 'react-i18next'
 import { useCountries } from '../hooks/use-countries'
 import { useDisplayName } from '../hooks/use-display-name'
 
-export type CountryOption = { iso: string; iso3: string; name: string }
+export type CountryOption = { iso: CountryCode; iso3: string }
 
 /**
- * Resolves a country's display name in the admin UI language (keyed on the
- * stable ISO code), falling back to the API's backend-locale `name` when the
- * runtime lacks coverage. Exported so every country-labelled surface
- * (pickers, grid cells) reads the same.
+ * Resolves a country's display name in the admin UI language from its ISO
+ * code, falling back to the code when the runtime has no name for it.
+ * Exported so every country-labelled surface (pickers, grid cells) reads the
+ * same.
  *
  * The resolver is referentially stable across renders — callers feed it into
  * `useMemo` deps, and a fresh closure each render would rebuild every derived
@@ -34,32 +35,37 @@ export type CountryOption = { iso: string; iso3: string; name: string }
 export function useCountryDisplayName() {
   const displayName = useDisplayName('region')
   return useCallback(
-    (country: CountryOption) => displayName(country.iso) ?? country.name,
+    (country: { iso: string }) => displayName(country.iso) ?? country.iso,
     [displayName],
   )
 }
 
 /**
- * Case-insensitive substring match against name, iso, and iso3 so the user
- * can find a country by typing "United States", "US", or "USA". Both pickers
- * filter the cached `useCountries()` list client-side — countries are a
- * ~250-row static set, so there's no remote search. Mirrors the server-side
- * `search` Ransack scope (`Spree::Country.search`).
+ * Sorts any list of countries by the name the admin reads, collated in the
+ * admin's language (a Swedish admin sees Österrike after Zimbabwe). Each name
+ * is resolved once per sort. The API cannot do this: it answers in ISO order
+ * and does not know the reader's language.
  */
-export function countryFilter(item: CountryOption, query: string): boolean {
-  const q = query.trim().toLowerCase()
-  if (!q) return true
-  return (
-    item.name.toLowerCase().includes(q) ||
-    item.iso.toLowerCase().includes(q) ||
-    item.iso3.toLowerCase().includes(q)
+export function useSortByCountryName() {
+  const countryName = useCountryDisplayName()
+  const { i18n } = useTranslation()
+  const collator = useMemo(() => new Intl.Collator(i18n.language), [i18n.language])
+  return useCallback(
+    <T,>(items: readonly T[], isoOf: (item: T) => string): T[] =>
+      items
+        .map((item) => ({ item, name: countryName({ iso: isoOf(item) }) }))
+        .sort((left, right) => collator.compare(left.name, right.name))
+        .map(({ item }) => item),
+    [countryName, collator],
   )
 }
 
 /**
- * Filter that also matches the LOCALIZED country name shown to the user (not
- * just the raw backend `name` / ISO codes), so typing a translated label finds
- * its country. Memoized on the display-name resolver.
+ * Case-insensitive substring match against the country's name in the admin's
+ * language, its ISO code and its ISO3 code, so typing "Deutschland", "DE" or
+ * "DEU" finds it. Both pickers filter the cached `useCountries()` list
+ * client-side — countries are a ~250-row static set, so there's no remote
+ * search. Memoized on the display-name resolver.
  */
 function useCountryFilter() {
   const countryName = useCountryDisplayName()
@@ -67,7 +73,11 @@ function useCountryFilter() {
     () => (item: CountryOption, query: string) => {
       const q = query.trim().toLowerCase()
       if (!q) return true
-      return countryName(item).toLowerCase().includes(q) || countryFilter(item, query)
+      return (
+        countryName(item).toLowerCase().includes(q) ||
+        item.iso.toLowerCase().includes(q) ||
+        item.iso3.toLowerCase().includes(q)
+      )
     },
     [countryName],
   )
@@ -88,12 +98,20 @@ function CountryRow({ country, label }: { country: CountryOption; label: string 
   )
 }
 
-/** Maps the cached country list onto the flat option shape both pickers use. */
+/**
+ * Maps the cached country list onto the flat option shape both pickers use,
+ * sorted by the name the admin reads (the API answers in ISO order).
+ */
 function useCountryOptions(): CountryOption[] {
   const { countries } = useCountries()
+  const sortByName = useSortByCountryName()
   return useMemo(
-    () => countries.map((c) => ({ iso: c.iso, iso3: c.iso3, name: c.name })),
-    [countries],
+    () =>
+      sortByName(
+        countries.map((c) => ({ iso: c.iso, iso3: c.iso3 })),
+        (c) => c.iso,
+      ),
+    [countries, sortByName],
   )
 }
 
@@ -118,7 +136,8 @@ export function CountryCombobox({
   /** Forwarded to the trigger so a `<FieldLabel htmlFor>` can target it. */
   id?: string
   value: string | null | undefined
-  onValueChange: (iso: string) => void
+  /** Fires with the picked code, or `''` when the selection is cleared. */
+  onValueChange: (iso: CountryCode | '') => void
   /** Forwarded to the trigger so RHF's `<Controller>` can track touched state. */
   onBlur?: () => void
   /** Trigger text while nothing is selected. */
@@ -204,9 +223,9 @@ export function CountryMultiCombobox({
   disabled = false,
 }: {
   /** Selected 2-letter ISO codes. */
-  value: string[]
+  value: readonly string[]
   /** Fires with the next array of ISO codes. */
-  onValueChange: (isos: string[]) => void
+  onValueChange: (isos: CountryCode[]) => void
   placeholder?: string
   emptyText?: string
   disabled?: boolean
@@ -222,7 +241,10 @@ export function CountryMultiCombobox({
   // strings. Selected ISOs not yet present in `items` (list still loading)
   // fall back to a stub so chips don't vanish on first render.
   const selected = useMemo<CountryOption[]>(
-    () => value.map((iso) => items.find((c) => c.iso === iso) ?? { iso, iso3: '', name: iso }),
+    () =>
+      value
+        .filter(isCountryCode)
+        .map((iso) => items.find((c) => c.iso === iso) ?? { iso, iso3: '' }),
     [value, items],
   )
 

@@ -1,17 +1,19 @@
+import { DimensionUnit, PACKAGE_TYPE_KINDS, type PackageTypeKind, WeightUnit } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
 import type { PanelPackageType, PanelPackageTypeCreateParams } from '../api-client'
 
-// The vocabulary the server validates against; typing anything else could
-// only fail on save.
-export const PACKAGE_TYPE_KINDS = ['box', 'envelope', 'carton', 'pallet', 'container'] as const
-export const PACKAGE_DIMENSION_UNITS = ['mm', 'cm', 'in', 'ft'] as const
-export const PACKAGE_WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const
+export { PACKAGE_TYPE_KINDS, type PackageTypeKind }
 
-export type PackageTypeKind = (typeof PACKAGE_TYPE_KINDS)[number]
-export type PackageDimensionUnit = (typeof PACKAGE_DIMENSION_UNITS)[number]
-export type PackageWeightUnit = (typeof PACKAGE_WEIGHT_UNITS)[number]
+/** @deprecated Use `Object.values(DimensionUnit)` from `@spree/admin-sdk`. */
+export const PACKAGE_DIMENSION_UNITS = Object.values(DimensionUnit)
+/** @deprecated Use `Object.values(WeightUnit)` from `@spree/admin-sdk`. */
+export const PACKAGE_WEIGHT_UNITS = Object.values(WeightUnit)
+/** @deprecated Use `DimensionUnit` from `@spree/admin-sdk`. */
+export type PackageDimensionUnit = DimensionUnit
+/** @deprecated Use `WeightUnit` from `@spree/admin-sdk`. */
+export type PackageWeightUnit = WeightUnit
 
 // Blank is how a merchant says "not measured", so every number is optional
 // and an empty string reaches the API as null rather than zero — a box
@@ -33,10 +35,10 @@ export const packageTypeFormSchema = z.object({
   length: optionalNumber,
   width: optionalNumber,
   height: optionalNumber,
-  dimensions_unit: z.enum(PACKAGE_DIMENSION_UNITS).optional(),
+  dimensions_unit: z.enum(DimensionUnit).optional(),
   weight: optionalNumber,
   max_weight: optionalNumber,
-  weight_unit: z.enum(PACKAGE_WEIGHT_UNITS).optional(),
+  weight_unit: z.enum(WeightUnit).optional(),
   default: z.boolean().optional(),
 })
 
@@ -89,10 +91,10 @@ export function packageTypeToFormValues(packageType: PanelPackageType): PackageT
     length: packageType.length ?? '',
     width: packageType.width ?? '',
     height: packageType.height ?? '',
-    dimensions_unit: (packageType.dimensions_unit ?? undefined) as PackageDimensionUnit | undefined,
+    dimensions_unit: (packageType.dimensions_unit ?? undefined) as DimensionUnit | undefined,
     weight: packageType.weight ?? '',
     max_weight: packageType.max_weight ?? '',
-    weight_unit: (packageType.weight_unit ?? undefined) as PackageWeightUnit | undefined,
+    weight_unit: (packageType.weight_unit ?? undefined) as WeightUnit | undefined,
     default: packageType.default ?? false,
   }
 }

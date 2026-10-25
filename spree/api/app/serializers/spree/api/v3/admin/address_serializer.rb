@@ -3,9 +3,10 @@ module Spree
     module V3
       module Admin
         class AddressSerializer < V3::AddressSerializer
+          # The Store API keeps these deprecated names until 6.1.
+          %i[state_abbr country_iso].each { |key| _attributes.delete(key) }
+
           typelize customer_id: [:string, nullable: true],
-                   owner_id: [:string, nullable: true],
-                   owner_type: [:string, nullable: true],
                    latitude: [:number, nullable: true],
                    longitude: [:number, nullable: true],
                    metadata: 'Record<string, unknown>'
@@ -24,18 +25,9 @@ module Spree
             address.longitude&.to_f
           end
 
-          attribute :customer_id do |address|
-            address.customer_owner&.prefixed_id
-          end
+          prefixed_id_attributes customer_id: :customer_owner
 
-          # Who the row belongs to — a customer's book, a company node's, or a
-          # seller's billing address. `customer_id` above stays as the
-          # customer-only shorthand the customers surface reads.
-          attribute :owner_id do |address|
-            address.owner&.prefixed_id
-          end
-
-          attributes :owner_type
+          one :owner, resource: proc { Spree.api.admin_address_owner_serializer }
         end
       end
     end

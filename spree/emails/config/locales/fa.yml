@@ -1,0 +1,37 @@
+---
+fa:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: بازنشانی گذرواژه
+        expiry_notice: این پیوند بازنشانی گذرواژه به‌زودی منقضی می‌شود. اگر شما این درخواست را نداده‌اید، نیازی به هیچ اقدامی نیست.
+        greeting: سلام %{name}،
+        ignore_notice: اگر درخواست بازنشانی گذرواژه نداده‌اید، می‌توانید این ایمیل را نادیده بگیرید. گذرواژه شما تغییر نخواهد کرد.
+        instructions: درخواستی برای بازنشانی گذرواژه شما دریافت کردیم. برای انتخاب گذرواژه جدید روی دکمه زیر کلیک کنید.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: سلام،
+        ignore_disclaimer: اگر شما این درخواست را نداده‌اید، لطفاً این ایمیل را نادیده بگیرید.
+        instructions: لطفاً برای تأیید آدرس ایمیل خود روی دکمه زیر کلیک کنید.
+        message_copy_link: 'اگر دکمه کار نکرد لطفاً پیوند زیر را کپی کرده و در مرورگر خود جای‌گذاری کنید:'
+        subject: آدرس ایمیل خود را تأیید کنید
+        verify_email_address_link: تأیید آدرس ایمیل
+    order_mailer:
+      cancel_email:
+        instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
+        subject: لغو سفارش
+      confirm_email:
+        instructions: Please review and retain the following order information for your records.
+        subject: تایید سفارش
+      payment_link_email:
+        message: لطفاً برای پرداخت سفارش خود روی دکمه زیر کلیک کنید.
+        message_copy_link: 'اگر دکمه کار نکرد لطفاً پیوند زیر را کپی کرده و در مرورگر خود جای‌گذاری کنید:'
+        pay_for_order: پرداخت سفارش
+        subject: 'پیوند پرداخت برای سفارش #%{number}'
+      store_owner_notification_email:
+        heading: سفارش جدید دریافت شد
+        instructions: شما یک سفارش جدید دریافت کرده‌اید.
+        order_summary: خلاصه سفارش %{number}
+        subject: "%{store_name} یک سفارش جدید دریافت کرد"
+      subtotal: 'جمع جزء:'
+      total: 'مجموع سفارش:'

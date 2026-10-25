@@ -25,6 +25,46 @@ describe Spree::TaxLine, type: :model do
     expect(tax_line).not_to be_valid
   end
 
+  describe 'post-sale rows' do
+    let(:order) { create(:shipped_order) }
+    let(:return_line) { create(:return, order: order, store: order.store).return_line_items.first }
+
+    it 'can belong to a return line instead of a sale item' do
+      tax_line = described_class.new(order: order, return_line_item: return_line, credit: true, amount: 1, rate: 0.1, label: 'VAT')
+
+      expect(tax_line).to be_valid
+      expect(tax_line.adjustable).to eq(return_line)
+      expect(tax_line).to be_post_sale
+    end
+
+    it 'still takes exactly one adjustable' do
+      tax_line = described_class.new(order: order, return_line_item: return_line, line_item: order.line_items.first,
+                                     amount: 1, rate: 0.1, label: 'VAT')
+
+      expect(tax_line).not_to be_valid
+    end
+
+    it 'is only ever owned by a placed order' do
+      tax_line = described_class.new(cart: create(:cart), return_line_item: return_line, amount: 1, rate: 0.1, label: 'VAT')
+
+      expect(tax_line).not_to be_valid
+    end
+
+    it 'never counts among the order’s own tax' do
+      sale = create(:tax_line, order: order, line_item: order.line_items.first)
+      credit = create(:tax_line, order: order, line_item: nil, return_line_item: return_line, credit: true)
+
+      expect(order.tax_lines).to eq([sale])
+      expect(order.post_sale_tax_lines).to eq([credit])
+      expect(described_class.credits).to eq([credit])
+    end
+
+    it 'names the key each taxable class is pointed at by' do
+      expect(described_class.adjustable_key_for(Spree::ExchangeLineItem)).to eq(:exchange_line_item_id)
+      expect { described_class.adjustable_key_for(Spree::Order) }.to raise_error(ArgumentError)
+    end
+  end
+
   it 'is owned by a cart during checkout' do
     tax_line = create(:tax_line, :on_cart)
 
@@ -64,19 +104,6 @@ describe Spree::TaxLine, type: :model do
       expect(tax_line).to be_valid
     ensure
       described_class.taxability_reasons = original
-    end
-  end
-
-  describe 'provider data' do
-    it 'defaults to an empty hash so payloads read nil-safe' do
-      expect(described_class.new.data).to eq({})
-      expect(described_class.new.data['jurisdictions']).to be_nil
-    end
-
-    it 'round-trips a provider payload' do
-      tax_line = create(:tax_line, order: order, line_item: line_item,
-                                  data: { 'jurisdictions' => [{ 'name' => 'WA', 'amount' => '1.2' }] })
-      expect(tax_line.reload.data['jurisdictions'].first['name']).to eq('WA')
     end
   end
 

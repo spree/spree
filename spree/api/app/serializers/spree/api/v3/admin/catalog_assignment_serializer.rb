@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class CatalogAssignmentSerializer < V3::BaseSerializer
-          typelize catalog_id: :string, assignable_type: :string, assignable_id: :string,
+          typelize catalog_id: :string, assignable_type: [:string, enum: Spree::CatalogAssignment::ASSIGNABLE_TYPES.map { |type| Spree::Base.polymorphic_api_type(type) }, enum_type_name: 'CatalogAssignableType'], assignable_id: :string,
                    assignable_name: [:string, nullable: true]
 
           attributes created_at: :iso8601
@@ -18,9 +18,7 @@ module Spree
             assignment.assignable_type.demodulize.underscore
           end
 
-          attribute :assignable_id do |assignment|
-            assignment.assignable&.prefixed_id
-          end
+          prefixed_id_attributes :assignable
 
           attribute :assignable_name do |assignment|
             assignment.assignable.try(:name)

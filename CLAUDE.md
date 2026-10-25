@@ -31,11 +31,12 @@ Use `/project:create-plan` and `/project:update-plan` for plan management, and `
 | `packages/sdk` | `@spree/sdk` — TypeScript Store API client |
 | `packages/admin-sdk` | `@spree/admin-sdk` — TypeScript Admin API client |
 | `packages/seller-sdk` | `@spree/seller-sdk` — TypeScript Seller API client |
+| `packages/core` | `@spree/core` — universal code with no HTTP: code lists, money helpers, filter vocabulary (published; the base for shared TypeScript code) |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |
-| `storefront/` | Next.js storefront cloned from `spree/storefront` branch `6-0-dev` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
+| `storefront/` | Next.js storefront cloned from `spree/storefront` `main` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
 | `docs/` | Mintlify powered documentation website, which is deployed to https://spreecommerce.org/docs |
 ## Development Server (worktrees)
 
@@ -55,13 +56,13 @@ wt remove                    # abandon instead of shipping
 
 Admin login: `spree@example.com` / `spree123`. The dev scripts run in the foreground and stream logs; `server/log/development.log` has the Rails log if the server runs detached. Start servers only in worktrees you're actively looking at — rspec/vitest/tsc need no servers.
 
-**Storefront (`pnpm wt:storefront`).** The Next.js storefront is a separate repo (`spree/storefront`) cloned per worktree into a gitignored `storefront/`, on its **`6-0-dev`** branch — `main` stays on the released Store API for people forking or deploying it. Unlike `server/`, the clone keeps its `.git`: commit and push storefront work from inside it, and push before `wt remove`, which deletes the clone with the worktree.
+**Storefront (`pnpm wt:storefront`).** The Next.js storefront is a separate repo (`spree/storefront`) cloned per worktree into a gitignored `storefront/`, on its `main` branch. Unlike `server/`, the clone keeps its `.git`: commit and push storefront work from inside it, and push before `wt remove`, which deletes the clone with the worktree.
 
 It is deliberately **not** a member of this pnpm workspace — one lockfile and one set of global overrides cannot serve both Next 16 and the dashboard's Vite tree. It instead points `@spree/sdk` at this worktree's `packages/sdk` through its own `.pnpmfile.cjs`, which rewrites the dependency only when `SPREE_SDK_PATH` is set (the JavaScript twin of `SPREE_PATH`), so a standalone clone still installs the published SDK. The rewrite uses `file:` and not `link:`, because the storefront pins module resolution to its own directory (`turbopack.root`, `output: "standalone"`) and lists the SDK in `transpilePackages` — a symlink pointing outside the project fails to resolve, and every `@spree/sdk` import breaks. Two consequences: the storefront's `pnpm-lock.yaml` will show a local path — never commit it — and because the SDK is **copied**, picking up a change to it means rebuilding and reinstalling, which is exactly what re-running `pnpm wt:storefront` does.
 
 `storefront/.env.local` is regenerated on every boot with this worktree's API URL and the seeded publishable keys (read straight from Postgres — publishable tokens are plaintext), so a reseeded database can't leave a stale key behind. Anything you add below the marker line is preserved.
 
-One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), `mailpit` (`brew services start mailpit` — one instance serves every worktree), Ruby per `server/.ruby-version` (mise or rbenv), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
+One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), `mailpit` (`brew services start mailpit` — one instance serves every worktree), Ruby per `server/.ruby-version` via [mise](https://mise.jdx.dev) (`mise settings add idiomatic_version_file_enable_tools ruby`, so it reads `.ruby-version`), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
 
 | What changed | What to run (inside the worktree) |
 | --- | --- |
@@ -80,6 +81,8 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 | Broken beyond repair | `wt remove` and recreate — or `dropdb spree_dev_<branch>`, delete `server/`, re-run `pnpm wt:setup` |
 
 When working with worktrees, don't use the `pnpm server:dev` and other docker-based commands. 
+
+**Cloud sessions** (`CLAUDE_CODE_REMOTE=true`) have no worktrees, portless or Homebrew. The SessionStart hook (`scripts/cloud/provision.sh`) has already started Postgres and Mailpit, cloned `server/`, and created and seeded `spree_development` — its summary at the top of the session lists the URLs. Start servers with `scripts/cloud/start.sh [rails|dashboard|seller|all]` (plain http: Rails :3000, dashboard :5173, seller :5175, logs in `/tmp/spree-*.log`); `pnpm wt:dev`/`wt:dashboard`/`wt:seller` do not work there. Check UI changes yourself with `node scripts/cloud/screenshot.mjs <url> <out.png> --login` and Read the PNG — the human cannot open these servers. `pnpm test:rspec`, `pnpm test:changed` and `pnpm wt:e2e` work unchanged.
 NEVER kill/shut off dev serves already running unless they are broken (eg. migrations didn't run, missing migrations).
 
 ---
@@ -190,6 +193,7 @@ end
 - No foreign key constraints
 - No default values on string/status columns (statuses are set by the creating workflow); integer, decimal and boolean columns DO carry defaults (`quantity` 1, amounts 0) so raw inserts can't produce nulls
 - Every metadata-carrying table has a single `metadata` JSON column — the `public_metadata`/`private_metadata` split was consolidated in 6.0
+- `preferences` columns are JSON, never `text` — YAML preferences are converted in 6.0 (see `docs/plans/6.0-json-preferences.md`); hash preferences never use number keys; secrets are `:password` preferences, stored encrypted in a `secret_preferences` `text` column
 - Always add `null: false` on required columns
 - One migration per feature when possible
 - Data transformations go in rake tasks, never in migrations
@@ -243,7 +247,7 @@ The Store API (customer-facing) and Admin API (back-office) are two halves of th
 
 #### Flat request/response structure
 
-API v3 uses flat params — no nested Rails-style wrapping. Declare a controller's writable attributes by overriding **`resource_permitted_attributes`** (a plain list). The base `permitted_attributes` appends extension-contributed attributes to it, and `permitted_params` permits and normalizes the result. `Spree::PermittedAttributes` and its model-name inference are **removed in 6.0** — a controller that declares neither `resource_permitted_attributes` nor `permitted_params` raises `NotImplementedError` on its first write.
+API v3 uses flat params — no nested Rails-style wrapping. Declare a controller's writable attributes with **`request_params`** — one typed declaration that the controller permits from, the integration spec documents with `request_body_for`, and the SDK request types are generated from (`pnpm generate:params` → `src/types/params/`), so backend, OpenAPI and TypeScript cannot drift. Never hand-write a request body in an rswag spec or a request type in an SDK. Each attribute is `body.attribute :name, :type, **options` — types `:string :integer :number :decimal :boolean :date :datetime :id :any :country :currency :hash :object :array` (`of:` for an array's items, `shape:` for an object, `choices:` for a value list, `required: true` + `on: :create`, `only:` for one action); money is `:decimal` (canonical string), never `:number`; a country or currency code is `:country` / `:currency`, never `:string` — they publish the closed `CountryCode` / `CurrencyCode` types (from `Spree::IsoData.country_codes` and `Spree::Money::Rounding::CURRENCY_CODES`), which serializers declare with `enum_type_name: 'CountryCode'` / `'CurrencyCode'` so reads and writes share one type. A shape two or more endpoints accept (address, price, stock level, media) is a class in `spree/api/app/request_schemas/` (`class AddressRequestSchema < Spree::Api::V3::RequestSchema`, `publishes 'XyzParams'` to give it its own type; Admin variants subclass the shared one, like serializers) — never copy a field list between controllers; a body used by one endpoint stays inline in its controller; a custom action declares `request_params 'XyzParams', action: :xyz do |body|`. A spec checks that every attribute a model-backed create/update accepts is writable on the model. `resource_permitted_attributes` (a plain list) still works but leaves the body undocumented and untyped. The base `permitted_attributes` appends extension-contributed attributes to it, and `permitted_params` permits and normalizes the result. `Spree::PermittedAttributes` and its model-name inference are **removed in 6.0** — a controller that declares neither `resource_permitted_attributes` nor `permitted_params` raises `NotImplementedError` on its first write.
 
 Extensions add writable attributes to a core resource from an initializer, appending to the model's `additional_permitted_attributes` (a `class_attribute` on `Spree::Base`, default `[]`): `Spree::Product.additional_permitted_attributes += [:brand_id]`. Always `+=`, never `=` — assigning replaces what another extension added. Core STI subclasses set theirs with `self.additional_permitted_attributes = [...]` in the class body. Three rules that matter:
 
@@ -254,9 +258,11 @@ Extensions add writable attributes to a core resource from an initializer, appen
 Prefer Custom Fields for merchant-managed data; the hook is for extensions adding real columns.
 
 ```ruby
-# ✅ Flat params
-def permitted_params
-  params.permit(:name, :description, :slug)
+# ✅ Flat params, declared once
+request_params :product do |body|
+  body.attribute :name, :string, required: true, on: :create
+  body.attribute :description, :string
+  body.attribute :slug, :string
 end
 
 # ❌ Nested params — not used in API v3
@@ -327,23 +333,43 @@ end
 attribute :variant_id
 ```
 
-### Typed subclasses (`api_type`, never the Ruby class name)
+### Typed values (`api_type`, never the Ruby class name)
 
-STI families selected by a `type` on the wire (promotion rules/actions, price rules, delivery-method rules, collection rules, commission rules, order-routing rules, payment methods, integrations, seller requirements, calculators, imports/exports) are addressed by their **`api_type` shorthand** — the demodulized + underscored leaf, so `Spree::PriceRules::VolumeRule` is `volume_rule`:
+**No Ruby class name ever crosses the API** — not in a request, response, filter, webhook payload, permission subject, SDK type, doc example or fixture. The database keeps storing class names; the conversion happens at the boundary, so the contract survives a backend that is not Ruby. Every such value is a short name: the demodulized + underscored class (`Spree::PriceRules::VolumeRule` → `volume_rule`, `Spree::CreditCard` → `credit_card`).
 
-- Never put a Ruby class name in a request, response, SDK type, doc example or fixture — `subclassed_via` and `find_by_api_type` match on `api_type` **only**, so a class name is rejected as an unknown type. A few surfaces (exports/imports, calculators, collection rules) also accept it as a compat fallback; never document or generate that form
-- Serialize with `attribute :type { |record| record.class.api_type }`
+**STI families** selected by a `type` (promotion rules/actions, price rules, delivery-method rules, collection rules, commission rules, order-routing rules, payment methods, integrations, seller requirements, calculators, imports/exports):
+
+- Serialize with `Model.api_type_for(record.type)` (or `record.class.api_type`); resolve writes with `subclassed_via` / `find_by_api_type` / `Model.class_name_for_api_type`, which match the registry only, so a class name is rejected as an unknown type
 - Override `def self.api_type` to keep the wire value stable across a class rename — the default is derived, so renaming otherwise changes a public identifier
-- Build pickers from the family's `…/types` endpoint (`{ type, label, preference_schema }`), never a hardcoded list — extension kinds then appear for free
+- Build pickers from the family's `…/types` endpoint (`{ type, label, schema }`, where `schema` is the JSON Schema of the type's preferences), never a hardcoded list — extension kinds then appear for free
 - Adding a built-in kind means updating the serializer's `comment:` list in the same change (see the value-list tiers below)
-- Polymorphic columns are different: `resource_type`, `taggable_type`, `owner_type` hold real class names and stay as they are (`Spree::Base.polymorphic_api_type` shortens where needed)
+
+**Registry-selected strategy classes** (fulfillment, delivery-rate, pickup-point, payout, tax and digital-asset providers, order routing strategies — plain Ruby, stored as a class-name string on a column or preference):
+
+- The family's base class `extend Spree::ApiTyped`; a gem class named after its family (`SpreeEasyPost::FulfillmentProvider`) answers its gem's name (`easy_post`)
+- The model converts incoming values: `normalizes :rate_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.delivery_rate_providers, value) }` (`parse_on_set:` for a preference), plus an inclusion validation against the registry; a filterable column gets `ransacker :provider, formatter: ->(value) { Spree::ApiTyped.class_name_for(…) }`
+- The serializer declares `api_type_attributes :rate_provider, :fulfillment_provider`
+- Turn a stored value into a class with `Spree::ApiTyped.registered_class(registry, value)` — never `constantize` a stored string; an unregistered value falls back to the default
+- Every new strategy family gets a registry (`Spree.<family>s`) — a column a merchant writes must never name an arbitrary class
+
+**Polymorphic columns** (`owner_type`, `resource_type`, `taggable_type`, `originator_type`, …):
+
+- Serialize with `Spree::Base.polymorphic_api_type(record.owner_type)` — the configured customer and admin user classes always read `customer` / `admin_user`
+- Accept with `Spree::Base.polymorphic_type_for(value, candidates)` against the classes that column may hold
+- **Filters**: the base `ResourceController` translates `type_*` and polymorphic `*_type_*` predicates (`q[receivable_type_eq]=purchase_order`) to class names; a plain column holding class names (`CustomFieldDefinition#resource_type`) overrides the model's `api_type_resolver`, which the published filter tables read too
+
+**Permission subjects** follow the same rule: `/me` serializes class subjects through `polymorphic_api_type` (`product`, `category`), and the dashboard checks them with the `Subject` constants.
+
+Never special-case old class names (`Spree::Taxon`) in this conversion — upgrade tasks migrate stored data. A changed Store API value or webhook field goes in the upgrade guide.
 
 ```ruby
 # ✅ Wire shorthand
 { type: 'volume_rule', preferences: { min_quantity: 10 } }
+{ fulfillment_provider: 'manual', resource_type: 'product' }
 
-# ❌ Rejected as an unknown type
+# ❌ Never on the wire
 { type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 10 } }
+{ fulfillment_provider: 'Spree::FulfillmentProvider::Manual', resource_type: 'Spree::Product' }
 ```
 
 ### Serializers (Alba)
@@ -390,10 +416,12 @@ end
 
 - `typelize attr: :type` for computed/delegated attribute types
 - Value lists come in three tiers — picking the wrong one is a contract bug:
-  - **Closed** (nothing can extend it — units, match policies): `enum: Model::KINDS` → closed TS union, plain OpenAPI `enum`
-  - **Open** (extensions may add, built-ins known at class-load — `has_status`, `Spree::Fee::KINDS`): add `enum_type_name: 'ModelStatus'` → open TS union (`'a' | 'b' | (string & {})`) + OpenAPI `anyOf`, so clients autocomplete the built-ins and still accept extension values
-  - **Registry-driven `type`** (the typed-subclass families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
+  - **Closed** (nothing can extend it — units, match policies): `enum: Model::KINDS, enum_type_name: 'ModelKind'` and add the name to `Typelizer::OpenEnums::CLOSED_LIST_NAMES` → closed TS union defined once in `@spree/core` (`MODEL_KINDS` + `ModelKind`), plain OpenAPI `enum`. Never leave a list unnamed: an inline union is copied into every SDK and cannot be imported by the dashboards
+  - **Open** (extensions may add, built-ins known at class-load — `has_status`, `Spree::Fee::KINDS`): add `enum_type_name: 'ModelStatus'` → open TS union (`'a' | 'b' | (string & {})`) + OpenAPI `anyOf`, so clients autocomplete the built-ins and still accept extension values. The list is generated once into `@spree/core` (`MODEL_STATUSES` + `ModelStatus`) and each SDK's `Enums.ts` re-exports the type; two serializers giving one name different values stop generation. Dashboards never copy a list: iterate the generated constant, and pick a subset with `subsetOf(MODEL_STATUSES, [...])` so a typo fails to compile
+  - **Registry-driven `type`** (the typed families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
 - Never use `typelize_from` — it connects to the database
+- **A deprecated field is marked, never only described.** Response attributes: `typelize state_abbr: [:string, nullable: true, deprecated: 'Use `state_code`. Removed in 6.1.']`. Request fields: `string :country_iso, deprecated: 'Use `country_code`. Removed in 6.1.'`. Both reach the API reference (`deprecated: true`) and the SDK types (`@deprecated`, struck through in editors). The message names the replacement and the release that removes it; a "Deprecated:" sentence in a `comment:` or `description:` alone is invisible to clients
+- **Which API deprecates and which removes.** The Store API (the stable public contract) deprecates: a renamed or retired field keeps working, marked `deprecated:`, until the next minor release. Until 6.0 is stable, the Admin and Seller APIs remove instead — drop the field outright, move the dashboards to the replacement, and list it in the upgrade guide; an Admin/Seller serializer drops an inherited deprecated Store field with `_attributes.delete(:field)`. After 6.0 stable, the Admin and Seller APIs follow the Store API's deprecation procedure too
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer
 - NEVER put too much logic in serializers, they should be lean and call models for custom methods
@@ -422,6 +450,8 @@ end
 
 For new models, add `publishes_lifecycle_events` concern and create an event serializer.
 
+Webhook payloads use Store serializers only — never a hand-built hash, never an Admin serializer; extra facts go in `metadata`. Every event is being moved to a declared catalog (see `docs/plans/6.0-typed-webhook-events.md`).
+
 ### Emails (Liquid + MJML)
 
 Every email renders from a Liquid template written in MJML, never ERB. See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/emails.mdx`.
@@ -432,6 +462,9 @@ Every email renders from a Liquid template written in MJML, never ERB. See `docs
 - **In templates**: output is HTML-escaped automatically (`| raw` only for HTML sanitized on write). Filters: `money`, `money_with_currency`, `date` (store time zone), `t` (Spree translation keys, so one template serves every language). An unknown variable raises in development and test.
 - **When you add or change an email**: if customers receive it, update `docs/developer/customization/email-variables.mdx` by hand with its variables, add it to `spree/emails/spec/mailers/spree/rendered_emails_spec.rb`, and give it a mailer preview (shown at `/rails/mailers` in development) in `spree/emails/lib/spree/emails/previews/` or, for staff emails, `spree/core/lib/spree/core/previews/`.
 - **Don't** add ERB email views, mailer view helpers, or model calls from templates. Apps' own mailers that call `mail` with ERB views still work: `layouts/spree/base_mailer.html.erb` wraps them in the Liquid layout.
+- **Merchants edit customer emails in the dashboard** (`docs/plans/6.0-email-template-editor.md`). A store's published version is found before the file, per language. A new **customer** email must be registered in `Spree.editable_email_templates` (in `spree/emails/lib/spree/emails/engine.rb`) with a sample builder in `spree/emails/app/services/spree/emails/samples/`, and added to the dashboard's variables manifest; never register staff, store-owner or seller emails. Changing a default template shows merchants who customized it an "updated by Spree" notice, so change defaults deliberately.
+- **Every record a customer email serializes has an email serializer of its own** in `spree/emails/app/serializers/spree/emails/` (a thin subclass of the Store API one is fine), and email serializers point their associations at those. The generated `Email*` types then describe exactly what templates receive, and the editor suggests variables from their Zod schemas; an association pointing at a Store API serializer leaks its types into the email ones.
+- **Colors and fonts come from `store.branding`**, never hard-coded in a customer template. Generate types with `cd spree/api && bundle exec rake typelizer:generate`, which runs inside `spree_emails` so the API and email serializers both load.
 
 ### API Authentication
 
@@ -467,13 +500,27 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 ### Performance
 
 - Use `includes`/`preload` to avoid N+1 queries (`ar_lazy_preload` gem also active)
+- **Every API request in the test suite is scanned for N+1 queries** (Prosopite in raise mode, configured in the dummy app's `test.rb`). A `Prosopite::NPlusOneQueriesError` prints the repeated statement and the serializer or model line that issued it. Fix it at that line: add the association to `collection_includes`, read a loaded association instead of running a scoped query, or replace the per-record lookup with one grouped query. Never answer it with `count` or `exists?` per record — that is the same N+1 in another shape; `size` on an already-loaded association is free, a `count` is not. No endpoint is exempt — never fix it by disabling the guard, skipping a spec, or wrapping the read in `Prosopite.pause`. An allow-list entry (`Prosopite.allow_stack_paths` in that `test.rb`) is only for a lookup that legitimately runs once per record being written (a uniqueness probe, a workflow run per requested row) and carries its reason next to it.
+- A list endpoint spec must render at least two records, since a repeated query cannot show with one — every `GET #index` block includes `it_behaves_like 'a list without N+1 queries'` with a `let!` creating them.
 - Use `Rails.cache` for expensive operations; use `cache_key_with_version` for custom keys
 - Proper database indexing
 
 ### I18n
 
-- Use `Spree.t` for translations
+- Use `I18n.t('spree.<key>')` with the full key for translations — `Spree.t` is deprecated (see `docs/plans/6.0-translations-in-core.md`)
+- Before removing a translation key `i18n-tasks unused` reports, check it is not passed around as a string or built from a value (`"spree.#{name}"`) — the checker cannot see either
 - Keep translations in `config/locales/en.yml` — no duplication across files
+
+### Money
+
+Money is never a float — not in Ruby, not in TypeScript (see `docs/plans/6.0-money-correctness.md`).
+
+- No `.to_f`, `Float()` or float literal (`100.0`) on an amount, price, total, cost, fee, discount, tax or payout. Compute in `BigDecimal`; in the dashboard never `parseFloat`/`Number()` a money string.
+- Round with `Spree::Money::Rounding.to_currency(amount, currency)` (the currency's ISO 4217 exponent from `spree/core/config/currency_exponents.json`), never `.round(2)`; split in minor units with `to_minor_units` / `from_minor_units`, never `* 100` / `/ 100`. Round only when persisting, calling a gateway, or serializing — not in intermediate math.
+- Read an amount from an API request with `Spree::Money::Rounding.parse_canonical(value, currency)`: canonical decimal strings only (`"1234.56"`), no locale parsing on the server. `Spree::LocalizedNumber` is deprecated; never add a model setter that re-parses numbers.
+- Write amounts out with `Spree::Money::Rounding.format(amount, currency)`.
+- In the dashboards, show and read money in the admin's own number format: `useMoneyLocale()` with `currencyParts` / `normalizeMoneyInput`, never a market's locale.
+- A third party that needs a JSON number gets `.to_f` once, on the line that hands it over, with a comment saying why.
 
 ### Time zones
 
@@ -602,11 +649,15 @@ The starter is the canonical host — the same app `spree add dashboard` scaffol
 2. **Follow `docs/plans/6.0-admin-spa.md`** for the three extension points (table registry, navigation registry, component injection) and the shadcn copy-paste ownership model.
 3. **Wrap SDK calls in custom hooks** under `src/hooks/` (e.g. `useOrders`, `useProduct`) — never call `adminClient` directly from components.
 
+**Every detail page exposes slots.** A new or reworked resource detail page (admin dashboard and seller panel alike) renders `<Slot name="<resource>.form_sidebar">` at the end of its sidebar column — plus `<resource>.form_main` when the main column is where plugin cards belong — with the record in the context (`{ <resource> }`), and gets an entry in `docs/developer/dashboard/slots-catalog.mdx` in the same change. Seller panel slots are named `seller.<page>.<area>`. **A slot inside a page's form must be a host form:** wrap the form in `<FormProvider>`, seed `extensionFormValues('<resource>', record)` into its defaults and hydration reset, and merge `extensionSubmitValues('<resource>', form)` into the save payload (and the post-save reset), so fields a plugin binds with `useHostForm()` save with the page's Save button. The matching API controller must accept extension attributes — use `resource_permitted_attributes`, or splat `*model_additional_permitted_attributes` into a hand-written `permitted_params`. Seller API controllers splat `*model_class.additional_seller_permitted_attributes` instead, so an attribute opened to operators never becomes seller-writable by accident. Reference: `routes/_authenticated/$storeId/products/collections/$collectionId.tsx`.
+
 **Translations.** Every user-visible string in `@spree/dashboard` goes through i18next — page titles, headings, table column labels, button labels, empty states, toast messages, confirm dialog copy, select option labels, badges, status text, tooltips, helper text. Never hardcode English (or any language) into JSX, into table column definitions, or into dropdown option arrays. Keys live in `packages/dashboard/src/locales/en.json` (app-specific copy) or `packages/dashboard-core/src/locales/en.json` (cross-cutting: `admin.common.*`, `admin.fields.<attribute>.<facet>`). Reach for `i18n.t(...)` at module load (table definitions) and `useTranslation().t(...)` inside components. **Schemas in `src/schemas/` hold canonical values only — never label strings.** Build `{ value, label }` pairs at render time inside the component by mapping the canonical value list against translation keys. When adding a new translation key, ALWAYS add it to the all languages files in `packages/dashboard/src/locales/` and `packages/dashboard-core/src/locales/`.
 
 **Destructive actions need a confirm — unless a sheet already gates them.** Any action that destroys or detaches data and fires **straight from a click** must go through `useConfirm()` with `variant: 'destructive'` first: row-level delete/remove buttons, and every bulk action that runs immediately. Bulk actions that open a picker sheet or dialog (`BulkAction.form`, `ResourcePickerSheet`) already require an explicit submit — that IS the confirmation, so don't stack a second dialog on top. `BulkAction` takes a `confirm` option (`{n}` interpolates the count) for the immediate case.
 
 State the count for bulk (`{{count}}`, pluralized in every locale) and the record name for a single row. **When the write is immediate but the surrounding page is a dirty-tracked form, say so** — e.g. the products panel on a category/collection persists each add/remove/reorder on click while the rest of the page waits for Save, so its confirm copy reads "This takes effect immediately." Without that, merchants reasonably assume Save-or-Discard applies.
+
+**A listing page renders `<ResourceTable>`, never a hand-built table.** Any page whose job is to list records — a settings resource, a top-level index — goes through `ResourceTable` with a `defineTable` definition in `packages/dashboard/src/tables/`. It carries column visibility, sorting, search, pagination, row selection, bulk actions, empty and loading states, and the drag-reorder contract; a `<Table>` assembled by hand gets none of them and drifts from every other page the moment one of those is added. The endpoint it reads must return `{ data, meta }` — add Pagy to the controller rather than returning a bare array, or the table cannot page. Reference: `routes/_authenticated/$storeId/settings/policies.tsx`. A hand-built `<Table>` is for the panels *inside* a record (a product's variants, an order's line items), which are not listing pages.
 
 **Nested collection panels must paginate, never cap.** A panel listing records that belong to the parent (a category's or collection's products, and anything comparable) has to page through the nested endpoint and render `<Pagination meta={meta} onPageChange={...}>`. A bare `limit: 100` silently hides the remainder on a parent with thousands of children, and "select all" then quietly means "all 100 I happened to load". Two consequences to get right: show the parent's real total from `meta.count` rather than the loaded page length, and offset drag-reorder positions by `meta.from - 1`, since the reposition endpoints want an index across the whole set rather than within the page.
 
@@ -670,6 +721,10 @@ When displaying amount or percentage fields please always use `<InputGroup>` wit
 `Currency` should be always rendered as a dropdown using `currency-select.tsx` component, this also applies to Preferences fields representing currency
 `Country` and `Countries` fields should always use `copuntry-combobox.tsx` component, this also applies to preferences fields representing a single country or multiple choices
 
+### @spree/core — Universal code
+
+Published package for code that is not tied to HTTP or a framework: the code lists (`pnpm generate:code-lists`) and code-shape checks, the open status/kind lists (`enums.generated.ts`, written by `rake typelizer:generate`), unit systems, display names, money helpers (arithmetic, percentages, reading typed amounts) and the filter vocabulary. The dashboard packages and the seller panel import it directly — never through `@spree/admin-sdk` / `@spree/seller-sdk`, which re-export the same code; `@spree/dashboard-core` still re-exports its money helpers for plugin authors. Code any client could use — a conversion, a format, a validation rule shared with the server — goes here, never into an SDK or a dashboard package. No runtime dependencies. `@spree/sdk-core` re-exports it and the SDKs bundle it, offering its code lists and money helpers under the same names as before. The code generators read it from source (the `@spree/source` export condition), so they run before anything is built.
+
 ### @spree/sdk-core — Shared HTTP Layer
 
 Private package providing `createRequestFn()`, `SpreeError`, retry logic, and Ransack param transformation. Used internally by both SDKs.
@@ -689,6 +744,7 @@ cd packages/sdk && pnpm test                             # 5. SDK tests
 - TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/admin-sdk/src/types/generated/` (Admin)
 - Zod schemas → `src/zod/generated/` in each SDK, exported as `@spree/sdk/zod`, `@spree/admin-sdk/zod` and `@spree/seller-sdk/zod`. Each SDK's `zod-schemas.test.ts` validates them against the responses recorded in `docs/api-reference/*.yaml`
 - Store types: `StoreProduct`, `StoreOrder`, etc. Admin types: `AdminProduct`, `AdminOrder`, etc.
+- Request body types → `src/types/params/` in each SDK, from the request schemas swaggerize writes (`pnpm generate:params`; the Lefthook hook and CI keep them in sync with `docs/api-reference/*.yaml`)
 
 A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. It also regenerates the Zod schemas when generated types or the generator change, and CI fails when committed schemas don't match the types. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing — run step 3 as `pnpm test:rspec api spec/integration/` so it queues with the other sessions.
 
@@ -745,6 +801,7 @@ Re-run `parallel_setup` after schema changes (`scripts/test/rspec <engine>` does
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance
 - Time-based tests: use `Timecop`
+- NEVER update or save the shared default store (`@default_store`) in specs — it outlives the example, so the change leaks into other specs. Stub what the code reads (`allow(Spree::Store).to receive(:default).and_return(build(:store, ...))`) or create a separate store
 - Don't over-engineer or repeat tests
 - Fold specs into the existing describe blocks, use context blocks for different scenarios, NEVER create new test files for a single new scenario unless it is a completely new feature
 
@@ -762,6 +819,8 @@ End-to-end tests for `packages/dashboard` live in `packages/dashboard/e2e/`. The
 cd packages/dashboard && pnpm test:e2e          # full suite
 cd packages/dashboard && pnpm test:e2e:ui       # Playwright UI mode (debug)
 ```
+
+**Every behaviour change or new feature ships with an E2E test.** If a merchant or seller can see the change in the Admin Dashboard or the Seller Panel, the same change adds or updates a Playwright spec that exercises it there: admin specs as `e2e/<resource>.spec.ts`, seller panel specs as `e2e/seller-<area>.spec.ts`. This applies to backend-only changes too, such as a validation, a status rule or a newly required field. Backend specs and unit tests prove the server refuses bad input; only the E2E test proves the dashboards still let users complete the flow.
 
 The `login(page)` helper authenticates through the API (one POST plants the refresh cookie; the SPA's boot-time silent refresh does the rest) — only `auth.spec.ts` drives the login form itself.
 

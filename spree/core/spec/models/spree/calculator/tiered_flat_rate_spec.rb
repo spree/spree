@@ -6,18 +6,40 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
   describe '#valid?' do
     subject { calculator.valid? }
 
-    context 'when tiers is not a hash' do
+    context 'when tiers is not a list of tiers' do
       before { calculator.preferred_tiers = ['nope', 0] }
 
       it { is_expected.to be false }
     end
 
-    context 'when tiers is a hash' do
-      context 'and one of the keys is not a positive number' do
-        before { calculator.preferred_tiers = { 'nope' => 20 } }
+    context 'when tiers is the pre-6.0 hash keyed by threshold' do
+      before { calculator.preferred_tiers = { 100 => 15 } }
 
-        it { is_expected.to be false }
-      end
+      it { is_expected.to be false }
+    end
+
+    context 'when a threshold is not a positive number' do
+      before { calculator.preferred_tiers = [{ threshold: 'nope', value: 20 }] }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when a threshold repeats' do
+      before { calculator.preferred_tiers = [{ threshold: 100, value: 15 }, { threshold: 100, value: 20 }] }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when an amount is negative' do
+      before { calculator.preferred_tiers = [{ threshold: 100, value: -1 }] }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when every tier has a positive threshold and an amount' do
+      before { calculator.preferred_tiers = [{ threshold: 100, value: 15 }] }
+
+      it { is_expected.to be true }
     end
   end
 
@@ -29,10 +51,10 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
     before do
       calculator.preferred_base_amount = 10
       calculator.preferred_currency = 'USD'
-      calculator.preferred_tiers = {
-        100 => 15,
-        200 => 20
-      }
+      calculator.preferred_tiers = [
+        { threshold: 200, value: 20 },
+        { threshold: 100, value: 15 }
+      ]
       allow(line_item).to receive_messages(currency: 'USD')
     end
 

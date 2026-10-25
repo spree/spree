@@ -3,6 +3,7 @@ import { type Product, SpreeError } from '@spree/admin-sdk'
 import {
   adminClient,
   CategorizationCard,
+  DigitalAssetsCard,
   extensionFormValues,
   extensionSubmitValues,
   GeneralCard,
@@ -13,14 +14,17 @@ import {
   PageHeader,
   PricesCard,
   type ProductFormValues,
+  prepareVariantsTaxForProductSave,
   productFormSchema,
   productToFormValues,
   SEOCard,
   Slot,
   StatusCard,
   TaxCard,
+  useAssignableVariants,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import {
   ErrorState,
@@ -37,8 +41,8 @@ import { useEffect } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import '../../../../components/spree/custom-fields/register'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
-import { DigitalAssetsCard } from '../../../../components/spree/products/digital-assets-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
@@ -90,7 +94,14 @@ function ProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
-  const { data: mediaResponse } = useProductMedia(productId)
+  const {
+    data: mediaResponse,
+    refetch: refetchMedia,
+    isFetching: mediaRefetching,
+    isRefetchError: mediaRefetchFailed,
+  } = useProductMedia(productId)
+  // Same query as the page's, read here for its refetch state only.
+  const { isFetching: productRefetching } = useProduct(productId)
 
   const mediaItems = mediaResponse?.data
 
@@ -108,18 +119,8 @@ function ProductForm({ product }: { product: Product }) {
 
   const selectedProductTypeId = form.watch('product_type_id')
 
-  // Variants the MediaCard can assign uploaded images to. Only server-persisted
-  // variants have an `id` that can ride media[].variant_ids on the PATCH, so we
-  // start from `product.variants`. But the merchant may have queued one of those
-  // for deletion in the current session (matrix Trash button) — drop those by
-  // intersecting against the live form `variants` ids. Newly-added variants
-  // without a server id are unassignable until save (no id to send).
-  const liveVariants = useWatch({ control: form.control, name: 'variants' })
   const formStatus = useWatch({ control: form.control, name: 'status' }) ?? product?.status
-  const liveVariantIds = new Set(
-    (liveVariants ?? []).map((v) => v.id).filter((id): id is string => !!id),
-  )
-  const assignableVariants = (product.variants ?? []).filter((v) => liveVariantIds.has(v.id))
+  const assignableVariants = useAssignableVariants(form.control, product.variants)
 
   // Reset the form whenever the source data changes — product itself (PATCH
   // refetch) and media (separate query). Both queries invalidate on save so
@@ -130,13 +131,24 @@ function ProductForm({ product }: { product: Product }) {
   // like deleting a media item) would otherwise overwrite the merchant's
   // unsaved edits. After the save round-trip itself, RHF's submission
   // already cleared isDirty, so the post-save refetch still re-hydrates.
+  //
+  // Also wait while the product or its media is refetching (a retry
+  // included): after a save the media list can land first, and resetting
+  // then would pair it with the pre-save product and put the old values
+  // back. The effect re-runs once both queries settle.
+  //
+  // A failed media refetch leaves the pre-save list cached, and refilling
+  // from it would drop new uploads and library picks — so the form keeps its
+  // own media then, while the product's server-assigned values (variant ids,
+  // slugs) still land.
   useEffect(() => {
-    if (form.formState.isDirty) return
-    form.reset({
+    if (form.formState.isDirty || productRefetching || mediaRefetching) return
+    const values = {
       ...productToFormValues(product, mediaItems),
       ...extensionFormValues('product', product),
-    })
-  }, [product, mediaItems, form])
+    }
+    form.reset(mediaRefetchFailed ? { ...values, media: form.getValues('media') } : values)
+  }, [product, mediaItems, productRefetching, mediaRefetching, mediaRefetchFailed, form])
 
   // Media-only hydration that bypasses the isDirty guard for the
   // already-empty case. Scenario: page mounts with mediaResponse still
@@ -152,10 +164,17 @@ function ProductForm({ product }: { product: Product }) {
     const current = form.getValues('media') ?? []
     if (current.length > 0) return
     if (form.formState.dirtyFields?.media) return
-    form.setValue('media', mediaItems.map(mediaToFormValues), { shouldDirty: false })
+    form.setValue(
+      'media',
+      mediaItems.map((media, index) => mediaToFormValues(media, index)),
+      { shouldDirty: false },
+    )
   }, [mediaItems, form])
 
-  const onSubmit = async (data: ProductFormValues) => {
+  const onSubmit = async (submitted: ProductFormValues) => {
+    // Media and variant rows get their extension fields back from live form
+    // state, which the parse behind `submitted` stripped.
+    const data = withExtensionRowValues('product', submitted, form.getValues())
     const { variants, media, ...rest } = data
     // Extension fields come from live form state: the Zod parse behind
     // `data` strips keys the first-party schema doesn't know.
@@ -165,7 +184,11 @@ function ProductForm({ product }: { product: Product }) {
     const payload: Record<string, unknown> = { ...rest, ...extensionValues }
 
     if (variants && variants.length > 0) {
-      payload.variants = variants.map((v, i) => variantToWirePayload(v, i))
+      const variantsForSave = prepareVariantsTaxForProductSave(
+        variants,
+        rest.tax_category_id as string | null | undefined,
+      )
+      payload.variants = variantsForSave.map((v, i) => variantToWirePayload(v, i))
     }
 
     // Strip UI-only fields and ship media inline. The server upserts by id
@@ -192,32 +215,35 @@ function ProductForm({ product }: { product: Product }) {
       // hydration effect would otherwise keep isDirty true forever (since
       // we then skip the refetch's reset).
       //
-      // Strip the file-transport keys and the UI-only fields from baseline
-      // media so a subsequent save before the mediaResponse refetch lands
-      // can't re-ship them and create a duplicate Asset — `signed_id` would
-      // re-attach the upload, `source_media_id` would place the library file a
-      // second time. The persisted media ids hydrate on the next refetch.
+      // Strip the file-transport keys from baseline media so a second save
+      // can't re-ship them and create a duplicate — `signed_id` would
+      // re-attach the upload, `source_media_id` would place the library file
+      // a second time. Previews stay, so tiles keep their image meanwhile.
       const baseline: ProductFormValues = {
         ...data,
         // `data` is the parsed (extension-stripped) shape — put extension
         // values back so the reset doesn't blank their inputs pre-refetch.
         ...extensionValues,
         media: (data.media ?? []).map(
-          ({
-            signed_id: _sid,
-            source_media_id: _smid,
-            poster_signed_id: _psid,
-            previewUrl: _p,
-            fullPreviewUrl: _fp,
-            posterUrl: _pu,
-            videoUrl: _vu,
-            downloadUrl: _du,
-            uploadId: _u,
-            ...rest
-          }) => rest,
+          ({ signed_id: _sid, source_media_id: _smid, poster_signed_id: _psid, ...rest }) => rest,
         ),
       }
       form.reset(baseline)
+
+      // New uploads and library picks gain their ids only in the persisted
+      // list. The save's own invalidation refetch can land while the form is
+      // still dirty — the hydration effect skips it, and an identical later
+      // refetch never re-runs that effect — so read it here. Applied only if
+      // the merchant hasn't touched media since, and only from a successful
+      // read: a failed refetch keeps the stale list in `data`.
+      const mediaRefetch = await refetchMedia()
+      if (mediaRefetch.status === 'success' && !form.formState.dirtyFields.media) {
+        form.resetField('media', {
+          defaultValue: mediaRefetch.data.data.map((media, index) =>
+            mediaToFormValues(media, index),
+          ),
+        })
+      }
       toastManager.add({ type: 'success', title: t('admin.messages.product_saved') })
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
@@ -243,9 +269,10 @@ function ProductForm({ product }: { product: Product }) {
   }
 
   return (
-    // FormProvider exposes the form to slot widgets: a `product.form_sidebar`
-    // extension binds inputs via `useHostForm()` and they persist through
-    // this form's Save — no widget-owned save cycle.
+    // FormProvider exposes the form to slot widgets: a `product.*` extension
+    // (the page columns, the media and variant sheets) binds inputs via
+    // `useHostForm()` and they persist through this form's Save — no
+    // widget-owned save cycle.
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
@@ -303,6 +330,7 @@ function ProductForm({ product }: { product: Product }) {
                 emptyTitle={t('admin.components.metadata_card.empty_title')}
                 emptyDescription={t('admin.components.metadata_card.empty_description')}
               />
+              <Slot name="product.form_main" context={{ product, mode: 'edit' }} />
             </>
           }
           sidebar={
@@ -322,7 +350,7 @@ function ProductForm({ product }: { product: Product }) {
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} product={product} />
-              <Slot name="product.form_sidebar" context={{ product }} />
+              <Slot name="product.form_sidebar" context={{ product, mode: 'edit' }} />
             </>
           }
         />

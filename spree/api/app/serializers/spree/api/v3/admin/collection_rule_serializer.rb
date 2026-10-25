@@ -8,7 +8,7 @@ module Spree
         # wire shorthand (e.g. "tag"), matching every other typed-rule
         # serializer and what the writer accepts.
         class CollectionRuleSerializer < BaseSerializer
-          typelize type: [:string, comment: 'Rule type. Built-in: tag, available_on, sale. Extensions may register more.'], value: [:string, nullable: true], match_policy: [:string, enum: Spree::CollectionRule::MATCH_POLICIES]
+          typelize type: [:string, comment: 'Rule type. Built-in: tag, available_on, sale. Extensions may register more.'], value: [:string, nullable: true], match_policy: [:string, enum: Spree::CollectionRule::MATCH_POLICIES, enum_type_name: 'CollectionRuleMatchPolicy']
 
           attributes :value, :match_policy
 

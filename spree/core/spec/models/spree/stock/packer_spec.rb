@@ -5,7 +5,7 @@ module Spree
     describe Packer, type: :model do
       subject { Packer.new(stock_location, inventory_units) }
 
-      let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
+      let(:inventory_units) { [FulfillmentItem.new(variant: create(:variant))] }
       let(:stock_location) { create(:stock_location) }
 
       context 'packages' do
@@ -23,7 +23,7 @@ module Spree
       end
 
       context 'default_package' do
-        let!(:inventory_units) { Array.new(2) { InventoryUnit.new variant: create(:variant) } }
+        let!(:inventory_units) { Array.new(2) { FulfillmentItem.new variant: create(:variant) } }
 
         it 'contains all the items' do
           inventory_units.each do |inventory_unit|
@@ -48,7 +48,7 @@ module Spree
 
         context "location doesn't have order items in stock" do
           let(:stock_location) { create(:stock_location, propagate_all_variants: false) }
-          let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
+          let(:inventory_units) { [FulfillmentItem.new(variant: create(:variant))] }
           let(:packer) { Packer.new(stock_location, inventory_units) }
 
           it 'builds an empty package' do
@@ -57,7 +57,7 @@ module Spree
         end
 
         context "doesn't track inventory levels" do
-          let(:inventory_units) { Array.new(2) { InventoryUnit.new(variant: create(:variant)) } }
+          let(:inventory_units) { Array.new(2) { FulfillmentItem.new(variant: create(:variant)) } }
 
           before { stub_store_preferences(track_inventory_levels: false) }
 

@@ -1,25 +1,32 @@
 import type { MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
+import type { LocaleCode } from '@spree/core'
+import { countryCodeSchema, currencyCodeSchema } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
+import type { DefaultValues } from 'react-hook-form'
 import { z } from 'zod/v4'
 
 export const marketFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
-  currency: z.string().min(1, { error: requiredMessage('market.currency') }),
+  currency: currencyCodeSchema,
+  // Only required here, not checked against the locale list: a market saved
+  // before the list was enforced keeps its locale until someone changes it,
+  // and the server names any changed code it does not list.
   default_locale: z.string().min(1, { error: requiredMessage('market.default_locale') }),
   supported_locales: z.array(z.string()),
   tax_inclusive: z.boolean(),
   default: z.boolean(),
-  country_codes: z.array(z.string()).min(1, { error: requiredMessage('market.country_codes') }),
+  country_codes: z
+    .array(countryCodeSchema)
+    .min(1, { error: requiredMessage('market.country_codes') }),
   // Empty means the installation default rather than "no tax".
   tax_provider: z.string().optional(),
 })
 
 export type MarketFormValues = z.infer<typeof marketFormSchema>
 
-export const MARKET_DEFAULTS: MarketFormValues = {
+// No currency: a new market takes the store's, and an edited one its own.
+export const MARKET_DEFAULTS: DefaultValues<MarketFormValues> = {
   name: '',
-  currency: '',
-  default_locale: '',
   supported_locales: [],
   tax_inclusive: false,
   default: false,
@@ -31,10 +38,10 @@ export function marketValuesToParams(v: MarketFormValues): MarketCreateParams & 
   return {
     name: v.name,
     currency: v.currency,
-    default_locale: v.default_locale,
+    default_locale: v.default_locale as LocaleCode,
     // The default locale is always implicitly included server-side; strip
     // duplicates here so the request stays compact.
-    supported_locales: v.supported_locales.filter((l) => l !== v.default_locale),
+    supported_locales: v.supported_locales.filter((l) => l !== v.default_locale) as LocaleCode[],
     tax_inclusive: v.tax_inclusive,
     default: v.default,
     country_codes: v.country_codes,

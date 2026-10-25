@@ -102,9 +102,17 @@ module Spree
         gross = amounts.values.sum.to_d
         return if gross <= 0
 
+        taxes = refund.refunded_line_taxes
+
         # Nil from any line means the attribution cannot be trusted whole, so
         # the blend answers for the refund rather than part of it.
-        earnings = amounts.map { |line_item_id, amount| line_earning(line_item_id, amount.to_d) }
+        earnings = amounts.map do |line_item_id, amount|
+          if taxes.key?(line_item_id)
+            line_goods_earning(line_item_id, amount.to_d, taxes[line_item_id].to_d)
+          else
+            line_earning(line_item_id, amount.to_d)
+          end
+        end
         return if earnings.any?(&:nil?)
 
         quantize(earnings.sum * (refunded.to_d.abs / gross))
@@ -124,6 +132,9 @@ module Spree
       # The commission comes from the row written against that line at
       # placement, not from today's rate: rates change, a clamped fee is not the
       # rate times the base, and a fixed rate is charged per unit.
+      #
+      # This is the reading for a refund that cannot say how much tax it gave
+      # back — a return or claim opened before they carried tax.
       def line_earning(line_item_id, amount)
         line_item = order_line_items[line_item_id]
         paid = line_item&.amount.to_d
@@ -138,6 +149,22 @@ module Spree
         share = amount / paid
         earned = amount - (commission_totals[line_item_id].to_d * share)
         earned -= line_item.tax_total.to_d * share if order.seller&.tax_remittance == 'platform'
+        earned
+      end
+
+      # The same for a refund that knows the tax it gave back on the line. The
+      # goods in it are measured against the line's worth before tax, after
+      # discounts, and carry their share of the commission; the tax goes back
+      # only when the seller collected it — when the marketplace remits it, the
+      # seller never had it to return.
+      def line_goods_earning(line_item_id, amount, tax)
+        line_item = order_line_items[line_item_id]
+        worth = line_item ? [line_item.discounted_amount.to_d, 0].max - line_item.included_tax_total.to_d : 0.to_d
+        return unless worth.positive?
+
+        goods = amount - tax
+        earned = goods - (commission_totals[line_item_id].to_d * goods / worth)
+        earned += tax unless order.seller&.tax_remittance == 'platform'
         earned
       end
 

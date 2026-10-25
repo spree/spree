@@ -1,4 +1,5 @@
 import type { Collection } from '@spree/admin-sdk'
+import { COLLECTION_SORT_ORDERS } from '@spree/core'
 import {
   Card,
   CardContent,
@@ -21,11 +22,7 @@ import {
 import type { UseFormReturn } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import {
-  COLLECTION_SORT_ORDERS,
-  type CollectionFormValues,
-  sortOrderLabelKey,
-} from '../../../schemas/collection'
+import { type CollectionFormValues, sortOrderLabelKey } from '../../../schemas/collection'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
@@ -96,7 +93,7 @@ export function CollectionMain({
       {collection && (
         <>
           <CollectionProductsCard collectionId={collection.id} automatic={automatic} />
-          <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Collection">
+          <FormBackedCustomFieldsProvider form={form} resourceType="collection">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
           <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />

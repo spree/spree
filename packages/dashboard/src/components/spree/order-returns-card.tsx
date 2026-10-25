@@ -1,5 +1,14 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
-import { currencyParts, useStore } from '@spree/dashboard-core'
+import { RETURN_STATUSES, subsetOf } from '@spree/core'
+import {
+  currencyParts,
+  formatAmount,
+  isPositiveMoney,
+  returnOwesNothing,
+  returnRefundSummary,
+  useMoneyLocale,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -17,7 +26,6 @@ import {
   type RefundMethod,
   ReturnReceiveDialog,
   ReturnRefundDialog,
-  returnOwesNothing,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -32,7 +40,6 @@ import {
   TagIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
-import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
@@ -43,7 +50,10 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
-const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
+const RETURN_ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
+// Once goods have arrived the return can only be refunded.
+const RETURN_CANCELABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
+const RETURN_RECEIVED = subsetOf(RETURN_STATUSES, ['received', 'refunded'])
 
 /**
  * Returns on an order. Each status change is a distinct action rather than an
@@ -58,6 +68,10 @@ export function OrderReturnsCard({ order }: { order: Order }) {
   const { data } = useOrderReturns(orderId)
   const { create, approve, receive, refund, cancel, buyLabel, refundLabel, deleteLabel } =
     useReturnActions(orderId)
+  // Paying the customer back is the refunds permission's, not the orders
+  // one's: the API refuses a refund without it, so the action is not offered.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
 
   const [creating, setCreating] = useState(false)
   const [receiving, setReceiving] = useState<Return | null>(null)
@@ -126,7 +140,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'received' && (
+                        {returnRecord.status === 'received' && canRefund && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
                             {returnOwesNothing(returnRecord.refundable_total) ? (
                               <>
@@ -141,7 +155,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             )}
                           </DropdownMenuItem>
                         )}
-                        {['requested', 'approved'].includes(returnRecord.status) && (
+                        {RETURN_CANCELABLE.includes(returnRecord.status) && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -196,12 +210,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                 )}
               </CardContent>
 
-              <CardFooter className="justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t('admin.pages.orders.detail.returns.refund_total')}
-                </span>
-                <span className="font-medium">{returnRecord.display_refund_total}</span>
-              </CardFooter>
+              <RefundSummaryFooter returnRecord={returnRecord} currency={order.currency} />
             </Card>
           ))}
         </CardContent>
@@ -232,6 +241,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
       {refunding && (
         <RefundDialog
           returnRecord={refunding}
+          currency={order.currency}
           onClose={() => setRefunding(null)}
           onSubmit={(params) => {
             refund.mutate({ returnId: refunding.id, ...params })
@@ -244,7 +254,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
 }
 
 /** A return is only worth a label while the goods are still coming back. */
-const RETURN_LABEL_STATUSES = ['requested', 'approved']
+const RETURN_LABEL_STATUSES = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
 
 /**
  * The prepaid label for the parcel coming back, and the button to buy one.
@@ -320,9 +330,39 @@ function ReturnLabel({
   )
 }
 
+function RefundSummaryFooter({
+  returnRecord,
+  currency,
+}: {
+  returnRecord: Return
+  currency: string
+}) {
+  const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
+  const summary = returnRefundSummary(returnRecord, currency, moneyLocale)
+
+  return (
+    <CardFooter className="justify-between text-sm">
+      <span className="text-muted-foreground">
+        {summary.kind === 'owed'
+          ? t('admin.pages.orders.detail.returns.refund_total')
+          : t('admin.pages.orders.detail.returns.refunded')}
+      </span>
+      <span className="font-medium">
+        {summary.kind === 'refunded_short'
+          ? t('admin.pages.orders.detail.returns.refunded_of', {
+              amount: summary.amount,
+              total: summary.total,
+            })
+          : summary.amount}
+      </span>
+    </CardFooter>
+  )
+}
+
 function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string }) {
   const { t } = useTranslation()
-  const received = ['received', 'refunded'].includes(status)
+  const received = RETURN_RECEIVED.includes(status)
 
   return (
     <div className="flex items-center justify-between text-sm">
@@ -376,19 +416,27 @@ function ReceiveDialog({
 
 function RefundDialog({
   returnRecord,
+  currency,
   onClose,
   onSubmit,
 }: {
   returnRecord: Return
+  currency: string
   onClose: () => void
   onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
 }) {
-  const { defaultCurrency } = useStore()
-  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
+  const moneyLocale = useMoneyLocale()
+  const { symbol: currencySymbol } = currencyParts(currency, moneyLocale)
 
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      owesNothing={returnOwesNothing(returnRecord.refundable_total)}
+      refundTaxTotal={
+        isPositiveMoney(returnRecord.refund_tax_total)
+          ? formatAmount(returnRecord.refund_tax_total, currency, moneyLocale)
+          : undefined
+      }
       currencySymbol={currencySymbol}
       onClose={onClose}
       onSubmit={onSubmit}

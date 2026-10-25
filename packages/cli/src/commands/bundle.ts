@@ -2,6 +2,7 @@ import type { Command } from 'commander'
 import { detectProject } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
+import { addCommandFor } from '../lib/extensions.js'
 
 // Deprecated: extensions are installed with `spree add`, anything else goes
 // through `spree exec bundle …`.
@@ -21,7 +22,7 @@ export function registerBundleCommand(program: Command): void {
       warnDeprecated(
         'spree bundle',
         args[0] === 'add' && args[1]
-          ? `spree add ${args[1]}`
+          ? addCommandFor(args[1])
           : `spree exec bundle ${args.join(' ')}`,
       )
       const ctx = detectProject()

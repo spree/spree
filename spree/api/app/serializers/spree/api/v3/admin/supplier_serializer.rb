@@ -15,7 +15,7 @@ module Spree
                    city: 'string | null',
                    state_name: 'string | null',
                    state_code: 'string | null',
-                   country_code: 'string | null',
+                   country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    postal_code: 'string | null',
                    purchase_orders_count: :number,
                    can_be_deleted: :boolean,
@@ -29,9 +29,7 @@ module Spree
 
           # Lets the dashboard hide the delete control rather than offer one
           # the model will refuse.
-          attribute :can_be_deleted do |supplier|
-            supplier.can_be_deleted?
-          end
+          attribute :can_be_deleted, &:can_be_deleted?
         end
       end
     end

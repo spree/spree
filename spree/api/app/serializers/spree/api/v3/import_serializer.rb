@@ -6,7 +6,6 @@ module Spree
       class ImportSerializer < BaseSerializer
         typelize number: :string,
                  type: [:string, nullable: true, comment: 'Import type. Built-in: products, product_translations, customers, price_list_prices. Extensions may register more.'], status: [:string, enum: Spree::Import.statuses, enum_type_name: 'ImportStatus'],
-                 owner_type: [:string, nullable: true], owner_id: [:string, nullable: true],
                  store_id: [:string, nullable: true], seller_id: [:string, nullable: true],
                  user_id: [:string, nullable: true], rows_count: :number
 
@@ -21,34 +20,12 @@ module Spree
           Spree::Import.api_type_for(import.type)
         end
 
-        attribute :status do |import|
-          import.status.to_s
-        end
-
+        attributes status: :string
         # Which marketplace this import belongs to, and — when a seller ran it —
         # whose it is. A null `seller_id` means the operator's own.
-        attribute :store_id do |import|
-          import.store&.prefixed_id
-        end
+        prefixed_id_attributes :store, :seller
 
-        attribute :seller_id do |import|
-          import.seller&.prefixed_id
-        end
-
-        # @deprecated Read `store_id` / `seller_id` — removed in 6.1. Emitted
-        #   from the pair above rather than the dropped columns, so a client
-        #   still reading them sees the same answer.
-        attribute :owner_type do |import|
-          Spree::Base.polymorphic_api_type(import.seller_id.present? ? 'Spree::Seller' : 'Spree::Store')
-        end
-
-        attribute :owner_id do |import|
-          (import.seller || import.store)&.prefixed_id
-        end
-
-        attribute :user_id do |import|
-          import.user&.prefixed_id
-        end
+        prefixed_id_attributes :user
       end
     end
   end

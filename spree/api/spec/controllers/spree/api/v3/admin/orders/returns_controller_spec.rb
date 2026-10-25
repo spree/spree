@@ -28,6 +28,25 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(json_response['memo']).to eq('Too small')
     end
 
+    it 'offers the tax the customer paid with the price' do
+      line_item = fulfillment_item.line_item
+      create(:tax_line, order: order, line_item: line_item, amount: 1, rate: 0.1, label: 'Sales tax 10%')
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        expand: 'return_line_items,return_line_items.tax_lines',
+        items: [{ fulfillment_item_id: fulfillment_item.prefixed_id, quantity: 1 }]
+      }, as: :json
+
+      line = json_response['return_line_items'].sole
+      expect(json_response['refund_total']).to eq(Spree::Money::Rounding.format(line_item.price + 1, 'USD'))
+      expect(json_response['refund_tax_total']).to eq('1.00')
+      expect(line).to include('pre_tax_amount' => Spree::Money::Rounding.format(line_item.price, 'USD'),
+                              'additional_tax_total' => '1.00',
+                              'refund_amount' => Spree::Money::Rounding.format(line_item.price + 1, 'USD'))
+      expect(line['tax_lines'].sole).to include('credit' => true, 'amount' => '1.00', 'return_line_item_id' => line['id'])
+    end
+
     it 'rejects returning more than was fulfilled' do
       post :create, params: {
         order_id: order.prefixed_id,
@@ -58,6 +77,33 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(return_record.prefixed_id)
       expect(json_response['refund_total']).to be_present
+    end
+
+    it 'finds the return by the key the refunding system knows it by' do
+      return_record = create_return
+      return_record.set_external_id('oms', 'REFUND-1')
+
+      get :show, params: { order_id: order.prefixed_id, id: 'external:oms:REFUND-1' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(return_record.prefixed_id)
+      expect(json_response['external_references']).to eq('oms' => 'REFUND-1')
+    end
+
+    it 'updates rather than re-creating when the refunding system replays a known key' do
+      return_record = create_return
+      return_record.set_external_id('oms', 'REFUND-1')
+
+      expect do
+        post :create, params: {
+          order_id: order.prefixed_id, memo: 'Replayed',
+          items: [{ fulfillment_item_id: fulfillment_item.prefixed_id, quantity: 1 }],
+          external_references: { oms: 'REFUND-1' }
+        }, as: :json
+      end.not_to change(Spree::Return, :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(return_record.reload.memo).to eq('Replayed')
     end
   end
 
@@ -201,6 +247,41 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(Spree::StoreCredit.find_by(originator: return_record)).to be_present
     end
 
+    # Settling a return is `orders` work; paying the customer back is the
+    # `refunds` key's, as on the nested refunds endpoint.
+    context 'with a key that may handle orders but not refund them' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders]) }
+      let(:headers) { api_key_headers }
+
+      it 'refuses to refund' do
+        patch :refund, params: {
+          order_id: order.prefixed_id,
+          id: return_record.prefixed_id,
+          refund_method: 'store_credit'
+        }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_permission']).to eq('write_refunds')
+        expect(Spree::StoreCredit.find_by(originator: return_record)).to be_nil
+      end
+    end
+
+    context 'with a key that may refund' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders write_refunds]) }
+      let(:headers) { api_key_headers }
+
+      it 'refunds to store credit issued by the key' do
+        patch :refund, params: {
+          order_id: order.prefixed_id,
+          id: return_record.prefixed_id,
+          refund_method: 'store_credit'
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(Spree::StoreCredit.find_by(originator: return_record).created_by).to eq(secret_api_key)
+      end
+    end
+
     it 'rejects an unknown refund method' do
       patch :refund, params: {
         order_id: order.prefixed_id,
@@ -222,7 +303,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['message']).to eq(Spree.t(:refund_exceeds_balance))
+      expect(json_response['error']['message']).to eq(I18n.t('spree.refund_exceeds_balance'))
       expect(json_response['error']['message']).not_to include('refund_exceeds_balance')
     end
   end

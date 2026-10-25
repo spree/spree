@@ -35,7 +35,7 @@ RSpec.describe 'freight serialization' do
 
     def select_freight_rate(cart, **line)
       snapshot = Spree::FreightSummary.new(lines: [Spree::FreightSummary::Line.new(**line)]).as_json
-      fulfillment = create(:shipment, cart: cart, order: nil)
+      fulfillment = create(:fulfillment, cart: cart, order: nil)
       create(:delivery_rate, fulfillment: fulfillment, selected: true, unpriced: true, cost: 0,
                              metadata: { 'freight_summary' => snapshot })
     end
@@ -77,32 +77,32 @@ RSpec.describe 'freight serialization' do
     # The rate says quoted-after-review; the fulfillment's own shipping line
     # must not undercut it with $0.00.
     it 'carries the unpriced flag and label through the fulfillment' do
-      fulfillment = create(:shipment)
+      fulfillment = create(:fulfillment)
       create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true, selected: true)
       fulfillment.reload.update_amounts
 
       json = described_class.new(fulfillment.reload, params: { store: store }).to_h
 
       expect(json['unpriced']).to be(true)
-      expect(json['display_cost']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_cost']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
 
     # display_cost and display_total sit side by side in the same payload;
     # one saying "quoted after review" while the other says $0.00 is the
     # free-shipping lie in a different field.
     it 'says the same on every money display, and is not free' do
-      fulfillment = create(:shipment)
+      fulfillment = create(:fulfillment)
       create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true, selected: true)
       fulfillment.reload.update_amounts
 
       json = described_class.new(fulfillment.reload, params: { store: store }).to_h
 
-      expect(json['display_total']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_total']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
       expect(fulfillment.reload).not_to be_free
     end
 
     it 'stays money for a priced fulfillment' do
-      fulfillment = create(:shipment)
+      fulfillment = create(:fulfillment)
       create(:delivery_rate, fulfillment: fulfillment, cost: 12, selected: true)
       fulfillment.reload.update_amounts
 
@@ -114,7 +114,7 @@ RSpec.describe 'freight serialization' do
   end
 
   describe Spree::Api::V3::DeliveryRateSerializer do
-    let(:fulfillment) { create(:shipment) }
+    let(:fulfillment) { create(:fulfillment) }
 
     it 'says a freight rate is unpriced rather than free' do
       rate = create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true)
@@ -122,7 +122,7 @@ RSpec.describe 'freight serialization' do
       json = described_class.new(rate, params: { store: store }).to_h
 
       expect(json['unpriced']).to be(true)
-      expect(json['display_cost']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_cost']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
 
     # A storefront rendering the total rather than the cost would otherwise
@@ -132,7 +132,7 @@ RSpec.describe 'freight serialization' do
 
       json = described_class.new(rate, params: { store: store }).to_h
 
-      expect(json['display_total']).to eq(Spree.t('delivery_rates.quoted_after_review'))
+      expect(json['display_total']).to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
     end
 
     it 'carries the frozen summary the provider quoted against' do

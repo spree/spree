@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { variantToFormValues, variantToWirePayload } from './product-form-mapping'
+import {
+  prepareVariantsTaxForProductSave,
+  variantHasTaxCategoryOverride,
+  variantToFormValues,
+  variantToWirePayload,
+} from './product-form-mapping'
+import type { VariantFormValues } from './product-schema'
 import type { PanelVariant } from './product-types'
 
 // variantToFormValues reads a handful of fields; cast a minimal fixture rather
@@ -68,5 +74,58 @@ describe('variantToFormValues prices', () => {
     )
 
     expect(values.prices).toEqual([])
+  })
+})
+
+describe('variant tax category overrides', () => {
+  const baseVariant = (): VariantFormValues => ({
+    id: 'variant_1',
+    sku: 'SKU-1',
+    barcode: null,
+    position: 0,
+    options: [],
+    weight: null,
+    height: null,
+    width: null,
+    depth: null,
+    weight_unit: null,
+    dimensions_unit: null,
+    hs_code: null,
+    country_of_origin: null,
+    customs_description: null,
+    minimum_order_quantity: null,
+    order_multiple: null,
+    purchase_unit: null,
+    units_per_carton: null,
+    cartons_per_pallet: null,
+    carton_weight: null,
+    carton_package_type_id: null,
+    track_inventory: true,
+    preorderable: false,
+    preorder_ships_at: null,
+    backorder_limit: null,
+    tax_category_id: null,
+    prices: [],
+    stock_levels: [],
+  })
+
+  it('detects a stored override', () => {
+    expect(variantHasTaxCategoryOverride({ ...baseVariant(), tax_category_id: 'taxcat_1' })).toBe(
+      true,
+    )
+    expect(variantHasTaxCategoryOverride(baseVariant())).toBe(false)
+  })
+
+  it('clears inheriting variants and keeps overrides on save prep', () => {
+    const variants = [
+      { ...baseVariant(), tax_category_id: null },
+      { ...baseVariant(), id: 'variant_2', tax_category_id: 'taxcat_override' },
+    ]
+
+    const prepared = prepareVariantsTaxForProductSave(variants, 'taxcat_product')
+
+    expect(prepared[0].tax_category_id).toBeNull()
+    expect(prepared[1].tax_category_id).toBe('taxcat_override')
+    expect(variantToWirePayload(prepared[0], 0).tax_category_id).toBeNull()
   })
 })

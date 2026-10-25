@@ -195,7 +195,7 @@ module Spree
       # vocabulary: a store may not have one called "Terms of Service", and
       # then there is nothing to snapshot rather than something to guess at.
       def consent_policies
-        store.policies.with_matching_name(Spree.t(:terms_of_service)).to_a
+        store.policies.with_matching_name(I18n.t('spree.terms_of_service')).to_a
       end
 
       def link_order

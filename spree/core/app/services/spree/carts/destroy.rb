@@ -20,7 +20,7 @@ module Spree
       private
 
       def check_if_can_be_destroyed(cart:)
-        return failure(false, Spree.t(:cannot_be_destroyed)) unless cart&.can_be_deleted?
+        return failure(false, I18n.t('spree.cannot_be_destroyed')) unless cart&.can_be_deleted?
 
         success(cart: cart)
       end
@@ -52,9 +52,14 @@ module Spree
         success(cart: cart)
       end
 
+      # Lets go of everything the cart was only borrowing, so the cascade that
+      # follows reaches nothing but the cart's own rows. An entry in somebody's
+      # address book stays in it, and a row a fulfillment or a completed order
+      # still points at is detached rather than soft-deleted out from under
+      # them.
       def clear_addresses(cart:)
-        cart.ship_address = nil unless cart.ship_address&.can_be_deleted?
-        cart.bill_address = nil unless cart.bill_address&.can_be_deleted?
+        cart.ship_address = nil unless cart.owns_address?(cart.ship_address) && cart.ship_address.can_be_deleted?
+        cart.bill_address = nil unless cart.owns_address?(cart.bill_address) && cart.bill_address.can_be_deleted?
 
         success(cart: cart)
       end
@@ -62,7 +67,7 @@ module Spree
       def destroy_order(cart:)
         destroyed_result = cart.destroy
 
-        return failure(false, Spree.t(:cannot_be_destroyed)) unless destroyed_result.present?
+        return failure(false, I18n.t('spree.cannot_be_destroyed')) unless destroyed_result.present?
 
         success(cart)
       end

@@ -5,6 +5,10 @@ module Spree
         # Admin API Price Serializer
         # Extends Store Price Serializer with admin-only fields
         class PriceSerializer < V3::PriceSerializer
+          without_formatted_money
+          _attributes.delete(:amount_in_cents)
+          _attributes.delete(:compare_at_amount_in_cents)
+
           typelize variant_id: [:string, nullable: true],
                    min_quantity: :number,
                    created_at: :string,
@@ -13,7 +17,7 @@ module Spree
           attributes :min_quantity
 
           attribute :variant_id do |price|
-            price&.variant&.prefixed_id
+            Spree::Variant.prefixed_id_for(price&.variant_id)
           end
 
           attributes created_at: :iso8601, updated_at: :iso8601

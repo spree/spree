@@ -35,6 +35,14 @@ module Spree
           skip_before_action :set_current_seller_context, only: [:create, :refresh, :logout, :providers]
           skip_before_action :authenticate_seller!, only: [:create, :refresh, :logout, :providers]
 
+          request_params 'LoginParams' do |body|
+            body.attribute :provider, :string,
+              choices: %w[email],
+              description: 'The authentication method. Defaults to `email`.'
+            body.attribute :email, :string, required: true, example: 'seller@example.com'
+            body.attribute :password, :string, required: true, example: 'password123'
+          end
+
           # POST /api/v3/seller/auth/login
           def create
             strategy = authentication_strategy
@@ -44,11 +52,13 @@ module Spree
             return render_authentication_failed(result.error) unless result.success?
 
             user = result.value
+            return render_account_deactivated if account_deactivated?(user)
+
             # A store's own staff share this user class, so authenticating is
             # not enough: without a role on some seller there is no panel to
             # sign in to, and minting a token would hand out an audience the
             # holder can do nothing with.
-            return render_authentication_failed(Spree.t(:seller_membership_required)) unless user.seller_member?
+            return render_authentication_failed(I18n.t('spree.seller_membership_required')) unless user.seller_member?
 
             set_refresh_cookie(
               Spree::RefreshToken.create_for(
@@ -93,6 +103,14 @@ module Spree
             end
 
             user = refresh_token.user
+            # Deactivating deletes the account's refresh tokens; this catches a
+            # refresh already under way when that happened.
+            if account_deactivated?(user)
+              refresh_token.destroy
+              clear_refresh_cookie
+              return render_account_deactivated
+            end
+
             # Membership can be revoked while a session is live; the refresh is
             # where that takes effect.
             unless user.seller_member?
@@ -100,7 +118,7 @@ module Spree
               clear_refresh_cookie
               return render_error(
                 code: ErrorHandler::ERROR_CODES[:access_denied],
-                message: Spree.t(:seller_membership_required),
+                message: I18n.t('spree.seller_membership_required'),
                 status: :forbidden
               )
             end

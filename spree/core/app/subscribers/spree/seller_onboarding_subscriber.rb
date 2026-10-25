@@ -26,7 +26,7 @@ module Spree
       seller = invitation.resource
       return unless seller.is_a?(Spree::Seller)
 
-      Spree::Sellers::StartOnboarding.call(seller: seller)
+      Spree.seller_start_onboarding_workflow.call(seller: seller)
     end
   end
 end

@@ -2,7 +2,9 @@ import type { PurchaseOrder, PurchaseOrderItem } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  Money,
   PageHeader,
+  Slot,
   Subject,
   useResourceKey,
   useStore,
@@ -36,6 +38,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
+import { ApiCustomFieldsCard } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
@@ -94,9 +97,16 @@ function PurchaseOrderDetailPage() {
             purchaseOrderId={purchaseOrder.id}
             title={t('admin.purchase_orders.history_title')}
           />
+          <Slot name="purchase_order.form_main" context={{ purchaseOrder }} />
         </>
       }
-      sidebar={<SummaryCard purchaseOrder={purchaseOrder} />}
+      sidebar={
+        <>
+          <SummaryCard purchaseOrder={purchaseOrder} />
+          <ApiCustomFieldsCard ownerType="purchase_order" ownerId={purchaseOrder.id} />
+          <Slot name="purchase_order.form_sidebar" context={{ purchaseOrder }} />
+        </>
+      }
     />
   )
 }
@@ -155,7 +165,9 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
           </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.subtotal')}</dt>
-          <dd className="tabular-nums">{purchaseOrder.display_subtotal}</dd>
+          <dd className="tabular-nums">
+            <Money amount={purchaseOrder.subtotal} currency={purchaseOrder.currency} />
+          </dd>
 
           <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.expected_at')}</dt>
           <dd>{purchaseOrder.expected_at ?? '—'}</dd>
@@ -334,8 +346,12 @@ function ItemRow({ item, showOver }: { item: PurchaseOrderItem; showOver: boolea
       <TableCell className="text-right tabular-nums">{item.quantity_received}</TableCell>
       <TableCell className="text-right tabular-nums">{item.quantity_rejected}</TableCell>
       {showOver && <TableCell className="text-right tabular-nums">{item.quantity_over}</TableCell>}
-      <TableCell className="text-right tabular-nums">{item.display_unit_cost}</TableCell>
-      <TableCell className="text-right tabular-nums">{item.display_total_cost}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        <Money amount={item.unit_cost} currency={item.currency} />
+      </TableCell>
+      <TableCell className="text-right tabular-nums">
+        <Money amount={item.total_cost} currency={item.currency} />
+      </TableCell>
     </TableRow>
   )
 }

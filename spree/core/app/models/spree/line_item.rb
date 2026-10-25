@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :li  # Spree-specific: line item
 
     include Spree::HasCustomFields
+    include Spree::HasExternalReferences
     include Spree::Metadata
 
     publishes_lifecycle_events
@@ -63,7 +64,7 @@ module Spree
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
       in: 0..DB_INTEGER_MAX,
-      only_integer: true, message: Spree.t('validation.must_be_int')
+      only_integer: true, message: I18n.t('spree.validation.must_be_int')
     }
 
     validates :price, numericality: true
@@ -119,7 +120,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[variant order tax_category]
     self.whitelisted_ransackable_attributes = %w[variant_id order_id tax_category_id quantity
-                                                 price cost_price cost_currency adjustment_total
+                                                 price cost_price adjustment_total
                                                  additional_tax_total discount_total included_tax_total
                                                  pre_tax_amount taxable_adjustment_total
                                                  non_taxable_adjustment_total]
@@ -157,12 +158,6 @@ module Spree
 
     # Assigns the current price without saving — the caller is expected to.
     # {#recalculate_price} persists instead.
-    #
-    # Restatement for a tax-inclusive market happens inside
-    # {Spree::Carts::PriceItems}: an address-less cart still has a taxing
-    # country (its market's own), and without it a cross-border cart is taxed
-    # for the destination at a price quoted for home, leaving the merchant to
-    # absorb the difference.
     # persist: false — runs mid-build and from callers that save the record
     # themselves.
     def update_price
@@ -180,8 +175,8 @@ module Spree
       price_record = Spree::PricingProvider::Internal.new.price_for(context)
       return if price_record.blank?
 
-      # Through the same writer every resolved price goes through, so the
-      # tax-inclusive restatement inputs are stated once.
+      # Through the same writer every resolved price goes through, so a line
+      # built here is priced exactly like a resolved one.
       Spree::Carts::PriceItems.apply([[self, price_record]], persist: false)
     end
 
@@ -231,7 +226,7 @@ module Spree
     #
     # @return [BigDecimal]
     def amount
-      price * quantity
+      Spree::Money::Rounding.to_currency(price * quantity, currency)
     end
 
     # Returns the compare at amount (compare at price * quantity) of the line item
@@ -496,7 +491,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
   end
 end

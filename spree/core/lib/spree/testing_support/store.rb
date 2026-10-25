@@ -29,6 +29,15 @@ RSpec.configure do |config|
     end
   end
 
+  # Reloaded before each example rather than after: the after hooks run
+  # inside the example's transaction, so a reload there still sees the
+  # example's writes, and the next example would start from values the
+  # database no longer holds. Setting a preference to such a stale value is
+  # no change to Rails, so it would never be saved.
+  config.before(:each) do
+    @default_store&.reload unless self.class.metadata[:without_global_store]
+  end
+
   config.after(:each) do
     unless self.class.metadata[:without_global_store]
       @default_store&.products = []
@@ -43,7 +52,6 @@ RSpec.configure do |config|
         @default_store.association(:default_market).reset if @default_store.association_cached?(:default_market)
         @default_store.association(:markets).reset if @default_store.association_cached?(:markets)
         @default_store.remove_instance_variable(:@has_markets) if @default_store.instance_variable_defined?(:@has_markets)
-        @default_store.reload
       end
     end
   end

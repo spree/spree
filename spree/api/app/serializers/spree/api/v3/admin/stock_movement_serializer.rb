@@ -13,7 +13,6 @@ module Spree
                    stock_transfer_number: [:string, nullable: true],
                    purchase_order_number: [:string, nullable: true],
                    unit_cost: [:string, nullable: true],
-                   display_unit_cost: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
                    stock_location_name: [:string, nullable: true],
                    variant_id: [:string, nullable: true],
@@ -68,9 +67,7 @@ module Spree
             Spree::StockTransfer.prefixed_id_for(movement.stock_transfer_id)
           end
 
-          attribute :stock_receipt_id do |movement|
-            movement.stock_receipt&.prefixed_id
-          end
+          prefixed_id_attributes :stock_receipt
 
           attribute :purchase_order_id do |movement|
             Spree::PurchaseOrder.prefixed_id_for(movement.purchase_order_id)
@@ -103,11 +100,8 @@ module Spree
           # purchase. Null on a transfer or a return — moving stock the
           # merchant already owns is not buying it.
           attribute :unit_cost do |movement|
-            movement.unit_cost&.to_s
-          end
-
-          attribute :display_unit_cost do |movement|
-            movement.display_unit_cost&.to_s
+            currency = movement.purchase_order&.currency || (current_store || Spree::Current.store)&.default_currency
+            Spree::Money::Rounding.format(movement.unit_cost, currency, unit_price: true)
           end
         end
       end

@@ -11,9 +11,7 @@ module Spree
           Spree::RichTextHelper.to_plain_text(policy.body)
         end
 
-        attribute :body_html do |policy|
-          policy.body_html
-        end
+        attributes :body_html
 
         # The one timestamp a store serializer carries. When a legal document
         # last changed is what a shopper is entitled to see on the page —

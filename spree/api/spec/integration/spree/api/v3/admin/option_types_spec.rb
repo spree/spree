@@ -23,8 +23,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., option_values). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
@@ -69,27 +68,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'color' },
-          label: { type: :string, example: 'Color' },
-          position: { type: :integer, example: 1 },
-          filterable: { type: :boolean, example: true },
-          option_values: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                name: { type: :string, example: 'red' },
-                label: { type: :string, example: 'Red' },
-                position: { type: :integer }
-              }
-            }
-          }
-        },
-        required: %w[name label]
-      }
+      request_body_for
 
       response '201', 'option type created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -170,27 +149,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Option type ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'color' },
-          label: { type: :string, example: 'Color' },
-          position: { type: :integer, example: 1 },
-          filterable: { type: :boolean, example: true },
-          option_values: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                id: { type: :string, description: 'Existing option value ID to update' },
-                name: { type: :string, example: 'red' },
-                label: { type: :string, example: 'Red' },
-                position: { type: :integer }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'option type updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

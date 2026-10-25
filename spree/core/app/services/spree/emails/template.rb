@@ -1,26 +1,37 @@
 module Spree
   module Emails
-    # One Liquid email template on disk, with optional front matter.
+    # One Liquid email template: a file on disk, with optional front matter
+    # holding its subject, or a store's saved version with the subject in its
+    # own field.
     class Template
       FRONT_MATTER = /\A---\s*\n(.*?)\n---\s*(?:\n|\z)/m
 
       attr_reader :key, :path
 
       # @param key [String] the template key, e.g. "spree/order_mailer/confirm_email"
-      # @param path [String] the file on disk
-      def initialize(key:, path:)
+      # @param path [String, nil] the file on disk
+      # @param subject [String, nil] the subject, for a template not read from a file
+      # @param body [String, nil] the body, for a template not read from a file
+      def initialize(key:, path: nil, subject: nil, body: nil)
         @key = key
         @path = path
+        @subject = subject
+        @body = body
       end
 
-      # @return [String, nil] the subject line as Liquid, read from the front matter
+      # @return [Boolean] whether this is a store's saved template or a draft, rather than a file
+      def stored?
+        path.nil?
+      end
+
+      # @return [String, nil] the subject line as Liquid
       def subject
-        front_matter['subject']
+        stored? ? @subject : front_matter['subject']
       end
 
       # @return [String] the template without its front matter
       def body
-        source.sub(FRONT_MATTER, '')
+        stored? ? @body.to_s : source.sub(FRONT_MATTER, '')
       end
 
       private

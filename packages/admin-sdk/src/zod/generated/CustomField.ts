@@ -4,7 +4,6 @@ import { z } from 'zod';
 export const CustomFieldSchema = z.object({
   id: z.string(),
   label: z.string(),
-  type: z.string(),
   field_type: z.string(),
   key: z.string(),
   value: z.any(),

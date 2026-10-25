@@ -112,6 +112,28 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       expect(small_option['count']).to eq(1)
     end
 
+    # Facets describe the listing the buyer gets, so a buyer narrowed to a
+    # catalog must not learn about products outside it.
+    context 'for a buyer narrowed to a company catalog' do
+      let(:company) { create(:company, store: store) }
+      let(:catalog) { create(:catalog, store: store) }
+
+      before do
+        create(:catalog_assignment, catalog: catalog, assignable: company)
+        catalog.add_products([product2.id])
+        create(:company_membership, company: company, customer: user)
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+      end
+
+      it 'describes only the products in the catalog' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['total_count']).to eq(1)
+        expect(json_response['filters'].find { |f| f['name'] == 'color' }).to be_nil
+      end
+    end
+
     it 'returns all sort options' do
       get :index
 
@@ -190,6 +212,13 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
         get :index, params: { q: { name_cont: product1.name } }
 
         expect(json_response['total_count']).to eq(1)
+      end
+
+      it 'ignores a q that is not a hash' do
+        get :index, params: { q: '[object Object]' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['total_count']).to eq(3)
       end
     end
 

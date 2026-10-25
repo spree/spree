@@ -24,27 +24,17 @@ module Spree
                    :variant_count,
                    available_on: :iso8601, preorder_ships_at: :iso8601
 
-        attribute :purchasable do |product|
-          product.purchasable?
-        end
+        attribute :purchasable, &:purchasable?
 
         # True when this product is currently offered as a pre-order on the
         # requesting channel.
-        attribute :preorder do |product|
-          product.preorder?
-        end
+        attribute :preorder, &:preorder?
 
-        attribute :in_stock do |product|
-          product.in_stock?
-        end
+        attribute :in_stock, &:in_stock?
 
-        attribute :backorderable do |product|
-          product.backorderable?
-        end
+        attribute :backorderable, &:backorderable?
 
-        attribute :available do |product|
-          product.available?
-        end
+        attribute :available, &:available?
 
         attribute :description do |product|
           next if product.description.blank?
@@ -60,9 +50,7 @@ module Spree
         # buy-box winner: that moves with price and stock, and a client that
         # cached or linked this id must not find it pointing at a different
         # row tomorrow. On a single-seller catalog the two coincide anyway.
-        attribute :default_variant_id do |product|
-          product.default_variant&.prefixed_id
-        end
+        prefixed_id_attributes :default_variant
 
         # The offer a storefront should lead with when several sellers share
         # the listing — the buy-box winner in the request's currency. Nil when
@@ -91,7 +79,7 @@ module Spree
         # single-seller catalog winner and default variant are the same row.
         attribute :price do |product|
           price = price_for(featured_variant(product))
-          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
+          price_serializer.new(price, params: params).to_h if price.present?
         end
 
         # Original price - base price without price list resolution (for showing strikethrough)
@@ -102,16 +90,14 @@ module Spree
           base = price_in(variant)
 
           if calculated.present? && base.present? && calculated.id != base.id
-            Spree.api.price_serializer.new(base, params: params).to_h
+            price_serializer.new(base, params: params).to_h
           end
         end
 
         # Nil on the marketplace's own first-party products. The id is always
         # present so a storefront can group or link by seller without paying
         # for the expand; `?expand=seller` adds the public profile.
-        attribute :seller_id do |product|
-          product.seller&.prefixed_id
-        end
+        prefixed_id_attributes :seller
 
         # Conditional associations
         one :seller,
@@ -162,7 +148,7 @@ module Spree
         attribute :prior_price,
                   if: proc { expand?('prior_price') } do |product|
           record = price_in(featured_variant(product))&.prior_price
-          Spree.api.price_history_serializer.new(record, params: params).to_h if record
+          price_history_serializer.new(record, params: params).to_h if record
         end
       end
     end
