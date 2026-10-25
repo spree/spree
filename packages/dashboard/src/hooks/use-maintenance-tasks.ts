@@ -14,7 +14,7 @@ const RUN_POLL_INTERVAL_MS = 2000
 /** Statuses that mean the runner still has work to do, so keep polling. */
 export function isRunActive(status: string | undefined): boolean {
   if (!status) return false
-  return ['enqueued', 'running', 'pausing', 'paused', 'interrupted', 'cancelling'].includes(status)
+  return ['enqueued', 'running', 'interrupted', 'cancelling'].includes(status)
 }
 
 /**
@@ -79,33 +79,20 @@ export function useStartMaintenanceTask() {
   })
 }
 
-export function usePauseMaintenanceTaskRun() {
-  return useRunControl('pause', 'paused')
-}
-
-export function useResumeMaintenanceTaskRun() {
-  return useRunControl('resume', 'resumed')
-}
-
-export function useCancelMaintenanceTaskRun() {
-  return useRunControl('cancel', 'canceled')
-}
-
 /**
- * Pause, resume and cancel differ only in which endpoint they call and what
- * they say afterwards. Each writes the returned run straight into the cache so
- * the buttons settle on the new status without waiting for the next poll.
+ * Writes the returned run straight into the cache so the sheet settles on the
+ * new status without waiting for the next poll.
  */
-function useRunControl(action: 'pause' | 'resume' | 'cancel', messageKey: string) {
+export function useCancelMaintenanceTaskRun() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<MaintenanceTaskRun, Error, string>({
-    mutationFn: (id) => adminClient.maintenanceTaskRuns[action](id),
+    mutationFn: (id) => adminClient.maintenanceTaskRuns.cancel(id),
     invalidate: [['maintenance-task-runs'], ['upgrade-steps']],
-    successMessage: i18n.t(`admin.maintenance_tasks.messages.${messageKey}`),
+    successMessage: i18n.t('admin.maintenance_tasks.messages.canceled'),
     errorMessage: i18n.t('admin.errors.generic'),
-    // Merged rather than replaced: the control endpoints return the run
+    // Merged rather than replaced: the cancellation endpoint returns the run
     // without the embedded admin user the detail query asked for.
     onSuccess: (run) => {
       queryClient.setQueryData<MaintenanceTaskRun>(

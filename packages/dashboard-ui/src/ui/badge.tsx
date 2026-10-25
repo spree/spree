@@ -192,8 +192,6 @@ const statusToneMap: Record<string, StatusTone> = {
   // the run, blue while it waits for one.
   enqueued: 'info',
   running: 'warning',
-  pausing: 'warning',
-  paused: 'warning',
   interrupted: 'info',
   cancelling: 'warning',
   cancelled: 'destructive',

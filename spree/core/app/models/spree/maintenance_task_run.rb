@@ -19,20 +19,20 @@ module Spree
     include Spree::Metadata
 
     publishes_lifecycle_events
-    publishes_events :started, :succeeded, :paused, :cancelled, :interrupted, :errored
+    publishes_events :started, :succeeded, :cancelled, :interrupted, :errored
     # Fires at every checkpoint, so it stays off webhook endpoints.
     publishes_event :progress, webhook: false
 
-    # Terminal statuses end a run for good; a paused or errored run can still
-    # be resumed from its cursor. `pausing` and `cancelling` are the operator's
-    # request, written by the control services and observed by the runner at
-    # its next checkpoint — the runner alone moves a run into `paused` or
-    # `cancelled`, so a stopped worker can never leave a lie in the column.
-    has_status :enqueued, :running, :pausing, :paused, :interrupted,
-               :cancelling, :cancelled, :succeeded, :errored,
+    # Terminal statuses end a run for good; a failed run is started again
+    # rather than resumed. `cancelling` is the operator's request, written by
+    # the Cancel service and observed by the runner at its next checkpoint —
+    # the runner alone moves a running run into `cancelled`, so a stopped
+    # worker can never leave a lie in the column.
+    has_status :enqueued, :running, :interrupted, :cancelling, :cancelled,
+               :succeeded, :errored,
                default: :enqueued
 
-    ACTIVE_STATUSES = %w[enqueued running pausing paused interrupted cancelling].freeze
+    ACTIVE_STATUSES = %w[enqueued running interrupted cancelling].freeze
     TERMINAL_STATUSES = %w[succeeded errored cancelled].freeze
     INITIATED_VIA = %w[dashboard api cli inline].freeze
 
@@ -81,13 +81,6 @@ module Spree
       TERMINAL_STATUSES.include?(status)
     end
 
-    # A run resumes from its cursor after an operator pause or a failure. An
-    # interrupted run needs no operator action — the backend already re-queued
-    # it — so it is deliberately not resumable by hand.
-    def resumable?
-      paused? || errored?
-    end
-
     # A run already `cancelling` stays cancelable: cancelling it again records
     # it as cancelled outright, which is how an operator clears a run whose
     # worker died before it could observe the first request.
@@ -104,9 +97,9 @@ module Spree
     end
 
     # Seconds of work. Time since the last checkpoint counts only while a
-    # worker holds the run — a paused or queued run is not working.
+    # worker holds the run — a queued run is not working.
     def duration
-      return time_running unless status.in?(%w[running pausing cancelling]) && started_at.present?
+      return time_running unless status.in?(%w[running cancelling]) && started_at.present?
 
       time_running + (Time.current - (updated_at || started_at))
     end

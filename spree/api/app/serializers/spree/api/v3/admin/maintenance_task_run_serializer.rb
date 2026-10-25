@@ -23,7 +23,6 @@ module Spree
                    error_class: [:string, nullable: true],
                    error_message: [:string, nullable: true],
                    error_backtrace: [:string, nullable: true],
-                   resumable: :boolean,
                    cancelable: :boolean,
                    active: :boolean,
                    store_id: [:string, nullable: true],
@@ -62,7 +61,6 @@ module Spree
             run.error_backtrace if params[:show_backtrace]
           end
 
-          attribute :resumable, &:resumable?
           attribute :cancelable, &:cancelable?
           attribute :active, &:active?
 

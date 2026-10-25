@@ -18,14 +18,8 @@ import { useTranslation } from 'react-i18next'
 import {
   useCancelMaintenanceTaskRun,
   useMaintenanceTaskRun,
-  usePauseMaintenanceTaskRun,
-  useResumeMaintenanceTaskRun,
 } from '../../../hooks/use-maintenance-tasks'
 import { runProgress, runTitle } from '../../../lib/maintenance-tasks'
-
-// Mirrors what the pause service accepts: a run that is working, or one
-// queued with no execution yet to observe a request.
-const PAUSABLE_STATUSES: string[] = ['enqueued', 'interrupted', 'running']
 
 export function RunDetailSheet({
   runId,
@@ -40,11 +34,7 @@ export function RunDetailSheet({
   const confirm = useConfirm()
 
   const { data: run, isLoading } = useMaintenanceTaskRun(open ? runId : undefined)
-  const pauseMutation = usePauseMaintenanceTaskRun()
-  const resumeMutation = useResumeMaintenanceTaskRun()
   const cancelMutation = useCancelMaintenanceTaskRun()
-
-  const busy = pauseMutation.isPending || resumeMutation.isPending || cancelMutation.isPending
 
   async function handleCancel() {
     if (!run) return
@@ -165,36 +155,13 @@ export function RunDetailSheet({
         {run && (
           <SheetFooter>
             <Can I="update" a={Subject.MaintenanceTaskRun}>
-              {PAUSABLE_STATUSES.includes(run.status) && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => pauseMutation.mutateAsync(run.id).catch(() => undefined)}
-                  disabled={busy}
-                >
-                  {t('admin.maintenance_tasks.actions.pause')}
-                </Button>
-              )}
-
-              {run.resumable && (
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => resumeMutation.mutateAsync(run.id).catch(() => undefined)}
-                  disabled={busy}
-                >
-                  {t('admin.maintenance_tasks.actions.resume')}
-                </Button>
-              )}
-
               {run.cancelable && (
                 <Button
                   type="button"
                   variant="destructive"
                   size="sm"
                   onClick={handleCancel}
-                  disabled={busy}
+                  disabled={cancelMutation.isPending}
                 >
                   {t('admin.maintenance_tasks.actions.cancel_run')}
                 </Button>

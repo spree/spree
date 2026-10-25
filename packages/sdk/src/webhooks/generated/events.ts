@@ -159,7 +159,6 @@ export interface WebhookEventMap {
   'maintenance_task_run.deleted': WebhookRecordReference
   'maintenance_task_run.errored': WebhookRecordReference
   'maintenance_task_run.interrupted': WebhookRecordReference
-  'maintenance_task_run.paused': WebhookRecordReference
   'maintenance_task_run.started': WebhookRecordReference
   'maintenance_task_run.succeeded': WebhookRecordReference
   'maintenance_task_run.updated': WebhookRecordReference

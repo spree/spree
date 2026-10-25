@@ -25,15 +25,6 @@ RSpec.describe Spree::MaintenanceTaskRun do
       end
     end
 
-    # An interrupted run has already been re-queued by the backend, so
-    # offering an operator a resume button for it would enqueue a second one.
-    it 'is resumable only after a pause or a failure' do
-      expect(build(:maintenance_task_run, status: 'paused')).to be_resumable
-      expect(build(:maintenance_task_run, status: 'errored')).to be_resumable
-      expect(build(:maintenance_task_run, status: 'interrupted')).not_to be_resumable
-      expect(build(:maintenance_task_run, status: 'succeeded')).not_to be_resumable
-    end
-
     it 'can be cancelled while active, including once cancelling is under way' do
       expect(build(:maintenance_task_run, status: 'running')).to be_cancelable
       expect(build(:maintenance_task_run, status: 'cancelling')).to be_cancelable
@@ -66,9 +57,10 @@ RSpec.describe Spree::MaintenanceTaskRun do
       expect(run.duration).to be_within(1).of(40)
     end
 
-    # A run paused overnight did 30 seconds of work, not twelve hours.
-    it 'stops counting while the run is paused' do
-      run = build(:maintenance_task_run, status: 'paused', time_running: 30, started_at: started_at,
+    # A run that waited an hour in the queue after its time slice did 30
+    # seconds of work, not an hour and a half.
+    it 'stops counting while the run waits in the queue' do
+      run = build(:maintenance_task_run, status: 'interrupted', time_running: 30, started_at: started_at,
                                          updated_at: 1.hour.ago)
 
       expect(run.duration).to eq(30)

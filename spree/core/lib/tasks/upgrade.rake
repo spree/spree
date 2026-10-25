@@ -193,7 +193,7 @@ module Spree
           abort '    Step failed. Fix the cause, then re-run this step.'
         end
 
-        # Anything short of success — paused, cancelled, still running — means
+        # Anything short of success — cancelled or still running — means
         # the step's data is not converted, and the steps after it depend on it.
         unless run.succeeded?
           puts "    The step did not finish (#{run.status})."

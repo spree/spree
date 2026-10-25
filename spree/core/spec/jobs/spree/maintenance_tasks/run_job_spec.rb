@@ -134,48 +134,12 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       expect(run.error_class).to eq('ArgumentError')
       expect(run.error_message).to eq('boom')
     end
-
-    it 'keeps the failed run resumable' do
-      run = start_run
-      described_class.perform_now(run.id)
-
-      expect(run.reload).to be_resumable
-    end
   end
 
-  # The control services write the request onto the row and the runner
-  # observes it at its next checkpoint. These examples write the same column
-  # the services do, from inside the task, so the request lands mid-walk
+  # The Cancel service writes the request onto the row and the runner
+  # observes it at its next checkpoint. This example writes the same column
+  # the service does, from inside the task, so the request lands mid-walk
   # exactly as an operator's would.
-  describe 'operator pause' do
-    let!(:products) { create_list(:product, 4, store: store) }
-
-    before { SpecMaintenanceTask.request_after = 2 }
-
-    it 'stops at the next checkpoint and keeps its place' do
-      run = start_run
-      SpecMaintenanceTask.request_status = 'pausing'
-
-      described_class.perform_now(run.id)
-
-      expect(run.reload).to be_paused
-      expect(SpecMaintenanceTask.processed.size).to eq(2)
-      expect(run.cursor).to eq(Spree::Product.order(:id).limit(2).pluck(:id).last.to_s)
-    end
-
-    it 'can be resumed from where it stopped' do
-      run = start_run
-      SpecMaintenanceTask.request_status = 'pausing'
-      described_class.perform_now(run.id)
-
-      SpecMaintenanceTask.request_after = nil
-      Spree::MaintenanceTasks::Resume.call(run: run.reload, inline: true)
-
-      expect(SpecMaintenanceTask.processed).to match_array(Spree::Product.order(:id).pluck(:id))
-      expect(run.reload).to be_succeeded
-    end
-  end
-
   describe 'operator cancel' do
     let!(:products) { create_list(:product, 4, store: store) }
 
@@ -188,31 +152,25 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       described_class.perform_now(run.id)
 
       expect(run.reload).to be_cancelled
-      expect(run).not_to be_resumable
       expect(run.ended_at).to be_present
       expect(SpecMaintenanceTask.processed.size).to eq(2)
     end
   end
 
   # A worker that stops mid-run leaves the run `running` and its job back in
-  # the queue. An operator who clicks Pause or Cancel in that gap writes the
-  # request, and the re-queued job is the only thing left to answer it.
+  # the queue. An operator who clicks Cancel in that gap writes the request,
+  # and the re-queued job is the only thing left to answer it.
   describe 'a request written while the job waited in the queue' do
     let!(:products) { create_list(:product, 2, store: store) }
 
-    {
-      'pausing' => 'paused',
-      'cancelling' => 'cancelled'
-    }.each do |requested, settled|
-      it "settles #{requested} as #{settled} without doing more work" do
-        run = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' },
-                                            status: requested, started_at: 1.minute.ago)
+    it 'settles cancelling as cancelled without doing more work' do
+      run = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' },
+                                          status: 'cancelling', started_at: 1.minute.ago)
 
-        described_class.perform_now(run.id)
+      described_class.perform_now(run.id)
 
-        expect(run.reload.status).to eq(settled)
-        expect(SpecMaintenanceTask.processed).to be_empty
-      end
+      expect(run.reload).to be_cancelled
+      expect(SpecMaintenanceTask.processed).to be_empty
     end
   end
 

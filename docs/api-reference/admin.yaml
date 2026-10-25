@@ -14059,8 +14059,8 @@ paths:
       - name: q[status_eq]
         in: query
         required: false
-        description: Filter by status (enqueued, running, paused, succeeded, errored,
-          cancelled, …)
+        description: Filter by status (enqueued, running, succeeded, errored, cancelled,
+          …)
         schema:
           type: string
       - name: sort
@@ -14095,7 +14095,6 @@ paths:
                   tallies: {}
                   arguments: {}
                   error_backtrace:
-                  resumable: false
                   cancelable: false
                   active: false
                   store_id:
@@ -14209,7 +14208,6 @@ paths:
                 tallies: {}
                 arguments: {}
                 error_backtrace:
-                resumable: false
                 cancelable: true
                 active: true
                 store_id: store_UkLWZg9DAJ
@@ -14310,7 +14308,6 @@ paths:
                 tallies: {}
                 arguments: {}
                 error_backtrace:
-                resumable: false
                 cancelable: true
                 active: true
                 store_id:
@@ -14325,191 +14322,6 @@ paths:
                 error:
                   code: record_not_found
                   message: Maintenance task run not found
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/pause":
-    parameters:
-    - name: maintenance_task_run_id
-      in: path
-      description: Maintenance task run ID
-      required: true
-      schema:
-        type: string
-    post:
-      summary: Pause a maintenance task run
-      tags:
-      - Maintenance Tasks
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Asks a running run to stop at its next checkpoint, keeping its place
-        so it can be resumed. The runner records the outcome: a running run
-        reports `pausing` here and `paused` once it has stopped. A run that has
-        not started yet pauses straight away.
-
-
-        **Required scope:** `write_maintenance_tasks` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const run = await client.maintenanceTaskRuns.pause('mtr_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api post /maintenance_task_runs/{maintenance_task_run_id}/pause
-          -d '{ ... }'
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      responses:
-        '200':
-          description: maintenance task run pausing
-          content:
-            application/json:
-              example:
-                id: mtr_UkLWZg9DAJ
-                status: pausing
-                dry_run: false
-                initiated_via: api
-                cursor:
-                tick_count: 0
-                tick_total:
-                error_class:
-                error_message:
-                started_at:
-                ended_at:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                task_name: capture_methods
-                progress:
-                duration: 0.0
-                tallies: {}
-                arguments: {}
-                error_backtrace:
-                resumable: false
-                cancelable: true
-                active: true
-                store_id:
-                admin_user_id:
-              schema:
-                "$ref": "#/components/schemas/MaintenanceTaskRun"
-        '422':
-          description: maintenance task run cannot be paused
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: a run with status succeeded cannot be paused
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/resumption":
-    parameters:
-    - name: maintenance_task_run_id
-      in: path
-      description: Maintenance task run ID
-      required: true
-      schema:
-        type: string
-    post:
-      summary: Resume a maintenance task run
-      tags:
-      - Maintenance Tasks
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Starts a paused or failed run again from where it stopped. A failed
-        run's recorded error is cleared, since the run now describes the new
-        attempt.
-
-
-        **Required scope:** `write_maintenance_tasks` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const run = await client.maintenanceTaskRuns.resume('mtr_UkLWZg9DAJ')
-      - lang: bash
-        label: Spree CLI
-        source: spree api post /maintenance_task_runs/{maintenance_task_run_id}/resumption
-          -d '{ ... }'
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      responses:
-        '200':
-          description: maintenance task run resumed
-          content:
-            application/json:
-              example:
-                id: mtr_UkLWZg9DAJ
-                status: enqueued
-                dry_run: false
-                initiated_via: api
-                cursor:
-                tick_count: 0
-                tick_total:
-                error_class:
-                error_message:
-                started_at:
-                ended_at:
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
-                task_name: capture_methods
-                progress:
-                duration: 0.0
-                tallies: {}
-                arguments: {}
-                error_backtrace:
-                resumable: false
-                cancelable: true
-                active: true
-                store_id:
-                admin_user_id:
-              schema:
-                "$ref": "#/components/schemas/MaintenanceTaskRun"
-        '422':
-          description: maintenance task run cannot be resumed
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: a run with status cancelled cannot be resumed
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/cancellation":
@@ -14590,7 +14402,6 @@ paths:
                 tallies: {}
                 arguments: {}
                 error_backtrace:
-                resumable: false
                 cancelable: true
                 active: true
                 store_id:
@@ -38395,12 +38206,6 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
-                - name: maintenance_task_run.paused
-                  group: maintenance_task_run
-                  credential_permission:
-                  credential: false
-                  deprecated: false
-                  replaced_by:
                 - name: maintenance_task_run.started
                   group: maintenance_task_run
                   credential_permission:
@@ -39422,7 +39227,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 261
+                  count: 260
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -65089,8 +64894,6 @@ components:
             enum:
             - enqueued
             - running
-            - pausing
-            - paused
             - interrupted
             - cancelling
             - cancelled
@@ -65142,8 +64945,6 @@ components:
         error_backtrace:
           type: string
           nullable: true
-        resumable:
-          type: boolean
         cancelable:
           type: boolean
         active:
@@ -65176,7 +64977,6 @@ components:
       - tallies
       - arguments
       - error_backtrace
-      - resumable
       - cancelable
       - active
       - store_id

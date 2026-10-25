@@ -2748,9 +2748,7 @@
     },
     "maintenance_tasks": {
       "actions": {
-        "cancel_run": "Anuluj uruchomienie",
-        "pause": "Wstrzymaj",
-        "resume": "Wznów"
+        "cancel_run": "Anuluj uruchomienie"
       },
       "cancel_confirm": {
         "message": "Zadanie zatrzyma się w najbliższym punkcie kontrolnym. Wykonana już praca pozostaje — anulowanie jej nie cofa.",
@@ -2777,8 +2775,6 @@
       },
       "messages": {
         "canceled": "Anulowanie uruchomienia",
-        "paused": "Wstrzymywanie uruchomienia",
-        "resumed": "Wznawianie uruchomienia",
         "start_failed": "Nie udało się uruchomić zadania",
         "started": "Zadanie uruchomione"
       },
@@ -2802,8 +2798,6 @@
         "enqueued": "W kolejce",
         "errored": "Nieudane",
         "interrupted": "Wznawianie…",
-        "paused": "Wstrzymane",
-        "pausing": "Wstrzymywanie…",
         "running": "W trakcie",
         "succeeded": "Zakończone"
       },

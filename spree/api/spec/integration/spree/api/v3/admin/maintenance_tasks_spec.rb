@@ -33,7 +33,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
       parameter name: :'q[task_name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by task name (contains), e.g. `capture`'
       parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by status (enqueued, running, paused, succeeded, errored, cancelled, …)'
+                description: 'Filter by status (enqueued, running, succeeded, errored, cancelled, …)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'
 
@@ -159,107 +159,6 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
       response '404', 'maintenance task run not found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { 'mtr_nonexistent' }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-    end
-  end
-
-  path '/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/pause' do
-    parameter name: :maintenance_task_run_id, in: :path, type: :string, description: 'Maintenance task run ID'
-
-    post 'Pause a maintenance task run' do
-      tags 'Maintenance Tasks'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description <<~DESC
-        Asks a running run to stop at its next checkpoint, keeping its place
-        so it can be resumed. The runner records the outcome: a running run
-        reports `pausing` here and `paused` once it has stopped. A run that has
-        not started yet pauses straight away.
-      DESC
-      admin_scope :write, :maintenance_tasks
-
-      admin_sdk_example 'maintenance-task-runs/pause'
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true,
-                description: 'Bearer token for admin authentication'
-
-      response '200', 'maintenance task run pausing' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:maintenance_task_run) do
-          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
-                                        status: 'running')
-        end
-        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
-
-        schema '$ref' => '#/components/schemas/MaintenanceTaskRun'
-
-        run_test! do |response|
-          expect(JSON.parse(response.body)['status']).to eq('pausing')
-        end
-      end
-
-      response '422', 'maintenance task run cannot be paused' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:maintenance_task_run) do
-          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
-                                        status: 'succeeded')
-        end
-        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-    end
-  end
-
-  path '/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/resumption' do
-    parameter name: :maintenance_task_run_id, in: :path, type: :string, description: 'Maintenance task run ID'
-
-    post 'Resume a maintenance task run' do
-      tags 'Maintenance Tasks'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description <<~DESC
-        Starts a paused or failed run again from where it stopped. A failed
-        run's recorded error is cleared, since the run now describes the new
-        attempt.
-      DESC
-      admin_scope :write, :maintenance_tasks
-
-      admin_sdk_example 'maintenance-task-runs/resume'
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true,
-                description: 'Bearer token for admin authentication'
-
-      response '200', 'maintenance task run resumed' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:maintenance_task_run) do
-          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
-                                        status: 'paused')
-        end
-        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
-
-        schema '$ref' => '#/components/schemas/MaintenanceTaskRun'
-
-        run_test! do |response|
-          expect(JSON.parse(response.body)['status']).to eq('enqueued')
-        end
-      end
-
-      response '422', 'maintenance task run cannot be resumed' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:maintenance_task_run) do
-          create(:maintenance_task_run, task_name: 'Spree::MaintenanceTasks::Upgrade::CaptureMethods',
-                                        status: 'cancelled')
-        end
-        let(:maintenance_task_run_id) { maintenance_task_run.prefixed_id }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

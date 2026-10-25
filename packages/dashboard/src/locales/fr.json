@@ -2730,9 +2730,7 @@
     },
     "maintenance_tasks": {
       "actions": {
-        "cancel_run": "Annuler l'exécution",
-        "pause": "Mettre en pause",
-        "resume": "Reprendre"
+        "cancel_run": "Annuler l'exécution"
       },
       "cancel_confirm": {
         "message": "La tâche s'arrête au prochain point de contrôle. Le travail déjà effectué est conservé — l'annulation ne le défait pas.",
@@ -2759,8 +2757,6 @@
       },
       "messages": {
         "canceled": "Annulation de l'exécution",
-        "paused": "Mise en pause de l'exécution",
-        "resumed": "Reprise de l'exécution",
         "start_failed": "Impossible de démarrer la tâche",
         "started": "Tâche démarrée"
       },
@@ -2784,8 +2780,6 @@
         "enqueued": "En file d'attente",
         "errored": "Échouée",
         "interrupted": "Reprise…",
-        "paused": "En pause",
-        "pausing": "Mise en pause…",
         "running": "En cours",
         "succeeded": "Terminée"
       },

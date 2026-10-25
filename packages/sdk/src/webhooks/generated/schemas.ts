@@ -149,7 +149,6 @@ type WebhookEventName =
   | 'maintenance_task_run.deleted'
   | 'maintenance_task_run.errored'
   | 'maintenance_task_run.interrupted'
-  | 'maintenance_task_run.paused'
   | 'maintenance_task_run.started'
   | 'maintenance_task_run.succeeded'
   | 'maintenance_task_run.updated'
@@ -413,7 +412,6 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'maintenance_task_run.deleted': WebhookRecordReferenceSchema,
   'maintenance_task_run.errored': WebhookRecordReferenceSchema,
   'maintenance_task_run.interrupted': WebhookRecordReferenceSchema,
-  'maintenance_task_run.paused': WebhookRecordReferenceSchema,
   'maintenance_task_run.started': WebhookRecordReferenceSchema,
   'maintenance_task_run.succeeded': WebhookRecordReferenceSchema,
   'maintenance_task_run.updated': WebhookRecordReferenceSchema,

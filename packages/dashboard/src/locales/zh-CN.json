@@ -2725,9 +2725,7 @@
     },
     "maintenance_tasks": {
       "actions": {
-        "cancel_run": "取消运行",
-        "pause": "暂停",
-        "resume": "继续"
+        "cancel_run": "取消运行"
       },
       "cancel_confirm": {
         "message": "任务会在下一个检查点停止。已完成的工作会保留——取消不会撤销它。",
@@ -2754,8 +2752,6 @@
       },
       "messages": {
         "canceled": "正在取消运行",
-        "paused": "正在暂停运行",
-        "resumed": "正在恢复运行",
         "start_failed": "无法启动任务",
         "started": "任务已启动"
       },
@@ -2779,8 +2775,6 @@
         "enqueued": "排队中",
         "errored": "已失败",
         "interrupted": "正在恢复…",
-        "paused": "已暂停",
-        "pausing": "正在暂停…",
         "running": "运行中",
         "succeeded": "已完成"
       },

@@ -6,9 +6,9 @@ module Spree
     # Three things can stop a run mid-collection, and all three resolve to the
     # same checkpoint: the worker is shutting down (Continuations re-queue the
     # job), the execution has used its time slice (the runner re-queues
-    # itself so no single task holds a worker), or an operator asked to pause
-    # or cancel (the control services write the request, the runner observes
-    # it here). The run row's cursor is written before each checkpoint, so
+    # itself so no single task holds a worker), or an operator asked to
+    # cancel (the Cancel service writes the request, the runner observes it
+    # here). The run row's cursor is written before each checkpoint, so
     # whichever path fires, the next execution restarts from the same record.
     class RunJob < ::Spree::BaseJob
       include ActiveJob::Continuable
@@ -16,7 +16,8 @@ module Spree
       queue_as Spree.queues.maintenance_tasks
 
       # A run that fails is recorded as failed; it must not be replayed by the
-      # backend behind the operator's back. Resuming is an explicit action.
+      # backend behind the operator's back. Running it again is an explicit
+      # action.
       #
       # `inline` is a run executing in the caller's own process — the
       # upgrade walk and the command line. It holds no worker, so it is not
@@ -27,9 +28,9 @@ module Spree
         # included.
         @run = Spree::MaintenanceTaskRun.find_by(id: run_id)
         return if @run.nil?
-        # `pausing` and `cancelling` are let through: a job re-queued after its
-        # worker stopped is the only execution that will ever answer them.
-        return unless @run.status.in?(%w[enqueued running interrupted pausing cancelling])
+        # `cancelling` is let through: a job re-queued after its worker
+        # stopped is the only execution that will ever answer it.
+        return unless @run.status.in?(%w[enqueued running interrupted cancelling])
 
         @task_class = @run.task_class
         return unfindable_task if @task_class.nil?
@@ -47,8 +48,8 @@ module Spree
 
         step :start
         # Seeded from the row rather than from the continuation: the row
-        # survives a dropped job, and an operator resume starts a brand new
-        # job with no continuation at all.
+        # survives a dropped job, which a re-queued execution then picks up
+        # with no continuation at all.
         step :process_collection, start: @run.cursor
         step :finish
       end
@@ -64,7 +65,7 @@ module Spree
                                           started_at: run.started_at || Time.current,
                                           job_id: job_id,
                                           tick_total: run.tick_total || safe_count)
-        # An operator paused or cancelled the run after the check above.
+        # An operator cancelled the run after the check above.
         return check_operator_request unless started
 
         publish('started')
@@ -106,8 +107,8 @@ module Spree
 
       # Continuations skip `start` once it has completed, so an execution
       # picking up after its time slice would otherwise keep reporting
-      # `interrupted` while it works — and the control services would treat it
-      # as idle. Conditional, so a pause or cancel written while the job sat
+      # `interrupted` while it works — and the Cancel service would treat it as
+      # idle. Conditional, so a cancel written while the job sat
       # in the queue is not overwritten.
       def resume_after_time_slice
         return unless run.interrupted?
@@ -219,35 +220,26 @@ module Spree
         publish('progress')
       end
 
-      # Pause and cancel are requests written to the row by the control
-      # services; the runner is the only writer of the resulting state, so a
-      # killed worker can never leave `paused` on a run that is still moving.
+      # Cancel is a request written to the row by the Cancel service; the
+      # runner is the only writer of the resulting state, so a killed worker
+      # can never leave `cancelled` on a run that is still moving.
       #
       # Read once per batch rather than on a timer: a primary-key read costs
       # nothing beside the batch of writes it follows, and a time-based
-      # throttle would make a fast task ignore a pause altogether — the
+      # throttle would make a fast task ignore a cancel altogether — the
       # batches would all land inside one interval.
       def check_operator_request
         requested = run.class.where(id: run.id).pick(:status)
+        return unless requested.in?(%w[cancelling cancelled])
 
-        case requested
-        when 'pausing', 'paused'
-          # A cancel can replace the pause between the read and the write.
-          return check_operator_request unless write_status('paused', from: requested,
-                                                                      time_running: accumulated_time)
-
-          publish('paused')
-          @halted = true
-        when 'cancelling', 'cancelled'
-          write_status('cancelled', from: requested, ended_at: Time.current, time_running: accumulated_time)
-          publish('cancelled')
-          @halted = true
-        end
+        write_status('cancelled', from: requested, ended_at: Time.current, time_running: accumulated_time)
+        publish('cancelled')
+        @halted = true
       end
 
       # The control services write to the same row this job holds in memory,
       # so the write only lands while the row is still in the status the
-      # runner expects. Otherwise an operator's pause or cancel, written
+      # runner expects. Otherwise an operator's cancel, written
       # between the runner's read and its write, would be overwritten.
       #
       # @return [Boolean] whether the row was in an expected status

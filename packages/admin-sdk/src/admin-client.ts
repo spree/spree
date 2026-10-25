@@ -4471,10 +4471,9 @@ export class AdminClient {
    *
    * After `create()`, poll `get(id)` while `active` is true; `progress` is
    * `0..1` when the task could count its collection and `null` when it could
-   * not, in which case show `tick_count` alone. A run can be paused and picked
-   * up later from its cursor (`pause` → `resume`) or stopped for good
-   * (`cancel`); `resumable` and `cancelable` say which of those apply right
-   * now. There is no delete: a run records work that touched merchant data.
+   * not, in which case show `tick_count` alone. `cancel` stops a run for good
+   * while `cancelable` is true. There is no delete: a run records work that
+   * touched merchant data.
    */
   /**
    * The upgrade manifest as an ordered checklist: what this release still
@@ -4521,12 +4520,6 @@ export class AdminClient {
         ...options,
         body: params,
       }),
-
-    pause: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
-      this.request<MaintenanceTaskRun>('POST', `/maintenance_task_runs/${id}/pause`, options),
-
-    resume: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
-      this.request<MaintenanceTaskRun>('POST', `/maintenance_task_runs/${id}/resumption`, options),
 
     cancel: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
       this.request<MaintenanceTaskRun>(

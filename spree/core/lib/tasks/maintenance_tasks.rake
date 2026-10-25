@@ -32,7 +32,7 @@ namespace :spree do
 
       if run.errored?
         puts "  #{run.error_class}: #{run.error_message}"
-        abort '  The run failed. Fix the cause and resume it from the dashboard, or re-run this task.'
+        abort '  The run failed. Fix the cause, then re-run this task.'
       end
     end
   end

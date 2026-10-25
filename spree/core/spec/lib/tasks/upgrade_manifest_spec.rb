@@ -196,7 +196,6 @@ RSpec.describe 'the upgrade manifest' do
 
       expect(run.reload).to be_errored
       expect(run.error_message).to eq('Set the pepper first.')
-      expect(run).to be_resumable
     end
   end
 

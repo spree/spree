@@ -2730,9 +2730,7 @@
     },
     "maintenance_tasks": {
       "actions": {
-        "cancel_run": "Lauf abbrechen",
-        "pause": "Pausieren",
-        "resume": "Fortsetzen"
+        "cancel_run": "Lauf abbrechen"
       },
       "cancel_confirm": {
         "message": "Die Aufgabe stoppt am nächsten Prüfpunkt. Bereits erledigte Arbeit bleibt bestehen — ein Abbruch macht sie nicht rückgängig.",
@@ -2759,8 +2757,6 @@
       },
       "messages": {
         "canceled": "Lauf wird abgebrochen",
-        "paused": "Lauf wird pausiert",
-        "resumed": "Lauf wird fortgesetzt",
         "start_failed": "Aufgabe konnte nicht gestartet werden",
         "started": "Aufgabe gestartet"
       },
@@ -2784,8 +2780,6 @@
         "enqueued": "In Warteschlange",
         "errored": "Fehlgeschlagen",
         "interrupted": "Wird fortgesetzt…",
-        "paused": "Pausiert",
-        "pausing": "Wird pausiert…",
         "running": "Läuft",
         "succeeded": "Abgeschlossen"
       },

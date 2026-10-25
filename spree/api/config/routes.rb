@@ -510,12 +510,10 @@ Spree::Core::Engine.add_routes do
         end
 
         # Maintenance tasks — see docs/plans/6.0-maintenance-tasks.md.
-        # Tasks are classes, addressed by their short name; runs are records.
+        # A run names its task by the short name the upgrade steps give.
         resources :upgrade_steps, only: [:index]
         resources :maintenance_task_runs, only: [:index, :show, :create] do
           scope module: :maintenance_task_runs do
-            resource :pause, only: [:create]
-            resource :resumption, only: [:create]
             resource :cancellation, only: [:create]
           end
         end

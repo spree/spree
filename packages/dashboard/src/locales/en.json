@@ -2730,9 +2730,7 @@
     },
     "maintenance_tasks": {
       "actions": {
-        "cancel_run": "Cancel run",
-        "pause": "Pause",
-        "resume": "Resume"
+        "cancel_run": "Cancel run"
       },
       "cancel_confirm": {
         "message": "The task stops at its next checkpoint. Work already done stays done — cancelling does not undo it.",
@@ -2759,8 +2757,6 @@
       },
       "messages": {
         "canceled": "Cancelling the run",
-        "paused": "Pausing the run",
-        "resumed": "Resuming the run",
         "start_failed": "Could not start the task",
         "started": "Task started"
       },
@@ -2784,8 +2780,6 @@
         "enqueued": "Queued",
         "errored": "Failed",
         "interrupted": "Resuming…",
-        "paused": "Paused",
-        "pausing": "Pausing…",
         "running": "Running",
         "succeeded": "Completed"
       },

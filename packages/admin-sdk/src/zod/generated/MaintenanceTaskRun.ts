@@ -22,7 +22,6 @@ export const MaintenanceTaskRunSchema = z.object({
   tallies: z.record(z.string(), z.number()),
   arguments: z.record(z.string(), z.unknown()),
   error_backtrace: z.string().nullable(),
-  resumable: z.boolean(),
   cancelable: z.boolean(),
   active: z.boolean(),
   store_id: z.string().nullable(),

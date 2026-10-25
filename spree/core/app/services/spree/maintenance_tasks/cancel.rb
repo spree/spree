@@ -1,7 +1,7 @@
 module Spree
   module MaintenanceTasks
-    # Stops a run for good. Like Pause, the service records the request and the
-    # runner records the outcome; a run that has not started yet is cancelled
+    # Stops a run for good. The service records the request and the runner
+    # records the outcome; a run that has not started yet is cancelled
     # outright, since no execution will ever observe the request.
     #
     # Cancelling a run that is already `cancelling` also cancels it outright.
@@ -20,9 +20,9 @@ module Spree
       def call(run:)
         return failure(run, not_cancelable_error(run)) unless run.cancelable?
 
-        # A pending pause means a worker is still mid-batch, so it, not this
-        # service, records that the run stopped.
-        if run.running? || run.pausing?
+        # A running run has a worker mid-batch, so it, not this service,
+        # records that the run stopped.
+        if run.running?
           run.update(status: 'cancelling')
         else
           run.update(status: 'cancelled', ended_at: Time.current)

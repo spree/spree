@@ -208,8 +208,6 @@ export type InvitationStatus = (typeof INVITATION_STATUSES)[number] | (string & 
 export const MAINTENANCE_TASK_RUN_STATUSES = [
   'enqueued',
   'running',
-  'pausing',
-  'paused',
   'interrupted',
   'cancelling',
   'cancelled',

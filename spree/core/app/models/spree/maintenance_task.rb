@@ -4,7 +4,7 @@ module Spree
   #
   # A task walks a stable-ordered collection and processes one record at a
   # time. The runner (Spree::MaintenanceTasks::RunJob) supplies batching,
-  # checkpointing, pause/resume/cancel and the audit row, so a task body says
+  # checkpointing, cancelling and the audit row, so a task body says
   # only what it does.
   #
   #   class Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets < Spree::MaintenanceTask
