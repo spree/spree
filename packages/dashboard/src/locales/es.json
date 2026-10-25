@@ -8,7 +8,7 @@
         "message": "La tarea se detiene en su próximo punto de control. El trabajo ya hecho se conserva: cancelar no lo deshace.",
         "title": "¿Cancelar esta ejecución?"
       },
-      "description": "Ejecuta las correcciones de datos, rellenos y reindexaciones incluidos en el código de tu tienda. Cada ejecución queda registrada.",
+      "description": "Ejecuta los pasos de datos de una actualización de Spree y sigue su progreso. Cada ejecución queda registrada.",
       "dry_run_badge": "Vista previa",
       "history": {
         "empty_title": "Todavía no hay ejecuciones",
@@ -24,8 +24,7 @@
       "initiated_via": {
         "api": "Iniciada a través de la API",
         "cli": "Iniciada desde la línea de comandos",
-        "dashboard": "Iniciada desde el panel",
-        "inline": "Iniciada por Spree"
+        "dashboard": "Iniciada desde el panel"
       },
       "messages": {
         "canceled": "Cancelando la ejecución",

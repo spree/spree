@@ -88,7 +88,6 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       expect(run.reload.tick_count).to eq(3)
       expect(run.tick_total).to eq(3)
       expect(run.tallies['updated']).to eq(3)
-      expect(run.progress).to eq(1.0)
     end
 
     it 'stamps the cursor so a resume would not repeat work' do

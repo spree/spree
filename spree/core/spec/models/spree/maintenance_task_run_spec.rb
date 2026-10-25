@@ -19,31 +19,10 @@ RSpec.describe Spree::MaintenanceTaskRun do
       end
     end
 
-    it 'counts succeeded, errored and cancelled as terminal' do
-      described_class::TERMINAL_STATUSES.each do |status|
-        expect(build(:maintenance_task_run, status: status)).to be_terminal
+    it 'counts succeeded, errored and cancelled as finished' do
+      %w[succeeded errored cancelled].each do |status|
+        expect(build(:maintenance_task_run, status: status)).not_to be_active
       end
-    end
-
-    it 'can be cancelled while active, including once cancelling is under way' do
-      expect(build(:maintenance_task_run, status: 'running')).to be_cancelable
-      expect(build(:maintenance_task_run, status: 'cancelling')).to be_cancelable
-      expect(build(:maintenance_task_run, status: 'succeeded')).not_to be_cancelable
-    end
-  end
-
-  describe '#progress' do
-    it 'is nil when the task could not count its collection' do
-      expect(build(:maintenance_task_run, tick_count: 5, tick_total: nil).progress).to be_nil
-    end
-
-    it 'reports the share of the collection processed' do
-      expect(build(:maintenance_task_run, tick_count: 5, tick_total: 20).progress).to eq(0.25)
-    end
-
-    # A collection that grows mid-run would otherwise report over 100%.
-    it 'never exceeds one' do
-      expect(build(:maintenance_task_run, tick_count: 30, tick_total: 20).progress).to eq(1.0)
     end
   end
 

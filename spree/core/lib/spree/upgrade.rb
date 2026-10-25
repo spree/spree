@@ -37,11 +37,14 @@ module Spree
       end.sort_by { |manifest| version_parts(manifest[:to]) + version_parts(manifest[:from]) }
     end
 
-    # Every manifest with its steps loaded, in walk order.
+    # Every manifest with its steps loaded, in walk order. Read once per
+    # process: the files ship inside the gem and change only with a deploy.
     #
     # @return [Array<Hash>]
     def self.manifests
-      available_manifests.map { |entry| YAML.safe_load_file(File.join(entry[:dir], 'manifest.yml')) }
+      @manifests ||= available_manifests.map do |entry|
+        YAML.safe_load_file(File.join(entry[:dir], 'manifest.yml')).freeze
+      end.freeze
     end
 
     # Every step of every manifest, in walk order, each carrying the manifest
@@ -49,11 +52,29 @@ module Spree
     #
     # @return [Array<Hash>]
     def self.steps
-      manifests.flat_map do |manifest|
+      @steps ||= manifests.flat_map do |manifest|
         manifest['steps'].map do |step|
           step.merge('from' => manifest['from'], 'to' => manifest['to'], 'docs' => manifest['docs'])
         end
-      end
+      end.freeze
+    end
+
+    # The task a step runs: its own class, or the shared runner for a step
+    # that names a rake task.
+    #
+    # @param step [Hash] a manifest step
+    # @return [String] a task class name
+    def self.task_class_name(step)
+      step['task_class'] || 'Spree::MaintenanceTasks::UpgradeStep'
+    end
+
+    # The arguments that start a step's task: a rake-backed step is named by
+    # its id, so the shared runner knows which rake task to invoke.
+    #
+    # @param step [Hash] a manifest step
+    # @return [Hash]
+    def self.task_arguments(step)
+      step['task_class'] ? {} : { 'step_id' => step['id'] }
     end
 
     # @param step_id [String]
@@ -99,15 +120,11 @@ module Spree
     #
     # False for a store installed fresh at its current version: it has no
     # historical data to convert, so neither the outstanding steps nor the
-    # history of past releases describes anything real for it. False also once
-    # every boundary is complete and nothing is outstanding.
+    # history of past releases describes anything real for it.
     #
     # @return [Boolean]
     def self.relevant?
-      return true unless Spree::UpgradeRecord.exists?
-      return false unless Spree::UpgradeRecord.upgraded?
-
-      true
+      !Spree::UpgradeRecord.exists? || Spree::UpgradeRecord.upgraded?
     end
 
     # Steps this installation still has to run: every manifest above the

@@ -2736,7 +2736,7 @@
         "message": "The task stops at its next checkpoint. Work already done stays done — cancelling does not undo it.",
         "title": "Cancel this run?"
       },
-      "description": "Run data corrections, backfills and reindexes that ship with your store's code. Every run is recorded.",
+      "description": "Run the data steps of a Spree upgrade and follow their progress. Every run is recorded.",
       "dry_run_badge": "Preview",
       "history": {
         "empty_title": "No runs yet",
@@ -2752,8 +2752,7 @@
       "initiated_via": {
         "api": "Started through the API",
         "cli": "Started from the command line",
-        "dashboard": "Started from the dashboard",
-        "inline": "Started by Spree"
+        "dashboard": "Started from the dashboard"
       },
       "messages": {
         "canceled": "Cancelling the run",

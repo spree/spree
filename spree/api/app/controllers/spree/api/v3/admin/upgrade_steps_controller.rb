@@ -39,31 +39,31 @@ module Spree
 
           def meta
             {
-              installed_version: Spree::Upgrade.installed_minor_version,
               completed_version: Spree::Upgrade.completed_boundary,
               # False when the boundary was assumed from the installed version
               # rather than recorded by a walk or a fresh install. The
               # dashboard says so, rather than presenting a guess as fact.
               completed_version_recorded: Spree::Upgrade.completed_boundary_known?,
-              superseded_step_count: Spree::Upgrade.superseded_steps.size,
-              # False for a store installed fresh at this release: there is no
-              # upgrade to show it.
-              upgrade_relevant: Spree::Upgrade.relevant?
+              superseded_step_count: superseded_steps.size
             }
           end
 
           # Superseded first: they are the earlier releases, so listing them
           # above what is outstanding keeps the whole thing in release order.
           def steps
-            @steps ||= Spree::Upgrade.superseded_steps + Spree::Upgrade.pending_steps
+            @steps ||= superseded_steps + Spree::Upgrade.pending_steps
+          end
+
+          def superseded_steps
+            @superseded_steps ||= Spree::Upgrade.superseded_steps
           end
 
           def superseded_ids
-            @superseded_ids ||= Spree::Upgrade.superseded_steps.map { |step| step['id'] }.to_set
+            @superseded_ids ||= superseded_steps.map { |step| step['id'] }.to_set
           end
 
           def present(step)
-            task_name = step['task_class'] || Spree::MaintenanceTasks::UpgradeStep.name
+            task_name = Spree::Upgrade.task_class_name(step)
             run = latest_runs[run_key(step, task_name)]
 
             {
@@ -76,10 +76,10 @@ module Spree
               from: step['from'],
               to: step['to'],
               docs: step['docs'],
-              task_name: Spree::MaintenanceTask.find_registered(task_name)&.api_type || task_name.demodulize.underscore,
-              # A rake-backed step runs inside the generic wrapper, so the id it
+              task_name: Spree::MaintenanceTask.api_type_for(task_name),
+              # A rake-backed step runs inside the shared runner, so the id it
               # was invoked with is what distinguishes one run from another.
-              arguments: step['task_class'] ? {} : { step_id: step['id'] },
+              arguments: Spree::Upgrade.task_arguments(step),
               last_run: run && Spree.api.admin_maintenance_task_run_serializer.new(
                 run, params: { show_backtrace: holds_permission?('write_maintenance_tasks') }
               ).to_h
@@ -92,6 +92,7 @@ module Spree
           # is not portable across the adapters Spree supports.
           def latest_runs
             @latest_runs ||= Spree::MaintenanceTaskRun.
+                             includes(:store, :admin_user).
                              where(task_name: manifest_task_names).
                              order(:id).
                              each_with_object({}) do |run, result|
@@ -100,8 +101,7 @@ module Spree
           end
 
           def manifest_task_names
-            steps.
-              map { |step| step['task_class'] || Spree::MaintenanceTasks::UpgradeStep.name }.uniq
+            steps.map { |step| Spree::Upgrade.task_class_name(step) }.uniq
           end
 
           def run_key(step, task_name)

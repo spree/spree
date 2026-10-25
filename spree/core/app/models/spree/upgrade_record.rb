@@ -19,8 +19,6 @@ module Spree
   class UpgradeRecord < Spree.base_class
     has_prefix_id :upg
 
-    include Spree::Metadata
-
     SOURCES = %w[walk install manual].freeze
 
     validates :version, presence: true, uniqueness: true
@@ -53,11 +51,10 @@ module Spree
     # @param version [String] two-segment release, e.g. "6.0"
     # @param source [String] one of SOURCES
     # @return [Spree::UpgradeRecord]
-    def self.stamp!(version, source: 'walk', metadata: {})
+    def self.stamp!(version, source: 'walk')
       record = find_or_initialize_by(version: version.to_s)
       record.source = source.to_s
       record.completed_at = Time.current
-      record.metadata = (record.metadata || {}).merge(metadata)
       record.save!
       record
     end

@@ -2731,7 +2731,7 @@
         "message": "任务会在下一个检查点停止。已完成的工作会保留——取消不会撤销它。",
         "title": "取消这次运行？"
       },
-      "description": "运行随店铺代码一同发布的数据修正、回填与重建索引。每次运行都会被记录。",
+      "description": "运行 Spree 升级中的数据步骤并跟踪其进度。每次运行都会被记录。",
       "dry_run_badge": "预览",
       "history": {
         "empty_title": "暂无运行记录",
@@ -2747,8 +2747,7 @@
       "initiated_via": {
         "api": "通过 API 启动",
         "cli": "从命令行启动",
-        "dashboard": "从仪表板启动",
-        "inline": "由 Spree 启动"
+        "dashboard": "从仪表板启动"
       },
       "messages": {
         "canceled": "正在取消运行",

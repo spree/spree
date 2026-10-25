@@ -149,8 +149,8 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     it 'reports progress the dashboard can draw a bar from' do
       get :show, params: { id: run.prefixed_id }
 
-      expect(json_response['progress']).to eq(0.25)
       expect(json_response['tick_count']).to eq(5)
+      expect(json_response['tick_total']).to eq(20)
       expect(json_response['active']).to be(true)
     end
   end

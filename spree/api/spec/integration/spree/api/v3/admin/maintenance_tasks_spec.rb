@@ -151,7 +151,7 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['progress']).to eq(0.25)
+          expect(data['tick_total']).to eq(20)
           expect(data['active']).to be(true)
         end
       end

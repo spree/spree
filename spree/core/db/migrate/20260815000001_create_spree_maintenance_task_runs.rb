@@ -27,11 +27,9 @@ class CreateSpreeMaintenanceTaskRuns < ActiveRecord::Migration[8.1]
       if t.respond_to?(:jsonb)
         t.jsonb :arguments
         t.jsonb :tallies
-        t.jsonb :metadata
       else
         t.json :arguments
         t.json :tallies
-        t.json :metadata
       end
 
       t.timestamps

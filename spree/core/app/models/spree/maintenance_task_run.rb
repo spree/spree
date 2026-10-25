@@ -16,12 +16,9 @@ module Spree
     has_prefix_id :mtr
 
     include Spree::HasStatus
-    include Spree::Metadata
 
     publishes_lifecycle_events
     publishes_events :started, :succeeded, :cancelled, :interrupted, :errored
-    # Fires at every checkpoint, so it stays off webhook endpoints.
-    publishes_event :progress, webhook: false
 
     # Terminal statuses end a run for good; a failed run is started again
     # rather than resumed. `cancelling` is the operator's request, written by
@@ -33,8 +30,7 @@ module Spree
                default: :enqueued
 
     ACTIVE_STATUSES = %w[enqueued running interrupted cancelling].freeze
-    TERMINAL_STATUSES = %w[succeeded errored cancelled].freeze
-    INITIATED_VIA = %w[dashboard api cli inline].freeze
+    INITIATED_VIA = %w[dashboard api cli].freeze
 
     belongs_to :store, class_name: 'Spree::Store', optional: true
     belongs_to :admin_user, class_name: Spree.admin_user_class.to_s, optional: true
@@ -44,9 +40,8 @@ module Spree
     validates :initiated_via, presence: true, inclusion: { in: INITIATED_VIA }
 
     scope :active, -> { where(status: ACTIVE_STATUSES) }
-    scope :terminal, -> { where(status: TERMINAL_STATUSES) }
 
-    self.whitelisted_ransackable_attributes = %w[task_name status dry_run initiated_via created_at]
+    self.whitelisted_ransackable_attributes = %w[task_name status created_at]
 
     # Filtered by the task's short name, which is what responses carry; the
     # column holds its class name. A partial value (`task_name_cont=capture`)
@@ -56,7 +51,6 @@ module Spree
     } do |parent|
       parent.table[:task_name]
     end
-    self.whitelisted_ransackable_associations = %w[admin_user store]
 
     # @return [Class, nil] the registered task class, or nil when the task has
     #   been removed from the registry since the run was created
@@ -64,36 +58,15 @@ module Spree
       Spree::MaintenanceTask.find_registered(task_name)
     end
 
-    # The task's short name, as the API and the dashboard identify it. A task
-    # that is no longer registered is shortened the same way rather than
-    # loaded from the stored string.
+    # The task's short name, as the API and the dashboard identify it.
     #
     # @return [String]
     def task_api_type
-      task_class&.api_type || task_name.to_s.demodulize.underscore
+      Spree::MaintenanceTask.api_type_for(task_name)
     end
 
     def active?
       ACTIVE_STATUSES.include?(status)
-    end
-
-    def terminal?
-      TERMINAL_STATUSES.include?(status)
-    end
-
-    # A run already `cancelling` stays cancelable: cancelling it again records
-    # it as cancelled outright, which is how an operator clears a run whose
-    # worker died before it could observe the first request.
-    def cancelable?
-      active?
-    end
-
-    # @return [Float, nil] 0.0..1.0, or nil when the task could not count its
-    #   collection (the dashboard then shows ticks without a bar)
-    def progress
-      return nil if tick_total.nil? || tick_total.zero?
-
-      [tick_count.to_f / tick_total, 1.0].min
     end
 
     # Seconds of work. Time since the last checkpoint counts only while a

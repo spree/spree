@@ -79,6 +79,15 @@ module Spree
         registered_classes.find { |klass| klass.name == name.to_s }
       end
 
+      # A task class name as the API shows it. A task that is no longer
+      # registered is shortened the same way rather than loaded by name.
+      #
+      # @param class_name [String]
+      # @return [String]
+      def api_type_for(class_name)
+        find_registered(class_name)&.api_type || class_name.to_s.demodulize.underscore
+      end
+
       # The registered task an API caller names. Matches the short name only,
       # so a Ruby class name arriving over the API is an unknown task.
       #
@@ -89,11 +98,10 @@ module Spree
       end
     end
 
-    # The records to walk. Return a relation with an explicit, stable order —
-    # the cursor is a value from that ordering, so an unordered relation would
-    # resume in the wrong place. Arrays are walked by index.
+    # The records to walk, ordered by primary key — the cursor is the last id
+    # processed, so any other order would resume in the wrong place.
     #
-    # @return [ActiveRecord::Relation, Array, nil]
+    # @return [ActiveRecord::Relation]
     def collection
       raise NotImplementedError, "#{self.class.name} must implement #collection or declare `no_collection`"
     end
@@ -109,10 +117,7 @@ module Spree
     #
     # @return [Integer, nil]
     def count
-      return nil if no_collection?
-
-      items = collection
-      items.respond_to?(:count) ? items.count : nil
+      collection.count unless no_collection?
     end
 
     def no_collection?
@@ -132,33 +137,6 @@ module Spree
 
     def tallies
       @tallies ||= Hash.new(0)
-    end
-
-    # The cursor value for a record. Defaults to the primary key, matching the
-    # default `order(:id)` walk.
-    def cursor_for(item)
-      item.respond_to?(:id) ? item.id.to_s : item.to_s
-    end
-
-    # Rake tasks are defined by the Rakefile, which a web process never loads —
-    # a task fired from the dashboard has to load the engine's tasks itself.
-    #
-    # Loads the one file that defines the task, and only when it is not already
-    # defined. Both halves matter: re-loading a .rake file APPENDS its block to
-    # a task that already exists, so a second load makes that task run twice,
-    # and loading every file would do that to every task in the engine. The
-    # symptom is invisible until something counts what it did.
-    #
-    # @param task_name [String] the rake task about to be invoked
-    def load_engine_rake_tasks(task_name)
-      require 'rake'
-
-      return if ::Rake::Task.task_defined?(task_name)
-
-      ::Rake::Task.define_task(:environment) unless ::Rake::Task.task_defined?(:environment)
-
-      path = rake_file_defining(task_name)
-      load(path) if path
     end
 
     # Runs an engine rake task as part of this task.
@@ -202,13 +180,36 @@ module Spree
       end || candidates.first
     end
 
+    # Called once the last record has been processed, before the run is
+    # marked succeeded — for a summary tally of what the walk left alone.
+    def after_complete; end
+
+    private
+
+    # Rake tasks are defined by the Rakefile, which a web process never loads —
+    # a task fired from the dashboard has to load the engine's tasks itself.
+    #
+    # Loads the one file that defines the task, and only when it is not already
+    # defined. Both halves matter: re-loading a .rake file APPENDS its block to
+    # a task that already exists, so a second load makes that task run twice,
+    # and loading every file would do that to every task in the engine. The
+    # symptom is invisible until something counts what it did.
+    #
+    # @param task_name [String] the rake task about to be invoked
+    def load_engine_rake_tasks(task_name)
+      require 'rake'
+
+      return if ::Rake::Task.task_defined?(task_name)
+
+      ::Rake::Task.define_task(:environment) unless ::Rake::Task.task_defined?(:environment)
+
+      path = rake_file_defining(task_name)
+      load(path) if path
+    end
+
     def rake_files
       roots = Rails.application.railties.grep(Rails::Engine).map(&:root) + [Rails.root]
       roots.uniq.flat_map { |root| Dir.glob(File.join(root, 'lib/tasks/**/*.rake')).sort }
     end
-
-    # Called once the last record has been processed, before the run is
-    # marked succeeded — for a summary tally of what the walk left alone.
-    def after_complete; end
   end
 end

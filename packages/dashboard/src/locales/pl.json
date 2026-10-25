@@ -2754,7 +2754,7 @@
         "message": "Zadanie zatrzyma się w najbliższym punkcie kontrolnym. Wykonana już praca pozostaje — anulowanie jej nie cofa.",
         "title": "Anulować to uruchomienie?"
       },
-      "description": "Uruchamiaj poprawki danych, uzupełnienia i przebudowy indeksów dostarczone wraz z kodem sklepu. Każde uruchomienie jest zapisywane.",
+      "description": "Uruchamiaj kroki danych aktualizacji Spree i śledź ich postęp. Każde uruchomienie jest zapisywane.",
       "dry_run_badge": "Podgląd",
       "history": {
         "empty_title": "Brak uruchomień",
@@ -2770,8 +2770,7 @@
       "initiated_via": {
         "api": "Uruchomione przez API",
         "cli": "Uruchomione z wiersza poleceń",
-        "dashboard": "Uruchomione z panelu",
-        "inline": "Uruchomione przez Spree"
+        "dashboard": "Uruchomione z panelu"
       },
       "messages": {
         "canceled": "Anulowanie uruchomienia",

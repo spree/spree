@@ -2736,7 +2736,7 @@
         "message": "Die Aufgabe stoppt am nächsten Prüfpunkt. Bereits erledigte Arbeit bleibt bestehen — ein Abbruch macht sie nicht rückgängig.",
         "title": "Diesen Lauf abbrechen?"
       },
-      "description": "Führen Sie Datenkorrekturen, Nachbefüllungen und Neuindizierungen aus, die mit dem Code Ihres Shops ausgeliefert werden. Jeder Lauf wird aufgezeichnet.",
+      "description": "Führen Sie die Datenschritte eines Spree-Upgrades aus und verfolgen Sie ihren Fortschritt. Jeder Lauf wird aufgezeichnet.",
       "dry_run_badge": "Vorschau",
       "history": {
         "empty_title": "Noch keine Läufe",
@@ -2752,8 +2752,7 @@
       "initiated_via": {
         "api": "Über die API gestartet",
         "cli": "Über die Kommandozeile gestartet",
-        "dashboard": "Über das Dashboard gestartet",
-        "inline": "Von Spree gestartet"
+        "dashboard": "Über das Dashboard gestartet"
       },
       "messages": {
         "canceled": "Lauf wird abgebrochen",

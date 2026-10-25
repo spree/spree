@@ -131,7 +131,6 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
       get :index
 
       expect(json_response['data']).to be_empty
-      expect(json_response['meta']['upgrade_relevant']).to be(false)
     end
 
     # An upgraded store keeps its history, so it can see which releases it has
@@ -143,7 +142,6 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
 
       expect(json_response['data']).not_to be_empty
       expect(json_response['data']).to all(include('superseded' => true))
-      expect(json_response['meta']['upgrade_relevant']).to be(true)
     end
 
     # Without a stamp the boundary is a guess, and saying so is what lets the

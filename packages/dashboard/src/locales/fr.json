@@ -2736,7 +2736,7 @@
         "message": "La tâche s'arrête au prochain point de contrôle. Le travail déjà effectué est conservé — l'annulation ne le défait pas.",
         "title": "Annuler cette exécution ?"
       },
-      "description": "Exécutez les corrections de données, les remplissages et les réindexations livrés avec le code de votre boutique. Chaque exécution est enregistrée.",
+      "description": "Exécutez les étapes de données d'une mise à jour de Spree et suivez leur progression. Chaque exécution est enregistrée.",
       "dry_run_badge": "Aperçu",
       "history": {
         "empty_title": "Aucune exécution",
@@ -2752,8 +2752,7 @@
       "initiated_via": {
         "api": "Lancée via l'API",
         "cli": "Lancée en ligne de commande",
-        "dashboard": "Lancée depuis le tableau de bord",
-        "inline": "Lancée par Spree"
+        "dashboard": "Lancée depuis le tableau de bord"
       },
       "messages": {
         "canceled": "Annulation de l'exécution",

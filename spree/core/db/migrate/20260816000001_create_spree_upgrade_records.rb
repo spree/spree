@@ -9,12 +9,6 @@ class CreateSpreeUpgradeRecords < ActiveRecord::Migration[8.1]
       t.string :source, null: false
       t.datetime :completed_at, null: false
 
-      if t.respond_to?(:jsonb)
-        t.jsonb :metadata
-      else
-        t.json :metadata
-      end
-
       t.timestamps
     end
 

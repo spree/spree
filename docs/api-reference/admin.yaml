@@ -14080,7 +14080,6 @@ paths:
                   status: succeeded
                   dry_run: false
                   initiated_via: dashboard
-                  cursor:
                   tick_count: 0
                   tick_total:
                   error_class:
@@ -14090,12 +14089,10 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   task_name: capture_methods
-                  progress:
                   duration: 0.0
                   tallies: {}
                   arguments: {}
                   error_backtrace:
-                  cancelable: false
                   active: false
                   store_id:
                   admin_user_id:
@@ -14193,7 +14190,6 @@ paths:
                 status: enqueued
                 dry_run: true
                 initiated_via: dashboard
-                cursor:
                 tick_count: 0
                 tick_total:
                 error_class:
@@ -14203,12 +14199,10 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 task_name: capture_methods
-                progress:
                 duration: 0.0
                 tallies: {}
                 arguments: {}
                 error_backtrace:
-                cancelable: true
                 active: true
                 store_id: store_UkLWZg9DAJ
                 admin_user_id: adm_UkLWZg9DAJ
@@ -14293,7 +14287,6 @@ paths:
                 status: running
                 dry_run: false
                 initiated_via: api
-                cursor:
                 tick_count: 5
                 tick_total: 20
                 error_class:
@@ -14303,12 +14296,10 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 task_name: capture_methods
-                progress: 0.25
                 duration: 0.0
                 tallies: {}
                 arguments: {}
                 error_backtrace:
-                cancelable: true
                 active: true
                 store_id:
                 admin_user_id:
@@ -14387,7 +14378,6 @@ paths:
                 status: cancelling
                 dry_run: false
                 initiated_via: api
-                cursor:
                 tick_count: 0
                 tick_total:
                 error_class:
@@ -14397,12 +14387,10 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 task_name: capture_methods
-                progress:
                 duration: 0.0
                 tallies: {}
                 arguments: {}
                 error_backtrace:
-                cancelable: true
                 active: true
                 store_id:
                 admin_user_id:
@@ -64906,9 +64894,6 @@ components:
           type: boolean
         initiated_via:
           type: string
-        cursor:
-          type: string
-          nullable: true
         tick_count:
           type: number
         tick_total:
@@ -64932,9 +64917,6 @@ components:
           type: string
         task_name:
           type: string
-        progress:
-          type: number
-          nullable: true
         duration:
           type: number
           nullable: true
@@ -64945,8 +64927,6 @@ components:
         error_backtrace:
           type: string
           nullable: true
-        cancelable:
-          type: boolean
         active:
           type: boolean
         store_id:
@@ -64962,7 +64942,6 @@ components:
       - status
       - dry_run
       - initiated_via
-      - cursor
       - tick_count
       - tick_total
       - error_class
@@ -64972,12 +64951,10 @@ components:
       - created_at
       - updated_at
       - task_name
-      - progress
       - duration
       - tallies
       - arguments
       - error_backtrace
-      - cancelable
       - active
       - store_id
       - admin_user_id

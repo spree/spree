@@ -69,13 +69,7 @@ module Spree
       # Plan mode selects exactly what a real run executes, so a dry run after
       # bumping the gem lists every backfill the upgrade is about to perform.
       def eligible_manifests
-        Spree::Upgrade.available_manifests
-          .select { |manifest| Spree::Upgrade.compare(manifest[:to], target_version) <= 0 }
-          .map { |entry| load_manifest_yaml(entry) }
-      end
-
-      def load_manifest_yaml(entry)
-        YAML.safe_load_file(File.join(entry[:dir], 'manifest.yml'))
+        Spree::Upgrade.manifests.select { |manifest| Spree::Upgrade.compare(manifest['to'], target_version) <= 0 }
       end
 
       def run_full_walk(manifests)
@@ -177,7 +171,7 @@ module Spree
         puts "    Running #{step_label(step)}..."
 
         result = Spree::MaintenanceTasks::Start.call(
-          task_name: step['task_class'] || 'Spree::MaintenanceTasks::UpgradeStep',
+          task_name: Spree::Upgrade.task_class_name(step),
           arguments: step_arguments(step),
           initiated_via: 'cli',
           inline: true
@@ -207,7 +201,7 @@ module Spree
       # environment variables gets the ones the operator exported, so
       # `CONFIRM_NO_PEPPER=true bin/rake spree:upgrade` reaches it.
       def step_arguments(step)
-        return { 'step_id' => step['id'] } unless step['task_class']
+        return Spree::Upgrade.task_arguments(step) unless step['task_class']
 
         task_class = Spree::MaintenanceTask.find_registered(step['task_class'])
         task_class.respond_to?(:arguments_from_environment) ? task_class.arguments_from_environment : {}

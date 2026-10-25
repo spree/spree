@@ -1,5 +1,6 @@
 import { Can, Subject } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Progress,
   ProgressLabel,
@@ -19,7 +20,7 @@ import {
   useCancelMaintenanceTaskRun,
   useMaintenanceTaskRun,
 } from '../../../hooks/use-maintenance-tasks'
-import { runProgress, runTitle } from '../../../lib/maintenance-tasks'
+import { humanizeName, runProgress, runTitle } from '../../../lib/maintenance-tasks'
 
 export function RunDetailSheet({
   runId,
@@ -76,9 +77,7 @@ export function RunDetailSheet({
                     label={t(`admin.maintenance_tasks.status.${run.status}`)}
                   />
                   {run.dry_run && (
-                    <span className="rounded bg-muted px-2 py-0.5 text-muted-foreground text-xs">
-                      {t('admin.maintenance_tasks.dry_run_badge')}
-                    </span>
+                    <Badge variant="secondary">{t('admin.maintenance_tasks.dry_run_badge')}</Badge>
                   )}
                 </div>
 
@@ -105,7 +104,7 @@ export function RunDetailSheet({
                     <dl className="flex flex-col gap-1 text-sm">
                       {Object.entries(run.tallies).map(([key, count]) => (
                         <div key={key} className="flex justify-between gap-4">
-                          <dt className="text-muted-foreground">{humanizeTally(key)}</dt>
+                          <dt className="text-muted-foreground">{humanizeName(key)}</dt>
                           <dd className="tabular-nums">{count}</dd>
                         </div>
                       ))}
@@ -155,7 +154,7 @@ export function RunDetailSheet({
         {run && (
           <SheetFooter>
             <Can I="update" a={Subject.MaintenanceTaskRun}>
-              {run.cancelable && (
+              {run.active && (
                 <Button
                   type="button"
                   variant="destructive"
@@ -212,8 +211,4 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
       <dd>{children}</dd>
     </div>
   )
-}
-
-function humanizeTally(key: string): string {
-  return key.replace(/_/g, ' ').replace(/^./, (character) => character.toUpperCase())
 }

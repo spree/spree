@@ -27,15 +27,13 @@ export interface UpgradeStep {
   task_name: string
   /**
    * Arguments to start it with. Empty for a step that is its own task; carries
-   * `step_id` for the steps of released manifests, which share one wrapper.
+   * `step_id` for a step that names a rake task, since those share one runner.
    */
   arguments: Record<string, unknown>
   last_run: MaintenanceTaskRun | null
 }
 
 export interface UpgradeStepsMeta {
-  /** The release this installation is running. */
-  installed_version: string
   /** The boundary whose steps are already done, and where the list starts. */
   completed_version: string | null
   /**
@@ -47,9 +45,4 @@ export interface UpgradeStepsMeta {
   completed_version_recorded: boolean
   /** How many steps belong to releases this store has already been through. */
   superseded_step_count: number
-  /**
-   * False for a store installed fresh at this release — it has no historical
-   * data to convert, so there is no upgrade to show and `data` is empty.
-   */
-  upgrade_relevant: boolean
 }

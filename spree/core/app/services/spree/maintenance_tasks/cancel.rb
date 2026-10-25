@@ -18,7 +18,7 @@ module Spree
       # @param run [Spree::MaintenanceTaskRun]
       # @return [Spree::ServiceModule::Base::Result] the run
       def call(run:)
-        return failure(run, not_cancelable_error(run)) unless run.cancelable?
+        return failure(run, not_cancelable_error(run)) unless run.active?
 
         # A running run has a worker mid-batch, so it, not this service,
         # records that the run stopped.

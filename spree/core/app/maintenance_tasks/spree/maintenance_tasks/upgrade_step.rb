@@ -18,8 +18,6 @@ module Spree
 
       def process
         invoke_rake_task(manifest_step.fetch('task'))
-
-        tally(:completed_steps)
       end
 
       # The manifest entry this run is executing, resolved across every

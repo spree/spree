@@ -4465,17 +4465,6 @@ export class AdminClient {
   // ============================================
 
   /**
-   * Runs of a maintenance task — the progress to poll while one is working and
-   * the audit trail afterwards (who ran what, with which arguments, and how it
-   * ended).
-   *
-   * After `create()`, poll `get(id)` while `active` is true; `progress` is
-   * `0..1` when the task could count its collection and `null` when it could
-   * not, in which case show `tick_count` alone. `cancel` stops a run for good
-   * while `cancelable` is true. There is no delete: a run records work that
-   * touched merchant data.
-   */
-  /**
    * The upgrade manifest as an ordered checklist: what this release still
    * needs run, the operator notes each step carries, and how each last went.
    *
@@ -4492,6 +4481,16 @@ export class AdminClient {
       ),
   }
 
+  /**
+   * Runs of a maintenance task — the progress to poll while one is working and
+   * the audit trail afterwards (who ran what, with which arguments, and how it
+   * ended).
+   *
+   * After `create()`, poll `get(id)` while `active` is true; show `tick_count`
+   * against `tick_total`, or `tick_count` alone when the task could not count
+   * its collection. `cancel` stops an active run for good. There is no delete:
+   * a run records work that touched merchant data.
+   */
   readonly maintenanceTaskRuns = {
     list: (
       params?: ListParams & Record<string, unknown>,

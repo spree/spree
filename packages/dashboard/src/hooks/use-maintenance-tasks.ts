@@ -11,19 +11,13 @@ import { useEffect, useRef } from 'react'
 
 const RUN_POLL_INTERVAL_MS = 2000
 
-/** Statuses that mean the runner still has work to do, so keep polling. */
-export function isRunActive(status: string | undefined): boolean {
-  if (!status) return false
-  return ['enqueued', 'running', 'interrupted', 'cancelling'].includes(status)
-}
-
 /**
  * One run, polled while the runner is working.
  *
  * When a run this hook watched finishes, the run history and the upgrade
  * steps are marked stale: a maintenance task writes records
  * outside any tracked mutation, so nothing else would. Done in an effect on
- * the status changing, never from `refetchInterval` — that runs again on every
+ * the run going inactive, never from `refetchInterval` — that runs again on every
  * fetch, and the run history key covers this query too, so invalidating from
  * there refetches this run and invalidates again without end.
  */
@@ -35,22 +29,20 @@ export function useMaintenanceTaskRun(id: string | undefined) {
     queryKey: useResourceKey('maintenance-task-runs', id),
     queryFn: () => adminClient.maintenanceTaskRuns.get(id as string, { expand: ['admin_user'] }),
     enabled: !!id,
-    refetchInterval: (query) =>
-      isRunActive(query.state.data?.status) ? RUN_POLL_INTERVAL_MS : false,
+    refetchInterval: (query) => (query.state.data?.active ? RUN_POLL_INTERVAL_MS : false),
   })
 
-  const status = query.data?.status
-  const previousStatus = useRef(status)
+  const active = query.data?.active
+  const wasActive = useRef(active)
 
   useEffect(() => {
-    const finished =
-      isRunActive(previousStatus.current) && status !== undefined && !isRunActive(status)
-    previousStatus.current = status
+    const finished = wasActive.current === true && active === false
+    wasActive.current = active
     if (!finished) return
 
     queryClient.invalidateQueries({ queryKey: buildKey('maintenance-task-runs') })
     queryClient.invalidateQueries({ queryKey: buildKey('upgrade-steps') })
-  }, [status, queryClient, buildKey])
+  }, [active, queryClient, buildKey])
 
   return query
 }
@@ -64,9 +56,7 @@ export function useUpgradeSteps() {
     queryKey: useResourceKey('upgrade-steps'),
     queryFn: () => adminClient.upgradeSteps.list(),
     refetchInterval: (query) =>
-      query.state.data?.data.some((step) => isRunActive(step.last_run?.status ?? undefined))
-        ? RUN_POLL_INTERVAL_MS
-        : false,
+      query.state.data?.data.some((step) => step.last_run?.active) ? RUN_POLL_INTERVAL_MS : false,
   })
 }
 

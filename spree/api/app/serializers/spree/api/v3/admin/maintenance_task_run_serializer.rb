@@ -13,31 +13,26 @@ module Spree
                    status: [:string, enum: Spree::MaintenanceTaskRun.statuses, enum_type_name: 'MaintenanceTaskRunStatus'],
                    dry_run: :boolean,
                    initiated_via: :string,
-                   cursor: [:string, nullable: true],
                    tick_count: :number,
                    tick_total: [:number, nullable: true],
-                   progress: [:number, nullable: true],
                    duration: [:number, nullable: true],
                    tallies: 'Record<string, number>',
                    arguments: 'Record<string, unknown>',
                    error_class: [:string, nullable: true],
                    error_message: [:string, nullable: true],
                    error_backtrace: [:string, nullable: true],
-                   cancelable: :boolean,
                    active: :boolean,
                    store_id: [:string, nullable: true],
                    admin_user_id: [:string, nullable: true],
                    started_at: [:string, nullable: true],
                    ended_at: [:string, nullable: true]
 
-          attributes :status, :dry_run, :initiated_via, :cursor,
+          attributes :status, :dry_run, :initiated_via,
                      :tick_count, :tick_total, :error_class, :error_message,
                      :started_at, :ended_at, :created_at, :updated_at
 
           # The task's short name, as `GET /upgrade_steps` gives it.
           attribute :task_name, &:task_api_type
-
-          attribute :progress, &:progress
 
           # to_f before rounding: the column is a decimal, and a BigDecimal
           # serializes as a quoted string — a client reading `duration` wants a
@@ -61,7 +56,6 @@ module Spree
             run.error_backtrace if params[:show_backtrace]
           end
 
-          attribute :cancelable, &:cancelable?
           attribute :active, &:active?
 
           attribute :store_id do |run|

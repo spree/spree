@@ -1,10 +1,10 @@
 import type { MaintenanceTaskRun } from '@spree/admin-sdk'
 
 /**
- * A task's short name as a label — `backfill_order_markets` reads as
- * "Backfill order markets" in a table cell.
+ * A snake_case name as a label — `backfill_order_markets` reads as
+ * "Backfill order markets".
  */
-export function taskShortName(taskName: string): string {
+export function humanizeName(taskName: string): string {
   return taskName.replaceAll('_', ' ').replace(/^./, (character) => character.toUpperCase())
 }
 
@@ -14,7 +14,7 @@ export function taskShortName(taskName: string): string {
  */
 export function runTitle(run: Pick<MaintenanceTaskRun, 'task_name' | 'arguments'>): string {
   const stepId = run.task_name === 'upgrade_step' ? run.arguments?.step_id : undefined
-  return taskShortName(typeof stepId === 'string' && stepId !== '' ? stepId : run.task_name)
+  return humanizeName(typeof stepId === 'string' && stepId !== '' ? stepId : run.task_name)
 }
 
 /**

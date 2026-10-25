@@ -28,9 +28,9 @@ module Spree
         # included.
         @run = Spree::MaintenanceTaskRun.find_by(id: run_id)
         return if @run.nil?
-        # `cancelling` is let through: a job re-queued after its worker
+        # `cancelling` counts as active: a job re-queued after its worker
         # stopped is the only execution that will ever answer it.
-        return unless @run.status.in?(%w[enqueued running interrupted cancelling])
+        return unless @run.active?
 
         @task_class = @run.task_class
         return unfindable_task if @task_class.nil?
@@ -95,13 +95,8 @@ module Spree
       end
 
       def refuse_duplicate
-        run.update_columns(
-          status: 'cancelled',
-          ended_at: Time.current,
-          error_class: 'Spree::MaintenanceTasks::AlreadyRunning',
-          error_message: "#{run.task_api_type} was already running, so this run did not start",
-          updated_at: Time.current
-        )
+        close_run('cancelled', 'Spree::MaintenanceTasks::AlreadyRunning',
+                  "#{run.task_api_type} was already running, so this run did not start")
         publish('cancelled')
       end
 
@@ -127,8 +122,6 @@ module Spree
           return
         end
 
-        relation_backed = task.collection.is_a?(ActiveRecord::Relation)
-
         loop do
           break if @halted
 
@@ -138,19 +131,12 @@ module Spree
           process_batch(items)
           break if @halted
 
-          # One cursor value, written to the row and to the continuation:
-          # a relation resumes after the last id seen, an array after the last
-          # index consumed.
-          cursor = if relation_backed
-                     task.cursor_for(items.last)
-                   else
-                     (step.cursor.presence || 0).to_i + items.size
-                   end
-
-          # Persisted before the checkpoint — an interruption between these
-          # two lines must not lose the batch that has already been applied.
-          persist_progress(cursor: cursor.to_s, count: items.size)
-          step.set!(cursor.to_s)
+          # One cursor value, the last id seen, written to the row and to the
+          # continuation. Persisted before the checkpoint — an interruption
+          # between these two lines must not lose the batch already applied.
+          cursor = items.last.id.to_s
+          persist_progress(cursor: cursor, count: items.size)
+          step.set!(cursor)
 
           check_operator_request
           check_time_slice(step)
@@ -193,22 +179,13 @@ module Spree
       # Cursor-paged rather than find_each: the cursor has to survive between
       # executions, which an in-memory batch enumerator cannot do.
       def next_batch(cursor)
-        items = task.collection
-
-        if items.is_a?(ActiveRecord::Relation)
-          scope = items
-          scope = scope.where(items.arel_table[items.primary_key].gt(cursor)) if cursor.present?
-          scope.limit(task.class.batch_size).to_a
-        else
-          offset = cursor.to_i
-          Array(items)[offset, task.class.batch_size] || []
-        end
+        scope = task.collection
+        scope = scope.where(scope.arel_table[scope.primary_key].gt(cursor)) if cursor.present?
+        scope.limit(task.class.batch_size).to_a
       end
 
       # update_columns rather than update!: progress is written on every batch
-      # and carries no validation of its own, and skipping the lock_version
-      # bump keeps the runner from invalidating its own record between
-      # batches.
+      # and carries no validation of its own.
       def persist_progress(cursor:, count:)
         run.update_columns(
           cursor: cursor,
@@ -217,7 +194,6 @@ module Spree
           time_running: accumulated_time,
           updated_at: Time.current
         )
-        publish('progress')
       end
 
       # Cancel is a request written to the row by the Cancel service; the
@@ -294,13 +270,14 @@ module Spree
       # a deploy that dropped it. Recorded rather than raised: retrying cannot
       # bring the class back.
       def unfindable_task
-        @run.update_columns(
-          status: 'errored',
-          ended_at: Time.current,
-          error_class: 'Spree::MaintenanceTasks::TaskNotRegistered',
-          error_message: "#{@run.task_name} is not a registered maintenance task",
-          updated_at: Time.current
-        )
+        close_run('errored', 'Spree::MaintenanceTasks::TaskNotRegistered',
+                  "#{run.task_name} is not a registered maintenance task")
+      end
+
+      # Ends a run that never started work, so there is nothing to tally.
+      def close_run(status, error_class, error_message)
+        run.update_columns(status: status, ended_at: Time.current, error_class: error_class,
+                           error_message: error_message, updated_at: Time.current)
       end
 
       # Summed, not replaced: a task instance counts only what the current

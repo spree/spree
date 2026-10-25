@@ -14,11 +14,7 @@ import {
 import { CheckIcon, ChevronRightIcon, ExternalLinkIcon, PlayIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  isRunActive,
-  useStartMaintenanceTask,
-  useUpgradeSteps,
-} from '../../../hooks/use-maintenance-tasks'
+import { useStartMaintenanceTask, useUpgradeSteps } from '../../../hooks/use-maintenance-tasks'
 
 interface Boundary {
   from: string
@@ -97,7 +93,7 @@ function BoundaryCard({
   const done = superseded
     ? steps.length
     : steps.filter((step) => step.last_run?.status === 'succeeded').length
-  const busy = steps.some((step) => isRunActive(step.last_run?.status ?? undefined))
+  const busy = steps.some((step) => step.last_run?.active)
   const nextStep = steps.find((step) => step.last_run?.status !== 'succeeded')
 
   async function runStep(step: UpgradeStep) {
@@ -241,7 +237,7 @@ function StepRow({
   // through, so it counts as done whether or not a run row exists for it —
   // most were run long before runs were recorded.
   const succeeded = superseded || run?.status === 'succeeded'
-  const active = isRunActive(run?.status ?? undefined)
+  const active = run?.active ?? false
 
   return (
     <div className="rounded-md border border-transparent hover:border-border">

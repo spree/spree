@@ -44,8 +44,6 @@ module Spree
 
         def process
           with_environment { invoke_rake_task(self.class.rake_task_name) }
-
-          tally(:completed)
         end
 
         private
