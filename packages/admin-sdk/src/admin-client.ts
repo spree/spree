@@ -685,7 +685,6 @@ import type {
   InvitationAcceptanceLink,
   LineItem,
   Locale,
-  MaintenanceTask,
   MaintenanceTaskRun,
   Market,
   Media,
@@ -4464,27 +4463,6 @@ export class AdminClient {
   // ============================================
   // Maintenance tasks
   // ============================================
-
-  /**
-   * Operator-run data work — backfills, reindexes, bulk corrections
-   * (docs/plans/6.0-maintenance-tasks.md). Tasks are deployed Ruby classes
-   * rather than records: `list()` returns what this installation can run,
-   * each entry carrying the `parameters` schema a run form is built from,
-   * whether it `supports_dry_run`, and its `active_run` / `last_run`.
-   *
-   * A task is addressed by its short `name` (`capture_methods`), so pass that to `get()`.
-   */
-  readonly maintenanceTasks = {
-    list: (options?: RequestOptions): Promise<{ data: MaintenanceTask[] }> =>
-      this.request<{ data: MaintenanceTask[] }>('GET', '/maintenance_tasks', options),
-
-    get: (name: string, options?: RequestOptions): Promise<{ data: MaintenanceTask }> =>
-      this.request<{ data: MaintenanceTask }>(
-        'GET',
-        `/maintenance_tasks/${encodeURIComponent(name)}`,
-        options,
-      ),
-  }
 
   /**
    * Runs of a maintenance task — the progress to poll while one is working and

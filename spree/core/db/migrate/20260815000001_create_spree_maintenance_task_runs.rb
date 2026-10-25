@@ -20,7 +20,6 @@ class CreateSpreeMaintenanceTaskRuns < ActiveRecord::Migration[8.1]
       t.string :job_id
       t.string :initiated_via, null: false
 
-      t.references :parent_run, null: true
       t.references :store, null: true
       t.references :admin_user, null: true
       t.references :api_key, null: true

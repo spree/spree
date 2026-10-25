@@ -28,10 +28,6 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
 
       def collection = Spree::Product.order(:id)
 
-      def after_start
-        raise ArgumentError, 'start failed' if self.class.fail_in == :after_start
-      end
-
       def after_complete
         raise ArgumentError, 'complete failed' if self.class.fail_in == :after_complete
       end
@@ -60,7 +56,6 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
     SpecMaintenanceTask.seconds_per_item = nil
     SpecMaintenanceTask.statuses_seen = []
     SpecMaintenanceTask.fail_in = nil
-    SpecMaintenanceTask.run_time_limit = Spree::MaintenanceTask.run_time_limit
     Spree.maintenance_tasks << 'SpecMaintenanceTask'
   end
 
@@ -145,24 +140,6 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       described_class.perform_now(run.id)
 
       expect(run.reload).to be_resumable
-    end
-  end
-
-  describe 'report_on' do
-    let!(:products) { create_list(:product, 2, store: store) }
-
-    before do
-      SpecMaintenanceTask.report_on(ArgumentError)
-      SpecMaintenanceTask.raise_on = Spree::Product.order(:id).first.id
-    end
-
-    it 'skips the failing record and finishes the run' do
-      run = start_run
-      described_class.perform_now(run.id)
-
-      expect(run.reload).to be_succeeded
-      expect(run.tallies['reported_errors']).to eq(1)
-      expect(SpecMaintenanceTask.processed.size).to eq(1)
     end
   end
 
@@ -321,7 +298,7 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
   describe 'a callback that fails' do
     let!(:products) { create_list(:product, 2, store: store) }
 
-    %i[after_start after_complete].each do |callback|
+    %i[after_complete].each do |callback|
       it "records a failing #{callback} as an error instead of retrying" do
         SpecMaintenanceTask.fail_in = callback
         run = start_run
@@ -347,13 +324,26 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       expect(run.reload).to be_cancelled
       expect(SpecMaintenanceTask.processed.size).to eq(2)
     end
+
+    # The last checkpoint has passed, so only the final status write can
+    # still see the request.
+    it 'keeps a cancellation that arrives while the run finishes' do
+      run = start_run
+      allow_any_instance_of(SpecMaintenanceTask).to receive(:after_complete) do
+        Spree::MaintenanceTaskRun.where(id: run.id).update_all(status: 'cancelling')
+      end
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload).to be_cancelled
+    end
   end
 
   describe 'an inline run' do
     let!(:products) { create_list(:product, 4, store: store) }
 
     it 'finishes in one go instead of handing the rest to a worker' do
-      SpecMaintenanceTask.run_time_limit = 0.seconds
+      stub_const('Spree::MaintenanceTask::MAX_RUN_TIME', 0.seconds)
       run = start_run(inline: true)
 
       expect(run.reload).to be_succeeded
@@ -395,7 +385,7 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
     end
 
     it 'reports itself running again once it resumes after its time slice' do
-      SpecMaintenanceTask.run_time_limit = 0.seconds
+      stub_const('Spree::MaintenanceTask::MAX_RUN_TIME', 0.seconds)
       run = start_run
 
       described_class.perform_later(run.id)

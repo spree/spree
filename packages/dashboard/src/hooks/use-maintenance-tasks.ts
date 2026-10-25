@@ -18,26 +18,10 @@ export function isRunActive(status: string | undefined): boolean {
 }
 
 /**
- * The tasks this installation can run. Task classes only change on deploy, so
- * this refetches on the poll interval only while a run of any task is active —
- * that is what keeps each card's `active_run` badge honest.
- */
-export function useMaintenanceTasks() {
-  return useQuery({
-    queryKey: useResourceKey('maintenance-tasks'),
-    queryFn: () => adminClient.maintenanceTasks.list(),
-    refetchInterval: (query) =>
-      query.state.data?.data.some((task) => isRunActive(task.active_run?.status ?? undefined))
-        ? RUN_POLL_INTERVAL_MS
-        : false,
-  })
-}
-
-/**
  * One run, polled while the runner is working.
  *
- * When a run this hook watched finishes, the task list, the run history and
- * the upgrade steps are marked stale: a maintenance task writes records
+ * When a run this hook watched finishes, the run history and the upgrade
+ * steps are marked stale: a maintenance task writes records
  * outside any tracked mutation, so nothing else would. Done in an effect on
  * the status changing, never from `refetchInterval` — that runs again on every
  * fetch, and the run history key covers this query too, so invalidating from
@@ -64,7 +48,6 @@ export function useMaintenanceTaskRun(id: string | undefined) {
     previousStatus.current = status
     if (!finished) return
 
-    queryClient.invalidateQueries({ queryKey: buildKey('maintenance-tasks') })
     queryClient.invalidateQueries({ queryKey: buildKey('maintenance-task-runs') })
     queryClient.invalidateQueries({ queryKey: buildKey('upgrade-steps') })
   }, [status, queryClient, buildKey])
@@ -90,7 +73,7 @@ export function useUpgradeSteps() {
 export function useStartMaintenanceTask() {
   return useResourceMutation<MaintenanceTaskRun, Error, MaintenanceTaskRunCreateParams>({
     mutationFn: (params) => adminClient.maintenanceTaskRuns.create(params),
-    invalidate: [['maintenance-tasks'], ['maintenance-task-runs'], ['upgrade-steps']],
+    invalidate: [['maintenance-task-runs'], ['upgrade-steps']],
     successMessage: i18n.t('admin.maintenance_tasks.messages.started'),
     errorMessage: i18n.t('admin.maintenance_tasks.messages.start_failed'),
   })
@@ -119,7 +102,7 @@ function useRunControl(action: 'pause' | 'resume' | 'cancel', messageKey: string
 
   return useResourceMutation<MaintenanceTaskRun, Error, string>({
     mutationFn: (id) => adminClient.maintenanceTaskRuns[action](id),
-    invalidate: [['maintenance-tasks'], ['maintenance-task-runs'], ['upgrade-steps']],
+    invalidate: [['maintenance-task-runs'], ['upgrade-steps']],
     successMessage: i18n.t(`admin.maintenance_tasks.messages.${messageKey}`),
     errorMessage: i18n.t('admin.errors.generic'),
     // Merged rather than replaced: the control endpoints return the run

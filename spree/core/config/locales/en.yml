@@ -1032,26 +1032,6 @@ en:
     locale_not_supported_by_market: is not offered by the chosen market
     locale_not_supported_by_store: is not supported by this store
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
-    maintenance_tasks:
-      upgrade:
-        backfill_order_markets:
-          description: Assign a market to orders placed before markets existed
-        capture_methods:
-          description: Convert payment method auto capture into capture methods
-        deliveries:
-          description: Create a delivery for every tracked fulfillment
-        order_coupon_codes:
-          description: Copy coupon codes onto placed orders
-        promotion_option_value_rules:
-          description: Rewrite Option Value promotion rules
-        returns:
-          description: Move return authorizations onto the Return and Exchange models
-        stripe_webhook_keys:
-          description: Move Stripe webhook signing secrets onto the gateway
-        users_to_customers:
-          description: Move users onto the gem-owned customer model
-      upgrade_step:
-        description: Run one step of the upgrade manifest
     manual: Manual
     market: Market
     me_no_current_user: No admin user authenticated this request

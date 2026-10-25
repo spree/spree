@@ -87,47 +87,6 @@ RSpec.describe Spree::MaintenanceTaskRun do
     end
   end
 
-  describe '#display_arguments' do
-    before do
-      stub_const('MaskedArgumentTask', Class.new(Spree::MaintenanceTask) do
-        def self.name = 'MaskedArgumentTask'
-        attribute :token, :string
-        attribute :label, :string
-        mask_attribute :token
-      end)
-      Spree.maintenance_tasks << 'MaskedArgumentTask'
-    end
-
-    after { Spree.maintenance_tasks.delete('MaskedArgumentTask') }
-
-    it 'hides values the task marked as masked' do
-      run = build(:maintenance_task_run, task_name: 'MaskedArgumentTask',
-                                         arguments: { 'token' => 'secret', 'label' => 'visible' })
-
-      expect(run.display_arguments['token']).to eq(Spree::MaintenanceTask::MASKED_VALUE)
-      expect(run.display_arguments['label']).to eq('visible')
-    end
-
-    # The stored value is the run's own record of what it did, and a rerun
-    # needs it — masking is a display concern only.
-    # Which values are secret is declared on the class, so once it is gone
-    # nothing says which values are safe to show.
-    it 'hides every value once the task is no longer registered' do
-      run = build(:maintenance_task_run, task_name: 'MaskedArgumentTask',
-                                         arguments: { 'token' => 'secret', 'label' => 'visible' })
-      Spree.maintenance_tasks.delete('MaskedArgumentTask')
-
-      expect(run.display_arguments.values).to all(eq(Spree::MaintenanceTask::MASKED_VALUE))
-    end
-
-    it 'leaves the stored arguments untouched' do
-      run = build(:maintenance_task_run, task_name: 'MaskedArgumentTask', arguments: { 'token' => 'secret' })
-      run.display_arguments
-
-      expect(run.arguments['token']).to eq('secret')
-    end
-  end
-
   describe '#task_class' do
     it 'is nil when the task is no longer registered' do
       expect(build(:maintenance_task_run, task_name: 'Gone::Task').task_class).to be_nil

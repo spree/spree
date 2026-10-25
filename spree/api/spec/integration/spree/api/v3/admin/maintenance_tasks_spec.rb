@@ -7,50 +7,6 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
-  path '/api/v3/admin/maintenance_tasks' do
-    get 'List maintenance tasks' do
-      tags 'Maintenance Tasks'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description <<~DESC
-        Returns the maintenance tasks this installation can run — data
-        corrections, backfills and reindexes that ship with the store's code
-        (see `docs/plans/6.0-maintenance-tasks.md`).
-
-        A task is a deployed class rather than a record, so it is identified by
-        its short `name` (`capture_methods`). Each entry carries the `parameters` schema a run form is
-        built from, whether it `supports_dry_run`, whether its rows come from a
-        `csv` upload, and how its last run went.
-      DESC
-      admin_scope :read, :maintenance_tasks
-
-      admin_sdk_example 'maintenance-tasks/list'
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true,
-                description: 'Bearer token for admin authentication'
-
-      response '200', 'maintenance tasks found' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-
-        run_test! do |response|
-          data = JSON.parse(response.body)
-          expect(data['data']).to be_an(Array)
-          expect(data['data'].first).to include('name', 'parameters', 'supports_dry_run')
-        end
-      end
-
-      response '401', 'unauthorized' do
-        let(:'x-spree-api-key') { 'invalid' }
-        let(:Authorization) { 'Bearer invalid' }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-    end
-  end
-
   path '/api/v3/admin/maintenance_task_runs' do
     get 'List maintenance task runs' do
       tags 'Maintenance Tasks'

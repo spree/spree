@@ -36,19 +36,9 @@ module Spree
     TERMINAL_STATUSES = %w[succeeded errored cancelled].freeze
     INITIATED_VIA = %w[dashboard api cli inline].freeze
 
-    # The file a CSV task reads its rows from. Private storage: an uploaded
-    # spreadsheet is merchant data, and a run keeps it as the record of what
-    # was applied.
-    has_one_attached :csv_file, service: Spree.private_storage_service_name
-
-    belongs_to :parent_run, class_name: 'Spree::MaintenanceTaskRun', optional: true,
-                            inverse_of: :child_runs
     belongs_to :store, class_name: 'Spree::Store', optional: true
     belongs_to :admin_user, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :api_key, class_name: 'Spree::ApiKey', optional: true
-
-    has_many :child_runs, class_name: 'Spree::MaintenanceTaskRun', foreign_key: :parent_run_id,
-                          dependent: :nullify, inverse_of: :parent_run
 
     validates :task_name, presence: true
     validates :initiated_via, presence: true, inclusion: { in: INITIATED_VIA }
@@ -119,22 +109,6 @@ module Spree
       return time_running unless status.in?(%w[running pausing cancelling]) && started_at.present?
 
       time_running + (Time.current - (updated_at || started_at))
-    end
-
-    # Arguments with masked values replaced, for anything that renders a run:
-    # the API, the dashboard and the CLI all read through here so a secret
-    # passed as a task parameter is never echoed back.
-    #
-    # Which values are secret is declared on the task class, so once a task is
-    # unregistered nothing says which are safe to show: every value is masked.
-    def display_arguments
-      values = arguments.presence || {}
-      klass = task_class
-
-      values.each_with_object({}) do |(key, value), result|
-        masked = klass.nil? || klass.masked_attributes.include?(key.to_s)
-        result[key] = masked ? Spree::MaintenanceTask::MASKED_VALUE : value
-      end
     end
   end
 end

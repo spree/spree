@@ -17,14 +17,12 @@ module Spree
             body.attribute :task_name, :string,
               required: true, on: :create,
               example: 'capture_methods',
-              description: 'The task to run, as `name` from `GET /maintenance_tasks`.'
+              description: 'The task to run, as `task_name` from `GET /upgrade_steps`.'
             body.attribute :arguments, :hash,
               description: "Values for the task's declared parameters, keyed by parameter name. " \
                            'A key the task does not declare is rejected.'
             body.attribute :dry_run, :boolean,
-              description: 'Report what would change without writing. Honored only by tasks whose `supports_dry_run` is true.'
-            body.attribute :csv_file, :string,
-              description: 'The `signed_id` of an uploaded CSV, for tasks whose `csv` is true. Rejected by the rest.'
+              description: 'Report what would change without writing. Ignored by tasks that do not support a dry run, which run for real.'
           end
 
           # POST /api/v3/admin/maintenance_task_runs
@@ -42,8 +40,7 @@ module Spree
               store: current_store,
               admin_user: try_spree_current_user,
               api_key: current_api_key,
-              initiated_via: initiated_via,
-              csv_file: body[:csv_file].presence
+              initiated_via: initiated_via
             )
 
             if result.success?
@@ -82,16 +79,6 @@ module Spree
           end
 
           private
-
-          # An invalid signed id is the caller's mistake, not a server fault —
-          # the same 422 the imports upload path returns.
-          rescue_from ActiveSupport::MessageVerifier::InvalidSignature do
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: 'Invalid csv_file signed id',
-              status: :unprocessable_content
-            )
-          end
 
           # A secret key belongs to an integration rather than a person, so the
           # two are recorded distinctly — "who ran this" has a different answer

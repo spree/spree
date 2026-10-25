@@ -18,6 +18,16 @@
 
 **Plan amended:** `6.0-beta-release.md` (Key Decisions 2 and 3).
 
+## 2026-10-25: Maintenance tasks ship for upgrade steps only
+
+**Context:** The maintenance tasks plan built a general-purpose surface for operator-run data work: a dashboard list of tasks with a form built from each task's parameters, endpoints to list and describe tasks, CSV input, throttling, per-record error reporting, masked arguments, preconditions and parent runs for an orchestrating walk. By release, only the upgrade manifests register tasks, and none of those uses any of it. The unused surface was most of the pull request's size and still needed review, tests and documentation.
+
+**Decision:** 6.0 ships maintenance tasks as the runner for upgrade steps. Removed before release: the dashboard's Tasks tab and run form, `GET /maintenance_tasks` and its SDK methods, `csv_collection` and the run's CSV attachment, `throttle_on`, `report_on`, `mask_attribute`, `precondition`, `description`, `max_run_time`, the `after_start`/`after_pause`/`after_interrupt`/`after_cancel`/`after_error` hooks, `parent_run` and `spree:maintenance_tasks:list`. Kept: the runner and its checkpoints, run history, pause/resume/cancel, dry run, batch size, step parameters, `after_complete`, the permissions and `spree:maintenance_tasks:perform`.
+
+**Consequences:** A task an extension or host wants to run outside an upgrade has no dashboard surface; adding one back is a new decision, built when there is a task that needs it. Runs no longer mask argument values, since no step takes a secret. The guide at `docs/developer/how-to/maintenance-tasks.mdx` now documents upgrade steps.
+
+**Plan amended:** `6.0-maintenance-tasks.md` (header note).
+
 ## 2026-10-25: An upgrade step is a rake task or a task class, never both
 
 **Context:** The 2026-08-15 maintenance tasks decision made every 5.6 → 6.0 upgrade step a task class. In practice most steps are one-pass updates that kept their rake body, so each step was declared in up to five places: the manifest, the rake task, a ten-line wrapper class naming that rake task, a line in the engine's registration list and a translated description repeating the manifest name. Six steps went further and carried the same logic twice, once in the rake task and once in the class, so a fix to one could miss the other.

@@ -12,10 +12,8 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       def self.name = 'TestMaintenance::Runs'
       supports_dry_run
       attribute :label, :string
-      attribute :token, :string
       attribute :product_id, :string
       validates :label, presence: true
-      mask_attribute :token
       def collection = Spree::Product.order(:id)
       def process(product) = nil
     end
@@ -95,16 +93,6 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
 
       expect(response).to have_http_status(:unprocessable_content)
     end
-
-    # A run is reproducible only if it kept what it was given, but the value
-    # must never travel back out.
-    it 'masks sensitive arguments in the response' do
-      post :create, params: { task_name: 'runs',
-                              arguments: { label: 'nightly', token: 'secret' } }
-
-      expect(json_response['arguments']['token']).to eq(Spree::MaintenanceTask::MASKED_VALUE)
-      expect(Spree::MaintenanceTaskRun.last.arguments['token']).to eq('secret')
-    end
   end
 
   describe 'GET #index' do
@@ -164,56 +152,6 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       expect(json_response['progress']).to eq(0.25)
       expect(json_response['tick_count']).to eq(5)
       expect(json_response['active']).to be(true)
-    end
-  end
-
-  describe 'a task whose rows come from a CSV' do
-    let(:csv_task) do
-      Class.new(Spree::MaintenanceTask) do
-        def self.name = 'TestMaintenance::FromCsv'
-        csv_collection
-        def process(row) = nil
-      end
-    end
-
-    before do
-      stub_const('TestMaintenance::FromCsv', csv_task)
-      Spree.maintenance_tasks << 'TestMaintenance::FromCsv'
-    end
-
-    after { Spree.maintenance_tasks.delete('TestMaintenance::FromCsv') }
-
-    let(:signed_id) do
-      ActiveStorage::Blob.create_and_upload!(
-        io: StringIO.new("sku,price\nA,1.00\n"), filename: 'p.csv', content_type: 'text/csv'
-      ).signed_id
-    end
-
-    it 'is advertised as needing a file' do
-      get :index
-
-      # Discovery lives on the tasks controller, but the flag is what the run
-      # dialog reads to decide whether to ask for one.
-      expect(Spree::MaintenanceTask.find_registered('TestMaintenance::FromCsv').collection_kind).to eq(:csv)
-    end
-
-    it 'keeps the uploaded file on the run' do
-      post :create, params: { task_name: 'from_csv', csv_file: signed_id }
-
-      expect(response).to have_http_status(:created)
-      expect(Spree::MaintenanceTaskRun.last.csv_file).to be_attached
-    end
-
-    it 'refuses a run with no file' do
-      post :create, params: { task_name: 'from_csv' }
-
-      expect(response).to have_http_status(:unprocessable_content)
-    end
-
-    it 'refuses an invalid signed id rather than failing the request' do
-      post :create, params: { task_name: 'from_csv', csv_file: 'not-a-signed-id' }
-
-      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

@@ -60,13 +60,13 @@ module Spree
       def start
         return if run.running?
 
-        run.update!(
-          status: 'running',
-          started_at: run.started_at || Time.current,
-          job_id: job_id,
-          tick_total: run.tick_total || safe_count
-        )
-        task.after_start
+        started = write_status('running', from: %w[enqueued interrupted],
+                                          started_at: run.started_at || Time.current,
+                                          job_id: job_id,
+                                          tick_total: run.tick_total || safe_count)
+        # An operator paused or cancelled the run after the check above.
+        return check_operator_request unless started
+
         publish('started')
       rescue StandardError => e
         record_error(e)
@@ -126,14 +126,11 @@ module Spree
           return
         end
 
-        return process_csv(step) if task.csv_collection?
-
         relation_backed = task.collection.is_a?(ActiveRecord::Relation)
 
         loop do
           break if @halted
 
-          wait_for_throttles
           items = next_batch(step.cursor)
           break if items.empty?
 
@@ -170,47 +167,13 @@ module Spree
         return if @halted
 
         task.after_complete
-        write_status('succeeded', ended_at: Time.current, tallies: merged_tallies)
+        return check_operator_request unless write_status('succeeded', from: 'running',
+                                                                       ended_at: Time.current,
+                                                                       tallies: merged_tallies)
+
         publish('succeeded')
       rescue StandardError => e
         record_error(e)
-      end
-
-      # CSV rows cursor by row number: the file is re-read on a resume, but
-      # rows at or below the cursor are skipped, so progress is monotonic
-      # without holding the parsed file across executions.
-      def process_csv(step)
-        rows = task.csv_rows
-        start = step.cursor.to_i
-        batch = []
-
-        rows.each_with_index do |row, index|
-          number = index + 1
-          next if number <= start
-          break if @halted
-
-          batch << [number, row]
-          next if batch.size < task.class.batch_size
-
-          apply_csv_batch(step, batch)
-          batch = []
-          break if @halted
-        end
-
-        apply_csv_batch(step, batch) if batch.any? && !@halted
-      end
-
-      def apply_csv_batch(step, batch)
-        wait_for_throttles
-        process_batch(batch.map(&:last))
-        return if @halted
-
-        cursor = batch.last.first
-        persist_progress(cursor: cursor.to_s, count: batch.size)
-        step.set!(cursor.to_s)
-
-        check_operator_request
-        check_time_slice(step)
       end
 
       # A no_collection task is one unit of work: no cursor, no partial
@@ -223,14 +186,7 @@ module Spree
       end
 
       def process_batch(items)
-        items.each do |item|
-          task.process(item)
-        rescue StandardError => e
-          raise e unless reportable?(e)
-
-          Rails.error.report(e, handled: true, severity: severity_for(e))
-          task.tally(:reported_errors)
-        end
+        items.each { |item| task.process(item) }
       end
 
       # Cursor-paged rather than find_each: the cursor has to survive between
@@ -272,66 +228,47 @@ module Spree
       # throttle would make a fast task ignore a pause altogether — the
       # batches would all land inside one interval.
       def check_operator_request
-        case run.class.where(id: run.id).pick(:status)
+        requested = run.class.where(id: run.id).pick(:status)
+
+        case requested
         when 'pausing', 'paused'
-          write_status('paused', time_running: accumulated_time)
-          task.after_pause
+          # A cancel can replace the pause between the read and the write.
+          return check_operator_request unless write_status('paused', from: requested,
+                                                                      time_running: accumulated_time)
+
           publish('paused')
           @halted = true
         when 'cancelling', 'cancelled'
-          write_status('cancelled', ended_at: Time.current, time_running: accumulated_time)
-          task.after_cancel
+          write_status('cancelled', from: requested, ended_at: Time.current, time_running: accumulated_time)
           publish('cancelled')
           @halted = true
         end
       end
 
       # The control services write to the same row this job holds in memory,
-      # so the runner's copy is stale by construction whenever an operator has
-      # acted. Reload before writing rather than carrying a lock_version the
-      # operator was never going to respect — the runner is the only writer of
-      # the resulting state, so there is nothing here to lose a race with.
-      def write_status(status, **attributes)
+      # so the write only lands while the row is still in the status the
+      # runner expects. Otherwise an operator's pause or cancel, written
+      # between the runner's read and its write, would be overwritten.
+      #
+      # @return [Boolean] whether the row was in an expected status
+      def write_status(status, from:, **attributes)
+        written = run.class.where(id: run.id, status: from).
+                  update_all(status: status, updated_at: Time.current, **attributes)
         run.reload
-        run.update!(status: status, **attributes)
+        written.positive?
       end
 
       def check_time_slice(step)
         return if @inline
-        return if Time.current - @execution_started_at < task.class.run_time_limit
+        return if Time.current - @execution_started_at < Spree::MaintenanceTask::MAX_RUN_TIME
 
-        write_status('interrupted', time_running: accumulated_time)
-        task.after_interrupt
+        return check_operator_request unless write_status('interrupted', from: 'running',
+                                                                         time_running: accumulated_time)
+
         publish('interrupted')
         # Raises Continuation::Interrupt, which inherits Exception and is
         # never caught by the rescues above.
         interrupt!(reason: :run_time_limit)
-      end
-
-      # Throttles hold the execution rather than re-queueing it: Solid Queue's
-      # polling granularity would round a short backoff up to something much
-      # coarser than the condition needs.
-      def wait_for_throttles
-        task.class.throttle_conditions.each do |throttle|
-          next unless instance_exec_condition(throttle[:condition])
-
-          backoff = throttle[:backoff]
-          backoff = backoff.call if backoff.respond_to?(:call)
-          sleep([backoff.to_f, task.class.run_time_limit.to_f].min)
-        end
-      end
-
-      def instance_exec_condition(condition)
-        condition.arity.zero? ? task.instance_exec(&condition) : condition.call(task)
-      end
-
-      def reportable?(error)
-        task.class.reported_errors.any? { |entry| error.is_a?(entry[:class]) }
-      end
-
-      def severity_for(error)
-        entry = task.class.reported_errors.find { |candidate| error.is_a?(candidate[:class]) }
-        entry ? entry[:severity] : :error
       end
 
       # Recording a failure must never fail. This is the last thing standing
@@ -350,7 +287,6 @@ module Spree
           error_backtrace: cleaned_backtrace(error),
           updated_at: Time.current
         )
-        task&.after_error(error)
         publish('errored')
         Rails.error.report(error, handled: true)
         @halted = true
@@ -398,8 +334,6 @@ module Spree
       end
 
       def safe_count
-        return task.csv_rows.size if task.csv_collection?
-
         task.count
       rescue StandardError
         nil

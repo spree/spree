@@ -9,7 +9,6 @@ module Spree
     # its own only when it walks rows (progress, resume, dry run) or asks the
     # operator for parameters.
     class UpgradeStep < Spree::MaintenanceTask
-      description 'maintenance_tasks.upgrade_step.description'
       no_collection
 
       attribute :step_id, :string

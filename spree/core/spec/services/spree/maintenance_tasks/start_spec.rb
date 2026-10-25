@@ -143,26 +143,4 @@ RSpec.describe Spree::MaintenanceTasks::Start do
       Spree.maintenance_tasks.delete('NoDryRunTask')
     end
   end
-
-  describe 'preconditions' do
-    before do
-      stub_const('GuardedTask', Class.new(Spree::MaintenanceTask) do
-        def self.name = 'GuardedTask'
-        precondition('the column this task fills has not been added yet') { false }
-        def collection = Spree::Product.order(:id)
-        def process(product) = nil
-      end)
-      Spree.maintenance_tasks << 'GuardedTask'
-    end
-
-    after { Spree.maintenance_tasks.delete('GuardedTask') }
-
-    it 'refuses the run and says what is missing' do
-      result = described_class.call(task_name: 'GuardedTask')
-
-      expect(result).to be_failure
-      expect(result.error.to_s).to include('has not been added yet')
-      expect(Spree::MaintenanceTaskRun.count).to be_zero
-    end
-  end
 end

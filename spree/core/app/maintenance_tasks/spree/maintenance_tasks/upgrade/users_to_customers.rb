@@ -9,8 +9,6 @@ module Spree
       # read without knowing, and Devise is gone by the time this runs), and
       # what to do with source rows that cannot be copied.
       class UsersToCustomers < RakeStep
-        description 'maintenance_tasks.upgrade.users_to_customers.description'
-
         runs_rake_task 'spree:upgrade:migrate_users_to_customers'
 
         attribute :confirm_no_pepper, :boolean, default: false

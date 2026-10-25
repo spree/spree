@@ -12,7 +12,6 @@ module Spree
       # collection is the true case alone: any other scope would never reach
       # zero remaining.
       class CaptureMethods < Spree::MaintenanceTask
-        description 'maintenance_tasks.upgrade.capture_methods.description'
         supports_dry_run
         collection_batch_size 5_000
 

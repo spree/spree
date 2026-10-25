@@ -50,53 +50,9 @@ RSpec.describe Spree::MaintenanceTask do
     end
   end
 
-  describe 'the parameter schema' do
-    before do
-      stub_const('SchemaSpecTask', Class.new(described_class) do
-        def self.name = 'SchemaSpecTask'
-        attribute :label, :string
-        attribute :batch_size, :integer, default: 100
-        attribute :mode, :string
-        attribute :token, :string
-        validates :label, presence: true
-        validates :mode, inclusion: { in: %w[fast thorough] }
-        mask_attribute :token
-      end)
-    end
-
-    def field(name) = SchemaSpecTask.parameters_schema.find { |entry| entry[:name] == name }
-
-    it 'reports each attribute with its type' do
-      expect(field('label')[:type]).to eq('string')
-      expect(field('batch_size')[:type]).to eq('integer')
-    end
-
-    it 'marks attributes a presence validator requires' do
-      expect(field('label')[:required]).to be(true)
-      expect(field('mode')[:required]).to be(false)
-    end
-
-    # An inclusion validator is what turns a parameter into a select rather
-    # than a free-text field.
-    it 'exposes the permitted values of an inclusion validator' do
-      expect(field('mode')[:options]).to eq(%w[fast thorough])
-      expect(field('label')[:options]).to be_nil
-    end
-
-    it 'carries defaults through' do
-      expect(field('batch_size')[:default]).to eq(100)
-    end
-
-    it 'flags masked attributes so a form never echoes them back' do
-      expect(field('token')[:masked]).to be(true)
-      expect(field('label')[:masked]).to be(false)
-    end
-  end
-
   describe 'declarations' do
-    it 'defaults to a batch size and a run time limit' do
+    it 'defaults to a batch size' do
       expect(described_class.batch_size).to eq(described_class::DEFAULT_BATCH_SIZE)
-      expect(described_class.run_time_limit).to eq(described_class::DEFAULT_MAX_RUN_TIME)
     end
 
     it 'does not support dry run unless the task says so' do
@@ -110,19 +66,6 @@ RSpec.describe Spree::MaintenanceTask do
       expect(previewable.dry_run_supported).to be(true)
     end
 
-    it 'resolves a description given as a translation key' do
-      expect(Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets.resolved_description).
-        to eq('Assign a market to orders placed before markets existed')
-    end
-
-    it 'leaves a plain-text description alone' do
-      task = Class.new(described_class) do
-        def self.name = 'PlainDescriptionTask'
-        description 'Just words'
-      end
-
-      expect(task.resolved_description).to eq('Just words')
-    end
   end
 
   describe 'the default instance surface' do

@@ -4,18 +4,14 @@
       "actions": {
         "cancel_run": "Cancelar ejecución",
         "pause": "Pausar",
-        "resume": "Reanudar",
-        "run": "Ejecutar"
+        "resume": "Reanudar"
       },
-      "already_running": "Esta tarea ya se está ejecutando",
       "cancel_confirm": {
         "message": "La tarea se detiene en su próximo punto de control. El trabajo ya hecho se conserva: cancelar no lo deshace.",
         "title": "¿Cancelar esta ejecución?"
       },
       "description": "Ejecuta las correcciones de datos, rellenos y reindexaciones incluidos en el código de tu tienda. Cada ejecución queda registrada.",
       "dry_run_badge": "Vista previa",
-      "empty_description": "Las tareas vienen del código de tu tienda: Spree incluye algunas, y tu desarrollador o una extensión pueden añadir más.",
-      "empty_title": "No hay tareas de mantenimiento",
       "history": {
         "empty_title": "Todavía no hay ejecuciones",
         "search_placeholder": "Buscar por nombre de tarea…",
@@ -33,8 +29,6 @@
         "dashboard": "Iniciada desde el panel",
         "inline": "Iniciada por Spree"
       },
-      "last_run": "Última ejecución",
-      "loading": "Cargando tareas…",
       "messages": {
         "canceled": "Cancelando la ejecución",
         "paused": "Pausando la ejecución",
@@ -42,31 +36,19 @@
         "start_failed": "No se pudo iniciar la tarea",
         "started": "Tarea iniciada"
       },
-      "never_run": "Nunca ejecutada",
       "run": {
         "arguments": "Argumentos",
-        "csv_help": "Necesita una fila de encabezado. Las columnas dependen de la tarea.",
-        "csv_label": "Archivo CSV",
-        "csv_required": "Elige un archivo CSV para ejecutar esta tarea.",
-        "dry_run_help": "Informa de lo que cambiaría sin escribir nada.",
-        "dry_run_label": "Solo vista previa",
         "duration": "Duración",
         "ended": "Finalizada",
         "error": "Error",
         "initiated_by": "Iniciada por",
         "loading": "Cargando ejecución…",
-        "no_description": "Sin descripción.",
         "processed_count": "{{count}} procesados",
         "progress_label": "Progreso",
-        "required_field": "Este campo es obligatorio.",
         "results": "Resultados",
         "seconds": "{{count}} s",
         "show_backtrace": "Mostrar detalle técnico",
-        "start": "Ejecutar tarea",
-        "start_dry_run": "Ejecutar vista previa",
-        "started": "Iniciada",
-        "starting": "Iniciando…",
-        "write_warning": "Esto comienza de inmediato y escribe en tus datos. Se puede detener, pero no deshacer."
+        "started": "Iniciada"
       },
       "status": {
         "cancelled": "Cancelada",
@@ -79,10 +61,8 @@
         "running": "En ejecución",
         "succeeded": "Completada"
       },
-      "supports_dry_run": "Vista previa disponible",
       "tabs": {
         "history": "Historial",
-        "tasks": "Tareas",
         "upgrade": "Actualización"
       },
       "title": "Tareas de mantenimiento",

@@ -47,10 +47,4 @@ RSpec.describe 'spree:maintenance_tasks rake tasks' do
       }.to raise_error(SystemExit)
     end
   end
-
-  describe 'list' do
-    it 'names the registered tasks' do
-      expect { run_task('spree:maintenance_tasks:list') }.not_to raise_error
-    end
-  end
 end

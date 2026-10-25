@@ -13992,555 +13992,6 @@ paths:
                   in: 1
                   previous:
                   next:
-  "/api/v3/admin/maintenance_tasks":
-    get:
-      summary: List maintenance tasks
-      tags:
-      - Maintenance Tasks
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns the maintenance tasks this installation can run — data
-        corrections, backfills and reindexes that ship with the store's code
-        (see `docs/plans/6.0-maintenance-tasks.md`).
-
-        A task is a deployed class rather than a record, so it is identified by
-        its short `name` (`capture_methods`). Each entry carries the `parameters` schema a run form is
-        built from, whether it `supports_dry_run`, whether its rows come from a
-        `csv` upload, and how its last run went.
-
-
-        **Required scope:** `read_maintenance_tasks` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: tasks } = await client.maintenanceTasks.list()
-      - lang: bash
-        label: Spree CLI
-        source: spree api get /maintenance_tasks
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      responses:
-        '200':
-          description: maintenance tasks found
-          content:
-            application/json:
-              example:
-                data:
-                - name: actor_types
-                  description: Fill in the actor type on past records
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: adjustments_to_typed_rows
-                  description: Map adjustments onto tax lines, discounts and fees
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: backfill_order_markets
-                  description: Assign a market to orders placed before markets existed
-                  parameters: []
-                  supports_dry_run: true
-                  no_collection: false
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: calculator_bounds_to_delivery_method_rules
-                  description: Convert calculator bounds into delivery method rules
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: capture_methods
-                  description: Convert payment method auto capture into capture methods
-                  parameters: []
-                  supports_dry_run: true
-                  no_collection: false
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: checkout_zones_to_markets
-                  description: Convert checkout zones to markets
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: consolidate_metadata
-                  description: Check for leftover split metadata columns
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: country_state_codes
-                  description: Fill ISO country and state codes from the legacy records
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: custom_field_definition_stores
-                  description: Scope custom field definitions to a store
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: deliveries
-                  description: Create a delivery for every tracked fulfillment
-                  parameters:
-                  - name: batch_size
-                    type: integer
-                    required: false
-                    options:
-                    masked: false
-                    default: 1000
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: delivery_and_stock_store_ids
-                  description: Assign delivery methods and stock locations to the
-                    default store
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: delivery_profiles
-                  description: Convert shipping categories into delivery profiles
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: encrypt_secret_preferences
-                  description: Encrypt gateway and integration secrets
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: external_receives_to_purchase_orders
-                  description: Turn 5.x supplier receives into purchase orders
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: fulfillment_statuses
-                  description: Collapse fulfillment statuses onto the 6.0 set
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: import_export_tenancy
-                  description: Give imports and exports their store and author
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: incomplete_orders_to_carts
-                  description: Move incomplete orders onto the Cart model
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: library_media_placements
-                  description: Record where each media file is used
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: market_tax_inclusive
-                  description: Decide whether each market's prices include tax
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: master_images_to_product_media
-                  description: Move variant-pinned images onto product media
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: media_class_names
-                  description: Rename stored Asset class names to Media
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: media_store_ids
-                  description: Assign a store to media rows
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: order_coupon_codes
-                  description: Copy coupon codes onto placed orders
-                  parameters:
-                  - name: batch_size
-                    type: integer
-                    required: false
-                    options:
-                    masked: false
-                    default: 500
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: package_types
-                  description: Add the default package types to every store
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: preferences_json
-                  description: Convert leftover YAML preferences to JSON
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: product_types
-                  description: Bind product types to the default store and reset counters
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: promotion_option_value_rules
-                  description: Rewrite Option Value promotion rules
-                  parameters:
-                  - name: skip_failed_rows
-                    type: boolean
-                    required: false
-                    options:
-                    masked: false
-                    default: false
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: reason_store_ids
-                  description: Assign return and refund reasons to the default store
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: recount_stock_levels
-                  description: Recount reserved and incoming stock
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: remove_master_variant
-                  description: Migrate products off the master variant
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: returns
-                  description: Move return authorizations onto the Return and Exchange
-                    models
-                  parameters:
-                  - name: skip_failed_rows
-                    type: boolean
-                    required: false
-                    options:
-                    masked: false
-                    default: false
-                  - name: batch_size
-                    type: integer
-                    required: false
-                    options:
-                    masked: false
-                    default: 500
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: rich_text_to_columns
-                  description: Move rich text out of Action Text into its own columns
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: search_reindex
-                  description: Rebuild the search index
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: shipping_to_delivery
-                  description: Rename the shipping vocabulary to delivery
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: stock_movements_to_typed_rows
-                  description: Type stock movements and reconcile open fulfillments
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: store_credit_categories
-                  description: Fold store credit categories into the credit memo
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: store_settings_from_config
-                  description: Copy moved settings from the global config onto each
-                    store
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: tagging_tenants
-                  description: Stamp the store on taggings written without one
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: tax_exemption_reasons
-                  description: Add tax exemption reasons and link certificates to
-                    them
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: tax_store_ids
-                  description: Assign tax categories and rates to the default store
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: tax_zones
-                  description: Convert zone-scoped tax rates to country and state
-                    codes
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: taxons_to_categories_and_collections
-                  description: Migrate taxons to categories and collections
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: upload_stores
-                  description: Record which store owns every uploaded file
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: users_to_customers
-                  description: Move users onto the gem-owned customer model
-                  parameters:
-                  - name: confirm_no_pepper
-                    type: boolean
-                    required: false
-                    options:
-                    masked: false
-                    default: false
-                  - name: skip_invalid_rows
-                    type: boolean
-                    required: false
-                    options:
-                    masked: false
-                    default: false
-                  - name: source_user_table
-                    type: string
-                    required: false
-                    options:
-                    masked: false
-                    default:
-                  - name: source_user_type
-                    type: string
-                    required: false
-                    options:
-                    masked: false
-                    default:
-                  - name: batch_size
-                    type: integer
-                    required: false
-                    options:
-                    masked: false
-                    default: 1000
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: zones_to_delivery_zones
-                  description: Convert shipping zones into delivery zones
-                  parameters: []
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-                - name: upgrade_step
-                  description: Run one step of the upgrade manifest
-                  parameters:
-                  - name: step_id
-                    type: string
-                    required: true
-                    options:
-                    masked: false
-                    default:
-                  supports_dry_run: false
-                  no_collection: true
-                  csv: false
-                  upgrade_step: true
-                  active_run:
-                  last_run:
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              example:
-                error:
-                  code: authentication_required
-                  message: Authentication required
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/maintenance_task_runs":
     get:
       summary: List maintenance task runs
@@ -14648,7 +14099,6 @@ paths:
                   cancelable: false
                   active: false
                   store_id:
-                  parent_run_id:
                   admin_user_id:
                 meta:
                   page: 1
@@ -14763,7 +14213,6 @@ paths:
                 cancelable: true
                 active: true
                 store_id: store_UkLWZg9DAJ
-                parent_run_id:
                 admin_user_id: adm_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/MaintenanceTaskRun"
@@ -14865,7 +14314,6 @@ paths:
                 cancelable: true
                 active: true
                 store_id:
-                parent_run_id:
                 admin_user_id:
               schema:
                 "$ref": "#/components/schemas/MaintenanceTaskRun"
@@ -14959,7 +14407,6 @@ paths:
                 cancelable: true
                 active: true
                 store_id:
-                parent_run_id:
                 admin_user_id:
               schema:
                 "$ref": "#/components/schemas/MaintenanceTaskRun"
@@ -15052,7 +14499,6 @@ paths:
                 cancelable: true
                 active: true
                 store_id:
-                parent_run_id:
                 admin_user_id:
               schema:
                 "$ref": "#/components/schemas/MaintenanceTaskRun"
@@ -15148,7 +14594,6 @@ paths:
                 cancelable: true
                 active: true
                 store_id:
-                parent_run_id:
                 admin_user_id:
               schema:
                 "$ref": "#/components/schemas/MaintenanceTaskRun"
@@ -65706,9 +65151,6 @@ components:
         store_id:
           type: string
           nullable: true
-        parent_run_id:
-          type: string
-          nullable: true
         admin_user_id:
           type: string
           nullable: true
@@ -65738,7 +65180,6 @@ components:
       - cancelable
       - active
       - store_id
-      - parent_run_id
       - admin_user_id
       x-typelizer: true
     Market:
@@ -81515,7 +80956,7 @@ components:
       properties:
         task_name:
           type: string
-          description: The task to run, as `name` from `GET /maintenance_tasks`.
+          description: The task to run, as `task_name` from `GET /upgrade_steps`.
           example: capture_methods
         arguments:
           type: object
@@ -81524,12 +80965,8 @@ components:
             name. A key the task does not declare is rejected.
         dry_run:
           type: boolean
-          description: Report what would change without writing. Honored only by tasks
-            whose `supports_dry_run` is true.
-        csv_file:
-          type: string
-          description: The `signed_id` of an uploaded CSV, for tasks whose `csv` is
-            true. Rejected by the rest.
+          description: Report what would change without writing. Ignored by tasks
+            that do not support a dry run, which run for real.
       required:
       - task_name
     MarketCreateParams:

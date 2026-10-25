@@ -4,8 +4,8 @@ module Spree
     # (docs/plans/6.0-maintenance-tasks.md).
     #
     # Everything that can be known before any work happens is checked here —
-    # the task exists, its parameters validate, its preconditions hold, and no
-    # run of the same task is already in flight — so an operator sees a 422
+    # the task exists, its parameters validate, and no run of the same task
+    # is already in flight — so an operator sees a 422
     # rather than a run that dies on its first record.
     class Start
       prepend ::Spree::ServiceModule::Base
@@ -21,8 +21,7 @@ module Spree
       # @param inline [Boolean] run synchronously (seeds, the CLI, the upgrade walk)
       # @return [Spree::ServiceModule::Base::Result] the run
       def call(task_name: nil, api_type: nil, arguments: {}, dry_run: false, store: nil, admin_user: nil,
-               api_key: nil, initiated_via: 'api', parent_run: nil, inline: false,
-               csv_file: nil)
+               api_key: nil, initiated_via: 'api', inline: false)
         task_class = if api_type.nil?
                        Spree::MaintenanceTask.find_registered(task_name)
                      else
@@ -43,17 +42,10 @@ module Spree
         task = task_class.new(arguments)
         return failure(task, task.errors) unless task.valid?
 
-        unmet = failing_precondition(task)
-        return failure(task, precondition_error(unmet)) if unmet
-
         active = active_run_for(task_name)
         return failure(active, already_running_error(task_class)) if active
 
-        return failure(task, missing_csv_error) if task_class.collection_kind == :csv && csv_file.blank?
-
-        run = build_run(task_class, arguments, dry_run, store, admin_user, api_key,
-                        initiated_via, parent_run)
-        run.csv_file.attach(csv_file) if csv_file.present?
+        run = build_run(task_class, arguments, dry_run, store, admin_user, api_key, initiated_via)
         return failure(run, run.errors) unless run.save
 
         dispatch(run, inline)
@@ -63,8 +55,7 @@ module Spree
 
       private
 
-      def build_run(task_class, arguments, dry_run, store, admin_user, api_key,
-                    initiated_via, parent_run)
+      def build_run(task_class, arguments, dry_run, store, admin_user, api_key, initiated_via)
         Spree::MaintenanceTaskRun.new(
           task_name: task_class.name,
           status: Spree::MaintenanceTaskRun.default_status,
@@ -75,8 +66,7 @@ module Spree
           store: store,
           admin_user: admin_user,
           api_key: api_key,
-          initiated_via: initiated_via.to_s,
-          parent_run: parent_run
+          initiated_via: initiated_via.to_s
         )
       end
 
@@ -112,13 +102,6 @@ module Spree
         Spree::MaintenanceTaskRun.active.find_by(task_name: task_name)
       end
 
-      def failing_precondition(task)
-        task.class.preconditions.find do |precondition|
-          block = precondition[:block]
-          !(block.arity.zero? ? task.instance_exec(&block) : block.call(task))
-        end
-      end
-
       def unknown_task_error(task_name)
         errors_for(:task_name, "#{task_name} is not a registered maintenance task")
       end
@@ -131,16 +114,8 @@ module Spree
         errors_for(:base, "#{task_class.api_type} belongs to a release this store has already completed")
       end
 
-      def missing_csv_error
-        errors_for(:base, 'this task needs a CSV file')
-      end
-
       def already_running_error(task_class)
         errors_for(:base, "#{task_class.api_type} is already running")
-      end
-
-      def precondition_error(precondition)
-        errors_for(:base, precondition[:message])
       end
 
       def errors_for(attribute, message)

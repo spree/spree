@@ -1,41 +1,12 @@
-import type { MaintenanceTask } from '@spree/admin-sdk'
-import {
-  adminClient,
-  Can,
-  ResourceTable,
-  resourceSearchSchema,
-  Subject,
-} from '@spree/dashboard-core'
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Progress,
-  StatusBadge,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  useRowClickBridge,
-} from '@spree/dashboard-ui'
+import { adminClient, ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
+import { Tabs, TabsContent, TabsList, TabsTrigger, useRowClickBridge } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlayIcon, WrenchIcon } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { RunDetailSheet } from '../../../../components/spree/maintenance-tasks/run-detail-sheet'
-import { RunTaskDialog } from '../../../../components/spree/maintenance-tasks/run-task-dialog'
 import { UpgradePanel } from '../../../../components/spree/maintenance-tasks/upgrade-panel'
-import {
-  isRunActive,
-  useMaintenanceTasks,
-  useUpgradeSteps,
-} from '../../../../hooks/use-maintenance-tasks'
-import { runProgress, taskShortName } from '../../../../lib/maintenance-tasks'
+import { useUpgradeSteps } from '../../../../hooks/use-maintenance-tasks'
 import '../../../../tables/maintenance-task-runs'
 
 // The page shares its URL with the run-history `<ResourceTable>`; `run` is the
@@ -43,7 +14,7 @@ import '../../../../tables/maintenance-task-runs'
 // be linked to and survives a reload.
 const searchSchema = resourceSearchSchema.extend({
   run: z.string().optional(),
-  tab: z.enum(['upgrade', 'tasks', 'history']).optional(),
+  tab: z.enum(['upgrade', 'history']).optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/maintenance-tasks')({
@@ -57,15 +28,7 @@ function MaintenanceTasksPage() {
   const search = Route.useSearch()
   const openRunId = search.run
 
-  const { data, isLoading } = useMaintenanceTasks()
-  const [taskToRun, setTaskToRun] = useState<MaintenanceTask | null>(null)
-
-  // Upgrade steps have their own panel, where the manifest order and the
-  // operator notes are what make them legible. The server marks them, so they
-  // stay out of this list even on an installation with no upgrade to run —
-  // where they are not work at all.
-  const { data: upgradeData } = useUpgradeSteps()
-  const tasks = (data?.data ?? []).filter((task) => !task.upgrade_step)
+  const { data: upgradeData, isLoading } = useUpgradeSteps()
 
   const openRun = useCallback(
     (runId: string | undefined) => {
@@ -78,15 +41,22 @@ function MaintenanceTasksPage() {
   )
 
   // The history table's task cell carries the run id; clicking a row opens the
-  // same sheet a card's progress bar does.
+  // run sheet.
   useRowClickBridge('data-maintenance-task-run-id', openRun)
 
   // Steps still outstanding — what the Upgrade tab is counting.
   const pendingUpgradeSteps = (upgradeData?.data ?? []).filter((step) => !step.superseded)
   const hasUpgrade = (upgradeData?.data ?? []).length > 0
-  // An upgrade in progress is the most urgent thing here, so it opens first
-  // when there is one and there are steps left to run.
-  const defaultTab = pendingUpgradeSteps.length > 0 ? 'upgrade' : 'tasks'
+
+  // Chosen once the steps have loaded and then kept, so the page does not
+  // switch tabs under the operator when the last step finishes.
+  const [defaultTab, setDefaultTab] = useState<'upgrade' | 'history'>()
+  useEffect(() => {
+    if (isLoading || defaultTab) return
+    setDefaultTab(pendingUpgradeSteps.length > 0 ? 'upgrade' : 'history')
+  }, [isLoading, defaultTab, pendingUpgradeSteps.length])
+
+  const activeTab = search.tab ?? defaultTab
 
   return (
     <div className="flex flex-col gap-6">
@@ -95,86 +65,49 @@ function MaintenanceTasksPage() {
         <p className="text-muted-foreground text-sm">{t('admin.maintenance_tasks.description')}</p>
       </header>
 
-      <Tabs
-        value={search.tab ?? defaultTab}
-        onValueChange={(value) =>
-          navigate({
-            search: (previous: Record<string, unknown>) => ({ ...previous, tab: value }),
-            replace: true,
-          })
-        }
-      >
-        <TabsList>
+      {activeTab && (
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) =>
+            navigate({
+              search: (previous: Record<string, unknown>) => ({ ...previous, tab: value }),
+              replace: true,
+            })
+          }
+        >
+          <TabsList>
+            {hasUpgrade && (
+              <TabsTrigger value="upgrade" count={pendingUpgradeSteps.length}>
+                {t('admin.maintenance_tasks.tabs.upgrade')}
+              </TabsTrigger>
+            )}
+            <TabsTrigger value="history">{t('admin.maintenance_tasks.tabs.history')}</TabsTrigger>
+          </TabsList>
+
           {hasUpgrade && (
-            <TabsTrigger value="upgrade" count={pendingUpgradeSteps.length}>
-              {t('admin.maintenance_tasks.tabs.upgrade')}
-            </TabsTrigger>
+            <TabsContent value="upgrade">
+              <UpgradePanel onOpenRun={openRun} />
+            </TabsContent>
           )}
-          <TabsTrigger value="tasks" count={tasks.length}>
-            {t('admin.maintenance_tasks.tabs.tasks')}
-          </TabsTrigger>
-          <TabsTrigger value="history">{t('admin.maintenance_tasks.tabs.history')}</TabsTrigger>
-        </TabsList>
 
-        {hasUpgrade && (
-          <TabsContent value="upgrade">
-            <UpgradePanel onOpenRun={openRun} />
+          {/* Kept mounted so the run table's loaded page, scroll position and
+              polling survive a tab switch. */}
+          <TabsContent value="history" keepMounted>
+            <ResourceTable
+              tableKey="maintenance-task-runs"
+              queryKey="maintenance-task-runs"
+              queryFn={(params) =>
+                adminClient.maintenanceTaskRuns.list({
+                  ...(params as Record<string, unknown>),
+                  expand: ['admin_user'],
+                })
+              }
+              searchParams={search}
+              hideHeader
+            />
           </TabsContent>
-        )}
-
-        <TabsContent value="tasks">
-          {isLoading && (
-            <p className="text-muted-foreground text-sm">{t('admin.maintenance_tasks.loading')}</p>
-          )}
-
-          {!isLoading && tasks.length === 0 && (
-            <Card>
-              <CardContent className="flex flex-col items-center gap-2 py-10 text-center">
-                <WrenchIcon className="size-8 text-muted-foreground" />
-                <p className="font-medium">{t('admin.maintenance_tasks.empty_title')}</p>
-                <p className="text-muted-foreground text-sm">
-                  {t('admin.maintenance_tasks.empty_description')}
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          <div className="grid gap-4 md:grid-cols-2">
-            {tasks.map((task) => (
-              <TaskCard
-                key={task.name}
-                task={task}
-                onRun={() => setTaskToRun(task)}
-                onOpenRun={openRun}
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Kept mounted so the run table's loaded page, scroll position and
-            polling survive a tab switch. */}
-        <TabsContent value="history" keepMounted>
-          <ResourceTable
-            tableKey="maintenance-task-runs"
-            queryKey="maintenance-task-runs"
-            queryFn={(params) =>
-              adminClient.maintenanceTaskRuns.list({
-                ...(params as Record<string, unknown>),
-                expand: ['admin_user'],
-              })
-            }
-            searchParams={search}
-            hideHeader
-          />
-        </TabsContent>
-      </Tabs>
-
-      <RunTaskDialog
-        task={taskToRun}
-        open={!!taskToRun}
-        onOpenChange={(open) => !open && setTaskToRun(null)}
-        onStarted={openRun}
-      />
+        </Tabs>
+      )}
 
       <RunDetailSheet
         runId={openRunId}
@@ -182,88 +115,5 @@ function MaintenanceTasksPage() {
         onOpenChange={(open) => !open && openRun(undefined)}
       />
     </div>
-  )
-}
-
-function TaskCard({
-  task,
-  onRun,
-  onOpenRun,
-}: {
-  task: MaintenanceTask
-  onRun: () => void
-  onOpenRun: (runId: string) => void
-}) {
-  const { t } = useTranslation()
-  const activeRun = task.active_run
-  const lastRun = task.last_run
-  const busy = isRunActive(activeRun?.status ?? undefined)
-
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <CardTitle className="text-base">{taskShortName(task.name)}</CardTitle>
-            <CardDescription>
-              {task.description ?? t('admin.maintenance_tasks.run.no_description')}
-            </CardDescription>
-          </div>
-
-          <Can I="update" a={Subject.MaintenanceTaskRun}>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={onRun}
-              disabled={busy}
-              title={busy ? t('admin.maintenance_tasks.already_running') : undefined}
-            >
-              <PlayIcon className="size-4" />
-              {t('admin.maintenance_tasks.actions.run')}
-            </Button>
-          </Can>
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {task.supports_dry_run && (
-            <Badge variant="secondary">{t('admin.maintenance_tasks.supports_dry_run')}</Badge>
-          )}
-        </div>
-
-        {busy && activeRun && (
-          <button
-            type="button"
-            className="flex flex-col gap-1 text-left"
-            onClick={() => onOpenRun(activeRun.id)}
-          >
-            <Progress {...runProgress(activeRun)} />
-            <span className="text-muted-foreground text-xs">
-              {t('admin.maintenance_tasks.run.processed_count', { count: activeRun.tick_count })}
-            </span>
-          </button>
-        )}
-
-        {!busy && lastRun && (
-          <button
-            type="button"
-            className="flex items-center gap-2 text-left text-sm"
-            onClick={() => onOpenRun(lastRun.id)}
-          >
-            <span className="text-muted-foreground">{t('admin.maintenance_tasks.last_run')}</span>
-            <StatusBadge
-              status={lastRun.status}
-              label={t(`admin.maintenance_tasks.status.${lastRun.status}`)}
-            />
-          </button>
-        )}
-
-        {!busy && !lastRun && (
-          <p className="text-muted-foreground text-sm">{t('admin.maintenance_tasks.never_run')}</p>
-        )}
-      </CardContent>
-    </Card>
   )
 }

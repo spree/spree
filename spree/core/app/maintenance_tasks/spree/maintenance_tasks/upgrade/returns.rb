@@ -7,8 +7,6 @@ module Spree
       # record and uniquely indexed there, so what is still outstanding is a
       # query rather than tracked state.
       class Returns < RakeStep
-        description 'maintenance_tasks.upgrade.returns.description'
-
         runs_rake_task 'spree:upgrade:migrate_returns'
 
         attribute :skip_failed_rows, :boolean, default: false

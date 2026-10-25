@@ -27,7 +27,6 @@ module Spree
                    cancelable: :boolean,
                    active: :boolean,
                    store_id: [:string, nullable: true],
-                   parent_run_id: [:string, nullable: true],
                    admin_user_id: [:string, nullable: true],
                    started_at: [:string, nullable: true],
                    ended_at: [:string, nullable: true]
@@ -36,7 +35,7 @@ module Spree
                      :tick_count, :tick_total, :error_class, :error_message,
                      :started_at, :ended_at, :created_at, :updated_at
 
-          # The task's short name, as `GET /maintenance_tasks` lists it.
+          # The task's short name, as `GET /upgrade_steps` gives it.
           attribute :task_name, &:task_api_type
 
           attribute :progress, &:progress
@@ -52,9 +51,9 @@ module Spree
             run.tallies || {}
           end
 
-          # Never the raw values: a task may take a token or a customer
-          # identifier as a parameter.
-          attribute :arguments, &:display_arguments
+          attribute :arguments do |run|
+            run.arguments || {}
+          end
 
           # The failure detail an operator needs to fix the cause. Held back
           # from read-only callers — a backtrace names internal paths and
@@ -69,10 +68,6 @@ module Spree
 
           attribute :store_id do |run|
             run.store&.prefixed_id
-          end
-
-          attribute :parent_run_id do |run|
-            run.parent_run&.prefixed_id
           end
 
           attribute :admin_user_id do |run|

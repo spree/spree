@@ -7,8 +7,6 @@ module SpreeStripe
     # task nor this class, and the upgrade walk skips the step rather than
     # failing on it.
     class MigrateWebhookKeys < Spree::MaintenanceTasks::Upgrade::RakeStep
-      description 'maintenance_tasks.upgrade.stripe_webhook_keys.description'
-
       runs_rake_task 'spree:upgrade:migrate_stripe_webhook_keys'
     end
   end
