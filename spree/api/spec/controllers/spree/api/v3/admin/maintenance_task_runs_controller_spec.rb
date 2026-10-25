@@ -37,12 +37,11 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       expect(json_response['task_name']).to eq('runs')
     end
 
-    it 'records who fired it and the store they were in' do
+    it 'records who fired it' do
       post :create, params: valid_params
 
       run = Spree::MaintenanceTaskRun.last
       expect(run.admin_user).to eq(admin_user)
-      expect(run.store).to eq(store)
       expect(run.initiated_via).to eq('dashboard')
     end
 
@@ -127,16 +126,6 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
       entry = json_response['data'].find { |candidate| candidate['id'] == run.prefixed_id }
       expect(entry['admin_user_id']).to eq(admin_user.prefixed_id)
       expect(entry['admin_user']['email']).to eq(admin_user.email)
-    end
-
-    # A backfill walks every store's data, so a run fired from one store is
-    # still the history of work that touched the others.
-    it 'is not scoped to the store the operator is in' do
-      run.update!(store: create(:store))
-
-      get :index
-
-      expect(json_response['data'].map { |entry| entry['id'] }).to include(run.prefixed_id)
     end
   end
 

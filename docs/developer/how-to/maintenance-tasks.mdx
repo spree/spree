@@ -63,7 +63,7 @@ A step that fails or is cancelled is started again rather than resumed. Every st
 
 ## Permissions
 
-An upgrade step can rewrite any data in the installation, so the grant sits with the other sensitive permissions:
+An upgrade step converts the data of every store in the installation, not only the store you are working in, and its runs are recorded for the installation as a whole. The grant therefore sits with the other sensitive permissions:
 
 - `read_maintenance_tasks` — see the upgrade steps and run history.
 - `write_maintenance_tasks` — start and cancel runs.

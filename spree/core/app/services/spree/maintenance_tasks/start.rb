@@ -17,10 +17,10 @@ module Spree
       # @param arguments [Hash] task parameters
       # @param dry_run [Boolean] preview mode; only honored by tasks that declare
       #   `supports_dry_run`
-      # @param initiated_via [String] dashboard / api / cli / inline
+      # @param initiated_via [String] dashboard / api / cli
       # @param inline [Boolean] run synchronously (seeds, the CLI, the upgrade walk)
       # @return [Spree::ServiceModule::Base::Result] the run
-      def call(task_name: nil, api_type: nil, arguments: {}, dry_run: false, store: nil, admin_user: nil,
+      def call(task_name: nil, api_type: nil, arguments: {}, dry_run: false, admin_user: nil,
                api_key: nil, initiated_via: 'api', inline: false)
         task_class = if api_type.nil?
                        Spree::MaintenanceTask.find_registered(task_name)
@@ -45,7 +45,7 @@ module Spree
         active = active_run_for(task_name)
         return failure(active, already_running_error(task_class)) if active
 
-        run = build_run(task_class, arguments, dry_run, store, admin_user, api_key, initiated_via)
+        run = build_run(task_class, arguments, dry_run, admin_user, api_key, initiated_via)
         return failure(run, run.errors) unless run.save
 
         dispatch(run, inline)
@@ -55,7 +55,7 @@ module Spree
 
       private
 
-      def build_run(task_class, arguments, dry_run, store, admin_user, api_key, initiated_via)
+      def build_run(task_class, arguments, dry_run, admin_user, api_key, initiated_via)
         Spree::MaintenanceTaskRun.new(
           task_name: task_class.name,
           status: Spree::MaintenanceTaskRun.default_status,
@@ -63,7 +63,6 @@ module Spree
           # A task that does not declare dry-run support would ignore the flag
           # and write for real; recording it as a preview would be a lie.
           dry_run: dry_run && task_class.dry_run_supported,
-          store: store,
           admin_user: admin_user,
           api_key: api_key,
           initiated_via: initiated_via.to_s

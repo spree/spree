@@ -21,7 +21,6 @@ export const MaintenanceTaskRunSchema = z.object({
   arguments: z.record(z.string(), z.unknown()),
   error_backtrace: z.string().nullable(),
   active: z.boolean(),
-  store_id: z.string().nullable(),
   admin_user_id: z.string().nullable(),
   admin_user: AdminUserSchema.optional(),
 });

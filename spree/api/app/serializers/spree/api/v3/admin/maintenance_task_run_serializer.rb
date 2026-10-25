@@ -22,7 +22,6 @@ module Spree
                    error_message: [:string, nullable: true],
                    error_backtrace: [:string, nullable: true],
                    active: :boolean,
-                   store_id: [:string, nullable: true],
                    admin_user_id: [:string, nullable: true],
                    started_at: [:string, nullable: true],
                    ended_at: [:string, nullable: true]
@@ -57,10 +56,6 @@ module Spree
           end
 
           attribute :active, &:active?
-
-          attribute :store_id do |run|
-            run.store&.prefixed_id
-          end
 
           attribute :admin_user_id do |run|
             run.admin_user&.prefixed_id

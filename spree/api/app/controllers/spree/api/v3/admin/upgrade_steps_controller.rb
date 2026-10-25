@@ -92,7 +92,7 @@ module Spree
           # is not portable across the adapters Spree supports.
           def latest_runs
             @latest_runs ||= Spree::MaintenanceTaskRun.
-                             includes(:store, :admin_user).
+                             includes(:admin_user).
                              where(task_name: manifest_task_names).
                              order(:id).
                              each_with_object({}) do |run, result|

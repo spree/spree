@@ -37,7 +37,6 @@ module Spree
               api_type: body[:task_name].to_s,
               arguments: body[:arguments]&.to_h || {},
               dry_run: ActiveModel::Type::Boolean.new.cast(body[:dry_run]) || false,
-              store: current_store,
               admin_user: try_spree_current_user,
               api_key: current_api_key,
               initiated_via: initiated_via
@@ -60,16 +59,14 @@ module Spree
             Spree.api.admin_maintenance_task_run_serializer
           end
 
-          # Runs are installation-wide: a backfill walks every store's data, so
-          # scoping the history to the header store would hide work that
-          # touched it. The store on the row records where the operator was,
-          # and is filterable like any other attribute.
+          # Runs are installation-wide: an upgrade step converts every store's
+          # data, so a run belongs to no store.
           def scope
             model_class.all
           end
 
           def collection_includes
-            [{ admin_user: [{ spree_roles: :resource }, { avatar_attachment: :blob }] }, :store]
+            [{ admin_user: [{ spree_roles: :resource }, { avatar_attachment: :blob }] }]
           end
 
           # A backtrace names internal paths and class names, so it rides with

@@ -16,10 +16,9 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
         The record of every maintenance task run: who started it, with which
         arguments, how far it got and how it ended.
 
-        Runs are installation-wide rather than per store — a backfill walks
-        every store's data — so this list is not filtered by the store the
-        request is made against. The `store_id` on a run records where the
-        operator was working when they started it.
+        Runs are installation-wide rather than per store — an upgrade step
+        converts every store's data — so this list is not filtered by the
+        store the request is made against.
       DESC
       admin_scope :read, :maintenance_tasks
 

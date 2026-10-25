@@ -30,10 +30,9 @@ RSpec.describe Spree::MaintenanceTasks::Start do
   it 'records who fired it and from where' do
     admin = create(:admin_user)
 
-    run = start(admin_user: admin, store: store, initiated_via: 'dashboard').value
+    run = start(admin_user: admin, initiated_via: 'dashboard').value
 
     expect(run.admin_user).to eq(admin)
-    expect(run.store).to eq(store)
     expect(run.initiated_via).to eq('dashboard')
   end
 

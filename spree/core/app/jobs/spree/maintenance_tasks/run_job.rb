@@ -35,7 +35,6 @@ module Spree
         @task_class = @run.task_class
         return unfindable_task if @task_class.nil?
 
-        Spree::Current.store = @run.store
         @inline = inline
         @execution_started_at = Time.current
         @time_running_before = @run.time_running.to_f

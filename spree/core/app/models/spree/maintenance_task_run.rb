@@ -9,9 +9,8 @@ module Spree
   # the backend, so the runner writes both in the same checkpoint and always
   # seeds from this column.
   #
-  # Runs are installation-wide. `store` records the store the operator was
-  # acting in — the runner loads it into Spree::Current.store — and is not
-  # ownership: a backfill routinely walks every store's data.
+  # Runs are installation-wide: an upgrade step converts every store's data,
+  # so a run belongs to no store.
   class MaintenanceTaskRun < Spree.base_class
     has_prefix_id :mtr
 
@@ -32,7 +31,6 @@ module Spree
     ACTIVE_STATUSES = %w[enqueued running interrupted cancelling].freeze
     INITIATED_VIA = %w[dashboard api cli].freeze
 
-    belongs_to :store, class_name: 'Spree::Store', optional: true
     belongs_to :admin_user, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :api_key, class_name: 'Spree::ApiKey', optional: true
 
