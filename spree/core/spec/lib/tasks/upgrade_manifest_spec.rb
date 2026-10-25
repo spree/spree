@@ -238,6 +238,19 @@ RSpec.describe 'the upgrade manifest' do
       expect { runner.call }.to raise_error(SystemExit).and output(/did not finish/).to_stdout
     end
 
+    # The manifest notes tell operators to export these; a step's attribute
+    # defaults must not overwrite what they exported.
+    it 'passes exported variables on to a step that reads them' do
+      step = Spree::Upgrade.find_step('migrate_users_to_customers')
+      runner = Spree::Upgrade::Runner.new(target_version: '6.0')
+      original = ENV.fetch('CONFIRM_NO_PEPPER', nil)
+      ENV['CONFIRM_NO_PEPPER'] = 'true'
+
+      expect(runner.send(:step_arguments, step)).to eq('confirm_no_pepper' => 'true')
+    ensure
+      ENV['CONFIRM_NO_PEPPER'] = original
+    end
+
     it 'records a run for a rake-backed step of a released manifest' do
       runner = Spree::Upgrade::Runner.new(target_version: '5.6', step_id: 'taxon_store_id')
 

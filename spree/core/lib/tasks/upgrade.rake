@@ -178,7 +178,7 @@ module Spree
 
         result = Spree::MaintenanceTasks::Start.call(
           task_name: step['task_class'] || 'Spree::MaintenanceTasks::UpgradeStep',
-          arguments: step['task_class'] ? {} : { 'step_id' => step['id'] },
+          arguments: step_arguments(step),
           initiated_via: 'cli',
           inline: true
         )
@@ -201,6 +201,16 @@ module Spree
         end
 
         true
+      end
+
+      # A rake-backed step is named by id; a class-backed step that reads
+      # environment variables gets the ones the operator exported, so
+      # `CONFIRM_NO_PEPPER=true bin/rake spree:upgrade` reaches it.
+      def step_arguments(step)
+        return { 'step_id' => step['id'] } unless step['task_class']
+
+        task_class = Spree::MaintenanceTask.find_registered(step['task_class'])
+        task_class.respond_to?(:arguments_from_environment) ? task_class.arguments_from_environment : {}
       end
 
       # Steps contributed by optional gems (payment gateways, for instance)

@@ -7,6 +7,8 @@ module Spree
       # variables the body reads. A step without parameters runs through
       # `UpgradeStep` and needs no class at all.
       class RakeStep < Spree::MaintenanceTask
+        ENVIRONMENT_LOCK = Mutex.new
+
         no_collection
 
         class_attribute :rake_task_name, instance_writer: false
@@ -20,14 +22,24 @@ module Spree
         # Declares a parameter the rake body reads from the environment.
         #
         # These bodies were written for a shell, so their answers arrive as
-        # environment variables. Mapping them to attributes is what lets the
-        # dashboard ask the question — "was a Devise pepper ever set?" — instead
-        # of failing with an instruction to re-run with a variable exported.
+        # environment variables. Mapping them to attributes records the answer
+        # on the run, and lets `ARGS` supply it when the step is run on its own.
         #
         # @param attribute_name [Symbol]
         # @param as [String] the environment variable the body reads
         def self.passes_to_environment(attribute_name, as:)
           self.environment_parameters = environment_parameters.merge(attribute_name.to_sym => as).freeze
+        end
+
+        # The declared parameters an operator exported before running the
+        # upgrade walk, so the walk passes them on rather than letting each
+        # attribute's default overwrite them.
+        #
+        # @return [Hash{String => String}]
+        def self.arguments_from_environment
+          environment_parameters.each_with_object({}) do |(attribute_name, variable), arguments|
+            arguments[attribute_name.to_s] = ENV[variable] if ENV.key?(variable)
+          end
         end
 
         def process
@@ -39,9 +51,15 @@ module Spree
         private
 
         # Restored afterwards so one run never leaks its answers into the next.
-        def with_environment
+        # ENV is shared by the whole process, so two steps running at once in a
+        # threaded worker take turns rather than reading each other's answers.
+        def with_environment(&block)
           return yield if self.class.environment_parameters.empty?
 
+          ENVIRONMENT_LOCK.synchronize { with_variables_set(&block) }
+        end
+
+        def with_variables_set
           keys = self.class.environment_parameters.values
           previous = ENV.to_h.slice(*keys)
 
@@ -61,7 +79,6 @@ module Spree
           else value.to_s.presence
           end
         end
-
       end
     end
   end
