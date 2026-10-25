@@ -82,6 +82,28 @@ describe('spree migrate', () => {
     expect(stderr).toHaveBeenCalledWith(expect.stringContaining('--steps 2'))
   })
 
+  it('migrate:rollback reads --steps after a leftover STEP= and drops the STEP=', async () => {
+    await runMigrate(['migrate:rollback', 'STEP=2', '--steps', '3'])
+
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bin/rails', 'db:rollback', 'STEP=3'],
+      '/proj',
+    )
+    expect(stderr).not.toHaveBeenCalled()
+  })
+
+  it('migrate:rollback points other raw args at spree exec', async () => {
+    await runMigrate(['migrate:rollback', 'VERSION=20260101000000'])
+
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bin/rails', 'db:rollback', 'VERSION=20260101000000'],
+      '/proj',
+    )
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining('spree exec bin/rails db:rollback VERSION=20260101000000'),
+    )
+  })
+
   it('migrate:rollback rejects a non-positive --steps', async () => {
     await expect(runMigrate(['migrate:rollback', '--steps', '0'])).rejects.toThrow(
       /positive whole number/,

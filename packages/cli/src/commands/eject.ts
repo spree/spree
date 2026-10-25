@@ -83,10 +83,10 @@ export async function ejectProject(projectDir: string): Promise<void> {
       '',
       'You can now customize:',
       `  ${pc.dim(`${apiDir}/app/`)}             — models, controllers, services (instant reload)`,
-      `  ${pc.dim(`${apiDir}/config/`)}          — Rails configuration (instant reload)`,
+      `  ${pc.dim(`${apiDir}/config/`)}          — backend configuration (instant reload)`,
       `  ${pc.dim(`${apiDir}/Gemfile`)}          — add extensions via ${pc.bold('spree add <extension>')}`,
       '',
-      `Rebuild only on Dockerfile / .ruby-version changes: ${pc.bold('spree build')}`,
+      `Rebuild only on Dockerfile or runtime version changes: ${pc.bold('spree build')}`,
     ].join('\n'),
     'Ejected!',
   )

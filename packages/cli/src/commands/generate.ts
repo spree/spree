@@ -44,7 +44,7 @@ export function registerGenerateCommand(program: Command): void {
       if (!SUPPORTED_GENERATORS.includes(name.replace(/^spree:/, ''))) {
         warnDeprecated(
           `spree generate ${name}`,
-          name.endsWith(':install')
+          name.endsWith(':install') && !name.startsWith('spree:')
             ? addCommandFor(name.slice(0, -':install'.length))
             : `spree exec bin/rails generate ${[generator, ...args].join(' ')}`,
         )

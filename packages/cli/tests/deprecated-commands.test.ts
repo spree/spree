@@ -60,6 +60,13 @@ describe('deprecated Rails-named commands', () => {
       'spree exec bin/rake',
     ],
     [['bundle', 'add', 'spree_stripe'], ['bundle', 'add', 'spree_stripe'], 'spree add stripe'],
+    [['bundle', 'add', 'paypal'], ['bundle', 'add', 'paypal'], 'spree add paypal'],
+    [['bundle', 'add', 'spree_foo'], ['bundle', 'add', 'spree_foo'], 'spree add --gem spree_foo'],
+    [
+      ['bundle', 'add', '--version', '~> 6.0', 'spree_stripe'],
+      ['bundle', 'add', '--version', '~> 6.0', 'spree_stripe'],
+      'spree add <extension>, or spree add --gem <gem>',
+    ],
     [['bundle', 'outdated'], ['bundle', 'outdated'], 'spree exec bundle outdated'],
     [['routes'], ['bin/rails', 'routes'], 'spree api endpoints'],
   ])('spree %j still runs and points at the replacement', async (argv, inner, replacement) => {
@@ -114,6 +121,14 @@ describe('spree generate', () => {
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
       ['bin/rails', 'generate', 'migration', 'AddX'],
       '/proj',
+    )
+  })
+
+  it("points Spree's own installer at spree exec, not spree add", async () => {
+    await run(['generate', 'spree:install'])
+
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining('spree exec bin/rails generate spree:install'),
     )
   })
 

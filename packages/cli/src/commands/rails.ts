@@ -1,4 +1,5 @@
 import type { Command } from 'commander'
+import { railsCommand } from '../backend.js'
 import { detectProject } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
@@ -14,6 +15,6 @@ export function registerRailsCommand(program: Command): void {
     .action(async (args: string[]) => {
       warnDeprecated('spree rails', `spree exec bin/rails ${args.join(' ')}`)
       const ctx = detectProject()
-      await dockerComposeExecOrRun(['bin/rails', ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(railsCommand(args), ctx.projectDir)
     })
 }

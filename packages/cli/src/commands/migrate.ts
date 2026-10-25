@@ -1,5 +1,5 @@
 import * as p from '@clack/prompts'
-import type { Command } from 'commander'
+import { type Command, InvalidArgumentError } from 'commander'
 import pc from 'picocolors'
 import { MIGRATE, MIGRATE_STATUS, rollbackCommand } from '../backend.js'
 import { detectProject } from '../context.js'
@@ -40,16 +40,19 @@ export function registerMigrateCommand(program: Command): void {
     .description('Roll back the last migration (`--steps n` to roll back n)')
     .option('--steps <n>', 'number of migrations to roll back', parseSteps)
     .argument('[args...]')
+    // No passThroughOptions: --steps must be read wherever it appears, even
+    // after a raw `STEP=2` left over from the deprecated form.
     .allowUnknownOption(true)
-    .passThroughOptions(true)
-    .action(async (args: string[], flags: { steps?: number }) => {
+    .action(async (rawArgs: string[], flags: { steps?: number }) => {
+      // An explicit --steps wins over a raw STEP=, so the two never both reach the backend.
+      const args = flags.steps ? rawArgs.filter((arg) => !arg.startsWith('STEP=')) : rawArgs
       if (args.length > 0) {
-        const step = args.find((arg) => arg.startsWith('STEP='))
+        const step = args.length === 1 && args[0].startsWith('STEP=') ? args[0] : undefined
         warnDeprecated(
           `spree migrate:rollback ${args.join(' ')}`,
           step
             ? `spree migrate:rollback --steps ${step.slice('STEP='.length)}`
-            : 'spree migrate:rollback',
+            : `spree exec bin/rails db:rollback ${args.join(' ')}`,
         )
       }
       const ctx = detectProject()
@@ -68,7 +71,7 @@ export function registerMigrateCommand(program: Command): void {
 function parseSteps(value: string): number {
   const steps = Number(value)
   if (!Number.isInteger(steps) || steps < 1) {
-    throw new Error(`--steps must be a positive whole number, got "${value}"`)
+    throw new InvalidArgumentError(`must be a positive whole number, got "${value}"`)
   }
   return steps
 }

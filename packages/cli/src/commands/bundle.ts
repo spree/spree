@@ -1,4 +1,5 @@
 import type { Command } from 'commander'
+import { bundleCommand } from '../backend.js'
 import { detectProject } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
@@ -19,14 +20,17 @@ export function registerBundleCommand(program: Command): void {
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
+      const gem = args[0] === 'add' && args[1] && !args[1].startsWith('-') ? args[1] : undefined
       warnDeprecated(
         'spree bundle',
-        args[0] === 'add' && args[1]
-          ? addCommandFor(args[1])
-          : `spree exec bundle ${args.join(' ')}`,
+        gem
+          ? addCommandFor(gem)
+          : args[0] === 'add'
+            ? 'spree add <extension>, or spree add --gem <gem> outside the catalog'
+            : `spree exec bundle ${args.join(' ')}`,
       )
       const ctx = detectProject()
-      await dockerComposeExecOrRun(['bundle', ...args], ctx.projectDir, {
+      await dockerComposeExecOrRun(bundleCommand(args), ctx.projectDir, {
         edgeHint: 'the edge stack heals gem drift on boot',
       })
     })

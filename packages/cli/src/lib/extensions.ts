@@ -48,21 +48,29 @@ export function isValidNpmName(name: string): boolean {
  * `spree_<name>`, so a typo cannot install a stranger's gem.
  */
 export function resolveExtension(name: string): CatalogEntry | undefined {
+  return findExtension(name)?.[1]
+}
+
+function findExtension(name: string): [string, CatalogEntry] | undefined {
   const wanted = name.trim().toLowerCase().replaceAll('-', '_')
   return Object.entries(EXTENSIONS).find(
     ([key, entry]) => key === wanted || entry.gem === wanted || entry.aliases?.includes(wanted),
-  )?.[1]
+  )
 }
 
-/** The `spree add` command that installs a gem: its catalog name, or `--gem` for one outside the catalog. */
-export function addCommandFor(gem: string): string {
-  const entry = Object.entries(EXTENSIONS).find(([, extension]) => extension.gem === gem)
-  return entry ? `spree add ${entry[1].aliases?.[0] ?? entry[0]}` : `spree add --gem ${gem}`
+/** The `spree add` command for a name: its catalog name, or `--gem` for one outside the catalog. */
+export function addCommandFor(name: string): string {
+  const found = findExtension(name)
+  return found ? `spree add ${shortestName(...found)}` : `spree add --gem ${name}`
 }
 
 /** The shortest name of every catalog entry (`paypal`, not `paypal_checkout`), for help and errors. */
 export function extensionNames(): string[] {
-  return Object.entries(EXTENSIONS).map(([key, entry]) => entry.aliases?.[0] ?? key)
+  return Object.entries(EXTENSIONS).map(([key, entry]) => shortestName(key, entry))
+}
+
+function shortestName(key: string, entry: CatalogEntry): string {
+  return entry.aliases?.[0] ?? key
 }
 
 /** Whether the Gemfile already declares the gem (commented-out lines don't count). */

@@ -1,4 +1,5 @@
 import type { Command } from 'commander'
+import { rakeCommand } from '../backend.js'
 import { detectProject } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
@@ -20,6 +21,6 @@ export function registerRakeCommand(program: Command): void {
           : `spree exec bin/rake ${args.join(' ')}`,
       )
       const ctx = detectProject()
-      await dockerComposeExecOrRun(['bin/rake', ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(rakeCommand(args), ctx.projectDir)
     })
 }

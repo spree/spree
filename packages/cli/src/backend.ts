@@ -3,30 +3,10 @@
 // so the Spree 7 Node backend replaces this file rather than every command.
 // See docs/plans/6.0-backend-agnostic-cli.md.
 
-export const CONSOLE = ['bin/rails', 'console']
-
-export const SEED_TASK = 'db:seed'
-
-export const MIGRATE = ['bin/rails', 'spree:install:migrations', 'db:migrate']
-
-export const MIGRATE_STATUS = ['bin/rails', 'db:migrate:status']
-
-export const DATABASE_RESET = [
-  'bin/rails',
-  'db:drop',
-  'db:create',
-  'spree:install:migrations',
-  'db:migrate',
-  'db:seed',
-]
-
-export const UPGRADE = ['bin/rake', 'spree:upgrade']
-
-export const PREPARE_DATABASE = ['bin/rails', 'db:prepare']
-
-export const TEST_ENV = { RAILS_ENV: 'test' }
-
-export const SUPPORTED_GENERATORS = ['api_resource']
+/** A task by its full backend name, e.g. `db:seed` or `spree:cli:create_admin`. */
+export function backendTaskCommand(task: string, args: string[] = []): string[] {
+  return railsCommand([task, ...args])
+}
 
 /** A Spree maintenance task, named without its `spree:` namespace (`search:reindex`). */
 export function spreeTask(name: string): string {
@@ -37,32 +17,51 @@ export function taskCommand(name: string, args: string[] = []): string[] {
   return backendTaskCommand(spreeTask(name), args)
 }
 
-/** A task by its full backend name, e.g. `db:seed` or `spree:cli:create_admin`. */
-export function backendTaskCommand(task: string, args: string[] = []): string[] {
-  return ['bin/rails', task, ...args]
-}
+export const CONSOLE = railsCommand(['console'])
+
+export const SEED_TASK = 'db:seed'
+
+export const MIGRATE = railsCommand([spreeTask('install:migrations'), 'db:migrate'])
+
+export const MIGRATE_STATUS = backendTaskCommand('db:migrate:status')
+
+export const DATABASE_RESET = railsCommand([
+  'db:drop',
+  'db:create',
+  spreeTask('install:migrations'),
+  'db:migrate',
+  SEED_TASK,
+])
+
+export const UPGRADE = taskCommand('upgrade')
+
+export const PREPARE_DATABASE = backendTaskCommand('db:prepare')
+
+export const TEST_ENV = { RAILS_ENV: 'test' }
+
+export const SUPPORTED_GENERATORS = ['api_resource']
 
 export function testCommand(args: string[]): string[] {
-  return ['bundle', 'exec', 'rspec', ...args]
+  return bundleCommand(['exec', 'rspec', ...args])
 }
 
 export function rollbackCommand(steps?: number, args: string[] = []): string[] {
-  return ['bin/rails', 'db:rollback', ...(steps ? [`STEP=${steps}`] : []), ...args]
+  return backendTaskCommand('db:rollback', [...(steps ? [`STEP=${steps}`] : []), ...args])
 }
 
 export function addPackageCommand(name: string): string[] {
-  return ['bundle', 'add', name]
+  return bundleCommand(['add', name])
 }
 
 export function updatePackagesCommand(names: string[]): string[] {
-  return ['bundle', 'update', ...names]
+  return bundleCommand(['update', ...names])
 }
 
-export const LIST_PACKAGES = ['bundle', 'list', '--name-only']
+export const LIST_PACKAGES = bundleCommand(['list', '--name-only'])
 
-export const INSTALL_PACKAGES = ['bundle', 'install']
+export const INSTALL_PACKAGES = bundleCommand(['install'])
 
-export const LIST_GENERATORS = ['bin/rails', 'generate', '--help']
+export const LIST_GENERATORS = railsCommand(['generate', '--help'])
 
 /** The install generator an extension ships, e.g. `spree_stripe:install`. */
 export function extensionInstallGenerator(name: string): string {
@@ -70,5 +69,24 @@ export function extensionInstallGenerator(name: string): string {
 }
 
 export function runGeneratorCommand(generator: string, args: string[] = []): string[] {
-  return ['bin/rails', 'generate', generator, ...args]
+  return railsCommand(['generate', generator, ...args])
+}
+
+// The raw tools, used directly only by the deprecated pass-through commands
+// (`spree rails`, `spree rake`, `spree bundle`, `spree routes`).
+
+export function railsCommand(args: string[]): string[] {
+  return ['bin/rails', ...args]
+}
+
+export function rakeCommand(args: string[]): string[] {
+  return ['bin/rake', ...args]
+}
+
+export function bundleCommand(args: string[]): string[] {
+  return ['bundle', ...args]
+}
+
+export function routesCommand(args: string[]): string[] {
+  return railsCommand(['routes', ...args])
 }

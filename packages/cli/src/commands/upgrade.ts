@@ -61,7 +61,7 @@ function withUpgradeOptions(command: Command): Command {
   return command
     .option(
       '--plan',
-      'list the data backfills a run would execute — for the installed Spree version, or the --to version ; runs nothing else',
+      'list the data backfills a run would execute — for the installed Spree version, or the --to version; runs nothing else',
     )
     .option('--step <id>', 'run a single upgrade step by id (runs nothing else)')
     .option(
@@ -88,7 +88,10 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     await runRakeUpgrade(ctx.projectDir, flags)
     // Puma loaded the old gems at boot; the rake steps ran in fresh processes.
     if (gemsUpdated)
-      await restartAppServices(ctx.projectDir, 'Restarting the app to load the updated gems')
+      await restartAppServices(
+        ctx.projectDir,
+        'Restarting the app to load the updated Spree packages',
+      )
   } else {
     const imagePulled = await pullImage(ctx.projectDir, flags)
     await updateSpreePackages(ctx.projectDir, flags)
@@ -176,7 +179,7 @@ async function runBundleUpdate(projectDir: string, flags: UpgradeFlags): Promise
   const spreeGems = await detectSpreeGems(projectDir)
   if (spreeGems.length === 0) {
     throw new Error(
-      'No Spree gems detected in Gemfile.lock. ' +
+      'No Spree packages detected in the backend dependencies. ' +
         'Confirm the project has `gem "spree"` (or `spree_core`) in its Gemfile.',
     )
   }
@@ -206,7 +209,7 @@ export async function detectSpreeGems(projectDir: string): Promise<string[]> {
   } catch (err) {
     const e = err as { stderr?: string }
     throw new Error(
-      'Could not list gems in the web container, even after `bundle install`.' +
+      'Could not list the Spree packages in the web container, even after reinstalling the backend dependencies.' +
         (e.stderr?.trim() ? `\n\n${e.stderr.trim()}` : ''),
     )
   }
