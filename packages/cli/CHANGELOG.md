@@ -1,5 +1,17 @@
 # @spree/cli
 
+## 3.5.0
+
+### Minor Changes
+
+- [#14980](https://github.com/spree/spree/pull/14980) [`6c126ab`](https://github.com/spree/spree/commit/6c126ab0851011b3a10658ba2527a26ef7d4d2e1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` now moves the dashboard packages and the Admin and Seller SDKs to the Spree version. From Spree 6.0 these packages share the version of the Spree gems, and a range on an older line such as `^1.0.0-rc.7` would never reach it on its own. A package pinned to an exact version moves to the Spree version and stays pinned; before, `update` left it on the old release while the server moved on. The upgrade then dedupes each app, so a dependency the new release pins, such as `@codemirror/view`, isn't left installed twice and failing type checks. Yarn 2 and later is now also recognised from the `packageManager` field. For a storefront on an older `@spree/sdk` line, the upgrade names the exact range to move to.
+
+### Patch Changes
+
+- [#14978](https://github.com/spree/spree/pull/14978) [`2df9371`](https://github.com/spree/spree/commit/2df9371e81f24b7f7ea8af915fdb2a6ea69c3dbc) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade`, `spree db:reset` and `spree db:console` now say plainly when Docker is not running, and show Docker's own error for other failures instead of the command that failed.
+  
+  `spree upgrade` now asks before running the upgrade tasks (data backfills), so they can be skipped like the other steps.
+
 ## 3.4.1
 
 ### Patch Changes
