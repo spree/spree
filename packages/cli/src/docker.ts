@@ -117,16 +117,29 @@ const DAEMON_DOWN =
 
 /**
  * The refusal shown when `docker compose` itself failed while probing the
- * stack (see isServiceRunning). A stopped daemon gets a plain "start Docker";
- * anything else shows Docker's own reason rather than execa's command line.
+ * stack (see isServiceRunning). A missing or stopped Docker gets a plain
+ * "install/start Docker"; anything else shows Docker's own reason rather than
+ * execa's command line.
  *
  * @param error the error `compose ps` threw
  * @param command the spree command to re-run, e.g. `spree upgrade`
  * @return the message lines
  */
 export function dockerStackProblem(error: unknown, command: string): string[] {
-  const { stderr, message } = error as { stderr?: string; message?: string }
-  const output = String(stderr || message || '')
+  const { code, stderr, originalMessage, message } = error as {
+    code?: string
+    stderr?: string
+    originalMessage?: string
+    message?: string
+  }
+  if (code === 'ENOENT') {
+    return [
+      'Docker is not installed (the `docker` command was not found).',
+      `Install Docker Desktop (or Docker Engine), then re-run ${pc.bold(command)}.`,
+    ]
+  }
+
+  const output = String(stderr || originalMessage || message || '')
   if (DAEMON_DOWN.test(output)) {
     return [
       'Docker is not running.',

@@ -365,6 +365,22 @@ describe('spree upgrade', () => {
       expect(commands).toEqual([])
     })
 
+    it('says Docker is not installed when the docker command is missing', async () => {
+      mockExeca.mockImplementation((async () => {
+        throw Object.assign(new Error('Command failed with ENOENT: docker compose ps web'), {
+          code: 'ENOENT',
+          originalMessage: 'spawn docker ENOENT',
+          stderr: '',
+        })
+      }) as never)
+
+      await expect(runUpgrade()).rejects.toMatchObject({ code: 1 })
+
+      expect(vi.mocked(p.cancel)).toHaveBeenCalledWith(
+        expect.stringMatching(/^Docker is not installed/),
+      )
+    })
+
     it("shows Docker's own reason for any other failure", async () => {
       failProbe('no such service: web')
 
