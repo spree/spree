@@ -7,6 +7,7 @@ import {
   dockerCompose,
   dockerComposeExec,
   dockerComposeRun,
+  dockerStackProblem,
   isServiceRunning,
 } from '../docker.js'
 
@@ -73,17 +74,10 @@ export function registerDbCommand(program: Command): void {
         )
         stackUp = running.some(Boolean)
       } catch (err) {
-        // `compose ps` itself failed: broken/stale compose, daemon down, unknown
-        // service. Point home rather than dumping the raw env-file error (mirrors
-        // upgrade.ts; backstop for a stale API directory past detectProject re-rooting).
-        // `return` is load-bearing: it tells TS `stackUp` is assigned past here.
-        return refuse([
-          'Could not inspect the Docker stack from this directory.',
-          `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
-          '',
-          `Run ${pc.bold('spree db:reset')} from your project root (the directory holding the`,
-          '.env with SECRET_KEY_BASE), and make sure Docker is running.',
-        ])
+        // `compose ps` itself failed: daemon down, broken/stale compose, unknown
+        // service (mirrors upgrade.ts). `return` is load-bearing: it tells TS
+        // `stackUp` is assigned past here.
+        return refuse(dockerStackProblem(err, 'spree db:reset'))
       }
 
       if (stackUp) {
@@ -136,14 +130,7 @@ export function registerDbCommand(program: Command): void {
       try {
         postgresUp = await isServiceRunning('postgres', ctx.projectDir)
       } catch (err) {
-        p.cancel(
-          [
-            'Could not inspect the Docker stack from this directory.',
-            `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
-            '',
-            `Run ${pc.bold('spree db:console')} from your project root, and make sure Docker is running.`,
-          ].join('\n'),
-        )
+        p.cancel(dockerStackProblem(err, 'spree db:console').join('\n'))
         process.exit(1)
       }
 

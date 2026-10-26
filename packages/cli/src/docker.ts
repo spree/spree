@@ -110,6 +110,40 @@ export async function isServiceRunning(service: string, projectDir: string): Pro
   return stdout.split('\n').some((line) => line.trim() === 'running')
 }
 
+// Docker Desktop, the Linux engine and the Windows named pipe each word a
+// stopped daemon differently.
+const DAEMON_DOWN =
+  /Cannot connect to the Docker daemon|failed to connect to the docker API|error during connect/i
+
+/**
+ * The refusal shown when `docker compose` itself failed while probing the
+ * stack (see isServiceRunning). A stopped daemon gets a plain "start Docker";
+ * anything else shows Docker's own reason rather than execa's command line.
+ *
+ * @param error the error `compose ps` threw
+ * @param command the spree command to re-run, e.g. `spree upgrade`
+ * @return the message lines
+ */
+export function dockerStackProblem(error: unknown, command: string): string[] {
+  const { stderr, message } = error as { stderr?: string; message?: string }
+  const output = String(stderr || message || '')
+  if (DAEMON_DOWN.test(output)) {
+    return [
+      'Docker is not running.',
+      `Start Docker Desktop (or the Docker service), then re-run ${pc.bold(command)}.`,
+    ]
+  }
+
+  const reason = output.split('\n').find((line) => line.trim()) ?? ''
+  return [
+    'Could not inspect the Docker stack from this directory.',
+    `  ${pc.dim(reason.trim())}`,
+    '',
+    `Run ${pc.bold(command)} from your project root (the directory holding the`,
+    '.env with SECRET_KEY_BASE), and make sure Docker is running.',
+  ]
+}
+
 export interface DockerComposeExecOptions {
   service?: string
   tty?: boolean

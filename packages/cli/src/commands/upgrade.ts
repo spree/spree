@@ -9,6 +9,7 @@ import {
   dockerCompose,
   dockerComposeCapture,
   dockerComposeExecOrRun,
+  dockerStackProblem,
   isServiceRunning,
   primeBundleVolume,
   restartAppServices,
@@ -148,16 +149,10 @@ async function assertUpgradeable(projectDir: string): Promise<void> {
   try {
     await isServiceRunning('web', projectDir)
   } catch (err) {
-    // `compose ps` itself failed: broken/stale compose, daemon down, unknown
-    // service. Point home instead of dumping the raw env-file error. (Backstop
-    // for a stale API directory that slipped past detectProject re-rooting.)
-    refuse([
-      'Could not inspect the Docker stack from this directory.',
-      `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
-      '',
-      `Run ${pc.bold('spree upgrade')} from your project root (the directory holding the`,
-      '.env with SECRET_KEY_BASE), and make sure Docker is running.',
-    ])
+    // `compose ps` itself failed: daemon down, broken/stale compose, unknown
+    // service. (Backstop for a stale API directory that slipped past
+    // detectProject re-rooting.)
+    refuse(dockerStackProblem(err, 'spree upgrade'))
   }
 }
 

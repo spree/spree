@@ -27,6 +27,7 @@ vi.mock('@clack/prompts', () => ({
   cancel: vi.fn(),
 }))
 
+import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import {
   detectSpreeGems,
@@ -323,6 +324,56 @@ describe('spree upgrade', () => {
 
     expect(commands).toContain('pnpm update @spree/dashboard')
     expect(commands.at(-1)).toBe('docker compose exec web bin/rake spree:upgrade')
+  })
+
+  describe('when `compose ps` fails', () => {
+    function failProbe(stderr: string): void {
+      mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+        if (args.includes('ps')) {
+          throw Object.assign(
+            new Error(
+              "Command failed with exit code 1: docker compose ps web --format '{{.State}}'",
+            ),
+            { exitCode: 1, stderr },
+          )
+        }
+        return { stdout: '' }
+      }) as never)
+    }
+
+    beforeEach(() => {
+      writeProject({ ejected: false })
+      vi.spyOn(process, 'exit').mockImplementation(((code: number) => {
+        throw Object.assign(new Error('exit'), { code })
+      }) as never)
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('says Docker is not running when the daemon is down', async () => {
+      failProbe(
+        'failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running',
+      )
+
+      await expect(runUpgrade()).rejects.toMatchObject({ code: 1 })
+
+      expect(vi.mocked(p.cancel)).toHaveBeenCalledWith(
+        expect.stringMatching(/^Docker is not running\./),
+      )
+      expect(commands).toEqual([])
+    })
+
+    it("shows Docker's own reason for any other failure", async () => {
+      failProbe('no such service: web')
+
+      await expect(runUpgrade()).rejects.toMatchObject({ code: 1 })
+
+      const message = vi.mocked(p.cancel).mock.calls.at(-1)?.[0]
+      expect(message).toMatch(/no such service: web/)
+      expect(message).not.toMatch(/Command failed/)
+    })
   })
 
   it('runs only the rake task with --plan or --step', async () => {

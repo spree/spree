@@ -11,7 +11,8 @@ vi.mock('../src/context', () => ({
   hasMonorepoSpreePath: () => monorepoEdge,
 }))
 
-vi.mock('../src/docker', () => ({
+vi.mock('../src/docker', async (importOriginal) => ({
+  dockerStackProblem: (await importOriginal<typeof import('../src/docker')>()).dockerStackProblem,
   // Sidekiq-era compose shape by default — these tests exercise the two-service
   // path; the Solid Queue single-service shape drops 'worker' from this list.
   appServices: vi.fn().mockResolvedValue(['web', 'worker']),
@@ -117,6 +118,7 @@ describe('spree db:reset', () => {
 
     await expect(runDbReset('--yes')).rejects.toMatchObject({ code: 1 })
 
+    expect(cancelMock).toHaveBeenCalledWith(expect.stringMatching(/^Docker is not running\./))
     expect(dockerCompose).not.toHaveBeenCalled()
     expect(dockerComposeRun).not.toHaveBeenCalled()
   })
