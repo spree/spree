@@ -5,7 +5,9 @@ module Spree
         class DigitalLinksController < ResourceController
           scoped_resource :orders
 
-          before_action :set_resource, only: [:reset]
+          # Redeclaring `set_resource` replaces the base class's filter rather
+          # than extending it, so every routed member action is listed here.
+          before_action :set_resource, only: [:show, :reset]
 
           # PATCH /api/v3/admin/digital_links/:id/reset
           #
