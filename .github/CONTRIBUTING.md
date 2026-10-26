@@ -404,19 +404,11 @@ A **Lefthook pre-commit hook** regenerates both whenever you commit a change to 
 To regenerate manually (useful when iterating on serializers before committing):
 
 ```bash
-cd server
-pnpm exec spree rake typelizer:generate     # regenerate TS types
-cd ..
-pnpm generate:zod                            # regenerate Zod schemas for every SDK
+pnpm generate:types   # regenerate TS types from the serializers
+pnpm generate:zod     # regenerate Zod schemas for every SDK
 ```
 
-If you'd rather avoid the Docker round-trip and have Ruby on your host, the native equivalent works too:
-
-```bash
-cd spree/api
-bundle install
-bundle exec rake typelizer:generate
-```
+`pnpm generate:types` runs with the Ruby on your machine, like the pre-commit hook, so run `bundle install` in `spree/api` once first.
 
 ### Releasing packages
 

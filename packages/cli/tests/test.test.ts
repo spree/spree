@@ -1,5 +1,6 @@
 import { Command } from 'commander'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { testCommand } from '../src/backend'
 import { registerTestCommand } from '../src/commands/test'
 import { dockerComposeExecOrRun } from '../src/docker'
 
@@ -19,6 +20,21 @@ async function runTests(args: string[] = [], command = 'test'): Promise<void> {
   await program.parseAsync([command, ...args], { from: 'user' })
 }
 
+describe('testCommand', () => {
+  // `$0` is the script's name, so forwarded arguments start at `$1` and reach
+  // the runner through `"$@"` with their quoting intact.
+  it('creates the test database before running the suite', () => {
+    expect(testCommand(['spec/models', '--fail-fast'])).toEqual([
+      'sh',
+      '-c',
+      'bin/rails db:create >/dev/null 2>&1; exec bundle exec rspec "$@"',
+      'spree test',
+      'spec/models',
+      '--fail-fast',
+    ])
+  })
+})
+
 describe('spree test', () => {
   beforeEach(() => {
     projectDir = '/proj'
@@ -27,11 +43,11 @@ describe('spree test', () => {
 
   // Branching (exec vs one-off run vs monorepo-edge refusal) is covered by
   // dockerComposeExecOrRun's own tests in docker.test.ts; here we assert the
-  // delegation shape: `bundle exec rspec` + forwarded args + RAILS_ENV=test.
+  // delegation shape: the backend's test command + forwarded args + RAILS_ENV=test.
   it('runs the full suite with RAILS_ENV=test when called bare', async () => {
     await runTests()
 
-    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(['bundle', 'exec', 'rspec'], '/proj', {
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(testCommand([]), '/proj', {
       env: { RAILS_ENV: 'test' },
       edgeHint: 'then re-run spree test',
     })
@@ -41,7 +57,7 @@ describe('spree test', () => {
     await runTests(['spec/models/spree/brand_spec.rb:15'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bundle', 'exec', 'rspec', 'spec/models/spree/brand_spec.rb:15'],
+      testCommand(['spec/models/spree/brand_spec.rb:15']),
       '/proj',
       expect.objectContaining({ env: { RAILS_ENV: 'test' } }),
     )
@@ -53,7 +69,7 @@ describe('spree test', () => {
     await runTests(['--format', 'documentation'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bundle', 'exec', 'rspec', '--format', 'documentation'],
+      testCommand(['--format', 'documentation']),
       '/proj',
       expect.objectContaining({ env: { RAILS_ENV: 'test' } }),
     )
@@ -63,7 +79,7 @@ describe('spree test', () => {
     await runTests(['spec/features/', '--fail-fast'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bundle', 'exec', 'rspec', 'spec/features/', '--fail-fast'],
+      testCommand(['spec/features/', '--fail-fast']),
       '/proj',
       expect.objectContaining({ env: { RAILS_ENV: 'test' } }),
     )
@@ -75,7 +91,7 @@ describe('spree test', () => {
     await runTests(['spec/models'], 'rspec')
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bundle', 'exec', 'rspec', 'spec/models'],
+      testCommand(['spec/models']),
       '/proj',
       expect.objectContaining({ env: { RAILS_ENV: 'test' } }),
     )

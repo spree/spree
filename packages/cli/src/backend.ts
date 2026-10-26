@@ -39,8 +39,17 @@ export const PREPARE_DATABASE = backendTaskCommand('db:prepare')
 
 export const TEST_ENV = { RAILS_ENV: 'test' }
 
+// Creates the test database first, so the suite runs on a fresh project; the
+// test helper loads the schema into it. Not `db:prepare`, which would seed a
+// newly created database. A create failure is left for the runner to report.
 export function testCommand(args: string[]): string[] {
-  return bundleCommand(['exec', 'rspec', ...args])
+  return [
+    'sh',
+    '-c',
+    'bin/rails db:create >/dev/null 2>&1; exec bundle exec rspec "$@"',
+    'spree test',
+    ...args,
+  ]
 }
 
 export function rollbackCommand(steps?: number, args: string[] = []): string[] {
