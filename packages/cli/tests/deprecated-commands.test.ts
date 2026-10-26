@@ -65,10 +65,20 @@ describe('deprecated Rails-named commands', () => {
     [
       ['bundle', 'add', '--version', '~> 6.0', 'spree_stripe'],
       ['bundle', 'add', '--version', '~> 6.0', 'spree_stripe'],
-      'spree add <extension>, or spree add --gem <gem>',
+      'spree exec bundle add --version ~> 6.0 spree_stripe',
     ],
     [['bundle', 'outdated'], ['bundle', 'outdated'], 'spree exec bundle outdated'],
     [['routes'], ['bin/rails', 'routes'], 'spree api endpoints'],
+    [
+      ['routes', '-g', 'products'],
+      ['bin/rails', 'routes', '-g', 'products'],
+      'spree exec bin/rails routes -g products',
+    ],
+    [
+      ['bundle', 'add', 'spree_stripe', '--version', '6.0'],
+      ['bundle', 'add', 'spree_stripe', '--version', '6.0'],
+      'spree exec bundle add spree_stripe --version 6.0',
+    ],
   ])('spree %j still runs and points at the replacement', async (argv, inner, replacement) => {
     await run(argv)
 

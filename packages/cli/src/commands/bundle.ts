@@ -20,14 +20,13 @@ export function registerBundleCommand(program: Command): void {
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
-      const gem = args[0] === 'add' && args[1] && !args[1].startsWith('-') ? args[1] : undefined
+      // A bare `bundle add <gem>` maps onto `spree add`; any extra option
+      // (a version, a source) only survives through `spree exec`.
+      const gem =
+        args[0] === 'add' && args.length === 2 && !args[1].startsWith('-') ? args[1] : undefined
       warnDeprecated(
         'spree bundle',
-        gem
-          ? addCommandFor(gem)
-          : args[0] === 'add'
-            ? 'spree add <extension>, or spree add --gem <gem> outside the catalog'
-            : `spree exec bundle ${args.join(' ')}`,
+        gem ? addCommandFor(gem) : `spree exec bundle ${args.join(' ')}`,
       )
       const ctx = detectProject()
       await dockerComposeExecOrRun(bundleCommand(args), ctx.projectDir, {

@@ -12,7 +12,10 @@ export function registerRoutesCommand(program: Command): void {
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
-      warnDeprecated('spree routes', 'spree api endpoints')
+      warnDeprecated(
+        'spree routes',
+        args.length > 0 ? `spree exec bin/rails routes ${args.join(' ')}` : 'spree api endpoints',
+      )
       const ctx = detectProject()
       await dockerComposeExecOrRun(routesCommand(args), ctx.projectDir)
     })
