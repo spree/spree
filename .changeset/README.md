@@ -13,14 +13,37 @@ spelling: gems `6.0.0.rc7` ship as `6.0.0-rc.7`, gems `6.0.2` as `6.0.2`. A
 bug report naming `@spree/sdk@6.0.2` therefore names the backend too.
 
 `@spree/cli` and `create-spree-app` manage projects rather than talk to the
-API, so they keep their own versions and release whenever they change.
+API, so they keep their own versions and release on their own tags.
 
 ## Releasing
+
+Every release is published by `.github/workflows/release.yml` from a tag
+pushed on a commit already on `main`. The workflow checks the tag against the
+versions in the repository first, and skips any version already published, so
+a failed release can be re-run.
+
+| Tag | Publishes |
+| --- | --- |
+| `v6.0.0.rc7` | the Spree gems and the packages in the group |
+| `@spree/cli@3.5.0` | `@spree/cli` |
+| `create-spree-app@2.4.1` | `create-spree-app` |
+
+**A Spree release:**
 
 1. Bump `Spree::VERSION` in `spree/core/lib/spree/core/version.rb`.
 2. Run `pnpm version:packages`. It runs `changeset version`, then moves every
    package in the group to the Spree version. A package with no changes still
-   gets the new version and a changelog entry saying so.
+   gets the new version and a changelog entry saying so. Pending changesets
+   for the tools are versioned too.
+3. Merge, then push the Spree tag, plus a tag for each tool whose version
+   changed: `git push origin v6.0.0.rc7 @spree/cli@3.5.0`.
+
+**A tool release between Spree releases:** run `pnpm version:tools`, which
+versions only the tools and leaves the group's changesets for the next Spree
+release. Merge, then push the tool's tag.
+
+GitHub starts no workflow for tags pushed more than three at a time, so push
+at most three tags at once.
 
 Never run plain `changeset version` for a release: it would give the group a
 version computed from the changesets. For packages in the group, the bump type
