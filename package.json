@@ -43,7 +43,8 @@
     "test:slots": "scripts/test/with-slot --status",
     "docs:dev": "cd docs && mint dev --port 3333",
     "changeset": "changeset",
-    "version:packages": "node scripts/version-packages.mjs"
+    "version:packages": "node scripts/version-packages.mjs",
+    "version:tools": "node scripts/version-packages.mjs --tools"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",

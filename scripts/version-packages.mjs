@@ -8,6 +8,10 @@
 // version Changesets gives them.
 //
 // Bump `Spree::VERSION` first, then run `pnpm version:packages`.
+//
+// `pnpm version:tools` (`--tools`) versions only the packages outside the
+// group, for a CLI or create-spree-app release between Spree releases; the
+// group's pending changesets wait for the next Spree release.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -127,7 +131,17 @@ function updateChangelog(changelogPath, { computed, target, changed, spreeVersio
   fs.writeFileSync(changelogPath, updated)
 }
 
+function versionTools() {
+  const ignores = alignedPackages().flatMap(({ name }) => ['--ignore', name])
+  execFileSync('pnpm', ['exec', 'changeset', 'version', ...ignores], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  })
+}
+
 function main() {
+  if (process.argv.includes('--tools')) return versionTools()
+
   const spreeVersion = gemVersion()
   const target = npmVersion(spreeVersion)
   const packages = alignedPackages()
