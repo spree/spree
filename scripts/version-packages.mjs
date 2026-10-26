@@ -44,11 +44,24 @@ export function peerRange(version) {
   return `>=${version} <${major + 1}.0.0-0`
 }
 
+/**
+ * A range over a package's whole major, release candidates included:
+ * `^6.0.0-0` accepts `6.0.0-rc.7`, `6.0.0` and every later 6.x, and installs
+ * the newest. Used where a range must never point at a version that may not be
+ * on npm yet.
+ *
+ * @param {string} version
+ * @returns {string}
+ */
+export function majorFloorRange(version) {
+  return `^${version.split('.')[0]}.0.0-0`
+}
+
 function readJson(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'))
 }
 
-function gemVersion() {
+export function gemVersion() {
   const source = fs.readFileSync(
     path.join(repoRoot, 'spree/core/lib/spree/core/version.rb'),
     'utf8',
@@ -64,7 +77,7 @@ function hasPendingChangesets() {
     .some((file) => file.endsWith('.md') && file !== 'README.md')
 }
 
-function alignedPackages() {
+export function alignedPackages() {
   const { fixed } = readJson(path.join(repoRoot, '.changeset/config.json'))
   const group = fixed.find((names) => names.includes('@spree/sdk'))
   if (!group) throw new Error('No Changesets fixed group contains @spree/sdk')
