@@ -2804,7 +2804,9 @@
         "run_next": "Exécuter l'étape suivante",
         "run_step": "Exécuter",
         "show_steps": "Afficher les étapes",
-        "title": "Mise à niveau vers Spree {{version}}"
+        "title": "Mise à niveau vers Spree {{version}}",
+        "up_to_date_description": "Lorsque vous mettrez Spree à niveau vers une nouvelle version, les étapes de données dont elle a besoin apparaîtront ici, prêtes à être lancées dans l'ordre.",
+        "up_to_date_title": "Votre boutique est à jour"
       }
     },
     "markets": {

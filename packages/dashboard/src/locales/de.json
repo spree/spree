@@ -2804,7 +2804,9 @@
         "run_next": "Nächsten Schritt ausführen",
         "run_step": "Ausführen",
         "show_steps": "Schritte anzeigen",
-        "title": "Upgrade auf Spree {{version}}"
+        "title": "Upgrade auf Spree {{version}}",
+        "up_to_date_description": "Wenn Sie Spree auf eine neue Version aktualisieren, erscheinen hier die Datenschritte, die dieses Release benötigt, bereit zur Ausführung in der richtigen Reihenfolge.",
+        "up_to_date_title": "Ihr Shop ist auf dem neuesten Stand"
       }
     },
     "markets": {

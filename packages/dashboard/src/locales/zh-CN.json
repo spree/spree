@@ -2799,7 +2799,9 @@
         "run_next": "运行下一步",
         "run_step": "运行",
         "show_steps": "显示步骤",
-        "title": "升级到 Spree {{version}}"
+        "title": "升级到 Spree {{version}}",
+        "up_to_date_description": "将 Spree 升级到新版本后，该版本所需的数据步骤会显示在这里，可按顺序运行。",
+        "up_to_date_title": "你的店铺已是最新"
       }
     },
     "markets": {

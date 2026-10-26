@@ -76,7 +76,9 @@
         "run_next": "Ejecutar el siguiente paso",
         "run_step": "Ejecutar",
         "show_steps": "Mostrar pasos",
-        "title": "Actualizar a Spree {{version}}"
+        "title": "Actualizar a Spree {{version}}",
+        "up_to_date_description": "Cuando actualices Spree a una nueva versión, aquí aparecerán los pasos de datos que necesita esa versión, listos para ejecutarse en orden.",
+        "up_to_date_title": "Tu tienda está al día"
       }
     },
     "pages": {

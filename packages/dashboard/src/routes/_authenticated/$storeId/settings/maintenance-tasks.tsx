@@ -14,7 +14,7 @@ import {
   useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { RunDetailSheet } from '../../../../components/spree/maintenance-tasks/run-detail-sheet'
@@ -69,7 +69,7 @@ function MaintenanceTasksPage() {
   const search = Route.useSearch()
   const openRunId = search.run
 
-  const { data: upgradeData, isLoading } = useUpgradeSteps()
+  const { data: upgradeData } = useUpgradeSteps()
 
   const openRun = useCallback(
     (runId: string | undefined) => {
@@ -87,68 +87,48 @@ function MaintenanceTasksPage() {
 
   // Steps still outstanding — what the Upgrade tab is counting.
   const pendingUpgradeSteps = (upgradeData?.data ?? []).filter((step) => !step.superseded)
-  const hasUpgrade = (upgradeData?.data ?? []).length > 0
-
-  // Chosen once the steps have loaded and then kept, so the page does not
-  // switch tabs under the operator when the last step finishes.
-  const [defaultTab, setDefaultTab] = useState<'upgrade' | 'history'>()
-  useEffect(() => {
-    if (isLoading || defaultTab) return
-    setDefaultTab(pendingUpgradeSteps.length > 0 ? 'upgrade' : 'history')
-  }, [isLoading, defaultTab, pendingUpgradeSteps.length])
-
-  // A bookmarked Upgrade tab falls back to History once there is no upgrade
-  // to show, rather than selecting a tab that is not rendered.
-  const requestedTab = search.tab === 'upgrade' && !hasUpgrade ? 'history' : search.tab
-  const activeTab = isLoading ? undefined : (requestedTab ?? defaultTab)
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader />
 
-      {activeTab && (
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) =>
-            navigate({
-              search: (previous: Record<string, unknown>) => ({ ...previous, tab: value }),
-              replace: true,
-            })
-          }
-        >
-          <TabsList>
-            {hasUpgrade && (
-              <TabsTrigger value="upgrade" count={pendingUpgradeSteps.length}>
-                {t('admin.maintenance_tasks.tabs.upgrade')}
-              </TabsTrigger>
-            )}
-            <TabsTrigger value="history">{t('admin.maintenance_tasks.tabs.history')}</TabsTrigger>
-          </TabsList>
+      <Tabs
+        value={search.tab ?? 'upgrade'}
+        onValueChange={(value) =>
+          navigate({
+            search: (previous: Record<string, unknown>) => ({ ...previous, tab: value }),
+            replace: true,
+          })
+        }
+      >
+        <TabsList>
+          <TabsTrigger value="upgrade" count={pendingUpgradeSteps.length || undefined}>
+            {t('admin.maintenance_tasks.tabs.upgrade')}
+          </TabsTrigger>
+          <TabsTrigger value="history">{t('admin.maintenance_tasks.tabs.history')}</TabsTrigger>
+        </TabsList>
 
-          {hasUpgrade && (
-            <TabsContent value="upgrade">
-              <UpgradePanel onOpenRun={openRun} />
-            </TabsContent>
-          )}
+        <TabsContent value="upgrade">
+          <UpgradePanel onOpenRun={openRun} />
+        </TabsContent>
 
-          {/* Kept mounted so the run table's loaded page, scroll position and
-              polling survive a tab switch. */}
-          <TabsContent value="history" keepMounted>
-            <ResourceTable
-              tableKey="maintenance-task-runs"
-              queryKey="maintenance-task-runs"
-              queryFn={(params) =>
-                adminClient.maintenanceTaskRuns.list({
-                  ...(params as Record<string, unknown>),
-                  expand: ['admin_user'],
-                })
-              }
-              searchParams={search}
-              hideHeader
-            />
-          </TabsContent>
-        </Tabs>
-      )}
+        {/* Kept mounted so the run table's loaded page, scroll position and
+            polling survive a tab switch. */}
+        <TabsContent value="history" keepMounted>
+          <ResourceTable
+            tableKey="maintenance-task-runs"
+            queryKey="maintenance-task-runs"
+            queryFn={(params) =>
+              adminClient.maintenanceTaskRuns.list({
+                ...(params as Record<string, unknown>),
+                expand: ['admin_user'],
+              })
+            }
+            searchParams={search}
+            hideHeader
+          />
+        </TabsContent>
+      </Tabs>
 
       <RunDetailSheet
         runId={openRunId}

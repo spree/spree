@@ -7,11 +7,22 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   Progress,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { CheckIcon, ChevronRightIcon, ExternalLinkIcon, PlayIcon } from 'lucide-react'
+import {
+  CheckIcon,
+  ChevronRightIcon,
+  CircleCheckIcon,
+  ExternalLinkIcon,
+  PlayIcon,
+} from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStartMaintenanceTask, useUpgradeSteps } from '../../../hooks/use-maintenance-tasks'
@@ -34,15 +45,32 @@ interface Boundary {
  * it already applied is how an upgrade does damage, so those are never
  * runnable.
  *
- * Renders nothing at all for a store installed fresh at this release: it has
- * no historical data to convert, so neither the steps nor the history describe
- * anything real for it.
+ * A store installed fresh at this release has no historical data to convert,
+ * so it is told where the steps of a later upgrade will appear instead.
  */
 export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void }) {
   const { data, isLoading } = useUpgradeSteps()
 
+  const { t } = useTranslation()
+
   const allSteps = data?.data ?? []
-  if (isLoading || allSteps.length === 0) return null
+  if (isLoading) return null
+
+  if (allSteps.length === 0) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <CircleCheckIcon />
+          </EmptyMedia>
+          <EmptyTitle>{t('admin.maintenance_tasks.upgrade.up_to_date_title')}</EmptyTitle>
+          <EmptyDescription>
+            {t('admin.maintenance_tasks.upgrade.up_to_date_description')}
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    )
+  }
 
   const boundaries = groupByBoundary(allSteps)
   const current = boundaries.filter((boundary) => !boundary.superseded)

@@ -2822,7 +2822,9 @@
         "run_next": "Uruchom następny krok",
         "run_step": "Uruchom",
         "show_steps": "Pokaż kroki",
-        "title": "Aktualizacja do Spree {{version}}"
+        "title": "Aktualizacja do Spree {{version}}",
+        "up_to_date_description": "Gdy zaktualizujesz Spree do nowej wersji, pojawią się tutaj kroki danych wymagane przez to wydanie, gotowe do uruchomienia po kolei.",
+        "up_to_date_title": "Twój sklep jest aktualny"
       }
     },
     "markets": {

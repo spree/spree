@@ -2804,7 +2804,9 @@
         "run_next": "Run next step",
         "run_step": "Run",
         "show_steps": "Show steps",
-        "title": "Upgrade to Spree {{version}}"
+        "title": "Upgrade to Spree {{version}}",
+        "up_to_date_description": "When you upgrade Spree to a new version, the data steps that release needs will appear here, ready to run in order.",
+        "up_to_date_title": "Your store is up to date"
       }
     },
     "markets": {
