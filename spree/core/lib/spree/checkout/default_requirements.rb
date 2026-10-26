@@ -33,6 +33,7 @@ module Spree
           r << req('address', 'email', I18n.t('spree.checkout_requirements.email_required')) unless @cart.email.present?
           r << req('address', 'ship_address', I18n.t('spree.checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
           r << req('delivery', 'delivery_method', I18n.t('spree.checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
+          r.concat(undeliverable_errors)
           r << req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
           r << req('address', 'po_number', I18n.t('spree.checkout_requirements.po_number_required')) if po_number_missing?
           r << order_minimum_requirement if below_order_minimum?
@@ -99,6 +100,31 @@ module Spree
           elsif !line_item.sufficient_stock?
             req('cart', 'line_items', I18n.t('spree.cart_line_item.out_of_stock', li_name: line_item.name), code: 'out_of_stock')
           end
+        end
+      end
+
+      # A rebuild drops a proposal no method can quote with only a transient
+      # warning, so part of a line can be in no fulfillment. Advisory, so the
+      # buyer reads it while they can still change the address or the cart.
+      def undeliverable_errors
+        return [] unless delivery_step_required? && @cart.fulfillments.any?
+
+        undelivered_line_items.map do |line_item|
+          req('delivery', 'line_items', I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
+              code: 'delivery_unavailable')
+        end
+      end
+
+      # A line short of stock is packed short too; the stock check already
+      # names it. Only lines short of a fulfillment pay for that check, so a
+      # cart read stays at one query.
+      def undelivered_line_items
+        allocated = Spree::FulfillmentItem.where(fulfillment_id: @cart.fulfillments.select(:id))
+                                          .group(:line_item_id).sum(:quantity)
+
+        @cart.line_items.select do |line_item|
+          allocated.fetch(line_item.id, 0) < line_item.quantity &&
+            !discontinued?(line_item) && line_item.sufficient_stock?
         end
       end
 

@@ -78,6 +78,37 @@ RSpec.describe Spree::Checkout::Requirements do
       )
     end
 
+    it 'reports part of a line in no fulfillment before completion, so the buyer can change it' do
+      line_item = order.line_items.first
+      line_item.update_column(:quantity, line_item.quantity + 1)
+
+      expect(described_class.new(order.reload).call).to include(
+        a_hash_including(step: 'delivery', code: 'delivery_unavailable')
+      )
+    end
+
+    it 'completes once every unit of every line is in a fulfillment' do
+      expect(described_class.new(order).call(completion: true))
+        .not_to include(a_hash_including(code: 'delivery_unavailable'))
+    end
+
+    it 'leaves a line short of stock to the stock check' do
+      line_item = order.line_items.first
+      line_item.update_column(:quantity, line_item.quantity + 1)
+      line_item.variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
+
+      codes = described_class.new(order.reload).call(completion: true).map { |requirement| requirement[:code] }
+      expect(codes).to include('out_of_stock')
+      expect(codes).not_to include('delivery_unavailable')
+    end
+
+    it 'says nothing of delivery before any can be proposed' do
+      order.fulfillments.destroy_all
+
+      expect(described_class.new(order.reload).call(completion: true))
+        .not_to include(a_hash_including(code: 'delivery_unavailable'))
+    end
+
     it 'does not require shipping_method when no delivery step' do
       allow(order).to receive(:has_checkout_step?).with('delivery').and_return(false)
       allow(order).to receive(:has_checkout_step?).with('payment').and_return(true)

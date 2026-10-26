@@ -2,9 +2,14 @@ require 'spec_helper'
 
 describe Spree::StockReservations::Reserve do
   let(:store) { create(:store) }
-  let(:variant) { create(:variant) }
-  let!(:stock_location) { variant.stock_levels.first.stock_location.tap { |sl| sl.update!(active: true) } }
-  let!(:stock_level) { variant.stock_levels.first.tap { |si| si.update!(backorderable: false); si.set_count_on_hand(10) } }
+  let!(:stock_location) { create(:stock_location, store: store) }
+  let(:variant) { create(:variant, product: create(:product, store: store)) }
+  let!(:stock_level) do
+    variant.stock_levels.find_by!(stock_location: stock_location).tap do |si|
+      si.update!(backorderable: false)
+      si.set_count_on_hand(10)
+    end
+  end
   let(:order) { create(:order, store: store) }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 3) }
 
@@ -89,6 +94,43 @@ describe Spree::StockReservations::Reserve do
 
       expect(result).to be_failure
       expect(result.error.to_s).to include('available')
+    end
+
+    it 'holds two lines of one variant on the shelf they share' do
+      second = create(:line_item, order: order, variant: variant, quantity: 3)
+
+      expect(result).to be_success
+      expect(Spree::StockReservation.where(line_item: [line_item, second]).pluck(:quantity)).to contain_exactly(3, 3)
+      expect(stock_level.reload.reserved_count).to eq(6)
+    end
+
+    it 'holds each unit at the location the allocation takes it from' do
+      stock_level.set_count_on_hand(2)
+      other_level = create(:stock_location, store: store).stock_level_or_create(variant)
+      other_level.update!(backorderable: false)
+      other_level.set_count_on_hand(10)
+
+      expect(result).to be_success
+      expect(stock_level.reload.reserved_count).to eq(2)
+      expect(other_level.reload.reserved_count).to eq(1)
+    end
+
+    it 'withdraws a hold the allocation no longer takes from that shelf' do
+      result
+      stock_level.update!(backorderable: true)
+
+      described_class.call(cart: order)
+
+      expect(Spree::StockReservation.for_order(order)).to be_empty
+      expect(stock_level.reload.reserved_count).to eq(0)
+    end
+
+    it 'leaves a line no covered location stocks to the delivery check rather than refuse it' do
+      variant.product.delivery_profile.default_origin_group.stock_locations =
+        [create(:stock_location, store: store, propagate_all_variants: false)]
+
+      expect(result).to be_success
+      expect(Spree::StockReservation.for_order(order)).to be_empty
     end
 
     it 'skips backorderable stock items' do
