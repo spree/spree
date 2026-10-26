@@ -242,22 +242,48 @@ async function runRakeUpgrade(projectDir: string, flags: UpgradeFlags): Promise<
 // (workspace:, file:, link:, git URLs) point at code the operator manages.
 const REGISTRY_SPEC = /^[\^~<>=\d*]|^latest$|^next$/
 
+// A single version (`6.0.0-rc.7`) rather than a range. `update` keeps a
+// declared range, and a single version is a range nothing else satisfies.
+const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
+
+export interface SpreePackage {
+  name: string
+  spec: string
+  dev: boolean
+}
+
+interface PackageJson {
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+  packageManager?: string
+}
+
 /**
  * The @spree/* packages a package.json depends on through the registry —
  * what `spree upgrade` bumps there. Returns [] for a missing or unreadable file.
  */
-export function detectSpreePackages(dir: string): string[] {
+export function detectSpreePackages(dir: string): SpreePackage[] {
   try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')) as {
-      dependencies?: Record<string, string>
-      devDependencies?: Record<string, string>
-    }
-    return Object.entries({ ...pkg.dependencies, ...pkg.devDependencies })
-      .filter(([name, spec]) => name.startsWith('@spree/') && REGISTRY_SPEC.test(spec))
-      .map(([name]) => name)
+    const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')) as PackageJson
+    return [
+      ...Object.entries(pkg.dependencies ?? {}).map(([name, spec]) => ({ name, spec, dev: false })),
+      ...Object.entries(pkg.devDependencies ?? {}).map(([name, spec]) => ({
+        name,
+        spec,
+        dev: true,
+      })),
+    ].filter(({ name, spec }) => name.startsWith('@spree/') && REGISTRY_SPEC.test(spec))
   } catch {
     return []
   }
+}
+
+export function isExactVersion(spec: string): boolean {
+  return EXACT_VERSION.test(spec)
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 function isOlderLine(spec: string, line: ReleaseLine): boolean {
@@ -270,7 +296,8 @@ function isOlderLine(spec: string, line: ReleaseLine): boolean {
  * Spree on an older version line, so the update that follows can reach the
  * line this CLI was built with. From 6.0 these packages share the Spree
  * version, and a range such as `^1.0.0-rc.7` never resolves to 6.x on its
- * own. The file is edited as text so its formatting is kept.
+ * own. Exact versions are left for the upgrade to install by name, so they
+ * stay exact. The file is edited as text so its formatting is kept.
  *
  * @param dir directory holding the package.json
  * @param line the packages released with Spree and their current version
@@ -282,7 +309,7 @@ export function moveToReleaseLine(
 ): Array<{ name: string; from: string; to: string }> {
   const manifestPath = path.join(dir, 'package.json')
   let source: string
-  let pkg: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> }
+  let pkg: PackageJson
   try {
     source = fs.readFileSync(manifestPath, 'utf-8')
     pkg = JSON.parse(source)
@@ -293,11 +320,12 @@ export function moveToReleaseLine(
   const to = `^${line.version}`
   const moved = Object.entries({ ...pkg.dependencies, ...pkg.devDependencies })
     .filter(([name, spec]) => line.packages.includes(name) && REGISTRY_SPEC.test(spec))
-    .filter(([, spec]) => isOlderLine(spec, line))
+    .filter(([, spec]) => !isExactVersion(spec) && isOlderLine(spec, line))
     .map(([name, from]) => ({ name, from, to }))
 
   for (const { name, from } of moved) {
-    source = source.replaceAll(`"${name}": "${from}"`, `"${name}": "${to}"`)
+    const declaration = new RegExp(`("${escapeRegExp(name)}"\\s*:\\s*)"${escapeRegExp(from)}"`, 'g')
+    source = source.replace(declaration, `$1"${to}"`)
   }
   if (moved.length > 0) fs.writeFileSync(manifestPath, source)
   return moved
@@ -316,10 +344,54 @@ export function packageUpdateArgs(
   dir: string,
 ): string[] {
   if (pm !== 'yarn') return ['update', ...packages]
-  const berry = [dir, projectDir].some((candidate) =>
-    fs.existsSync(path.join(candidate, '.yarnrc.yml')),
-  )
-  return berry ? ['up', '-R', ...packages] : ['upgrade', ...packages]
+  return isYarnBerry(projectDir, dir) ? ['up', '-R', ...packages] : ['upgrade', ...packages]
+}
+
+/**
+ * The package-manager arguments that install the given `name@version` specs
+ * and record them as exact versions again, in the group they are declared in.
+ */
+export function packageAddArgs(pm: string, specs: string[], dev: boolean): string[] {
+  if (pm === 'yarn') return ['add', '--exact', ...(dev ? ['--dev'] : []), ...specs]
+  const command = pm === 'npm' ? 'install' : 'add'
+  return [command, '--save-exact', ...(dev ? ['--save-dev'] : []), ...specs]
+}
+
+/**
+ * The package-manager arguments that fold duplicate copies of a package into
+ * one, or null where the package manager has no such command (Yarn Classic).
+ * An updated package can pin a dependency, such as `@codemirror/view`, newer
+ * than the copy the lockfile already holds for packages that take it by range;
+ * the two copies then clash in type checks until they are folded together.
+ */
+export function packageDedupeArgs(pm: string, projectDir: string, dir: string): string[] | null {
+  if (pm === 'yarn' && !isYarnBerry(projectDir, dir)) return null
+  return ['dedupe']
+}
+
+function isYarnBerry(projectDir: string, dir: string): boolean {
+  return [dir, projectDir].some((candidate) => {
+    if (fs.existsSync(path.join(candidate, '.yarnrc.yml'))) return true
+    try {
+      const pkg = JSON.parse(
+        fs.readFileSync(path.join(candidate, 'package.json'), 'utf-8'),
+      ) as PackageJson
+      const major = pkg.packageManager?.match(/^yarn@(\d+)\./)?.[1]
+      return major !== undefined && Number(major) >= 2
+    } catch {
+      return false
+    }
+  })
+}
+
+// `update` leaves an exact version where it is, so a pinned app would stay on
+// the old release while the server moves on. A pin on a package released with
+// Spree moves to the Spree version; any other pin is the operator's to move.
+function pinnedOffRelease(packages: SpreePackage[], dev: boolean): string[] {
+  return packages
+    .filter((pkg) => pkg.dev === dev && isExactVersion(pkg.spec))
+    .filter((pkg) => RELEASE_LINE.packages.includes(pkg.name) && pkg.spec !== RELEASE_LINE.version)
+    .map((pkg) => `${pkg.name}@${RELEASE_LINE.version}`)
 }
 
 // The project root carries @spree/cli; each admin app carries the dashboard
@@ -342,13 +414,35 @@ async function updateSpreePackages(projectDir: string, flags: UpgradeFlags): Pro
       p.log.info(`${name}: ${from} → ${to} ${pc.dim(`in ${target.relative}`)}`)
     }
     const pm = detectPackageManager(projectDir, target.dir)
-    const args = packageUpdateArgs(pm, target.packages, projectDir, target.dir)
-    p.log.step(`${pc.bold(`${pm} ${args.join(' ')}`)} ${pc.dim(`in ${target.relative}`)}`)
-    await execa(pm, args, { cwd: target.dir, stdio: 'inherit' })
+
+    const ranged = target.packages.filter((pkg) => !isExactVersion(pkg.spec)).map((pkg) => pkg.name)
+    if (ranged.length > 0) {
+      await runPackageManager(pm, packageUpdateArgs(pm, ranged, projectDir, target.dir), target)
+    }
+    const pinnedDependencies = pinnedOffRelease(target.packages, false)
+    if (pinnedDependencies.length > 0) {
+      await runPackageManager(pm, packageAddArgs(pm, pinnedDependencies, false), target)
+    }
+    const pinnedDevDependencies = pinnedOffRelease(target.packages, true)
+    if (pinnedDevDependencies.length > 0) {
+      await runPackageManager(pm, packageAddArgs(pm, pinnedDevDependencies, true), target)
+    }
+    const dedupeArgs = packageDedupeArgs(pm, projectDir, target.dir)
+    if (dedupeArgs) await runPackageManager(pm, dedupeArgs, target)
+
     // An updated dashboard can ship new routes; regenerate now so the next
     // dev start doesn't rewrite the file and reload the open page.
     if (target.relative !== '.') await generateRouteTree(target.dir)
   }
+}
+
+async function runPackageManager(
+  pm: string,
+  args: string[],
+  target: { relative: string; dir: string },
+): Promise<void> {
+  p.log.step(`${pc.bold(`${pm} ${args.join(' ')}`)} ${pc.dim(`in ${target.relative}`)}`)
+  await execa(pm, args, { cwd: target.dir, stdio: 'inherit' })
 }
 
 // We can detect the conventional create-spree-app storefront and tell the
