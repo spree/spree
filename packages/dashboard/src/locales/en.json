@@ -2790,7 +2790,6 @@
       "unavailable": "Maintenance tasks are not available to you. On some installations they are turned off, and upgrade steps are run from the command line by whoever operates the installation.",
       "upgrade": {
         "already_completed": "Completed",
-        "assumed_boundary": "This store is assumed to have been on Spree {{version}} before this upgrade. If it skipped releases, ask your developer to run the earlier steps from the command line.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Run “{{name}}”?",

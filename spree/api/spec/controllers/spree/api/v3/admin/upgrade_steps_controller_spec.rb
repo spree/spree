@@ -156,8 +156,6 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
       get :index
 
       expect(json_response['meta']['completed_version']).to eq('5.6')
-      expect(json_response['meta']['completed_version_recorded']).to be(true)
-      expect(json_response['meta']['superseded_step_count']).to be > 0
     end
 
     # A store installed fresh at this release has no upgrade at all — not the
@@ -181,13 +179,10 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
       expect(json_response['data']).to all(include('superseded' => true))
     end
 
-    # Without a stamp the boundary is a guess, and saying so is what lets the
-    # dashboard offer the older steps rather than silently hide them from a
-    # store that has been postponing its upgrade.
-    it 'admits when the boundary was assumed rather than recorded' do
+    # Without a stamp the store is assumed to come from the release below.
+    it 'counts from the release below the installed one when nothing is recorded' do
       get :index
 
-      expect(json_response['meta']['completed_version_recorded']).to be(false)
       expect(json_response['meta']['completed_version']).to eq('5.6')
     end
 

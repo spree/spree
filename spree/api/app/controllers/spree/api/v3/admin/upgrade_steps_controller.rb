@@ -41,16 +41,7 @@ module Spree
           private
 
           def meta
-            {
-              completed_version: Spree::Upgrade.completed_boundary,
-              # False when the boundary was assumed from the installed version
-              # rather than recorded by a walk or a fresh install. The
-              # dashboard says so, rather than presenting a guess as fact.
-              completed_version_recorded: Spree::Upgrade.completed_boundary_known?,
-              # Counts the earlier releases' steps too, though they are not
-              # listed: an assumed boundary is what may have skipped them.
-              superseded_step_count: superseded_steps.size
-            }
+            { completed_version: Spree::Upgrade.completed_boundary }
           end
 
           # Superseded first: they are the earlier releases, so listing them

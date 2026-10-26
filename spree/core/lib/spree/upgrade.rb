@@ -105,20 +105,13 @@ module Spree
     # Falls back to the release before the installed one when nothing has been
     # stamped: an installation running 6.0 has, by far most often, come from
     # 5.6, and showing every step of every manifest ever written is worse than
-    # showing the one boundary that is almost certainly right. The fallback is
-    # a guess and is reported as one — `completed_boundary_known?` is false —
-    # so callers can say where the older steps are run rather than hide them.
+    # showing the one boundary that is almost certainly right. A store that
+    # skipped releases runs the earlier steps from the command line, which
+    # walks every manifest whatever the boundary.
     #
     # @return [String, nil]
     def self.completed_boundary
       Spree::UpgradeRecord.current_version || previous_boundary
-    end
-
-    # Whether the boundary was recorded rather than assumed.
-    #
-    # @return [Boolean]
-    def self.completed_boundary_known?
-      Spree::UpgradeRecord.current_version.present?
     end
 
     # The `to` of the manifest immediately below the installed version.

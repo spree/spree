@@ -62,7 +62,6 @@
       "unavailable": "Las tareas de mantenimiento no están disponibles para ti. En algunas instalaciones están desactivadas, y quien opera la instalación ejecuta los pasos de actualización desde la línea de comandos.",
       "upgrade": {
         "already_completed": "Completada",
-        "assumed_boundary": "Se supone que esta tienda estaba en Spree {{version}} antes de esta actualización. Si se saltó versiones, pide a tu desarrollador que ejecute los pasos anteriores desde la línea de comandos.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "message": "Los pasos tienen un orden: ejecuta primero los anteriores. Esto escribe en tus datos y no se puede deshacer.",

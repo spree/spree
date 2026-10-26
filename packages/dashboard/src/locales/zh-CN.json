@@ -2785,7 +2785,6 @@
       "unavailable": "你无法使用维护任务。在某些安装中维护任务已关闭，升级步骤由安装的运维人员通过命令行运行。",
       "upgrade": {
         "already_completed": "已完成",
-        "assumed_boundary": "假定此店铺在本次升级前运行的是 Spree {{version}}。若跳过了某些版本，请让开发者从命令行运行较早的步骤。",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "运行“{{name}}”？",

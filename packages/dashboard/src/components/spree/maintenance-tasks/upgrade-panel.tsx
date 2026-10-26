@@ -1,4 +1,4 @@
-import type { UpgradeStep, UpgradeStepsMeta } from '@spree/admin-sdk'
+import type { UpgradeStep } from '@spree/admin-sdk'
 import { Can, Subject } from '@spree/dashboard-core'
 import {
   Button,
@@ -56,7 +56,6 @@ export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void
         <BoundaryCard
           key={`${boundary.from}-${boundary.to}`}
           boundary={boundary}
-          meta={data?.meta}
           onOpenRun={onOpenRun}
         />
       ))}
@@ -74,11 +73,9 @@ export function UpgradePanel({ onOpenRun }: { onOpenRun: (runId: string) => void
 
 function BoundaryCard({
   boundary,
-  meta,
   onOpenRun,
 }: {
   boundary: Boundary
-  meta?: UpgradeStepsMeta
   onOpenRun: (runId: string) => void
 }) {
   const { t } = useTranslation()
@@ -183,17 +180,6 @@ function BoundaryCard({
               disabled={busy || startMutation.isPending}
             />
           ))}
-
-          {/* Without a recorded boundary the earlier releases are shown as
-              completed on an assumption. A store that actually skipped them
-              needs to know their steps are still runnable. */}
-          {meta && !meta.completed_version_recorded && meta.superseded_step_count > 0 && (
-            <p className="px-2 pt-2 text-muted-foreground text-xs">
-              {t('admin.maintenance_tasks.upgrade.assumed_boundary', {
-                version: meta.completed_version,
-              })}
-            </p>
-          )}
 
           {boundary.docs && (
             <a

@@ -84,7 +84,7 @@ The setting in an initializer takes precedence over the environment variable. Se
 
 A store installed fresh at this release sees no Upgrade tab — it has no historical data to convert. For a store that was upgraded, the tab shows the release it is moving to, with the releases it has already crossed below as completed history that cannot be re-run from the dashboard. The tab starts at the 5.6 → 6.0 upgrade, the first whose runs are recorded; steps of earlier releases run only from the command line, which `spree upgrade` walks in full.
 
-Which those are comes from `Spree::UpgradeRecord`, a stamp written when an upgrade walk completes and when a store is first installed. Without a stamp — a store upgraded before this record existed — the tab assumes the release immediately below the installed one and says so, pointing at the command line for the earlier steps.
+Which those are comes from `Spree::UpgradeRecord`, a stamp written when an upgrade walk completes and when a store is first installed. Without a stamp — a store upgraded before this record existed — the tab assumes the release immediately below the installed one. A store that skipped releases runs the earlier steps from the command line.
 
 Stamp a boundary by hand when you know a store already ran those steps:
 

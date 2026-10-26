@@ -2790,7 +2790,6 @@
       "unavailable": "Wartungsaufgaben stehen Ihnen nicht zur Verfügung. Auf manchen Installationen sind sie abgeschaltet, und Upgrade-Schritte werden von den Betreibern der Installation über die Kommandozeile ausgeführt.",
       "upgrade": {
         "already_completed": "Abgeschlossen",
-        "assumed_boundary": "Es wird angenommen, dass dieser Shop vor diesem Upgrade auf Spree {{version}} lief. Wurden Releases übersprungen, lassen Sie die früheren Schritte von Ihren Entwicklern über die Kommandozeile ausführen.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "„{{name}}“ ausführen?",

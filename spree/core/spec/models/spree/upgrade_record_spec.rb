@@ -97,17 +97,15 @@ RSpec.describe Spree::Upgrade do
 
   describe 'the assumed boundary' do
     # Without a stamp the starting point is a guess. Showing the single most
-    # likely boundary beats showing every step ever written, but the guess has
-    # to be reported as one so a long-postponed upgrade can find the rest.
+    # likely boundary beats showing every step ever written.
     it 'falls back to the release below the installed one' do
       expect(described_class.completed_boundary).to eq('5.6')
-      expect(described_class.completed_boundary_known?).to be(false)
     end
 
-    it 'is known once something records it' do
+    it 'follows what something records' do
       Spree::UpgradeRecord.stamp!('5.6', source: 'walk')
 
-      expect(described_class.completed_boundary_known?).to be(true)
+      expect(described_class.completed_boundary).to eq('5.6')
     end
 
     it 'counts the steps it is leaving out' do

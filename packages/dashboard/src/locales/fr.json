@@ -2790,7 +2790,6 @@
       "unavailable": "Les tâches de maintenance ne vous sont pas accessibles. Sur certaines installations, elles sont désactivées et les étapes de mise à niveau sont lancées en ligne de commande par l'équipe qui exploite l'installation.",
       "upgrade": {
         "already_completed": "Terminé",
-        "assumed_boundary": "Cette boutique est supposée avoir été sur Spree {{version}} avant cette mise à niveau. Si des versions ont été sautées, demandez à votre développeur d'exécuter les étapes antérieures en ligne de commande.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Exécuter « {{name}} » ?",

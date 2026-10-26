@@ -36,13 +36,4 @@ export interface UpgradeStep {
 export interface UpgradeStepsMeta {
   /** The boundary whose steps are already done, and where the list starts. */
   completed_version: string | null
-  /**
-   * False when `completed_version` was assumed from the installed version
-   * rather than recorded by an upgrade walk or a fresh install. A store that
-   * postponed several releases needs the older steps, so offer them rather
-   * than hide them when this is false.
-   */
-  completed_version_recorded: boolean
-  /** How many steps belong to releases this store has already been through. */
-  superseded_step_count: number
 }
