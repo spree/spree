@@ -112,10 +112,6 @@ spree upgrade --yes            # Skip the prompts
 
 Your storefront is your own code, so `spree upgrade` does not change it — it tells you which `@spree/sdk` version to move to.
 
-<Note>
-Run `pnpm update @spree/cli` before `spree upgrade` when you move to Spree 6.0. The command runs the CLI version you already have, and only a CLI released with 6.0 knows about the new version numbers.
-</Note>
-
 Production upgrades only need the data backfills — installing gems and migrating happen in your deploy pipeline. See [Upgrades](/developer/upgrades) for the manual production path.
 
 <Note>
