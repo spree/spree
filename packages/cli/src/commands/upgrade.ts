@@ -321,18 +321,29 @@ function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+function isReleasedPin(spec: string, line: ReleaseLine): boolean {
+  return spec.includes('-') && !line.version.includes('-') && isOlderVersion(spec, line.version)
+}
+
 function isOlderLine(spec: string, line: ReleaseLine): boolean {
   const declared = spec.match(/(\d+)\./)
   return declared !== null && Number(declared[1]) < Number(line.version.split('.')[0])
 }
 
 /**
- * Rewrites the ranges in a package.json that hold a package released with
- * Spree on an older version line, so the update that follows can reach the
- * line the server runs. From 6.0 these packages share the Spree
- * version, and a range such as `^1.0.0-rc.7` never resolves to 6.x on its
- * own. Exact versions are left for the upgrade to install by name, so they
- * stay exact. The file is edited as text so its formatting is kept.
+ * Rewrites the specs in a package.json that the update that follows could not
+ * move to the Spree version the server runs, for packages released with Spree:
+ *
+ * - a range on an older version line: from 6.0 these packages share the Spree
+ *   version, and `^1.0.0-rc.7` never resolves to 6.x on its own
+ * - a release candidate pin, once the server is on a final version: pnpm 11's
+ *   `update` writes a prerelease back as an exact version, so the pin is
+ *   pnpm's rather than the operator's, and `6.0.0-rc.7` becomes `^6.0.0`
+ *
+ * Both become a `^` range on the server's version, which a locked prerelease
+ * never satisfies, so the update installs it. Other exact versions are left
+ * for the upgrade to install by name, so they stay exact. The file is edited
+ * as text so its formatting is kept.
  *
  * @param dir directory holding the package.json
  * @param line the packages released with Spree and the version to move to
@@ -355,7 +366,9 @@ export function moveToReleaseLine(
   const to = `^${line.version}`
   const moved = Object.entries({ ...pkg.dependencies, ...pkg.devDependencies })
     .filter(([name, spec]) => line.packages.includes(name) && REGISTRY_SPEC.test(spec))
-    .filter(([, spec]) => !isExactVersion(spec) && isOlderLine(spec, line))
+    .filter(([, spec]) =>
+      isExactVersion(spec) ? isReleasedPin(spec, line) : isOlderLine(spec, line),
+    )
     .map(([name, from]) => ({ name, from, to }))
 
   for (const { name, from } of moved) {
@@ -459,9 +472,8 @@ function splitVersion(version: string): [number[], string[]] {
 // the old release while the server moves on. A pin on a package released with
 // Spree that is older than the server's Spree version moves to it. A newer pin
 // stays, since the server may not have moved (a skipped pull); any other pin is
-// the operator's to move. Pins are common: pnpm 11's `update` writes a
-// prerelease back as an exact version, so during release candidates every app
-// is pinned after its first upgrade.
+// the operator's to move. A release candidate pin reaching a final version
+// was already turned into a range (see moveToReleaseLine).
 function pinnedOffRelease(packages: SpreePackage[], dev: boolean, line: ReleaseLine): string[] {
   return packages
     .filter((pkg) => pkg.dev === dev && isExactVersion(pkg.spec))
@@ -494,16 +506,18 @@ async function updateSpreePackages(
       p.log.info(`${name}: ${from} → ${to} ${pc.dim(`in ${target.relative}`)}`)
     }
     const pm = detectPackageManager(projectDir, target.dir)
+    // Read again, since the rewrite above can turn a pin into a range.
+    const packages = detectSpreePackages(target.dir)
 
-    const ranged = target.packages.filter((pkg) => !isExactVersion(pkg.spec)).map((pkg) => pkg.name)
+    const ranged = packages.filter((pkg) => !isExactVersion(pkg.spec)).map((pkg) => pkg.name)
     if (ranged.length > 0) {
       await runPackageManager(pm, packageUpdateArgs(pm, ranged, projectDir, target.dir), target)
     }
-    const pinnedDependencies = pinnedOffRelease(target.packages, false, line)
+    const pinnedDependencies = pinnedOffRelease(packages, false, line)
     if (pinnedDependencies.length > 0) {
       await runPackageManager(pm, packageAddArgs(pm, pinnedDependencies, false), target)
     }
-    const pinnedDevDependencies = pinnedOffRelease(target.packages, true, line)
+    const pinnedDevDependencies = pinnedOffRelease(packages, true, line)
     if (pinnedDevDependencies.length > 0) {
       await runPackageManager(pm, packageAddArgs(pm, pinnedDevDependencies, true), target)
     }

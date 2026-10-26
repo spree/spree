@@ -48,6 +48,8 @@ An upgrade updates the server and the `@spree/*` packages of your dashboard apps
     | Yarn 2 or later | `yarn add --exact @spree/dashboard@6.0.0-rc.7` | `yarn dedupe` |
     | Yarn 1 | `yarn add --exact @spree/dashboard@6.0.0-rc.7` | Not available |
 
+    Moving from a release candidate pin such as `6.0.0-rc.7` to the final release, change the pin to a range such as `^6.0.0` in `package.json` instead, then run `update` as above. Installing over an exact pin by name keeps it exact.
+
     Add `--save-dev` (pnpm and npm) or `--dev` (Yarn) for a package listed under `devDependencies`. Without the dedupe step, a dependency that the new version pins, such as `@codemirror/view`, can end up installed twice and fail type checks.
   </Tab>
 </Tabs>

@@ -333,6 +333,30 @@ describe('moveToReleaseLine', () => {
     expect(readPackageJson()).toBe(source)
   })
 
+  it('gives release candidate pins a range once the line is a final version', () => {
+    writePackageJson(
+      JSON.stringify({
+        dependencies: {
+          '@spree/dashboard': '6.0.0-rc.7',
+          '@spree/dashboard-ui': '6.0.0',
+          '@spree/admin-sdk': '6.0.1-rc.1',
+        },
+      }),
+    )
+
+    expect(moveToReleaseLine(dir, { ...LINE, version: '6.0.0' })).toEqual([
+      { name: '@spree/dashboard', from: '6.0.0-rc.7', to: '^6.0.0' },
+    ])
+  })
+
+  it('keeps release candidate pins exact while the line is still a release candidate', () => {
+    const source = JSON.stringify({ dependencies: { '@spree/dashboard': '6.0.0-rc.6' } })
+    writePackageJson(source)
+
+    expect(moveToReleaseLine(dir, LINE)).toEqual([])
+    expect(readPackageJson()).toBe(source)
+  })
+
   it('returns [] without a readable package.json', () => {
     expect(moveToReleaseLine(dir, LINE)).toEqual([])
     writePackageJson('{ not json')
@@ -660,6 +684,47 @@ describe('spree upgrade', () => {
       fs.readFileSync(path.join(projectDir, 'apps', 'dashboard', 'package.json'), 'utf-8'),
     )
     expect(dashboard.dependencies['@spree/dashboard-core']).toBe('^6.0.0-rc.8')
+  })
+
+  it('gives release candidate pins a range back when the final release lands', async () => {
+    writeProject({
+      ejected: true,
+      dashboardDependencies: {
+        '@spree/dashboard': '6.0.0-rc.7',
+        '@spree/dashboard-ui': '6.0.0-rc.7',
+        '@spree/dashboard-core': '6.0.0-rc.7',
+      },
+    })
+    const dashboardPackageJson = path.join(projectDir, 'apps', 'dashboard', 'package.json')
+    const manifest = JSON.parse(fs.readFileSync(dashboardPackageJson, 'utf-8'))
+    manifest.devDependencies = { '@spree/admin-sdk': '6.0.0-rc.7' }
+    fs.writeFileSync(dashboardPackageJson, JSON.stringify(manifest))
+    routeExeca({ spreeVersion: '6.0.0' })
+
+    await runUpgrade()
+
+    expect(commands.filter((command) => command.startsWith('pnpm'))).toEqual([
+      'pnpm update @spree/cli',
+      'pnpm dedupe',
+      'pnpm update @spree/dashboard @spree/dashboard-ui @spree/dashboard-core @spree/admin-sdk',
+      'pnpm dedupe',
+    ])
+    const dashboard = JSON.parse(fs.readFileSync(dashboardPackageJson, 'utf-8'))
+    expect(dashboard.dependencies).toEqual({
+      '@spree/dashboard': '^6.0.0',
+      '@spree/dashboard-ui': '^6.0.0',
+      '@spree/dashboard-core': '^6.0.0',
+    })
+    expect(dashboard.devDependencies).toEqual({ '@spree/admin-sdk': '^6.0.0' })
+  })
+
+  it('keeps a pin on a final version exact', async () => {
+    writeProject({ ejected: true, dashboardDependencies: { '@spree/dashboard': '6.0.0' } })
+    routeExeca({ spreeVersion: '6.0.1' })
+
+    await runUpgrade()
+
+    expect(commands).toContain('pnpm add --save-exact @spree/dashboard@6.0.1')
   })
 
   it('reads a pulled image from a one-off container, since the running one is still the old image', async () => {
