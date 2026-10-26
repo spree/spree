@@ -31,6 +31,10 @@ import { execa } from 'execa'
 import {
   detectSpreeGems,
   detectSpreePackages,
+  isExactVersion,
+  newestRelease,
+  packageAddArgs,
+  packageDedupeArgs,
   packageUpdateArgs,
   registerUpgradeCommand,
   sdkAdvisory,
@@ -178,7 +182,18 @@ describe('detectSpreePackages', () => {
       dependencies: { '@spree/dashboard': '^1.0.0-beta.8', react: '^19.2.6' },
       devDependencies: { '@spree/cli': '~3.1.0', '@spree/docs': 'latest' },
     })
-    expect(detectSpreePackages(dir)).toEqual(['@spree/dashboard', '@spree/cli', '@spree/docs'])
+    expect(detectSpreePackages(dir)).toEqual([
+      { name: '@spree/dashboard', spec: '^1.0.0-beta.8', dev: false },
+      { name: '@spree/cli', spec: '~3.1.0', dev: true },
+      { name: '@spree/docs', spec: 'latest', dev: true },
+    ])
+  })
+
+  it('lists exact versions too', () => {
+    const dir = withPackageJson({ dependencies: { '@spree/dashboard': '1.0.0-rc.5' } })
+    expect(detectSpreePackages(dir)).toEqual([
+      { name: '@spree/dashboard', spec: '1.0.0-rc.5', dev: false },
+    ])
   })
 
   it('leaves local and git specs alone', () => {
@@ -195,6 +210,74 @@ describe('detectSpreePackages', () => {
   it('returns [] without a readable package.json', () => {
     expect(detectSpreePackages(withPackageJson('{ not json'))).toEqual([])
     expect(detectSpreePackages('/nonexistent')).toEqual([])
+  })
+})
+
+describe('isExactVersion', () => {
+  it('tells single versions from ranges and tags', () => {
+    expect(isExactVersion('1.0.0')).toBe(true)
+    expect(isExactVersion('1.0.0-rc.5')).toBe(true)
+    expect(isExactVersion('^1.0.0-rc.5')).toBe(false)
+    expect(isExactVersion('~3.1.0')).toBe(false)
+    expect(isExactVersion('>=0.5.0 <2.0.0')).toBe(false)
+    expect(isExactVersion('1.x')).toBe(false)
+    expect(isExactVersion('latest')).toBe(false)
+  })
+})
+
+describe('newestRelease', () => {
+  const mockExeca = vi.mocked(execa)
+  afterEach(() => mockExeca.mockReset())
+
+  it('takes the newest release within the major of the pinned version', async () => {
+    mockExeca.mockResolvedValue({ stdout: '["1.0.0-rc.5", "1.0.0-rc.6"]' } as never)
+
+    await expect(newestRelease('@spree/dashboard', '1.0.0-rc.5')).resolves.toBe('1.0.0-rc.6')
+    expect(mockExeca).toHaveBeenCalledWith('npm', [
+      'view',
+      '@spree/dashboard@^1.0.0-rc.5',
+      'version',
+      '--json',
+    ])
+  })
+
+  it('reads a single matching release', async () => {
+    mockExeca.mockResolvedValue({ stdout: '"1.0.0-rc.5"' } as never)
+
+    await expect(newestRelease('@spree/dashboard', '1.0.0-rc.5')).resolves.toBe('1.0.0-rc.5')
+  })
+
+  it('keeps the pinned version when the registry lists nothing', async () => {
+    mockExeca.mockResolvedValue({ stdout: '' } as never)
+
+    await expect(newestRelease('@spree/dashboard', '1.0.0-rc.5')).resolves.toBe('1.0.0-rc.5')
+  })
+})
+
+describe('packageAddArgs', () => {
+  it('saves exact versions in the group they are declared in', () => {
+    expect(packageAddArgs('pnpm', ['@spree/dashboard@1.0.0'], false)).toEqual([
+      'add',
+      '--save-exact',
+      '@spree/dashboard@1.0.0',
+    ])
+    expect(packageAddArgs('pnpm', ['@spree/cli@3.5.0'], true)).toEqual([
+      'add',
+      '--save-exact',
+      '--save-dev',
+      '@spree/cli@3.5.0',
+    ])
+    expect(packageAddArgs('npm', ['@spree/dashboard@1.0.0'], false)).toEqual([
+      'install',
+      '--save-exact',
+      '@spree/dashboard@1.0.0',
+    ])
+    expect(packageAddArgs('yarn', ['@spree/cli@3.5.0'], true)).toEqual([
+      'add',
+      '--exact',
+      '--dev',
+      '@spree/cli@3.5.0',
+    ])
   })
 })
 
@@ -231,6 +314,21 @@ describe('packageUpdateArgs', () => {
   })
 })
 
+describe('packageDedupeArgs', () => {
+  it('dedupes on pnpm, npm and Yarn Berry, and skips Yarn Classic', () => {
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-dedupe-test-'))
+    try {
+      expect(packageDedupeArgs('pnpm', projectDir, projectDir)).toEqual(['dedupe'])
+      expect(packageDedupeArgs('npm', projectDir, projectDir)).toEqual(['dedupe'])
+      expect(packageDedupeArgs('yarn', projectDir, projectDir)).toBeNull()
+      fs.writeFileSync(path.join(projectDir, '.yarnrc.yml'), 'nodeLinker: node-modules\n')
+      expect(packageDedupeArgs('yarn', projectDir, projectDir)).toEqual(['dedupe'])
+    } finally {
+      fs.rmSync(projectDir, { recursive: true, force: true })
+    }
+  })
+})
+
 describe('spree upgrade', () => {
   const mockExeca = vi.mocked(execa)
   let commands: string[]
@@ -242,6 +340,7 @@ describe('spree upgrade', () => {
       if (args.includes('ps')) return { stdout: 'running' }
       if (args.includes('list')) return { stdout: 'spree\nspree_core\n' }
       if (args.includes('config')) return { stdout: 'web\n' }
+      if (cmd === 'npm' && args[0] === 'view') return { stdout: '["1.0.0-rc.5", "1.0.0-rc.6"]' }
       const command = `${cmd} ${args.join(' ')}`
       commands.push(command)
       if (failOn && command.includes(failOn)) throw new Error(`${failOn} failed`)
@@ -249,7 +348,13 @@ describe('spree upgrade', () => {
     }) as never)
   }
 
-  function writeProject({ ejected }: { ejected: boolean }): void {
+  function writeProject({
+    ejected,
+    dashboardDependencies = { '@spree/dashboard': '^1.0.0' },
+  }: {
+    ejected: boolean
+    dashboardDependencies?: Record<string, string>
+  }): void {
     projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-upgrade-run-test-'))
     fs.writeFileSync(
       path.join(projectDir, 'docker-compose.yml'),
@@ -265,7 +370,7 @@ describe('spree upgrade', () => {
     fs.mkdirSync(dashboardDir, { recursive: true })
     fs.writeFileSync(
       path.join(dashboardDir, 'package.json'),
-      JSON.stringify({ dependencies: { '@spree/dashboard': '^1.0.0' } }),
+      JSON.stringify({ dependencies: dashboardDependencies }),
     )
   }
 
@@ -293,7 +398,9 @@ describe('spree upgrade', () => {
     expect(commands).toEqual([
       'docker compose exec web bundle update spree spree_core',
       'pnpm update @spree/cli',
+      'pnpm dedupe',
       'pnpm update @spree/dashboard',
+      'pnpm dedupe',
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
       'docker compose exec web bin/rake spree:upgrade',
       'docker compose restart web',
@@ -308,10 +415,37 @@ describe('spree upgrade', () => {
     expect(commands).toEqual([
       'docker compose pull',
       'pnpm update @spree/cli',
+      'pnpm dedupe',
       'pnpm update @spree/dashboard',
+      'pnpm dedupe',
       'docker compose up -d --no-deps web',
       'docker compose up -d --wait',
       'docker compose exec web bin/rake spree:upgrade',
+    ])
+  })
+
+  it('moves pinned packages to the newest release and keeps them pinned', async () => {
+    writeProject({
+      ejected: true,
+      dashboardDependencies: {
+        '@spree/dashboard': '1.0.0-rc.5',
+        '@spree/dashboard-ui': '1.0.0-rc.5',
+        '@spree/admin-sdk': '^1.0.0-rc.5',
+      },
+    })
+
+    await runUpgrade()
+
+    expect(commands).toEqual([
+      'docker compose exec web bundle update spree spree_core',
+      'pnpm update @spree/cli',
+      'pnpm dedupe',
+      'pnpm update @spree/admin-sdk',
+      'pnpm add --save-exact @spree/dashboard@1.0.0-rc.6 @spree/dashboard-ui@1.0.0-rc.6',
+      'pnpm dedupe',
+      'docker compose exec web bin/rails spree:install:migrations db:migrate',
+      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose restart web',
     ])
   })
 

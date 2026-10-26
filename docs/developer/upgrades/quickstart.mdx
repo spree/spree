@@ -38,6 +38,8 @@ An upgrade updates the server and the `@spree/*` packages of your dashboard apps
     ```
 
     On npm or Yarn, run `npm update` or `yarn upgrade` instead, naming each `@spree/*` package from that `package.json` (they do not accept the `"@spree/*"` pattern).
+
+    `update` never moves a package pinned to an exact version such as `1.0.0-rc.5`. Install the new release by name instead, for example `pnpm add --save-exact @spree/dashboard@1.0.0-rc.6`. Then run `pnpm dedupe` in each directory you changed, so a dependency the new release pins doesn't end up installed twice.
   </Tab>
 </Tabs>
 
