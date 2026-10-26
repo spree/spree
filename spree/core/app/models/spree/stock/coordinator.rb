@@ -102,7 +102,7 @@ module Spree
       end
 
       def prioritize_packages(packages)
-        prioritizer = Prioritizer.new(packages, estimator: estimator)
+        prioritizer = Prioritizer.new(packages, estimator: estimator, audience: @audience)
         prioritizer.prioritized_packages
       end
 
