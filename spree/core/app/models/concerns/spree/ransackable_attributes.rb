@@ -74,8 +74,8 @@ module Spree::RansackableAttributes
     # @param attributes [Array<Symbol, String>]
     def self.search_by(*attributes)
       self.search_attributes = attributes.map(&:to_s).freeze
-      scope :search, ->(query) {
-        query.blank? ? all : ransack("#{search_attributes.join('_or_')}_cont" => query.to_s.strip).result
+      scope :search, ->(query = nil) {
+        [nil, true].include?(query) || query.blank? ? all : ransack("#{search_attributes.join('_or_')}_cont" => query.to_s.strip).result
       }
     end
 
