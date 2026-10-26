@@ -113,7 +113,7 @@ This replaces `docker-compose.yml` with a version that builds from `server/`, re
 - **Override models** with decorators in `server/app/models/`
 - **Add controllers** in `server/app/controllers/`
 - **Configure Spree** in `server/config/initializers/spree.rb`
-- **Add migrations** with `spree exec bin/rails generate migration AddFooToSpreeBars foo:string` (runs inside the container)
+- **Add migrations** with `spree generate migration AddFooToSpreeBars foo:string` (runs inside the container)
 
 See the [Customization Guide](/developer/customization) for more details.
 

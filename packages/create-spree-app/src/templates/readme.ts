@@ -105,7 +105,7 @@ This rebuilds the Docker image from \`server/\` and restarts services. You can t
 
 - **Customize the API** by editing the files in \`server/\`
 - **Add extensions** with \`spree add <extension>\`
-- **Add new API resources** with \`spree generate api_resource <name> <attributes>\`
+- **Add new resources** with \`spree generate model <name> <attributes>\`
 
 ## Spree CLI
 
@@ -145,7 +145,10 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 
 | Command | Description |
 |---------|-------------|
+| \`spree generate model Brand name:string slug:string:uniq\` | Generate a new database model |
 | \`spree generate api_resource Brand name:string slug:string:uniq\` | Generate a new Spree API resource |
+| \`spree generate subscriber OmsOrderSync order.placed\` | Generate a new event subscriber |
+| \`spree generate migration AddPositionToSpreeBrands position:integer\` | Generate a new database migration |
 
 ### Admin API
 

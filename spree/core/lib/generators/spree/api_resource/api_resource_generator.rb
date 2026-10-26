@@ -108,7 +108,7 @@ module Spree
 
     # Override parent: skip if the model existed before this run. Migrations
     # are append-only — schema changes get a separate migration:
-    #   pnpm exec spree exec bin/rails g migration AddFooToBar foo:string
+    #   pnpm exec spree generate migration AddFooToBar foo:string
     def create_migration_file
       if @model_existed_before_run
         say_status :skip, 'migration (model already exists; add a new migration for schema changes)', :yellow

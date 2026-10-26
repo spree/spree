@@ -103,52 +103,28 @@ describe('spree generate', () => {
     vi.restoreAllMocks()
   })
 
-  it('runs api_resource without a notice', async () => {
-    await run(['generate', 'api_resource', 'Brand', 'name:string'])
+  it.each([
+    [
+      ['generate', 'api_resource', 'Brand', 'name:string'],
+      ['spree:api_resource', 'Brand', 'name:string'],
+    ],
+    [
+      ['g', 'model_decorator', 'Product'],
+      ['spree:model_decorator', 'Product'],
+    ],
+    [
+      ['generate', 'migration', 'AddX'],
+      ['migration', 'AddX'],
+    ],
+    [['generate', 'spree:install'], ['spree:install']],
+    [['generate', 'spree_stripe:install'], ['spree_stripe:install']],
+  ])('spree %j runs without a notice', async (argv, generatorArgs) => {
+    await run(argv)
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bin/rails', 'generate', 'spree:api_resource', 'Brand', 'name:string'],
+      ['bin/rails', 'generate', ...generatorArgs],
       '/proj',
     )
     expect(stderr).not.toHaveBeenCalled()
-  })
-
-  it('still runs other Spree generators, pointing at spree exec', async () => {
-    await run(['g', 'model_decorator', 'Product'])
-
-    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bin/rails', 'generate', 'spree:model_decorator', 'Product'],
-      '/proj',
-    )
-    expect(stderr).toHaveBeenCalledWith(
-      expect.stringContaining('spree exec bin/rails generate spree:model_decorator Product'),
-    )
-  })
-
-  it('forwards Rails built-ins unprefixed', async () => {
-    await run(['generate', 'migration', 'AddX'])
-
-    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bin/rails', 'generate', 'migration', 'AddX'],
-      '/proj',
-    )
-  })
-
-  it("points Spree's own installer at spree exec, not spree add", async () => {
-    await run(['generate', 'spree:install'])
-
-    expect(stderr).toHaveBeenCalledWith(
-      expect.stringContaining('spree exec bin/rails generate spree:install'),
-    )
-  })
-
-  it('points extension installers at spree add', async () => {
-    await run(['generate', 'spree_stripe:install'])
-
-    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
-      ['bin/rails', 'generate', 'spree_stripe:install'],
-      '/proj',
-    )
-    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('spree add stripe'))
   })
 })

@@ -39,8 +39,6 @@ export const PREPARE_DATABASE = backendTaskCommand('db:prepare')
 
 export const TEST_ENV = { RAILS_ENV: 'test' }
 
-export const SUPPORTED_GENERATORS = ['api_resource']
-
 export function testCommand(args: string[]): string[] {
   return bundleCommand(['exec', 'rspec', ...args])
 }

@@ -120,7 +120,7 @@ Run any CLI command against the running backend from `server/`:
 ```bash
 cd server
 pnpm exec spree migrate
-pnpm exec spree exec bin/rails generate spree:model Brand name:string
+pnpm exec spree generate model Brand name:string
 pnpm exec spree upgrade --plan
 ```
 

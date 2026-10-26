@@ -26,7 +26,7 @@ Run from your Spree project directory:
 | `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
 | `spree console` / `spree shell` / `spree logs` | Backend console, container shell, log tailing |
 | `spree migrate` / `spree seed` / `spree sample-data` | Database tasks |
-| `spree generate api_resource …` | Scaffold a Store + Admin API resource |
+| `spree generate …` | Spree generators (models, API resources, subscribers, migrations) |
 | `spree task <name>` | Run a Spree maintenance task (e.g. `search:reindex`) |
 | `spree user create` / `spree api-key …` | Admin users and scoped API keys |
 | `spree encryption init` | Add encryption keys to `.env` (`--print` to only print a set) |
