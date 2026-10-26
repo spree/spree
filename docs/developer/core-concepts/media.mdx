@@ -196,7 +196,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/medi
 </CodeGroup>
 
 <Note>
-The fetch runs in the background, so this request returns `202 Accepted` with no body — the media appears in the gallery once the download and processing finish. Re-fetch the product's media to know when it's ready.
+The fetch runs in the background, so this request returns `202 Accepted` with no body — the media appears in the gallery once the download and processing finish. Re-fetch the product's media to know when it's ready. If the URL serves something other than a supported image, nothing is added and the fetch is not retried; media already imported from that source keeps its current file.
 </Note>
 
 #### Sharing a single image across variants
