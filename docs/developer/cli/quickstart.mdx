@@ -318,6 +318,8 @@ spree migrate:rollback             # roll back the last migration
 spree migrate:rollback --steps 2   # roll back the last two
 ```
 
+`spree migrate:status` and `spree migrate:rollback` use the backend's own migration tooling, so they may change in a future major release. `spree migrate` itself stays the same.
+
 ### `spree db:reset`
 
 Drop, recreate, migrate, and seed the database. **Destructive** — wipes everything. Asks for confirmation.
@@ -337,7 +339,7 @@ spree db:console
 
 ### `spree test`
 
-Run the backend test suite inside the web container against the test database — never your development data. Everything after `test` passes through, so file paths, line numbers, and flags work as usual.
+Run the backend test suite inside the web container against the test database — never your development data. Everything after `test` goes to the backend's test runner (RSpec today), so file paths, line numbers and flags follow that runner's format.
 
 ```bash
 spree test                                      # full suite
@@ -352,7 +354,7 @@ Before the first run, create the test database with `spree exec bin/rails db:tes
 
 ### `spree task`
 
-Run a Spree maintenance task. Anything after the task name passes through.
+Run a Spree maintenance task. The task names are stable; anything after the name goes to the task in the task runner's own format.
 
 ```bash
 spree task load_sample_data
