@@ -101,6 +101,7 @@ overrides:
   # make wrapInList throw, so list toolbar buttons no-op.
   prosemirror-model: 1.25.12
   prosemirror-view: 1.42.6
+  body-parser@>=2.0.0 <2.4.0: ^2.4.0
 
 # auditConfig: advisories we have reviewed and decided not to fix. The weekly
 # security-audit workflow honors this list, so an entry here also stops the job
@@ -113,3 +114,6 @@ overrides:
 auditConfig:
   ignoreGhsas:
     - GHSA-vfj7-8cjw-p6xm
+
+minimumReleaseAgeExclude:
+  - body-parser@2.4.0
