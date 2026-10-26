@@ -39,9 +39,11 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
   return (
     <Button type="submit" disabled={!(isDirty || dirty) || isSubmitting}>
       {isSubmitting && <Loader2Icon className="animate-spin" />}
-      {isSubmitting
-        ? (savingLabel ?? t('admin.actions.saving'))
-        : (label ?? t('admin.actions.save'))}
+      <span>
+        {isSubmitting
+          ? (savingLabel ?? t('admin.actions.saving'))
+          : (label ?? t('admin.actions.save'))}
+      </span>
     </Button>
   )
 }

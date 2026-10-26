@@ -703,7 +703,7 @@ function EditableHeaderActions() {
       </Button>
       <Button type="button" size="sm" onClick={mode.save} disabled={mode.saving}>
         {mode.saving && <Loader2Icon className="size-4 animate-spin" />}
-        {t('admin.actions.save')}
+        <span>{t('admin.actions.save')}</span>
       </Button>
     </div>
   )
@@ -942,7 +942,7 @@ function CreateDefinitionSheet({
             </Button>
             <Button type="submit" disabled={create.isPending}>
               {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
-              {t('admin.custom_field_definitions.create_label')}
+              <span>{t('admin.custom_field_definitions.create_label')}</span>
             </Button>
           </SheetFooter>
         </form>
