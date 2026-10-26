@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Versions the npm packages from the pending changesets, then moves every
 // package in the Changesets `fixed` group onto the version of the Spree gems
 // (`spree/core/lib/spree/core/version.rb`, in npm's spelling). Changesets still

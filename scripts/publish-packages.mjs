@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Publishes the npm packages a release tag names, skipping any version already
 // on npm, so a release that failed part-way can simply run again. The npm
 // dist-tag follows the version: `0.x` → `next`, a prerelease → `beta`, else
