@@ -67,6 +67,20 @@ module Spree
         expect(delivery.reload).to be_successful
       end
 
+      it 'does not retry a delivery refused for its address' do
+        allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::PrivateIPAddress, "Hostname '169.254.169.254' has no public ip addresses")
+
+        expect { described_class.perform_now(delivery.id) }.not_to have_enqueued_job(described_class)
+        expect(delivery.reload).to be_blocked
+      end
+
+      it 'retries a delivery whose host name did not resolve' do
+        allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::UnresolvedHostname, "Could not resolve hostname 'example.com'")
+
+        expect { described_class.perform_now(delivery.id) }.to have_enqueued_job(described_class)
+        expect(delivery.reload.error_type).to eq('connection_error')
+      end
+
       it 'does not retry once the endpoint was switched off' do
         webhook_endpoint.update!(active: false)
         job = described_class.new(delivery.id)
