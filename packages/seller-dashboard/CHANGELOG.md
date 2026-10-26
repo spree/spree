@@ -13,7 +13,7 @@
 - [#14947](https://github.com/spree/spree/pull/14947) [`aebf883`](https://github.com/spree/spree/commit/aebf8832b6f207c0427f9f8384c2d6d0d7e1ae88) Thanks [@mad-eel](https://github.com/mad-eel)! - A delivery method's amount for the store's default currency is now saved with its other currencies, so leaving it blank means the method isn't offered in that currency, as the form says. Before, a blank default currency was saved as free. The admin dashboard and the seller panel share one per-currency amount editor, `CurrencyAmountsField` in `@spree/dashboard-core`, so sellers can price a method in every currency the marketplace sells in. Both forms ask for an amount in at least one currency.
 - Updated dependencies [[`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d)]:
   - @spree/seller-sdk@1.0.0-rc.6
-  - @spree/core@0.3.0-rc.0
+  - @spree/core@0.3.0
 
 ## 1.0.0-rc.6
 

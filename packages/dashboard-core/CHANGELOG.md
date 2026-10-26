@@ -14,7 +14,7 @@
 
 - [#14967](https://github.com/spree/spree/pull/14967) [`6a1b118`](https://github.com/spree/spree/commit/6a1b118cd86262d30c0b4ddcb98f8ceec150de22) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The login page explains a refused sign-in when a staff account has been deactivated, instead of reporting a generic sign-in failure.
 - Updated dependencies []:
-  - @spree/core@0.3.0-rc.0
+  - @spree/core@0.3.0
 
 ## 1.0.0-rc.5
 
