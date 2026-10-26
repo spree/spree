@@ -69,6 +69,8 @@ jobs:
     name: Release npm packages
     needs: verify
     runs-on: ubuntu-latest
+    # Must match the environment in each package's npm Trusted Publishing setting.
+    environment: release
     permissions:
       contents: read
       id-token: write
