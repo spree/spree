@@ -836,3 +836,18 @@ steps:
       missing from the list. This stamps the store of the record on every
       tagging without one, for each taggable that keeps its taggings per
       store. Idempotent — taggings that already carry a store are skipped.
+
+  - id: disable_unsafe_webhook_endpoints
+    name: "Switch off webhook endpoints pointing at internal addresses"
+    task: "spree:upgrade:disable_unsafe_webhook_endpoints"
+    notes: |
+      Spree 6.0 refuses webhook URLs that are malformed or point at an
+      internal or private address. Endpoints saved before these checks can
+      still hold such a URL; delivery already refuses them, and this switches
+      them off so the failed attempts stop. The reason is kept on the endpoint
+      and no email is sent.
+
+      Plain-http endpoints keep running: HTTPS is required the next time one
+      is saved. So do endpoints whose host does not resolve during the run,
+      which may be a passing DNS failure. Idempotent — endpoints already
+      switched off are skipped.

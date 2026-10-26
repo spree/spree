@@ -66,36 +66,72 @@ describe Spree::WebhookEndpoint, type: :model do
       expect(build(:webhook_endpoint, url: 'https://example.com/hook', store: create(:store))).to be_valid
     end
 
-    describe 'url format' do
-      it 'accepts valid https urls' do
+    describe 'url' do
+      it 'accepts an https url at a public host' do
         webhook_endpoint.url = 'https://example.com/webhooks'
         expect(webhook_endpoint).to be_valid
       end
 
-      it 'accepts valid http urls' do
+      it 'requires https' do
         webhook_endpoint.url = 'http://example.com/webhooks'
-        expect(webhook_endpoint).to be_valid
+        expect(webhook_endpoint).not_to be_valid
+        expect(webhook_endpoint.errors[:url]).to eq(['must use https'])
       end
 
-      it 'rejects invalid urls' do
-        webhook_endpoint.url = 'not-a-url'
-        expect(webhook_endpoint).not_to be_valid
-        expect(webhook_endpoint.errors[:url]).to be_present
-      end
-
-      it 'rejects ftp urls' do
-        webhook_endpoint.url = 'ftp://example.com/webhooks'
-        expect(webhook_endpoint).not_to be_valid
+      [
+        'not-a-url',
+        'ftp://example.com/webhooks',
+        'not a url https://example.com/webhooks',
+        "https://①②⑦.⓪.⓪.①/",
+        'https://[https://example.com/x]/latest/meta-data/',
+        'https://user:secret@example.com/webhooks'
+      ].each do |url|
+        it "rejects #{url.inspect} as not a web address" do
+          webhook_endpoint.url = url
+          expect(webhook_endpoint).not_to be_valid
+          expect(webhook_endpoint.errors[:url]).to eq(['must be a valid http or https URL'])
+        end
       end
 
       # A resolver answers nothing for these spellings, so each must be read
       # as the address it is.
-      %w[http://[::1]/hook http://2130706433/hook http://0x7f000001/hook http://127.1/hook].each do |literal|
-        it "rejects the loopback address written as #{literal}" do
+      %w[http://[::1]/hook http://2130706433/hook http://0x7f000001/hook http://127.1/hook http://[::ffff:a9fe:a9fe]/].each do |literal|
+        it "rejects the internal address written as #{literal}" do
           webhook_endpoint.url = literal
           expect(webhook_endpoint).not_to be_valid
-          expect(webhook_endpoint.errors[:url]).to include('must not point to an internal or private network address')
+          expect(webhook_endpoint.errors[:url]).to eq(['must not point to an internal or private network address'])
         end
+      end
+
+      %w[metadata render-host metadata.google.internal kubernetes.default.svc printer.local app.localhost].each do |host|
+        it "rejects the internal host name #{host} without looking it up" do
+          webhook_endpoint.url = "https://#{host}/hook"
+          expect(webhook_endpoint).not_to be_valid
+          expect(webhook_endpoint.errors[:url]).to eq(['must not point to an internal or private network address'])
+          expect(Resolv).not_to have_received(:getaddresses)
+        end
+      end
+
+      it 'rejects a host name that does not resolve' do
+        allow(Resolv).to receive(:getaddresses).with('gone.example.com').and_return([])
+        webhook_endpoint.url = 'https://gone.example.com/webhooks'
+        expect(webhook_endpoint).not_to be_valid
+        expect(webhook_endpoint.errors[:url]).to eq(['must point to a host name that exists'])
+      end
+
+      it 'checks an active endpoint saved under older rules on every save, but lets it be switched off' do
+        webhook_endpoint.url = 'http://127.1/hook'
+        webhook_endpoint.save!(validate: false)
+
+        expect(webhook_endpoint.update(name: 'Renamed')).to be false
+        expect(webhook_endpoint.reload.update(active: false)).to be true
+        expect(webhook_endpoint.update(active: true)).to be false
+      end
+
+      it 'checks only the url format in development' do
+        allow(Rails.env).to receive(:development?).and_return(true)
+        webhook_endpoint.url = 'http://localhost:3000/api/webhooks/spree'
+        expect(webhook_endpoint).to be_valid
       end
 
       it 'rejects urls resolving to private IPs' do
@@ -390,6 +426,17 @@ describe Spree::WebhookEndpoint, type: :model do
       end
 
       it 'disables the endpoint' do
+        endpoint.check_auto_disable!
+
+        expect(endpoint.reload.active).to be false
+        expect(endpoint.disabled_at).to be_present
+      end
+
+      # Saved under older rules: the URL check must not stand in the way of
+      # switching it off.
+      it 'disables an endpoint whose URL the current rules refuse' do
+        endpoint.update_column(:url, 'http://127.1:5432/')
+
         endpoint.check_auto_disable!
 
         expect(endpoint.reload.active).to be false

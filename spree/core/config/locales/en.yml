@@ -467,8 +467,10 @@ en:
               invalid_pattern: 'must hold event names or patterns such as order.* or *.created (rejected: %{entries})'
               too_many: can hold at most %{count} entries
             url:
+              https_required: must use https
               internal_address_not_allowed: must not point to an internal or private network address
               invalid_url: must be a valid http or https URL
+              unresolvable_host: must point to a host name that exists
         spree/wishlist_item:
           attributes:
             variant:
