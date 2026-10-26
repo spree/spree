@@ -65,11 +65,21 @@ describe 'spree:upgrade' do
         end
       end
 
-      run_upgrade
+      # A failing step aborts the walk, and an abort must fail this example
+      # rather than end it quietly.
+      expect { run_upgrade }.not_to raise_error
 
+      # The rake task each step runs: named by a released manifest, or wrapped
+      # by its task class. Collection tasks run no rake task, and an optional
+      # step whose gem is absent is skipped.
       expected_tasks = manifests
         .select { |manifest| Spree::Upgrade.compare(manifest['to'], '6.0') <= 0 }
-        .flat_map { |manifest| manifest['steps'].map { |step| step['task'] } }
+        .flat_map { |manifest| manifest['steps'] }
+        .filter_map do |step|
+          next step['task'] if step['task']
+
+          Spree::MaintenanceTask.find_registered(step['task_class'])&.try(:rake_task_name)
+        end
       expect(invoked_tasks).to eq(expected_tasks)
     end
   end

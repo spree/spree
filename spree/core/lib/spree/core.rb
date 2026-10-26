@@ -135,7 +135,8 @@ module Spree
       stock_reservations: :default,
       tax_identifiers: :default,
       data_requests: :default,
-      payouts: :default
+      payouts: :default,
+      maintenance_tasks: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do
@@ -455,6 +456,19 @@ module Spree
     custom_fields
   end
 
+  # Registered maintenance task class names — the tasks an operator can run
+  # from the dashboard, the Admin API or the CLI
+  # (docs/plans/6.0-maintenance-tasks.md). Extensions append their own from an
+  # initializer:
+  #
+  #   Spree.maintenance_tasks << 'SpreeReviews::MaintenanceTasks::RecountRatings'
+  #
+  # Class names rather than classes, so registration is safe at initializer
+  # time and survives code reloading in development.
+  #
+  # @return [Array<String, Class>]
+  singleton_class.delegate :maintenance_tasks, :maintenance_tasks=, to: :spree_config
+
   # Registry mapping a numbered resource to the generator that produces its
   # document numbers. With no entry, the store's `document_number_format`
   # preference picks between the sequential and random strategies.
@@ -644,6 +658,7 @@ require 'spree/core/version'
 require 'spree/core/number_generator'
 require 'spree/number_generators/registry'
 require 'spree/migrations'
+require 'spree/upgrade'
 require 'spree/validators'
 require 'spree/core/engine'
 

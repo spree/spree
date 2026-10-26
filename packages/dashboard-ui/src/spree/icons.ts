@@ -169,6 +169,7 @@ export {
   UsersRoundIcon,
   WarehouseIcon,
   WebhookIcon,
+  WrenchIcon,
   X,
   XCircleIcon,
   XIcon,

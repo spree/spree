@@ -490,6 +490,8 @@ paths:
                 - write_email_templates
                 - read_integrations
                 - write_integrations
+                - read_maintenance_tasks
+                - write_maintenance_tasks
                 - read_api_keys
                 - write_api_keys
                 - read_oauth_applications
@@ -631,6 +633,8 @@ paths:
                 - write_email_templates
                 - read_integrations
                 - write_integrations
+                - read_maintenance_tasks
+                - write_maintenance_tasks
                 - read_api_keys
                 - write_api_keys
                 - read_oauth_applications
@@ -13988,6 +13992,415 @@ paths:
                   in: 1
                   previous:
                   next:
+  "/api/v3/admin/maintenance_task_runs":
+    get:
+      summary: List maintenance task runs
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The record of every maintenance task run: who started it, with which
+        arguments, how far it got and how it ended.
+
+        Runs are installation-wide rather than per store — an upgrade step
+        converts every store's data — so this list is not filtered by the
+        store the request is made against.
+
+
+        **Required scope:** `read_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: runs } = await client.maintenanceTaskRuns.list({ status_eq: 'succeeded' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /maintenance_task_runs -d '{"status_eq":"succeeded"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[task_name_cont]
+        in: query
+        required: false
+        description: Filter by task name (contains), e.g. `capture`
+        schema:
+          type: string
+      - name: q[status_eq]
+        in: query
+        required: false
+        description: Filter by status (enqueued, running, succeeded, errored, cancelled,
+          …)
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: maintenance task runs found
+          content:
+            application/json:
+              example:
+                data:
+                - id: mtr_UkLWZg9DAJ
+                  status: succeeded
+                  dry_run: false
+                  initiated_via: dashboard
+                  tick_count: 0
+                  tick_total:
+                  error_class:
+                  error_message:
+                  started_at:
+                  ended_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  task_name: capture_methods
+                  duration: 0.0
+                  tallies: {}
+                  arguments: {}
+                  error_backtrace:
+                  active: false
+                  admin_user_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/MaintenanceTaskRun"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Start a maintenance task
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Starts a run of a registered maintenance task and returns it. The run
+        is enqueued, so poll it while `active` is true.
+
+        `arguments` are validated by the task's own Active Model validations,
+        so a bad value is rejected here rather than failing on the first
+        record. `dry_run` is honored only by tasks whose `supports_dry_run` is
+        true — recording a run as a preview that would in fact have written
+        would misrepresent what happened.
+
+        Only one run of a task can be in flight at a time: two would race over
+        the same records and their cursors would leapfrog.
+
+
+        **Required scope:** `write_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const run = await client.maintenanceTaskRuns.create({
+            task_name: 'capture_methods',
+            dry_run: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /maintenance_task_runs -d '{"task_name":"capture_methods","dry_run":true}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: maintenance task started
+          content:
+            application/json:
+              example:
+                id: mtr_UkLWZg9DAJ
+                status: enqueued
+                dry_run: true
+                initiated_via: dashboard
+                tick_count: 0
+                tick_total:
+                error_class:
+                error_message:
+                started_at:
+                ended_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                task_name: capture_methods
+                duration: 0.0
+                tallies: {}
+                arguments: {}
+                error_backtrace:
+                active: true
+                admin_user_id: adm_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/MaintenanceTaskRun"
+        '422':
+          description: task is not registered
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Task name nope is not a registered maintenance task
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/MaintenanceTaskRunCreateParams"
+        required: true
+  "/api/v3/admin/maintenance_task_runs/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Maintenance task run ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve a maintenance task run
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        A single run, with the progress a dashboard polls while it works.
+
+        `progress` is `0..1` when the task could count its collection and
+        `null` when it could not, in which case `tick_count` alone reports what
+        has been processed. `arguments` are rendered through the task's masking
+        rules, so a secret passed as a parameter is stored for reproducibility
+        but never echoed back.
+
+
+        **Required scope:** `read_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const run = await client.maintenanceTaskRuns.get('mtr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /maintenance_task_runs/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: maintenance task run found
+          content:
+            application/json:
+              example:
+                id: mtr_UkLWZg9DAJ
+                status: running
+                dry_run: false
+                initiated_via: api
+                tick_count: 5
+                tick_total: 20
+                error_class:
+                error_message:
+                started_at:
+                ended_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                task_name: capture_methods
+                duration: 0.0
+                tallies: {}
+                arguments: {}
+                error_backtrace:
+                active: true
+                admin_user_id:
+              schema:
+                "$ref": "#/components/schemas/MaintenanceTaskRun"
+        '404':
+          description: maintenance task run not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Maintenance task run not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/maintenance_task_runs/{maintenance_task_run_id}/cancellation":
+    parameters:
+    - name: maintenance_task_run_id
+      in: path
+      description: Maintenance task run ID
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Cancel a maintenance task run
+      tags:
+      - Maintenance Tasks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Asks the runner to stop for good at its next checkpoint.
+
+        Cancelling is not a rollback — work already committed stays committed.
+        What a cancelled run keeps is its cursor, so an operator can see how
+        far it got. A run that is still `cancelling` because its worker has
+        gone is cancelled outright by a second request.
+
+
+        **Required scope:** `write_maintenance_tasks` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const run = await client.maintenanceTaskRuns.cancel('mtr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /maintenance_task_runs/{maintenance_task_run_id}/cancellation
+          -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: maintenance task run cancelling
+          content:
+            application/json:
+              example:
+                id: mtr_UkLWZg9DAJ
+                status: cancelling
+                dry_run: false
+                initiated_via: api
+                tick_count: 0
+                tick_total:
+                error_class:
+                error_message:
+                started_at:
+                ended_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                task_name: capture_methods
+                duration: 0.0
+                tallies: {}
+                arguments: {}
+                error_backtrace:
+                active: true
+                admin_user_id:
+              schema:
+                "$ref": "#/components/schemas/MaintenanceTaskRun"
+        '422':
+          description: maintenance task run cannot be cancelled
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: a run with status succeeded cannot be cancelled
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/markets":
     get:
       summary: List markets
@@ -33263,6 +33676,20 @@ paths:
                   group_label: Settings
                   label: Integrations
                   description: ''
+                - key: read_maintenance_tasks
+                  resource: maintenance_tasks
+                  kind: read
+                  group: access
+                  group_label: Access
+                  label: Maintenance tasks
+                  description: ''
+                - key: write_maintenance_tasks
+                  resource: maintenance_tasks
+                  kind: write
+                  group: access
+                  group_label: Access
+                  label: Maintenance tasks
+                  description: ''
                 - key: read_api_keys
                   resource: api_keys
                   kind: read
@@ -33306,7 +33733,7 @@ paths:
                   label: Staff & roles
                   description: Team members, invitations, roles and their permissions
                 meta:
-                  count: 59
+                  count: 61
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -33442,6 +33869,8 @@ paths:
                   - write_email_templates
                   - read_integrations
                   - write_integrations
+                  - read_maintenance_tasks
+                  - write_maintenance_tasks
                   - read_api_keys
                   - write_api_keys
                   - read_oauth_applications
@@ -37730,6 +38159,54 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
+                - name: maintenance_task_run.cancelled
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: maintenance_task_run.created
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: maintenance_task_run.deleted
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: maintenance_task_run.errored
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: maintenance_task_run.interrupted
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: maintenance_task_run.started
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: maintenance_task_run.succeeded
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: maintenance_task_run.updated
+                  group: maintenance_task_run
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
                 - name: media.created
                   group: media
                   credential_permission:
@@ -38733,7 +39210,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 252
+                  count: 260
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -57435,6 +57912,8 @@ paths:
                 - write_package_types
                 - read_email_templates
                 - write_email_templates
+                - read_maintenance_tasks
+                - write_maintenance_tasks
                 bearer_methods_supported:
                 - header
                 resource_documentation: https://spreecommerce.org/docs/developer/mcp/overview
@@ -57483,6 +57962,9 @@ tags:
 - name: Imports
   description: Async CSV imports of admin resources, with per-row status and failed-row
     retry
+- name: Maintenance Tasks
+  description: Operator-run data work — backfills, reindexes and upgrade steps — and
+    the record of every run
 - name: Markets
   description: Markets — geographic groupings of countries used for pricing, tax,
     and fulfillment rules
@@ -64383,6 +64865,90 @@ components:
       - code
       - default
       - rtl
+      x-typelizer: true
+    MaintenanceTaskRun:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - enqueued
+            - running
+            - interrupted
+            - cancelling
+            - cancelled
+            - succeeded
+            - errored
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        dry_run:
+          type: boolean
+        initiated_via:
+          type: string
+        tick_count:
+          type: number
+        tick_total:
+          type: number
+          nullable: true
+        error_class:
+          type: string
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        started_at:
+          type: string
+          nullable: true
+        ended_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        task_name:
+          type: string
+        duration:
+          type: number
+          nullable: true
+        tallies:
+          type: object
+        arguments:
+          type: object
+        error_backtrace:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+        admin_user_id:
+          type: string
+          nullable: true
+        admin_user:
+          "$ref": "#/components/schemas/AdminUser"
+      required:
+      - id
+      - status
+      - dry_run
+      - initiated_via
+      - tick_count
+      - tick_total
+      - error_class
+      - error_message
+      - started_at
+      - ended_at
+      - created_at
+      - updated_at
+      - task_name
+      - duration
+      - tallies
+      - arguments
+      - error_backtrace
+      - active
+      - admin_user_id
       x-typelizer: true
     Market:
       type: object
@@ -80153,6 +80719,24 @@ components:
         metadata:
           type: object
           additionalProperties: true
+    MaintenanceTaskRunCreateParams:
+      type: object
+      properties:
+        task_name:
+          type: string
+          description: The task to run, as `task_name` from `GET /upgrade_steps`.
+          example: capture_methods
+        arguments:
+          type: object
+          additionalProperties: true
+          description: Values for the task's declared parameters, keyed by parameter
+            name. A key the task does not declare is rejected.
+        dry_run:
+          type: boolean
+          description: Report what would change without writing. Ignored by tasks
+            that do not support a dry run, which run for real.
+      required:
+      - task_name
     MarketCreateParams:
       type: object
       properties:

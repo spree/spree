@@ -2830,6 +2830,87 @@
         "title": "مستخدم في"
       }
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "إلغاء التشغيل"
+      },
+      "cancel_confirm": {
+        "message": "تتوقف المهمة عند نقطة التحقق التالية. العمل المنجز يبقى كما هو — الإلغاء لا يتراجع عنه.",
+        "title": "إلغاء هذا التشغيل؟"
+      },
+      "description": "شغّل خطوات البيانات في ترقية Spree وتابع تقدّمها. يُسجَّل كل تشغيل.",
+      "dry_run_badge": "معاينة",
+      "history": {
+        "empty_title": "لا توجد عمليات تشغيل",
+        "search_placeholder": "ابحث باسم المهمة…",
+        "table": {
+          "initiated_by": "بدأها",
+          "processed": "تمت معالجتها",
+          "status": "الحالة",
+          "task": "المهمة"
+        },
+        "title": "سجل التشغيل"
+      },
+      "initiated_via": {
+        "api": "بدأت عبر واجهة البرمجة",
+        "cli": "بدأت من سطر الأوامر",
+        "dashboard": "بدأت من لوحة التحكم"
+      },
+      "messages": {
+        "canceled": "جارٍ إلغاء التشغيل",
+        "start_failed": "تعذّر بدء المهمة",
+        "started": "بدأت المهمة"
+      },
+      "run": {
+        "arguments": "المعاملات",
+        "duration": "المدة",
+        "ended": "انتهت",
+        "error": "خطأ",
+        "initiated_by": "بدأها",
+        "loading": "جارٍ تحميل التشغيل…",
+        "processed_count": "تمت معالجة {{count}}",
+        "progress_label": "التقدّم",
+        "results": "النتائج",
+        "seconds": "{{count}} ث",
+        "show_backtrace": "عرض التفاصيل التقنية",
+        "started": "بدأت"
+      },
+      "status": {
+        "cancelled": "أُلغيت",
+        "cancelling": "جارٍ الإلغاء…",
+        "enqueued": "في الانتظار",
+        "errored": "فشلت",
+        "interrupted": "جارٍ الاستئناف…",
+        "running": "قيد التشغيل",
+        "succeeded": "اكتملت"
+      },
+      "tabs": {
+        "history": "السجل",
+        "upgrade": "الترقية"
+      },
+      "title": "مهام الصيانة",
+      "unavailable": "مهام الصيانة غير متاحة لك. في بعض التثبيتات تكون معطّلة، ويشغّل مسؤول التثبيت خطوات الترقية من سطر الأوامر.",
+      "upgrade": {
+        "already_completed": "مكتمل",
+        "boundary": "Spree {{from}} ← {{to}}",
+        "confirm": {
+          "title": "تشغيل «{{name}}»؟",
+          "message": "للخطوات ترتيب — شغّل ما قبلها أولًا. هذا يكتب في بياناتك ولا يمكن التراجع عنه."
+        },
+        "description": "خطوات البيانات التي يحتاجها هذا الإصدار، بالترتيب الذي يجب تنفيذها به.",
+        "hide_steps": "إخفاء الخطوات",
+        "history_description": "اكتمل بالفعل في هذا المتجر.",
+        "progress": "اكتمل {{done}} من {{total}}",
+        "read_guide": "اقرأ دليل الترقية",
+        "run_again": "إعادة التشغيل",
+        "run_next": "تشغيل الخطوة التالية",
+        "run_step": "تشغيل",
+        "show_steps": "عرض الخطوات",
+        "title": "الترقية إلى Spree {{version}}",
+        "up_to_date_description": "عند ترقية Spree إلى إصدار جديد، ستظهر هنا خطوات البيانات التي يحتاجها ذلك الإصدار، جاهزة للتشغيل بالترتيب.",
+        "up_to_date_title": "متجرك محدّث"
+      }
+    },
     "nav": {
       "account": "الحساب",
       "catalogs": "الكتالوجات",
@@ -4274,6 +4355,7 @@
             "import_row": "صف استيراد",
             "invitation": "دعوة",
             "line_item": "Line item",
+            "maintenance_task_run": "تشغيل مهمة صيانة",
             "media": "وسائط",
             "newsletter_subscriber": "Newsletter subscriber",
             "order": "طلب",
@@ -5467,6 +5549,7 @@
         "emails": "عناوين المُرسِل وإعدادات رسائل المعاملات",
         "imports": "سجل عمليات استيراد CSV ونتائجها",
         "integrations": "اربط مزوّدي الشحن والضرائب وغيرهم",
+        "maintenance_tasks": "عمليات التعبئة وإعادة الفهرسة وخطوات الترقية، مع سجل لكل تشغيل",
         "markets": "البلدان التي تبيع إليها وعملاتها",
         "payment_methods": "بوابات الدفع وطريقة تحصيل المدفوعات",
         "policies": "الشروط والخصوصية والإرجاع والشحن",
@@ -5505,6 +5588,7 @@
         "emails": "البريد الإلكتروني",
         "imports": "عمليات الاستيراد",
         "integrations": "التكاملات",
+        "maintenance_tasks": "مهام الصيانة",
         "markets": "الأسواق",
         "payment_methods": "طرق الدفع",
         "policies": "السياسات",

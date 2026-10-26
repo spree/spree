@@ -503,6 +503,7 @@ import type {
   InvitationCreateParams,
   LineItemCreateParams,
   LineItemUpdateParams,
+  MaintenanceTaskRunCreateParams,
   MarketCreateParams,
   MarketUpdateParams,
   MediaCreateParams,
@@ -684,6 +685,7 @@ import type {
   InvitationAcceptanceLink,
   LineItem,
   Locale,
+  MaintenanceTaskRun,
   Market,
   Media,
   OauthAccessToken,
@@ -745,6 +747,8 @@ import type {
   TranslationBatchEntry,
   TranslationCoverage,
   UpdateStatus,
+  UpgradeStep,
+  UpgradeStepsMeta,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -4454,6 +4458,74 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/exports/${id}`, options),
+  }
+
+  // ============================================
+  // Maintenance tasks
+  // ============================================
+
+  /**
+   * The upgrade manifest as an ordered checklist: what this release still
+   * needs run, the operator notes each step carries, and how each last went.
+   *
+   * Read-only — running a step is starting the task it names through
+   * `maintenanceTaskRuns.create()` with the step's own `task_name` and
+   * `arguments`.
+   */
+  readonly upgradeSteps = {
+    list: (options?: RequestOptions): Promise<{ data: UpgradeStep[]; meta: UpgradeStepsMeta }> =>
+      this.request<{ data: UpgradeStep[]; meta: UpgradeStepsMeta }>(
+        'GET',
+        '/upgrade_steps',
+        options,
+      ),
+  }
+
+  /**
+   * Runs of a maintenance task — the progress to poll while one is working and
+   * the audit trail afterwards (who ran what, with which arguments, and how it
+   * ended).
+   *
+   * After `create()`, poll `get(id)` while `active` is true; show `tick_count`
+   * against `tick_total`, or `tick_count` alone when the task could not count
+   * its collection. `cancel` stops an active run for good. There is no delete:
+   * a run records work that touched merchant data.
+   */
+  readonly maintenanceTaskRuns = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<MaintenanceTaskRun>> =>
+      this.request<PaginatedResponse<MaintenanceTaskRun>>('GET', '/maintenance_task_runs', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('GET', `/maintenance_task_runs/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (
+      params: MaintenanceTaskRunCreateParams,
+      options?: RequestOptions,
+    ): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('POST', '/maintenance_task_runs', {
+        ...options,
+        body: params,
+      }),
+
+    cancel: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>(
+        'POST',
+        `/maintenance_task_runs/${id}/cancellation`,
+        options,
+      ),
   }
 
   // ============================================

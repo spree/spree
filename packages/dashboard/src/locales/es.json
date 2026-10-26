@@ -1,5 +1,86 @@
 {
   "admin": {
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Cancelar ejecución"
+      },
+      "cancel_confirm": {
+        "message": "La tarea se detiene en su próximo punto de control. El trabajo ya hecho se conserva: cancelar no lo deshace.",
+        "title": "¿Cancelar esta ejecución?"
+      },
+      "description": "Ejecuta los pasos de datos de una actualización de Spree y sigue su progreso. Cada ejecución queda registrada.",
+      "dry_run_badge": "Vista previa",
+      "history": {
+        "empty_title": "Todavía no hay ejecuciones",
+        "search_placeholder": "Buscar por nombre de tarea…",
+        "table": {
+          "initiated_by": "Iniciada por",
+          "processed": "Procesados",
+          "status": "Estado",
+          "task": "Tarea"
+        },
+        "title": "Historial de ejecuciones"
+      },
+      "initiated_via": {
+        "api": "Iniciada a través de la API",
+        "cli": "Iniciada desde la línea de comandos",
+        "dashboard": "Iniciada desde el panel"
+      },
+      "messages": {
+        "canceled": "Cancelando la ejecución",
+        "start_failed": "No se pudo iniciar la tarea",
+        "started": "Tarea iniciada"
+      },
+      "run": {
+        "arguments": "Argumentos",
+        "duration": "Duración",
+        "ended": "Finalizada",
+        "error": "Error",
+        "initiated_by": "Iniciada por",
+        "loading": "Cargando ejecución…",
+        "processed_count": "{{count}} procesados",
+        "progress_label": "Progreso",
+        "results": "Resultados",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Mostrar detalle técnico",
+        "started": "Iniciada"
+      },
+      "status": {
+        "cancelled": "Cancelada",
+        "cancelling": "Cancelando…",
+        "enqueued": "En cola",
+        "errored": "Fallida",
+        "interrupted": "Reanudando…",
+        "running": "En ejecución",
+        "succeeded": "Completada"
+      },
+      "tabs": {
+        "history": "Historial",
+        "upgrade": "Actualización"
+      },
+      "title": "Tareas de mantenimiento",
+      "unavailable": "Las tareas de mantenimiento no están disponibles para ti. En algunas instalaciones están desactivadas, y quien opera la instalación ejecuta los pasos de actualización desde la línea de comandos.",
+      "upgrade": {
+        "already_completed": "Completada",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "message": "Los pasos tienen un orden: ejecuta primero los anteriores. Esto escribe en tus datos y no se puede deshacer.",
+          "title": "¿Ejecutar «{{name}}»?"
+        },
+        "description": "Pasos de datos que necesita esta versión, en el orden en que deben ejecutarse.",
+        "hide_steps": "Ocultar pasos",
+        "history_description": "Ya completado en esta tienda.",
+        "progress": "{{done}} de {{total}} hechos",
+        "read_guide": "Leer la guía de actualización",
+        "run_again": "Ejecutar de nuevo",
+        "run_next": "Ejecutar el siguiente paso",
+        "run_step": "Ejecutar",
+        "show_steps": "Mostrar pasos",
+        "title": "Actualizar a Spree {{version}}",
+        "up_to_date_description": "Cuando actualices Spree a una nueva versión, aquí aparecerán los pasos de datos que necesita esa versión, listos para ejecutarse en orden.",
+        "up_to_date_title": "Tu tienda está al día"
+      }
+    },
     "pages": {
       "channels": {
         "add_cta": "Nuevo canal de venta",
@@ -640,6 +721,7 @@
             "import_row": "Fila de importación",
             "invitation": "Invitación",
             "line_item": "Línea de pedido",
+            "maintenance_task_run": "Ejecución de tarea de mantenimiento",
             "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
@@ -4322,6 +4404,7 @@
         "emails": "Direcciones de remitente y configuración de emails transaccionales",
         "imports": "Historial de importaciones CSV y sus resultados",
         "integrations": "Conectá proveedores de envío, impuestos y otros",
+        "maintenance_tasks": "Rellenos, reindexaciones y pasos de actualización, con un registro de cada ejecución",
         "markets": "Los países a los que vendés y sus monedas",
         "payment_methods": "Pasarelas de pago y cómo se capturan los pagos",
         "policies": "Documentos de términos, privacidad, devoluciones y envíos",
@@ -4360,6 +4443,7 @@
         "emails": "Emails",
         "imports": "Importaciones",
         "integrations": "Integraciones",
+        "maintenance_tasks": "Tareas de mantenimiento",
         "markets": "Mercados",
         "payment_methods": "Métodos de pago",
         "policies": "Políticas",

@@ -201,6 +201,13 @@ module Spree
         })
         catalog.register_scope(:integrations, group: :settings, resources: -> { [Spree::Integration] })
 
+        # Sits with the other sensitive access grants rather than under
+        # settings: a task can rewrite any data in the install, so out of the
+        # box only the admin role holds it (docs/plans/6.0-maintenance-tasks.md).
+        catalog.register_scope(:maintenance_tasks, group: :access, resources: -> {
+          [Spree::MaintenanceTaskRun, :maintenance_task]
+        })
+
         # The CORS allowlist is a credential as much as a key is: an origin on
         # it may call the cookie-authenticated refresh endpoint from a browser
         # and read back any signed-in admin's access token. So it sits with

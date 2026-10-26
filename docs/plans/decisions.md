@@ -18,6 +18,26 @@
 
 **Plan amended:** `6.0-beta-release.md` (Key Decisions 2 and 3).
 
+## 2026-10-25: Maintenance tasks ship for upgrade steps only
+
+**Context:** The maintenance tasks plan built a general-purpose surface for operator-run data work: a dashboard list of tasks with a form built from each task's parameters, endpoints to list and describe tasks, CSV input, throttling, per-record error reporting, masked arguments, preconditions and parent runs for an orchestrating walk. By release, only the upgrade manifests register tasks, and none of those uses any of it. The unused surface was most of the pull request's size and still needed review, tests and documentation.
+
+**Decision:** 6.0 ships maintenance tasks as the runner for upgrade steps. Removed before release: the dashboard's Tasks tab and run form, `GET /maintenance_tasks` and its SDK methods, `csv_collection` and the run's CSV attachment, `throttle_on`, `report_on`, `mask_attribute`, `precondition`, `description`, `max_run_time`, the `after_start`/`after_pause`/`after_interrupt`/`after_cancel`/`after_error` hooks, `parent_run` and `spree:maintenance_tasks:list`. Pause and resume went too: upgrade steps are short or safe to re-run, so a step that fails or is cancelled is started again, and the `pausing`/`paused` statuses, their services, endpoints, events and dashboard buttons are gone. Kept: the runner and its checkpoints, run history, cancel, dry run, batch size, step parameters, `after_complete`, the permissions and `spree:maintenance_tasks:perform`.
+
+**Consequences:** A task an extension or host wants to run outside an upgrade has no dashboard surface; adding one back is a new decision, built when there is a task that needs it. Runs no longer mask argument values, since no step takes a secret. Runs are installation-wide and belong to no store: an upgrade step converts every store's data, so a run no longer records the store the operator was in, and the runner no longer sets a current store while a step works. The guide at `docs/developer/how-to/maintenance-tasks.mdx` now documents upgrade steps.
+
+**Plan amended:** `6.0-maintenance-tasks.md` (header note).
+
+## 2026-10-25: An upgrade step is a rake task or a task class, never both
+
+**Context:** The 2026-08-15 maintenance tasks decision made every 5.6 → 6.0 upgrade step a task class. In practice most steps are one-pass updates that kept their rake body, so each step was declared in up to five places: the manifest, the rake task, a ten-line wrapper class naming that rake task, a line in the engine's registration list and a translated description repeating the manifest name. Six steps went further and carried the same logic twice, once in the rake task and once in the class, so a fix to one could miss the other.
+
+**Decision:** The manifest is the only list of steps, and each step names exactly one of `task` or `task_class`. A one-pass step names its rake task and runs through the shared `UpgradeStep` runner, which records it like any other run. A step gets a class of its own only when it walks rows (progress, resume, dry run) or asks the operator for parameters, and then it has no rake twin. Task classes named by a manifest are registered from it, so neither core nor a provider gem keeps a second list. The history labels a one-pass step by its step id.
+
+**Consequences:** Adding a step is a manifest entry plus either a rake task or a class. One-pass steps share one task name, so the history filter cannot single one out and two of them cannot run at once, which an ordered upgrade does not need. 38 classes (34 wrappers and four one-pass steps), their registrations and descriptions, and two duplicate rake tasks are removed; seven classes remain (five with parameters, two row walks).
+
+**Plan amended:** `6.0-maintenance-tasks.md` (Key Decisions, Upgrade manifest integration).
+
 ## 2026-10-24: A marketplace decides whether, what and under review its sellers may upload
 
 **Context:** With sellers able to attach downloadable files to their products (the entry below), any approved seller can put a file on the marketplace's domain that buyers download trusting the marketplace's brand. Nothing in Spree scans a file's contents, and before this there was no way to keep seller uploads off, to narrow what they may be, or to re-check an approved listing whose file changed. Digital asset writes were also plain model saves in two places, so a host had no point at which to refuse an upload.
@@ -4760,6 +4780,51 @@ is superseded; `Spree.store_setup_tasks` stays code-only for the merchant's own
 Getting Started list. Never add `Seller#onboarding_completed?`-style predicates
 or step-done columns; a new admission check is a kind or a `validate` hook on
 the seller workflows. Plan: `6.0-seller-onboarding-requirements.md`.
+
+## 2026-08-15 — Maintenance tasks: operator-run data work is a task class with a run row, and every 6.0 upgrade step is one
+
+**Decision:** Spree 6.0 core gains a first-class maintenance-task primitive —
+`Spree::MaintenanceTask` (Shopify `maintenance_tasks` authoring contract:
+`collection`/`process`/`count`, ActiveModel attributes as parameters,
+`throttle_on`, `report_on`, `no_collection`, later `csv_collection`) run by a
+native `ActiveJob::Continuable` job, with a persistent
+`Spree::MaintenanceTaskRun` row carrying cursor, progress, arguments, tallies,
+outcome and who fired it from where. It is built natively, not by depending
+on Shopify's gem: the gem's runner is a second interruption mechanism
+(`job-iteration`) beside the one 6.0 already standardized on, and its UI is
+a server-rendered engine Spree 6.0 has no place to mount. Tasks are
+registered explicitly (`Spree.maintenance_tasks`, the same
+`Rails.application.config.spree.*` array as every class family) — never
+autodiscovered. Authorization is **one catalog resource,
+`maintenance_tasks`, in the `access` group**: admins hold it by default,
+nothing is gated per task and nothing checks the `admin` role by name.
+Runs are installation-wide with a recorded context store the runner loads
+into `Spree::Current.store`. Dry-run is opt-in and task-honored
+(`supports_dry_run` + `dry_run?`), never a runner-faked rollback. The run
+row is the audit; lifecycle events fire; no audit-log model. Schema
+migrations stay in the deploy pipeline forever.
+
+**All 22 steps of the 5.6→6.0 upgrade manifest are rewritten as
+`Spree::MaintenanceTasks::Upgrade::*` classes and the manifest names
+`task_class:` instead of rake tasks** (those rake names never shipped, so
+there is nothing to bridge; older manifests keep rake steps and the walker
+runs both kinds inside run rows). `spree:upgrade` keeps its interface and
+becomes an inline walk that writes the same run rows; the dashboard gets an
+Upgrade panel and `Upgrade::Walk`, an orchestrating task whose steps are
+child runs.
+
+**Why:** A console session records what was typed, not what it did; a
+managed platform cannot hand out shells; and the 6.0 upgrade is the largest
+data migration Spree has shipped. Building the runner for our own migration
+path yields the cloud capability as a side effect and turns "run this rake
+task and wait" into progress bars and resume buttons. It lives in BSD-3 core
+because it is infrastructure self-hosted merchants need exactly as much.
+
+**Consequences:** New bulk/backfill work is a task, not a bare rake task or
+a README console snippet; new 6.0 upgrade steps are born as task classes;
+`Imports::ProcessJob`-style system-triggered jobs stay plain Continuable
+jobs (the primitive is for operator-triggered work). Plan:
+`6.0-maintenance-tasks.md`.
 
 ## 2026-08-24 — Media library reuses files by sharing blobs, never by a shared asset entity
 

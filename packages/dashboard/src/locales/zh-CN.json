@@ -2723,6 +2723,87 @@
     "jurisdiction": {
       "everywhere": "所有地区"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "取消运行"
+      },
+      "cancel_confirm": {
+        "message": "任务会在下一个检查点停止。已完成的工作会保留——取消不会撤销它。",
+        "title": "取消这次运行？"
+      },
+      "description": "运行 Spree 升级中的数据步骤并跟踪其进度。每次运行都会被记录。",
+      "dry_run_badge": "预览",
+      "history": {
+        "empty_title": "暂无运行记录",
+        "search_placeholder": "按任务名称搜索…",
+        "table": {
+          "initiated_by": "启动人",
+          "processed": "已处理",
+          "status": "状态",
+          "task": "任务"
+        },
+        "title": "运行历史"
+      },
+      "initiated_via": {
+        "api": "通过 API 启动",
+        "cli": "从命令行启动",
+        "dashboard": "从仪表板启动"
+      },
+      "messages": {
+        "canceled": "正在取消运行",
+        "start_failed": "无法启动任务",
+        "started": "任务已启动"
+      },
+      "run": {
+        "arguments": "参数",
+        "duration": "耗时",
+        "ended": "结束时间",
+        "error": "错误",
+        "initiated_by": "启动人",
+        "loading": "正在加载运行记录…",
+        "processed_count": "已处理 {{count}} 条",
+        "progress_label": "进度",
+        "results": "结果",
+        "seconds": "{{count}} 秒",
+        "show_backtrace": "显示技术详情",
+        "started": "开始时间"
+      },
+      "status": {
+        "cancelled": "已取消",
+        "cancelling": "正在取消…",
+        "enqueued": "排队中",
+        "errored": "已失败",
+        "interrupted": "正在恢复…",
+        "running": "运行中",
+        "succeeded": "已完成"
+      },
+      "tabs": {
+        "history": "历史",
+        "upgrade": "升级"
+      },
+      "title": "维护任务",
+      "unavailable": "你无法使用维护任务。在某些安装中维护任务已关闭，升级步骤由安装的运维人员通过命令行运行。",
+      "upgrade": {
+        "already_completed": "已完成",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "title": "运行“{{name}}”？",
+          "message": "步骤有先后顺序——请先运行前面的步骤。此操作会写入数据且无法撤销。"
+        },
+        "description": "此版本所需的数据步骤，按必须执行的顺序排列。",
+        "hide_steps": "隐藏步骤",
+        "history_description": "此店铺已完成。",
+        "progress": "已完成 {{done}} / {{total}}",
+        "read_guide": "阅读升级指南",
+        "run_again": "重新运行",
+        "run_next": "运行下一步",
+        "run_step": "运行",
+        "show_steps": "显示步骤",
+        "title": "升级到 Spree {{version}}",
+        "up_to_date_description": "将 Spree 升级到新版本后，该版本所需的数据步骤会显示在这里，可按顺序运行。",
+        "up_to_date_title": "你的店铺已是最新"
+      }
+    },
     "markets": {
       "add_cta": "添加市场",
       "columns": {
@@ -4231,6 +4312,7 @@
             "import_row": "导入行",
             "invitation": "邀请",
             "line_item": "订单项",
+            "maintenance_task_run": "维护任务运行",
             "media": "媒体",
             "newsletter_subscriber": "邮件订阅者",
             "order": "订单",
@@ -5418,6 +5500,7 @@
         "emails": "发件地址与交易邮件设置",
         "imports": "CSV 导入历史与结果",
         "integrations": "连接物流、税务及其他服务商",
+        "maintenance_tasks": "回填、重建索引与升级步骤，并记录每次运行",
         "markets": "销售的国家/地区及其货币",
         "payment_methods": "支付网关与收款方式",
         "policies": "条款、隐私、退货与配送文件",
@@ -5456,6 +5539,7 @@
         "emails": "邮件",
         "imports": "导入",
         "integrations": "集成",
+        "maintenance_tasks": "维护任务",
         "markets": "市场",
         "payment_methods": "支付方式",
         "policies": "政策",

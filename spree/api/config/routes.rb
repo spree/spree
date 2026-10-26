@@ -509,6 +509,15 @@ Spree::Core::Engine.add_routes do
           post :test, on: :member
         end
 
+        # Maintenance tasks — see docs/plans/6.0-maintenance-tasks.md.
+        # A run names its task by the short name the upgrade steps give.
+        resources :upgrade_steps, only: [:index]
+        resources :maintenance_task_runs, only: [:index, :show, :create] do
+          scope module: :maintenance_task_runs do
+            resource :cancellation, only: [:create]
+          end
+        end
+
         # Promotions, with nested actions/rules/coupon codes.
         resources :promotions, concerns: :custom_fieldable do
           resources :promotion_actions, only: [:index, :show, :create, :update, :destroy]

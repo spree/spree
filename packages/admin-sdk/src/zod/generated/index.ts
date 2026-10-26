@@ -75,6 +75,7 @@ export { InvitationSchema, type Invitation } from './Invitation';
 export { InvitationAcceptanceLinkSchema, type InvitationAcceptanceLink } from './InvitationAcceptanceLink';
 export { LineItemSchema, type LineItem } from './LineItem';
 export { LocaleSchema, type Locale } from './Locale';
+export { MaintenanceTaskRunSchema, type MaintenanceTaskRun } from './MaintenanceTaskRun';
 export { MarketSchema, type Market } from './Market';
 export { MediaSchema, type Media } from './Media';
 export { MembershipProductSchema, type MembershipProduct } from './MembershipProduct';

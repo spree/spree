@@ -188,6 +188,15 @@ const statusToneMap: Record<string, StatusTone> = {
   // same green/red the rest of the app uses saves them parsing the word.
   true: 'success',
   false: 'destructive',
+  // Maintenance task runs: amber while a worker holds or is about to release
+  // the run, blue while it waits for one.
+  enqueued: 'info',
+  running: 'warning',
+  interrupted: 'info',
+  cancelling: 'warning',
+  cancelled: 'destructive',
+  succeeded: 'success',
+  errored: 'destructive',
 } satisfies Record<BuiltInStatus, StatusTone> & Record<string, StatusTone>
 
 // Dot fills, by tone. These read the same `--status-*` ramps the tinted Badge

@@ -95,6 +95,15 @@ module Spree
         apply_staff_baseline
         grantable_keys_for(roles).each { |key| activate_permission(key) }
       end
+
+      withhold_maintenance_tasks unless Spree::Config.maintenance_tasks_dashboard_enabled
+    end
+
+    # Applied last so it overrides the full-access grant, and travels to the
+    # dashboard with the other rules, which then hides the page.
+    def withhold_maintenance_tasks
+      cannot :manage, [Spree::MaintenanceTaskRun, :maintenance_task]
+      @permission_keys -= %w[read_maintenance_tasks write_maintenance_tasks]
     end
 
     # Every key the roles ask for, bounded at activation by what each role's

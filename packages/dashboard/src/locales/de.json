@@ -2728,6 +2728,87 @@
     "jurisdiction": {
       "everywhere": "Überall"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Lauf abbrechen"
+      },
+      "cancel_confirm": {
+        "message": "Die Aufgabe stoppt am nächsten Prüfpunkt. Bereits erledigte Arbeit bleibt bestehen — ein Abbruch macht sie nicht rückgängig.",
+        "title": "Diesen Lauf abbrechen?"
+      },
+      "description": "Führen Sie die Datenschritte eines Spree-Upgrades aus und verfolgen Sie ihren Fortschritt. Jeder Lauf wird aufgezeichnet.",
+      "dry_run_badge": "Vorschau",
+      "history": {
+        "empty_title": "Noch keine Läufe",
+        "search_placeholder": "Nach Aufgabenname suchen…",
+        "table": {
+          "initiated_by": "Gestartet von",
+          "processed": "Verarbeitet",
+          "status": "Status",
+          "task": "Aufgabe"
+        },
+        "title": "Laufverlauf"
+      },
+      "initiated_via": {
+        "api": "Über die API gestartet",
+        "cli": "Über die Kommandozeile gestartet",
+        "dashboard": "Über das Dashboard gestartet"
+      },
+      "messages": {
+        "canceled": "Lauf wird abgebrochen",
+        "start_failed": "Aufgabe konnte nicht gestartet werden",
+        "started": "Aufgabe gestartet"
+      },
+      "run": {
+        "arguments": "Parameter",
+        "duration": "Dauer",
+        "ended": "Beendet",
+        "error": "Fehler",
+        "initiated_by": "Gestartet von",
+        "loading": "Lauf wird geladen…",
+        "processed_count": "{{count}} verarbeitet",
+        "progress_label": "Fortschritt",
+        "results": "Ergebnisse",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Technische Details anzeigen",
+        "started": "Gestartet"
+      },
+      "status": {
+        "cancelled": "Abgebrochen",
+        "cancelling": "Wird abgebrochen…",
+        "enqueued": "In Warteschlange",
+        "errored": "Fehlgeschlagen",
+        "interrupted": "Wird fortgesetzt…",
+        "running": "Läuft",
+        "succeeded": "Abgeschlossen"
+      },
+      "tabs": {
+        "history": "Verlauf",
+        "upgrade": "Upgrade"
+      },
+      "title": "Wartungsaufgaben",
+      "unavailable": "Wartungsaufgaben stehen Ihnen nicht zur Verfügung. Auf manchen Installationen sind sie abgeschaltet, und Upgrade-Schritte werden von den Betreibern der Installation über die Kommandozeile ausgeführt.",
+      "upgrade": {
+        "already_completed": "Abgeschlossen",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "title": "„{{name}}“ ausführen?",
+          "message": "Die Schritte haben eine Reihenfolge — führen Sie zuerst die vorhergehenden aus. Dies schreibt in Ihre Daten und kann nicht rückgängig gemacht werden."
+        },
+        "description": "Datenschritte, die dieses Release benötigt, in der Reihenfolge ihrer Ausführung.",
+        "hide_steps": "Schritte ausblenden",
+        "history_description": "In diesem Shop bereits abgeschlossen.",
+        "progress": "{{done}} von {{total}} erledigt",
+        "read_guide": "Upgrade-Anleitung lesen",
+        "run_again": "Erneut ausführen",
+        "run_next": "Nächsten Schritt ausführen",
+        "run_step": "Ausführen",
+        "show_steps": "Schritte anzeigen",
+        "title": "Upgrade auf Spree {{version}}",
+        "up_to_date_description": "Wenn Sie Spree auf eine neue Version aktualisieren, erscheinen hier die Datenschritte, die dieses Release benötigt, bereit zur Ausführung in der richtigen Reihenfolge.",
+        "up_to_date_title": "Ihr Shop ist auf dem neuesten Stand"
+      }
+    },
     "markets": {
       "add_cta": "Markt hinzufügen",
       "columns": {
@@ -4242,6 +4323,7 @@
             "import_row": "Importzeile",
             "invitation": "Einladung",
             "line_item": "Position",
+            "maintenance_task_run": "Wartungsaufgaben-Lauf",
             "media": "Medien",
             "newsletter_subscriber": "Newsletter-Abonnent",
             "order": "Bestellung",
@@ -5430,6 +5512,7 @@
         "emails": "Absenderadressen und Einstellungen für Transaktions-E-Mails",
         "imports": "Verlauf der CSV-Importe und ihre Ergebnisse",
         "integrations": "Versand-, Steuer- und andere Anbieter verbinden",
+        "maintenance_tasks": "Nachbefüllungen, Neuindizierungen und Upgrade-Schritte samt Protokoll jedes Laufs",
         "markets": "Länder, in die Sie verkaufen, und ihre Währungen",
         "payment_methods": "Zahlungsanbieter und wie Zahlungen eingezogen werden",
         "policies": "AGB, Datenschutz, Rückgabe und Versand",
@@ -5468,6 +5551,7 @@
         "emails": "E-Mails",
         "imports": "Importe",
         "integrations": "Integrationen",
+        "maintenance_tasks": "Wartungsaufgaben",
         "markets": "Märkte",
         "payment_methods": "Zahlungsmethoden",
         "policies": "Richtlinien",

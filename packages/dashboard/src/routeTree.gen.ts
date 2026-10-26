@@ -64,6 +64,7 @@ import { Route as SettingsChannelsRouteImport } from './routes/_authenticated/$s
 import { Route as SettingsCommissionRatesRouteImport } from './routes/_authenticated/$storeId/settings/commission-rates'
 import { Route as SettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
 import { Route as SettingsIntegrationsRouteImport } from './routes/_authenticated/$storeId/settings/integrations'
+import { Route as SettingsMaintenanceTasksRouteImport } from './routes/_authenticated/$storeId/settings/maintenance-tasks'
 import { Route as SettingsMarketplaceRouteImport } from './routes/_authenticated/$storeId/settings/marketplace'
 import { Route as SettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
 import { Route as SettingsOauthClientsRouteImport } from './routes/_authenticated/$storeId/settings/oauth-clients'
@@ -391,6 +392,12 @@ const SettingsIntegrationsRoute = SettingsIntegrationsRouteImport.update({
   path: '/integrations',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsMaintenanceTasksRoute =
+  SettingsMaintenanceTasksRouteImport.update({
+    id: '/maintenance-tasks',
+    path: '/maintenance-tasks',
+    getParentRoute: () => SettingsRoute,
+  } as any)
 const SettingsMarketplaceRoute = SettingsMarketplaceRouteImport.update({
   id: '/marketplace',
   path: '/marketplace',
@@ -704,6 +711,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
+  '/$storeId/settings/maintenance-tasks': typeof SettingsMaintenanceTasksRoute
   '/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/oauth-clients': typeof SettingsOauthClientsRoute
@@ -808,6 +816,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
+  '/$storeId/settings/maintenance-tasks': typeof SettingsMaintenanceTasksRoute
   '/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/oauth-clients': typeof SettingsOauthClientsRoute
@@ -915,6 +924,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/commission-rates': typeof SettingsCommissionRatesRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
   '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
+  '/_authenticated/$storeId/settings/maintenance-tasks': typeof SettingsMaintenanceTasksRoute
   '/_authenticated/$storeId/settings/marketplace': typeof SettingsMarketplaceRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/_authenticated/$storeId/settings/oauth-clients': typeof SettingsOauthClientsRoute
@@ -1023,6 +1033,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/commission-rates'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/integrations'
+    | '/$storeId/settings/maintenance-tasks'
     | '/$storeId/settings/marketplace'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/oauth-clients'
@@ -1127,6 +1138,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/commission-rates'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/integrations'
+    | '/$storeId/settings/maintenance-tasks'
     | '/$storeId/settings/marketplace'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/oauth-clients'
@@ -1233,6 +1245,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/commission-rates'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
     | '/_authenticated/$storeId/settings/integrations'
+    | '/_authenticated/$storeId/settings/maintenance-tasks'
     | '/_authenticated/$storeId/settings/marketplace'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/oauth-clients'
@@ -1691,6 +1704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIntegrationsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/maintenance-tasks': {
+      id: '/_authenticated/$storeId/settings/maintenance-tasks'
+      path: '/maintenance-tasks'
+      fullPath: '/$storeId/settings/maintenance-tasks'
+      preLoaderRoute: typeof SettingsMaintenanceTasksRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/marketplace': {
       id: '/_authenticated/$storeId/settings/marketplace'
       path: '/marketplace'
@@ -2070,6 +2090,7 @@ interface SettingsRouteChildren {
   SettingsCommissionRatesRoute: typeof SettingsCommissionRatesRoute
   SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
   SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
+  SettingsMaintenanceTasksRoute: typeof SettingsMaintenanceTasksRoute
   SettingsMarketplaceRoute: typeof SettingsMarketplaceRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
   SettingsOauthClientsRoute: typeof SettingsOauthClientsRoute
@@ -2106,6 +2127,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsCommissionRatesRoute: SettingsCommissionRatesRoute,
   SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
   SettingsIntegrationsRoute: SettingsIntegrationsRoute,
+  SettingsMaintenanceTasksRoute: SettingsMaintenanceTasksRoute,
   SettingsMarketplaceRoute: SettingsMarketplaceRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
   SettingsOauthClientsRoute: SettingsOauthClientsRoute,

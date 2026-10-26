@@ -2746,6 +2746,87 @@
     "jurisdiction": {
       "everywhere": "Wszędzie"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Anuluj uruchomienie"
+      },
+      "cancel_confirm": {
+        "message": "Zadanie zatrzyma się w najbliższym punkcie kontrolnym. Wykonana już praca pozostaje — anulowanie jej nie cofa.",
+        "title": "Anulować to uruchomienie?"
+      },
+      "description": "Uruchamiaj kroki danych aktualizacji Spree i śledź ich postęp. Każde uruchomienie jest zapisywane.",
+      "dry_run_badge": "Podgląd",
+      "history": {
+        "empty_title": "Brak uruchomień",
+        "search_placeholder": "Szukaj po nazwie zadania…",
+        "table": {
+          "initiated_by": "Uruchomił",
+          "processed": "Przetworzono",
+          "status": "Status",
+          "task": "Zadanie"
+        },
+        "title": "Historia uruchomień"
+      },
+      "initiated_via": {
+        "api": "Uruchomione przez API",
+        "cli": "Uruchomione z wiersza poleceń",
+        "dashboard": "Uruchomione z panelu"
+      },
+      "messages": {
+        "canceled": "Anulowanie uruchomienia",
+        "start_failed": "Nie udało się uruchomić zadania",
+        "started": "Zadanie uruchomione"
+      },
+      "run": {
+        "arguments": "Parametry",
+        "duration": "Czas trwania",
+        "ended": "Zakończono",
+        "error": "Błąd",
+        "initiated_by": "Uruchomił",
+        "loading": "Wczytywanie uruchomienia…",
+        "processed_count": "przetworzono: {{count}}",
+        "progress_label": "Postęp",
+        "results": "Wyniki",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Pokaż szczegóły techniczne",
+        "started": "Rozpoczęto"
+      },
+      "status": {
+        "cancelled": "Anulowane",
+        "cancelling": "Anulowanie…",
+        "enqueued": "W kolejce",
+        "errored": "Nieudane",
+        "interrupted": "Wznawianie…",
+        "running": "W trakcie",
+        "succeeded": "Zakończone"
+      },
+      "tabs": {
+        "history": "Historia",
+        "upgrade": "Aktualizacja"
+      },
+      "title": "Zadania konserwacyjne",
+      "unavailable": "Zadania konserwacyjne nie są dla Ciebie dostępne. W niektórych instalacjach są wyłączone, a kroki aktualizacji uruchamia z wiersza poleceń osoba zarządzająca instalacją.",
+      "upgrade": {
+        "already_completed": "Ukończone",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "title": "Uruchomić „{{name}}”?",
+          "message": "Kroki mają kolejność — najpierw uruchom te wcześniejsze. Ta operacja zapisuje dane i nie można jej cofnąć."
+        },
+        "description": "Kroki na danych wymagane przez to wydanie, w kolejności ich wykonania.",
+        "hide_steps": "Ukryj kroki",
+        "history_description": "Już ukończone w tym sklepie.",
+        "progress": "ukończono {{done}} z {{total}}",
+        "read_guide": "Przeczytaj przewodnik aktualizacji",
+        "run_again": "Uruchom ponownie",
+        "run_next": "Uruchom następny krok",
+        "run_step": "Uruchom",
+        "show_steps": "Pokaż kroki",
+        "title": "Aktualizacja do Spree {{version}}",
+        "up_to_date_description": "Gdy zaktualizujesz Spree do nowej wersji, pojawią się tutaj kroki danych wymagane przez to wydanie, gotowe do uruchomienia po kolei.",
+        "up_to_date_title": "Twój sklep jest aktualny"
+      }
+    },
     "markets": {
       "add_cta": "Dodaj rynek",
       "columns": {
@@ -4292,6 +4373,7 @@
             "import_row": "Wiersz importu",
             "invitation": "Zaproszenie",
             "line_item": "Pozycja zamówienia",
+            "maintenance_task_run": "Uruchomienie zadania konserwacyjnego",
             "media": "Multimedia",
             "newsletter_subscriber": "Subskrybent newslettera",
             "order": "Zamówienie",
@@ -5496,6 +5578,7 @@
         "emails": "Adresy nadawcy i ustawienia e-maili transakcyjnych",
         "imports": "Historia importów CSV i ich wyniki",
         "integrations": "Podłącz dostawców wysyłki, podatków i innych usług",
+        "maintenance_tasks": "Uzupełnienia, przebudowy indeksów i kroki aktualizacji wraz z zapisem każdego uruchomienia",
         "markets": "Kraje, do których sprzedajesz, i ich waluty",
         "payment_methods": "Bramki płatnicze i sposób pobierania płatności",
         "policies": "Regulamin, prywatność, zwroty i wysyłka",
@@ -5534,6 +5617,7 @@
         "emails": "Wiadomości e-mail",
         "imports": "Importy",
         "integrations": "Integracje",
+        "maintenance_tasks": "Zadania konserwacyjne",
         "markets": "Rynki",
         "payment_methods": "Metody płatności",
         "policies": "Polityki",

@@ -2728,6 +2728,87 @@
     "jurisdiction": {
       "everywhere": "Everywhere"
     },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Cancel run"
+      },
+      "cancel_confirm": {
+        "message": "The task stops at its next checkpoint. Work already done stays done — cancelling does not undo it.",
+        "title": "Cancel this run?"
+      },
+      "description": "Run the data steps of a Spree upgrade and follow their progress. Every run is recorded.",
+      "dry_run_badge": "Preview",
+      "history": {
+        "empty_title": "No runs yet",
+        "search_placeholder": "Search by task name…",
+        "table": {
+          "initiated_by": "Started by",
+          "processed": "Processed",
+          "status": "Status",
+          "task": "Task"
+        },
+        "title": "Run history"
+      },
+      "initiated_via": {
+        "api": "Started through the API",
+        "cli": "Started from the command line",
+        "dashboard": "Started from the dashboard"
+      },
+      "messages": {
+        "canceled": "Cancelling the run",
+        "start_failed": "Could not start the task",
+        "started": "Task started"
+      },
+      "run": {
+        "arguments": "Arguments",
+        "duration": "Duration",
+        "ended": "Ended",
+        "error": "Error",
+        "initiated_by": "Started by",
+        "loading": "Loading run…",
+        "processed_count": "{{count}} processed",
+        "progress_label": "Progress",
+        "results": "Results",
+        "seconds": "{{count}}s",
+        "show_backtrace": "Show technical detail",
+        "started": "Started"
+      },
+      "status": {
+        "cancelled": "Cancelled",
+        "cancelling": "Cancelling…",
+        "enqueued": "Queued",
+        "errored": "Failed",
+        "interrupted": "Resuming…",
+        "running": "Running",
+        "succeeded": "Completed"
+      },
+      "tabs": {
+        "history": "History",
+        "upgrade": "Upgrade"
+      },
+      "title": "Maintenance tasks",
+      "unavailable": "Maintenance tasks are not available to you. On some installations they are turned off, and upgrade steps are run from the command line by whoever operates the installation.",
+      "upgrade": {
+        "already_completed": "Completed",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "title": "Run “{{name}}”?",
+          "message": "Steps have an order — run the ones before it first. This writes to your data and cannot be undone."
+        },
+        "description": "Data steps this release needs, in the order they must run.",
+        "hide_steps": "Hide steps",
+        "history_description": "Already completed on this store.",
+        "progress": "{{done}} of {{total}} done",
+        "read_guide": "Read the upgrade guide",
+        "run_again": "Run again",
+        "run_next": "Run next step",
+        "run_step": "Run",
+        "show_steps": "Show steps",
+        "title": "Upgrade to Spree {{version}}",
+        "up_to_date_description": "When you upgrade Spree to a new version, the data steps that release needs will appear here, ready to run in order.",
+        "up_to_date_title": "Your store is up to date"
+      }
+    },
     "markets": {
       "add_cta": "Add market",
       "columns": {
@@ -4242,6 +4323,7 @@
             "import_row": "Import row",
             "invitation": "Invitation",
             "line_item": "Line item",
+            "maintenance_task_run": "Maintenance task run",
             "media": "Media",
             "newsletter_subscriber": "Newsletter subscriber",
             "order": "Order",
@@ -5430,6 +5512,7 @@
         "emails": "Sender addresses and transactional email settings",
         "imports": "History of CSV imports and their results",
         "integrations": "Connect shipping, tax and other providers",
+        "maintenance_tasks": "Backfills, reindexes and upgrade steps, with a record of every run",
         "markets": "Countries you sell to and their currencies",
         "payment_methods": "Payment gateways and how payments are captured",
         "policies": "Terms, privacy, returns and shipping documents",
@@ -5468,6 +5551,7 @@
         "emails": "Emails",
         "imports": "Imports",
         "integrations": "Integrations",
+        "maintenance_tasks": "Maintenance tasks",
         "markets": "Markets",
         "payment_methods": "Payment methods",
         "policies": "Policies",
