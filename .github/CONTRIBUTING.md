@@ -426,9 +426,9 @@ Published packages use [Changesets](https://github.com/changesets/changesets) fo
 pnpm changeset    # from the repo root; select the affected package(s)
 ```
 
-This creates a changeset file describing your changes. Commit it with your PR. The dashboard packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`) are a fixed group and always release together under one version — a changeset naming any of them bumps all three. See `.changeset/README.md` for the release trains.
+This creates a changeset file describing your changes. Commit it with your PR. The packages that talk to the Spree API (`@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core`, `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/seller-dashboard`) are a fixed group: they always release together, under the version of the Spree gems. See `.changeset/README.md`.
 
-Releasing is a two-step flow: a maintainer consumes the pending changesets (`pnpm version:preview` for the Developer Preview train, `pnpm changeset version` to include `@spree/sdk` — writes the CHANGELOGs and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished versions and publish with npm provenance via Trusted Publishing. Dist-tags follow the version, matching the rule in the release jobs: `0.x` versions (the Developer Preview line) publish under `next`, prerelease versions under `beta`, and stable versions as `latest`.
+Releasing is a two-step flow: a maintainer bumps `Spree::VERSION` and runs `pnpm version:packages`, which consumes the pending changesets (writes the CHANGELOGs and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished versions and publish with npm provenance via Trusted Publishing. Dist-tags follow the version, matching the rule in the release jobs: `0.x` versions (the Developer Preview line) publish under `next`, prerelease versions under `beta`, and stable versions as `latest`.
 
 Private packages (`@spree/dashboard-starter`, `@spree/dashboard-plugin-example`, `@spree/sdk-core`) are never published and don't need changesets.
 

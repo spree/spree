@@ -96,7 +96,7 @@ spree build --yes            # Skip confirmation prompts (for CI)
 Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
 
 1. **Update the server** — on a project that runs the prebuilt image, it pulls the latest Spree image. On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`.
-2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first. The one exception is the move to Spree 6.0, when these packages started sharing the Spree version: a range still on an older line, such as `^1.0.0-rc.7`, is rewritten to the Spree version for you.
 3. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
 4. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
 
@@ -111,6 +111,10 @@ spree upgrade --yes            # Skip the prompts
 ```
 
 Your storefront is your own code, so `spree upgrade` does not change it — it tells you which `@spree/sdk` version to move to.
+
+<Note>
+Run `pnpm update @spree/cli` before `spree upgrade` when you move to Spree 6.0. The command runs the CLI version you already have, and only a CLI released with 6.0 knows about the new version numbers.
+</Note>
 
 Production upgrades only need the data backfills — installing gems and migrating happen in your deploy pipeline. See [Upgrades](/developer/upgrades) for the manual production path.
 

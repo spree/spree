@@ -14,6 +14,7 @@ import {
   primeBundleVolume,
   restartAppServices,
 } from '../docker.js'
+import { RELEASE_LINE, type ReleaseLine } from '../lib/release-line.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
 interface UpgradeFlags {
@@ -259,6 +260,49 @@ export function detectSpreePackages(dir: string): string[] {
   }
 }
 
+function isOlderLine(spec: string, line: ReleaseLine): boolean {
+  const declared = spec.match(/(\d+)\./)
+  return declared !== null && Number(declared[1]) < Number(line.version.split('.')[0])
+}
+
+/**
+ * Rewrites the ranges in a package.json that hold a package released with
+ * Spree on an older version line, so the update that follows can reach the
+ * line this CLI was built with. From 6.0 these packages share the Spree
+ * version, and a range such as `^1.0.0-rc.7` never resolves to 6.x on its
+ * own. The file is edited as text so its formatting is kept.
+ *
+ * @param dir directory holding the package.json
+ * @param line the packages released with Spree and their current version
+ * @returns the rewritten packages with their old and new ranges, [] when none
+ */
+export function moveToReleaseLine(
+  dir: string,
+  line: ReleaseLine = RELEASE_LINE,
+): Array<{ name: string; from: string; to: string }> {
+  const manifestPath = path.join(dir, 'package.json')
+  let source: string
+  let pkg: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> }
+  try {
+    source = fs.readFileSync(manifestPath, 'utf-8')
+    pkg = JSON.parse(source)
+  } catch {
+    return []
+  }
+
+  const to = `^${line.version}`
+  const moved = Object.entries({ ...pkg.dependencies, ...pkg.devDependencies })
+    .filter(([name, spec]) => line.packages.includes(name) && REGISTRY_SPEC.test(spec))
+    .filter(([, spec]) => isOlderLine(spec, line))
+    .map(([name, from]) => ({ name, from, to }))
+
+  for (const { name, from } of moved) {
+    source = source.replaceAll(`"${name}": "${from}"`, `"${name}": "${to}"`)
+  }
+  if (moved.length > 0) fs.writeFileSync(manifestPath, source)
+  return moved
+}
+
 /**
  * The package-manager arguments that move the given packages to the newest
  * release their declared range allows, without rewriting that range — the
@@ -294,6 +338,9 @@ async function updateSpreePackages(projectDir: string, flags: UpgradeFlags): Pro
   }
 
   for (const target of targets) {
+    for (const { name, from, to } of moveToReleaseLine(target.dir)) {
+      p.log.info(`${name}: ${from} → ${to} ${pc.dim(`in ${target.relative}`)}`)
+    }
     const pm = detectPackageManager(projectDir, target.dir)
     const args = packageUpdateArgs(pm, target.packages, projectDir, target.dir)
     p.log.step(`${pc.bold(`${pm} ${args.join(' ')}`)} ${pc.dim(`in ${target.relative}`)}`)
@@ -306,7 +353,7 @@ async function updateSpreePackages(projectDir: string, flags: UpgradeFlags): Pro
 
 // We can detect the conventional create-spree-app storefront and tell the
 // operator exactly what to bump.
-export function sdkAdvisory(projectDir: string): string {
+export function sdkAdvisory(projectDir: string, line: ReleaseLine = RELEASE_LINE): string {
   const generic = 'Update @spree/sdk in any storefront or integration consuming the API'
   const pkgPath = path.join(projectDir, 'apps', 'storefront', 'package.json')
   if (!fs.existsSync(pkgPath)) return generic
@@ -317,6 +364,9 @@ export function sdkAdvisory(projectDir: string): string {
     }
     const declared = pkg.dependencies?.['@spree/sdk'] ?? pkg.devDependencies?.['@spree/sdk']
     if (!declared) return generic
+    if (line.packages.includes('@spree/sdk') && isOlderLine(declared, line)) {
+      return `Update @spree/sdk in apps/storefront from ${declared} to ^${line.version}: from Spree 6.0 the SDK shares the Spree version`
+    }
     return `Update @spree/sdk in apps/storefront (currently ${declared}) to the release matching the new Spree version`
   } catch {
     return generic

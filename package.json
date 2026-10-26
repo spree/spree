@@ -43,7 +43,7 @@
     "test:slots": "scripts/test/with-slot --status",
     "docs:dev": "cd docs && mint dev --port 3333",
     "changeset": "changeset",
-    "version:preview": "changeset version --ignore @spree/sdk"
+    "version:packages": "node scripts/version-packages.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",

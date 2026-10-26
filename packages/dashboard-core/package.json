@@ -58,8 +58,8 @@
     "prepublishOnly": "tsup"
   },
   "peerDependencies": {
-    "@spree/admin-sdk": ">=1.0.0-rc.4 <2.0.0-0",
-    "@spree/dashboard-ui": ">=0.10.0 <1.0.0-0 || >=1.0.0-0 <2.0.0-0",
+    "@spree/admin-sdk": ">=1.0.0-rc.4 <7.0.0-0",
+    "@spree/dashboard-ui": ">=1.0.0-rc.4 <7.0.0-0",
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.2",
     "i18next": "^26.2.0",

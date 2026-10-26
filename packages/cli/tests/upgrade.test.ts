@@ -32,10 +32,16 @@ import { execa } from 'execa'
 import {
   detectSpreeGems,
   detectSpreePackages,
+  moveToReleaseLine,
   packageUpdateArgs,
   registerUpgradeCommand,
   sdkAdvisory,
 } from '../src/commands/upgrade'
+
+const LINE = {
+  packages: ['@spree/sdk', '@spree/admin-sdk', '@spree/dashboard', '@spree/dashboard-core'],
+  version: '6.0.0-rc.7',
+}
 
 describe('sdkAdvisory', () => {
   const tempDirs: string[] = []
@@ -61,18 +67,27 @@ describe('sdkAdvisory', () => {
 
   it('names the declared @spree/sdk version when the storefront uses it', () => {
     const dir = makeTempDir()
-    writeStorefrontPackageJson(dir, { dependencies: { '@spree/sdk': '^1.0.3' } })
+    writeStorefrontPackageJson(dir, { dependencies: { '@spree/sdk': '^6.0.0-rc.5' } })
 
-    expect(sdkAdvisory(dir)).toBe(
-      'Update @spree/sdk in apps/storefront (currently ^1.0.3) to the release matching the new Spree version',
+    expect(sdkAdvisory(dir, LINE)).toBe(
+      'Update @spree/sdk in apps/storefront (currently ^6.0.0-rc.5) to the release matching the new Spree version',
+    )
+  })
+
+  it('names the exact range when the storefront is on an SDK line older than Spree 6', () => {
+    const dir = makeTempDir()
+    writeStorefrontPackageJson(dir, { dependencies: { '@spree/sdk': '^2.0.0-rc.5' } })
+
+    expect(sdkAdvisory(dir, LINE)).toBe(
+      'Update @spree/sdk in apps/storefront from ^2.0.0-rc.5 to ^6.0.0-rc.7: from Spree 6.0 the SDK shares the Spree version',
     )
   })
 
   it('finds @spree/sdk in devDependencies too', () => {
     const dir = makeTempDir()
-    writeStorefrontPackageJson(dir, { devDependencies: { '@spree/sdk': '1.1.0' } })
+    writeStorefrontPackageJson(dir, { devDependencies: { '@spree/sdk': '6.1.0' } })
 
-    expect(sdkAdvisory(dir)).toContain('currently 1.1.0')
+    expect(sdkAdvisory(dir, LINE)).toContain('currently 6.1.0')
   })
 
   it('falls back to generic advice without a storefront', () => {
@@ -196,6 +211,77 @@ describe('detectSpreePackages', () => {
   it('returns [] without a readable package.json', () => {
     expect(detectSpreePackages(withPackageJson('{ not json'))).toEqual([])
     expect(detectSpreePackages('/nonexistent')).toEqual([])
+  })
+})
+
+describe('moveToReleaseLine', () => {
+  let dir: string
+  beforeEach(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-release-line-test-'))
+  })
+  afterEach(() => fs.rmSync(dir, { recursive: true, force: true }))
+
+  function writePackageJson(source: string): void {
+    fs.writeFileSync(path.join(dir, 'package.json'), source)
+  }
+
+  function readPackageJson(): string {
+    return fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')
+  }
+
+  it('moves packages released with Spree off older lines, keeping the formatting', () => {
+    writePackageJson(
+      [
+        '{',
+        '    "dependencies": {',
+        '        "@spree/dashboard": "^1.0.0-rc.7",',
+        '        "@spree/dashboard-core": ">=0.13.1 <2.0.0",',
+        '        "react": "^19.2.6"',
+        '    },',
+        '    "devDependencies": { "@spree/admin-sdk": "~1.0.0", "@spree/cli": "^3.4.1" }',
+        '}',
+        '',
+      ].join('\n'),
+    )
+
+    expect(moveToReleaseLine(dir, LINE)).toEqual([
+      { name: '@spree/dashboard', from: '^1.0.0-rc.7', to: '^6.0.0-rc.7' },
+      { name: '@spree/dashboard-core', from: '>=0.13.1 <2.0.0', to: '^6.0.0-rc.7' },
+      { name: '@spree/admin-sdk', from: '~1.0.0', to: '^6.0.0-rc.7' },
+    ])
+    expect(readPackageJson()).toBe(
+      [
+        '{',
+        '    "dependencies": {',
+        '        "@spree/dashboard": "^6.0.0-rc.7",',
+        '        "@spree/dashboard-core": "^6.0.0-rc.7",',
+        '        "react": "^19.2.6"',
+        '    },',
+        '    "devDependencies": { "@spree/admin-sdk": "^6.0.0-rc.7", "@spree/cli": "^3.4.1" }',
+        '}',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('leaves current, tagged and local specs alone', () => {
+    const source = JSON.stringify({
+      dependencies: {
+        '@spree/dashboard': '^6.0.0-rc.5',
+        '@spree/dashboard-core': 'next',
+        '@spree/admin-sdk': 'workspace:^',
+      },
+    })
+    writePackageJson(source)
+
+    expect(moveToReleaseLine(dir, LINE)).toEqual([])
+    expect(readPackageJson()).toBe(source)
+  })
+
+  it('returns [] without a readable package.json', () => {
+    expect(moveToReleaseLine(dir, LINE)).toEqual([])
+    writePackageJson('{ not json')
+    expect(moveToReleaseLine(dir, LINE)).toEqual([])
   })
 })
 

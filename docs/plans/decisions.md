@@ -1,3 +1,13 @@
+## 2026-10-26: The TypeScript packages that talk to the API carry the Spree version
+
+**Context:** One Spree release shipped under three numbering schemes: gems `6.0.0.rc6`, `@spree/sdk` `2.0.0-rc.5`, the Admin and Seller SDKs and the dashboard packages `1.0.0-rc.6`, the seller panel `1.0.0-rc.7`, `@spree/core` `0.3.0`. The SDKs are generated from the serializers and the dashboards read only the Admin API, so each of those numbers stood for a backend version that nobody could read off it.
+
+**Decision:** `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core`, the dashboard trio and `@spree/seller-dashboard` form one Changesets `fixed` group versioned from `Spree::VERSION` in npm spelling (`6.0.0.rc7` → `6.0.0-rc.7`), released by `pnpm version:packages`. `@spree/cli` and `create-spree-app` keep their own versions, since they manage projects rather than talk to the API. The switch lands at the release candidate after `rc6` rather than at GA, so the migration path runs before release day. `spree upgrade` rewrites a project's ranges that are still on an older line, and names the exact `@spree/sdk` range for the storefront.
+
+**Consequences:** A Spree release publishes every package in the group even when one has no changes, as the gems already do. A breaking change in the TypeScript code alone waits for the next Spree major. Projects from the preview update `@spree/cli` before upgrading, because the CLI they have does not know the new numbering. Stable `1.0.0` and `2.0.0` are never published for the group, and the old lines get an npm deprecation pointing at `spree upgrade`.
+
+**Plan amended:** `6.0-beta-release.md` (Key Decisions 2 and 3).
+
 ## 2026-10-24: A marketplace decides whether, what and under review its sellers may upload
 
 **Context:** With sellers able to attach downloadable files to their products (the entry below), any approved seller can put a file on the marketplace's domain that buyers download trusting the marketplace's brand. Nothing in Spree scans a file's contents, and before this there was no way to keep seller uploads off, to narrow what they may be, or to re-check an approved listing whose file changed. Digital asset writes were also plain model saves in two places, so a host had no point at which to refuse an upload.
