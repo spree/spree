@@ -59,6 +59,7 @@
         "upgrade": "Actualización"
       },
       "title": "Tareas de mantenimiento",
+      "unavailable": "Las tareas de mantenimiento no están disponibles para ti. En algunas instalaciones están desactivadas, y quien opera la instalación ejecuta los pasos de actualización desde la línea de comandos.",
       "upgrade": {
         "already_completed": "Completada",
         "assumed_boundary": "Las versiones hasta la {{version}} se muestran como completadas, suponiendo que esta tienda ya estaba en ella. Si se saltó versiones, pide a tu desarrollador que ejecute los pasos anteriores desde la línea de comandos.",

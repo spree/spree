@@ -1,5 +1,18 @@
-import { adminClient, ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
-import { Tabs, TabsContent, TabsList, TabsTrigger, useRowClickBridge } from '@spree/dashboard-ui'
+import {
+  adminClient,
+  ResourceTable,
+  resourceSearchSchema,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
+import {
+  Empty,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -19,8 +32,36 @@ const searchSchema = resourceSearchSchema.extend({
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/maintenance-tasks')({
   validateSearch: searchSchema,
-  component: MaintenanceTasksPage,
+  component: MaintenanceTasksRoute,
 })
+
+// The settings entry is hidden without access, but a bookmark still lands
+// here — including on an installation that turned maintenance tasks off,
+// where every request would be refused.
+function MaintenanceTasksRoute() {
+  const { t } = useTranslation()
+  const { permissions } = usePermissions()
+
+  if (permissions.can('read', Subject.MaintenanceTaskRun)) return <MaintenanceTasksPage />
+
+  return (
+    <div className="flex flex-col gap-6">
+      <PageHeader />
+      <Empty>{t('admin.maintenance_tasks.unavailable')}</Empty>
+    </div>
+  )
+}
+
+function PageHeader() {
+  const { t } = useTranslation()
+
+  return (
+    <header className="flex flex-col gap-1">
+      <h1 className="font-semibold text-2xl">{t('admin.maintenance_tasks.title')}</h1>
+      <p className="text-muted-foreground text-sm">{t('admin.maintenance_tasks.description')}</p>
+    </header>
+  )
+}
 
 function MaintenanceTasksPage() {
   const { t } = useTranslation()
@@ -63,10 +104,7 @@ function MaintenanceTasksPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-semibold text-2xl">{t('admin.maintenance_tasks.title')}</h1>
-        <p className="text-muted-foreground text-sm">{t('admin.maintenance_tasks.description')}</p>
-      </header>
+      <PageHeader />
 
       {activeTab && (
         <Tabs

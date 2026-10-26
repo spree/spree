@@ -70,6 +70,16 @@ An upgrade step converts the data of every store in the installation, not only t
 
 Only the admin role holds these by default. Error backtraces are shown only to callers who may act on a run, since they name internal paths.
 
+### Turning off the dashboard
+
+On a platform that serves many merchants from one installation, the people holding a store's admin role are not the ones who operate the installation. Set `SPREE_MAINTENANCE_TASKS_DASHBOARD_ENABLED=false` to take maintenance tasks out of the dashboard and the Admin API for everyone, API keys included. Upgrade steps then run only from the command line, as part of your deploy.
+
+```ruby server/config/initializers/spree.rb
+Spree::Config.maintenance_tasks_dashboard_enabled = false
+```
+
+The setting in an initializer takes precedence over the environment variable. See [Configuration](/developer/customization/configuration) for the other settings read from the environment.
+
 ## What a store is shown
 
 A store installed fresh at this release sees no Upgrade tab — it has no historical data to convert. For a store that was upgraded, the tab shows the release it is moving to, with the releases it has already crossed below as completed history that cannot be re-run from the dashboard.

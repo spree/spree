@@ -8,6 +8,20 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
+    context 'when the installation turns maintenance tasks off' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_maintenance_tasks]) }
+      let(:headers) { api_key_headers }
+
+      before { allow(Spree::Config).to receive(:maintenance_tasks_dashboard_enabled).and_return(false) }
+
+      it 'refuses a secret key that holds the scope' do
+        get :index
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['message']).to include('spree upgrade')
+      end
+    end
+
     it_behaves_like 'a list without N+1 queries' do
       subject { get :index }
 

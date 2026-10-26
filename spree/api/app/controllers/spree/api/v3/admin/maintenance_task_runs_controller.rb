@@ -11,6 +11,8 @@ module Spree
         class MaintenanceTaskRunsController < ResourceController
           include ActiveStorage::SetCurrent
 
+          include MaintenanceTasksSwitch
+
           scoped_resource :maintenance_tasks
 
           request_params :maintenance_task_run do |body|

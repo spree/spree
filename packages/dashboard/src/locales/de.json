@@ -2787,6 +2787,7 @@
         "upgrade": "Upgrade"
       },
       "title": "Wartungsaufgaben",
+      "unavailable": "Wartungsaufgaben stehen Ihnen nicht zur Verfügung. Auf manchen Installationen sind sie abgeschaltet, und Upgrade-Schritte werden von den Betreibern der Installation über die Kommandozeile ausgeführt.",
       "upgrade": {
         "already_completed": "Abgeschlossen",
         "assumed_boundary": "Releases bis {{version}} werden als abgeschlossen angezeigt, in der Annahme, dass dieser Shop bereits darauf lief. Wurden Releases übersprungen, lassen Sie die früheren Schritte von Ihren Entwicklern über die Kommandozeile ausführen.",

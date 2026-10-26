@@ -91,6 +91,31 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :cont
     end
   end
 
+  # A secret key is authorized by its scopes rather than by the ability, so
+  # the switch has to refuse it in the controller.
+  context 'a secret key with write scope when the installation turns tasks off' do
+    let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_maintenance_tasks]) }
+    let(:headers) { api_key_headers }
+
+    before { allow(Spree::Config).to receive(:maintenance_tasks_dashboard_enabled).and_return(false) }
+
+    it 'cannot list runs' do
+      get :index
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json_response['error']['message']).to include('spree upgrade')
+    end
+
+    it 'cannot start a run' do
+      run.update!(status: 'succeeded')
+
+      post :create, params: { task_name: 'authorized' }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(Spree::MaintenanceTaskRun.where(status: 'enqueued')).to be_empty
+    end
+  end
+
   context 'a role granted write access' do
     let(:custom_permissions) { %w[write_maintenance_tasks] }
 

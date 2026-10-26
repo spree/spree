@@ -1034,6 +1034,7 @@ en:
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
     manual: Manual
     market: Market
+    maintenance_tasks_turned_off: Maintenance tasks are turned off for this installation. Run upgrade steps from the command line with `spree upgrade` (or `bin/rake spree:upgrade`).
     me_no_current_user: No admin user authenticated this request
     media: Media
     meta_description: Meta Description

@@ -8,6 +8,8 @@ module Spree
           # Stops a run for good. Work already committed stays committed; the
           # runner records the outcome (docs/plans/6.0-maintenance-tasks.md).
           class CancellationsController < Admin::BaseController
+            include MaintenanceTasksSwitch
+
             scoped_resource :maintenance_tasks
 
             def create

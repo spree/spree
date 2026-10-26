@@ -24,6 +24,21 @@ RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRuns::CancellationsControll
     end
   end
 
+  # Checked before anything else, so an admin is told the feature is off
+  # rather than which permission they lack — no grant would help.
+  context 'when the installation turns maintenance tasks off' do
+    before { allow(Spree::Config).to receive(:maintenance_tasks_dashboard_enabled).and_return(false) }
+
+    it 'refuses a signed-in admin and says why' do
+      post :create, params: { maintenance_task_run_id: run.prefixed_id }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json_response['error']['message']).to include('spree upgrade')
+      expect(json_response['error']).not_to have_key('details')
+      expect(run.reload).to be_running
+    end
+  end
+
   context 'without maintenance task access' do
     include_context 'API v3 Admin with custom permissions'
 

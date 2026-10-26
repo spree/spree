@@ -2787,6 +2787,7 @@
         "upgrade": "Mise à niveau"
       },
       "title": "Tâches de maintenance",
+      "unavailable": "Les tâches de maintenance ne vous sont pas accessibles. Sur certaines installations, elles sont désactivées et les étapes de mise à niveau sont lancées en ligne de commande par l'équipe qui exploite l'installation.",
       "upgrade": {
         "already_completed": "Terminé",
         "assumed_boundary": "Les versions jusqu'à {{version}} sont affichées comme terminées, en supposant que cette boutique y était déjà. Si des versions ont été sautées, demandez à votre développeur d'exécuter les étapes antérieures en ligne de commande.",

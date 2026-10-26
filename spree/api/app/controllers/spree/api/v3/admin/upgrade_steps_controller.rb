@@ -12,6 +12,8 @@ module Spree
         # itself — a step's position in the manifest is a property of the
         # upgrade, not of the class.
         class UpgradeStepsController < BaseController
+          include MaintenanceTasksSwitch
+
           scoped_resource :maintenance_tasks
 
           # GET /api/v3/admin/upgrade_steps

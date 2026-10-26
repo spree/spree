@@ -2787,6 +2787,7 @@
         "upgrade": "Upgrade"
       },
       "title": "Maintenance tasks",
+      "unavailable": "Maintenance tasks are not available to you. On some installations they are turned off, and upgrade steps are run from the command line by whoever operates the installation.",
       "upgrade": {
         "already_completed": "Completed",
         "assumed_boundary": "Releases up to {{version}} are shown as completed, assuming this store was already on it. If it skipped releases, ask your developer to run the earlier steps from the command line.",
