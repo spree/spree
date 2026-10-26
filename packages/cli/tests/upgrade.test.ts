@@ -17,7 +17,10 @@ const LINE = vi.hoisted(() => ({
   version: '6.0.0-rc.7',
 }))
 
-vi.mock('../src/lib/release-line', () => ({ RELEASE_LINE: LINE }))
+vi.mock('../src/lib/release-line', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../src/lib/release-line')>()),
+  RELEASE_LINE: LINE,
+}))
 
 let projectDir: string
 
@@ -41,6 +44,7 @@ vi.mock('@clack/prompts', () => ({
 }))
 
 import * as p from '@clack/prompts'
+import * as prompts from '@clack/prompts'
 import { execa } from 'execa'
 import {
   detectSpreeGems,
@@ -54,6 +58,33 @@ import {
   registerUpgradeCommand,
   sdkAdvisory,
 } from '../src/commands/upgrade'
+import { npmVersionOf, releaseLineFor } from '../src/lib/release-line'
+
+describe('npmVersionOf', () => {
+  it('spells gem versions the way the packages are published', () => {
+    expect(npmVersionOf('6.0.0.rc7')).toBe('6.0.0-rc.7')
+    expect(npmVersionOf('6.0.0.rc10')).toBe('6.0.0-rc.10')
+    expect(npmVersionOf('6.0.0.beta1')).toBe('6.0.0-beta.1')
+    expect(npmVersionOf('6.0.0.alpha')).toBe('6.0.0-alpha')
+    expect(npmVersionOf('6.1.2')).toBe('6.1.2')
+    expect(npmVersionOf('6.0')).toBeUndefined()
+  })
+})
+
+describe('releaseLineFor', () => {
+  it('follows the server version, older or newer than the built-in line', () => {
+    expect(releaseLineFor('6.0.0.rc8', LINE)).toEqual({ ...LINE, version: '6.0.0-rc.8' })
+    expect(releaseLineFor('6.0.0.rc6', LINE)).toEqual({ ...LINE, version: '6.0.0-rc.6' })
+  })
+
+  it('moves nothing for a server from before the packages shared its version', () => {
+    expect(releaseLineFor('5.6.2', LINE)).toEqual({ packages: [], version: '5.6.2' })
+  })
+
+  it('keeps the built-in line for a version it cannot read', () => {
+    expect(releaseLineFor('main', LINE)).toBe(LINE)
+  })
+})
 
 describe('sdkAdvisory', () => {
   const tempDirs: string[] = []
@@ -448,13 +479,26 @@ describe('packageUpdateArgs', () => {
 describe('spree upgrade', () => {
   const mockExeca = vi.mocked(execa)
   let commands: string[]
+  let versionProbes: string[]
 
   // Every docker and package-manager call goes through execa; record them in
   // order, leaving out the read-only probes (`compose ps`, `bundle list`, …).
-  function routeExeca({ failOn }: { failOn?: string } = {}): void {
+  // `spreeVersion` is what the server's bundle reports for spree_core.
+  function routeExeca({
+    failOn,
+    spreeVersion = '6.0.0.rc7',
+  }: {
+    failOn?: string
+    spreeVersion?: string | null
+  } = {}): void {
     mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
       if (args.includes('ps')) return { stdout: 'running' }
-      if (args.includes('list')) return { stdout: 'spree\nspree_core\n' }
+      if (args.includes('--name-only')) return { stdout: 'spree\nspree_core\n' }
+      if (args.includes('list')) {
+        versionProbes.push(`${cmd} ${args.join(' ')}`)
+        if (spreeVersion === null) throw new Error('bundler failed')
+        return { stdout: `  * spree (${spreeVersion})\n  * spree_core (${spreeVersion})\n` }
+      }
       if (args.includes('config')) return { stdout: 'web\n' }
       const command = `${cmd} ${args.join(' ')}`
       commands.push(command)
@@ -497,6 +541,8 @@ describe('spree upgrade', () => {
 
   beforeEach(() => {
     commands = []
+    versionProbes = []
+    vi.mocked(prompts.log.warn).mockClear()
     routeExeca()
   })
 
@@ -581,6 +627,64 @@ describe('spree upgrade', () => {
       ejected: true,
       dashboardDependencies: { '@spree/dashboard': '6.0.0', '@spree/dashboard-ui': '6.0.1' },
     })
+
+    await runUpgrade()
+
+    expect(commands.filter((command) => command.startsWith('pnpm'))).toEqual([
+      'pnpm update @spree/cli',
+      'pnpm dedupe',
+      'pnpm dedupe',
+    ])
+  })
+
+  it('moves the packages to the Spree version the server runs, not the one built in', async () => {
+    writeProject({
+      ejected: true,
+      dashboardDependencies: {
+        '@spree/dashboard': '6.0.0-rc.7',
+        '@spree/dashboard-core': '^1.0.0',
+      },
+    })
+    routeExeca({ spreeVersion: '6.0.0.rc8' })
+
+    await runUpgrade()
+
+    expect(commands.filter((command) => command.startsWith('pnpm'))).toEqual([
+      'pnpm update @spree/cli',
+      'pnpm dedupe',
+      'pnpm update @spree/dashboard-core',
+      'pnpm add --save-exact @spree/dashboard@6.0.0-rc.8',
+      'pnpm dedupe',
+    ])
+    const dashboard = JSON.parse(
+      fs.readFileSync(path.join(projectDir, 'apps', 'dashboard', 'package.json'), 'utf-8'),
+    )
+    expect(dashboard.dependencies['@spree/dashboard-core']).toBe('^6.0.0-rc.8')
+  })
+
+  it('reads a pulled image from a one-off container, since the running one is still the old image', async () => {
+    writeProject({ ejected: false })
+
+    await runUpgrade()
+
+    expect(versionProbes).toEqual(['docker compose run --rm --no-deps -T web bundle list'])
+  })
+
+  it('falls back to the built-in Spree version, with a warning, when the server cannot say', async () => {
+    writeProject({ ejected: true, dashboardDependencies: { '@spree/dashboard': '6.0.0-rc.6' } })
+    routeExeca({ spreeVersion: null })
+
+    await runUpgrade()
+
+    expect(commands).toContain('pnpm add --save-exact @spree/dashboard@6.0.0-rc.7')
+    expect(vi.mocked(prompts.log.warn)).toHaveBeenCalledWith(
+      expect.stringContaining("Could not read the server's Spree version"),
+    )
+  })
+
+  it('moves nothing on a server from before the packages shared its version', async () => {
+    writeProject({ ejected: true, dashboardDependencies: { '@spree/dashboard': '1.0.0-rc.6' } })
+    routeExeca({ spreeVersion: '5.6.2' })
 
     await runUpgrade()
 

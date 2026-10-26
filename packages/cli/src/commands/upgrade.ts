@@ -14,7 +14,7 @@ import {
   primeBundleVolume,
   restartAppServices,
 } from '../docker.js'
-import { RELEASE_LINE, type ReleaseLine } from '../lib/release-line.js'
+import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
 interface UpgradeFlags {
@@ -78,9 +78,11 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     return
   }
 
+  let line: ReleaseLine
   if (isEjectedProject(ctx.projectDir)) {
     const gemsUpdated = await runBundleUpdate(ctx.projectDir, flags)
-    await updateSpreePackages(ctx.projectDir, flags)
+    line = await serverReleaseLine(ctx.projectDir, { fromNewImage: false })
+    await updateSpreePackages(ctx.projectDir, flags, line)
     await runMigrate(ctx.projectDir, flags)
     await runRakeUpgrade(ctx.projectDir, flags)
     // Puma loaded the old gems at boot; the rake steps ran in fresh processes.
@@ -88,12 +90,45 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
       await restartAppServices(ctx.projectDir, 'Restarting the app to load the updated gems')
   } else {
     const imagePulled = await pullImage(ctx.projectDir, flags)
-    await updateSpreePackages(ctx.projectDir, flags)
+    line = await serverReleaseLine(ctx.projectDir, { fromNewImage: imagePulled })
+    await updateSpreePackages(ctx.projectDir, flags, line)
     if (imagePulled) await recreateContainers(ctx.projectDir)
     await runRakeUpgrade(ctx.projectDir, flags)
   }
 
-  printPostUpgradeReminder(ctx.projectDir)
+  printPostUpgradeReminder(ctx.projectDir, line)
+}
+
+/**
+ * The Spree version the server runs after its update, as the release line the
+ * packages move to. The CLI that runs an upgrade was installed before it, so
+ * the version built into it can be a release behind the server. A freshly
+ * pulled image is read from a one-off container, since the running one still
+ * has the old image until it is recreated.
+ */
+async function serverReleaseLine(
+  projectDir: string,
+  { fromNewImage }: { fromNewImage: boolean },
+): Promise<ReleaseLine> {
+  try {
+    const stdout = fromNewImage
+      ? (
+          await execa(
+            'docker',
+            ['compose', 'run', '--rm', '--no-deps', '-T', 'web', 'bundle', 'list'],
+            { cwd: projectDir },
+          )
+        ).stdout
+      : await dockerComposeCapture(['bundle', 'list'], projectDir)
+    const installed = stdout.match(/\bspree_core \(([^)\s]+)/)?.[1]
+    if (installed) return releaseLineFor(installed, RELEASE_LINE)
+  } catch {
+    // Fall through to the version this CLI was built with.
+  }
+  p.log.warn(
+    `Could not read the server's Spree version; moving the @spree/* packages to ${RELEASE_LINE.version}.`,
+  )
+  return RELEASE_LINE
 }
 
 async function confirmStep(message: string, flags: UpgradeFlags): Promise<boolean> {
@@ -294,13 +329,13 @@ function isOlderLine(spec: string, line: ReleaseLine): boolean {
 /**
  * Rewrites the ranges in a package.json that hold a package released with
  * Spree on an older version line, so the update that follows can reach the
- * line this CLI was built with. From 6.0 these packages share the Spree
+ * line the server runs. From 6.0 these packages share the Spree
  * version, and a range such as `^1.0.0-rc.7` never resolves to 6.x on its
  * own. Exact versions are left for the upgrade to install by name, so they
  * stay exact. The file is edited as text so its formatting is kept.
  *
  * @param dir directory holding the package.json
- * @param line the packages released with Spree and their current version
+ * @param line the packages released with Spree and the version to move to
  * @returns the rewritten packages with their old and new ranges, [] when none
  */
 export function moveToReleaseLine(
@@ -422,21 +457,27 @@ function splitVersion(version: string): [number[], string[]] {
 
 // `update` leaves an exact version where it is, so a pinned app would stay on
 // the old release while the server moves on. A pin on a package released with
-// Spree that is older than the Spree version moves to it. A newer pin stays,
-// since the CLI may have been built before that release; any other pin is the
-// operator's to move.
-function pinnedOffRelease(packages: SpreePackage[], dev: boolean): string[] {
+// Spree that is older than the server's Spree version moves to it. A newer pin
+// stays, since the server may not have moved (a skipped pull); any other pin is
+// the operator's to move. Pins are common: pnpm 11's `update` writes a
+// prerelease back as an exact version, so during release candidates every app
+// is pinned after its first upgrade.
+function pinnedOffRelease(packages: SpreePackage[], dev: boolean, line: ReleaseLine): string[] {
   return packages
     .filter((pkg) => pkg.dev === dev && isExactVersion(pkg.spec))
-    .filter((pkg) => RELEASE_LINE.packages.includes(pkg.name))
-    .filter((pkg) => isOlderVersion(pkg.spec, RELEASE_LINE.version))
-    .map((pkg) => `${pkg.name}@${RELEASE_LINE.version}`)
+    .filter((pkg) => line.packages.includes(pkg.name))
+    .filter((pkg) => isOlderVersion(pkg.spec, line.version))
+    .map((pkg) => `${pkg.name}@${line.version}`)
 }
 
 // The project root carries @spree/cli; each admin app carries the dashboard
 // packages and the Admin SDK. The storefront is the merchant's own fork, so
 // its SDK bump stays theirs (see sdkAdvisory).
-async function updateSpreePackages(projectDir: string, flags: UpgradeFlags): Promise<void> {
+async function updateSpreePackages(
+  projectDir: string,
+  flags: UpgradeFlags,
+  line: ReleaseLine,
+): Promise<void> {
   const targets = ['.', ...APP_DIRS.map((dir) => path.join('apps', dir))]
     .map((relative) => ({ relative, dir: path.join(projectDir, relative) }))
     .map((target) => ({ ...target, packages: detectSpreePackages(target.dir) }))
@@ -449,7 +490,7 @@ async function updateSpreePackages(projectDir: string, flags: UpgradeFlags): Pro
   }
 
   for (const target of targets) {
-    for (const { name, from, to } of moveToReleaseLine(target.dir)) {
+    for (const { name, from, to } of moveToReleaseLine(target.dir, line)) {
       p.log.info(`${name}: ${from} → ${to} ${pc.dim(`in ${target.relative}`)}`)
     }
     const pm = detectPackageManager(projectDir, target.dir)
@@ -458,11 +499,11 @@ async function updateSpreePackages(projectDir: string, flags: UpgradeFlags): Pro
     if (ranged.length > 0) {
       await runPackageManager(pm, packageUpdateArgs(pm, ranged, projectDir, target.dir), target)
     }
-    const pinnedDependencies = pinnedOffRelease(target.packages, false)
+    const pinnedDependencies = pinnedOffRelease(target.packages, false, line)
     if (pinnedDependencies.length > 0) {
       await runPackageManager(pm, packageAddArgs(pm, pinnedDependencies, false), target)
     }
-    const pinnedDevDependencies = pinnedOffRelease(target.packages, true)
+    const pinnedDevDependencies = pinnedOffRelease(target.packages, true, line)
     if (pinnedDevDependencies.length > 0) {
       await runPackageManager(pm, packageAddArgs(pm, pinnedDevDependencies, true), target)
     }
@@ -506,14 +547,14 @@ export function sdkAdvisory(projectDir: string, line: ReleaseLine = RELEASE_LINE
   }
 }
 
-function printPostUpgradeReminder(projectDir: string): void {
+function printPostUpgradeReminder(projectDir: string, line: ReleaseLine = RELEASE_LINE): void {
   p.note(
     [
       `The manifest only ran ${pc.bold('rake-automatable')} steps.`,
       '',
       "Don't forget the manual parts from the upgrade doc:",
       `  ${pc.dim('- Compare your scheduled jobs (config/recurring.yml) with the upgrade guide')}`,
-      `  ${pc.dim(`- ${sdkAdvisory(projectDir)}`)}`,
+      `  ${pc.dim(`- ${sdkAdvisory(projectDir, line)}`)}`,
       `  ${pc.dim('- Review the behavior changes listed in the upgrade guide')}`,
       `  ${pc.dim('- Audit custom decorators against renamed APIs')}`,
       '',
