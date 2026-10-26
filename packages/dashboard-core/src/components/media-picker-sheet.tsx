@@ -214,7 +214,7 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
                 ) : (
                   <UploadIcon className="size-4" />
                 )}
-                {t('admin.media_picker.upload')}
+                <span>{t('admin.media_picker.upload')}</span>
               </Button>
             </>
           )}

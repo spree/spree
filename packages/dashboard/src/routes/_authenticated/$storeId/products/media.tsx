@@ -249,7 +249,7 @@ function MediaLibraryPage() {
                 ) : (
                   <UploadIcon className="size-4" />
                 )}
-                {t('admin.media_library.upload')}
+                <span>{t('admin.media_library.upload')}</span>
               </Button>
             </Can>
           }
