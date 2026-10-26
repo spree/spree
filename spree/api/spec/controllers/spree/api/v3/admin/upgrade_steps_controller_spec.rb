@@ -107,20 +107,19 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
     # Wrapper runs all share one task name, so the step id is what tells one
     # step's history from another's.
     it 'matches a wrapper run to the step it ran' do
-      Spree::UpgradeRecord.stamp!('5.5', source: 'manual')
       create(:maintenance_task_run,
              task_name: 'Spree::MaintenanceTasks::UpgradeStep',
-             arguments: { 'step_id' => 'taxon_store_id' },
+             arguments: { 'step_id' => 'migrate_tax_zones' },
              status: 'succeeded')
 
       get :index
 
-      taxon_step = json_response['data'].find { |entry| entry['id'] == 'taxon_store_id' }
+      tax_zones_step = json_response['data'].find { |entry| entry['id'] == 'migrate_tax_zones' }
       other_step = json_response['data'].find do |entry|
-        entry['task_name'] == 'upgrade_step' && entry['id'] != 'taxon_store_id'
+        entry['task_name'] == 'upgrade_step' && entry['id'] != 'migrate_tax_zones'
       end
 
-      expect(taxon_step['last_run']).to be_present
+      expect(tax_zones_step['last_run']).to be_present
       expect(other_step['last_run']).to be_nil
     end
   end
@@ -132,16 +131,23 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
     # Earlier releases stay visible as history — a store should be able to see
     # which upgrades it has been through — but are never runnable.
     it 'marks the boundaries it has already crossed as superseded' do
+      Spree::UpgradeRecord.stamp!('6.0', source: 'walk')
+
+      get :index
+
+      expect(json_response['data']).not_to be_empty
+      expect(json_response['data']).to all(include('superseded' => true, 'to' => '6.0'))
+    end
+
+    # Nothing recorded the runs of releases before 6.0, so a checklist of them
+    # could only ever show steps as done on an assumption.
+    it 'leaves releases before the first recorded one to the command line' do
       Spree::UpgradeRecord.stamp!('5.6', source: 'walk')
 
       get :index
 
-      outstanding = json_response['data'].reject { |step| step['superseded'] }
-      history = json_response['data'].select { |step| step['superseded'] }
-
-      expect(outstanding.map { |step| step['from'] }.uniq).to eq(['5.6'])
-      expect(history).not_to be_empty
-      expect(history.map { |step| step['from'] }.uniq).not_to include('5.6')
+      expect(json_response['data'].map { |step| step['to'] }.uniq).to eq(['6.0'])
+      expect(json_response['data']).to all(include('superseded' => false))
     end
 
     it 'reports the boundary it is counting from' do

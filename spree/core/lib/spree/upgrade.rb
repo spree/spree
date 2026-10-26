@@ -7,6 +7,11 @@ module Spree
   # task runner can read the same manifests the rake walk does; the rake file
   # keeps the walking and printing.
   module Upgrade
+    # The first release whose upgrade steps run as maintenance tasks. Nothing
+    # recorded the steps of earlier releases, so the dashboard starts here; the
+    # command line still walks every manifest.
+    FIRST_TRACKED_RELEASE = '6.0'.freeze
+
     # Two-segment "5.5" form of the installed Spree version.
     #
     # @return [String]
@@ -57,6 +62,15 @@ module Spree
           step.merge('from' => manifest['from'], 'to' => manifest['to'], 'docs' => manifest['docs'])
         end
       end.freeze
+    end
+
+    # Whether a step belongs to a release whose runs are recorded, and so has a
+    # place in the dashboard's checklist.
+    #
+    # @param step [Hash] a manifest step
+    # @return [Boolean]
+    def self.tracked?(step)
+      compare(step['to'], FIRST_TRACKED_RELEASE) >= 0
     end
 
     # The task a step runs: its own class, or the shared runner for a step

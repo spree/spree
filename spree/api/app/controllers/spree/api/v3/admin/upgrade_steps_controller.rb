@@ -18,11 +18,12 @@ module Spree
 
           # GET /api/v3/admin/upgrade_steps
           #
-          # Every step of every manifest this installation has reached, each
-          # marked pending or superseded. Superseded steps are the releases it
-          # has already been through: shown as history rather than hidden, but
-          # never runnable, since re-running a completed conversion is how an
-          # upgrade does damage.
+          # Every step of every manifest this installation has reached, from
+          # the first release whose runs are recorded, each marked pending or
+          # superseded. Superseded steps are the releases it has already been
+          # through: shown as history rather than hidden, but never runnable,
+          # since re-running a completed conversion is how an upgrade does
+          # damage. Earlier releases are left to the command line.
           def index
             authorize! :read, :maintenance_task
 
@@ -46,6 +47,8 @@ module Spree
               # rather than recorded by a walk or a fresh install. The
               # dashboard says so, rather than presenting a guess as fact.
               completed_version_recorded: Spree::Upgrade.completed_boundary_known?,
+              # Counts the earlier releases' steps too, though they are not
+              # listed: an assumed boundary is what may have skipped them.
               superseded_step_count: superseded_steps.size
             }
           end
@@ -53,7 +56,7 @@ module Spree
           # Superseded first: they are the earlier releases, so listing them
           # above what is outstanding keeps the whole thing in release order.
           def steps
-            @steps ||= superseded_steps + Spree::Upgrade.pending_steps
+            @steps ||= (superseded_steps + Spree::Upgrade.pending_steps).select { |step| Spree::Upgrade.tracked?(step) }
           end
 
           def superseded_steps

@@ -2808,7 +2808,7 @@
       "unavailable": "Zadania konserwacyjne nie są dla Ciebie dostępne. W niektórych instalacjach są wyłączone, a kroki aktualizacji uruchamia z wiersza poleceń osoba zarządzająca instalacją.",
       "upgrade": {
         "already_completed": "Ukończone",
-        "assumed_boundary": "Wydania do {{version}} są pokazane jako ukończone przy założeniu, że sklep już na nim działał. Jeśli pominięto wydania, poproś programistę o uruchomienie wcześniejszych kroków z wiersza poleceń.",
+        "assumed_boundary": "Zakładamy, że przed tą aktualizacją sklep działał na Spree {{version}}. Jeśli pominięto wydania, poproś programistę o uruchomienie wcześniejszych kroków z wiersza poleceń.",
         "boundary": "Spree {{from}} → {{to}}",
         "confirm": {
           "title": "Uruchomić „{{name}}”?",
