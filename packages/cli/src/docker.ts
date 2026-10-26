@@ -154,7 +154,7 @@ export function dockerStackProblem(error: unknown, command: string): string[] {
     `  ${pc.dim(reason.trim())}`,
     '',
     `Run ${pc.bold(command)} from your project root (the directory holding the`,
-    '.env with SECRET_KEY_BASE), and make sure Docker is running.',
+    '.env file), and make sure Docker is running.',
   ]
 }
 
