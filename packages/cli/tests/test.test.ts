@@ -1,6 +1,6 @@
 import { Command } from 'commander'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { registerRspecCommand } from '../src/commands/rspec'
+import { registerTestCommand } from '../src/commands/test'
 import { dockerComposeExecOrRun } from '../src/docker'
 
 let projectDir: string
@@ -13,13 +13,13 @@ vi.mock('../src/docker', () => ({
   dockerComposeExecOrRun: vi.fn().mockResolvedValue(undefined),
 }))
 
-async function runRspec(args: string[] = []): Promise<void> {
+async function runTests(args: string[] = [], command = 'test'): Promise<void> {
   const program = new Command().enablePositionalOptions()
-  registerRspecCommand(program)
-  await program.parseAsync(['rspec', ...args], { from: 'user' })
+  registerTestCommand(program)
+  await program.parseAsync([command, ...args], { from: 'user' })
 }
 
-describe('spree rspec', () => {
+describe('spree test', () => {
   beforeEach(() => {
     projectDir = '/proj'
     vi.clearAllMocks()
@@ -29,16 +29,16 @@ describe('spree rspec', () => {
   // dockerComposeExecOrRun's own tests in docker.test.ts; here we assert the
   // delegation shape: `bundle exec rspec` + forwarded args + RAILS_ENV=test.
   it('runs the full suite with RAILS_ENV=test when called bare', async () => {
-    await runRspec()
+    await runTests()
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(['bundle', 'exec', 'rspec'], '/proj', {
       env: { RAILS_ENV: 'test' },
-      edgeHint: 'then re-run spree rspec',
+      edgeHint: 'then re-run spree test',
     })
   })
 
   it('forwards file paths and line numbers', async () => {
-    await runRspec(['spec/models/spree/brand_spec.rb:15'])
+    await runTests(['spec/models/spree/brand_spec.rb:15'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
       ['bundle', 'exec', 'rspec', 'spec/models/spree/brand_spec.rb:15'],
@@ -50,7 +50,7 @@ describe('spree rspec', () => {
   // Leading flags have no preceding positional, so they rely on
   // allowUnknownOption (passThroughOptions alone only covers flags after one).
   it('forwards leading rspec flags instead of parsing them', async () => {
-    await runRspec(['--format', 'documentation'])
+    await runTests(['--format', 'documentation'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
       ['bundle', 'exec', 'rspec', '--format', 'documentation'],
@@ -60,12 +60,26 @@ describe('spree rspec', () => {
   })
 
   it('forwards flags following a path untouched', async () => {
-    await runRspec(['spec/features/', '--fail-fast'])
+    await runTests(['spec/features/', '--fail-fast'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
       ['bundle', 'exec', 'rspec', 'spec/features/', '--fail-fast'],
       '/proj',
       expect.objectContaining({ env: { RAILS_ENV: 'test' } }),
     )
+  })
+
+  it('keeps `spree rspec` working with a deprecation notice', async () => {
+    const stderr = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    await runTests(['spec/models'], 'rspec')
+
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bundle', 'exec', 'rspec', 'spec/models'],
+      '/proj',
+      expect.objectContaining({ env: { RAILS_ENV: 'test' } }),
+    )
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('spree test'))
+    stderr.mockRestore()
   })
 })

@@ -120,7 +120,7 @@ Run any CLI command against the running backend from `server/`:
 ```bash
 cd server
 pnpm exec spree migrate
-pnpm exec spree generate model Brand name:string
+pnpm exec spree exec bin/rails generate spree:model Brand name:string
 pnpm exec spree upgrade --plan
 ```
 
@@ -132,7 +132,7 @@ Which command after which change:
 | --- | --- |
 | Ruby code in `spree/*` gems | Nothing — gems are bind-mounted; code reloads on the next request |
 | A new migration in a gem | Nothing — the next `pnpm server:dev` boot applies it (or `cd server && pnpm exec spree migrate` while the stack runs) |
-| Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check | | bundle install` (or `cd server && pnpm exec spree bundle install` while the stack runs) |
+| Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check | | bundle install` (or `cd server && pnpm exec spree exec bundle install` while the stack runs) |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates the containers) |
 | `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build ("lockfile can't be updated because frozen") | `pnpm server:build`, then `pnpm server:dev` — the build script handles the edge-rewritten `Gemfile.lock` automatically |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes the database and volumes) |
@@ -252,7 +252,7 @@ After schema changes, re-run `bundle exec rake parallel_setup` to update the wor
 Spree runs slower in development because caching is disabled and code reloads on each request. To turn on caching:
 
 ```bash
-cd server && pnpm exec spree rails dev:cache
+cd server && pnpm exec spree exec bin/rails dev:cache
 ```
 
 Restart the Rails server after running this (Ctrl+C the running `pnpm server:dev` and start it again).
@@ -405,7 +405,7 @@ To regenerate manually (useful when iterating on serializers before committing):
 
 ```bash
 cd server
-pnpm exec spree rake typelizer:generate     # regenerate TS types
+pnpm exec spree exec bin/rake typelizer:generate     # regenerate TS types
 cd ..
 pnpm generate:zod                            # regenerate Zod schemas for every SDK
 ```

@@ -61,7 +61,7 @@ spree eject
 
 2. Configure the Docker image build to authenticate against the Keygen source.
 
-    If you use the Spree CLI (Docker), `spree bundle install` resolves the licensed
+    If you use the Spree CLI (Docker), `spree exec bundle install` resolves the licensed
     gems **inside the image at build time**, so the Keygen credentials must be available
     during `bundle install` in the `Dockerfile` — not just at runtime. Pass them as
     [BuildKit secrets](https://docs.docker.com/build/building/secrets/) so they are mounted
@@ -118,7 +118,7 @@ spree eject
     <CodeGroup>
 
     ```bash Spree CLI (Docker)
-    spree bundle install
+    spree exec bundle install
     ```
 
     ```bash Without Spree CLI
@@ -132,7 +132,7 @@ spree eject
     <CodeGroup>
 
     ```bash Spree CLI (Docker)
-    spree generate spree_enterprise:install && spree generate spree_multi_tenant:install
+    spree exec bin/rails generate spree_enterprise:install && spree exec bin/rails generate spree_multi_tenant:install
     ```
 
     ```bash Without Spree CLI

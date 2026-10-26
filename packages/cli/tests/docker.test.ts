@@ -16,11 +16,11 @@ vi.mock('@clack/prompts', () => ({
 
 import { execa } from 'execa'
 import {
+  captureTask,
   dockerComposeCapture,
   dockerComposeExecOrRun,
   dockerComposeRun,
   prepareDatabase,
-  rakeTask,
 } from '../src/docker'
 
 const mockExeca = vi.mocked(execa)
@@ -285,7 +285,7 @@ describe('dockerComposeCapture', () => {
   })
 })
 
-describe('rakeTask', () => {
+describe('captureTask', () => {
   beforeEach(() => {
     monorepoEdge = false
     logInfoMock.mockClear()
@@ -294,10 +294,10 @@ describe('rakeTask', () => {
 
   afterEach(() => vi.restoreAllMocks())
 
-  it('strips Rails boot noise from the captured output', async () => {
+  it('strips backend boot noise from the captured output', async () => {
     routeExeca(true, '[Spree Events] subscribers loaded\napi_key_abc\n')
 
-    await expect(rakeTask('spree:cli:ensure_api_key', '/proj')).resolves.toBe('api_key_abc')
+    await expect(captureTask('spree:cli:ensure_api_key', '/proj')).resolves.toBe('api_key_abc')
     expect(mockExeca).toHaveBeenCalledWith(
       'docker',
       ['compose', 'exec', '-T', 'web', 'bin/rails', 'spree:cli:ensure_api_key'],
@@ -308,7 +308,7 @@ describe('rakeTask', () => {
   it('falls back to a one-off container when web is down', async () => {
     routeExeca(false, 'seeded')
 
-    await expect(rakeTask('db:seed', '/proj')).resolves.toBe('seeded')
+    await expect(captureTask('db:seed', '/proj')).resolves.toBe('seeded')
     expect(mockExeca).toHaveBeenCalledWith(
       'docker',
       ['compose', 'run', '--rm', '-T', 'web', 'bin/rails', 'db:seed'],

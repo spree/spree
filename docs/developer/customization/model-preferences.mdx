@@ -17,7 +17,7 @@ To define a model preference, you need to add them to your model class.
 Make sure to generate a migration to add the `preferences` column to the table. This column stores the preferences as JSON.
 
 ```bash
-spree generate migration AddPreferencesToSpreeBrands preferences:jsonb
+spree exec bin/rails generate migration AddPreferencesToSpreeBrands preferences:jsonb
 ```
 
 `jsonb` is for PostgreSQL, the default database. On MySQL or SQLite use `preferences:json`.

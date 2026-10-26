@@ -3,8 +3,9 @@ import { dirname, join, relative, resolve } from 'node:path'
 import * as p from '@clack/prompts'
 import { type FilterSpec, renderAppFilterTypes } from '@spree/sdk-core'
 import type { Command } from 'commander'
+import { spreeTask } from '../backend.js'
 import { detectProject } from '../context.js'
-import { rakeTask } from '../docker.js'
+import { captureTask } from '../docker.js'
 
 const APIS = ['store', 'admin', 'seller'] as const
 type Api = (typeof APIS)[number]
@@ -45,7 +46,7 @@ export function registerFiltersCommand(program: Command): void {
     .option('--out <file>', `where to write that one file (default: ${DEFAULT_OUT})`)
     .option(
       '--from <file>',
-      'read the filter tables from a file written by `bin/rails spree:api:filter_tables` instead of the running app',
+      'read the filter tables from a file written by `spree task api:filter_tables` instead of the running app',
     )
     .action(async (options: TypesOptions) => {
       if (options.api && !APIS.includes(options.api)) {
@@ -78,7 +79,7 @@ export function registerFiltersCommand(program: Command): void {
       const tables = parseFilterTables(
         options.from
           ? readFileSync(resolve(options.from), 'utf8')
-          : await rakeTask('spree:api:filter_tables', projectDir as string),
+          : await captureTask(spreeTask('api:filter_tables'), projectDir as string),
       )
 
       for (const { api, out } of targets) {
@@ -98,7 +99,7 @@ export function parseFilterTables(output: string): Record<Api, FilterSpec> {
   const json = output.split('\n').find((line) => line.trimStart().startsWith('{'))
   if (!json)
     throw new Error(
-      'No filter tables found. Run `bin/rails spree:api:filter_tables` to check its output.',
+      'No filter tables found. Run `spree task api:filter_tables` to check its output.',
     )
 
   return JSON.parse(json) as Record<Api, FilterSpec>
