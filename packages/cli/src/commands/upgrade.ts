@@ -220,6 +220,13 @@ async function runMigrate(projectDir: string, flags: UpgradeFlags): Promise<void
 }
 
 async function runRakeUpgrade(projectDir: string, flags: UpgradeFlags): Promise<void> {
+  // --plan and --step already name the rake run the operator asked for.
+  const explicit = flags.plan || flags.step
+  if (!explicit && !(await confirmStep('Run the Spree upgrade tasks (data backfills)?', flags))) {
+    p.log.info('Skipping the upgrade tasks.')
+    return
+  }
+
   // Flags map to env vars so prod (`STEP=channels rake spree:upgrade`) and dev share the same path.
   const env: Record<string, string> = {}
   if (flags.plan) env.DRY_RUN = '1'

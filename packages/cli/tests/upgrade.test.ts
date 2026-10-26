@@ -376,6 +376,22 @@ describe('spree upgrade', () => {
     })
   })
 
+  it('skips only the upgrade tasks when the operator declines them', async () => {
+    writeProject({ ejected: true })
+    vi.mocked(p.confirm).mockImplementation(
+      (async ({ message }: { message: string }) => !message.includes('upgrade tasks')) as never,
+    )
+
+    const program = new Command()
+    registerUpgradeCommand(program)
+    await program.parseAsync(['upgrade'], { from: 'user' })
+
+    expect(commands).toContain(
+      'docker compose exec web bin/rails spree:install:migrations db:migrate',
+    )
+    expect(commands).not.toContain('docker compose exec web bin/rake spree:upgrade')
+  })
+
   it('runs only the rake task with --plan or --step', async () => {
     writeProject({ ejected: true })
 
