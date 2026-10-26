@@ -374,24 +374,6 @@ spree exec bin/rails runner "puts Spree::Product.count"
 spree exec bundle outdated
 ```
 
-### Deprecated commands
-
-These commands still work and print a notice naming their replacement. They will be removed in Spree 7.0.
-
-| Deprecated | Use instead |
-| --- | --- |
-| `spree rails …` | `spree exec bin/rails …` |
-| `spree rake spree:<task>` | `spree task <task>` |
-| `spree rake <other task>` | `spree exec bin/rake <other task>` |
-| `spree bundle add <gem>` | `spree add <extension>`, or `spree add --gem <gem>` outside the catalog |
-| `spree bundle …` | `spree exec bundle …` |
-| `spree rspec …` | `spree test …` |
-| `spree routes` | `spree api endpoints`, or `spree exec bin/rails routes …` to filter Rails routes |
-| `spree generate <gem>:install` | `spree add <extension>` |
-| `spree migrate:rollback STEP=n` | `spree migrate:rollback --steps n` |
-| `spree build --reset-bundle` | `spree build --reset-deps` |
-| `spree plugin new --ruby-name`, `--no-engine` | `--backend-name`, `--no-backend` |
-
 ## Pair with AI agents
 
 The CLI's predictable command surface is what AI coding agents drive when working on Spree projects. The [Spree agent skills](/developer/agentic/agent-skills) teach agents these commands and conventions (install them with `spree add ai`), and the Claude Code plugin adds `/spree:doctor` (stack diagnosis) and `/spree:audit-upgrade` (upgrade-readiness audit) on top. See [Agentic Development](/developer/agentic/overview).
