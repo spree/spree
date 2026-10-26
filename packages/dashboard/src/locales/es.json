@@ -659,6 +659,7 @@
               "error_type": "Tipo de error",
               "event": "Evento",
               "execution_time": "Tiempo de ejecución",
+              "redirect_hint": "Los webhooks no siguen redirecciones. Cambia la URL del endpoint a la dirección a la que redirige.",
               "request_errors": "Error de transporte",
               "request_payload": "Payload de la solicitud",
               "response_body": "Cuerpo de la respuesta",

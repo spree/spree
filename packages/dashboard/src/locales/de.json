@@ -4261,6 +4261,7 @@
               "error_type": "Fehlertyp",
               "event": "Ereignis",
               "execution_time": "Ausführungszeit",
+              "redirect_hint": "Webhooks folgen keinen Weiterleitungen. Ändern Sie die Endpunkt-URL auf die Adresse, zu der weitergeleitet wird.",
               "request_errors": "Transportfehler",
               "request_payload": "Anfrage-Payload",
               "response_body": "Antworttext",

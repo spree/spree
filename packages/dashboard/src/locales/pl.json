@@ -4311,6 +4311,7 @@
               "error_type": "Typ błędu",
               "event": "Zdarzenie",
               "execution_time": "Czas wykonania",
+              "redirect_hint": "Webhooki nie podążają za przekierowaniami. Zmień URL punktu końcowego na adres, do którego następuje przekierowanie.",
               "request_errors": "Błąd transportu",
               "request_payload": "Ładunek żądania",
               "response_body": "Treść odpowiedzi",

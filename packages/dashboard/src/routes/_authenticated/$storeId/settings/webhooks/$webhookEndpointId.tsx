@@ -590,6 +590,7 @@ function DeliveryDetailSheet({
 
   const statusKey = delivery ? deliveryStatusKey(delivery) : null
   const failed = statusKey === 'failure' || statusKey === 'error'
+  const redirected = delivery?.response_code != null && REDIRECT_CODES.has(delivery.response_code)
   const truncatedResponse =
     delivery?.response_body && delivery.response_body.length > RESPONSE_BODY_LIMIT
       ? delivery.response_body.slice(0, RESPONSE_BODY_LIMIT)
@@ -608,6 +609,14 @@ function DeliveryDetailSheet({
             <Skeleton className="h-40 w-full" />
           ) : (
             <>
+              {redirected && (
+                <Alert variant="warning">
+                  <CircleAlertIcon />
+                  <AlertDescription>
+                    {t('admin.pages.settings.webhooks.deliveries.detail.redirect_hint')}
+                  </AlertDescription>
+                </Alert>
+              )}
               <Card>
                 <CardContent className="p-0">
                   <dl className="divide-y divide-border">
@@ -760,6 +769,9 @@ function DeliveryDetailSheet({
     </Sheet>
   )
 }
+
+// The 3xx answers that name another address; 300 and 304 do not.
+const REDIRECT_CODES = new Set([301, 302, 303, 307, 308])
 
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
