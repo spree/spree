@@ -249,7 +249,7 @@ function MediaLibraryPage() {
                 ) : (
                   <UploadIcon className="size-4" />
                 )}
-                {t('admin.media_library.upload')}
+                <span>{t('admin.media_library.upload')}</span>
               </Button>
             </Can>
           }
@@ -665,7 +665,7 @@ function MediaDetailSheet({
                   </Button>
                   <Button type="submit" disabled={!isDirty || form.formState.isSubmitting}>
                     {form.formState.isSubmitting && <Loader2Icon className="size-4 animate-spin" />}
-                    {t('admin.actions.save')}
+                    <span>{t('admin.actions.save')}</span>
                   </Button>
                 </SheetFooter>
               )}
