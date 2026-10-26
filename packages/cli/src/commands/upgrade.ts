@@ -384,13 +384,52 @@ function isYarnBerry(projectDir: string, dir: string): boolean {
   })
 }
 
+function compareIdentifiers(left: string, right: string): number {
+  const leftNumeric = /^\d+$/.test(left)
+  const rightNumeric = /^\d+$/.test(right)
+  if (leftNumeric && rightNumeric) return Number(left) - Number(right)
+  if (leftNumeric !== rightNumeric) return leftNumeric ? -1 : 1
+  return left < right ? -1 : left > right ? 1 : 0
+}
+
+/**
+ * Whether one exact version sorts before another under semver precedence: the
+ * release numbers first, then a prerelease (`6.0.0-rc.7`) before its release,
+ * then prerelease identifiers one by one.
+ */
+export function isOlderVersion(version: string, than: string): boolean {
+  const [leftRelease, leftPrerelease] = splitVersion(version)
+  const [rightRelease, rightPrerelease] = splitVersion(than)
+  for (let index = 0; index < 3; index++) {
+    const difference = leftRelease[index] - rightRelease[index]
+    if (difference !== 0) return difference < 0
+  }
+  if (leftPrerelease.length === 0 || rightPrerelease.length === 0) {
+    return leftPrerelease.length > rightPrerelease.length
+  }
+  for (let index = 0; index < Math.min(leftPrerelease.length, rightPrerelease.length); index++) {
+    const difference = compareIdentifiers(leftPrerelease[index], rightPrerelease[index])
+    if (difference !== 0) return difference < 0
+  }
+  return leftPrerelease.length < rightPrerelease.length
+}
+
+function splitVersion(version: string): [number[], string[]] {
+  const [release, ...prerelease] = version.split('-')
+  const identifiers = prerelease.join('-')
+  return [release.split('.').map(Number), identifiers ? identifiers.split('.') : []]
+}
+
 // `update` leaves an exact version where it is, so a pinned app would stay on
 // the old release while the server moves on. A pin on a package released with
-// Spree moves to the Spree version; any other pin is the operator's to move.
+// Spree that is older than the Spree version moves to it. A newer pin stays,
+// since the CLI may have been built before that release; any other pin is the
+// operator's to move.
 function pinnedOffRelease(packages: SpreePackage[], dev: boolean): string[] {
   return packages
     .filter((pkg) => pkg.dev === dev && isExactVersion(pkg.spec))
-    .filter((pkg) => RELEASE_LINE.packages.includes(pkg.name) && pkg.spec !== RELEASE_LINE.version)
+    .filter((pkg) => RELEASE_LINE.packages.includes(pkg.name))
+    .filter((pkg) => isOlderVersion(pkg.spec, RELEASE_LINE.version))
     .map((pkg) => `${pkg.name}@${RELEASE_LINE.version}`)
 }
 

@@ -32,14 +32,16 @@ export function npmVersion(gemVersion) {
 
 /**
  * The range a package in the group accepts for another one it names with a
- * literal range: the whole major, prereleases included.
+ * literal range: this release and anything after it in the same major. The
+ * floor is the full version because semver only lets a prerelease such as
+ * `6.0.1-rc.1` satisfy a range with a comparator on that same `6.0.1`.
  *
  * @param {string} version
  * @returns {string}
  */
-export function majorRange(version) {
+export function peerRange(version) {
   const major = Number(version.split('.')[0])
-  return `>=${major}.0.0-0 <${major + 1}.0.0-0`
+  return `>=${version} <${major + 1}.0.0-0`
 }
 
 function readJson(file) {
@@ -146,7 +148,7 @@ function main() {
       setVersion(manifestPath, computed, target)
       console.log(`${name}: ${before.get(name)} → ${target}`)
     }
-    setPeerRanges(manifestPath, names, majorRange(target))
+    setPeerRanges(manifestPath, names, peerRange(target))
   }
 }
 

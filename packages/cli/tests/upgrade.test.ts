@@ -46,6 +46,7 @@ import {
   detectSpreeGems,
   detectSpreePackages,
   isExactVersion,
+  isOlderVersion,
   moveToReleaseLine,
   packageAddArgs,
   packageDedupeArgs,
@@ -320,6 +321,24 @@ describe('isExactVersion', () => {
   })
 })
 
+describe('isOlderVersion', () => {
+  it('orders exact versions by semver precedence', () => {
+    expect(isOlderVersion('6.0.0-rc.6', '6.0.0-rc.7')).toBe(true)
+    expect(isOlderVersion('6.0.0-rc.9', '6.0.0-rc.10')).toBe(true)
+    expect(isOlderVersion('1.0.0-rc.5', '6.0.0-rc.7')).toBe(true)
+    expect(isOlderVersion('6.0.0-rc.7', '6.0.0')).toBe(true)
+    expect(isOlderVersion('6.0.0-beta.1', '6.0.0-rc.1')).toBe(true)
+    expect(isOlderVersion('6.0.0-rc', '6.0.0-rc.1')).toBe(true)
+    expect(isOlderVersion('6.0.0-rc.1', '6.0.0-rc.rc')).toBe(true)
+
+    expect(isOlderVersion('6.0.0-rc.7', '6.0.0-rc.7')).toBe(false)
+    expect(isOlderVersion('6.0.0', '6.0.0-rc.7')).toBe(false)
+    expect(isOlderVersion('6.0.1', '6.0.0')).toBe(false)
+    expect(isOlderVersion('6.0.0-rc.10', '6.0.0-rc.9')).toBe(false)
+    expect(isOlderVersion('7.0.0-rc.1', '6.9.9')).toBe(false)
+  })
+})
+
 describe('packageAddArgs', () => {
   it('saves exact versions in the group they are declared in', () => {
     expect(packageAddArgs('pnpm', ['@spree/dashboard@6.0.0'], false)).toEqual([
@@ -554,6 +573,21 @@ describe('spree upgrade', () => {
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
       'docker compose exec web bin/rake spree:upgrade',
       'docker compose restart web',
+    ])
+  })
+
+  it('leaves pins newer than the Spree version it was built with', async () => {
+    writeProject({
+      ejected: true,
+      dashboardDependencies: { '@spree/dashboard': '6.0.0', '@spree/dashboard-ui': '6.0.1' },
+    })
+
+    await runUpgrade()
+
+    expect(commands.filter((command) => command.startsWith('pnpm'))).toEqual([
+      'pnpm update @spree/cli',
+      'pnpm dedupe',
+      'pnpm dedupe',
     ])
   })
 

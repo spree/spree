@@ -33,9 +33,10 @@ a changeset names only decides which heading its changelog entry goes under.
 Never use `workspace:^` for a peerDependency on another workspace package
 (e.g. dashboard-core → dashboard-ui). Changesets majors a peer-dependent
 whenever its peer's new version escapes the declared range, and that cascades
-through the fixed group. Use a literal range covering the whole major
-(`>=6.0.0-0 <7.0.0-0`) instead, paired with
-`onlyUpdatePeerDependentsWhenOutOfRange` in `config.json`;
-`pnpm version:packages` moves those ranges to the new major on a major release.
+through the fixed group. Use a literal range instead, paired with
+`onlyUpdatePeerDependentsWhenOutOfRange` in `config.json`.
+`pnpm version:packages` sets those ranges on every release to that release and
+anything after it in the same major (`>=6.0.1-rc.1 <7.0.0-0`); starting the range
+at the full version is what lets a patch release candidate satisfy it.
 
 Docs: https://github.com/changesets/changesets

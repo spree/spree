@@ -54,8 +54,10 @@ From 6.0, the packages that talk to the Spree API are released with Spree and ca
 A storefront on Spree 5.x depends on `@spree/sdk` `1.x`. Change that range by hand, since it never resolves to 6.x on its own:
 
 ```json storefront/package.json
-"@spree/sdk": "^6.0.0"
+"@spree/sdk": "^6.0.0-rc.7"
 ```
+
+A range that names a release candidate also accepts the final `6.0.0` and every later 6.x release, so it doesn't need changing again when 6.0 is released. `^6.0.0` doesn't accept release candidates.
 
 Projects created during the 6.0 preview depend on `1.0.0-rc` or `2.0.0-rc` versions. Update the CLI first, then upgrade, and `spree upgrade` rewrites those ranges:
 
@@ -64,7 +66,7 @@ pnpm update @spree/cli
 spree upgrade
 ```
 
-Dashboard plugins should widen their peer dependency ranges on `@spree/admin-sdk`, `@spree/dashboard-core` and `@spree/dashboard-ui` to `^6.0.0`.
+Dashboard plugins should widen their peer dependency ranges on `@spree/admin-sdk`, `@spree/dashboard-core` and `@spree/dashboard-ui` to `^6.0.0-rc.7` for the same reason.
 
 Re-running is safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated. It also runs every data backfill from earlier upgrades (5.4 → 5.5 and 5.5 → 5.6), so any you missed along the way are caught up. That does not remove the requirement above: upgrade your application to 5.6 first.
 
