@@ -27,7 +27,7 @@ describe('testCommand', () => {
     expect(testCommand(['spec/models', '--fail-fast'])).toEqual([
       'sh',
       '-c',
-      'bin/rails db:create >/dev/null 2>&1; exec bundle exec rspec "$@"',
+      'VERBOSE=false bin/rails db:create && exec bundle exec rspec "$@"',
       'spree test',
       'spec/models',
       '--fail-fast',
