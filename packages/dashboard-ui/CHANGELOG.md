@@ -1,5 +1,9 @@
 # @spree/dashboard-ui
 
+## 6.0.0-rc.7
+
+Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.
+
 ## 1.0.0-rc.6
 
 ### Patch Changes

@@ -1,3 +1,23 @@
+## 2026-10-26: Every release is published from a tag, in one workflow
+
+**Context:** The npm packages published from `packages.yml` whenever a merge to `main` touched certain paths, while the gems published from `release.yml` on a tag pushed by hand. The two halves of one Spree release went out at different times, a later merge cancelled a release part-way, and gems published without any check of the commit.
+
+**Decision:** `release.yml` publishes everything, started by a tag on a commit already on `main`. `v6.0.0.rc7` releases the gems and the npm packages that share the Spree version; `@spree/cli@3.5.0` and `create-spree-app@2.4.1` release those tools on their own. A first job checks the tag against `Spree::VERSION` and the package versions before anything publishes, and every step skips versions already on its registry. One script (`scripts/publish-packages.mjs`) publishes npm packages in dependency order. `packages.yml` only runs checks. `pnpm version:tools` versions the tools between Spree releases while the group's changesets wait. The templates the CLI embeds accept their whole major (`^6.0.0-0`) instead of the workspace version, so a CLI tag never points at packages not yet on npm.
+
+**Consequences:** Nothing reaches npm from a merge alone; a release is the tag. npm Trusted Publishing names the workflow file, so every published package must trust `release.yml` before its first tag release. GitHub starts no workflow for more than three tags pushed at once. `@spree/docs` keeps publishing from `docs-package.yml`.
+
+**Plan amended:** `6.0-beta-release.md` (Key Decision 3, References).
+
+## 2026-10-26: The TypeScript packages that talk to the API carry the Spree version
+
+**Context:** One Spree release shipped under three numbering schemes: gems `6.0.0.rc6`, `@spree/sdk` `2.0.0-rc.5`, the Admin and Seller SDKs and the dashboard packages `1.0.0-rc.6`, the seller panel `1.0.0-rc.7`, `@spree/core` `0.3.0`. The SDKs are generated from the serializers and the dashboards read only the Admin API, so each of those numbers stood for a backend version that nobody could read off it.
+
+**Decision:** `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core`, the dashboard trio and `@spree/seller-dashboard` form one Changesets `fixed` group versioned from `Spree::VERSION` in npm spelling (`6.0.0.rc7` → `6.0.0-rc.7`), released by `pnpm version:packages`. `@spree/cli` and `create-spree-app` keep their own versions, since they manage projects rather than talk to the API. The switch lands at the release candidate after `rc6` rather than at GA, so the migration path runs before release day. `spree upgrade` rewrites a project's ranges that are still on an older line, and names the exact `@spree/sdk` range for the storefront.
+
+**Consequences:** A Spree release publishes every package in the group even when one has no changes, as the gems already do. A breaking change in the TypeScript code alone waits for the next Spree major. Projects from the preview update `@spree/cli` before upgrading, because the CLI they have does not know the new numbering. Stable `1.0.0` and `2.0.0` are never published for the group, and the old lines get an npm deprecation pointing at `spree upgrade`.
+
+**Plan amended:** `6.0-beta-release.md` (Key Decisions 2 and 3).
+
 ## 2026-10-24: A marketplace decides whether, what and under review its sellers may upload
 
 **Context:** With sellers able to attach downloadable files to their products (the entry below), any approved seller can put a file on the marketplace's domain that buyers download trusting the marketplace's brand. Nothing in Spree scans a file's contents, and before this there was no way to keep seller uploads off, to narrow what they may be, or to re-check an approved listing whose file changed. Digital asset writes were also plain model saves in two places, so a host had no point at which to refuse an upload.

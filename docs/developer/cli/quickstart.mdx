@@ -96,7 +96,7 @@ spree build --yes            # Skip confirmation prompts (for CI)
 Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
 
 1. **Update the server** — on a project that runs the prebuilt image, it pulls the latest Spree image. On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`.
-2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and SDKs in `apps/dashboard` and `apps/seller-dashboard`. The dashboard packages and SDKs move to the Spree version your server now runs. `@spree/cli` moves to the newest release its range in `package.json` allows.
 3. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
 4. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
 

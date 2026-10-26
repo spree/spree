@@ -29,6 +29,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { alignedPackages, majorFloorRange } from './version-packages.mjs'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -82,14 +83,13 @@ function publishedRange(name) {
   if (manifest.private) {
     throw new Error(`${name} is private — it can't be a dependency of the synced template`)
   }
-  // On 0.x, `^` never crosses a minor, so scaffolds stay frozen on whatever
-  // minor the CLI happened to be published against — a dashboard release
-  // without a CLI release in the same train would never reach users. Float
-  // instead, floored at the version this template was built against, through
-  // all of 0.x AND into 1.x so preview-era apps migrate to stable on their
-  // own. After 1.0, `^` floats within the major on its own.
+  // Packages released with Spree float over their whole major, floored at its
+  // first release rather than at the version in this workspace: the CLI that
+  // embeds this template releases on its own tag, possibly before that version
+  // reaches npm, and a range on an unpublished version fails every install.
   const { version } = manifest
-  return version.startsWith('0.') ? `>=${version} <2.0.0` : `^${version}`
+  if (alignedPackages().some((pkg) => pkg.name === name)) return majorFloorRange(version)
+  return `^${version}`
 }
 
 const pkgPath = path.join(targetDir, 'package.json')
