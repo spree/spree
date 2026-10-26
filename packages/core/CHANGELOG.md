@@ -1,5 +1,11 @@
 # @spree/core
 
+## 0.3.0
+
+### Minor Changes
+
+- [#14970](https://github.com/spree/spree/pull/14970) [`fb8a9ce`](https://github.com/spree/spree/commit/fb8a9ce01e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A webhook endpoint's subscriptions must now be `*`, an event name, or a name with `*` in place of whole segments (`order.*`, `*.created`), with at most 200 entries of up to 100 characters each; the API's 422 names the rejected entries. `@spree/core` exports the rule as `WEBHOOK_EVENT_PATTERN`, `isWebhookEventPattern`, `WEBHOOK_SUBSCRIPTION_MAX_LENGTH` and `WEBHOOK_SUBSCRIPTIONS_MAX`, and the dashboard's webhook form checks it before saving, refusing an invalid custom event inline. `FieldError` no longer crashes on the sparse per-item error array react-hook-form produces.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @spree/admin-sdk
 
+## 1.0.0-rc.6
+
+### Minor Changes
+
+- [#14971](https://github.com/spree/spree/pull/14971) [`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Sellers can manage the downloadable files on their own digital products. The Seller SDK adds `products.digitalAssets` (`list`, `get`, `create`, `update`, `delete`), and the seller panel's product page shows the same Digital files card as the dashboard: upload, replace and delete files, and set per-file download limits. A file the marketplace delivers through its own provider is listed but cannot be replaced by the seller. The card now lives in `@spree/dashboard-core` as `DigitalAssetsCard`, and a panel enables it by registering `digitalAssets` on its API client; `readOnly` shows the files without any way to change them and `accept` narrows the file picker.
+  
+  Seller uploads are a marketplace decision: three store settings, edited on the dashboard's Marketplace settings page, say whether sellers may upload at all (off by default), which content types their files may have, and whether a file added to or replaced on an approved product sends it back to review. The seller `/me` response carries them under `store`, and the Admin SDK's `Store` type gains the three fields.
+
+### Patch Changes
+
+- [#14952](https://github.com/spree/spree/pull/14952) [`caaaee2`](https://github.com/spree/spree/commit/caaaee2915) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A store credit's `created_by` is now an `Actor` rather than an `AdminUser`, since a credit issued with a secret API key records the key as its issuer. The dashboard hides refunding a return, resolving a claim, fulfilling an exchange and refunding on cancel from roles without the refunds permission.
+
+- [#14970](https://github.com/spree/spree/pull/14970) [`fb8a9ce`](https://github.com/spree/spree/commit/fb8a9ce01e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A webhook endpoint's subscriptions must now be `*`, an event name, or a name with `*` in place of whole segments (`order.*`, `*.created`), with at most 200 entries of up to 100 characters each; the API's 422 names the rejected entries. `@spree/core` exports the rule as `WEBHOOK_EVENT_PATTERN`, `isWebhookEventPattern`, `WEBHOOK_SUBSCRIPTION_MAX_LENGTH` and `WEBHOOK_SUBSCRIPTIONS_MAX`, and the dashboard's webhook form checks it before saving, refusing an invalid custom event inline. `FieldError` no longer crashes on the sparse per-item error array react-hook-form produces.
+
 ## 1.0.0-rc.5
 
 ### Minor Changes

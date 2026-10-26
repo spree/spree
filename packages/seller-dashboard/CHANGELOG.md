@@ -1,5 +1,20 @@
 # @spree/seller-dashboard
 
+## 1.0.0-rc.7
+
+### Minor Changes
+
+- [#14971](https://github.com/spree/spree/pull/14971) [`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Sellers can manage the downloadable files on their own digital products. The Seller SDK adds `products.digitalAssets` (`list`, `get`, `create`, `update`, `delete`), and the seller panel's product page shows the same Digital files card as the dashboard: upload, replace and delete files, and set per-file download limits. A file the marketplace delivers through its own provider is listed but cannot be replaced by the seller. The card now lives in `@spree/dashboard-core` as `DigitalAssetsCard`, and a panel enables it by registering `digitalAssets` on its API client; `readOnly` shows the files without any way to change them and `accept` narrows the file picker.
+  
+  Seller uploads are a marketplace decision: three store settings, edited on the dashboard's Marketplace settings page, say whether sellers may upload at all (off by default), which content types their files may have, and whether a file added to or replaced on an approved product sends it back to review. The seller `/me` response carries them under `store`, and the Admin SDK's `Store` type gains the three fields.
+
+### Patch Changes
+
+- [#14947](https://github.com/spree/spree/pull/14947) [`aebf883`](https://github.com/spree/spree/commit/aebf8832b6f207c0427f9f8384c2d6d0d7e1ae88) Thanks [@mad-eel](https://github.com/mad-eel)! - A delivery method's amount for the store's default currency is now saved with its other currencies, so leaving it blank means the method isn't offered in that currency, as the form says. Before, a blank default currency was saved as free. The admin dashboard and the seller panel share one per-currency amount editor, `CurrencyAmountsField` in `@spree/dashboard-core`, so sellers can price a method in every currency the marketplace sells in. Both forms ask for an amount in at least one currency.
+- Updated dependencies [[`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d)]:
+  - @spree/seller-sdk@1.0.0-rc.6
+  - @spree/core@0.3.0-rc.0
+
 ## 1.0.0-rc.6
 
 ### Minor Changes

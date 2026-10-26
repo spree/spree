@@ -1,5 +1,13 @@
 # @spree/cli
 
+## 3.4.1
+
+### Patch Changes
+
+- [#14948](https://github.com/spree/spree/pull/14948) [`317c01a`](https://github.com/spree/spree/commit/317c01af77) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` runs `bundle install` itself when the gems in the container no longer match `Gemfile.lock`, instead of stopping and asking for it, and fails only if the bundle is still broken afterwards.
+
+- [#14966](https://github.com/spree/spree/pull/14966) [`88411f1`](https://github.com/spree/spree/commit/88411f1d4e23847702a1abee7d3195fb9580b078) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The dashboard and seller panel starters now tell search engines not to index them: a `<meta name="robots" content="noindex, nofollow">` in each shell, for a panel served from a static host, alongside the `X-Robots-Tag` header the Rails engine adds when it serves a panel itself.
+
 ## 3.4.0
 
 ### Minor Changes
