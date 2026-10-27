@@ -1,6 +1,6 @@
 {
   "name": "@spree/seller-sdk",
-  "version": "6.0.0-rc.7",
+  "version": "6.0.0",
   "description": "TypeScript client for the Spree Seller API — the marketplace seller panel.",
   "type": "module",
   "main": "./dist/index.cjs",

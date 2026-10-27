@@ -27,7 +27,7 @@ Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don
 }
 ```
 
-Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. One pre-release caveat: a range like `^1.0.0-beta.3` accepts later `1.0.0` betas and every stable `1.x` release, but not betas of other versions — so keep your `@spree/dashboard-*` peers in step with the dashboard until 1.0 ships. `spree plugin new` scaffolds ranges starting at the admin SDK and dashboard versions released alongside your `@spree/cli`.
+Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. The dashboard packages carry the Spree version, so `^6.0.0` accepts every Spree 6.x release. `spree plugin new` scaffolds ranges starting at the admin SDK and dashboard versions released alongside your `@spree/cli`.
 
 `dependencies` is for things your plugin *uses* that the host *doesn't* — small utilities (e.g., `clsx`, `date-fns` if you need a specific version, your own helper packages). When in doubt, peer-dep it. The trade-off is "user has to install one more thing" vs. "user has two copies of React" — always pay the first cost.
 

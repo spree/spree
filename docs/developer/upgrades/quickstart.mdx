@@ -39,16 +39,16 @@ An upgrade updates the server and the `@spree/*` packages of your dashboard apps
 
     On npm or Yarn, run `npm update` or `yarn upgrade` instead, naming each `@spree/*` package from that `package.json` (they do not accept the `"@spree/*"` pattern).
 
-    `update` never moves a package pinned to an exact version, such as `"@spree/dashboard": "6.0.0-rc.6"`. Install the new version by name instead, then fold duplicate copies of shared dependencies together, in each directory you changed:
+    `update` never moves a package pinned to an exact version, such as `"@spree/dashboard": "6.0.0"`. Install the version you are upgrading to by name instead, the same version as the Spree gems on your server, then fold duplicate copies of shared dependencies together, in each directory you changed:
 
     | Package manager | Install the new version | Fold duplicates |
     | --- | --- | --- |
-    | pnpm | `pnpm add --save-exact @spree/dashboard@6.0.0-rc.7` | `pnpm dedupe` |
-    | npm | `npm install --save-exact @spree/dashboard@6.0.0-rc.7` | `npm dedupe` |
-    | Yarn 2 or later | `yarn add --exact @spree/dashboard@6.0.0-rc.7` | `yarn dedupe` |
-    | Yarn 1 | `yarn add --exact @spree/dashboard@6.0.0-rc.7` | Not available |
+    | pnpm | `pnpm add --save-exact @spree/dashboard@<version>` | `pnpm dedupe` |
+    | npm | `npm install --save-exact @spree/dashboard@<version>` | `npm dedupe` |
+    | Yarn 2 or later | `yarn add --exact @spree/dashboard@<version>` | `yarn dedupe` |
+    | Yarn 1 | `yarn add --exact @spree/dashboard@<version>` | Not available |
 
-    Moving from a release candidate pin such as `6.0.0-rc.7` to the final release, change the pin to a range such as `^6.0.0` in `package.json` instead, then run `update` as above. Installing over an exact pin by name keeps it exact.
+    Moving from a release candidate pin such as `6.0.0-rc.7` to 6.0, change the pin to a range such as `^6.0.0` in `package.json` instead, then run `update` as above. Installing over an exact pin by name keeps it exact.
 
     Add `--save-dev` (pnpm and npm) or `--dev` (Yarn) for a package listed under `devDependencies`. Without the dedupe step, a dependency that the new version pins, such as `@codemirror/view`, can end up installed twice and fail type checks.
   </Tab>

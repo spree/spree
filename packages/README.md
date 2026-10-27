@@ -8,8 +8,7 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 
 | Badge | Meaning |
 | --- | --- |
-| **Stable** | Published to npm under `latest`, follows semver, safe for production. |
-| **Release Candidate** | The Spree 6.0 line, published under the `beta` dist-tag. The API is settling; pin exact versions. |
+| **Stable** | Published to npm under `latest`, follows semver, safe for production. Packages that talk to the Spree API carry the Spree version: `6.0.x` works with Spree 6.0.x. |
 | **Developer Preview** | Published to npm on the 0.x line; the API may change between minor versions. Pin exact versions. |
 | **Internal** | Private to the workspace (`"private": true`), not published. |
 
@@ -17,15 +16,15 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 
 | Package | npm | Status | Description |
 | --- | --- | --- | --- |
-| [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (1.x) · **Release Candidate** (2.0) | TypeScript client for the customer-facing **Store API v3**. 1.x targets Spree 5.x; 2.0 targets Spree 6.0. |
-| [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Release Candidate** (1.0) | TypeScript client for the **Admin API v3**. |
-| [`seller-sdk`](./seller-sdk) | [`@spree/seller-sdk`](https://www.npmjs.com/package/@spree/seller-sdk) | **Release Candidate** (1.0) | TypeScript client for the **Seller API**, used by marketplace seller panels. |
-| [`core`](./core) | [`@spree/core`](https://www.npmjs.com/package/@spree/core) | **Developer Preview** (0.x) | Universal code with no HTTP: country, currency, locale and unit code lists, unit systems, display names, exact money arithmetic and input parsing, the filter vocabulary. |
+| [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (6.x) | TypeScript client for the customer-facing **Store API v3**. 1.x targets Spree 5.x. |
+| [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Stable** (6.x) | TypeScript client for the **Admin API v3**. |
+| [`seller-sdk`](./seller-sdk) | [`@spree/seller-sdk`](https://www.npmjs.com/package/@spree/seller-sdk) | **Stable** (6.x) | TypeScript client for the **Seller API**, used by marketplace seller panels. |
+| [`core`](./core) | [`@spree/core`](https://www.npmjs.com/package/@spree/core) | **Stable** (6.x) | Universal code with no HTTP: country, currency, locale and unit code lists, unit systems, display names, exact money arithmetic and input parsing, the filter vocabulary. |
 | [`sdk-core`](./sdk-core) | — | **Internal** | Shared HTTP, retry and error layer the SDKs bundle. |
-| [`dashboard`](./dashboard) | [`@spree/dashboard`](https://www.npmjs.com/package/@spree/dashboard) | **Release Candidate** (1.0) | The Spree 6.0 admin dashboard, a React single-page app. Replaces the legacy Rails `spree/admin` engine. |
-| [`dashboard-core`](./dashboard-core) | [`@spree/dashboard-core`](https://www.npmjs.com/package/@spree/dashboard-core) | **Release Candidate** (1.0) | Dashboard framework: registries (table, nav, slot, settings-nav), providers, shared hooks, `defineDashboardPlugin`. The extension API. |
-| [`dashboard-ui`](./dashboard-ui) | [`@spree/dashboard-ui`](https://www.npmjs.com/package/@spree/dashboard-ui) | **Release Candidate** (1.0) | Design system: shadcn primitives, headless composed components, design tokens. Source-only. |
-| [`seller-dashboard`](./seller-dashboard) | [`@spree/seller-dashboard`](https://www.npmjs.com/package/@spree/seller-dashboard) | **Release Candidate** (1.0) | The marketplace seller panel, the seller-facing counterpart to the admin dashboard. |
+| [`dashboard`](./dashboard) | [`@spree/dashboard`](https://www.npmjs.com/package/@spree/dashboard) | **Stable** (6.x) | The Spree 6.0 admin dashboard, a React single-page app. Replaces the legacy Rails `spree/admin` engine. |
+| [`dashboard-core`](./dashboard-core) | [`@spree/dashboard-core`](https://www.npmjs.com/package/@spree/dashboard-core) | **Stable** (6.x) | Dashboard framework: registries (table, nav, slot, settings-nav), providers, shared hooks, `defineDashboardPlugin`. The extension API. |
+| [`dashboard-ui`](./dashboard-ui) | [`@spree/dashboard-ui`](https://www.npmjs.com/package/@spree/dashboard-ui) | **Stable** (6.x) | Design system: shadcn primitives, headless composed components, design tokens. Source-only. |
+| [`seller-dashboard`](./seller-dashboard) | [`@spree/seller-dashboard`](https://www.npmjs.com/package/@spree/seller-dashboard) | **Stable** (6.x) | The marketplace seller panel, the seller-facing counterpart to the admin dashboard. |
 | [`dashboard-starter`](./dashboard-starter) | — | **Internal** | Host app for the admin dashboard; the source of the [`spree/dashboard-starter`](https://github.com/spree/dashboard-starter) template. |
 | [`seller-dashboard-starter`](./seller-dashboard-starter) | — | **Internal** | Host app for the seller panel; the source of the [`spree/seller-dashboard-starter`](https://github.com/spree/seller-dashboard-starter) template. |
 | [`dashboard-plugin-example`](./dashboard-plugin-example) | — | **Internal** | Example dashboard plugin (a Brands feature); the reference for the plugin authoring docs. |

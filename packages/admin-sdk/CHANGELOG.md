@@ -1,5 +1,11 @@
 # @spree/admin-sdk
 
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added maintenance task runs and upgrade steps. `upgradeSteps.list()` returns the data steps a Spree upgrade still needs, in the order they must run, each with its last run. `maintenanceTaskRuns` lists, gets and starts runs, and `maintenanceTaskRuns.cancel()` stops one. Runs belong to the whole installation, and a task is named by its short name (`capture_methods`), never a Ruby class name.
+
 ## 6.0.0-rc.7
 
 Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.

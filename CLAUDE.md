@@ -421,7 +421,7 @@ end
   - **Registry-driven `type`** (the typed families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
 - Never use `typelize_from` — it connects to the database
 - **A deprecated field is marked, never only described.** Response attributes: `typelize state_abbr: [:string, nullable: true, deprecated: 'Use `state_code`. Removed in 6.1.']`. Request fields: `string :country_iso, deprecated: 'Use `country_code`. Removed in 6.1.'`. Both reach the API reference (`deprecated: true`) and the SDK types (`@deprecated`, struck through in editors). The message names the replacement and the release that removes it; a "Deprecated:" sentence in a `comment:` or `description:` alone is invisible to clients
-- **Which API deprecates and which removes.** The Store API (the stable public contract) deprecates: a renamed or retired field keeps working, marked `deprecated:`, until the next minor release. Until 6.0 is stable, the Admin and Seller APIs remove instead — drop the field outright, move the dashboards to the replacement, and list it in the upgrade guide; an Admin/Seller serializer drops an inherited deprecated Store field with `_attributes.delete(:field)`. After 6.0 stable, the Admin and Seller APIs follow the Store API's deprecation procedure too
+- **Deprecate, never remove.** Since 6.0 the Store, Admin and Seller APIs are all stable contracts: a renamed or retired field keeps working, marked `deprecated:`, until the next minor release, and the upgrade guide names its replacement. Move the dashboards to the replacement in the same change
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer
 - NEVER put too much logic in serializers, they should be lean and call models for custom methods
@@ -608,7 +608,7 @@ pnpm typecheck
 
 ### @spree/admin-sdk — Admin API Client
 
-Same patterns as `@spree/sdk` but for the Admin API. Supports both secret key (server-to-server) and JWT (admin SPA) authentication. Published under the `next` dist-tag during the Spree 6.0 Developer Preview.
+Same patterns as `@spree/sdk` but for the Admin API. Supports both secret key (server-to-server) and JWT (admin SPA) authentication.
 
 ### @spree/dashboard — Admin UI (React SPA)
 
