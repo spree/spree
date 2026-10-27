@@ -234,6 +234,8 @@ en:
         units_per_carton: Units per carton
         weight: Weight
         width: Width
+      spree/webhook_endpoint:
+        url: URL
       spree/wishlist_item:
         variant: ''
       spree/zone:

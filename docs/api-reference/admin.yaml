@@ -37141,7 +37141,7 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Url must be a valid http or https URL
+                  message: URL must be a valid http or https URL
                   details:
                     url:
                     - code: invalid_url
@@ -37319,7 +37319,7 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Url must be a valid http or https URL
+                  message: URL must be a valid http or https URL
                   details:
                     url:
                     - code: invalid_url

@@ -255,7 +255,9 @@ test.describe('webhooks', () => {
     await page.getByRole('button', { name: /^re-enable$/i }).click()
 
     await expect(
-      page.getByText('must not point to an internal or private network address', { exact: true }),
+      page.getByText('URL must not point to an internal or private network address', {
+        exact: true,
+      }),
     ).toBeVisible({ timeout: 15_000 })
     await expect(page.getByRole('button', { name: /^re-enable$/i })).toBeVisible()
   })

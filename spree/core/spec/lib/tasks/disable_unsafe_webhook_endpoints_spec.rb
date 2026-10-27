@@ -28,7 +28,7 @@ describe 'spree:upgrade:disable_unsafe_webhook_endpoints' do
 
     endpoint.reload
     expect(endpoint.active).to be false
-    expect(endpoint.disabled_reason).to eq('Url must not point to an internal or private network address')
+    expect(endpoint.disabled_reason).to eq('URL must not point to an internal or private network address')
     expect(Spree::WebhookMailer).not_to have_received(:endpoint_disabled)
   end
 

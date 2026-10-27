@@ -47,9 +47,10 @@ interface UseResourceMutationOptions<TData, TError, TVariables>
    */
   errorMessage?: string | false
   /**
-   * Toast a field-level 422 too, joining its messages. Set this on a page
-   * with no form to render them inline — otherwise the rejection is silent
-   * and the merchant sees a button re-enable with no explanation.
+   * Toast a field-level 422 too, in the server's full sentence ("Name can't
+   * be blank"). Set this on a page with no form to render them inline —
+   * otherwise the rejection is silent and the merchant sees a button
+   * re-enable with no explanation.
    */
   showValidationErrors?: boolean
   /** Forwarded onSuccess callback. Runs after invalidation + toast. */
@@ -110,7 +111,7 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
     },
     onError: (error, variables, onMutateResult, ctx) => {
       if (errorMessage !== false && showValidationErrors && isValidationError(error)) {
-        toastManager.add({ type: 'error', title: fieldMessages(error) ?? errorMessage })
+        toastManager.add({ type: 'error', title: validationSentence(error) ?? errorMessage })
       } else if (errorMessage !== false && !isValidationError(error)) {
         // A refusal with no field to hang off — a workflow saying the source
         // shelf cannot cover this transfer — says something the caller's
@@ -136,6 +137,16 @@ function isValidationError(error: unknown): boolean {
 
 function hasFieldDetails(error: SpreeError): boolean {
   return !!error.details && Object.keys(error.details).length > 0
+}
+
+/**
+ * The server's sentence for a refused save, naming each field ("Name can't be
+ * blank"), or the bare field messages joined when it sent none.
+ */
+function validationSentence(error: unknown): string | undefined {
+  if (!(error instanceof SpreeError)) return undefined
+
+  return error.message || fieldMessages(error)
 }
 
 /** Every field message the server sent, as one line. */
