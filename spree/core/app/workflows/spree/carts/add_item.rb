@@ -42,7 +42,8 @@ module Spree
         external_step :check_availability
         external_step :resolve_price if price.nil?
 
-        ApplicationRecord.transaction do
+        # A savepoint, so a refused line is undone inside a caller's transaction too.
+        ApplicationRecord.transaction(requires_new: true) do
           step :add_to_line_item
           step :handle_stock_reservations if cart.in_checkout?
           step :recalculate, with: -> { Spree.cart_recalculate_workflow }

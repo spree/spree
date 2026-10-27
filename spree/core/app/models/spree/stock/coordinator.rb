@@ -4,7 +4,7 @@ module Spree
       attr_reader   :order, :inventory_units
       attr_accessor :unallocated_inventory_units
 
-      # @param audience [String] who the packages are quoted for
+      # @param audience [Symbol] who the packages are quoted for
       def initialize(order, inventory_units = nil, audience: DeliveryMethod::STOREFRONT)
         @order = order
         @inventory_units = inventory_units || InventoryUnitBuilder.new(order).units

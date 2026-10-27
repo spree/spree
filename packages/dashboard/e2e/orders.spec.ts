@@ -9,6 +9,8 @@ import {
   FIXTURE_BOGUS_TRANSACTION_ID,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_SPLIT_SKU,
+  FIXTURE_SPLIT_WAREHOUSE,
   fillAddressForm,
   login,
 } from './helpers'
@@ -342,6 +344,54 @@ test.describe('order editing', () => {
     })
     await expect(page.getByText(/^negotiated$/i)).toBeVisible()
     await expect(page.getByRole('button', { name: /reset .* to catalog price/i })).toBeVisible()
+  })
+
+  // A unit that neither the shipped parcel nor the open one can carry goes
+  // out in a parcel of its own, and what already shipped stays as it was.
+  test('ships a unit added to a partly shipped order in a new parcel', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, {
+      quantity: 1,
+      ship: false,
+      extraSkus: [FIXTURE_SPLIT_SKU],
+    })
+
+    const locations = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/stock_locations?q[name_eq]=${encodeURIComponent(FIXTURE_SPLIT_WAREHOUSE)}`,
+    )
+    const fulfillments = await adminRequest<{ data: { id: string; stock_location_id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}/fulfillments`,
+    )
+    expect(fulfillments.data).toHaveLength(2)
+    const promoParcel = fulfillments.data.find(
+      (fulfillment) => fulfillment.stock_location_id !== locations.data[0].id,
+    )
+    await adminRequest(
+      page,
+      creds,
+      'patch',
+      `/orders/${order.id}/fulfillments/${promoParcel?.id}/fulfill`,
+    )
+
+    const orderUrl = `/${creds.store_id}/orders/${order.id}`
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByLabel(`Quantity of ${FIXTURE_PROMO_PRODUCT}`).fill('2')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`${orderUrl}$`), { timeout: 15_000 })
+
+    await expect(page.getByText(/^unfulfilled$/i)).toHaveCount(2, { timeout: 15_000 })
+    await expect(page.getByText(/^fulfilled$/i)).toHaveCount(1)
+    await expect(page.getByText(FIXTURE_SPLIT_WAREHOUSE)).toBeVisible()
   })
 })
 

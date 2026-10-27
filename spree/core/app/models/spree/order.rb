@@ -944,7 +944,7 @@ module Spree
     # existing fulfillment alone, shipped ones included.
     #
     # @param units [Array<Spree::FulfillmentItem>] unsaved units, built by id
-    # @param audience [String] who the new fulfillments are quoted for
+    # @param audience [Symbol] who the new fulfillments are quoted for
     # @return [Array<Spree::Fulfillment>, nil] the new fulfillments, or nil
     #   when stock cannot cover every unit, in which case nothing is saved
     def pack_new_units!(units, audience: Spree::DeliveryMethod::STOREFRONT)

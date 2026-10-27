@@ -196,6 +196,37 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       end
     end
 
+    # The stock check counts every warehouse, but only the channel's may pack
+    # the new parcel, so the refusal comes after the line was written.
+    context 'when no warehouse the order ships from can pack the added unit' do
+      let!(:order) { create(:shipped_order, store: store) }
+      let!(:line_item) { order.line_items.first }
+
+      before do
+        open_location = create(:stock_location, store: store, propagate_all_variants: false)
+        create(:fulfillment, order: order, status: 'unfulfilled', stock_location: open_location).fulfillment_items.delete_all
+        channel = create(:channel, store: store)
+        channel.stock_locations = [open_location]
+        order.update_columns(channel_id: channel.id)
+      end
+
+      it 'refuses an update and leaves the line as it was' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(line_item.reload.quantity).to eq(1)
+        expect(line_item.fulfillment_items.sum(:quantity)).to eq(1)
+      end
+
+      it 'refuses an addition and leaves the line as it was' do
+        post :create, params: { order_id: order.prefixed_id, variant_id: line_item.variant.prefixed_id, quantity: 1 }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(line_item.reload.quantity).to eq(1)
+        expect(line_item.fulfillment_items.sum(:quantity)).to eq(1)
+      end
+    end
+
     context 'with a negotiated price' do
       subject { patch :update, params: { order_id: order.prefixed_id, id: line_item.prefixed_id, price: '7.20' }, as: :json }
 

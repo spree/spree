@@ -507,10 +507,12 @@ module Spree
     end
 
     # Read from the parcels, not the status rollup, which calls a mix of
-    # fulfilled and delivered parcels `partial`.
+    # fulfilled and delivered parcels `partial`. Not Order#fully_fulfilled?,
+    # which counts a canceled parcel as unfinished and an order with no
+    # parcels as fulfilled.
     def order_fully_fulfilled?
       live = order.fulfillments.reject(&:canceled?)
-      live.any? && live.all? { |fulfillment| fulfillment.fulfilled? || fulfillment.delivered? }
+      live.any? && live.all?(&:fulfilled_or_delivered?)
     end
 
     def shipped_quantity

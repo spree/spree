@@ -44,16 +44,21 @@ module Spree
         # external-pricing store — so it runs before the transaction opens.
         revert_manual_price(order, line_item, attributes) if reverting
 
-        ActiveRecord::Base.transaction do
-          return failure(line_item) unless line_item.update(attributes)
+        # A savepoint, rolled back rather than returned from: a line refused
+        # after its row was written (no warehouse can pack the added units)
+        # must not stay written inside the caller's transaction.
+        saved = false
+        ActiveRecord::Base.transaction(requires_new: true) do
+          raise ActiveRecord::Rollback unless line_item.update(attributes)
 
           if quantity_changing || price_provided
             Spree::Orders::Recalculate.call(order: order, line_item: line_item)
             order.update_statuses!
           end
+          saved = true
         end
 
-        success(line_item)
+        saved ? success(line_item) : failure(line_item)
       end
 
       private
