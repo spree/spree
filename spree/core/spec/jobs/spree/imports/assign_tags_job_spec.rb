@@ -11,6 +11,12 @@ RSpec.describe Spree::Imports::AssignTagsJob, type: :job do
       expect(product.reload.tag_list).to contain_exactly('ECO', 'Gold')
     end
 
+    it 'ignores blank tag names' do
+      described_class.perform_now(product.id, 'ECO,, Gold, ')
+
+      expect(product.reload.tag_list).to contain_exactly('ECO', 'Gold')
+    end
+
     it 'replaces existing tags' do
       product.tag_list = 'Old Tag'
       product.save!

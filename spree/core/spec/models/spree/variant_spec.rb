@@ -385,6 +385,11 @@ describe Spree::Variant, type: :model do
       # presentation. Backed by `Spree::Searchable#search_condition`, so
       # LIKE-wildcard escaping is handled centrally.
       let(:product) { create(:product, name: 'Crewneck Sweater') }
+
+      it 'returns nothing for a non-text query' do
+        expect(described_class.search(true)).to be_empty
+      end
+
       let(:color_type) do
         Spree::OptionType.find_by(name: 'spec-color') ||
           create(:option_type, name: 'spec-color', label: 'Color')
