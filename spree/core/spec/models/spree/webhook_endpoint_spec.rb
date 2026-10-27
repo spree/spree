@@ -112,6 +112,13 @@ describe Spree::WebhookEndpoint, type: :model do
         end
       end
 
+      it 'treats an address it cannot read as internal' do
+        allow(Resolv).to receive(:getaddresses).with('odd.example.com').and_return(['not-an-address'])
+        webhook_endpoint.url = 'https://odd.example.com/webhooks'
+        expect(webhook_endpoint).not_to be_valid
+        expect(webhook_endpoint.errors[:url]).to eq(['must not point to an internal or private network address'])
+      end
+
       it 'rejects a host name that does not resolve' do
         allow(Resolv).to receive(:getaddresses).with('gone.example.com').and_return([])
         webhook_endpoint.url = 'https://gone.example.com/webhooks'

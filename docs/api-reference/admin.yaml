@@ -37144,10 +37144,9 @@ paths:
                   message: Url must be a valid http or https URL
                   details:
                     url:
-                    - value: not a url
-                      code: invalid
+                    - code: invalid_url
                       message: must be a valid http or https URL
-                      specific: true
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -37323,10 +37322,9 @@ paths:
                   message: Url must be a valid http or https URL
                   details:
                     url:
-                    - value: not a url
-                      code: invalid
+                    - code: invalid_url
                       message: must be a valid http or https URL
-                      specific: true
+                      specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -84975,8 +84973,9 @@ components:
           nullable: true
         url:
           type: string
-          description: HTTPS destination URL. It cannot resolve to a private IP address
-            outside development.
+          description: HTTPS URL at a host that exists. Outside development it cannot
+            name an internal host or point to a private address, unless the host is
+            in `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS`. Redirects are not followed.
           example: https://example.com/webhooks/orders
         active:
           type: boolean
@@ -85013,8 +85012,9 @@ components:
           nullable: true
         url:
           type: string
-          description: HTTPS destination URL. It cannot resolve to a private IP address
-            outside development.
+          description: HTTPS URL at a host that exists. Outside development it cannot
+            name an internal host or point to a private address, unless the host is
+            in `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS`. Redirects are not followed.
           example: https://example.com/webhooks/orders
         active:
           type: boolean

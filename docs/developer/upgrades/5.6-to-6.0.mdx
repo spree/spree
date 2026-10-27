@@ -275,7 +275,7 @@ Every uploaded file now records the store that owns it (`active_storage_blobs.st
 bundle exec rake spree:upgrade:disable_unsafe_webhook_endpoints
 ```
 
-Switches off webhook endpoints whose URL Spree now refuses for good: a malformed URL, or an internal or private address (see [Webhook URLs are checked more strictly](#webhook-urls-are-checked-more-strictly)). Earlier versions accepted some of these, such as `http://127.1/`. Spree already refuses to deliver to them; this stops the failed attempts. Plain-http endpoints keep running, and so do endpoints whose host does not resolve while the step runs, since that may be a passing DNS failure. No email is sent, and the reason is kept on the endpoint. Safe to re-run at any time.
+Switches off webhook endpoints whose URL Spree now refuses for good: a malformed URL, or an internal or private address (see [Webhook URLs are checked more strictly](#webhook-urls-are-checked-more-strictly)). Earlier versions accepted some of these, such as `http://127.1/`. Spree already refuses to deliver to them; this stops the failed attempts. Plain-http endpoints keep running, and so do endpoints whose host does not resolve while the step runs, since that may be a passing DNS failure. No email is sent, and the reason is kept on the endpoint. An endpoint that can't be saved is reported and skipped, so the rest are still switched off. Safe to re-run at any time.
 
 ## Enable Active Record encryption
 

@@ -90,9 +90,11 @@ module Spree
     # last, so a plain-http URL that is otherwise safe answers
     # `:https_required` and nothing more serious.
     #
+    # @param resolve [Boolean] false skips the DNS lookup, judging a host name
+    #   by its name alone
     # @return [Symbol, nil] an error key under +url+: `:invalid_url`,
     #   `:internal_address_not_allowed`, `:unresolvable_host` or `:https_required`
-    def url_error
+    def url_error(resolve: true)
       uri = URI.parse(url.to_s)
       return :invalid_url unless uri.is_a?(URI::HTTP) && uri.hostname.present? && uri.userinfo.nil?
       return if Rails.env.development? || self.class.allowed_internal_host?(url)
@@ -101,25 +103,19 @@ module Spree
       if addresses.nil?
         return :internal_address_not_allowed if internal_host_name?(uri.hostname)
 
-        addresses = Resolv.getaddresses(uri.hostname)
-        return :unresolvable_host if addresses.empty?
+        addresses = resolve ? Resolv.getaddresses(uri.hostname) : []
+        return :unresolvable_host if resolve && addresses.empty?
       end
       return :internal_address_not_allowed if addresses.any? { |address| private_address?(address) }
 
       :https_required unless uri.scheme == 'https'
-    rescue URI::InvalidURIError, ArgumentError
-      :invalid_url
+    # Before ArgumentError, which IPAddr::InvalidAddressError descends from.
     rescue IPAddr::InvalidAddressError
       :internal_address_not_allowed
+    rescue URI::InvalidURIError, ArgumentError
+      :invalid_url
     rescue Resolv::ResolvError
       :unresolvable_host
-    end
-
-    # Whether Spree refuses this URL for good: malformed, or internal.
-    #
-    # @return [Boolean]
-    def url_refused?
-      REFUSED_URL_ERRORS.include?(url_error)
     end
 
     # Returns the plaintext `secret_key` only on the create response.

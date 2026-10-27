@@ -849,5 +849,6 @@ steps:
 
       Plain-http endpoints keep running: HTTPS is required the next time one
       is saved. So do endpoints whose host does not resolve during the run,
-      which may be a passing DNS failure. Idempotent — endpoints already
-      switched off are skipped.
+      which may be a passing DNS failure. An endpoint that cannot be saved is
+      reported and skipped. Idempotent — endpoints already switched off are
+      skipped.

@@ -1,5 +1,12 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_REDIRECT_WEBHOOK, gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  FIXTURE_REDIRECT_WEBHOOK,
+  FIXTURE_REFUSED_WEBHOOK,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+} from './helpers'
 
 const WEBHOOKS_PATH = (storeId: string) => `/${storeId}/settings/webhooks`
 const CTA = /new endpoint/i
@@ -236,5 +243,20 @@ test.describe('webhooks', () => {
     await expect(page.getByText(/webhooks don't follow redirects/i)).toBeVisible({
       timeout: 15_000,
     })
+  })
+
+  test('says why re-enabling an endpoint at an internal address is refused', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(`${WEBHOOKS_PATH(creds.store_id)}/${creds.refused_webhook_id}`)
+    await expect(page.getByRole('heading', { name: FIXTURE_REFUSED_WEBHOOK })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: /^re-enable$/i }).click()
+
+    await expect(
+      page.getByText('must not point to an internal or private network address', { exact: true }),
+    ).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('button', { name: /^re-enable$/i })).toBeVisible()
   })
 })

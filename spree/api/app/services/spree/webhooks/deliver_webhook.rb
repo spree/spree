@@ -109,9 +109,10 @@ module Spree
       end
 
       # SsrfFilter resolves neither `127.1` nor `metadata.google.internal`;
-      # the endpoint's own URL rules tell those apart from a DNS outage.
+      # the endpoint's own URL rules tell those apart from a DNS outage, with
+      # no second lookup of a name that just failed to resolve.
       def refused_url?
-        @delivery.webhook_endpoint.url_refused?
+        Spree::WebhookEndpoint::REFUSED_URL_ERRORS.include?(@delivery.webhook_endpoint.url_error(resolve: false))
       end
 
       def record_failure(error, start_time, payload, error_type:)

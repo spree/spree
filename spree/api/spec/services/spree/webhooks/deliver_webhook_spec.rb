@@ -325,7 +325,9 @@ module Spree
             allow(Rails.error).to receive(:report)
           end
 
-          it 'records a connection error without reporting it' do
+          it 'records a connection error without reporting it or looking the name up again' do
+            expect(Resolv).not_to receive(:getaddresses)
+
             described_class.call(delivery: delivery, secret_key: secret_key)
 
             expect(delivery.reload.error_type).to eq('connection_error')

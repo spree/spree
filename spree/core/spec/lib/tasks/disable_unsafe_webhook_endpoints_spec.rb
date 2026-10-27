@@ -57,6 +57,23 @@ describe 'spree:upgrade:disable_unsafe_webhook_endpoints' do
     expect(endpoint.reload.active).to be true
   end
 
+  it 'reports an endpoint it cannot save and switches off the rest' do
+    allow(Rails.error).to receive(:report)
+    unsaved = saved_earlier('http://127.1/')
+    switched_off = saved_earlier('http://[::1]/hook')
+    allow_any_instance_of(Spree::WebhookEndpoint).to receive(:disable!).and_wrap_original do |original, **options|
+      raise ActiveRecord::RecordNotSaved, 'Failed to save the record' if original.receiver.id == unsaved.id
+
+      original.call(**options)
+    end
+
+    expect { subject.invoke }.to output(/Could not switch off #{unsaved.prefixed_id}.*Switched off 1 webhook endpoint.*Could not switch off 1 webhook endpoint/m).to_stdout
+
+    expect(unsaved.reload.active).to be true
+    expect(switched_off.reload.active).to be false
+    expect(Rails.error).to have_received(:report).once
+  end
+
   it 'skips endpoints that are already switched off' do
     endpoint = saved_earlier('http://127.1/', active: false, disabled_reason: 'Manually disabled')
 

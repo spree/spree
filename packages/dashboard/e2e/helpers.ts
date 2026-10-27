@@ -166,6 +166,8 @@ export const FIXTURE_INVENTORY_RESERVED = 3
 export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
 // A webhook endpoint whose one delivery was answered with a redirect.
 export const FIXTURE_REDIRECT_WEBHOOK = 'E2E Redirecting Webhook'
+// A switched-off webhook endpoint whose URL the current rules refuse.
+export const FIXTURE_REFUSED_WEBHOOK = 'E2E Refused Webhook'
 /**
  * A seller with one settled sale and one payout still owed, so the ledger
  * screens have rows without a spec having to place and fulfil an order first.
@@ -216,6 +218,8 @@ export interface E2ECredentials {
   comma_store_id: string
   /** The endpoint seeded with a delivery answered by a redirect. */
   redirect_webhook_id: string
+  /** The switched-off endpoint at an internal address. */
+  refused_webhook_id: string
 }
 
 /** Credentials plus the JWT from the login response (Admin API Bearer auth). */

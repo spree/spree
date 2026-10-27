@@ -38,6 +38,7 @@ import {
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
   FIXTURE_REDIRECT_WEBHOOK,
+  FIXTURE_REFUSED_WEBHOOK,
   FIXTURE_SELLER_PASSWORD,
   FIXTURE_SELLER_USER_EMAIL,
   FIXTURE_SELLER_WRITER_EMAIL,
@@ -216,8 +217,11 @@ const BOOTSTRAP_RUBY = [
   // Inactive, so orders placed by other specs add no deliveries above it.
   `redirect_hook = s.webhook_endpoints.where(name: '${FIXTURE_REDIRECT_WEBHOOK}').first_or_create!(url: 'https://redirecting.example.com/hook', subscriptions: ['order.placed'], active: false)`,
   "redirect_hook.webhook_deliveries.first_or_create!(event_name: 'order.placed', payload: { name: 'order.placed', data: {} }, response_code: 302, success: false, delivered_at: Time.current)",
+  // A switched-off endpoint at an internal address, as one saved before the
+  // URL rules would be, so re-enabling it is refused. Saved past validation.
+  `refused_hook = s.webhook_endpoints.find_by(name: '${FIXTURE_REFUSED_WEBHOOK}') || s.webhook_endpoints.new(name: '${FIXTURE_REFUSED_WEBHOOK}', url: 'http://127.1/hook', subscriptions: ['order.placed'], active: false, disabled_at: Time.current, disabled_reason: 'Url must not point to an internal or private network address').tap { |endpoint| endpoint.save!(validate: false) }`,
   'port = ENV.fetch("PORT", 3010)',
-  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, redirect_webhook_id: redirect_hook.prefixed_id)',
+  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, redirect_webhook_id: redirect_hook.prefixed_id, refused_webhook_id: refused_hook.prefixed_id)',
 ].join('; ')
 
 export default async function globalSetup() {

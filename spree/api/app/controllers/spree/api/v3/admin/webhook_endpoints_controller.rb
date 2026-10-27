@@ -16,7 +16,9 @@ module Spree
             body.attribute :url, :string,
               required: true, on: :create,
               example: 'https://example.com/webhooks/orders',
-              description: 'HTTPS destination URL. It cannot resolve to a private IP address outside development.'
+              description: 'HTTPS URL at a host that exists. Outside development it cannot name an internal host or ' \
+                           'point to a private address, unless the host is in `SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS`. ' \
+                           'Redirects are not followed.'
             body.attribute :active, :boolean,
               description: 'Defaults to true on create. Prefer the disable and enable endpoints to pause one.'
             body.attribute :subscriptions, :array, of: :string,
