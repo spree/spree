@@ -1,7 +1,7 @@
 module Spree
   module Companies
     # Founds a company from the storefront — the B2B front door
-    # (docs/plans/6.0-b2b-company-self-registration.md): an authenticated
+    # (docs/plans/6.1-b2b-company-self-registration.md): an authenticated
     # customer creates a root node plus their own membership in one call.
     # Companies are born active; whether they may act commercially is the
     # activation policy's answer, so a registered approval flow makes this
