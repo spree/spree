@@ -17,10 +17,12 @@ vi.mock('@clack/prompts', () => ({
 import { execa } from 'execa'
 import {
   captureTask,
+  dockerCompose,
   dockerComposeCapture,
   dockerComposeExecOrRun,
   dockerComposeRun,
   prepareDatabase,
+  primeBundleVolume,
 } from '../src/docker'
 
 const mockExeca = vi.mocked(execa)
@@ -108,6 +110,61 @@ describe('dockerComposeRun', () => {
       stderr: ['pipe', 'inherit'],
     })
     expect(opts).not.toHaveProperty('stdio')
+  })
+})
+
+describe('dockerCompose', () => {
+  afterEach(() => mockExeca.mockReset())
+
+  it('explains an exhausted Docker network pool and how to free it', async () => {
+    const daemonError = new Error(
+      'Command failed with exit code 1: docker compose up -d\nError response from daemon: all predefined address pools have been fully subnetted',
+    )
+    mockExeca.mockRejectedValueOnce(daemonError)
+
+    const error = await dockerCompose(['up', '-d'], '/proj').catch((caught: Error) => caught)
+
+    expect(error).toBeInstanceOf(Error)
+    expect((error as Error).message).toContain('docker network ls')
+    expect((error as Error).cause).toBe(daemonError)
+  })
+
+  it('rethrows any other failure unchanged', async () => {
+    const daemonError = new Error('Command failed with exit code 1: docker compose up -d')
+    mockExeca.mockRejectedValueOnce(daemonError)
+
+    await expect(dockerCompose(['up', '-d'], '/proj')).rejects.toBe(daemonError)
+  })
+})
+
+describe('primeBundleVolume', () => {
+  afterEach(() => mockExeca.mockReset())
+
+  it('captures stderr while still streaming it to the terminal', async () => {
+    await primeBundleVolume('/proj')
+
+    expect(mockExeca).toHaveBeenCalledWith('docker', ['compose', 'up', '-d', '--no-deps', 'web'], {
+      cwd: '/proj',
+      stdin: 'inherit',
+      stdout: 'inherit',
+      stderr: ['pipe', 'inherit'],
+    })
+  })
+
+  it('stops on an exhausted Docker network pool so its hint reaches the operator', async () => {
+    mockExeca.mockRejectedValueOnce(
+      new Error(
+        'Error response from daemon: all predefined address pools have been fully subnetted',
+      ),
+    )
+
+    await expect(primeBundleVolume('/proj')).rejects.toThrow('docker network ls')
+  })
+
+  it("leaves any other failure to the caller's own `up`", async () => {
+    mockExeca.mockRejectedValueOnce(new Error('pull access denied'))
+
+    await expect(primeBundleVolume('/proj')).resolves.toBeUndefined()
   })
 })
 
