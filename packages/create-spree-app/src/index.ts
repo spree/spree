@@ -80,7 +80,7 @@ const program = new Command()
       }
       if (mailpitSmtpPort !== 1025 || mailpitUiPort !== 8025) {
         p.log.info(
-          `Another project's mail catcher is probably still running. ${pc.cyan('docker ps')} lists it; ${pc.cyan('docker compose down')} in its folder frees the ports.`,
+          `Another program is using those ports, often an earlier Spree project's mail catcher. ${pc.cyan('docker ps')} lists running containers; ${pc.cyan('docker compose down')} in that project's folder frees the ports.`,
         )
       }
 

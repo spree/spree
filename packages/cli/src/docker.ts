@@ -19,13 +19,21 @@ export async function dockerCompose(args: string[], projectDir: string, options?
 // compose project keeps its `<name>_default` network after its containers
 // stop — so a machine with many old projects fails to create a new one with
 // a daemon message that names neither the cause nor the fix.
-function withDockerHint(error: unknown): unknown {
-  const message = error instanceof Error ? error.message : String(error)
-  if (!/all predefined address pools have been fully subnetted/i.test(message)) return error
+const ADDRESS_POOLS_EXHAUSTED = /all predefined address pools have been fully subnetted/i
 
+function isAddressPoolExhausted(error: unknown): boolean {
+  return ADDRESS_POOLS_EXHAUSTED.test(error instanceof Error ? error.message : String(error))
+}
+
+function withDockerHint(error: unknown): unknown {
+  if (!isAddressPoolExhausted(error)) return error
+
+  const message = error instanceof Error ? error.message : String(error)
   return new Error(
     `${message}\n\nDocker has no free network addresses left, usually because old projects left their networks behind. ` +
-      `Run ${pc.cyan('docker network prune')} to remove the networks no container is using, then try again.`,
+      `List them with ${pc.cyan('docker network ls')} and remove the ones you no longer need with ${pc.cyan('docker network rm <name>')}. ` +
+      `${pc.cyan('docker network prune')} removes every network on this machine that no container is using, ` +
+      'including networks other tools created and still expect to find.',
     { cause: error },
   )
 }
@@ -46,17 +54,22 @@ function withDockerHint(error: unknown): unknown {
 //
 // Best-effort: a failed prime (image not built yet, daemon hiccup) is swallowed
 // so the caller's real `up` builds/pulls and surfaces the genuine error — we
-// remove a race, we never mask a failure.
+// remove a race, we never mask a failure. The exception is a project network
+// Docker cannot create: this is the first `up`, and `spree dev`'s foreground
+// `up` streams stderr uncaptured, so this is the one place its hint can show.
 export async function primeBundleVolume(
   projectDir: string,
   options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
 ): Promise<void> {
+  const stdio = options?.stdio ?? 'inherit'
   try {
     await dockerCompose(['up', '-d', '--no-deps', 'web'], projectDir, {
-      stdio: options?.stdio ?? 'inherit',
+      stdin: stdio,
+      stdout: stdio,
+      stderr: stdio === 'inherit' ? ['pipe', 'inherit'] : 'pipe',
     })
-  } catch {
-    // fall through to the caller's `up`, which reports any real failure
+  } catch (error) {
+    if (isAddressPoolExhausted(error)) throw error
   }
 }
 
