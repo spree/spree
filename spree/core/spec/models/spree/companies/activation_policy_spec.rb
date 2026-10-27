@@ -50,8 +50,8 @@ RSpec.describe Spree::Companies::ActivationPolicy, type: :model do
     # over a division must not slip past a suspended root.
     it 'stays gated when only the root of the tree is suspended' do
       root = create(:company, store: store)
-      create(:company, store: store, kind: 'division', parent: root)
-      create(:company_membership, company: root, customer: customer)
+      division = create(:company, store: store, kind: 'division', parent: root)
+      create(:company_membership, company: division, customer: customer)
 
       with_company_activation_policy(inactive: [root]) do
         code = Spree.company_activation_policy_class.new.

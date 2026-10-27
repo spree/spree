@@ -51,8 +51,19 @@ module Spree
               store: current_store,
               customer: current_user,
               name: params[:name],
-              registration: params[:registration]&.to_unsafe_h
+              registration: registration_answers
             }
+          end
+
+          # The declared :hash type shapes the generated schema and the
+          # permitted list; it does not stop a caller sending a scalar or an
+          # array under the key, and this path reads the raw params. Anything
+          # that is not a hash carries no answers.
+          def registration_answers
+            case (value = params[:registration])
+            when ActionController::Parameters then value.to_unsafe_h
+            when Hash then value
+            end
           end
 
           def serializer_class
