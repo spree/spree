@@ -641,7 +641,7 @@ describe('spree upgrade', () => {
       'pnpm add --save-exact @spree/dashboard@6.0.0-rc.7 @spree/dashboard-ui@6.0.0-rc.7',
       'pnpm dedupe',
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
-      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose exec web bin/rails spree:upgrade',
       'docker compose restart web',
     ])
   })
@@ -849,7 +849,7 @@ describe('spree upgrade', () => {
     expect(commands).toContain(
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
     )
-    expect(commands).not.toContain('docker compose exec web bin/rake spree:upgrade')
+    expect(commands).not.toContain('docker compose exec web bin/rails spree:upgrade')
   })
 
   it('runs only the rake task with --plan or --step', async () => {
