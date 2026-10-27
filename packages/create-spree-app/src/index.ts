@@ -78,6 +78,11 @@ const program = new Command()
           )
         }
       }
+      if (mailpitSmtpPort !== 1025 || mailpitUiPort !== 8025) {
+        p.log.info(
+          `Another project's mail catcher is probably still running. ${pc.cyan('docker ps')} lists it; ${pc.cyan('docker compose down')} in its folder frees the ports.`,
+        )
+      }
 
       await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
 

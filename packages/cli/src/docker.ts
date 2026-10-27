@@ -5,10 +5,29 @@ import { backendTaskCommand, PREPARE_DATABASE } from './backend.js'
 import { hasMonorepoSpreePath } from './context.js'
 
 export async function dockerCompose(args: string[], projectDir: string, options?: ExecaOptions) {
-  return execa('docker', ['compose', ...args], {
-    cwd: projectDir,
-    ...options,
-  })
+  try {
+    return await execa('docker', ['compose', ...args], {
+      cwd: projectDir,
+      ...options,
+    })
+  } catch (error) {
+    throw withDockerHint(error)
+  }
+}
+
+// Docker's default address pools hold about 30 bridge networks, and every
+// compose project keeps its `<name>_default` network after its containers
+// stop — so a machine with many old projects fails to create a new one with
+// a daemon message that names neither the cause nor the fix.
+function withDockerHint(error: unknown): unknown {
+  const message = error instanceof Error ? error.message : String(error)
+  if (!/all predefined address pools have been fully subnetted/i.test(message)) return error
+
+  return new Error(
+    `${message}\n\nDocker has no free network addresses left, usually because old projects left their networks behind. ` +
+      `Run ${pc.cyan('docker network prune')} to remove the networks no container is using, then try again.`,
+    { cause: error },
+  )
 }
 
 // web and worker share one bundle_cache named volume and, in the dev compose,
