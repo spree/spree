@@ -868,6 +868,22 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    context 'with items on a fully fulfilled order' do
+      let(:order) { create(:shipped_order, store: store) }
+      let(:line_item) { order.line_items.first }
+
+      it 'refuses with order_not_editable' do
+        patch :update, params: {
+          id: order.prefixed_id,
+          items: [{ variant_id: line_item.variant.prefixed_id, quantity: line_item.quantity + 1 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('order_not_editable')
+        expect(line_item.reload.quantity).to eq(1)
+      end
+    end
+
     context 'adding items to a draft order with a shipping address' do
       let(:country) { @default_country }
       let(:state)   { country.states.first || create(:state, country: country) }

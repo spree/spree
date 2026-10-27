@@ -129,6 +129,19 @@ module Spree
           expect(packages.map { |package| package.stock_location.name }).to eq [eu_warehouse.name]
           expect(packages.first.delivery_rates.map(&:name)).to include('EU Standard')
         end
+
+        context 'when the only method serving the destination is back-office only' do
+          subject { Coordinator.new(order, audience: DeliveryMethod::BACKOFFICE) }
+
+          before { Spree::DeliveryMethod.find_by!(name: 'EU Standard').update!(storefront_visible: false) }
+
+          it 'ranks origins for the back office as well as quoting for it' do
+            packages = subject.packages
+
+            expect(packages.map { |package| package.stock_location.name }).to eq [eu_warehouse.name]
+            expect(packages.first.delivery_rates.map(&:name)).to include('EU Standard')
+          end
+        end
       end
 
       describe 'channel-scoped allocation' do

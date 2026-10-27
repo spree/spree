@@ -157,6 +157,13 @@ export const FIXTURE_TRANSFER_PRODUCT = 'E2E Transfer Product'
 /** Unique so the transfer specs can resolve exactly the stocked variant. */
 export const FIXTURE_TRANSFER_SKU = 'E2E-TRANSFER-SKU'
 export const FIXTURE_SUPPLIER = 'E2E Supplier'
+/**
+ * A warehouse stocking only its own product, so an order holding it and the
+ * promo product ships in two parcels.
+ */
+export const FIXTURE_SPLIT_WAREHOUSE = 'E2E Split Warehouse'
+export const FIXTURE_SPLIT_PRODUCT = 'E2E Split Product'
+export const FIXTURE_SPLIT_SKU = 'E2E-SPLIT-SKU'
 // The Inventory page: a SKU of its own so the figures it asserts are not
 // moved by the transfer specs, stocked at the source and held by one
 // checkout at the destination.
@@ -631,7 +638,8 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
  * Places an order for the promo customer, paid by store credit, and ships it
  * unless `ship` is false. `firstName` / `lastName` set the billing name, so a
  * list test can tell its own orders apart from everyone else's. `locale`
- * places it in another of the store's languages.
+ * places it in another of the store's languages. `extraSkus` adds one unit of
+ * each further variant.
  */
 export async function createPlacedOrder(
   page: Page,
@@ -642,12 +650,14 @@ export async function createPlacedOrder(
     firstName = 'Promo',
     lastName = 'Customer',
     locale,
+    extraSkus = [],
   }: {
     quantity?: number
     ship?: boolean
     firstName?: string
     lastName?: string
     locale?: string
+    extraSkus?: string[]
   } = {},
 ) {
   const headers = { Authorization: `Bearer ${accessToken}` }
@@ -662,7 +672,12 @@ export async function createPlacedOrder(
     `/api/v3/admin/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
   )
   const customerId = customers.data[0].id
-  const variants = await request('get', `/api/v3/admin/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`)
+  const variantId = async (sku: string) =>
+    (await request('get', `/api/v3/admin/variants?q[sku_eq]=${sku}`)).data[0].id
+  const items = [{ variant_id: await variantId(FIXTURE_PROMO_SKU), quantity }]
+  for (const sku of extraSkus) {
+    items.push({ variant_id: await variantId(sku), quantity: 1 })
+  }
   const address = {
     first_name: firstName,
     last_name: lastName,
@@ -676,7 +691,7 @@ export async function createPlacedOrder(
 
   const order = await request('post', '/api/v3/admin/orders', {
     customer_id: customerId,
-    items: [{ variant_id: variants.data[0].id, quantity }],
+    items,
     shipping_address: address,
     billing_address: address,
     ...(locale ? { locale } : {}),

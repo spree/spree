@@ -189,6 +189,16 @@ describe Spree::LineItem, type: :model do
         expect { line_item.destroy }.not_to change { shipment.inventory_units.count }
       end
     end
+
+    context 'on a fully fulfilled order' do
+      let(:order) { create(:shipped_order) }
+
+      it 'refuses, leaving the shipped units in place' do
+        expect(line_item.destroy).to be(false)
+        expect(line_item.errors.details[:base]).to include(error: :order_fully_fulfilled)
+        expect(line_item.inventory_units.reload.sum(:quantity)).to eq(line_item.quantity)
+      end
+    end
   end
 
   context '#save' do
@@ -205,6 +215,52 @@ describe Spree::LineItem, type: :model do
         line_item.order.recalculate_totals!
 
         expect(line_item.reload.pre_tax_amount).to eq(line_item.price * line_item.quantity)
+      end
+    end
+
+    context 'on a fully fulfilled order' do
+      let(:order) { create(:shipped_order) }
+
+      it 'refuses a quantity change' do
+        line_item.quantity += 1
+
+        expect(line_item.save).to be(false)
+        expect(line_item.errors.details[:base]).to include(error: :order_fully_fulfilled)
+      end
+
+      # The status rollup reads `partial` for this mix, though nothing is left to ship.
+      it 'refuses when its parcels are a mix of fulfilled and delivered' do
+        create(:fulfillment, order: order, status: 'delivered')
+        order.update_column(:fulfillment_status, 'partial')
+        line_item.quantity += 1
+
+        expect(line_item.save).to be(false)
+        expect(line_item.errors.details[:base]).to include(error: :order_fully_fulfilled)
+      end
+    end
+
+    context 'on a partly shipped order' do
+      let(:order) { create(:shipped_order) }
+
+      before { create(:fulfillment, order: order, status: 'unfulfilled') }
+
+      it 'allows raising the quantity' do
+        line_item.quantity += 1
+        line_item.valid?
+
+        expect(line_item.errors.details[:base]).to be_empty
+      end
+
+      it 'refuses a quantity below the shipped units' do
+        line_item.quantity = 0
+
+        expect(line_item.save).to be(false)
+        expect(line_item.errors.details[:base]).to include(error: :below_shipped_quantity)
+      end
+
+      it 'refuses removing a line with shipped units' do
+        expect { expect(line_item.destroy).to be(false) }.not_to change { line_item.inventory_units.reload.sum(:quantity) }
+        expect(line_item.errors.details[:base]).to include(error: :below_shipped_quantity)
       end
     end
 

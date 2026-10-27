@@ -40,6 +40,9 @@ import {
   FIXTURE_SELLER_PASSWORD,
   FIXTURE_SELLER_USER_EMAIL,
   FIXTURE_SELLER_WRITER_EMAIL,
+  FIXTURE_SPLIT_PRODUCT,
+  FIXTURE_SPLIT_SKU,
+  FIXTURE_SPLIT_WAREHOUSE,
   FIXTURE_SUPPLIER,
   FIXTURE_TRANSFER_DESTINATION,
   FIXTURE_TRANSFER_PRODUCT,
@@ -175,6 +178,16 @@ const BOOTSTRAP_RUBY = [
   // Deep enough that the serial suite can ship from it repeatedly.
   'transfer_source.stock_levels.where(variant: transfer_product.default_variant).first_or_create!.update!(count_on_hand: 5000)',
   `s.suppliers.where(name: '${FIXTURE_SUPPLIER}').first_or_create!(email: 'e2e@supplier.test')`,
+  // Order editing: a warehouse holding only its own product, so an order with
+  // it and the promo product ships in two parcels, and a promo unit added
+  // later fits neither the shipped parcel nor this warehouse's open one.
+  `split_location = s.stock_locations.where(name: '${FIXTURE_SPLIT_WAREHOUSE}').first_or_create!(active: true, propagate_all_variants: false)`,
+  `split_product = Spree::Product.where(name: '${FIXTURE_SPLIT_PRODUCT}').first_or_create!(store: s, status: 'active')`,
+  `split_product.default_variant.update!(sku: '${FIXTURE_SPLIT_SKU}')`,
+  `split_product.default_variant.set_price(s.default_currency, 14.99)`,
+  'Spree::ProductPublication.find_or_create_by!(product: split_product, channel: s.default_channel)',
+  'split_product.default_variant.stock_levels.where.not(stock_location: split_location).delete_all',
+  'split_location.stock_levels.where(variant: split_product.default_variant).first_or_create!.update!(count_on_hand: 5000, backorderable: false)',
   // The Inventory page: its own SKU, stocked at the source so a transfer can
   // leave, and held by one checkout at the destination. The hold is a
   // reservation row written directly — the row keeps the level's counter

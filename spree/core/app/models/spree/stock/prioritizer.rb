@@ -9,10 +9,12 @@ module Spree
       # @param estimator [Spree::Stock::Estimator, nil] consulted for
       #   deliverability, so an origin that cannot serve the destination loses
       #   to one that can. Omitted, the caller's order stands as given.
-      def initialize(packages, adjuster_class = Adjuster, estimator: nil)
+      # @param audience [Symbol] who the packages are quoted for
+      def initialize(packages, adjuster_class = Adjuster, estimator: nil, audience: DeliveryMethod::STOREFRONT)
         @packages = packages
         @adjuster_class = adjuster_class
         @estimator = estimator
+        @audience = audience
         @adjusters = {}
       end
 
@@ -57,7 +59,7 @@ module Spree
         return if estimator.nil?
 
         ranked = packages.each_with_index.sort_by do |package, index|
-          [estimator.deliverable?(package) ? 0 : 1, index]
+          [estimator.deliverable?(package, @audience) ? 0 : 1, index]
         end
 
         packages.replace(ranked.map(&:first))

@@ -119,7 +119,8 @@ module Spree
               if result.success?
                 render json: serialize_resource(result.value)
               else
-                render_validation_error(@resource.errors.presence || result.error)
+                errors = @resource.errors.presence || result.error
+                render_validation_error(errors, code: infer_line_item_error_code(errors, default: ERROR_CODES[:validation_error]))
               end
             end
           end

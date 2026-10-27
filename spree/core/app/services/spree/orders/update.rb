@@ -105,7 +105,8 @@ module Spree
       def propagate_step_failure!(result, fallback:)
         record = result.value
         if record.respond_to?(:errors) && record.errors.any? && record != @order
-          record.errors.full_messages.each { |message| @order.errors.add(:base, message) }
+          # The type travels too, so the API can name the refusal.
+          record.errors.each { |error| @order.errors.add(:base, error.type, message: error.full_message) }
         elsif result.error.to_s.present?
           @order.errors.add(:base, result.error.to_s)
         elsif @order.errors.empty?
