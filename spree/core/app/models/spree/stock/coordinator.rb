@@ -34,6 +34,15 @@ module Spree
         prioritize_packages(build_packages(stock_locations: stock_locations))
       end
 
+      # Whether any delivery method can carry the package to the order's
+      # address, by the rule allocation ranked origins with, so no rate is requested.
+      #
+      # @param package [Spree::Stock::Package]
+      # @return [Boolean]
+      def deliverable?(package)
+        estimator.deliverable?(package)
+      end
+
       # @param packages [Array<Spree::Stock::Package>]
       # @return [Array<Spree::Stock::Package>] the same packages, with their delivery rates
       def estimate_packages(packages)

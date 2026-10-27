@@ -10,6 +10,12 @@ module Spree
     #
     # @see Requirements
     class DefaultRequirements
+      # Everything the discontinuation and stock checks read, so a set of
+      # lines is checked at once.
+      STOCK_CHECK_ASSOCIATIONS = {
+        variant: [{ product: %i[store product_publications] }, { stock_levels: %i[stock_location active_stock_reservations] }]
+      }.freeze
+
       # @param cart [Spree::Cart]
       def initialize(cart)
         @cart = cart
@@ -121,11 +127,11 @@ module Spree
       def undelivered_line_items
         allocated = Spree::FulfillmentItem.where(fulfillment_id: @cart.fulfillments.select(:id))
                                           .group(:line_item_id).sum(:quantity)
+        short = @cart.line_items.select { |line_item| allocated.fetch(line_item.id, 0) < line_item.quantity }
+        return [] if short.empty?
 
-        @cart.line_items.select do |line_item|
-          allocated.fetch(line_item.id, 0) < line_item.quantity &&
-            !discontinued?(line_item) && line_item.sufficient_stock?
-        end
+        ActiveRecord::Associations::Preloader.new(records: short, associations: STOCK_CHECK_ASSOCIATIONS).call
+        short.reject { |line_item| discontinued?(line_item) || !line_item.sufficient_stock? }
       end
 
       def discontinued?(line_item)
@@ -133,11 +139,7 @@ module Spree
       end
 
       def completion_line_items
-        # Everything the discontinuation and stock checks read, for every line
-        # at once.
-        @completion_line_items ||= @cart.line_items.includes(
-          variant: [{ product: %i[store product_publications] }, { stock_levels: %i[stock_location active_stock_reservations] }]
-        ).to_a
+        @completion_line_items ||= @cart.line_items.includes(STOCK_CHECK_ASSOCIATIONS).to_a
       end
 
       def delivery_step_required?

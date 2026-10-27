@@ -71,12 +71,17 @@ module Spree
       # Held where the allocation packs each unit, so the hold protects the stock the order will ship.
       def build_targets(cart)
         cart.line_items.reset
-        packages = Spree::Stock::Coordinator.new(cart).allocated_packages
-        items = packages.flat_map { |package| package.contents.map { |item| [package.stock_location, item] } }
+        coordinator = Spree::Stock::Coordinator.new(cart)
+        packages = coordinator.allocated_packages
+        check_allocated_in_full(cart, packages_items(packages))
+
+        # Once the address is known, a unit only an origin unable to reach it
+        # would pack cannot ship, so it is left to the delivery check rather
+        # than held where it blocks buyers that origin does serve.
+        packages = packages.select { |package| coordinator.deliverable?(package) } if cart.ship_address.present?
+        items = packages_items(packages)
         stock_levels = Spree::Stock::Packer.stock_levels_by_location(packages.map(&:stock_location).uniq,
                                                                      cart.line_items.map(&:variant_id).uniq)
-
-        check_allocated_in_full(cart, items)
 
         # Summed because a splitter can pack one line into several packages from one location.
         quantities = Hash.new(0)
@@ -96,6 +101,10 @@ module Spree
         end
 
         quantities.map { |(line_item, stock_level), quantity| [line_item, stock_level, quantity] }
+      end
+
+      def packages_items(packages)
+        packages.flat_map { |package| package.contents.map { |item| [package.stock_location, item] } }
       end
 
       # A line placed nowhere is left to the delivery check, which can say why;

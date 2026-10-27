@@ -133,6 +133,44 @@ describe Spree::StockReservations::Reserve do
       expect(Spree::StockReservation.for_order(order)).to be_empty
     end
 
+    context 'when only one origin can deliver to the address' do
+      let(:profile) { variant.product.delivery_profile }
+      let(:netherlands) { Spree::Country.by_iso('NL') }
+      let(:eu_location) { create(:stock_location, store: store, propagate_all_variants: false) }
+      let!(:eu_level) do
+        eu_location.stock_level_or_create(variant).tap do |level|
+          level.update!(backorderable: false)
+          level.set_count_on_hand(2)
+        end
+      end
+
+      before do
+        Spree::DeliveryMethod.delete_all
+        eu_group = profile.delivery_origin_groups.create!(name: 'EU')
+        profile.default_origin_group.stock_locations = [stock_location]
+        eu_group.stock_locations = [eu_location]
+
+        eu_zone = create(:delivery_zone_with_country, store: store, delivery_profile: profile,
+                                                      delivery_origin_group: eu_group, country: netherlands)
+        create(:delivery_method, store: store, delivery_profile: profile, delivery_origin_group: eu_group, delivery_zone: eu_zone)
+      end
+
+      it 'does not hold units that only an origin unable to reach the address would ship' do
+        order.update!(ship_address: create(:address, country: netherlands, state: nil))
+
+        expect(result).to be_success
+        expect(eu_level.reload.reserved_count).to eq(2)
+        expect(stock_level.reload.reserved_count).to eq(0)
+      end
+
+      it 'holds where the allocation packs while no address says what can ship' do
+        order.update_columns(ship_address_id: nil)
+
+        expect(result).to be_success
+        expect(stock_level.reload.reserved_count + eu_level.reload.reserved_count).to eq(3)
+      end
+    end
+
     it 'skips backorderable stock items' do
       stock_level.update!(backorderable: true)
       expect { result }.not_to change(Spree::StockReservation, :count)
