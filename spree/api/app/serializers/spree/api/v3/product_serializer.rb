@@ -19,6 +19,8 @@ module Spree
                  original_price: ['Price', nullable: true],
                  tags: [:string, multi: true]
 
+        pricing_access_attribute
+
         attributes :name, :slug,
                    :meta_title, :meta_description, :meta_keywords,
                    :variant_count,

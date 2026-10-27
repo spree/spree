@@ -45,6 +45,7 @@ module Spree
         return false if customer.present?
         return false if channel.blank?
         return true if channel.storefront_prices_hidden?
+        return true if channel.storefront_approval_required?
 
         !channel.resolved_guest_checkout
       end

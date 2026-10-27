@@ -548,6 +548,17 @@ module Spree
   #   })
   #
   # @return [Spree::PermissionConfiguration] the permission catalog
+  # The registered company activation policy, ready to ask. The contract is
+  # an argless constructor (the policy is a stateless per-call strategy), so
+  # this is the one construction point every consumer shares — a replacement
+  # needing per-request state overrides the class, not the call sites. A
+  # policy that reads persisted state should cache per request itself.
+  #
+  # @return [Object] an instance of Spree.company_activation_policy_class
+  def self.company_activation_policy
+    company_activation_policy_class.new
+  end
+
   def self.permissions
     @permissions ||= PermissionConfiguration.new
   end

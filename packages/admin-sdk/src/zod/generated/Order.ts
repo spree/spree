@@ -34,6 +34,7 @@ export const OrderSchema = z.object({
   company_name: z.string().nullable(),
   po_document_filename: z.string().nullable(),
   po_document_byte_size: z.number().nullable(),
+  pricing_access: z.string().nullable(),
   number: z.string(),
   email: z.string(),
   customer_note: z.string().nullable(),
@@ -125,6 +126,7 @@ export const OrderSchema = z.object({
   company_name: z.ZodType<Order['company_name']>;
   po_document_filename: z.ZodType<Order['po_document_filename']>;
   po_document_byte_size: z.ZodType<Order['po_document_byte_size']>;
+  pricing_access: z.ZodType<Order['pricing_access']>;
   number: z.ZodType<Order['number']>;
   email: z.ZodType<Order['email']>;
   customer_note: z.ZodType<Order['customer_note']>;
