@@ -22,6 +22,7 @@ overrides:
   '@tiptap/extension-placeholder': 3.32.0
   prosemirror-model: 1.25.12
   prosemirror-view: 1.42.6
+  body-parser@>=2.0.0 <2.4.0: ^2.4.0
 
 pnpmfileChecksum: sha256-/hj2bImeQU1Javs2ImTcClE6F4pENJrMIvCAcSd2xuc=
 
@@ -2863,8 +2864,8 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  body-parser@2.3.0:
-    resolution: {integrity: sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw==}
+  body-parser@2.4.0:
+    resolution: {integrity: sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==}
     engines: {node: '>=18'}
 
   brace-expansion@5.0.12:
@@ -6897,7 +6898,7 @@ snapshots:
 
   baseline-browser-mapping@2.11.30: {}
 
-  body-parser@2.3.0:
+  body-parser@2.4.0:
     dependencies:
       bytes: 3.1.2
       content-type: 2.1.0
@@ -7315,7 +7316,7 @@ snapshots:
   express@5.3.0:
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.3.0
+      body-parser: 2.4.0
       content-disposition: 2.0.1
       content-type: 2.1.0
       cookie: 0.7.2
