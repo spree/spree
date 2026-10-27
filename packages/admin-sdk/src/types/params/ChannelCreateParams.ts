@@ -9,7 +9,7 @@ export type ChannelCreateParams = {
   /** Order routing strategy shorthand (built-in: `rules`). Null inherits the store setting. */
   order_routing_strategy?: string | null
   /** What anonymous visitors can see. Null inherits the store setting. */
-  storefront_access?: 'public' | 'prices_hidden' | 'login_required' | null
+  storefront_access?: 'public' | 'prices_hidden' | 'login_required' | 'approval_required' | null
   /** Whether guests can check out without an account. Null inherits the store setting. */
   guest_checkout?: boolean | null
   /**

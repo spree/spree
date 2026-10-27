@@ -76,6 +76,7 @@ type WebhookEventName =
   | 'claim.updated'
   | 'company.created'
   | 'company.deleted'
+  | 'company.registered'
   | 'company.updated'
   | 'company_invitation.accepted'
   | 'company_invitation.created'
@@ -339,6 +340,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'claim.updated': ClaimSchema,
   'company.created': CompanySchema,
   'company.deleted': CompanySchema,
+  'company.registered': CompanySchema,
   'company.updated': CompanySchema,
   'company_invitation.accepted': CompanyInvitationSchema,
   'company_invitation.created': CompanyInvitationSchema,

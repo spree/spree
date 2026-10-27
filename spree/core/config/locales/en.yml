@@ -753,10 +753,10 @@ en:
         description: Charges this rate only when the seller is one of the selected
         name: Seller
     company: Company
-    company_registration:
-      already_registered: You have already registered a company on this store
     company_invitations:
       not_pending: This invitation is no longer pending and cannot be revoked.
+    company_registration:
+      already_registered: You have already registered a company on this store
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete
