@@ -1,19 +1,13 @@
 require 'spec_helper'
-require 'rake'
 
-describe 'spree:upgrade:disable_unsafe_webhook_endpoints' do
-  subject { Rake::Task[task_name] }
+RSpec.describe Spree::MaintenanceTasks::Upgrade::DisableUnsafeWebhookEndpoints do
+  before { allow(Spree::WebhookMailer).to receive(:endpoint_disabled) }
 
-  let(:task_name) { 'spree:upgrade:disable_unsafe_webhook_endpoints' }
-
-  before(:all) do
-    Rake::Task.define_task(:environment)
-    load Spree::Core::Engine.root.join('lib', 'tasks', 'disable_unsafe_webhook_endpoints.rake')
-  end
-
-  before do
-    subject.reenable
-    allow(Spree::WebhookMailer).to receive(:endpoint_disabled)
+  def run_task(dry_run: false)
+    result = Spree::MaintenanceTasks::Start.call(task_name: described_class.name,
+                                                 dry_run: dry_run, initiated_via: 'cli')
+    Spree::MaintenanceTasks::RunJob.perform_now(result.value.id)
+    result.value.reload
   end
 
   # An endpoint saved before the current URL checks existed.
@@ -24,18 +18,20 @@ describe 'spree:upgrade:disable_unsafe_webhook_endpoints' do
   it 'switches off an endpoint at a loopback address written as a host name, without an email' do
     endpoint = saved_earlier('http://127.1:5432/')
 
-    expect { subject.invoke }.to output(/Switched off 1 webhook endpoint/).to_stdout
+    run = run_task
 
     endpoint.reload
     expect(endpoint.active).to be false
     expect(endpoint.disabled_reason).to eq('URL must not point to an internal or private network address')
     expect(Spree::WebhookMailer).not_to have_received(:endpoint_disabled)
+    expect(run).to be_succeeded
+    expect(run.tallies['switched_off']).to eq(1)
   end
 
   it 'switches off an endpoint whose URL is malformed' do
     endpoint = saved_earlier('http://[https://example.com/x]/latest/meta-data/')
 
-    expect { subject.invoke }.to output.to_stdout
+    run_task
 
     expect(endpoint.reload.active).to be false
   end
@@ -43,16 +39,17 @@ describe 'spree:upgrade:disable_unsafe_webhook_endpoints' do
   it 'leaves a plain-http endpoint at a public host running' do
     endpoint = saved_earlier('http://hooks.example.com/spree')
 
-    expect { subject.invoke }.to output(/Switched off 0 webhook endpoint/).to_stdout
+    run = run_task
 
     expect(endpoint.reload.active).to be true
+    expect(run.tallies).not_to have_key('switched_off')
   end
 
   it 'leaves an endpoint running when its host does not resolve during the run' do
     allow(Resolv).to receive(:getaddresses).and_return([])
     endpoint = saved_earlier('https://hooks.example.com/spree')
 
-    expect { subject.invoke }.to output(/Switched off 0 webhook endpoint/).to_stdout
+    run_task
 
     expect(endpoint.reload.active).to be true
   end
@@ -67,18 +64,32 @@ describe 'spree:upgrade:disable_unsafe_webhook_endpoints' do
       original.call(**options)
     end
 
-    expect { subject.invoke }.to output(/Could not switch off #{unsaved.prefixed_id}.*Switched off 1 webhook endpoint.*Could not switch off 1 webhook endpoint/m).to_stdout
+    run = run_task
 
     expect(unsaved.reload.active).to be true
     expect(switched_off.reload.active).to be false
-    expect(Rails.error).to have_received(:report).once
+    expect(run).to be_succeeded
+    expect(run.tallies).to include('switched_off' => 1, 'failed' => 1)
+    expect(Rails.error).to have_received(:report).with(an_instance_of(ActiveRecord::RecordNotSaved), context: { webhook_endpoint_id: unsaved.id })
   end
 
   it 'skips endpoints that are already switched off' do
     endpoint = saved_earlier('http://127.1/', active: false, disabled_reason: 'Manually disabled')
 
-    expect { subject.invoke }.to output(/Switched off 0 webhook endpoint/).to_stdout
+    run = run_task
 
     expect(endpoint.reload.disabled_reason).to eq('Manually disabled')
+    expect(run.tick_count).to be_zero
+  end
+
+  describe 'dry run' do
+    it 'reports what it would switch off without writing' do
+      endpoint = saved_earlier('http://127.1/')
+
+      run = run_task(dry_run: true)
+
+      expect(endpoint.reload.active).to be true
+      expect(run.tallies['would_switch_off']).to eq(1)
+    end
   end
 end
