@@ -50,6 +50,16 @@ module Spree
         # @param unit_price [Boolean]
         # @param descriptions [Hash{Symbol => String}] what each amount is, for
         #   the API reference and the SDK types
+        # Declares the +pricing_access+ reason code on a payload that nulls
+        # prices — +login_required+ | +company_required+ | a code the
+        # registered activation policy supplies — so a storefront renders
+        # "sign in" / "register your business" from the code instead of
+        # interpreting bare nulls. Null when prices are visible.
+        def self.pricing_access_attribute
+          typelize pricing_access: [:string, nullable: true]
+          attribute(:pricing_access) { |_object| params[:pricing_access] }
+        end
+
         def self.money_attributes(*names, currency: :currency, unit_price: false, descriptions: {})
           typelize(**names.index_with do |name|
             next display_money_type(name) if display_money?(name)

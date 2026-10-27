@@ -12,6 +12,7 @@ import { VariantSchema } from './Variant';
 
 export const ProductSchema = z.object({
   id: z.string(),
+  pricing_access: z.string().nullable(),
   name: z.string(),
   slug: z.string(),
   meta_title: z.string().nullable(),

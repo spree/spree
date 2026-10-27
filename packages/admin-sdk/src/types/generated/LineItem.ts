@@ -9,6 +9,7 @@ interface LineItem {
   seller_id: string | null;
   preorder: boolean;
   preorder_ships_at: string | null;
+  pricing_access: string | null;
   quantity: number;
   currency: CurrencyCode;
   name: string;
