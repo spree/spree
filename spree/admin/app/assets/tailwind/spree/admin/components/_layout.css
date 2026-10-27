@@ -428,14 +428,13 @@
   }
 
   .sidebar-mobile .sidebar-panel {
-    @apply absolute top-0 bottom-0 bg-gray-25 overflow-y-auto flex flex-col shadow-lg transition-transform duration-500;
+    @apply absolute top-0 bottom-0 bg-gray-25 overflow-y-auto flex flex-col shadow-lg transition-transform duration-500 -translate-x-full;
     inset-inline-start: 0;
     width: var(--spacing-sidebar-width);
-    transform: translateX(-100%);
   }
 
   [dir="rtl"] .sidebar-mobile .sidebar-panel {
-    transform: translateX(100%);
+    @apply translate-x-full;
   }
 
   .sidebar-mobile .sidebar-mobile-header {
