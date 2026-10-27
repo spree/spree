@@ -1,5 +1,17 @@
 # @spree/dashboard
 
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added Settings → Maintenance tasks. The Upgrade tab lists the data steps a Spree upgrade needs, in order, and runs them one at a time; a store with nothing to convert is told it is up to date. The History tab records every run, from the dashboard or the command line, and each run opens a sheet with its progress, results and a Cancel button. The page is hidden when `SPREE_MAINTENANCE_TASKS_DASHBOARD_ENABLED=false`.
+
+### Patch Changes
+
+- [#14983](https://github.com/spree/spree/pull/14983) [`e22669b`](https://github.com/spree/spree/commit/e22669b5ac1bfa28febd3a7fd831ff3eecdd8649) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the dashboard crashing when a Save button started saving while the browser was translating the page.
+- Updated dependencies [[`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553)]:
+  - @spree/core@6.0.0
+
 ## 6.0.0-rc.7
 
 Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.

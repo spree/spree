@@ -2,12 +2,11 @@
 
 TypeScript client for the [Spree Commerce](https://spreecommerce.org) Seller API — the marketplace branch used by sellers to manage their own products, orders, fulfillments and payouts.
 
-> **Beta.** Published under the `beta` tag while Spree 6.0 is in beta, and
-> promoted to `latest` at 6.0 GA. Install it explicitly:
->
-> ```bash
-> npm install @spree/seller-sdk@beta
-> ```
+```bash
+npm install @spree/seller-sdk
+```
+
+`@spree/seller-sdk` is released with Spree and carries its version: `@spree/seller-sdk@6.0.x` works with Spree 6.0.x.
 
 ## Usage
 

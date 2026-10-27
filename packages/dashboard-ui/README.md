@@ -2,7 +2,7 @@
 
 Spree Dashboard design system. Shadcn primitives + headless composed components + design tokens.
 
-> **Developer Preview.** APIs may change between 0.x releases. Docs: [React Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview).
+Docs: [React Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview).
 
 ## What's inside
 

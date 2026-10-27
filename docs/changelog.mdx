@@ -15,6 +15,18 @@ Keep up with the latest features and improvements in Spree Commerce!
 
 </div>
 
+<Update label="Spree 6.0" description="October 27, 2026" tags={["Release"]}>
+  Spree 6.0 is now stable. It brings together everything in this changelog since August: a new React dashboard, a seller panel for marketplaces, B2B wholesale, built-in AI agent access, and emails that merchants edit themselves.
+
+  - **One version for everything.** The Ruby gems and the TypeScript packages that talk to the Spree API now share one version number: `@spree/sdk@6.0.0` is the client for Spree 6.0.0.
+  - **Stable APIs.** The Store, Admin and Seller APIs are now stable. A field that is renamed or retired keeps working, marked as deprecated, until the next minor release.
+  - **New projects start on 6.0.** `npx create-spree-app@latest` sets up a Spree 6.0 server, dashboard, seller panel and storefront.
+
+  Existing Spree 5.x stores should upgrade to 5.6 first, then follow the upgrade guide.
+
+  **Learn more:** [Quick start](/developer/getting-started/quickstart) · [Upgrade guide](/developer/upgrades/5.6-to-6.0) · [React Dashboard](/developer/dashboard/overview)
+</Update>
+
 <Update label="MCP server for AI agents" description="October 18, 2026" tags={["AI", "Dashboard"]}>
   Spree now ships with a built-in MCP server, so AI agents such as Claude or Cursor can manage your store in plain language. Ask an agent for last month's sales in Germany, update a product, cancel an order, mark a shipment as delivered or launch a new market — without opening the admin.
 

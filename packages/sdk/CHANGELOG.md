@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added the `maintenance_task_run.*` webhook events (`created`, `started`, `interrupted`, `succeeded`, `errored`, `cancelled`, `updated` and `deleted`) to the typed webhook event catalog.
+
 ## 6.0.0-rc.7
 
 Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.

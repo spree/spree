@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 2.4.1
+
+### Patch Changes
+
+- [#14975](https://github.com/spree/spree/pull/14975) [`f86d75c`](https://github.com/spree/spree/commit/f86d75c467ca0fb39886a9d9813d59dfd7f73ccc) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Renamed the CLI commands and flags that were named after Rails tools, so each command describes what it does rather than which Rails tool runs it. `spree test` replaces `spree rspec`, `spree add <extension>` replaces `spree bundle add`, `spree migrate:rollback --steps n` replaces `STEP=n`, `spree build --reset-deps` replaces `--reset-bundle`, and `spree plugin new` takes `--backend-name` / `--no-backend`. `spree rails`, `spree rake`, `spree bundle`, `spree routes`, `spree rspec` and the old flags still work and print a notice naming the replacement; they will be removed in Spree 7.0. `spree test` now creates the test database when it is missing, so the suite runs on a fresh project with no setup step. Also fixed the setup-link hint `spree init` printed, which named a command that does not exist.
+
 ## 2.4.0
 
 ### Minor Changes

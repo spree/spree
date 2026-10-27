@@ -8,7 +8,7 @@ It has no dependencies and makes no network calls, so it runs anywhere JavaScrip
 npm install @spree/core
 ```
 
-> **Developer Preview.** `@spree/core` is on the 0.x line, and its API may change between minor versions until 1.0, so pin an exact version.
+`@spree/core` is released with Spree and carries its version: `@spree/core@6.0.x` works with Spree 6.0.x.
 
 ## Contents
 

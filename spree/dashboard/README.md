@@ -2,7 +2,7 @@
 
 Hosts the [Spree React Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview) from your Spree server — the **single-node topology**: the dashboard and the Admin API share one origin, so there are no CORS entries to maintain and auth cookies stay `SameSite=Lax`.
 
-> **Developer Preview.** In Spree 6 this gem becomes the default admin delivery. The path is permanent: the dashboard lives at `/dashboard`, and `/admin` stays reserved for the classic `spree_admin`.
+The path is permanent: the dashboard lives at `/dashboard`, and `/admin` stays reserved for the classic `spree_admin`.
 
 ## What it does
 
