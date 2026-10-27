@@ -15,6 +15,7 @@ interface Order {
   company_name: string | null;
   po_document_filename: string | null;
   po_document_byte_size: number | null;
+  pricing_access: string | null;
   number: string;
   email: string;
   customer_note: string | null;

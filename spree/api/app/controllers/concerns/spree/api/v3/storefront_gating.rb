@@ -15,6 +15,8 @@ module Spree
 
         included do
           before_action :enforce_storefront_login_required!
+
+          class_attribute :storefront_renders_receipts, instance_writer: false, default: false
         end
 
         class_methods do
@@ -25,19 +27,40 @@ module Spree
           def allow_guest_storefront_access!
             skip_before_action :enforce_storefront_login_required!, raise: false
           end
+
+          # Opts a controller out of the +approval_required+ price gate. Use
+          # for receipt surfaces — completed purchases and the customer's own
+          # stored value, money already taken. The posture protects catalog
+          # prices, never a buyer's record of what they were charged; the
+          # shipped +prices_hidden+ guest semantics stay untouched.
+          def renders_receipts!
+            self.storefront_renders_receipts = true
+          end
         end
 
         protected
 
         # @return [Boolean] whether prices must be hidden from this request.
         def hide_prices?
-          try_spree_current_user.blank? && !!current_channel&.storefront_prices_hidden?
+          pricing_access.present?
+        end
+
+        # Why prices are withheld from this request — nil when they are
+        # visible. Computed once per request; rendered by the serializers
+        # beside every nulled price.
+        #
+        # @return [String, nil]
+        def pricing_access
+          return @pricing_access if defined?(@pricing_access)
+
+          @pricing_access = compute_pricing_access
         end
 
         # Injects the price-hiding flag so the shared +price_for+/+price_in+
-        # serializer helpers null prices for gated guests.
+        # serializer helpers null prices for gated requests, and the reason
+        # code the priced payloads render beside the nulls.
         def serializer_params
-          super.merge(hide_prices: hide_prices?)
+          super.merge(hide_prices: hide_prices?, pricing_access: pricing_access)
         end
 
         # Renders a 401 with the shared +authentication_required+ error code.
@@ -58,6 +81,19 @@ module Spree
         end
 
         private
+
+        def compute_pricing_access
+          channel = current_channel
+          return nil if channel.nil?
+
+          if channel.storefront_prices_hidden?
+            'login_required' if try_spree_current_user.blank?
+          elsif channel.storefront_approval_required? && !storefront_renders_receipts
+            Spree.company_activation_policy.pricing_access_code(
+              user: try_spree_current_user, store: current_store
+            )
+          end
+        end
 
         def enforce_storefront_login_required!
           return if try_spree_current_user.present?

@@ -19,6 +19,8 @@ module Spree
 
         prefixed_id_attributes :product
 
+        pricing_access_attribute
+
         attributes :sku, :options_text, :track_inventory, :media_count
 
         # Customer-facing "ships by" promise — only while the variant is a

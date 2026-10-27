@@ -9,6 +9,13 @@ module Spree
         # (docs/plans/6.0-b2b-companies-and-catalogs.md).
         class CompaniesController < ResourceController
           prepend_before_action :require_authentication!
+          rate_limit to: Spree::Api::Config[:rate_limit_register], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_register]) }
+
+          request_params 'RegisterCompanyParams', action: :create do |body|
+            body.attribute :name, :string, required: true, example: 'Nowak Tools sp. z o.o.'
+            body.attribute :registration, :hash,
+              description: "Free-form answers from the merchant's registration form, stored on the company."
+          end
 
           request_params 'UpdateCompanyParams', action: :update do |body|
             body.attribute :name, :string, example: 'Acme Industrial Group'
@@ -29,6 +36,23 @@ module Spree
 
           def model_class
             Spree::Company
+          end
+
+          # POST founds a root company plus the caller's membership — the
+          # B2B front door, open to an existing retail customer and
+          # rate-limited like customer registration
+          # (docs/plans/6.1-b2b-company-self-registration.md).
+          def create_workflow
+            Spree.company_register_workflow
+          end
+
+          def create_workflow_arguments
+            {
+              store: current_store,
+              customer: current_user,
+              name: params[:name],
+              registration: params[:registration]&.to_unsafe_h
+            }
           end
 
           def serializer_class
