@@ -81,6 +81,7 @@ export interface WebhookEventMap {
   'claim.updated': Claim
   'company.created': Company
   'company.deleted': Company
+  'company.registered': Company
   'company.updated': Company
   'company_invitation.accepted': CompanyInvitation
   'company_invitation.created': CompanyInvitation

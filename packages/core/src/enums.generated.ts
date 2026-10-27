@@ -480,7 +480,12 @@ export const STOCK_TRANSFER_STATUSES = [
 export type StockTransferStatus = (typeof STOCK_TRANSFER_STATUSES)[number] | (string & {})
 
 /** Every value of `StorefrontAccess`. */
-export const STOREFRONT_ACCESSES = ['public', 'prices_hidden', 'login_required'] as const
+export const STOREFRONT_ACCESSES = [
+  'public',
+  'prices_hidden',
+  'login_required',
+  'approval_required',
+] as const
 export type StorefrontAccess = (typeof STOREFRONT_ACCESSES)[number]
 
 /** The built-in values of `TaxExemptionCertificateStatus`. Extensions may add more. */

@@ -1300,6 +1300,7 @@
           "inherit": "Heredar de la tienda",
           "label": "Acceso del storefront",
           "options": {
+            "approval_required": "Aprobación requerida — precios y pago solo para miembros de una empresa activa",
             "login_required": "Requiere inicio de sesión: los visitantes deben iniciar sesión para navegar",
             "prices_hidden": "Precios ocultos: los visitantes deben iniciar sesión para verlos",
             "public": "Público: cualquiera puede navegar y ver los precios"
@@ -2269,6 +2270,7 @@
           "help": "Predeterminado de toda la tienda sobre lo que pueden ver los visitantes anónimos. Los canales pueden reemplazarlo. Cuando los precios están ocultos, los invitados deben iniciar sesión para finalizar la compra.",
           "label": "Acceso del storefront",
           "options": {
+            "approval_required": "Aprobación requerida — precios y pago solo para miembros de una empresa activa",
             "login_required": "Requiere inicio de sesión: los visitantes deben iniciar sesión para navegar",
             "prices_hidden": "Precios ocultos: los visitantes deben iniciar sesión para verlos",
             "public": "Público: cualquiera puede navegar y ver los precios"

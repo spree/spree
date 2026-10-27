@@ -6660,3 +6660,27 @@ in each gem's `post_install_message`, not in the CLI.
 the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
 already lists is reported as installed rather than ejecting the project to
 re-add it.
+
+## 2026-10-27 — Company self-registration retargets to 6.1 and is built on released 6.0
+
+6.0 shipped stable without the B2B front door. The mechanisms
+(`6.1-b2b-company-self-registration.md`, renamed from 6.0) are additive and
+need no breaking window, so they land in the next minor rather than a patch
+release. The August pull-forward to 6.0 GA is spent; Enterprise onboarding
+builds on 6.1.
+
+Implementation choices, settled while porting the work onto released 6.0:
+the one-root guard refuses any second founding (`already_registered`) for a
+customer already holding a root membership; `pricing_access` rides every
+payload that nulls a price rather than the channel, and admin and event
+payloads carry it always-null as an additive constant; receipts (completed
+orders, order history, own balances) opt out of the posture through a
+`renders_receipts!` macro, because the posture protects catalog prices and
+not the record of money already taken; an explicitly named inactive company
+keeps the sale's attribution and loses only its agreements and exemptions,
+with a placed order exempt from the question entirely; and completion
+distinguishes `company_selection_required` from `company_activation_required`
+so a multi-company buyer is asked to choose rather than to register.
+
+Plans amended: `6.1-b2b-company-self-registration.md` (retargeted, In
+development).
