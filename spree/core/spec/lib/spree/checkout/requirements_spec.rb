@@ -78,6 +78,58 @@ RSpec.describe Spree::Checkout::Requirements do
       )
     end
 
+    it 'reports part of a line in no fulfillment before completion, so the buyer can change it' do
+      line_item = order.line_items.first
+      line_item.update_column(:quantity, line_item.quantity + 1)
+
+      expect(described_class.new(order.reload).call).to include(
+        a_hash_including(step: 'delivery', code: 'delivery_unavailable')
+      )
+    end
+
+    it 'checks the lines short of a fulfillment together, so more of them cost no more queries' do
+      cart_with_short_lines = lambda do |count|
+        create(:order_with_line_items, store: store, line_items_count: count).tap do |cart|
+          cart.line_items.each { |line_item| line_item.update_column(:quantity, line_item.quantity + 1) }
+        end.reload
+      end
+      # Inside the store a request runs in, as without one every stock check looks the default store up.
+      query_count = lambda do |cart|
+        count = 0
+        counter = ->(*, payload) { count += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION/) || payload[:cached] }
+        Spree::Current.set(store: store) do
+          ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { described_class.new(cart).call }
+        end
+        count
+      end
+
+      two, three = cart_with_short_lines.call(2), cart_with_short_lines.call(3)
+
+      expect(query_count.call(three)).to eq(query_count.call(two))
+    end
+
+    it 'completes once every unit of every line is in a fulfillment' do
+      expect(described_class.new(order).call(completion: true))
+        .not_to include(a_hash_including(code: 'delivery_unavailable'))
+    end
+
+    it 'leaves a line short of stock to the stock check' do
+      line_item = order.line_items.first
+      line_item.update_column(:quantity, line_item.quantity + 1)
+      line_item.variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
+
+      codes = described_class.new(order.reload).call(completion: true).map { |requirement| requirement[:code] }
+      expect(codes).to include('out_of_stock')
+      expect(codes).not_to include('delivery_unavailable')
+    end
+
+    it 'says nothing of delivery before any can be proposed' do
+      order.fulfillments.destroy_all
+
+      expect(described_class.new(order.reload).call(completion: true))
+        .not_to include(a_hash_including(code: 'delivery_unavailable'))
+    end
+
     it 'does not require shipping_method when no delivery step' do
       allow(order).to receive(:has_checkout_step?).with('delivery').and_return(false)
       allow(order).to receive(:has_checkout_step?).with('payment').and_return(true)

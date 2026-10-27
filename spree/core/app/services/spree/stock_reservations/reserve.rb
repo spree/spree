@@ -14,13 +14,17 @@ module Spree
 
         ApplicationRecord.transaction do
           targets = build_targets(cart)
-          break if targets.empty?
 
           # Pessimistic lock + fresh read of count_on_hand. The lock serializes
           # concurrent checkouts and we use the locked rows below so we never
-          # check stock against a stale association cache.
+          # check stock against a stale association cache. The shelves held
+          # now are locked with the new ones, in id order, so two checkouts
+          # moving holds past each other cannot deadlock.
+          stock_level_ids = targets.map { |_, si, _| si.id } |
+                            Spree::StockReservation.for_order(cart).pluck(:stock_level_id)
           locked_stock_levels = Spree::StockLevel
-            .where(id: targets.map { |_, si| si.id })
+            .where(id: stock_level_ids)
+            .order(:id)
             .lock
             .index_by(&:id)
 
@@ -29,22 +33,13 @@ module Spree
 
           this_order_used = Hash.new(0)
 
-          targets.each do |line_item, stock_level|
+          reservations = targets.map do |line_item, stock_level, quantity|
             stock_level = locked_stock_levels.fetch(stock_level.id)
             available = stock_level.available_count - held.fetch(stock_level.id, 0) - this_order_used[stock_level.id]
 
-            if available < line_item.quantity
-              raise InsufficientStockError.new(
-                line_item,
-                I18n.t(
-                  'spree.insufficient_stock_for_reservation',
-                  item: line_item.variant.name,
-                  available: [available, 0].max
-                )
-              )
-            end
+            raise_insufficient_stock(line_item, available) if available < quantity
 
-            this_order_used[stock_level.id] += line_item.quantity
+            this_order_used[stock_level.id] += quantity
 
             reservation = existing[[stock_level.id, line_item.id]] ||
                           Spree::StockReservation.new(stock_level: stock_level, line_item: line_item)
@@ -55,10 +50,15 @@ module Spree
               reservation.order = cart
               reservation.cart = nil
             end
-            reservation.quantity = line_item.quantity
+            reservation.quantity = quantity
             reservation.expires_at = expires_at
             reservation.save!
+            reservation
           end
+
+          # Left in place, a hold the allocation moved away from blocks other buyers until it expires.
+          moved = Spree::StockReservation.for_order(cart).where.not(id: reservations.map(&:id))
+          Spree::StockReservation.withdraw(moved)
         end
 
         success(cart)
@@ -68,23 +68,71 @@ module Spree
 
       private
 
+      # Held where the allocation packs each unit, so the hold protects the stock the order will ship.
       def build_targets(cart)
-        cart.line_items.includes(variant: [:product, { stock_levels: :stock_location }]).filter_map do |line_item|
-          variant = line_item.variant
-          next unless variant&.should_track_inventory?
+        cart.line_items.reset
+        coordinator = Spree::Stock::Coordinator.new(cart)
+        packages = coordinator.allocated_packages
+        check_allocated_in_full(cart, packages_items(packages))
 
-          stock_level = select_stock_level(variant)
+        # Once the address is known, a unit only an origin unable to reach it
+        # would pack cannot ship, so it is left to the delivery check rather
+        # than held where it blocks buyers that origin does serve.
+        packages = packages.select { |package| coordinator.deliverable?(package) } if cart.ship_address.present?
+        items = packages_items(packages)
+        stock_levels = Spree::Stock::Packer.stock_levels_by_location(packages.map(&:stock_location).uniq,
+                                                                     cart.line_items.map(&:variant_id).uniq)
+
+        # Summed because a splitter can pack one line into several packages from one location.
+        quantities = Hash.new(0)
+        items.each do |stock_location, item|
+          next unless item.on_hand?
+
+          line_item = item.inventory_unit.line_item
+          variant = line_item.variant
+          stock_level = stock_levels.dig(stock_location.id, variant.id)
           # Backorderable and pre-cart variants oversell past count_on_hand,
           # so a reservation capped at on-hand stock would wrongly reject them;
           # their cap is enforced by Stock::Quantifier#can_supply? instead.
+          next unless variant.should_track_inventory?
           next if stock_level.nil? || stock_level.backorderable? || variant.preorder?
 
-          [line_item, stock_level]
+          quantities[[line_item, stock_level]] += item.quantity
+        end
+
+        quantities.map { |(line_item, stock_level), quantity| [line_item, stock_level, quantity] }
+      end
+
+      def packages_items(packages)
+        packages.flat_map { |package| package.contents.map { |item| [package.stock_location, item] } }
+      end
+
+      # A line placed nowhere is left to the delivery check, which can say why;
+      # one placed in part has shelves that fall short, and is refused.
+      def check_allocated_in_full(cart, items)
+        allocated = items.each_with_object(Hash.new(0)) do |(_, item), quantities|
+          quantities[item.inventory_unit.line_item_id] += item.quantity
+        end
+
+        cart.line_items.each do |line_item|
+          variant = line_item.variant
+          next unless variant&.should_track_inventory?
+          next if variant.preorder?
+
+          placed = allocated[line_item.id]
+          raise_insufficient_stock(line_item, placed) if placed.positive? && placed < line_item.quantity
         end
       end
 
-      def select_stock_level(variant)
-        variant.stock_levels.detect { |si| si.stock_location&.active? && si.available? }
+      def raise_insufficient_stock(line_item, available)
+        raise InsufficientStockError.new(
+          line_item,
+          I18n.t(
+            'spree.insufficient_stock_for_reservation',
+            item: line_item.variant.name,
+            available: [available, 0].max
+          )
+        )
       end
 
       def held_by_others(stock_level_ids, owner)
@@ -104,8 +152,8 @@ module Spree
       def existing_reservations_for(targets)
         return {} if targets.empty?
 
-        stock_level_ids = targets.map { |_, si| si.id }
-        line_item_ids = targets.map { |li, _| li.id }
+        stock_level_ids = targets.map { |_, si, _| si.id }
+        line_item_ids = targets.map { |li, _, _| li.id }
 
         Spree::StockReservation
           .where(stock_level_id: stock_level_ids, line_item_id: line_item_ids)

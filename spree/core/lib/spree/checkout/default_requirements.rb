@@ -10,6 +10,12 @@ module Spree
     #
     # @see Requirements
     class DefaultRequirements
+      # Everything the discontinuation and stock checks read, so a set of
+      # lines is checked at once.
+      STOCK_CHECK_ASSOCIATIONS = {
+        variant: [{ product: %i[store product_publications] }, { stock_levels: %i[stock_location active_stock_reservations] }]
+      }.freeze
+
       # @param cart [Spree::Cart]
       def initialize(cart)
         @cart = cart
@@ -33,6 +39,7 @@ module Spree
           r << req('address', 'email', I18n.t('spree.checkout_requirements.email_required')) unless @cart.email.present?
           r << req('address', 'ship_address', I18n.t('spree.checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
           r << req('delivery', 'delivery_method', I18n.t('spree.checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
+          r.concat(undeliverable_errors)
           r << req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
           r << req('address', 'po_number', I18n.t('spree.checkout_requirements.po_number_required')) if po_number_missing?
           r << order_minimum_requirement if below_order_minimum?
@@ -102,16 +109,37 @@ module Spree
         end
       end
 
+      # A rebuild drops a proposal no method can quote with only a transient
+      # warning, so part of a line can be in no fulfillment. Advisory, so the
+      # buyer reads it while they can still change the address or the cart.
+      def undeliverable_errors
+        return [] unless delivery_step_required? && @cart.fulfillments.any?
+
+        undelivered_line_items.map do |line_item|
+          req('delivery', 'line_items', I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
+              code: 'delivery_unavailable')
+        end
+      end
+
+      # A line short of stock is packed short too; the stock check already
+      # names it. Only lines short of a fulfillment pay for that check, so a
+      # cart read stays at one query.
+      def undelivered_line_items
+        allocated = Spree::FulfillmentItem.where(fulfillment_id: @cart.fulfillments.select(:id))
+                                          .group(:line_item_id).sum(:quantity)
+        short = @cart.line_items.select { |line_item| allocated.fetch(line_item.id, 0) < line_item.quantity }
+        return [] if short.empty?
+
+        ActiveRecord::Associations::Preloader.new(records: short, associations: STOCK_CHECK_ASSOCIATIONS).call
+        short.reject { |line_item| discontinued?(line_item) || !line_item.sufficient_stock? }
+      end
+
       def discontinued?(line_item)
         line_item.variant.nil? || line_item.variant.discontinued? || line_item.variant.product.discontinued?
       end
 
       def completion_line_items
-        # Everything the discontinuation and stock checks read, for every line
-        # at once.
-        @completion_line_items ||= @cart.line_items.includes(
-          variant: [{ product: %i[store product_publications] }, { stock_levels: %i[stock_location active_stock_reservations] }]
-        ).to_a
+        @completion_line_items ||= @cart.line_items.includes(STOCK_CHECK_ASSOCIATIONS).to_a
       end
 
       def delivery_step_required?

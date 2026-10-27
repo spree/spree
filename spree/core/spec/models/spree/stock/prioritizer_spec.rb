@@ -47,6 +47,36 @@ module Spree
           expect(packages.first.quantity).to eq 2
         end
 
+        it 'backorders from an origin that can deliver rather than take stock on hand from one that cannot' do
+          2.times { build_inventory_unit }
+
+          undeliverable = pack { |package| inventory_units.each { |unit| package.add unit } }
+          deliverable = Package.new(other_location).tap do |package|
+            inventory_units.each { |unit| package.add unit, :backordered }
+          end
+
+          packages = Prioritizer.new([undeliverable, deliverable],
+                                     estimator: deliverable_only(deliverable)).prioritized_packages
+
+          expect(packages).to eq [deliverable]
+          expect(packages.first.quantity(:backordered)).to eq 2
+        end
+
+        it 'leaves a unit the origins that can deliver cannot supply with the origin that holds it' do
+          2.times { build_inventory_unit }
+          covered, uncovered = inventory_units
+
+          undeliverable = pack { |package| inventory_units.each { |unit| package.add unit } }
+          deliverable = Package.new(other_location).tap { |package| package.add covered, :backordered }
+
+          packages = Prioritizer.new([undeliverable, deliverable],
+                                     estimator: deliverable_only(deliverable)).prioritized_packages
+
+          expect(packages).to eq [deliverable, undeliverable]
+          expect(deliverable.contents.map(&:inventory_unit)).to eq [covered]
+          expect(undeliverable.contents.map(&:inventory_unit)).to eq [uncovered]
+        end
+
         it 'keeps the order it was given between origins that can both deliver' do
           2.times { build_inventory_unit }
 

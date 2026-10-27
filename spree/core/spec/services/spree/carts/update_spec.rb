@@ -961,6 +961,14 @@ module Spree
 
             expect(Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)).to be > original_expiry
           end
+
+          it 'reserves again when the destination changes, since the units may ship from elsewhere' do
+            cart.line_items.first.variant.stock_levels.first.update!(backorderable: true)
+
+            described_class.call(cart: cart, params: { shipping_address: address_params.merge(city: 'Brooklyn', postal_code: '11201') })
+
+            expect(Spree::StockReservation.where(cart_id: cart.id)).to be_empty
+          end
         end
 
         # Reverting to the `cart` state from inside Update isn't reachable via
