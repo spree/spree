@@ -33,12 +33,24 @@ module Spree
           # stored value, money already taken. The posture protects catalog
           # prices, never a buyer's record of what they were charged; the
           # shipped +prices_hidden+ guest semantics stay untouched.
+          #
+          # For a controller that renders receipts on only some of its paths,
+          # call {#rendering_receipt!} on those instead.
           def renders_receipts!
             self.storefront_renders_receipts = true
           end
         end
 
         protected
+
+        # Declares that this particular response is a receipt, for a
+        # controller whose other paths are not — the cart endpoints, which
+        # answer with a completed order once checkout has succeeded. Must run
+        # before the serializer params are read.
+        def rendering_receipt!
+          @rendering_receipt = true
+          remove_instance_variable(:@pricing_access) if defined?(@pricing_access)
+        end
 
         # @return [Boolean] whether prices must be hidden from this request.
         def hide_prices?
@@ -88,11 +100,17 @@ module Spree
 
           if channel.storefront_prices_hidden?
             'login_required' if try_spree_current_user.blank?
-          elsif channel.storefront_approval_required? && !storefront_renders_receipts
+          elsif channel.storefront_approval_required? && !receipt_response?
             Spree.company_activation_policy.pricing_access_code(
               user: try_spree_current_user, store: current_store
             )
           end
+        end
+
+        # Whether this response is a buyer's record of money already taken,
+        # declared for the whole controller or just for this path.
+        def receipt_response?
+          storefront_renders_receipts || @rendering_receipt.present?
         end
 
         def enforce_storefront_login_required!

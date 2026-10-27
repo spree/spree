@@ -97,6 +97,15 @@ RSpec.describe Spree::Api::V3::Store::CompaniesController, type: :controller do
       expect(store.companies.where(name: 'Second Business')).to be_empty
     end
 
+    # A scalar under the key is a malformed submission, not a crash: the
+    # declared :hash type does not filter the raw params this path reads.
+    it 'ignores registration answers that are not a hash' do
+      post :create, params: { name: 'Nowak Tools', registration: 'not-a-hash' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(store.companies.find_by(name: 'Nowak Tools').metadata).not_to have_key('registration')
+    end
+
     it 'refuses an invalid registration' do
       post :create, params: { name: '' }, as: :json
 

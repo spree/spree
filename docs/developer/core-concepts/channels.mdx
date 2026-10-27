@@ -111,7 +111,7 @@ This attribution drives reporting (best-selling by channel, revenue per channel)
 
 ### Storefront Access Gating
 
-A channel's `storefront_access` decides what an **anonymous** visitor — a request with no authenticated customer — may see. Logged-in customers are never gated. The posture is one of three values:
+A channel's `storefront_access` decides what a visitor may see. Under `prices_hidden` and `login_required` only an **anonymous** visitor — a request with no authenticated customer — is gated, and logged-in customers are never gated. `approval_required` also gates a signed-in customer who has no standing over an active [company](/developer/core-concepts/companies). The posture is one of four values:
 
 | Mode | Guest sees catalog | Guest sees prices | Use case |
 |---|---|---|---|
