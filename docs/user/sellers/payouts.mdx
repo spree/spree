@@ -52,6 +52,8 @@ A seller can have their own schedule and minimum, set on their page under **Payo
   <Tab title="Stripe Connect">
     Each seller connects a Stripe account — the **payout account** onboarding requirement asks them to, and the seller panel walks them through it. You charge the customer on your own Stripe account; as each seller's goods ship, their share is transferred to their connected account, tied to the charge that funds it so it moves as soon as that charge settles rather than out of your balance.
 
+    When a refund is issued after the seller was paid, the seller's share is taken back from their Stripe account automatically.
+
     From there, Stripe pays the seller's bank on the schedule set for their account. Spree records what Stripe is going to do, and a webhook confirms when it did — which is when the payout turns **Completed**.
 
     Requires an active Stripe payment method under Settings → Payments. Setup is on the [Stripe Connect](/integrations/payments/stripe-connect) page.
@@ -59,7 +61,7 @@ A seller can have their own schedule and minimum, set on their page under **Payo
 </Tabs>
 
 <Note>
-Refund clawbacks and netting across payouts, reconciliation, and seller tax reports are part of Spree Enterprise.
+Reconciliation against Stripe statements and seller tax reports are part of Spree Enterprise.
 </Note>
 
 ## Related

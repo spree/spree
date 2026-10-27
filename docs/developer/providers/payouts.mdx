@@ -15,7 +15,7 @@ Core calls a provider at exactly three moments. Each verb takes the ledger row i
 |---|---|---|
 | `transfer!(seller_transfer)` | An order is fulfilled and the seller is payable | Credit the seller's earning — or, if your rails only move money at settlement, mark the row `completed` and do nothing else |
 | `pay!(seller_payout)` | A scheduled sweep or an operator settles a seller | Send the batch. Store the provider's own id in `reference`, and leave the status alone — a payout is completed when the money is confirmed to have landed, not when it was sent |
-| `reverse!(seller_transfer)` | A refund takes back part of an earning | Pull the money back if your rails can. Core writes the reversal row either way, so a provider that cannot claw back implements this as a no-op |
+| `reverse!(seller_transfer)` | A refund takes back part of an earning | Pull the money back if your rails can. Core writes the reversal row either way, so a provider that cannot claw back implements this as a no-op. Raise `GatewayError` to have it retried later, for example while its earning has not been sent |
 
 Alongside the verbs, a provider tells core what it needs from sellers before it can pay them:
 
@@ -334,7 +334,7 @@ The Stripe provider's spec in the monorepo (`spree/providers/stripe/spec/models/
 - `onboarded?` asks the API rather than reading the cached stamp
 
 <Note>
-Refund clawbacks netted across settlements, reconciliation against provider statements, KYC operations and seller tax reporting (DAC7) are Spree Enterprise. Open source ships the ledger, the contract, and the two providers above.
+Reconciliation against provider statements, KYC operations and seller tax reporting (DAC7) are Spree Enterprise. Open source ships the ledger, the contract, and the two providers above.
 </Note>
 
 ## Related

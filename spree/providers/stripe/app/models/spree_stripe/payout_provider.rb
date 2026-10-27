@@ -266,15 +266,54 @@ module SpreeStripe
       raise Spree::Core::AmbiguousGatewayError, e.message
     end
 
-    # Pulls a seller's money back after a refund.
+    # Pulls a seller's share of a refund back from their connected account.
     #
-    # Ledger-only in open source: the row is written either way, so the books
-    # stay correct, but reversing the Stripe transfer — and netting a negative
-    # balance against future earnings — is where a marketplace needs the money
-    # operations that Enterprise provides.
+    # Reverses the transfer that paid the earning, by the reversal's amount,
+    # so the money returns to the platform that refunded the customer. A
+    # seller who has already been paid out is left with a negative Stripe
+    # balance, which their next earnings make up before anything more is paid
+    # out to them.
+    #
+    # The reversal waits until its earning has reached Stripe: until then
+    # there is no transfer to take from. It is left pending, and the
+    # pending-transfers job asks again once the earning is sent.
     def reverse!(seller_transfer)
-      seller_transfer.update!(status: 'completed')
+      return complete_without_sending(seller_transfer) if minor_units(seller_transfer).zero?
+
+      earning = seller_transfer.reversed_from
+      raise Spree::Core::GatewayError, 'Reversal has no earning to take back from' if earning.nil?
+      # Never sent, so nothing reached the seller's account.
+      return complete_without_sending(seller_transfer) if earning.failed?
+      return seller_transfer unless earning.completed?
+
+      # Confirmed without a transfer to point at — settled by hand, say. Only
+      # a person can say where that money is.
+      if earning.reference.blank?
+        raise Spree::Core::AmbiguousGatewayError, 'The earning has no Stripe transfer to reverse'
+      end
+
+      reversal = Stripe::Transfer.create_reversal(
+        earning.reference,
+        {
+          amount: minor_units(seller_transfer),
+          metadata: {
+            spree_seller_transfer_id: seller_transfer.id,
+            spree_order_number: seller_transfer.order.number
+          }
+        },
+        gateway_for(seller_transfer.seller.store).api_options.merge(idempotency_key: idempotency_key(seller_transfer))
+      )
+
+      # The earning may have been sent after this row was written, and only
+      # then learned the currency it settled in.
+      seller_transfer.update!(
+        { status: 'completed', reference: reversal.id }.merge(earning.reversal_settlement(seller_transfer.amount.abs))
+      )
       seller_transfer
+    rescue *AMBIGUOUS_ERRORS => e
+      # The reversal may have been made before the answer was lost, so core
+      # parks it rather than taking the money back twice.
+      raise Spree::Core::AmbiguousGatewayError, e.message
     end
 
     private
