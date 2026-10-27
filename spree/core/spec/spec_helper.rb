@@ -68,6 +68,7 @@ require 'spree/testing_support/kernel'
 require 'spree/testing_support/imports'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/next_instance_of'
+require 'spree/testing_support/example_hosts'
 
 RSpec.configure do |config|
   config.color = true

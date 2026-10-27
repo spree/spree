@@ -269,6 +269,14 @@ bundle exec rake spree:uploads:assign_stores
 
 Every uploaded file now records the store that owns it (`active_storage_blobs.store_id`). New uploads get it when they are made; this task gives existing files the store of the record they are attached to. A file attached in more than one store is listed and left alone for you to resolve. Safe to re-run at any time.
 
+### Switch off webhook endpoints at internal addresses
+
+```bash
+bundle exec rake "spree:maintenance_tasks:perform[disable_unsafe_webhook_endpoints]"
+```
+
+Switches off webhook endpoints whose URL Spree now refuses for good: a malformed URL, or an internal or private address (see [Webhook URLs are checked more strictly](#webhook-urls-are-checked-more-strictly)). Earlier versions accepted some of these, such as `http://127.1/`. Spree already refuses to deliver to them; this stops the failed attempts. Plain-http endpoints keep running, and so do endpoints whose host does not resolve while the step runs, since that may be a passing DNS failure. No email is sent, and the reason is kept on the endpoint. An endpoint that can't be saved is reported and skipped, so the rest are still switched off. Safe to re-run at any time.
+
 ## Enable Active Record encryption
 
 Spree encrypts payment gateway and integration secrets, webhook endpoint signing secrets, payment gateway customer IDs and the OAuth tokens on user identities with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html) — but only when encryption keys are configured. Without keys these values are stored in plain text. New 6.0 projects get keys at setup; upgraded applications need to add them.
@@ -689,6 +697,21 @@ Some payloads changed so that every webhook carries the Store API shape and noth
 - **Purchase order, stock receipt, supplier and shipping label events** carry a short payload — status, related record IDs and timestamps. Costs, notes, contact details and label files are read from the Admin API.
 - **`saved_report.*`** no longer includes the author's name.
 - **Subscribing an endpoint to `customer.password_reset_requested`** needs the permission to manage customers. The staff and seller reset events are still never sent to webhooks.
+
+## Webhook URLs are checked more strictly
+
+Outside development, a webhook endpoint's URL must now:
+
+- use HTTPS
+- name a host that exists
+- not name an internal host: a name without a dot, or one ending in `.internal`, `.local`, `.localhost` or `.svc`
+- not point to an internal or private address, however it is written (`127.1`, `[::1]` and `0x7f.0.0.1` included)
+
+Hosts listed in [`SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS`](/developer/core-concepts/webhooks#internal-endpoints) are exempt from all four, plain http included.
+
+The URL is checked every time an active endpoint is saved, not only when it changes. An existing plain-http endpoint keeps receiving webhooks, but it cannot be edited or turned back on until its URL uses HTTPS. Turning an endpoint off always works.
+
+Spree no longer follows redirects when it delivers a webhook. A `3xx` answer is a failed delivery, so point the endpoint at the final URL. A delivery refused because of its URL is recorded with `error_type: 'blocked'` and is not retried. Run [the upgrade step](#switch-off-webhook-endpoints-at-internal-addresses) to switch off endpoints saved before these checks.
 
 ## Removed in 6.0
 

@@ -78,6 +78,8 @@ export function useToggleWebhookEndpoint() {
     invalidate: [['webhook-endpoints']],
     successMessage: false,
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+    // Re-enabling re-checks the URL, and no form is open to show the refusal.
+    showValidationErrors: true,
     onSuccess: (_data, { id }) => {
       // Detail page reads `disabled_at` + `active` directly from the
       // single-endpoint cache; invalidating only the list misses it.

@@ -37,6 +37,8 @@ import {
   FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
+  FIXTURE_REDIRECT_WEBHOOK,
+  FIXTURE_REFUSED_WEBHOOK,
   FIXTURE_SELLER_PASSWORD,
   FIXTURE_SELLER_USER_EMAIL,
   FIXTURE_SELLER_WRITER_EMAIL,
@@ -66,6 +68,10 @@ const RAILS_ENV = {
   PORT,
   DASHBOARD_E2E: '1',
   DATABASE_URL: `sqlite3:${TEST_SQLITE}`,
+  // The webhook specs' endpoints live under example.com subdomains that do
+  // not exist. Trusting them lets those endpoints save; the specs for refused
+  // URLs use other hosts.
+  SPREE_WEBHOOKS_ALLOWED_INTERNAL_HOSTS: '.example.com',
 }
 
 // Customer's last name is derived from the full name so the seeder and the
@@ -206,8 +212,16 @@ const BOOTSTRAP_RUBY = [
   `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
   "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
   `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
+  // An endpoint whose delivery was answered with a redirect, for the hint the
+  // delivery panel shows. Written directly: no endpoint redirects in a test run.
+  // Inactive, so orders placed by other specs add no deliveries above it.
+  `redirect_hook = s.webhook_endpoints.where(name: '${FIXTURE_REDIRECT_WEBHOOK}').first_or_create!(url: 'https://redirecting.example.com/hook', subscriptions: ['order.placed'], active: false)`,
+  "redirect_hook.webhook_deliveries.first_or_create!(event_name: 'order.placed', payload: { name: 'order.placed', data: {} }, response_code: 302, success: false, delivered_at: Time.current)",
+  // A switched-off endpoint at an internal address, as one saved before the
+  // URL rules would be, so re-enabling it is refused. Saved past validation.
+  `refused_hook = s.webhook_endpoints.find_by(name: '${FIXTURE_REFUSED_WEBHOOK}') || s.webhook_endpoints.new(name: '${FIXTURE_REFUSED_WEBHOOK}', url: 'http://127.1/hook', subscriptions: ['order.placed'], active: false, disabled_at: Time.current, disabled_reason: 'Automatically disabled after repeated delivery failures').tap { |endpoint| endpoint.save!(validate: false) }`,
   'port = ENV.fetch("PORT", 3010)',
-  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
+  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, redirect_webhook_id: redirect_hook.prefixed_id, refused_webhook_id: refused_hook.prefixed_id)',
 ].join('; ')
 
 export default async function globalSetup() {

@@ -44,32 +44,26 @@ module Spree
 
           begin
             response = make_request
-            execution_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
 
             payload[:response_code] = response.code.to_i
             @delivery.complete!(
               response_code: response.code.to_i,
-              execution_time: execution_time,
+              execution_time: elapsed_since(start_time),
               response_body: response.body.to_s.truncate(10_000)
             )
+          # Refusals are deliberate, so they are recorded rather than reported.
+          # A name that does not resolve may be a passing DNS outage and is
+          # retried; an internal or malformed address never becomes allowed.
+          rescue SsrfFilter::UnresolvedHostname => e
+            record_failure(e, start_time, payload, error_type: refused_url? ? 'blocked' : 'connection_error')
+          rescue SsrfFilter::Error, URI::InvalidURIError => e
+            record_failure(e, start_time, payload, error_type: 'blocked')
           rescue Net::OpenTimeout, Net::ReadTimeout => e
-            execution_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
             Rails.error.report(e, context: { webhook_delivery_id: @delivery.id, url: @delivery.url })
-            payload[:error_type] = 'timeout'
-            @delivery.complete!(
-              execution_time: execution_time,
-              error_type: 'timeout',
-              request_errors: e.message
-            )
+            record_failure(e, start_time, payload, error_type: 'timeout')
           rescue StandardError => e
-            execution_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
             Rails.error.report(e, context: { webhook_delivery_id: @delivery.id, url: @delivery.url })
-            payload[:error_type] = 'connection_error'
-            @delivery.complete!(
-              execution_time: execution_time,
-              error_type: 'connection_error',
-              request_errors: e.message
-            )
+            record_failure(e, start_time, payload, error_type: 'connection_error')
           end
         end
       end
@@ -106,8 +100,28 @@ module Spree
           request.body = body
           http.request(request)
         else
-          SsrfFilter.post(@delivery.url, headers: headers, body: body, http_options: http_options)
+          # A redirect is recorded as the endpoint's answer, never followed:
+          # following it would hand the request to an address nobody checked
+          # when the endpoint was saved.
+          SsrfFilter.post(@delivery.url, headers: headers, body: body, http_options: http_options,
+                                         max_redirects: 0, allow_unfollowed_redirects: true)
         end
+      end
+
+      # SsrfFilter resolves neither `127.1` nor `metadata.google.internal`;
+      # the endpoint's own URL rules tell those apart from a DNS outage, with
+      # no second lookup of a name that just failed to resolve.
+      def refused_url?
+        Spree::WebhookEndpoint::REFUSED_URL_ERRORS.include?(@delivery.webhook_endpoint.url_error(resolve: false))
+      end
+
+      def record_failure(error, start_time, payload, error_type:)
+        payload[:error_type] = error_type
+        @delivery.complete!(execution_time: elapsed_since(start_time), error_type: error_type, request_errors: error.message)
+      end
+
+      def elapsed_since(start_time)
+        ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
       end
 
       def generate_signature
