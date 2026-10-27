@@ -6670,8 +6670,8 @@ release. The August pull-forward to 6.0 GA is spent; Enterprise onboarding
 builds on 6.1.
 
 Implementation choices, settled while porting the work onto released 6.0:
-the one-root guard refuses any second founding (`already_registered`) for a
-customer already holding a root membership; `pricing_access` rides every
+the one-root guard refuses a second founding (`already_registered`) in a store
+where the customer already holds a root membership; `pricing_access` rides every
 payload that nulls a price rather than the channel, and admin and event
 payloads carry it always-null as an additive constant; receipts (completed
 orders, order history, own balances) opt out of the posture through a

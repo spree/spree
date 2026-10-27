@@ -548,6 +548,10 @@ module Spree
   #   })
   #
   # @return [Spree::PermissionConfiguration] the permission catalog
+  def self.permissions
+    @permissions ||= PermissionConfiguration.new
+  end
+
   # The registered company activation policy, ready to ask. The contract is
   # an argless constructor (the policy is a stateless per-call strategy), so
   # this is the one construction point every consumer shares — a replacement
@@ -557,10 +561,6 @@ module Spree
   # @return [Object] an instance of Spree.company_activation_policy_class
   def self.company_activation_policy
     company_activation_policy_class.new
-  end
-
-  def self.permissions
-    @permissions ||= PermissionConfiguration.new
   end
 
   # Ransack configuration accessor for managing custom ransackable attributes,

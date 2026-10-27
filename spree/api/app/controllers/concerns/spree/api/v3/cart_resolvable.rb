@@ -87,6 +87,12 @@ module Spree
         # storefront that knows nothing about groups still finds every order it
         # needs there.
         def render_order(status: :ok)
+          # What comes back is a completed purchase, so it is a receipt even
+          # though the cart endpoints are not a receipt surface as a whole: a
+          # buyer who lost their standing after paying still gets the totals
+          # they were charged.
+          rendering_receipt!
+
           # Read back through a lazily preloading relation rather than
           # reloaded in place: a group's orders, and everything each of them
           # renders, then load once for all of them instead of once per order.

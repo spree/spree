@@ -103,6 +103,18 @@ RSpec.shared_examples 'a company host' do
           expect(record.company_activation_missing?).to be(true)
         end
       end
+
+      # The company_id is validated when it is written, so a membership
+      # revoked afterwards leaves a cart still naming a company the buyer no
+      # longer belongs to. Completing on it would take that business's
+      # exemptions.
+      it 'is true when the buyer lost standing over the company it names' do
+        membership = create(:company_membership, company: company, customer: record.customer)
+        record.update!(company: company)
+        membership.destroy!
+
+        expect(record.reload.company_activation_missing?).to be(true)
+      end
     end
   end
 
