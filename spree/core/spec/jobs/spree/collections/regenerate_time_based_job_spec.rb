@@ -20,6 +20,19 @@ module Spree
       expect(collection.reload.products).not_to include(product)
     end
 
+    context 'when a store has been deleted' do
+      let(:deleted_store) { create(:store) }
+
+      before do
+        create(:available_on_collection_rule, :is_equal_to, collection: create(:automatic_collection, store: deleted_store), value: 30)
+        deleted_store.destroy
+      end
+
+      it 'skips its collections' do
+        expect { described_class.perform_now }.not_to raise_error
+      end
+    end
+
     context 'when another store has a time-based collection' do
       let(:other_store) { create(:store) }
       let!(:other_collection) { create(:automatic_collection, store: other_store) }
