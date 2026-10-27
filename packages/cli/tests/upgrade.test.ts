@@ -210,7 +210,7 @@ describe('detectSpreeGems', () => {
       if (args.includes('install')) return { stdout: '' }
       throw Object.assign(new Error('x'), { exitCode: 1, stderr: 'Could not find gem spree_core' })
     }) as never)
-    await expect(detectSpreeGems('/proj')).rejects.toThrow(/even after `bundle install`/)
+    await expect(detectSpreeGems('/proj')).rejects.toThrow(/even after reinstalling/)
     await expect(detectSpreeGems('/proj')).rejects.toThrow(/Could not find gem spree_core/)
   })
 })
@@ -587,7 +587,7 @@ describe('spree upgrade', () => {
       'pnpm update @spree/dashboard',
       'pnpm dedupe',
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
-      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose exec web bin/rails spree:upgrade',
       'docker compose restart web',
     ])
   })
@@ -605,7 +605,7 @@ describe('spree upgrade', () => {
       'pnpm dedupe',
       'docker compose up -d --no-deps web',
       'docker compose up -d --wait',
-      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose exec web bin/rails spree:upgrade',
     ])
   })
 
@@ -767,7 +767,7 @@ describe('spree upgrade', () => {
     await expect(runUpgrade()).rejects.toThrow(/spree:upgrade failed/)
 
     expect(commands).toContain('pnpm update @spree/dashboard')
-    expect(commands.at(-1)).toBe('docker compose exec web bin/rake spree:upgrade')
+    expect(commands.at(-1)).toBe('docker compose exec web bin/rails spree:upgrade')
   })
 
   describe('when `compose ps` fails', () => {
@@ -859,8 +859,8 @@ describe('spree upgrade', () => {
     await runUpgrade(['--step', 'channels'])
 
     expect(commands).toEqual([
-      'docker compose exec -e DRY_RUN=1 web bin/rake spree:upgrade',
-      'docker compose exec -e STEP=channels web bin/rake spree:upgrade',
+      'docker compose exec -e DRY_RUN=1 web bin/rails spree:upgrade',
+      'docker compose exec -e STEP=channels web bin/rails spree:upgrade',
     ])
   })
 })

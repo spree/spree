@@ -91,8 +91,8 @@ Reference material — the data backfills `bundle exec rake spree:upgrade` execu
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:upgrade:preferences_json
-spree rake spree:upgrade:encrypt_secret_preferences
+spree task upgrade:preferences_json
+spree task upgrade:encrypt_secret_preferences
 ```
 
 ```bash Without Spree CLI
@@ -306,7 +306,7 @@ Recreate the containers so they pick up the new `.env` (`spree dev` — `spree r
 Never change or lose the keys once data is encrypted — the encrypted records become unreadable.
 </Warning>
 
-**3. Encrypt existing rows.** Rows written before the keys were set are plain text. Gateway and integration secrets and the OAuth tokens on user identities stay readable and are encrypted on their next write; run `spree rake spree:upgrade:encrypt_secret_preferences` (`bundle exec rake spree:upgrade:encrypt_secret_preferences` without the Spree CLI) to encrypt every gateway and integration secret at once. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
+**3. Encrypt existing rows.** Rows written before the keys were set are plain text. Gateway and integration secrets and the OAuth tokens on user identities stay readable and are encrypted on their next write; run `spree task upgrade:encrypt_secret_preferences` (`bundle exec rake spree:upgrade:encrypt_secret_preferences` without the Spree CLI) to encrypt every gateway and integration secret at once. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
 
 ## Preferences are stored as JSON
 
@@ -330,7 +330,7 @@ Model preferences moved from YAML to JSON, and secrets moved out of them. Declar
 - **Per-preference helper methods are gone.** Use `preference_type(:name)`, `preference_default(:name)` and `preference_deprecated(:name)` instead of `preferred_<name>_type`, `preferred_<name>_default` and `preferred_<name>_deprecated`. `clear_preferences`, `restore_preferences_for`, `preferences_of_type`, the class methods `preference_getter_method`, `preference_setter_method` and `prefers_query_method`, `Spree::Preferences::ScopedStore`, `Spree::Preferences::Store` and the `Spree::Preference` model are removed.
 - **The `spree_preferences` table is dropped.** The installation id it held is not carried over: the default store generates a new one the next time it is saved. Rows an application wrote there itself are dropped with it: copy any you need before upgrading.
 - **Preferences live only on models.** `Spree::Preferences::Preferable` is included by `Spree::Base` and needs a `preferences` JSON column; including it in a plain Ruby class is no longer supported. A hash stored inside a preference comes back with string keys.
-- **A record whose preferences still hold YAML cannot be read.** The migration converts every row, so this only happens to rows written by older code after it ran. Run `spree rake spree:upgrade:preferences_json` (`bundle exec rake spree:upgrade:preferences_json` without the Spree CLI) to convert it.
+- **A record whose preferences still hold YAML cannot be read.** The migration converts every row, so this only happens to rows written by older code after it ran. Run `spree task upgrade:preferences_json` (`bundle exec rake spree:upgrade:preferences_json` without the Spree CLI) to convert it.
 
 ## The Cart/Order split
 
@@ -989,7 +989,7 @@ Other changes that come with it:
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:money:audit_capture_events
+spree task money:audit_capture_events
 ```
 
 ```bash Without Spree CLI

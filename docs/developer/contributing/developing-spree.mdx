@@ -82,7 +82,7 @@ Which command after which change:
 | Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check || bundle install` (or `cd server && pnpm exec spree bundle install` while the stack runs) |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates the containers) |
 | `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build ("lockfile can't be updated because frozen") | `pnpm server:build`, then `pnpm server:dev` — the build script handles the edge-rewritten `Gemfile.lock` automatically |
-| Meilisearch image bump ("database version … is incompatible") | Remove the `server_meilisearch_data` volume, boot, then reindex (`pnpm exec spree rake spree:search:reindex`) — the index is derived data |
+| Meilisearch image bump ("database version … is incompatible") | Remove the `server_meilisearch_data` volume, boot, then reindex (`pnpm exec spree task search:reindex`) — the index is derived data |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes the database and volumes) |
 
 Re-run `pnpm server:setup` **only** to fully reset — it does `docker compose down -v` + `rm -rf ./server`, wiping all DB data.
@@ -310,19 +310,11 @@ A **Lefthook pre-commit hook** regenerates both whenever you commit a change to 
 To regenerate manually (useful when iterating on serializers before committing):
 
 ```bash
-cd server
-pnpm exec spree rake typelizer:generate     # regenerate TS types
-cd ..
-pnpm generate:zod                            # regenerate Zod schemas for every SDK
+pnpm generate:types   # regenerate TS types from the serializers
+pnpm generate:zod     # regenerate Zod schemas for every SDK
 ```
 
-If you'd rather avoid the Docker round-trip and have Ruby on your host, the native equivalent works too:
-
-```bash
-cd spree/api
-bundle install
-bundle exec rake typelizer:generate
-```
+`pnpm generate:types` runs with the Ruby on your machine, like the pre-commit hook, so run `bundle install` in `spree/api` once first.
 
 ### Releasing packages
 

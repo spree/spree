@@ -17,19 +17,22 @@ Run from your Spree project directory:
 |---------|-------------|
 | `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the Admin Dashboard dev server when `apps/dashboard` exists and opens the dashboard in the browser once it is ready (`--no-open` skips it) |
 | `spree stop` | Stop backend services |
-| `spree upgrade` | Upgrade Spree — the server (image or gems), `@spree/*` packages, migrations and data backfills |
+| `spree upgrade` | Upgrade Spree — the server, `@spree/*` packages, migrations and data backfills |
 | `spree eject` | Switch from the prebuilt image to building from `backend/` |
 | `spree add dashboard` | Add the Admin Dashboard to an existing project, to customize it |
 | `spree add seller-dashboard` | Add the marketplace seller panel to an existing project |
+| `spree add <extension>` | Install an extension end to end (e.g. `spree add stripe`) |
 | `spree add ai` | Install the Spree agent skills and connect coding agents to the Spree docs MCP server |
 | `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
-| `spree console` / `spree shell` / `spree logs` | Rails console, container shell, log tailing |
+| `spree console` / `spree shell` / `spree logs` | Backend console, container shell, log tailing |
 | `spree migrate` / `spree seed` / `spree sample-data` | Database tasks |
 | `spree generate …` | Spree generators (models, API resources, subscribers, migrations) |
+| `spree task <name>` | Run a Spree maintenance task (e.g. `search:reindex`) |
 | `spree user create` / `spree api-key …` | Admin users and scoped API keys |
-| `spree encryption init` | Add Active Record encryption keys to `.env` (`--print` to only print a set) |
+| `spree encryption init` | Add encryption keys to `.env` (`--print` to only print a set) |
 | `spree api get/post/patch/delete <path>` | Call the Admin API directly (`spree api endpoints` lists routes + scopes) |
-| `spree rspec` | Run the backend test suite inside the container |
+| `spree test` | Run the backend test suite inside the container |
+| `spree exec <command>` | Run any other command inside the container |
 
 ## Documentation
 
