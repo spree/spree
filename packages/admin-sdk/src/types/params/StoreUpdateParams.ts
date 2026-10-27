@@ -12,7 +12,7 @@ export type StoreUpdateParams = {
    * The store-wide default for what anonymous visitors can see. Channels fall back to it when they
    * don't set their own.
    */
-  storefront_access?: 'public' | 'prices_hidden' | 'login_required'
+  storefront_access?: 'public' | 'prices_hidden' | 'login_required' | 'approval_required'
   /**
    * The storefront's public URL, the base for links in customer emails. Saving it also completes
    * the storefront setup task.

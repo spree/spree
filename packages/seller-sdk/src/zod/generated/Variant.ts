@@ -11,6 +11,7 @@ import { StockLevelSchema } from './StockLevel';
 export const VariantSchema = z.object({
   id: z.string(),
   product_id: z.string(),
+  pricing_access: z.string().nullable(),
   sku: z.string().nullable(),
   options_text: z.string(),
   track_inventory: z.boolean(),

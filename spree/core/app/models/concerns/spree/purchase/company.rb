@@ -61,6 +61,29 @@ module Spree
         resolved_company&.legal_entity
       end
 
+      # Whether an +approval_required+ channel must refuse completion: the
+      # sale resolves to no company, or to a named node the buyer no longer
+      # stands over or the policy has not activated (an inactive sole standing
+      # already resolves to nothing). The staff exemption lives with the
+      # checkout requirement that consumes this
+      # (docs/plans/6.1-b2b-company-self-registration.md).
+      #
+      # @return [Boolean]
+      def company_activation_missing?
+        return false if channel.blank? || !channel.storefront_approval_required?
+
+        node = resolved_company
+        return true if node.nil?
+        # Standing is re-read here rather than trusted from the cart: the
+        # column is validated when it is written, and a membership revoked
+        # afterwards leaves a cart still naming the company. Completing on it
+        # would attribute the sale — and its exemptions — to a business the
+        # buyer no longer belongs to.
+        return true unless customer&.standing_for?(node)
+
+        !Spree.company_activation_policy.active?(node)
+      end
+
       private
 
       def company_id_changing?
@@ -76,9 +99,13 @@ module Spree
 
       def customer_has_standing_over_company
         return if company.nil?
-        return if customer&.standing_for?(company)
+        return errors.add(:company, :invalid) unless customer&.standing_for?(company)
+        # Distinct from :invalid so a storefront can tell "not yours" from
+        # "not yet activated" — the latter is the awaiting-approval state the
+        # registration flow renders.
+        return if Spree.company_activation_policy.active?(company)
 
-        errors.add(:company, :invalid)
+        errors.add(:company, :not_active)
       end
 
       # Deliberately not memoized. An instance variable survives #reload, so a

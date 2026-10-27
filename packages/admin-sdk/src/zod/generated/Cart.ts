@@ -16,6 +16,7 @@ export const CartSchema = z.object({
   po_number_required: z.boolean(),
   po_document_filename: z.string().nullable(),
   po_document_byte_size: z.number().nullable(),
+  pricing_access: z.string().nullable(),
   token: z.string(),
   email: z.string().nullable(),
   customer_note: z.string().nullable(),

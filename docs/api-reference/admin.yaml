@@ -4190,8 +4190,8 @@ paths:
                   default: true
                   storefront_access:
                   guest_checkout:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.213Z'
+                  updated_at: '2026-10-27T18:14:03.213Z'
                   order_routing_strategy:
                   stock_location_ids: []
                   default_catalog_id:
@@ -4684,24 +4684,24 @@ paths:
                 - id: orule_UkLWZg9DAJ
                   position: 1
                   active: true
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.220Z'
+                  updated_at: '2026-10-27T18:14:03.220Z'
                   type: preferred_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                 - id: orule_gbHJdmfrXB
                   position: 2
                   active: true
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.224Z'
+                  updated_at: '2026-10-27T18:14:03.224Z'
                   type: minimize_splits
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                 - id: orule_EfhxLZ9ck8
                   position: 3
                   active: true
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.228Z'
+                  updated_at: '2026-10-27T18:14:03.228Z'
                   type: default_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
@@ -4844,7 +4844,7 @@ paths:
                 id: orule_UkLWZg9DAJ
                 position: 2
                 active: false
-                created_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-10-27T18:14:03.220Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: preferred_location
                 channel_id: ch_UkLWZg9DAJ
@@ -10213,7 +10213,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
                 filename: products.csv
                 content_type: text/csv
                 byte_size: 48213
@@ -10221,7 +10221,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJxcmZsMnNod3YwYmR4cWF3ZWFocDZvYjhlYzh5IiwiY29udGVudF90eXBlIjoidGV4dC9jc3YiLCJjb250ZW50X2xlbmd0aCI6NDgyMTMsImNoZWNrc3VtIjoiaGdKTXJSNkRFQjJYTloxelVRVVJWZz09Iiwic2VydmljZV9uYW1lIjoidGVzdCJ9LCJleHAiOiIyMDI2LTAxLTE1VDEyOjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--c3b32cb7c8370747da83a558fab123e28b943128
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJxcmZsMnNod3YwYmR4cWF3ZWFocDZvYjhlYzh5IiwiY29udGVudF90eXBlIjoidGV4dC9jc3YiLCJjb250ZW50X2xlbmd0aCI6NDgyMTMsImNoZWNrc3VtIjoiaGdKTXJSNkRFQjJYTloxelVRVVJWZz09Iiwic2VydmljZV9uYW1lIjoidGVzdCJ9LCJleHAiOiIyMDI2LTAxLTE1VDEyOjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--77ea6fd2bdef22a20bbd2813e9ebe97316fccc52
                   headers:
                     Content-Type: text/csv
               schema:
@@ -14523,8 +14523,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 - id: mkt_gbHJdmfrXB
                   name: EU
@@ -16494,6 +16494,81 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/digital_links/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Digital link ID
+      schema:
+        type: string
+    get:
+      summary: Get a digital link
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single download link with its download count and expiry.
+
+        **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const digitalLink = await client.digitalLinks.retrieve('dl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /digital_links/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: digital link found
+          content:
+            application/json:
+              example:
+                id: dl_UkLWZg9DAJ
+                access_counter: 0
+                filename: thinking-cat.jpg
+                content_type: image/jpeg
+                download_url: "/api/v3/store/digital_links/ks9F16gjTLQPCzwFDpj2ifrJ"
+                expires_at: '2026-01-22T12:00:00Z'
+                authorizable: true
+                expired: false
+                access_limit_exceeded: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/DigitalLink"
+        '404':
+          description: digital link not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Digital link not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/exchanges":
     get:
       summary: List exchanges
@@ -18121,6 +18196,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: larue@gerlachoga.biz
                 customer_note:
@@ -18157,8 +18233,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -18490,10 +18566,11 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 2
                   currency: USD
-                  name: Product 779180
-                  slug: product-779180
+                  name: Product 799180
+                  slug: product-799180
                   options_text: 'Size: S'
                   price: '10.00'
                   total: '20.00'
@@ -18599,10 +18676,11 @@ paths:
                 seller_id:
                 preorder: false
                 preorder_ships_at:
+                pricing_access:
                 quantity: 3
                 currency: USD
-                name: Product 7999
-                slug: product-7999
+                name: Product 8199
+                slug: product-8199
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '59.97'
@@ -18722,10 +18800,11 @@ paths:
                 seller_id:
                 preorder: false
                 preorder_ships_at:
+                pricing_access:
                 quantity: 2
                 currency: USD
-                name: Product 802714
-                slug: product-802714
+                name: Product 822714
+                slug: product-822714
                 options_text: 'Size: S'
                 price: '10.00'
                 total: '20.00'
@@ -18826,10 +18905,11 @@ paths:
                 seller_id:
                 preorder: false
                 preorder_ships_at:
+                pricing_access:
                 quantity: 5
                 currency: USD
-                name: Product 819758
-                slug: product-819758
+                name: Product 839758
+                slug: product-839758
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '99.95'
@@ -18990,6 +19070,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: ghislaine_labadie@carroll.info
                 customer_note:
@@ -19026,8 +19107,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19343,6 +19424,7 @@ paths:
                   company_name:
                   po_document_filename:
                   po_document_byte_size:
+                  pricing_access:
                   number: R1001
                   email: viki_reichel@moorecummerata.us
                   customer_note:
@@ -19379,8 +19461,8 @@ paths:
                     - US
                     supported_locales:
                     - en
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
+                    created_at: '2026-10-27T18:14:03.206Z'
+                    updated_at: '2026-10-27T18:14:03.206Z'
                     tax_provider:
                   external_references: {}
                   status: draft
@@ -19569,6 +19651,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1002
                 email: pinned@example.com
                 customer_note:
@@ -19605,8 +19688,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19726,6 +19809,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: angelic@ogaromaguera.co.uk
                 customer_note:
@@ -19762,8 +19846,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19873,6 +19957,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: updated@example.com
                 customer_note:
@@ -19909,8 +19994,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -20072,6 +20157,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: lisandra.blanda@grahamryan.biz
                 customer_note:
@@ -20108,8 +20194,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -20251,6 +20337,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: eleanor@zulaufdavis.com
                 customer_note:
@@ -20287,8 +20374,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: canceled
@@ -20391,6 +20478,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: del@bashirian.us
                 customer_note:
@@ -20427,8 +20515,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -20525,6 +20613,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: michal.cartwright@hintzdeckow.info
                 customer_note:
@@ -20561,8 +20650,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.206Z'
+                  updated_at: '2026-10-27T18:14:03.206Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -21021,7 +21110,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1792493 can be returned
+                  message: Only 1 of Product 1812493 can be returned
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -24383,7 +24472,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0Z252N2l0MG55YnkwbHhkczg5Y2hteTd6aXlvIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--06a160c64f398ed4eb70327ef6932eaf662f98d7/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0Z252N2l0MG55YnkwbHhkczg5Y2hteTd6aXlvIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--839644ad267dc5f78f6b53a8d7057b98bf087422/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                   provider_settings: {}
@@ -24474,7 +24563,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJhOXR0cGNpbmxxbThvbmtlNHM1NmI2Y3gxMWVzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--0df5c2167c42cdda6a5f6639d3ddc1b4473c5a81/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJhOXR0cGNpbmxxbThvbmtlNHM1NmI2Y3gxMWVzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--94c1a7ddccd4e49f7fb161ee3b99156fcbbea075/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
                 provider_settings: {}
@@ -24563,7 +24652,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwZXp6d3IzMzE3ajRoem9kc3Awc2czN3EzMnhzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--da799713969a4775b10b6055f685e92f410f5176/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwZXp6d3IzMzE3ajRoem9kc3Awc2czN3EzMnhzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--1c2fef18671d0af8003048a37719dedf7119c06b/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
                 provider_settings: {}
@@ -24932,8 +25021,9 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1296550
-                  slug: product-1296550
+                  pricing_access:
+                  name: Product 1316550
+                  slug: product-1316550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -25088,12 +25178,13 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
+                pricing_access:
                 name: New Product
                 slug: new-product
                 meta_title:
                 meta_description:
                 meta_keywords:
-                variant_count: 0
+                variant_count: 1
                 available_on:
                 preorder_ships_at:
                 purchasable: false
@@ -25211,8 +25302,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1332061
-                slug: product-1332061
+                pricing_access:
+                name: Product 1352061
+                slug: product-1352061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25321,8 +25413,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
+                pricing_access:
                 name: Updated Name
-                slug: product-1355339
+                slug: product-1375339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26130,8 +26223,9 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1538682
-                slug: product-1538682
+                pricing_access:
+                name: Product 1558682
+                slug: product-1558682
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26252,8 +26346,9 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1564387
-                slug: product-1564387
+                pricing_access:
+                name: Product 1584387
+                slug: product-1584387
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26540,8 +26635,8 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-10-27T18:14:03.250Z'
+                  created_at: '2026-10-27T18:14:03.250Z'
                 - id: pol_uw2YK1rnl0
                   name: Restocking Policy
                   slug: restocking-policy
@@ -26554,22 +26649,22 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-10-27T18:14:03.256Z'
+                  created_at: '2026-10-27T18:14:03.256Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-10-27T18:14:03.260Z'
+                  created_at: '2026-10-27T18:14:03.260Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-10-27T18:14:03.243Z'
+                  created_at: '2026-10-27T18:14:03.243Z'
                 meta:
                   page: 1
                   limit: 25
@@ -30888,7 +30983,7 @@ paths:
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                created_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-10-27T18:14:03.189Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_routing_strategy: rules
                 payout_provider:
@@ -31258,7 +31353,7 @@ paths:
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                created_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-10-27T18:14:03.189Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_routing_strategy: rules
                 payout_provider:
@@ -32625,7 +32720,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.0.rc5
+                current_version: 6.0.0
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
@@ -35525,7 +35620,8 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-285
+                  pricing_access:
+                  sku: SKU-287
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -35580,11 +35676,12 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2146804
+                  product_name: Product 2166804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-286
+                  pricing_access:
+                  sku: SKU-288
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -35651,7 +35748,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2146804
+                  product_name: Product 2166804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -35730,6 +35827,7 @@ paths:
               example:
                 id: variant_EfhxLZ9ck8
                 product_id: prod_UkLWZg9DAJ
+                pricing_access:
                 sku: NEW-SKU-001
                 options_text: 'Size: XL'
                 track_inventory: true
@@ -35797,7 +35895,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2151771
+                product_name: Product 2171771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -35809,7 +35907,7 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - value: SKU-290
+                    - value: SKU-292
                       code: taken
                       message: has already been taken
                       specific: false
@@ -35897,7 +35995,8 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-292
+                pricing_access:
+                sku: SKU-294
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -35964,7 +36063,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2174025
+                product_name: Product 2194025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -36037,6 +36136,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
+                pricing_access:
                 sku: UPDATED-SKU
                 options_text: 'Size: S'
                 track_inventory: true
@@ -36104,7 +36204,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2195672
+                product_name: Product 2215672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -36395,7 +36495,8 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-299
+                  pricing_access:
+                  sku: SKU-301
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -36450,11 +36551,12 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2213647
+                  product_name: Product 2233647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-300
+                  pricing_access:
+                  sku: SKU-302
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -36521,7 +36623,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2213647
+                  product_name: Product 2233647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -37746,6 +37848,12 @@ paths:
                   deprecated: false
                   replaced_by:
                 - name: company.deleted
+                  group: company
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company.registered
                   group: company
                   credential_permission:
                   credential: false
@@ -39210,7 +39318,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 260
+                  count: 261
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -45172,8 +45280,8 @@ paths:
                   name: General
                   default: true
                   position: 1
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-10-27T18:14:03.267Z'
+                  updated_at: '2026-10-27T18:14:03.267Z'
                   kind: shipping
                   digital: false
                   offers_pickup: false
@@ -47128,13 +47236,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--67382e81defdd88f735d84ff1babd856273be958/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--46e482cc96016e51b15894907087c57520b05113/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d243d129e3ff8a09074907fe34c8ab090bdcb91/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bbb757aa68f442b1ed38ec83b8bd96cb11208732/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--d9d12e22d714ddf87c0bd8b08726e5d430795393/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6aa5fd29f7db02f4a0dae6d4f10525695e79ac34/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -47142,10 +47250,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6b7e238e1ef61d21073386840200cb4c64a7916f/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -47236,13 +47344,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--67382e81defdd88f735d84ff1babd856273be958/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--46e482cc96016e51b15894907087c57520b05113/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d243d129e3ff8a09074907fe34c8ab090bdcb91/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bbb757aa68f442b1ed38ec83b8bd96cb11208732/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--d9d12e22d714ddf87c0bd8b08726e5d430795393/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6aa5fd29f7db02f4a0dae6d4f10525695e79ac34/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47250,10 +47358,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a5b15043f3d33016108bd19e25acb6a0e4656b64
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6b7e238e1ef61d21073386840200cb4c64a7916f/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--5cf0481318d5a302e12252ba348a3112ecb896a0
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -47331,13 +47439,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--67382e81defdd88f735d84ff1babd856273be958/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--46e482cc96016e51b15894907087c57520b05113/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d243d129e3ff8a09074907fe34c8ab090bdcb91/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bbb757aa68f442b1ed38ec83b8bd96cb11208732/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--d9d12e22d714ddf87c0bd8b08726e5d430795393/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6aa5fd29f7db02f4a0dae6d4f10525695e79ac34/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47345,10 +47453,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6b7e238e1ef61d21073386840200cb4c64a7916f/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
                 viewable_id: prod_UkLWZg9DAJ
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -47422,7 +47530,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 413397
+                  name: Product 433397
                   owner_type: product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -47582,13 +47690,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--67382e81defdd88f735d84ff1babd856273be958/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--46e482cc96016e51b15894907087c57520b05113/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d243d129e3ff8a09074907fe34c8ab090bdcb91/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bbb757aa68f442b1ed38ec83b8bd96cb11208732/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--d9d12e22d714ddf87c0bd8b08726e5d430795393/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6aa5fd29f7db02f4a0dae6d4f10525695e79ac34/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -47596,10 +47704,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6b7e238e1ef61d21073386840200cb4c64a7916f/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -47690,13 +47798,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--67382e81defdd88f735d84ff1babd856273be958/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--46e482cc96016e51b15894907087c57520b05113/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d243d129e3ff8a09074907fe34c8ab090bdcb91/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bbb757aa68f442b1ed38ec83b8bd96cb11208732/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--d9d12e22d714ddf87c0bd8b08726e5d430795393/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6aa5fd29f7db02f4a0dae6d4f10525695e79ac34/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47704,10 +47812,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6b7e238e1ef61d21073386840200cb4c64a7916f/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -47797,13 +47905,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--67382e81defdd88f735d84ff1babd856273be958/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--46e482cc96016e51b15894907087c57520b05113/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d243d129e3ff8a09074907fe34c8ab090bdcb91/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bbb757aa68f442b1ed38ec83b8bd96cb11208732/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--d9d12e22d714ddf87c0bd8b08726e5d430795393/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6aa5fd29f7db02f4a0dae6d4f10525695e79ac34/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47811,10 +47919,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6b7e238e1ef61d21073386840200cb4c64a7916f/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
                 viewable_id: prod_UkLWZg9DAJ
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--e137ca93dede5820c6e22d5d00de63ffab80246b/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -47966,13 +48074,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--67382e81defdd88f735d84ff1babd856273be958/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--46e482cc96016e51b15894907087c57520b05113/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4d243d129e3ff8a09074907fe34c8ab090bdcb91/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bbb757aa68f442b1ed38ec83b8bd96cb11208732/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--d9d12e22d714ddf87c0bd8b08726e5d430795393/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6aa5fd29f7db02f4a0dae6d4f10525695e79ac34/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -47980,10 +48088,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a5b15043f3d33016108bd19e25acb6a0e4656b64
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6b7e238e1ef61d21073386840200cb4c64a7916f/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--5cf0481318d5a302e12252ba348a3112ecb896a0
                   viewable_id: variant_gbHJdmfrXB
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--adeccecfda218ba55abd82ae488dc9b42735a3ef/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: variant
                 meta:
@@ -50269,12 +50377,12 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1083365
+                  name: Product 1103365
                   thumbnail_url:
                   price_list_variants:
                   - id: variant_UkLWZg9DAJ
                     label:
-                    sku: SKU-127
+                    sku: SKU-129
                     currency: USD
                     source: base
                     break_count: 1
@@ -51329,8 +51437,8 @@ paths:
                   purchase_order_id: po_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 1639018
-                  variant_sku: SKU-198
+                  variant_name: Product 1659018
+                  variant_sku: SKU-200
                   options_text: 'Size: S'
                   thumbnail_url:
                 supplier:
@@ -55383,8 +55491,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1885410
-                  variant_sku: SKU-233
+                  variant_name: Product 1905410
+                  variant_sku: SKU-235
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -55403,8 +55511,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1885410
-                  variant_sku: SKU-234
+                  variant_name: Product 1905410
+                  variant_sku: SKU-236
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -55423,8 +55531,8 @@ paths:
                   reserved_count: 2
                   incoming_count: 20
                   purchasable_count: 35
-                  variant_name: Product 1885410
-                  variant_sku: SKU-234
+                  variant_name: Product 1905410
+                  variant_sku: SKU-236
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Pilar Stokes
@@ -55608,8 +55716,8 @@ paths:
                 reserved_count: 0
                 incoming_count: 0
                 purchasable_count: 25
-                variant_name: Product 1919378
-                variant_sku: SKU-240
+                variant_name: Product 1939378
+                variant_sku: SKU-242
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_name: Gilbert Marquardt
@@ -55787,8 +55895,8 @@ paths:
                   stock_location_id: sloc_UkLWZg9DAJ
                   stock_location_name: Mona Hegmann
                   variant_id: variant_gbHJdmfrXB
-                  variant_name: Product 1928513
-                  variant_sku: SKU-241
+                  variant_name: Product 1948513
+                  variant_sku: SKU-243
                   order_id:
                   fulfillment_id:
                   return_id:
@@ -55902,8 +56010,8 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 stock_location_name: Chrystal Sauer
                 variant_id: variant_gbHJdmfrXB
-                variant_name: Product 1942954
-                variant_sku: SKU-245
+                variant_name: Product 1962954
+                variant_sku: SKU-247
                 order_id:
                 fulfillment_id:
                 return_id:
@@ -56494,8 +56602,8 @@ paths:
                   stock_transfer_id: st_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 2012176
-                  variant_sku: SKU-258
+                  variant_name: Product 2032176
+                  variant_sku: SKU-260
                   options_text: 'Size: S'
                   thumbnail_url:
                 source_location:
@@ -58884,6 +58992,9 @@ components:
         po_document_byte_size:
           type: number
           nullable: true
+        pricing_access:
+          type: string
+          nullable: true
         token:
           type: string
         email:
@@ -59407,6 +59518,7 @@ components:
       - po_number_required
       - po_document_filename
       - po_document_byte_size
+      - pricing_access
       - token
       - email
       - customer_note
@@ -60165,6 +60277,7 @@ components:
           - public
           - prices_hidden
           - login_required
+          - approval_required
         guest_checkout:
           type: boolean
           nullable: true
@@ -64341,6 +64454,9 @@ components:
         preorder_ships_at:
           type: string
           nullable: true
+        pricing_access:
+          type: string
+          nullable: true
         quantity:
           type: number
         currency:
@@ -64619,6 +64735,7 @@ components:
       - seller_id
       - preorder
       - preorder_ships_at
+      - pricing_access
       - quantity
       - currency
       - name
@@ -66644,6 +66761,9 @@ components:
         po_document_byte_size:
           type: number
           nullable: true
+        pricing_access:
+          type: string
+          nullable: true
         number:
           type: string
         email:
@@ -67313,6 +67433,7 @@ components:
       - company_name
       - po_document_filename
       - po_document_byte_size
+      - pricing_access
       - number
       - email
       - customer_note
@@ -68581,6 +68702,9 @@ components:
       properties:
         id:
           type: string
+        pricing_access:
+          type: string
+          nullable: true
         name:
           type: string
         slug:
@@ -68736,6 +68860,7 @@ components:
           "$ref": "#/components/schemas/ProductType"
       required:
       - id
+      - pricing_access
       - name
       - slug
       - meta_title
@@ -73308,6 +73433,7 @@ components:
           - public
           - prices_hidden
           - login_required
+          - approval_required
         guest_checkout:
           type: boolean
         always_include_confirm_step:
@@ -75547,6 +75673,9 @@ components:
           type: string
         product_id:
           type: string
+        pricing_access:
+          type: string
+          nullable: true
         sku:
           type: string
           nullable: true
@@ -76135,6 +76264,7 @@ components:
       required:
       - id
       - product_id
+      - pricing_access
       - sku
       - options_text
       - track_inventory
@@ -78337,6 +78467,7 @@ components:
           - public
           - prices_hidden
           - login_required
+          - approval_required
           description: What anonymous visitors can see. Null inherits the store setting.
           nullable: true
         guest_checkout:
@@ -78392,6 +78523,7 @@ components:
           - public
           - prices_hidden
           - login_required
+          - approval_required
           description: What anonymous visitors can see. Null inherits the store setting.
           nullable: true
         guest_checkout:
@@ -84156,6 +84288,7 @@ components:
           - public
           - prices_hidden
           - login_required
+          - approval_required
           description: The store-wide default for what anonymous visitors can see.
             Channels fall back to it when they don't set their own.
         storefront_url:

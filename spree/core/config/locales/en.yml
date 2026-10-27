@@ -271,6 +271,10 @@ en:
               thresholds_should_be_positive_number: should all have a threshold larger than 0
               thresholds_should_be_unique: should not repeat a threshold
               values_should_be_percent: should all have a value between 0% and 100%
+        spree/cart:
+          attributes:
+            company:
+              not_active: has not been activated for purchasing yet
         spree/catalog:
           attributes:
             base:
@@ -714,6 +718,8 @@ en:
     channels: Sales channels
     checkout: Checkout
     checkout_requirements:
+      company_activation_required: An active company account is required to place orders on this store
+      company_selection_required: Choose which company this order is for
       delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
@@ -749,6 +755,8 @@ en:
     company: Company
     company_invitations:
       not_pending: This invitation is no longer pending and cannot be revoked.
+    company_registration:
+      already_registered: You have already registered a company on this store
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete
