@@ -748,6 +748,7 @@
               {
                 "group": "Develop",
                 "pages": [
+                  "index",
                   {
                     "group": "Getting Started",
                     "pages": [
@@ -826,7 +827,7 @@
                     "icon": "book-open"
                   },
                   {
-                    "group": "AI-Assisted Development",
+                    "group": "Agentic Development",
                     "pages": [
                       "developer/agentic/overview",
                       "developer/agentic/agent-skills",
@@ -1212,7 +1213,7 @@
               },
               {
                 "item": "Seller API",
-                "icon": "shop",
+                "icon": "handshake",
                 "description": "REST API for the marketplace seller panel",
                 "groups": [
                   {
@@ -2759,7 +2760,7 @@
           },
           {
             "item": "Seller API",
-            "icon": "shop",
+            "icon": "handshake",
             "description": "REST API for the marketplace seller panel",
             "groups": [
               {

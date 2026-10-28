@@ -1,7 +1,9 @@
 ---
 title: "Spree Commerce documentation: open-source commerce platform"
 description: "Spree is the open-source commerce platform that fits the systems you already run — connect your ERP, PIM, WMS and payment stack instead of replacing them."
-mode: "custom"
+sidebarTitle: "Overview"
+icon: "house"
+mode: "wide"
 ---
 
 {/* ── Primitives ─────────────────────────────────────────────────────────── */}
@@ -32,14 +34,14 @@ export const Lede = ({ children }) => (
 
 export const Section = ({ children, className = "" }) => (
   <section className={`border-t border-[#e9e5dd]/80 dark:border-[#3f3e3c] ${className}`}>
-    <div className="max-w-7xl mx-auto px-6 sm:px-10 py-16 sm:py-20">{children}</div>
+    <div className="py-12">{children}</div>
   </section>
 );
 
 {/* Big clickable card — the whole surface is the link. */}
 export const Card = ({ href, icon, title, children, footer }) => (
   <a href={href}
-    className="group flex flex-col rounded-2xl border border-[#e2dfd8] dark:border-[#3f3e3c] bg-[#f7f5f2] dark:bg-[#272626] p-7 no-underline transition-colors hover:border-[#d5d5d5] dark:hover:border-[#565351] hover:bg-[#f2efea] dark:hover:bg-[#2e2c2c]">
+    className="home-plain group flex flex-col rounded-2xl border border-[#e2dfd8] dark:border-[#3f3e3c] bg-[#f7f5f2] dark:bg-[#272626] p-7 no-underline transition-colors hover:border-[#d5d5d5] dark:hover:border-[#565351] hover:bg-[#f2efea] dark:hover:bg-[#2e2c2c]">
     <div className="flex items-center gap-3">
       {icon && (
         <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-white dark:bg-[#3f3e3c] text-[#4d4d4d] dark:text-zinc-300 shrink-0">
@@ -70,31 +72,15 @@ export const Steps = ({ items }) => (
 {/* Pill link — used for the "How do I…?" question list. */}
 export const Pill = ({ href, children }) => (
   <a href={href}
-    className="inline-flex items-center rounded-lg border border-[#e2dfd8] dark:border-[#3f3e3c] bg-[#f7f5f2] dark:bg-[#272626] px-3.5 py-2 font-mono text-[13px] text-[#4d4d4d] dark:text-zinc-300 no-underline transition-colors hover:border-[#b3b3b3] dark:hover:border-[#5f5c59] hover:text-[#061932] dark:hover:text-zinc-100">
-    {children}
+    className="home-plain group inline-flex items-center rounded-lg border border-[#e2dfd8] dark:border-[#3f3e3c] bg-[#f7f5f2] dark:bg-[#272626] px-3.5 py-2 font-mono text-[13px] no-underline transition-colors hover:border-[#b3b3b3] dark:hover:border-[#5f5c59]">
+    <span className="text-[#4d4d4d] dark:text-zinc-300 group-hover:text-[#061932] dark:group-hover:text-zinc-100">{children}</span>
   </a>
-);
-
-{/* Opens Mintlify's own search modal via the hidden sidebar entry, which is
-   still mounted on custom-mode pages — no imitation search, the real one. */}
-export const SearchBox = () => (
-  <button
-    onClick={() => document.getElementById('search-bar-entry')?.click()}
-    className="flex w-full max-w-xl items-center justify-between gap-3 rounded-xl border border-[#e2dfd8] dark:border-[#3f3e3c] bg-[#f7f5f2] dark:bg-[#272626] px-4 h-12 text-left cursor-pointer transition-colors hover:border-[#d5d5d5] dark:hover:border-[#565351]">
-    <span className="flex items-center gap-2.5 text-[#999999] dark:text-zinc-500">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-      </svg>
-      <span className="text-[15px]">Search the docs...</span>
-    </span>
-    <kbd className="rounded-md border border-[#e2dfd8] dark:border-[#4a4846] px-1.5 py-0.5 font-mono text-xs text-[#999999] dark:text-zinc-500">⌘K</kbd>
-  </button>
 );
 
 {/* Compact concept link — icon, topic and a one-line descriptor. */}
 export const ConceptLink = ({ href, title, icon, children }) => (
   <a href={href}
-    className="group flex gap-3.5 rounded-xl px-4 py-3.5 no-underline transition-colors hover:bg-[#f7f5f2] dark:hover:bg-[#32302e]/60">
+    className="home-plain group flex gap-3.5 rounded-xl px-4 py-3.5 no-underline transition-colors hover:bg-[#f7f5f2] dark:hover:bg-[#32302e]/60">
     <span className="mt-0.5 flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-[#f2efea] dark:bg-[#3f3e3c] text-[#4d4d4d] dark:text-zinc-300 transition-colors group-hover:bg-white dark:group-hover:bg-[#4a4846]">
       <Icon className="w-[18px] h-[18px]">{icon}</Icon>
     </span>
@@ -140,11 +126,11 @@ export const CopyBox = ({ label, command }) => {
 
 {/* ── Page ───────────────────────────────────────────────────────────────── */}
 
-<div className="w-full">
+<div className="home-page not-prose w-full">
 
   {/* HERO */}
   <section>
-    <div className="max-w-7xl mx-auto px-6 sm:px-10 pt-20 pb-16 sm:pt-28 sm:pb-20">
+    <div className="pt-2 pb-12 sm:pb-16">
       <div className="max-w-3xl">
         <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight text-[#061932] dark:text-zinc-50 m-0 leading-[1.05]">
           Build commerce the way you want it
@@ -152,14 +138,11 @@ export const CopyBox = ({ label, command }) => {
         <p className="mt-6 text-lg sm:text-xl text-[#666666] dark:text-zinc-400 leading-relaxed m-0">
           From Omnichannel and cross-border DTC, to complex B2B commerce workflows, to marketplaces and subscription services. Spree gives you battle-tested commerce primitives and unlimited flexibility to build the commerce experience your business needs.
         </p>
-        <div className="mt-8">
-          <SearchBox />
-        </div>
-        <div className="mt-6 flex flex-wrap items-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center gap-3">
           <a href="/developer/getting-started/quickstart"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#0077ff] hover:bg-[#0060ce] px-6 py-3.5 text-base font-medium text-white no-underline transition-colors">
-            Get started
-            <Icon className="w-4 h-4"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></Icon>
+            className="home-plain inline-flex items-center gap-2 rounded-xl bg-[#0077ff] hover:bg-[#0060ce] px-6 py-3.5 text-base font-medium no-underline transition-colors">
+            <span className="text-white">Get started</span>
+            <Icon className="w-4 h-4 text-white"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></Icon>
           </a>
           {/*
           <a href="https://console.spree.sh"
@@ -176,7 +159,7 @@ export const CopyBox = ({ label, command }) => {
   </section>
 
   {/* LEARNING PATHS */}
-  <Section className="home-band">
+  <Section>
     <Eyebrow>Learning paths</Eyebrow>
     <SectionTitle>Start where you are</SectionTitle>
     <div className="mt-10 grid md:grid-cols-3 gap-5">
@@ -367,7 +350,7 @@ export const CopyBox = ({ label, command }) => {
   </Section>
 
   {/* FITS YOUR ARCHITECTURE */}
-  <Section className="home-band">
+  <Section>
     <div className="grid lg:grid-cols-[1fr_1.15fr] gap-12 lg:gap-16 items-start">
       <div>
         <Eyebrow>Integrations</Eyebrow>
@@ -424,7 +407,7 @@ export const CopyBox = ({ label, command }) => {
   </Section>
 
   {/* AI AGENTS */}
-  <Section className="home-band">
+  <Section>
     <div className="grid lg:grid-cols-[1fr_1.15fr] gap-12 lg:gap-16 items-start">
       <div>
         <Eyebrow>For AI agents</Eyebrow>
@@ -435,7 +418,7 @@ export const CopyBox = ({ label, command }) => {
         </Lede>
         <a href="/developer/agentic/overview"
           className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 no-underline hover:gap-3 transition-all">
-          Set up AI-assisted development
+          Set up agentic development
           <Icon className="w-4 h-4"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></Icon>
         </a>
       </div>
@@ -451,7 +434,7 @@ export const CopyBox = ({ label, command }) => {
   </Section>
 
   {/* COMMUNITY */}
-  <Section className="home-band-end">
+  <Section>
     <Eyebrow>Community &amp; support</Eyebrow>
     <SectionTitle>Get help when you need it</SectionTitle>
     <div className="mt-10 grid md:grid-cols-3 gap-5">

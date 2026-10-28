@@ -342,6 +342,19 @@ html:not(.dark) h4 {
   color: #7fb8ff !important;
 }
 
+/* The homepage hero carries its own headline, so Mintlify's page title,
+   breadcrumb and description would repeat it. */
+#content-area:has(.home-page) > #header {
+  display: none;
+}
+
+/* Homepage cards and pills colour their own text, so the body link colour
+   must not reach them. */
+#content-container .home-plain.link,
+.dark #content-container .home-plain.link {
+  color: inherit !important;
+}
+
 /* --- Changelog ------------------------------------------------------------ */
 /* The changelog runs in custom mode so it has no empty sidebar, and custom
    mode drops Mintlify's article typography — these rules restore it. The
