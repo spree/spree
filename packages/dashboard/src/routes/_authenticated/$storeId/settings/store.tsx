@@ -47,6 +47,7 @@ import {
   SelectValue,
   Skeleton,
   Switch,
+  Textarea,
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
@@ -66,6 +67,7 @@ import {
   DraftCustomFieldsCard,
   useCustomFieldsDraft,
 } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import {
   useStoreDataSources,
   useStoreSettings,
@@ -81,6 +83,8 @@ import {
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
   component: StoreSettingsPage,
 })
+
+const SEO_TRANSLATABLE_FIELDS = ['seo_title', 'meta_description'] as const
 
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
@@ -111,6 +115,8 @@ const TIMEZONES: string[] = (() => {
 function storeToFormValues(store: Store): StoreSettingsFormValues {
   return {
     name: store.name,
+    seo_title: store.seo_title ?? '',
+    meta_description: store.meta_description ?? '',
     admin_locale: store.admin_locale ?? '',
     timezone: store.timezone,
     unit_system: (store.unit_system as UnitSystem) ?? 'metric',
@@ -245,6 +251,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
       if (storeDirty) {
         await updateMutation.mutateAsync({
           name: values.name,
+          seo_title: values.seo_title || null,
+          meta_description: values.meta_description || null,
           admin_locale: values.admin_locale || undefined,
           timezone: values.timezone,
           unit_system: values.unit_system,
@@ -446,6 +454,49 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   </FieldGroup>
                 </CardContent>
               </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.store.seo.title')}</CardTitle>
+                  <CardDescription>{t('admin.store.seo.description')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="store-seo-title">
+                        {t('admin.fields.store.seo_title.label')}
+                      </FieldLabel>
+                      <Input
+                        id="store-seo-title"
+                        aria-invalid={!!errors.seo_title || undefined}
+                        {...form.register('seo_title')}
+                      />
+                      <FieldDescription>{t('admin.fields.store.seo_title.help')}</FieldDescription>
+                      <FieldError errors={[errors.seo_title]} />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="store-meta-description">
+                        {t('admin.fields.store.meta_description.label')}
+                      </FieldLabel>
+                      <Textarea
+                        id="store-meta-description"
+                        rows={3}
+                        aria-invalid={!!errors.meta_description || undefined}
+                        {...form.register('meta_description')}
+                      />
+                      <FieldDescription>
+                        {t('admin.fields.store.meta_description.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.meta_description]} />
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <ResourceTranslationsCard
+                resourceType="store"
+                resourceId={store.id}
+                fields={SEO_TRANSLATABLE_FIELDS}
+              />
 
               <Card>
                 <CardHeader>

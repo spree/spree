@@ -2394,6 +2394,14 @@
         "email_font": {
           "label": "Fuente",
           "help": "Las aplicaciones de correo que no puedan cargarla usarán una fuente similar."
+        },
+        "seo_title": {
+          "label": "Título SEO",
+          "help": "El título que muestran los buscadores y las pestañas del navegador para la página de inicio de tu tienda."
+        },
+        "meta_description": {
+          "label": "Meta descripción",
+          "help": "Un breve resumen que los buscadores muestran bajo el título."
         }
       },
       "store_credit": {
@@ -6249,6 +6257,10 @@
         "kg": "Kilogramo (kg)",
         "lb": "Libra (lb)",
         "oz": "Onza (oz)"
+      },
+      "seo": {
+        "title": "Ficha en buscadores",
+        "description": "El título y la descripción predeterminados de tu tienda. Tradúcelos a cada idioma que admite tu tienda."
       }
     },
     "company_invitations": {

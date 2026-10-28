@@ -75,6 +75,7 @@ RSpec.configure do |config|
         { name: 'Orders', description: 'Order lookup' },
         { name: 'Customers', description: 'Customer account, addresses, saved payment methods, and order history' },
         { name: 'Markets', description: 'Markets, countries, currencies, and locales' },
+        { name: 'Store', description: "The current store's name and default SEO metadata" },
         { name: 'Wishlists', description: 'Customer wishlists' },
         { name: 'Newsletter Subscribers', description: 'Guest and customer newsletter subscriptions (double opt-in)' },
         { name: 'Policies', description: 'Store policies (return policy, privacy policy, terms of service)' },

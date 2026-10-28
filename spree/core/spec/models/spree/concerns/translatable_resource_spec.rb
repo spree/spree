@@ -53,6 +53,33 @@ RSpec.describe Spree::TranslatableResource, type: :model do
 
       Mobility.with_locale(:es) { expect(product.reload.name).not_to eq 'Máquina de espresso' }
     end
+
+    context 'when the last translated value of a locale is cleared' do
+      it 'removes the translation without leaving a blank row behind' do
+        option_type = create(:option_type, label: 'Size')
+        option_type.upsert_translations('de' => { 'label' => 'Größe' })
+        option_type.reload.upsert_translations('de' => { 'label' => nil })
+
+        expect(option_type.translations.reload.where(locale: 'de')).to be_empty
+      end
+
+      context 'on a store, whose translation rows are soft deleted' do
+        let(:translated_store) { create(:store, default_locale: 'en') }
+
+        before { allow(translated_store).to receive(:supported_locales_list).and_return(%w[en de]) }
+
+        it 'stops reading the cleared value and accepts a new one' do
+          translated_store.upsert_translations('de' => { 'seo_title' => 'Kaffeeladen' })
+          translated_store.upsert_translations('de' => { 'seo_title' => nil })
+
+          Mobility.with_locale(:de) { expect(translated_store.reload.seo_title(fallback: false)).to be_nil }
+
+          translated_store.upsert_translations('de' => { 'seo_title' => 'Kaffeehaus' })
+
+          Mobility.with_locale(:de) { expect(translated_store.reload.seo_title(fallback: false)).to eq 'Kaffeehaus' }
+        end
+      end
+    end
   end
 
   # OptionType's translatable column and public name are both `label` since

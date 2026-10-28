@@ -10798,6 +10798,66 @@ paths:
                   message: record not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/store":
+    get:
+      summary: Get the current store
+      tags:
+      - Store
+      security:
+      - api_key: []
+      description: Returns the current store's name and default SEO metadata in the
+        requested locale. A field without a translation falls back to the store's
+        default locale.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const store = await client.store.get()
+
+          const title = store.seo_title ?? store.name
+          const description = store.meta_description
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: x-spree-locale
+        in: header
+        required: false
+        description: Locale for translated values, e.g. `de`. Defaults to the store
+          locale.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store found
+          content:
+            application/json:
+              example:
+                id: store_UkLWZg9DAJ
+                name: Spree Test Store
+                seo_title:
+                meta_description: Sample store description.
+              schema:
+                "$ref": "#/components/schemas/Store"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/wishlists":
     get:
       summary: List wishlists
@@ -13652,6 +13712,8 @@ tags:
   description: Customer account, addresses, saved payment methods, and order history
 - name: Markets
   description: Markets, countries, currencies, and locales
+- name: Store
+  description: The current store's name and default SEO metadata
 - name: Wishlists
   description: Customer wishlists
 - name: Newsletter Subscribers
@@ -23108,6 +23170,25 @@ components:
       - display_amount_used
       - display_amount_remaining
       - currency
+      x-typelizer: true
+    Store:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        seo_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - seo_title
+      - meta_description
       x-typelizer: true
     SupplierEvent:
       type: object

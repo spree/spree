@@ -2370,6 +2370,14 @@
         "email_font": {
           "label": "Police",
           "help": "Les applications de messagerie qui ne peuvent pas la charger utilisent une police similaire."
+        },
+        "seo_title": {
+          "label": "Titre SEO",
+          "help": "Le titre affiché par les moteurs de recherche et les onglets du navigateur pour la page d’accueil de votre boutique."
+        },
+        "meta_description": {
+          "label": "Méta-description",
+          "help": "Un court résumé que les moteurs de recherche affichent sous le titre."
         }
       },
       "store_credit": {
@@ -5883,6 +5891,10 @@
         "kg": "Kilogramme (kg)",
         "lb": "Livre (lb)",
         "oz": "Once (oz)"
+      },
+      "seo": {
+        "title": "Référencement",
+        "description": "Le titre et la description par défaut de votre boutique. Traduisez-les pour chaque langue prise en charge par votre boutique."
       }
     },
     "table_descriptions": {

@@ -30879,8 +30879,10 @@ paths:
             application/json:
               example:
                 id: store_UkLWZg9DAJ
-                metadata: {}
                 name: Spree Test Store
+                seo_title:
+                meta_description: Sample store description.
+                metadata: {}
                 code: spree_1
                 default_currency: USD
                 default_locale: en
@@ -31249,8 +31251,10 @@ paths:
             application/json:
               example:
                 id: store_UkLWZg9DAJ
-                metadata: {}
                 name: Renamed Store
+                seo_title:
+                meta_description: Sample store description.
+                metadata: {}
                 code: spree_1
                 default_currency: USD
                 default_locale: en
@@ -72945,10 +72949,16 @@ components:
       properties:
         id:
           type: string
-        metadata:
-          type: object
         name:
           type: string
+        seo_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        metadata:
+          type: object
         code:
           type: string
         default_currency:
@@ -74122,8 +74132,10 @@ components:
           nullable: true
       required:
       - id
-      - metadata
       - name
+      - seo_title
+      - meta_description
+      - metadata
       - code
       - default_currency
       - default_locale
@@ -84217,6 +84229,16 @@ components:
         name:
           type: string
           example: My Store
+        seo_title:
+          type: string
+          description: The storefront's default page title, in the store's default
+            language. Translate it through the translations endpoints.
+          nullable: true
+        meta_description:
+          type: string
+          description: The storefront's default meta description, in the store's default
+            language.
+          nullable: true
         admin_locale:
           type: string
           example: en

@@ -2370,6 +2370,14 @@
         "email_font": {
           "label": "Font",
           "help": "Email apps that can't load it fall back to a similar font."
+        },
+        "seo_title": {
+          "label": "SEO title",
+          "help": "The title search engines and browser tabs show for your storefront's home page."
+        },
+        "meta_description": {
+          "label": "Meta description",
+          "help": "A short summary search engines show under the title."
         }
       },
       "store_credit": {
@@ -5882,6 +5890,10 @@
         "kg": "Kilogram (kg)",
         "lb": "Pound (lb)",
         "oz": "Ounce (oz)"
+      },
+      "seo": {
+        "title": "Search engine listing",
+        "description": "The default title and description of your storefront. Translate them for each language your store supports."
       }
     },
     "table_descriptions": {
