@@ -72,6 +72,27 @@ curl 'https://api.mystore.com/api/v3/admin/store' \
 
 This is an admin endpoint, so it requires a secret API key (`sk_xxx`) or a Bearer JWT — a publishable key cannot reach it.
 
+### Storefront SEO
+
+A storefront reads the store's public name and default SEO metadata — `seo_title` and `meta_description` — from the Store API, in the shopper's language. Use them for the home page title and description. A field with no translation for the requested locale returns the default-language value.
+
+<CodeGroup>
+
+```typescript Store SDK
+const store = await client.store.get({ locale: 'de' })
+// { id: "store_k5nR8xLq", name: "My Store", seo_title: "Frischer Kaffee", meta_description: "…" }
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/store' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Locale: de'
+```
+
+</CodeGroup>
+
+Merchants edit the default-language values on **Settings → Store** in the dashboard and translate them with **Manage translations** on the same page. See [Translations](/developer/core-concepts/translations).
+
 ## Channels vs. Markets
 
 Two different ways to split a store, often confused:

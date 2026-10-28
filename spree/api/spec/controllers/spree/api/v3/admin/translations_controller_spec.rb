@@ -120,6 +120,26 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
     end
   end
 
+  context 'when the parent is the store' do
+    before { store.translations.create!(locale: 'de', seo_title: 'Kaffeeladen') }
+
+    it 'returns the translation matrix for the current store' do
+      get :index, params: { store_id: store.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      data = json_response['data']
+      expect(data['resource_type']).to eq('store')
+      expect(data['resource_id']).to eq(store.prefixed_id)
+      expect(data['translations']['de']['seo_title']).to eq('Kaffeeladen')
+    end
+
+    it 'returns 404 for another store' do
+      get :index, params: { store_id: create(:store).prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   context 'when the parent param resolves to nothing translatable' do
     it 'has no route for a non-translatable parent' do
       # tax_categories are not in Spree.translatable_resources and the

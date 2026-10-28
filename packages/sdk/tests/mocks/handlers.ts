@@ -615,6 +615,17 @@ export const handlers = [
     HttpResponse.json({ token: 'new-jwt-token', user: fixtures.user }),
   ),
 
+  // Store — answers in the requested locale so client locale wiring is testable
+  http.get(`${API_PREFIX}/store`, ({ request }) => {
+    const german = request.headers.get('X-Spree-Locale') === 'de'
+    return HttpResponse.json({
+      id: 'store_1',
+      name: 'Coffee Shop',
+      seo_title: german ? 'Kaffeeladen' : 'Coffee Shop',
+      meta_description: german ? null : 'Freshly roasted coffee',
+    })
+  }),
+
   // Channel — echoes the X-Spree-Channel header so client channel wiring is testable
   http.get(`${API_PREFIX}/channel`, ({ request }) => {
     if (request.headers.get('X-Spree-Channel') === 'wholesale') {

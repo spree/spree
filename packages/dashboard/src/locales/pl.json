@@ -2388,6 +2388,14 @@
         "email_font": {
           "label": "Czcionka",
           "help": "Programy pocztowe, które nie mogą jej wczytać, użyją podobnej czcionki."
+        },
+        "seo_title": {
+          "label": "Tytuł SEO",
+          "help": "Tytuł, który wyszukiwarki i karty przeglądarki pokazują dla strony głównej Twojego sklepu."
+        },
+        "meta_description": {
+          "label": "Opis meta",
+          "help": "Krótkie podsumowanie, które wyszukiwarki pokazują pod tytułem."
         }
       },
       "store_credit": {
@@ -5950,6 +5958,10 @@
         "kg": "Kilogram (kg)",
         "lb": "Funt (lb)",
         "oz": "Uncja (oz)"
+      },
+      "seo": {
+        "title": "Wynik w wyszukiwarce",
+        "description": "Domyślny tytuł i opis Twojego sklepu. Przetłumacz je na każdy język obsługiwany przez sklep."
       }
     },
     "table_descriptions": {

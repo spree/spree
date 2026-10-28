@@ -4,8 +4,10 @@ import { SetupTaskSchema } from './SetupTask';
 
 export const StoreSchema = z.object({
   id: z.string(),
-  metadata: z.record(z.string(), z.unknown()),
   name: z.string(),
+  seo_title: z.string().nullable(),
+  meta_description: z.string().nullable(),
+  metadata: z.record(z.string(), z.unknown()),
   code: z.string(),
   default_currency: z.string(),
   default_locale: z.string(),

@@ -198,6 +198,19 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with SEO params' do
+      let(:params) { { seo_title: 'Fresh Coffee Beans', meta_description: 'Roasted every morning' } }
+
+      it 'saves them and returns them' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['seo_title']).to eq('Fresh Coffee Beans')
+        expect(json_response['meta_description']).to eq('Roasted every morning')
+        expect(store.reload.seo_title).to eq('Fresh Coffee Beans')
+      end
+    end
+
     context 'with the low stock threshold' do
       let(:params) { { low_stock_threshold: 12 } }
 

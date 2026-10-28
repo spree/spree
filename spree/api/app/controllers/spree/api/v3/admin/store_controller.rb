@@ -7,6 +7,12 @@ module Spree
 
           request_params :store do |body|
             body.attribute :name, :string, example: 'My Store'
+            body.attribute :seo_title, :string,
+              nullable: true,
+              description: "The storefront's default page title, in the store's default language. Translate it through the translations endpoints."
+            body.attribute :meta_description, :string,
+              nullable: true,
+              description: "The storefront's default meta description, in the store's default language."
             body.attribute :admin_locale, :string, example: 'en'
             body.attribute :timezone, :string, example: 'Europe/Berlin'
             body.attribute :weight_unit, :weight_unit

@@ -22,6 +22,9 @@ Spree::Core::Engine.add_routes do
         # Current channel context (never a list — see Store::ChannelController)
         resource :channel, only: [:show], controller: 'channel'
 
+        # Current store context (name and default SEO metadata, localized)
+        resource :store, only: [:show], controller: 'store'
+
         # Catalog
         resources :products, only: [:index, :show] do
           collection do
@@ -287,9 +290,9 @@ Spree::Core::Engine.add_routes do
         resource :store, only: [:show, :update], controller: 'store' do
           get :data_sources
         end
-        # The store's own custom fields, addressed by its id like every other
+        # The store's own custom fields and translations, addressed by its id like every other
         # parent. The controller only ever resolves the current store.
-        resources :stores, only: [], concerns: :custom_fieldable
+        resources :stores, only: [], concerns: [:custom_fieldable, :translatable]
 
         # Staff & access (invitations, admin users, roles, API keys)
         resources :admin_users, only: [:index, :show, :update, :destroy]

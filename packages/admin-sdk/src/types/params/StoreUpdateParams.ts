@@ -4,6 +4,13 @@ import type { WeightUnit } from '../generated'
 
 export type StoreUpdateParams = {
   name?: string
+  /**
+   * The storefront's default page title, in the store's default language. Translate it through the
+   * translations endpoints.
+   */
+  seo_title?: string | null
+  /** The storefront's default meta description, in the store's default language. */
+  meta_description?: string | null
   admin_locale?: string
   timezone?: string
   weight_unit?: WeightUnit

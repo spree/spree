@@ -205,6 +205,48 @@ test.describe('store settings — general', () => {
     await expect(save).toBeDisabled({ timeout: 15_000 })
   })
 
+  // The e2e store supports `de` through its Europe market, so the
+  // translations editor offers it as a target language.
+  test('saves the SEO title and description, and translates them', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    const seoTitle = page.locator('#store-seo-title')
+    const metaDescription = page.locator('#store-meta-description')
+    await expect(seoTitle).toBeVisible({ timeout: 15_000 })
+
+    const suffix = Date.now()
+    const title = `E2E Coffee ${suffix}`
+    await seoTitle.fill(title)
+    await metaDescription.fill('Freshly roasted coffee')
+    const save = page.getByRole('button', { name: /^save$/i })
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(seoTitle).toHaveValue(title, { timeout: 15_000 })
+    await expect(metaDescription).toHaveValue('Freshly roasted coffee')
+
+    await page.getByRole('button', { name: /manage translations/i }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByTestId('source-seo_title')).toContainText(title, { timeout: 15_000 })
+    const translated = `E2E Kaffee ${suffix}`
+    await dialog.getByLabel('seo_title de').fill(translated)
+    await dialog.getByRole('button', { name: /^save translations$/i }).click()
+    await expect(page.getByText(/translations saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^close$/i }).click()
+    await page.getByRole('button', { name: /manage translations/i }).click()
+    await expect(page.getByRole('dialog').getByLabel('seo_title de')).toHaveValue(translated, {
+      timeout: 15_000,
+    })
+    await page.getByRole('button', { name: /^close$/i }).click()
+
+    await seoTitle.fill('')
+    await metaDescription.fill('')
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
   // A store with no storefront of its own reads back no storefront URL: the
   // dashboard neither offers to "View store" nor prefills the connect form
   // with an address the merchant never entered.

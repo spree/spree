@@ -82,6 +82,7 @@ export type {
   Seller,
   State,
   StockLocation,
+  Store,
   StoreCredit,
   TaxLine,
   Variant,

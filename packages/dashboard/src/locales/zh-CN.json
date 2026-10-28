@@ -2365,6 +2365,14 @@
         "email_font": {
           "label": "字体",
           "help": "无法加载该字体的邮件应用会使用相近的字体。"
+        },
+        "seo_title": {
+          "label": "SEO 标题",
+          "help": "搜索引擎和浏览器标签页为您店铺首页显示的标题。"
+        },
+        "meta_description": {
+          "label": "元描述",
+          "help": "搜索引擎在标题下方显示的简短摘要。"
         }
       },
       "store_credit": {
@@ -5869,6 +5877,10 @@
         "kg": "千克 (kg)",
         "lb": "磅 (lb)",
         "oz": "盎司 (oz)"
+      },
+      "seo": {
+        "title": "搜索引擎展示",
+        "description": "店铺的默认标题和描述。请为店铺支持的每种语言进行翻译。"
       }
     },
     "table_descriptions": {
