@@ -1,6 +1,7 @@
 import {
   CAPTURE_METHODS,
   DOCUMENT_NUMBER_FORMATS,
+  LocaleCode,
   PROVIDER_FAILURE_POLICIES,
   STOREFRONT_ACCESSES,
   UNIT_SYSTEMS,
@@ -18,7 +19,10 @@ export const INTERNAL_PROVIDER_KEY = 'internal'
 
 export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
-  admin_locale: z.string().nullable().optional(),
+  admin_locale: z
+    .union([z.enum(LocaleCode), z.literal('')])
+    .nullable()
+    .optional(),
   timezone: z.string().min(1, { error: requiredMessage('store.timezone') }),
   unit_system: z.enum(UNIT_SYSTEMS),
   weight_unit: z.enum(WeightUnit),
