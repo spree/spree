@@ -58651,6 +58651,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/AddressOwner"
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         metadata:
           type: object
         created_at:
@@ -59386,6 +59390,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         completed_at:
           type: string
           nullable: true
@@ -60331,6 +60339,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ClaimLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         memo:
           type: string
           nullable: true
@@ -61204,6 +61216,10 @@ components:
           type: array
           items:
             type: object
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         external_references:
           type: object
         metadata:
@@ -61605,6 +61621,10 @@ components:
         gateway_payment_profile_id:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         customer_id:
           type: string
           nullable: true
@@ -61794,6 +61814,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CustomerGroup"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         failed_attempts:
           type: number
         metadata:
@@ -62019,6 +62043,10 @@ components:
           type: boolean
         pickup_point:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         admin_name:
           type: string
           nullable: true
@@ -63531,6 +63559,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         external_references:
           type: object
         metadata:
@@ -64031,6 +64063,10 @@ components:
           type: boolean
         active:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         created_at:
           type: string
         updated_at:
@@ -64577,6 +64613,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         external_references:
           type: object
         metadata:
@@ -65890,6 +65930,10 @@ components:
         og_image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         external_references:
           type: object
         created_at:
@@ -65993,6 +66037,10 @@ components:
         customer_id:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - email
@@ -66151,6 +66199,10 @@ components:
           - dropdown
           - color_swatch
           - buttons
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         translations:
           type: object
         metadata:
@@ -66199,6 +66251,10 @@ components:
         image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         metadata:
           type: object
         created_at:
@@ -67144,6 +67200,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         external_references:
           type: object
         status:
@@ -67490,6 +67550,10 @@ components:
           type: boolean
         source_required:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         metadata:
           type: object
         active:
@@ -67591,6 +67655,10 @@ components:
           nullable: true
         payment_method:
           "$ref": "#/components/schemas/PaymentMethod"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         metadata:
           type: object
         avs_response:
@@ -67666,6 +67734,10 @@ components:
         gateway_payment_profile_id:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         metadata:
           type: object
         created_at:
@@ -69847,6 +69919,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ReturnLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         external_references:
           type: object
         memo:
@@ -70823,6 +70899,10 @@ components:
         cover_photo_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         status:
           anyOf:
           - type: string
@@ -72803,6 +72883,10 @@ components:
           - ZWL
           - ZWN
           - ZWR
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         memo:
           type: string
           nullable: true

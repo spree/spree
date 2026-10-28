@@ -13488,8 +13488,9 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (`policies`). A seller's
-          policies are their own published legal documents.
+        description: Comma-separated associations to expand (`policies`, `custom_fields`).
+          A seller's policies are their own published legal documents; `custom_fields`
+          returns only fields marked storefront visible.
         schema:
           type: string
       - name: fields
@@ -13590,8 +13591,9 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (`policies`). A seller's
-          policies are their own published legal documents.
+        description: Comma-separated associations to expand (`policies`, `custom_fields`).
+          A seller's policies are their own published legal documents; `custom_fields`
+          returns only fields marked storefront visible.
         schema:
           type: string
       - name: fields
@@ -13614,6 +13616,12 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                custom_fields:
+                - id: cf_UkLWZg9DAJ
+                  label: Navigation position
+                  field_type: number
+                  key: merchandising.navigation_position
+                  value: '10.0'
               schema:
                 "$ref": "#/components/schemas/Seller"
         '404':
@@ -14273,6 +14281,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/AddressOwner"
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - label
@@ -14967,6 +14979,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - market_id
@@ -15269,6 +15285,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ClaimLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - number
@@ -15410,6 +15430,10 @@ components:
           type: array
           items:
             type: object
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -15709,6 +15733,10 @@ components:
         gateway_payment_profile_id:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - brand
@@ -16004,6 +16032,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CustomerGroup"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - email
@@ -16179,6 +16211,10 @@ components:
           type: boolean
         pickup_point:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -17125,6 +17161,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - number
@@ -17611,6 +17651,10 @@ components:
           type: boolean
         active:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - code
@@ -18101,6 +18145,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - variant_id
@@ -19323,6 +19371,10 @@ components:
         og_image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - product_id
@@ -19390,6 +19442,10 @@ components:
         customer_id:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - email
@@ -19416,6 +19472,10 @@ components:
           - dropdown
           - color_swatch
           - buttons
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -19446,6 +19506,10 @@ components:
         image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - option_type_id
@@ -20469,6 +20533,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - market_id
@@ -20566,6 +20634,10 @@ components:
           type: boolean
         source_required:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -20627,6 +20699,10 @@ components:
           nullable: true
         payment_method:
           "$ref": "#/components/schemas/PaymentMethod"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - payment_method_id
@@ -20938,6 +21014,10 @@ components:
         gateway_payment_profile_id:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - gateway_payment_profile_id
@@ -22197,6 +22277,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ReturnLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - number
@@ -22269,6 +22353,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Policy"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -23011,6 +23099,10 @@ components:
           - ZWL
           - ZWN
           - ZWR
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - amount
