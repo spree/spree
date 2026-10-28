@@ -1676,6 +1676,13 @@ function FilterPanel({
     )
   }
 
+  /** "Any …": no constraint on this field at all, `is not` rules included. */
+  function clearValues() {
+    setValue('')
+    setEditing(null)
+    onChange(filters.filter((f) => f.field !== field))
+  }
+
   function toggleValue(option: string) {
     setValues(checked.includes(option) ? checked.filter((v) => v !== option) : [...checked, option])
   }
@@ -1772,8 +1779,8 @@ function FilterPanel({
         {field && (multi || enumMulti) && column && (
           <AnyRow
             label={t('admin.components.table_toolbar.any_field', { field: column.label })}
-            active={checked.length === 0}
-            onSelect={() => setValues([])}
+            active={!filters.some((f) => f.field === field)}
+            onSelect={clearValues}
           />
         )}
 
