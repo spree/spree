@@ -5,7 +5,7 @@ module Spree
         class StoreSerializer < V3::BaseSerializer
           typelize name: :string, url: :string, code: :string, api_url: :string,
                    default_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], default_locale: [:string, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
-                   default_country_code: [:string, nullable: true],
+                   default_country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    supported_currencies: [:string, multi: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    supported_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
                    available_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
