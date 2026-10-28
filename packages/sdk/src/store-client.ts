@@ -78,6 +78,7 @@ import type {
   ReturnSort,
   Seller,
   StockLocation,
+  Store,
   StoreCredit,
   UpdateCartParams,
   UpdateCompanyParams,
@@ -386,6 +387,16 @@ export class StoreClient {
      */
     get: (options?: RequestOptions): Promise<Channel> =>
       this.request<Channel>('GET', '/channel', options),
+  }
+
+  readonly store = {
+    /**
+     * Get the current store's name and default SEO metadata (`seo_title`,
+     * `meta_description`) in the request locale. A field without a
+     * translation falls back to the store's default locale.
+     */
+    get: (options?: RequestOptions): Promise<Store> =>
+      this.request<Store>('GET', '/store', options),
   }
 
   // ============================================

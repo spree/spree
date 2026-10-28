@@ -92,6 +92,7 @@ export { StockMovementSchema, type StockMovement } from './StockMovement';
 export { StockReceiptEventSchema, type StockReceiptEvent } from './StockReceiptEvent';
 export { StockReservationSchema, type StockReservation } from './StockReservation';
 export { StockTransferSchema, type StockTransfer } from './StockTransfer';
+export { StoreSchema, type Store } from './Store';
 export { StoreCreditSchema, type StoreCredit } from './StoreCredit';
 export { StoreCreditEventSchema, type StoreCreditEvent } from './StoreCreditEvent';
 export { SupplierEventSchema, type SupplierEvent } from './SupplierEvent';

@@ -1252,6 +1252,8 @@ export class AdminClient {
       this.request<{ data: StoreDataSources }>('GET', '/store/data_sources', options).then(
         (r) => r.data,
       ),
+
+    translations: this.parentScopedTranslations('/stores'),
   }
 
   /** The locales a merchant can translate content into for the current store. */

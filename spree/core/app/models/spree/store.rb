@@ -42,6 +42,11 @@ module Spree
       acts_as_paranoid
       # deleted translation values still need to be accessible - remove deleted_at scope
       default_scope { unscope(where: :deleted_at) }
+
+      # Mobility deletes a row once its last value is cleared. The soft delete
+      # stamps only `deleted_at`, and the row stays readable, so the cleared
+      # values have to be written too or the old translation keeps showing.
+      before_destroy { update_columns(changes_to_save.transform_values(&:last)) if has_changes_to_save? }
     end
 
     #

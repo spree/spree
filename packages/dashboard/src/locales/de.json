@@ -2370,6 +2370,14 @@
         "email_font": {
           "label": "Schrift",
           "help": "E-Mail-Programme, die sie nicht laden können, verwenden eine ähnliche Schrift."
+        },
+        "seo_title": {
+          "label": "SEO-Titel",
+          "help": "Der Titel, den Suchmaschinen und Browser-Tabs für die Startseite Ihres Shops anzeigen."
+        },
+        "meta_description": {
+          "label": "Meta-Beschreibung",
+          "help": "Eine kurze Zusammenfassung, die Suchmaschinen unter dem Titel anzeigen."
         }
       },
       "store_credit": {
@@ -5882,6 +5890,10 @@
         "kg": "Kilogramm (kg)",
         "lb": "Pfund (lb)",
         "oz": "Unze (oz)"
+      },
+      "seo": {
+        "title": "Suchmaschinen-Eintrag",
+        "description": "Standardtitel und -beschreibung Ihres Shops. Übersetzen Sie sie für jede Sprache, die Ihr Shop unterstützt."
       }
     },
     "table_descriptions": {

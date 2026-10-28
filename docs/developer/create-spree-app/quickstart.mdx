@@ -23,7 +23,7 @@ The **admin dashboard** is included in every project (skip it with `--no-dashboa
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) 20 or later
+- [Node.js](https://nodejs.org/) 20 or later, with npm 9 or later (check with `node -v` and `npm -v`)
 - [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend, PostgreSQL, and Meilisearch)
 
 ## CLI Flags
@@ -182,6 +182,21 @@ The project deploys as **one image**: `server/Dockerfile` builds the Spree API t
 - **Anywhere else** — `spree build --production` builds the same image locally; push it to a registry and run it on any Docker host.
 
 See the [Deployment Guide](/developer/deployment) and the [dashboard deployment docs](/developer/dashboard/deployment).
+
+## Troubleshooting
+
+### `npm ERR! cb.apply is not a function`
+
+Your npm is too old for the Node.js version installed on your machine (npm 6 or earlier running on a newer Node.js). npm crashes while it downloads the installer, before `create-spree-app` starts. This usually happens when an old global npm or a Node.js version manager points at a different version than the one you expect.
+
+Reinstall a current Node.js from [nodejs.org](https://nodejs.org/) or with your version manager (for example `nvm install --lts && nvm use --lts`). It ships with a matching npm. Running `npm install -g npm@latest` usually fails with the same error, because the broken npm runs the upgrade.
+
+If the error remains, clear npm's cache and run the installer again:
+
+```bash
+rm -rf ~/.npm/_npx ~/.npm/_cacache
+npx create-spree-app@latest my-store
+```
 
 ## Next Steps
 
