@@ -42,7 +42,7 @@ module Spree
                          Spree.api.payment_source_serializer
                        end
 
-          serializer.new(payment.source).to_h
+          serializer.new(payment.source, params: nested_params('source')).to_h
         end
 
         one :payment_method, resource: proc { Spree.api.payment_method_serializer }

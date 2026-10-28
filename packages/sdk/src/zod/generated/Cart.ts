@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { AppliedPromotionSchema } from './AppliedPromotion';
-import { CustomFieldSchema } from './CustomField';
 import { FeeSchema } from './Fee';
 import { FreightSummarySchema } from './FreightSummary';
 import { FulfillmentSchema } from './Fulfillment';
@@ -75,7 +74,6 @@ export const CartSchema = z.object({
   payment_methods: z.array(PaymentMethodSchema),
   gift_card: GiftCardSchema.nullable(),
   get market() { return MarketSchema.nullable(); },
-  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Cart = z.infer<typeof CartSchema>;

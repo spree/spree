@@ -45,7 +45,7 @@ module Spree
                            Spree.api.admin_payment_source_serializer
                          end
 
-            serializer.new(payment.source).to_h
+            serializer.new(payment.source, params: nested_params('source')).to_h
           end
 
           many :capture_events,

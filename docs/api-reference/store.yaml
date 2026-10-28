@@ -14979,10 +14979,6 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
-        custom_fields:
-          type: array
-          items:
-            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - market_id

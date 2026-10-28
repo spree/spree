@@ -195,6 +195,9 @@ module Spree
         # Declares the opt-in `custom_fields` expand. The Store API sends only
         # values whose definition is storefront visible; Admin API serializers
         # pass `admin: true` to send every value.
+        #
+        # @param admin [Boolean] whether to send every value rather than only storefront visible ones
+        # @return [void]
         def self.expandable_custom_fields(admin: false)
           if admin
             many :custom_fields,

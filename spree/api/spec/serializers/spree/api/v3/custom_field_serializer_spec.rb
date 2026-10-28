@@ -101,7 +101,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldSerializer do
 
     it 'is offered by every Store API serializer of a record that can carry custom fields' do
       serializers = %w[
-        Address Cart Category Claim Collection Company CreditCard Customer DeliveryMethod Fulfillment GiftCard
+        Address Category Claim Collection Company CreditCard Customer DeliveryMethod Fulfillment GiftCard
         LineItem Media NewsletterSubscriber OptionType OptionValue Order Payment PaymentMethod PaymentSource
         Product Return Seller StoreCredit Variant
       ]

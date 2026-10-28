@@ -111,6 +111,7 @@ module Spree
               currency: current_currency,
               user: current_user,
               includes: [],
+              expand: expand_list,
               hide_prices: hide_prices?
             }
           end

@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { AppliedPromotionSchema } from './AppliedPromotion';
-import { CustomFieldSchema } from './CustomField';
 import { FreightSummarySchema } from './FreightSummary';
 import { LineItemSchema } from './LineItem';
 import { MarketSchema } from './Market';
@@ -51,7 +50,6 @@ export const CartSchema = z.object({
   billing_address: AddressSchema.nullable(),
   shipping_address: AddressSchema.nullable(),
   get market() { return MarketSchema.nullable(); },
-  custom_fields: z.array(CustomFieldSchema).optional(),
   completed_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),

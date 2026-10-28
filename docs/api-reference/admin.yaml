@@ -59390,10 +59390,6 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
-        custom_fields:
-          type: array
-          items:
-            "$ref": "#/components/schemas/CustomField"
         completed_at:
           type: string
           nullable: true
