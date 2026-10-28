@@ -25,6 +25,8 @@ module Spree
             { 'id' => node.prefixed_id, 'name' => node.name, 'kind' => node.kind }
           end
         end
+
+        expandable_custom_fields
       end
     end
   end

@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 import { DeliverySchema } from './Delivery';
 import { DeliveryMethodSchema } from './DeliveryMethod';
 import { DeliveryRateSchema } from './DeliveryRate';
@@ -36,6 +37,7 @@ export const FulfillmentSchema = z.object({
   stock_location: StockLocationSchema,
   delivery_rates: z.array(DeliveryRateSchema),
   tax_lines: z.array(TaxLineSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Fulfillment = z.infer<typeof FulfillmentSchema>;

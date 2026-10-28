@@ -79,6 +79,8 @@ module Spree
         one :shipping_address, resource: proc { Spree.api.address_serializer }
         one :gift_card, resource: proc { Spree.api.gift_card_serializer }
         one :market, resource: proc { Spree.api.market_serializer }
+
+        expandable_custom_fields
       end
     end
   end

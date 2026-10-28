@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import type StoreCredit from '../../types/generated/StoreCredit';
 import { ActorSchema } from './Actor';
+import { CustomFieldSchema } from './CustomField';
 import { CustomerSchema } from './Customer';
 
 export const StoreCreditSchema = z.object({
@@ -10,6 +11,7 @@ export const StoreCreditSchema = z.object({
   amount_used: z.string(),
   amount_remaining: z.string(),
   currency: z.string(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   memo: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
@@ -29,6 +31,7 @@ export const StoreCreditSchema = z.object({
   amount_used: z.ZodType<StoreCredit['amount_used']>;
   amount_remaining: z.ZodType<StoreCredit['amount_remaining']>;
   currency: z.ZodType<StoreCredit['currency']>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<StoreCredit['custom_fields'], undefined>>>;
   memo: z.ZodType<StoreCredit['memo']>;
   metadata: z.ZodType<StoreCredit['metadata']>;
   created_at: z.ZodType<StoreCredit['created_at']>;

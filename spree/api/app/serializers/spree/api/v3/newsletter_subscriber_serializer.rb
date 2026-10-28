@@ -21,6 +21,8 @@ module Spree
         attribute :customer_id do |subscriber|
           subscriber.customer&.prefixed_id if current_user && subscriber.customer_id == current_user.id
         end
+
+        expandable_custom_fields
       end
     end
   end

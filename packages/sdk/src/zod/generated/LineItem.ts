@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 import { DigitalLinkSchema } from './DigitalLink';
 import { OptionValueSchema } from './OptionValue';
 import { SellerSchema } from './Seller';
@@ -39,6 +40,7 @@ export const LineItemSchema = z.object({
   option_values: z.array(OptionValueSchema),
   digital_links: z.array(DigitalLinkSchema).optional(),
   tax_lines: z.array(TaxLineSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type LineItem = z.infer<typeof LineItemSchema>;

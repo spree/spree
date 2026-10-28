@@ -75,6 +75,8 @@ module Spree
           one :returns_address,
               resource: proc { Spree.api.admin_address_serializer },
               if: proc { |seller| seller.returns_address.present? }
+
+          expandable_custom_fields admin: true
         end
       end
     end

@@ -35,6 +35,8 @@ module Spree
         # The address book the entry belongs to. Null for an address in no
         # book: one a guest typed in, or the copy a placed order keeps.
         one :owner, resource: proc { Spree.api.address_owner_serializer }
+
+        expandable_custom_fields
       end
     end
   end

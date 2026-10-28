@@ -51,6 +51,7 @@ module Spree
 
         attribute :active, &:active?
 
+        expandable_custom_fields
       end
     end
   end

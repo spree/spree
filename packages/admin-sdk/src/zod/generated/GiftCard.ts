@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import type GiftCard from '../../types/generated/GiftCard';
 import { AdminUserSchema } from './AdminUser';
+import { CustomFieldSchema } from './CustomField';
 import { CustomerSchema } from './Customer';
 import { GiftCardBatchSchema } from './GiftCardBatch';
 import { OrderSchema } from './Order';
@@ -19,6 +20,7 @@ export const GiftCardSchema = z.object({
   redeemed_at: z.string().nullable(),
   expired: z.boolean(),
   active: z.boolean(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   created_at: z.string(),
   updated_at: z.string(),
   customer_id: z.string().nullable(),
@@ -40,6 +42,7 @@ export const GiftCardSchema = z.object({
   redeemed_at: z.ZodType<GiftCard['redeemed_at']>;
   expired: z.ZodType<GiftCard['expired']>;
   active: z.ZodType<GiftCard['active']>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<GiftCard['custom_fields'], undefined>>>;
   created_at: z.ZodType<GiftCard['created_at']>;
   updated_at: z.ZodType<GiftCard['updated_at']>;
   customer_id: z.ZodType<GiftCard['customer_id']>;

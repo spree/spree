@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const NewsletterSubscriberSchema = z.object({
   id: z.string(),
@@ -9,6 +10,7 @@ export const NewsletterSubscriberSchema = z.object({
   verified: z.boolean(),
   verified_at: z.string().nullable(),
   customer_id: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type NewsletterSubscriber = z.infer<typeof NewsletterSubscriberSchema>;

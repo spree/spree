@@ -54,6 +54,8 @@ module Spree
         many :customer_groups,
              proc { |groups, params| groups.for_store(params&.dig(:store) || Spree::Current.store) },
              resource: proc { Spree.api.customer_group_serializer }
+
+        expandable_custom_fields
       end
     end
   end

@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const MediaSchema = z.object({
   id: z.string(),
@@ -22,6 +23,7 @@ export const MediaSchema = z.object({
   large_url: z.string().nullable(),
   xlarge_url: z.string().nullable(),
   og_image_url: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });
