@@ -756,12 +756,17 @@ export async function addTextFilter(page: Page, field: RegExp, operator: RegExp,
   await expect(controls).toBeHidden()
 }
 
-/** Adds a filter whose values are listed (a status, yes or no) by picking one. */
+/**
+ * Adds a filter whose values are listed (a status, yes or no) by picking one.
+ * A yes-or-no closes the panel on its own; a status list stays open to tick
+ * more, so Escape closes it.
+ */
 export async function addListFilter(page: Page, field: RegExp, value: RegExp) {
   await page.getByRole('button', { name: /add filter/i }).click()
   const items = page.locator('[data-slot="filter-panel-item"]')
   await items.getByText(field).click()
   await items.getByText(value).click()
+  await page.keyboard.press('Escape')
 }
 
 /** Adds a filter on related records (categories, tags) by searching for one and ticking it. */
@@ -773,20 +778,13 @@ export async function addRecordFilter(page: Page, field: RegExp, value: string) 
   await page.keyboard.press('Escape')
 }
 
-/**
- * Narrows a quick filter in the toolbar to one value. Every value starts
- * ticked, so narrowing means unticking the rest.
- */
+/** Narrows a quick filter in the toolbar to one value, through that row's "Only". */
 export async function narrowQuickFilter(page: Page, trigger: RegExp, keep: RegExp) {
   await page.getByRole('button', { name: trigger }).click()
-  const items = page.getByRole('menuitemcheckbox')
-  await expect(items.first()).toBeVisible()
-  for (const item of await items.all()) {
-    const name = (await item.textContent()) ?? ''
-    if (!keep.test(name.trim()) && (await item.getAttribute('aria-checked')) === 'true') {
-      await item.click()
-    }
-  }
+  const item = page.getByRole('menuitemcheckbox', { name: keep })
+  await item.hover()
+  await item.getByText(/^only$/i).click()
+  await expect(page.getByRole('menuitemcheckbox', { checked: true })).toHaveCount(1)
   await page.keyboard.press('Escape')
 }
 

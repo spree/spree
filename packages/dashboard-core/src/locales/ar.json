@@ -422,6 +422,7 @@
       },
       "table_toolbar": {
         "add_filter": "إضافة فلتر",
+        "any_field": "{{field}}: الكل",
         "ascending": "تصاعدي",
         "clear_all": "مسح الكل",
         "columns_tooltip": "الأعمدة",
@@ -442,6 +443,8 @@
         "filter_select_placeholder": "اختر…",
         "filter_text_placeholder": "تصفية…",
         "filter_to_placeholder": "التصفية إلى…",
+        "n_selected": "{{count}} محدد",
+        "only": "فقط",
         "operators": {
           "after": "بعد",
           "before": "قبل",
@@ -467,6 +470,7 @@
         "remove_filter": "إزالة الفلتر",
         "reset_to_default": "إعادة إلى الافتراضي",
         "search_placeholder": "بحث…",
+        "select_all": "تحديد الكل",
         "sort_by": "ترتيب حسب",
         "sort_tooltip": "ترتيب",
         "visible_columns": "الأعمدة المرئية"

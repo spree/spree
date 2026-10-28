@@ -422,6 +422,7 @@
       },
       "table_toolbar": {
         "add_filter": "添加筛选条件",
+        "any_field": "任意{{field}}",
         "ascending": "升序",
         "clear_all": "全部清除",
         "columns_tooltip": "列",
@@ -442,6 +443,8 @@
         "filter_select_placeholder": "选择…",
         "filter_text_placeholder": "筛选…",
         "filter_to_placeholder": "筛选至…",
+        "n_selected": "已选 {{count}} 项",
+        "only": "仅此项",
         "operators": {
           "after": "晚于",
           "before": "早于",
@@ -467,6 +470,7 @@
         "remove_filter": "移除筛选",
         "reset_to_default": "重置为默认值",
         "search_placeholder": "搜索…",
+        "select_all": "全选",
         "sort_by": "排序方式",
         "sort_tooltip": "排序",
         "visible_columns": "可见列"

@@ -160,19 +160,23 @@ function DropdownMenuCheckboxItem({
       data-slot="dropdown-menu-checkbox-item"
       data-inset={inset}
       className={cn(
-        "relative flex cursor-pointer items-center gap-3 rounded-lg py-1.5 pr-8 pl-2.5 text-sm outline-hidden select-none transition-colors duration-75 focus:bg-accent focus:text-accent-foreground data-inset:pl-7 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/checkbox-item relative flex cursor-pointer items-center gap-2.5 rounded-lg py-1.5 pr-2.5 pl-2.5 text-sm outline-hidden select-none transition-colors duration-75 focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       checked={checked}
       onCheckedChange={onCheckedChange ? (checked) => onCheckedChange(checked) : undefined}
       {...props}
     >
+      {/* Drawn rather than a <Checkbox>: the item is already the checkbox to
+          assistive technology, and a second control inside it would be read
+          twice. Styled to match <Checkbox> so a menu and a table agree. */}
       <span
-        className="pointer-events-none absolute right-2 flex items-center justify-center"
+        aria-hidden
         data-slot="dropdown-menu-checkbox-item-indicator"
+        className="pointer-events-none flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-border bg-card text-white shadow-xs transition-colors duration-100 group-data-[checked]/checkbox-item:border-blue-500 group-data-[checked]/checkbox-item:bg-blue-500"
       >
         <MenuPrimitive.CheckboxItemIndicator keepMounted={false}>
-          <CheckIcon />
+          <CheckIcon className="size-3.5" />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
