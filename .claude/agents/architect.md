@@ -14,4 +14,3 @@ When reviewing code changes:
 - Check if any active plan's constraints are being violated
 - Flag when implementation diverges from a finalized plan
 
-Always update root CLAUDE.md when adding or changing plan status.
