@@ -37,7 +37,6 @@ RSpec.describe Spree::Seeds::All do
     end
   end
 
-
   it 'gives every store its first publishable key' do
     other_store = create(:store)
 
