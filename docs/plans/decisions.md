@@ -1,3 +1,13 @@
+## 2026-10-27: Stripe transfer reversals on refund move to open source
+
+**Context:** A refund on a seller's order wrote the reversal row, and the next payout to the seller's bank subtracted it, but the open-source Stripe provider never reversed the transfer. The seller's share stayed on their connected account while the marketplace had refunded the customer from its own balance, and nothing in the books said where that money now was. The 2026-07-15 decision kept the pullback in Enterprise.
+
+**Decision:** `SpreeStripe::PayoutProvider#reverse!` reverses the seller's share of the earning's Stripe transfer (`Stripe::Transfer.create_reversal`, keyed on the reversal row). A reversal whose earning has not reached Stripe yet stays pending; one whose earning nobody can account for waits for a person. `SellerTransfers::ExecutePendingJob` now retries owed reversals after the seller's earnings, through the provider that made the earning, and `ExecutePendingDueJob` picks up any seller holding one, including suspended sellers and those who can no longer be paid. A seller already paid out is left with a negative Stripe balance, which their next earnings make up before the sweep can pay them again.
+
+**Consequences:** Supersedes the clawback part of 2026-07-15. Enterprise keeps reconciliation against provider statements, KYC operations, payout reports including DAC7, and marketplace-facilitator taxes.
+
+**Plans amended:** `6.0-multi-vendor-marketplace.md` (summary, scope table, payout provider section, funds flow).
+
 ## 2026-10-26: A warehouse that cannot deliver gives up the units another can supply, and holds follow the allocation
 
 **Context:** A profile with per-region origin groups still allocated a cart to a warehouse with no method for the address whenever the warehouse that could deliver held the item only as backorderable (V-3596). Putting the capable warehouse first had no effect, because the Adjuster takes stock on hand anywhere over a backorder; the cart then reported the item as undeliverable. Reproducing it showed four more gaps on the same path. Orders allocated through `OrderRouting::Strategy::Rules`, which skipped the delivery profile and channel coverage that carts apply. A cart whose rebuild dropped an undeliverable proposal could still complete, placing an order with part of a line in no fulfillment. The checkout hold locked the first warehouse with stock, which could be one that cannot ship the order, and refused a cart another warehouse could have backordered. And allocation packed one line per variant, so a second line of the same variant (possible with a custom line finder) was allocated nowhere.
