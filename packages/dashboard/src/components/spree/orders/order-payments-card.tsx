@@ -1,5 +1,11 @@
 import type { Order, Payment } from '@spree/admin-sdk'
-import { adminClient, currencyParts, Money } from '@spree/dashboard-core'
+import {
+  adminClient,
+  currencyParts,
+  Money,
+  useMetadataSheet,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -249,6 +255,7 @@ function PaymentActionsMenu({
 }) {
   const { t } = useTranslation()
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
   const dashboardUrl = payment.gateway_dashboard_payment_url
 
   return (
@@ -275,6 +282,10 @@ function PaymentActionsMenu({
               </a>
             </DropdownMenuItem>
           )}
+          <ViewMetadataMenuItem
+            metadata={payment.metadata}
+            onClick={() => metadataSheet.show(payment.metadata, payment.number)}
+          />
           {canCapture && (
             <DropdownMenuItem onClick={onCapture}>
               <CreditCardIcon className="size-4" />
@@ -295,6 +306,7 @@ function PaymentActionsMenu({
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
       />
+      {metadataSheet.sheet}
     </>
   )
 }

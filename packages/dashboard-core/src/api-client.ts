@@ -362,6 +362,8 @@ export interface PanelPackageType extends PanelNamedRecord {
    * editable.
    */
   editable?: boolean
+  /** Operator-only; the seller panel's serializer leaves it out. */
+  metadata?: Record<string, unknown> | null
   /** Whose packaging this is; null is the marketplace's own. */
   seller_id?: string | null
   seller_name?: string | null

@@ -370,7 +370,8 @@
       "metadata_card": {
         "empty_description": "Apps and integrations populate this automatically.",
         "empty_title": "No metadata",
-        "title": "Metadata"
+        "title": "Metadata",
+        "view": "View metadata"
       },
       "page_header": {
         "copy_id": "Copy ID",

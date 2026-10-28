@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import { expandCustomFieldsCard, gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const PATH = (storeId: string) => `/${storeId}/settings/custom-field-definitions`
 const CTA = /add custom field/i
@@ -116,6 +116,7 @@ test.describe('custom field definitions', () => {
     const customFields = page
       .locator('[data-slot="card"]')
       .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^custom fields$/i }) })
+    await expandCustomFieldsCard(page)
     const input = customFields.getByLabel(new RegExp(`^${label}$`, 'i'))
     await expect(input).toBeVisible({ timeout: 15_000 })
     await input.fill('Aisle 7')
@@ -123,6 +124,7 @@ test.describe('custom field definitions', () => {
     await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
 
     await page.reload()
+    await expandCustomFieldsCard(page)
     await expect(customFields.getByLabel(new RegExp(`^${label}$`, 'i'))).toHaveValue('Aisle 7', {
       timeout: 15_000,
     })
@@ -153,6 +155,7 @@ test.describe('custom field definitions', () => {
     await expect(page.getByText(/custom fields saved/i)).toBeVisible({ timeout: 15_000 })
 
     await page.reload()
+    await expandCustomFieldsCard(page)
     await expect(customFields.getByText('Gold')).toBeVisible({ timeout: 15_000 })
   })
 

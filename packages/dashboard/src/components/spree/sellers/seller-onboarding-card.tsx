@@ -1,5 +1,5 @@
 import type { Seller, SellerRequirementStatus } from '@spree/admin-sdk'
-import { progressPercentage } from '@spree/dashboard-core'
+import { progressPercentage, useMetadataSheet, ViewMetadataMenuItem } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -12,6 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  hasMetadata,
   Progress,
   StatusBadge as SharedStatusBadge,
   Sheet,
@@ -123,6 +124,7 @@ function RequirementRow({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const [policyOpen, setPolicyOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
   const acceptMutation = useAcceptSellerRequirementSubmission(sellerId)
   const rejectMutation = useRejectSellerRequirementSubmission(sellerId)
   const waiveMutation = useWaiveSellerRequirement(sellerId)
@@ -156,6 +158,8 @@ function RequirementRow({
   }
 
   const policy = requirement.published_policy
+  const canWaive = canEdit && requirement.status !== 'complete'
+  const submissionHasMetadata = hasMetadata(submission?.metadata)
 
   return (
     <li className="flex items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
@@ -224,7 +228,7 @@ function RequirementRow({
           </>
         )}
 
-        {canEdit && requirement.status !== 'complete' && (
+        {(canWaive || submissionHasMetadata) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="icon-sm" variant="ghost" disabled={busy}>
@@ -232,13 +236,21 @@ function RequirementRow({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleWaive}>
-                {t('admin.sellers.onboarding.actions.waive')}
-              </DropdownMenuItem>
+              <ViewMetadataMenuItem
+                metadata={submission?.metadata}
+                onClick={() => metadataSheet.show(submission?.metadata, requirement.name)}
+              />
+              {canWaive && (
+                <DropdownMenuItem onClick={handleWaive}>
+                  {t('admin.sellers.onboarding.actions.waive')}
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
       </div>
+
+      {metadataSheet.sheet}
 
       {/* Read-only: the operator approves or sends back a seller, they do not
           rewrite the seller's legal text. Rendered as sanitized markup, the

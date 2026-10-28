@@ -1,6 +1,13 @@
 import type { Seller } from '@spree/admin-sdk'
 import { SELLER_STATUSES, subsetOf } from '@spree/core'
-import { adminClient, PageHeader, Slot, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  adminClient,
+  PageHeader,
+  RecordMetadataCard,
+  Slot,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -287,6 +294,8 @@ function SellerBody({ seller }: { seller: Seller }) {
             />
             <SellerOnboardingCard seller={seller} canEdit={canEdit} />
             <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
+            <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} collapsible />
+            <RecordMetadataCard metadata={seller.metadata} />
             <Slot name="seller.form_main" context={{ seller, canEdit }} />
           </>
         }
@@ -307,7 +316,6 @@ function SellerBody({ seller }: { seller: Seller }) {
               canEdit={canEdit}
               onEdit={() => setEditingSettlement(true)}
             />
-            <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} />
             <EnterprisePreviewNote previewKey="sellers.shopify" />
             <Slot name="seller.form_sidebar" context={{ seller, canEdit }} />
           </>

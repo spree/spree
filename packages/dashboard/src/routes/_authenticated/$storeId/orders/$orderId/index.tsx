@@ -1,5 +1,5 @@
-import { Slot } from '@spree/dashboard-core'
-import { ErrorState, MetadataCard, ResourceLayout } from '@spree/dashboard-ui'
+import { RecordMetadataCard, Slot } from '@spree/dashboard-core'
+import { ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -88,14 +88,9 @@ function OrderDetailPage() {
             resourceType="order"
             resourceLabel={t('admin.nav.orders').toLowerCase()}
           >
-            <CustomFieldsInlineCard />
+            <CustomFieldsInlineCard collapsible />
           </EditableApiCustomFieldsProvider>
-          <MetadataCard
-            metadata={order.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
-          />
+          <RecordMetadataCard metadata={order.metadata} />
           <Slot name="order.form_main" context={{ order }} />
         </>
       }

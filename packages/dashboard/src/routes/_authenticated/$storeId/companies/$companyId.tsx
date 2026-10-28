@@ -5,6 +5,7 @@ import {
   adminClient,
   mapSpreeErrorsToForm,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   usePermissions,
@@ -157,6 +158,8 @@ function CompanyBody({ company }: { company: Company }) {
           <SubUnitsCard company={company} canEdit={canEdit} />
           <MembersCard company={company} canEdit={canEdit} />
           {!isDivision && <TaxExemptionCertificatesCard companyId={company.id} canEdit={canEdit} />}
+          <ApiCustomFieldsCard ownerType="company" ownerId={company.id} collapsible />
+          <RecordMetadataCard metadata={company.metadata} />
           {/* Company-wide panels an extension owns: roles, purchase limits,
               approval settings (docs: Enterprise b2b-companies plan). */}
           <Slot name="company.form_main" context={{ company, kind: company.kind, canEdit }} />
@@ -171,7 +174,6 @@ function CompanyBody({ company }: { company: Company }) {
           ) : (
             <CompanyTaxIdentifiersCard companyId={company.id} canEdit={canEdit} />
           )}
-          <ApiCustomFieldsCard ownerType="company" ownerId={company.id} />
           <Slot name="company.form_sidebar" context={{ company, kind: company.kind, canEdit }} />
         </>
       }

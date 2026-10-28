@@ -368,7 +368,8 @@
       "metadata_card": {
         "empty_description": "Les applications et intégrations remplissent ceci automatiquement.",
         "empty_title": "Aucune métadonnée",
-        "title": "Métadonnées"
+        "title": "Métadonnées",
+        "view": "Voir les métadonnées"
       },
       "page_header": {
         "copy_id": "Copier l'ID",

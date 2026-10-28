@@ -24,6 +24,7 @@ import {
   extensionSubmitValues,
   HostFormSlot,
   mapSpreeErrorsToForm,
+  RecordMetadataSection,
   ResourceTable,
   resourceSearchSchema,
   runtimeListParams,
@@ -398,6 +399,7 @@ function EditOptionTypeSheet({
               />
               <OptionValuesFieldArray form={form} />
               <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
+              <RecordMetadataSection metadata={optionType?.metadata} />
             </div>
             <SheetFooter>
               <Button

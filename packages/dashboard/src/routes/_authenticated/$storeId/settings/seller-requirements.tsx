@@ -5,6 +5,7 @@ import {
   Can,
   defaultPreferences,
   PreferencesForm,
+  RecordMetadataSection,
   ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
@@ -410,6 +411,7 @@ function EditRequirementForm({
               onChange={setActive}
             />
           </FieldGroup>
+          <RecordMetadataSection metadata={requirement?.metadata} />
         </div>
         <SheetFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

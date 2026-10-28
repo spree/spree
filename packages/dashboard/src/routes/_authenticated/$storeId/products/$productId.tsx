@@ -17,6 +17,7 @@ import {
   prepareVariantsTaxForProductSave,
   productFormSchema,
   productToFormValues,
+  RecordMetadataCard,
   SEOCard,
   Slot,
   StatusCard,
@@ -29,7 +30,6 @@ import {
 import {
   ErrorState,
   FormActions,
-  MetadataCard,
   ResourceLayout,
   Skeleton,
   StatusBadge,
@@ -320,16 +320,11 @@ function ProductForm({ product }: { product: Product }) {
                 }
               />
               <DigitalAssetsCard productId={productId} variants={assignableVariants} />
-              <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
-                <CustomFieldsInlineCard />
-              </ProductCustomFieldsProvider>
               <ResourceTranslationsCard resourceType="product" resourceId={productId} />
-              <MetadataCard
-                metadata={product.metadata}
-                title={t('admin.components.metadata_card.title')}
-                emptyTitle={t('admin.components.metadata_card.empty_title')}
-                emptyDescription={t('admin.components.metadata_card.empty_description')}
-              />
+              <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
+                <CustomFieldsInlineCard collapsible />
+              </ProductCustomFieldsProvider>
+              <RecordMetadataCard metadata={product.metadata} />
               <Slot name="product.form_main" context={{ product, mode: 'edit' }} />
             </>
           }

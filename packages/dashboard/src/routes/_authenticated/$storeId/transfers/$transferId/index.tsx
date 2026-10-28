@@ -3,6 +3,7 @@ import {
   adminClient,
   Can,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   useResourceKey,
@@ -105,13 +106,14 @@ function StockTransferDetailPage() {
             stockTransferId={transfer.id}
             title={t('admin.stock_transfers.history_title')}
           />
+          <ApiCustomFieldsCard ownerType="stock_transfer" ownerId={transfer.id} collapsible />
+          <RecordMetadataCard metadata={transfer.metadata} />
           <Slot name="stock_transfer.form_main" context={{ transfer }} />
         </>
       }
       sidebar={
         <>
           <SummaryCard transfer={transfer} />
-          <ApiCustomFieldsCard ownerType="stock_transfer" ownerId={transfer.id} />
           <Slot name="stock_transfer.form_sidebar" context={{ transfer }} />
         </>
       }

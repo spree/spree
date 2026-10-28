@@ -1,6 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
-import { defaultPreferences, mapSpreeErrorsToForm, useStore } from '@spree/dashboard-core'
+import {
+  defaultPreferences,
+  mapSpreeErrorsToForm,
+  RecordMetadataSection,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Sheet,
@@ -281,6 +286,7 @@ export function EditPaymentMethodSheet({
                 onPreferencesChange={setPreferences}
               />
               <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
+              <RecordMetadataSection metadata={paymentMethod?.metadata} />
             </div>
             <SheetFooter>
               <Button
