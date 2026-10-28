@@ -20,6 +20,8 @@ export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
   seo_title: z.string(),
   meta_description: z.string(),
+  // A language the server does not list is refused there, under this field,
+  // rather than here, where a stored one would block every other setting.
   admin_locale: z.string().nullable().optional(),
   timezone: z.string().min(1, { error: requiredMessage('store.timezone') }),
   unit_system: z.enum(UNIT_SYSTEMS),

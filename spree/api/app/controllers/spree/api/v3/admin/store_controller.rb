@@ -13,8 +13,9 @@ module Spree
             body.attribute :meta_description, :string,
               nullable: true,
               description: "The storefront's default meta description, in the store's default language."
-            body.attribute :admin_locale, :string, example: 'en'
-            body.attribute :timezone, :string, example: 'Europe/Berlin'
+            body.attribute :admin_locale, :locale, nullable: true, example: 'en',
+              description: 'The language the dashboard opens in for every staff member; null lets each use their own.'
+            body.attribute :timezone, :time_zone, example: 'Europe/Berlin'
             body.attribute :weight_unit, :weight_unit
             body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS
             body.attribute :storefront_access, :string,

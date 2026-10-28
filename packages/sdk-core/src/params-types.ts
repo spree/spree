@@ -29,13 +29,14 @@ export interface ParamsSpec {
 const isRequestSchema = (name: string) => name.endsWith('Params')
 
 // Code lists the request schemas reference by name: ISO countries and
-// currencies, Spree's locales and measurement units. The response types
+// currencies, Spree's locales, time zones and measurement units. The response types
 // generated beside these files declare the same named types, so a request
 // imports them from there rather than repeating them.
 const SHARED_CODE_LISTS = new Set([
   'CountryCode',
   'CurrencyCode',
   'LocaleCode',
+  'TimeZone',
   'WeightUnit',
   'DimensionUnit',
 ])

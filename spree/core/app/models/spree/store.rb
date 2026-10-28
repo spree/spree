@@ -55,8 +55,9 @@ module Spree
     UNIT_SYSTEMS = %w[metric imperial].freeze
 
     # general preferences
-    preference :admin_locale, :string, format: :locale
-    preference :timezone, :string, format: :timezone, default: Time.zone.name
+    preference :admin_locale, :string, format: :locale, parse_on_set: ->(value) { Spree::Locales.listed(value) || value.presence }
+    preference :timezone, :string, format: :timezone, default: Spree::TimeZones.normalize(Time.zone.name),
+                                   parse_on_set: ->(value) { Spree::TimeZones.normalize(value) }
     preference :weight_unit, :string, default: 'lb', choices: -> { Spree::Variant::WEIGHT_UNITS }
     preference :unit_system, :string, default: 'imperial', choices: -> { UNIT_SYSTEMS }
     # Anonymous identifier of this installation, kept on the default store
@@ -408,6 +409,8 @@ module Spree
                         message: :invalid_document_number_affix }
     validates :preferred_capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }
     validate :preferred_storefront_url_is_an_origin
+    validate :preferred_admin_locale_is_listed
+    validate :preferred_timezone_is_a_time_zone
     validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
@@ -839,6 +842,31 @@ module Spree
       return if Spree::AllowedOrigin.normalize_origin(raw)
 
       errors.add(:preferred_storefront_url, :invalid)
+    end
+
+    def preferred_admin_locale_is_listed
+      locale = preferred_admin_locale
+      return if locale.blank? || Spree::Locales::ALL.include?(locale)
+      return if awaiting_upgrade?(:admin_locale) { Spree::Locales.listed(locale) }
+
+      errors.add(:preferred_admin_locale, :inclusion)
+    end
+
+    def preferred_timezone_is_a_time_zone
+      return if Spree::TimeZones.valid?(preferred_timezone)
+      return if awaiting_upgrade?(:timezone) { Spree::TimeZones.valid?(Spree::TimeZones.normalize(preferred_timezone)) }
+
+      errors.add(:preferred_timezone, :invalid)
+    end
+
+    # A value saved before 6.0 that the store settings upgrade step converts
+    # must not block saving the store's other settings until the step runs.
+    # The block says whether the step can convert it.
+    def awaiting_upgrade?(name)
+      return false unless persisted?
+      return false unless public_send(:"preferred_#{name}") == (attribute_was('preferences') || {})[name]
+
+      yield.present?
     end
 
     # The starting value only shapes a counter that does not exist yet — once

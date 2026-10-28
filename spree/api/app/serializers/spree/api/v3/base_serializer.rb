@@ -152,6 +152,12 @@ module Spree
         }.freeze
         private_constant :PREFERENCE_LIST_NAMES
 
+        # Settings declared with a code format share the code list request
+        # bodies take, so a value read back is the type a write takes.
+        FORMAT_CODE_LISTS = { 'iso-country' => :country, 'currency' => :currency, 'locale' => :locale,
+                              'timezone' => :time_zone }.freeze
+        private_constant :FORMAT_CODE_LISTS
+
         def self.preference_type_hint(schema, name)
           types = Array(schema['type'])
           options = {}
@@ -165,6 +171,9 @@ module Spree
           if schema['enum']
             options[:enum] = schema['enum'].compact
             options[:enum_type_name] = PREFERENCE_LIST_NAMES[name.to_sym] if PREFERENCE_LIST_NAMES.key?(name.to_sym)
+          elsif (code_list = FORMAT_CODE_LISTS[(schema['items'] || schema)['format']])
+            options[:enum_type_name], values = Spree::Api::V3::RequestSchema::CODE_LISTS.fetch(code_list)
+            options[:enum] = values.call
           end
           options.empty? ? hint : [hint, options]
         end

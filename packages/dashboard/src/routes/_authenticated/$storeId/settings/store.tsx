@@ -3,8 +3,11 @@ import { SpreeError, type Store, type StoreDataSourceProvider } from '@spree/adm
 import {
   CAPTURE_METHODS,
   DOCUMENT_NUMBER_FORMATS,
+  type LocaleCode,
   PROVIDER_FAILURE_POLICIES,
   STOREFRONT_ACCESSES,
+  TIME_ZONES,
+  type TimeZone,
   UNIT_SYSTEM_WEIGHT_UNITS,
   UNIT_SYSTEMS,
   type UnitSystem,
@@ -89,27 +92,19 @@ const SEO_TRANSLATABLE_FIELDS = ['seo_title', 'meta_description'] as const
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
 
-const TIMEZONES: string[] = (() => {
+// Browsers list zones under their own, sometimes older, names (`Asia/Calcutta`
+// for the `Asia/Kolkata` a store is saved with) and leave out `UTC`, the store
+// default, so Spree's suggestions are always merged in.
+const TIMEZONES: TimeZone[] = (() => {
+  let browserZones: string[] = []
   try {
-    // Browsers list only canonical zones, which leaves out `UTC` — the store's
-    // default, and a choice a merchant must be able to return to.
-    const zones = Intl.supportedValuesOf('timeZone')
-    return zones.includes('UTC') ? zones : ['UTC', ...zones]
+    browserZones = Intl.supportedValuesOf('timeZone')
   } catch {
-    // Fallback for older browsers — a small representative set.
-    return [
-      'UTC',
-      'America/New_York',
-      'America/Chicago',
-      'America/Denver',
-      'America/Los_Angeles',
-      'Europe/London',
-      'Europe/Paris',
-      'Europe/Berlin',
-      'Asia/Tokyo',
-      'Australia/Sydney',
-    ]
+    // Older browsers cannot list zones; Spree's suggestions stand alone.
   }
+  const zones = new Set<string>([...TIME_ZONES, ...browserZones])
+  zones.delete('UTC')
+  return ['UTC', ...[...zones].sort()]
 })()
 
 function storeToFormValues(store: Store): StoreSettingsFormValues {
@@ -253,7 +248,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
           name: values.name,
           seo_title: values.seo_title || null,
           meta_description: values.meta_description || null,
-          admin_locale: values.admin_locale || undefined,
+          admin_locale: (values.admin_locale || null) as LocaleCode | null,
           timezone: values.timezone,
           unit_system: values.unit_system,
           weight_unit: values.weight_unit,
@@ -325,9 +320,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
 
   useFormSubmitShortcut(form, onSubmit, { dirty: customFields.isDirty })
 
-  // Compute the dynamic timezone option list once. `Intl.supportedValuesOf`
-  // can be expensive on some browsers; memo keeps re-renders cheap.
-  const timezoneOptions = useMemo(() => TIMEZONES.map((tz) => ({ value: tz, label: tz })), [])
+  // The saved zone stays selectable even when neither list carries its name.
+  const timezoneOptions = useMemo(
+    () =>
+      (TIMEZONES.includes(store.timezone) ? TIMEZONES : [store.timezone, ...TIMEZONES]).map(
+        (tz) => ({ value: tz, label: tz }),
+      ),
+    [store.timezone],
+  )
   const unitSystemOptions = useMemo(
     () => UNIT_SYSTEMS.map((value) => ({ value, label: t(`admin.store.unit_systems.${value}`) })),
     [t],

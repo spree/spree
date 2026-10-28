@@ -40,22 +40,25 @@ module Spree
           datetime: { type: :string, format: :'date-time' },
           id: { type: :string },
           any: {},
-          # Codes from the closed lists below.
+          # Codes from the lists below.
           country: { type: :string },
           currency: { type: :string },
           locale: { type: :string },
+          time_zone: { type: :string },
           weight_unit: { type: :string },
           dimension_unit: { type: :string }
         }.freeze
 
-        # The closed lists a code field takes, published once per API as a
-        # named component — the same `CountryCode`, `CurrencyCode` and
-        # `WeightUnit` types the serializers declare, so a value read from a
-        # response is the type a request takes.
+        # The lists a code field takes, published once per API as a named
+        # component — the same `CountryCode`, `CurrencyCode` and `WeightUnit`
+        # types the serializers declare, so a value read from a response is the
+        # type a request takes. A list `Typelizer::OpenEnums` does not close
+        # only suggests its values.
         CODE_LISTS = {
           country: ['CountryCode', -> { Spree::IsoData.country_codes }],
           currency: ['CurrencyCode', -> { Spree::Money::Rounding::CURRENCY_CODES }],
           locale: ['LocaleCode', -> { Spree::Locales::ALL }],
+          time_zone: ['TimeZone', -> { Spree::TimeZones::SUGGESTED }],
           weight_unit: ['WeightUnit', -> { Spree::Variant::WEIGHT_UNITS }],
           dimension_unit: ['DimensionUnit', -> { Spree::Variant::DIMENSION_UNITS }]
         }.freeze
@@ -348,7 +351,12 @@ module Spree
             next unless CODE_LISTS.key?(field.kind)
 
             name, values = CODE_LISTS[field.kind]
-            lists[name] = { type: :string, enum: values.call }
+            lists[name] = if Typelizer::OpenEnums.closed?(name)
+                            { type: :string, enum: values.call }
+                          else
+                            Typelizer::OpenEnums.open_schema({ type: :string }, values.call)
+                              .merge(description: Typelizer::OpenEnums.description(name)).compact
+                          end
           end
         end
 
@@ -469,7 +477,7 @@ module Spree
 
           # The same open list the serializers publish (`enum_type_name`):
           # clients autocomplete the built-in values and still accept any other.
-          { anyOf: [schema.merge(enum: field.enum), schema] }
+          Typelizer::OpenEnums.open_schema(schema, field.enum)
         end
       end
     end

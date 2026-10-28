@@ -17,7 +17,7 @@ module Spree
                    products_count: :number,
                    default_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    supported_currencies: [:string, multi: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
-                   timezone: [:string, nullable: true]
+                   timezone: [:string, nullable: true, enum: Spree::TimeZones::SUGGESTED, enum_type_name: 'TimeZone']
 
           attributes :timezone,
                      :status, :legal_name, :registration_number,
