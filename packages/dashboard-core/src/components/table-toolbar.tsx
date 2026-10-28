@@ -184,8 +184,8 @@ export function TableToolbar({
 }: TableToolbarProps) {
   const { t } = useTranslation()
   const [filterOpen, setFilterOpen] = useState(false)
-  // The field the panel opens on when a chip is clicked; null opens the field list.
-  const [panelField, setPanelField] = useState<string | null>(null)
+  // The rule the panel opens on when its chip is clicked; null opens the field list.
+  const [panelRule, setPanelRule] = useState<FilterRule | null>(null)
 
   const allCols = allColumns ?? columns
   // Memoize so `FilterPanel`'s `useMemo` deps stay stable across parent
@@ -306,7 +306,10 @@ export function TableToolbar({
                 open={filterOpen}
                 onOpenChange={(next) => {
                   setFilterOpen(next)
-                  if (!next) setPanelField(null)
+                  // Cleared on opening too: Apply closes the panel through
+                  // `open`, which does not call this, so the trigger is the
+                  // first chance to forget the chip that opened it last.
+                  setPanelRule(null)
                 }}
               >
                 <Tooltip>
@@ -329,8 +332,8 @@ export function TableToolbar({
                   Apply button off the screen. */}
                 <PopoverContent align="start" className="w-[min(480px,calc(100vw-1rem))] p-0">
                   <FilterPanel
-                    key={panelField ?? ''}
-                    initialField={panelField}
+                    key={panelRule?.id ?? ''}
+                    initialRule={panelRule}
                     columns={panelColumns}
                     filters={filters}
                     onApply={(f) => {
@@ -396,7 +399,7 @@ export function TableToolbar({
                 onEdit={
                   panelKeys.has(entry.rules[0].field)
                     ? () => {
-                        setPanelField(entry.rules[0].field)
+                        setPanelRule(entry.rules[0])
                         setFilterOpen(true)
                       }
                     : undefined
@@ -1477,14 +1480,14 @@ function InlineValueList({
  * duplicated that list in a second place, in a different notation.
  */
 function FilterPanel({
-  initialField = null,
+  initialRule = null,
   columns,
   filters,
   onApply,
   onChange,
 }: {
-  /** Open straight on this field's values, as when its chip is clicked. */
-  initialField?: string | null
+  /** Open straight on this rule's field and value, as when its chip is clicked. */
+  initialRule?: FilterRule | null
   /** The fields with no quick control of their own. A field that has one is
    *  filtered there alone — its checkbox list already says "is" and "is not",
    *  so offering it here too only listed the same field twice. */
@@ -1505,15 +1508,18 @@ function FilterPanel({
    * empty, and the next tick would replace the existing set rather than extend
    * it.
    */
-  function seedFor(key: string | null) {
+  function seedFor(key: string | null, rule?: FilterRule | null) {
     const col = columns.find((c) => c.key === key)
     if (!col) return { operator: '', value: '', editing: null }
     const ops = getOperators(col.filterType ?? 'string')
+    const editable = (f: FilterRule) =>
+      f.field === key && col.filterType !== 'date' && ops.some((o) => o.value === f.operator)
+    // The clicked chip's own rule first: a field can carry two typed rules,
+    // and editing "equals b" must not open on "contains a".
     const applied =
+      (rule && editable(rule) ? rule : undefined) ??
       filters.find((f) => f.field === key && f.operator === 'in') ??
-      (col.filterType === 'date'
-        ? undefined
-        : filters.find((f) => f.field === key && ops.some((o) => o.value === f.operator)))
+      filters.find(editable)
     return {
       operator: applied && applied.operator !== 'in' ? applied.operator : ops[0].value,
       value: applied?.value ?? '',
@@ -1522,10 +1528,10 @@ function FilterPanel({
       editing: applied && applied.operator !== 'in' ? applied.id : null,
     }
   }
-  const [initial] = useState(() => seedFor(initialField))
+  const [initial] = useState(() => seedFor(initialRule?.field ?? null, initialRule))
 
   // The field being built, or null while the field list is showing.
-  const [field, setField] = useState<string | null>(initialField)
+  const [field, setField] = useState<string | null>(initialRule?.field ?? null)
   const [operator, setOperator] = useState(initial.operator)
   const [value, setValue] = useState(initial.value)
   const [editing, setEditing] = useState<string | null>(initial.editing)
@@ -1654,8 +1660,15 @@ function FilterPanel({
   function setValues(next: string[]) {
     if (!field) return
     setValue(next.join(','))
+    // A reopened `status is active` is shown ticked, so the set that replaces
+    // it must replace that rule too, or the old `eq` keeps narrowing the list.
+    // Only for enums: a `not_in` tag rule is a separate constraint.
+    const replaced = enumMulti ? editing : null
+    setEditing(null)
 
-    const others = filters.filter((f) => !(f.field === field && f.operator === 'in'))
+    const others = filters.filter(
+      (f) => !(f.field === field && f.operator === 'in') && f.id !== replaced,
+    )
     onChange(
       next.length === 0
         ? others
@@ -1837,7 +1850,14 @@ function FilterPanel({
               type="button"
               data-slot="filter-panel-item"
               className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-              onClick={() => setCustomRange({ from: '', to: '' })}
+              // Seeded with the bounds applied, so editing one end keeps the other.
+              onClick={() =>
+                setCustomRange({
+                  from:
+                    filters.find((f) => f.field === field && f.operator === 'gteq')?.value ?? '',
+                  to: filters.find((f) => f.field === field && f.operator === 'lteq')?.value ?? '',
+                })
+              }
             >
               {t('admin.components.table_toolbar.date_presets.custom')}
               <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
