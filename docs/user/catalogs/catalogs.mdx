@@ -49,7 +49,7 @@ Who the catalog is for. **Assign** takes:
 - **Audience type** - **Company** or **Customer group**.
 - **Audience** - The company or group itself. A company assignment covers that company and every sub-unit below it, so assigning to a parent covers its divisions.
 
-An audience can be added now or later, but a catalog assigned to nobody cannot be activated, so one has to be set before the catalog can start applying.
+An audience can be added now or later, but a catalog assigned to nobody cannot be activated unless it is a sales channel's default catalog, so one has to be set before the catalog can start applying.
 
 ### Products
 
@@ -168,7 +168,7 @@ So a product's row on the catalog beats the catalog-wide term, and both beat wha
 
 ## How to Activate or Deactivate a Catalog
 
-**Activate** at the top of the catalog page puts the agreement in force after a confirmation. Its audience then sees the products it lists and pays its prices. A catalog with no audience cannot be activated, because there would be nobody for it to apply to.
+**Activate** at the top of the catalog page puts the agreement in force after a confirmation. Its audience then sees the products it lists and pays its prices. A catalog with no audience cannot be activated, unless it is a sales channel's default catalog. Otherwise there would be nobody for it to apply to.
 
 **Deactivate** stops it applying. Everything the catalog holds is kept, so activating it again makes its terms apply again.
 
@@ -208,13 +208,13 @@ A draft keeps the price it was created with even if the catalog changes afterwar
 
 ### Agreed Prices for One Business
 
-Create a catalog, assign it to the company, leave the **Products** step empty and choose **Prices I enter for this catalog**. The company's buyers see your whole range and pay your agreed prices. This is the most common arrangement, and leaving the product list empty is what keeps their view of your range unchanged.
+Create a catalog, assign it to the company, leave the **Products** step empty and choose **Prices I enter for this catalog**. Then enter each price on the catalog page, save them, and click **Activate**, because a new catalog does nothing until it is activated. The company's buyers see your whole range and pay your agreed prices. This is the most common arrangement, and leaving the product list empty is what keeps their view of your range unchanged.
 
 ### A Range Only Some Buyers See
 
-Create a catalog, assign it to the company or group, and add only the products that audience should have. Its buyers then see exactly those products and nothing else, because a catalog narrows its audience to the products it lists rather than adding to what they already see.
+Create a catalog, assign it to the company or group, and add only the products that audience should have. Its buyers then see exactly those products and nothing else, as long as no other active catalog also covers them. Where an audience has a second active catalog that lists products, its buyers see both catalogs' products together.
 
-<Warning>A catalog that lists products hides every other product from its audience. An audience whose catalog holds six products sees six products in the shop and nothing else.</Warning>
+<Warning>A catalog that lists products hides every other product from its audience. An audience whose only catalog holds six products sees six products in the shop and nothing else. Where that audience is covered by a second active catalog, they see what both catalogs list.</Warning>
 
 ### An Extra Product for One Audience
 

@@ -32,7 +32,7 @@ A rate is chosen for each item sold rather than for the order as a whole, so one
 
 A rate with no conditions matches everything, which is how a marketplace states a single standard charge. That rate belongs at the **bottom** of the list, because nothing below a rate that matches everything is ever reached.
 
-<Warning>Where no rate matches an item, no commission is charged on it and the seller keeps the whole sale. Narrowing every rate with conditions and leaving nothing to catch the remainder is the way a marketplace stops earning without anything appearing to be wrong.</Warning>
+<Warning>Where no rate matches an item, no commission is charged on it and the seller keeps the sale, less any consumer tax your marketplace remits. Narrowing every rate with conditions and leaving nothing to catch the remainder is the way a marketplace stops earning without anything appearing to be wrong.</Warning>
 
 Two kinds of sale are never commissioned. Products your own team sells are the marketplace's own and carry no fee, and the seller charged is the one recorded against the item when the order was placed rather than whoever owns the product today.
 
@@ -99,7 +99,7 @@ These setups all depend on the order:
 - **Rates that vary with the value of the sale.** A rate charging 15% below 50 above a rate charging 10% from 50 upwards, with the standard rate below both. The first band to match wins, which is why the bands are ordered rather than given priorities of their own.
 - **A standard rate.** One rate with no conditions, at the bottom, catching everything the rates above did not.
 
-<Warning>Raising a rate with no conditions above the others turns off everything beneath it, because a rate that matches everything ends the search. The list stays as it was and nothing warns you, so the effect only shows up in what the next sales are charged.</Warning>
+<Warning>Raising a percentage rate with no conditions above the others turns off everything beneath it, because it matches every sale in every currency and ends the search. A flat fee does not reach quite that far, since it is skipped for a currency it states no amount in, and the rates below it still apply to those sales. The list stays as it was and nothing warns you, so the effect only shows up in what the next sales are charged.</Warning>
 
 ## How to Edit or Delete a Rate
 
