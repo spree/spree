@@ -48,7 +48,7 @@ test.describe('metadata', () => {
     const session = await login(page)
     const order = await createPlacedOrder(page, session.accessToken)
     const fulfillments = await adminRequest<{
-      data: { fulfillment_items: { id: string }[] }[]
+      data: { id: string; fulfillment_items: { id: string }[] }[]
     }>(page, session, 'get', `/orders/${order.id}/fulfillments?expand=fulfillment_items`)
     const orderReturn = await adminRequest<{ id: string; number: string }>(
       page,
@@ -63,6 +63,14 @@ test.describe('metadata', () => {
       metadata: METADATA,
       external_references: EXTERNAL_REFERENCES,
     })
+    // References alone are enough to offer the sheet.
+    await adminRequest(
+      page,
+      session,
+      'patch',
+      `/orders/${order.id}/fulfillments/${fulfillments.data[0].id}`,
+      { external_references: { wms: 'SHIP-0042' } },
+    )
 
     await page.goto(`/${session.store_id}/orders/${order.id}`)
     const returns = page.locator('[data-slot="card"]').filter({ hasText: /^returns/i })
@@ -74,6 +82,34 @@ test.describe('metadata', () => {
     await expect(sheet.getByText('erp_id')).toBeVisible()
     await expect(sheet.getByText('ERP-4711')).toBeVisible()
     await expect(sheet.getByText('NS-0042')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(sheet).toBeHidden()
+
+    const fulfillmentsCard = page.locator('[data-slot="card"]').filter({
+      has: page.locator('[data-slot="card-title"]', { hasText: /fulfillments/i }),
+    })
+    await fulfillmentsCard
+      .getByRole('button', { name: /actions/i })
+      .first()
+      .click()
+    await page.getByRole('menuitem', { name: /view metadata/i }).click()
+    await expect(page.getByRole('dialog').getByText('SHIP-0042')).toBeVisible()
+  })
+
+  test('a seller page lists the keys external systems know it by', async ({ page }) => {
+    const session = await login(page)
+    const seller = await seedRecord(page, session, '/sellers', {
+      name: `E2E Referenced Seller ${Date.now()}`,
+      external_references: EXTERNAL_REFERENCES,
+    })
+
+    await page.goto(`/${session.store_id}/sellers/${seller.id}`)
+
+    const toggle = page.getByRole('button', { name: /^metadata\s*1$/i })
+    await expect(toggle).toBeVisible({ timeout: 15_000 })
+    await toggle.click()
+    await expect(page.getByText('netsuite')).toBeVisible()
+    await expect(page.getByText('NS-0042')).toBeVisible()
   })
 
   test('an edit sheet keeps metadata collapsed until opened', async ({ page }) => {
