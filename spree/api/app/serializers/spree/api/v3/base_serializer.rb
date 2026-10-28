@@ -152,9 +152,10 @@ module Spree
         }.freeze
         private_constant :PREFERENCE_LIST_NAMES
 
-        # Settings declared with a code format share the closed code list
-        # request bodies take, so a value read back is the type a write takes.
-        FORMAT_CODE_LISTS = { 'iso-country' => :country, 'currency' => :currency, 'locale' => :locale }.freeze
+        # Settings declared with a code format share the code list request
+        # bodies take, so a value read back is the type a write takes.
+        FORMAT_CODE_LISTS = { 'iso-country' => :country, 'currency' => :currency, 'locale' => :locale,
+                              'timezone' => :time_zone }.freeze
         private_constant :FORMAT_CODE_LISTS
 
         def self.preference_type_hint(schema, name)

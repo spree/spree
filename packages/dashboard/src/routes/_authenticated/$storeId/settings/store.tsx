@@ -5,6 +5,8 @@ import {
   DOCUMENT_NUMBER_FORMATS,
   PROVIDER_FAILURE_POLICIES,
   STOREFRONT_ACCESSES,
+  TIME_ZONES,
+  type TimeZone,
   UNIT_SYSTEM_WEIGHT_UNITS,
   UNIT_SYSTEMS,
   type UnitSystem,
@@ -85,26 +87,15 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/store')(
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
 
-const TIMEZONES: string[] = (() => {
+const TIMEZONES: TimeZone[] = (() => {
   try {
     // Browsers list only canonical zones, which leaves out `UTC` — the store's
     // default, and a choice a merchant must be able to return to.
     const zones = Intl.supportedValuesOf('timeZone')
     return zones.includes('UTC') ? zones : ['UTC', ...zones]
   } catch {
-    // Fallback for older browsers — a small representative set.
-    return [
-      'UTC',
-      'America/New_York',
-      'America/Chicago',
-      'America/Denver',
-      'America/Los_Angeles',
-      'Europe/London',
-      'Europe/Paris',
-      'Europe/Berlin',
-      'Asia/Tokyo',
-      'Australia/Sydney',
-    ]
+    // Older browsers cannot list zones; offer the ones Spree suggests.
+    return [...TIME_ZONES]
   }
 })()
 

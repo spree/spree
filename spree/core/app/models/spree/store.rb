@@ -51,7 +51,8 @@ module Spree
 
     # general preferences
     preference :admin_locale, :string, format: :locale
-    preference :timezone, :string, format: :timezone, default: Time.zone.name
+    preference :timezone, :string, format: :timezone, default: Spree::TimeZones.normalize(Time.zone.name),
+                                   parse_on_set: ->(value) { Spree::TimeZones.normalize(value) }
     preference :weight_unit, :string, default: 'lb', choices: -> { Spree::Variant::WEIGHT_UNITS }
     preference :unit_system, :string, default: 'imperial', choices: -> { UNIT_SYSTEMS }
     # Anonymous identifier of this installation, kept on the default store
@@ -403,6 +404,7 @@ module Spree
                         message: :invalid_document_number_affix }
     validates :preferred_capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }
     validate :preferred_storefront_url_is_an_origin
+    validate :preferred_timezone_is_a_time_zone
     validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
@@ -834,6 +836,15 @@ module Spree
       return if Spree::AllowedOrigin.normalize_origin(raw)
 
       errors.add(:preferred_storefront_url, :invalid)
+    end
+
+    # A Rails time zone name stored before 6.0 is converted by an upgrade step;
+    # until it runs, that name must not block saving the store's other settings.
+    def preferred_timezone_is_a_time_zone
+      return if Spree::TimeZones.valid?(preferred_timezone)
+      return if persisted? && preferred_timezone == (attribute_was('preferences') || {})[:timezone]
+
+      errors.add(:preferred_timezone, :invalid)
     end
 
     # The starting value only shapes a counter that does not exist yet — once

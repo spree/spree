@@ -968,6 +968,38 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'preferred_timezone' do
+    let(:store) { create(:store) }
+
+    it 'converts a Rails time zone name to its IANA name' do
+      store.update!(preferred_timezone: 'Eastern Time (US & Canada)')
+
+      expect(store.preferred_timezone).to eq('America/New_York')
+    end
+
+    it 'keeps an IANA name and UTC as given' do
+      store.update!(preferred_timezone: 'Europe/Berlin')
+      expect(store.preferred_timezone).to eq('Europe/Berlin')
+
+      store.update!(preferred_timezone: 'UTC')
+      expect(store.preferred_timezone).to eq('UTC')
+    end
+
+    it 'rejects a value that names no time zone' do
+      store.preferred_timezone = 'Mars/Olympus_Mons'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_timezone]).to be_present
+    end
+
+    it 'does not block saving other settings while a stored name awaits the upgrade step' do
+      store.update_columns(preferences: store.preferences.merge(timezone: 'Mars/Olympus_Mons'))
+      store.reload
+
+      expect(store.update(preferred_guest_checkout: false)).to be(true)
+    end
+  end
+
   describe 'units' do
     let(:store) { build(:store) }
 

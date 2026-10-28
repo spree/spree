@@ -8,7 +8,7 @@ module Spree
           request_params :store do |body|
             body.attribute :name, :string, example: 'My Store'
             body.attribute :admin_locale, :locale, example: 'en'
-            body.attribute :timezone, :string, example: 'Europe/Berlin'
+            body.attribute :timezone, :time_zone, example: 'Europe/Berlin'
             body.attribute :weight_unit, :weight_unit
             body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS
             body.attribute :storefront_access, :string,

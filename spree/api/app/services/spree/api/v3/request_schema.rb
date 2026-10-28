@@ -40,25 +40,29 @@ module Spree
           datetime: { type: :string, format: :'date-time' },
           id: { type: :string },
           any: {},
-          # Codes from the closed lists below.
+          # Codes from the lists below.
           country: { type: :string },
           currency: { type: :string },
           locale: { type: :string },
+          time_zone: { type: :string },
           weight_unit: { type: :string },
           dimension_unit: { type: :string }
         }.freeze
 
-        # The closed lists a code field takes, published once per API as a
-        # named component — the same `CountryCode`, `CurrencyCode` and
-        # `WeightUnit` types the serializers declare, so a value read from a
-        # response is the type a request takes.
+        # The lists a code field takes, published once per API as a named
+        # component — the same `CountryCode`, `CurrencyCode` and `WeightUnit`
+        # types the serializers declare, so a value read from a response is the
+        # type a request takes. Lists in `OPEN_CODE_LISTS` only suggest values.
         CODE_LISTS = {
           country: ['CountryCode', -> { Spree::IsoData.country_codes }],
           currency: ['CurrencyCode', -> { Spree::Money::Rounding::CURRENCY_CODES }],
           locale: ['LocaleCode', -> { Spree::Locales::ALL }],
+          time_zone: ['TimeZone', -> { Spree::TimeZones::SUGGESTED }],
           weight_unit: ['WeightUnit', -> { Spree::Variant::WEIGHT_UNITS }],
           dimension_unit: ['DimensionUnit', -> { Spree::Variant::DIMENSION_UNITS }]
         }.freeze
+
+        OPEN_CODE_LISTS = %i[time_zone].freeze
 
         ACTIONS = %i[create update].freeze
 
@@ -348,7 +352,8 @@ module Spree
             next unless CODE_LISTS.key?(field.kind)
 
             name, values = CODE_LISTS[field.kind]
-            lists[name] = { type: :string, enum: values.call }
+            list = { type: :string, enum: values.call }
+            lists[name] = OPEN_CODE_LISTS.include?(field.kind) ? { anyOf: [list, { type: :string }] } : list
           end
         end
 

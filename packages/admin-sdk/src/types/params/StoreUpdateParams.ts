@@ -1,12 +1,13 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
 import type { LocaleCode } from '../generated'
+import type { TimeZone } from '../generated'
 import type { WeightUnit } from '../generated'
 
 export type StoreUpdateParams = {
   name?: string
   admin_locale?: LocaleCode
-  timezone?: string
+  timezone?: TimeZone
   weight_unit?: WeightUnit
   unit_system?: 'metric' | 'imperial'
   /**
