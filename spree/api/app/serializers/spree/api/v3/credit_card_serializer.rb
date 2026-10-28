@@ -7,6 +7,8 @@ module Spree
                  gateway_payment_profile_id: [:string, nullable: true]
 
         attributes :brand, :last4, :month, :year, :name, :default, :gateway_payment_profile_id
+
+        expandable_custom_fields
       end
     end
   end

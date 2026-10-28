@@ -49,6 +49,8 @@ module Spree
 
           # Where the inbound parcel is, as the carrier last reported it.
           many :deliveries, resource: proc { Spree.api.admin_delivery_serializer }
+
+          expandable_custom_fields admin: true
         end
       end
     end

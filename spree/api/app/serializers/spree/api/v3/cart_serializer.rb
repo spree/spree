@@ -129,6 +129,8 @@ module Spree
         many :payment_methods, resource: proc { Spree.api.payment_method_serializer }
         one :gift_card, resource: proc { Spree.api.gift_card_serializer }
         one :market, resource: proc { Spree.api.market_serializer }
+
+        expandable_custom_fields
       end
     end
   end

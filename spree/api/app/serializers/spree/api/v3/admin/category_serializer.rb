@@ -28,9 +28,7 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('ancestors') }
 
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable_custom_fields admin: true
         end
       end
     end

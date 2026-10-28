@@ -52,6 +52,8 @@ module Spree
           one :customer,
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

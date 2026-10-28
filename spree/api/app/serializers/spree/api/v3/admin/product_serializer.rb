@@ -108,9 +108,7 @@ module Spree
                resource: proc { Spree.api.admin_collection_serializer },
                if: proc { expand?('collections') }
 
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable_custom_fields admin: true
 
           many :product_publications,
                resource: proc { Spree.api.admin_product_publication_serializer },

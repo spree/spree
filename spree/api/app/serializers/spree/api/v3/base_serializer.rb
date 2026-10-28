@@ -192,6 +192,22 @@ module Spree
           end
         end
 
+        # Declares the opt-in `custom_fields` expand. The Store API sends only
+        # values whose definition is storefront visible; Admin API serializers
+        # pass `admin: true` to send every value.
+        def self.expandable_custom_fields(admin: false)
+          if admin
+            many :custom_fields,
+                 resource: proc { Spree.api.admin_custom_field_serializer },
+                 if: proc { expand?('custom_fields') }
+          else
+            many :storefront_custom_fields,
+                 key: :custom_fields,
+                 resource: proc { Spree.api.custom_field_serializer },
+                 if: proc { expand?('custom_fields') }
+          end
+        end
+
         # Plain decimal notation. BigDecimal renders 0.06 as "0.6e-1", which
         # is what a client would otherwise print beside a unit.
         #

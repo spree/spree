@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 import { DigitalLinkSchema } from './DigitalLink';
 import { OptionValueSchema } from './OptionValue';
 import { SellerSchema } from './Seller';
@@ -32,6 +33,7 @@ export const LineItemSchema = z.object({
   get option_values() { return z.array(OptionValueSchema); },
   digital_links: z.array(DigitalLinkSchema),
   tax_lines: z.array(TaxLineSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   metadata: z.record(z.string(), z.unknown()),
   price_source: z.string().nullable(),

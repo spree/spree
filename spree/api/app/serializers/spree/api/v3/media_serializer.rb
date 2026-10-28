@@ -99,6 +99,8 @@ module Spree
         def url_helpers
           Rails.application.routes.url_helpers
         end
+
+        expandable_custom_fields
       end
     end
   end

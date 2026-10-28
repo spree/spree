@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressOwnerSchema } from './AddressOwner';
+import { CustomFieldSchema } from './CustomField';
 
 export const AddressSchema = z.object({
   id: z.string(),
@@ -23,6 +24,7 @@ export const AddressSchema = z.object({
   is_default_shipping: z.boolean(),
   state_name: z.string().nullable(),
   owner: AddressOwnerSchema.nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
   updated_at: z.string(),

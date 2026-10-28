@@ -65,6 +65,8 @@ module Spree
           many :payment_splits,
                resource: proc { Spree.api.admin_payment_split_serializer },
                if: proc { expand?('payment_splits') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

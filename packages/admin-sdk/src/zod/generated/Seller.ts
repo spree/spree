@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
+import { CustomFieldSchema } from './CustomField';
 
 export const SellerSchema = z.object({
   id: z.string(),
@@ -11,6 +12,7 @@ export const SellerSchema = z.object({
   logo_url: z.string().nullable(),
   square_logo_url: z.string().nullable(),
   cover_photo_url: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   status: z.string(),
   contact_email: z.string().nullable(),
   billing_email: z.string().nullable(),

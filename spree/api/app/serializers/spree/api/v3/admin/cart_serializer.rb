@@ -29,6 +29,8 @@ module Spree
           # An admin twin, so this package carries its own type rather
           # than importing the store one.
           one :freight_summary, resource: proc { Spree.api.admin_freight_summary_serializer }
+
+          expandable_custom_fields admin: true
         end
       end
     end

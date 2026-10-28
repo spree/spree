@@ -28,6 +28,8 @@ module Spree
           prefixed_id_attributes customer_id: :customer_owner
 
           one :owner, resource: proc { Spree.api.admin_address_owner_serializer }
+
+          expandable_custom_fields admin: true
         end
       end
     end

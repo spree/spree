@@ -46,6 +46,8 @@ module Spree
         end
 
         one :payment_method, resource: proc { Spree.api.payment_method_serializer }
+
+        expandable_custom_fields
       end
     end
   end

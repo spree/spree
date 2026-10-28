@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
+import { CustomFieldSchema } from './CustomField';
 import { PolicySchema } from './Policy';
 
 export const ProfileSchema = z.object({
@@ -12,6 +13,7 @@ export const ProfileSchema = z.object({
   logo_url: z.string().nullable(),
   square_logo_url: z.string().nullable(),
   cover_photo_url: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   timezone: z.string().nullable(),
   status: z.string(),
   legal_name: z.string().nullable(),
