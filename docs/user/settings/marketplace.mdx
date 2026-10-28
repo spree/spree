@@ -3,7 +3,7 @@ title: "Marketplace Settings"
 description: "Learn how to set how your marketplace pays its sellers, how sellers join it, and the tax on your commission."
 ---
 
-Marketplace settings are the rules that apply to every seller on your marketplace. They decide how sellers are paid, whether an admin needs to review sellers before they can trade, whether sellers receive emails from your store, and what tax is charged on your commission.
+Marketplace settings are the rules that apply to every seller on your marketplace. They decide how sellers are paid, whether an admin needs to review sellers before they can trade, what files sellers may attach to their products, whether sellers receive emails from your store, and what tax is charged on your commission.
 
 These settings are the defaults for the whole marketplace. An individual seller can carry their own payout schedule and their own minimum payout, set on that seller's page, and those will override the settings here for that seller alone.
 
@@ -48,9 +48,25 @@ Turning **Publish seller products automatically** on suits established sellers l
 
 <Warning>Each switch removes a human decision. A workable middle setting on a growing marketplace is to review sellers but not their products, so you still choose who trades while a seller you have already approved can list freely.</Warning>
 
+## Seller Files
+
+![The Seller files section](/docs/images/user/settings/marketplace/3-seller-files.png)
+
+Whether sellers may attach downloadable files to their own products, which kinds of file those may be, and whether changing one on a product already on sale needs looking at again.
+
+- **Let sellers upload digital files** - Off by default. Switched on, sellers attach downloadable files to their own products and set the download limits on them. Left off, only your own team adds files, and a seller sees the ones you added without being able to change them.
+- **Accepted file types for sellers** - Which formats a seller may upload. Pick from the list, or type a content type such as `application/pdf` and press Enter to add one that is not there. A whole family is accepted as well, written as `audio/*`.
+- **Review file changes on products already on sale** - On by default. A seller who adds or replaces a file on an approved product sends that product back to review and off sale until you approve it again.
+
+Uploading is off to begin with because a file a shopper downloads carries your marketplace's name, which makes it something your marketplace vouches for in the same way a listing is. A marketplace selling digital goods through its sellers switches it on; one where the files are your own leaves it off.
+
+The accepted types are checked against each file's own signature rather than its name, so renaming a file does not get it past the list. The list starts with the usual document, archive, audio, video and image formats. Your own uploads are never restricted by it.
+
+<Note>**Review file changes on products already on sale** does nothing where **Publish seller products automatically** is switched on, because there is no review step for a product to go back to. A marketplace that reviews nothing accepts the file along with everything else.</Note>
+
 ## Communication
 
-![The Communication section, with the seller email switch](/docs/images/user/settings/marketplace/3-communication.png)
+![The Communication section, with the seller email switch](/docs/images/user/settings/marketplace/4-communication.png)
 
 Whether your store sends sellers its own emails about approval, products and payouts. Emails to customers are not affected either way.
 
@@ -65,7 +81,7 @@ Turning it off might suit a few specific situations:
 
 ## Commission Tax
 
-![The Commission tax section](/docs/images/user/settings/marketplace/4-commission-tax.png)
+![The Commission tax section](/docs/images/user/settings/marketplace/5-commission-tax.png)
 
 The tax charged on your commission, as a percentage, used when neither the commission rate itself nor your tax provider supplies a rate. Leave it at zero if you charge no tax on your fee.
 
