@@ -17,15 +17,25 @@ module Spree
           Spree::Store.with_deleted.order(:id)
         end
 
+        # Locks the store's row, so a settings save made meanwhile is read
+        # rather than overwritten, and counts each change once it is written.
+        #
+        # @param store [Spree::Store]
+        # @return [void]
         def process(store)
-          changes = time_zone_change(store).merge(admin_locale_change(store))
-          return if changes.empty?
+          store.with_lock do
+            changes = time_zone_change(store).merge(admin_locale_change(store))
+            next if changes.empty?
 
-          changes.each_value { |outcome, _value| tally(dry_run? ? :"would_#{outcome}" : outcome) }
-          return if dry_run?
+            if dry_run?
+              changes.each_value { |outcome, _value| tally(:"would_#{outcome}") }
+              next
+            end
 
-          changes.each { |name, (_outcome, value)| store.set_preference(name, value) }
-          store.update_columns(preferences: store.preferences, updated_at: Time.current)
+            changes.each { |name, (_outcome, value)| store.set_preference(name, value) }
+            store.update_columns(preferences: store.preferences, updated_at: Time.current)
+            changes.each_value { |outcome, _value| tally(outcome) }
+          end
         end
 
         private
