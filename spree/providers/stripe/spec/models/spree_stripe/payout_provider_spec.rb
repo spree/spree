@@ -194,8 +194,13 @@ RSpec.describe SpreeStripe::PayoutProvider do
                                           amount: -10.25, currency: 'USD')
     end
 
+    let(:reversals_made) { [] }
+
     before do
       allow(Stripe::Transfer).to receive(:create_reversal).and_return(Stripe::StripeObject.construct_from(id: 'trr_1'))
+      allow(Stripe::Transfer).to receive(:list_reversals) do
+        Stripe::ListObject.construct_from(object: 'list', data: reversals_made, has_more: false)
+      end
     end
 
     it "takes the seller's share back from the transfer that paid the earning" do
@@ -254,6 +259,37 @@ RSpec.describe SpreeStripe::PayoutProvider do
       allow(Stripe::Transfer).to receive(:create_reversal).and_raise(Stripe::APIConnectionError, 'timed out')
 
       expect { described_class.new.reverse!(reversal) }.to raise_error(Spree::Core::AmbiguousGatewayError)
+    end
+
+    # An earlier attempt reversed the transfer but never recorded it, and its
+    # idempotency key may have expired since — asking again would take the
+    # money twice.
+    context 'when an earlier attempt already made the reversal' do
+      let(:reversals_made) do
+        [
+          { id: 'trr_other', object: 'transfer_reversal', metadata: { spree_seller_transfer_id: '0' } },
+          { id: 'trr_made', object: 'transfer_reversal', metadata: { spree_seller_transfer_id: reversal.id.to_s } }
+        ]
+      end
+
+      it 'records that reversal instead of making another' do
+        expect(Stripe::Transfer).not_to receive(:create_reversal)
+
+        described_class.new.reverse!(reversal)
+
+        expect(reversal.reload).to be_completed
+        expect(reversal.reference).to eq('trr_made')
+      end
+    end
+
+    # Nothing moved, so the retry job may simply ask again.
+    it 'leaves a failed lookup to be retried' do
+      allow(Stripe::Transfer).to receive(:list_reversals).and_raise(Stripe::APIConnectionError, 'timed out')
+
+      expect { described_class.new.reverse!(reversal) }.to raise_error(Spree::Core::GatewayError) do |error|
+        expect(error).not_to be_a(Spree::Core::AmbiguousGatewayError)
+      end
+      expect(Stripe::Transfer).not_to have_received(:create_reversal)
     end
   end
 
