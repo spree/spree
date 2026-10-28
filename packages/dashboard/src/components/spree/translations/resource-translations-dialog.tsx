@@ -74,6 +74,8 @@ interface ResourceTranslationsDialogProps {
   resourceType: TranslatableResourceType
   /** Prefixed id of the resource being translated. */
   resourceId: string
+  /** Limits the resource's own rows to these field keys; omit to edit every field. */
+  fields?: readonly string[]
 }
 
 /** Edits keyed by `${resourceId}::${locale}::${field}` → value. */
@@ -95,13 +97,14 @@ export function ResourceTranslationsDialog({
   onOpenChange,
   resourceType,
   resourceId,
+  fields,
 }: ResourceTranslationsDialogProps) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data, isLoading, isError, refetch } = useResourceTranslations(resourceType, resourceId)
   const invalidateTranslations = useInvalidateTranslations()
 
-  const rows = useMemo(() => (data ? flattenTree(data) : []), [data])
+  const rows = useMemo(() => (data ? flattenTree(data, fields) : []), [data, fields])
   const targetLocales = useMemo(
     () => (data ? data.supported_locales.filter((l) => l !== data.default_locale) : []),
     [data],
@@ -392,7 +395,7 @@ function TranslationGrid({
 /** Flattens the matrix tree (root + nested children) into ordered rows.
  *  A child's left-column label is its own source value (e.g. "Small"), so the
  *  grid reads as a hierarchy; the root's rows use the field i18n labels. */
-function flattenTree(data: ResourceTranslations): TranslationRow[] {
+function flattenTree(data: ResourceTranslations, fields?: readonly string[]): TranslationRow[] {
   const rows: TranslationRow[] = []
 
   const pushNode = (node: ResourceTranslations | ResourceTranslationsNode, indent: number) => {
@@ -400,7 +403,8 @@ function flattenTree(data: ResourceTranslations): TranslationRow[] {
       resourceType: node.resource_type,
       resourceId: node.resource_id,
       indent,
-      fields: node.fields,
+      fields:
+        indent === 0 && fields ? node.fields.filter((f) => fields.includes(f.key)) : node.fields,
       translations: node.translations,
       // Children typically have a single field; label the row by its source so
       // the hierarchy reads naturally ("Size" → "Small", "Medium").

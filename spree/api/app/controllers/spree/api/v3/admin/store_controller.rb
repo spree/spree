@@ -149,17 +149,19 @@ module Spree
           # GET /api/v3/admin/store
           def show
             authorize! :show, current_store
-            render json: serialize_store
+            render json: in_default_locale { serialize_store }
           end
 
           # PATCH /api/v3/admin/store
           def update
             authorize! :update, current_store
 
-            if current_store.update(permitted_params)
-              render json: serialize_store
-            else
-              render_validation_error(current_store.errors)
+            in_default_locale do
+              if current_store.update(permitted_params)
+                render json: serialize_store
+              else
+                render_validation_error(current_store.errors)
+              end
             end
           end
 
@@ -182,6 +184,13 @@ module Spree
           end
 
           private
+
+          # Settings hold the store's default-language values, whatever locale
+          # the request resolved to. Other languages are written through the
+          # translations endpoints.
+          def in_default_locale(&)
+            Mobility.with_locale(current_store.default_locale, &)
+          end
 
           def describe(provider_classes)
             provider_classes.map do |provider_class|

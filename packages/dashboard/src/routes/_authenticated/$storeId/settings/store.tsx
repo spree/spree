@@ -84,6 +84,8 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/store')(
   component: StoreSettingsPage,
 })
 
+const SEO_TRANSLATABLE_FIELDS = ['seo_title', 'meta_description'] as const
+
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
 
@@ -490,7 +492,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   </FieldGroup>
                 </CardContent>
               </Card>
-              <ResourceTranslationsCard resourceType="store" resourceId={store.id} />
+              <ResourceTranslationsCard
+                resourceType="store"
+                resourceId={store.id}
+                fields={SEO_TRANSLATABLE_FIELDS}
+              />
 
               <Card>
                 <CardHeader>

@@ -229,6 +229,7 @@ test.describe('store settings — general', () => {
     await page.getByRole('button', { name: /manage translations/i }).click()
     const dialog = page.getByRole('dialog')
     await expect(dialog.getByTestId('source-seo_title')).toContainText(title, { timeout: 15_000 })
+    await expect(dialog.getByLabel('name de')).toHaveCount(0)
     const translated = `E2E Kaffee ${suffix}`
     await dialog.getByLabel('seo_title de').fill(translated)
     await dialog.getByRole('button', { name: /^save translations$/i }).click()
@@ -240,6 +241,23 @@ test.describe('store settings — general', () => {
       timeout: 15_000,
     })
     await page.getByRole('button', { name: /^close$/i }).click()
+
+    // Delete the translation so later specs in this shard start without it.
+    const cleared = await page.request.post('/api/v3/admin/translations/batch', {
+      headers: { 'X-Spree-Store-Id': creds.store_id, Authorization: `Bearer ${creds.accessToken}` },
+      data: {
+        translations: [
+          {
+            resource_type: 'store',
+            resource_id: creds.store_id,
+            values: { de: { seo_title: null } },
+          },
+        ],
+      },
+    })
+    if (!cleared.ok()) {
+      throw new Error(`Failed to delete translation: ${cleared.status()} ${await cleared.text()}`)
+    }
 
     await seoTitle.fill('')
     await metaDescription.fill('')

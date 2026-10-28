@@ -48,7 +48,7 @@ export function usePayoutProviders() {
 export function useUpdateStoreSettings() {
   return useResourceMutation<unknown, Error, StoreUpdateParams>({
     mutationFn: (params) => adminClient.store.update(params),
-    invalidate: [[STORE_QUERY_RESOURCE], [TRANSLATIONS_QUERY_RESOURCE]],
+    invalidate: [[STORE_QUERY_RESOURCE], [TRANSLATIONS_QUERY_RESOURCE, 'store']],
     successMessage: false,
     errorMessage: false,
   })

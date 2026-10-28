@@ -78,5 +78,19 @@ RSpec.describe Spree::Api::V3::Admin::Translations::BatchesController, type: :co
       post :create, params: { translations: { resource_type: 'product' } }, as: :json
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'deletes a store translation cell with null' do
+      store.upsert_translations('de' => { 'seo_title' => 'Kaffeeladen' })
+
+      post :create, params: {
+        translations: [{ resource_type: 'store', resource_id: store.prefixed_id, values: { de: { seo_title: nil } } }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(Mobility.with_locale(:de) { store.reload.seo_title(fallback: false) }).to be_nil
+
+      store.reload.upsert_translations('de' => { 'seo_title' => 'Kaffeehaus' })
+      expect(Mobility.with_locale(:de) { store.reload.seo_title(fallback: false) }).to eq('Kaffeehaus')
+    end
   end
 end

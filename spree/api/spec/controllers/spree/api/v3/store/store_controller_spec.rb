@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::Store::StoreController, type: :controller do
 
   before do
     allow(store).to receive(:supported_locales_list).and_return(%w[en de fr])
-    store.translations.create!(locale: 'de', seo_title: 'Kaffeeladen — Frische Bohnen')
+    store.upsert_translations('de' => { 'seo_title' => 'Kaffeeladen — Frische Bohnen' })
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 

@@ -121,7 +121,7 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
   end
 
   context 'when the parent is the store' do
-    before { store.translations.create!(locale: 'de', seo_title: 'Kaffeeladen') }
+    before { store.upsert_translations('de' => { 'seo_title' => 'Kaffeeladen' }) }
 
     it 'returns the translation matrix for the current store' do
       get :index, params: { store_id: store.prefixed_id }, as: :json

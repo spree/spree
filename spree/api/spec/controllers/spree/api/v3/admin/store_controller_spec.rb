@@ -209,6 +209,24 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         expect(json_response['meta_description']).to eq('Roasted every morning')
         expect(store.reload.seo_title).to eq('Fresh Coffee Beans')
       end
+
+      context 'when the request resolves to a non-default locale' do
+        before do
+          configure_supported_locales(store, %w[en de])
+          store.upsert_translations('de' => { 'seo_title' => 'Frische Kaffeebohnen' })
+          request.headers['x-spree-locale'] = 'de'
+        end
+
+        after { I18n.locale = :en }
+
+        it 'writes the default-language value and leaves the translation alone' do
+          subject
+
+          expect(json_response['seo_title']).to eq('Fresh Coffee Beans')
+          expect(Mobility.with_locale(:en) { store.reload.seo_title }).to eq('Fresh Coffee Beans')
+          expect(Mobility.with_locale(:de) { store.reload.seo_title(fallback: false) }).to eq('Frische Kaffeebohnen')
+        end
+      end
     end
 
     context 'with the low stock threshold' do
