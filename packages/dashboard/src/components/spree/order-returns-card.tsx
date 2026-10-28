@@ -162,8 +162,13 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                         )}
                         <ViewMetadataMenuItem
                           metadata={returnRecord.metadata}
+                          externalReferences={returnRecord.external_references}
                           onClick={() =>
-                            metadataSheet.show(returnRecord.metadata, returnRecord.number)
+                            metadataSheet.show(
+                              returnRecord.metadata,
+                              returnRecord.number,
+                              returnRecord.external_references,
+                            )
                           }
                         />
                         {RETURN_CANCELABLE.includes(returnRecord.status) && (

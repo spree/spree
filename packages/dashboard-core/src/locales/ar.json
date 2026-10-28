@@ -366,8 +366,10 @@
         "video_title": "معاينة الفيديو"
       },
       "metadata_card": {
+        "copy_reference": "نسخ مفتاح {{system}}",
         "empty_description": "تملأ التطبيقات والتكاملات هذا تلقائيًا.",
         "empty_title": "لا توجد بيانات وصفية",
+        "external_references": "المراجع الخارجية",
         "title": "البيانات الوصفية",
         "view": "عرض البيانات الوصفية"
       },

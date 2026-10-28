@@ -367,8 +367,10 @@
         "video_title": "Podgląd wideo"
       },
       "metadata_card": {
+        "copy_reference": "Kopiuj klucz {{system}}",
         "empty_description": "Aplikacje i integracje wypełniają to automatycznie.",
         "empty_title": "Brak metadanych",
+        "external_references": "Odwołania zewnętrzne",
         "title": "Metadane",
         "view": "Pokaż metadane"
       },

@@ -6,6 +6,8 @@ module Spree
         # shopper also gets, plus the operational state and the settlement and
         # tax configuration only the operator sets.
         class SellerSerializer < V3::SellerSerializer
+          include Concerns::ExternalReferencesAttribute
+
           typelize status: [:string, enum: Spree::Seller.statuses, enum_type_name: 'SellerStatus'],
                    legal_name: [:string, nullable: true],
                    registration_number: [:string, nullable: true],

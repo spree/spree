@@ -179,8 +179,10 @@
         "video_title": "Vista previa del video"
       },
       "metadata_card": {
+        "copy_reference": "Copiar clave de {{system}}",
         "empty_description": "Las aplicaciones e integraciones lo completan automáticamente.",
         "empty_title": "Sin metadatos",
+        "external_references": "Referencias externas",
         "title": "Metadatos",
         "view": "Ver metadatos"
       },

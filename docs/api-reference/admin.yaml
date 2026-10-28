@@ -53667,6 +53667,7 @@ paths:
                   logo_url:
                   square_logo_url:
                   cover_photo_url:
+                  external_references: {}
                   status: pending
                   contact_email: hello@sparks.example
                   billing_email:
@@ -53783,6 +53784,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: pending
                 contact_email: hi@northwind.example
                 billing_email:
@@ -53891,6 +53893,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: pending
                 contact_email: hello@sparks.example
                 billing_email:
@@ -53985,6 +53988,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: pending
                 contact_email: hello@sparks.example
                 billing_email:
@@ -54175,6 +54179,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: invited
                 contact_email: hello@sparks.example
                 billing_email:
@@ -54269,6 +54274,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: approved
                 contact_email: hello@sparks.example
                 billing_email:
@@ -54375,6 +54381,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: onboarding
                 contact_email: hello@sparks.example
                 billing_email:
@@ -54489,6 +54496,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: suspended
                 contact_email: hello@sparks.example
                 billing_email:
@@ -54585,6 +54593,7 @@ paths:
                 logo_url:
                 square_logo_url:
                 cover_photo_url:
+                external_references: {}
                 status: rejected
                 contact_email: hello@sparks.example
                 billing_email:
@@ -70903,6 +70912,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CustomField"
+        external_references:
+          type: object
         status:
           anyOf:
           - type: string
@@ -70988,6 +70999,7 @@ components:
       - logo_url
       - square_logo_url
       - cover_photo_url
+      - external_references
       - status
       - contact_email
       - billing_email

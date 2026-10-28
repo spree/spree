@@ -366,8 +366,10 @@
         "video_title": "视频预览"
       },
       "metadata_card": {
+        "copy_reference": "复制 {{system}} 键",
         "empty_description": "应用和集成会自动填充此内容。",
         "empty_title": "暂无元数据",
+        "external_references": "外部引用",
         "title": "元数据",
         "view": "查看元数据"
       },

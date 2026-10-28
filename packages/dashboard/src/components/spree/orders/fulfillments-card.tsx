@@ -520,7 +520,14 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
 
             <ViewMetadataMenuItem
               metadata={fulfillment.metadata}
-              onClick={() => metadataSheet.show(fulfillment.metadata)}
+              externalReferences={fulfillment.external_references}
+              onClick={() =>
+                metadataSheet.show(
+                  fulfillment.metadata,
+                  fulfillment.number,
+                  fulfillment.external_references,
+                )
+              }
             />
 
             {CAN_CANCEL.includes(fulfillment.status) && (

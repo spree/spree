@@ -33,6 +33,7 @@ import type { PanelStockLocation } from '../api-client'
 import { Can } from '../components/can'
 import { CountryCombobox } from '../components/country-combobox'
 import { StateCombobox, useCountryStates } from '../components/country-state-fields'
+import { RecordMetadataSection } from '../components/record-metadata'
 import { ResourceTable, resourceSearchSchema } from '../components/resource-table'
 import { HostFormSlot } from '../components/slot'
 import {
@@ -341,6 +342,7 @@ function EditStockLocationSheet({
               />
               {StockLevelsPanel && <StockLevelsPanel stockLocationId={id} />}
               {ActivityPanel && <ActivityPanel stockLocationId={id} />}
+              <RecordMetadataSection externalReferences={stockLocation?.external_references} />
             </div>
             <SheetFooter>
               <Button

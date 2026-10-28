@@ -295,7 +295,10 @@ function SellerBody({ seller }: { seller: Seller }) {
             <SellerOnboardingCard seller={seller} canEdit={canEdit} />
             <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
             <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} collapsible />
-            <RecordMetadataCard metadata={seller.metadata} />
+            <RecordMetadataCard
+              metadata={seller.metadata}
+              externalReferences={seller.external_references}
+            />
             <Slot name="seller.form_main" context={{ seller, canEdit }} />
           </>
         }

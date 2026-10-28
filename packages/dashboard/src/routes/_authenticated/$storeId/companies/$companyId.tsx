@@ -159,7 +159,10 @@ function CompanyBody({ company }: { company: Company }) {
           <MembersCard company={company} canEdit={canEdit} />
           {!isDivision && <TaxExemptionCertificatesCard companyId={company.id} canEdit={canEdit} />}
           <ApiCustomFieldsCard ownerType="company" ownerId={company.id} collapsible />
-          <RecordMetadataCard metadata={company.metadata} />
+          <RecordMetadataCard
+            metadata={company.metadata}
+            externalReferences={company.external_references}
+          />
           {/* Company-wide panels an extension owns: roles, purchase limits,
               approval settings (docs: Enterprise b2b-companies plan). */}
           <Slot name="company.form_main" context={{ company, kind: company.kind, canEdit }} />

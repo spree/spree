@@ -13,6 +13,7 @@ export const SellerSchema = z.object({
   square_logo_url: z.string().nullable(),
   cover_photo_url: z.string().nullable(),
   custom_fields: z.array(CustomFieldSchema).optional(),
+  external_references: z.record(z.string(), z.string()),
   status: z.string(),
   contact_email: z.string().nullable(),
   billing_email: z.string().nullable(),

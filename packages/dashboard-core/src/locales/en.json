@@ -368,8 +368,10 @@
         "video_title": "Video preview"
       },
       "metadata_card": {
+        "copy_reference": "Copy {{system}} key",
         "empty_description": "Apps and integrations populate this automatically.",
         "empty_title": "No metadata",
+        "external_references": "External references",
         "title": "Metadata",
         "view": "View metadata"
       },

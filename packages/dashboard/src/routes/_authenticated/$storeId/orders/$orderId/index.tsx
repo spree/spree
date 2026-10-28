@@ -90,7 +90,10 @@ function OrderDetailPage() {
           >
             <CustomFieldsInlineCard collapsible />
           </EditableApiCustomFieldsProvider>
-          <RecordMetadataCard metadata={order.metadata} />
+          <RecordMetadataCard
+            metadata={order.metadata}
+            externalReferences={order.external_references}
+          />
           <Slot name="order.form_main" context={{ order }} />
         </>
       }
