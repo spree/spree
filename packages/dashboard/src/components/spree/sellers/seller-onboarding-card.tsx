@@ -231,7 +231,12 @@ function RequirementRow({
         {(canWaive || submissionHasMetadata) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="icon-sm" variant="ghost" disabled={busy}>
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                disabled={busy}
+                aria-label={t('admin.actions.actions_menu')}
+              >
                 <EllipsisVerticalIcon className="size-4" />
               </Button>
             </DropdownMenuTrigger>

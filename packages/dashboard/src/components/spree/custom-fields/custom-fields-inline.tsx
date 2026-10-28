@@ -665,11 +665,12 @@ export function CustomFieldsInlineCard({
       requiredDefinitionIds?.includes(definition.id) && isBlankValue(values[definition.id]),
   )
 
-  // Opens once rather than tracking the flag, so the card does not fold away
-  // the moment the merchant fills the last required field in.
+  // Opens once rather than tracking the flags, so the card does not fold away
+  // the moment the merchant fills the last required field in. A failed load
+  // opens it too: the error lives in the body, out of sight while folded.
   useEffect(() => {
-    if (requiredMissing) setOpen(true)
-  }, [requiredMissing])
+    if (requiredMissing || loadFailed) setOpen(true)
+  }, [requiredMissing, loadFailed])
 
   if (canEdit === false || (hideWhenEmpty && !hasDefinitions)) return null
 
@@ -737,7 +738,7 @@ function isBlankValue(value: unknown) {
   return (
     value === null ||
     value === undefined ||
-    value === '' ||
+    (typeof value === 'string' && value.trim() === '') ||
     (Array.isArray(value) && value.length === 0)
   )
 }
