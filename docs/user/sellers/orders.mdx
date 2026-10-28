@@ -1,32 +1,103 @@
 ---
 title: "Marketplace Orders"
-description: "One checkout across several sellers becomes one order per seller — paid once, shipped separately, settled separately."
+description: "Learn how a checkout spanning several sellers is split, what differs on each order page, and how sellers fulfill their own."
 ---
 
-This is what makes a marketplace different from a shop, and it is worth understanding before anything else.
+A marketplace order is an order carrying products from one of your sellers. Where a shopper buys from two sellers in a single checkout, that one purchase becomes one order per seller, each fulfilled by the seller it belongs to and each carrying its own share of what was paid.
 
-A customer fills one basket, enters one address, and pays once. But each seller needs their own order: they ship separately, they are paid separately, and they must never see each other's business. So at checkout, a basket spanning several sellers becomes an **order group** — one container holding one order per seller.
+The shopper experiences a single purchase. They pay once, receive one confirmation, and see their basket arriving in separate deliveries. Your team sees the separate orders, and each seller sees only their own.
 
-| Level | Owns |
+To review them, navigate to **Orders** in the admin dashboard.
+
+## How a Checkout Is Split
+
+![The Orders list, with two seller orders from one purchase](/docs/images/user/sellers/orders/1-orders-list.png)
+
+A checkout is split when its goods belong to more than one party, and your own goods count as a party of their own. A basket holding one seller's goods, or only your own, produces one ordinary order. A basket mixing your own goods with one seller's produces two.
+
+Where it does span several, the checkout becomes a **purchase** holding one order per seller. The purchase keeps the number the shopper saw, and the orders number off it. A purchase numbered R1003 produces R1003-1 and R1003-2.
+
+The split is a real division rather than a presentational one. Each order carries its own items, its own delivery charge and its own totals, worked out in its own right rather than divided down from the basket.
+
+| Held once for the purchase | Held by each order |
 |---|---|
-| Order group | The customer, the addresses, the single payment, the combined total |
-| Order | One seller's items, its fulfillments, its own money lines |
+| The payment the shopper made | The items that seller sold |
+| The delivery and billing addresses | The delivery charge and the totals |
+| The contact email | The fulfillments, and who fulfills them |
+| | The commission and the seller's earning |
 
-The one payment is apportioned across the orders as **payment splits**, so each seller's share of a single charge is recorded exactly. That is what makes per-seller refunds and settlement possible later.
+<Note>The purchase itself is not an order and does not appear as a row in your orders list. Searching for R1003 finds R1003-1 and R1003-2, which are the orders that exist.</Note>
 
-## In the dashboard
+### Finding the Other Parts of a Purchase
 
-On the **Orders** list, an order that is part of a group shows it in the **Order group** column, with a link to view every order in that group. On an order's page, a **Marketplace** card names the seller — or says the order is the marketplace's own — and shows which group it belongs to.
+![The Seller card on an order, with the link to the rest of the purchase](/docs/images/user/sellers/orders/2-seller-card.png)
 
-A basket with only one seller's products, or only your own, produces a single order with no group.
+The **Seller** column on the orders list names the seller behind each order, with an empty field if the order is one of your own. It is shown by default, because the list holds your orders and your sellers' together.
 
-## Who does what
+To see the rest of one purchase, open any order from it and use **View all orders in this purchase** on the **Seller** card. That filters the orders list to that purchase alone. The same link is available as a **Purchase** column on the list, which is hidden until you add it.
 
-- **The seller** sees their order in their panel, and ships it from their own stock location with their own delivery method. Shipping is what records their earning.
-- **You** see every order. Refunds are handled per order, so refunding one seller's items never touches another's.
-- **The customer** sees one purchase, and one confirmation.
+## What Differs on a Seller's Order Page
 
-## Related
+![A seller's order in the admin dashboard](/docs/images/user/sellers/orders/3-seller-order.png)
 
-- [Payouts](/user/sellers/payouts) — how a shipped order turns into money owed
-- [Processing Orders](/user/orders/processing-orders) — the order page in general
+A seller's order is processed in the same way as any other, and [<u>Processing Orders</u>](/user/orders/processing-orders) covers the screen itself. However, there are three things are there that an ordinary order does not have:
+
+- **Seller** names the business that sold it, linked to their seller page. On an order of your own this card reads **Sold by you**. Where the order was part of a larger purchase, the card also says so and links to the rest.
+- **Commission** lists what your marketplace charged, one row per item, naming the rate that charged it, the fee and any tax on that fee. Delivery appears as its own row where the rate charges on it.
+- **Seller transfers** shows what the sale earned the seller once the order is fulfilled, and whether it has been settled into a payout yet.
+
+The order summary carries both the order total and the marketplace fee, so what the shopper paid and what you charged are readable together.
+
+<Note>Commission is charged when the order is placed, and the seller's earning is created when the order is fulfilled. An order that has not shipped therefore shows a commission with no transfer against it yet.</Note>
+
+## Who Fulfills a Seller Order
+
+The seller does, from their own panel. The goods are theirs, held at their own stock location, and shipped using the delivery methods they set up.
+
+Your team can still act on a seller's order from the admin dashboard in the same way as any other, which is what you need when a seller is unresponsive or a customer escalates to you.
+
+Some marketplaces are run the other way round. Where sellers hold their stock in a warehouse the marketplace owns, your own team picks and ships every order and fulfills each seller's orders on their behalf from the admin dashboard. Nothing about the split changes: each seller still has their own order, earns on it and is paid for it. What changes is who packs the parcel. A marketplace working this way puts its stock locations and delivery methods in its own hands rather than asking each seller to set up their own, which is covered under [<u>Onboarding</u>](/user/sellers/onboarding).
+
+## How a Seller Fulfills an Order
+
+![A seller's orders list in their own panel](/docs/images/user/sellers/orders/4-seller-orders-list.png)
+
+Orders reach a seller under **Orders** in their panel, where they see only their own. The list carries the order number, when it was placed, its fulfillment and payment status and its total, and can be filtered by any of those.
+
+![A seller fulfilling an order, with the tracking number and notification](/docs/images/user/sellers/orders/5-fulfill-form.png)
+
+Opening an order shows what has to go out on the **Fulfillments** card, with the delivery method the shopper chose and the location it ships from.
+
+1. Tick the items going in this parcel, and set the quantity where only some are being sent.
+2. Enter the **Tracking number**.
+3. Choose the **Shipping carrier**, or leave it to be detected from the tracking number.
+4. Leave **Send shipment notification to customer** ticked to email the shopper, or clear it to ship quietly.
+5. Click **Fulfill items**.
+
+The order moves to **Fulfilled**, or to **Partial** where some items are still to come, and the stock comes off the seller's own location. Fulfilling the whole order is also what creates the seller's earning.
+
+A seller can split a parcel into two, add a tracking number afterwards, print a packing slip or a label, and cancel a parcel to put the goods back on the shelf. Returns and claims are raised and handled from the same page. See [<u>The Seller Panel</u>](/user/sellers/seller-panel).
+
+## How the Money Divides
+
+Take a shopper who buys one $36.00 mug from a seller and pays $6.00 to have it delivered, on a marketplace charging ten percent commission on the goods alone. That seller's order comes to $42.00, and divides like this:
+
+| | |
+|---|---|
+| The customer pays | $42.00 for this part of their basket |
+| Your commission, at ten percent of the $36.00 of goods | $3.60 |
+| The seller earns | $38.40 |
+
+Whether delivery is included in the fee depends on the rate, which can be set to charge on it or not. See [<u>Commission Rates</u>](/user/sellers/commission-rates).
+
+The seller's earning appears as a transfer once the order is fulfilled, and earnings gather on their balance until they are settled into a payout. See [<u>Seller Transfers</u>](/user/sellers/transfers) and [<u>Payouts</u>](/user/sellers/payouts).
+
+<Note>Refunding a seller's order writes a reversal that takes back the seller's share of what was refunded rather than the whole amount, so a refund does not charge them commission on goods that came back. The commission on the order itself is not rewritten, because it is the record of what was charged at the time. See [<u>Seller Transfers</u>](/user/sellers/transfers).</Note>
+
+## Further Reading
+
+- [<u>Processing Orders</u>](/user/orders/processing-orders) - Working an order through, which applies to seller orders too
+- [<u>The Seller Panel</u>](/user/sellers/seller-panel) - How a seller runs their own orders
+- [<u>Commission Rates</u>](/user/sellers/commission-rates) - What the marketplace charges on each sale
+- [<u>Seller Transfers</u>](/user/sellers/transfers) - The ledger of what each order earned its seller
+- [<u>Payouts</u>](/user/sellers/payouts) - Settling what sellers are owed
