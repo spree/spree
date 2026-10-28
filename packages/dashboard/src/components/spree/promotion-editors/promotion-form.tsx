@@ -9,7 +9,13 @@ import type {
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
 import { MATCH_POLICIES, type MatchPolicy } from '@spree/core'
-import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
+import {
+  Can,
+  PageHeader,
+  PreferencesForm,
+  RecordMetadataCard,
+  StoreDatePicker,
+} from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -351,6 +357,8 @@ export function PromotionForm({
                 matchPolicy={form.watch('match_policy')}
               />
               <ActionsCard form={form} actionsArray={actionsArray} />
+              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} collapsible />}
+              {promotion && <RecordMetadataCard metadata={promotion.metadata} />}
             </>
           }
           sidebar={
@@ -358,7 +366,6 @@ export function PromotionForm({
               <BasicsCard form={form} />
               <TriggerCard mode={mode} form={form} promotion={promotion} />
               <ScheduleCard form={form} />
-              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} />}
               <Slot name="promotion.form_sidebar" context={{ promotion, mode }} />
             </>
           }

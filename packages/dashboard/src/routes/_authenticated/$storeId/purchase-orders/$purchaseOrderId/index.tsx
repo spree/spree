@@ -4,6 +4,7 @@ import {
   Can,
   Money,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   useResourceKey,
@@ -97,13 +98,14 @@ function PurchaseOrderDetailPage() {
             purchaseOrderId={purchaseOrder.id}
             title={t('admin.purchase_orders.history_title')}
           />
+          <ApiCustomFieldsCard ownerType="purchase_order" ownerId={purchaseOrder.id} collapsible />
+          <RecordMetadataCard metadata={purchaseOrder.metadata} />
           <Slot name="purchase_order.form_main" context={{ purchaseOrder }} />
         </>
       }
       sidebar={
         <>
           <SummaryCard purchaseOrder={purchaseOrder} />
-          <ApiCustomFieldsCard ownerType="purchase_order" ownerId={purchaseOrder.id} />
           <Slot name="purchase_order.form_sidebar" context={{ purchaseOrder }} />
         </>
       }

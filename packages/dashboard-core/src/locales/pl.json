@@ -369,7 +369,8 @@
       "metadata_card": {
         "empty_description": "Aplikacje i integracje wypełniają to automatycznie.",
         "empty_title": "Brak metadanych",
-        "title": "Metadane"
+        "title": "Metadane",
+        "view": "Pokaż metadane"
       },
       "page_header": {
         "copy_id": "Kopiuj ID",

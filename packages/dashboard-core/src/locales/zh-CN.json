@@ -368,7 +368,8 @@
       "metadata_card": {
         "empty_description": "应用和集成会自动填充此内容。",
         "empty_title": "暂无元数据",
-        "title": "元数据"
+        "title": "元数据",
+        "view": "查看元数据"
       },
       "page_header": {
         "copy_id": "复制 ID",

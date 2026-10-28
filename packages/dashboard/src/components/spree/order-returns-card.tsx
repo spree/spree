@@ -6,8 +6,10 @@ import {
   isPositiveMoney,
   returnOwesNothing,
   returnRefundSummary,
+  useMetadataSheet,
   useMoneyLocale,
   usePermissions,
+  ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -23,6 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  hasMetadata,
   type RefundMethod,
   ReturnReceiveDialog,
   ReturnRefundDialog,
@@ -76,6 +79,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
   const [creating, setCreating] = useState(false)
   const [receiving, setReceiving] = useState<Return | null>(null)
   const [refunding, setRefunding] = useState<Return | null>(null)
+  const metadataSheet = useMetadataSheet()
 
   const returns = data?.data ?? []
   const canCreate = fulfilledUnits(order).length > 0
@@ -118,7 +122,8 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                   <span className="text-sm font-medium">{returnRecord.number}</span>
                 </CardTitle>
 
-                {RETURN_ACTIONABLE.includes(returnRecord.status) && (
+                {(RETURN_ACTIONABLE.includes(returnRecord.status) ||
+                  hasMetadata(returnRecord.metadata)) && (
                   <CardAction>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -155,6 +160,12 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             )}
                           </DropdownMenuItem>
                         )}
+                        <ViewMetadataMenuItem
+                          metadata={returnRecord.metadata}
+                          onClick={() =>
+                            metadataSheet.show(returnRecord.metadata, returnRecord.number)
+                          }
+                        />
                         {RETURN_CANCELABLE.includes(returnRecord.status) && (
                           <>
                             <DropdownMenuSeparator />
@@ -249,6 +260,8 @@ export function OrderReturnsCard({ order }: { order: Order }) {
           }}
         />
       )}
+
+      {metadataSheet.sheet}
     </>
   )
 }

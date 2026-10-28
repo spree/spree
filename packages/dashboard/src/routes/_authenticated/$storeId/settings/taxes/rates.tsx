@@ -7,6 +7,7 @@ import {
   extensionSubmitValues,
   HostFormSlot,
   mapSpreeErrorsToForm,
+  RecordMetadataSection,
   StateCombobox,
   Subject,
   useCountryStates,
@@ -345,6 +346,7 @@ function EditTaxRateSheet({
                 context={{ taxRate, mode: 'edit' }}
               />
               <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
+              <RecordMetadataSection metadata={taxRate?.metadata} />
             </div>
             <SheetFooter>
               <Button

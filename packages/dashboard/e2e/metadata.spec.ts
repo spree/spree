@@ -1,0 +1,89 @@
+import { expect, test } from '@playwright/test'
+import {
+  adminRequest,
+  createPlacedOrder,
+  deleteSeededRecords,
+  type E2ELoginSession,
+  gotoIndex,
+  login,
+  rowButton,
+  seedRecord,
+} from './helpers'
+
+// Metadata is written by apps and integrations, never in the dashboard, so
+// every record here is seeded with it through the Admin API.
+const METADATA = { erp_id: 'ERP-4711' }
+
+async function seedCompany(page: Parameters<typeof login>[0], session: E2ELoginSession) {
+  return seedRecord(page, session, '/companies', {
+    name: `E2E Metadata Co ${Date.now()}`,
+    metadata: METADATA,
+  })
+}
+
+test.describe('metadata', () => {
+  test.afterEach(({ page }) => deleteSeededRecords(page))
+
+  test('a detail page folds metadata to a counted header', async ({ page }) => {
+    const session = await login(page)
+    const company = await seedCompany(page, session)
+
+    await page.goto(`/${session.store_id}/companies/${company.id}`)
+
+    const toggle = page.getByRole('button', { name: /^metadata\s*1$/i })
+    await expect(toggle).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('ERP-4711')).toBeHidden()
+
+    await toggle.click()
+    await expect(page.getByText('erp_id')).toBeVisible()
+    await expect(page.getByText('ERP-4711')).toBeVisible()
+  })
+
+  test('a row menu opens the metadata of a nested record', async ({ page }) => {
+    const session = await login(page)
+    const order = await createPlacedOrder(page, session.accessToken)
+    const fulfillments = await adminRequest<{
+      data: { fulfillment_items: { id: string }[] }[]
+    }>(page, session, 'get', `/orders/${order.id}/fulfillments?expand=fulfillment_items`)
+    const orderReturn = await adminRequest<{ id: string; number: string }>(
+      page,
+      session,
+      'post',
+      `/orders/${order.id}/returns`,
+      {
+        items: [{ fulfillment_item_id: fulfillments.data[0].fulfillment_items[0].id, quantity: 1 }],
+      },
+    )
+    await adminRequest(page, session, 'patch', `/orders/${order.id}/returns/${orderReturn.id}`, {
+      metadata: METADATA,
+    })
+
+    await page.goto(`/${session.store_id}/orders/${order.id}`)
+    const returns = page.locator('[data-slot="card"]').filter({ hasText: /^returns/i })
+    await expect(returns.getByText(orderReturn.number)).toBeVisible({ timeout: 15_000 })
+    await returns.getByRole('button', { name: /actions/i }).click()
+    await page.getByRole('menuitem', { name: /view metadata/i }).click()
+
+    const sheet = page.getByRole('dialog')
+    await expect(sheet.getByText('erp_id')).toBeVisible()
+    await expect(sheet.getByText('ERP-4711')).toBeVisible()
+  })
+
+  test('an edit sheet keeps metadata collapsed until opened', async ({ page }) => {
+    const session = await login(page)
+    const name = `E2E Metadata Supplier ${Date.now()}`
+    await seedRecord(page, session, '/suppliers', { name, metadata: METADATA })
+
+    await gotoIndex(page, `/${session.store_id}/suppliers`, /new supplier/i)
+    await rowButton(page, name).click()
+
+    const sheet = page.getByRole('dialog')
+    const section = sheet.getByRole('button', { name: /^metadata\s*1$/i })
+    await expect(section).toBeVisible({ timeout: 15_000 })
+    await expect(sheet.getByText('ERP-4711')).toBeHidden()
+
+    await section.click()
+    await expect(sheet.getByText('erp_id')).toBeVisible()
+    await expect(sheet.getByText('ERP-4711')).toBeVisible()
+  })
+})

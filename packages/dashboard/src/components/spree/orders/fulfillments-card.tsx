@@ -7,8 +7,10 @@ import {
   isPositiveMoney,
   Money,
   unfulfilledItemRows,
+  useMetadataSheet,
   useMoneyLocale,
   useStockLocations,
+  ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -431,6 +433,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
   const [uploadOpen, setUploadOpen] = useState(false)
   const [fulfilling, setFulfilling] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const editable = CAN_EDIT.includes(fulfillment.status)
   const splittable = editable && unitsOf(fulfillment).length > 0
@@ -514,6 +517,11 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                 {t('admin.orders.detail.fulfillments.upload_label')}
               </DropdownMenuItem>
             )}
+
+            <ViewMetadataMenuItem
+              metadata={fulfillment.metadata}
+              onClick={() => metadataSheet.show(fulfillment.metadata)}
+            />
 
             {CAN_CANCEL.includes(fulfillment.status) && (
               <>
@@ -733,6 +741,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           onOpenChange={setUploadOpen}
         />
       )}
+
+      {metadataSheet.sheet}
     </FulfillmentPanel>
   )
 }

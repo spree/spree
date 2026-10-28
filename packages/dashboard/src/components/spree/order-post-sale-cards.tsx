@@ -1,6 +1,12 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
 import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf } from '@spree/core'
-import { isPositiveMoney, Money, usePermissions } from '@spree/dashboard-core'
+import {
+  isPositiveMoney,
+  Money,
+  useMetadataSheet,
+  usePermissions,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -15,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  hasMetadata,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -64,6 +71,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
   const { permissionKeys } = usePermissions()
   const canRefund = permissionKeys.includes('write_refunds')
   const [creating, setCreating] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const exchanges = data?.data ?? []
   const canCreate = fulfilledUnits(order).length > 0
@@ -106,7 +114,8 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                   <span className="text-sm font-medium">{exchange.number}</span>
                 </CardTitle>
 
-                {EXCHANGE_ACTIONABLE.includes(exchange.status) && (
+                {(EXCHANGE_ACTIONABLE.includes(exchange.status) ||
+                  hasMetadata(exchange.metadata)) && (
                   <CardAction>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -155,6 +164,10 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
                           </DropdownMenuItem>
                         )}
+                        <ViewMetadataMenuItem
+                          metadata={exchange.metadata}
+                          onClick={() => metadataSheet.show(exchange.metadata, exchange.number)}
+                        />
                         {EXCHANGE_CANCELABLE.includes(exchange.status) && (
                           <>
                             <DropdownMenuSeparator />
@@ -224,6 +237,8 @@ export function OrderExchangesCard({ order }: { order: Order }) {
           }}
         />
       )}
+
+      {metadataSheet.sheet}
     </>
   )
 }
@@ -241,6 +256,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
   const canRefund = permissionKeys.includes('write_refunds')
   const [creatingClaim, setCreatingClaim] = useState(false)
   const [resolving, setResolving] = useState<Claim | null>(null)
+  const metadataSheet = useMetadataSheet()
 
   const claims = data?.data ?? []
   // A claim is about ordered items, so it never depends on anything shipping.
@@ -281,7 +297,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                   <span className="text-sm font-medium">{claim.number}</span>
                 </CardTitle>
 
-                {CLAIM_ACTIONABLE.includes(claim.status) && (
+                {(CLAIM_ACTIONABLE.includes(claim.status) || hasMetadata(claim.metadata)) && (
                   <CardAction>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -303,6 +319,10 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.claims.actions.resolve')}
                           </DropdownMenuItem>
                         )}
+                        <ViewMetadataMenuItem
+                          metadata={claim.metadata}
+                          onClick={() => metadataSheet.show(claim.metadata, claim.number)}
+                        />
                         {CLAIM_ACTIONABLE.includes(claim.status) && <DropdownMenuSeparator />}
                         {claim.status === 'open' && (
                           <DropdownMenuItem
@@ -407,6 +427,8 @@ export function OrderClaimsCard({ order }: { order: Order }) {
           }}
         />
       )}
+
+      {metadataSheet.sheet}
     </>
   )
 }

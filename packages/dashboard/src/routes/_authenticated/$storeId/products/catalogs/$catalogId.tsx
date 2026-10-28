@@ -7,6 +7,7 @@ import {
   extensionSubmitValues,
   mapSpreeErrorsToForm,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   usePermissions,
@@ -393,6 +394,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                     )
                   }
                 />
+                <RecordMetadataCard metadata={catalog.metadata} />
               </>
             }
             sidebar={

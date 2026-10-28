@@ -495,6 +495,17 @@ function customFieldsCardOn(page: Page) {
 }
 
 /**
+ * Unfolds the custom fields card where a detail page folds it. A no-op on
+ * surfaces that always show it open, such as sheets and the new-product page.
+ */
+export async function expandCustomFieldsCard(page: Page) {
+  const card = customFieldsCardOn(page)
+  await expect(card).toBeVisible({ timeout: 15_000 })
+  const toggle = card.locator('[data-slot="card-header"] button[aria-expanded="false"]')
+  if (await toggle.count()) await toggle.click()
+}
+
+/**
  * Sets a value through a custom fields card that edits and saves itself (a
  * detail page with no form of its own), and checks it survives a reload.
  */
@@ -506,6 +517,7 @@ export async function saveCustomFieldOnCard(page: Page, label: string, value: st
   await expect(card.getByText(value)).toBeVisible({ timeout: 15_000 })
 
   await page.reload()
+  await expandCustomFieldsCard(page)
   await expect(customFieldsCardOn(page).getByText(value)).toBeVisible({ timeout: 15_000 })
 }
 
@@ -514,12 +526,14 @@ export async function saveCustomFieldOnCard(page: Page, label: string, value: st
  * checks it survives a reload. A custom field alone must enable that Save.
  */
 export async function saveCustomFieldWithPage(page: Page, label: string, value: string) {
+  await expandCustomFieldsCard(page)
   await page.getByLabel(label).fill(value)
   const save = page.getByRole('button', { name: /^save$/i })
   await save.click()
   await expect(save).toBeDisabled({ timeout: 15_000 })
 
   await page.reload()
+  await expandCustomFieldsCard(page)
   await expect(page.getByLabel(label)).toHaveValue(value, { timeout: 15_000 })
 }
 

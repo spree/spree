@@ -10,6 +10,7 @@ import {
   Can,
   mapSpreeErrorsToForm,
   PreferencesForm,
+  RecordMetadataSection,
   ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
@@ -301,6 +302,7 @@ function EditCommissionRateSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <CommissionRateFormFields form={form} />
+              <RecordMetadataSection metadata={rate?.metadata} />
             </div>
             <SheetFooter>
               <Button

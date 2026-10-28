@@ -7,7 +7,15 @@ import {
   isZeroMoney,
   sumMoney,
 } from '@spree/core'
-import { adminClient, currencyParts, formatMoney, Money, percentOf } from '@spree/dashboard-core'
+import {
+  adminClient,
+  currencyParts,
+  formatMoney,
+  Money,
+  percentOf,
+  useMetadataSheet,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -30,6 +38,7 @@ import {
   Field,
   FieldGroup,
   FieldLabel,
+  hasMetadata,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -79,17 +88,21 @@ function feeKindLabel(kind: string) {
     : kind
 }
 
-/** Trailing action cell — renders empty (keeping column width) for undeletable rows. */
-function AdjustmentDeleteCell({
+/** Trailing action cell — renders empty (keeping column width) for rows with no actions. */
+function AdjustmentActionsCell({
+  metadata,
+  onViewMetadata,
   onDelete,
   deleting,
 }: {
+  metadata: Record<string, unknown> | null
+  onViewMetadata: () => void
   onDelete?: () => void
   deleting?: boolean
 }) {
   return (
     <TableCell className="w-10 text-right">
-      {onDelete && (
+      {(onDelete || hasMetadata(metadata)) && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -102,10 +115,13 @@ function AdjustmentDeleteCell({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem variant="destructive" onClick={onDelete}>
-              <TrashIcon className="size-4" />
-              {i18n.t('admin.actions.delete')}
-            </DropdownMenuItem>
+            <ViewMetadataMenuItem metadata={metadata} onClick={onViewMetadata} />
+            {onDelete && (
+              <DropdownMenuItem variant="destructive" onClick={onDelete}>
+                <TrashIcon className="size-4" />
+                {i18n.t('admin.actions.delete')}
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
@@ -206,6 +222,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
   const orderId = order.id
   const confirm = useConfirm()
   const [addDiscountOpen, setAddDiscountOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const { data: discounts } = useOrderDiscounts(orderId)
   const deleteDiscountMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
@@ -278,7 +295,9 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
                 <TableCell className="text-right tabular-nums">
                   <Money amount={row.amount} currency={order.currency} />
                 </TableCell>
-                <AdjustmentDeleteCell
+                <AdjustmentActionsCell
+                  metadata={row.metadata}
+                  onViewMetadata={() => metadataSheet.show(row.metadata)}
                   onDelete={row.kind === 'promotion' ? undefined : () => handleDeleteDiscount(row)}
                   deleting={deleteDiscountMutation.isPending}
                 />
@@ -289,6 +308,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
       )}
 
       <AddDiscountDialog order={order} open={addDiscountOpen} onOpenChange={setAddDiscountOpen} />
+      {metadataSheet.sheet}
     </Card>
   )
 }
@@ -298,6 +318,7 @@ export function FeesCard({ order }: { order: Order }) {
   const orderId = order.id
   const confirm = useConfirm()
   const [addFeeOpen, setAddFeeOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const { data: fees } = useOrderFees(orderId)
   const deleteFeeMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
@@ -359,7 +380,9 @@ export function FeesCard({ order }: { order: Order }) {
                 <TableCell className="text-right tabular-nums">
                   <Money amount={row.amount} currency={order.currency} />
                 </TableCell>
-                <AdjustmentDeleteCell
+                <AdjustmentActionsCell
+                  metadata={row.metadata}
+                  onViewMetadata={() => metadataSheet.show(row.metadata)}
                   onDelete={() => handleDeleteFee(row)}
                   deleting={deleteFeeMutation.isPending}
                 />
@@ -370,6 +393,7 @@ export function FeesCard({ order }: { order: Order }) {
       )}
 
       <AddFeeDialog order={order} open={addFeeOpen} onOpenChange={setAddFeeOpen} />
+      {metadataSheet.sheet}
     </Card>
   )
 }

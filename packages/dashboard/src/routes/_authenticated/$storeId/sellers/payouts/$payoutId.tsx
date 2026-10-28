@@ -3,6 +3,7 @@ import {
   formatStoreDateTime,
   Money,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   usePermissions,
@@ -180,6 +181,7 @@ function PayoutDetailPage() {
                 <Pagination meta={transfers.meta} onPageChange={setPage} />
               )}
             </Card>
+            <RecordMetadataCard metadata={payout.metadata} />
             <Slot name="seller_payout.form_main" context={{ payout }} />
           </>
         }

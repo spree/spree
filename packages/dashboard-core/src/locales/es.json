@@ -181,7 +181,8 @@
       "metadata_card": {
         "empty_description": "Las aplicaciones e integraciones lo completan automáticamente.",
         "empty_title": "Sin metadatos",
-        "title": "Metadatos"
+        "title": "Metadatos",
+        "view": "Ver metadatos"
       },
       "page_header": {
         "copy_id": "Copiar ID",

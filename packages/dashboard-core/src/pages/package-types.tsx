@@ -32,6 +32,7 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import type { PanelPackageType } from '../api-client'
 import { Can } from '../components/can'
+import { RecordMetadataSection } from '../components/record-metadata'
 import { ResourceTable, resourceSearchSchema } from '../components/resource-table'
 import { HostFormSlot } from '../components/slot'
 import {
@@ -338,6 +339,7 @@ function EditPackageTypeSheet({
               name={`${formKey}.form_fields`}
               context={{ packageType, mode: 'edit' }}
             />
+            <RecordMetadataSection metadata={packageType?.metadata} />
           </div>
           <SheetFooter>
             <Button type="submit" disabled={updateMutation.isPending}>

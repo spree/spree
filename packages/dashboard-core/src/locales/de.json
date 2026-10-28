@@ -368,7 +368,8 @@
       "metadata_card": {
         "empty_description": "Apps und Integrationen füllen dies automatisch.",
         "empty_title": "Keine Metadaten",
-        "title": "Metadaten"
+        "title": "Metadaten",
+        "view": "Metadaten anzeigen"
       },
       "page_header": {
         "copy_id": "ID kopieren",
