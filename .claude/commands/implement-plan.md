@@ -92,7 +92,7 @@ reason.
   on the issue's `gitBranchName` (read it with `get_issue`).
 - Start with `/goal` so the run has a stated goal to check itself against:
   the deliverables from stage 1 plus green changed specs and green CI.
-- Follow the plan's phase order and every convention in `CLAUDE.md` (models,
+- Follow the plan's phase order and every convention in the `AGENTS.md` files (models,
   migrations, API controllers, serializers, dashboard, translations in every
   locale, type generation pipeline when serializers change, OpenAPI regenerated
   from the integration specs — never edited by hand).
