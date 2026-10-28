@@ -1,55 +1,131 @@
 ---
 title: "Seller Requirements"
-description: "Build the checklist sellers complete before they can be approved to sell on your marketplace."
+description: "Learn how to set the checklist a seller completes before they can be approved to trade on your marketplace."
 ---
 
-Seller requirements are **the checklist sellers complete before they can be approved**. Each item appears on the seller's own onboarding checklist, and the required ones gate approval.
+Seller requirements define the checklist a seller must work through before they can be approved and start selling on your marketplace. Each requirement is one thing you ask of them, such as accepting your terms, filling in the profile shoppers see, or uploading a document that you need to have on record.
 
-To reach it, navigate to **Settings → Seller requirements**, under the **Marketplace** group.
+The checklist is the same for every seller. A seller sees it in their own panel as a list of tasks with progress tracker, and you see the same list on that seller's page in the admin dashboard along with the state of each item. A requirement marked as required has to be done before the seller can be approved, and one left optional is shown to them as recommended.
 
-## What's on the screen
+To manage the checklist, navigate to **Settings → Seller Requirements** in the admin dashboard.
 
-A drag-ordered list of requirements — the order you set here is the order sellers work through. There is no sort control; drag the handle to reorder.
+## Reviewing the Checklist
 
-A new store starts with five requirements, each marked **Required** and **Active**:
+![The Seller requirements list, showing the built-in requirements](/docs/images/user/settings/seller-requirements/1-requirements-list.png)
 
-- **Accept terms**
-- **Complete profile**
-- **Billing address**
-- **Returns address**
-- **Minimum products**
+The list shows one row per requirement, in the order sellers work through them.
 
-## Add a requirement
-
-Click **Add requirement**. The panel opens with a single **Type** dropdown, reading *"Choose what to ask for."* It offers the kinds not already in use:
-
-- **Delivery method**
-- **Shipping box**
-- **Payout account**
-- **Required custom fields**
-- **Seller policy**
-- **Seller confirmation**
-- **Manual check**
-- **Document**
-
-## Edit a requirement
-
-Opening a requirement gives you three settings:
-
-| Setting | What the screen says |
+| Column | What it means |
 |---|---|
-| **Name** | *"What the seller sees on their checklist."* |
-| **Required** | *"Required items must be done before a seller can be approved. Others are shown as recommended."* |
-| **Active** | *"Switch off to stop asking for this without deleting it."* |
+| **Name** | What the seller sees on their checklist, with the instructions you wrote beneath it. |
+| **Type** | What kind of thing is being asked for. |
+| **Required** | Whether it has to be done before approval, or is only recommended. |
+| **Status** | Whether the requirement is being asked for at all. |
 
-## Good to know
+Rows are dragged to reorder them, and the order they sit in is the order the seller sees.
 
-- A requirement type can only be used once, so the **Add requirement** list shrinks as you add them.
-- Switching a requirement to inactive retires it without losing the record of sellers who already completed it.
-- Marking an item **Required** is what gates approval — anything left unrequired is shown to the seller as recommended.
+### Default Requirements
 
-## Related
+A new Spree marketplace has seven requirements on the list by default. They cover what any seller needs in place before they can trade, so most marketplaces add to this list rather than building one from nothing.
 
-- [<u>Sellers → Onboarding</u>](/user/sellers/onboarding)
-- [<u>Sellers → Managing Sellers</u>](/user/sellers/managing-sellers)
-- [<u>Settings → Marketplace</u>](/user/settings/marketplace)
+| Requirement | What the seller does | What you can set |
+|---|---|---|
+| **Accept terms** | Reads and accepts your marketplace terms. | The terms themselves, the date they take effect, and an optional link to a published copy. Sellers who accepted before that date are asked again, which is how a change of terms is put to sellers already trading. |
+| **Complete profile** | Fills in the public profile shoppers see. | Which parts are required: the About text, the logo, the cover photo and the contact email. |
+| **Billing address** | Gives the address their payouts are billed from. | |
+| **Returns address** | Gives the address customer returns are sent to. | |
+| **Delivery method** | Offers at least one way to ship their orders. | Nothing, but this one can also be met from your side: a delivery method of your own that is shared with sellers satisfies it for every seller at once, which suits a marketplace that ships everything itself. |
+| **Shipping box** | Gives the size and weight of the box they pack orders in. | |
+| **Minimum products** | Lists at least a set number of products. | How many products that is. |
+
+A built-in requirement can be deleted like any other, and can be added again afterwards from the same type list. Switching it off is usually the better move where your marketplace simply does not need it, such as a shipping box or a returns address on a marketplace selling only digital goods, because switching off keeps anything sellers have already submitted.
+
+## How to Add a Requirement
+
+1. Click **Add requirement**.
+2. Choose a **Type**, which decides what the seller is asked to do.
+3. Enter the **Name** the seller sees on their checklist.
+4. Enter the **Instructions** telling them what you need and why.
+5. Fill in anything the type asks for, described below.
+6. Leave **Required** on if it must be done before approval, or switch it off to show it as recommended.
+7. Click **Save**.
+
+A new requirement is added to the bottom of the list, and appears immediately on the checklist of every seller who has not yet been approved.
+
+## Additional Requirement Types
+
+The seven default requirements cover what every seller needs in place before they can trade. Anything asked for beyond that is built from the types below, which are chosen when adding a requirement and decide what the seller is asked to do.
+
+Most types can only be used once on a checklist, because the thing they ask for is only worth asking for once. The four marked as repeatable below can be added as many times as needed, which is how a checklist ends up with two separate documents or several statements to confirm. A type that can only be used once is not offered when adding a requirement if it is already on the list, and becomes available again if that requirement is deleted. The default requirements all work this way.
+
+| Type | What the seller does | Can be used in multiple requirements |
+|---|---|---|
+| **Payout account** | Connects an account that can receive their payouts. | No |
+| **Required custom fields** | Fills in the custom fields you choose. | No |
+| **Seller policy** | Publishes their own store policies. | Yes |
+| **Seller confirmation** | Confirms a statement you write, such as holding the rights to sell what they list. | Yes |
+| **Manual check** | Confirms they are ready to be checked, and leaves whatever reference you asked them for. A member of your team then marks it done. | Yes |
+| **Document** | Uploads a file for you to read, such as a registration certificate. | Yes |
+
+**Seller confirmation**, **Manual check** and **Document** all give the seller a note box alongside the answer itself, so a reference, an explanation or anything else worth knowing arrives with what they send. **Document** also tells the seller which file types are accepted, which are PDF, JPEG, PNG, HEIC, WebP and Word.
+
+Those three look much the same to the seller, and differ in what happens once they have answered. A seller confirmation is taken at the seller's word and counts as met the moment they confirm it. A manual check and a document both wait for somebody on your team to accept them, which is why a manual check suits anything only your team can verify, such as a tax number against a public register. See [<u>Onboarding</u>](/user/sellers/onboarding) for making those decisions.
+
+<Note>There is no plain text or tick box type. A written answer is collected with **Required custom fields**, and a statement the seller has to agree to is collected with **Seller confirmation**.</Note>
+
+### Custom Seller Fields
+
+**Required custom fields** is how a seller is asked to type something in, such as a registration number or a license reference. It works differently from the other types, because the fields themselves are not created here.
+
+An existing custom field on seller records has to exist before a requirement can ask for it. Create the fields first under [<u>Custom Fields</u>](/user/settings/custom-fields), choosing sellers as the type of record they apply to, and then add a requirement of this type and pick which of those fields the seller has to fill in.
+
+Pick only the fields the seller should answer themselves. A custom field on seller records is not necessarily a question for the seller, because your own team may be using some of them to record things of its own, such as the account manager looking after a seller or a note from a review. Every field picked here appears in the seller's task for them to fill in, so adding one of those asks the seller for something that was never meant for them, and makes it something they have to answer before they can be approved.
+
+The fields become part of the seller's record rather than living only on the checklist, so what a seller enters stays readable on their page afterwards. That makes custom requirements ideal for storing important information that you may need to reference later, such as a company number that you check against a register.
+
+## What to Ask Sellers For
+
+The seven built-in requirements cover what any seller needs in order to trade. What you add on top depends on what you sell and what you are accountable for.
+
+Most marketplaces ask for some of the following, whatever they sell:
+
+- A company registration number and a tax registration number, as **Required custom fields**.
+- Proof of liability insurance, as a **Document**, where a seller's goods could cause harm.
+- A confirmation that the seller owns the rights to everything they list, as a **Seller confirmation**, which is the usual protection against counterfeit goods.
+- A published returns policy, as a **Seller policy**, so a shopper can read the terms before buying.
+
+Beyond that, what you ask follows your industry.
+
+| Marketplace | What it tends to ask for |
+|---|---|
+| **Food and drink** | A food hygiene or food business registration certificate, and a confirmation that allergen information on every listing is accurate. |
+| **Cosmetics and personal care** | A product safety report or its reference number, and the responsible person named for the market being sold into. |
+| **Electronics** | A declaration of conformity for the market, and registration under electrical waste rules where they apply. |
+| **Supplements and health** | The registration or notification reference for the products being listed, and a confirmation that no medical claims are made. |
+| **Alcohol** | The seller's license to sell it, and a confirmation that they will carry out age checks on delivery. |
+| **Jewelry and precious metals** | Assay or hallmarking evidence, and a confirmation about the origin of materials. |
+| **Secondhand and resale** | A description of how authenticity is checked, which suits a **Manual check** reviewed by your team. |
+| **Handmade and craft** | A confirmation that the seller makes what they list themselves, where that is the point of the marketplace. |
+
+<Warning>A requirement records what a seller told you. It does not verify any of it, so a license number collected as a custom field is a number in a box until somebody checks it against the register. Use a **Manual check** for anything that has to be verified by a person, which makes the verification itself a step on the checklist rather than something to remember.</Warning>
+
+<Note>Requirements are the same for every seller. A marketplace selling across several of the categories above asks every seller for all of it, so it is worth keeping the list to what genuinely applies to all of them and handling the rest when you review each seller.</Note>
+
+## How to Edit a Requirement
+
+Choose **Edit** from the menu at the end of a row, which opens the same fields as creating one. Editing also offers an **Active** switch, which stops a requirement being asked for without deleting it or losing what sellers have already submitted.
+
+Editing a built-in requirement is where its own settings are changed, such as the terms sellers accept or the minimum number of products they have to list. Those settings are listed under [<u>Default Requirements</u>](#default-requirements).
+
+## How to Delete a Requirement
+
+Choose **Delete** from the menu at the end of a row and confirm.
+
+<Warning>Deleting a requirement also deletes everything sellers have already submitted for it, including uploaded documents. Switching it to inactive instead stops it being asked for while keeping what has been submitted.</Warning>
+
+## Further Reading
+
+- [<u>Onboarding</u>](/user/sellers/onboarding) - How a seller works through this checklist and gets approved
+- [<u>Marketplace Settings</u>](/user/settings/marketplace) - Whether sellers are approved automatically
+- [<u>Sellers</u>](/user/sellers/sellers) - The sellers themselves
+- [<u>Custom Fields</u>](/user/settings/custom-fields) - The fields a required custom fields requirement can ask for

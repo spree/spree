@@ -490,7 +490,7 @@
     },
     {
       "source": "/user/vendors/vendor-management",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/user/vendors/vendor-onboarding-manual",
@@ -550,7 +550,7 @@
     },
     {
       "source": "/use-case/marketplace/admin-dashboard",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/use-case/marketplace/capabilities",
@@ -723,6 +723,10 @@
     {
       "source": "/developer/agentic/mcp",
       "destination": "/developer/agentic/docs-mcp"
+    },
+    {
+      "source": "/user/sellers/managing-sellers",
+      "destination": "/user/sellers/sellers"
     }
   ],
   "contextual": {
@@ -1338,10 +1342,11 @@
                     "pages": [
                       "user/sellers/sellers",
                       "user/sellers/onboarding",
-                      "user/sellers/managing-sellers",
+                      "user/sellers/seller-panel",
                       "user/sellers/products",
                       "user/sellers/orders",
                       "user/sellers/commission-rates",
+                      "user/sellers/transfers",
                       "user/sellers/payouts"
                     ]
                   },
@@ -2988,10 +2993,11 @@
             "pages": [
               "user/sellers/sellers",
               "user/sellers/onboarding",
-              "user/sellers/managing-sellers",
+              "user/sellers/seller-panel",
               "user/sellers/products",
               "user/sellers/orders",
               "user/sellers/commission-rates",
+              "user/sellers/transfers",
               "user/sellers/payouts"
             ]
           },

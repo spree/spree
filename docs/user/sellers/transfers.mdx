@@ -1,0 +1,117 @@
+---
+title: "Seller Transfers"
+description: "Learn how to read the ledger of what each fulfilled order earned its seller, less your commission."
+---
+
+A seller transfer is a record of what one order earned one seller. A transfer is created when an order is fulfilled, with the value amounting to the order total minus the marketplace commission. Refunds are recorded as separate transfers, carrying a negative value that cancels part or all of the original.
+
+The ledger is the record behind every balance on your marketplace. A seller's balance, the amount a payout settles and what a seller sees on their own earnings screen are all built from these lines, so this is where a figure that looks wrong is checked.
+
+Existing transfers are never edited. Every correction is recorded as an additional transfer, so a seller's total is always the sum of their rows and the full history remains available.
+
+To review them, navigate to **Sellers → Seller transfers** in the admin dashboard.
+
+## Reviewing Seller Transfers
+
+![The Seller transfers list, with a sale and a refund](/docs/images/user/sellers/transfers/1-transfers-list.png)
+
+The list shows one row per transfer.
+
+| Column | What it means |
+|---|---|
+| **Date** | When the transfer was created. |
+| **Sellers** | Which seller earned or repaid it. |
+| **Order** | The order it came from. |
+| **Type** | **Sale** for an earning, **Refund** for one taken back. |
+| **Status** | Where the transfer has got to, described below. |
+| **Amount** | What the seller earned, or a negative figure where it was taken back. |
+
+Filters narrow the list by date, seller, type and status, which is how a single seller's history over a period is read.
+
+### Transfer Statuses
+
+What a status means depends on how your marketplace pays its sellers, which is set under [<u>Marketplace Settings</u>](/user/settings/marketplace).
+
+Where no payment provider is connected, Spree records what each seller is owed and you send the money yourself by bank transfer. Nothing is being attempted on your behalf, so every transfer is marked **Completed** the moment it is created and no other status appears on the list.
+
+Where a provider such as Stripe Connect is connected, the provider moves the money and reports back, and a transfer passes through the following:
+
+| Status | What it means |
+|---|---|
+| **Pending** | Recorded and not yet sent to the provider. |
+| **Processing** | An attempt failed and will be made again. |
+| **Completed** | The provider confirmed it. |
+| **Failed** | The provider refused it. |
+| **Needs checking** | The provider could not say whether the money moved. Nothing will retry it until somebody establishes what happened against the provider's own records. |
+
+<Note>A transfer records what a seller is owed rather than money moving. Even with a provider connected, a transfer is one half of the ledger: the money reaches the seller through a payout, which is a separate record. See [<u>Payouts</u>](/user/sellers/payouts).</Note>
+
+## When a Transfer Is Created
+
+A transfer is created when a seller order is **fully fulfilled**, not when it is placed or paid. Every item has to have gone out, so an order with one parcel still outstanding earns nothing yet, and an order sitting unfulfilled shows a commission on its own page while having earned the seller nothing.
+
+How the customer paid makes no difference. An order settled with store credit or a gift card produces the same transfer a card payment would, because how the sale was funded is a matter for your marketplace rather than for the seller.
+
+An order sold by your own team rather than by a seller has no seller against it, so no transfer is created for it.
+
+<Note>Where a payment provider is connected, a seller whose account with that provider is not ready yet is still credited. The transfer is recorded and held at **Pending** until their account can receive the money, and is sent once it can.</Note>
+
+## What a Seller Earns
+
+A transfer is the order total, less the consumer tax where your marketplace remits it, less the commission charged on the order including the tax on that commission. It can never be less than zero.
+
+Taking an order of $120.00 on a marketplace charging 10%, where the seller remits their own tax:
+
+| | |
+|---|---|
+| Order total | $120.00 |
+| Commission at 10% of the seller's net revenue | $10.00 |
+| Tax on that commission at 20% | $2.00 |
+| **The seller earns** | **$108.00** |
+
+Where the seller's **Tax remitted by** is set to the marketplace rather than to the seller, the consumer tax on the order comes off as well, because the marketplace files it and the seller never holds it. That setting is on the seller's own page under [<u>Sellers</u>](/user/sellers/sellers).
+
+The commission subtracted is the exact amount recorded against the order at the moment it was placed. Spree does not look up the commission rate again and recalculate the fee when the transfer is created.
+
+This matters because the recorded fee and the current rate can disagree. The rate may have been edited since the order was placed, the fee may have been limited by a floor or a cap, or a flat fee may have been charged per unit rather than as a share of the total. In each of those cases, applying today's rate to the order total would produce a different number from the one the seller was actually charged. See [<u>Commission Rates</u>](/user/sellers/commission-rates).
+
+## Refunds
+
+Refunding a seller order writes a second transfer against the same order, as a negative figure, rather than editing the first one.
+
+The amount taken back is the **seller's share** of what was refunded, not the whole of it. A refund is the customer's gross figure and carries both the consumer tax and your commission, while the seller only ever received their net cut, so clawing back the gross would charge them commission on goods that came back. On the $120.00 order above, refunding the customer in full takes $108.00 back from the seller.
+
+How that share is worked out depends on what the refund can say about itself:
+
+- **A return or a claim** names the lines it paid for, so the share is what those lines actually earned, scaled to the amount refunded. A restocking fee or a goodwill payment on top is absorbed by that scaling.
+- **A manual refund or a cancellation** is only an amount against an order, so the order's own ratio of earnings to total is used instead.
+
+A reversal can never take back more than is left of the earning, so several refunds against one order cannot between them claw back more than the seller was paid.
+
+<Note>Refunding an order that was never fulfilled reverses nothing, because the seller was never credited for it. This is an ordinary case rather than a problem.</Note>
+
+Where the earning has already been settled in a closed payout, the reversal lands in the next period instead. A settlement that has happened is never rewritten.
+
+## How a Seller's Balance Is Built
+
+![The Balance card on a seller's page](/docs/images/user/sellers/transfers/2-balance-card.png)
+
+A seller's page carries a **Balance** card once they have earned anything, and every figure on it comes from this ledger.
+
+| Figure | What it counts |
+|---|---|
+| **Owed** | What has been earned and not yet paid. This is the figure a payout can send. |
+| **Earned** | Every completed transfer added together, refunds included, so it is net of what has been given back. |
+| **Paid out** | Completed transfers sitting inside a completed payout. |
+| **On its way** | Transfers that have not completed yet, whether still to be sent, being retried, or waiting on a provider that could not report an outcome. |
+
+**On its way** counts transfers rather than payouts, so a seller whose balance has been swept into a payout that has not been marked paid reads zero here, with the amount showing under **Owed** until the payout is marked paid.
+
+Nothing is converted between currencies. A seller trading in two currencies holds two positions on the card rather than one total, and where their account settles in a currency other than the one they sold in, the card shows both what the sales were worth and what the account received.
+
+## Further Reading
+
+- [<u>Payouts</u>](/user/sellers/payouts) - Settling these earnings and recording them as paid
+- [<u>Commission Rates</u>](/user/sellers/commission-rates) - What is deducted before a transfer is created
+- [<u>Marketplace Orders</u>](/user/sellers/orders) - The orders these transfers come from
+- [<u>Sellers</u>](/user/sellers/sellers) - The seller pages carrying the balance card

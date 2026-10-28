@@ -1,93 +1,237 @@
 ---
 title: "Catalogs"
-description: "Give a company or customer group its own product range, prices and order terms."
+description: "Learn how to control which products a group of buyers can see and what they pay."
 ---
 
-A catalog is a commercial agreement. It decides what an audience sees, what they pay, and how much they must order — the B2B equivalent of a negotiated price list.
+A catalog is an agreement with a set of buyers that decides two things: which products they can see, and what those products cost them. It is assigned to an audience, which is either a company or a customer group, and once it is active, everyone in that audience shops under its terms.
 
-Catalogs are how you give a wholesale customer their own range and pricing without running a second store. To manage them, open **Catalogs** under Products.
+Catalogs are how a store sells to different buyers on different terms from one set of products. A trade customer pays agreed prices, a wholesale group buys in multiples of a case, and a distributor sees a range nobody else does, all without a separate store or a duplicate product.
 
-## The two ways a catalog is used
+Pricing and visibility are separate decisions, and a catalog can change one without changing the other. A catalog that lists no products covers your whole range, so it can change prices without hiding anything. A catalog that lists products covers only those, and its audience sees nothing else, whether or not the price changes too.
 
-The single most useful thing to understand is that an **empty product list means something different from a full one**.
+To manage catalogs, navigate to **Products → Catalogs** in the admin dashboard.
 
-<Tabs>
-  <Tab title="Pricing overlay">
-    **No products added.** Nothing is hidden — the audience browses your normal range — but they pay this catalog's prices.
+<Note>A catalog's prices are kept with the catalog itself and never appear under **Products → Price Lists**. Use a price list for prices that apply to anyone matching a rule, such as a channel, a market or a quantity, and a catalog for terms agreed with a particular audience. See [<u>Price Lists</u>](/user/pricing/price-lists).</Note>
 
-    This is what you want for a customer who buys anything you sell, at agreed rates.
-  </Tab>
-  <Tab title="Restricted range">
-    **Products added.** The audience now sees *only* those products, at this catalog's prices.
+## Reviewing Catalogs
 
-    This is what you want for a buyer with a contracted range — the twelve SKUs in their agreement and nothing else.
-  </Tab>
-</Tabs>
+![The Catalogs list, showing each catalog's status, pricing and product count](/docs/images/user/catalogs/catalogs/1-catalogs-list.png)
 
-Adding the first product to an empty catalog therefore does not add one item to what a customer sees. It switches the catalog into restricting mode, and they now see only that item.
+The list shows one row per catalog.
 
-## Creating a catalog
-
-**Add catalog** opens a short wizard: name it, choose who it is for, pick the products it covers, set what they pay, then review. Nothing is created until you finish.
-
-You can also create a bare catalog and fill it in afterwards — the same cards are on the catalog page.
-
-## Who sees it
-
-A catalog reaches nobody until you assign an audience. Assign it to:
-
-- a **company** — which covers that company and every division beneath it, or
-- a **customer group**.
-
-<Note>
-Company assignments win. A buyer whose company — or one above it — has any catalog gets those catalogs, and their customer group is not consulted. To give company buyers tier pricing, assign the catalog to their companies or divisions rather than to a group.
-</Note>
-
-## What they pay
-
-A catalog prices through its own price list, set up on the catalog page. Each product row shows where its price comes from:
-
-| From | Meaning |
+| Column | What it means |
 |---|---|
-| Entered | An amount typed onto this catalog's price list |
-| Adjusted | The shop price with this catalog's percentage applied |
-| Shop price | The normal price — this catalog does not price that product |
+| **Name** | What the agreement is called. |
+| **Status** | Whether the catalog is in force. Only an active catalog changes what its audience sees or pays. |
+| **Pricing** | How it prices its products: normal prices, prices you entered, or a percentage off. |
+| **Products** | How many products it lists. A catalog listing none covers your whole range instead. |
+| **Created at** | When the catalog was made. |
 
-A percentage is the quickest way to express "this customer gets 15% off everything", with no rows to maintain as your prices change.
+The **Status** filter narrows the list to **Active** or **Inactive**, **Add filter** offers the created and updated dates, and the menu at the end of a row offers **Edit** and **Delete**.
 
-<Warning>
-Removing a catalog's pricing deletes the price list and the prices in it, and that audience goes back to paying normal prices. The dashboard warns you before saving such a change.
-</Warning>
+<Note>The list does not show who each catalog is assigned to, so two catalogs covering the same audience cannot be identified from this screen. Open a catalog to see its **Audiences** card.</Note>
 
-## Order terms
+## How to Create a Catalog
 
-Catalogs can also carry the commercial terms of the agreement — how much a buyer must order:
+**Add catalog** opens a five-step wizard. Nothing is created until the last step, and **Back** can be used at any point.
 
-- a **minimum order quantity** and **order multiple**, set for the whole catalog or per product
-- an **order minimum**, the least a whole order must come to, set per currency
+### Details
 
-Leave them blank and buyers may order any quantity, any total.
+- **Name** - What your team calls the agreement, such as Wholesale.
+- **Description** - An internal note about what the agreement is for. Shoppers never see it.
 
-## Going live
+### Audience
 
-Catalogs are created switched off, so you can build one up without anyone seeing a half-finished agreement. **Activate** puts it into effect: its audience starts seeing its assortment and getting its prices.
+![The Audience step, with two companies assigned to the same catalog](/docs/images/user/catalogs/catalogs/2-audience-step.png)
 
-**Deactivate** stops it applying. The audience goes back to shop prices and everything the catalog holds is kept, so you can switch it on again later.
+Who the catalog is for. **Assign** takes:
 
-<Note>
-A catalog with no audience cannot be activated — there would be nobody to apply it to. The exception is a catalog set as a sales channel's default, which reaches buyers through the channel rather than through an assignment.
-</Note>
+- **Audience type** - **Company** or **Customer group**.
+- **Audience** - The company or group itself. A company assignment covers that company and every sub-unit below it, so assigning to a parent covers its divisions.
 
-## Deleting a catalog
+An audience can be added now or later, but a catalog assigned to nobody cannot be activated, so one has to be set before the catalog can start applying.
 
-**Delete** ends the agreement for good. It removes the catalog, its audience assignments, and its price list together with the prices in it. Your products stay in the store, and orders already placed are untouched.
+### Products
 
-<Warning>
-Deleting cannot be undone, and the prices typed onto the catalog's price list cannot be recovered. If you only want the agreement to stop applying, deactivate it instead.
-</Warning>
+![The Products step, with several products moved into the catalog](/docs/images/user/catalogs/catalogs/3-products-step.png)
 
-## Related
+The range of products the agreement covers. Products are searched for on the right, and when added are moved into the catalog's product list on the left. They can be added one by one, or in bulk by selecting every product on the page or every product matching the search.
 
-- [Selling to businesses](/user/how-to/selling-to-businesses) — the whole B2B setup, end to end
-- [Companies](/user/customers/companies) and [Customer Groups](/user/customers/customer-groups) — the two audiences a catalog is assigned to
-- [Price Lists](/user/pricing/price-lists) — pricing matched by market, volume or zone rules rather than owned by an agreement
+Leaving this step empty is a valid setup rather than an incomplete one. An empty list means the catalog covers every product in your store, so its audience carries on seeing your whole range and only the price changes. That is what you want when the agreement is about price alone.
+
+### Pricing
+
+![The Pricing step, set to a percentage off base prices](/docs/images/user/catalogs/catalogs/4-percentage-pricing.png)
+
+What the audience pays. The choice made here decides which pricing controls the catalog's page carries afterwards, and it can be changed at any time.
+
+- **Normal prices** - Your usual shop prices, unchanged.
+- **Prices I enter for this catalog** - A price you set yourself for each variant.
+- **A percentage off base prices** - Your shop prices adjusted by a percentage.
+
+Each is described in full under [<u>How a Catalog Prices Its Products</u>](#how-a-catalog-prices-its-products). A percentage and its quantity tiers can be set here in the wizard. Prices you enter yourself cannot, because they are typed against each variant, so a catalog using them is created first and priced from its own page.
+
+### Review
+
+![The Review step, which states that the catalog is created inactive](/docs/images/user/catalogs/catalogs/5-review-step.png)
+
+The summary lists the name, audiences, product count and pricing. **Create catalog** then opens the catalog's own page.
+
+<Note>A new catalog is always created inactive and has no effect until it is activated. Enter its prices first, then activate it.</Note>
+
+## How a Catalog Prices Its Products
+
+The **Pricing** card on the catalog's page holds one of three choices. The choice decides how the catalog works out its prices, and which other controls appear beside it.
+
+### Normal Prices
+
+The catalog charges your usual shop prices and carries no pricing controls of its own. Use it when the catalog exists to decide which products its audience can see rather than what they pay.
+
+### Prices I Enter for This Catalog
+
+The catalog charges a price you set for each variant, in each currency you sell in. Prices are set in a grid that opens over the catalog page, or loaded from a CSV file. There is no percentage setting in this mode. A price you enter is stored on the catalog, so changing the product's own shop price later leaves the catalog's price exactly as you set it.
+
+![The price grid, with a price entered against a variant](/docs/images/user/catalogs/catalogs/6-edit-prices.png)
+
+**Enter prices** appears on both the **Products** card and the **Pricing** card, and opens the same grid.
+
+1. Click **Enter prices**. Each variant is listed with its SKU, a **From qty**, a **Price** and a **Compare-at price**, in the currency shown at the top. The dropdown there switches to your other currencies, each priced separately.
+2. Double-click the **Price** cell, type the price and press Tab. A single click only selects the cell, so typing straight after one does nothing.
+3. Click **Save prices**. The grid counts unsaved changes as you work, and confirms how many prices were saved.
+
+The variant's row on the **Products** card then shows your price labeled **Entered**, where it previously showed the shop price labeled **Shop price**.
+
+#### Quantity Tier
+
+![The price grid with a quantity break that lowers the price from 10 units](/docs/images/user/catalogs/catalogs/7-quantity-break.png)
+
+A quantity tier lowers the line item price once a buyer takes a set number of units, which is how volume is set up on a catalog. The **Pricing** card carries no setting for breaks in this mode. A break is an extra row in the price grid, or an extra row in an imported file, and the **From qty** on that row is the quantity it starts at.
+
+1. In the empty row under the variant, type the quantity the break starts at under **From qty**.
+2. Type the price for that quantity in the row that appears.
+3. Click **Save prices**.
+
+The variant's row on the **Products** card then carries a marker such as **+1 tier** beside its price, and hovering over it lists every quantity with the price that applies from it. A variant can hold ten breaks at most.
+
+#### Importing and Exporting These Prices
+
+**Import** and **Export** on the **Pricing** card move this catalog's prices as a CSV file. This is the practical way to load an agreed price list a buyer has sent you, or to set prices for many products at once instead of entering them one by one.
+
+- **SKU** and **Price** are required.
+- **Currency**, **Minimum quantity** and **Compare at Price** are optional.
+
+Because the minimum quantity is a column, quantity breaks travel as extra rows for the same SKU, and the grid and the file are two routes to the same prices. The import panel offers a blank template and an example file, and the step after upload matches your file's columns to those fields.
+
+### A Percentage Off Base Prices
+
+When using the **Percentage Off Base Prices** model, the catalog works its prices out from your shop prices rather than storing its own, so changing a product's shop price changes what this audience pays at the same time. There is no grid and no import in this mode, because there are no individual prices to enter.
+
+- **Percentage** - How much to adjust your shop prices by. A discount is entered as a negative percentage, and an increase as a positive one.
+- **Quantity tiers** - A deeper percentage from a given quantity upward, which is how a bulk discount is set up without pricing each variant by hand. Each tier takes its own percentage and the quantity it starts at, and a catalog can hold ten tiers at most.
+- **Adjust compare-at prices** - Whether the compare-at price is adjusted by the same percentage. With it off, the compare-at price a shopper sees crossed out stays as it is on the product.
+
+<Note>Each tier is worked out from your shop price, never from the tier below it. A catalog set to 10% off with a tier of 20% off from fifty units charges twenty percent off the shop price at fifty, not twenty percent off the already-discounted price.</Note>
+
+<Note>A catalog carrying tiers but no overall percentage charges your shop prices until a line reaches the first tier, which is how an agreement that gives no discount below a case is set up.</Note>
+
+## How to Edit a Catalog
+
+Everything set in the wizard can be changed afterwards from the catalog's own page, which is laid out in cards.
+
+- **Products** - **Add products** adds more, and each row offers **Remove from catalog**. Each row also carries its own **Minimum** and **Multiple**, which override the catalog-wide terms for that product.
+- **Catalog** - The name and the internal description.
+- **Pricing** - The same three choices as the wizard, with whichever controls that choice carries beside them.
+- **Commercial terms** - The smallest quantity and order value this agreement accepts, described in the next section.
+- **Audiences** - **Assign** adds another company or group, and each row offers **Remove**. A catalog can serve several audiences at once.
+
+### Commercial Terms
+
+![The Commercial terms card, with a minimum order quantity and an order multiple](/docs/images/user/catalogs/catalogs/8-commercial-terms.png)
+
+Commercial terms set the smallest order this agreement accepts, which is how a catalog enforces case quantities and minimum order values.
+
+- **Minimum order quantity** - The fewest units a buyer may take of one product. A smaller quantity is refused in the cart, and the message names the quantities they can order instead.
+- **Order multiple** - The step size above that minimum. A multiple of 24 allows 24, 48 and 72 but not 30. Steps are counted from the minimum, so a minimum of 50 in steps of 24 allows 50, 74 and 98.
+- **Order minimums** - The smallest total an order may come to, set separately for each currency. Only the items count towards it, so more expensive delivery method does not make up the difference. Buyers see how much more they need to add, and cannot check out until they reach it.
+
+Both quantity rules apply to every product in the catalog, and a product can override either of them on its own row on the **Products** card.
+
+The minimum and the multiple are settled separately, each taking the first answer it finds in this order:
+
+1. The product's row on this catalog, where an override has been set.
+2. The catalog's own **Commercial terms**.
+3. The product's own setting on its product page, used when no catalog states one.
+
+So a product's row on the catalog beats the catalog-wide term, and both beat whatever the product itself says. Because the two are settled separately, a catalog can supply the multiple while the product supplies the minimum.
+
+<Note>Quantity rules apply to buyers shopping for themselves. An order your team builds in the dashboard is not held to them, so staff can enter a quantity that was agreed as an exception.</Note>
+
+## How to Activate or Deactivate a Catalog
+
+**Activate** at the top of the catalog page puts the agreement in force after a confirmation. Its audience then sees the products it lists and pays its prices. A catalog with no audience cannot be activated, because there would be nobody for it to apply to.
+
+**Deactivate** stops it applying. Everything the catalog holds is kept, so activating it again makes its terms apply again.
+
+<Warning>The confirmation says a deactivated catalog's audience goes back to the shop prices. That is only true when no other catalog covers them, and if a second catalog still applies, the audience is priced by that second catalog instead.</Warning>
+
+## How to Delete a Catalog
+
+**Delete catalog** under **More actions** removes the catalog, its audience assignments and its price list with every price in it. The products themselves stay in your store. This cannot be undone, so deactivate the catalog instead when the agreement might be needed again.
+
+## Which Catalog Applies
+
+A buyer can be covered by more than one catalog, and two rules decide which one prices their order.
+
+**Only one kind of audience is used.** A buyer's company is consulted first, and their customer groups are used only when no catalog is assigned to their company or to any company above it. A company buyer is therefore never priced by their customer group's catalog, which is why trade tiers belong on the companies themselves. Where neither applies, the sales channel's default catalog is used, if one is set.
+
+**The closest company to the buyer decides, and then the cheapest price.** The buyer's own company is checked first, then the company above it, and so on up the company hierarchy. The first one carrying a catalog that prices the product wins, even where a company further up would have charged less. A division's own catalog therefore prices its buyers ahead of its parent company's.
+
+Where one company carries more than one catalog, the buyer pays the lowest price any of them gives for the quantity being bought. Quantity breaks count in that comparison, so which catalog wins can change with the quantity ordered. Take one catalog charging 40.00 a unit and another charging 45.00 that drops to 35.00 from ten units: a buyer taking nine pays 40.00 under the first catalog, and a buyer taking ten pays 35.00 under the second.
+
+### How to Check What a Buyer Will Pay
+
+![A draft order line naming the catalog that priced it](/docs/images/user/catalogs/catalogs/9-priced-by.png)
+
+A buyer's price is not shown on the product page, the company page or the customer's page, so the way to see it is to start a draft order.
+
+1. Navigate to **Orders → Draft Orders** and click **New Order**.
+2. Pick the business under **Company (optional)**. The customer list then offers only the people who buy for it.
+3. Choose the customer, add the product under **Add a variant**, and click **New Order**.
+
+The draft's line shows the price this buyer is charged, with **Priced by** and the catalog's name beneath it as a link. The variant search shows your shop price while you are building the order, because the catalog is applied when the draft is created rather than while you are searching.
+
+A draft keeps the price it was created with even if the catalog changes afterwards. Changing a line's quantity through **Edit order** prices it again on save, and the line may then name a different catalog.
+
+<Note>A draft order holds stock for as long as it exists, so a draft started only to check a price takes those units out of what you can sell until it is removed.</Note>
+
+## Ways to Use Catalogs
+
+### Agreed Prices for One Business
+
+Create a catalog, assign it to the company, leave the **Products** step empty and choose **Prices I enter for this catalog**. The company's buyers see your whole range and pay your agreed prices. This is the most common arrangement, and leaving the product list empty is what keeps their view of your range unchanged.
+
+### A Range Only Some Buyers See
+
+Create a catalog, assign it to the company or group, and add only the products that audience should have. Its buyers then see exactly those products and nothing else, because a catalog narrows its audience to the products it lists rather than adding to what they already see.
+
+<Warning>A catalog that lists products hides every other product from its audience. An audience whose catalog holds six products sees six products in the shop and nothing else.</Warning>
+
+### An Extra Product for One Audience
+
+Letting one audience have access to a product that nobody else can buy takes two catalogs, because a catalog restricts its audience to the products it lists. A catalog holding that product on its own would leave its audience being able to see only that one product and nothing else.
+
+1. Build a **Main range** catalog holding the products everyone should see, and assign it to a catch-all customer group, or set it as the channel's default catalog.
+2. Build a second catalog holding the special product, and assign it to the audience that may buy it.
+3. Assign the **Main range** catalog to that audience as well, and activate both.
+
+An audience sees every product listed by any catalog covering them, so this audience sees the main range plus the special product, while everyone else sees the main range only. Make sure both catalogs list products, because a catalog with an empty product list removes the restriction for everyone it covers and would show them your whole range.
+
+<Note>A catalog can only narrow what a sales channel already publishes. A product that is not published to the channel cannot be reached by adding it to a catalog, so publish the special product first and let the catalogs decide who sees it. See [<u>Sales Channels</u>](/user/settings/sales-channels).</Note>
+
+## Further Reading
+
+- [<u>Price Lists</u>](/user/pricing/price-lists) - Prices that apply to anyone matching a rule
+- [<u>Companies</u>](/user/customers/companies) - The businesses and divisions a catalog is assigned to
+- [<u>Groups</u>](/user/customers/customer-groups) - The other kind of audience a catalog can have
+- [<u>Draft Orders</u>](/user/orders/draft-orders) - Building an order on a buyer's behalf
+- [<u>Products</u>](/user/products/products) - The products a catalog covers

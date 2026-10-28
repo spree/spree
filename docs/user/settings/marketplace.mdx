@@ -1,62 +1,87 @@
 ---
-title: "Marketplace"
-description: "Who pays your sellers and how often, whether new sellers and their products are reviewed, and the tax on your commission."
+title: "Marketplace Settings"
+description: "Learn how to set how your marketplace pays its sellers, how sellers join it, and the tax on your commission."
 ---
 
-The Marketplace settings screen holds the decisions that shape how your marketplace runs: **who gets to trade, what goes on sale, what sellers hear from you, and how they get paid.**
+Marketplace settings are the rules that apply to every seller on your marketplace. They decide how sellers are paid, whether an admin needs to review sellers before they can trade, whether sellers receive emails from your store, and what tax is charged on your commission.
 
-To reach it, navigate to **Settings → Marketplace**.
+These settings are the defaults for the whole marketplace. An individual seller can carry their own payout schedule and their own minimum payout, set on that seller's page, and those will override the settings here for that seller alone.
 
-## What's on the screen
+To manage them, navigate to **Settings → Marketplace** in the admin dashboard.
 
-### Payouts
+<Note>The page holds one **Save** for everything on it, rather than one per section. Changing any field brings up **Discard** beside it, which returns every field to the values it was last saved with.</Note>
 
-| Setting | What it does |
-|---|---|
-| **Payout provider** | Who actually moves the money. Leave it unset and Spree keeps the books while you pay sellers yourself. |
-| **Settle sellers** | How often earnings are swept into a payout — daily, weekly, every two weeks, monthly, or only by hand. A seller can carry their own schedule, which wins. |
-| **Minimum payout** | What a seller's balance must reach before it is worth sending. Below it, the balance carries to the next period. |
+## Payouts
 
-### Seller admission
+![The Payouts section, with the provider, schedule and minimum payout](/docs/images/user/settings/marketplace/1-payouts.png)
 
-| Setting | What it does |
-|---|---|
-| **Approve sellers automatically** | Let a seller start trading the moment they finish the onboarding checklist, with nobody reviewing them. |
-| **Approve seller products automatically** | Put a seller's product on sale as soon as they submit it, without review. |
+How and when the marketplace pays its sellers.
 
-Both are off by default. What your marketplace lists is what it vouches for, so admitting sellers and listing their products are decisions worth making on purpose. Turn them on for an invite-only marketplace where you already know your sellers; leave them off for an open one.
+- **Paid through** - Who moves the money. **Your own books** means you send each transfer yourself and record it as paid in the dashboard. **Stripe Connect** means the provider pays sellers, and each seller has to set up their own account with it before they can be paid.
+- **Settle sellers** - How often earnings are gathered into a payment: daily, weekly, every two weeks, monthly, or only when you say so. The default is monthly.
+- **Minimum payout** - The smallest balance worth sending. A seller owed less than this carries their balance into the next period instead. Zero pays whatever is owed.
 
-### Communication
+**Your own books** suits a marketplace with only a handful of sellers that you already pay by bank transfer, where you would rather keep the payments in your own accounting system than add a provider. It costs nothing per transfer, and the trade-off is that somebody has to make each payment manually and record it. **Stripe Connect** is more suitable for marketplaces with large numbers of sellers, where paying them all manually would be too time-consuming and costly.
 
-| Setting | What it does |
-|---|---|
-| **Send sellers transactional emails** | Whether Spree emails sellers about invitations, approvals and payouts. Turn it off if you send seller communications yourself. |
+The settlement schedule is a choice between the seller's cash flow and your own effort. **Daily** or **Weekly** suits a marketplace whose sellers are small businesses depending on the money arriving, particularly where you pay through a provider and each payment costs you nothing to make. **Monthly** suits fewer, larger payments and less reconciliation. **Only when you say so** suits a new marketplace where you want to look at every settlement before it goes out, or when a dedicated finance team pays on its own cycle.
 
-### Commission tax
+The minimum payout exists to avoid paying unnecessary transfer fees on lots of small payments. A balance below it rolls forward to the next period instead, so a seller is paid once the amount is worth sending. Leave it at zero where transfers cost you nothing.
 
-| Setting | What it does |
-|---|---|
-| **Default commission tax rate** | The tax charged on your commission when nothing more specific applies. Entered as a percentage. |
+<Note>Both the schedule and the minimum are defaults for the marketplace. An individual seller can carry their own, set on that seller's page, which suits a large seller you have agreed different terms with.</Note>
 
-This is tax on **your service to the seller**, not on the goods the shopper bought — a separate supply, assessed against the seller's billing address.
+<Note>**Stripe Connect** is offered only once your store already has Stripe set up as a payment method, because the account that charges your customers is the one that pays your sellers. Each seller then connects their own account as part of their checklist, and a seller without one cannot be paid. See [<u>Payment Methods</u>](/user/settings/payments).</Note>
 
-It is only a fallback. A commission rate carrying its own tax rate wins, and so does a connected tax service. Set it for the case where neither has an answer, so commission is never left untaxed by omission.
+## Seller Admission
 
-## How to set your payout terms
+![The Seller admission section, with both review switches](/docs/images/user/settings/marketplace/2-seller-admission.png)
 
-1. Go to **Settings → Marketplace**.
-2. Choose **Paid through**. On **Your own books**, Spree tracks what each seller is owed and you send the transfers yourself, marking each one paid.
-3. Choose how often to **Settle sellers**. Pick **Only when you say so** if you would rather run each payout by hand.
-4. Set a **Minimum payout**, or leave it at zero to pay whatever is owed each period.
-5. Click **Save**.
+Whether a person reviews a seller, or a seller's product, before either goes live.
 
-## Good to know
+- **Approve sellers automatically** - A seller starts trading the moment they finish their checklist, with nobody reviewing them.
+- **Publish seller products automatically** - A seller's product goes on sale the moment they submit it, with nobody reviewing it.
 
-- A seller can carry their own settlement schedule, which overrides the store-wide setting for that seller.
-- Setting a minimum does not cancel a small balance — it carries forward to the next period.
+Both switches are usually left off, which is what makes your seller requirements checklist a real gate rather than a formality. With both of them switched off, a seller finishing the checklist waits for your review, and each product they submit needs your approval before being published.
 
-## Related
+Turning **Approve sellers automatically** on suits an invite-only marketplace, where you have already decided who each seller is before sending the invitation and the checklist is there to collect their details rather than to vet them. It makes less sense where anyone can apply, because the checklist is then the only thing standing between an applicant and your storefront.
 
-- [<u>Sellers → Payouts</u>](/user/sellers/payouts)
-- [<u>Sellers → Commission Rates</u>](/user/sellers/commission-rates)
-- [<u>Settings → Seller Requirements</u>](/user/settings/seller-requirements)
+Turning **Publish seller products automatically** on suits established sellers listing a high volume of products, where reviewing each one would be a significant bottleneck. The risk is different from the one above: an unreviewed seller can be suspended before they sell anything, while an unreviewed product is on your storefront under your name the moment it is submitted.
+
+<Warning>Each switch removes a human decision. A workable middle setting on a growing marketplace is to review sellers but not their products, so you still choose who trades while a seller you have already approved can list freely.</Warning>
+
+## Communication
+
+![The Communication section, with the seller email switch](/docs/images/user/settings/marketplace/3-communication.png)
+
+Whether your store sends sellers its own emails about approval, products and payouts. Emails to customers are not affected either way.
+
+It is on by default, and most marketplaces leave it on, because it is what tells a seller their invitation is waiting or their application has been approved without anyone writing to them.
+
+Turning it off might suit a few specific situations:
+- A marketplace with few enough sellers that you write to each one personally, where the store's own wording would read as impersonal beside yours.
+- A marketplace running seller communication through its own mailing or support system, where two sets of emails about the same event would confuse people.
+- A store being set up or migrated, where real sellers exist in the data and nobody wants them to receive anything until the marketplace is ready.
+
+<Warning>With this off, nothing tells a seller they have been invited or approved. The invitation link still exists, but somebody has to send it to them.</Warning>
+
+## Commission Tax
+
+![The Commission tax section](/docs/images/user/settings/marketplace/4-commission-tax.png)
+
+The tax charged on your commission, as a percentage, used when neither the commission rate itself nor your tax provider supplies a rate. Leave it at zero if you charge no tax on your fee.
+
+Your commission is a fee on the service you provide to the seller, which is a separate thing from the goods the seller sells to the shopper. Where that service is taxable, the tax on it is worked out on its own and never mixes with the tax the customer paid on the item.
+
+This matters most to marketplaces operating where VAT applies to a commission charged between businesses, which covers the EU and other VAT jurisdictions. A marketplace whose fee is not taxable leaves the figure at zero and nothing is charged on it.
+
+<Note>Commission tax is worked out against the seller's own jurisdiction rather than the shopper's, because the service is sold to the seller. A marketplace with sellers in several countries is therefore likely to need a figure per rate rather than one default. See [<u>Commission Rates</u>](/user/sellers/commission-rates).</Note>
+
+<Note>This figure is a fallback. A commission rate carrying its own tax figure uses that instead for the sales it charges, and where a tax provider is configured, it answers before this default is reached.</Note>
+
+<Warning>Whether your commission is taxable, and at what rate, depends on where you and your sellers are based. Always confirm the correct rates with your accountant before entering a figure here.</Warning>
+
+## Further Reading
+
+- [<u>Seller Requirements</u>](/user/settings/seller-requirements) - The checklist a seller completes before approval
+- [<u>Sellers</u>](/user/sellers/sellers) - The sellers themselves, and approving them
+- [<u>Commission Rates</u>](/user/sellers/commission-rates) - What the marketplace charges on each sale
+- [<u>Payouts</u>](/user/sellers/payouts) - Settling what sellers are owed

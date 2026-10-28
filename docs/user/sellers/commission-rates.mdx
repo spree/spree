@@ -1,68 +1,119 @@
 ---
 title: "Commission Rates"
-description: "What the marketplace charges on each sale — set as rates with rules, applied in list order, and frozen onto every sale."
+description: "Learn how to set what your marketplace charges sellers on each sale, and which sales each rate applies to."
 ---
 
-Commission is what you charge a seller for a sale. It is set as **rates**, each with the rules for when it applies, and recorded per sale as a **commission line** that never changes afterwards.
+A commission rate is what your marketplace charges a seller on a sale. Each rate carries a charge, which is either a percentage of the sale or a flat fee per unit, and the conditions deciding which sales it applies to.
 
-Find them under **Sellers → Commission rates**.
+A marketplace usually has more than one rate: a standard charge on everything, and narrower rates charging differently for one category, one seller or sales above a certain value. The rates sit in an ordered list, and the first one matching is the one charged.
 
-## A rate
+Rates are configuration rather than records. Editing one changes what the next sale is charged and never what a past one was, because the fee charged on an order is written once when the order is placed and is never worked out again.
 
-| Field | Meaning |
+To manage them, navigate to **Sellers → Commission rates** in the admin dashboard.
+
+## Reviewing Your Commission Rates
+
+![The Commission rates list, in the order they are applied](/docs/images/user/sellers/commission-rates/1-rates-list.png)
+
+The list shows one row per rate, in the order they are tried.
+
+| Column | What it means |
 |---|---|
-| Name and code | How it appears on the seller's earnings and in reports |
-| Kind | **Percentage** of the sale, or a **fixed** fee per sale |
-| Value | The percentage for a percentage rate, or the fee per currency for a fixed one |
-| Enabled | Switched-off rates are skipped |
+| **Name** | What the rate is called, with your own code for it beneath. |
+| **Value** | What it charges, such as 10.0%. |
+| **Conditions** | Which sales it applies to, or **Every sale** where it has none. |
+| **Enabled** | Whether the rate is being charged at all. |
 
-A percentage rate can carry a **floor and cap per currency** — at least $1, at most $50 — so a small sale still earns you something and a large one is not commissioned without limit. A fixed rate states its fee per currency, and applies only in currencies it has an amount for.
+**The order of the rows is the order of priority.** There is no priority number to set: the first rate whose conditions match is the one charged, and the rest are not consulted. Rows are dragged to reorder them.
 
-## The list is the precedence
+## How a Rate Is Chosen
 
-This is the most important thing to understand, and it is deliberately simple.
+A rate is chosen for each item sold rather than for the order as a whole, so one order can be charged by several rates. The marketplace walks the enabled rates from the top of the list and takes the first one whose conditions admit that item and whose charge can be made in the order's currency.
 
-When a sale happens, Spree walks your enabled rates **from the top of the list** and takes **the first whose rules match**. There is no scoring, and no built-in idea that a product rule beats a category rule. What you see in the table is exactly what happens — to change the answer, drag a row up or down.
+A rate with no conditions matches everything, which is how a marketplace states a single standard charge. That rate belongs at the **bottom** of the list, because nothing below a rate that matches everything is ever reached.
 
-Two consequences:
+<Warning>Where no rate matches an item, no commission is charged on it and the seller keeps the whole sale. Narrowing every rate with conditions and leaving nothing to catch the remainder is the way a marketplace stops earning without anything appearing to be wrong.</Warning>
 
-- **A rate with no rules matches everything.** That is how you express your default — and it belongs at the **bottom**, because anything below it can never be reached.
-- **New rates are created at the top**, since a new rate is there to say something more specific than what exists.
+Two kinds of sale are never commissioned. Products your own team sells are the marketplace's own and carry no fee, and the seller charged is the one recorded against the item when the order was placed rather than whoever owns the product today.
 
-If nothing matches, **no commission is charged**. A marketplace with no rate covering a sale charges nothing rather than inventing a default nobody set.
+## How to Create a Commission Rate
 
-## Rules
+![The Add commission rate form](/docs/images/user/sellers/commission-rates/2-add-rate.png)
 
-Rules narrow when a rate applies. A rate can hold several, and **all of them must match**; the items listed *within* one rule are alternatives.
+1. Click **Add commission rate**.
+2. Enter a **Name**, and a **Code** if you want your own identifier for it.
+3. Choose the **Charge**, which is either a percentage of the sale or a flat fee.
+4. Enter the value. A percentage takes one figure, up to 100, and a flat fee takes an amount per currency, charged for every unit sold.
+5. Add any **Conditions**, described below. A rate with none charges every sale.
+6. Set whatever else the rate needs from the fields below the conditions, described under [<u>Other Settings</u>](#other-settings).
+7. Click **Create commission rate**.
 
-| Rule | Matches when the item is |
+The new rate appears at the top of the list and starts charging immediately.
+
+The top is the right place for most new rates, because a rate is usually created to charge something differently from the rates already there, and it has to sit above them to be reached. The exception is a rate with no conditions, which charges everything and stops the search. That one belongs at the bottom, and a new one has to be dragged there.
+
+<Note>With a flat fee, a currency left empty is one this rate does not charge, and sales in that currency fall through to the next rate instead. A percentage is a ratio rather than an amount, so it charges in every currency.</Note>
+
+### Conditions
+
+Conditions narrow which sales a rate charges. Every condition on a rate has to hold, and a condition naming several records matches any of them.
+
+| Condition | What it limits the rate to |
 |---|---|
-| Seller | from one of the sellers named |
-| Category | in one of the categories named |
-| Product | one of the products named |
-| Item total | worth at least, or at most, an amount |
+| **Seller** | Items sold by the sellers you pick. |
+| **Category** | Products in the categories you pick, and anything filed beneath them. |
+| **Product** | The products you pick. |
+| **Sale value** | Items whose value falls within a range, set as a minimum and an optional maximum. |
 
-So "electronics from these three sellers" is two rules on one rate.
+**Sale value** is measured per item, on the same figure the fee itself is charged on, so a band and the charge it governs always weigh a sale the same way. The minimum is included in the band and the maximum is not, which lets two bands meet at a number without overlapping or leaving a gap. A rate charging 15% below 50 and one charging 10% from 50 upwards are two rates, each holding one of these.
 
-## What the fee is charged on
+<Warning>A condition that names nothing never matches, so a half-filled condition takes the rate out of use rather than widening it. A **Seller** condition with no sellers chosen charges nobody. Make sure to enter values for any conditions added to a rate.</Warning>
 
-- **Net of tax, by default.** The customer's VAT is not the seller's revenue, so commission is charged on the amount excluding it. Switch **tax inclusive** on to charge on the gross instead.
-- **After discounts, always.** Commission is charged on what the customer actually paid — a promotion is the seller's concession.
-- **Delivery is optional.** **Include shipping** charges commission on the delivery charge as well as the goods. A fixed fee cannot do this, since charging it again on the parcel would double it.
+### Other Settings
 
-## Tax on your commission
+- **Floor and cap (optional)** - On a percentage rate, the least and the most it will ever charge, set per currency. These are amounts rather than ratios, so each holds only in the currency it was written in, and a sale in a currency with neither set is charged without limit.
+- **Maximum per sale line (optional)** - On a flat fee, a ceiling on what one line can be charged. A flat fee is charged in full for every unit sold, so on a cheap item it can come to more than the seller made on the sale, and this is what stops that.
+- **Tax on commission** - The tax charged on the commission itself. Your fee is a separate supply to the seller, so this is added on top of the fee rather than taken out of it, and the two are invoiced and reported apart. Leaving it empty uses the default under [<u>Marketplace Settings</u>](/user/settings/marketplace).
+- **Charge on delivery** - Whether commission is also charged on what the seller collected for delivery, rather than on the goods alone. Available on a percentage rate only, since a flat fee is charged per unit sold and has no sensible reading on a parcel.
+- **Charge on the gross price** - Whether commission is charged on the price including the customer's tax. Left off, it is charged on the seller's net revenue, which is the usual basis where your fee is taxed as its own supply. Discounts come off the figure either way.
+- **Enabled** - A disabled rate is skipped when a sale is charged, without being deleted.
 
-Your commission is a service you sell to the seller — a separate taxable supply from their sale to the customer. It is taxed at the **seller's** location, not the shopper's: a German marketplace charging a French seller is a cross-border business supply, and where the shopper lives has nothing to do with it.
+## How to Change Which Rate Takes Priority
 
-The tax rate is taken from the rate itself if you set one, otherwise from your tax setup using the seller's address, otherwise from the store's default commission tax rate.
+A rate's position in the list is its priority. The marketplace reads the list from the top and charges the first rate that matches, so a rate higher up outranks every rate beneath it, and the highest one that matches an item is the only one consulted for that item.
 
-## What gets recorded
+![Dragging a commission-free rate above the standard rate](/docs/images/user/sellers/commission-rates/3-commission-order.png)
 
-When an order is placed, the matching rate is applied and the result frozen as a commission line — one per item, plus one per delivery where the rate includes it. Every field is a snapshot: editing or deleting the rate later changes nothing already charged. Lines cannot be edited; correcting a charge means recording a reversal, as with any ledger.
+1. Navigate to **Sellers → Commission rates**.
+2. Grab the handle at the start of a row.
+3. Drag it up to raise its priority, or down to lower it.
 
-Sellers see their commission on each earning in their panel.
+The new order takes effect on the next sale. Nothing already charged changes.
 
-## Related
+The general rule for ordering is that the narrower the conditions of the rate are, the higher it belongs. A rate charging one category differently has to sit above the rate charging everything, because the broad rate would otherwise match first and the narrow one would never be reached. Priority is the only thing deciding this, so a narrow rate placed below a broad one is simply inactive.
 
-- [Payouts](/user/sellers/payouts) — where the net of sale and commission ends up
-- [Managing sellers](/user/sellers/managing-sellers) — the sellers a rule can name
+These setups all depend on the order:
+
+- **Commission-free products.** A rate charging 0% with a **Product** or **Category** condition, placed at the top, trades the named goods for nothing. Below it, the standard rate charges everything else.
+- **A negotiated rate for one seller.** A rate charging 5% with a **Seller** condition, above a standard rate charging 10%. The named seller is charged 5% and everybody else falls through to 10%.
+- **Rates that vary with the value of the sale.** A rate charging 15% below 50 above a rate charging 10% from 50 upwards, with the standard rate below both. The first band to match wins, which is why the bands are ordered rather than given priorities of their own.
+- **A standard rate.** One rate with no conditions, at the bottom, catching everything the rates above did not.
+
+<Warning>Raising a rate with no conditions above the others turns off everything beneath it, because a rate that matches everything ends the search. The list stays as it was and nothing warns you, so the effect only shows up in what the next sales are charged.</Warning>
+
+## How to Edit or Delete a Rate
+
+A rate can be edited or deleted at any time, from the menu at the end of its row.
+
+To edit one, click **Edit**. The same fields open as when the rate was created, and saving changes what the next sale is charged. Commission already charged is untouched, so editing a rate is never a way to correct a fee on an order that has already been placed.
+
+To delete one, click **Delete** and confirm. Commission already charged on past sales is not affected either, so deleting a rate changes what future sales are charged rather than rewriting what has happened. The rate itself stays readable behind the commission it charged, so an old order can still say which rate produced its fee.
+
+<Warning>Deleting a rate can leave sales with no commission at all. Where nothing below it matches, the sales it was charging fall through the rest of the list and are charged nothing, and the seller keeps the whole amount. Check that a rate with no conditions is sitting at the bottom of the list before deleting anything above it.</Warning>
+
+## Further Reading
+
+- [<u>Seller Transfers</u>](/user/sellers/transfers) - What each sale earned its seller after commission
+- [<u>Marketplace Orders</u>](/user/sellers/orders) - Where the commission appears on an order
+- [<u>Marketplace Settings</u>](/user/settings/marketplace) - The default tax on commission
+- [<u>Payouts</u>](/user/sellers/payouts) - Settling what sellers are owed
