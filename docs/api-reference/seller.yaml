@@ -28614,8 +28614,8 @@ components:
             - UTC
           - type: string
             nullable: true
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          description: Common IANA time zones; any other IANA time zone identifier
+            is accepted too.
         status:
           anyOf:
           - type: string

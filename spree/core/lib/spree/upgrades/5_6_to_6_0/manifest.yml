@@ -597,16 +597,18 @@ steps:
       is dropped in 6.1. Idempotent — only rows without a capture_method are
       written.
 
-  - id: store_time_zones
-    name: "Convert store time zones to IANA names"
-    task_class: "Spree::MaintenanceTasks::Upgrade::StoreTimeZones"
+  - id: store_regional_settings
+    name: "Convert store time zones and admin languages to standard codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::StoreRegionalSettings"
     notes: |
       A store's time zone is now always an IANA name such as America/New_York,
-      the form the API accepts and browsers understand. Stores saved with a
-      Rails display name such as "Eastern Time (US & Canada)" are converted.
-      A value that names no time zone at all is counted as unknown and left
-      for you to correct in the store settings. Idempotent — stores already on
-      an IANA name are skipped.
+      and its admin language a locale code Spree lists, the forms the API
+      accepts and browsers understand. Rails time zone names such as
+      "Eastern Time (US & Canada)" and locale spellings such as en_US are
+      converted. A time zone that names no zone is reset to the store default,
+      which is what the store already ran on; an admin language Spree does not
+      list is cleared, so staff see their own language. Idempotent — stores
+      already on standard codes are skipped.
 
   - id: product_types_backfill
     name: "Backfill product type store ownership"

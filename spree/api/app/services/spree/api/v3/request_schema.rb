@@ -52,7 +52,8 @@ module Spree
         # The lists a code field takes, published once per API as a named
         # component — the same `CountryCode`, `CurrencyCode` and `WeightUnit`
         # types the serializers declare, so a value read from a response is the
-        # type a request takes. Lists in `OPEN_CODE_LISTS` only suggest values.
+        # type a request takes. A list `Typelizer::OpenEnums` does not close
+        # only suggests its values.
         CODE_LISTS = {
           country: ['CountryCode', -> { Spree::IsoData.country_codes }],
           currency: ['CurrencyCode', -> { Spree::Money::Rounding::CURRENCY_CODES }],
@@ -61,8 +62,6 @@ module Spree
           weight_unit: ['WeightUnit', -> { Spree::Variant::WEIGHT_UNITS }],
           dimension_unit: ['DimensionUnit', -> { Spree::Variant::DIMENSION_UNITS }]
         }.freeze
-
-        OPEN_CODE_LISTS = %i[time_zone].freeze
 
         ACTIONS = %i[create update].freeze
 
@@ -352,8 +351,12 @@ module Spree
             next unless CODE_LISTS.key?(field.kind)
 
             name, values = CODE_LISTS[field.kind]
-            list = { type: :string, enum: values.call }
-            lists[name] = OPEN_CODE_LISTS.include?(field.kind) ? { anyOf: [list, { type: :string }] } : list
+            lists[name] = if Typelizer::OpenEnums.closed?(name)
+                            { type: :string, enum: values.call }
+                          else
+                            Typelizer::OpenEnums.open_schema({ type: :string }, values.call)
+                              .merge(description: Typelizer::OpenEnums.description(name)).compact
+                          end
           end
         end
 
@@ -474,7 +477,7 @@ module Spree
 
           # The same open list the serializers publish (`enum_type_name`):
           # clients autocomplete the built-in values and still accept any other.
-          { anyOf: [schema.merge(enum: field.enum), schema] }
+          Typelizer::OpenEnums.open_schema(schema, field.enum)
         end
       end
     end

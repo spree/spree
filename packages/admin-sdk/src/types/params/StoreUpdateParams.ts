@@ -6,7 +6,8 @@ import type { WeightUnit } from '../generated'
 
 export type StoreUpdateParams = {
   name?: string
-  admin_locale?: LocaleCode
+  /** The language the dashboard opens in for every staff member; null lets each use their own. */
+  admin_locale?: LocaleCode | null
   timezone?: TimeZone
   weight_unit?: WeightUnit
   unit_system?: 'metric' | 'imperial'

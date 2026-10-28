@@ -7,7 +7,8 @@ module Spree
 
           request_params :store do |body|
             body.attribute :name, :string, example: 'My Store'
-            body.attribute :admin_locale, :locale, example: 'en'
+            body.attribute :admin_locale, :locale, nullable: true, example: 'en',
+              description: 'The language the dashboard opens in for every staff member; null lets each use their own.'
             body.attribute :timezone, :time_zone, example: 'Europe/Berlin'
             body.attribute :weight_unit, :weight_unit
             body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS

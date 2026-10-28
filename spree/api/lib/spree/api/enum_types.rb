@@ -110,7 +110,8 @@ module Spree
           type = "export type #{name} = (typeof #{constant})[number] | (string & {})"
           type = "export type #{name} =\n  | (typeof #{constant})[number]\n  | (string & {})" if type.length > LINE_WIDTH
 
-          "\n/** The built-in values of `#{name}`. Extensions may add more. */\n#{line}\n#{type}\n"
+          summary = Typelizer::OpenEnums.description(name) || "The built-in values of `#{name}`. Extensions may add more."
+          "\n/** #{summary} */\n#{line}\n#{type}\n"
         end
       end
     end

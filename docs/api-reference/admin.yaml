@@ -73951,8 +73951,8 @@ components:
             - Pacific/Tongatapu
             - UTC
           - type: string
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          description: Common IANA time zones; any other IANA time zone identifier
+            is accepted too.
         storefront_url:
           type: string
           nullable: true
@@ -78645,6 +78645,8 @@ components:
         - Pacific/Tongatapu
         - UTC
       - type: string
+      description: Common IANA time zones; any other IANA time zone identifier is
+        accepted too.
     DimensionUnit:
       type: string
       enum:
@@ -84948,7 +84950,10 @@ components:
         admin_locale:
           allOf:
           - "$ref": "#/components/schemas/LocaleCode"
+          description: The language the dashboard opens in for every staff member;
+            null lets each use their own.
           example: en
+          nullable: true
         timezone:
           allOf:
           - "$ref": "#/components/schemas/TimeZone"

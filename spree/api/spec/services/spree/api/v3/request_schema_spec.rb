@@ -128,7 +128,10 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       schema = described_class.new { |schema| schema.attribute :timezone, :time_zone }
 
       expect(schema.json_schema[:properties][:timezone]).to eq('$ref': '#/components/schemas/TimeZone')
-      expect(schema.code_lists['TimeZone']).to eq(anyOf: [{ type: :string, enum: Spree::TimeZones::SUGGESTED }, { type: :string }])
+      expect(schema.code_lists['TimeZone']).to eq(
+        anyOf: [{ type: :string, enum: Spree::TimeZones::SUGGESTED }, { type: :string }],
+        description: Typelizer::OpenEnums.description('TimeZone')
+      )
     end
 
     it 'sends decimals as canonical strings' do

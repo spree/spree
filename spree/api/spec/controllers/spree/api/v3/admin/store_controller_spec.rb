@@ -475,6 +475,35 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with an admin language' do
+      let(:params) { { admin_locale: 'pt_br' } }
+
+      it 'stores its listed spelling' do
+        subject
+        expect(json_response['admin_locale']).to eq('pt-BR')
+      end
+
+      context 'that is null' do
+        let(:params) { { admin_locale: nil } }
+
+        it 'accepts it as no override' do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(json_response['admin_locale']).to be_blank
+        end
+      end
+
+      context 'that Spree does not list' do
+        let(:params) { { admin_locale: 'klingon' } }
+
+        it 'returns a validation error' do
+          subject
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['details']).to have_key('admin_locale')
+        end
+      end
+    end
+
     context 'with an invalid storefront_access value' do
       let(:params) { { storefront_access: 'nonsense' } }
 

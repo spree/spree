@@ -527,7 +527,7 @@ export const TAXABILITY_REASONS = [
 ] as const
 export type TaxabilityReason = (typeof TAXABILITY_REASONS)[number] | (string & {})
 
-/** The built-in values of `TimeZone`. Extensions may add more. */
+/** Common IANA time zones; any other IANA time zone identifier is accepted too. */
 export const TIME_ZONES = [
   'Africa/Algiers',
   'Africa/Cairo',
