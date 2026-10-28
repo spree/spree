@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
+import { CustomFieldSchema } from './CustomField';
 import { CustomerGroupSchema } from './CustomerGroup';
 import { NewsletterSubscriberSchema } from './NewsletterSubscriber';
 
@@ -20,6 +21,7 @@ export const CustomerSchema = z.object({
   default_shipping_address: AddressSchema.nullable(),
   newsletter_subscriber: NewsletterSubscriberSchema.nullable(),
   customer_groups: z.array(CustomerGroupSchema),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Customer = z.infer<typeof CustomerSchema>;

@@ -27,6 +27,19 @@ Keep up with the latest features and improvements in Spree Commerce!
   **Learn more:** [Quick start](/developer/getting-started/quickstart) · [Upgrade guide](/developer/upgrades/5.6-to-6.0) · [React Dashboard](/developer/dashboard/overview)
 </Update>
 
+<Update label="Sellers can sell digital products" description="October 24, 2026" tags={["Marketplace", "Catalog", "Seller Panel"]}>
+  Sellers on a marketplace can now manage the downloadable files their digital products deliver, such as e-books, design files or software. Until now only the marketplace operator could attach them.
+
+  - **Same card as the dashboard.** The seller panel's product page shows the **Digital files** card, where sellers upload, replace and delete files and set download limits for each one.
+  - **The marketplace decides.** Under **Settings → Marketplace → Seller files** you choose whether sellers may upload files at all (off by default) and which file types they may use. Each file is checked by its contents, not its name, and the default list leaves out programs and scripts.
+  - **Changes go back to review.** Adding or replacing a file on a product already on sale sends it back for approval, so buyers only download what you have checked. You can turn this off.
+  - **Safe by default.** Sellers can only reach files on their own products, and a read-only seller role can see files but not change them.
+
+  Developers get the same operations through the Seller API and SDK, and can plug in their own malware scanner to check each upload before it is accepted.
+
+  **Learn more:** [Sell digital products on a marketplace](/developer/how-to/sell-digital-products#on-a-marketplace) · [Marketplace settings user guide](/user/settings/marketplace)
+</Update>
+
 <Update label="MCP server for AI agents" description="October 18, 2026" tags={["AI", "Dashboard"]}>
   Spree now ships with a built-in MCP server, so AI agents such as Claude or Cursor can manage your store in plain language. Ask an agent for last month's sales in Germany, update a product, cancel an order, mark a shipment as delivered or launch a new market — without opening the admin.
 

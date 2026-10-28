@@ -11,6 +11,8 @@ module Spree
           one :option_type,
               resource: proc { Spree.api.admin_option_type_serializer },
               if: proc { expand?('option_type') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

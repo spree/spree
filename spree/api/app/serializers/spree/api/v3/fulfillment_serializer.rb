@@ -59,6 +59,8 @@ module Spree
         one :stock_location, resource: proc { Spree.api.stock_location_serializer }
         many :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
         many :tax_lines, resource: proc { Spree.api.tax_line_serializer }, if: proc { expand?('tax_lines') }
+
+        expandable_custom_fields
       end
     end
   end

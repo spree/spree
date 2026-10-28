@@ -9,6 +9,8 @@ module Spree
         # customer-facing serializer so public fields stay in sync.
         class NewsletterSubscriberSerializer < V3::NewsletterSubscriberSerializer
           prefixed_id_attributes :customer
+
+          expandable_custom_fields admin: true
         end
       end
     end

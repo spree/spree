@@ -7,6 +7,7 @@ import { AppliedPromotionSchema } from './AppliedPromotion';
 import { CartSchema } from './Cart';
 import { ChannelSchema } from './Channel';
 import { ClaimSchema } from './Claim';
+import { CustomFieldSchema } from './CustomField';
 import { CustomerSchema } from './Customer';
 import { ExchangeSchema } from './Exchange';
 import { FreightSummarySchema } from './FreightSummary';
@@ -65,6 +66,7 @@ export const OrderSchema = z.object({
   shipping_address: AddressSchema.nullable().optional(),
   get gift_card() { return GiftCardSchema.nullable(); },
   get market() { return MarketSchema.nullable(); },
+  custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   status: z.string(),
   last_ip_address: z.string().nullable(),
@@ -156,6 +158,7 @@ export const OrderSchema = z.object({
   shipping_address: z.ZodOptional<z.ZodType<Exclude<Order['shipping_address'], undefined>>>;
   gift_card: z.ZodType<Order['gift_card']>;
   market: z.ZodType<Order['market']>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Order['custom_fields'], undefined>>>;
   external_references: z.ZodType<Order['external_references']>;
   status: z.ZodType<Order['status']>;
   last_ip_address: z.ZodType<Order['last_ip_address']>;

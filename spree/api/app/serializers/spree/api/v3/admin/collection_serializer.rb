@@ -18,10 +18,7 @@ module Spree
                resource: proc { Spree.api.admin_collection_rule_serializer },
                if: proc { expand?('rules') }
 
-          # Override inherited custom_fields to use the admin serializer.
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable_custom_fields admin: true
         end
       end
     end

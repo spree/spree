@@ -3,6 +3,8 @@ module Spree
     # An order as its emails read it: the Store API order plus what only an
     # email shows — who to greet, the summary rows and line thumbnails.
     class OrderSerializer < Spree::Api::V3::OrderSerializer
+      _attributes.delete(:custom_fields)
+
       include Spree::Emails::PurchaseSummaryAttributes
 
       without_display_money

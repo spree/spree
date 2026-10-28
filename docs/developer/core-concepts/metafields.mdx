@@ -165,6 +165,37 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=custom_fie
 
 Each value arrives with its own label and type, so you can render a spec table straight from the array without hardcoding which fields exist.
 
+The same `expand` works on every Store API record that can carry custom fields:
+
+- **Catalog:** products, variants, option types and values, media, categories, collections and [sellers](/developer/core-concepts/sellers)
+- **Checkout:** line items, delivery methods, payment methods, fulfillments and payments
+- **A customer's own records:** their account, addresses, orders, saved cards and payment sources, gift cards, store credits, returns, claims, companies and newsletter subscription
+
+On a marketplace, for example, merchants can manage seller merchandising from the dashboard — a `merchandising.navigation_position` number that picks featured sellers and orders them:
+
+<CodeGroup>
+
+```typescript Store SDK
+const { data: sellers } = await client.sellers.list({
+  expand: ['custom_fields'],
+})
+
+const featured = sellers
+  .map((seller) => ({
+    seller,
+    position: seller.custom_fields?.find((field) => field.key === 'merchandising.navigation_position')?.value,
+  }))
+  .filter(({ position }) => position != null)
+  .sort((a, b) => Number(a.position) - Number(b.position))
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/sellers?expand=custom_fields' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
 ## Searching, sorting and filtering
 
 A custom field can take part in product listings — but only if you ask, because indexing everything by default would be wasteful.

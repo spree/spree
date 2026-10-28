@@ -24650,6 +24650,10 @@ components:
           - dropdown
           - color_swatch
           - buttons
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -24680,6 +24684,10 @@ components:
         image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - option_type_id
@@ -25019,6 +25027,10 @@ components:
         state_name:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - label
@@ -25533,6 +25545,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ClaimLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         memo:
           type: string
           nullable: true
@@ -25853,6 +25869,10 @@ components:
           type: boolean
         pickup_point:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         admin_name:
           type: string
           nullable: true
@@ -26687,6 +26707,10 @@ components:
         og_image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         created_at:
           type: string
         updated_at:
@@ -28443,6 +28467,10 @@ components:
         cover_photo_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         timezone:
           type: string
           nullable: true
@@ -29162,6 +29190,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ReturnLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         memo:
           type: string
           nullable: true
@@ -30973,6 +31005,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Policy"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name

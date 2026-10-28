@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const PaymentMethodSchema = z.object({
   id: z.string(),
@@ -8,6 +9,7 @@ export const PaymentMethodSchema = z.object({
   type: z.string(),
   session_required: z.boolean(),
   source_required: z.boolean(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   metadata: z.record(z.string(), z.unknown()),
   active: z.boolean(),
   capture_method: z.string().nullable(),
