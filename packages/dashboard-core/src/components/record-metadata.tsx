@@ -1,19 +1,46 @@
-import { DropdownMenuItem, hasMetadata, MetadataCard, MetadataSheet } from '@spree/dashboard-ui'
+import {
+  DropdownMenuItem,
+  hasExternalReferences,
+  hasMetadata,
+  MetadataCard,
+  MetadataSheet,
+} from '@spree/dashboard-ui'
 import { BracesIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 type Metadata = Record<string, unknown> | null | undefined
+type ExternalReferences = Record<string, string> | null | undefined
+
+interface RecordIntegrationData {
+  metadata?: Metadata
+  /** The record's `external_references` map, on records that carry one. */
+  externalReferences?: ExternalReferences
+}
+
+function useMetadataCopy() {
+  const { t } = useTranslation()
+  return {
+    title: t('admin.components.metadata_card.title'),
+    metadataTitle: t('admin.components.metadata_card.title'),
+    externalReferencesTitle: t('admin.components.metadata_card.external_references'),
+    copyLabel: (system: string) => t('admin.components.metadata_card.copy_reference', { system }),
+    emptyTitle: t('admin.components.metadata_card.empty_title'),
+    emptyDescription: t('admin.components.metadata_card.empty_description'),
+  }
+}
+
+function hasIntegrationData({ metadata, externalReferences }: RecordIntegrationData) {
+  return hasMetadata(metadata) || hasExternalReferences(externalReferences)
+}
 
 /** Metadata card for the main column of a record's detail page. */
-export function RecordMetadataCard({ metadata }: { metadata: Metadata }) {
-  const { t } = useTranslation()
+export function RecordMetadataCard({ metadata, externalReferences }: RecordIntegrationData) {
   return (
     <MetadataCard
       metadata={metadata}
-      title={t('admin.components.metadata_card.title')}
-      emptyTitle={t('admin.components.metadata_card.empty_title')}
-      emptyDescription={t('admin.components.metadata_card.empty_description')}
+      externalReferences={externalReferences}
+      {...useMetadataCopy()}
     />
   )
 }
@@ -21,26 +48,24 @@ export function RecordMetadataCard({ metadata }: { metadata: Metadata }) {
 /** Metadata of a row inside another page; pair with {@link ViewMetadataMenuItem}. */
 function RecordMetadataSheet({
   metadata,
+  externalReferences,
   open,
   onOpenChange,
   description,
-}: {
-  metadata: Metadata
+}: RecordIntegrationData & {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** Names the record, e.g. "Payment P123". */
   description?: string
 }) {
-  const { t } = useTranslation()
   return (
     <MetadataSheet
       open={open}
       onOpenChange={onOpenChange}
       metadata={metadata}
-      title={t('admin.components.metadata_card.title')}
+      externalReferences={externalReferences}
       description={description}
-      emptyTitle={t('admin.components.metadata_card.empty_title')}
-      emptyDescription={t('admin.components.metadata_card.empty_description')}
+      {...useMetadataCopy()}
     />
   )
 }
@@ -51,17 +76,18 @@ function RecordMetadataSheet({
  * closed, so it never flashes the empty state on the way out.
  */
 export function useMetadataSheet() {
-  const [viewing, setViewing] = useState<{ metadata: Metadata; description?: string }>()
+  const [viewing, setViewing] = useState<RecordIntegrationData & { description?: string }>()
   const [open, setOpen] = useState(false)
 
   return {
-    show(metadata: Metadata, description?: string) {
-      setViewing({ metadata, description })
+    show(metadata: Metadata, description?: string, externalReferences?: ExternalReferences) {
+      setViewing({ metadata, description, externalReferences })
       setOpen(true)
     },
     sheet: (
       <RecordMetadataSheet
         metadata={viewing?.metadata}
+        externalReferences={viewing?.externalReferences}
         description={viewing?.description}
         open={open}
         onOpenChange={setOpen}
@@ -72,14 +98,11 @@ export function useMetadataSheet() {
 
 /** Renders nothing when the record has no metadata, so a menu needs no check of its own. */
 export function ViewMetadataMenuItem({
-  metadata,
   onClick,
-}: {
-  metadata: Metadata
-  onClick: () => void
-}) {
+  ...data
+}: RecordIntegrationData & { onClick: () => void }) {
   const { t } = useTranslation()
-  if (!hasMetadata(metadata)) return null
+  if (!hasIntegrationData(data)) return null
 
   return (
     <DropdownMenuItem onClick={onClick}>
@@ -90,6 +113,6 @@ export function ViewMetadataMenuItem({
 }
 
 /** Metadata at the bottom of a record's edit sheet; renders nothing when there is none. */
-export function RecordMetadataSection({ metadata }: { metadata: Metadata }) {
-  return hasMetadata(metadata) ? <RecordMetadataCard metadata={metadata} /> : null
+export function RecordMetadataSection(data: RecordIntegrationData) {
+  return hasIntegrationData(data) ? <RecordMetadataCard {...data} /> : null
 }

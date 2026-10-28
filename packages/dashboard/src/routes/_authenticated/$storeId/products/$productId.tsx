@@ -324,7 +324,10 @@ function ProductForm({ product }: { product: Product }) {
               <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
                 <CustomFieldsInlineCard collapsible />
               </ProductCustomFieldsProvider>
-              <RecordMetadataCard metadata={product.metadata} />
+              <RecordMetadataCard
+                metadata={product.metadata}
+                externalReferences={product.external_references}
+              />
               <Slot name="product.form_main" context={{ product, mode: 'edit' }} />
             </>
           }

@@ -96,7 +96,10 @@ export function CategoryMain({
           <FormBackedCustomFieldsProvider form={form} resourceType="category">
             <CustomFieldsInlineCard collapsible />
           </FormBackedCustomFieldsProvider>
-          <RecordMetadataCard metadata={category.metadata} />
+          <RecordMetadataCard
+            metadata={category.metadata}
+            externalReferences={category.external_references}
+          />
         </>
       )}
     </>

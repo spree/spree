@@ -366,8 +366,10 @@
         "video_title": "Aperçu de la vidéo"
       },
       "metadata_card": {
+        "copy_reference": "Copier la clé {{system}}",
         "empty_description": "Les applications et intégrations remplissent ceci automatiquement.",
         "empty_title": "Aucune métadonnée",
+        "external_references": "Références externes",
         "title": "Métadonnées",
         "view": "Voir les métadonnées"
       },

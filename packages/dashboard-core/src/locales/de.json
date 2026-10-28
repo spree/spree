@@ -366,8 +366,10 @@
         "video_title": "Videovorschau"
       },
       "metadata_card": {
+        "copy_reference": "{{system}}-Schlüssel kopieren",
         "empty_description": "Apps und Integrationen füllen dies automatisch.",
         "empty_title": "Keine Metadaten",
+        "external_references": "Externe Referenzen",
         "title": "Metadaten",
         "view": "Metadaten anzeigen"
       },

@@ -655,6 +655,8 @@ export interface PanelStockLocation {
   pickup_stock_policy?: string
   pickup_ready_in_minutes?: number | null
   pickup_instructions?: string | null
+  /** Operator-only; the seller panel's serializer leaves it out. */
+  external_references?: Record<string, string>
 }
 
 /**
