@@ -413,35 +413,16 @@ describe('alignPeerRanges', () => {
     })
   })
 
-  it('moves both declarations of a dependency listed in both groups, and installs it once', () => {
-    fs.writeFileSync(
-      path.join(dir, 'package.json'),
-      JSON.stringify({
-        dependencies: { 'react-hook-form': '7.80.0' },
-        devDependencies: { 'react-hook-form': '^7.75.0' },
-      }),
-    )
+  it('leaves a dependency listed in both groups alone, with a warning', () => {
+    const source = JSON.stringify({
+      dependencies: { 'react-hook-form': '7.80.0' },
+      devDependencies: { 'react-hook-form': '^7.75.0' },
+    })
+    fs.writeFileSync(path.join(dir, 'package.json'), source)
 
-    expect(alignPeerRanges(dir, PEERS)).toEqual([
-      { name: 'react-hook-form', from: '7.80.0', to: '^7.90.0', dev: false, exact: true },
-    ])
-    const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8'))
-    expect(pkg.dependencies['react-hook-form']).toBe('^7.90.0')
-    expect(pkg.devDependencies['react-hook-form']).toBe('^7.90.0')
-  })
-
-  it('installs a dev declaration that moves on its own, even if dependencies lists the peer too', () => {
-    fs.writeFileSync(
-      path.join(dir, 'package.json'),
-      JSON.stringify({
-        dependencies: { 'react-hook-form': '^7.95.0' },
-        devDependencies: { 'react-hook-form': '^7.75.0' },
-      }),
-    )
-
-    expect(alignPeerRanges(dir, PEERS)).toEqual([
-      { name: 'react-hook-form', from: '^7.75.0', to: '^7.90.0', dev: true, exact: false },
-    ])
+    expect(alignPeerRanges(dir, PEERS)).toEqual([])
+    expect(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')).toBe(source)
+    expect(prompts.log.warn).toHaveBeenCalledWith(expect.stringContaining('react-hook-form'))
   })
 
   it('leaves local and tagged specs, and dependencies Spree does not require, alone', () => {

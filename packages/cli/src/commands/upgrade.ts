@@ -490,17 +490,25 @@ export function alignPeerRanges(
       to: peers[dependency.name],
       exact: isExactVersion(dependency.from),
     }))
+    // Listed in both groups, the package managers disagree on which group an
+    // install writes to, so the app's own manifest decides: it is left as is.
+    .filter(({ name }) => {
+      const both =
+        Object.hasOwn(pkg.dependencies ?? {}, name) &&
+        Object.hasOwn(pkg.devDependencies ?? {}, name)
+      if (both)
+        p.log.warn(
+          `${name} is in both dependencies and devDependencies; raise it to ${peers[name]} by hand.`,
+        )
+      return !both
+    })
 
   for (const { name, from, to } of moved) {
     const declaration = new RegExp(`("${escapeRegExp(name)}"\\s*:\\s*)"${escapeRegExp(from)}"`, 'g')
     source = source.replace(declaration, `$1"${to}"`)
   }
   if (moved.length > 0) fs.writeFileSync(manifestPath, source)
-  // Listed in both groups, each declaration moves, but it is installed once,
-  // from `dependencies`.
-  return moved.filter(
-    ({ name, dev }) => !dev || !moved.some((other) => !other.dev && other.name === name),
-  )
+  return moved
 }
 
 function minVersionOf(range: string): string {
