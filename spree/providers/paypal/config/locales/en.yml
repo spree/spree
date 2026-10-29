@@ -1,0 +1,4 @@
+---
+en:
+  spree:
+    paypal_checkout: {}
