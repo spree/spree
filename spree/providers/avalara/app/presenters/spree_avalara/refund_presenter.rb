@@ -52,9 +52,6 @@ module SpreeAvalara
         currencyCode: order.currency,
         customerCode: customer_code,
         addresses: addresses,
-        # Classified as of the original supply, not today: a return reverses
-        # that sale rather than making a new one.
-        taxOverride: { type: 'TaxDate', reason: 'Refund', taxDate: supply_date },
         lines: lines
       }
 
@@ -94,6 +91,9 @@ module SpreeAvalara
           amount: -[money - tax, 0.to_d].max,
           # Net by construction, as the override below is the whole tax.
           taxIncluded: false,
+          # Classified as of the original supply: a return reverses that sale.
+          # The date rides here because Avalara refuses a header override
+          # alongside a line one.
           taxOverride: { type: 'TaxAmount', reason: 'Refund', taxAmount: -tax, taxDate: supply_date }
         )
       end

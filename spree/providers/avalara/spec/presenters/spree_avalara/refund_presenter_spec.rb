@@ -54,7 +54,9 @@ RSpec.describe SpreeAvalara::RefundPresenter do
       payload = present.call
 
       expect(payload[:date]).to eq('2026-07-03')
-      expect(payload[:taxOverride]).to eq(type: 'TaxDate', reason: 'Refund', taxDate: '2026-05-01')
+      expect(payload[:lines].sole[:taxOverride]).to include(taxDate: '2026-05-01')
+      # Avalara refuses a header override alongside a line one.
+      expect(payload).not_to have_key(:taxOverride)
     end
   end
 
