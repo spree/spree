@@ -498,7 +498,9 @@ export function alignPeerRanges(
   if (moved.length > 0) fs.writeFileSync(manifestPath, source)
   // Listed in both groups, each declaration moves, but it is installed once,
   // from `dependencies`.
-  return moved.filter(({ name, dev }) => !(dev && pkg.dependencies?.[name]))
+  return moved.filter(
+    ({ name, dev }) => !dev || !moved.some((other) => !other.dev && other.name === name),
+  )
 }
 
 function minVersionOf(range: string): string {
