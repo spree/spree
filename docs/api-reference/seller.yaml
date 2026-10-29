@@ -289,6 +289,11 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
+                inviter_email: cathy@framioreilly.co.uk
+                invitee_exists: false
+                seller:
+                  id: sel_UkLWZg9DAJ
+                  name: Seller 72
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -16012,6 +16017,10 @@ paths:
                   expires_at: '2026-01-29T12:00:00.000Z'
                   accepted_at:
                   status: pending
+                  inviter_email: jayna_leuschke@hirtheschinner.info
+                  seller:
+                    id: sel_UkLWZg9DAJ
+                    name: Seller 76
               schema:
                 type: object
                 properties:
@@ -16117,6 +16126,10 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
+                inviter_email: carmelia_hodkiewicz@donnelly.us
+                seller:
+                  id: sel_UkLWZg9DAJ
+                  name: Seller 78
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -16279,6 +16292,10 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
+                inviter_email: hal_kiehn@herman.biz
+                seller:
+                  id: sel_UkLWZg9DAJ
+                  name: Seller 179
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -26626,20 +26643,6 @@ components:
         accepted_at:
           type: string
           nullable: true
-        inviter_email:
-          type: string
-        invitee_exists:
-          type: boolean
-        seller:
-          type: object
-          properties:
-            id:
-              type: string
-            name:
-              type: string
-          required:
-          - id
-          - name
         status:
           anyOf:
           - type: string
@@ -26649,6 +26652,12 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        inviter_email:
+          type: string
+        invitee_exists:
+          type: boolean
+        seller:
+          type: object
       required:
       - id
       - email

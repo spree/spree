@@ -1051,7 +1051,7 @@
       "create_to_accept": ". أنشئ حسابك للقبول.",
       "generic_error_message": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
       "generic_error_title": "تعذر تحميل الدعوة",
-      "invited_as_role": "مثل {{role}}",
+      "invited_as_role": " مثل {{role}}",
       "invited_by": "{{email}} دعوتك",
       "invited_generic": "لقد تمت دعوتك",
       "join_store": "انضم إلى {{store}}",
