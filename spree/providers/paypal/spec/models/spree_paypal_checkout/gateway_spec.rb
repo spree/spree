@@ -53,6 +53,12 @@ RSpec.describe SpreePaypalCheckout::Gateway do
 
       expect(gateway.available_for_order?(cart)).to be(false)
     end
+
+    it 'is false for a total PayPal would refuse' do
+      cart.update_columns(currency: 'TWD', total: BigDecimal('1234.50'))
+
+      expect(gateway.available_for_order?(cart)).to be(false)
+    end
   end
 
   describe '#paypal_intent' do
@@ -227,6 +233,12 @@ RSpec.describe SpreePaypalCheckout::Gateway do
       expect(gateway.authorize(money, nil, options).authorization).to eq(order_id)
     end
 
+    it 'fails for an order whose only capture was declined' do
+      allow(gateway).to receive(:paypal_order).and_return(paypal_order_data(captures: [paypal_capture(status: 'DECLINED')]))
+
+      expect(gateway.purchase(money, nil, options)).not_to be_success
+    end
+
     it 'fails for an order no money has moved on' do
       allow(gateway).to receive(:paypal_order).and_return(paypal_order_data(status: 'APPROVED'))
 
@@ -256,6 +268,21 @@ RSpec.describe SpreePaypalCheckout::Gateway do
           with('AUTHORIZ123456789', money, request_id: 'spree-py_test123-capture')
       end
 
+      it 'records the capture id on the payment through the capture workflow, keeping the authorization id' do
+        order = create(:order, store: store, total: 10)
+        payment = create(:payment, status: 'pending', order: order, payment_method: gateway, response_code: order_id,
+                                   amount: 10, metadata: { 'paypal_authorization_id' => 'AUTHORIZ123456789' })
+        allow_any_instance_of(described_class).to receive(:paypal_order).with(order_id).
+          and_return(paypal_order_data(authorizations: [paypal_authorization]))
+        allow_any_instance_of(described_class).to receive(:capture_authorization).and_return(paypal_capture)
+
+        expect(Spree.payment_capture_workflow.call(payment: payment)).to be_success
+        expect(payment.reload).to be_completed
+        expect(payment.metadata).to eq(
+          'paypal_authorization_id' => 'AUTHORIZ123456789', 'paypal_capture_id' => 'CAPTURE123456789A'
+        )
+      end
+
       it 'raises naming the pending reason when PayPal holds the capture' do
         allow(gateway).to receive(:capture_authorization).
           and_return(paypal_capture(status: 'PENDING', reason: 'PENDING_REVIEW'))
@@ -280,6 +307,19 @@ RSpec.describe SpreePaypalCheckout::Gateway do
 
         expect { capture }.to raise_error(Spree::Core::AmbiguousGatewayError)
       end
+
+      it 'raises an ambiguous error for a server error the SDK cannot read' do
+        response = PaypalHelpers::PaypalResponse.new(502, '<html>Bad Gateway</html>', {})
+        allow(gateway).to receive(:capture_authorization).and_raise(PaypalServerSdk::APIException.new('Bad Gateway', response))
+
+        expect { capture }.to raise_error(Spree::Core::AmbiguousGatewayError)
+      end
+
+      it 'raises an ambiguous error when PayPal answers the capture with a server error' do
+        allow(gateway).to receive(:capture_authorization).and_raise(paypal_error('INTERNAL_SERVER_ERROR', status: 500))
+
+        expect { capture }.to raise_error(Spree::Core::AmbiguousGatewayError, /could not say whether it took the payment/)
+      end
     end
 
     it 'succeeds without a call when the order was captured already' do
@@ -289,6 +329,24 @@ RSpec.describe SpreePaypalCheckout::Gateway do
       expect(capture).to be_success
       expect(capture.authorization).to eq(order_id)
       expect(gateway).not_to have_received(:capture_authorization)
+    end
+
+    it 'records the id of a capture PayPal already took' do
+      order = create(:order, store: store, total: 10)
+      payment = create(:payment, order: order, payment_method: gateway, response_code: order_id, amount: 10)
+      allow(gateway).to receive(:paypal_order).and_return(paypal_order_data(captures: [paypal_capture]))
+
+      gateway.capture(money, order_id, gateway_options.merge(payment_prefixed_id: payment.prefixed_id))
+
+      expect(payment.reload.metadata['paypal_capture_id']).to eq('CAPTURE123456789A')
+    end
+
+    it 'refuses to report an earlier capture of another amount as this one' do
+      allow(gateway).to receive(:paypal_order).and_return(paypal_order_data(captures: [paypal_capture(value: '4.00')]))
+
+      expect { capture }.to raise_error(
+        Spree::Core::GatewayError, 'PayPal already captured 4.00 USD on this order, not the 10.00 USD asked for.'
+      )
     end
 
     it 'raises when an earlier capture is still pending' do

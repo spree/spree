@@ -11,6 +11,10 @@ module SpreePaypalCheckout
 
     # A capture PayPal has taken, whether or not it was refunded since.
     CAPTURED_STATUSES = %w[COMPLETED PARTIALLY_REFUNDED REFUNDED].freeze
+    # A capture that took or holds the money.
+    MOVED_CAPTURE_STATUSES = (CAPTURED_STATUSES + %w[PENDING]).freeze
+    # An authorization that holds or held the money.
+    MOVED_AUTHORIZATION_STATUSES = %w[CREATED PENDING PARTIALLY_CAPTURED CAPTURED].freeze
     # An authorization that can still be captured or voided.
     OPEN_AUTHORIZATION_STATUSES = %w[CREATED PARTIALLY_CAPTURED PENDING].freeze
     # Transport failures where PayPal may or may not have acted on the request.
@@ -20,13 +24,16 @@ module SpreePaypalCheckout
     # AUTHORIZATION_EXPIRED, …) kept apart from the message for callers that
     # act on it.
     class PaypalError < Spree::Core::GatewayError
-      attr_reader :issue
+      attr_reader :issue, :status
 
-      def initialize(message = nil, issue: nil)
+      def initialize(message = nil, issue: nil, status: nil)
         super(message)
         @issue = issue
+        @status = status
       end
     end
+
+    include SpreePaypalCheckout::Gateway::PaymentSessions
 
     preference :client_id, :password
     preference :client_secret, :password
@@ -70,14 +77,20 @@ module SpreePaypalCheckout
       Spree::PaymentSessions::PaypalCheckout
     end
 
+    def payment_source_class
+      SpreePaypalCheckout::PaymentSources::Paypal
+    end
+
     # No saved PayPal accounts in this release, so core never calls
     # create_profile and passes no source to credit and void.
     def payment_profiles_supported?
       false
     end
 
+    # Not offered for a currency PayPal does not take, nor for a total it
+    # would refuse, such as yen or forint with a fraction.
     def available_for_order?(order)
-      super && SpreePaypalCheckout::Amounts.supported_currency?(order.currency)
+      super && SpreePaypalCheckout::Amounts.payable?(order.total_minus_store_credits, order.currency)
     end
 
     # CAPTURE takes the money when the session completes; AUTHORIZE holds it
@@ -133,7 +146,11 @@ module SpreePaypalCheckout
       capture = captures(paypal_order).first
       if capture
         raise_pending_capture(capture) if capture['status'] == 'PENDING'
-        return success(order_id, paypal_order) if capture['status'].in?(CAPTURED_STATUSES)
+        if capture['status'].in?(CAPTURED_STATUSES)
+          response = already_captured(order_id, paypal_order, capture, money)
+          record_capture_id(gateway_options, capture['id'])
+          return response
+        end
       end
 
       authorization = open_authorization(paypal_order)
@@ -144,7 +161,9 @@ module SpreePaypalCheckout
       end
 
       case result['status']
-      when 'COMPLETED' then success(order_id, result)
+      when 'COMPLETED'
+        record_capture_id(gateway_options, result['id'])
+        success(order_id, result)
       when 'PENDING' then raise_pending_capture(result)
       else
         raise PaypalError.new(I18n.t('spree.paypal_checkout.errors.capture_not_completed', status: result['status']),
@@ -272,8 +291,7 @@ module SpreePaypalCheckout
     #
     # @raise [PaypalServerSdk::APIException] when PayPal refuses them
     def request_access_token
-      basic = ["#{preferred_client_id}:#{preferred_client_secret}"].pack('m0')
-      client.o_auth_authorization.request_token('authorization' => "Basic #{basic}").data
+      client.oauth2.fetch_token
     end
 
     # Rebuilt when the credentials change, since it carries them.
@@ -306,6 +324,25 @@ module SpreePaypalCheckout
       )
     end
 
+    def captures(paypal_order)
+      payments_of(paypal_order, 'captures')
+    end
+
+    def authorizations(paypal_order)
+      payments_of(paypal_order, 'authorizations')
+    end
+
+    # Whether PayPal took the money, or holds a capture of it.
+    def capture_taken?(paypal_order)
+      captures(paypal_order).any? { |capture| capture['status'].in?(MOVED_CAPTURE_STATUSES) }
+    end
+
+    # Whether PayPal took or holds money against the order.
+    def money_moved?(paypal_order)
+      capture_taken?(paypal_order) ||
+        authorizations(paypal_order).any? { |authorization| authorization['status'].in?(MOVED_AUTHORIZATION_STATUSES) }
+    end
+
     private
 
     def read_back(gateway_options)
@@ -314,7 +351,7 @@ module SpreePaypalCheckout
       return failure('Payment is missing a PayPal order') if payment.response_code.blank?
 
       paypal_order = protect_from_error { paypal_order(payment.response_code) }
-      return success(payment.response_code, paypal_order) if captures(paypal_order).any? || open_authorization(paypal_order)
+      return success(payment.response_code, paypal_order) if capture_taken?(paypal_order) || open_authorization(paypal_order)
 
       failure(no_authorization_message(paypal_order))
     end
@@ -330,12 +367,8 @@ module SpreePaypalCheckout
       payments.find_by(number: payment_number) if payment_number.present?
     end
 
-    def captures(paypal_order)
-      payments_of(paypal_order, 'captures')
-    end
-
     def open_authorization(paypal_order)
-      payments_of(paypal_order, 'authorizations').find do |authorization|
+      authorizations(paypal_order).find do |authorization|
         authorization['status'].in?(OPEN_AUTHORIZATION_STATUSES)
       end
     end
@@ -345,12 +378,39 @@ module SpreePaypalCheckout
     end
 
     def no_authorization_message(paypal_order)
-      authorization = payments_of(paypal_order, 'authorizations').first
+      authorization = authorizations(paypal_order).first
       if authorization
         I18n.t('spree.paypal_checkout.errors.authorization_not_open', status: authorization['status'])
       else
         I18n.t('spree.paypal_checkout.errors.nothing_to_capture', status: paypal_order['status'])
       end
+    end
+
+    # A capture an earlier request already made, perhaps one that timed out.
+    # It is only this capture if it took the amount now asked for.
+    def already_captured(order_id, paypal_order, capture, money)
+      return success(order_id, paypal_order) if amount_matches?(capture['amount'], money, money.currency)
+
+      captured = capture['amount'] || {}
+      raise Spree::Core::GatewayError, I18n.t('spree.paypal_checkout.errors.captured_other_amount',
+                                              captured: "#{captured['value']} #{captured['currency_code']}",
+                                              requested: "#{SpreePaypalCheckout::Amounts.to_paypal(money, money.currency)} #{money.currency.to_s.upcase}")
+    end
+
+    # @param paypal_amount [Hash, nil] an amount as PayPal writes it
+    def amount_matches?(paypal_amount, amount, currency)
+      paypal_amount = paypal_amount || {}
+      paypal_amount['currency_code'] == currency.to_s.upcase &&
+        paypal_amount['value'] == SpreePaypalCheckout::Amounts.to_paypal(amount, currency)
+    end
+
+    # Settlement records a capture only when checkout took one, so a capture
+    # made later records its own id for the dashboard link.
+    def record_capture_id(gateway_options, capture_id)
+      payment = find_payment(gateway_options)
+      return if payment.nil? || payment.metadata['paypal_capture_id'] == capture_id
+
+      payment.update_columns(metadata: payment.metadata.merge('paypal_capture_id' => capture_id))
     end
 
     def raise_pending_capture(capture)
@@ -366,8 +426,7 @@ module SpreePaypalCheckout
     end
 
     def paypal_money(money)
-      currency = money.currency.to_s.upcase
-      PaypalServerSdk::Money.new(currency_code: currency, value: SpreePaypalCheckout::Amounts.to_paypal(money, currency))
+      SpreePaypalCheckout::Amounts.to_paypal_money(money, money.currency)
     end
 
     def log_level
@@ -399,18 +458,34 @@ module SpreePaypalCheckout
     # since PayPal may have acted on it.
     def protect_from_error(money_moving: false)
       yield
-    rescue PaypalServerSdk::ErrorException => e
-      detail = e.details.is_a?(Array) ? e.details.first : nil
-      issue = detail&.issue || e.name
-      description = detail&.description || e.message
-      raise PaypalError.new([issue, description].compact.join(': '), issue: issue)
     rescue PaypalServerSdk::APIException => e
-      raise PaypalError, "PayPal: #{e.reason}"
+      message = e.is_a?(PaypalServerSdk::ErrorException) ? paypal_error_message(e) : "PayPal: #{e.message}"
+      # A server error or a request timeout says nothing about whether PayPal
+      # acted, even after the SDK's retries.
+      if money_moving && (e.response_code.to_i >= 500 || e.response_code.to_i == 408)
+        raise Spree::Core::AmbiguousGatewayError, I18n.t('spree.paypal_checkout.errors.outcome_unknown', message: message)
+      end
+
+      issue = paypal_issue(e) if e.is_a?(PaypalServerSdk::ErrorException)
+      raise PaypalError.new(message, issue: issue, status: e.response_code)
     rescue CoreLibrary::AuthValidationException
       raise Spree::Core::GatewayError, credentials_rejected_message
     rescue *CONNECTION_ERRORS => e
       error_class = money_moving ? Spree::Core::AmbiguousGatewayError : Spree::Core::GatewayError
       raise error_class, I18n.t('spree.paypal_checkout.errors.no_answer', message: e.message)
+    end
+
+    # PayPal's own issue code, such as INSTRUMENT_DECLINED, when it gave one.
+    def paypal_issue(error)
+      paypal_detail(error)&.issue || error.name
+    end
+
+    def paypal_error_message(error)
+      [paypal_issue(error), paypal_detail(error)&.description || error.message].compact.join(': ')
+    end
+
+    def paypal_detail(error)
+      error.details.first if error.details.is_a?(Array)
     end
 
     def success(authorization, full_response)
