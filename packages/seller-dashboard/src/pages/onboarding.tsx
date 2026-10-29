@@ -24,15 +24,13 @@ import {
   Progress,
   ScrollArea,
   StatusBadge as SharedStatusBadge,
+  StepIcon,
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
 import {
-  CheckCircle2Icon,
   ChevronRightIcon,
   CircleAlertIcon,
-  CircleIcon,
-  ClockIcon,
   ExternalLinkIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
@@ -517,17 +515,14 @@ function panelRoute(kind: string): string | undefined {
   }
 }
 
+// The operator's setup checklist icons, plus a submission sent back.
 function StatusIcon({ status }: { status: string }) {
-  if (status === 'complete') {
-    return <CheckCircle2Icon className="size-5 shrink-0 text-success" />
-  }
-  if (status === 'pending') {
-    return <ClockIcon className="size-5 shrink-0 text-warning" />
-  }
+  if (status === 'complete') return <StepIcon status="done" className="size-5" />
+  if (status === 'pending') return <StepIcon status="in_progress" className="size-5" />
   if (status === 'rejected') {
     return <XCircleIcon className="size-5 shrink-0 text-destructive" />
   }
-  return <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
+  return <StepIcon status="todo" className="size-5" />
 }
 
 function StatusBadge({ status }: { status: string }) {

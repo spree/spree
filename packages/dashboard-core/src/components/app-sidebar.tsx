@@ -130,6 +130,7 @@ export function AppSidebar({
   uiLocales,
   onEditProfile,
   notifications,
+  widget,
   ...props
 }: ComponentProps<typeof Sidebar> & {
   /**
@@ -145,6 +146,8 @@ export function AppSidebar({
   onEditProfile?: () => void
   /** Shown beside the account menu, such as a notifications bell. */
   notifications?: ReactNode
+  /** A card pinned above the account menu. */
+  widget?: ReactNode
 }) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
@@ -175,7 +178,7 @@ export function AppSidebar({
             shell's shape steady and say the difference honestly.
 
             Keyed on `isLoading` alone, not on an empty list: entries without a
-            `subject` (Home, Getting Started) skip the permission filter, so the
+            `subject` (Home) skip the permission filter, so the
             list is never actually empty and a length check would never fire. */}
         {isLoading ? (
           <NavSkeleton />
@@ -193,6 +196,7 @@ export function AppSidebar({
           list fades out above it rather than scrolling it away. */}
       {!isLoading && !isMobile && <NavBottom items={bottomItems} className="py-2" />}
       <SidebarFooter className="hidden md:flex">
+        {widget}
         {/* In icon mode the rail is too narrow for a row, so the control
             stacks above the avatar. */}
         <div
