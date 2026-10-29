@@ -358,7 +358,17 @@ RSpec.describe 'AvaTax API contract', :vcr do
   end
 
   describe 'an exchange replacement' do
-    let(:exchange) { create(:received_exchange) }
+    # The quote echoes back the exchange line's prefixed id as recorded, so it
+    # is pinned for the same reason as the line item above.
+    RECORDED_EXCHANGE_LINE_ID = 1
+
+    let(:exchange) do
+      build(:received_exchange, order: create(:shipped_order)).tap do |record|
+        record.exchange_line_items.first.id = RECORDED_EXCHANGE_LINE_ID
+        record.save!
+        record.exchange_line_items.each { |line| line.update!(received_quantity: line.quantity) }
+      end
+    end
     let(:order) { exchange.order }
     let(:lines) { exchange.exchange_line_items.to_a }
 
