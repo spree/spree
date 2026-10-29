@@ -20,13 +20,11 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  StepIcon,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
-  CheckCircle2Icon,
   ChevronDownIcon,
-  CircleIcon,
-  ClockIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
   FileTextIcon,
@@ -337,16 +335,12 @@ function StatusBadge({ status, waived }: { status: string; waived: boolean }) {
   )
 }
 
+// The same icons the seller sees on their own onboarding page.
 function StatusIcon({ status }: { status: string }) {
-  if (status === 'complete') {
-    return <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-green-600" />
-  }
-
-  if (status === 'pending') {
-    return <ClockIcon className="mt-0.5 size-4 shrink-0 text-amber-600" />
-  }
+  if (status === 'complete') return <StepIcon status="done" className="mt-0.5" />
+  if (status === 'pending') return <StepIcon status="in_progress" className="mt-0.5" />
   if (status === 'rejected') {
     return <XCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
   }
-  return <CircleIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+  return <StepIcon status="todo" className="mt-0.5" />
 }

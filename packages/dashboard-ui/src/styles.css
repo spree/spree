@@ -450,8 +450,8 @@
   --radius-sm: 0.4rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.625rem;
-  --radius-xl: 0.875rem;
-  --radius-2xl: 1.125rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
 
   /* Sidebar + header tokens */
   --spacing-sidebar-width: 240px;
