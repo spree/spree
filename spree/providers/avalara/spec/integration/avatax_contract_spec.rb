@@ -302,29 +302,35 @@ RSpec.describe 'AvaTax API contract', :vcr do
       line_item.update_column(:pre_tax_amount, 200)
     end
 
+    # The credits Avalara actually created. The gem swallows a duplicate refusal,
+    # so a document code left behind by an earlier recording would pass for a
+    # filed credit — hence this, and a fresh order number in every example.
+    def filed_credits
+      [].tap do |filed|
+        allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
+          original.call(model).tap { |credit| filed << credit }
+        end
+      end
+    end
+
     it 'credits the returned line', vcr: { cassette_name: 'refund/return_invoice' } do
-      expect { provider.refund(order, return_items) }.not_to raise_error
+      order.update_column(:number, "R-RETURN-#{Time.now.to_i}")
+      filed = filed_credits
+
+      provider.refund(order, return_items)
+
+      expect(filed.sole).to include('type' => 'ReturnInvoice')
     end
 
     # AvaTax ignores an override key it does not recognise without complaining,
     # so the only proof the override landed is the date it taxed the credit on.
     it 'taxes the credit as of the original sale', vcr: { cassette_name: 'refund/tax_date_override' } do
-      # A fresh document code per recording: the other refund examples reuse the
-      # order factory's number, so they collide with documents recording left
-      # behind — which is what their duplicate handling wants, and what this
-      # example must avoid, since it needs a response to read.
       order.update_column(:number, "R-TAXDATE-#{Time.now.to_i}")
-      credited = nil
-      allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
-        credited = original.call(model)
-      end
+      filed = filed_credits
 
       provider.refund(order, return_items)
 
-      # Asserted before reading it, so a swallowed refusal fails here rather than
-      # blowing up on nil.
-      expect(credited).to be_present
-      expect(credited['lines'].map { |line| line['taxDate'] }).to all(eq('2024-01-15'))
+      expect(filed.sole['lines'].map { |line| line['taxDate'] }).to all(eq('2024-01-15'))
     end
 
     # The credit carries the tax core gave back rather than a fresh quote, and
@@ -333,21 +339,21 @@ RSpec.describe 'AvaTax API contract', :vcr do
     it 'credits exactly the tax given back, as of the original sale',
        vcr: { cassette_name: 'refund/tax_amount_override' } do
       order.update_column(:number, "R-TAXAMOUNT-#{Time.now.to_i}")
-      credited = nil
-      allow(integration.client).to receive(:create_transaction).and_wrap_original do |original, model|
-        credited = original.call(model)
-      end
+      filed = filed_credits
 
       provider.refund(order, return_items)
 
-      expect(credited).to be_present
-      expect(credited['lines'].sole).to include('tax' => -8.88, 'taxDate' => '2024-01-15')
+      expect(filed.sole['lines'].sole).to include('tax' => -8.88, 'taxDate' => '2024-01-15')
     end
 
     it 'accepts a replayed credit', vcr: { cassette_name: 'refund/duplicate' } do
+      order.update_column(:number, "R-REPLAY-#{Time.now.to_i}")
+      filed = filed_credits
+
       provider.refund(order, return_items)
 
       expect { provider.refund(order, return_items) }.not_to raise_error
+      expect(filed.size).to eq(1)
     end
   end
 
