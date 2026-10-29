@@ -48,11 +48,11 @@
     "version:tools": "node scripts/version-packages.mjs --tools"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.14",
+    "@biomejs/biome": "^2.6.3",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@typescript/typescript6": "^6.0.2",
-    "turbo": "^2.11.9"
+    "turbo": "^2.11.10"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {

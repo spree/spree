@@ -72,25 +72,25 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@hookform/resolvers": "^6.0.0",
+    "@hookform/resolvers": "^6.0.1",
     "@spree/core": "workspace:^",
     "@tailwindcss/vite": "^4.2.4",
-    "@tanstack/react-hotkeys": "^0.16.0",
+    "@tanstack/react-hotkeys": "^0.17.0",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
-    "lucide-react": "^1.60.0",
+    "lucide-react": "^1.62.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
-    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-query": "^5.105.0",
     "@tanstack/react-router": "^1.170.45",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tsup": "^9.0.0",
     "typescript": "~7.0.2",
-    "vite": "^8.3.4",
+    "vite": "^8.3.5",
     "vitest": "^5.0.5"
   }
 }

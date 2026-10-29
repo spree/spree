@@ -49,7 +49,7 @@
     "@clack/prompts": "^1.8.0",
     "commander": "^15.0.0",
     "console-table-printer": "^2.15.0",
-    "execa": "^10.2.0",
+    "execa": "^10.2.1",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
