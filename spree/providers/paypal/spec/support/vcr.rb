@@ -13,7 +13,18 @@ VCR.configure do |c|
   # Offline by default: a missing cassette fails the example rather than quietly
   # recording one against whatever credentials happen to be in the environment.
   # Opt in with RECORD_VCR=1 when you genuinely intend to capture new interactions.
-  c.default_cassette_options = { record: ENV['RECORD_VCR'] ? :new_episodes : :none }
+  c.default_cassette_options = {
+    record: ENV['RECORD_VCR'] ? :new_episodes : :none,
+    match_requests_on: %i[method paypal_route]
+  }
+
+  # PayPal ids in the path (orders, captures, authorizations, webhooks) differ
+  # between the sandbox objects a recording used and the placeholders a replay
+  # passes, so they are matched as one segment.
+  c.register_request_matcher :paypal_route do |recorded, replayed|
+    route = ->(request) { URI(request.uri).path.gsub(%r{/(?=[A-Z0-9-]*\d)[A-Z0-9-]{10,}(?=/|\z)}, '/:id') }
+    route.call(recorded) == route.call(replayed)
+  end
 
   c.filter_sensitive_data('<PAYPAL_CLIENT_ID>') { ENV['PAYPAL_CLIENT_ID'] }
   c.filter_sensitive_data('<PAYPAL_CLIENT_SECRET>') { ENV['PAYPAL_CLIENT_SECRET'] }

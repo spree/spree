@@ -1,4 +1,15 @@
 ---
 en:
   spree:
-    paypal_checkout: {}
+    paypal_checkout:
+      errors:
+        authorization_not_open: "PayPal can no longer capture this payment: its authorization is %{status}."
+        capture_not_completed: "PayPal did not complete the capture (status %{status})."
+        capture_pending: "PayPal is holding this capture: %{reason}. It completes when PayPal releases it."
+        credentials_rejected: "PayPal %{environment} rejected this client id and secret — check that Test mode matches the credentials."
+        no_answer: "PayPal did not answer: %{message}"
+        nothing_to_capture: "This PayPal order has no authorization to capture (order status %{status})."
+        nothing_to_refund: "This PayPal order has no capture to refund."
+        paypal_unavailable: "PayPal could not be reached to check the client id and secret. Try again later."
+        void_captured: "PayPal has already captured this payment; refund it instead."
+        void_pending_capture: "PayPal is still holding a capture on this payment; refund it once it completes."
