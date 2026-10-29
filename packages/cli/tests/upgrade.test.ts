@@ -58,7 +58,6 @@ import {
   packageUpdateArgs,
   registerUpgradeCommand,
   sdkAdvisory,
-  specFloor,
   spreePeerRanges,
 } from '../src/commands/upgrade'
 import { npmVersionOf, releaseLineFor } from '../src/lib/release-line'
@@ -271,17 +270,6 @@ describe('detectSpreePackages', () => {
   })
 })
 
-describe('specFloor', () => {
-  it('reads the lowest version a spec admits', () => {
-    expect(specFloor('^7.90.0')).toBe('7.90.0')
-    expect(specFloor('~7.0.2')).toBe('7.0.2')
-    expect(specFloor('>=4.7.0')).toBe('4.7.0')
-    expect(specFloor('^19')).toBe('19.0.0')
-    expect(specFloor('6.0.0-rc.7')).toBe('6.0.0-rc.7')
-    expect(specFloor('latest')).toBeNull()
-  })
-})
-
 describe('spreePeerRanges', () => {
   const mockExeca = vi.mocked(execa)
   afterEach(() => mockExeca.mockReset())
@@ -329,6 +317,8 @@ describe('spreePeerRanges', () => {
         react: 'npm:other-react@99.0.0',
         'react-dom': 'file:../react-dom',
         i18next: '^99.0.0", "evil": "1.0.0',
+        zod: '^4.0.0\n',
+        'date-fns': '1.2.3 nonsense',
         'react-hook-form': '>=7.90.0 <8 || ^9',
       }),
     })) as never)
@@ -404,6 +394,17 @@ describe('alignPeerRanges', () => {
         '',
       ].join('\n'),
     )
+  })
+
+  it('leaves a range inside any alternative of the peer range alone', () => {
+    fs.writeFileSync(
+      path.join(dir, 'package.json'),
+      JSON.stringify({ dependencies: { 'react-hook-form': '^7.95.0', i18next: '^8.0.0' } }),
+    )
+
+    expect(
+      alignPeerRanges(dir, { 'react-hook-form': '^9 || ^7.90.0', i18next: '^9 || ^7' }),
+    ).toEqual([{ name: 'i18next', from: '^8.0.0', to: '^9 || ^7', dev: false, exact: false }])
   })
 
   it('leaves local and tagged specs, and dependencies Spree does not require, alone', () => {

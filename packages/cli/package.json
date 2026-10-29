@@ -50,7 +50,8 @@
     "commander": "^15.0.0",
     "console-table-printer": "^2.15.0",
     "execa": "^10.2.0",
-    "picocolors": "^1.1.1"
+    "picocolors": "^1.1.1",
+    "semver": "^7.8.5"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",
@@ -58,6 +59,7 @@
     "@spree/admin-sdk": "workspace:^",
     "@spree/sdk-core": "workspace:*",
     "@types/node": "^26.6.5",
+    "@types/semver": "^7.8.0",
     "tsup": "^9.0.0",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5",

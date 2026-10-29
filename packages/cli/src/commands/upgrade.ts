@@ -4,6 +4,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
+import semver from 'semver'
 import {
   INSTALL_PACKAGES,
   LIST_PACKAGES,
@@ -292,10 +293,16 @@ const REGISTRY_SPEC = /^[\^~<>=\d*]|^latest$|^next$/
 // declared range, and a single version is a range nothing else satisfies.
 const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
 
-// A plain semver range (`^7.90.0`, `>=4.7.0 <6`, `^18 || ^19`). A peer range
-// read from the registry is written into the app's package.json, so aliases
-// (`npm:`), URLs, paths and anything that could break the JSON are refused.
-const SEMVER_RANGE = /^[0-9A-Za-z.+\-^~<>=|*\s]+$/
+// A peer range read from the registry is written into the app's package.json,
+// so only a valid semver range is taken (no aliases, URLs or paths), and never
+// one with a control character, which semver trims but JSON can't hold raw.
+function isPlainRange(range: unknown): range is string {
+  return (
+    typeof range === 'string' &&
+    [...range].every((character) => character.charCodeAt(0) >= 0x20) &&
+    semver.validRange(range) !== null
+  )
+}
 
 export interface SpreePackage {
   name: string
@@ -396,17 +403,6 @@ export function moveToReleaseLine(
 }
 
 /**
- * The lowest version a spec admits (`^7.90.0` → `7.90.0`, `^19` → `19.0.0`),
- * or null for one without a version, such as `latest` or `*`.
- */
-export function specFloor(spec: string): string | null {
-  const match = spec.match(/(\d+)(?:\.(\d+))?(?:\.(\d+))?(-[0-9A-Za-z.-]+)?/)
-  if (!match) return null
-  const [, major, minor = '0', patch = '0', prerelease = ''] = match
-  return `${major}.${minor}.${patch}${prerelease}`
-}
-
-/**
  * The third-party peer ranges the given @spree/* packages declare at the
  * versions about to be installed, read from the registry before installing:
  * npm refuses an install whose peers don't match, so the app's own ranges have
@@ -443,11 +439,9 @@ export async function spreePeerRanges(
       continue
     }
     for (const [peer, range] of Object.entries(peers)) {
-      if (peer.startsWith('@spree/') || typeof range !== 'string' || !SEMVER_RANGE.test(range))
-        continue
-      const floor = specFloor(range)
-      const current = Object.hasOwn(ranges, peer) ? specFloor(ranges[peer]) : null
-      if (floor && (!current || isOlderVersion(current, floor))) ranges[peer] = range
+      if (peer.startsWith('@spree/') || !isPlainRange(range)) continue
+      const current = Object.hasOwn(ranges, peer) ? ranges[peer] : null
+      if (!current || semver.gt(minVersionOf(range), minVersionOf(current))) ranges[peer] = range
     }
   }
   return ranges
@@ -455,8 +449,9 @@ export async function spreePeerRanges(
 
 /**
  * Rewrites the app's own ranges for Spree's peer dependencies (React Hook
- * Form, i18next, the TanStack libraries, …) that start below what Spree
- * requires. Left alone, the app keeps its older copy: npm refuses the install,
+ * Form, i18next, the TanStack libraries, …) that admit a version Spree's range
+ * doesn't (`^7.75.0` against `^7.90.0`). A range already inside Spree's, for
+ * any of its alternatives, stays as it is. Left alone, the app keeps its older copy: npm refuses the install,
  * and pnpm installs it with a warning, leaving Spree's components typed and
  * tested against a version the app doesn't run. Each becomes Spree's range,
  * so the update that follows checks against it. An exact version is marked
@@ -487,11 +482,9 @@ export function alignPeerRanges(
     ...Object.entries(pkg.devDependencies ?? {}).map(([name, from]) => ({ name, from, dev: true })),
   ]
     .filter(({ name, from }) => Object.hasOwn(peers, name) && REGISTRY_SPEC.test(from))
-    .filter(({ name, from }) => {
-      const declared = specFloor(from)
-      const required = specFloor(peers[name])
-      return declared !== null && required !== null && isOlderVersion(declared, required)
-    })
+    .filter(
+      ({ name, from }) => semver.validRange(from) !== null && !semver.subset(from, peers[name]),
+    )
     .map((dependency) => ({
       ...dependency,
       to: peers[dependency.name],
@@ -504,6 +497,10 @@ export function alignPeerRanges(
   }
   if (moved.length > 0) fs.writeFileSync(manifestPath, source)
   return moved
+}
+
+function minVersionOf(range: string): string {
+  return semver.minVersion(range)?.version ?? '0.0.0'
 }
 
 /**
