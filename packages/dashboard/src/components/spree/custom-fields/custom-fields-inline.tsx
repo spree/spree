@@ -606,15 +606,13 @@ export function ApiCustomFieldsCard({
 export function DraftCustomFieldsCard({
   draft,
   hideWhenEmpty,
-  collapsible,
 }: {
   draft: CustomFieldsDraft
   hideWhenEmpty?: boolean
-  collapsible?: boolean
 }) {
   return (
     <DraftCustomFieldsProvider draft={draft}>
-      <CustomFieldsInlineCard hideWhenEmpty={hideWhenEmpty} collapsible={collapsible} />
+      <CustomFieldsInlineCard hideWhenEmpty={hideWhenEmpty} />
     </DraftCustomFieldsProvider>
   )
 }
@@ -630,7 +628,11 @@ interface CustomFieldsInlineCardProps {
    * defined in Settings, which offers every resource with an edit surface.
    */
   hideWhenEmpty?: boolean
-  /** Folds the card to its header, with a count of filled fields. For the end of a detail page's main column. */
+  /**
+   * Folds the card to its header, with a count of filled fields. For a detail
+   * page that edits them behind the card's own Edit button; a page whose form
+   * saves them keeps them in view.
+   */
   collapsible?: boolean
 }
 

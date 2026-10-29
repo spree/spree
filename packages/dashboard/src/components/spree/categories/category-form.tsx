@@ -94,7 +94,7 @@ export function CategoryMain({
             persist on the page's Save.
           */}
           <FormBackedCustomFieldsProvider form={form} resourceType="category">
-            <CustomFieldsInlineCard collapsible />
+            <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
           <RecordMetadataCard
             metadata={category.metadata}
