@@ -114,7 +114,7 @@ test.describe('store settings — general', () => {
     await expect(page.getByText('Standardy i formaty', { exact: true })).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible()
+    await expect(page.getByRole('link', { name: /^produkty$/i })).toBeVisible()
 
     // The crux: survives a reload. The switch must have been adopted as the
     // admin's own `selected_locale` (PATCH /me), not just written to
