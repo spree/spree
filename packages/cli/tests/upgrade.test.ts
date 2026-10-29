@@ -414,6 +414,7 @@ describe('alignPeerRanges', () => {
   })
 
   it('leaves a dependency listed in both groups alone, with a warning', () => {
+    vi.mocked(prompts.log.warn).mockClear()
     const source = JSON.stringify({
       dependencies: { 'react-hook-form': '7.80.0' },
       devDependencies: { 'react-hook-form': '^7.75.0' },
@@ -422,7 +423,11 @@ describe('alignPeerRanges', () => {
 
     expect(alignPeerRanges(dir, PEERS)).toEqual([])
     expect(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')).toBe(source)
-    expect(prompts.log.warn).toHaveBeenCalledWith(expect.stringContaining('react-hook-form'))
+    expect(
+      vi
+        .mocked(prompts.log.warn)
+        .mock.calls.filter(([message]) => String(message).includes('react-hook-form')),
+    ).toHaveLength(1)
   })
 
   it('leaves local and tagged specs, and dependencies Spree does not require, alone', () => {

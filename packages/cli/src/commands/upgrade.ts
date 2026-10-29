@@ -477,6 +477,7 @@ export function alignPeerRanges(
     return []
   }
 
+  const warned = new Set<string>()
   const moved = [
     ...Object.entries(pkg.dependencies ?? {}).map(([name, from]) => ({ name, from, dev: false })),
     ...Object.entries(pkg.devDependencies ?? {}).map(([name, from]) => ({ name, from, dev: true })),
@@ -496,10 +497,12 @@ export function alignPeerRanges(
       const both =
         Object.hasOwn(pkg.dependencies ?? {}, name) &&
         Object.hasOwn(pkg.devDependencies ?? {}, name)
-      if (both)
+      if (both && !warned.has(name)) {
+        warned.add(name)
         p.log.warn(
           `${name} is in both dependencies and devDependencies; raise it to ${peers[name]} by hand.`,
         )
+      }
       return !both
     })
 
