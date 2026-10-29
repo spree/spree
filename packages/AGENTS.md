@@ -2,6 +2,8 @@
 
 pnpm workspace + Turbo, Biome for lint and format (`pnpm lint`, `pnpm lint:fix`, `pnpm typecheck`), Vitest for tests. Libraries build with Tsup; the starters and the dashboard bundle with Vite. Follow standard React, TanStack Router/Query, React Hook Form and Zod practice; below is only what this codebase does differently.
 
+**Dependency versions live in the `catalog:` of `pnpm-workspace.yaml`.** A third-party package used by two or more workspace packages is declared as `"catalog:"` everywhere, and every peer dependency also gets a matching dev dependency. `node scripts/check-dependency-ranges.mjs` (run in CI) enforces both. Separate ranges once left two copies of React Hook Form installed, and the dashboard stopped type checking.
+
 ## Packages and boundaries
 
 - `@spree/dashboard-ui` — shadcn primitives on **Base UI (not Radix)**, plus headless composed components. Data comes through props; never import providers or hooks. Add components with the shadcn CLI after checking shadcn doesn't already have one.

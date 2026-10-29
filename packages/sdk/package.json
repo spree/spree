@@ -94,15 +94,15 @@
   },
   "devDependencies": {
     "@spree/sdk-core": "workspace:*",
-    "@types/node": "^26.6.5",
-    "@vitest/coverage-v8": "^5.0.5",
-    "msw": "^3.0.3",
-    "tsup": "^9.0.0",
-    "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.5",
-    "yaml": "^2.8.4",
-    "zod": "^4.6.7"
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "msw": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "yaml": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "typescript": ">=4.7.0",

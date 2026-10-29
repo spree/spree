@@ -46,22 +46,22 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "dependencies": {
-    "@clack/prompts": "^1.8.0",
-    "commander": "^15.0.0",
+    "@clack/prompts": "catalog:",
+    "commander": "catalog:",
     "console-table-printer": "^2.15.0",
-    "execa": "^10.2.0",
-    "picocolors": "^1.1.1"
+    "execa": "catalog:",
+    "picocolors": "catalog:"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^1.0.1",
-    "@changesets/cli": "^3.0.3",
+    "@changesets/changelog-github": "catalog:",
+    "@changesets/cli": "catalog:",
     "@spree/admin-sdk": "workspace:^",
     "@spree/sdk-core": "workspace:*",
-    "@types/node": "^26.6.5",
-    "tsup": "^9.0.0",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.5",
-    "yaml": "^2.8.4"
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "yaml": "catalog:"
   },
   "engines": {
     "node": ">=20"

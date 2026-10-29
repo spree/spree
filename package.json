@@ -48,18 +48,19 @@
     "version:tools": "node scripts/version-packages.mjs --tools"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.14",
-    "@changesets/changelog-github": "^1.0.1",
-    "@changesets/cli": "^3.0.3",
-    "@typescript/typescript6": "^6.0.2",
-    "turbo": "^2.11.9"
+    "@biomejs/biome": "catalog:",
+    "@changesets/changelog-github": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@typescript/typescript6": "catalog:",
+    "turbo": "^2.11.9",
+    "yaml": "catalog:"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
-    "@base-ui/react": "1.8.0",
+    "@base-ui/react": "catalog:",
     "@spree/cli": "workspace:*"
   }
 }
