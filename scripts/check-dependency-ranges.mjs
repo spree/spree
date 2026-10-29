@@ -23,6 +23,8 @@ import { parse as parseYaml } from 'yaml'
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 // Released with `npm publish`, which ships `catalog:` verbatim.
 const NPM_PUBLISHED = new Set(['packages/docs/package.json'])
+// Ships source, so it pins runtime dependencies to the catalog's exact version.
+const EXACT_PINS = 'packages/dashboard-ui/package.json'
 
 const { catalog = {} } = parseYaml(
   fs.readFileSync(path.join(repoRoot, 'pnpm-workspace.yaml'), 'utf8'),
@@ -60,7 +62,13 @@ for (const manifest of manifests) {
   for (const section of ['dependencies', 'devDependencies']) {
     for (const [name, spec] of Object.entries(manifest[section] ?? {})) {
       if (isWorkspace(spec) || spec === 'catalog:' || NPM_PUBLISHED.has(manifest.file)) continue
-      if (installers.get(name).size < 2 || pinsCatalogVersion(name, spec)) continue
+      if (installers.get(name).size < 2) continue
+      if (
+        manifest.file === EXACT_PINS &&
+        section === 'dependencies' &&
+        pinsCatalogVersion(name, spec)
+      )
+        continue
       problems.push(`${manifest.file}: ${section}.${name} is "${spec}" — use "catalog:"`)
     }
   }
