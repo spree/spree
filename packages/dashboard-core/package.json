@@ -60,13 +60,13 @@
   "peerDependencies": {
     "@spree/admin-sdk": ">=6.0.0 <7.0.0-0",
     "@spree/dashboard-ui": ">=6.0.0 <7.0.0-0",
-    "@tanstack/react-query": "catalog:",
-    "@tanstack/react-router": "catalog:",
-    "i18next": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "react-hook-form": "catalog:",
-    "react-i18next": "catalog:"
+    "@tanstack/react-query": "^5.100.9",
+    "@tanstack/react-router": "^1.169.2",
+    "i18next": "^26.2.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-hook-form": "^7.75.0",
+    "react-i18next": "^17.0.8"
   },
   "dependencies": {
     "@dnd-kit/core": "catalog:",

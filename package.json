@@ -52,6 +52,7 @@
     "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
     "@typescript/typescript6": "catalog:",
+    "semver": "^7.8.5",
     "turbo": "^2.11.9",
     "yaml": "catalog:"
   },

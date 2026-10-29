@@ -2,19 +2,31 @@
 // Keeps every workspace package on one version of each third-party dependency
 // (see `catalog:` in pnpm-workspace.yaml). Fails when:
 //
-//   - a dependency two or more packages use is declared without `catalog:`
-//     in dependencies or devDependencies, so a bump would move one copy only
+//   - a dependency two or more packages install is declared in dependencies
+//     or devDependencies as anything but `catalog:` or the catalog's exact
+//     version (@spree/dashboard-ui pins its runtime dependencies)
 //   - a peer dependency has no matching dependency or devDependency, so the
-//     workspace installs it from the peer range instead of the catalog
+//     workspace would install it from the peer range instead of the catalog
+//   - the version the workspace installs falls outside the package's own peer
+//     range, so the published contract no longer covers what this repository
+//     tests
 //
-// Peer ranges themselves may stay wide (the SDKs accept `typescript >=4.7.0`).
+// Peer ranges themselves are hand-written floors (see pnpm-workspace.yaml).
 //
 // Usage: node scripts/check-dependency-ranges.mjs
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import semver from 'semver'
+import { parse as parseYaml } from 'yaml'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+// Released with `npm publish`, which ships `catalog:` verbatim.
+const NPM_PUBLISHED = new Set(['packages/docs/package.json'])
+
+const { catalog = {} } = parseYaml(
+  fs.readFileSync(path.join(repoRoot, 'pnpm-workspace.yaml'), 'utf8'),
+)
 const manifestPaths = [
   'package.json',
   ...fs
@@ -28,29 +40,45 @@ const manifests = manifestPaths.map((file) => ({
 }))
 
 const isWorkspace = (spec) => spec.startsWith('workspace:')
-const users = new Map()
+const installers = new Map()
 for (const manifest of manifests) {
-  for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
+  if (NPM_PUBLISHED.has(manifest.file)) continue
+  for (const section of ['dependencies', 'devDependencies']) {
     for (const [name, spec] of Object.entries(manifest[section] ?? {})) {
       if (isWorkspace(spec)) continue
-      users.set(name, (users.get(name) ?? new Set()).add(manifest.file))
+      installers.set(name, (installers.get(name) ?? new Set()).add(manifest.file))
     }
   }
+}
+
+function pinsCatalogVersion(name, spec) {
+  return catalog[name] && semver.valid(spec) && spec === semver.minVersion(catalog[name]).version
 }
 
 const problems = []
 for (const manifest of manifests) {
   for (const section of ['dependencies', 'devDependencies']) {
     for (const [name, spec] of Object.entries(manifest[section] ?? {})) {
-      if (isWorkspace(spec) || spec === 'catalog:' || users.get(name).size < 2) continue
+      if (isWorkspace(spec) || spec === 'catalog:' || NPM_PUBLISHED.has(manifest.file)) continue
+      if (installers.get(name).size < 2 || pinsCatalogVersion(name, spec)) continue
       problems.push(`${manifest.file}: ${section}.${name} is "${spec}" — use "catalog:"`)
     }
   }
-  for (const name of Object.keys(manifest.peerDependencies ?? {})) {
-    if (manifest.dependencies?.[name] || manifest.devDependencies?.[name]) continue
-    problems.push(
-      `${manifest.file}: peer ${name} needs a matching devDependency ("catalog:" or "workspace:")`,
-    )
+  for (const [name, range] of Object.entries(manifest.peerDependencies ?? {})) {
+    const spec = manifest.dependencies?.[name] ?? manifest.devDependencies?.[name]
+    if (!spec) {
+      problems.push(
+        `${manifest.file}: peer ${name} needs a matching devDependency ("catalog:" or "workspace:")`,
+      )
+      continue
+    }
+    if (isWorkspace(spec) || isWorkspace(range)) continue
+    const installed = semver.minVersion(spec === 'catalog:' ? catalog[name] : spec)
+    if (!semver.satisfies(installed, range)) {
+      problems.push(
+        `${manifest.file}: peer ${name} "${range}" excludes ${installed}, the version this workspace tests`,
+      )
+    }
   }
 }
 

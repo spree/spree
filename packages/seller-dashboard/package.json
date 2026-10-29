@@ -59,13 +59,13 @@
     "@spree/admin-sdk": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
-    "@tanstack/react-query": "catalog:",
-    "@tanstack/react-router": "catalog:",
-    "i18next": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "react-hook-form": "catalog:",
-    "react-i18next": "catalog:"
+    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-router": "^1.170.45",
+    "i18next": "^26.5.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-hook-form": "^7.90.0",
+    "react-i18next": "^17.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
