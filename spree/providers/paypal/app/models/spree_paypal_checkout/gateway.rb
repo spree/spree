@@ -34,6 +34,7 @@ module SpreePaypalCheckout
     end
 
     include SpreePaypalCheckout::Gateway::PaymentSessions
+    include SpreePaypalCheckout::Gateway::Webhooks
 
     preference :client_id, :password
     preference :client_secret, :password
