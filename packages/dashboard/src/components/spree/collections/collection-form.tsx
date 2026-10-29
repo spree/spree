@@ -95,7 +95,7 @@ export function CollectionMain({
           <CollectionProductsCard collectionId={collection.id} automatic={automatic} />
           <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />
           <FormBackedCustomFieldsProvider form={form} resourceType="collection">
-            <CustomFieldsInlineCard collapsible />
+            <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
           <RecordMetadataCard metadata={collection.metadata} />
         </>

@@ -322,7 +322,7 @@ function ProductForm({ product }: { product: Product }) {
               <DigitalAssetsCard productId={productId} variants={assignableVariants} />
               <ResourceTranslationsCard resourceType="product" resourceId={productId} />
               <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
-                <CustomFieldsInlineCard collapsible />
+                <CustomFieldsInlineCard />
               </ProductCustomFieldsProvider>
               <RecordMetadataCard
                 metadata={product.metadata}

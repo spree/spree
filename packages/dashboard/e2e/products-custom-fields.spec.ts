@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { expandCustomFieldsCard, gotoIndex, login } from './helpers'
+import { gotoIndex, login } from './helpers'
 import { customFieldsCard, PRODUCTS_PATH } from './products-helpers'
 
 const DEFINITIONS_PATH = (storeId: string) => `/${storeId}/settings/custom-field-definitions`
@@ -44,10 +44,9 @@ test.describe('product custom fields — new product', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
       timeout: 30_000,
     })
-    await expandCustomFieldsCard(page)
-
     await expect(customFieldsCard(page).getByLabel(new RegExp(`^${fieldLabel}$`, 'i'))).toHaveValue(
       'Cotton',
+      { timeout: 15_000 },
     )
   })
 })
@@ -69,7 +68,6 @@ test.describe('product custom fields — existing product', () => {
       timeout: 30_000,
     })
 
-    await expandCustomFieldsCard(page)
     const cfCard = customFieldsCard(page)
     const input = cfCard.getByLabel(new RegExp(`^${fieldLabel}$`, 'i'))
     await expect(input).toBeVisible({ timeout: 15_000 })
@@ -83,10 +81,10 @@ test.describe('product custom fields — existing product', () => {
     await expect(saveButton).toBeDisabled({ timeout: 30_000 })
 
     await page.reload()
-    await expandCustomFieldsCard(page)
 
     await expect(customFieldsCard(page).getByLabel(new RegExp(`^${fieldLabel}$`, 'i'))).toHaveValue(
       'Slim',
+      { timeout: 15_000 },
     )
   })
 })

@@ -496,7 +496,7 @@ function customFieldsCardOn(page: Page) {
 
 /**
  * Unfolds the custom fields card where a detail page folds it. A no-op on
- * surfaces that always show it open, such as sheets and the new-product page.
+ * surfaces that always show it open: sheets, and pages whose form saves it.
  */
 export async function expandCustomFieldsCard(page: Page) {
   const card = customFieldsCardOn(page)
@@ -526,14 +526,12 @@ export async function saveCustomFieldOnCard(page: Page, label: string, value: st
  * checks it survives a reload. A custom field alone must enable that Save.
  */
 export async function saveCustomFieldWithPage(page: Page, label: string, value: string) {
-  await expandCustomFieldsCard(page)
   await page.getByLabel(label).fill(value)
   const save = page.getByRole('button', { name: /^save$/i })
   await save.click()
   await expect(save).toBeDisabled({ timeout: 15_000 })
 
   await page.reload()
-  await expandCustomFieldsCard(page)
   await expect(page.getByLabel(label)).toHaveValue(value, { timeout: 15_000 })
 }
 

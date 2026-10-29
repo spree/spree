@@ -357,7 +357,7 @@ export function PromotionForm({
                 matchPolicy={form.watch('match_policy')}
               />
               <ActionsCard form={form} actionsArray={actionsArray} />
-              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} collapsible />}
+              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} />}
               {promotion && <RecordMetadataCard metadata={promotion.metadata} />}
             </>
           }
