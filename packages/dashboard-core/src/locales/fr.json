@@ -424,6 +424,7 @@
       },
       "table_toolbar": {
         "add_filter": "Ajouter un filtre",
+        "any_field": "{{field}} : tous",
         "ascending": "Croissant",
         "clear_all": "Tout effacer",
         "columns_tooltip": "Colonnes",
@@ -444,6 +445,8 @@
         "filter_select_placeholder": "Sélectionner…",
         "filter_text_placeholder": "Filtrer…",
         "filter_to_placeholder": "Filtrer sur…",
+        "n_selected": "{{count}} sélectionnés",
+        "only": "Uniquement",
         "operators": {
           "after": "après",
           "before": "avant",
@@ -469,6 +472,7 @@
         "remove_filter": "Supprimer le filtre",
         "reset_to_default": "Réinitialiser",
         "search_placeholder": "Rechercher…",
+        "select_all": "Tout sélectionner",
         "sort_by": "Trier par",
         "sort_tooltip": "Trier",
         "visible_columns": "Colonnes visibles"
