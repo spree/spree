@@ -21,22 +21,22 @@
     "@spree/dashboard-ui": "workspace:^",
     "@spree/seller-dashboard": "workspace:^",
     "@spree/seller-sdk": "workspace:^",
-    "@tanstack/react-query": "^5.104.5",
-    "@tanstack/react-router": "^1.170.45",
-    "i18next": "^26.5.3",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "react-hook-form": "^7.90.0",
-    "react-i18next": "^17.1.0"
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "i18next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
+    "react-i18next": "catalog:"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.14",
-    "@playwright/test": "^1.64.1",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "typescript": "~7.0.2",
-    "vite": "^8.3.4",
-    "vitest": "^5.0.5"
+    "@biomejs/biome": "catalog:",
+    "@playwright/test": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }
