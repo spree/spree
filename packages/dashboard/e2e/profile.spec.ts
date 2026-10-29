@@ -54,12 +54,12 @@ test.describe('profile', () => {
 
     // Whole UI re-renders in Polish: the nav "Products" → "Produkty" (proves
     // table/nav labels resolved at boot, not just live-subscribed components).
-    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: /^produkty$/i })).toBeVisible({ timeout: 15_000 })
 
     // Survives a reload (locale persisted in localStorage + bundle loaded eagerly
     // at boot).
     await page.reload()
-    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: /^produkty$/i })).toBeVisible({ timeout: 15_000 })
 
     // Table-driven pages also translate: the Customers list column headers are
     // resolved from `i18n.t()` at module load, so they only render in Polish if
@@ -91,13 +91,13 @@ test.describe('profile', () => {
     await page.getByRole('button', { name: /user menu/i }).click()
     await page.getByRole('combobox', { name: /^language$/i }).selectOption({ label: 'Polski' })
 
-    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: /^produkty$/i })).toBeVisible({ timeout: 15_000 })
 
     // The switch is saved to the account (PATCH /me), so it has to survive a
     // reload rather than be reverted by the auth provider. Reloading is also
     // what proves the save landed: nothing else here waits on that request.
     await page.reload()
-    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: /^produkty$/i })).toBeVisible({ timeout: 15_000 })
 
     // Reset to English via the top-bar menu (the picker is now "Język"), and
     // confirm that save landed too — later specs in this serial run expect

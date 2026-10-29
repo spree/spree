@@ -10,30 +10,41 @@ import {
   Progress,
   ProgressValue,
   Skeleton,
+  StepIcon,
 } from '@spree/dashboard-ui'
-import { CheckCircle2Icon, CircleIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import '../../../components/spree/setup-tasks/register'
-import { setupTaskSlot } from '../../../components/spree/setup-tasks/types'
-
-// Settings deep-links for the tasks whose default card body (copy + CTA
-// button) suffices. Tasks needing real UI register a slot component under
-// `getting-started.task.<name>` instead — see setup-tasks/register.ts.
-const TASK_LINKS: Record<string, string> = {
-  setup_payment_method: '/$storeId/settings/payment-methods',
-  add_products: '/$storeId/products',
-  set_customer_support_email: '/$storeId/settings/emails',
-  setup_taxes_collection: '/$storeId/settings/taxes/rates',
-}
+import {
+  SETUP_TASK_LINKS,
+  setupTaskCopy,
+  setupTaskSlot,
+} from '../../../components/spree/setup-tasks/types'
 
 export const Route = createFileRoute('/_authenticated/$storeId/getting-started')({
+  // `task` opens that step. Other params pass through: the storefront step
+  // reads Vercel's `deployment-url` callback param.
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { task?: string } & Record<string, unknown> => ({
+    ...search,
+    task: typeof search.task === 'string' ? search.task : undefined,
+  }),
   component: GettingStartedPage,
 })
 
 function GettingStartedPage() {
   const { t } = useTranslation()
   const { store, storeId } = useStore()
+  const { task: requested } = Route.useSearch()
+  const [open, setOpen] = useState<string[] | null>(null)
+  // A click in the sidebar while already on this page opens the new step.
+  const [seen, setSeen] = useState(requested)
+  if (seen !== requested) {
+    setSeen(requested)
+    setOpen(null)
+  }
 
   if (!store) {
     return (
@@ -48,19 +59,11 @@ function GettingStartedPage() {
   const tasks = store.setup_tasks ?? []
   const doneCount = tasks.filter((task) => task.done).length
   const firstPending = tasks.find((task) => !task.done)?.name
+  // A stale or mistyped `?task=` falls back to the first unfinished step.
+  const opening = tasks.some((task) => task.name === requested) ? requested : firstPending
 
-  const taskCopy = (task: SetupTask, facet: 'title' | 'description' | 'cta') => {
-    // Extension tasks without registered copy fall back to a humanized name
-    // for the title and render no description/CTA. Going through defaultValue
-    // keeps the lookup inside i18next, so copy registered later (e.g. by a
-    // plugin locale bundle) wins without a code change.
-    const humanized = task.name.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
-    const fallback = facet === 'title' ? humanized : ''
-    return (
-      t(`admin.pages.getting_started.tasks.${task.name}.${facet}`, { defaultValue: fallback }) ||
-      null
-    )
-  }
+  const taskCopy = (task: SetupTask, facet: 'title' | 'description' | 'cta') =>
+    setupTaskCopy(t, task.name, facet)
 
   return (
     <div className="flex flex-col gap-6">
@@ -82,22 +85,22 @@ function GettingStartedPage() {
 
       {/* One card holding every step, rather than a card each: this is a single
           checklist read top to bottom, and five separate frames made it read as
-          five unrelated things. Opens on the first unfinished step. */}
+          five unrelated things. Opens on the requested step, or else the first
+          unfinished one. */}
       <Card className="overflow-hidden py-0">
-        <Accordion defaultValue={firstPending ? [firstPending] : []}>
+        <Accordion
+          value={open ?? (opening ? [opening] : [])}
+          onValueChange={(value) => setOpen(value as string[])}
+        >
           {tasks.map((task) => {
-            const link = TASK_LINKS[task.name]
+            const link = SETUP_TASK_LINKS[task.name]
             const description = taskCopy(task, 'description')
             const cta = taskCopy(task, 'cta')
 
             return (
               <AccordionItem key={task.name} value={task.name}>
                 <AccordionTrigger>
-                  {task.done ? (
-                    <CheckCircle2Icon className="size-5 shrink-0 text-success" />
-                  ) : (
-                    <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
-                  )}
+                  <StepIcon status={task.done ? 'done' : 'todo'} className="size-5" />
                   {/* Muted once done, so a glance down the list separates what
                       is left from what is finished without reading the icons. */}
                   <span className={task.done ? 'text-muted-foreground' : undefined}>

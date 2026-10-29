@@ -1,4 +1,3 @@
-import type { Store } from '@spree/admin-sdk'
 // Entries use `labelKey` rather than a resolved `label` so the sidebar
 // re-renders on language change — see app-sidebar.tsx for resolution.
 import { hasVisibleSettingsEntries, nav, Subject } from '@spree/dashboard-core'
@@ -8,7 +7,6 @@ import {
   GiftIcon,
   HomeIcon,
   InboxIcon,
-  MapIcon,
   PackageIcon,
   SettingsIcon,
   StoreIcon,
@@ -16,23 +14,7 @@ import {
   UsersIcon,
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
-import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
 import { navCounterBadge } from '../components/spree/nav-counter-badge'
-
-nav.add({
-  key: 'getting-started',
-  labelKey: 'admin.nav.getting_started',
-  path: '/getting-started',
-  icon: MapIcon,
-  position: 50,
-  subject: Subject.Store,
-  // Store setup is settings work — every staffer can READ the store (shell
-  // data), so gate on the authority the tasks actually need.
-  action: 'update',
-  // Legacy-admin parity: the entry disappears once every setup task is done.
-  if: ({ store }) => !!(store as Store | null)?.setup_tasks?.some((task) => !task.done),
-  badge: GettingStartedNavBadge,
-})
 
 nav.add({
   key: 'home',

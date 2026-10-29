@@ -1,4 +1,5 @@
 import type { Store } from '@spree/admin-sdk'
+import { useStore } from '@spree/dashboard-core'
 import {
   Button,
   CopyToClipboardButton,
@@ -14,6 +15,7 @@ import {
   toastManager,
 } from '@spree/dashboard-ui'
 import { EyeIcon, EyeOffIcon } from '@spree/dashboard-ui/icons'
+import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStorefrontPublishableKey } from '../../hooks/use-api-keys'
@@ -25,8 +27,13 @@ const STOREFRONT_DOCS_URL = 'https://spreecommerce.org/docs/developer/storefront
 
 // Mirrors Spree::Admin::StorefrontHelper#vercel_deploy_url: clone the official
 // Next.js storefront with the store's credentials prefilled, and come back to
-// the Getting Started page after a successful deploy.
-function vercelDeployUrl(store: Store, token: string, envDescription: string): string {
+// `returnUrl` after a successful deploy.
+function vercelDeployUrl(
+  store: Store,
+  token: string,
+  envDescription: string,
+  returnUrl: string,
+): string {
   const params = new URLSearchParams({
     'repository-url': STOREFRONT_REPOSITORY_URL,
     'project-name': `${store.code}-storefront`,
@@ -38,7 +45,7 @@ function vercelDeployUrl(store: Store, token: string, envDescription: string): s
     }),
     envDescription,
     envLink: `${STOREFRONT_REPOSITORY_URL}#readme`,
-    'redirect-url': window.location.origin + window.location.pathname,
+    'redirect-url': returnUrl,
   })
   return `https://vercel.com/new/clone?${params.toString()}`
 }
@@ -82,7 +89,18 @@ export function StorefrontConnectSheet({
   initialUrl,
 }: StorefrontConnectSheetProps) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
+  const router = useRouter()
   const [url, setUrl] = useState(() => initialUrl ?? store.storefront_url ?? '')
+  // The sheet also opens from the sidebar checklist on any page, but only the
+  // Getting Started page picks up Vercel's callback and reopens it.
+  const returnUrl =
+    window.location.origin +
+    router.buildLocation({
+      to: '/$storeId/getting-started',
+      params: { storeId },
+      search: { task: 'setup_storefront' },
+    }).publicHref
   const [showKey, setShowKey] = useState(false)
 
   const {
@@ -208,6 +226,7 @@ export function StorefrontConnectSheet({
                           store,
                           token,
                           t('admin.pages.getting_started.storefront_sheet.env_description'),
+                          returnUrl,
                         )
                       : undefined
                   }

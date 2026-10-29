@@ -8,6 +8,7 @@ import {
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
+import { GettingStartedWidget } from '../../components/spree/getting-started-widget'
 import { Notifications } from '../../components/spree/notifications'
 import { PluginRoutePage, usePluginRouteClaim } from '../../components/spree/plugin-route-page'
 import { ProfileDialog } from '../../components/spree/profile-dialog'
@@ -67,6 +68,7 @@ function StoreShell({ storeId, inSettings }: { storeId: string; inSettings: bool
       uiLocales={UI_LOCALES}
       onEditProfile={() => setProfileOpen(true)}
       notifications={<Notifications />}
+      sidebarWidget={<GettingStartedWidget />}
     >
       <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
       {/* A plugin page more specific than the matched route (`/sellers/shopify`

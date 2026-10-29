@@ -114,7 +114,7 @@ test.describe('store settings — general', () => {
     await expect(page.getByText('Standardy i formaty', { exact: true })).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible()
+    await expect(page.getByRole('link', { name: /^produkty$/i })).toBeVisible()
 
     // The crux: survives a reload. The switch must have been adopted as the
     // admin's own `selected_locale` (PATCH /me), not just written to
@@ -306,7 +306,8 @@ test.describe('store settings — general', () => {
     await expect(page.getByRole('menuitem', { name: /^view store$/i })).toHaveCount(0)
     await page.keyboard.press('Escape')
 
-    const step = page.getByRole('button', { name: /set up storefront/i })
+    // Scoped to the page: the sidebar checklist offers the same step.
+    const step = page.getByRole('main').getByRole('button', { name: /set up storefront/i })
     if ((await step.getAttribute('aria-expanded')) !== 'true') await step.click()
     await page.getByRole('button', { name: /^connect storefront$/i }).click()
     await expect(page.getByLabel(/^storefront url$/i)).toHaveValue('')
