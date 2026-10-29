@@ -405,6 +405,26 @@ describe('alignPeerRanges', () => {
     expect(
       alignPeerRanges(dir, { 'react-hook-form': '^9 || ^7.90.0', i18next: '^9 || ^7' }),
     ).toEqual([{ name: 'i18next', from: '^8.0.0', to: '^9 || ^7', dev: false, exact: false }])
+    expect(
+      JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')).dependencies,
+    ).toEqual({
+      'react-hook-form': '^7.95.0',
+      i18next: '^9 || ^7',
+    })
+  })
+
+  it('moves a dependency listed in both groups once, from dependencies', () => {
+    fs.writeFileSync(
+      path.join(dir, 'package.json'),
+      JSON.stringify({
+        dependencies: { 'react-hook-form': '7.80.0' },
+        devDependencies: { 'react-hook-form': '7.80.0' },
+      }),
+    )
+
+    expect(alignPeerRanges(dir, PEERS)).toEqual([
+      { name: 'react-hook-form', from: '7.80.0', to: '^7.90.0', dev: false, exact: true },
+    ])
   })
 
   it('leaves local and tagged specs, and dependencies Spree does not require, alone', () => {

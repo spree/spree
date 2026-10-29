@@ -482,6 +482,8 @@ export function alignPeerRanges(
     ...Object.entries(pkg.devDependencies ?? {}).map(([name, from]) => ({ name, from, dev: true })),
   ]
     .filter(({ name, from }) => Object.hasOwn(peers, name) && REGISTRY_SPEC.test(from))
+    // Listed in both groups, it is installed once, from `dependencies`.
+    .filter(({ name, dev }) => !(dev && pkg.dependencies?.[name]))
     .filter(
       ({ name, from }) => semver.validRange(from) !== null && !semver.subset(from, peers[name]),
     )
