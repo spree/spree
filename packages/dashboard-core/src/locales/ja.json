@@ -1,0 +1,2099 @@
+{
+  "admin": {
+    "address_select": {
+      "none": "住所が選ばれていません"
+    },
+    "app_name": "Spree 管理画面",
+    "a11y": {
+      "breadcrumb": "パンくずリスト",
+      "breadcrumb_more": "その他",
+      "bulk_actions": "一括操作",
+      "change_color": "色を変更（{{value}}）",
+      "clear_date": "日付をクリア",
+      "clear_selection": "選択を解除",
+      "collapse_all": "すべて折りたたむ",
+      "delete_image": "画像を削除",
+      "drag_to_reorder": "ドラッグして並べ替え",
+      "edit_media": "メディアを編集",
+      "expand_all": "すべて展開",
+      "hide_value": "値を隠す",
+      "pick_color": "色を選ぶ",
+      "refetch": "再取得",
+      "remove_image": "画像を外す",
+      "remove_value": "値を削除",
+      "reorder": "並べ替え",
+      "select_all_rows": "このページの行をすべて選択",
+      "select_row": "行を選択",
+      "settings_navigation": "設定のナビゲーション",
+      "show_value": "値を表示",
+      "sidebar": "サイドバー",
+      "sidebar_description": "モバイル用のサイドバーを表示します。",
+      "stock_at_locations": "ロケーションごとの在庫",
+      "store_switcher": "ストアを切り替え",
+      "toggle_sidebar": "サイドバーの表示を切り替え",
+      "upload_image": "画像をアップロード",
+      "user_menu": "ユーザーメニュー",
+      "view_image": "画像を見る"
+    },
+    "account": {
+      "community": "コミュニティ",
+      "contact_support": "サポートに問い合わせる",
+      "documentation": "ドキュメント",
+      "edit_profile": "プロフィールを編集",
+      "language": {
+        "label": "言語",
+        "update_failed": "言語の設定を保存できませんでした。もう一度お試しください。"
+      },
+      "log_out": "ログアウト",
+      "preferences": "設定",
+      "view_store": "ストアを見る"
+    },
+    "actions": {
+      "actions_menu": "操作",
+      "add": "追加",
+      "adding": "追加中…",
+      "apply": "適用",
+      "back": "戻る",
+      "cancel": "キャンセル",
+      "clear": "クリア",
+      "close": "閉じる",
+      "confirm": "確認",
+      "copied": "コピーしました！",
+      "copy": "コピー",
+      "create": "作成",
+      "creating": "作成中…",
+      "delete": "削除",
+      "deleting": "削除中…",
+      "discard": "破棄",
+      "discard_changes": "変更を破棄",
+      "done": "完了",
+      "duplicate": "複製",
+      "edit": "編集",
+      "export": "エクスポート",
+      "exporting": "エクスポート中…",
+      "generate": "生成",
+      "hide": "隠す",
+      "import": "インポート",
+      "invite": "招待",
+      "more_actions": "その他の操作",
+      "remove": "削除",
+      "remove_item": "{{label}}を削除",
+      "remove_rule": "ルールを削除",
+      "reset": "リセット",
+      "revoke": "取り消す",
+      "save": "保存",
+      "saving": "保存中…",
+      "search": "検索",
+      "send": "送信",
+      "send_invitation": "招待を送る",
+      "sending": "送信中…",
+      "show": "表示",
+      "sign_in": "ログイン",
+      "signing_in": "ログイン中…",
+      "view": "表示",
+      "view_all": "すべて表示",
+      "view_details": "詳細を見る"
+    },
+    "address": {
+      "not_located_yet": "この住所の位置が分かると、地図が表示されます。"
+    },
+    "address_book": {
+      "default_billing": "既定の請求先",
+      "default_shipping": "既定のお届け先",
+      "inherited_from": "{{name}}から引き継ぎ",
+      "set_default_billing": "既定の請求先にする",
+      "set_default_shipping": "既定のお届け先にする"
+    },
+    "auth": {
+      "back_to_login": "ログインに戻る",
+      "forgot_password": {
+        "error": "問題が起きました。もう一度お試しください。",
+        "link": "パスワードをお忘れですか？",
+        "sending": "送信中…",
+        "sent_subtitle": "そのメールアドレスのアカウントがあれば、パスワードを再設定するリンクをお送りしました。",
+        "sent_title": "メールをご確認ください",
+        "submit": "再設定リンクを送る",
+        "subtitle": "メールアドレスを入れると、パスワードを再設定するリンクをお送りします。",
+        "title": "パスワードの再設定"
+      },
+      "login": {
+        "account_deactivated": "このアカウントは無効になっています。利用を再開するには管理者に連絡してください。",
+        "account_not_provisioned": "このアカウントには、このストアの権限がありません。管理者に招待を依頼してください。",
+        "divider": "または",
+        "invalid_oauth_state": "ログインのセッションが切れたか、無効です。もう一度ログインし直してください。",
+        "providers_error_message": "ログインの方法を読み込めませんでした。ページを再読み込みするか、管理者に連絡してください。",
+        "providers_error_title": "ログインできません",
+        "rate_limit_exceeded": "ログインの試行が多すぎます。少し待ってからもう一度お試しください。",
+        "sso_button": "{{provider}}で続ける",
+        "sso_failed": "そのプロバイダーではログインできませんでした。もう一度お試しください。",
+        "subtitle": "管理者アカウントにログイン",
+        "title": "おかえりなさい"
+      },
+      "logout": "ログアウト",
+      "no_store_access": {
+        "description": "ログインはできていますが、このアカウントはまだどのストアのメンバーでもありません。ストアの管理者に招待を依頼するか、別のアカウントでログインしてください。",
+        "signed_in_as": "{{email}}でログイン中",
+        "title": "どのストアにもアクセスできません"
+      },
+      "reset_password": {
+        "confirm_password_label": "新しいパスワード（確認）",
+        "error": "問題が起きました。もう一度お試しください。",
+        "missing_token_message": "このパスワード再設定のリンクにはトークンがありません。",
+        "missing_token_title": "無効な再設定リンク",
+        "new_password_label": "新しいパスワード",
+        "request_new_link": "再設定リンクをもう一度送る",
+        "submit": "パスワードを再設定",
+        "submitting": "再設定中…",
+        "subtitle": "管理者アカウントの新しいパスワードを入れてください。",
+        "title": "新しいパスワードを決める",
+        "token_invalid": "この再設定リンクは無効か、期限が切れています。もう一度お申し込みください。"
+      }
+    },
+    "color_picker": {
+      "no_color": "色なし"
+    },
+    "common": {
+      "active": "有効",
+      "adjust_search_or_filters": "検索や絞り込みの条件を変えてみてください",
+      "all": "すべて",
+      "and": "と",
+      "are_you_sure": "よろしいですか？",
+      "cancel": "キャンセル",
+      "clear": "クリア",
+      "comma_separated_hint": "値はカンマで区切ってください。",
+      "default": "既定",
+      "delete_confirm_message": "よろしいですか？この操作は元に戻せません。",
+      "deleted": "削除済み",
+      "empty_value": "—",
+      "inactive": "無効",
+      "learn_more": "詳しく見る",
+      "skip_to_content": "本文へスキップ",
+      "loading": "読み込み中…",
+      "next": "次へ",
+      "no": "いいえ",
+      "no_results": "結果がありません",
+      "combobox_more_results_one": "ほかに 1 件の結果があります。入力して検索してください。",
+      "combobox_more_results_other": "ほかに {{count}} 件の結果があります。入力して検索してください。",
+      "none": "なし",
+      "optional": "任意",
+      "or": "または",
+      "page_of": "{{page}} / {{total}} ページ",
+      "pick_date": "日付を選ぶ",
+      "prev": "前へ",
+      "prices": "価格",
+      "remove_question": "削除しますか？",
+      "required": "必須",
+      "retry": "もう一度試す",
+      "search_placeholder": "検索…",
+      "searching": "検索中…",
+      "select_placeholder": "選択…",
+      "unsaved_changes": "保存していない変更があります。",
+      "yes": "はい",
+      "done": "完了",
+      "error": "問題が起きました。"
+    },
+    "components": {
+      "address_block": {
+        "not_provided": "未入力"
+      },
+      "address_form_dialog": {
+        "description": "住所の詳細を更新します。",
+        "edit_title": "住所を編集"
+      },
+      "bulk_action_bar": {
+        "default_error": "一括操作に失敗しました",
+        "default_success": "{n} 件を更新しました",
+        "selected": "{{count}} 件を選択中"
+      },
+      "channel_select": {
+        "placeholder": "販売チャネルを選択",
+        "all_channels": "すべてのチャネル"
+      },
+      "command_palette": {
+        "create": {
+          "heading": "作成",
+          "label": "新しい{{noun}}",
+          "nouns": {
+            "catalog": "カタログ",
+            "catalog_plural": "カタログ",
+            "category": "カテゴリ",
+            "category_plural": "カテゴリ",
+            "collection": "コレクション",
+            "collection_plural": "コレクション",
+            "company": "会社",
+            "company_plural": "会社",
+            "customer": "顧客",
+            "customer_group": "顧客グループ",
+            "customer_group_plural": "顧客グループ",
+            "customer_plural": "顧客",
+            "discount": "割引",
+            "discount_plural": "割引",
+            "gift_card": "ギフトカード",
+            "gift_card_plural": "ギフトカード",
+            "option_type": "オプション",
+            "option_type_plural": "オプション",
+            "order": "注文",
+            "order_plural": "注文",
+            "price_list": "価格リスト",
+            "price_list_plural": "価格リスト",
+            "product": "商品",
+            "product_plural": "商品",
+            "promotion": "プロモーション",
+            "promotion_plural": "プロモーション",
+            "seller": "販売者",
+            "seller_plural": "販売者",
+            "stock_location": "ロケーション",
+            "stock_location_plural": "ロケーション",
+            "stock_transfer": "移動",
+            "stock_transfer_plural": "移動"
+          },
+          "verbs": "add,new,create,追加,新規,作成"
+        },
+        "description": "商品・注文・顧客をまとめて検索したり、コマンドを実行したりします。",
+        "empty_hint": "入力して検索するか、下のコマンドを選んでください。",
+        "goto": "移動",
+        "goto_label": "{{label}}へ移動",
+        "hints": {
+          "close": "閉じる",
+          "esc_key": "esc",
+          "navigate": "移動",
+          "select": "選択"
+        },
+        "no_results": "「{{query}}」の結果はありません。",
+        "placeholder": "商品・注文・顧客を検索…",
+        "search_label": "何でも検索…",
+        "title": "検索とコマンド"
+      },
+      "confirm_dialog": {
+        "title": "よろしいですか？"
+      },
+      "country_combobox": {
+        "empty": "国が見つかりません",
+        "placeholder": "国を選択",
+        "search_placeholder": "国を検索…"
+      },
+      "currency_select": {
+        "empty": "通貨が見つかりません",
+        "placeholder": "通貨を選択",
+        "search_placeholder": "通貨を検索…"
+      },
+      "custom_fields": {
+        "json_placeholder": "{ \"example\": \"value\" }"
+      },
+      "date_range_picker": {
+        "presets": {
+          "last_14_days": "過去 14 日間",
+          "last_30_days": "過去 30 日間",
+          "last_7_days": "過去 7 日間",
+          "last_90_days": "過去 90 日間",
+          "this_month": "今月",
+          "year_to_date": "年初から今日まで"
+        }
+      },
+      "error_state": {
+        "retry": "もう一度試す"
+      },
+      "export_button": {
+        "all": {
+          "description": "絞り込みを無視して、このストアのすべてをエクスポートします。",
+          "title": "すべてのレコード"
+        },
+        "description": "CSV はバックグラウンドで作り、準備ができ次第ダウンロードします。時間がかかるときは、メールでもリンクをお送りします。",
+        "downloaded": "エクスポートをダウンロードしました",
+        "email_fallback": "まだ処理中です。準備ができたらメールでリンクをお送りします。",
+        "failed": "エクスポートに失敗しました: {{message}}",
+        "filtered": {
+          "count_few": "今の絞り込みに一致する {{formattedCount}} 件のレコードをエクスポートします。",
+          "count_many": "今の絞り込みに一致する {{formattedCount}} 件のレコードをエクスポートします。",
+          "count_one": "今の絞り込みに一致する {{formattedCount}} 件のレコードをエクスポートします。",
+          "count_other": "今の絞り込みに一致する {{formattedCount}} 件のレコードをエクスポートします。",
+          "no_filter": "絞り込みはありません。すべてのレコードをエクスポートするのと同じです。",
+          "title": "今の絞り込み",
+          "unknown_count": "今の絞り込みに一致するレコードをエクスポートします。"
+        },
+        "preparing": "エクスポートを準備中…",
+        "title": "CSV にエクスポート"
+      },
+      "file_upload": {
+        "attached": "添付ファイル",
+        "browse": "ファイルを選ぶ",
+        "drop_image_label": "画像をここにドロップするか、クリックして選んでください",
+        "drop_label": "ファイルをここにドロップするか、クリックして選んでください",
+        "invalid_type": "この種類のファイルは使えません（使えるもの: {{accept}}）",
+        "upload_failed": "アップロードに失敗しました: {{message}}",
+        "uploading": "アップロード中…"
+      },
+      "import_button": {
+        "delimiter_label": "列の区切り文字",
+        "delimiters": {
+          "comma": "カンマ（,）",
+          "pipe": "パイプ（|）",
+          "semicolon": "セミコロン（;）",
+          "tab": "タブ"
+        },
+        "description": "CSV ファイルをアップロードしてください。次の手順で、列と項目を対応させます。",
+        "download_example": "CSV の例をダウンロード",
+        "download_template": "CSV のテンプレートをダウンロード",
+        "drop_label": "CSV ファイルをここにドロップするか、クリックして選んでください",
+        "example_failed": "例のダウンロードに失敗しました: {{message}}",
+        "failed": "インポートに失敗しました: {{message}}",
+        "submit": "次へ",
+        "template_failed": "テンプレートのダウンロードに失敗しました: {{message}}",
+        "title": "CSV からインポート"
+      },
+      "json_preview_drawer": {
+        "collapse_depth": "折りたたむ深さ",
+        "copied": "コピーしました",
+        "copy_all": "すべてコピー",
+        "depth": "深さ {{level}}",
+        "failed_to_load": "読み込めませんでした: {{message}}",
+        "open_raw": "生のレスポンスを開く",
+        "raw": "生データ",
+        "title": "JSON"
+      },
+      "locale_select": {
+        "empty": "言語が見つかりません",
+        "multi_placeholder": "言語を追加…",
+        "placeholder": "言語を選択",
+        "search_placeholder": "言語を検索…"
+      },
+      "market_combobox": {
+        "empty": "一致するマーケットがありません",
+        "search_placeholder": "マーケットを検索…"
+      },
+      "media": {
+        "remove_tooltip": "画像を外す"
+      },
+      "media_preview": {
+        "video_title": "動画のプレビュー"
+      },
+      "metadata_card": {
+        "copy_reference": "{{system}} のキーをコピー",
+        "empty_description": "アプリや連携機能が自動で入れます。",
+        "empty_title": "メタデータはありません",
+        "external_references": "外部参照",
+        "title": "メタデータ",
+        "view": "メタデータを表示"
+      },
+      "page_header": {
+        "copy_id": "ID をコピー",
+        "copy_number": "番号をコピー",
+        "view_as_json": "JSON で見る"
+      },
+      "pagination": {
+        "first_page": "最初のページへ",
+        "last_page": "最後のページへ",
+        "next_page": "次のページへ",
+        "previous_page": "前のページへ",
+        "range": "{{count}} 件中 {{from}}–{{to}} 件",
+        "rows_per_page": "1 ページの行数"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "値はカンマで区切ってください。",
+        "tiers": {
+          "add_tier": "段階を追加",
+          "empty": "段階はまだありません。段階を追加するまでは基本の率が適用されます。",
+          "header_threshold": "注文合計 ≥",
+          "header_value": "割引",
+          "label": "段階",
+          "remove_tier": "段階を削除"
+        },
+        "unlimited": "無制限"
+      },
+      "rich_text_editor": {
+        "blockquote": "引用",
+        "bold": "太字",
+        "bullet_list": "箇条書き",
+        "image": "画像",
+        "italic": "斜体",
+        "link": "リンク",
+        "link_url_prompt": "URL",
+        "ordered_list": "番号付きリスト",
+        "placeholder": "何か書いてください…",
+        "redo": "やり直す",
+        "strikethrough": "取り消し線",
+        "undo": "元に戻す"
+      },
+      "secret_input": {
+        "new_value_placeholder": "新しい値",
+        "replace": "置き換え",
+        "stored_help": "サーバーに保存されています。変えるには「置き換え」をクリックしてください。"
+      },
+      "state_combobox": {
+        "empty": "州・都道府県が見つかりません",
+        "placeholder": "州・都道府県を選択",
+        "search_placeholder": "州・都道府県を検索…"
+      },
+      "table_toolbar": {
+        "add_filter": "絞り込みを追加",
+        "any_field": "{{field}}（すべて）",
+        "ascending": "昇順",
+        "clear_all": "すべてクリア",
+        "columns_tooltip": "列",
+        "date_presets": {
+          "all": "すべての日付",
+          "custom": "指定",
+          "last_30_days": "過去 30 日間",
+          "last_7_days": "過去 7 日間",
+          "last_month": "先月",
+          "this_month": "今月",
+          "today": "今日"
+        },
+        "date_range_end": "終了",
+        "date_range_start": "開始",
+        "descending": "降順",
+        "filter_by": "絞り込む項目…",
+        "filter_date_placeholder": "日付を選ぶ",
+        "filter_select_placeholder": "選択…",
+        "filter_text_placeholder": "絞り込み…",
+        "filter_to_placeholder": "絞り込む…",
+        "n_selected": "{{count}} 件を選択中",
+        "only": "これのみ",
+        "operators": {
+          "after": "より後",
+          "before": "より前",
+          "contains": "を含む",
+          "does_not_equal": "と等しくない",
+          "ends_with": "で終わる",
+          "equals": "と等しい",
+          "greater_than": "より大きい",
+          "greater_than_or_equal": "以上",
+          "is": "である",
+          "is_any_of": "のいずれか",
+          "is_none_of": "のどれでもない",
+          "is_not": "ではない",
+          "is_not_set": "が未設定",
+          "is_set": "が設定済み",
+          "less_than": "より小さい",
+          "less_than_or_equal": "以下",
+          "on_or_after": "以降",
+          "on_or_before": "以前",
+          "starts_with": "で始まる"
+        },
+        "order": "順序",
+        "remove_filter": "絞り込みを削除",
+        "reset_to_default": "既定に戻す",
+        "search_placeholder": "検索…",
+        "select_all": "すべて選択",
+        "sort_by": "並べ替え",
+        "sort_tooltip": "並べ替え",
+        "visible_columns": "表示する列"
+      },
+      "tag_combobox": {
+        "create_option": "「{{tag}}」を作成",
+        "empty_hint": "入力して Enter を押すとタグを作れます",
+        "placeholder": "入力してタグを追加…"
+      },
+      "theme_toggle": {
+        "dark": "ダーク",
+        "label": "テーマ",
+        "light": "ライト",
+        "system": "システム"
+      },
+      "wizard": {
+        "discard_cancel": "編集を続ける",
+        "discard_confirm": "破棄",
+        "discard_message": "ここまで入力した内容はすべて失われます。元に戻すことはできません。",
+        "discard_title": "この下書きを破棄しますか？"
+      }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "{{currency}}での金額",
+      "help": "空欄の通貨では、この配送方法は提供されません。",
+      "label": "金額",
+      "required": "少なくとも 1 つの通貨で金額を入れてください。"
+    },
+    "custom_field_definitions": {
+      "errors": {
+        "failed_to_create": "カスタムフィールドの定義を作成できませんでした",
+        "failed_to_delete": "カスタムフィールドの定義を削除できませんでした",
+        "failed_to_update": "カスタムフィールドの定義を更新できませんでした"
+      },
+      "messages": {
+        "created": "カスタムフィールドの定義を作成しました",
+        "deleted": "カスタムフィールドの定義を削除しました",
+        "updated": "カスタムフィールドの定義を更新しました"
+      }
+    },
+    "errors": {
+      "failed_to_create": "作成できませんでした",
+      "failed_to_delete": "削除できませんでした",
+      "failed_to_load": "読み込めませんでした",
+      "failed_to_load_customer": "顧客を読み込めませんでした",
+      "failed_to_load_order": "注文を読み込めませんでした",
+      "failed_to_load_product": "商品を読み込めませんでした",
+      "failed_to_revoke_key": "キーを取り消せませんでした",
+      "failed_to_save": "保存できませんでした",
+      "failed_to_send_invitation": "招待を送れませんでした",
+      "failed_to_update": "更新できませんでした",
+      "failed_to_update_profile": "プロフィールを更新できませんでした",
+      "failed_to_update_staff": "スタッフを更新できませんでした",
+      "failed_to_update_store": "ストアの設定を更新できませんでした",
+      "generic": "問題が起きました",
+      "label_download_failed": "ラベルをダウンロードできませんでした",
+      "network": "ネットワークエラーです。もう一度お試しください",
+      "not_found": "見つかりません",
+      "required": "この項目は必須です",
+      "unauthorized": "この操作をする権限がありません",
+      "unexpected": "予期しないエラーが起きました",
+      "unexpected_retry": "予期しないエラーが起きました。もう一度お試しください。"
+    },
+    "fields": {
+      "active": {
+        "label": "有効"
+      },
+      "address": {
+        "address1": {
+          "label": "住所"
+        },
+        "address2": {
+          "label": "建物名・部屋番号など"
+        },
+        "is_default_billing": {
+          "label": "既定の請求先住所"
+        },
+        "is_default_shipping": {
+          "label": "既定のお届け先住所"
+        },
+        "label": {
+          "label": "ラベル",
+          "placeholder": "例: 自宅、会社"
+        },
+        "postal_code": {
+          "label": "郵便番号"
+        }
+      },
+      "address1": {
+        "label": "住所 1 行目"
+      },
+      "address2": {
+        "label": "住所 2 行目"
+      },
+      "amount": {
+        "label": "金額"
+      },
+      "city": {
+        "label": "市区町村"
+      },
+      "code": {
+        "label": "コード"
+      },
+      "company": {
+        "label": "会社"
+      },
+      "completed_at": {
+        "label": "完了日時"
+      },
+      "contact_email": {
+        "label": "連絡先メールアドレス"
+      },
+      "country_code": {
+        "label": "国"
+      },
+      "created_at": {
+        "label": "作成日時"
+      },
+      "currency": {
+        "label": "通貨"
+      },
+      "description": {
+        "label": "説明"
+      },
+      "discount": {
+        "label": "割引"
+      },
+      "email": {
+        "label": "メールアドレス"
+      },
+      "enabled": {
+        "label": "有効"
+      },
+      "ends_at": {
+        "label": "終了"
+      },
+      "expires_at": {
+        "label": "有効期限"
+      },
+      "first_name": {
+        "label": "名"
+      },
+      "kind": {
+        "label": "種類"
+      },
+      "label": {
+        "label": "ラベル"
+      },
+      "last_name": {
+        "label": "姓"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "代替テキスト",
+          "placeholder": "アクセシビリティと SEO のために画像を説明してください"
+        },
+        "external_video_url": {
+          "help": "YouTube か Vimeo のリンクを貼り付けてください。",
+          "label": "動画のリンク",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "動画を再生する前に表示する静止画です。空欄にすると、提供元の画像があればそれを使います。",
+          "label": "ポスター画像"
+        }
+      },
+      "meta_description": {
+        "label": "メタディスクリプション"
+      },
+      "meta_title": {
+        "label": "メタタイトル"
+      },
+      "name": {
+        "label": "名前"
+      },
+      "package_type": {
+        "name": {
+          "label": "名前"
+        },
+        "kind": {
+          "label": "種類",
+          "help": "商品を詰めるこん包材にできるのは、カートンだけです。"
+        },
+        "length": {
+          "label": "長さ"
+        },
+        "width": {
+          "label": "幅"
+        },
+        "height": {
+          "label": "高さ"
+        },
+        "dimensions_unit": {
+          "label": "単位"
+        },
+        "dimensions": {
+          "help": "運送会社の容積重量や、立方メートルで比べる貨物の料金区分に使います。"
+        },
+        "weight": {
+          "label": "空の重さ",
+          "help": "こん包材そのものの重さです。中身の重さに足されます。"
+        },
+        "max_weight": {
+          "label": "最大重量",
+          "help": "運べる重さです。"
+        },
+        "weight_unit": {
+          "label": "単位"
+        },
+        "default": {
+          "label": "既定の箱",
+          "help": "荷物の見積もりに使うこん包材です。既定にできるのは 1 つだけです。"
+        }
+      },
+      "number": {
+        "label": "番号"
+      },
+      "password": {
+        "label": "パスワード"
+      },
+      "permalink": {
+        "label": "パーマリンク"
+      },
+      "phone": {
+        "label": "電話番号"
+      },
+      "pretty_name": {
+        "label": "氏名"
+      },
+      "quantity": {
+        "label": "数量"
+      },
+      "setup": {
+        "country_code": {
+          "help": "発送元の国です。ストアは世界中に販売できます。ここで決めるのは最初の通貨・倉庫・配送ゾーンだけで、どれも後で変えられます。",
+          "label": "国",
+          "placeholder": "国を検索"
+        },
+        "currency": {
+          "help": "既定の通貨です。いつでも追加できます。",
+          "label": "通貨",
+          "placeholder": "通貨を検索"
+        },
+        "locale": {
+          "help": "既定の言語です。いつでも追加できます。",
+          "label": "言語"
+        },
+        "password_confirmation": {
+          "label": "パスワード（確認）"
+        },
+        "sample_data": {
+          "help": "管理画面を試せるように、デモ用の商品・カテゴリ・顧客・注文をバックグラウンドで追加します。数分かかり、商品画像もダウンロードします。",
+          "label": "サンプルデータを読み込む"
+        },
+        "store_name": {
+          "label": "ストア名"
+        }
+      },
+      "shipping": {
+        "label": "配送"
+      },
+      "slug": {
+        "label": "スラッグ"
+      },
+      "starts_at": {
+        "label": "開始"
+      },
+      "state_code": {
+        "label": "都道府県・州"
+      },
+      "state_name": {
+        "label": "都道府県・州"
+      },
+      "status": {
+        "label": "状態"
+      },
+      "stock_location": {
+        "active": {
+          "help": "無効なロケーションは、出荷先の選択に出てきません。",
+          "label": "有効"
+        },
+        "admin_name": {
+          "label": "内部用の名前",
+          "placeholder": "任意。管理画面だけに表示されます"
+        },
+        "backorderable_default": {
+          "help": "新しい在庫は、在庫切れのときに入荷待ちの注文を受け付ける設定になります。",
+          "label": "既定で入荷待ちを受け付ける"
+        },
+        "default": {
+          "help": "新しい在庫はここに作られます。既定にできるロケーションは 1 つだけです。",
+          "label": "既定のロケーション"
+        },
+        "kind": {
+          "label": "種類"
+        },
+        "name": {
+          "placeholder": "東京倉庫"
+        },
+        "pickup_enabled": {
+          "help": "お客様がご注文手続きで、このロケーションでの受け取りを選べます。",
+          "label": "店頭受け取りを許可"
+        },
+        "pickup_instructions": {
+          "label": "受け取りの案内",
+          "placeholder": "お客様が注文を受け取りに行く場所です。"
+        },
+        "pickup_ready_in_minutes": {
+          "label": "準備にかかる時間（分）",
+          "placeholder": "60"
+        },
+        "pickup_stock_policy": {
+          "label": "在庫の方針"
+        },
+        "propagate_all_variants": {
+          "help": "すべての商品バリアントについて、このロケーションの在庫を作ります。",
+          "label": "すべてのバリアントの在庫を自動で作る"
+        },
+        "returns_enabled": {
+          "help": "返品された商品はこのロケーションに戻ります。返品を別の場所で検品するならオフにしてください。",
+          "label": "ここで返品を受け付ける"
+        }
+      },
+      "storefront_visible": {
+        "help": "オフにすると、このオプションは管理画面のスタッフだけに見えます（バックオフィスでの注文や手入力用）。",
+        "label": "ストア画面に表示"
+      },
+      "subtotal": {
+        "label": "小計"
+      },
+      "tax": {
+        "label": "税"
+      },
+      "total": {
+        "label": "合計"
+      },
+      "updated_at": {
+        "label": "更新日時"
+      },
+      "zipcode": {
+        "label": "郵便番号"
+      },
+      "product": {
+        "available_on": {
+          "label": "販売開始日"
+        },
+        "category_ids": {
+          "label": "カテゴリ"
+        },
+        "channels": {
+          "label": "販売チャネル"
+        },
+        "collection_ids": {
+          "help": "ここで設定できるのは手動のコレクションだけです。自動のコレクションはルールに従います。",
+          "label": "コレクション"
+        },
+        "delivery_profile_id": {
+          "help": "この商品をどのゾーンにどの配送方法で届けるかを決めます。",
+          "label": "配送プロファイル"
+        },
+        "description": {
+          "label": "説明",
+          "placeholder": "商品の説明を書いてください…"
+        },
+        "discontinue_on": {
+          "label": "販売終了日"
+        },
+        "make_active_at": {
+          "label": "有効にする日時"
+        },
+        "name": {
+          "label": "名前",
+          "placeholder": "商品名"
+        },
+        "product_type_id": {
+          "help": "ご注文手続きで、どの配送方法を出すかを決めます。",
+          "label": "商品タイプ"
+        },
+        "seller": {
+          "label": "販売者"
+        },
+        "tags": {
+          "label": "タグ"
+        }
+      },
+      "variant": {
+        "backorder_limit": {
+          "help": "在庫を超えて売れる最大の数です。入荷待ちと予約注文の上限になります。空欄なら無制限です。",
+          "label": "入荷待ちの上限",
+          "placeholder": "無制限"
+        },
+        "barcode": {
+          "label": "バーコード"
+        },
+        "country_of_origin": {
+          "label": "原産国"
+        },
+        "customs_description": {
+          "label": "税関用の品名",
+          "placeholder": "商品のわかりやすい説明"
+        },
+        "depth": {
+          "label": "奥行き"
+        },
+        "dimensions_unit": {
+          "label": "単位"
+        },
+        "height": {
+          "label": "高さ"
+        },
+        "hs_code": {
+          "label": "HS コード",
+          "placeholder": "例: 640411"
+        },
+        "preorder_ships_at": {
+          "help": "予約注文を発送する予定日です。お客様にはお届けの目安として表示し、この日を過ぎると予約注文は終わります。",
+          "label": "発送予定日",
+          "placeholder": "日付を選択"
+        },
+        "preorderable": {
+          "help": "在庫が入る前にこのバリアントを販売します。受け付ける数は入荷待ちの上限で決めます。入荷予定の数を入れるか、空欄にすると無制限です。",
+          "label": "予約注文を受け付ける"
+        },
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "weight": {
+          "label": "重さ"
+        },
+        "weight_unit": {
+          "label": "単位"
+        },
+        "width": {
+          "label": "幅"
+        },
+        "minimum_order_quantity": {
+          "label": "最小注文数",
+          "placeholder": "最小なし",
+          "help": "購入者が注文できる最小の数です。空欄なら最小はありません。"
+        },
+        "order_multiple": {
+          "label": "注文単位",
+          "placeholder": "単位なし",
+          "help": "最小から増やすときの刻みです。空欄ならどの数量でも注文できます。"
+        },
+        "purchase_unit": {
+          "label": "購入単位",
+          "options": {
+            "unit": "個",
+            "carton": "カートン"
+          }
+        },
+        "units_per_carton": {
+          "label": "1 カートンあたりの個数"
+        },
+        "quantity_rule_invalid": "0 より大きい整数を入れるか、空欄にしてください。",
+        "carton_package_type_id": {
+          "label": "カートン",
+          "help": "この商品を詰めるカートンです。同じ詰め方をするものすべてで、大きさを共有します。"
+        },
+        "carton_weight": {
+          "label": "カートンの重さ",
+          "help": "詰め終わったカートン 1 つの重さです。"
+        },
+        "cartons_per_pallet": {
+          "label": "1 パレットあたりのカートン数"
+        },
+        "carton_weight_invalid": "0 より大きいカートンの重さを入れるか、空欄にしてください。"
+      },
+      "minimum_order_quantity": {
+        "label": "最小注文数",
+        "help": "購入者が注文できる最小の数です。空欄なら最小はありません。"
+      },
+      "order_multiple": {
+        "label": "注文単位",
+        "help": "最小から増やすときの刻みです。空欄ならどの数量でも注文できます。"
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "ダウンロードできる回数"
+        },
+        "digital_asset_authorized_days": {
+          "label": "ダウンロードできる日数"
+        }
+      }
+    },
+    "image_upload": {
+      "remove_cta": "削除",
+      "replace_cta": "画像を差し替え",
+      "upload_cta": "画像をアップロード",
+      "upload_failed": "画像をアップロードできませんでした",
+      "uploading": "アップロード中…"
+    },
+    "imports": {
+      "download_original": "元のファイルをダウンロード",
+      "failed": {
+        "description": "ファイルを処理できませんでした。",
+        "title": "インポートに失敗しました"
+      },
+      "failed_rows": {
+        "error": "エラー",
+        "hide_data": "行のデータを隠す",
+        "next_page": "次のページ",
+        "prev_page": "前のページ",
+        "row_number": "行",
+        "title": "失敗した行",
+        "view_data": "行のデータを見る"
+      },
+      "load_failed": "インポートを読み込めませんでした。",
+      "mapping": {
+        "description": "ファイルの列を{{type}}の項目に対応させてください。",
+        "field": "項目",
+        "file_column": "ファイルの列",
+        "missing_required": "続けるには、必須の項目を対応させてください: {{fields}}",
+        "not_mapped": "対応なし",
+        "required": "必須",
+        "sample": "例",
+        "start": "インポートを開始",
+        "starting": "開始中…",
+        "title": "列の対応付け"
+      },
+      "processing": {
+        "failed_count": "{{failed}} 件失敗",
+        "note": "このページを離れても、インポートはバックグラウンドで続きます。",
+        "preparing": "行を準備中…",
+        "progress": "{{total}} 行中 {{processed}} 行を処理しました",
+        "retrying": "失敗した行を再試行中 · 残り {{remaining}} 行",
+        "title": "行を処理中"
+      },
+      "results": {
+        "completed_title": "インポートが完了しました",
+        "retry_failed": "失敗した行を再試行（{{failed}}）",
+        "retrying": "再試行中…",
+        "summary": "{{completed}} 行をインポート · {{failed}} 行失敗",
+        "view_records": "{{type}}を見る"
+      },
+      "status": {
+        "completed": "完了",
+        "completed_mapping": "待機中",
+        "failed": "失敗",
+        "mapping": "対応付け中",
+        "pending": "保留中",
+        "processing": "処理中"
+      },
+      "step_descriptions": {
+        "complete": "インポートが終わりました。作成・更新されたものを確かめてください。",
+        "map_fields": "ファイルの各列を Spree の項目に対応させます。",
+        "process_rows": "行をインポートしています。数分かかることがあります。"
+      },
+      "steps": {
+        "complete": "完了",
+        "map_fields": "項目の対応付け",
+        "process_rows": "行の処理"
+      },
+      "try_again": "もう一度試す",
+      "types": {
+        "customers": "顧客",
+        "price_list_prices": "価格リストの価格",
+        "product_translations": "商品の翻訳",
+        "products": "商品",
+        "purchase_orders": "発注"
+      },
+      "wizard_title": "インポート"
+    },
+    "media_picker": {
+      "confirm": "選んだものを追加",
+      "description": "ライブラリにあるファイルを選ぶか、新しくアップロードしてください。",
+      "empty": "ライブラリは空です。ファイルをアップロードして始めましょう。",
+      "no_results": "検索に一致するファイルはありません。",
+      "search_placeholder": "名前で検索…",
+      "selected_count_one": "{{count}} 件を選択中",
+      "selected_count_other": "{{count}} 件を選択中",
+      "title": "メディアライブラリ",
+      "upload": "アップロード"
+    },
+    "messages": {
+      "address_removed": "住所を削除しました",
+      "address_saved": "住所を保存しました",
+      "copied_to_clipboard": "クリップボードにコピーしました",
+      "created": "作成しました",
+      "customer_deleted": "顧客を削除しました",
+      "customer_saved": "顧客を保存しました",
+      "digital_asset_removed": "ファイルを削除しました",
+      "digital_asset_saved": "ファイルを保存しました",
+      "digital_link_reset": "ダウンロードできるように戻しました",
+      "digital_links_email_sent": "ダウンロード用のメールを送りました",
+      "gift_card_created": "ギフトカードを作成しました",
+      "invitation_accepted": "Spree へようこそ",
+      "invitation_resent": "招待をもう一度送りました",
+      "invitation_sent": "招待を送りました",
+      "key_created": "キーを作成しました",
+      "key_deleted": "キーを削除しました",
+      "key_revoked": "キーを取り消しました",
+      "key_updated": "キーを更新しました",
+      "order_saved": "注文を保存しました",
+      "payment_method_saved": "支払い方法を保存しました",
+      "product_created": "商品を作成しました",
+      "product_deleted": "商品を削除しました",
+      "product_saved": "商品を保存しました",
+      "profile_updated": "プロフィールを更新しました",
+      "promotion_created": "プロモーションを作成しました",
+      "promotion_deleted": "プロモーションを削除しました",
+      "promotion_saved": "プロモーションを保存しました",
+      "removed": "削除しました",
+      "saved": "保存しました",
+      "settings_updated": "設定を更新しました",
+      "stock_location_saved": "在庫ロケーションを保存しました",
+      "store_credit_removed": "ストアクレジットを削除しました",
+      "store_credit_saved": "ストアクレジットを保存しました",
+      "store_settings_updated": "ストアの設定を更新しました",
+      "tax_category_saved": "税区分を保存しました",
+      "updated": "更新しました"
+    },
+    "package_types": {
+      "table_title": "こん包タイプ",
+      "search_placeholder": "こん包材を検索",
+      "empty": "こん包材はまだありません。発送に使う箱や、卸売の注文で使うカートンやパレットを追加してください。",
+      "add_cta": "こん包タイプを追加",
+      "default_badge": "既定",
+      "edit_sheet_title": "こん包タイプ",
+      "create_description": "商品を詰める箱・カートン・パレット・コンテナです。",
+      "edit_description": "このカートンに詰める商品はこの寸法を使うので、1 か所直せばすべてに反映されます。",
+      "dimensions_column": "寸法",
+      "volume_column": "容積",
+      "kinds": {
+        "box": "箱",
+        "envelope": "封筒",
+        "carton": "カートン",
+        "pallet": "パレット",
+        "container": "コンテナ"
+      },
+      "messages": {
+        "added": "こん包タイプを追加しました",
+        "updated": "こん包タイプを更新しました",
+        "deleted": "こん包タイプを削除しました"
+      },
+      "delete_confirm": {
+        "title": "こん包タイプを削除しますか？",
+        "message": "{{name}}を削除します。先に、これに詰めている商品を詰め直してください。"
+      },
+      "validation": {
+        "non_negative": "0 以上にしてください"
+      },
+      "description": "商品の発送に使う箱・カートン・パレットと、運送会社が見積もりに使う大きさや重さです。"
+    },
+    "pages": {
+      "settings": {
+        "stock_locations": {
+          "add_sheet_title": "在庫ロケーションを追加",
+          "edit_sheet_title": "在庫ロケーションを編集",
+          "search_placeholder": "在庫ロケーションを検索…"
+        },
+        "package_types": {
+          "add_sheet_title": "こん包タイプを追加"
+        }
+      },
+      "products": {
+        "add_cta": "商品を追加",
+        "bulk": {
+          "add_categories_action": "カテゴリに追加…",
+          "add_channels_action": "販売チャネルに追加…",
+          "add_collections_action": "コレクションに追加",
+          "add_tags_action": "タグを追加…",
+          "categories_add_description": "これらの商品を追加するカテゴリを選んでください。",
+          "categories_add_failed": "商品をカテゴリに追加できませんでした",
+          "categories_add_title": "カテゴリに追加",
+          "categories_added": "{n} 件の商品をカテゴリに追加しました",
+          "categories_remove_description": "これらの商品を外すカテゴリを選んでください。",
+          "categories_remove_failed": "商品をカテゴリから外せませんでした",
+          "categories_remove_title": "カテゴリから外す",
+          "categories_removed": "{n} 件の商品をカテゴリから外しました",
+          "channels_add_description": "これらの商品を掲載する販売チャネルを選んでください。",
+          "channels_add_failed": "商品を販売チャネルに掲載できませんでした",
+          "channels_add_title": "販売チャネルに追加",
+          "channels_added": "{n} 件の商品を販売チャネルに掲載しました",
+          "channels_remove_description": "これらの商品の掲載をやめる販売チャネルを選んでください。",
+          "channels_remove_failed": "商品の販売チャネルへの掲載をやめられませんでした",
+          "channels_remove_title": "販売チャネルから外す",
+          "channels_removed": "{n} 件の商品の販売チャネルへの掲載をやめました",
+          "collections_add_description": "選んだ商品を、選んだすべてのコレクションに追加します。",
+          "collections_add_failed": "商品をコレクションに追加できませんでした",
+          "collections_add_title": "コレクションに追加",
+          "collections_added": "商品をコレクションに追加しました",
+          "collections_remove_description": "選んだ商品を、選んだすべてのコレクションから外します。",
+          "collections_remove_failed": "商品をコレクションから外せませんでした",
+          "collections_remove_title": "コレクションから外す",
+          "collections_removed": "商品をコレクションから外しました",
+          "delete_confirm": {
+            "message": "選んだ商品を削除します。この操作は元に戻せません。",
+            "title": "{n} 件の商品を削除しますか？"
+          },
+          "delete_failed": "商品を削除できませんでした",
+          "deleted": "{n} 件の商品を削除しました",
+          "remove_categories_action": "カテゴリから外す…",
+          "remove_channels_action": "販売チャネルから外す…",
+          "remove_collections_action": "コレクションから外す",
+          "remove_tags_action": "タグを外す…",
+          "set_status_action": "状態を設定…",
+          "status_sheet_description": "選んだ商品に設定する状態を選んでください。",
+          "status_sheet_title": "商品の状態を設定",
+          "status_update_failed": "商品の状態を更新できませんでした",
+          "status_updated": "{n} 件の商品の状態を更新しました",
+          "tags_add_description": "これらの商品に追加するタグを選ぶか、作ってください。",
+          "tags_add_failed": "タグを追加できませんでした",
+          "tags_add_title": "タグを追加",
+          "tags_added": "{n} 件の商品にタグを追加しました",
+          "tags_remove_description": "これらの商品から外すタグを選んでください。",
+          "tags_remove_failed": "タグを外せませんでした",
+          "tags_remove_title": "タグを外す",
+          "tags_removed": "{n} 件の商品からタグを外しました"
+        },
+        "clone_failed": "商品を複製できませんでした",
+        "clone_succeeded": "商品を複製しました",
+        "delete_failed": "商品を削除できませんでした",
+        "delete_succeeded": "商品を削除しました",
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "価格を編集するには、バリアントを 1 つ以上追加してください。"
+          }
+        },
+        "inventory": {
+          "in_stock": "在庫 {{count}}",
+          "in_stock_short": "在庫あり",
+          "on_backorder": "入荷待ち",
+          "out_of_stock": "在庫切れ"
+        },
+        "media_empty": "メディアはまだありません。",
+        "media_upload": "メディアをアップロード",
+        "new": {
+          "create_failed": "商品を作成できませんでした",
+          "create_succeeded": "商品を作成しました",
+          "description": "商品を設定します。バリアント・価格・在庫・メディア・カスタムフィールドを追加してください",
+          "preview_slug_placeholder": "your-product-slug",
+          "save_label": "商品を作成",
+          "title": "新しい商品"
+        },
+        "options": {
+          "add_value": "オプションの値を追加",
+          "sheet_title_create": "オプションタイプを作成",
+          "sheet_title_edit": "オプションタイプを編集",
+          "table": {
+            "values": "値"
+          },
+          "values_empty": "値はまだありません。",
+          "values_section": "値"
+        },
+        "price_lists": {
+          "activate": "有効にする",
+          "activate_confirm": {
+            "message": "「{{name}}」は、条件に合う顧客にすぐ適用され、手動で無効にするまで有効です。",
+            "message_with_end": "「{{name}}」は、条件に合う顧客にすぐ適用され、手動で無効にするか終了日（{{ends_at}}）まで有効です。",
+            "title": "価格リストを有効にしますか？"
+          },
+          "add_cta": "新しい価格リスト",
+          "add_products_cta": "商品を追加",
+          "add_rule": "ルールを追加",
+          "add_rule_help": "設定するルールの種類を選んでください。",
+          "basics_section": "基本情報",
+          "deactivate": "無効にする",
+          "deactivate_confirm": {
+            "message": "「{{name}}」は、すぐに顧客に適用されなくなります。既存の注文には影響しません。",
+            "title": "価格リストを無効にしますか？"
+          },
+          "delete_confirm": {
+            "message": "「{{name}}」を削除すると、その価格も削除されます。元に戻すことはできません。",
+            "title": "価格リストを削除しますか？"
+          },
+          "edit_prices": {
+            "add_products_link": "商品を追加",
+            "columns": {
+              "compare_at_price": "比較価格",
+              "price": "価格",
+              "product": "商品",
+              "sku": "SKU",
+              "variant": "バリアント"
+            },
+            "compare_at_aria": "{{label}}の比較価格",
+            "count_summary_one": "{{currency}}の価格 {{count}} 件",
+            "count_summary_other": "{{currency}}の価格 {{count}} 件",
+            "currency_label": "通貨",
+            "dirty_summary_one": "保存していない変更 {{count}} 件",
+            "dirty_summary_other": "保存していない変更 {{count}} 件",
+            "discard_confirm": {
+              "message_close_one": "保存していない価格が {{count}} 件あります。閉じると破棄されます。",
+              "message_close_other": "保存していない価格が {{count}} 件あります。閉じると破棄されます。",
+              "message_currency": "通貨を切り替えると、保存していない価格は破棄されます。",
+              "title": "保存していない価格を破棄しますか？"
+            },
+            "empty": "このリストにはまだ商品がありません。",
+            "empty_no_base_prices": "基本価格はまだありません。",
+            "empty_pick_products": "価格を設定するには、価格リストの商品を選んでください。",
+            "grid_aria": "バリアントの価格",
+            "no_matches_for_filters": "今の絞り込みに一致する価格はありません。",
+            "no_matches_for_search": "「{{search}}」に一致する価格はありません。",
+            "price_aria": "{{label}}の価格",
+            "save_cta": "価格を保存",
+            "save_failed": "価格を保存できませんでした",
+            "save_success_one": "{{count}} 件の価格を保存しました",
+            "save_success_other": "{{count}} 件の価格を保存しました",
+            "search_placeholder": "商品名・SKU・オプションで検索…",
+            "title": "価格の編集 — {{name}}",
+            "variant_default": "既定"
+          },
+          "edit_prices_cta": "価格を編集",
+          "no_changes": "保存する変更はありません。",
+          "prices_help_one": "{{count}} 件の価格を設定済みです。更新するには一括エディターを開いてください。",
+          "prices_help_other": "{{count}} 件の価格を設定済みです。更新するには一括エディターを開いてください。",
+          "prices_help_zero": "上で商品を選ぶと仮の価格が作られます。そのあと一括エディターを開いてください。",
+          "products_empty": "商品はまだありません。価格を編集するには商品を追加してください。",
+          "products_empty_search": "一致する商品はありません",
+          "products_help": "このリストを適用する商品を選んでください。保存すると仮の価格が作られるので、下で入力してください。",
+          "products_search_placeholder": "商品名で検索…",
+          "products_section": "商品",
+          "products_selected_one": "{{count}} 件の商品を選択中。",
+          "products_selected_other": "{{count}} 件の商品を選択中。",
+          "remove_rule_confirm": {
+            "message": "価格リストを保存すると、ルールは削除されます。",
+            "title": "ルールを削除しますか？"
+          },
+          "remove_selected": "選んだものを削除",
+          "rule_click_to_configure": "クリックして設定",
+          "rule_default_description": "ルールのパラメーターを調整します。",
+          "rule_name_overflow": "{{names}} ほか {{count}} 件",
+          "rule_no_options": "このルールには設定できる項目がありません。ルールがあるだけで条件が適用されます。",
+          "rule_types_all_used": "使えるルールの種類は、すべてこのリストに入っています。",
+          "rule_types_empty": "ルールの種類が登録されていません。",
+          "rules_empty": "ルールはありません。このリストはすべての買い物客に適用されます。",
+          "rules_help": "このリストを適用する条件です。「すべて」ならすべてのルールを満たす必要があり、「いずれか」なら最初に一致したもので決まります。",
+          "rules_section": "ルール",
+          "schedule": "予約",
+          "schedule_confirm": {
+            "message": "「{{name}}」は {{starts_at}} に公開され、終了日まで有効です。",
+            "title": "価格リストを予約しますか？"
+          },
+          "schedule_section": "予約",
+          "sheet_title_create": "価格リストを作成",
+          "sheet_title_edit": "価格リストを編集",
+          "subtitle": "顧客グループ・地域・数量ごとの価格を設定します。",
+          "title": "価格リスト",
+          "unschedule": "予約を取り消す",
+          "unschedule_confirm": {
+            "message": "「{{name}}」は予約した日に有効にならなくなります。後で予約し直すか、手動で有効にできます。",
+            "title": "価格リストの予約を取り消しますか？"
+          }
+        },
+        "publishing": {
+          "caption_hidden_after": "{{date}} に非公開",
+          "caption_live": "今お客様に公開中",
+          "caption_not_available": "非公開 — 商品の状態が{{product_status}}です",
+          "caption_scheduled": "{{date}} に公開",
+          "caption_unpublished": "{{date}} に非公開にしました",
+          "caption_window": "公開 {{start}} → {{end}}",
+          "empty": "まだどの販売チャネルにも掲載していません。",
+          "inactive_marker": "無効",
+          "manage_cta": "管理",
+          "manage_description": "この商品を掲載する販売チャネルを選んでください。チャネルをオフにすると、どこにも掲載されなくなります。",
+          "manage_title": "販売チャネルの管理",
+          "no_channels": "使える販売チャネルがありません。「設定 → 販売チャネル」で作成してください。",
+          "status_hidden": "非公開",
+          "status_live": "公開中",
+          "status_not_available": "利用できません",
+          "status_scheduled": "予約済み",
+          "title": "公開"
+        },
+        "section_basics": "基本情報",
+        "section_categorization": "分類",
+        "section_inventory": "在庫",
+        "section_media": "メディア",
+        "section_organization": "整理",
+        "section_pricing": "価格",
+        "section_seo": "SEO",
+        "section_variants": "バリアント",
+        "status_options": {
+          "active": "有効",
+          "archived": "アーカイブ済み",
+          "draft": "下書き",
+          "proposed": "審査中",
+          "rejected": "修正が必要"
+        },
+        "status_under_review": "この商品は審査中です。「承認」か「却下」で決めてください。",
+        "transfers": {
+          "description_external": "<strong>{{destination}}</strong> への外部からの入荷。",
+          "description_internal": "<strong>{{source}}</strong> から <strong>{{destination}}</strong> へ在庫を移動しました。",
+          "edit_sheet_title": "移動 {{number}}",
+          "items_empty": "品目はまだありません。",
+          "section_from": "移動元",
+          "section_items": "品目",
+          "section_to": "移動先",
+          "sheet_title": "新しい在庫移動"
+        },
+        "variants_empty": "バリアントはまだありません。",
+        "variants_one": "バリアント {{count}} 件",
+        "variants_other": "バリアント {{count}} 件"
+      }
+    },
+    "resource_picker": {
+      "add_count_one": "{{count}} 件を追加",
+      "add_count_other": "{{count}} 件を追加",
+      "already_added": "追加済み",
+      "empty": "結果が見つかりません。",
+      "load_more": "さらに読み込む",
+      "search_placeholder": "検索…",
+      "select_all_matching_one": "一致する {{count}} 件をすべて選択",
+      "select_all_matching_other": "一致する {{count}} 件をすべて選択",
+      "select_page_one": "このページの {{count}} 件を選択",
+      "select_page_other": "このページの {{count}} 件をすべて選択",
+      "selected_count_one": "{{count}} 件を選択中",
+      "selected_count_other": "{{count}} 件を選択中",
+      "title": "商品を追加"
+    },
+    "row_actions": {
+      "clone": "複製",
+      "delete": "削除",
+      "edit": "編集",
+      "menu_label": "操作を開く"
+    },
+    "settings_nav": {
+      "groups": {
+        "fulfillment": "出荷",
+        "team": "チームとアクセス"
+      },
+      "items": {
+        "stock_locations": "在庫ロケーション"
+      }
+    },
+    "settings_page": {
+      "back_to_dashboard": "ダッシュボードに戻る",
+      "description": "ストア・販売の設定・チームを管理します。",
+      "no_results": "「{{query}}」に一致する設定はありません。",
+      "search_placeholder": "設定を検索",
+      "title": "設定"
+    },
+    "stock_locations": {
+      "add_cta": "在庫ロケーションを追加",
+      "badges": {
+        "default": "既定",
+        "enabled": "有効",
+        "inactive": "無効"
+      },
+      "columns": {
+        "default": "既定",
+        "location": "ロケーション",
+        "pickup": "受け取り",
+        "returns": "返品",
+        "seller": "販売者",
+        "type": "種類"
+      },
+      "create_description": "注文を出荷する倉庫・店舗・受け取り場所を追加します。",
+      "create_label": "在庫ロケーションを作成",
+      "delete_confirm": {
+        "message": "{{name}}を削除します。このロケーションの在庫も削除されます。",
+        "title": "在庫ロケーションを削除しますか？"
+      },
+      "edit_description": "名前・住所・受け取り・在庫の方針を更新します。",
+      "empty": "在庫ロケーションはまだありません",
+      "kinds": {
+        "fulfillment_center": "フルフィルメントセンター",
+        "store": "店舗",
+        "warehouse": "倉庫"
+      },
+      "pickup_stock_policies": {
+        "any": "ほかのロケーションからの移動を許可",
+        "local": "このロケーションにある商品だけ"
+      },
+      "search_placeholder": "名前で検索…",
+      "section_behavior": "動作",
+      "section_details": "詳細",
+      "section_pickup": "受け取り",
+      "section_returns": "返品",
+      "stock_levels": {
+        "empty": "このロケーションにはまだ在庫がありません。",
+        "empty_search": "検索に一致する在庫はありません。",
+        "help": "バリアントごとに、手持ちの数と入荷待ちにできる数を調整します。",
+        "low_stock_marker": "在庫わずか",
+        "search_placeholder": "SKU か商品名で検索…",
+        "table": {
+          "backorder": "入荷待ち",
+          "on_hand": "手持ち",
+          "variant": "バリアント"
+        },
+        "title": "このロケーションの在庫",
+        "unknown_product": "不明な商品",
+        "variant_count_one": "バリアント {{count}} 件",
+        "variant_count_other": "バリアント {{count}} 件"
+      },
+      "description": "在庫を置き、注文を出荷する倉庫や店舗です。"
+    },
+    "validation": {
+      "codes": {
+        "accepted": "を受け入れてください",
+        "blank": "を入力してください",
+        "confirmation": "が一致しません",
+        "empty": "を入力してください",
+        "equal_to": "は {{count}} にしてください",
+        "exclusion": "は予約されています",
+        "forbidden_reporting_member": "このレポートは、読む権限のないデータを参照しています。",
+        "greater_than": "は {{count}} より大きい値にしてください",
+        "greater_than_or_equal_to": "は {{count}} 以上にしてください",
+        "inclusion": "は一覧にありません",
+        "invalid": "は不正な値です",
+        "invalid_commission_rule_type": "{{type}}は、このストアで使える手数料のルールではありません",
+        "less_than": "は {{count}} より小さい値にしてください",
+        "less_than_or_equal_to": "は {{count}} 以下にしてください",
+        "not_a_number": "は数値で入力してください",
+        "not_an_integer": "は整数で入力してください",
+        "other_than": "は {{count}} 以外の値にしてください",
+        "present": "は空にしてください",
+        "product_not_in_store": "はすべてこのストアのものにしてください",
+        "required": "を入力してください",
+        "seeded_report_read_only": "これは組み込みのレポートなので変更できません。代わりにコピーを保存してください。",
+        "taken": "はすでに使われています",
+        "too_long": "は {{count}} 文字以内にしてください",
+        "too_many_decimals": "の小数点以下は {{count}} 桁までにしてください",
+        "too_short": "は {{count}} 文字以上にしてください",
+        "wrong_length": "は {{count}} 文字にしてください"
+      },
+      "country_required": "国は必須です",
+      "currency_required": "通貨は必須です",
+      "locale_required": "言語は必須です",
+      "first_name_required": "名は必須です",
+      "invalid_email": "正しいメールアドレスを入れてください",
+      "invalid_email_or_password": "メールアドレスかパスワードが違います",
+      "invalid_hex_color": "16 進数の色が正しくありません",
+      "invalid_password": "パスワードが違います",
+      "last_name_required": "姓は必須です",
+      "min_length": "{{field}}は {{count}} 文字以上にしてください",
+      "password_required": "パスワードは必須です",
+      "passwords_dont_match": "パスワードが一致しません",
+      "positive_number": "{{field}}は 0 より大きくしてください",
+      "required": "{{field}}は必須です",
+      "store_name_required": "ストア名は必須です",
+      "too_many_decimals": "{{field}}の小数点以下は {{count}} 桁までです"
+    },
+    "products": {
+      "autocomplete": {
+        "empty": "一致する商品はありません",
+        "placeholder": "商品名で検索…"
+      },
+      "category_search_placeholder": "カテゴリを検索…",
+      "collection_search_placeholder": "コレクションを検索…",
+      "columns": {
+        "in_stock": "在庫",
+        "price": "価格",
+        "sku": "SKU"
+      },
+      "delete_confirm": "この商品を削除してもよろしいですか？",
+      "delete_label": "商品を削除",
+      "inventory": {
+        "backorder_aria": "{{location}}で入荷待ちを受け付ける",
+        "columns": {
+          "backorder": "入荷待ち",
+          "location": "ロケーション",
+          "on_hand": "手持ち"
+        },
+        "empty_no_locations": "在庫を管理するには、設定で在庫ロケーションを追加してください。",
+        "empty_no_variants": "在庫は在庫ロケーションごとに管理します。在庫を管理するには、バリアントを追加してください。",
+        "on_hand_aria": "{{location}}の手持ち",
+        "unknown_location": "不明なロケーション"
+      },
+      "media": {
+        "add_from_library": "ライブラリから追加",
+        "add_video": "動画のリンクを追加",
+        "add_video_submit": "動画を追加",
+        "add_video_title": "動画のリンクを追加",
+        "assigned_variants_help": "この画像が表すバリアントを選んでください。空欄ならすべてのバリアントに適用します。",
+        "assigned_variants_label": "対象のバリアント",
+        "delete_confirm": "このメディアを削除しますか？元に戻すことはできません。",
+        "drop_hint": "メディアをここにドラッグ＆ドロップするか、クリックして選んでください",
+        "edit_title": "メディアを編集",
+        "file_types_hint": "画像（PNG・JPG・WebP）と動画（MP4・WebM・MOV）",
+        "focal_point_help": "画像をクリックして、切り抜いたときに残す部分を決めてください。",
+        "focal_point_reset": "リセット",
+        "unsupported_file_one": "{{count}} 個のファイルを追加できませんでした。使えるのは画像と動画だけです。",
+        "unsupported_file_other": "{{count}} 個のファイルを追加できませんでした。使えるのは画像と動画だけです。",
+        "upload_failed": "{{name}}をアップロードできませんでした: {{message}}",
+        "upload_status_failed": "失敗",
+        "video_preview_title": "動画のプレビュー",
+        "video_url_invalid": "YouTube か Vimeo のリンクを入れてください。"
+      },
+      "no_categories_found": "カテゴリが見つかりません",
+      "no_collections_found": "コレクションが見つかりません",
+      "options": {
+        "add_cta": "オプションタイプを追加",
+        "count_one": "値 {{count}} 件",
+        "count_other": "値 {{count}} 件",
+        "create_description": "バリアントで使うオプションを決めます（例: サイズ、色）。",
+        "create_label": "オプションタイプを作成",
+        "delete_confirm": {
+          "message": "値もすべて削除されます。これらの値を使っているバリアントからは値がなくなります。",
+          "title": "オプションタイプを削除しますか？"
+        },
+        "edit_description": "オプションタイプとその値を編集します。",
+        "image_upload_failed": "画像をアップロードできませんでした",
+        "kinds": {
+          "buttons": "ボタン",
+          "color_swatch": "カラースウォッチ",
+          "dropdown": "ドロップダウン"
+        },
+        "value_label_placeholder": "例: S",
+        "value_name_placeholder": "例: small",
+        "values_help": "値はドラッグで並べ替えられます。最初の値が、新しいバリアントの既定になります。"
+      },
+      "price_lists": {
+        "errors": {
+          "failed_to_activate": "価格リストを有効にできませんでした",
+          "failed_to_deactivate": "価格リストを無効にできませんでした"
+        },
+        "messages": {
+          "activated": "価格リストを有効にしました",
+          "created": "価格リストを作成しました",
+          "deactivated": "価格リストを無効にしました",
+          "deleted": "価格リストを削除しました",
+          "updated": "価格リストを更新しました"
+        },
+        "validation": {
+          "ends_after_starts": "開始日より後にしてください。"
+        }
+      },
+      "product_type_adds_options_one": "このタイプは、新しい商品に{{options}}を追加します。",
+      "product_type_adds_options_other": "このタイプは、新しい商品に{{options}}を追加します。",
+      "product_type_placeholder": "商品タイプなし",
+      "save_label": "商品を保存",
+      "seo": {
+        "meta_description_placeholder": "SEO 用の説明",
+        "meta_title_placeholder": "SEO 用のタイトル",
+        "slug_placeholder": "product-url-handle"
+      },
+      "tax_category_placeholder": "税区分を選択",
+      "tax": {
+        "apply_to_variants_help": "この区分は、独自の税区分を持たないすべてのバリアントに適用されます。保存すると、それらのバリアントはこの設定を使います。",
+        "variant_overrides_heading": "独自の税区分を持つバリアント",
+        "variant_overrides_description": "これらのバリアントは、上書きを解除するまで自分の区分を使います。ほかのバリアントは、上の商品の区分に従います。",
+        "clear_variant_override": "商品の区分を使う"
+      },
+      "transfers": {
+        "create_description": "ロケーション間で在庫を移動するか、外部の仕入れ先から新しい在庫を受け入れます。",
+        "delete_confirm": {
+          "message": "この移動で作られた在庫の動きは元に戻されます。",
+          "title": "この移動を削除しますか？"
+        },
+        "destination_placeholder": "移動先のロケーションを選択",
+        "details_card": "詳細",
+        "different_locations_error": "移動元と移動先は別にしてください。",
+        "external_label": "外部（仕入れ先からの入荷）",
+        "fields": {
+          "created": "作成日時",
+          "external_receive": "外部からの入荷",
+          "immutable_note": "在庫移動は、作成後に変更できません。",
+          "internal": "内部",
+          "reference": "参照番号",
+          "type": "種類"
+        },
+        "items_table": {
+          "qty": "数量",
+          "sku": "SKU",
+          "variant": "バリアント"
+        },
+        "new_cta": "新しい移動",
+        "reference_label": "参照番号",
+        "reference_placeholder": "発注番号、仕入れ先の請求書番号など…",
+        "review_description": "作成する前に移動の内容を確かめてください。品目は後から変更できません。",
+        "search_items_placeholder": "名前か SKU で検索（3 文字以上）…"
+      },
+      "variants": {
+        "add_option": "オプションを追加",
+        "bulk_edit": {
+          "grid_aria": "バリアントの一括編集スプレッドシート",
+          "title": "バリアントを一括編集",
+          "trigger": "一括編集",
+          "unset": "なし"
+        },
+        "create_option_type": "新しいオプションタイプを作成",
+        "create_option_type_title": "新しいオプションタイプ",
+        "create_value": "新しい値",
+        "create_value_title": "新しいオプション値",
+        "default_variant": "既定のバリアント",
+        "edit_row_aria": "{{name}}を編集",
+        "edit_variant": "バリアントの編集 — {{name}}",
+        "errors": {
+          "failed_to_create_option_type": "オプションタイプを作成できませんでした",
+          "failed_to_create_value": "値を作成できませんでした"
+        },
+        "keep": "すべて残す",
+        "option_type_label": "オプションタイプ",
+        "option_type_placeholder": "オプションタイプを選ぶ",
+        "orphan_warning": "保存すると、既存のバリアント {{count}} 件が削除されます:",
+        "orphan_warning_one": "既存のバリアント {{count}} 件は選んだオプションに合わなくなったため、保存すると削除されます:",
+        "orphan_warning_other": "既存のバリアント {{count}} 件は選んだオプションに合わなくなったため、保存すると削除されます:",
+        "remove_row_aria": "{{name}}を削除",
+        "sheet": {
+          "availability": "販売状況",
+          "customs": "税関",
+          "customs_help": "この商品を国外へ発送するときの税関書類に使います。",
+          "identity": "識別情報",
+          "tax_category_placeholder": "商品から引き継ぐ",
+          "ordering": "B2B の注文",
+          "ordering_help": "買い手が注文しなければならない量です。カートに入れたときと、チェックアウトのときに確かめます。顧客グループや会社のカタログで、買い手ごとに上書きできます。在庫は引き続き個数で数えます。",
+          "packing": "こん包",
+          "packing_help": "この商品をまとめて倉庫から出すときの形です。運賃の見積もりはこの数値で計算します。",
+          "no_carton_types": "この商品のこん包を記録するには、<settingsLink>設定 → こん包タイプ</settingsLink>でカートンの種類を追加してください。",
+          "carton_placeholder": "カートンなし",
+          "pending_save": "ここでの変更は商品と一緒に保存されます。"
+        },
+        "title": "バリアント",
+        "variant_label": "バリアント"
+      }
+    },
+    "product_types": {
+      "add_cta": "商品タイプを追加",
+      "add_sheet_title": "新しい商品タイプ",
+      "affects_new_only": {
+        "description": "オプションタイプやカテゴリを編集すると、これから作る商品に反映されます。すでにこのタイプを持つ商品は今のままです。下のカスタムフィールドは、このタイプのすべての商品に常に表示されます。",
+        "title": "変更は新しい商品に適用されます"
+      },
+      "apply_to_products": {
+        "confirm_label": "適用",
+        "cta_one": "既存の商品 {{count}} 件に適用",
+        "cta_other": "既存の商品 {{count}} 件に適用",
+        "message_one": "このタイプにあって商品にないオプションタイプとカテゴリを、{{count}} 件の商品に追加します。何も削除しません。",
+        "message_other": "このタイプにあって商品にないオプションタイプとカテゴリを、{{count}} 件の商品に追加します。何も削除しません。",
+        "title": "既存の商品に適用"
+      },
+      "create_description": "商品をまとめ、配送の方法を決めます。",
+      "create_label": "商品タイプを作成",
+      "custom_delivery_profile": "カスタム",
+      "default_delivery_profile": "ストアの既定のプロファイル",
+      "delete_confirm": {
+        "message": "「{{name}}」を削除してもよろしいですか？商品で使われているタイプは削除できません。",
+        "title": "商品タイプを削除"
+      },
+      "edit_description": "名前や、このタイプの商品の配送方法を変更します。",
+      "edit_sheet_title": "商品タイプを編集",
+      "empty": "商品タイプはまだありません",
+      "messages": {
+        "applied_to_products": "既存の商品に適用しています",
+        "created": "商品タイプを作成しました",
+        "deleted": "商品タイプを削除しました",
+        "updated": "商品タイプを更新しました"
+      },
+      "no_categories": "カテゴリはまだありません",
+      "no_option_types": "オプションタイプはまだありません",
+      "option_type_search_placeholder": "オプションタイプを検索",
+      "search_placeholder": "商品タイプを検索"
+    },
+    "calculators": {
+      "default_refund_amount": "既定の返金額",
+      "default_tax": "既定の税",
+      "digital_delivery": "デジタル配送",
+      "flat_percent_item_total": "一定の割合",
+      "flat_rate": "定額",
+      "flexi_rate": "変動料金",
+      "per_item": "品目ごと",
+      "percent_on_line_item": "明細ごとの割合",
+      "price_sack": "価格帯",
+      "tiered_flat_rate": "段階的な定額",
+      "tiered_percent": "段階的な割合"
+    },
+    "stock_levels": {
+      "messages": {
+        "stock_level_deleted": "在庫数を削除しました",
+        "stock_updated": "在庫を更新しました"
+      }
+    },
+    "option_types": {
+      "columns": {
+        "values": "値"
+      },
+      "kinds": {
+        "buttons": "ボタン",
+        "color_swatch": "カラースウォッチ",
+        "dropdown": "ドロップダウン"
+      },
+      "messages": {
+        "created": "オプションタイプを作成しました",
+        "deleted": "オプションタイプを削除しました",
+        "updated": "オプションタイプを更新しました"
+      },
+      "table": {
+        "empty": "オプションタイプはまだありません",
+        "search_placeholder": "名前で検索…"
+      },
+      "value_count_one": "値 {{count}} 件",
+      "value_count_other": "値 {{count}} 件"
+    },
+    "media_library": {
+      "download": "ダウンロード"
+    },
+    "catalogs": {
+      "terms": {
+        "title": "取引条件",
+        "description": "この契約の買い手が注文しなければならない量です。",
+        "no_rule_placeholder": "ルールなし",
+        "minimums_title": "最低注文額",
+        "minimums_description": "注文全体の最低金額です（通貨ごと）。",
+        "minimums_empty": "最低注文額はありません。買い手はどんな合計でもチェックアウトできます。",
+        "minimum_amount_label": "最低金額",
+        "validation": {
+          "positive_integer": "0 より大きい整数を入れるか、空欄にしてください。",
+          "currency_taken": "この通貨にはすでに最低金額があります。",
+          "positive_amount": "0 より大きい金額を入れてください。",
+          "fix_terms": "保存する前に、強調表示された数量ルールを直してください。"
+        },
+        "mixed": "混在",
+        "inherits": "既定",
+        "default_help": "リストで商品ごとに決めていない限り、このカタログのすべての商品に適用されます。",
+        "column_minimum": "最低数",
+        "column_multiple": "単位",
+        "help": {
+          "minimum": "1 つの商品について買い手が注文できる最低の数です。下回る注文は、近い有効な数量を示したうえで断ります。勝手に切り上げることはありません。",
+          "multiple": "注文の刻みです。24 単位なら 24・48・72 と注文でき、30 はできません。刻みは最低数から数えるので、最低数 50・24 単位なら 50・74・98 になります。",
+          "order_minimum": "注文全体の最低金額で、品目だけを数えます。配送料や税は含みません。買い手は買い物中に不足額を見られ、届くまではチェックアウトできません。"
+        }
+      }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "既定の返金額",
+          "description": "返品された品目に支払われた金額を返金します"
+        },
+        "default_tax": {
+          "name": "既定の税",
+          "description": "課税対象の金額に税率を適用します"
+        },
+        "digital_delivery": {
+          "name": "デジタル配送",
+          "description": "送料なし — 注文はデジタルで届けます"
+        },
+        "flat_percent_item_total": {
+          "name": "一定の割合",
+          "description": "注文の品目合計に対する割合"
+        },
+        "flat_rate": {
+          "name": "定額",
+          "description": "注文の内容にかかわらず一定の金額"
+        },
+        "flexi_rate": {
+          "name": "変動料金",
+          "description": "基本の金額に、品目ごとの金額を足します"
+        },
+        "per_item": {
+          "name": "品目ごと",
+          "description": "注文の品目 1 つごとに一定の金額"
+        },
+        "percent_on_line_item": {
+          "name": "明細ごとの割合",
+          "description": "明細ごとの割合"
+        },
+        "price_sack": {
+          "name": "価格帯",
+          "description": "しきい値未満ならある金額、以上なら別の金額"
+        },
+        "tiered_flat_rate": {
+          "name": "段階的な定額",
+          "description": "注文合計に応じて変わる一定の金額"
+        },
+        "tiered_percent": {
+          "name": "段階的な割合",
+          "description": "注文合計に応じて変わる割合"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "最近公開",
+          "description": "過去 N 日以内に公開した商品"
+        },
+        "sale": {
+          "name": "セール中",
+          "description": "今、比較価格より安くなっている商品"
+        },
+        "tag": {
+          "name": "タグ",
+          "description": "一致するタグを持つ商品"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "カテゴリ",
+          "description": "選んだカテゴリとその下にある商品にだけ、この率を適用します"
+        },
+        "item_total_rule": {
+          "name": "売上額",
+          "description": "一定の金額の範囲内の売上にだけ、この率を適用します"
+        },
+        "product_rule": {
+          "name": "商品",
+          "description": "選んだ商品にだけ、この率を適用します"
+        },
+        "seller_rule": {
+          "name": "販売者",
+          "description": "選んだ販売者のときだけ、この率を適用します"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "チャネル",
+          "description": "選んだ販売チャネルでだけ、この配送方法を提供します"
+        },
+        "company_rule": {
+          "name": "会社",
+          "description": "会社としての注文だけ、またはそうでない注文だけに、この配送方法を提供します"
+        },
+        "excluded_products_rule": {
+          "name": "除外する商品",
+          "description": "注文にこれらの商品が含まれるときは、この配送方法を隠します"
+        },
+        "item_total_rule": {
+          "name": "品目合計",
+          "description": "注文合計が範囲内のときだけ、この配送方法を提供します"
+        },
+        "volume_rule": {
+          "name": "容積",
+          "description": "発送の容積（立方メートル）が範囲内のときだけ、この配送方法を提供します"
+        },
+        "weight_rule": {
+          "name": "重量",
+          "description": "荷物の重量が範囲内のときだけ、この配送方法を提供します"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "既定のロケーション",
+          "description": "既定に指定した在庫ロケーションを優先します"
+        },
+        "minimize_splits": {
+          "name": "分割を減らす",
+          "description": "単独で最も多くの品目を出荷できるロケーションを優先し、分割出荷を避けます"
+        },
+        "preferred_location": {
+          "name": "優先ロケーション",
+          "description": "注文にロケーションが指定されていれば、そこから出荷します"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "チャネル",
+          "description": "販売チャネルに応じて価格を適用します"
+        },
+        "customer_group_rule": {
+          "name": "顧客グループ",
+          "description": "特定の顧客グループに価格を適用します"
+        },
+        "market_rule": {
+          "name": "マーケット",
+          "description": "マーケットに応じて価格を適用します"
+        },
+        "user_rule": {
+          "name": "顧客",
+          "description": "特定の顧客に価格を適用します"
+        },
+        "volume_rule": {
+          "name": "数量割引",
+          "description": "購入数量に応じて価格を適用します"
+        },
+        "zone_rule": {
+          "name": "ゾーン",
+          "description": "配送ゾーンに応じて価格を適用します"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "注文全体の調整を作成",
+          "description": "注文にプロモーションの値引き調整を作成します"
+        },
+        "create_item_adjustments": {
+          "name": "明細ごとの調整を作成",
+          "description": "明細にプロモーションの値引き調整を作成します"
+        },
+        "create_line_items": {
+          "name": "明細を作成",
+          "description": "指定した数量のバリアントを無料でカートに追加します"
+        },
+        "free_shipping": {
+          "name": "送料無料",
+          "description": "注文のすべての発送を無料にします"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "カテゴリ",
+          "description": "指定したカテゴリの商品が注文に含まれる"
+        },
+        "channel": {
+          "name": "チャネル",
+          "description": "特定の販売チャネルからの注文に限定します"
+        },
+        "country": {
+          "name": "国",
+          "description": "お届け先が特定の国の注文に限定します"
+        },
+        "currency": {
+          "name": "通貨",
+          "description": "特定の通貨の注文に限定します"
+        },
+        "customer": {
+          "name": "顧客",
+          "description": "指定した顧客だけが使えます"
+        },
+        "customer_group": {
+          "name": "顧客グループ",
+          "description": "指定した顧客グループの顧客だけが使えます"
+        },
+        "customer_logged_in": {
+          "name": "ログイン中の顧客のみ",
+          "description": "ログインしている顧客だけが使えます"
+        },
+        "first_order": {
+          "name": "初回注文",
+          "description": "顧客の初めての注文であること"
+        },
+        "item_total": {
+          "name": "品目合計",
+          "description": "注文合計が条件を満たす"
+        },
+        "market": {
+          "name": "マーケット",
+          "description": "特定のマーケットからの注文に限定します"
+        },
+        "one_use_per_user": {
+          "name": "1 人 1 回まで",
+          "description": "1 人 1 回だけ使えます"
+        },
+        "option_value": {
+          "name": "オプション値",
+          "description": "一致するオプション値の商品が注文に含まれる"
+        },
+        "product": {
+          "name": "商品",
+          "description": "指定した商品が注文に含まれる"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "規約への同意",
+          "description": "販売を始める前に、マーケットプレイスの規約に同意する必要があります"
+        },
+        "attestation": {
+          "name": "販売者の確認",
+          "description": "あなたが書いた文言を販売者が確認する必要があります"
+        },
+        "billing_address": {
+          "name": "請求先住所",
+          "description": "販売者は請求先住所を入れる必要があります"
+        },
+        "complete_profile": {
+          "name": "プロフィールの入力",
+          "description": "販売者は公開プロフィールを入力する必要があります"
+        },
+        "delivery_method": {
+          "name": "配送方法",
+          "description": "販売者は配送方法を 1 つ以上設定する必要があります"
+        },
+        "document": {
+          "name": "書類",
+          "description": "販売者は審査用の書類をアップロードする必要があります"
+        },
+        "minimum_products": {
+          "name": "最低商品数",
+          "description": "販売者は一定数以上の商品を掲載する必要があります"
+        },
+        "operator_review": {
+          "name": "手動確認",
+          "description": "チームのメンバーが手作業で販売者を承認する必要があります"
+        },
+        "payout_account": {
+          "name": "支払い先口座",
+          "description": "販売者は支払いを受け取る口座を接続する必要があります"
+        },
+        "policy": {
+          "name": "販売者ポリシー",
+          "description": "販売者はストアのポリシーを公開する必要があります"
+        },
+        "required_custom_fields": {
+          "name": "必須のカスタムフィールド",
+          "description": "販売者は、必須にしたカスタムフィールドを入力する必要があります"
+        },
+        "returns_address": {
+          "name": "返品先住所",
+          "description": "販売者は返品を受け付ける住所を入れる必要があります"
+        }
+      }
+    },
+    "digital_assets": {
+      "add": "追加",
+      "all_variants": "すべてのバリアント",
+      "columns": {
+        "file": "ファイル",
+        "variant": "バリアント",
+        "size": "サイズ",
+        "downloads": "ダウンロード数",
+        "days": "日数"
+      },
+      "delete_description": "「{{name}}」は、購入した人もダウンロードできなくなります。すぐに反映されます。",
+      "delete_title": "このファイルを削除しますか？",
+      "description": "購入後に買い手がダウンロードできるファイルです。デジタル商品に添付するほか、物理的な商品に説明書や保証書を付けることもできます。",
+      "download": "ダウンロード",
+      "drop_hint": "ファイルをここにドラッグ＆ドロップするか、クリックして選んでください",
+      "empty": "ファイルはまだありません",
+      "limit_invalid": "上限は 1 以上の整数にするか、空欄にしてください。",
+      "limits_help": "ダウンロード回数と日数の上限を空欄にすると、ストアの設定を使います。",
+      "source": {
+        "upload": "ファイルをアップロード"
+      },
+      "store_default": "{{count}}（ストアの既定）",
+      "title": "デジタルファイル",
+      "untitled": "無題のファイル",
+      "upload": "ファイルを追加",
+      "upload_failed": "{{name}}をアップロードできませんでした: {{message}}",
+      "uploading": "{{name}}をアップロード中…",
+      "uploading_short": "アップロード中…",
+      "replace": "ファイルを置き換え",
+      "replace_description": "「{{name}}」は削除され、購入した人は今までのリンクから新しいファイルをダウンロードします。すぐに反映されます。",
+      "replace_title": "このファイルを置き換えますか？"
+    }
+  }
+}
