@@ -312,6 +312,21 @@ describe('spreePeerRanges', () => {
     )
   })
 
+  it('refuses peer ranges that are not plain version ranges', async () => {
+    mockExeca.mockImplementation((async () => ({
+      stdout: JSON.stringify({
+        react: 'npm:other-react@99.0.0',
+        'react-dom': 'file:../react-dom',
+        i18next: '^99.0.0", "evil": "1.0.0',
+        'react-hook-form': '>=7.90.0 <8 || ^9',
+      }),
+    })) as never)
+
+    expect(await spreePeerRanges('/app', [{ name: '@spree/dashboard', spec: '^6.0.0' }])).toEqual({
+      'react-hook-form': '>=7.90.0 <8 || ^9',
+    })
+  })
+
   it('skips a package the registry cannot answer for', async () => {
     mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
       if (args[1].startsWith('@spree/dashboard@')) throw new Error('E404')

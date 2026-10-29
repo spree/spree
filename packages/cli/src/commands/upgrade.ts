@@ -292,6 +292,11 @@ const REGISTRY_SPEC = /^[\^~<>=\d*]|^latest$|^next$/
 // declared range, and a single version is a range nothing else satisfies.
 const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
 
+// A plain semver range (`^7.90.0`, `>=4.7.0 <6`, `^18 || ^19`). A peer range
+// read from the registry is written into the app's package.json, so aliases
+// (`npm:`), URLs, paths and anything that could break the JSON are refused.
+const SEMVER_RANGE = /^[0-9A-Za-z.+\-^~<>=|*\s]+$/
+
 export interface SpreePackage {
   name: string
   spec: string
@@ -438,7 +443,8 @@ export async function spreePeerRanges(
       continue
     }
     for (const [peer, range] of Object.entries(peers)) {
-      if (peer.startsWith('@spree/')) continue
+      if (peer.startsWith('@spree/') || typeof range !== 'string' || !SEMVER_RANGE.test(range))
+        continue
       const floor = specFloor(range)
       const current = ranges[peer] && specFloor(ranges[peer])
       if (floor && (!current || isOlderVersion(current, floor))) ranges[peer] = range
