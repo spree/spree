@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 3.6.1
+
+### Patch Changes
+
+- [#14989](https://github.com/spree/spree/pull/14989) [`70ab2cd`](https://github.com/spree/spree/commit/70ab2cd786ea4395c1669563fcb4b942267c7080) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - When Docker runs out of network addresses, `spree init`, `spree dev` and the other commands that start containers now explain why and how to remove the old networks, instead of showing only the raw Docker error.
+
 ## 3.6.0
 
 ### Minor Changes

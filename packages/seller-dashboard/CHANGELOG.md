@@ -1,5 +1,16 @@
 # @spree/seller-dashboard
 
+## 6.0.1
+
+### Patch Changes
+
+- [#15015](https://github.com/spree/spree/pull/15015) [`29d95e3`](https://github.com/spree/spree/commit/29d95e388efb42568cf16ccadbe7a106195ece7e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the invitation link redirecting anyone already signed in to the dashboard instead of letting them accept. Someone signed in as the invited account now accepts with one click, and someone signed in as another account is asked to sign out first. The seller panel's acceptance page shares these screens: an existing account confirms its password instead of being asked to set a new one, and the seller invitation lookup now says whether the invitee has an account.
+
+- [#15010](https://github.com/spree/spree/pull/15010) [`9f0550e`](https://github.com/spree/spree/commit/9f0550e81e0afe36148887814ac13bc94c09714d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Store setup moved from a Getting Started nav entry to a checklist card above the account menu in the admin dashboard. It shows overall progress and every step, marks the next one to take, and each step goes straight to where it is done: a settings page, or the address and storefront dialogs opened in place. The card can be minimized to its header, and stays that way until expanded again. Like the old entry, it disappears once setup is done or for staff who cannot change the store. The Getting Started page and the seller panel's onboarding page use the same step icons, now exported from `@spree/dashboard-ui` as `StepIcon` and `StepProgressRing`. `AppShell` gains a `sidebarWidget` prop for cards pinned above the account menu.
+- Updated dependencies [[`29d95e3`](https://github.com/spree/spree/commit/29d95e388efb42568cf16ccadbe7a106195ece7e), [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187), [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd)]:
+  - @spree/seller-sdk@6.0.1
+  - @spree/core@6.0.1
+
 ## 6.0.0
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @spree/core
 
+## 6.0.1
+
+### Patch Changes
+
+- [#15001](https://github.com/spree/spree/pull/15001) [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Typed the store's regional settings. The store's `default_country_code` is now `CountryCode`, its `admin_locale` is `LocaleCode` (send `null` to clear it), and its `timezone` — also on the seller profile — is the new `TimeZone` type, which suggests common IANA time zones while accepting any other. `TIME_ZONES` in `@spree/core` lists the suggested zones.
+
 ## 6.0.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 2.4.2
+
+### Patch Changes
+
+- [#14989](https://github.com/spree/spree/pull/14989) [`70ab2cd`](https://github.com/spree/spree/commit/70ab2cd786ea4395c1669563fcb4b942267c7080) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - When the mail catcher's usual ports are taken, the installer now says what is usually holding them and how to free them.
+
 ## 2.4.1
 
 ### Patch Changes

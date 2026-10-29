@@ -1,5 +1,15 @@
 # @spree/seller-sdk
 
+## 6.0.1
+
+### Patch Changes
+
+- [#15015](https://github.com/spree/spree/pull/15015) [`29d95e3`](https://github.com/spree/spree/commit/29d95e388efb42568cf16ccadbe7a106195ece7e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the invitation link redirecting anyone already signed in to the dashboard instead of letting them accept. Someone signed in as the invited account now accepts with one click, and someone signed in as another account is asked to sign out first. The seller panel's acceptance page shares these screens: an existing account confirms its password instead of being asked to set a new one, and the seller invitation lookup now says whether the invitee has an account.
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#15001](https://github.com/spree/spree/pull/15001) [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Typed the store's regional settings. The store's `default_country_code` is now `CountryCode`, its `admin_locale` is `LocaleCode` (send `null` to clear it), and its `timezone` — also on the seller profile — is the new `TimeZone` type, which suggests common IANA time zones while accepting any other. `TIME_ZONES` in `@spree/core` lists the suggested zones.
+
 ## 6.0.0
 
 No changes in this release.
