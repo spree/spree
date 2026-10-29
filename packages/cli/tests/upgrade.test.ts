@@ -413,18 +413,21 @@ describe('alignPeerRanges', () => {
     })
   })
 
-  it('moves a dependency listed in both groups once, from dependencies', () => {
+  it('moves both declarations of a dependency listed in both groups, and installs it once', () => {
     fs.writeFileSync(
       path.join(dir, 'package.json'),
       JSON.stringify({
         dependencies: { 'react-hook-form': '7.80.0' },
-        devDependencies: { 'react-hook-form': '7.80.0' },
+        devDependencies: { 'react-hook-form': '^7.75.0' },
       }),
     )
 
     expect(alignPeerRanges(dir, PEERS)).toEqual([
       { name: 'react-hook-form', from: '7.80.0', to: '^7.90.0', dev: false, exact: true },
     ])
+    const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8'))
+    expect(pkg.dependencies['react-hook-form']).toBe('^7.90.0')
+    expect(pkg.devDependencies['react-hook-form']).toBe('^7.90.0')
   })
 
   it('leaves local and tagged specs, and dependencies Spree does not require, alone', () => {

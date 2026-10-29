@@ -482,8 +482,6 @@ export function alignPeerRanges(
     ...Object.entries(pkg.devDependencies ?? {}).map(([name, from]) => ({ name, from, dev: true })),
   ]
     .filter(({ name, from }) => Object.hasOwn(peers, name) && REGISTRY_SPEC.test(from))
-    // Listed in both groups, it is installed once, from `dependencies`.
-    .filter(({ name, dev }) => !(dev && pkg.dependencies?.[name]))
     .filter(
       ({ name, from }) => semver.validRange(from) !== null && !semver.subset(from, peers[name]),
     )
@@ -498,7 +496,9 @@ export function alignPeerRanges(
     source = source.replace(declaration, `$1"${to}"`)
   }
   if (moved.length > 0) fs.writeFileSync(manifestPath, source)
-  return moved
+  // Listed in both groups, each declaration moves, but it is installed once,
+  // from `dependencies`.
+  return moved.filter(({ name, dev }) => !(dev && pkg.dependencies?.[name]))
 }
 
 function minVersionOf(range: string): string {
