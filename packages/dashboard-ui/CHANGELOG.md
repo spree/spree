@@ -1,5 +1,19 @@
 # @spree/dashboard-ui
 
+## 6.0.1
+
+### Patch Changes
+
+- [#15006](https://github.com/spree/spree/pull/15006) [`f227994`](https://github.com/spree/spree/commit/f227994feffde925ee3a0b21c2b2c661d91c08c4) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The admin dashboard now shows external references (the keys an ERP, PIM or CRM knows a record by) in the Metadata card, each with a copy button. They appear on product, order, category, company and seller pages, in the metadata sheet of returns and fulfillments, and in the stock location edit panel. The Admin API now returns external references for sellers too.
+
+- [#15007](https://github.com/spree/spree/pull/15007) [`27bbcfa`](https://github.com/spree/spree/commit/27bbcfa8938e18bb54f10fd9685b784ed5587159) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - List filters in the admin dashboard are quicker to narrow. Dropdown menus show checkboxes instead of trailing checkmarks, and every multi-select row offers "Only" on hover to keep just that value, or "Select all" to widen back. Quick filters show the colours of the statuses they let through and a count when narrowed. The Add filter panel lists values as checkboxes under an "Any …" row that clears the field, statuses can be picked several at once, and clicking a filter chip reopens the panel on that field. The Add filter button is now an icon with a tooltip.
+
+- [#15010](https://github.com/spree/spree/pull/15010) [`9f0550e`](https://github.com/spree/spree/commit/9f0550e81e0afe36148887814ac13bc94c09714d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Store setup moved from a Getting Started nav entry to a checklist card above the account menu in the admin dashboard. It shows overall progress and every step, marks the next one to take, and each step goes straight to where it is done: a settings page, or the address and storefront dialogs opened in place. The card can be minimized to its header, and stays that way until expanded again. Like the old entry, it disappears once setup is done or for staff who cannot change the store. The Getting Started page and the seller panel's onboarding page use the same step icons, now exported from `@spree/dashboard-ui` as `StepIcon` and `StepProgressRing`. `AppShell` gains a `sidebarWidget` prop for cards pinned above the account menu.
+
+- [#15004](https://github.com/spree/spree/pull/15004) [`6116abf`](https://github.com/spree/spree/commit/6116abf1ef311859ceada1f4d09face26cbf64d6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The admin dashboard now shows metadata on every record that has it. Detail pages end their main column with Custom fields and Metadata, both folded to a header that counts what they hold, so the page leads with the record itself. Records listed inside another page (payments, fulfillments, returns, claims, exchanges, store credits, shipping labels, discounts, fees and seller requirement submissions) get a "View metadata" item in their row menu, and settings records edited in a side panel show it in a collapsed section; both appear only when the record has metadata.
+- Updated dependencies [[`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd)]:
+  - @spree/core@6.0.1
+
 ## 6.0.0
 
 ### Minor Changes

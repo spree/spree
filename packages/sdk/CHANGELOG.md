@@ -1,5 +1,13 @@
 # @spree/sdk
 
+## 6.0.1
+
+### Patch Changes
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#14997](https://github.com/spree/spree/pull/14997) [`730c9da`](https://github.com/spree/spree/commit/730c9daa414b19fd125c03aa095ae23ea2cc91ab) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added localized storefront SEO settings. Merchants edit the store's SEO title and meta description on Store Settings and translate them for each supported language. The Store SDK reads them with `client.store.get()`, and the Admin SDK reaches the store's translations with `client.store.translations.get()`.
+
 ## 6.0.0
 
 ### Minor Changes
