@@ -104,9 +104,10 @@ module SpreeAvalara
     end
 
     # The money each line got back, tax included. A short refund — a
-    # restocking fee, a part refund — is divided in proportion to what each
-    # line is worth, to the cent, which is how core divided it before writing
-    # the credit rows.
+    # restocking fee, a part refund — is divided to the cent the way core
+    # divided it before writing the credit rows: by the refund agreed per line
+    # where the record carries one (a claim), otherwise by what each line is
+    # worth. A different split pairs one line's tax with another line's money.
     #
     # @return [Hash{Object => BigDecimal}]
     def refunded
@@ -117,17 +118,23 @@ module SpreeAvalara
         if amount.nil? || amount.to_d >= total
           worth
         else
-          divide(amount.to_d, worth)
+          divide(amount.to_d, division_weights(worth))
         end
       end
     end
 
-    def divide(money, worth)
-      weights = worth.values.map { |value| to_minor_units(value) }
-      return worth.transform_values { 0.to_d } if weights.sum.zero?
+    def division_weights(worth)
+      agreed = return_items.index_with { |item| (item.try(:refund_amount) || item.credited_worth).to_d }
 
-      shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(to_minor_units(money), weights)
-      worth.keys.zip(shares).to_h do |item, cents|
+      agreed.values.sum.positive? ? agreed : worth
+    end
+
+    def divide(money, weights)
+      cents_weights = weights.values.map { |value| to_minor_units(value) }
+      return weights.transform_values { 0.to_d } if cents_weights.sum.zero?
+
+      shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(to_minor_units(money), cents_weights)
+      weights.keys.zip(shares).to_h do |item, cents|
         [item, Spree::Money::Rounding.from_minor_units(cents, order.currency)]
       end
     end

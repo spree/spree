@@ -114,6 +114,19 @@ RSpec.describe SpreeAvalara::RefundPresenter do
       expect(lines.map { |line| line.dig(:taxOverride, :taxAmount) }).to eq([-8, -4])
     end
 
+    # Core divides a claim's refund by what was agreed per line, not by worth.
+    it 'divides a claim by the refund agreed per line' do
+      claim_lines = [[line_item, 107.25], [second_line, 0]].map do |line, agreed|
+        instance_double(Spree::ClaimLineItem, line_item: line, credited_quantity: 1, credited_worth: 107.25.to_d,
+                                              credited_tax_total: agreed.positive? ? 7.25.to_d : 0.to_d,
+                                              refund_amount: agreed.to_d)
+      end
+
+      lines = present(return_items: claim_lines, amount: 107.25).call[:lines]
+
+      expect(lines.sole).to include(amount: -100, taxOverride: hash_including(taxAmount: -7.25))
+    end
+
     it 'credits each line its whole worth when the refund covers it' do
       lines = present(return_items: both_lines, amount: 5_000).call[:lines]
 
