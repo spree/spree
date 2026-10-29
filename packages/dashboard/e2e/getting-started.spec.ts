@@ -53,4 +53,25 @@ test.describe('getting started', () => {
       timeout: 15_000,
     })
   })
+  test('sidebar checklist is gone once every step is done', async ({ page }) => {
+    // Finishing every step for real would change the shared store other specs
+    // read, so the store payload reports them done instead.
+    const storeUrl = /\/api\/v3\/admin\/store(\?|$)/
+    await page.route(storeUrl, async (route) => {
+      if (route.request().method() !== 'GET') return route.fallback()
+      const response = await route.fetch()
+      const store = await response.json()
+      store.setup_tasks = store.setup_tasks.map((task: object) => ({ ...task, done: true }))
+      await route.fulfill({ response, json: store })
+    })
+
+    const creds = await login(page)
+    const storeLoaded = page.waitForResponse(storeUrl)
+    await page.goto(`/${creds.store_id}/orders`)
+    await storeLoaded
+
+    await expect(page.getByRole('heading', { name: /^orders$/i })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: /^home$/i })).toBeVisible()
+    await expect(page.getByRole('navigation', { name: /^getting started$/i })).toHaveCount(0)
+  })
 })
