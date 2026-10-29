@@ -58,11 +58,32 @@ RSpec.describe 'Accepting a seller invitation on the Seller API', type: :request
     expect(response).to have_http_status(:unauthorized)
   end
 
+  it 'finds the account for a differently cased address on the password path too' do
+    invitation.update_column(:email, invitee.email.upcase)
+
+    expect { accept({ password: password }) }.to change(Spree::RoleUser, :count).by(1)
+
+    expect(response).to have_http_status(:ok)
+  end
+
   it 'reports whether the invitee already has an account' do
     get "/api/v3/seller/auth/invitations/#{invitation.prefixed_id}/lookup", params: { token: invitation.token }
 
     body = JSON.parse(response.body)
     expect(body['invitee_exists']).to be(true)
     expect(body['seller']).to eq('id' => seller.prefixed_id, 'name' => seller.name)
+  end
+
+  # Whether an address holds an account anywhere on the marketplace is for the
+  # link's holder, who already knows the address — not for a seller's team.
+  it 'leaves that out of the team listing' do
+    seller_role.update!(permissions: %w[read_seller_profile])
+
+    get '/api/v3/seller/invitations', headers: seller_headers
+
+    expect(response).to have_http_status(:ok)
+    listed = JSON.parse(response.body)['data'].find { |row| row['id'] == invitation.prefixed_id }
+    expect(listed).to be_present
+    expect(listed).not_to have_key('invitee_exists')
   end
 end

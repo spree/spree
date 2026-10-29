@@ -37,7 +37,7 @@ module Spree
           # Looked up by email so an admin who's already on another store sees
           # the password prompt, not a fresh account form.
           attribute :invitee_exists do |invitation|
-            Spree.admin_user_class.exists?(email: invitation.email)
+            invitation.invitee_account.present?
           end
 
           # Minimal store identity for the unauthenticated acceptance page's

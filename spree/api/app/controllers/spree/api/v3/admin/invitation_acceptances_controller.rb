@@ -74,14 +74,14 @@ module Spree
           # implicit: we look the user up by `invitation.email`, never by a
           # client-supplied email. The token is the credential.
           def resolve_or_create_invitee(invitation)
+            existing = invitation.invitee_account
+            return create_new_invitee(invitation) unless existing
+
             # Someone already signed in as the invitee has proven who they are.
             authenticate_user
-            return current_user if current_user&.email&.casecmp?(invitation.email)
+            return existing if current_user == existing
 
-            existing = Spree.admin_user_class.find_by(email: invitation.email)
-            return authenticate_existing(existing) if existing
-
-            create_new_invitee(invitation)
+            authenticate_existing(existing)
           end
 
           def authenticate_existing(user)

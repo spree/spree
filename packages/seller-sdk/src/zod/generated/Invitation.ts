@@ -9,7 +9,7 @@ export const InvitationSchema = z.object({
   accepted_at: z.string().nullable(),
   status: z.string(),
   inviter_email: z.string(),
-  invitee_exists: z.boolean(),
+  invitee_exists: z.boolean().optional(),
   seller: z.object({ id: z.string(), name: z.string() }),
 });
 

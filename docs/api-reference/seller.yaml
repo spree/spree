@@ -26657,7 +26657,6 @@ components:
       - accepted_at
       - status
       - inviter_email
-      - invitee_exists
       - seller
       x-typelizer: true
     Media:

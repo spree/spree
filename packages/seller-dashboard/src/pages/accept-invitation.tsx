@@ -27,7 +27,12 @@ export function AcceptInvitationPage({
           token={token}
           lookup={async (id, token) => {
             const invitation = await sellerClient().auth.lookupInvitation(id, token)
-            return { ...invitation, target: invitation.seller }
+            // Carried by the lookup alone; the team listings leave it out.
+            return {
+              ...invitation,
+              invitee_exists: invitation.invitee_exists ?? false,
+              target: invitation.seller,
+            }
           }}
           onAccepted={(invitation) =>
             navigate({

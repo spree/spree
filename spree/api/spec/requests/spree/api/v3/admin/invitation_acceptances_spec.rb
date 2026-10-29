@@ -43,6 +43,15 @@ RSpec.describe 'Accepting a staff invitation on the Admin API', type: :request d
     expect(Spree::Invitation.pending.exists?(invitation.id)).to be(true)
   end
 
+  it 'finds the account for a differently cased address on the password path too' do
+    invitation.update_column(:email, invitee.email.upcase)
+
+    expect { accept({ password: password }) }.to change(Spree::RoleUser, :count).by(1)
+
+    expect(response).to have_http_status(:ok)
+    expect(JSON.parse(response.body)['user']['email']).to eq(invitee.email)
+  end
+
   it 'accepts a signed-out invitee who gives the password' do
     accept({ password: password })
 

@@ -136,4 +136,18 @@ RSpec.describe Spree::Invitation, type: :model do
       expect(invitation.acceptance_url).to include("/accept-invitation/#{invitation.prefixed_id}?token=#{invitation.token}")
     end
   end
+
+  describe '#invitee_account' do
+    let!(:account) { create(:admin_user, email: 'pat@example.com') }
+
+    it 'finds the account for a differently cased address' do
+      invitation = build(:invitation, email: 'Pat@Example.com')
+
+      expect(invitation.invitee_account).to eq(account)
+    end
+
+    it 'is nil when no account holds the address' do
+      expect(build(:invitation, email: 'nobody@example.com').invitee_account).to be_nil
+    end
+  end
 end

@@ -7,7 +7,7 @@ module Spree
                    expires_at: [:string, nullable: true],
                    accepted_at: [:string, nullable: true],
                    inviter_email: :string,
-                   invitee_exists: :boolean,
+                   invitee_exists: [:boolean, optional: true],
                    seller: '{ id: string; name: string }'
 
           attributes :email,
@@ -19,10 +19,12 @@ module Spree
             invitation.inviter.email
           end
 
-          # Drives the acceptance page's sign-in vs sign-up branch, as on the
-          # admin serializer.
-          attribute :invitee_exists do |invitation|
-            Spree.admin_user_class.exists?(email: invitation.email)
+          # Drives the acceptance page's sign-in vs sign-up branch, so only the
+          # public lookup carries it: whoever holds the emailed link already
+          # knows the address. A seller's team screen does not get to learn
+          # which addresses hold accounts elsewhere on the marketplace.
+          attribute :invitee_exists, if: proc { params[:acceptance] } do |invitation|
+            invitation.invitee_account.present?
           end
 
           # The smallest shape the acceptance page's title ("Join <seller>")
