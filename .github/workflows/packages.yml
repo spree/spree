@@ -14,7 +14,10 @@ on:
       - "pnpm-lock.yaml"
       - "turbo.json"
       - "biome.json"
+      - "package.json"
+      - "pnpm-workspace.yaml"
       - "scripts/sync-starter.mjs"
+      - "scripts/check-dependency-ranges.mjs"
       - ".github/workflows/packages.yml"
   pull_request:
     paths:
@@ -28,7 +31,10 @@ on:
       - "pnpm-lock.yaml"
       - "turbo.json"
       - "biome.json"
+      - "package.json"
+      - "pnpm-workspace.yaml"
       - "scripts/sync-starter.mjs"
+      - "scripts/check-dependency-ranges.mjs"
       - ".github/workflows/packages.yml"
 
 concurrency:
@@ -66,9 +72,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Every shared dependency resolves from the catalog in
+      # pnpm-workspace.yaml, so one bump moves every package that uses it.
+      - name: Check dependency ranges use the catalog
+        run: node scripts/check-dependency-ranges.mjs
+
       # Two copies of a shared library (React Query, the router) break type
-      # checking across packages, and Dependabot can leave them behind when it
-      # bumps only some of the packages that use one. Run `pnpm dedupe` to fix.
+      # checking across packages. Run `pnpm dedupe` to fix.
       - name: Check lockfile has no duplicate packages
         run: pnpm dedupe --check
 

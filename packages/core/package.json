@@ -57,12 +57,12 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
-    "tsup": "^9.0.0",
-    "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.5",
-    "yaml": "^2.9.1"
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "yaml": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0"
