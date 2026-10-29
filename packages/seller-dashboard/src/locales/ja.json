@@ -1,0 +1,864 @@
+{
+  "accept_invitation": {
+    "failed": "招待を承諾できませんでした。期限が切れているか、パスワードが正しくない可能性があります。",
+    "first_name": "名",
+    "invalid_link": "このリンクにはトークンがありません。招待メールのリンクから開いてください。",
+    "last_name": "姓",
+    "not_found": "この招待はもう有効ではありません。招待した人に新しい招待を送ってもらってください。",
+    "password": "パスワード",
+    "password_confirmation": "パスワード（確認）",
+    "submit": "招待を承諾",
+    "submitting": "承諾中…",
+    "subtitle": "{{email}} として招待されました。パスワードを設定して完了してください。",
+    "title": "チームに参加"
+  },
+  "account": {
+    "avatar": "写真",
+    "avatar_help": "パネル内であなたの名前の横に表示されます。正方形の画像がきれいに表示されます。",
+    "email": "メールアドレス",
+    "first_name": "名",
+    "language": "言語",
+    "last_name": "姓",
+    "load_failed_title": "プロフィールを読み込めませんでした",
+    "save_failed": "プロフィールを保存できませんでした",
+    "saved": "プロフィールを更新しました",
+    "saving": "保存中…",
+    "subtitle": "個人情報とパネルの表示言語を管理します。",
+    "title": "プロフィール"
+  },
+  "admin": {
+    "actions": {
+      "actions_menu": "操作",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "edit": "編集",
+      "save": "保存",
+      "saving": "保存中…"
+    },
+    "common": {
+      "loading": "読み込み中…",
+      "no_results": "結果がありません"
+    },
+    "components": {
+      "export_button": {
+        "all": {
+          "description": "フィルターを無視して、すべてのレコードをエクスポートします。"
+        }
+      }
+    },
+    "fields": {
+      "tax_identifier": {
+        "kind": {
+          "help": "どの登録かを示します。登録されている検証ロジックと一致する必要があるので、つづりに注意してください。",
+          "label": "種類",
+          "required": "登録の種類を選ぶか入力"
+        },
+        "value": {
+          "label": "数値",
+          "placeholder": "DE123456789",
+          "required": "登録番号を入れてください"
+        }
+      }
+    },
+    "orders": {
+      "detail": {
+        "cancel": {
+          "description": "理由とメモは注文に記録され、支払いは精算されます。",
+          "keep_order": "注文を残す",
+          "no_reason": "理由なし",
+          "note_label": "メモ",
+          "note_placeholder": "このメモはスタッフだけが見られます",
+          "notify_customer": "顧客にメールを送る",
+          "reason_label": "理由",
+          "refund_payments": "顧客に返金する",
+          "refund_payments_help": "受け取り済みの代金は返金します。受け取っていないオーソリはどちらの場合も解放します。"
+        },
+        "fulfillments": {
+          "add_tracking_title": "追跡番号を追加",
+          "carrier_auto": "自動で判定",
+          "carrier_label": "運送会社",
+          "carrier_search": "運送会社を検索",
+          "delivery_method": "配送方法",
+          "edit_description": "このフルフィルメントの出荷元と配送方法を変更します。",
+          "edit_title": "フルフィルメントを編集",
+          "edit_tracking_title": "追跡番号を編集",
+          "move_and_requote": "移して再見積もり",
+          "no_rates": "このフルフィルメントで見積もられた配送方法はありません。",
+          "rates_pending_origin": "新しい出荷元を保存すると、提供される配送方法を確認できます。",
+          "ships_from": "出荷元",
+          "tracking_description": "運送会社の追跡番号か、追跡リンク全体です。",
+          "upload_label_cost": "送料",
+          "upload_label_description": "ほかで購入したラベルを記録し、荷物にファイル・追跡番号・費用を残します。",
+          "upload_label_file": "ラベルのファイル",
+          "upload_label_title": "ラベルをアップロード"
+        },
+        "section_customer_note": "特記事項",
+        "section_internal_note": "社内メモ"
+      },
+      "fulfill": {
+        "include_item": "{{name}}を出荷",
+        "quantity_for": "{{name}}の出荷数量",
+        "of_units": "/ {{count}}",
+        "empty": "このフルフィルメントには、処理できる品目がありません。",
+        "tracking_label": "追跡番号",
+        "tracking_placeholder": "追跡番号かリンク",
+        "notify_customer": "顧客に発送の通知を送る",
+        "partial_hint": "選んだ品目は、今出荷する新しいフルフィルメントに移ります。残りはこちらに未処理のまま残ります。",
+        "units_selected": "出荷する数",
+        "submit": "品目を処理"
+      }
+    },
+    "tax_identifiers": {
+      "add_cta": "登録番号を追加",
+      "add_title": "税の登録番号を追加",
+      "checked_prefix": "確認日",
+      "delete_confirm": {
+        "message": "{{value}} を削除します。すでに受けた注文は、請求したときの番号のままです。",
+        "title": "この登録番号を削除しますか？"
+      },
+      "dialog_description": "請求書に載る VAT 番号や事業者番号です。これにより EU の B2B のリバースチャージが可能になります。",
+      "edit_title": "税の登録番号を編集",
+      "empty": "登録された税の登録番号はありません",
+      "kinds": {
+        "au_abn": "オーストラリア事業者番号（ABN）",
+        "ch_vat": "スイスの VAT",
+        "eu_vat": "EU の VAT",
+        "gb_vat": "英国の VAT",
+        "us_ein": "米国の EIN"
+      },
+      "messages": {
+        "created": "登録番号を追加しました",
+        "deleted": "登録番号を削除しました",
+        "updated": "登録番号を更新しました",
+        "validation_failed": "番号を確かめられませんでした",
+        "validation_requested": "登録機関で番号を確かめています"
+      },
+      "not_validatable": "この種類を確かめる登録機関がないので、入力したとおりに記録します。",
+      "select_kind": "種類を選ぶ",
+      "title": "税の登録番号",
+      "validate_action": "登録機関で確かめる",
+      "validation_status": {
+        "not_checked": "未確認",
+        "pending": "確認中",
+        "unavailable": "登録機関を利用できません",
+        "unsupported": "確認できません",
+        "unverified": "無効",
+        "verified": "確認済み"
+      }
+    },
+    "pages": {
+      "orders": {
+        "detail": {
+          "returns": {
+            "receive_title": "返品された品目を受け取る",
+            "received_quantity": "受け取り済み",
+            "resellable": "再販できる",
+            "actions": {
+              "receive": "品目を受け取る",
+              "refund": "返金",
+              "complete": "返品を完了"
+            },
+            "refund_title": "返品を返金",
+            "complete_title": "返品を完了",
+            "nothing_owed": "この返品で返す金額はないので、お金は戻りません。完了すると返品を閉じます。",
+            "refund_amount": "金額",
+            "refund_includes_tax": "全額には {{tax}} の税が含まれます。少ない額にすると、税も同じ割合で返します。",
+            "refund_method": "返金先",
+            "refund_methods": {
+              "original_payment": "元の支払い方法",
+              "store_credit": "ストアクレジット"
+            },
+            "reason": "理由",
+            "location": "返品先",
+            "location_default": "既定の返品ロケーション",
+            "location_no_returns": "{{name}}（返品を受け付けません）",
+            "memo": "メモ",
+            "create_title": "新しい返品"
+          },
+          "claims": {
+            "resolve_title": "クレームを解決",
+            "resolution": "解決の方法",
+            "resolutions": {
+              "refund": "返金",
+              "replacement": "交換品",
+              "refund_and_replacement": "返金と交換品"
+            },
+            "refund_amount": "返金額",
+            "replacement_items": "交換品を送る対象",
+            "actions": {
+              "resolve": "解決",
+              "create": "新しいクレーム"
+            },
+            "create_title": "新しいクレーム"
+          },
+          "dialogs": {
+            "cancel_title": "注文をキャンセルしますか？"
+          },
+          "actions": {
+            "cancel": "注文をキャンセル"
+          }
+        }
+      }
+    },
+    "settings_nav": {
+      "descriptions": {
+        "delivery_methods": "商品をお客様に届ける方法",
+        "package_types": "注文の梱包に使う箱・カートン・コンテナ",
+        "policies": "利用規約・プライバシー・返品・配送の文書",
+        "stock_locations": "在庫を置く倉庫と受け取り場所",
+        "team": "このセラーにアクセスできる人"
+      }
+    },
+    "settings_page": {
+      "description": "配送、法的文書、チームを管理します。"
+    }
+  },
+  "app": {
+    "name": "セラーパネル"
+  },
+  "common": {
+    "apply": "適用",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "error": "問題が起きました。",
+    "loading": "読み込み中…",
+    "no_results": "結果がありません",
+    "remove": "外す",
+    "retry": "もう一度試す",
+    "save": "保存",
+    "saving": "保存中…",
+    "actions": "操作",
+    "edit": "編集"
+  },
+  "delivery_methods": {
+    "add": "配送方法を追加",
+    "columns": {
+      "name": "名前",
+      "owner": "所有者",
+      "visibility": "表示"
+    },
+    "conditions": {
+      "add": "条件を追加",
+      "description": "条件がない場合、この方法は発送可能なすべての注文で選択肢に表示されます。",
+      "remove": "条件を削除"
+    },
+    "delete_confirm": {
+      "title": "配送方法を削除しますか？",
+      "message": "{{name}} を削除します。この方法で発送済みの注文の記録は残ります。"
+    },
+    "description": "注文をお客様に届ける方法と、お客様が支払う送料です。",
+    "empty": {
+      "title": "配送方法はまだありません",
+      "description": "配送方法を追加するか、このマーケットプレイスがセラーと共有している方法を使ってください。"
+    },
+    "fields": {
+      "admin_name": "社内用の名前",
+      "calculator": "価格",
+      "delivery_profile": "商品の種類",
+      "delivery_zone": "配送先",
+      "name": "名前",
+      "storefront_visible": "チェックアウトに表示"
+    },
+    "messages": {
+      "deleted": "配送方法を削除しました",
+      "saved": "配送方法を保存しました"
+    },
+    "owner": {
+      "marketplace": "マーケットプレイス",
+      "mine": "自分の方法"
+    },
+    "search_placeholder": "名前で検索…",
+    "sections": {
+      "conditions": "この方法が適用される条件",
+      "goods": "配送する商品",
+      "price": "料金"
+    },
+    "sheet": {
+      "new_title": "新しい配送方法",
+      "description": "お客様がチェックアウトで選ぶので、お客様に説明するときの言葉で名前を付けてください。"
+    },
+    "title": "配送方法",
+    "visibility": {
+      "hidden": "非表示",
+      "storefront": "ストア"
+    },
+    "zone": {
+      "everywhere": "この種類の商品が届くすべての地域"
+    }
+  },
+  "earnings": {
+    "balance": {
+      "converted": "{{currency}} で得た収益を、あなたの通貨で支払います",
+      "earned": "収益",
+      "empty": "注文が発送されると、その収益がここに表示されます。",
+      "load_error": "残高を読み込めませんでした。",
+      "owed": "未払いの収益（{{currency}}）",
+      "paid": "支払い済み",
+      "payable": "支払予定額",
+      "pending": "輸送中",
+      "title": "残高"
+    },
+    "columns": {
+      "date": "日付",
+      "order": "注文",
+      "kind": "種類",
+      "status": "状態",
+      "amount": "金額"
+    },
+    "kinds": {
+      "earning": "売上",
+      "refund_reversal": "返金"
+    },
+    "search_placeholder": "参照で検索",
+    "statuses": {
+      "pending": "保留中",
+      "processing": "処理中",
+      "completed": "完了",
+      "failed": "失敗",
+      "unresolved": "確認が必要"
+    },
+    "subtitle": "売上による収益と、マーケットプレイスとの精算状況です。",
+    "title": "収益",
+    "transfers": {
+      "title": "収益",
+      "empty": "収益はまだありません。"
+    }
+  },
+  "forgot_password": {
+    "back_to_login": "サインインに戻る",
+    "email": "メールアドレス",
+    "failed": "リクエストを送信できませんでした。しばらくしてからもう一度お試しください。",
+    "sent_subtitle": "そのアドレスがセラーアカウントのものであれば、再設定用のリンクをお送りしました。リンクの有効期限は短いのでご注意ください。",
+    "sent_title": "メールをご確認ください",
+    "submit": "再設定リンクを送る",
+    "submitting": "送信中…",
+    "subtitle": "メールアドレスを入力すると、新しいパスワードを設定するためのリンクをお送りします。",
+    "title": "パスワードをお忘れですか？"
+  },
+  "home": {
+    "products": "商品",
+    "selling_no": "商品はまだ販売されていません。",
+    "selling_title": "販売",
+    "selling_yes": "商品は販売中です。",
+    "setup_cta": "設定を続ける",
+    "setup_description": "{{total}} 件中 {{done}} 件完了 — 販売を始めるには、残りを完了してください。",
+    "setup_title": "設定を完了する",
+    "status": "状態",
+    "subtitle": "このマーケットプレイスでのあなたの状況です。",
+    "team": "チームメンバー",
+    "title": "こんにちは、{{name}} さん"
+  },
+  "login": {
+    "email": "メールアドレス",
+    "failed": "そのメールアドレスとパスワードに一致するセラーアカウントがありません。",
+    "forgot_password": "パスワードをお忘れですか？",
+    "no_seller": "このアカウントは、このマーケットプレイスのセラーを運営していません。",
+    "password": "パスワード",
+    "submit": "ログイン",
+    "submitting": "ログイン中…",
+    "subtitle": "ストア、チーム、支払いを管理します。",
+    "title": "セラーパネルにログイン"
+  },
+  "nav": {
+    "home": "ホーム",
+    "legal": "法的文書",
+    "onboarding": "設定",
+    "orders": "注文",
+    "policies": "ポリシー",
+    "products": "商品",
+    "profile": "プロフィール",
+    "settings": "設定",
+    "sign_out": "ログアウト",
+    "team": "チーム",
+    "delivery_methods": "配送方法",
+    "package_types": "こん包タイプ",
+    "earnings": "収益",
+    "payouts": "支払い"
+  },
+  "onboarding": {
+    "accept_terms": "規約に同意する",
+    "awaiting_review": "マーケットプレイスの審査を待っています。",
+    "connect_payout_account": "受け取り方法を設定する",
+    "payout_account_rejected": "支払いプロバイダーにお問い合わせください",
+    "awaiting_payout_provider": "支払いプロバイダーが情報を確認し終わるのを待っています。",
+    "confirm": "確認",
+    "document_help": "PDF または書類の画像。",
+    "document_label": "書類",
+    "done": "完了しました。",
+    "go": "移動",
+    "note_placeholder": "マーケットプレイスに伝えたいこと（任意）",
+    "optional": "任意",
+    "progress_count": "{{total}} 件中 {{done}} 件が完了",
+    "progress_title": "進捗",
+    "read_terms": "規約を読む",
+    "ready": "必要な項目はすべて完了しました。",
+    "remaining_one": "提出するまでに、あと {{count}} 件の作業があります",
+    "remaining_other": "提出するまでに、あと {{count}} 件の作業があります",
+    "status": {
+      "complete": "完了",
+      "pending": "審査中",
+      "rejected": "再確認が必要"
+    },
+    "submit": "審査を申請",
+    "submit_document": "審査を申請",
+    "submitted": "審査に提出済み",
+    "submitted_requirement": "提出済み",
+    "submitting": "送信中…",
+    "subtitle": "販売を始める前に、このマーケットプレイスが求めている項目です。",
+    "terms_accepted": "規約に同意済み",
+    "title": "設定",
+    "under_review": "マーケットプレイスが申請を審査しています。進展があればメールでお知らせします。"
+  },
+  "orders": {
+    "address_edit": {
+      "billing_title": "請求先住所を編集",
+      "shipping_title": "お届け先住所を編集"
+    },
+    "billing_address": "請求先住所",
+    "columns": {
+      "fulfillment": "フルフィルメント",
+      "number": "注文",
+      "payment": "支払い",
+      "placed": "受注",
+      "quantity": "数量",
+      "total": "合計"
+    },
+    "customer": {
+      "title": "顧客"
+    },
+    "customer_note": "顧客のメモ",
+    "earnings": {
+      "title": "収益",
+      "payout": "支払い",
+      "view_payout": "支払いを見る",
+      "not_settled": "まだ支払っていません"
+    },
+    "empty": "注文はまだありません。お客様が購入すると、ここに表示されます。",
+    "fulfill": "処理済みにする",
+    "fulfillment_statuses": {
+      "backorder": "入荷待ち",
+      "canceled": "キャンセル済み",
+      "delivered": "配達済み",
+      "fulfilled": "処理済み",
+      "partial": "一部",
+      "unfulfilled": "未処理"
+    },
+    "fulfillments": {
+      "add_delivery": "追跡番号を追加",
+      "add_tracking": "追跡番号を追加",
+      "cancel": "荷物をキャンセル",
+      "cancel_message": "商品は在庫に戻り、配送業者への依頼は取り消されます。",
+      "cancel_title": "この荷物をキャンセルしますか？",
+      "carrier_status_available_for_pickup": "受け取り可能",
+      "carrier_status_delivered": "配達済み",
+      "carrier_status_failure": "配達できませんでした",
+      "carrier_status_in_transit": "輸送中",
+      "carrier_status_out_for_delivery": "配達中",
+      "carrier_status_pending": "運送会社の受け取り待ち",
+      "carrier_status_pre_transit": "ラベル作成済み",
+      "carrier_status_return_to_sender": "差出人へ返送中",
+      "carrier_status_unknown": "状態不明",
+      "confirm_delete_delivery": "この追跡番号を削除しますか？",
+      "confirm_delete_label": "このラベルを削除しますか？ファイルは削除され、再印刷できなくなります。",
+      "confirm_split": "すぐに反映されます。",
+      "delete_label": "ラベルを削除",
+      "empty": "この注文で発送するものはありません。",
+      "free": "無料",
+      "label_cost": "費用 {{amount}}",
+      "label_title": "配送ラベル",
+      "label_uploaded": "アップロード済み",
+      "packing_slip_title": "納品書 — 注文 {{number}}",
+      "print_label": "ラベルを印刷",
+      "print_packing_slip": "納品書を印刷",
+      "quoted_after_review": "確認後に見積もり",
+      "ship_to": "お届け先",
+      "ships_from_label": "出荷元",
+      "split": "分割",
+      "split_description": "この荷物の中身の一部を、別の荷物に移します。",
+      "split_item": "品目",
+      "split_quantity": "移す数量",
+      "split_title": "荷物を分ける",
+      "split_would_empty": "すべて移すと、この荷物が空になります。",
+      "splitting": "分割中…",
+      "title": "フルフィルメント",
+      "upload_label": "ラベルをアップロード"
+    },
+    "items": "品目",
+    "not_found": "注文が見つかりませんでした。",
+    "payment": {
+      "title": "支払い",
+      "share_help": "このカートでお客様が支払った金額のうち、あなたの取り分です。",
+      "authorized": "オーソリ済み",
+      "captured": "確定済み",
+      "refunded": "返金済み",
+      "refundable": "返金可能"
+    },
+    "payment_statuses": {
+      "none": "未払い",
+      "authorized": "オーソリ済み",
+      "partially_paid": "一部支払い済み",
+      "paid": "支払い済み",
+      "partially_refunded": "一部返金済み",
+      "refunded": "返金済み",
+      "overcharged": "過剰請求",
+      "voided": "無効"
+    },
+    "post_sale": {
+      "approve": "承認",
+      "cancel": "キャンセル",
+      "claims": {
+        "cancel_message": "お客様には、手続きを進めないことが通知されます。",
+        "cancel_title": "この申し立てをキャンセルしますか？",
+        "create": "新しいクレーム",
+        "deny": "却下",
+        "deny_message": "お客様には、申し立てが認められなかったことが通知されます。",
+        "deny_title": "この申し立てを却下しますか？",
+        "empty": "この注文で報告された問題はありません。",
+        "resolve": "解決",
+        "title": "クレーム"
+      },
+      "exchanges": {
+        "title": "交換",
+        "receive": "受け取る",
+        "fulfill": "交換品を発送",
+        "balance_due_confirm": "交換品の価格が返品された商品を上回っています。発送すると、差額が未払い残高として注文に加わります。自動では請求されません。",
+        "price_difference": "差額: {{amount}}",
+        "cancel_title": "この交換をキャンセルしますか？",
+        "cancel_message": "お客様には、手続きを進めないことが通知されます。"
+      },
+      "reason": "理由",
+      "returns": {
+        "cancel_message": "お客様には、手続きを進めないことが通知されます。",
+        "cancel_title": "この返品をキャンセルしますか？",
+        "create": "新しい返品",
+        "empty": "この注文から返品された商品はありません。",
+        "not_resellable": "再販できない",
+        "partially_received": "{{quantity}} 点中 {{received}} 点を受け取り済み",
+        "receive": "受け取る",
+        "refund": "返金",
+        "refund_total": "返金合計: {{amount}}",
+        "refunded": "返金済み: {{amount}}",
+        "refunded_of": "返金済み: {{total}} 中 {{amount}}",
+        "title": "返品"
+      },
+      "statuses": {
+        "requested": "申請中",
+        "approved": "承認済み",
+        "received": "受け取り済み",
+        "refunded": "返金済み",
+        "fulfilled": "処理済み",
+        "open": "受付中",
+        "resolved": "解決済み",
+        "denied": "却下",
+        "canceled": "キャンセル済み"
+      }
+    },
+    "search_placeholder": "注文番号で検索…",
+    "shipping_address": "配送先",
+    "ships_from": "{{name}} から発送",
+    "summary": {
+      "adjustments": "調整",
+      "cancel_note": "キャンセルのメモ",
+      "cancel_reason": "キャンセルの理由",
+      "canceled_at": "キャンセル日時",
+      "commission_fee": "マーケットプレイス手数料",
+      "commission_tax": "マーケットプレイス手数料の税",
+      "commission_total": "マーケットプレイス手数料の合計",
+      "completed_at": "完了日時",
+      "created_at": "作成日時",
+      "currency": "通貨",
+      "item_total": "品目",
+      "outstanding_balance": "未払いの残高",
+      "payment_total": "支払い合計",
+      "promotions": "プロモーション",
+      "shipping": "配送",
+      "subtotal": "小計",
+      "tax_additional": "税（外税）",
+      "tax_included": "税（内税）",
+      "tax_total": "税",
+      "title": "概要",
+      "total": "合計"
+    },
+    "title": "注文",
+    "tracking_label": "追跡番号"
+  },
+  "payouts": {
+    "columns": {
+      "date": "日付",
+      "status": "状態",
+      "earnings": "収益",
+      "reference": "参照番号",
+      "amount": "金額"
+    },
+    "detail": {
+      "covers_empty": "この支払いに含まれる収益はありません。",
+      "covers_error": "この支払いに含まれる収益を読み込めませんでした。",
+      "covers_one": "収益 {{count}} 件分",
+      "covers_other": "収益 {{count}} 件分",
+      "period": "期間",
+      "settlement": "支払い"
+    },
+    "empty": "支払いはまだありません。",
+    "not_found": "この支払いが見つかりませんでした。",
+    "search_placeholder": "参照で検索",
+    "subtitle": "マーケットプレイスから送金された金額と、送金予定の金額です。",
+    "title": "支払い"
+  },
+  "policies": {
+    "add": "ポリシーを追加",
+    "columns": {
+      "name": "名前",
+      "updated": "更新日時"
+    },
+    "delete_confirm": {
+      "title": "ポリシーを削除しますか？",
+      "message": "{{name}} を削除します。マーケットプレイスが必須としている場合、設定の未完了項目に再び表示されます。"
+    },
+    "description": "ストアページでお客様に表示される法的文書です。",
+    "empty": {
+      "title": "ポリシーはまだありません",
+      "description": "このマーケットプレイスが求めている文書を公開してください。"
+    },
+    "fields": {
+      "name": "名前",
+      "body": "内容"
+    },
+    "messages": {
+      "deleted": "ポリシーを削除しました",
+      "saved": "ポリシーを保存しました"
+    },
+    "required": {
+      "title": "求められている文書",
+      "description": "このマーケットプレイスでは、承認の前にこれらのポリシーが必要です。",
+      "write": "作成する"
+    },
+    "search_placeholder": "名前で検索…",
+    "sheet": {
+      "new_title": "新しいポリシー",
+      "description": "お客様はストアページでこれを読みます。"
+    },
+    "title": "ポリシー"
+  },
+  "products": {
+    "add": "商品を追加",
+    "add_images": "画像を追加",
+    "add_variant": "バリアントを追加",
+    "archive": "アーカイブ",
+    "archive_confirm_description": "販売が停止され、出品中の一覧から外れます。",
+    "archive_confirm_title": "この商品をアーカイブしますか？",
+    "bulk": {
+      "delete_confirm_description": "{n} 件をカタログから削除します。お客様には表示されなくなります。",
+      "delete_confirm_title": "選択した商品を削除しますか？",
+      "delete_failed": "商品を削除できませんでした。",
+      "deleted": "{n} 件の商品を削除しました",
+      "set_status_action": "ステータスを設定",
+      "skipped_one": "{{count}} 件は変更されませんでした。{{message}}",
+      "skipped_other": "{{count}} 件は変更されませんでした。{{message}}",
+      "skipped_refused": "マーケットプレイスが変更を許可しませんでした。理由は各商品を開いて確認してください。",
+      "skipped_submit": "提出できるのは、下書きの商品と、マーケットプレイスから修正を求められた商品だけです。",
+      "status_dialog_description": "作業中の商品を非公開にするか、完全にアーカイブします。販売を始めるかどうかはマーケットプレイスが決めるので、代わりに審査を申請してください。",
+      "status_dialog_title": "ステータスを設定",
+      "status_update_failed": "商品を更新できませんでした。",
+      "status_updated": "{n} 件の商品を更新しました",
+      "submit_confirm_description": "マーケットプレイスが {n} 件の商品を審査し、販売するかどうかを決めます。",
+      "submit_confirm_title": "選択した商品の審査を申請しますか？",
+      "submit_failed": "商品を提出できませんでした。",
+      "submitted": "{n} 件の商品の審査を申請しました"
+    },
+    "columns": {
+      "name": "商品",
+      "price": "価格",
+      "status": "状態"
+    },
+    "custom_fields": "商品の詳細",
+    "details": "詳細",
+    "empty": "商品はまだありません。追加して販売を始めましょう。",
+    "fields": {
+      "alt": "代替テキスト",
+      "categories": "カテゴリ",
+      "categories_placeholder": "カテゴリを検索…",
+      "collections": "コレクション",
+      "collections_placeholder": "コレクションを検索…",
+      "country_of_origin": "原産国",
+      "country_of_origin_placeholder": "例: JP",
+      "description": "説明",
+      "hs_code": "HS コード",
+      "hs_code_placeholder": "例: 9405.20",
+      "meta_description": "メタディスクリプション",
+      "meta_keywords": "メタキーワード",
+      "meta_title": "ページタイトル",
+      "name": "名前",
+      "option": "オプション",
+      "option_name": "オプション",
+      "option_value": "値",
+      "price": "価格",
+      "price_in": "価格（{{currency}}）",
+      "price_placeholder": "空欄の場合は現在の価格のままです",
+      "product_type": "商品タイプ",
+      "product_type_placeholder": "種類を選択",
+      "sku": "SKU",
+      "slug": "URL ハンドル",
+      "status": "状態",
+      "stock": "在庫",
+      "weight": "重量"
+    },
+    "media": "メディア",
+    "media_remove_confirm_description": "保存すると商品から外れます。",
+    "media_remove_confirm_title": "この画像を外しますか？",
+    "new_title": "新しい商品",
+    "not_found": "商品が見つかりませんでした。",
+    "organization": "分類",
+    "rejection_reason": "理由: {{reason}}",
+    "saved": "商品を保存しました",
+    "search_placeholder": "名前で検索…",
+    "seo": "検索エンジンでの表示",
+    "shipping": "配送と通関",
+    "status_help": {
+      "active": "販売中で、お客様に表示されています。",
+      "archived": "販売を停止し、出品中の一覧から外れています。",
+      "draft": "あなただけが見られます。準備ができたら、マーケットプレイスに審査を申請してください。",
+      "proposed": "マーケットプレイスの審査を待っています。変更は引き続きできます。",
+      "rejected": "マーケットプレイスから修正を求められています。編集してから、もう一度申請してください。"
+    },
+    "status_updated": "ステータスを更新しました",
+    "statuses": {
+      "active": "有効",
+      "archived": "アーカイブ済み",
+      "draft": "下書き",
+      "proposed": "審査中",
+      "rejected": "修正が必要"
+    },
+    "submit_for_review": "審査を申請",
+    "take_down": "非公開にする",
+    "take_down_confirm_description": "お客様には表示されなくなります。後でもう一度申請できます。",
+    "take_down_confirm_title": "この商品を非公開にしますか？",
+    "title": "商品",
+    "uploading": "{{count}} 件のファイルをアップロード中…",
+    "uploading_plural": "{{count}} 件のファイルをアップロード中…",
+    "variant_remove_confirm_description": "保存すると商品から外れます。",
+    "variant_remove_confirm_title": "このバリアントを削除しますか？",
+    "variants": "バリアント",
+    "variants_empty": "この商品は上記の価格で、1 つの商品として販売されます。サイズやカラーなどの選択肢で販売するには、バリアントを追加してください。",
+    "digital_files_review_notice": "ファイルを追加または差し替えると、この商品は再審査になり、マーケットプレイスが再び承認するまで販売が停止されます。"
+  },
+  "profile": {
+    "about": "紹介",
+    "add_address": "住所を追加",
+    "address_filled": "追加済み",
+    "address_missing": "未登録",
+    "address_not_provided": "住所はまだありません。",
+    "at_a_glance": "概要",
+    "billing_address": "請求先住所",
+    "billing_email": "請求用のメールアドレス",
+    "business_details": "事業者情報",
+    "contact_email": "連絡先メールアドレス",
+    "edit": "編集",
+    "edit_title": "プロフィールを編集",
+    "joined": "登録日",
+    "legal_name": "正式名称",
+    "minimum_payout": "最低支払額",
+    "name": "名前",
+    "no_about": "説明はまだ書かれていません。",
+    "not_provided": "未登録",
+    "on_holiday_notice": "休業モードがオンのため、商品は表示されますが購入できません。",
+    "operator_managed": "マーケットプレイスが設定",
+    "payout_schedule": "支払いのスケジュール",
+    "products_count": "商品",
+    "registration_number": "登録番号",
+    "returns_address": "返品先の住所",
+    "save": "変更を保存",
+    "saved": "プロフィールを保存しました",
+    "saving": "保存中…",
+    "section_contact": "連絡先",
+    "section_settlement": "支払いと税",
+    "section_standing": "状態",
+    "select_tax_identifier_kind": "登録の種類を選択または入力",
+    "status_help": {
+      "approved": "承認済みです。このマーケットプレイスで販売できます。",
+      "canceled": "このセラーアカウントは閉鎖されています。",
+      "invited": "招待されています。設定を完了して申請してください。",
+      "onboarding": "チェックリストを進めてから、審査を申請してください。",
+      "pending": "マーケットプレイスはまだ申請の処理を始めていません。",
+      "ready_for_review": "マーケットプレイスが申請を審査しています。",
+      "rejected": "申請は承認されませんでした。詳しくはマーケットプレイスにお問い合わせください。",
+      "suspended": "販売は一時停止中です。詳しくはマーケットプレイスにお問い合わせください。"
+    },
+    "subtitle": "ストアでのあなたの紹介と、マーケットプレイスからの連絡先です。",
+    "tax_identifier_kind": "登録の種類",
+    "tax_identifier_kinds": {
+      "au_abn": "オーストラリア事業者番号（ABN）",
+      "ch_vat": "スイスの VAT",
+      "eu_vat": "EU の VAT",
+      "gb_vat": "英国の VAT",
+      "us_ein": "米国の EIN"
+    },
+    "tax_remittance": "税の納付者",
+    "team_count": "チームメンバー",
+    "vat_number": "VAT 番号",
+    "vat_status": {
+      "pending": "この番号を確認しています。",
+      "unavailable": "登録機関に接続できませんでした。後でもう一度確認します。",
+      "unsupported": "この番号は入力されたとおりに記録されます。自動では確認できません。",
+      "unverified": "この番号を確認できませんでした。"
+    }
+  },
+  "reset_password": {
+    "failed": "このリンクは使えませんでした。期限が切れているか、パスワードが受け付けられなかった可能性があります。",
+    "invalid_link": "このリンクにはトークンがありません。再設定メールのリンクから開いてください。",
+    "mismatch": "2 つのパスワードが一致していません。",
+    "password": "新しいパスワード",
+    "password_confirmation": "新しいパスワード（確認）",
+    "request_new_link": "新しいリンクをリクエスト",
+    "submit": "パスワードを変更",
+    "submitting": "保存中…",
+    "subtitle": "新しいパスワードを設定して、ログインを完了してください。",
+    "title": "新しいパスワードを決める"
+  },
+  "seller_picker": {
+    "status": "状態",
+    "subtitle": "複数のセラーを運営しています。管理するセラーを選んでください。",
+    "title": "セラーを選択"
+  },
+  "seller_switcher": {
+    "label": "セラーを切り替え"
+  },
+  "team": {
+    "actions": {
+      "copy_link": "招待のリンクをコピー",
+      "remove": "削除",
+      "resend": "招待を再送",
+      "revoke": "取り消す"
+    },
+    "confirm": {
+      "remove_message": "{{name}} はすぐにこのセラーにアクセスできなくなります。",
+      "remove_title": "メンバーを削除",
+      "revoke_message": "{{email}} への招待は使えなくなります。",
+      "revoke_title": "招待を取り消す"
+    },
+    "empty": "チームにはまだ誰もいません",
+    "empty_description": "同僚を招待すると、承諾後にここに表示されます。",
+    "invitations_section": "保留中の招待",
+    "invite_cta": "メンバーを招待",
+    "invite_description": "このセラーに参加するためのリンクがメールで届きます。",
+    "invite_email": "メールアドレス",
+    "invite_email_placeholder": "colleague@example.com",
+    "invite_sending": "送信中…",
+    "invite_submit": "招待を送る",
+    "invite_title": "同僚を招待",
+    "members_section": "メンバー",
+    "messages": {
+      "invited": "招待を送りました",
+      "link_copied": "招待のリンクをコピーしました",
+      "removed": "メンバーを削除しました",
+      "resent": "招待をもう一度送りました",
+      "revoked": "招待を取り消しました"
+    },
+    "subtitle": "このセラーにログインして管理できる人です。",
+    "table": {
+      "email": "メールアドレス",
+      "expires": "有効期限",
+      "member": "メンバー"
+    },
+    "title": "チーム"
+  }
+}
