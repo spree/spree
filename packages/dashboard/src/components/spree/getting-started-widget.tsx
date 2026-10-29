@@ -94,12 +94,7 @@ export function GettingStartedWidget() {
             )
             const className = cn(
               'flex w-full items-center gap-2.5 px-3 py-1.5 text-start hover:bg-accent',
-              // The first unfinished step reads darker than the rest: where to start.
-              task.done
-                ? 'text-foreground'
-                : task.name === current
-                  ? 'text-foreground/80'
-                  : 'text-muted-foreground/70',
+              task.done ? 'text-foreground' : 'text-foreground/80',
             )
 
             let control: ReactNode
