@@ -37,4 +37,38 @@ RSpec.describe SpreePaypalCheckout::Gateway do
   it 'takes money amounts' do
     expect(described_class.accepts_money_amounts).to be(true)
   end
+
+  describe '#available_for_order?' do
+    let(:cart) { create(:cart_with_line_items, store: store) }
+
+    it 'is true for a currency PayPal takes' do
+      expect(gateway.available_for_order?(cart)).to be(true)
+    end
+
+    it 'is false for a currency PayPal does not take' do
+      cart.update_columns(currency: 'INR')
+
+      expect(gateway.available_for_order?(cart)).to be(false)
+    end
+  end
+
+  describe '#paypal_intent' do
+    it 'captures for a method that captures at checkout' do
+      gateway.update!(capture_method: 'checkout')
+
+      expect(gateway.paypal_intent).to eq('CAPTURE')
+    end
+
+    it 'authorizes for a method that captures on dispatch' do
+      gateway.update!(capture_method: 'on_dispatch')
+
+      expect(gateway.paypal_intent).to eq('AUTHORIZE')
+    end
+
+    it 'authorizes for a method captured by hand' do
+      gateway.update!(capture_method: 'manual')
+
+      expect(gateway.paypal_intent).to eq('AUTHORIZE')
+    end
+  end
 end

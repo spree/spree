@@ -51,5 +51,21 @@ module SpreePaypalCheckout
     def payment_profiles_supported?
       false
     end
+
+    def available_for_order?(order)
+      super && SpreePaypalCheckout::Amounts.supported_currency?(order.currency)
+    end
+
+    # CAPTURE takes the money when the session completes; AUTHORIZE holds it
+    # for Spree to capture on dispatch or by hand.
+    #
+    # @return [String]
+    def paypal_intent
+      if capture_at_checkout?
+        PaypalServerSdk::CheckoutPaymentIntent::CAPTURE
+      else
+        PaypalServerSdk::CheckoutPaymentIntent::AUTHORIZE
+      end
+    end
   end
 end
