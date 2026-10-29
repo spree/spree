@@ -5915,6 +5915,7 @@
       "table_title": "Definiciones de campos personalizados"
     },
     "invitation": {
+      "accept": "Aceptar invitación",
       "accepting": "Aceptando…",
       "could_not_accept": "No se pudo aceptar la invitación",
       "create_and_accept": "Crear cuenta y aceptar",
@@ -5931,7 +5932,9 @@
       "not_found_message": "Esta invitación venció, fue revocada o ya fue aceptada. Pedile al que invita que envíe una nueva.",
       "not_found_title": "Invitación no encontrada",
       "sign_in_and_accept": "Iniciar sesión y aceptar",
-      "sign_in_to_accept": ". Iniciá sesión para aceptar."
+      "sign_in_to_accept": ". Iniciá sesión para aceptar.",
+      "signed_in_as_another_account": "Iniciaste sesión como {{email}}, pero esta invitación es para {{invitee}}. Cerrá sesión para aceptarla.",
+      "signed_in_as_invitee": ". Iniciaste sesión como {{email}}."
     },
     "markets": {
       "add_cta": "Agregar mercado",

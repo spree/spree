@@ -2715,6 +2715,7 @@
       "view_cta": "Ansehen"
     },
     "invitation": {
+      "accept": "Einladung annehmen",
       "accepting": "Wird angenommen…",
       "could_not_accept": "Einladung konnte nicht angenommen werden",
       "create_and_accept": "Konto erstellen & annehmen",
@@ -2731,7 +2732,9 @@
       "not_found_message": "Diese Einladung ist abgelaufen, wurde widerrufen oder bereits angenommen. Bitten Sie die einladende Person, eine neue zu senden.",
       "not_found_title": "Einladung nicht gefunden",
       "sign_in_and_accept": "Anmelden & annehmen",
-      "sign_in_to_accept": ". Melden Sie sich an, um anzunehmen."
+      "sign_in_to_accept": ". Melden Sie sich an, um anzunehmen.",
+      "signed_in_as_another_account": "Sie sind als {{email}} angemeldet, aber diese Einladung gilt für {{invitee}}. Melden Sie sich ab, um sie anzunehmen.",
+      "signed_in_as_invitee": ". Sie sind als {{email}} angemeldet."
     },
     "jurisdiction": {
       "everywhere": "Überall"

@@ -2733,6 +2733,7 @@
       "view_cta": "عرض"
     },
     "invitation": {
+      "accept": "قبول الدعوة",
       "accepting": "قبول…",
       "could_not_accept": "لا يمكن قبول الدعوة",
       "create_and_accept": "Create account & accept",
@@ -2749,7 +2750,9 @@
       "not_found_message": "انتهت صلاحية هذه الدعوة، أو تم إلغاؤها، أو تم قبولها بالفعل. اطلب من الداعي إرسال واحدة جديدة.",
       "not_found_title": "لم يتم العثور على الدعوة",
       "sign_in_and_accept": "Sign in & accept",
-      "sign_in_to_accept": ". قم بتسجيل الدخول للقبول."
+      "sign_in_to_accept": ". قم بتسجيل الدخول للقبول.",
+      "signed_in_as_another_account": "أنت مسجّل الدخول باسم {{email}}، لكن هذه الدعوة موجّهة إلى {{invitee}}. سجّل الخروج لقبولها.",
+      "signed_in_as_invitee": ". أنت مسجّل الدخول باسم {{email}}."
     },
     "jurisdiction": {
       "everywhere": "كل المناطق"

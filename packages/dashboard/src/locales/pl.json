@@ -2733,6 +2733,7 @@
       "view_cta": "Zobacz"
     },
     "invitation": {
+      "accept": "Zaakceptuj zaproszenie",
       "accepting": "Akceptowanie…",
       "could_not_accept": "Nie udało się zaakceptować zaproszenia",
       "create_and_accept": "Utwórz konto i zaakceptuj",
@@ -2749,7 +2750,9 @@
       "not_found_message": "To zaproszenie wygasło, zostało unieważnione lub już je zaakceptowano. Poproś osobę zapraszającą o wysłanie nowego.",
       "not_found_title": "Nie znaleziono zaproszenia",
       "sign_in_and_accept": "Zaloguj się i zaakceptuj",
-      "sign_in_to_accept": ". Zaloguj się, aby zaakceptować."
+      "sign_in_to_accept": ". Zaloguj się, aby zaakceptować.",
+      "signed_in_as_another_account": "Zalogowano jako {{email}}, ale to zaproszenie jest dla {{invitee}}. Wyloguj się, aby je zaakceptować.",
+      "signed_in_as_invitee": ". Zalogowano jako {{email}}."
     },
     "jurisdiction": {
       "everywhere": "Wszędzie"

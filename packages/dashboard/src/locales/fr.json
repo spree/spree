@@ -2715,6 +2715,7 @@
       "view_cta": "Voir"
     },
     "invitation": {
+      "accept": "Accepter l’invitation",
       "accepting": "Acceptation…",
       "could_not_accept": "Impossible d'accepter l'invitation",
       "create_and_accept": "Créer un compte et accepter",
@@ -2731,7 +2732,9 @@
       "not_found_message": "Cette invitation a expiré, a été révoquée ou a déjà été acceptée. Demandez à la personne qui vous a invité de vous en envoyer une nouvelle.",
       "not_found_title": "Invitation introuvable",
       "sign_in_and_accept": "Se connecter et accepter",
-      "sign_in_to_accept": ". Connectez-vous pour accepter."
+      "sign_in_to_accept": ". Connectez-vous pour accepter.",
+      "signed_in_as_another_account": "Vous êtes connecté en tant que {{email}}, mais cette invitation est destinée à {{invitee}}. Déconnectez-vous pour l’accepter.",
+      "signed_in_as_invitee": ". Vous êtes connecté en tant que {{email}}."
     },
     "jurisdiction": {
       "everywhere": "Partout"

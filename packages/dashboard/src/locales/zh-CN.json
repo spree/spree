@@ -2710,6 +2710,7 @@
       "view_cta": "查看"
     },
     "invitation": {
+      "accept": "接受邀请",
       "accepting": "正在接受…",
       "could_not_accept": "无法接受邀请",
       "create_and_accept": "创建账户并接受",
@@ -2726,7 +2727,9 @@
       "not_found_message": "此邀请已过期、被撤销或已被接受。请让邀请人发送一个新的邀请。",
       "not_found_title": "未找到邀请",
       "sign_in_and_accept": "登录并接受",
-      "sign_in_to_accept": "。登录以接受。"
+      "sign_in_to_accept": "。登录以接受。",
+      "signed_in_as_another_account": "你当前以 {{email}} 登录，但此邀请发送给 {{invitee}}。请退出登录后再接受。",
+      "signed_in_as_invitee": "。你当前以 {{email}} 登录。"
     },
     "jurisdiction": {
       "everywhere": "所有地区"
