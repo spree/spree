@@ -43,7 +43,7 @@ function GettingStartedPage() {
   const [seen, setSeen] = useState(requested)
   if (seen !== requested) {
     setSeen(requested)
-    setOpen(requested ? [requested] : null)
+    setOpen(null)
   }
 
   if (!store) {
@@ -59,6 +59,8 @@ function GettingStartedPage() {
   const tasks = store.setup_tasks ?? []
   const doneCount = tasks.filter((task) => task.done).length
   const firstPending = tasks.find((task) => !task.done)?.name
+  // A stale or mistyped `?task=` falls back to the first unfinished step.
+  const opening = tasks.some((task) => task.name === requested) ? requested : firstPending
 
   const taskCopy = (task: SetupTask, facet: 'title' | 'description' | 'cta') =>
     setupTaskCopy(t, task.name, facet)
@@ -87,7 +89,7 @@ function GettingStartedPage() {
           unfinished one. */}
       <Card className="overflow-hidden py-0">
         <Accordion
-          value={open ?? (requested ? [requested] : firstPending ? [firstPending] : [])}
+          value={open ?? (opening ? [opening] : [])}
           onValueChange={(value) => setOpen(value as string[])}
         >
           {tasks.map((task) => {

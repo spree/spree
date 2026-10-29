@@ -48,6 +48,9 @@ test.describe('getting started', () => {
 
     // Other steps link to the page where they are done.
     await checklist.getByRole('link', { name: /set up taxes collection/i }).click()
-    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/settings/taxes/rates`))
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/settings/taxes/rates(\\?|$)`))
+    await expect(page.getByRole('button', { name: /add tax rate/i })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 })

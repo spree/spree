@@ -189,6 +189,8 @@ export function AppSidebar({
                 alone below a screen of empty space, so on a phone it follows
                 the list. */}
             {isMobile && <NavBottom items={bottomItems} className="mb-2" />}
+            {/* The footer is hidden on a phone, so the widget follows the list. */}
+            {isMobile && widget && <div className="px-2 pb-2">{widget}</div>}
           </>
         )}
       </SidebarContent>

@@ -39,7 +39,7 @@ export function GettingStartedWidget() {
   const { t } = useTranslation()
   const { store, storeId } = useStore()
   const { permissions } = usePermissions()
-  const { state } = useSidebar()
+  const { state, isMobile, setOpenMobile } = useSidebar()
   const [minimized, setMinimized] = useState(readMinimized)
   const [openTask, setOpenTask] = useState<string | null>(null)
   const closeTask = useCallback(() => setOpenTask(null), [])
@@ -47,9 +47,16 @@ export function GettingStartedWidget() {
   const tasks = (store as Store | null)?.setup_tasks ?? []
   const done = tasks.filter((task) => task.done).length
   const current = tasks.find((task) => !task.done)?.name
+  const collapsed = !isMobile && state === 'collapsed'
 
-  if (!store || !current || state === 'collapsed' || !permissions.can('update', Subject.Store)) {
+  if (!store || !current || collapsed || !permissions.can('update', Subject.Store)) {
     return null
+  }
+
+  // On a phone the card sits in the drawer, which a link should close. Dialogs
+  // opened in place keep it open: they are mounted inside it.
+  const closeDrawer = () => {
+    if (isMobile) setOpenMobile(false)
   }
 
   const toggle = () => {
@@ -85,7 +92,9 @@ export function GettingStartedWidget() {
       {!minimized && (
         <ul className="py-1">
           {tasks.map((task) => {
-            const link = SETUP_TASK_LINKS[task.name]
+            const link = Object.hasOwn(SETUP_TASK_LINKS, task.name)
+              ? SETUP_TASK_LINKS[task.name]
+              : undefined
             const row = (
               <>
                 <StepIcon status={task.done ? 'done' : 'todo'} />
@@ -100,7 +109,7 @@ export function GettingStartedWidget() {
             let control: ReactNode
             if (link) {
               control = (
-                <Link to={link} params={{ storeId }} className={className}>
+                <Link to={link} params={{ storeId }} className={className} onClick={closeDrawer}>
                   {row}
                 </Link>
               )
@@ -119,6 +128,7 @@ export function GettingStartedWidget() {
                   params={{ storeId }}
                   search={{ task: task.name }}
                   className={className}
+                  onClick={closeDrawer}
                 >
                   {row}
                 </Link>
