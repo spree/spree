@@ -343,6 +343,12 @@ module Spree
     def snapshot
       dup.tap do |copy|
         copy.owner = nil
+
+        if business_owned?
+          copy.company = company.presence || owner&.name
+          copy.owner_type = owner_type
+        end
+
         copy.label = nil
         copy.deleted_at = nil
       end

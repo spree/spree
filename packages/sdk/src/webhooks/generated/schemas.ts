@@ -6,6 +6,7 @@ import {
   CompanySchema,
   CompanyInvitationSchema,
   CustomerSchema,
+  DataRequestConfirmationRequestedEventSchema,
   DataRequestEventSchema,
   DeliverySchema,
   DigitalAssetSchema,
@@ -85,6 +86,7 @@ type WebhookEventName =
   | 'customer.password_reset'
   | 'customer.password_reset_requested'
   | 'data_request.completed'
+  | 'data_request.confirmation_requested'
   | 'data_request.created'
   | 'data_request.deleted'
   | 'data_request.updated'
@@ -142,6 +144,14 @@ type WebhookEventName =
   | 'line_item.created'
   | 'line_item.deleted'
   | 'line_item.updated'
+  | 'maintenance_task_run.cancelled'
+  | 'maintenance_task_run.created'
+  | 'maintenance_task_run.deleted'
+  | 'maintenance_task_run.errored'
+  | 'maintenance_task_run.interrupted'
+  | 'maintenance_task_run.started'
+  | 'maintenance_task_run.succeeded'
+  | 'maintenance_task_run.updated'
   | 'media.created'
   | 'media.deleted'
   | 'media.updated'
@@ -339,6 +349,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'customer.password_reset': CustomerSchema,
   'customer.password_reset_requested': PasswordResetRequestedEventSchema,
   'data_request.completed': DataRequestEventSchema,
+  'data_request.confirmation_requested': DataRequestConfirmationRequestedEventSchema,
   'data_request.created': DataRequestEventSchema,
   'data_request.deleted': DataRequestEventSchema,
   'data_request.updated': DataRequestEventSchema,
@@ -396,6 +407,14 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'line_item.created': LineItemSchema,
   'line_item.deleted': LineItemSchema,
   'line_item.updated': LineItemSchema,
+  'maintenance_task_run.cancelled': WebhookRecordReferenceSchema,
+  'maintenance_task_run.created': WebhookRecordReferenceSchema,
+  'maintenance_task_run.deleted': WebhookRecordReferenceSchema,
+  'maintenance_task_run.errored': WebhookRecordReferenceSchema,
+  'maintenance_task_run.interrupted': WebhookRecordReferenceSchema,
+  'maintenance_task_run.started': WebhookRecordReferenceSchema,
+  'maintenance_task_run.succeeded': WebhookRecordReferenceSchema,
+  'maintenance_task_run.updated': WebhookRecordReferenceSchema,
   'media.created': MediaEventSchema,
   'media.deleted': MediaEventSchema,
   'media.updated': MediaEventSchema,

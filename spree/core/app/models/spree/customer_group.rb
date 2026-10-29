@@ -21,7 +21,10 @@ module Spree
     # own association (rather than `alias_method`) is what lets `customer_ids=`
     # exist and what makes the `PrefixedId` auto-decoder in `assign_attributes`
     # recognise the key — that lookup keys off `reflect_on_association(:customers)`.
-    has_many :customers, through: :customer_group_users, source: :customer, source_type: Spree.customer_class.to_s
+    # Joining a group changes nothing on the customer, so saving the group
+    # does not re-validate every member it lists.
+    has_many :customers, through: :customer_group_users, source: :customer, source_type: Spree.customer_class.to_s,
+                         validate: false
 
     #
     # Validations
@@ -41,64 +44,79 @@ module Spree
     # @param user_ids [Array] array of user IDs to add
     # @return [Integer] number of customers added
     def add_customers(user_ids)
-      return 0 if user_ids.blank?
-
-      user_ids = Array(user_ids).map(&:to_s).uniq
-      return 0 if user_ids.empty?
-
-      # Get existing user IDs to avoid duplicates
-      existing_user_ids = customer_group_users.where(customer_id: user_ids).pluck(:customer_id).map(&:to_s).to_set
-
-      now = Time.current
-      user_type = Spree.customer_class.to_s
-
-      records_to_insert = user_ids.filter_map do |user_id|
-        next if existing_user_ids.include?(user_id)
-
-        {
-          customer_group_id: id,
-          user_id: user_id,
-          user_type: user_type,
-          created_at: now,
-          updated_at: now
-        }
-      end
-
-      return 0 if records_to_insert.empty?
-
-      Spree::CustomerGroupUser.upsert_all(records_to_insert, on_duplicate: :skip)
-      added_user_ids = records_to_insert.map { |r| r[:user_id] }
-      touch_users(added_user_ids)
-      touch
-
-      records_to_insert.size
+      self.class.add_customers_to([self], user_ids)
     end
 
     # Bulk remove customers from the group
     # @param user_ids [Array] array of user IDs to remove
     # @return [Integer] number of customers removed
     def remove_customers(user_ids)
-      return 0 if user_ids.blank?
+      self.class.remove_customers_from([self], user_ids)
+    end
 
-      user_ids = Array(user_ids).map(&:to_s).uniq
-      return 0 if user_ids.empty?
+    # Adds customers to every given group, skipping memberships that already
+    # exist, with one lookup for all groups.
+    # @param groups [Array<Spree::CustomerGroup>]
+    # @param customer_ids [Array] customer IDs to add
+    # @return [Integer] number of memberships created
+    def self.add_customers_to(groups, customer_ids)
+      customer_ids = Array(customer_ids).compact_blank.map(&:to_s).uniq
+      groups = Array(groups)
+      return 0 if customer_ids.empty? || groups.empty?
 
-      deleted_count = customer_group_users.where(customer_id: user_ids).delete_all
+      existing_pairs = Spree::CustomerGroupUser.
+                       where(customer_group_id: groups.map(&:id), customer_id: customer_ids).
+                       pluck(:customer_group_id, :customer_id).
+                       to_set { |group_id, customer_id| [group_id, customer_id.to_s] }
 
-      if deleted_count > 0
-        touch_users(user_ids)
-        touch
+      now = Time.current
+      customer_type = Spree.customer_class.to_s
+      records_to_insert = groups.flat_map do |group|
+        customer_ids.filter_map do |customer_id|
+          next if existing_pairs.include?([group.id, customer_id])
+
+          {
+            customer_group_id: group.id,
+            customer_id: customer_id,
+            customer_type: customer_type,
+            created_at: now,
+            updated_at: now
+          }
+        end
       end
+      return 0 if records_to_insert.empty?
+
+      Spree::CustomerGroupUser.upsert_all(records_to_insert, on_duplicate: :skip)
+      touch_customers(records_to_insert.map { |record| record[:customer_id] }.uniq)
+      changed_group_ids = records_to_insert.map { |record| record[:customer_group_id] }.to_set
+      groups.select { |group| changed_group_ids.include?(group.id) }.each(&:touch)
+
+      records_to_insert.size
+    end
+
+    # Removes customers from every given group.
+    # @param groups [Array<Spree::CustomerGroup>]
+    # @param customer_ids [Array] customer IDs to remove
+    # @return [Integer] number of memberships removed
+    def self.remove_customers_from(groups, customer_ids)
+      customer_ids = Array(customer_ids).compact_blank.map(&:to_s).uniq
+      groups = Array(groups)
+      return 0 if customer_ids.empty? || groups.empty?
+
+      memberships = Spree::CustomerGroupUser.where(customer_group_id: groups.map(&:id), customer_id: customer_ids)
+      changed_group_ids = memberships.distinct.pluck(:customer_group_id).to_set
+      return 0 if changed_group_ids.empty?
+
+      deleted_count = memberships.delete_all
+      touch_customers(customer_ids)
+      groups.select { |group| changed_group_ids.include?(group.id) }.each(&:touch)
 
       deleted_count
     end
 
-    private
-
-    def touch_users(user_ids)
-      return if user_ids.blank?
-
-      Spree.customer_class.where(id: user_ids).touch_all
+    def self.touch_customers(customer_ids)
+      Spree.customer_class.where(id: customer_ids).touch_all
     end
+    private_class_method :touch_customers
   end
 end

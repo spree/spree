@@ -14,7 +14,7 @@ module Spree
                    starts_at: 'string | null',
                    ends_at: 'string | null',
                    deleted_at: 'string | null',
-                   match_policy: [:string, enum: Spree::PriceList::MATCH_POLICIES],
+                   match_policy: [:string, enum: Spree::PriceList::MATCH_POLICIES, enum_type_name: 'MatchPolicy'],
                    price_adjustment_percentage: 'string | null',
                    adjust_compare_at: :boolean,
                    automatic_pricing: :boolean,
@@ -34,13 +34,18 @@ module Spree
           attribute :currently_active, &:currently_active?
 
           # Cheap counts so the index can render "12 products / 36 prices"
-          # without forcing each row to expand the children.
+          # without forcing each row to expand the children. The index counts
+          # the whole page at once; a single list asks for its own.
           attribute :products_count do |pl|
-            pl.products.count
+            counts = params[:products_counts]
+
+            (counts || Spree::PriceList.products_count_by_list(pl.id)).fetch(pl.id, 0)
           end
 
           attribute :prices_count do |pl|
-            pl.prices.count
+            counts = params[:prices_counts]
+
+            counts ? counts.fetch(pl.id, 0) : pl.prices.count
           end
 
           # Always expanded: a list's bands are the rest of the sentence its

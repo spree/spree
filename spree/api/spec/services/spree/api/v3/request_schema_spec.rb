@@ -124,6 +124,16 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       expect(schema.permit_list).to eq([:country_code, { currencies: [] }])
     end
 
+    it 'publishes the time zone list as suggestions that accept any other zone' do
+      schema = described_class.new { |schema| schema.attribute :timezone, :time_zone }
+
+      expect(schema.json_schema[:properties][:timezone]).to eq('$ref': '#/components/schemas/TimeZone')
+      expect(schema.code_lists['TimeZone']).to eq(
+        anyOf: [{ type: :string, enum: Spree::TimeZones::SUGGESTED }, { type: :string }],
+        description: Typelizer::OpenEnums.description('TimeZone')
+      )
+    end
+
     it 'sends decimals as canonical strings' do
       expect(price.json_schema[:properties][:amount]).to include(type: :string, format: :decimal)
     end
@@ -182,6 +192,79 @@ RSpec.describe Spree::Api::V3::RequestSchema do
 
     it 'refuses publishes after the fields' do
       expect { Class.new(described_class) { attribute :city, :string; publishes 'LateParams' } }.to raise_error(ArgumentError, /before the attributes/)
+    end
+
+    describe 'extended by another schema' do
+      it "accepts the base's fields and publishes only what it adds or changes" do
+        parent = base
+        schema = described_class.new(:widget) do |schema|
+          schema.extends parent
+          schema.attribute :id, :id
+          schema.attribute :note, :string, required: true, on: :create
+        end
+
+        expect(schema.permit_list(:create)).to eq(%i[city id note])
+        expect(schema.shapes.map(&:name)).to eq(['TestAddressParams'])
+        expect(schema.json_schema(:create)).to eq(
+          allOf: [
+            { '$ref': '#/components/schemas/TestAddressParams' },
+            { type: :object, properties: { id: { type: :string }, note: { type: :string } }, required: ['note'] }
+          ]
+        )
+      end
+
+      it 'publishes every shape its base builds on' do
+        parent = base
+        middle = Class.new(described_class) do
+          publishes 'TestShippingAddressParams'
+          extends parent
+        end
+        schema = described_class.new(:widget) { |schema| schema.extends middle }
+
+        expect(schema.shapes.map(&:name)).to eq(%w[TestShippingAddressParams TestAddressParams])
+      end
+
+      it 'restates a base field it requires' do
+        parent = Class.new(described_class) do
+          publishes 'TestOptionalCityParams'
+          attribute :city, :string
+        end
+        schema = described_class.new(:widget) do |schema|
+          schema.extends parent
+          schema.require_attributes :city, on: :create
+        end
+
+        expect(schema.json_schema(:create)[:allOf].last).to eq(type: :object, properties: { city: { type: :string } }, required: ['city'])
+        expect(schema.json_schema(:update)).to eq('$ref': '#/components/schemas/TestOptionalCityParams')
+      end
+
+      it "publishes the body in full when the base has a field this action doesn't take" do
+        parent = Class.new(described_class) do
+          publishes 'TestOneShotParams'
+          attribute :city, :string
+          attribute :code, :string, only: :create
+        end
+        schema = described_class.new(:widget) { |schema| schema.extends parent }
+
+        expect(schema.json_schema(:create)).to eq('$ref': '#/components/schemas/TestOneShotParams')
+        expect(schema.json_schema(:update)).to eq(type: :object, properties: { city: { type: :string } })
+      end
+
+      it 'restates a base field it describes differently' do
+        parent = base
+        schema = described_class.new(:widget) do |schema|
+          schema.extends parent
+          schema.describe_attribute :city, 'Where the widget ships from.'
+        end
+
+        expect(schema.json_schema(:update)[:allOf].last).to eq(
+          type: :object, properties: { city: { type: :string, description: 'Where the widget ships from.' } }, required: ['city']
+        )
+      end
+
+      it 'refuses a base without a published name' do
+        expect { described_class.new { |schema| schema.extends described_class.new } }.to raise_error(ArgumentError, /no published name/)
+      end
     end
   end
 

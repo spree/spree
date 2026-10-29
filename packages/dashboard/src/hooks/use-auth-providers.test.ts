@@ -6,6 +6,7 @@ describe('authCallbackErrorKey', () => {
     expect(authCallbackErrorKey('account_not_provisioned')).toBe(
       'admin.auth.login.account_not_provisioned',
     )
+    expect(authCallbackErrorKey('account_deactivated')).toBe('admin.auth.login.account_deactivated')
   })
 
   it('falls back to the generic message for unknown and inherited names', () => {

@@ -248,8 +248,11 @@ module Spree
         end
 
         # Finds a single resource within scope using prefixed ID
+        # Loaded through the lazy-preload relation, as the collection is, so
+        # the serializer's walk over the record's children batches their
+        # associations instead of querying once per child.
         def find_resource
-          scope.find_by_prefix_id!(params[:id])
+          scope.preload_associations_lazily.find_by_prefix_id!(params[:id])
         end
 
         # Per-record authorization hook. A no-op in the shared base: the Store
@@ -268,6 +271,7 @@ module Spree
                     preload_associations_lazily.
                     ransack(ransack_params, auth_object: ransack_auth_object)
           result = @search.result(distinct: collection_distinct?)
+          result = result.with_translation_fallback_order if model_class.include?(Spree::TranslatableResource)
           pagy_options = { limit: limit, page: page }
           result = apply_collection_sort(result)
           @pagy, @collection = pagy(result, **pagy_options)
@@ -480,11 +484,21 @@ module Spree
           base_scope = if @parent.present?
                          @parent.send(parent_association)
                        else
-                         model_class.for_store(current_store)
+                         store_scope
                        end
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
           base_scope = base_scope.preload_associations_lazily
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
+        end
+
+        # The store's rows of this model when the resource has no parent. A
+        # model the store reaches through another record rather than an
+        # association of its own — a commission line through its order —
+        # names that path here, since `for_store` answers nothing for it.
+        #
+        # @return [ActiveRecord::Relation]
+        def store_scope
+          model_class.for_store(current_store)
         end
 
         # Action names treated as reads. Override in subclasses with custom
@@ -558,7 +572,17 @@ module Spree
         # declared on the model. Override +resource_permitted_attributes+ rather
         # than this, so the extension union is not lost.
         def permitted_attributes
-          resource_permitted_attributes + model_additional_permitted_attributes
+          with_nested_additional_permitted_attributes(resource_permitted_attributes) + model_additional_permitted_attributes
+        end
+
+        # Nested lists this resource writes, keyed by param name, mapped to the
+        # model each entry becomes — +{ media: Spree::Media }+ lets an
+        # extension's +Spree::Media.additional_permitted_attributes+ ride the
+        # product's +media+ entries, not only the media endpoint.
+        #
+        # @return [Hash{Symbol => Class}]
+        def nested_permitted_models
+          {}
         end
 
         # The resource's writable attributes: its `request_params`
@@ -579,12 +603,32 @@ module Spree
         def model_additional_permitted_attributes
           return [] unless respond_to?(:model_class, true)
 
-          model = model_class
-          return [] unless model.respond_to?(:additional_permitted_attributes)
-
-          Array(model.additional_permitted_attributes)
+          additional_permitted_attributes_for(model_class)
         rescue NotImplementedError
           []
+        end
+
+        # What extensions declared writable on +model+. `Spree.base_class` is
+        # host-overridable, so the class_attribute may not be there at all.
+        #
+        # @param model [Class]
+        # @return [Array]
+        def additional_permitted_attributes_for(model)
+          Array(model.try(:additional_permitted_attributes))
+        end
+
+        def with_nested_additional_permitted_attributes(attributes)
+          return attributes if nested_permitted_models.empty?
+
+          attributes.map do |attribute|
+            next attribute unless attribute.is_a?(Hash)
+
+            attribute.to_h do |name, nested|
+              model = nested_permitted_models[name.to_sym]
+              additional = model ? additional_permitted_attributes_for(model) : []
+              [name, additional.any? && nested.is_a?(Array) ? nested + additional : nested]
+            end
+          end
         end
       end
     end

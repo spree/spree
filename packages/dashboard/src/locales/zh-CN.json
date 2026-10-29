@@ -572,7 +572,8 @@
         "empty_description": "记录结构化的详细信息，例如材质、版型或保养说明。",
         "empty_title": "尚无自定义字段",
         "errors": {
-          "failed_to_save": "保存自定义字段失败"
+          "failed_to_save": "保存自定义字段失败",
+          "failed_to_load": "无法加载自定义字段。请刷新页面重试。"
         },
         "manage_in_settings": "在设置中管理",
         "new_definition_description": "定义自定义字段，以在您的{{resource}}上存储有类型的结构化信息。",
@@ -796,10 +797,6 @@
         "updated": "配送方式已更新"
       },
       "no_zone_restriction": "不限制",
-      "pricing": {
-        "amount_in_currency": "{{currency}} 金额",
-        "currency_amounts_help": "未填写金额的币种将不会提供该配送方式。"
-      },
       "provider_needs_connection": "连接 {{name}} 后即可使用",
       "provider_unavailable": "{{name}}(不可用)",
       "rule_summary": {
@@ -934,35 +931,6 @@
       "to_placeholder": "止",
       "toggle_states": "显示 {{country}} 的省/州"
     },
-    "digital_assets": {
-      "add": "添加",
-      "all_variants": "所有变体",
-      "columns": {
-        "file": "文件",
-        "variant": "变体",
-        "size": "大小",
-        "downloads": "下载次数",
-        "days": "天数"
-      },
-      "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
-      "delete_title": "删除此文件？",
-      "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
-      "download": "下载",
-      "drop_hint": "将文件拖放到此处，或点击浏览",
-      "empty": "暂无文件",
-      "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
-      "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
-      "source": {
-        "upload": "上传文件"
-      },
-      "store_default": "{{count}}（商店默认）",
-      "title": "数字文件",
-      "untitled": "未命名文件",
-      "upload": "添加文件",
-      "upload_failed": "上传 {{name}} 失败：{{message}}",
-      "uploading": "正在上传 {{name}}…",
-      "uploading_short": "上传中…"
-    },
     "digital_links": {
       "columns": {
         "file": "文件",
@@ -984,7 +952,209 @@
       "title": "下载"
     },
     "enterprise": {
-      "learn_more": "了解 Spree Enterprise"
+      "available_in": "Spree Enterprise 提供此功能",
+      "badge": "Enterprise",
+      "cta": "获取 Spree Enterprise",
+      "footer": "Spree Enterprise 在您已在使用的开源 Spree 基础上增加此功能。您的数据、网店和集成均保持不变。",
+      "how_it_works": "运作方式",
+      "learn_more": "了解 Spree Enterprise",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "每条记录都显示旧值和新值，让您准确了解更改内容。",
+              "title": "更改前后对比"
+            },
+            "coverage": {
+              "description": "产品、变体、价格、库存、分类、促销、支付、货件、商店积分、税率和店铺设置。",
+              "title": "覆盖所有关键内容"
+            },
+            "search": {
+              "description": "按操作人、记录类型或日期筛选，并打开被更改的记录。",
+              "title": "便捷搜索"
+            }
+          },
+          "intro": "多人共同管理店铺时，您需要知道是谁更改了价格、库存或设置。Spree Enterprise 会记录每一项重要更改，包括操作人、时间以及更改前后的值。",
+          "nav": "审计日志",
+          "steps": {
+            "change": {
+              "description": "团队成员编辑一条记录。",
+              "title": "更改"
+            },
+            "record": {
+              "description": "Spree 保存操作人、时间及更改内容。",
+              "title": "记录"
+            },
+            "review": {
+              "description": "随时在审计日志中找到这项更改。",
+              "title": "查看"
+            }
+          },
+          "subtitle": "查看谁在何时更改了店铺中的哪些内容。",
+          "title": "审计日志"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "企业获批后即可使用其专属目录和价格。您之后可以暂停账户，也可以恢复。",
+              "title": "按您的条款批准"
+            },
+            "checklist": {
+              "description": "要求提供税号、文件或确认事项，并逐项审核。",
+              "title": "自定义审核清单"
+            },
+            "dialogue": {
+              "description": "无需直接拒绝，可附上说明将申请退回。企业在您的网店中作答。",
+              "title": "补充信息"
+            }
+          },
+          "intro": "当企业在您的网店注册时，Spree Enterprise 会将其账户置于待审核状态。企业可以浏览商品目录，但看不到价格；与此同时，您的团队核实其资料、索取缺少的信息并批准申请。",
+          "nav": "企业入驻",
+          "steps": {
+            "approve": {
+              "description": "企业可以看到其价格并下单。",
+              "title": "批准"
+            },
+            "register": {
+              "description": "企业在您的网店注册。",
+              "title": "注册"
+            },
+            "review": {
+              "description": "您的团队审核申请或要求补充信息。",
+              "title": "审核"
+            },
+            "verify": {
+              "description": "企业填写审核清单，期间价格保持隐藏。",
+              "title": "核实"
+            }
+          },
+          "subtitle": "在企业可以购买前审核其注册申请。",
+          "title": "企业入驻"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "自动发出最早入库或最先到期的批次，也可由仓库自行选择。一个货件可以从多个批次出货。",
+              "title": "正确批次优先"
+            },
+            "recall": {
+              "description": "查找某个批次去往的所有订单和客户，并查看即将到期的批次。",
+              "title": "快速召回"
+            },
+            "stock": {
+              "description": "记录每个库存地点中每个批次的数量、到期日期、生产日期和供应商批号。",
+              "title": "按批次管理库存"
+            }
+          },
+          "intro": "食品、化妆品、健康产品及其他受监管商品的卖家需要知道每个批次的去向。Spree Enterprise 按批次管理库存，记录数量和到期日期，并为每个货件选出正确的批次。",
+          "nav": "批次",
+          "steps": {
+            "allocate": {
+              "description": "Spree 按您的规则为每个货件分配批次。",
+              "title": "分配"
+            },
+            "receive": {
+              "description": "采购订单或调拨到货时登记批次。",
+              "title": "收货"
+            },
+            "ship": {
+              "description": "每个货件都会记录其包含的批次。",
+              "title": "发货"
+            },
+            "trace": {
+              "description": "搜索批次，查找相关订单和客户。",
+              "title": "追溯"
+            }
+          },
+          "subtitle": "按批次跟踪库存，优先发出正确的批次，并追溯每个批次去往的订单。",
+          "title": "批次与到期日期"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "买家接受后，报价单会转为订单，并保留其付款条款和采购订单号。",
+              "title": "直接生成订单"
+            },
+            "negotiate": {
+              "description": "在单张报价单中调整单价、数量、运费和费用，不影响买家的价格表。",
+              "title": "单笔交易专属价格"
+            },
+            "validity": {
+              "description": "每张报价单都有到期日期。买家可以要求修改，您再发送修订后的报价单。",
+              "title": "有效期清晰"
+            }
+          },
+          "intro": "企业买家通常需要先确认价格再下单。使用报价单，买家可从购物车发起询价，您的团队进行报价，买家在线接受。已接受的报价单会按约定价格转为普通订单。",
+          "nav": "报价单",
+          "note": {
+            "description": "使用 Spree Enterprise，买家可在到期前在线查看草稿、要求修改并接受。",
+            "title": "将此草稿作为报价单发送"
+          },
+          "steps": {
+            "accept": {
+              "description": "买家接受后，报价单即转为订单。",
+              "title": "接受"
+            },
+            "price": {
+              "description": "您的团队调整价格、数量和运费。",
+              "title": "报价"
+            },
+            "request": {
+              "description": "买家从购物车发起报价请求。",
+              "title": "询价"
+            },
+            "send": {
+              "description": "买家收到报价单链接及其到期日期。",
+              "title": "发送"
+            }
+          },
+          "subtitle": "与企业买家协商价格，并将已接受的报价单转为订单。",
+          "title": "报价单"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "产品、变体、图片、翻译、价格和库存均来自卖家的店铺。新产品照常经过您的审核。",
+              "title": "商品目录同步"
+            },
+            "control": {
+              "description": "您的团队在 Spree 中编辑过的字段会暂停同步，直到您选择恢复。无法发送的订单会标记出来提醒您。",
+              "title": "掌控权在您手中"
+            },
+            "orders": {
+              "description": "平台订单以已付款状态在卖家的 Shopify 中创建。货件、物流单号、取消和退款都会自动同步回来。",
+              "title": "订单集中处理"
+            }
+          },
+          "intro": "许多卖家已经在 Shopify 上销售。将他们的店铺连接到您的平台后，其商品目录和库存会自动保持同步。平台订单会出现在卖家的 Shopify 中，方便他们在一个地方完成所有履约。",
+          "nav": "Shopify",
+          "note": {
+            "description": "使用 Spree Enterprise，此卖家的产品、库存和订单将与其 Shopify 店铺保持同步。",
+            "title": "连接此卖家的 Shopify 店铺"
+          },
+          "steps": {
+            "connect": {
+              "description": "您为卖家创建连接。",
+              "title": "连接"
+            },
+            "install": {
+              "description": "卖家在其 Shopify 店铺中安装应用。",
+              "title": "安装"
+            },
+            "sell": {
+              "description": "订单发送到卖家店铺，货件信息同步回来。",
+              "title": "销售"
+            },
+            "sync": {
+              "description": "其商品目录、库存地点和库存同步到您的平台。",
+              "title": "同步"
+            }
+          },
+          "subtitle": "让卖家继续在自己的 Shopify 店铺中经营业务。",
+          "title": "卖家 Shopify 对接"
+        }
+      },
+      "see_how_it_works": "了解运作方式"
     },
     "errors": {
       "forbidden_description": "您没有权限查看此页面。",
@@ -1233,9 +1403,24 @@
             "product": "商品",
             "category": "分类",
             "customer": "客户",
-            "variant": "变体"
+            "variant": "变体",
+            "seller": "卖家",
+            "collection": "系列",
+            "promotion": "促销",
+            "gift_card": "礼品卡",
+            "store_credit": "店铺信用",
+            "stock_transfer": "调拨",
+            "purchase_order": "采购订单",
+            "company": "企业",
+            "payment_method": "支付方式",
+            "delivery_method": "配送方式",
+            "tax_rate": "税率",
+            "product_type": "商品类型",
+            "media": "媒体",
+            "store": "店铺"
           },
-          "read_only_help": "一旦此字段存在值，所属对象便无法更改。"
+          "read_only_help": "一旦此字段存在值，所属对象便无法更改。",
+          "api_only_group": "仅通过 API"
         },
         "searchable": {
           "help": "将值纳入店面商品全文搜索（仅短文本、长文本和数字）。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。",
@@ -1496,6 +1681,10 @@
           "label": "优惠码",
           "placeholder": "可选"
         },
+        "currency": {
+          "help": "由市场决定。",
+          "label": "货币"
+        },
         "customer_note": {
           "label": "客户备注（客户可见）"
         },
@@ -1505,6 +1694,14 @@
         },
         "internal_note": {
           "label": "内部备注（仅员工可见）"
+        },
+        "locale": {
+          "label": "语言区域",
+          "help": "用于发送给客户的邮件和文档。"
+        },
+        "market": {
+          "label": "市场",
+          "help": "决定订单的价格和税费，以及可用的货币和语言区域。"
         },
         "order_group": {
           "label": "本次购买",
@@ -2096,15 +2293,9 @@
           "help": "关闭后，买家可以不限次数下载。",
           "label": "限制下载次数"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "允许的下载次数"
-        },
         "limit_digital_download_days": {
           "help": "关闭后，下载链接永不过期。",
           "label": "限制下载期限"
-        },
-        "digital_asset_authorized_days": {
-          "label": "可用天数"
         },
         "default_package_dimensions": {
           "height": "高",
@@ -2124,6 +2315,28 @@
         "auto_approve_seller_products": {
           "label": "自动发布卖家商品",
           "help": "卖家提交后商品立即上架销售，无需任何人审核。"
+        },
+        "seller_digital_assets_enabled": {
+          "label": "允许卖家上传数字文件",
+          "help": "卖家可为自己的商品附加可下载文件并设置下载限制。关闭后，只有您可以添加文件，卖家只能看到您添加的文件。"
+        },
+        "seller_digital_asset_content_types": {
+          "label": "卖家可上传的文件类型",
+          "help": "选择卖家可以上传的格式，或输入内容类型（例如 application/pdf）后按 Enter。也可以填写整个类别，例如 audio/*。按文件自身的签名（如有）判断，而非文件名。您自己的上传不受限制。",
+          "placeholder": "搜索格式或输入内容类型…",
+          "invalid": "每一项必须是一个内容类型，例如 application/pdf。",
+          "empty_hint": "没有匹配的格式。输入内容类型（例如 application/pdf）后按 Enter 添加。",
+          "add_option": "添加 {{type}}",
+          "families": {
+            "audio": "任何音频文件 · audio/*",
+            "video": "任何视频文件 · video/*",
+            "image": "任何图片文件 · image/*",
+            "text": "任何文本文件 · text/*"
+          }
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "审核在售商品的文件变更",
+          "help": "卖家在已批准的商品上添加或替换文件时，商品将重新进入审核并下架，直到您再次批准。卖家商品自动发布时此项无效。"
         },
         "send_seller_transactional_emails": {
           "label": "向卖家发送邮件",
@@ -2152,6 +2365,14 @@
         "email_font": {
           "label": "字体",
           "help": "无法加载该字体的邮件应用会使用相近的字体。"
+        },
+        "seo_title": {
+          "label": "SEO 标题",
+          "help": "搜索引擎和浏览器标签页为您店铺首页显示的标题。"
+        },
+        "meta_description": {
+          "label": "元描述",
+          "help": "搜索引擎在标题下方显示的简短摘要。"
         }
       },
       "store_credit": {
@@ -2331,7 +2552,9 @@
         },
         "subscriptions": {
           "help": "选择哪些事件应触发 Webhook。不选择任何事件则接收所有事件。",
-          "label": "事件"
+          "invalid": "使用事件名称，或以 * 代替某一段的模式，例如 order.* 或 *.created。",
+          "label": "事件",
+          "too_many": "最多可选择 {{count}} 个事件。"
         },
         "url": {
           "label": "目标 URL",
@@ -2423,6 +2646,7 @@
         "updated": "礼品卡已更新"
       },
       "statuses": {
+        "active": "启用",
         "canceled": "已取消",
         "expired": "已过期",
         "partially_redeemed": "部分已兑换",
@@ -2506,6 +2730,87 @@
     },
     "jurisdiction": {
       "everywhere": "所有地区"
+    },
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "取消运行"
+      },
+      "cancel_confirm": {
+        "message": "任务会在下一个检查点停止。已完成的工作会保留——取消不会撤销它。",
+        "title": "取消这次运行？"
+      },
+      "description": "运行 Spree 升级中的数据步骤并跟踪其进度。每次运行都会被记录。",
+      "dry_run_badge": "预览",
+      "history": {
+        "empty_title": "暂无运行记录",
+        "search_placeholder": "按任务名称搜索…",
+        "table": {
+          "initiated_by": "启动人",
+          "processed": "已处理",
+          "status": "状态",
+          "task": "任务"
+        },
+        "title": "运行历史"
+      },
+      "initiated_via": {
+        "api": "通过 API 启动",
+        "cli": "从命令行启动",
+        "dashboard": "从仪表板启动"
+      },
+      "messages": {
+        "canceled": "正在取消运行",
+        "start_failed": "无法启动任务",
+        "started": "任务已启动"
+      },
+      "run": {
+        "arguments": "参数",
+        "duration": "耗时",
+        "ended": "结束时间",
+        "error": "错误",
+        "initiated_by": "启动人",
+        "loading": "正在加载运行记录…",
+        "processed_count": "已处理 {{count}} 条",
+        "progress_label": "进度",
+        "results": "结果",
+        "seconds": "{{count}} 秒",
+        "show_backtrace": "显示技术详情",
+        "started": "开始时间"
+      },
+      "status": {
+        "cancelled": "已取消",
+        "cancelling": "正在取消…",
+        "enqueued": "排队中",
+        "errored": "已失败",
+        "interrupted": "正在恢复…",
+        "running": "运行中",
+        "succeeded": "已完成"
+      },
+      "tabs": {
+        "history": "历史",
+        "upgrade": "升级"
+      },
+      "title": "维护任务",
+      "unavailable": "你无法使用维护任务。在某些安装中维护任务已关闭，升级步骤由安装的运维人员通过命令行运行。",
+      "upgrade": {
+        "already_completed": "已完成",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "title": "运行“{{name}}”？",
+          "message": "步骤有先后顺序——请先运行前面的步骤。此操作会写入数据且无法撤销。"
+        },
+        "description": "此版本所需的数据步骤，按必须执行的顺序排列。",
+        "hide_steps": "隐藏步骤",
+        "history_description": "此店铺已完成。",
+        "progress": "已完成 {{done}} / {{total}}",
+        "read_guide": "阅读升级指南",
+        "run_again": "重新运行",
+        "run_next": "运行下一步",
+        "run_step": "运行",
+        "show_steps": "显示步骤",
+        "title": "升级到 Spree {{version}}",
+        "up_to_date_description": "将 Spree 升级到新版本后，该版本所需的数据步骤会显示在这里，可按顺序运行。",
+        "up_to_date_title": "你的店铺已是最新"
+      }
     },
     "markets": {
       "add_cta": "添加市场",
@@ -2669,7 +2974,8 @@
         },
         "address_edit": {
           "billing_title": "编辑账单地址",
-          "shipping_title": "编辑收货地址"
+          "shipping_title": "编辑收货地址",
+          "billing_same_as_shipping": "与收货地址相同"
         },
         "adjustment_lines": {
           "add_discount": "添加折扣",
@@ -2998,6 +3304,12 @@
           "captures": "扣款记录",
           "captures_empty": "尚未扣款。",
           "captured_at": "扣款时间"
+        },
+        "customer_edit": {
+          "title": "编辑客户",
+          "customer_help": "清除客户即可将此订单改为访客订单。",
+          "confirm_detach": "此订单将不再显示在客户的订单历史和账户中。要移除客户吗？",
+          "detach": "移除客户"
         }
       },
       "edit": {
@@ -3079,6 +3391,7 @@
           "sku": "SKU",
           "variant": "变体"
         },
+        "use_company_default_addresses": "使用 {{company}} 保存的默认账单和配送地址",
         "use_default_addresses": "使用客户的默认账单和配送地址"
       },
       "payment_statuses": {
@@ -3451,15 +3764,27 @@
         "drafts_title": "草稿订单",
         "new": {
           "add_line_item": "添加订单项",
+          "address_help": "不选择地址则可在订单创建后再填写。公司订单可使用该公司的地址及其继承的地址。",
+          "company_addresses": "公司地址",
           "company_help": "将此订单关联到某个公司。客户列表随后只显示可为其采购的人员。",
+          "customer_addresses": "客户地址",
+          "reset_items": {
+            "confirm": "更改并移除商品",
+            "message_other": "已选的 {{count}} 件商品可能不向此买家、市场或渠道销售，或价格不同。它们将被移除。",
+            "title": "移除已选商品？"
+          },
           "search_variant": "搜索变体…",
           "section_billing": "账单",
           "section_customer": "客户",
           "section_items": "商品",
+          "section_market": "市场和渠道",
+          "section_market_help": "可销售的商品及其价格取决于买家、市场和渠道。",
           "section_notes": "备注",
           "section_summary": "概览",
+          "select_billing_address": "账单地址",
           "select_company": "公司（可选）",
           "select_customer": "选择客户",
+          "select_shipping_address": "收货地址",
           "title": "新建订单"
         }
       },
@@ -3995,6 +4320,7 @@
             "import_row": "导入行",
             "invitation": "邀请",
             "line_item": "订单项",
+            "maintenance_task_run": "维护任务运行",
             "media": "媒体",
             "newsletter_subscriber": "邮件订阅者",
             "order": "订单",
@@ -4086,6 +4412,8 @@
           "payouts_description": "本平台如何以及何时向卖家付款。卖家也可以使用自己的付款周期和最低金额。",
           "admission_title": "卖家审核",
           "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
+          "seller_files_title": "卖家文件",
+          "seller_files_description": "卖家是否可以为商品附加可下载文件、允许哪些类型，以及在已批准商品上更改文件是否需要再次审核。",
           "communication_title": "沟通",
           "commission_tax_title": "佣金税"
         },
@@ -5180,6 +5508,7 @@
         "emails": "发件地址与交易邮件设置",
         "imports": "CSV 导入历史与结果",
         "integrations": "连接物流、税务及其他服务商",
+        "maintenance_tasks": "回填、重建索引与升级步骤，并记录每次运行",
         "markets": "销售的国家/地区及其货币",
         "payment_methods": "支付网关与收款方式",
         "policies": "条款、隐私、退货与配送文件",
@@ -5218,6 +5547,7 @@
         "emails": "邮件",
         "imports": "导入",
         "integrations": "集成",
+        "maintenance_tasks": "维护任务",
         "markets": "市场",
         "payment_methods": "支付方式",
         "policies": "政策",
@@ -5547,6 +5877,10 @@
         "kg": "千克 (kg)",
         "lb": "磅 (lb)",
         "oz": "盎司 (oz)"
+      },
+      "seo": {
+        "title": "搜索引擎展示",
+        "description": "店铺的默认标题和描述。请为店铺支持的每种语言进行翻译。"
       }
     },
     "table_descriptions": {
@@ -6215,6 +6549,7 @@
         "digital_asset_mailer_files_ready_email": "下载已就绪",
         "customer_mailer_password_reset_email": "重置密码",
         "customer_mailer_data_export_email": "个人数据导出已就绪",
+        "customer_mailer_data_request_confirmation_email": "数据请求确认",
         "newsletter_mailer_email_confirmation": "订阅确认",
         "company_mailer_invitation_email": "公司邀请",
         "spree_base_mailer": "邮件布局",
@@ -6318,7 +6653,8 @@
         "reset_url": "设置新密码的链接。",
         "download_url": "下载导出文件的链接。",
         "expires_at": "链接失效的时间。",
-        "confirmation_url": "确认订阅的链接。",
+        "confirmation_url": "确认订阅或数据请求的链接。",
+        "kind": "数据请求是索取副本（access）还是要求删除（erasure）。",
         "company": "邀请客户加入的公司。",
         "accept_url": "接受邀请的链接。",
         "store": "您的店铺：名称、链接、标志和品牌样式。",

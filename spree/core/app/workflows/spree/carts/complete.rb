@@ -422,10 +422,21 @@ module Spree
       # provider a question whose answer is discarded — and for an external
       # engine that is a billable remote call per line item, inside the
       # completion lock.
+      #
+      # Each copy is handed the cart line's variant, loaded once for every
+      # line, so validating the copies reads its product, stock and tax
+      # category for all of them at once rather than per line.
       def copy_line_items!(cart, order)
-        cart.line_items.reload.index_with do |cart_line_item|
+        cart_line_items = cart.line_items.reload.to_a
+        ActiveRecord::Associations::Preloader.new(
+          records: cart_line_items,
+          associations: { variant: [{ product: %i[store product_publications tax_category] }, { stock_levels: %i[stock_location active_stock_reservations] }] }
+        ).call
+
+        cart_line_items.index_with do |cart_line_item|
           attributes = cart_line_item.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
           line_item = order.line_items.new(attributes.merge('order_id' => order.id))
+          line_item.variant = cart_line_item.variant if cart_line_item.variant
           line_item.skip_tax_estimation = true
           line_item.save!
           line_item
@@ -434,9 +445,12 @@ module Spree
 
       # @return [Hash{Integer => Integer}] cart fulfillment id → order fulfillment id
       def copy_fulfillments!(cart, order, line_item_map)
-        line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
+        line_items_by_cart_line_item_id = line_item_map.transform_keys(&:id)
 
-        cart.fulfillments.reload.each_with_object({}) do |cart_fulfillment, map|
+        cart_fulfillments = cart.fulfillments.reload.to_a
+        ActiveRecord::Associations::Preloader.new(records: cart_fulfillments, associations: %i[selected_delivery_rate fulfillment_items]).call
+
+        cart_fulfillments.each_with_object({}) do |cart_fulfillment, map|
           attributes = cart_fulfillment.attributes.except('id', 'cart_id', 'number', 'tracking', 'created_at', 'updated_at')
           fulfillment = order.fulfillments.create!(attributes.merge('order_id' => order.id, 'address_id' => order.ship_address_id))
 
@@ -447,13 +461,15 @@ module Spree
 
           cart_fulfillment.fulfillment_items.each do |item|
             item_attributes = item.attributes.except('id', 'created_at', 'updated_at')
-            fulfillment.fulfillment_items.create!(
-              item_attributes.merge(
-                'fulfillment_id' => fulfillment.id,
-                'order_id' => order.id,
-                'line_item_id' => line_item_id_map.fetch(item.line_item_id)
-              )
+            line_item = line_items_by_cart_line_item_id.fetch(item.line_item_id)
+            fulfillment_item = fulfillment.fulfillment_items.new(
+              item_attributes.merge('fulfillment_id' => fulfillment.id, 'order_id' => order.id)
             )
+            # Objects rather than ids, so validating the copy does not look
+            # each of them up again.
+            fulfillment_item.line_item = line_item
+            fulfillment_item.variant = line_item.variant if line_item.variant_id == item.variant_id
+            fulfillment_item.save!
           end
 
           map[cart_fulfillment.id] = fulfillment.id

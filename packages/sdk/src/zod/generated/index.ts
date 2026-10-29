@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 export { AddressSchema, type Address } from './Address';
+export { AddressOwnerSchema, type AddressOwner } from './AddressOwner';
 export { AppliedPromotionSchema, type AppliedPromotion } from './AppliedPromotion';
 export { BaseSchema, type Base } from './Base';
 export { CartSchema, type Cart } from './Cart';
@@ -19,6 +20,7 @@ export { CustomFieldSchema, type CustomField } from './CustomField';
 export { CustomerSchema, type Customer } from './Customer';
 export { CustomerGroupSchema, type CustomerGroup } from './CustomerGroup';
 export { DataRequestSchema, type DataRequest } from './DataRequest';
+export { DataRequestConfirmationRequestedEventSchema, type DataRequestConfirmationRequestedEvent } from './DataRequestConfirmationRequestedEvent';
 export { DataRequestEventSchema, type DataRequestEvent } from './DataRequestEvent';
 export { DeliverySchema, type Delivery } from './Delivery';
 export { DeliveryMethodSchema, type DeliveryMethod } from './DeliveryMethod';
@@ -90,6 +92,7 @@ export { StockMovementSchema, type StockMovement } from './StockMovement';
 export { StockReceiptEventSchema, type StockReceiptEvent } from './StockReceiptEvent';
 export { StockReservationSchema, type StockReservation } from './StockReservation';
 export { StockTransferSchema, type StockTransfer } from './StockTransfer';
+export { StoreSchema, type Store } from './Store';
 export { StoreCreditSchema, type StoreCredit } from './StoreCredit';
 export { StoreCreditEventSchema, type StoreCreditEvent } from './StoreCreditEvent';
 export { SupplierEventSchema, type SupplierEvent } from './SupplierEvent';

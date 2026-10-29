@@ -82,7 +82,7 @@ Which command after which change:
 | Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check || bundle install` (or `cd server && pnpm exec spree bundle install` while the stack runs) |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates the containers) |
 | `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build ("lockfile can't be updated because frozen") | `pnpm server:build`, then `pnpm server:dev` — the build script handles the edge-rewritten `Gemfile.lock` automatically |
-| Meilisearch image bump ("database version … is incompatible") | Remove the `server_meilisearch_data` volume, boot, then reindex (`pnpm exec spree rake spree:search:reindex`) — the index is derived data |
+| Meilisearch image bump ("database version … is incompatible") | Remove the `server_meilisearch_data` volume, boot, then reindex (`pnpm exec spree task search:reindex`) — the index is derived data |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes the database and volumes) |
 
 Re-run `pnpm server:setup` **only** to fully reset — it does `docker compose down -v` + `rm -rf ./server`, wiping all DB data.
@@ -310,19 +310,11 @@ A **Lefthook pre-commit hook** regenerates both whenever you commit a change to 
 To regenerate manually (useful when iterating on serializers before committing):
 
 ```bash
-cd server
-pnpm exec spree rake typelizer:generate     # regenerate TS types
-cd ..
-pnpm generate:zod                            # regenerate Zod schemas for every SDK
+pnpm generate:types   # regenerate TS types from the serializers
+pnpm generate:zod     # regenerate Zod schemas for every SDK
 ```
 
-If you'd rather avoid the Docker round-trip and have Ruby on your host, the native equivalent works too:
-
-```bash
-cd spree/api
-bundle install
-bundle exec rake typelizer:generate
-```
+`pnpm generate:types` runs with the Ruby on your machine, like the pre-commit hook, so run `bundle install` in `spree/api` once first.
 
 ### Releasing packages
 
@@ -335,7 +327,9 @@ pnpm changeset
 
 This creates a changeset file describing your changes. Commit it with your PR.
 
-Releasing is a two-step flow: a maintainer consumes the pending changesets (`changeset version` — writes the CHANGELOG and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished version and publish with npm provenance via Trusted Publishing. `@spree/admin-sdk` publishes under the `next` dist-tag while on the 0.x Developer Preview line; the others ship as `latest` (prereleases go to `beta`).
+The packages that talk to the Spree API (`@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core` and the dashboard packages) carry the version of the Spree gems. `@spree/cli` and `create-spree-app` keep their own versions.
+
+Releasing is a two-step flow: a maintainer bumps the Spree version, runs `pnpm version:packages` (writes the CHANGELOGs and bumps `package.json`) and merges that bump to `main`. Pushing a tag then publishes the release: `v<Spree version>` releases the gems and the packages that share the Spree version, and `@spree/cli@<version>` or `create-spree-app@<version>` releases that tool. Prereleases publish under the `beta` dist-tag, stable versions as `latest`.
 
 Private packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/sdk-core`) don't need changesets.
 
@@ -437,6 +431,31 @@ The MCP server URL for quick setup:
 ```
 https://spreecommerce.org/docs/mcp
 ```
+
+### Claude Code cloud sessions
+
+Cloud sessions (claude.ai/code, or **Cloud** in the Claude desktop app) run the agent on a remote Linux machine. The repository is set up so the agent there can run the backend, the admin dashboard and the seller panel, and check its work in a headless browser.
+
+Create the cloud environment once, then share it with your organization if others need it:
+
+1. Open the environment settings from the environment selector under the message box.
+2. **Setup script**: paste the contents of [`scripts/cloud/environment-setup.sh`](https://github.com/spree/spree/blob/main/scripts/cloud/environment-setup.sh). It installs Ruby, pnpm, Mailpit and Chromium, and the result is saved for later sessions.
+3. **Network access**: choose **Custom**, keep the default allowed domains, and add `cdn.playwright.dev` and `playwright.download.prss.microsoft.com` so the browser can be downloaded.
+4. **Environment variables**:
+
+   ```bash
+   PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
+   BASH_DEFAULT_TIMEOUT_MS=300000
+   BASH_MAX_TIMEOUT_MS=1200000
+   ```
+
+When a session starts, a hook clones the starter app, installs dependencies, and creates and seeds the database. The first session takes a few minutes. The agent then starts the servers with `scripts/cloud/start.sh` and looks at pages with `scripts/cloud/screenshot.mjs`.
+
+<Note>
+The servers run on the remote machine, so you cannot open them in your own browser. The agent checks the pages itself, and the Playwright suite (`pnpm wt:e2e`) runs there as it does on a laptop.
+</Note>
+
+When the starter moves to a new Ruby version, update `RUBY_VERSION` in `scripts/cloud/environment-setup.sh` and paste the script into the environment again.
 
 ## That's a wrap!
 

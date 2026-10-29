@@ -38,6 +38,21 @@ module Spree
     # flip or a catalog attach/detach changes which lists match generically.
     after_commit -> { Spree::Current.price_lists = nil }
 
+    # Distinct products per list for a page of lists, in one grouped query.
+    # @param price_list_ids [Array<Integer>]
+    # @return [Hash{Integer => Integer}] keyed by price list id; lists with no products are absent
+    def self.products_count_by_list(price_list_ids)
+      where(id: price_list_ids).joins(:variants).group(arel_table[:id]).
+        distinct.count(Spree::Variant.arel_table[:product_id])
+    end
+
+    # Prices per list for a page of lists, in one grouped query.
+    # @param price_list_ids [Array<Integer>]
+    # @return [Hash{Integer => Integer}] keyed by price list id; lists with no prices are absent
+    def self.prices_count_by_list(price_list_ids)
+      Spree::Price.where(price_list_id: price_list_ids).group(:price_list_id).count
+    end
+
     # Flat-payload writer for `rules`. See
     # {Spree::TypedAssociations#assign_typed_association}.
     def rules=(rows)

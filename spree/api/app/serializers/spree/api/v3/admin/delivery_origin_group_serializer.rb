@@ -19,11 +19,11 @@ module Spree
           end
 
           attribute :delivery_zones_count do |record|
-            record.delivery_zones.count
+            record.delivery_zones.size
           end
 
           attribute :delivery_methods_count do |record|
-            record.delivery_methods.count
+            record.delivery_methods.size
           end
         end
       end

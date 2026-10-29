@@ -1,5 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Can, mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  Can,
+  mapSpreeErrorsToForm,
+  RecordMetadataSection,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   ActiveBadge,
   Badge,
@@ -317,6 +323,7 @@ function EditReasonSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <ReasonFormFields form={form} withCode={withCode} />
+            {'metadata' in reason && <RecordMetadataSection metadata={reason.metadata} />}
           </div>
           <SheetFooter>
             <Button type="button" variant="outline" onClick={onClose}>

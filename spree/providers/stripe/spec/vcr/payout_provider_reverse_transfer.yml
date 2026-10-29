@@ -1,0 +1,787 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/payment_intents
+    body:
+      encoding: UTF-8
+      string: amount=10000&currency=usd&payment_method=pm_card_bypassPending&payment_method_types[0]=card&confirm=true
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Idempotency-Key:
+      - 3aacfd96-8c76-41c9-9cc2-77e26cd5ad22
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 28 Oct 2026 12:35:20 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1590'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=5Cu60vCZ0ca2-Mh-NzxqrG_d8tJx6O5Ii2QCEpyHXOuczKItC5_kqBN8DbemJiXqER6JwL0XJXNzhOD7;
+        report-to csp
+      Idempotency-Key:
+      - 3aacfd96-8c76-41c9-9cc2-77e26cd5ad22
+      Original-Request:
+      - req_DHX8Ii6oHYWpGn
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=5Cu60vCZ0ca2-Mh-NzxqrG_d8tJx6O5Ii2QCEpyHXOuczKItC5_kqBN8DbemJiXqER6JwL0XJXNzhOD7&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=5Cu60vCZ0ca2-Mh-NzxqrG_d8tJx6O5Ii2QCEpyHXOuczKItC5_kqBN8DbemJiXqER6JwL0XJXNzhOD7&t=1"
+      Request-Id:
+      - req_DHX8Ii6oHYWpGn
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-09-30.endive. See https://docs.stripe.com/upgrades
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3UVW4aFmGsiQWfE60s4jVfpP",
+          "object": "payment_intent",
+          "allowed_payment_method_types": null,
+          "amount": 10000,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 10000,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": null,
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "automatic",
+          "client_secret": "pi_3UVW4aFmGsiQWfE60s4jVfpP_secret_QNhLqGls1Hw02e3xZzvvrlwLT",
+          "confirmation_method": "automatic",
+          "created": 1793190920,
+          "currency": "usd",
+          "customer": null,
+          "customer_account": null,
+          "description": null,
+          "excluded_payment_method_types": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": "ch_3UVW4aFmGsiQWfE609Q0eAZB",
+          "livemode": false,
+          "managed_payments": {
+            "enabled": false
+          },
+          "metadata": {},
+          "next_action": null,
+          "on_behalf_of": null,
+          "payment_method": "pm_1UVW4ZFmGsiQWfE6qtr0wP88",
+          "payment_method_configuration_details": null,
+          "payment_method_options": {
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic"
+            }
+          },
+          "payment_method_types": [
+            "card"
+          ],
+          "payment_record": null,
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shared_payment_granted_token": null,
+          "shipping": null,
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": null,
+          "status": "succeeded",
+          "transfer_data": null,
+          "transfer_group": null
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:20 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/transfers
+    body:
+      encoding: UTF-8
+      string: amount=4250&currency=usd&destination=acct_1UE8TgCPyuszaKOY&source_transaction=ch_3UVW4aFmGsiQWfE609Q0eAZB&metadata[spree_seller_transfer_id]=450903764&metadata[spree_order_number]=R1001&expand[0]=destination_payment.balance_transaction
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_DHX8Ii6oHYWpGn","request_duration_ms":1283}}'
+      Idempotency-Key:
+      - spree-vtr_Y010FYETxC
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 28 Oct 2026 12:35:21 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '3263'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm;
+        report-to csp
+      Idempotency-Key:
+      - spree-vtr_Y010FYETxC
+      Original-Request:
+      - req_8s3gHgXBzC9xSm
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"
+      Request-Id:
+      - req_8s3gHgXBzC9xSm
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-09-30.endive. See https://docs.stripe.com/upgrades
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "tr_3UVW4aFmGsiQWfE60GzM4283",
+          "object": "transfer",
+          "amount": 4250,
+          "amount_reversed": 0,
+          "balance_transaction": "txn_3UVW4aFmGsiQWfE609YWz8tM",
+          "created": 1793190921,
+          "currency": "usd",
+          "description": null,
+          "destination": "acct_1UE8TgCPyuszaKOY",
+          "destination_payment": {
+            "id": "py_1UVW4bCPyuszaKOYVzCypbUW",
+            "object": "charge",
+            "amount": 4250,
+            "amount_captured": 4250,
+            "amount_refunded": 0,
+            "application": "ca_SHLkYn88AhyjJ4Fkk5eqq8xeGERfDeV7",
+            "application_fee": null,
+            "application_fee_amount": null,
+            "balance_transaction": {
+              "id": "txn_1UVW4bCPyuszaKOY20fmFnb0",
+              "object": "balance_transaction",
+              "amount": 4250,
+              "available_on": 1793190921,
+              "balance_type": "payments",
+              "created": 1793190921,
+              "currency": "usd",
+              "description": null,
+              "exchange_rate": null,
+              "fee": 0,
+              "fee_details": [],
+              "net": 4250,
+              "reporting_category": "charge",
+              "source": "py_1UVW4bCPyuszaKOYVzCypbUW",
+              "status": "available",
+              "type": "payment"
+            },
+            "billing_details": {
+              "address": {
+                "city": null,
+                "country": null,
+                "line1": null,
+                "line2": null,
+                "postal_code": null,
+                "state": null
+              },
+              "email": null,
+              "name": null,
+              "phone": null,
+              "tax_id": null
+            },
+            "calculated_statement_descriptor": null,
+            "captured": true,
+            "created": 1793190921,
+            "currency": "usd",
+            "customer": null,
+            "description": null,
+            "destination": null,
+            "dispute": null,
+            "disputed": false,
+            "failure_balance_transaction": null,
+            "failure_code": null,
+            "failure_message": null,
+            "fraud_details": {},
+            "invoice": null,
+            "livemode": false,
+            "metadata": {},
+            "on_behalf_of": null,
+            "order": null,
+            "outcome": null,
+            "paid": true,
+            "payment_intent": null,
+            "payment_method": null,
+            "payment_method_details": {
+              "stripe_account": {},
+              "type": "stripe_account"
+            },
+            "receipt_email": null,
+            "receipt_number": null,
+            "receipt_url": "https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xVUU4VGdDUHl1c3phS09ZKInYh9cGMgYko6eZva46LBb13EKs5Kjr0ddbD7C9OccoBd5k7xubnLTF_EQBqrwTxLKfHCkS15miZ0FV",
+            "refunded": false,
+            "review": null,
+            "shipping": null,
+            "source": {
+              "id": "acct_1RMn2pFmGsiQWfE6",
+              "object": "account",
+              "application_icon": "https://files.stripe.com/links/MDB8YWNjdF8xUk1uMnBGbUdzaVFXZkU2fGZsX2xpdmVfSnBnMWtpZVk3ZlpZcUlpM09yR2lBMzVp00swlntEYI",
+              "application_name": "Vendo (test)"
+            },
+            "source_transfer": "tr_3UVW4aFmGsiQWfE60GzM4283",
+            "statement_descriptor": null,
+            "statement_descriptor_suffix": null,
+            "status": "succeeded",
+            "transfer_data": null,
+            "transfer_group": null
+          },
+          "livemode": false,
+          "metadata": {
+            "spree_order_number": "R1001",
+            "spree_seller_transfer_id": "450903764"
+          },
+          "reversals": {
+            "object": "list",
+            "data": [],
+            "has_more": false,
+            "total_count": 0,
+            "url": "/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283/reversals"
+          },
+          "reversed": false,
+          "source_transaction": "ch_3UVW4aFmGsiQWfE609Q0eAZB",
+          "source_type": "card",
+          "transfer_group": "group_pi_3UVW4aFmGsiQWfE60s4jVfpP"
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:21 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/refunds
+    body:
+      encoding: UTF-8
+      string: charge=ch_3UVW4aFmGsiQWfE609Q0eAZB&amount=2050
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_8s3gHgXBzC9xSm","request_duration_ms":983}}'
+      Idempotency-Key:
+      - cd2df86a-04ef-4054-ad6a-4e15e5e4a282
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 28 Oct 2026 12:35:22 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '714'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm;
+        report-to csp
+      Idempotency-Key:
+      - cd2df86a-04ef-4054-ad6a-4e15e5e4a282
+      Original-Request:
+      - req_eyb1kcUGclQ8Ed
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"
+      Request-Id:
+      - req_eyb1kcUGclQ8Ed
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-09-30.endive. See https://docs.stripe.com/upgrades
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "re_3UVW4aFmGsiQWfE60UITZmgx",
+          "object": "refund",
+          "amount": 2050,
+          "balance_transaction": "txn_3UVW4aFmGsiQWfE60KtjBoCx",
+          "charge": "ch_3UVW4aFmGsiQWfE609Q0eAZB",
+          "created": 1793190922,
+          "currency": "usd",
+          "customer": null,
+          "customer_account": null,
+          "destination_details": {
+            "card": {
+              "reference_status": "pending",
+              "reference_type": "acquirer_reference_number",
+              "type": "refund"
+            },
+            "type": "card"
+          },
+          "metadata": {},
+          "payment_intent": "pi_3UVW4aFmGsiQWfE60s4jVfpP",
+          "payment_method": "pm_1UVW4ZFmGsiQWfE6qtr0wP88",
+          "reason": null,
+          "receipt_number": null,
+          "source_transfer_reversal": null,
+          "status": "succeeded",
+          "transfer_reversal": null
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:22 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283/reversals?limit=100
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_eyb1kcUGclQ8Ed","request_duration_ms":999}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 28 Oct 2026 12:35:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '121'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm;
+        report-to csp
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"
+      Request-Id:
+      - req_Lua2DtfKgYvHRa
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-09-30.endive. See https://docs.stripe.com/upgrades
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "object": "list",
+          "data": [],
+          "has_more": false,
+          "url": "/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283/reversals"
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:23 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283/reversals
+    body:
+      encoding: UTF-8
+      string: amount=1025&metadata[spree_seller_transfer_id]=450903765&metadata[spree_order_number]=R1001
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_Lua2DtfKgYvHRa","request_duration_ms":161}}'
+      Idempotency-Key:
+      - spree-vtr_5vxvHAQZnC
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 28 Oct 2026 12:35:24 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '430'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm;
+        report-to csp
+      Idempotency-Key:
+      - spree-vtr_5vxvHAQZnC
+      Original-Request:
+      - req_nI165JxLQtsQm5
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"
+      Request-Id:
+      - req_nI165JxLQtsQm5
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-09-30.endive. See https://docs.stripe.com/upgrades
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "trr_1UVW4dFmGsiQWfE6ysRdAlPd",
+          "object": "transfer_reversal",
+          "amount": 1025,
+          "balance_transaction": "txn_1UVW4dFmGsiQWfE6ErKBcx9z",
+          "created": 1793190923,
+          "currency": "usd",
+          "destination_payment_refund": "pyr_1UVW4dCPyuszaKOYxWh0ocjq",
+          "metadata": {
+            "spree_order_number": "R1001",
+            "spree_seller_transfer_id": "450903765"
+          },
+          "source_refund": null,
+          "transfer": "tr_3UVW4aFmGsiQWfE60GzM4283"
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:24 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/18.4.2 Spree Stripe/6.0.0 (https://spreecommerce.org)
+        AIAgent/claude_code
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_nI165JxLQtsQm5","request_duration_ms":980}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 28 Oct 2026 12:35:24 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1309'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm;
+        report-to csp
+      Report-To:
+      - '{"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - csp="https://q.stripe.com/csp-report-v2?q=YumHfcVVvUfHDEArssyfvPFb1gBR_blj_iiHIyI3TAAKUIoXy1vwmeCSJFIoG7CbvJYbAbS8coXQpfSm&t=1"
+      Request-Id:
+      - req_moIlJkfxqCSIQh
+      Stripe-Notice:
+      - You are using an outdated API version (2023-10-16). We recommend upgrading
+        to the latest API version, 2026-09-30.endive. See https://docs.stripe.com/upgrades
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - 3c3
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "tr_3UVW4aFmGsiQWfE60GzM4283",
+          "object": "transfer",
+          "amount": 4250,
+          "amount_reversed": 1025,
+          "balance_transaction": "txn_3UVW4aFmGsiQWfE609YWz8tM",
+          "created": 1793190921,
+          "currency": "usd",
+          "description": null,
+          "destination": "acct_1UE8TgCPyuszaKOY",
+          "destination_payment": "py_1UVW4bCPyuszaKOYVzCypbUW",
+          "livemode": false,
+          "metadata": {
+            "spree_order_number": "R1001",
+            "spree_seller_transfer_id": "450903764"
+          },
+          "reversals": {
+            "object": "list",
+            "data": [
+              {
+                "id": "trr_1UVW4dFmGsiQWfE6ysRdAlPd",
+                "object": "transfer_reversal",
+                "amount": 1025,
+                "balance_transaction": "txn_1UVW4dFmGsiQWfE6ErKBcx9z",
+                "created": 1793190923,
+                "currency": "usd",
+                "destination_payment_refund": "pyr_1UVW4dCPyuszaKOYxWh0ocjq",
+                "metadata": {
+                  "spree_order_number": "R1001",
+                  "spree_seller_transfer_id": "450903765"
+                },
+                "source_refund": null,
+                "transfer": "tr_3UVW4aFmGsiQWfE60GzM4283"
+              }
+            ],
+            "has_more": false,
+            "total_count": 1,
+            "url": "/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283/reversals"
+          },
+          "reversed": false,
+          "source_transaction": "ch_3UVW4aFmGsiQWfE609Q0eAZB",
+          "source_type": "card",
+          "transfer_group": "group_pi_3UVW4aFmGsiQWfE60s4jVfpP"
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:24 GMT
+recorded_with: VCR 6.4.0

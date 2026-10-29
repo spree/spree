@@ -1,3 +1,4 @@
+import type { FileUploadVisibility } from '@spree/core'
 import { useMutation } from '@tanstack/react-query'
 import { getApiClient } from '../api-client'
 
@@ -31,7 +32,7 @@ interface FileUploadOptions {
    * (documents, imports, digital products). Attaching a file never moves it
    * between storage services, so this has to be decided up front.
    */
-  visibility?: 'public' | 'private'
+  visibility?: FileUploadVisibility
 }
 
 export function useFileUpload(options: FileUploadOptions = {}) {

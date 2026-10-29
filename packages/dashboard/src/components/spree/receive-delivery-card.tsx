@@ -1,4 +1,5 @@
 import type { StockReceiptCreateParams } from '@spree/admin-sdk'
+import { STOCK_RECEIPT_REJECTION_REASONS, type StockReceiptRejectionReason } from '@spree/core'
 import { Can, StoreDatePicker, type SubjectName } from '@spree/dashboard-core'
 import {
   Button,
@@ -24,7 +25,6 @@ import {
 } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { REJECTION_REASONS, type RejectionReason } from '../../schemas/inventory-operations'
 import { QuantityCell, QuantityHead } from './quantity-cell'
 import { VariantLink } from './variant-link'
 
@@ -48,7 +48,7 @@ export interface ReceivableLine {
 interface Count {
   accepted: number
   rejected: number
-  reason: RejectionReason | ''
+  reason: StockReceiptRejectionReason | ''
 }
 
 /**
@@ -215,20 +215,22 @@ export function ReceiveDeliveryCard({
                   <TableCell className="rounded-none!">
                     {count.rejected > 0 ? (
                       <Select
-                        items={REJECTION_REASONS.map((value) => ({
+                        items={STOCK_RECEIPT_REJECTION_REASONS.map((value) => ({
                           value,
                           label: t(`admin.stock_receipts.rejection_reasons.${value}`),
                         }))}
                         value={count.reason}
                         onValueChange={(value) =>
-                          setCount(line.id, { reason: (value as RejectionReason | null) ?? '' })
+                          setCount(line.id, {
+                            reason: (value as StockReceiptRejectionReason | null) ?? '',
+                          })
                         }
                       >
                         <SelectTrigger aria-label={t('admin.stock_receipts.columns.reason')}>
                           <SelectValue placeholder={t('admin.stock_receipts.reason_placeholder')} />
                         </SelectTrigger>
                         <SelectContent>
-                          {REJECTION_REASONS.map((value) => (
+                          {STOCK_RECEIPT_REJECTION_REASONS.map((value) => (
                             <SelectItem key={value} value={value}>
                               {t(`admin.stock_receipts.rejection_reasons.${value}`)}
                             </SelectItem>

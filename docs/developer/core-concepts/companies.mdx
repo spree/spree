@@ -215,6 +215,46 @@ curl -X POST 'https://api.mystore.com/api/v3/store/companies/comp_xxx/addresses'
 
 Note that a delivery site is just an address. Ten warehouses do not mean ten company nodes — nodes exist for organizational and legal structure, addresses for where things go.
 
+### Addresses inherit downwards
+
+Listing a node's addresses returns its own entries **and** the ones it inherits from the nodes above it, so a division can ship to the headquarters site it shares. Writing one stays with the node that owns it: a division can add and edit its own entries, and reads its parent's without being able to change them. Each entry's `owner` names the node it belongs to, so a client can tell inherited entries apart from the node's own.
+
+### Picking an address at checkout
+
+A member buying for their company ships to the company's sites, not only to their own saved addresses. Set the company on the cart with `company_id` first, then ask the cart which addresses it can use:
+
+<CodeGroup>
+
+```typescript Store SDK
+await client.carts.update('cart_xxx', { company_id: 'comp_xxx' })
+
+const { data: addresses } = await client.carts.addresses.list('cart_xxx')
+
+// Each entry names the book it came out of, so a picker can label them.
+// A personal purchase has no company sites, so there may be none.
+const site = addresses.find((address) => address.owner?.type === 'company')
+
+if (site) {
+  await client.carts.update('cart_xxx', { shipping_address_id: site.id })
+}
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx/addresses' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT'
+```
+
+</CodeGroup>
+
+This call needs a signed-in customer. Unlike the rest of the cart endpoints, a guest cart token is not enough: what comes back is the account's address books rather than the cart's own contents. A guest cart has neither book, so the list would be empty anyway.
+
+The list holds the buyer's own address book plus the address book of the company set on the cart, limited to the countries the cart's [market](/developer/core-concepts/markets) sells to. Every entry in it is accepted as `shipping_address_id` or `billing_address_id`, so a picker built from it never offers an address the checkout cannot use. A buyer who belongs to a single company still has to set it on the cart: until then, only their own addresses are listed and accepted. An address belonging to anyone else is rejected, and completing the order copies the chosen address onto it, leaving the book entry free to be renamed or retired later.
+
+Each entry carries the `owner` it is filed under — `{ id, type, name }`, where `type` is `customer` or `company` — so a picker can group and label the two books from one response. An inherited site names the node that owns it rather than the one the cart is for, so a division's own docks and the headquarters docks it shares are told apart.
+
+Staff placing an order get the same reach: `shipping_address_id` and `billing_address_id` on the Admin API's order creation accept the company's sites, and `use_customer_default_address` fills the slots from the company's defaults when the request names a company with `company_id`. Without one it takes the customer's own defaults, even for a buyer who belongs to a single company — prefilling follows what the caller asked for rather than inferring an organization on their behalf.
+
 ## Tax
 
 Tax registrations and exemption certificates live **only on legal entities**, and a purchase resolves tax through the node's nearest `company` ancestor.

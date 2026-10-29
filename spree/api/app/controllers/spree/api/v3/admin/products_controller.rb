@@ -77,10 +77,8 @@ module Spree
             body.attribute :variants, :array,
               as: 'ProductVariantParams',
               description: 'Every purchasable attribute (sku, prices, stock, weight, dimensions) lives on variants. An entry without `options` upserts onto the default variant of a simple product; pass `id` to update an existing variant.' do |variant|
+              variant.extends Spree::Api::V3::Admin::VariantRequestSchema
               variant.attribute :id, :id
-              variant.include_attributes Spree::Api::V3::VariantRequestSchema
-              variant.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
-                description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing.'
             end
           end
 
@@ -221,7 +219,7 @@ module Spree
 
             channels = scoped_channels
             product_ids = bulk_collection.distinct.ids
-            channels.find_each { |channel| channel.add_products(product_ids) }
+            channels.add_products(product_ids)
 
             render json: { product_count: product_ids.size, channel_count: channels.size }
           end
@@ -233,7 +231,7 @@ module Spree
 
             channels = scoped_channels
             product_ids = bulk_collection.distinct.ids
-            removed = channels.sum { |channel| channel.remove_products(product_ids) }
+            removed = channels.remove_products(product_ids)
 
             render json: { product_count: product_ids.size, channel_count: channels.size, removed: removed }
           end
@@ -291,6 +289,18 @@ module Spree
             Spree.product_update_workflow
           end
 
+          def nested_permitted_models
+            { media: Spree::Media, variants: Spree::Variant }
+          end
+
+          # A written product is serialized from a fresh read: lazy preloading
+          # does not reach records a write built, so the instance the workflow
+          # returned would query once per variant.
+          def serialize_resource(resource)
+            resource = scope.where(id: resource.id).preload_associations_lazily.take! if resource.lazy_preload_context.nil?
+            super
+          end
+
           # Use SearchProvider::Database for collection to handle price/best_selling
           # sorting correctly (counts before sorting, avoiding PG/Mobility issues).
           def collection
@@ -321,7 +331,24 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*permitted_attributes).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
+            params.permit(*permitted_attributes).tap do |attrs|
+              attrs.delete(:status) if review_status?(attrs[:status])
+              scope_store_references(attrs)
+            end
+          end
+
+          # Read through the store here because the model only checks that the
+          # record exists: another store's type or tax category would otherwise
+          # be accepted, and the type would seed its option types onto the
+          # product.
+          STORE_REFERENCES = { product_type_id: :product_types, tax_category_id: :tax_categories }.freeze
+
+          def scope_store_references(attrs)
+            STORE_REFERENCES.each do |key, association|
+              next if attrs[key].blank?
+
+              attrs[key] = current_store.public_send(association).find_by_param!(attrs[key]).id
+            end
           end
 
           # A review status is an outcome, not a value to assign: `proposed`

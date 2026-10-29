@@ -1,7 +1,12 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
-import { login, openProfileDialog } from './helpers'
+import {
+  login,
+  openProfileDialog,
+  saveCustomFieldWithPage,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const FIXTURE_IMAGE = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -56,10 +61,8 @@ test.describe('store settings — general', () => {
 
     // Normalize the store's admin language to English while the UI is still
     // English, so the Polish selection below is always a real change regardless
-    // of any value left by a prior run (the suite shares one seeded DB). A
-    // concrete language (not the blank "use default") is used because clearing
-    // the override sends `undefined`, which the backend treats as "unchanged".
-    // Save only when this actually dirties the form.
+    // of any value left by a prior run (the suite shares one seeded DB). Save
+    // only when this actually dirties the form.
     await page.goto(STORE_PATH(creds.store_id))
     await expect(page.locator('#store-admin-locale')).toBeVisible({ timeout: 15_000 })
     await page.locator('#store-admin-locale').click()
@@ -142,6 +145,32 @@ test.describe('store settings — general', () => {
       timeout: 15_000,
     })
   })
+
+  // Choosing "Use the default language" removes the store's override rather
+  // than leaving the previous language in place.
+  test('clears the store admin language', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    const adminLocale = page.locator('#store-admin-locale')
+    const save = page.getByRole('button', { name: /^save$/i })
+    await expect(adminLocale).toBeVisible({ timeout: 15_000 })
+
+    await adminLocale.click()
+    await page.getByRole('option', { name: /^english$/i }).click()
+    if (await save.isEnabled()) {
+      await save.click()
+      await expect(save).toBeDisabled({ timeout: 15_000 })
+    }
+
+    await adminLocale.click()
+    await page.getByRole('option', { name: 'Use the default language', exact: true }).click()
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(adminLocale).toContainText('Use the default language', { timeout: 15_000 })
+  })
+
   // These settings are written under their plain names (`timezone`,
   // `guest_checkout`, …) since preferences became a typed contract; each must
   // still save and come back after a reload.
@@ -169,8 +198,10 @@ test.describe('store settings — general', () => {
       ),
     }
 
+    // Browsers list this zone as `Asia/Calcutta`; the store saves and shows
+    // its current IANA name.
     await timezone.click()
-    await page.getByRole('option', { name: 'Europe/Warsaw', exact: true }).click()
+    await page.getByRole('option', { name: 'Asia/Kolkata', exact: true }).click()
     await storefrontAccess.click()
     await page.getByRole('option', { name: /^prices hidden/i }).click()
     await guestCheckout.click()
@@ -183,7 +214,7 @@ test.describe('store settings — general', () => {
 
     await page.reload()
     await expect(prefix).toHaveValue('E2E', { timeout: 15_000 })
-    await expect(timezone).toContainText('Europe/Warsaw')
+    await expect(timezone).toContainText('Asia/Kolkata')
     await expect(storefrontAccess).toContainText(/prices hidden/i)
     await expect(guestCheckout).toHaveAttribute('aria-checked', String(!original.guestCheckout))
     await expect(onDispatch).toBeChecked()
@@ -196,6 +227,66 @@ test.describe('store settings — general', () => {
     await guestCheckout.click()
     await prefix.fill(original.prefix)
     if (original.capture >= 0) await captureRadios.nth(original.capture).click()
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  // The e2e store supports `de` through its Europe market, so the
+  // translations editor offers it as a target language.
+  test('saves the SEO title and description, and translates them', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    const seoTitle = page.locator('#store-seo-title')
+    const metaDescription = page.locator('#store-meta-description')
+    await expect(seoTitle).toBeVisible({ timeout: 15_000 })
+
+    const suffix = Date.now()
+    const title = `E2E Coffee ${suffix}`
+    await seoTitle.fill(title)
+    await metaDescription.fill('Freshly roasted coffee')
+    const save = page.getByRole('button', { name: /^save$/i })
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(seoTitle).toHaveValue(title, { timeout: 15_000 })
+    await expect(metaDescription).toHaveValue('Freshly roasted coffee')
+
+    await page.getByRole('button', { name: /manage translations/i }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByTestId('source-seo_title')).toContainText(title, { timeout: 15_000 })
+    await expect(dialog.getByLabel('name de')).toHaveCount(0)
+    const translated = `E2E Kaffee ${suffix}`
+    await dialog.getByLabel('seo_title de').fill(translated)
+    await dialog.getByRole('button', { name: /^save translations$/i }).click()
+    await expect(page.getByText(/translations saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^close$/i }).click()
+    await page.getByRole('button', { name: /manage translations/i }).click()
+    await expect(page.getByRole('dialog').getByLabel('seo_title de')).toHaveValue(translated, {
+      timeout: 15_000,
+    })
+    await page.getByRole('button', { name: /^close$/i }).click()
+
+    // Delete the translation so later specs in this shard start without it.
+    const cleared = await page.request.post('/api/v3/admin/translations/batch', {
+      headers: { 'X-Spree-Store-Id': creds.store_id, Authorization: `Bearer ${creds.accessToken}` },
+      data: {
+        translations: [
+          {
+            resource_type: 'store',
+            resource_id: creds.store_id,
+            values: { de: { seo_title: null } },
+          },
+        ],
+      },
+    })
+    if (!cleared.ok()) {
+      throw new Error(`Failed to delete translation: ${cleared.status()} ${await cleared.text()}`)
+    }
+
+    await seoTitle.fill('')
+    await metaDescription.fill('')
     await save.click()
     await expect(save).toBeDisabled({ timeout: 15_000 })
   })
@@ -360,5 +451,13 @@ test.describe('store settings — emails', () => {
     await page.getByRole('option', { name: /^inter/i }).click()
     await save.click()
     await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  test('saves a store custom field with the page Save', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'store', async (label) => {
+      await page.goto(STORE_PATH(creds.store_id))
+      await saveCustomFieldWithPage(page, label, 'Region EU')
+    })
   })
 })

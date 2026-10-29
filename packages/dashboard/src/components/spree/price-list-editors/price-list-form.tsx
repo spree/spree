@@ -5,6 +5,7 @@ import type {
   PriceRule,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
+import { MATCH_POLICIES, type MatchPolicy } from '@spree/core'
 import {
   adminClient,
   Can,
@@ -17,9 +18,10 @@ import {
   useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
-import { DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
+import { Alert, AlertDescription, DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
 import {
   CalendarOffIcon,
+  CircleAlertIcon,
   PauseIcon,
   PencilIcon,
   PlayIcon,
@@ -47,6 +49,7 @@ import {
   ProductMembershipStagingProvider,
   useProductMembershipStaging,
 } from '../product-membership-staging'
+import { TypePickerSheet } from '../type-picker-sheet'
 import { PriceListStatusBadge } from './status-badge'
 // Side-effect import — registers per-rule editors (customer, customer
 // group, …) into the slot registry. Must run before any RuleEditSheet
@@ -95,7 +98,6 @@ import {
   useRemovePriceListProducts,
 } from '../../../hooks/use-price-lists'
 import {
-  MATCH_POLICIES,
   PRICE_LIST_DEFAULTS,
   type PriceListFormValues,
   type PriceRuleFormDraft,
@@ -182,7 +184,7 @@ export function PriceListForm({
       description: priceList.description ?? '',
       starts_at: priceList.starts_at,
       ends_at: priceList.ends_at,
-      match_policy: (priceList.match_policy as 'all' | 'any') ?? 'all',
+      match_policy: (priceList.match_policy as MatchPolicy) ?? 'all',
       rules: initialRules.map(ruleDraftFromRule),
       staged_products: { adds: [], removes: [] },
       ...extensionFormValues('price_list', priceList),
@@ -298,12 +300,10 @@ export function PriceListForm({
             main={
               <>
                 {form.formState.errors.root?.message && (
-                  <p
-                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                    role="alert"
-                  >
-                    {form.formState.errors.root.message}
-                  </p>
+                  <Alert variant="destructive">
+                    <CircleAlertIcon />
+                    <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                  </Alert>
                 )}
                 <RulesCard form={form} rulesArray={rulesArray} />
                 {mode === 'edit' && priceList && (
@@ -666,10 +666,17 @@ function RulesCard({
         </div>
 
         {pickerOpen && (
-          <RulePickerSheet
+          <TypePickerSheet
+            family="price_rule"
+            title={t('admin.pages.products.price_lists.add_rule')}
+            description={t('admin.pages.products.price_lists.add_rule_help')}
+            emptyMessage={t(
+              registeredTypes.length === 0
+                ? 'admin.pages.products.price_lists.rule_types_empty'
+                : 'admin.pages.products.price_lists.rule_types_all_used',
+            )}
             // One rule type per list (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={registeredTypes.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -867,62 +874,6 @@ function formatPreferenceValue(value: unknown, t: Translator): string {
 function humanize(key: string): string {
   const spaced = key.replace(/_/g, ' ').trim()
   return spaced.charAt(0).toUpperCase() + spaced.slice(1)
-}
-
-function RulePickerSheet({
-  types,
-  registeredCount,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  /** Types still selectable — already-added types are filtered out upstream. */
-  types: ResourceTypeDefinition[]
-  /** Total registered types regardless of selection — lets the empty state
-   *  distinguish "nothing registered" from "all already used". */
-  registeredCount: number
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  const emptyKey =
-    registeredCount === 0
-      ? 'admin.pages.products.price_lists.rule_types_empty'
-      : 'admin.pages.products.price_lists.rule_types_all_used'
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.pages.products.price_lists.add_rule')}</SheetTitle>
-          <SheetDescription>{t('admin.pages.products.price_lists.add_rule_help')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
-          ) : (
-            types.map((tt) => (
-              <button
-                key={tt.type}
-                type="button"
-                onClick={() => onPicked(tt)}
-                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-              >
-                <span className="text-sm font-medium">
-                  {typeLabel('price_rule', tt.type, tt.label)}
-                </span>
-                {typeDescription('price_rule', tt.type, tt.description) && (
-                  <span className="text-xs text-muted-foreground">
-                    {typeDescription('price_rule', tt.type, tt.description)}
-                  </span>
-                )}
-              </button>
-            ))
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
-  )
 }
 
 function RuleEditSheet({

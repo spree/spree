@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class LineItemSerializer < Spree::Api::V3::LineItemSerializer
+      _attributes.delete(:custom_fields)
+
       include Spree::Emails::PurchasedItemAttributes
 
       without_display_money

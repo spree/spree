@@ -165,6 +165,37 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=custom_fie
 
 Each value arrives with its own label and type, so you can render a spec table straight from the array without hardcoding which fields exist.
 
+The same `expand` works on every Store API record that can carry custom fields:
+
+- **Catalog:** products, variants, option types and values, media, categories, collections and [sellers](/developer/core-concepts/sellers)
+- **Checkout:** line items, delivery methods, payment methods, fulfillments and payments
+- **A customer's own records:** their account, addresses, orders, saved cards and payment sources, gift cards, store credits, returns, claims, companies and newsletter subscription
+
+On a marketplace, for example, merchants can manage seller merchandising from the dashboard — a `merchandising.navigation_position` number that picks featured sellers and orders them:
+
+<CodeGroup>
+
+```typescript Store SDK
+const { data: sellers } = await client.sellers.list({
+  expand: ['custom_fields'],
+})
+
+const featured = sellers
+  .map((seller) => ({
+    seller,
+    position: seller.custom_fields?.find((field) => field.key === 'merchandising.navigation_position')?.value,
+  }))
+  .filter(({ position }) => position != null)
+  .sort((a, b) => Number(a.position) - Number(b.position))
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/sellers?expand=custom_fields' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
 ## Searching, sorting and filtering
 
 A custom field can take part in product listings — but only if you ask, because indexing everything by default would be wasteful.
@@ -197,7 +228,35 @@ In the dashboard, fields with these flags become available in the product table'
 
 ## What can carry custom fields
 
-Most things you'd want to annotate: products, variants, orders, line items, customers, categories, payments, fulfillments, gift cards and store credits, among others.
+Most things you'd want to annotate: products, variants, orders, line items, customers, categories, payments, fulfillments, gift cards and store credits, among others. **Settings → Custom Fields** lists every type your installation supports; types no dashboard screen edits appear under **Through the API only**, for integrations to fill in.
+
+Merchants fill values in from the record's own screen in the dashboard:
+
+| Where | Records | How values save |
+|---|---|---|
+| Detail page | Products, categories, collections, promotions, store settings | With the page's Save button |
+| Detail page | Orders, customers, companies, sellers, stock transfers, purchase orders | With the card's own Edit and Save |
+| Edit sheet | Option types, product types, tax rates, payment methods, delivery methods, gift cards, media | With the sheet's Save button |
+| Product page sheet | Variants, product media | With the sheet's Done (Cancel discards) |
+| Detail sheet | Store credits | With the card's own Edit and Save |
+
+Sheets show the card only once the store defines a field for that type, so a store that uses none sees no empty sections. Staff who can view a record but not edit it don't see its custom fields: reading them needs edit access.
+
+Each record type in the table above has the same nested endpoint. The Admin SDK reaches any of them through one accessor, named by the record's type:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: customFields } = await adminClient
+  .customFields('stock_transfer', 'st_xxx')
+  .list()
+```
+
+```bash CLI
+spree api get /stock_transfers/st_xxx/custom_fields
+```
+
+</CodeGroup>
 
 ## Definitions belong to a store
 

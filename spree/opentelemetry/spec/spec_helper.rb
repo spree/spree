@@ -12,7 +12,6 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'

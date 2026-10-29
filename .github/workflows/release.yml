@@ -1,12 +1,48 @@
 name: Release
 
+# Every release starts from a tag pushed on a commit already on main:
+#
+#   v6.0.0.rc7               the Spree gems, and the npm packages that share the
+#                            Spree version (SDKs, @spree/core, dashboards)
+#   @spree/cli@3.5.0         @spree/cli
+#   create-spree-app@2.4.1   create-spree-app
+#
+# Each job skips versions already on its registry, so a release that failed
+# part-way can be re-run.
 on:
   push:
-    tags: ['v*']
+    tags: ['v*', '@spree/cli@*', 'create-spree-app@*']
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
+  verify:
+    name: Verify the tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+
+      - name: The tagged commit is on main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+      - name: The tag matches the versions in the repository
+        run: node scripts/publish-packages.mjs verify "$GITHUB_REF_NAME"
+
   release-gems:
     name: Release gems to RubyGems
+    needs: verify
+    if: startsWith(github.ref_name, 'v')
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -28,3 +64,39 @@ jobs:
       - name: Build and push gems to RubyGems
         working-directory: spree
         run: bundle exec rake gem:release
+
+  release-npm:
+    name: Release npm packages
+    needs: verify
+    runs-on: ubuntu-latest
+    # Must match the environment in each package's npm Trusted Publishing setting.
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+
+      - name: Build and publish
+        run: node scripts/publish-packages.mjs publish "$GITHUB_REF_NAME"

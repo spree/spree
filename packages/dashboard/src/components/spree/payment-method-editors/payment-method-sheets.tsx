@@ -1,6 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
-import { defaultPreferences, mapSpreeErrorsToForm, useStore } from '@spree/dashboard-core'
+import {
+  defaultPreferences,
+  mapSpreeErrorsToForm,
+  RecordMetadataSection,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Sheet,
@@ -28,6 +33,7 @@ import {
   paymentMethodValuesToCreateParams,
   paymentMethodValuesToUpdateParams,
 } from '../../../schemas/payment-method'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import { SetupGuideLink } from '../integrations/setup-guide-link'
 import { PaymentMethodForm } from './payment-method-form'
 import type { PaymentMethodFormValues } from './types'
@@ -177,6 +183,7 @@ export function EditPaymentMethodSheet({
   const { t } = useTranslation()
   const { data: paymentMethod, isLoading } = usePaymentMethod(id)
   const updateMutation = useUpdatePaymentMethod(id)
+  const customFields = useCustomFieldsDraft('payment_method', id)
   // The provider's preference schema comes from its `/types` entry, matched
   // by the record's `type`.
   const { data: typesData } = usePaymentMethodTypes({ enabled: open })
@@ -220,11 +227,20 @@ export function EditPaymentMethodSheet({
 
   async function onSubmit(values: PaymentMethodFormValues) {
     const params = paymentMethodValuesToUpdateParams(values)
-    if (preferencesDirty) params.preferences = preferences
+    // Read from the ref rather than the memo: a retry runs before the next
+    // render recomputes it.
+    const prefsDirty = JSON.stringify(preferences) !== originalPreferencesRef.current
+    if (prefsDirty) params.preferences = preferences
     try {
-      await updateMutation.mutateAsync(params)
-      form.reset(values)
-      originalPreferencesRef.current = JSON.stringify(preferences)
+      // The record saves first and is marked clean, so a retry after a failed
+      // custom field save sends only the custom fields.
+      const savesRecord = form.formState.isDirty || prefsDirty
+      if (savesRecord) {
+        await updateMutation.mutateAsync(params)
+        form.reset(values)
+        originalPreferencesRef.current = JSON.stringify(preferences)
+      }
+      if (!(await customFields.save({ announce: !savesRecord }))) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -269,6 +285,8 @@ export function EditPaymentMethodSheet({
                 preferences={preferences}
                 onPreferencesChange={setPreferences}
               />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
+              <RecordMetadataSection metadata={paymentMethod?.metadata} />
             </div>
             <SheetFooter>
               <Button
@@ -282,7 +300,8 @@ export function EditPaymentMethodSheet({
               <Button
                 type="submit"
                 disabled={
-                  form.formState.isSubmitting || (!form.formState.isDirty && !preferencesDirty)
+                  form.formState.isSubmitting ||
+                  (!form.formState.isDirty && !preferencesDirty && !customFields.isDirty)
                 }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}

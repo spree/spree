@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 export { ActorSchema, type Actor } from './Actor';
 export { AddressSchema, type Address } from './Address';
+export { AddressOwnerSchema, type AddressOwner } from './AddressOwner';
 export { AdminUserSchema, type AdminUser } from './AdminUser';
 export { AllowedOriginSchema, type AllowedOrigin } from './AllowedOrigin';
 export { ApiKeySchema, type ApiKey } from './ApiKey';
@@ -74,6 +75,7 @@ export { InvitationSchema, type Invitation } from './Invitation';
 export { InvitationAcceptanceLinkSchema, type InvitationAcceptanceLink } from './InvitationAcceptanceLink';
 export { LineItemSchema, type LineItem } from './LineItem';
 export { LocaleSchema, type Locale } from './Locale';
+export { MaintenanceTaskRunSchema, type MaintenanceTaskRun } from './MaintenanceTaskRun';
 export { MarketSchema, type Market } from './Market';
 export { MediaSchema, type Media } from './Media';
 export { MembershipProductSchema, type MembershipProduct } from './MembershipProduct';

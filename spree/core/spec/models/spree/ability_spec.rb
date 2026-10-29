@@ -131,6 +131,16 @@ describe Spree::Ability, type: :model do
         expect(staff_ability).to be_able_to :read, Spree::State.new
         expect(staff_ability).to be_able_to :read, store
       end
+
+      it "reads only this store's markets and channels" do
+        other_store = create(:store)
+
+        expect(staff_ability).to be_able_to :read, build(:market, store: store)
+        expect(staff_ability).to be_able_to :read, build(:channel, store: store)
+        expect(staff_ability).not_to be_able_to :update, build(:market, store: store)
+        expect(staff_ability).not_to be_able_to :read, build(:market, store: other_store)
+        expect(staff_ability).not_to be_able_to :read, build(:channel, store: other_store)
+      end
     end
 
     context 'with the admin role' do
@@ -148,6 +158,17 @@ describe Spree::Ability, type: :model do
       # audience may hold builds a role that refuses to save.
       it 'leaves out the keys only another audience may hold' do
         expect(staff_ability.permission_keys).not_to include('read_seller_profile', 'read_seller_earnings')
+      end
+
+      # A host whose store admins do not operate the installation runs upgrade
+      # steps from the command line only.
+      it 'withholds maintenance tasks when the installation turns them off' do
+        allow(Spree::Config).to receive(:maintenance_tasks_dashboard_enabled).and_return(false)
+
+        expect(staff_ability).not_to be_able_to :read, Spree::MaintenanceTaskRun
+        expect(staff_ability).not_to be_able_to :read, :maintenance_task
+        expect(staff_ability.permission_keys).not_to include('read_maintenance_tasks', 'write_maintenance_tasks')
+        expect(staff_ability).to be_able_to :manage, Spree::Order
       end
     end
 

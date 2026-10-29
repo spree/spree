@@ -57,6 +57,38 @@ RSpec.describe Spree::SellerTransfers::ExecutePendingDueJob do
     expect(enqueued_seller_ids).to be_empty
   end
 
+  it 'hands over a seller whose reversal the provider refused' do
+    original = earning(status: 'completed')
+    create(:seller_transfer, :reversal, seller: seller, order: original.order, reversed_from: original,
+                                        status: 'processing')
+
+    described_class.perform_now
+
+    expect(enqueued_seller_ids).to contain_exactly(seller.id)
+  end
+
+  it 'hands over a seller who is no longer approved when a reversal is owed' do
+    original = earning(status: 'completed')
+    create(:seller_transfer, :reversal, seller: seller, order: original.order, reversed_from: original,
+                                        status: 'processing')
+    seller.update!(status: 'suspended')
+
+    described_class.perform_now
+
+    expect(enqueued_seller_ids).to contain_exactly(seller.id)
+  end
+
+  # Nothing can be taken back until a person settles what the earning did.
+  it 'leaves a reversal of an earning nobody can account for alone' do
+    original = earning(status: 'unresolved')
+    create(:seller_transfer, :reversal, seller: seller, order: original.order, reversed_from: original,
+                                        status: 'processing')
+
+    described_class.perform_now
+
+    expect(enqueued_seller_ids).to be_empty
+  end
+
   it 'says nothing when every earning is confirmed' do
     earning(status: 'completed')
 

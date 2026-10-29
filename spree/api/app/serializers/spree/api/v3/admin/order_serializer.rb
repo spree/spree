@@ -31,7 +31,7 @@ module Spree
                    total: [:string, nullable: false],
                    amount_due: [:string, nullable: false]
 
-          typelize status: [:string, enum: Spree::Order::STATUSES],
+          typelize status: [:string, enum: Spree::Order::STATUSES, enum_type_name: 'OrderStatus'],
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,
                    store_owner_notification_delivered: [:boolean, nullable: true],
@@ -198,6 +198,8 @@ module Spree
           typelize freight_summary: [:FreightSummary, nullable: true]
 
           one :freight_summary, resource: proc { Spree.api.admin_freight_summary_serializer }
+
+          expandable_custom_fields admin: true
         end
       end
     end

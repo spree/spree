@@ -13,16 +13,20 @@ module Spree
 
       # @param product [Spree::Product]
       # @param submitted_by [Spree.admin_user_class, nil] who asked
+      # @param reason [String, nil] why a listing already on sale goes back to
+      #   review — what changed on it. Recorded on the submission row. Without
+      #   one, only a draft or a rejected product can be submitted.
       # @return [Spree::ServiceModule::Result] value is the product
-      def perform(product:, submitted_by: nil)
+      def perform(product:, submitted_by: nil, reason: nil)
         super
 
         # Only a listing that is being worked on can be submitted. Guarding
         # `active?` alone let an archived product through — and with
         # auto-approval on, a withdrawn listing went straight back on sale
         # without anybody reviewing it. Re-submitting one already in review
-        # is equally meaningless.
-        unless product.draft? || product.rejected?
+        # is equally meaningless. An active listing reopens review only when
+        # the caller says what changed, which no seller-facing action does.
+        unless product.draft? || product.rejected? || (reason.present? && product.active?)
           reject!(:cannot_propose, message: I18n.t('activerecord.errors.models.spree/product.attributes.base.cannot_propose'))
         end
 
@@ -51,7 +55,8 @@ module Spree
       # one: the trail is how many times this was asked for, and rewriting
       # the last answer would erase that.
       def open_submission
-        product.submissions.create!(status: 'pending', submitted_by: submitted_by)
+        product.submissions.create!(status: 'pending', submitted_by: submitted_by,
+                                    metadata: reason.present? ? { 'reason' => reason } : {})
       end
 
       def auto_approve?

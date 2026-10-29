@@ -41,7 +41,17 @@ function TabsList({
   )
 }
 
-function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Tab>) {
+/**
+ * A tab. Pass `count` to append a tally — the number of steps outstanding, or
+ * of records in the panel — which is what tells an operator whether a tab is
+ * worth opening before they open it.
+ */
+function TabsTrigger({
+  className,
+  children,
+  count,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Tab> & { count?: number }) {
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
@@ -67,7 +77,12 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+      {count !== undefined && (
+        <span className="rounded-full bg-muted px-1.5 py-0.5 text-xs tabular-nums">{count}</span>
+      )}
+    </TabsPrimitive.Tab>
   )
 }
 

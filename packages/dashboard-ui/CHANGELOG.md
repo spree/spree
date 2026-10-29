@@ -1,5 +1,55 @@
 # @spree/dashboard-ui
 
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `TabsTrigger` takes a `count` to show a tally next to the tab's label. `StatusBadge` colors the maintenance task run statuses, and `WrenchIcon` is exported from `@spree/dashboard-ui/icons`.
+
+### Patch Changes
+
+- [#14983](https://github.com/spree/spree/pull/14983) [`e22669b`](https://github.com/spree/spree/commit/e22669b5ac1bfa28febd3a7fd831ff3eecdd8649) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the dashboard crashing when a Save button started saving while the browser was translating the page.
+- Updated dependencies [[`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553)]:
+  - @spree/core@6.0.0
+
+## 6.0.0-rc.7
+
+Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.
+
+## 1.0.0-rc.6
+
+### Patch Changes
+
+- [#14970](https://github.com/spree/spree/pull/14970) [`fb8a9ce`](https://github.com/spree/spree/commit/fb8a9ce01e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A webhook endpoint's subscriptions must now be `*`, an event name, or a name with `*` in place of whole segments (`order.*`, `*.created`), with at most 200 entries of up to 100 characters each; the API's 422 names the rejected entries. `@spree/core` exports the rule as `WEBHOOK_EVENT_PATTERN`, `isWebhookEventPattern`, `WEBHOOK_SUBSCRIPTION_MAX_LENGTH` and `WEBHOOK_SUBSCRIPTIONS_MAX`, and the dashboard's webhook form checks it before saving, refusing an invalid custom event inline. `FieldError` no longer crashes on the sparse per-item error array react-hook-form produces.
+- Updated dependencies []:
+  - @spree/core@0.3.0
+
+## 1.0.0-rc.5
+
+### Minor Changes
+
+- [#14911](https://github.com/spree/spree/pull/14911) [`3ca1f5e`](https://github.com/spree/spree/commit/3ca1f5e32f2e3cbb249d27571388e488153afd12) Thanks [@KacperMekarski](https://github.com/KacperMekarski)! - Company members can now pick their company's addresses when choosing where an order goes. Picking a company site at checkout used to be dropped without an error, because the cart only ever looked in the buyer's own address book. A new `GET /store/carts/:id/addresses` returns everything a cart may be shipped or billed to — the buyer's book plus the sites of the company set as the cart's `company_id` and the ones it inherits, limited to the countries the cart's market sells to — and `client.carts.addresses.list()` reaches it. The company has to be set on the cart explicitly: a buyer who belongs to a single company is not assumed to be buying for it when it comes to addresses. Every `Address` now carries the `owner` it is filed under (`null` for an address in no book, such as the copy a placed order keeps), so a picker can label the two books from one response. On the Admin API this `owner` object replaces the separate `owner_id` and `owner_type` fields. Unlike the other cart endpoints this one needs a signed-in customer: it answers with the account's address books rather than the cart's own contents. Staff get the same reach: a company's sites are selectable when creating an order, and "use default addresses" takes the company's defaults for a company order. On a division's page, addresses inherited from the companies above it are labelled with their owner and cannot be edited there.
+
+- [#14939](https://github.com/spree/spree/pull/14939) [`9c73a79`](https://github.com/spree/spree/commit/9c73a7908dbe35ecb0b3ce654f1b3d6705e9a0c3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added custom field editing to variants, option types, sellers, promotions, gift cards, store credits, stock transfers, purchase orders, companies, payment methods, delivery methods, tax rates, product types, media and store settings. Sheets show the custom fields card only once the store defines a field for that type. On the product page, variant and media custom fields save with the sheet's Done, and widgets in their `product.variant.form_fields` and `product.media.form_fields` slots can save on Done through `onSave`. `FormActions` and `useFormSubmitShortcut` accept `dirty` for unsaved changes held outside the form. `client.customFields(ownerType, ownerId)` accepts each of these types.
+
+### Patch Changes
+
+- [#14944](https://github.com/spree/spree/pull/14944) [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added every status, kind and other value list the Spree API returns to `@spree/core`, each as a list of its values (`PRODUCT_STATUSES`, `MEDIA_TYPES`, …) and a type (`ProductStatus`, `MediaType`, …) — open where extensions may add values, closed otherwise — plus `subsetOf` for picking the values an action accepts with each one checked at compile time. The SDKs re-export these types instead of each carrying its own copy, so their names and values are unchanged. The dashboards and the seller panel build their status filters and action checks from these lists, so a status added on the server shows up without a dashboard change. Value lists the SDKs used to spell out inline, such as a seller transfer's `kind`, now have names of their own; `MediaType`, `CollectionRuleMatchPolicy` and `CollectionSortOrder` in `@spree/admin-sdk`, and `ClaimResolution` in `@spree/dashboard-ui`, now come from the generated lists under the same names. A seller's `tax_remittance` and `payouts_schedule_interval`, a claim's `resolution`, a collection's `sort_order`, a shipping label's `format`, purchase order and stock transfer statuses, and tax and commission lines' `taxability_reason` are now typed with their lists instead of as plain strings.
+- Updated dependencies [[`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1)]:
+  - @spree/core@0.2.0
+
+## 1.0.0-rc.4
+
+### Patch Changes
+
+- [#14917](https://github.com/spree/spree/pull/14917) [`dd72579`](https://github.com/spree/spree/commit/dd72579df100ac42e46137851941f292c378172e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Apps no longer choose the versions of `@tanstack/react-table`, `@tanstack/react-hotkeys` and `@hookform/resolvers` used inside the dashboard packages: they are now regular dependencies, so upgrading them in an app (for example to React Table 9) no longer breaks type checking or the dashboard itself. Table column definitions are available as `DataGridColumn` from `@spree/dashboard-ui`. The TipTap menu extensions are pinned to the same version as the rest of the editor.
+  
+  `@spree/dashboard` and `@spree/seller-dashboard` now list the libraries they share with the app (React, TanStack Router and Query, React Hook Form, i18next, react-i18next and the Spree dashboard packages) as peer dependencies, so the app's copy is the only one. Before, an app on a different version got a second copy, which crashes React or makes plugins disappear. Apps must list these packages as their own dependencies; the starter templates now include React Hook Form, i18next and react-i18next.
+
+- [#14907](https://github.com/spree/spree/pull/14907) [`04760bf`](https://github.com/spree/spree/commit/04760bf28c44a52fdf0c773af5fae7774b5910a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Search pickers keep the option you pick instead of flickering and switching to another value while results load.
+
+- [#14907](https://github.com/spree/spree/pull/14907) [`04760bf`](https://github.com/spree/spree/commit/04760bf28c44a52fdf0c773af5fae7774b5910a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Toasts now stack behind each other and fan out on hover, matching the shadcn toast.
+
 ## 1.0.0-rc.3
 
 ### Minor Changes

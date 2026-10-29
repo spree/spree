@@ -11,9 +11,15 @@ export type CreateCartParams = {
   market_id?: string
   currency?: CurrencyCode
   locale?: LocaleCode
-  /** An existing address to ship to. */
+  /**
+   * An existing address to ship to, from the buyer's address book or from the book of the company
+   * the cart is for. List both with `GET /store/carts/:id/addresses`.
+   */
   shipping_address_id?: string
-  /** An existing address to bill. */
+  /**
+   * An existing address to bill, from the buyer's address book or from the book of the company the
+   * cart is for. List both with `GET /store/carts/:id/addresses`.
+   */
   billing_address_id?: string
   preferred_stock_location_id?: string
   /**

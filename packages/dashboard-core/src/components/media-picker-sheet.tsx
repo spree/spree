@@ -214,7 +214,7 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
                 ) : (
                   <UploadIcon className="size-4" />
                 )}
-                {t('admin.media_picker.upload')}
+                <span>{t('admin.media_picker.upload')}</span>
               </Button>
             </>
           )}
@@ -297,7 +297,7 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
               onClick={() => submit(Array.from(staged.values()))}
             >
               {submitting && <Loader2Icon className="size-4 animate-spin" />}
-              {confirmLabel ?? t('admin.media_picker.confirm')}
+              <span>{confirmLabel ?? t('admin.media_picker.confirm')}</span>
             </Button>
           </SheetFooter>
         )}

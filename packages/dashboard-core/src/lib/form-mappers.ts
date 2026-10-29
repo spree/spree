@@ -1,4 +1,4 @@
-import type { CountryCode } from '@spree/admin-sdk'
+import type { CountryCode } from '@spree/core'
 import type { PanelAccountParams } from '../api-client'
 
 /**

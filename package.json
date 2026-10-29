@@ -6,10 +6,11 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
+    "generate:types": "cd spree/api && bundle exec rake typelizer:generate",
     "generate:zod": "pnpm --recursive --filter \"./packages/*\" run generate:zod",
     "generate:filters": "pnpm --recursive --filter \"./packages/*\" run generate:filters",
     "generate:params": "pnpm --recursive --filter \"./packages/*\" run generate:params",
-    "generate:iso-codes": "pnpm --filter @spree/sdk run generate:iso-codes",
+    "generate:code-lists": "pnpm --filter @spree/core run generate:code-lists",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "turbo format",
@@ -26,7 +27,7 @@
     "server:teardown": "bash scripts/server-teardown.sh",
     "server:console": "cd server && spree console",
     "server:logs": "cd server && spree logs",
-    "server:seed": "cd server && spree rails db:seed",
+    "server:seed": "cd server && spree seed",
     "server:load_sample_data": "cd server && spree task load_sample_data",
     "dashboard:dev": "turbo build --filter='@spree/dashboard-starter^...' && pnpm --dir packages/dashboard-starter dev --port 5173 --strictPort",
     "seller:dev": "turbo build --filter='@spree/seller-dashboard-starter^...' && pnpm --dir packages/seller-dashboard-starter dev --port 5174 --strictPort",
@@ -43,14 +44,15 @@
     "test:slots": "scripts/test/with-slot --status",
     "docs:dev": "cd docs && mint dev --port 3333",
     "changeset": "changeset",
-    "version:preview": "changeset version --ignore @spree/sdk"
+    "version:packages": "node scripts/version-packages.mjs",
+    "version:tools": "node scripts/version-packages.mjs --tools"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@typescript/typescript6": "^6.0.2",
-    "turbo": "^2.11.8"
+    "turbo": "^2.11.9"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {

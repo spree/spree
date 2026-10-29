@@ -49,6 +49,12 @@ module Spree
         app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::RequestSizeLimit
       end
 
+      # Outside ShowExceptions, so an unknown API path's 404 carries it too.
+      initializer 'spree.api.no_index' do |app|
+        require_relative 'middleware/no_index'
+        app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::NoIndex
+      end
+
       # The resources agents may read and write are derived from the admin
       # controllers themselves (see Spree::Api::AgentResourceMap). Marked
       # stale on every reload rather than rebuilt: deriving it eager-loads the

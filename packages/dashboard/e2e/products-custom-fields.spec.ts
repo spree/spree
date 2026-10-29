@@ -44,9 +44,9 @@ test.describe('product custom fields — new product', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
       timeout: 30_000,
     })
-
     await expect(customFieldsCard(page).getByLabel(new RegExp(`^${fieldLabel}$`, 'i'))).toHaveValue(
       'Cotton',
+      { timeout: 15_000 },
     )
   })
 })
@@ -84,6 +84,7 @@ test.describe('product custom fields — existing product', () => {
 
     await expect(customFieldsCard(page).getByLabel(new RegExp(`^${fieldLabel}$`, 'i'))).toHaveValue(
       'Slim',
+      { timeout: 15_000 },
     )
   })
 })

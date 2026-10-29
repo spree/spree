@@ -2,7 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { AuthProvider } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
 import { adminClient, Slot, useAuth } from '@spree/dashboard-core'
-import { Button, Input, Label, Skeleton } from '@spree/dashboard-ui'
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Input,
+  Label,
+  Skeleton,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
@@ -233,12 +242,11 @@ function ProvidersUnavailable() {
   const { t } = useTranslation()
 
   return (
-    <div className="grid gap-2 rounded-md border border-destructive/50 p-4">
-      <p className="font-medium text-sm">{t('admin.auth.login.providers_error_title')}</p>
-      <p className="text-sm text-muted-foreground">
-        {t('admin.auth.login.providers_error_message')}
-      </p>
-    </div>
+    <Alert variant="destructive">
+      <CircleAlertIcon />
+      <AlertTitle>{t('admin.auth.login.providers_error_title')}</AlertTitle>
+      <AlertDescription>{t('admin.auth.login.providers_error_message')}</AlertDescription>
+    </Alert>
   )
 }
 

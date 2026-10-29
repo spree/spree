@@ -11,6 +11,8 @@ async function createCustomerGroup(page: Page, attrs: { name: string; descriptio
   await page.locator('#name').fill(attrs.name)
   if (attrs.description) await page.locator('#description').fill(attrs.description)
 
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: customer_group.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create customer group/i }).click()
 }
 

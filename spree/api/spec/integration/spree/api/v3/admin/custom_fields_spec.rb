@@ -16,7 +16,19 @@ RSpec.describe 'Admin Custom Fields API', type: :request, swagger_doc: 'api-refe
     'option_types' => { tag: 'Option Types', scope: :products, label: 'option type', parent: -> { create(:option_type) } },
     'orders' => { tag: 'Orders', scope: :orders, label: 'order', parent: -> { create(:order, store: store) } },
     'sellers' => { tag: 'Sellers', scope: :sellers, label: 'seller', parent: -> { create(:seller, store: store) } },
-    'variants' => { tag: 'Variants', scope: :products, label: 'variant', parent: -> { create(:variant) } }
+    'variants' => { tag: 'Variants', scope: :products, label: 'variant', parent: -> { create(:variant) } },
+    'promotions' => { tag: 'Promotions', scope: :promotions, label: 'promotion', parent: -> { create(:promotion) } },
+    'gift_cards' => { tag: 'Gift Cards', scope: :gift_cards, label: 'gift card', parent: -> { create(:gift_card) } },
+    'store_credits' => { tag: 'Store Credits', scope: :store_credits, label: 'store credit', parent: -> { create(:store_credit) } },
+    'stock_transfers' => { tag: 'Stock Transfers', scope: :stock, label: 'stock transfer', parent: -> { create(:stock_transfer) } },
+    'purchase_orders' => { tag: 'Purchase Orders', scope: :purchasing, label: 'purchase order', parent: -> { create(:purchase_order) } },
+    'companies' => { tag: 'Companies', scope: :customers, label: 'company', parent: -> { create(:company) } },
+    'payment_methods' => { tag: 'Payment Methods', scope: :settings, label: 'payment method', parent: -> { create(:check_payment_method) } },
+    'delivery_methods' => { tag: 'Delivery', scope: :delivery_methods, label: 'delivery method', parent: -> { create(:delivery_method) } },
+    'tax_rates' => { tag: 'Settings', scope: :settings, label: 'tax rate', parent: -> { create(:tax_rate) } },
+    'product_types' => { tag: 'Product Types', scope: :product_types, label: 'product type', parent: -> { create(:product_type) } },
+    'media' => { tag: 'Media', scope: :media, label: 'media file', parent: -> { create(:media) } },
+    'stores' => { tag: 'Settings', scope: :settings, label: 'store', parent: -> { store } }
   }.each do |segment, config|
     parent_param = :"#{segment.singularize}_id"
 
@@ -43,7 +55,7 @@ RSpec.describe 'Admin Custom Fields API', type: :request, swagger_doc: 'api-refe
           let(:'x-spree-api-key') { secret_api_key.plaintext_token }
           let(:parent) { instance_exec(&config[:parent]) }
           let(:definition) do
-            create(:custom_field_definition, :short_text_field, resource_type: parent.class.name)
+            create(:custom_field_definition, :short_text_field, resource_type: parent.class.base_class.name)
           end
           let!(:custom_field) do
             create(:custom_field, resource: parent, custom_field_definition: definition, value: 'wool')

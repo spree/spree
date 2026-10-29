@@ -107,6 +107,17 @@ module Spree
       split
     end
 
+    # `dup` copies the foreign keys but not the loaded records, so every copy
+    # made while packing and splitting would look its line item and variant
+    # up again.
+    def initialize_dup(other)
+      super
+      %i[line_item variant].each do |name|
+        association = other.association(name)
+        self.association(name).target = association.target if association.loaded?
+      end
+    end
+
     # This will fail if extract >= available_quantity
     def split_inventory!(extract_quantity)
       split = self.class.split(self, extract_quantity)

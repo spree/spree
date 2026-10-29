@@ -1,28 +1,8 @@
 import type { SellerCreateParams } from '@spree/admin-sdk'
+import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
 import { blankToNull, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-
-/**
- * The lifecycle, in the order a seller normally travels it. `status` is
- * never part of a form: each move is its own workflow on the server, so the
- * list here is only for rendering labels and filters.
- */
-export const SELLER_STATUSES = [
-  'pending',
-  'invited',
-  'onboarding',
-  'ready_for_review',
-  'approved',
-  'suspended',
-  'rejected',
-  'canceled',
-] as const
-
-export type SellerStatus = (typeof SELLER_STATUSES)[number]
-
-export const TAX_REMITTANCES = ['seller', 'platform'] as const
-export const PAYOUT_INTERVALS = ['daily', 'weekly', 'biweekly', 'monthly', 'manual'] as const
 
 export const sellerFormSchema = z.object({
   name: z
@@ -34,7 +14,7 @@ export const sellerFormSchema = z.object({
   billing_email: z.email().or(z.literal('')).optional(),
   about: z.string().optional(),
   tax_remittance: z.enum(TAX_REMITTANCES).optional(),
-  payouts_schedule_interval: z.enum(PAYOUT_INTERVALS).or(z.literal('')).optional(),
+  payouts_schedule_interval: z.enum(PAYOUT_SCHEDULE_INTERVALS).or(z.literal('')).optional(),
   minimum_payout_amount: z.string().trim().optional(),
   holiday_mode_until: z.string().optional(),
   // Three-state image fields, one triple per attachment. See ResourceImageField.

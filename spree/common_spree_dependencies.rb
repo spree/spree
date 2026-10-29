@@ -25,7 +25,6 @@ end
 
 group :test do
   gem 'parallel_tests'
-  gem 'database_cleaner-active_record'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.2.0'
   gem 'rspec-rails'
@@ -40,6 +39,14 @@ group :test do
   gem 'webmock'
   gem 'timecop'
   gem 'rails-controller-testing'
+  # N+1 tripwire for API requests (see Spree::Api::V3::BaseController).
+  # pg_query is Prosopite's SQL fingerprinter for every adapter but MySQL.
+  # It has a C extension and no JRuby build, so it is scoped like the
+  # database adapters above; the guard is inert where it is missing.
+  gem 'prosopite'
+  platforms :ruby do
+    gem 'pg_query'
+  end
 end
 
 group :test, :development do

@@ -656,6 +656,39 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
     end
 
+    # The token proves the caller holds the cart, not the account whose
+    # address book a typed address lands in.
+    context 'with only the guest token on a customer-owned cart' do
+      before do
+        request.headers['Authorization'] = nil
+        request.headers['X-Spree-Token'] = order.token
+      end
+
+      it 'refuses to write an address' do
+        expect do
+          patch :update, params: {
+            id: order.prefixed_id,
+            shipping_address: { first_name: 'Mallory', last_name: 'Doe', address1: '1 Evil St', city: 'New York',
+                                zipcode: '10001', phone: '555', country_code: 'US', state_code: 'NY' }
+          }, as: :json
+        end.not_to change(user.addresses, :count)
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'refuses to pick an address from the book' do
+        patch :update, params: { id: order.prefixed_id, shipping_address_id: user.addresses.first.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'still updates the cart itself' do
+        patch :update, params: { id: order.prefixed_id, po_number: 'PO-4471' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     it 'updates the cart through the configured carts update service' do
       custom_service = Class.new(Spree::Carts::Update)
       allow(Spree).to receive(:carts_update_service).and_return(custom_service)
@@ -706,6 +739,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(order.reload.ship_address_id).to eq(existing_address.id)
+    end
+
+    it 'accepts shipping_address_id from the company the cart is for' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: user)
+      site = create(:company_address, owner: company, first_name: 'Dana', last_name: 'Reyes',
+                                      country: country, state: us_state)
+
+      patch :update, params: {
+        id: order.prefixed_id, company_id: company.prefixed_id, shipping_address_id: site.prefixed_id
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(order.reload.ship_address_id).to eq(site.id)
     end
 
     context 'the buyer purchase order' do

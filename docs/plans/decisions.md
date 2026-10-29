@@ -1,3 +1,93 @@
+## 2026-10-27: Stripe transfer reversals on refund move to open source
+
+**Context:** A refund on a seller's order wrote the reversal row, and the next payout to the seller's bank subtracted it, but the open-source Stripe provider never reversed the transfer. The seller's share stayed on their connected account while the marketplace had refunded the customer from its own balance, and nothing in the books said where that money now was. The 2026-07-15 decision kept the pullback in Enterprise.
+
+**Decision:** `SpreeStripe::PayoutProvider#reverse!` reverses the seller's share of the earning's Stripe transfer (`Stripe::Transfer.create_reversal`, keyed on the reversal row). A reversal whose earning has not reached Stripe yet stays pending; one whose earning nobody can account for waits for a person. `SellerTransfers::ExecutePendingJob` now retries owed reversals after the seller's earnings, through the provider that made the earning, and `ExecutePendingDueJob` picks up any seller holding one, including suspended sellers and those who can no longer be paid. A seller already paid out is left with a negative Stripe balance, which their next earnings make up before the sweep can pay them again.
+
+**Consequences:** Supersedes the clawback part of 2026-07-15. Enterprise keeps reconciliation against provider statements, KYC operations, payout reports including DAC7, and marketplace-facilitator taxes.
+
+**Plans amended:** `6.0-multi-vendor-marketplace.md` (summary, scope table, payout provider section, funds flow).
+
+## 2026-10-26: A warehouse that cannot deliver gives up the units another can supply, and holds follow the allocation
+
+**Context:** A profile with per-region origin groups still allocated a cart to a warehouse with no method for the address whenever the warehouse that could deliver held the item only as backorderable (V-3596). Putting the capable warehouse first had no effect, because the Adjuster takes stock on hand anywhere over a backorder; the cart then reported the item as undeliverable. Reproducing it showed four more gaps on the same path. Orders allocated through `OrderRouting::Strategy::Rules`, which skipped the delivery profile and channel coverage that carts apply. A cart whose rebuild dropped an undeliverable proposal could still complete, placing an order with part of a line in no fulfillment. The checkout hold locked the first warehouse with stock, which could be one that cannot ship the order, and refused a cart another warehouse could have backordered. And allocation packed one line per variant, so a second line of the same variant (possible with a custom line finder) was allocated nowhere.
+
+**Decision:** A backorder from a warehouse that can deliver beats stock on hand in one that cannot. `Stock::Prioritizer` takes from the warehouses that cannot deliver every unit the capable ones can supply between them, on hand or backordered; a unit they cannot cover stays where it was, so the split and the `delivery_unavailable` warning remain for it rather than a partial shipment being offered. `Rules#for_allocation` ranks `Stock::Coordinator#candidate_stock_locations` and packs them through `Coordinator#allocated_packages(locations)`, so carts and orders allocate under one coverage check; the routing plan already saw the Coordinator becoming the strategy's internal machinery. A cart reports `delivery_unavailable` among its advisory requirements while any unit of a line needing delivery is in no fulfillment, so a storefront can say so before taking payment, and completion refuses it. `StockReservations::Reserve` runs the allocation without quoting rates (`Coordinator#allocated_packages`) and holds each line's on-hand units at the location it is packed from, withdrawing the cart's holds the allocation no longer takes; a line placed only in part is refused, as before, while one placed nowhere is left to the completion check. Once the cart has an address, a unit packed only at a location unable to deliver there is not held either, since the cart cannot complete with it and the hold would block buyers that location does serve. A change of destination reserves again instead of only extending the holds, so holds placed before the address was known move to where the order will ship from. The packer splits one shelf between the lines of a variant in order, and the Prioritizer tells proposed units apart by line item.
+
+**Consequences:** A shopper may now wait for a backorder where before they were told the item could not be delivered. One line can hold stock at several warehouses, and each hold re-runs allocation, which costs the packing and deliverability queries but never a carrier request. An address change can now be refused when the warehouse serving the new address cannot cover the cart, as entering checkout already could. Holds and allocation still read stock on hand without other checkouts' holds, so a contended shelf is refused at the hold rather than spilling to the next warehouse — the routing plan's reservation-aware eligibility question stays open. The profile page's "Ships from" card still shows only the first origin group's warehouses; it is left for a separate change.
+
+**Plans amended:** `6.0-delivery-profiles.md` (Runtime flow, step 2), `6.0-order-routing.md` (Since then, the `for_allocation` sequence, References), `6.0-channel-delivery.md` (Enforcement points, step 1), `6.0-stock-reservations.md` (Open Question 1, resolved).
+
+## 2026-10-26: Every release is published from a tag, in one workflow
+
+**Context:** The npm packages published from `packages.yml` whenever a merge to `main` touched certain paths, while the gems published from `release.yml` on a tag pushed by hand. The two halves of one Spree release went out at different times, a later merge cancelled a release part-way, and gems published without any check of the commit.
+
+**Decision:** `release.yml` publishes everything, started by a tag on a commit already on `main`. `v6.0.0.rc7` releases the gems and the npm packages that share the Spree version; `@spree/cli@3.5.0` and `create-spree-app@2.4.1` release those tools on their own. A first job checks the tag against `Spree::VERSION` and the package versions before anything publishes, and every step skips versions already on its registry. One script (`scripts/publish-packages.mjs`) publishes npm packages in dependency order. `packages.yml` only runs checks. `pnpm version:tools` versions the tools between Spree releases while the group's changesets wait. The templates the CLI embeds accept their whole major (`^6.0.0-0`) instead of the workspace version, so a CLI tag never points at packages not yet on npm.
+
+**Consequences:** Nothing reaches npm from a merge alone; a release is the tag. npm Trusted Publishing names the workflow file, so every published package must trust `release.yml` before its first tag release. GitHub starts no workflow for more than three tags pushed at once. `@spree/docs` keeps publishing from `docs-package.yml`.
+
+**Plan amended:** `6.0-beta-release.md` (Key Decision 3, References).
+
+## 2026-10-26: The TypeScript packages that talk to the API carry the Spree version
+
+**Context:** One Spree release shipped under three numbering schemes: gems `6.0.0.rc6`, `@spree/sdk` `2.0.0-rc.5`, the Admin and Seller SDKs and the dashboard packages `1.0.0-rc.6`, the seller panel `1.0.0-rc.7`, `@spree/core` `0.3.0`. The SDKs are generated from the serializers and the dashboards read only the Admin API, so each of those numbers stood for a backend version that nobody could read off it.
+
+**Decision:** `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core`, the dashboard trio and `@spree/seller-dashboard` form one Changesets `fixed` group versioned from `Spree::VERSION` in npm spelling (`6.0.0.rc7` → `6.0.0-rc.7`), released by `pnpm version:packages`. `@spree/cli` and `create-spree-app` keep their own versions, since they manage projects rather than talk to the API. The switch lands at the release candidate after `rc6` rather than at GA, so the migration path runs before release day. `spree upgrade` rewrites a project's ranges that are still on an older line, and names the exact `@spree/sdk` range for the storefront.
+
+**Consequences:** A Spree release publishes every package in the group even when one has no changes, as the gems already do. A breaking change in the TypeScript code alone waits for the next Spree major. Projects from the preview update `@spree/cli` before upgrading, because the CLI they have does not know the new numbering. Stable `1.0.0` and `2.0.0` are never published for the group, and the old lines get an npm deprecation pointing at `spree upgrade`.
+
+**Plan amended:** `6.0-beta-release.md` (Key Decisions 2 and 3).
+
+## 2026-10-25: Maintenance tasks ship for upgrade steps only
+
+**Context:** The maintenance tasks plan built a general-purpose surface for operator-run data work: a dashboard list of tasks with a form built from each task's parameters, endpoints to list and describe tasks, CSV input, throttling, per-record error reporting, masked arguments, preconditions and parent runs for an orchestrating walk. By release, only the upgrade manifests register tasks, and none of those uses any of it. The unused surface was most of the pull request's size and still needed review, tests and documentation.
+
+**Decision:** 6.0 ships maintenance tasks as the runner for upgrade steps. Removed before release: the dashboard's Tasks tab and run form, `GET /maintenance_tasks` and its SDK methods, `csv_collection` and the run's CSV attachment, `throttle_on`, `report_on`, `mask_attribute`, `precondition`, `description`, `max_run_time`, the `after_start`/`after_pause`/`after_interrupt`/`after_cancel`/`after_error` hooks, `parent_run` and `spree:maintenance_tasks:list`. Pause and resume went too: upgrade steps are short or safe to re-run, so a step that fails or is cancelled is started again, and the `pausing`/`paused` statuses, their services, endpoints, events and dashboard buttons are gone. Kept: the runner and its checkpoints, run history, cancel, dry run, batch size, step parameters, `after_complete`, the permissions and `spree:maintenance_tasks:perform`.
+
+**Consequences:** A task an extension or host wants to run outside an upgrade has no dashboard surface; adding one back is a new decision, built when there is a task that needs it. Runs no longer mask argument values, since no step takes a secret. Runs are installation-wide and belong to no store: an upgrade step converts every store's data, so a run no longer records the store the operator was in, and the runner no longer sets a current store while a step works. The guide at `docs/developer/how-to/maintenance-tasks.mdx` now documents upgrade steps.
+
+**Plan amended:** `6.0-maintenance-tasks.md` (header note).
+
+## 2026-10-25: An upgrade step is a rake task or a task class, never both
+
+**Context:** The 2026-08-15 maintenance tasks decision made every 5.6 → 6.0 upgrade step a task class. In practice most steps are one-pass updates that kept their rake body, so each step was declared in up to five places: the manifest, the rake task, a ten-line wrapper class naming that rake task, a line in the engine's registration list and a translated description repeating the manifest name. Six steps went further and carried the same logic twice, once in the rake task and once in the class, so a fix to one could miss the other.
+
+**Decision:** The manifest is the only list of steps, and each step names exactly one of `task` or `task_class`. A one-pass step names its rake task and runs through the shared `UpgradeStep` runner, which records it like any other run. A step gets a class of its own only when it walks rows (progress, resume, dry run) or asks the operator for parameters, and then it has no rake twin. Task classes named by a manifest are registered from it, so neither core nor a provider gem keeps a second list. The history labels a one-pass step by its step id.
+
+**Consequences:** Adding a step is a manifest entry plus either a rake task or a class. One-pass steps share one task name, so the history filter cannot single one out and two of them cannot run at once, which an ordered upgrade does not need. 38 classes (34 wrappers and four one-pass steps), their registrations and descriptions, and two duplicate rake tasks are removed; seven classes remain (five with parameters, two row walks).
+
+**Plan amended:** `6.0-maintenance-tasks.md` (Key Decisions, Upgrade manifest integration).
+
+## 2026-10-24: A marketplace decides whether, what and under review its sellers may upload
+
+**Context:** With sellers able to attach downloadable files to their products (the entry below), any approved seller can put a file on the marketplace's domain that buyers download trusting the marketplace's brand. Nothing in Spree scans a file's contents, and before this there was no way to keep seller uploads off, to narrow what they may be, or to re-check an approved listing whose file changed. Digital asset writes were also plain model saves in two places, so a host had no point at which to refuse an upload.
+
+**Decision:** Three store settings, shown on the dashboard's Marketplace settings page. `seller_digital_assets_enabled` is off by default, like the two auto-approve settings: what a buyer downloads under the marketplace's name is something the marketplace vouches for, and that should be a choice. Off, a seller can neither add, replace nor remove files on their products. `seller_digital_asset_content_types` is an allowlist checked against the file's own signature where the format has one, never the file name; a signature-less format such as plain text keeps its declared type. Its default covers the formats digital goods usually come in and leaves out executables, scripts, SVG and unrecognised binaries. The operator's own uploads are not restricted. `review_seller_digital_asset_changes` is on by default: a seller adding or replacing a file on a listing already on sale sends it back to review, off sale until approved again; changing limits or deleting does not, and the rule is moot when seller products auto-approve. The submission row records the reason and who made the change, and the seller panel says so before the seller acts. Every digital asset write, from either endpoint or nested in a product write, runs through one workflow with hooks, so a host that scans uploads has a single place to refuse a file before it is attached. Core ships no scanner. The seller `/me` response carries the settings the panel needs under `store`.
+
+**Consequences:** A marketplace that reviews listings will see approved products drop off sale for a file swap until it approves them again; the alternative, holding the new file in quarantine while the old one keeps serving, needs file versioning and is deferred to the uploads scanning work. ZIP is on the default list, so the allowlist is a policy, not protection. Opening uploads to sellers is now an explicit step in setting up a marketplace, documented beside the auto-approve settings. The 6.1 upload-scanning design (a scanner registry with a no-op default, a verdict on the blob, delivery refused while pending) builds on these hooks rather than on the controllers.
+
+**Plan amended:** `6.0-digital-assets.md` (Seller panel decisions, Migration Path step 9, Constraints on Current Work).
+
+## 2026-10-24: Sellers manage the downloadable files on their own products, uploads only
+
+**Context:** A marketplace seller could list a digital product, but only the operator could attach the file it delivers (GitHub #14965). The Seller API had a file upload endpoint and nothing to attach the upload to a product.
+
+**Decision:** The Seller API gains `/api/v3/seller/products/:product_id/digital_assets` (index, show, create, update, destroy), rooted in `current_seller.products`, so another seller's or the marketplace's own product is a `404`. Writes need `:update` on the product, so a read-only seller role can list files but not change them. Sellers upload files and may set the per-file download limits. They cannot pick a digital asset provider and never see provider settings: a provider is the operator's own integration into internal systems, and letting a seller choose one would route the seller's sales through it. Files are added from the product's edit page only, not while creating a product. The admin and seller endpoints share their write logic, their request shape and their serialized fields, and both panels render one Digital files card from `@spree/dashboard-core`.
+
+**Consequences:** An asset the operator created with a provider still appears on the seller's product, and the seller may change its limits or delete it. Opening providers to sellers later means adding them to the seller request shape and registering `providers` on the seller panel's client; nothing else changes. Pre-save file attachment on the seller's new product form remains open until a seller asks for it.
+
+**Plan amended:** `6.0-digital-assets.md` (Seller panel decisions, Migration Path step 9).
+
+## 2026-10-19: A self-service data request is confirmed from its email address before Spree acts on it
+
+**Context:** A customer's own access or erasure request covers the guest orders, carts, cards and consent recorded at the account's email address, so that someone who checked out as a guest and registered later receives their whole history. Spree never confirms that an account's email address belongs to the account holder, so a request should not reach rows at that address until the address itself confirms it.
+
+**Decision:** A request a customer raises for themselves starts as `awaiting_confirmation` and does nothing until it is confirmed from the address it names. Spree publishes `data_request.confirmation_requested` with a confirmation token, gated with `credential: 'write_customers'` like `customer.password_reset_requested`, and its key joins `Spree::WebhookPayloadRedaction::SENSITIVE_PAYLOAD_KEYS`, so the webhook delivery log stores `[REDACTED]` in its place. `spree_emails` sends the link, and a headless storefront can send it from a webhook instead. As in the newsletter and password reset flows, the request takes a `redirect_url`, kept only when it matches one of the store's allowed origins, and the email links to `<redirect_url>?token=…`, falling back to the store's storefront URL. That page acts only when the person presses its button, which calls `POST /api/v3/store/data_requests/:token/confirmation`: some mail scanners open links and run the page's scripts, so a page that confirmed on load could erase data nobody approved. Only then is the request queued, and it matches guest rows by email as before. The download link is given only to whoever holds the token, by email or through the token-addressed read; the account's own session sees the status and never the link. After 24 hours an unconfirmed request can no longer be confirmed, and it is marked `lapsed` the next time the customer asks, follows the link or is erased. Erasure still asks for the account password. Staff-raised requests skip confirmation, since staff check identity themselves. A verified-email flag on the customer was rejected for now: it would add state that every email change must clear, and no other feature needs it yet. Limiting self-service requests to rows the account owns was also rejected, because a former guest would then never receive their full history.
+
+**Consequences:** Every self-service request costs one extra email, and an access request sends a second one when the file is ready. A store with neither `spree_emails` nor a handler for the event cannot complete self-service requests; staff requests still work, and the docs say so. `download_url` stays in the Store API response but is `null` on the account's own reads, which matters only to 6.0 prerelease adopters, since no stable release had data requests. The storefront gains the confirmation page in the same change, since it has no page for the newsletter's links either and a link to the storefront's home page would confirm nothing; and `spree_emails` gains a customer email that merchants can edit. `awaiting_confirmation` and `lapsed` join `DataRequestStatus`.
+
+**Plan amended:** `5.4-6.0-eu-legal-compliance.md` (Key Decision 8 and the Constraints on Current Work).
+
 ## 2026-10-19: Avalara reads whether prices include tax from core
 
 **Context:** The Avalara gem worked out inclusiveness itself, through the market covering the tax country, because 5.x restated prices for the destination and the browsing market could disagree with it. Core now passes `tax_inclusive:` to every provider and charges every customer of a market its prices as entered (2026-10-16).
@@ -1130,6 +1220,78 @@ changes only affect future numbers; and code saving a numbered record with
 normally assigns one is `before_validation`. Plan:
 `6.0-document-numbers.md`.
 
+## 2026-09-07: N+1 tripwire — every API request in the suite is scanned for repeated queries
+
+Lazy preloading on list collections already batches association reads, so
+the N+1s Spree still ships are per-record model queries a serializer
+reaches: a stock check, a price lookup, a `count`, a derived number. Rails'
+strict loading cannot see those (it watches association loading, which the
+lazy preloader satisfies first), so the net is Prosopite, which fingerprints
+the SQL a request ran and reports a statement repeated from one call site.
+
+This repository's dummy app hooks a scan around every v3 request and raises
+on a report. The hook lives in the dummy app's `test.rb`, not in the shipped
+controller, so a host application that bundles Prosopite for its own use is
+never opted into Spree's guard. Statements issued while a record is
+validated, saved, locked, destroyed or committed are not reported: writes
+run their callbacks one record at a time by design (a `dependent: :destroy`
+cascade, a uniqueness or number probe per created row), and the guard
+exists for what a request reads. The few workflows that write one record
+per requested row — a cart's lines, a split checkout's seller orders, a
+payout per currency, a product payload's nested variants — are named in
+the same allow list, each with its reason.
+
+Two traps are worth naming, because both make the guard lie. Prosopite
+fingerprints through pg_query, which cannot parse SQLite's `?` binds, so
+SQLite borrows the text normalizer written for MySQL — and that normalizer
+blanks anything double-quoted, which is a string literal in MySQL but an
+identifier in SQLite. Left alone it erases every table name, so unrelated
+queries share one fingerprint and a single record's distinct associations
+report as an N+1; re-quoting identifiers as backticks first fixes it, and
+it accounted for more than half of the first run's failures. The second
+has no fix at the guard: two associations on one table — an order's billing and shipping address, a category's image and square image —
+are indistinguishable from a repeat in the SQL alone. Telling them apart by
+the row each lookup asks for was tried and abandoned, because a genuine
+`belongs_to` N+1 also fetches a different row every time, so the same rule
+hid the commonest N+1 there is. The guard therefore reports these, and the
+fix is to preload the pair at the render site; a review of this change
+caught the earlier attempt.
+
+No endpoint is exempt. Turning it on, with the fingerprinting corrected,
+left 63 API spec files with a repeated query; they were fixed in the same
+change rather than parked on a list that logs instead of failing, because
+a file on such a list hides every new repeat added to its endpoints too.
+
+Products, categories and collections were then taken first, as the
+highest-traffic surfaces. Every listing and detail endpoint across the
+three is now clean; what remains on them is write-path work, where a query
+per record created is inherent. The fixes worth naming are structural: a
+category's product counts and its ancestor chain each collapse to one
+query using the nested set's own `lft`/`rgt` bounds rather than a query per
+node; the storefront's category filter sidebar costs one query instead of
+two per child; counter-cache recounts across a bulk assignment are grouped
+rather than `reset_counters` per record; and bulk tagging reads the tags it
+needs once. A category's breadcrumb trail now preloads the images it
+renders.
+
+The shape behind most of them: a model method that reads a loaded
+association when one happens to be loaded and runs a scoped query when it
+is not, which on a list means a query per row. Prices, store credit,
+publications, confirmation checks and the cart's delivery-address question
+all had it. Cart writes were the worst case — price queries scaled at three
+per line item, so a five-line cart cost fifteen — because a cart built one
+item at a time has no relation to batch from; registering the resolved
+variants as one preload context makes it flat. Two candidates were reverted
+after the core suite caught them: `category_and_ancestors` is memoized, so
+calling it from a callback poisons later reads, and the line-item finder
+must re-query because callers add lines behind its back. Two conventions
+follow. A repeated query is fixed at the line the report names — the association goes into
+`collection_includes`, or the model reads a loaded association instead of
+running a scoped query per record (`read_association_in_memory?`) — never
+by widening the allow list. And a
+list endpoint's spec renders at least two records, since a repeated
+statement cannot show with one.
+
 ## 2026-08-13: Isolation tripwires — the guard under the store-scoping discipline
 
 Open-core isolation is the controller discipline (every lookup through a
@@ -2174,6 +2336,15 @@ quote-currency parameter; multi-currency carrier setups use
 per-currency carrier accounts). The pricing card renders one amount per
 supported store currency; the default currency maps to the legacy amount
 preference.
+
+**Amended 2026-10-21:** `amounts` decides alone once it holds an amount, and
+the dashboard writes the store's default currency into it like every other
+currency. The legacy pair still quotes its own currency, but only while
+`amounts` is empty. Mapping the default currency to the legacy `amount`
+made "left blank" impossible for it: the pair's untouched default (0 in the
+store's currency) read as a price, so a method priced only in euros, through
+the dashboard or the API, was offered free to dollar carts. Upgrades from 5.6
+need no data step: 5.x methods hold only the legacy pair.
 
 ## 2026-08-09: Fulfillment profiles — ShippingCategory promoted, not removed
 
@@ -4640,6 +4811,51 @@ Getting Started list. Never add `Seller#onboarding_completed?`-style predicates
 or step-done columns; a new admission check is a kind or a `validate` hook on
 the seller workflows. Plan: `6.0-seller-onboarding-requirements.md`.
 
+## 2026-08-15 — Maintenance tasks: operator-run data work is a task class with a run row, and every 6.0 upgrade step is one
+
+**Decision:** Spree 6.0 core gains a first-class maintenance-task primitive —
+`Spree::MaintenanceTask` (Shopify `maintenance_tasks` authoring contract:
+`collection`/`process`/`count`, ActiveModel attributes as parameters,
+`throttle_on`, `report_on`, `no_collection`, later `csv_collection`) run by a
+native `ActiveJob::Continuable` job, with a persistent
+`Spree::MaintenanceTaskRun` row carrying cursor, progress, arguments, tallies,
+outcome and who fired it from where. It is built natively, not by depending
+on Shopify's gem: the gem's runner is a second interruption mechanism
+(`job-iteration`) beside the one 6.0 already standardized on, and its UI is
+a server-rendered engine Spree 6.0 has no place to mount. Tasks are
+registered explicitly (`Spree.maintenance_tasks`, the same
+`Rails.application.config.spree.*` array as every class family) — never
+autodiscovered. Authorization is **one catalog resource,
+`maintenance_tasks`, in the `access` group**: admins hold it by default,
+nothing is gated per task and nothing checks the `admin` role by name.
+Runs are installation-wide with a recorded context store the runner loads
+into `Spree::Current.store`. Dry-run is opt-in and task-honored
+(`supports_dry_run` + `dry_run?`), never a runner-faked rollback. The run
+row is the audit; lifecycle events fire; no audit-log model. Schema
+migrations stay in the deploy pipeline forever.
+
+**All 22 steps of the 5.6→6.0 upgrade manifest are rewritten as
+`Spree::MaintenanceTasks::Upgrade::*` classes and the manifest names
+`task_class:` instead of rake tasks** (those rake names never shipped, so
+there is nothing to bridge; older manifests keep rake steps and the walker
+runs both kinds inside run rows). `spree:upgrade` keeps its interface and
+becomes an inline walk that writes the same run rows; the dashboard gets an
+Upgrade panel and `Upgrade::Walk`, an orchestrating task whose steps are
+child runs.
+
+**Why:** A console session records what was typed, not what it did; a
+managed platform cannot hand out shells; and the 6.0 upgrade is the largest
+data migration Spree has shipped. Building the runner for our own migration
+path yields the cloud capability as a side effect and turns "run this rake
+task and wait" into progress bars and resume buttons. It lives in BSD-3 core
+because it is infrastructure self-hosted merchants need exactly as much.
+
+**Consequences:** New bulk/backfill work is a task, not a bare rake task or
+a README console snippet; new 6.0 upgrade steps are born as task classes;
+`Imports::ProcessJob`-style system-triggered jobs stay plain Continuable
+jobs (the primitive is for operator-triggered work). Plan:
+`6.0-maintenance-tasks.md`.
+
 ## 2026-08-24 — Media library reuses files by sharing blobs, never by a shared asset entity
 
 The 6.0 media library is a store-scoped view over `Spree::Media` (which gains a
@@ -6493,3 +6709,23 @@ relaxation.
 The registry was split by surface during the 6.0 build for exactly this —
 `Spree.store_agent_tools` exists and is empty, and a tool filed on the wrong
 surface is refused at registration.
+
+## 2026-10-19 — `spree add` installs extensions from a catalog shipped with the CLI
+
+`spree add paypal` will eject (with consent), add the gem, run its install
+generator if it has one, migrate, install any dashboard plugin and restart a
+running server (`docs/plans/6.0-cli-add-extensions.md`). Names resolve only
+through a JSON catalog bundled in `@spree/cli`, never by guessing a gem name,
+because a guessed name turns a typo into installing a stranger's gem. The
+catalog ships with the CLI rather than being fetched, so the command works
+offline and a remote file cannot change what gets installed. Setup notes live
+in each gem's `post_install_message`, not in the CLI.
+
+## 2026-10-19 — Extensions released with Spree are pinned to the project's Spree version
+
+`spree add` adds the gems that ship from this repository (`spree_stripe`,
+`spree_meilisearch`, `spree_easypost`, `spree_opentelemetry`, `spree_mcp`) as
+`>= <locked spree version>`. An unpinned `bundle add spree_stripe` resolves to
+the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
+already lists is reported as installed rather than ejecting the project to
+re-add it.

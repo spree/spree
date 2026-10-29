@@ -1,3 +1,4 @@
+import { FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
 import { fulfillmentItemRows } from '@spree/dashboard-core'
 import {
   Badge,
@@ -44,8 +45,8 @@ import { ShippingLabelRow } from './shipping-label-row'
 // A parcel that has not gone out is the only one still to ship or cancel.
 // Reading these off "not unfulfilled" once badged a canceled parcel as a
 // success.
-const CAN_SHIP = ['unfulfilled']
-const CAN_CANCEL = ['unfulfilled']
+const CAN_SHIP = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_CANCEL = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 
 /** Every parcel owed on this order, and what the seller can do with each. */
 export function FulfillmentsCard({ order }: { order: Order }) {

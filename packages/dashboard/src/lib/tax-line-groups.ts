@@ -1,4 +1,4 @@
-import { isDecimalString, sumMoney } from '@spree/admin-sdk'
+import { isDecimalString, sumMoney } from '@spree/core'
 
 /**
  * How tax rows are shown on an order: one rate charged on many lines

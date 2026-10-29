@@ -6,12 +6,14 @@ module Spree
         # shopper also gets, plus the operational state and the settlement and
         # tax configuration only the operator sets.
         class SellerSerializer < V3::SellerSerializer
+          include Concerns::ExternalReferencesAttribute
+
           typelize status: [:string, enum: Spree::Seller.statuses, enum_type_name: 'SellerStatus'],
                    legal_name: [:string, nullable: true],
                    registration_number: [:string, nullable: true],
                    contact_email: [:string, nullable: true], billing_email: [:string, nullable: true],
-                   tax_remittance: :string,
-                   payouts_schedule_interval: [:string, nullable: true],
+                   tax_remittance: [:string, enum: Spree::Seller::TAX_REMITTANCES, enum_type_name: 'TaxRemittance'],
+                   payouts_schedule_interval: [:string, nullable: true, enum: Spree::Seller::PAYOUT_INTERVALS, enum_type_name: 'PayoutScheduleInterval'],
                    minimum_payout_amount: [:string, nullable: true],
                    holiday_mode_until: [:string, nullable: true],
                    terms_accepted_at: [:string, nullable: true],
@@ -54,9 +56,7 @@ module Spree
           # so the minimum-products requirement asks the same question free.
           attributes :products_count
 
-          attribute :users_count do |seller|
-            seller.users.size
-          end
+          attributes :users_count
 
           # How far through the marketplace's checklist this seller is — what
           # the list's progress column and the profile's badge render. The
@@ -77,6 +77,8 @@ module Spree
           one :returns_address,
               resource: proc { Spree.api.admin_address_serializer },
               if: proc { |seller| seller.returns_address.present? }
+
+          expandable_custom_fields admin: true
         end
       end
     end

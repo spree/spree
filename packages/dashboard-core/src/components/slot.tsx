@@ -1,7 +1,8 @@
 import { Fragment } from 'react'
+import { FormProvider, type UseFormReturn } from 'react-hook-form'
 import { type SlotAmbientContext, useSlotEntries } from '../lib/slot-registry'
 
-interface SlotProps<TContext> {
+export interface SlotProps<TContext> {
   /** Slot name, e.g. "product.form_sidebar" or "order.dropdown". */
   name: string
   /** Slot-specific context passed to every registered component. */
@@ -46,5 +47,24 @@ export function Slot<TContext extends object = object>({
         )
       })}
     </>
+  )
+}
+
+/**
+ * A slot inside a form that isn't wrapped in `FormProvider` — a create or edit
+ * sheet. Widgets rendered here reach the form with `useHostForm()`, so fields
+ * they bind save with the sheet's own submit.
+ */
+export function HostFormSlot<TContext extends object = object>({
+  form,
+  ...slot
+}: SlotProps<TContext> & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<any, any, any>
+}) {
+  return (
+    <FormProvider {...form}>
+      <Slot {...slot} />
+    </FormProvider>
   )
 }

@@ -5,6 +5,7 @@ import type {
   Company,
   CompanyInvitation,
   Customer,
+  DataRequestConfirmationRequestedEvent,
   DataRequestEvent,
   Delivery,
   DigitalAsset,
@@ -91,6 +92,8 @@ export interface WebhookEventMap {
   /** Carries a live credential: delivered only to endpoints that name this event. */
   'customer.password_reset_requested': PasswordResetRequestedEvent
   'data_request.completed': DataRequestEvent
+  /** Carries a live credential: delivered only to endpoints that name this event. */
+  'data_request.confirmation_requested': DataRequestConfirmationRequestedEvent
   'data_request.created': DataRequestEvent
   'data_request.deleted': DataRequestEvent
   'data_request.updated': DataRequestEvent
@@ -151,6 +154,14 @@ export interface WebhookEventMap {
   'line_item.created': LineItem
   'line_item.deleted': LineItem
   'line_item.updated': LineItem
+  'maintenance_task_run.cancelled': WebhookRecordReference
+  'maintenance_task_run.created': WebhookRecordReference
+  'maintenance_task_run.deleted': WebhookRecordReference
+  'maintenance_task_run.errored': WebhookRecordReference
+  'maintenance_task_run.interrupted': WebhookRecordReference
+  'maintenance_task_run.started': WebhookRecordReference
+  'maintenance_task_run.succeeded': WebhookRecordReference
+  'maintenance_task_run.updated': WebhookRecordReference
   'media.created': MediaEvent
   'media.deleted': MediaEvent
   'media.updated': MediaEvent

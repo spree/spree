@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import type Payment from '../../types/generated/Payment';
 import { CreditCardSchema } from './CreditCard';
+import { CustomFieldSchema } from './CustomField';
 import { OrderSchema } from './Order';
 import { PaymentCaptureEventSchema } from './PaymentCaptureEvent';
 import { PaymentMethodSchema } from './PaymentMethod';
@@ -21,6 +22,7 @@ export const PaymentSchema = z.object({
   source_id: z.string().nullable(),
   get source() { return z.union([CreditCardSchema, StoreCreditSchema, PaymentSourceSchema]).nullable(); },
   payment_method: PaymentMethodSchema.optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   metadata: z.record(z.string(), z.unknown()),
   avs_response: z.string().nullable(),
   cvv_response_code: z.string().nullable(),
@@ -47,6 +49,7 @@ export const PaymentSchema = z.object({
   source_id: z.ZodType<Payment['source_id']>;
   source: z.ZodType<Payment['source']>;
   payment_method: z.ZodOptional<z.ZodType<Exclude<Payment['payment_method'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Payment['custom_fields'], undefined>>>;
   metadata: z.ZodType<Payment['metadata']>;
   avs_response: z.ZodType<Payment['avs_response']>;
   cvv_response_code: z.ZodType<Payment['cvv_response_code']>;

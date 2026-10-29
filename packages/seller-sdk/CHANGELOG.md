@@ -1,5 +1,37 @@
 # @spree/seller-sdk
 
+## 6.0.0
+
+No changes in this release.
+
+## 6.0.0-rc.7
+
+Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.
+
+## 1.0.0-rc.6
+
+### Minor Changes
+
+- [#14971](https://github.com/spree/spree/pull/14971) [`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Sellers can manage the downloadable files on their own digital products. The Seller SDK adds `products.digitalAssets` (`list`, `get`, `create`, `update`, `delete`), and the seller panel's product page shows the same Digital files card as the dashboard: upload, replace and delete files, and set per-file download limits. A file the marketplace delivers through its own provider is listed but cannot be replaced by the seller. The card now lives in `@spree/dashboard-core` as `DigitalAssetsCard`, and a panel enables it by registering `digitalAssets` on its API client; `readOnly` shows the files without any way to change them and `accept` narrows the file picker.
+  
+  Seller uploads are a marketplace decision: three store settings, edited on the dashboard's Marketplace settings page, say whether sellers may upload at all (off by default), which content types their files may have, and whether a file added to or replaced on an approved product sends it back to review. The seller `/me` response carries them under `store`, and the Admin SDK's `Store` type gains the three fields.
+
+## 1.0.0-rc.5
+
+### Patch Changes
+
+- [#14933](https://github.com/spree/spree/pull/14933) [`1a86817`](https://github.com/spree/spree/commit/1a86817598711e5383d9acd663bbe808448a9dd2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order filter and sort types include `market_id` and `locale`. Locale, currency and country filters (`locale`, `currency`, `cost_currency`, `country_code`, `country_of_origin`) accept only `LocaleCode`, `CurrencyCode` and `CountryCode` values (new `CodeFilters` type) instead of free text.
+
+- [#14944](https://github.com/spree/spree/pull/14944) [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added every status, kind and other value list the Spree API returns to `@spree/core`, each as a list of its values (`PRODUCT_STATUSES`, `MEDIA_TYPES`, …) and a type (`ProductStatus`, `MediaType`, …) — open where extensions may add values, closed otherwise — plus `subsetOf` for picking the values an action accepts with each one checked at compile time. The SDKs re-export these types instead of each carrying its own copy, so their names and values are unchanged. The dashboards and the seller panel build their status filters and action checks from these lists, so a status added on the server shows up without a dashboard change. Value lists the SDKs used to spell out inline, such as a seller transfer's `kind`, now have names of their own; `MediaType`, `CollectionRuleMatchPolicy` and `CollectionSortOrder` in `@spree/admin-sdk`, and `ClaimResolution` in `@spree/dashboard-ui`, now come from the generated lists under the same names. A seller's `tax_remittance` and `payouts_schedule_interval`, a claim's `resolution`, a collection's `sort_order`, a shipping label's `format`, purchase order and stock transfer statuses, and tax and commission lines' `taxability_reason` are now typed with their lists instead of as plain strings.
+
+- [#14936](https://github.com/spree/spree/pull/14936) [`06fc8b0`](https://github.com/spree/spree/commit/06fc8b06574742b63f15e355ea352f67655459c1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Weight and dimension units are closed code lists, exported as `WeightUnit` and `DimensionUnit` (values and types) like `CountryCode` and `CurrencyCode`, and every unit field in responses and request types uses them; unit fields in requests accept `null` to fall back to the store default. The Admin and Seller SDKs publish one `VariantParams` type: `ProductVariantParams`, `VariantCreateParams` and `VariantUpdateParams` build on it. The Seller SDK's `SellerProductVariantParams` is renamed to `ProductVariantParams` (the old name stays as a deprecated alias). The variant editor and bulk variant editor now offer feet as a dimension unit.
+
+## 1.0.0-rc.4
+
+### Minor Changes
+
+- [#14900](https://github.com/spree/spree/pull/14900) [`11b9a03`](https://github.com/spree/spree/commit/11b9a03c775fce616a9cd73cb39fa47e7b88bb13) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `CountryCode`, `CurrencyCode` and `LocaleCode` as values as well as types, so you can write `CurrencyCode.USD`, list every code with `Object.values(CurrencyCode)` and see each code's name in your editor. Plain strings such as `'USD'` still type-check.
+
 ## 1.0.0-rc.3
 
 ### Patch Changes

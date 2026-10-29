@@ -31,7 +31,8 @@ module Spree
 
           request_params 'UpdateCustomerParams', action: :update do |body|
             body.attribute :email, :string, format: :email, example: 'customer@example.com'
-            body.attribute :password, :string
+            body.attribute :password, :string,
+              description: 'Changing it signs the customer out everywhere: every refresh token is revoked, so sign in again once the access token expires.'
             body.attribute :password_confirmation, :string
             body.attribute :current_password, :string,
               description: 'Required when changing the email or the password.'
@@ -75,6 +76,7 @@ module Spree
 
           # GET /api/v3/store/customer
           def show
+            preload_default_addresses
             render json: serialize_resource(current_user)
           end
 
@@ -86,6 +88,10 @@ module Spree
             current_user.consent_source = Spree::ConsentRecord::ACCOUNT
 
             if current_user.update(update_params)
+              # A password change is how a customer takes a stolen session
+              # back, so no refresh token issued before it may outlive it —
+              # the reset flow does the same.
+              Spree::RefreshToken.revoke_all_for(current_user) if update_params[:password].present?
               render json: serialize_resource(current_user)
             else
               render_errors(current_user.errors)
@@ -105,6 +111,7 @@ module Spree
               currency: current_currency,
               user: current_user,
               includes: [],
+              expand: expand_list,
               hide_prices: hide_prices?
             }
           end
@@ -114,6 +121,12 @@ module Spree
           end
 
           private
+
+          # Both default addresses live in one table, so they are fetched in one
+          # query rather than one each.
+          def preload_default_addresses
+            ActiveRecord::Associations::Preloader.new(records: [current_user], associations: %i[bill_address ship_address]).call
+          end
 
           def sensitive_update?
             (params[:email].present? && params[:email] != current_user.email) ||

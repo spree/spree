@@ -23,7 +23,6 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 require 'ffaker'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }

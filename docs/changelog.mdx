@@ -15,26 +15,54 @@ Keep up with the latest features and improvements in Spree Commerce!
 
 </div>
 
-<Update label="Exact money everywhere" description="October 9, 2026" tags={["API", "Payments"]}>
-  Money is now exact from the database to the payment provider, in every currency.
+<Update label="Spree 6.0" description="October 27, 2026" tags={["Release"]}>
+  Spree 6.0 is now stable. It brings together everything in this changelog since August: a new React dashboard, a seller panel for marketplaces, B2B wholesale, built-in AI agent access, and emails that merchants edit themselves.
 
-  - Amounts in the API are written with exactly the decimals of their currency, such as `10.00` in dollars, `1000` in yen and `1.500` in Kuwaiti dinar. Unit prices can go below a cent (`0.0125`) for wholesale pricing.
-  - Payment providers now receive the amount with its currency, so captures and refunds in yen or dinar are charged and recorded exactly.
-  - Very large amounts, such as orders in Vietnamese dong above 100 million, are stored without overflow.
+  - **One version for everything.** The Ruby gems and the TypeScript packages that talk to the Spree API now share one version number: `@spree/sdk@6.0.0` is the client for Spree 6.0.0.
+  - **Stable APIs.** The Store, Admin and Seller APIs are now stable. A field that is renamed or retired keeps working, marked as deprecated, until the next minor release.
+  - **New projects start on 6.0.** `npx create-spree-app@latest` sets up a Spree 6.0 server, dashboard, seller panel and storefront.
 
-  Integrations must now send amounts as text such as `"19.99"`. Numbers and localized formats are refused with a clear error.
+  Existing Spree 5.x stores should upgrade to 5.6 first, then follow the upgrade guide.
 
-  **Learn more:** [Monetary amounts](/api-reference/admin-api/monetary-amounts) · [Upgrade guide](/developer/upgrades/5.6-to-6.0#money)
+  **Learn more:** [Quick start](/developer/getting-started/quickstart) · [Upgrade guide](/developer/upgrades/5.6-to-6.0) · [React Dashboard](/developer/dashboard/overview)
 </Update>
 
-<Update label="Prices save correctly in every language" description="October 9, 2026" tags={["Pricing", "Dashboard"]}>
-  Stores whose language writes a comma as the decimal separator, such as Dutch, German or French, could save the wrong price. A price entered as €49,50 was stored as €4950,00, and saving an unchanged €99 again turned it into €990 and then €9900. Prices, costs, weights and dimensions are now saved exactly as entered, whatever the store's language.
+<Update label="Sellers can sell digital products" description="October 24, 2026" tags={["Marketplace", "Catalog", "Seller Panel"]}>
+  Sellers on a marketplace can now manage the downloadable files their digital products deliver, such as e-books, design files or software. Until now only the marketplace operator could attach them.
 
-  Taxes and discounts in yen are now rounded to whole yen.
+  - **Same card as the dashboard.** The seller panel's product page shows the **Digital files** card, where sellers upload, replace and delete files and set download limits for each one.
+  - **The marketplace decides.** Under **Settings → Marketplace → Seller files** you choose whether sellers may upload files at all (off by default) and which file types they may use. Each file is checked by its contents, not its name, and the default list leaves out programs and scripts.
+  - **Changes go back to review.** Adding or replacing a file on a product already on sale sends it back for approval, so buyers only download what you have checked. You can turn this off.
+  - **Safe by default.** Sellers can only reach files on their own products, and a read-only seller role can see files but not change them.
 
-  The dashboard now shows and reads amounts in your own number format, whatever the currency: if your dashboard is in German you type `1.234,56` for dollars and euros alike.
+  Developers get the same operations through the Seller API and SDK, and can plug in their own malware scanner to check each upload before it is accepted.
 
-  If you edited prices in such a store before this update, check them.
+  **Learn more:** [Sell digital products on a marketplace](/developer/how-to/sell-digital-products#on-a-marketplace) · [Marketplace settings user guide](/user/settings/marketplace)
+</Update>
+
+<Update label="MCP server for AI agents" description="October 18, 2026" tags={["AI", "Dashboard"]}>
+  Spree now ships with a built-in MCP server, so AI agents such as Claude or Cursor can manage your store in plain language. Ask an agent for last month's sales in Germany, update a product, cancel an order, mark a shipment as delivered or launch a new market — without opening the admin.
+
+  - **Built in, no extra cost.** Connect an agent with your store's URL and your admin login.
+  - **Role-based permissions.** You approve which parts of the store an agent can access, and it can never do more than your own staff role allows.
+  - **Sensitive data stays protected.** Agents cannot see gift card or discount codes, manage API keys or staff accounts, or delete customer data.
+  - **Full control and audit trail.** **Settings → AI Agents** lists every connected agent and who approved it, and access can be revoked at any time.
+
+  Developers can add custom tools for workflows specific to their business.
+
+  **Learn more:** [MCP server](/developer/mcp/overview) · [Quick start](/developer/mcp/quick-start) · [Permissions](/developer/mcp/permissions)
+</Update>
+
+<Update label="Multi-currency pricing improvements" description="October 9, 2026" tags={["Pricing", "Payments", "Dashboard"]}>
+  Prices, order totals, taxes and refunds are now accurate in every currency and every admin language, from the product page to checkout, payment and reporting.
+
+  - **Correct prices in every locale.** Stores using a comma as the decimal separator, such as Dutch, German or French, could see a price of €49,50 saved as €4950. Prices, cost prices, weights and dimensions are now saved exactly as entered.
+  - **Local number formats in the admin.** Merchants enter and see amounts in the number format of their own admin language, whatever currency they sell in.
+  - **Proper support for every currency.** Zero-decimal currencies such as the Japanese yen, three-decimal currencies such as the Kuwaiti dinar, and high-value orders in currencies such as the Vietnamese dong are all handled correctly.
+  - **Payment gateway amounts match.** Captures and refunds now match your payment provider exactly.
+  - **Sub-cent unit prices for B2B.** Wholesale catalogs can price high-volume items below one cent per unit.
+
+  If you edited prices in a store with a comma-decimal locale before this update, review them. Developers maintaining integrations should read the upgrade guide.
 
   **Learn more:** [Upgrade guide](/developer/upgrades/5.6-to-6.0#money)
 </Update>

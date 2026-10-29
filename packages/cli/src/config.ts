@@ -2,9 +2,10 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import pc from 'picocolors'
+import { spreeTask } from './backend.js'
 import { DEFAULT_SPREE_PORT } from './constants.js'
 import { detectProject } from './context.js'
-import { rakeTask } from './docker.js'
+import { captureTask } from './docker.js'
 
 /** Host a flag/env key defaults to when none is given — the local dev server. */
 const LOCAL_DEV_URL = `http://localhost:${DEFAULT_SPREE_PORT}`
@@ -243,7 +244,7 @@ export interface MintKeyOptions {
 export async function mintApiKey(projectDir: string, options: MintKeyOptions): Promise<string> {
   let stdout: string
   try {
-    stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
+    stdout = await captureTask(spreeTask('cli:create_api_key'), projectDir, {
       NAME: options.name,
       KEY_TYPE: options.keyType,
       ...(options.scopes?.length ? { SCOPES: options.scopes.join(',') } : {}),

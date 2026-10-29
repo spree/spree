@@ -127,6 +127,44 @@ describe('variants', () => {
 
       expect(url!.searchParams.get('q[sku_cont]')).toBe('SKU')
     })
+
+    it('sends the sales context as itself, not as filters', async () => {
+      let url: URL | null = null
+      server.use(
+        http.get(`${API_PREFIX}/variants`, ({ request }) => {
+          url = new URL(request.url)
+          return HttpResponse.json(paginated([]))
+        }),
+      )
+
+      await createTestClient().variants.list({
+        search: 'shirt',
+        market_id: 'mkt_eu',
+        channel_id: 'ch_web',
+        customer_id: undefined,
+      })
+
+      expect(url!.searchParams.get('market_id')).toBe('mkt_eu')
+      expect(url!.searchParams.get('channel_id')).toBe('ch_web')
+      expect(url!.searchParams.has('customer_id')).toBe(false)
+      expect(url!.searchParams.get('q[market_id]')).toBeNull()
+      expect(url!.searchParams.get('q[search]')).toBe('shirt')
+    })
+
+    it('sends a draft order as the sales context', async () => {
+      let url: URL | null = null
+      server.use(
+        http.get(`${API_PREFIX}/variants`, ({ request }) => {
+          url = new URL(request.url)
+          return HttpResponse.json(paginated([]))
+        }),
+      )
+
+      await createTestClient().variants.list({ order_id: 'or_abc' })
+
+      expect(url!.searchParams.get('order_id')).toBe('or_abc')
+      expect(url!.searchParams.get('q[order_id]')).toBeNull()
+    })
   })
 
   describe('get', () => {

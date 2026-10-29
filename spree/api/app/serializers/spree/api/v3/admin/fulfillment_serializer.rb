@@ -61,6 +61,7 @@ module Spree
               resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }
 
+          expandable_custom_fields admin: true
         end
       end
     end

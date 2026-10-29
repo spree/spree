@@ -186,9 +186,20 @@ function FieldError({
       return null
     }
 
-    const uniqueErrors = [...new Map(errors.map((error) => [error?.message, error])).values()]
+    // `filter` also closes the holes react-hook-form leaves in a per-item
+    // error array (`[ <empty>, { message } ]`), which `map` would keep and
+    // `new Map` would choke on.
+    const uniqueErrors = [
+      ...new Map(
+        errors.filter((error) => error?.message).map((error) => [error?.message, error]),
+      ).values(),
+    ]
 
-    if (uniqueErrors?.length == 1) {
+    if (!uniqueErrors.length) {
+      return null
+    }
+
+    if (uniqueErrors.length == 1) {
       return uniqueErrors[0]?.message
     }
 

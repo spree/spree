@@ -15,6 +15,8 @@ async function createTaxCategory(
   if (attrs.taxCode) await page.locator('#tax_code').fill(attrs.taxCode)
   if (attrs.description) await page.locator('#description').fill(attrs.description)
 
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: tax_category.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create tax category/i }).click()
 }
 

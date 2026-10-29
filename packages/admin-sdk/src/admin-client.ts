@@ -198,6 +198,31 @@ import type {
 // Semantic reporting contract (docs/plans/6.0-analytics-semantic-layer.md)
 // ============================================
 
+// Every sales context field, so adding one to `VariantSalesContextParams`
+// fails to compile until it is listed here too.
+const VARIANT_SALES_CONTEXT_FIELDS: Record<keyof VariantSalesContextParams, true> = {
+  order_id: true,
+  market_id: true,
+  channel_id: true,
+  customer_id: true,
+  company_id: true,
+  currency: true,
+}
+
+// The sales context scopes and prices the list, so it stays out of the Ransack filters.
+function variantListQuery(
+  params: ListParams<VariantFilters, VariantSort> & VariantSalesContextParams,
+): ReturnType<typeof transformListParams> {
+  const filters: Record<string, unknown> = { ...params }
+  const context: Record<string, string> = {}
+  for (const field of Object.keys(VARIANT_SALES_CONTEXT_FIELDS)) {
+    const value = filters[field]
+    if (typeof value === 'string' && value) context[field] = value
+    delete filters[field]
+  }
+  return { ...transformListParams(filters), ...context }
+}
+
 export type ReportingGrain = 'hour' | 'day' | 'week' | 'month'
 
 export type ReportingCompare = 'previous_period' | 'previous_year'
@@ -478,6 +503,7 @@ import type {
   InvitationCreateParams,
   LineItemCreateParams,
   LineItemUpdateParams,
+  MaintenanceTaskRunCreateParams,
   MarketCreateParams,
   MarketUpdateParams,
   MediaCreateParams,
@@ -595,6 +621,7 @@ import type {
   TaxRateUpdateParams,
   TrackingCarrierOption,
   VariantCreateParams,
+  VariantSalesContextParams,
   VariantUpdateParams,
   WebhookEndpointCreateParams,
   WebhookEndpointDisableParams,
@@ -658,6 +685,7 @@ import type {
   InvitationAcceptanceLink,
   LineItem,
   Locale,
+  MaintenanceTaskRun,
   Market,
   Media,
   OauthAccessToken,
@@ -719,6 +747,8 @@ import type {
   TranslationBatchEntry,
   TranslationCoverage,
   UpdateStatus,
+  UpgradeStep,
+  UpgradeStepsMeta,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -745,6 +775,18 @@ const CUSTOM_FIELD_OWNER_PATHS = {
   collection: '/collections',
   option_type: '/option_types',
   seller: '/sellers',
+  promotion: '/promotions',
+  gift_card: '/gift_cards',
+  store_credit: '/store_credits',
+  stock_transfer: '/stock_transfers',
+  purchase_order: '/purchase_orders',
+  company: '/companies',
+  payment_method: '/payment_methods',
+  delivery_method: '/delivery_methods',
+  tax_rate: '/tax_rates',
+  product_type: '/product_types',
+  media: '/media',
+  store: '/stores',
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
 export class AdminClient {
@@ -1210,6 +1252,8 @@ export class AdminClient {
       this.request<{ data: StoreDataSources }>('GET', '/store/data_sources', options).then(
         (r) => r.data,
       ),
+
+    translations: this.parentScopedTranslations('/stores'),
   }
 
   /** The locales a merchant can translate content into for the current store. */
@@ -4419,6 +4463,74 @@ export class AdminClient {
   }
 
   // ============================================
+  // Maintenance tasks
+  // ============================================
+
+  /**
+   * The upgrade manifest as an ordered checklist: what this release still
+   * needs run, the operator notes each step carries, and how each last went.
+   *
+   * Read-only — running a step is starting the task it names through
+   * `maintenanceTaskRuns.create()` with the step's own `task_name` and
+   * `arguments`.
+   */
+  readonly upgradeSteps = {
+    list: (options?: RequestOptions): Promise<{ data: UpgradeStep[]; meta: UpgradeStepsMeta }> =>
+      this.request<{ data: UpgradeStep[]; meta: UpgradeStepsMeta }>(
+        'GET',
+        '/upgrade_steps',
+        options,
+      ),
+  }
+
+  /**
+   * Runs of a maintenance task — the progress to poll while one is working and
+   * the audit trail afterwards (who ran what, with which arguments, and how it
+   * ended).
+   *
+   * After `create()`, poll `get(id)` while `active` is true; show `tick_count`
+   * against `tick_total`, or `tick_count` alone when the task could not count
+   * its collection. `cancel` stops an active run for good. There is no delete:
+   * a run records work that touched merchant data.
+   */
+  readonly maintenanceTaskRuns = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<MaintenanceTaskRun>> =>
+      this.request<PaginatedResponse<MaintenanceTaskRun>>('GET', '/maintenance_task_runs', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('GET', `/maintenance_task_runs/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (
+      params: MaintenanceTaskRunCreateParams,
+      options?: RequestOptions,
+    ): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>('POST', '/maintenance_task_runs', {
+        ...options,
+        body: params,
+      }),
+
+    cancel: (id: string, options?: RequestOptions): Promise<MaintenanceTaskRun> =>
+      this.request<MaintenanceTaskRun>(
+        'POST',
+        `/maintenance_task_runs/${id}/cancellation`,
+        options,
+      ),
+  }
+
+  // ============================================
   // Imports (CSV: products, customers, …)
   // ============================================
 
@@ -4963,12 +5075,12 @@ export class AdminClient {
 
   readonly variants = {
     list: (
-      params?: ListParams<VariantFilters, VariantSort>,
+      params?: ListParams<VariantFilters, VariantSort> & VariantSalesContextParams,
       options?: RequestOptions,
     ): Promise<PaginatedResponse<Variant>> =>
       this.request<PaginatedResponse<Variant>>('GET', '/variants', {
         ...options,
-        params: params ? transformListParams(params) : undefined,
+        params: params ? variantListQuery(params) : undefined,
       }),
 
     get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Variant> =>

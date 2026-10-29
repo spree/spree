@@ -1,36 +1,130 @@
 ---
 title: "Seller Products"
-description: "Sellers list their own products and submit them; you review each one before it goes on sale."
+description: "Learn how products listed by your sellers are reviewed, approved and put on sale."
 ---
 
-A product can belong to a seller. If it does, the seller created it in their panel and maintains it there. If it does not, it is the marketplace's own stock.
+A seller product is a product listed by one of your sellers rather than by your own team. The seller writes it, prices it and holds the stock, and it appears in your products list alongside your own with the seller named against it.
 
-Sellers do not publish. They **submit**, and you decide.
+Three things set it apart from one of your own listings. It cannot go on sale until you have reviewed it, because what the marketplace lists is what the marketplace vouches for. It can only be merchandised into categories and collections by your team. And when it sells, the seller fulfills the order from their own stock and is paid for it, less the commission you charge.
 
-## The review queue
+To find what your sellers have listed, navigate to **Products** in the admin dashboard. The **Seller** column is shown by default and names the seller behind each row, with a dash where the product is your own.
 
-A product a seller has submitted arrives with the status **Proposed**. Filter the Products list by that status to see everything waiting.
+## What Puts a Seller's Product on Sale
 
-Open one and you have two choices:
+Three separate things all have to be true before a shopper can buy a product one of your sellers listed.
 
-- **Approve** — it goes on sale as soon as you do.
-- **Send back** — it returns to the seller as a draft, with a reason they will see. They can fix it and submit again.
+1. **The seller is approved.** A seller still working through onboarding, or one who has been rejected or suspended, has nothing on sale whatever their products say. A seller in holiday mode keeps their listings visible but unbuyable until the date passes. See [<u>Sellers</u>](/user/sellers/sellers).
+2. **The product is approved.** The seller submits it and you approve it, which sets its status to **Active**.
+3. **The product is listed on a sales channel.** This is a separate step from approving, described below.
 
-The product page shows who decided, and when.
+Any one of the three left undone leaves a product that reads as fine on both sides and cannot be bought.
 
-Stores that trust their sellers can have submissions approved automatically — ask your developers to switch it on.
+## What Makes a Seller Product Different
 
-## What sellers manage themselves
+A seller product is an ordinary product with a seller attached to it. From the admin dashboard your team can edit all of it exactly as you would one of your own listings, down to the price and the stock count. The one thing that cannot be changed is which seller it belongs to.
 
-From their panel, a seller looks after everything about how their products reach the customer:
+What differs is the seller's side. Their panel reaches part of the listing and not the rest.
 
-- **Stock locations** — where they ship from. Stock for their products lives there.
-- **Delivery methods** — their own shipping options, with their own rates, alongside any shared marketplace ones.
-- **Package types** — the boxes and cartons they ship in, which their delivery quotes are built on.
+| | |
+|---|---|
+| **The seller maintains** | The name, description and media, the prices and stock, the variants and their options, the SKU, the slug and the search engine listing. They also pick the product type and the delivery profile, from your marketplace's own lists. |
+| **Only your team can set** | The categories, collections and tags the product is filed under, the tax category, and which sales channels carry it. |
 
-Delivery profiles and zones stay yours; a seller assigns a profile to each product rather than defining them.
+Being able to edit a seller's listing is not the same as it being yours to maintain. The seller holds the stock and sets their own prices, so corrections to either should normally come from them, and editing a seller's product is usually reserved for corrections rather than fully managing their catalog.
 
-## Related
+Filing is the marketplace's side of the bargain. Tags in particular belong to the whole marketplace rather than to one product, so a seller adding one would be writing into shared vocabulary. The product type and the delivery profile are theirs to pick because the type is what hands their product its options, and the profile is what decides how their goods can be shipped at all.
 
-- [Products](/user/products/adding-products) — the product editor, which is the same for a seller's products
-- [Managing sellers](/user/sellers/managing-sellers) — the seller behind the product
+### Product Statuses
+
+A product carries one of five statuses. The seller panel and the admin dashboard do not always name them the same way, and the two review statuses are read differently in the products list than on the product's own page.
+
+| What it means | The seller sees | You see |
+|---|---|---|
+| The seller is still working on it. | **Draft** | **Draft** |
+| Submitted and waiting on your decision. The seller can still make changes while it waits. | **In review** | **Proposed** |
+| You sent it back. The seller edits it and submits it again. | **Changes needed** | **Rejected** |
+| Approved, and on sale wherever it is listed, for as long as its seller is approved and not on holiday. | **Active** | **Active** |
+| Taken out of the seller's active listings and off sale. | **Archived** | **Archived** |
+
+A seller never sets a status directly. **Draft** and **Archived** they reach through their own actions, and the other three move only through submission and your decision.
+
+## How a Seller Submits a Product
+
+![A seller's products list in their own panel](/docs/images/user/sellers/products/1-seller-products-list.png)
+
+The form a seller fills in is the same one your team uses, so the fields themselves are covered in [<u>Adding Products</u>](/user/products/adding-products).
+
+Once the seller has finished the product and saved it, they press **Submit for review**, which is what passes it to you. Their copy then reads **In review**, and they can carry on editing it while it waits.
+
+![A seller's product waiting for review](/docs/images/user/sellers/products/2-seller-product-in-review.png)
+
+Only a product that is **Draft** or **Changes needed** can be submitted. An active listing is already on sale and an archived one has been taken down, so neither is submitted again without first being moved back to draft.
+
+Each submission is recorded in its own right, so a product sent back twice and resubmitted carries the full trail of who asked, who decided, and what they were told. Correcting a decision never overwrites the one before it.
+
+## How to Review a Submitted Product
+
+![A submitted product on the admin side, with its Seller, Status and Publishing cards](/docs/images/user/sellers/products/3-admin-product-in-review.png)
+
+A submitted product appears in your products list with the status **Proposed**. The **Status** column can be sorted to bring them together, and the **Seller** column filtered to one seller at a time.
+
+Opening one shows the seller's work in the main form and your decision on the cards beside it. The **Seller** card names the seller and carries their own status, which matters because a product from a suspended seller is not on sale whatever the product itself says.
+
+1. Navigate to **Products** and open the product.
+2. Read what the seller wrote, and check the price, the media and the stock.
+3. File the listing on the **Categorization** card, choosing its categories, collections and tags.
+4. Click **Approve** on the **Status** card and confirm, or click **Send back**.
+
+**Approve** sets the status to **Active** and closes the review.
+
+<Note>Switching on **Publish seller products automatically** under [<u>Marketplace Settings</u>](/user/settings/marketplace) approves a product the moment it is submitted, with nobody reviewing it. The approval is recorded as automatic rather than against anyone's name.</Note>
+
+### How to Send a Product Back
+
+Sending a product back returns it to the seller to work on, rather than turning it down for good.
+
+![A product that has been sent back, with the reason against it](/docs/images/user/sellers/products/4-sent-back.png)
+
+1. On the product's **Status** card, click **Send back**.
+2. Enter the reason, answering the question the box asks: what should the seller change.
+3. Click **Send back** again to confirm.
+
+The product reads **Rejected** in your products list and **Changes needed** on its own page. The seller sees **Changes needed** in their panel with your reason shown against the product, so they know what to fix before submitting it again.
+
+The reason is recorded against your decision rather than against the product itself, which means the seller cannot edit it away. **Send back** stays available on a product that has already been sent back, which is how a reason is corrected. Each one is recorded as its own decision in the product's review history rather than overwriting the last.
+
+## How to Publish an Approved Product
+
+Approving a product does not put it in front of shoppers. Until a sales channel carries it, the **Publishing** card reads **Not listed on any sales channel yet** and the product cannot be found or bought.
+
+![The Publishing card, with the product listed on a sales channel](/docs/images/user/sellers/products/5-publishing.png)
+
+1. On the product, find the **Publishing** card.
+2. Click **Manage**.
+3. Tick the sales channels the product should appear on.
+4. Click **Done**, then save the product.
+
+The card then names each channel the product is live on, and shoppers on those channels can buy it. Switching a channel off unlists the product there.
+
+<Warning>The seller's panel reports an approved product as **Active** whether or not a channel carries it, because the status describes your decision rather than where the product is listed. A seller can therefore believe they are selling before you have listed them anywhere.</Warning>
+
+## Stock and Fulfillment
+
+A seller's product is stocked at the seller's own location rather than yours, and the seller sets the count. When a shopper buys it, the order goes to that seller to fulfill and the stock comes off their location.
+
+This is why a seller has stock locations, delivery methods and package types of their own in their panel. The delivery options a shopper is offered at checkout come from the seller the product belongs to. See [<u>Onboarding</u>](/user/sellers/onboarding).
+
+## Importing and Exporting
+
+Sellers can export their products to a CSV file and import changes back from their own panel, covering their own products only. This is how a seller with a long range updates prices or stock without working through each product one at a time.
+
+A product the import creates arrives as a draft, exactly as one built by hand does, so a new listing never reaches shoppers without your decision. A row that updates a product already on sale is applied straight away, so an existing listing's price or description changes without coming back for review. The seller selects them in their list and uses the bulk **Submit for review** action to send the batch. See [<u>Import and Export</u>](/user/products/import-and-export) for the file itself.
+
+## Further Reading
+
+- [<u>Sellers</u>](/user/sellers/sellers) - The sellers themselves, and approving them
+- [<u>Onboarding</u>](/user/sellers/onboarding) - How a seller lists their first products
+- [<u>The Seller Panel</u>](/user/sellers/seller-panel) - What a seller sees when building a product
+- [<u>Marketplace Settings</u>](/user/settings/marketplace) - Reviewing products automatically
+- [<u>Products</u>](/user/products/products) - The products list, which holds your own and your sellers'
+- [<u>Sales Channels</u>](/user/settings/sales-channels) - The channels a product is listed on

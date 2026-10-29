@@ -2,10 +2,10 @@ module Spree
   module Api
     module V3
       module Admin
-        class StoreSerializer < V3::BaseSerializer
-          typelize name: :string, url: :string, code: :string, api_url: :string,
+        class StoreSerializer < V3::StoreSerializer
+          typelize url: :string, code: :string, api_url: :string,
                    default_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], default_locale: [:string, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
-                   default_country_code: [:string, nullable: true],
+                   default_country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    supported_currencies: [:string, multi: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    supported_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
                    available_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
@@ -20,7 +20,6 @@ module Spree
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata,
-                     :name,
                      :code,
                      :default_currency,
                      :default_locale,
@@ -36,6 +35,7 @@ module Spree
           # and rate settings are formatted below.
           preference_attributes Spree::Store, except: %i[order_routing_strategy payout_provider
                                                          default_minimum_payout_amount default_commission_tax_rate]
+          typelize weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS, enum_type_name: 'WeightUnit']
 
           # Once the counter has issued a number the starting value no longer
           # applies, so the settings page can say that instead of accepting a

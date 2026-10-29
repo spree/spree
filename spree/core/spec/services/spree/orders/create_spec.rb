@@ -65,6 +65,67 @@ module Spree
         end
       end
 
+      context 'with a market' do
+        let(:market) { create(:market, :eu, store: store) }
+        let(:params) { { email: 'new@example.com', market_id: market.prefixed_id } }
+
+        it "takes the market's currency and default locale" do
+          order = subject.value
+          expect(order.market).to eq(market)
+          expect(order.currency).to eq('EUR')
+          expect(order.locale).to eq('de')
+        end
+
+        context 'and one of its languages' do
+          before { market.update!(supported_locales: %w[de fr]) }
+
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'fr' } }
+
+          it 'keeps the given language' do
+            expect(subject.value.locale).to eq('fr')
+          end
+        end
+
+        context 'and no market, only its currency' do
+          let(:params) { { email: 'new@example.com', currency: 'EUR' } }
+
+          before { market }
+
+          it 'places the order in a market that sells the currency' do
+            expect(subject.value.market).to eq(market)
+          end
+        end
+
+        context 'and a currency the market does not use' do
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, currency: 'USD' } }
+
+          it 'refuses the order' do
+            expect { subject }.not_to change(Spree::Order, :count)
+            expect(subject).to be_failure
+            expect(subject.value.errors[:currency]).to be_present
+          end
+        end
+
+        context 'and a language the market does not offer' do
+          let(:params) { { email: 'new@example.com', market_id: market.prefixed_id, locale: 'ja' } }
+
+          it 'refuses the order' do
+            expect(subject).to be_failure
+            expect(subject.value.errors[:locale]).to be_present
+          end
+        end
+      end
+
+      context 'with use_shipping' do
+        let(:params) { { email: 'new@example.com', shipping_address: address_attrs, use_shipping: true } }
+
+        it 'copies the shipping address to the billing address' do
+          order = subject.value
+          expect(order.bill_address).to be_present
+          expect(order.bill_address).to eq(order.ship_address)
+        end
+      end
+
       context 'with items but no shipping address' do
         let(:params) do
           {
@@ -234,6 +295,23 @@ module Spree
         end
       end
 
+      context 'with an item not published on the channel' do
+        let(:unpublished_product) do
+          create(:product_in_stock).tap { |p| p.product_publications.destroy_all }
+        end
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: unpublished_product.default_variant.prefixed_id, quantity: 1 }]
+          }
+        end
+
+        it 'does not create the order' do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          expect(Spree::Order.where(email: 'new@example.com')).to be_empty
+        end
+      end
+
       context 'when add_items fails because the variant is out of stock' do
         # Product factory propagates stock items as +backorderable: true+ by
         # default. Strip both so the LineItem +quantity_available+ validation
@@ -262,6 +340,105 @@ module Spree
 
         it 'rolls back the order so no draft is persisted on failure' do
           expect { subject }.not_to change(Spree::Order, :count)
+        end
+      end
+    end
+
+    describe 'addresses on an order for a company' do
+      let(:company) { create(:company, store: store) }
+      let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+      let(:headquarters) { create(:company_address, owner: company) }
+
+      it 'accepts a site from the company address book' do
+        result = described_class.call(
+          store: store, customer: user,
+          params: { company_id: company.prefixed_id, shipping_address_id: headquarters.prefixed_id }
+        )
+
+        expect(result).to be_success
+        expect(result.value.ship_address_id).to eq(headquarters.id)
+      end
+
+      it 'accepts a site the purchase node inherits from its parent' do
+        result = described_class.call(
+          store: store, customer: user,
+          params: { company_id: division.prefixed_id, shipping_address_id: headquarters.prefixed_id }
+        )
+
+        expect(result).to be_success
+        expect(result.value.ship_address_id).to eq(headquarters.id)
+      end
+
+      it 'refuses a site belonging to another company' do
+        outsider = create(:company_address, owner: create(:company, store: store))
+
+        result = described_class.call(
+          store: store, customer: user,
+          params: { company_id: company.prefixed_id, shipping_address_id: outsider.prefixed_id }
+        )
+
+        expect(result).to be_success
+        expect(result.value.ship_address_id).to be_nil
+      end
+
+      # Deliberately left on the factory's nameless company site: a company
+      # address names the business and not a person, which is what broke the
+      # copy the order keeps of it.
+      describe 'use_customer_default_address' do
+        before do
+          company.update!(default_bill_address: headquarters, default_ship_address: headquarters)
+        end
+
+        it 'copies the company defaults rather than the buyer\'s own' do
+          user.update!(bill_address: create(:address, customer: user), ship_address: create(:address, customer: user))
+
+          result = described_class.call(
+            store: store, customer: user,
+            params: { company_id: company.prefixed_id, use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.ship_address.address1).to eq(headquarters.address1)
+          expect(result.value.ship_address_id).not_to eq(headquarters.id)
+        end
+
+        # Inherited for prefill the same way it is for selection.
+        it 'reaches the parent node\'s default when the division holds none' do
+          result = described_class.call(
+            store: store, customer: user,
+            params: { company_id: division.prefixed_id, use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.bill_address.address1).to eq(headquarters.address1)
+        end
+
+        it 'leaves the slots empty rather than falling back to the buyer' do
+          company.update!(default_bill_address: nil, default_ship_address: nil)
+          user.update!(bill_address: create(:address, customer: user))
+
+          result = described_class.call(
+            store: store, customer: user,
+            params: { company_id: company.prefixed_id, use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.bill_address).to be_nil
+        end
+
+        it 'uses the buyer\'s own defaults when no company is named' do
+          create(:company_membership, company: company, customer: user)
+          own_address = create(:address, customer: user)
+          user.update!(bill_address: own_address, ship_address: own_address)
+
+          result = described_class.call(
+            store: store, customer: user,
+            params: { use_customer_default_address: true }
+          )
+
+          expect(result).to be_success
+          expect(result.value.ship_address.address1).to eq(own_address.address1)
+          expect(result.value.bill_address.address1).to eq(own_address.address1)
         end
       end
     end

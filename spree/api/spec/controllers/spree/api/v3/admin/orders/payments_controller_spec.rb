@@ -191,6 +191,34 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
         expect(payment.amount).to eq(order.order_total_after_store_credit)
       end
     end
+
+    context 'when the order has nothing left to pay and no amount is given' do
+      it 'refuses a zero payment' do
+        allow_any_instance_of(Spree::Order).to receive(:order_total_after_store_credit).and_return(BigDecimal('0'))
+
+        post :create, params: { order_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+        expect(order.payments).to be_empty
+      end
+    end
+
+    context 'when amount is not positive' do
+      %w[-100.00 0].each do |amount|
+        it "refuses #{amount}" do
+          post :create, params: {
+            order_id: order.prefixed_id,
+            payment_method_id: payment_method.prefixed_id,
+            amount: amount
+          }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['code']).to eq('invalid_money_format')
+          expect(order.payments).to be_empty
+        end
+      end
+    end
   end
 
   describe 'PATCH #capture' do

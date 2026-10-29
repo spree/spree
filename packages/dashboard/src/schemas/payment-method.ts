@@ -1,7 +1,7 @@
 import type { PaymentMethodCreateParams, PaymentMethodUpdateParams } from '@spree/admin-sdk'
+import { CAPTURE_METHODS } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { CAPTURE_METHODS } from './store'
 
 // Empty means "inherit from the store" — the API models that as null, so the
 // form's empty option maps back to null on submit.

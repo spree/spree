@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Nie wybrano adresu"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Ścieżka nawigacji",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Domyślny rozliczeniowy",
       "default_shipping": "Domyślny wysyłkowy",
+      "inherited_from": "Dziedziczony z: {{name}}",
       "set_default_billing": "Ustaw jako domyślny adres rozliczeniowy",
       "set_default_shipping": "Ustaw jako domyślny adres wysyłkowy"
     },
@@ -113,6 +117,7 @@
         "title": "Zresetuj hasło"
       },
       "login": {
+        "account_deactivated": "To konto zostało dezaktywowane. Skontaktuj się z administratorem, aby przywrócić dostęp.",
         "account_not_provisioned": "To konto nie ma dostępu do tego sklepu. Poproś administratora o zaproszenie.",
         "divider": "lub",
         "invalid_oauth_state": "Ta sesja logowania wygasła lub była nieprawidłowa. Zaloguj się ponownie.",
@@ -362,9 +367,12 @@
         "video_title": "Podgląd wideo"
       },
       "metadata_card": {
+        "copy_reference": "Kopiuj klucz {{system}}",
         "empty_description": "Aplikacje i integracje wypełniają to automatycznie.",
         "empty_title": "Brak metadanych",
-        "title": "Metadane"
+        "external_references": "Odwołania zewnętrzne",
+        "title": "Metadane",
+        "view": "Pokaż metadane"
       },
       "page_header": {
         "copy_id": "Kopiuj ID",
@@ -417,6 +425,7 @@
       },
       "table_toolbar": {
         "add_filter": "Dodaj filtr",
+        "any_field": "{{field}}: dowolne",
         "ascending": "Rosnąco",
         "clear_all": "Wyczyść wszystko",
         "columns_tooltip": "Kolumny",
@@ -437,6 +446,8 @@
         "filter_select_placeholder": "Wybierz…",
         "filter_text_placeholder": "Filtruj…",
         "filter_to_placeholder": "Filtruj do…",
+        "n_selected": "Wybrano: {{count}}",
+        "only": "Tylko",
         "operators": {
           "after": "po",
           "before": "przed",
@@ -462,6 +473,7 @@
         "remove_filter": "Usuń filtr",
         "reset_to_default": "Przywróć domyślne",
         "search_placeholder": "Szukaj…",
+        "select_all": "Zaznacz wszystko",
         "sort_by": "Sortuj według",
         "sort_tooltip": "Sortuj",
         "visible_columns": "Widoczne kolumny"
@@ -483,6 +495,12 @@
         "discard_message": "Wszystko, co zostało wprowadzone, zostanie utracone. Nie można tego cofnąć.",
         "discard_title": "Odrzucić szkic?"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Kwota w {{currency}}",
+      "help": "Waluty bez kwoty nie mają oferowanej tej metody dostawy.",
+      "label": "Kwota",
+      "required": "Podaj kwotę w co najmniej jednej walucie."
     },
     "custom_field_definitions": {
       "errors": {
@@ -938,6 +956,14 @@
       "order_multiple": {
         "label": "Wielokrotność zamówienia",
         "help": "Każdy kolejny krok powyżej minimum. Pozostaw puste, aby dopuścić dowolną ilość."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Dozwolone pobrania"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Dostępne dni"
+        }
       }
     },
     "image_upload": {
@@ -2063,6 +2089,38 @@
           "description": "Sprzedawca musi podać adres do zwrotów"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Dodaj",
+      "all_variants": "Wszystkie warianty",
+      "columns": {
+        "file": "Plik",
+        "variant": "Wariant",
+        "size": "Rozmiar",
+        "downloads": "Pobrania",
+        "days": "Dni"
+      },
+      "delete_description": "„{{name}}” nie będzie już dostępny do pobrania dla osób, które go kupiły. Zmiana działa natychmiast.",
+      "delete_title": "Usunąć ten plik?",
+      "description": "Pliki, które kupujący mogą pobrać po zakupie. Dołącz je do produktu cyfrowego lub do fizycznego, aby dostarczyć instrukcję albo gwarancję.",
+      "download": "Pobierz",
+      "drop_hint": "Przeciągnij i upuść pliki tutaj lub kliknij, aby wybrać",
+      "empty": "Brak plików",
+      "limit_invalid": "Limity muszą być liczbami całkowitymi od 1 lub puste.",
+      "limits_help": "Pozostaw limity pobrań i dni puste, aby użyć ustawień sklepu.",
+      "source": {
+        "upload": "Prześlij plik"
+      },
+      "store_default": "{{count}} (domyślne sklepu)",
+      "title": "Pliki cyfrowe",
+      "untitled": "Plik bez nazwy",
+      "upload": "Dodaj plik",
+      "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
+      "uploading": "Przesyłanie {{name}}…",
+      "uploading_short": "Przesyłanie…",
+      "replace": "Zastąp plik",
+      "replace_description": "„{{name}}” zostanie usunięty, a wszyscy kupujący pobiorą nowy plik ze swoich dotychczasowych linków. Obowiązuje natychmiast.",
+      "replace_title": "Zastąpić ten plik?"
     }
   }
 }

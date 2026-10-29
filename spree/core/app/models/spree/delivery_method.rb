@@ -451,10 +451,13 @@ module Spree
         calculator.description + ': ' +
 
         if calculator.is_a?(Spree::Calculator::Shipping::FlatRate)
-          if calculator.preferred_amount == 0
+          amount = calculator.amount_for(calculator.preferred_currency)
+          if amount.nil?
+            ''
+          elsif amount.zero?
             I18n.t('spree.free')
           else
-            Spree::Money.new(calculator.preferred_amount, { currency: calculator.preferred_currency }).to_s
+            Spree::Money.new(amount, { currency: calculator.preferred_currency }).to_s
           end
         elsif calculator.is_a?(Spree::Calculator::Shipping::FlexiRate)
           Spree::Money.new(calculator.preferred_first_item, { currency: calculator.preferred_currency }).to_s
@@ -497,14 +500,21 @@ module Spree
       reconcile_services(pending)
     end
 
+    # Matched against the method's rows loaded once, rather than a lookup per
+    # row. A row created here joins that list, so a later row naming the
+    # same (carrier, service) updates it as a lookup would.
     def reconcile_services(rows)
+      existing = services.reload.to_a
       kept_ids = rows.filter_map do |row|
-        record =
-          if row[:id].present?
-            id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
-            services.find_by(id: id)
-          end
-        record ||= services.find_or_initialize_by(carrier: row[:carrier], service: row[:service])
+        if row[:id].present?
+          id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
+          record = existing.find { |service| service.id.to_s == id.to_s }
+        end
+        record ||= existing.find { |service| service.carrier == row[:carrier] && service.service == row[:service] }
+        unless record
+          record = services.build(carrier: row[:carrier], service: row[:service])
+          existing << record
+        end
         record.assign_attributes(row.slice(:carrier, :service, :label, :markup_flat, :markup_percent, :position).to_h)
         record.save!
         record.id

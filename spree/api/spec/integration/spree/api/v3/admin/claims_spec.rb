@@ -139,7 +139,7 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Settles an approved claim with money back, a replacement shipment, or both.'
-      admin_scope :write, :orders
+      admin_scope_note('`write_orders`, plus `write_refunds` for a resolution that refunds')
 
       admin_sdk_example 'order-claims/resolve'
 

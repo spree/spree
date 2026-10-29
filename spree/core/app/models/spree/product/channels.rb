@@ -64,8 +64,8 @@ module Spree
       def publication_for(channel)
         return nil unless channel
 
-        if product_publications.loaded?
-          product_publications.find { |p| p.channel_id == channel.id }
+        if read_association_in_memory?(:product_publications)
+          product_publications.find { |publication| publication.channel_id == channel.id }
         else
           product_publications.find_by(channel_id: channel.id)
         end
@@ -122,10 +122,16 @@ module Spree
       end
 
       def apply_product_publications(publications_params)
+        rows = publications_params.map { |publication_data| publication_data.to_h.with_indifferent_access }
         publication_ids_in_payload = []
 
-        publications_params.each do |publication_data|
-          publication_data = publication_data.to_h.with_indifferent_access
+        # The product's publications and every channel the payload names are
+        # read once, rather than a lookup per row.
+        named_channel_ids = rows.filter_map { |row| decode_publication_channel_id(row[:channel_id]) if row[:id].blank? }
+        channels_by_id = named_channel_ids.empty? ? {} : publishable_channels.where(id: named_channel_ids).index_by { |channel| channel.id.to_s }
+        product_publications.load
+
+        rows.each do |publication_data|
           publication_id = publication_data.delete(:id)
           channel_id = decode_publication_channel_id(publication_data[:channel_id])
 
@@ -133,7 +139,7 @@ module Spree
             decoded_id = Spree::PrefixedId.prefixed_id?(publication_id) ?
                            Spree::PrefixedId.decode_prefixed_id(publication_id) :
                            publication_id
-            publication = product_publications.find_by(id: decoded_id)
+            publication = product_publications.detect { |existing| existing.id.to_s == decoded_id.to_s }
             next unless publication
 
             # Channel is immutable; ignore any rebind attempt.
@@ -142,19 +148,21 @@ module Spree
           elsif channel_id.present?
             # Only publish to channels owned by the product's store; ignore
             # ids referencing another store's channel.
-            channel = publishable_channels.find_by(id: channel_id)
+            channel = channels_by_id[channel_id.to_s]
             next unless channel
 
             # Upsert by channel_id so repeat submissions are idempotent
             # against the unique (product_id, channel_id) index.
-            publication = product_publications.find_or_initialize_by(channel_id: channel.id)
+            publication = product_publications.detect { |existing| existing.channel_id == channel.id } ||
+                          product_publications.build(channel: channel)
             publication.assign_attributes(publication_data.slice(:published_at, :unpublished_at))
             publication.save!
             publication_ids_in_payload << publication.id
           end
         end
 
-        product_publications.where.not(id: publication_ids_in_payload).destroy_all
+        removed = product_publications.reject { |publication| publication_ids_in_payload.include?(publication.id) }
+        product_publications.destroy(*removed) if removed.any?
       end
 
       def decode_publication_channel_id(value)

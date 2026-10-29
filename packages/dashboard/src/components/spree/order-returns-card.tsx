@@ -1,11 +1,15 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
+import { RETURN_STATUSES, subsetOf } from '@spree/core'
 import {
   currencyParts,
   formatAmount,
   isPositiveMoney,
   returnOwesNothing,
   returnRefundSummary,
+  useMetadataSheet,
   useMoneyLocale,
+  usePermissions,
+  ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -21,6 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  hasMetadata,
   type RefundMethod,
   ReturnReceiveDialog,
   ReturnRefundDialog,
@@ -48,7 +53,10 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
-const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
+const RETURN_ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
+// Once goods have arrived the return can only be refunded.
+const RETURN_CANCELABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
+const RETURN_RECEIVED = subsetOf(RETURN_STATUSES, ['received', 'refunded'])
 
 /**
  * Returns on an order. Each status change is a distinct action rather than an
@@ -63,10 +71,15 @@ export function OrderReturnsCard({ order }: { order: Order }) {
   const { data } = useOrderReturns(orderId)
   const { create, approve, receive, refund, cancel, buyLabel, refundLabel, deleteLabel } =
     useReturnActions(orderId)
+  // Paying the customer back is the refunds permission's, not the orders
+  // one's: the API refuses a refund without it, so the action is not offered.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
 
   const [creating, setCreating] = useState(false)
   const [receiving, setReceiving] = useState<Return | null>(null)
   const [refunding, setRefunding] = useState<Return | null>(null)
+  const metadataSheet = useMetadataSheet()
 
   const returns = data?.data ?? []
   const canCreate = fulfilledUnits(order).length > 0
@@ -109,7 +122,8 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                   <span className="text-sm font-medium">{returnRecord.number}</span>
                 </CardTitle>
 
-                {RETURN_ACTIONABLE.includes(returnRecord.status) && (
+                {(RETURN_ACTIONABLE.includes(returnRecord.status) ||
+                  hasMetadata(returnRecord.metadata)) && (
                   <CardAction>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -131,7 +145,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'received' && (
+                        {returnRecord.status === 'received' && canRefund && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
                             {returnOwesNothing(returnRecord.refundable_total) ? (
                               <>
@@ -146,7 +160,18 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             )}
                           </DropdownMenuItem>
                         )}
-                        {['requested', 'approved'].includes(returnRecord.status) && (
+                        <ViewMetadataMenuItem
+                          metadata={returnRecord.metadata}
+                          externalReferences={returnRecord.external_references}
+                          onClick={() =>
+                            metadataSheet.show(
+                              returnRecord.metadata,
+                              returnRecord.number,
+                              returnRecord.external_references,
+                            )
+                          }
+                        />
+                        {RETURN_CANCELABLE.includes(returnRecord.status) && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -240,12 +265,14 @@ export function OrderReturnsCard({ order }: { order: Order }) {
           }}
         />
       )}
+
+      {metadataSheet.sheet}
     </>
   )
 }
 
 /** A return is only worth a label while the goods are still coming back. */
-const RETURN_LABEL_STATUSES = ['requested', 'approved']
+const RETURN_LABEL_STATUSES = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
 
 /**
  * The prepaid label for the parcel coming back, and the button to buy one.
@@ -353,7 +380,7 @@ function RefundSummaryFooter({
 
 function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string }) {
   const { t } = useTranslation()
-  const received = ['received', 'refunded'].includes(status)
+  const received = RETURN_RECEIVED.includes(status)
 
   return (
     <div className="flex items-center justify-between text-sm">

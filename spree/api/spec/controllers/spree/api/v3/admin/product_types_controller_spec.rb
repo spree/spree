@@ -64,6 +64,18 @@ RSpec.describe Spree::Api::V3::Admin::ProductTypesController, type: :controller 
       expect(product.reload.option_types).to be_empty
     end
 
+    it 'ignores option types from another store' do
+      foreign_option_type = create(:option_type, store: create(:store))
+
+      patch :update, params: {
+        id: product_type.prefixed_id,
+        option_type_ids: [foreign_option_type.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(product_type.reload.option_types).to be_empty
+    end
+
     it 'ignores categories from another store' do
       foreign_category = create(:category, store: create(:store))
 

@@ -1,4 +1,4 @@
-import type { CurrencyCode } from '@spree/admin-sdk'
+import { type CurrencyCode, isCurrencyCode } from '@spree/core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -12,10 +12,9 @@ import {
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisplayName } from '../hooks/use-display-name'
-import { isCurrencyCode } from '../lib/iso-codes'
 import { useOptionalStore } from '../providers/store-provider'
 
-export { ALL_CURRENCY_CODES } from '../lib/currencies'
+export { ACTIVE_CURRENCY_CODES as ALL_CURRENCY_CODES } from '@spree/core'
 
 interface CurrencySelectProps {
   /** Classes for the trigger — used to match a neighbouring control's height. */
@@ -33,8 +32,8 @@ interface CurrencySelectProps {
   /** Fires on every selection change. */
   onChange?: (currency: CurrencyCode) => void
   /**
-   * Currency codes to pick from. Defaults to the current store's
-   * `supported_currencies`. Pass `ALL_CURRENCY_CODES` (or any custom list) for
+   * Currency codes to pick from. Defaults to the currencies of the current
+   * store's markets. Pass `ALL_CURRENCY_CODES` (or any custom list) for
    * contexts where the merchant chooses a currency the store doesn't yet
    * support — e.g. a market's currency.
    */
@@ -55,8 +54,8 @@ interface CurrencySelectProps {
 }
 
 /**
- * Picker for a currency code. Defaults to the current store's
- * `supported_currencies` (and the store's `default_currency`), so callers
+ * Picker for a currency code. Defaults to the currencies of the
+ * current store's markets (the default market's first), so callers
  * choosing among already-configured currencies don't have to wire anything up.
  * Pass `options` (e.g. `ALL_CURRENCY_CODES`) when the merchant may pick any
  * currency, such as a market's currency. Each option reads `CODE — Full Name`

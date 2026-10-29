@@ -28,6 +28,14 @@ module Spree
     describe '#call' do
       subject { described_class.call(order: order, params: params) }
 
+      context 'with a channel from another store' do
+        let(:params) { { channel_id: create(:channel, store: create(:store)).prefixed_id } }
+
+        it 'refuses it' do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
       context 'with empty params' do
         let(:params) { {} }
 

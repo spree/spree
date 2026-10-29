@@ -277,7 +277,9 @@ module Spree
     #   the search. Definitions are store-owned, so the caller says which store
     #   is searching; `Spree::Current.store` is the request's answer and a
     #   background caller (an export, say) passes its own.
-    scope :search, ->(query, store = Spree::Current.store) {
+    # @param audience [Symbol, nil] `:store` keeps a shopper's search off the
+    #   custom fields hidden from the storefront; `nil` is the back office
+    scope :search, ->(query, store = Spree::Current.store, audience: nil) {
       next none if query.blank?
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
@@ -285,6 +287,7 @@ module Spree
       searchable_definitions = store.custom_field_definitions.
                                for_resource_type('Spree::Product').
                                searchable
+      searchable_definitions = searchable_definitions.storefront_visible if audience == :store
 
       # Only pay for the custom_field scan when some definition opts into search;
       # the leading-wildcard LIKE over spree_custom_fields can't use an index.
@@ -494,7 +497,9 @@ module Spree
     def purchasable?
       return @purchasable unless @purchasable.nil?
 
-      @purchasable = sellable_variants.any?(&:purchasable?)
+      variants_to_check = sellable_variants
+      Spree::Stock::Quantifier.preload(variants_to_check)
+      @purchasable = variants_to_check.any?(&:purchasable?)
     end
 
     def in_stock?

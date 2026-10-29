@@ -27,6 +27,26 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
 
       expect(response).to have_http_status(:not_found)
     end
+
+    context 'for a division' do
+      let!(:division) { create(:company, store: store, kind: 'division', parent: company) }
+      let!(:headquarters) { create(:company_address, owner: company, label: 'HQ') }
+      let!(:dock) { create(:company_address, owner: division, label: 'Dock') }
+
+      it 'includes the sites inherited from the nodes above it' do
+        get :index, params: { company_id: division.prefixed_id }, as: :json
+
+        expect(json_response['data'].map { |row| row['id'] }).
+          to contain_exactly(headquarters.prefixed_id, dock.prefixed_id)
+      end
+
+      it 'still refuses to rewrite an inherited site' do
+        patch :update, params: { company_id: division.prefixed_id, id: headquarters.prefixed_id, label: 'Taken' }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(headquarters.reload.label).to eq('HQ')
+      end
+    end
   end
 
   describe 'POST #create' do

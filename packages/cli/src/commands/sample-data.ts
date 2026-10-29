@@ -1,7 +1,8 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
+import { spreeTask } from '../backend.js'
 import { detectProject } from '../context.js'
-import { rakeTask } from '../docker.js'
+import { captureTask } from '../docker.js'
 
 export function registerSampleDataCommand(program: Command): void {
   program
@@ -12,7 +13,7 @@ export function registerSampleDataCommand(program: Command): void {
 
       const s = p.spinner()
       s.start('Loading sample data...')
-      await rakeTask('spree:load_sample_data', ctx.projectDir)
+      await captureTask(spreeTask('load_sample_data'), ctx.projectDir)
       s.stop('Sample data loaded.')
     })
 }

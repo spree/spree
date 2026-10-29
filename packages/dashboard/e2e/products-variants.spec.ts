@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { createCustomFieldDefinition, deleteCustomFieldDefinition, login } from './helpers'
 import {
   addOptionToVariants,
   createProduct,
@@ -78,8 +78,9 @@ test.describe('product variants', () => {
     await expect(variantsCard.getByText('Blue')).toHaveCount(0)
   })
 
-  // Skipped: pre-existing flake — both the matrix and the edit sheet register
-  test('opens the per-variant edit sheet and edits SKU + weight', async ({ page }) => {
+  test('opens the per-variant edit sheet and edits SKU, weight and dimension unit', async ({
+    page,
+  }) => {
     const creds = await login(page)
 
     const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red'])
@@ -100,6 +101,10 @@ test.describe('product variants', () => {
     // verify the sheet's UI specifically).
     await sheet.getByLabel(/^sku$/i).fill('SKU-SHEET-1')
     await sheet.getByLabel(/^weight$/i).fill('1.5')
+    // Feet: the last unit the server accepts, once missing from this picker.
+    await sheet.locator('[id$="-dim-unit"]').click()
+    await page.getByRole('option', { name: 'ft', exact: true }).click()
+    await expect(sheet.locator('[id$="-dim-unit"]')).toHaveText('ft')
 
     await sheet.getByRole('button', { name: /^done$/i }).click()
     await expect(sheet).toBeHidden()
@@ -114,5 +119,103 @@ test.describe('product variants', () => {
     const reopened = page.getByRole('dialog')
     await expect(reopened.getByLabel(/^sku$/i)).toHaveValue('SKU-SHEET-1')
     await expect(reopened.getByLabel(/^weight$/i)).toHaveValue('1.5')
+    await expect(reopened.locator('[id$="-dim-unit"]')).toHaveText('ft')
+  })
+
+  test('reads weights typed into the bulk editor with grouping and a decimal comma', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+
+    const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red', 'blue'])
+
+    const productName = `E2E Bulk Weights ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+    await addOptionToVariants(page, colorLabel, ['Red', 'Blue'])
+
+    const variantsCard = variantsCardLocator(page)
+    await variantsCard.getByRole('button', { name: /^bulk edit$/i }).click()
+    const grid = page.getByRole('dialog')
+
+    // A spreadsheet cell is read-only until double-clicked.
+    for (const [variant, typed] of [
+      ['Red', '1,500'],
+      ['Blue', '2,5'],
+    ]) {
+      const cell = grid.getByLabel(new RegExp(`^weight — .*\\b${variant}$`, 'i'))
+      await cell.dblclick()
+      await cell.fill(typed)
+      await cell.press('Enter')
+    }
+    await expect(grid.getByLabel(/^weight — .*\bred$/i)).toHaveValue('1500')
+    await expect(grid.getByLabel(/^weight — .*\bblue$/i)).toHaveValue('2.5')
+
+    // A value that is not a number in either format leaves the cell as it was.
+    const red = grid.getByLabel(/^weight — .*\bred$/i)
+    await red.dblclick()
+    await red.fill('1.234,5')
+    await red.press('Enter')
+    await expect(red).toHaveValue('1500')
+
+    await grid.getByRole('button', { name: /^done$/i }).click()
+    await expect(grid).toBeHidden()
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+    for (const [variant, weight] of [
+      ['red', '1500'],
+      ['blue', '2.5'],
+    ]) {
+      await variantsCard
+        .getByRole('button', { name: new RegExp(`^edit .*\\b${variant}$`, 'i') })
+        .click()
+      const sheet = page.getByRole('dialog')
+      await expect(sheet.getByLabel(/^weight$/i)).toHaveValue(weight)
+      await sheet.getByRole('button', { name: /^done$/i }).click()
+      await expect(sheet).toBeHidden()
+    }
+  })
+
+  test('saves a custom field from the variant sheet', async ({ page }) => {
+    const creds = await login(page)
+    const definition = await createCustomFieldDefinition(page, creds.accessToken, 'variant')
+    const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red'])
+
+    try {
+      await createProduct(page, creds.store_id, `E2E Variant Custom Field ${Date.now()}`)
+      await addOptionToVariants(page, colorLabel, ['Red'])
+      // Only a saved variant has an id to hang the value on.
+      await page.getByRole('button', { name: /save product/i }).click()
+      await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+        timeout: 30_000,
+      })
+
+      // Edited like the rest of the sheet: Done keeps it, Cancel drops it.
+      const variantsCard = variantsCardLocator(page)
+      await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
+      const sheet = page.getByRole('dialog')
+      await sheet.getByLabel(definition.label).fill('Matte')
+      await sheet.getByRole('button', { name: /^done$/i }).click()
+      await expect(sheet).toBeHidden({ timeout: 15_000 })
+
+      await page.reload()
+      await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
+      const reopened = page.getByRole('dialog')
+      await expect(reopened.getByLabel(definition.label)).toHaveValue('Matte', { timeout: 15_000 })
+
+      await reopened.getByLabel(definition.label).fill('Gloss')
+      await reopened.getByRole('button', { name: /^cancel$/i }).click()
+      await page.reload()
+      await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
+      await expect(page.getByRole('dialog').getByLabel(definition.label)).toHaveValue('Matte', {
+        timeout: 15_000,
+      })
+    } finally {
+      await deleteCustomFieldDefinition(page, creds.accessToken, definition.id)
+    }
   })
 })

@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
+import { PAYOUT_SCHEDULE_INTERVALS } from '@spree/core'
 import {
   currencyParts,
   fractionToPercent,
   mapSpreeErrorsToForm,
   PageHeader,
   percentToFraction,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   Alert,
@@ -49,6 +51,7 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { ContentTypeCombobox } from '../../../../components/spree/content-type-combobox'
 import {
   usePayoutProviders,
   useStoreSettings,
@@ -57,7 +60,6 @@ import {
 import {
   type MarketplaceSettingsFormValues,
   marketplaceSettingsFormSchema,
-  PAYOUT_SCHEDULE_INTERVALS,
 } from '../../../../schemas/marketplace'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/marketplace')({
@@ -86,7 +88,8 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const { storeId } = Route.useParams()
   const updateMutation = useUpdateStoreSettings()
   const { data: payoutProviders } = usePayoutProviders()
-  const { symbol: currencySymbol } = currencyParts(store.default_currency, i18n.language)
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   const form = useForm<MarketplaceSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,6 +103,9 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
       default_minimum_payout_amount: String(store.default_minimum_payout_amount ?? '0'),
       auto_approve_sellers: store.auto_approve_sellers ?? false,
       auto_approve_seller_products: store.auto_approve_seller_products ?? false,
+      seller_digital_assets_enabled: store.seller_digital_assets_enabled ?? false,
+      seller_digital_asset_content_types: store.seller_digital_asset_content_types ?? [],
+      review_seller_digital_asset_changes: store.review_seller_digital_asset_changes ?? true,
       send_seller_transactional_emails: store.send_seller_transactional_emails ?? true,
       commission_tax_rate_percentage:
         fractionToPercent(String(store.default_commission_tax_rate ?? '')) || '0',
@@ -155,6 +161,9 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
         default_minimum_payout_amount: values.default_minimum_payout_amount,
         auto_approve_sellers: values.auto_approve_sellers,
         auto_approve_seller_products: values.auto_approve_seller_products,
+        seller_digital_assets_enabled: values.seller_digital_assets_enabled,
+        seller_digital_asset_content_types: values.seller_digital_asset_content_types,
+        review_seller_digital_asset_changes: values.review_seller_digital_asset_changes,
         send_seller_transactional_emails: values.send_seller_transactional_emails,
         default_commission_tax_rate: percentToFraction(values.commission_tax_rate_percentage),
       })
@@ -174,6 +183,9 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const selectedProvider = payoutProviders?.data?.find(
     (provider) => provider.id === form.watch('payout_provider'),
   )
+  // The type list and the review rule only mean something once sellers may
+  // upload at all; shown before that they read as settings with no effect.
+  const sellerFilesEnabled = form.watch('seller_digital_assets_enabled')
 
   return (
     <FormProvider {...form}>
@@ -340,6 +352,58 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                       name="auto_approve_seller_products"
                       control={form.control}
                     />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.marketplace.seller_files_title')}</CardTitle>
+                  <CardDescription>
+                    {t('admin.pages.settings.marketplace.seller_files_description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SwitchField
+                      id="marketplace-seller-digital-assets"
+                      label={t('admin.fields.store.seller_digital_assets_enabled.label')}
+                      help={t('admin.fields.store.seller_digital_assets_enabled.help')}
+                      name="seller_digital_assets_enabled"
+                      control={form.control}
+                    />
+                    {sellerFilesEnabled && (
+                      <>
+                        <Controller
+                          control={form.control}
+                          name="seller_digital_asset_content_types"
+                          render={({ field, fieldState }) => (
+                            <Field>
+                              <FieldLabel htmlFor="marketplace-seller-content-types">
+                                {t('admin.fields.store.seller_digital_asset_content_types.label')}
+                              </FieldLabel>
+                              <ContentTypeCombobox
+                                id="marketplace-seller-content-types"
+                                value={field.value}
+                                onChange={field.onChange}
+                                invalid={fieldState.invalid}
+                              />
+                              <FieldDescription>
+                                {t('admin.fields.store.seller_digital_asset_content_types.help')}
+                              </FieldDescription>
+                              <FieldError errors={[fieldState.error]} />
+                            </Field>
+                          )}
+                        />
+                        <SwitchField
+                          id="marketplace-review-seller-file-changes"
+                          label={t('admin.fields.store.review_seller_digital_asset_changes.label')}
+                          help={t('admin.fields.store.review_seller_digital_asset_changes.help')}
+                          name="review_seller_digital_asset_changes"
+                          control={form.control}
+                        />
+                      </>
+                    )}
                   </FieldGroup>
                 </CardContent>
               </Card>

@@ -1,5 +1,10 @@
-import type { CatalogCreateParams, CurrencyCode, PriceList } from '@spree/admin-sdk'
-import { compareMoney, negateMoney } from '@spree/admin-sdk'
+import type { CatalogCreateParams, PriceList } from '@spree/admin-sdk'
+import {
+  type CatalogAssignableType,
+  type CurrencyCode,
+  compareMoney,
+  negateMoney,
+} from '@spree/core'
 import {
   blankToNull,
   isPositiveMoney,
@@ -216,7 +221,7 @@ export interface OrderMinimumEntry {
  */
 export interface AssignmentEntry {
   id?: string
-  assignable_type: 'company' | 'customer_group'
+  assignable_type: CatalogAssignableType
   assignable_id: string
   assignable_name?: string | null
   /**

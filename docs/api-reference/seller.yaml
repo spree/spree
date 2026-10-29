@@ -108,7 +108,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 2
+                  name: Seller 6
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -171,7 +171,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 4
+                  name: Seller 8
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -365,7 +365,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 75
+                  name: Seller 79
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -487,7 +487,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 113
+                  name: Seller 117
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -560,9 +560,39 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 85
-                  slug: seller-85
+                  name: Seller 89
+                  slug: seller-89
                   status: approved
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
+                  seller_digital_assets_enabled: false
+                  seller_digital_asset_content_types:
+                  - application/pdf
+                  - application/epub+zip
+                  - application/zip
+                  - application/x-7z-compressed
+                  - application/gzip
+                  - application/json
+                  - text/plain
+                  - text/csv
+                  - audio/mpeg
+                  - audio/mp4
+                  - audio/aac
+                  - audio/flac
+                  - audio/ogg
+                  - audio/wav
+                  - audio/x-wav
+                  - audio/midi
+                  - video/mp4
+                  - video/webm
+                  - video/quicktime
+                  - image/jpeg
+                  - image/png
+                  - image/gif
+                  - image/webp
+                  - image/tiff
+                  review_seller_digital_asset_changes: true
                 permissions:
                 - allow: true
                   actions:
@@ -831,9 +861,39 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 87
-                  slug: seller-87
+                  name: Seller 91
+                  slug: seller-91
                   status: approved
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
+                  seller_digital_assets_enabled: false
+                  seller_digital_asset_content_types:
+                  - application/pdf
+                  - application/epub+zip
+                  - application/zip
+                  - application/x-7z-compressed
+                  - application/gzip
+                  - application/json
+                  - text/plain
+                  - text/csv
+                  - audio/mpeg
+                  - audio/mp4
+                  - audio/aac
+                  - audio/flac
+                  - audio/ogg
+                  - audio/wav
+                  - audio/x-wav
+                  - audio/midi
+                  - video/mp4
+                  - video/webm
+                  - video/quicktime
+                  - image/jpeg
+                  - image/png
+                  - image/gif
+                  - image/webp
+                  - image/tiff
+                  review_seller_digital_asset_changes: true
                 permissions: []
                 permission_keys: []
               schema:
@@ -12324,7 +12384,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_117
+                  code: UPS_GROUND_118
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12347,7 +12407,7 @@ paths:
                       currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_118
+                  code: UPS_GROUND_119
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12516,7 +12576,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_123
+                code: UPS_GROUND_124
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12573,7 +12633,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_125
+                code: UPS_GROUND_126
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12805,7 +12865,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -12854,7 +12916,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -12905,7 +12969,9 @@ paths:
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
                       amount:
-                        type: string
+                        type:
+                        - string
+                        - 'null'
                         format: money
                         pattern: "^-?\\d+(\\.\\d+)?$"
                         default: '0'
@@ -13966,6 +14032,365 @@ paths:
                 option_type_labels: []
               schema:
                 "$ref": "#/components/schemas/ProductType"
+  "/api/v3/seller/products/{product_id}/digital_assets":
+    parameters:
+    - name: product_id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+    get:
+      summary: List product digital assets
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: Returns the downloadable files on one of this seller's own products,
+        oldest first.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: digitalAssets } = await client.products.digitalAssets.list('prod_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: DigitalAsset
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: digital assets found
+          content:
+            application/json:
+              example:
+                data:
+                - id: dig_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  filename: thinking-cat.jpg
+                  content_type: image/jpeg
+                  authorized_clicks:
+                  authorized_days:
+                  byte_size: 18090
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  provider_type:
+                  provider_name: File
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--1adbb0b4aeb518c0dbf52eabec0c5343fb37f6a7/thinking-cat.jpg
+                  effective_authorized_clicks: 5
+                  effective_authorized_days: 7
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DigitalAsset"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '404':
+          description: another seller's product
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Product not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a product digital asset
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: |
+        Attaches a downloadable file to one of the product's variants (the
+        default variant when `variant_id` is omitted). Upload the file first
+        through `POST /api/v3/seller/files` with `visibility: 'private'`, then
+        send its `signed_id` here. Leave `authorized_clicks` and
+        `authorized_days` out to use the marketplace's download settings.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          // `signed_id` comes from `files.upload()` with `visibility: 'private'`.
+          const digitalAsset = await client.products.digitalAssets.create('prod_UkLWZg9DAJ', {
+            signed_id: 'eyJfcmFpbHMiOnsiZGF0YSI6MTIzfX0=--abc123',
+            authorized_clicks: 5,
+            authorized_days: 30,
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: digital asset created
+          content:
+            application/json:
+              example:
+                id: dig_gbHJdmfrXB
+                variant_id: variant_UkLWZg9DAJ
+                filename: manual.pdf
+                content_type: image/jpeg
+                authorized_clicks: 5
+                authorized_days: 30
+                byte_size: 18090
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                provider_type:
+                provider_name: File
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--4a809efdc2e6ec19eb62b2a074d48b25dcf95f88/manual.pdf
+                effective_authorized_clicks: 5
+                effective_authorized_days: 30
+              schema:
+                "$ref": "#/components/schemas/DigitalAsset"
+        '422':
+          description: no file sent
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Attachment can't be blank
+                  details:
+                    attachment:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DigitalAssetCreateParams"
+        required: true
+  "/api/v3/seller/products/{product_id}/digital_assets/{id}":
+    parameters:
+    - name: product_id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Digital asset ID
+      schema:
+        type: string
+    get:
+      summary: Get a product digital asset
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const digitalAsset = await client.products.digitalAssets.get('prod_UkLWZg9DAJ', 'dig_k5nR8xLqPz')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: digital asset found
+          content:
+            application/json:
+              example:
+                id: dig_UkLWZg9DAJ
+                variant_id: variant_UkLWZg9DAJ
+                filename: thinking-cat.jpg
+                content_type: image/jpeg
+                authorized_clicks:
+                authorized_days:
+                byte_size: 18090
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                provider_type:
+                provider_name: File
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--f6c26021324728070070e91a164fcd2996107d5d/thinking-cat.jpg
+                effective_authorized_clicks: 5
+                effective_authorized_days: 7
+              schema:
+                "$ref": "#/components/schemas/DigitalAsset"
+    patch:
+      summary: Update a product digital asset
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: |
+        Changes a file's download limits, or replaces it with a new private
+        `signed_id`. Links customers already received keep working and serve
+        the new file.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          // `null` falls back to the marketplace's download settings.
+          const digitalAsset = await client.products.digitalAssets.update(
+            'prod_UkLWZg9DAJ',
+            'dig_k5nR8xLqPz',
+            { authorized_clicks: 10, authorized_days: null },
+          )
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: digital asset updated
+          content:
+            application/json:
+              example:
+                id: dig_UkLWZg9DAJ
+                variant_id: variant_UkLWZg9DAJ
+                filename: thinking-cat.jpg
+                content_type: image/jpeg
+                authorized_clicks: 10
+                authorized_days:
+                byte_size: 18090
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                provider_type:
+                provider_name: File
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--80e4a4219f2521a2e065aed66845d0d9bb4291a3/thinking-cat.jpg
+                effective_authorized_clicks: 10
+                effective_authorized_days: 7
+              schema:
+                "$ref": "#/components/schemas/DigitalAsset"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DigitalAssetUpdateParams"
+        required: true
+    delete:
+      summary: Delete a product digital asset
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: Removes the file. Customers who already bought it can no longer
+        download it.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.products.digitalAssets.delete('prod_UkLWZg9DAJ', 'dig_k5nR8xLqPz')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: digital asset deleted
   "/api/v3/seller/products":
     get:
       summary: List products
@@ -14172,8 +14597,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2793250
-                  slug: product-2793250
+                  name: Product 2923250
+                  slug: product-2923250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14386,8 +14811,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2826710
-                slug: product-2826710
+                name: Product 2956710
+                slug: product-2956710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14477,7 +14902,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2858212
+                slug: product-2988212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14600,8 +15025,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 2887816
-                slug: product-2887816
+                name: Product 3017816
+                slug: product-3017816
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14711,8 +15136,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 290209
-                slug: product-290209
+                name: Product 303209
+                slug: product-303209
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14801,8 +15226,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2919405
-                slug: product-2919405
+                name: Product 3049405
+                slug: product-3049405
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15020,8 +15445,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 140
-                slug: seller-140
+                name: Seller 152
+                slug: seller-152
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15111,7 +15536,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-142
+                slug: seller-154
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15232,7 +15657,7 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `active` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
-          | `country_code` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `country_code` | One of the `CountryCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `default` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -15990,7 +16415,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e3e622807fc2a4cbaf839915644236c074b14c7b
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -15998,7 +16423,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--5d9d0b86e73fd398b0da66a7fd3ed0f444c4c192
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--25172b4f2478e89864b255331dbb4632f9fd158d
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -17453,7 +17878,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 128
+                  delivery_method_name: UPS Ground 129
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17461,13 +17886,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2479315
-                    sku: SKU-331
+                    name: Product 2529315
+                    sku: SKU-338
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 128
+                    name: UPS Ground 129
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -17576,7 +18001,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 129
+                delivery_method_name: UPS Ground 130
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17584,13 +18009,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 248961
-                  sku: SKU-332
+                  name: Product 253961
+                  sku: SKU-339
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 129
+                  name: UPS Ground 130
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17674,7 +18099,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 130
+                delivery_method_name: UPS Ground 131
                 stock_location_name: Melony Block
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17682,13 +18107,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2492065
-                  sku: SKU-333
+                  name: Product 2542065
+                  sku: SKU-340
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 130
+                  name: UPS Ground 131
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17760,7 +18185,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 131
+                delivery_method_name: UPS Ground 132
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17768,13 +18193,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2503170
-                  sku: SKU-334
+                  name: Product 2553170
+                  sku: SKU-341
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 131
+                  name: UPS Ground 132
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17860,7 +18285,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 132
+                delivery_method_name: UPS Ground 133
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -17868,13 +18293,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2517276
-                  sku: SKU-335
+                  name: Product 2567276
+                  sku: SKU-342
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 132
+                  name: UPS Ground 133
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -17963,7 +18388,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 133
+                  delivery_method_name: UPS Ground 134
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17971,13 +18396,13 @@ paths:
                     quantity: 1
                     line_item_id: li_gbHJdmfrXB
                     variant_id: variant_gbHJdmfrXB
-                    name: Product 2531765
-                    sku: SKU-337
+                    name: Product 2581765
+                    sku: SKU-344
                     options_text: ''
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   delivery_rates:
                   - id: dr_EfhxLZ9ck8
-                    name: UPS Ground 133
+                    name: UPS Ground 134
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -18009,7 +18434,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 133
+                  delivery_method_name: UPS Ground 134
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -18017,13 +18442,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2523520
-                    sku: SKU-336
+                    name: Product 2573520
+                    sku: SKU-343
                     options_text: ''
                   selected_delivery_rate_id: dr_VqXmZF31wY
                   delivery_rates:
                   - id: dr_VqXmZF31wY
-                    name: UPS Ground 133
+                    name: UPS Ground 134
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -20681,12 +21106,14 @@ paths:
           | `channel_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `completed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `customer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `delivery_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `fulfillment_status` | One of `backorder`, `canceled`, `partial`, `unfulfilled`, `fulfilled`, `delivered`, `pending`, `ready`, `shipped` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `item_total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `locale` | One of the `LocaleCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `market_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_group_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `payment_status` | One of `none`, `authorized`, `partially_paid`, `paid`, `partially_refunded`, `refunded`, `overcharged`, `voided`, `balance_due`, `credit_owed`, `failed`, `void` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -20697,7 +21124,7 @@ paths:
           | `total_quantity` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `channel_id`, `completed_at`, `created_at`, `currency`, `customer_id`, `delivery_total`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Order
         sortable:
@@ -20710,6 +21137,8 @@ paths:
         - fulfillment_status
         - id
         - item_total
+        - locale
+        - market_id
         - number
         - order_group_id
         - payment_state
@@ -20759,7 +21188,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 26595
+                    name: Product 27095
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -20768,7 +21197,7 @@ paths:
                     additional_tax_total: '0.00'
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-349
+                    sku: SKU-356
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -20781,7 +21210,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 145
+                    delivery_method_name: UPS Ground 146
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -20789,13 +21218,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 26595
-                      sku: SKU-349
+                      name: Product 27095
+                      sku: SKU-356
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 145
+                      name: UPS Ground 146
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -20955,7 +21384,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2669755
+                  name: Product 2719755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -20964,7 +21393,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-350
+                  sku: SKU-357
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -20977,7 +21406,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 146
+                  delivery_method_name: UPS Ground 147
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -20985,13 +21414,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2669755
-                    sku: SKU-350
+                    name: Product 2719755
+                    sku: SKU-357
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 146
+                    name: UPS Ground 147
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21151,7 +21580,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2696554
+                  name: Product 2746554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21160,7 +21589,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-353
+                  sku: SKU-360
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21173,7 +21602,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 149
+                  delivery_method_name: UPS Ground 150
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21181,13 +21610,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2696554
-                    sku: SKU-353
+                    name: Product 2746554
+                    sku: SKU-360
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 149
+                    name: UPS Ground 150
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21337,7 +21766,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2705038
+                  name: Product 2755038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21346,7 +21775,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-354
+                  sku: SKU-361
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21359,7 +21788,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 150
+                  delivery_method_name: UPS Ground 151
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21367,13 +21796,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2705038
-                    sku: SKU-354
+                    name: Product 2755038
+                    sku: SKU-361
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 150
+                    name: UPS Ground 151
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21530,7 +21959,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2723962
+                  name: Product 2773962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21539,7 +21968,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-356
+                  sku: SKU-363
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21552,7 +21981,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 152
+                  delivery_method_name: UPS Ground 153
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21560,13 +21989,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2723962
-                    sku: SKU-356
+                    name: Product 2773962
+                    sku: SKU-363
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 152
+                    name: UPS Ground 153
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21700,7 +22129,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2735749
+                  name: Product 2785749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21709,7 +22138,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-357
+                  sku: SKU-364
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21722,7 +22151,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 153
+                  delivery_method_name: UPS Ground 154
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21730,13 +22159,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2735749
-                    sku: SKU-357
+                    name: Product 2785749
+                    sku: SKU-364
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 153
+                    name: UPS Ground 154
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22387,13 +22816,13 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[provider_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `period_end` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `period_start` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -22706,7 +23135,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2987120 can be returned
+                  message: Only 1 of Product 3117120 can be returned
       requestBody:
         content:
           application/json:
@@ -23500,13 +23929,13 @@ paths:
         content: |-
           ## Filters
 
-          Filter with `q[<attribute>_<predicate>]=value`, for example `q[currency_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[provider_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
 
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `amount` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `currency` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `kind` | One of `earning`, `refund_reversal` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -24032,6 +24461,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/SellerMeSummary"
+        store:
+          "$ref": "#/components/schemas/Store"
         permissions:
           type: array
           items:
@@ -24048,6 +24479,7 @@ components:
       required:
       - user
       - sellers
+      - store
       - permissions
       - permission_keys
     OnboardingProgress:
@@ -24218,6 +24650,10 @@ components:
           - dropdown
           - color_swatch
           - buttons
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -24248,6 +24684,10 @@ components:
         image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - option_type_id
@@ -24587,6 +25027,10 @@ components:
         state_name:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - label
@@ -25071,6 +25515,10 @@ components:
         resolution:
           type: string
           nullable: true
+          enum:
+          - refund
+          - replacement
+          - refund_and_replacement
         order_id:
           type: string
           nullable: true
@@ -25097,6 +25545,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ClaimLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         memo:
           type: string
           nullable: true
@@ -25417,6 +25869,10 @@ components:
           type: boolean
         pickup_point:
           type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         admin_name:
           type: string
           nullable: true
@@ -25592,6 +26048,65 @@ components:
       - name
       - description
       - delivery_profile_id
+      x-typelizer: true
+    DigitalAsset:
+      type: object
+      properties:
+        id:
+          type: string
+        variant_id:
+          type: string
+          nullable: true
+        filename:
+          type: string
+          nullable: true
+        content_type:
+          type: string
+          nullable: true
+        authorized_clicks:
+          type: number
+          nullable: true
+        authorized_days:
+          type: number
+          nullable: true
+        byte_size:
+          type: number
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        provider_type:
+          type: string
+          nullable: true
+          description: 'Digital asset provider; null is an uploaded file. Built-in:
+            file. Extensions may register more.'
+        provider_name:
+          type: string
+          description: 'Digital asset provider name. Built-in: File. Extensions may
+            register more.'
+        download_url:
+          type: string
+          nullable: true
+        effective_authorized_clicks:
+          type: number
+        effective_authorized_days:
+          type: number
+      required:
+      - id
+      - variant_id
+      - filename
+      - content_type
+      - authorized_clicks
+      - authorized_days
+      - byte_size
+      - created_at
+      - updated_at
+      - provider_type
+      - provider_name
+      - download_url
+      - effective_authorized_clicks
+      - effective_authorized_days
       x-typelizer: true
     ExchangeLineItem:
       type: object
@@ -26192,6 +26707,10 @@ components:
         og_image_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         created_at:
           type: string
         updated_at:
@@ -27948,9 +28467,155 @@ components:
         cover_photo_url:
           type: string
           nullable: true
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         timezone:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - Africa/Algiers
+            - Africa/Cairo
+            - Africa/Casablanca
+            - Africa/Harare
+            - Africa/Johannesburg
+            - Africa/Monrovia
+            - Africa/Nairobi
+            - America/Argentina/Buenos_Aires
+            - America/Asuncion
+            - America/Bogota
+            - America/Caracas
+            - America/Chicago
+            - America/Chihuahua
+            - America/Denver
+            - America/Guatemala
+            - America/Guyana
+            - America/Halifax
+            - America/Indiana/Indianapolis
+            - America/Juneau
+            - America/La_Paz
+            - America/Lima
+            - America/Los_Angeles
+            - America/Mazatlan
+            - America/Mexico_City
+            - America/Monterrey
+            - America/Montevideo
+            - America/New_York
+            - America/Nuuk
+            - America/Phoenix
+            - America/Puerto_Rico
+            - America/Regina
+            - America/Santiago
+            - America/Sao_Paulo
+            - America/St_Johns
+            - America/Tijuana
+            - Asia/Almaty
+            - Asia/Baghdad
+            - Asia/Baku
+            - Asia/Bangkok
+            - Asia/Chongqing
+            - Asia/Colombo
+            - Asia/Dhaka
+            - Asia/Hong_Kong
+            - Asia/Irkutsk
+            - Asia/Jakarta
+            - Asia/Jerusalem
+            - Asia/Kabul
+            - Asia/Kamchatka
+            - Asia/Karachi
+            - Asia/Kathmandu
+            - Asia/Kolkata
+            - Asia/Krasnoyarsk
+            - Asia/Kuala_Lumpur
+            - Asia/Kuwait
+            - Asia/Magadan
+            - Asia/Muscat
+            - Asia/Novosibirsk
+            - Asia/Riyadh
+            - Asia/Seoul
+            - Asia/Shanghai
+            - Asia/Singapore
+            - Asia/Srednekolymsk
+            - Asia/Taipei
+            - Asia/Tashkent
+            - Asia/Tbilisi
+            - Asia/Tehran
+            - Asia/Tokyo
+            - Asia/Ulaanbaatar
+            - Asia/Urumqi
+            - Asia/Vladivostok
+            - Asia/Yakutsk
+            - Asia/Yangon
+            - Asia/Yekaterinburg
+            - Asia/Yerevan
+            - Atlantic/Azores
+            - Atlantic/Cape_Verde
+            - Atlantic/South_Georgia
+            - Australia/Adelaide
+            - Australia/Brisbane
+            - Australia/Canberra
+            - Australia/Darwin
+            - Australia/Hobart
+            - Australia/Melbourne
+            - Australia/Perth
+            - Australia/Sydney
+            - Etc/GMT+12
+            - Europe/Amsterdam
+            - Europe/Athens
+            - Europe/Belgrade
+            - Europe/Berlin
+            - Europe/Bratislava
+            - Europe/Brussels
+            - Europe/Bucharest
+            - Europe/Budapest
+            - Europe/Copenhagen
+            - Europe/Dublin
+            - Europe/Helsinki
+            - Europe/Istanbul
+            - Europe/Kaliningrad
+            - Europe/Kyiv
+            - Europe/Lisbon
+            - Europe/Ljubljana
+            - Europe/London
+            - Europe/Madrid
+            - Europe/Minsk
+            - Europe/Moscow
+            - Europe/Paris
+            - Europe/Prague
+            - Europe/Riga
+            - Europe/Rome
+            - Europe/Samara
+            - Europe/Sarajevo
+            - Europe/Skopje
+            - Europe/Sofia
+            - Europe/Stockholm
+            - Europe/Tallinn
+            - Europe/Vienna
+            - Europe/Vilnius
+            - Europe/Volgograd
+            - Europe/Warsaw
+            - Europe/Zagreb
+            - Europe/Zurich
+            - Pacific/Apia
+            - Pacific/Auckland
+            - Pacific/Chatham
+            - Pacific/Fakaofo
+            - Pacific/Fiji
+            - Pacific/Guadalcanal
+            - Pacific/Guam
+            - Pacific/Honolulu
+            - Pacific/Majuro
+            - Pacific/Midway
+            - Pacific/Noumea
+            - Pacific/Pago_Pago
+            - Pacific/Port_Moresby
+            - Pacific/Tongatapu
+            - UTC
+          - type: string
+            nullable: true
+          description: Common IANA time zones; any other IANA time zone identifier
+            is accepted too.
         status:
           anyOf:
           - type: string
@@ -27980,9 +28645,18 @@ components:
           nullable: true
         tax_remittance:
           type: string
+          enum:
+          - seller
+          - platform
         payouts_schedule_interval:
           type: string
           nullable: true
+          enum:
+          - daily
+          - weekly
+          - biweekly
+          - monthly
+          - manual
         holiday_mode_until:
           type: string
           nullable: true
@@ -28658,6 +29332,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/ReturnLineItem"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         memo:
           type: string
           nullable: true
@@ -28902,6 +29580,10 @@ components:
         format:
           type: string
           nullable: true
+          enum:
+          - pdf
+          - png
+          - zpl
         external_id:
           type: string
           nullable: true
@@ -29329,6 +30011,28 @@ components:
       - returns_enabled
       - created_at
       - updated_at
+      x-typelizer: true
+    Store:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        seller_digital_assets_enabled:
+          type: boolean
+        seller_digital_asset_content_types:
+          type: array
+          items:
+            type: string
+        review_seller_digital_asset_changes:
+          type: boolean
+      required:
+      - id
+      - name
+      - seller_digital_assets_enabled
+      - seller_digital_asset_content_types
+      - review_seller_digital_asset_changes
       x-typelizer: true
     TaxIdentifier:
       type: object
@@ -30443,6 +31147,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Policy"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - name
@@ -30472,6 +31180,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -30504,6 +31213,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -30549,6 +31259,7 @@ components:
           format: money
           pattern: "^-?\\d+(\\.\\d+)?$"
           default: '0'
+          nullable: true
         currency:
           type: string
           format: currency
@@ -31115,6 +31826,20 @@ components:
       - ZA
       - ZM
       - ZW
+    DimensionUnit:
+      type: string
+      enum:
+      - mm
+      - cm
+      - in
+      - ft
+    WeightUnit:
+      type: string
+      enum:
+      - g
+      - kg
+      - lb
+      - oz
     AccountUpdateParams:
       type: object
       properties:
@@ -31367,6 +32092,50 @@ components:
           type: string
         tracking_url:
           type: string
+    DigitalAssetCreateParams:
+      type: object
+      properties:
+        signed_id:
+          type: string
+          description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
+            On update it replaces the file for everyone who already bought it. A seller''s
+            file must be of a content type the marketplace accepts, checked against
+            the file''s own signature where it has one.'
+        variant_id:
+          type: string
+          description: On create, defaults to the product's default variant when omitted.
+            On update, omitting it keeps the current variant.
+        authorized_clicks:
+          type: integer
+          description: Null means the store's download settings apply.
+          nullable: true
+        authorized_days:
+          type: integer
+          description: Null means the store's download settings apply.
+          nullable: true
+      required:
+      - signed_id
+    DigitalAssetUpdateParams:
+      type: object
+      properties:
+        signed_id:
+          type: string
+          description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
+            On update it replaces the file for everyone who already bought it. A seller''s
+            file must be of a content type the marketplace accepts, checked against
+            the file''s own signature where it has one.'
+        variant_id:
+          type: string
+          description: On create, defaults to the product's default variant when omitted.
+            On update, omitting it keeps the current variant.
+        authorized_clicks:
+          type: integer
+          description: Null means the store's download settings apply.
+          nullable: true
+        authorized_days:
+          type: integer
+          description: Null means the store's download settings apply.
+          nullable: true
     ExchangeCancelParams:
       type: object
       properties:
@@ -31716,12 +32485,8 @@ components:
           type: number
           nullable: true
         dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
           nullable: true
         weight:
           type: number
@@ -31731,12 +32496,8 @@ components:
           type: number
           nullable: true
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
           nullable: true
         default:
           type: boolean
@@ -31771,12 +32532,8 @@ components:
           type: number
           nullable: true
         dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
           nullable: true
         weight:
           type: number
@@ -31786,12 +32543,8 @@ components:
           type: number
           nullable: true
         weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
           nullable: true
         default:
           type: boolean
@@ -31969,7 +32722,7 @@ components:
         variants:
           type: array
           items:
-            "$ref": "#/components/schemas/SellerProductVariantParams"
+            "$ref": "#/components/schemas/ProductVariantParams"
           description: 'The variants, as a whole: one absent from the list is removed.
             Pass `id` to update an existing variant.'
       required:
@@ -32041,9 +32794,16 @@ components:
         variants:
           type: array
           items:
-            "$ref": "#/components/schemas/SellerProductVariantParams"
+            "$ref": "#/components/schemas/ProductVariantParams"
           description: 'The variants, as a whole: one absent from the list is removed.
             Pass `id` to update an existing variant.'
+    ProductVariantParams:
+      allOf:
+      - "$ref": "#/components/schemas/VariantParams"
+      - type: object
+        properties:
+          id:
+            type: string
     ProfileUpdateParams:
       type: object
       properties:
@@ -32280,134 +33040,6 @@ components:
             type: string
           description: Replaces the variants this media is linked to. An empty list
             clears them.
-    SellerProductVariantParams:
-      type: object
-      properties:
-        id:
-          type: string
-        sku:
-          type: string
-        barcode:
-          type: string
-        cost_price:
-          type: string
-          format: decimal
-          pattern: "^-?\\d+(\\.\\d+)?$"
-          nullable: true
-        cost_currency:
-          "$ref": "#/components/schemas/CurrencyCode"
-        weight:
-          type: number
-          nullable: true
-        height:
-          type: number
-          nullable: true
-        width:
-          type: number
-          nullable: true
-        depth:
-          type: number
-          nullable: true
-        weight_unit:
-          type: string
-          enum:
-          - g
-          - kg
-          - lb
-          - oz
-        dimensions_unit:
-          type: string
-          enum:
-          - mm
-          - cm
-          - in
-          - ft
-        hs_code:
-          type: string
-        customs_description:
-          type: string
-        country_of_origin:
-          "$ref": "#/components/schemas/CountryCode"
-        minimum_order_quantity:
-          type: integer
-          nullable: true
-        order_multiple:
-          type: integer
-          nullable: true
-        purchase_unit:
-          type: string
-        units_per_carton:
-          type: integer
-          description: How many units fill one carton.
-          nullable: true
-        carton_package_type_id:
-          type: string
-          description: 'The carton this variant is packed into: a package type of
-            kind `carton`.'
-          nullable: true
-        carton_weight:
-          type: number
-          description: What one packed carton weighs, in the variant's weight unit.
-          nullable: true
-        cartons_per_pallet:
-          type: integer
-          description: How many cartons stack on one pallet.
-          nullable: true
-        track_inventory:
-          type: boolean
-        preorderable:
-          type: boolean
-        preorder_ships_at:
-          type: string
-          format: date-time
-          description: The "ships by" date shown to customers while the variant is
-            a pre-order. Null clears it.
-          nullable: true
-        backorder_limit:
-          type: integer
-          description: Maximum units sellable beyond available stock, capping backorders
-            and pre-orders. Null is unlimited.
-          nullable: true
-        position:
-          type: integer
-        options:
-          type: array
-          items:
-            "$ref": "#/components/schemas/VariantOptionParams"
-          description: One pair per option type the variant takes part in (size, color).
-        prices:
-          type: array
-          items:
-            type: object
-            properties:
-              currency:
-                allOf:
-                - "$ref": "#/components/schemas/CurrencyCode"
-                description: Omit to price in the store's currency. A seller has no
-                  currency of their own.
-                example: USD
-              amount:
-                type: string
-                format: decimal
-                pattern: "^-?\\d+(\\.\\d+)?$"
-                description: 'A canonical decimal string (`"1234.56"`: period decimal,
-                  no grouping). The API does not parse localized input.'
-                example: '24.00'
-              compare_at_amount:
-                type: string
-                format: decimal
-                pattern: "^-?\\d+(\\.\\d+)?$"
-                example: '30.00'
-                nullable: true
-            required:
-            - amount
-          description: Per-currency prices. Upserted by currency.
-        stock_levels:
-          type: array
-          items:
-            "$ref": "#/components/schemas/StockLevelParams"
-          description: 'Stock per location, at this seller''s own locations only:
-            a location belonging to anyone else is ignored.'
     SellerTaxIdentifierCreateParams:
       type: object
       properties:
@@ -32682,6 +33314,138 @@ components:
       required:
       - name
       - value
+    VariantParams:
+      type: object
+      properties:
+        sku:
+          type: string
+        barcode:
+          type: string
+        cost_price:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        cost_currency:
+          "$ref": "#/components/schemas/CurrencyCode"
+        weight:
+          type: number
+          nullable: true
+        height:
+          type: number
+          nullable: true
+        width:
+          type: number
+          nullable: true
+        depth:
+          type: number
+          nullable: true
+        weight_unit:
+          allOf:
+          - "$ref": "#/components/schemas/WeightUnit"
+          description: Null falls back to the store's weight unit.
+          nullable: true
+        dimensions_unit:
+          allOf:
+          - "$ref": "#/components/schemas/DimensionUnit"
+          description: Null falls back to the store's unit system.
+          nullable: true
+        hs_code:
+          type: string
+        customs_description:
+          type: string
+        country_of_origin:
+          "$ref": "#/components/schemas/CountryCode"
+        minimum_order_quantity:
+          type: integer
+          nullable: true
+        order_multiple:
+          type: integer
+          nullable: true
+        purchase_unit:
+          type: string
+          enum:
+          - unit
+          - carton
+          nullable: true
+        units_per_carton:
+          type: integer
+          description: How many units fill one carton.
+          nullable: true
+        carton_package_type_id:
+          type: string
+          description: 'The carton this variant is packed into: a package type of
+            kind `carton`. Its dimensions are shared by every product packed the same
+            way, so a corrected carton size fixes all of them at once.'
+          nullable: true
+        carton_weight:
+          type: number
+          description: What one packed carton weighs, in the variant's weight unit.
+          nullable: true
+        cartons_per_pallet:
+          type: integer
+          description: How many cartons stack on one pallet.
+          nullable: true
+        track_inventory:
+          type: boolean
+        preorderable:
+          type: boolean
+          description: Sell this variant before it's in stock. Adds the pre-order
+            label and ships-by promise; the cap comes from `backorder_limit`, an incoming
+            stock count, or backorder.
+        preorder_ships_at:
+          type: string
+          format: date-time
+          description: The "ships by" date shown to customers while the variant is
+            a pre-order. Once it passes, the variant is no longer a pre-order. Null
+            clears it.
+          nullable: true
+        backorder_limit:
+          type: integer
+          description: Maximum units sellable beyond available stock, capping backorders
+            and pre-orders. Null is unlimited.
+          nullable: true
+        position:
+          type: integer
+        options:
+          type: array
+          items:
+            "$ref": "#/components/schemas/VariantOptionParams"
+          description: One pair per option type the variant takes part in (size, color).
+            Option types and values are created when missing.
+        prices:
+          type: array
+          items:
+            type: object
+            properties:
+              currency:
+                allOf:
+                - "$ref": "#/components/schemas/CurrencyCode"
+                description: Omit to price in the store's currency. A seller has no
+                  currency of their own.
+                example: USD
+              amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                description: 'A canonical decimal string (`"1234.56"`: period decimal,
+                  no grouping). The API does not parse localized input.'
+                example: '24.00'
+              compare_at_amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                example: '30.00'
+                nullable: true
+            required:
+            - amount
+          description: Per-currency prices. Upserted by currency.
+        stock_levels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StockLevelParams"
+          description: 'Stock per location, at this seller''s own locations only:
+            a location belonging to anyone else is ignored.'
   x-spree-filter-tables:
     Claim:
       attributes:
@@ -32759,6 +33523,13 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+    DigitalAsset:
+      attributes:
+        created_at: datetime
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     Exchange:
       attributes:
         created_at: datetime
@@ -32821,7 +33592,8 @@ components:
         channel_id: id
         completed_at: datetime
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         customer_id: id
         delivery_total: decimal
         fulfillment_status:
@@ -32837,6 +33609,9 @@ components:
           - shipped
         id: id
         item_total: decimal
+        locale:
+          code: LocaleCode
+        market_id: id
         number: text
         order_group_id: id
         payment_state:
@@ -33010,7 +33785,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         period_end: datetime
         period_start: datetime
@@ -33032,7 +33808,8 @@ components:
       attributes:
         amount: decimal
         created_at: datetime
-        currency: text
+        currency:
+          code: CurrencyCode
         id: id
         kind:
           enum:
@@ -33075,7 +33852,8 @@ components:
     StockLocation:
       attributes:
         active: boolean
-        country_code: text
+        country_code:
+          code: CountryCode
         created_at: datetime
         default: boolean
         id: id

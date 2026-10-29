@@ -1,0 +1,51 @@
+module Spree
+  module MaintenanceTasks
+    # Stops a run for good. The service records the request and the runner
+    # records the outcome; a run that has not started yet is cancelled
+    # outright, since no execution will ever observe the request.
+    #
+    # Cancelling a run that is already `cancelling` also cancels it outright.
+    # That is the way out when the worker that should have observed the first
+    # request is gone: a run the runner never comes back to would otherwise
+    # stay active and block every new run of its task.
+    #
+    # Cancelling is not a rollback — work already committed stays committed.
+    # What a cancelled run keeps is its cursor, so an operator can see exactly
+    # how far it got.
+    class Cancel
+      prepend ::Spree::ServiceModule::Base
+
+      # @param run [Spree::MaintenanceTaskRun]
+      # @return [Spree::ServiceModule::Base::Result] the run
+      def call(run:)
+        # Locked so the status read here is still the status when it is
+        # written: the runner may finish the run in between, and a finished
+        # run overwritten with `cancelling` would stay active for good.
+        run.with_lock do
+          return failure(run, not_cancelable_error(run)) unless run.active?
+
+          # A running run has a worker mid-batch, so it, not this service,
+          # records that the run stopped.
+          if run.running?
+            run.update!(status: 'cancelling')
+          else
+            run.update!(status: 'cancelled', ended_at: Time.current)
+            run.publish_event('maintenance_task_run.cancelled')
+          end
+        end
+
+        success(run.reload)
+      end
+
+      private
+
+      def not_cancelable_error(run)
+        build_error("a run with status #{run.status} cannot be cancelled")
+      end
+
+      def build_error(message)
+        ActiveModel::Errors.new(Spree::MaintenanceTaskRun.new).tap { |errors| errors.add(:base, message) }
+      end
+    end
+  end
+end

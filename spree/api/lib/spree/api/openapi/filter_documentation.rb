@@ -106,11 +106,18 @@ module Spree
         def attribute_rows(table)
           rows = ['| Attribute | Kind | Predicates |', '|---|---|---|']
           table.attributes.except(*table.aliased_attributes).each do |attribute, kind|
-            label = kind.is_a?(Hash) ? "One of #{kind['enum'].map { |value| "`#{value}`" }.join(', ')}" : KIND_LABELS.fetch(kind)
+            label = kind_label(kind)
             predicates = Spree::Api::V3::FilterPredicates::BY_KIND.fetch(kind.is_a?(Hash) ? 'enum' : kind)
             rows << "| `#{attribute}` | #{label} | #{predicates.map { |predicate| "`#{predicate}`" }.join(' ')} |"
           end
           rows
+        end
+
+        def kind_label(kind)
+          return KIND_LABELS.fetch(kind) unless kind.is_a?(Hash)
+          return "One of the `#{kind['code']}` codes" if kind['code']
+
+          "One of #{kind['enum'].map { |value| "`#{value}`" }.join(', ')}"
         end
 
         def association_rows

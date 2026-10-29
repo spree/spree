@@ -1,69 +1,165 @@
 ---
 title: "Payouts"
-description: "What each seller has earned, what they are owed, and how it reaches them — by hand, or through Stripe Connect."
+description: "Learn how to settle what your sellers are owed and record each payment as sent."
 ---
 
-Spree keeps a ledger of what every seller earns, and pays it out on a schedule. Two pages under **Sellers** show it, and one settings page controls how it works.
+A payout is a settlement with one seller, in one currency. It gathers the earnings that seller has accrued and not yet been paid for, states the total, and names exactly which earnings it covers.
 
-## Transfers — the ledger
+A payout is a record of a settlement rather than the settlement itself. Where your marketplace is set to **Your own books**, creating a payout moves no money: you send the payment through your bank and then mark the payout as paid. Where a payment provider such as Stripe Connect is connected, the provider sends the money and the record follows it.
 
-Every time a seller ships an order, an **earning** is recorded: their share of the sale, less [commission](/user/sellers/commission-rates), in the sale's currency. If a refund is later issued on that order, a **refund reversal** takes the corresponding amount back off. **Sellers → Transfers** lists them all, and each links to the order that produced it.
+Payouts are the second half of the seller ledger. The first half is seller transfers, which credit a seller as each of their orders is fulfilled. A payout gathers those credits and settles them. See [<u>Seller Transfers</u>](/user/sellers/transfers).
 
-A seller's page sums this into a **Balance** card:
+To review payouts, navigate to **Sellers → Payouts** in the admin dashboard.
 
-| Figure | Meaning |
+## Reviewing Your Payouts
+
+![The Payouts list, with one pending payout](/docs/images/user/sellers/payouts/1-payouts-list.png)
+
+The list shows one row per payout.
+
+| Column | What it means |
 |---|---|
-| Earned | Everything recorded in their favour |
-| Pending | Earned, not yet included in a payout |
-| Owed | Ready to pay |
-| Paid | Already paid out |
+| **Date** | When the payout was created. |
+| **Sellers** | Which seller it settles. |
+| **Status** | Where the payout has got to, described below. |
+| **Earnings** | How many transfers it covers, as a count rather than an amount. |
+| **Reference** | The reference recorded when it was marked as paid. |
+| **Amount** | What the payout comes to. |
 
-## Payouts — settlements
+Filters narrow the list by date, seller and status. The search box matches on the reference rather than on seller names.
 
-On schedule, a seller's pending earnings are batched into a **payout**. **Sellers → Payouts** lists them with their status, and each payout itemises the earnings it covers.
+### Payout Statuses
 
-| Status | Meaning |
+What a status means depends on the **Paid through** setting under [<u>Marketplace Settings</u>](/user/settings/marketplace).
+
+Where that is set to **Your own books**, a payout is created as **Pending** and stays there until you mark it as paid, at which point it becomes **Completed**. No other status occurs, because nothing is being attempted on your behalf.
+
+Where a payment provider is connected, the provider moves the money and reports back, and a payout can also reach the following:
+
+| Status | What it means |
 |---|---|
-| Pending | Batched, not yet sent |
-| Processing | Handed to the payout provider |
-| Completed | Paid |
-| Failed | The provider refused it |
-| Unresolved | The provider's answer was lost — needs a person to check |
+| **Pending** | Created and not yet confirmed. |
+| **Processing** | An attempt is under way. |
+| **Completed** | The money reached the seller. |
+| **Failed** | The provider refused it. The earnings it held are released, and the next settlement picks them up. |
+| **Needs checking** | The provider could not say whether the money moved. The earnings stay attached to this payout so nothing sends them again, and it waits for somebody to establish what happened. |
 
-## The schedule
+## How Payouts Are Created
 
-Under **Settings → Marketplace** you set the defaults:
+Payouts are created by a sweep that runs once a day and looks at every approved seller in turn. A seller is settled when both of the following hold.
 
-- **Schedule** — daily, weekly, every two weeks, monthly, or manual.
-- **Minimum payout amount** — earnings below it roll into the next payout rather than paying out a trivial sum.
+**Their schedule is due.** The schedule is set under [<u>Marketplace Settings</u>](/user/settings/marketplace) as daily, weekly, every two weeks, monthly, or only when you say so. A seller carrying their own **Payout schedule** on their seller page follows that instead. Being due is measured from the seller's last payout in that currency, so a seller who has never been paid in a currency is settled as soon as they are owed anything rather than waiting out a full period. A seller whose schedule is set to manual is never settled by the sweep.
 
-A seller can have their own schedule and minimum, set on their page under **Payouts and tax**; leave them blank to inherit the defaults.
+**They are owed at least the minimum.** The **Minimum payout** is also set under Marketplace Settings, with a seller's own figure taking precedence. A balance below it is carried into the next period rather than being sent.
 
-## How the money moves
+One payout is created per currency. Nothing is converted, so a seller owed in two currencies receives two payouts rather than one combined figure.
 
-**Settings → Marketplace** also chooses the **payout provider** — the thing that actually sends money.
+A payout gathers the seller's unsettled transfers oldest first, and every refund is included whatever else is. A payout can therefore cover a sale, a refund and a second sale, which is why its total can be lower than the sales inside it. The period shown on the payout runs from the oldest earning it covers to the moment it was created.
 
-<Tabs>
-  <Tab title="Built-in (pay by hand)">
-    The default. Spree keeps the books and moves no money: earnings accrue, batch into payouts on schedule, and each payout waits in your queue as **Pending**. You pay it by bank transfer from your own bank, then open the payout and mark it **paid**, recording the reference it went out under.
+<Note>Where a balance has gone negative, because refunds came to more than earnings, nothing is created and the shortfall is carried forward to be absorbed by what the seller earns next.</Note>
 
-    Right for a marketplace starting out, or one that settles by invoice.
-  </Tab>
-  <Tab title="Stripe Connect">
-    Each seller connects a Stripe account — the **payout account** onboarding requirement asks them to, and the seller panel walks them through it. You charge the customer on your own Stripe account; as each seller's goods ship, their share is transferred to their connected account, tied to the charge that funds it so it moves as soon as that charge settles rather than out of your balance.
+### How to Settle a Seller Immediately
 
-    From there, Stripe pays the seller's bank on the schedule set for their account. Spree records what Stripe is going to do, and a webhook confirms when it did — which is when the payout turns **Completed**.
+![A seller's Balance card, showing what is owed](/docs/images/user/sellers/payouts/2-balance-card.png)
 
-    Requires an active Stripe payment method under Settings → Payments. Setup is on the [Stripe Connect](/integrations/payments/stripe-connect) page.
-  </Tab>
-</Tabs>
+**Settle now** gathers everything a seller is owed into a payout at once, without waiting for their schedule. This is how a seller on a manual schedule is paid by default.
 
-<Note>
-Refund clawbacks and netting across payouts, reconciliation, and seller tax reports are part of Spree Enterprise.
-</Note>
+1. Navigate to **Sellers** and open the seller.
+2. On the **Balance** card, click **Settle now**.
+3. Read the confirmation and click **Settle now** again.
 
-## Related
+One payout is created per currency, exactly as the sweep creates them. No money moves, and each payout waits to be marked as paid.
 
-- [Commission rates](/user/sellers/commission-rates) — what is deducted before an earning is recorded
-- [Marketplace orders](/user/sellers/orders) — the payment splits earnings are computed from
-- [Onboarding](/user/sellers/onboarding) — the payout account requirement
+<Note>The **Balance** card reads the same after settling. The amount stays under **Owed**, because owed counts what has been earned and not yet paid, and a payout that has not been marked as paid has not paid anything yet.</Note>
+
+## Reading a Payout
+
+![A payout, with the earnings it covers](/docs/images/user/sellers/payouts/3-payout-detail.png)
+
+Opening a payout from the list shows the amount, the status and the seller in the header, over the two cards below.
+
+**Covers N earnings** lists every transfer in the payout, with the date, the order it came from, whether it was a sale or a refund, and the amount. This is what a seller needs to reconcile a deposit against their own records.
+
+**Payout** carries the settlement itself:
+
+- **Amount** - What the payout comes to.
+- **Reference** - The reference recorded when it was marked as paid, or **Not provided** where none was given.
+- **Provider** - What settled it. A marketplace keeping its own books reads `Spree::PayoutProvider::System` here.
+- **Period** - From the oldest earning in the payout to the moment the payout was created.
+
+## How to Mark a Payout as Paid
+
+Marking a payout as paid records that the money reached the seller. It is what clears the amount from the seller's balance, moving it from **Owed** to **Paid out**, so it is done after the payment has been sent rather than before.
+
+This is the step a marketplace paying through **Your own books** works through on payout day. Where a payment provider is connected, the provider confirms its own settlements and this is needed only in the one case described under [<u>Payouts Through Stripe Connect</u>](#payouts-through-stripe-connect).
+
+![The row menu on the payouts list, with Mark as paid](/docs/images/user/sellers/payouts/4-row-menu.png)
+
+It can be done from either of two places. On the payouts list, open the menu at the end of a row and click **Mark as paid**. On a payout's own page, click **Mark as paid** in the header. Both open the same dialog.
+
+![The Mark as paid dialog, with its reference field](/docs/images/user/sellers/payouts/5-mark-as-paid.png)
+
+1. Send the payment to the seller through your bank.
+2. Open the payout, or the menu at the end of its row on the payouts list.
+3. Click **Mark as paid**.
+4. Enter the **Reference** the payment went out under, such as the bank reference, so it can be traced later. This is optional, and no two payouts can share one.
+5. Click **Mark as paid** in the dialog.
+
+The payout becomes **Completed** and the reference is shown against it. The seller's balance moves the amount from **Owed** to **Paid out**, and the seller sees the same change in their own panel.
+
+<Warning>Marking a payout as paid moves no money. It records a payment you made separately, so doing it before sending the money leaves the seller reading that they have been paid when they have not.</Warning>
+
+The action is offered on a payout that is **Pending**, **Processing** or **Needs checking**. A payout that is already **Completed** cannot be marked again, and a **Failed** one has already released its earnings to the next settlement.
+
+## Payouts Through Stripe Connect
+
+Where **Paid through** is set to **Stripe Connect**, the records on this page are written in the same way and the same schedule governs them. What changes is that the money moves on its own, and payouts are completed by Stripe rather than by you.
+
+Setting the provider up is covered in [<u>Stripe Connect for Marketplaces</u>](/integrations/payments/stripe-connect).
+
+### How the Money Reaches a Seller
+
+The money makes two separate moves rather than one.
+
+- **As each order is fulfilled**, the seller's earning is transferred from your Stripe account to that seller's connected account. The transfer is funded by the customer's own charge, so it settles when that charge settles and your marketplace does not have to front the money. This is the seller transfer described under [<u>Seller Transfers</u>](/user/sellers/transfers).
+- **When a payout is created**, Spree instructs that connected account to pay its balance out to the seller's bank. This is the payout.
+
+Connected accounts are set up so that Stripe runs no payout schedule of its own. The **Settle sellers** interval under [<u>Marketplace Settings</u>](/user/settings/marketplace) is therefore the only schedule in effect, exactly as it is without a provider.
+
+### Payouts Complete on Their Own
+
+A payout created against Stripe Connect holds Stripe's own payout identifier as its **Reference** from the moment it is created, and stays **Pending** until Stripe reports what happened to it.
+
+- When the money reaches the seller's bank, the payout becomes **Completed** and the seller's balance moves from **Owed** to **Paid out**. Nobody marks it.
+- When Stripe cannot send it, the payout becomes **Failed** and the earnings it held are released, so the next settlement picks them up and sends them again.
+
+A bank can return a payout days after paying it, so a payout that has already completed can still be reported as failed later. The earnings are released in that case too, which keeps a seller's balance correct rather than reporting them settled while Stripe still holds the money.
+
+<Note>These confirmations arrive on a second Stripe webhook endpoint, separate from the one carrying your customers' payments. Spree registers it when the Stripe payment method is saved. See [<u>Stripe Connect for Marketplaces</u>](/integrations/payments/stripe-connect).</Note>
+
+### When You Still Mark a Payout as Paid
+
+One case remains. Where Stripe's answer to a request was lost rather than refused, the payout is left at **Needs checking**, because nobody can tell whether the money moved and sending it again would risk paying twice.
+
+Check that payout against your Stripe dashboard. Where the money went out, mark it as paid with the Stripe payout identifier as the reference, which completes it in the same way the confirmation would have.
+
+### What a Seller Needs First
+
+A seller is only credited once they hold a connected Stripe account, which they set up themselves from the **Payout account** row on their onboarding checklist. Until then their earnings are recorded and held at **Pending**, and are sent once their account can receive them. See [<u>Onboarding</u>](/user/sellers/onboarding).
+
+### Why a Payout Can Be Smaller Than the Balance
+
+A seller's earning is credited when their order is fulfilled, but the money behind it only reaches their connected account once the customer's charge settles with Stripe. Those are not the same moment.
+
+Before creating a payout, Spree asks Stripe what the seller's account can actually send, and settles only that much, taking the oldest earnings first. Anything left over stays owed and goes out in the next settlement. Where Stripe cannot be reached for that figure, no payout is created for that seller in that period, and the balance carries forward intact.
+
+### Refunds
+
+A refund writes its reversal against the seller's ledger in the usual way, so balances and payouts stay correct from then on. The Stripe transfer behind the original earning is not pulled back, and a balance driven negative by refunds is absorbed by what the seller earns next rather than being recovered from them directly.
+
+## Further Reading
+
+- [<u>Seller Transfers</u>](/user/sellers/transfers) - The earnings a payout gathers up
+- [<u>Marketplace Settings</u>](/user/settings/marketplace) - The payout schedule, provider and minimum
+- [<u>Sellers</u>](/user/sellers/sellers) - The seller pages carrying the Balance card
+- [<u>Commission Rates</u>](/user/sellers/commission-rates) - What is deducted before a seller earns

@@ -28,6 +28,7 @@ export * from './filters.generated'
 // Re-export all generated types (unprefixed: Product, Order, etc.)
 export type {
   Address,
+  AddressOwner,
   AppliedPromotion,
   Base,
   Cart,
@@ -45,6 +46,7 @@ export type {
   Customer,
   CustomerGroup,
   CustomField,
+  DataRequest,
   Delivery,
   DeliveryMethod,
   DeliveryRate,
@@ -80,6 +82,7 @@ export type {
   Seller,
   State,
   StockLocation,
+  Store,
   StoreCredit,
   TaxLine,
   Variant,
@@ -168,6 +171,7 @@ export interface ProductFiltersParams {
 // that extends them (see `spree filters types`).
 export type {
   BooleanFilters,
+  CodeFilters,
   CustomFieldValueFilters,
   EnumFilters,
   IdFilters,

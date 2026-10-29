@@ -45,7 +45,7 @@ module Spree
                            Spree.api.admin_payment_source_serializer
                          end
 
-            serializer.new(payment.source).to_h
+            serializer.new(payment.source, params: nested_params('source')).to_h
           end
 
           many :capture_events,
@@ -65,6 +65,8 @@ module Spree
           many :payment_splits,
                resource: proc { Spree.api.admin_payment_split_serializer },
                if: proc { expand?('payment_splits') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

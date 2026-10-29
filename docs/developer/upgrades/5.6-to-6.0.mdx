@@ -47,7 +47,38 @@ Before running `bundle update`, update your `Gemfile`: the Rails admin (`spree_a
 gem 'spree_dashboard'
 ```
 
+### The TypeScript packages share the Spree version
+
+From 6.0, the packages that talk to the Spree API are released with Spree and carry its version: `@spree/sdk@6.0.0` is the Store API client for Spree 6.0.0. The same applies to `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core`, `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui` and `@spree/seller-dashboard`. `@spree/cli` and `create-spree-app` keep their own versions.
+
+A storefront on Spree 5.x depends on `@spree/sdk` `1.x`. Change that range by hand, since it never resolves to 6.x on its own:
+
+```json storefront/package.json
+"@spree/sdk": "^6.0.0"
+```
+
+Projects created during the 6.0 preview depend on `1.0.0-rc`, `2.0.0-rc` or `6.0.0-rc` versions. Update the CLI first, then upgrade, and `spree upgrade` rewrites those ranges:
+
+```bash
+pnpm update @spree/cli
+spree upgrade
+```
+
+Dashboard plugins should widen their peer dependency ranges on `@spree/admin-sdk`, `@spree/dashboard-core` and `@spree/dashboard-ui` to `^6.0.0` for the same reason.
+
 Re-running is safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated. It also runs every data backfill from earlier upgrades (5.4 → 5.5 and 5.5 → 5.6), so any you missed along the way are caught up. That does not remove the requirement above: upgrade your application to 5.6 first.
+
+### Watching it, and picking it back up
+
+Every data step is a [maintenance task](/developer/how-to/maintenance-tasks), which changes what a long upgrade looks like. Each step records a run: who started it, when, what it reported, and — if it stops — the cause. So a half-finished upgrade tells you which step stopped and why, rather than leaving a stack trace and no record of what already ran.
+
+Three consequences worth knowing before you start:
+
+- **Watch it from the dashboard.** Settings → Maintenance tasks shows each step with a progress bar while it works. On a large store this is the difference between a silent hour and a visible one.
+- **Run it without a shell.** Every step can be started from the dashboard, which is how operators on a managed platform run an upgrade at all.
+- **Re-run one step.** `STEP=migrate_returns bundle exec rake spree:upgrade` runs a single step by id — useful when one step needed a data fix and the rest already succeeded.
+
+Preview first where it is offered. Steps that can report what they would change without writing show a preview toggle in the dashboard, or take `DRY_RUN=1` on the command line.
 
 ## What the upgrade does
 
@@ -58,8 +89,8 @@ Reference material — the data backfills `bundle exec rake spree:upgrade` execu
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:upgrade:preferences_json
-spree rake spree:upgrade:encrypt_secret_preferences
+spree task upgrade:preferences_json
+spree task upgrade:encrypt_secret_preferences
 ```
 
 ```bash Without Spree CLI
@@ -156,7 +187,7 @@ bundle exec rake spree:backfill_order_coupon_codes
 
 ```bash
 bundle exec rake spree:markets:migrate_checkout_zones
-bundle exec rake spree:backfill_order_markets
+bundle exec rake "spree:maintenance_tasks:perform[backfill_order_markets]"
 ```
 
 A store without a market gets a default one covering its old checkout zone's countries (or its default country), and the checkout zone is cleared. Orders missing a market then get the store default — `market` is required on carts and orders in 6.0.
@@ -185,15 +216,28 @@ bundle exec rake spree:stock:recount_levels
 bundle exec rake spree:upgrade:backfill_actor_types
 ```
 
-Orders, refunds, returns, exchanges, claims and stock receipts remember who
-cancelled, approved, created or received them. In 6.0 that can be a member of
-staff **or an API key**, so each id column — `canceler_id`, `approver_id`,
-`created_by_id`, `refunder_id`, `received_by_id` — gained a type column beside
-it (`canceler_type`, and so on) naming which kind of actor the id points at.
+Orders, refunds, returns, exchanges, claims, stock receipts and store credits
+remember who cancelled, approved, created, received or issued them. In 6.0 that
+can be a member of staff **or an API key**, so each id column — `canceler_id`,
+`approver_id`, `created_by_id`, `refunder_id`, `received_by_id` — gained a type
+column beside it (`canceler_type`, and so on) naming which kind of actor the id
+points at.
 
 Rows written before the upgrade carry an id and an empty type; this task fills
 the type in. Until it runs they still read as the staff member they always
 were, with a deprecation warning. Safe to re-run at any time.
+
+### Stamp the store on tags added in bulk
+
+```bash
+bundle exec rake spree:upgrade:backfill_tagging_tenants
+```
+
+Product and order taggings carry the store they belong to, and the admin tag
+list filters by it. Tags added through the bulk endpoints were written without
+the store, so they were missing from that list while tags added one at a time
+were not. This stamps the record's store on every tagging without one. Safe to
+re-run at any time.
 
 ### Move users onto the Customer and AdminUser models
 
@@ -260,7 +304,7 @@ Recreate the containers so they pick up the new `.env` (`spree dev` — `spree r
 Never change or lose the keys once data is encrypted — the encrypted records become unreadable.
 </Warning>
 
-**3. Encrypt existing rows.** Rows written before the keys were set are plain text. Gateway and integration secrets and the OAuth tokens on user identities stay readable and are encrypted on their next write; run `spree rake spree:upgrade:encrypt_secret_preferences` (`bundle exec rake spree:upgrade:encrypt_secret_preferences` without the Spree CLI) to encrypt every gateway and integration secret at once. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
+**3. Encrypt existing rows.** Rows written before the keys were set are plain text. Gateway and integration secrets and the OAuth tokens on user identities stay readable and are encrypted on their next write; run `spree task upgrade:encrypt_secret_preferences` (`bundle exec rake spree:upgrade:encrypt_secret_preferences` without the Spree CLI) to encrypt every gateway and integration secret at once. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
 
 ## Preferences are stored as JSON
 
@@ -284,7 +328,7 @@ Model preferences moved from YAML to JSON, and secrets moved out of them. Declar
 - **Per-preference helper methods are gone.** Use `preference_type(:name)`, `preference_default(:name)` and `preference_deprecated(:name)` instead of `preferred_<name>_type`, `preferred_<name>_default` and `preferred_<name>_deprecated`. `clear_preferences`, `restore_preferences_for`, `preferences_of_type`, the class methods `preference_getter_method`, `preference_setter_method` and `prefers_query_method`, `Spree::Preferences::ScopedStore`, `Spree::Preferences::Store` and the `Spree::Preference` model are removed.
 - **The `spree_preferences` table is dropped.** The installation id it held is not carried over: the default store generates a new one the next time it is saved. Rows an application wrote there itself are dropped with it: copy any you need before upgrading.
 - **Preferences live only on models.** `Spree::Preferences::Preferable` is included by `Spree::Base` and needs a `preferences` JSON column; including it in a plain Ruby class is no longer supported. A hash stored inside a preference comes back with string keys.
-- **A record whose preferences still hold YAML cannot be read.** The migration converts every row, so this only happens to rows written by older code after it ran. Run `spree rake spree:upgrade:preferences_json` (`bundle exec rake spree:upgrade:preferences_json` without the Spree CLI) to convert it.
+- **A record whose preferences still hold YAML cannot be read.** The migration converts every row, so this only happens to rows written by older code after it ran. Run `spree task upgrade:preferences_json` (`bundle exec rake spree:upgrade:preferences_json` without the Spree CLI) to convert it.
 
 ## The Cart/Order split
 
@@ -620,6 +664,8 @@ Settings no longer reach the Admin and Seller APIs in the shape of Ruby's prefer
 
 `order.preferred_stock_location_id` keeps its name: it is an association, not a setting. Validation errors name the field without the prefix too. The Admin and Seller APIs no longer accept the old `preferred_*` names; send the new ones. The store's `storefront_url` is the setting as saved, `null` when unset; `url` is the address customer links use. The store's `default_minimum_payout_amount` and `default_commission_tax_rate` are now exact decimal strings (`"0.23"`) instead of numbers.
 
+**Time zones are IANA names.** A store's `timezone` (and the seller profile's, which reads it) is always an IANA identifier such as `America/New_York` or `UTC`, typed as `TimeZone` in the SDKs. A Rails display name such as `Eastern Time (US & Canada)` sent on write is converted to its IANA name; a value that names no time zone is refused with a `422`. The store's `admin_locale` likewise only takes a locale code Spree lists (`en_US` is converted to `en-US`), and `null` clears it. The `store_regional_settings` upgrade step converts stored values, resets a time zone that names no zone to the store default, and clears an admin language Spree does not list.
+
 **`preference_schema` is replaced by `schema`.** Rules, actions, payment methods and integrations no longer carry `preference_schema` on every row. Each family's `/types` endpoint (and the delivery-method and promotion-action calculator lists) returns a `schema` per type instead: the JSON Schema of its `preferences`, with `format`, `enum`, `default` and `x-spree-secret`. Read a row's type, then look up its schema there. `/payment_methods/types` now lists every provider, with `installed: true` on those the store already has, instead of leaving them out.
 
 **Writes are validated.** A `preferences` payload with an unknown key, a value of the wrong type, a value outside the declared choices, or an id of another model or another store is refused with a `422` whose `code` is `invalid_preferences`. `details` names each failing value by its JSON pointer (`/preferences/channel_ids/1`, or `/rules/0/preferences/channel_ids/1` inside a list of rules). Before, unknown keys were silently dropped. Send decimals as strings (`"10.0"`) and record ids as prefixed ids (`ch_…`).
@@ -943,7 +989,7 @@ Other changes that come with it:
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:money:audit_capture_events
+spree task money:audit_capture_events
 ```
 
 ```bash Without Spree CLI
@@ -1087,6 +1133,8 @@ Two enforcement changes on the Admin API:
 
 - **JWT staff pass the same per-controller key gate as secret keys.** A request whose principal lacks `<read|write>_<resource>` gets a 403 with `details.required_permission` naming the missing key.
 - **Staff endpoints moved out of the `settings` scope.** `/admin_users`, `/invitations`, and `/roles` now require the new `read_staff` / `write_staff` scopes; secret keys minted with `settings` before 6.0 lose those endpoints. `/countries` and `/locales` became scope-exempt reference data.
+- **The CORS allowlist moved out of the `settings` scope too.** `/allowed_origins` requires `read_api_keys` / `write_api_keys` (6.0 release candidates briefly held it under `staff`): an allowed origin can read any signed-in admin's access token through the cookie-authenticated refresh endpoint, so it is managed like a credential.
+- **Paying a customer back needs `write_refunds`.** Refunding a return, resolving a claim with a refund, fulfilling an exchange and cancelling an order with `refund_payments` require it alongside `write_orders`, as the nested refunds endpoint always did. Roles and keys that only hold `write_orders` get a 403 on those calls; the dashboard hides the actions from them.
 
 ### Rich-text fields read as plain text plus HTML
 

@@ -42,6 +42,11 @@ module Spree
       acts_as_paranoid
       # deleted translation values still need to be accessible - remove deleted_at scope
       default_scope { unscope(where: :deleted_at) }
+
+      # Mobility deletes a row once its last value is cleared. The soft delete
+      # stamps only `deleted_at`, and the row stays readable, so the cleared
+      # values have to be written too or the old translation keeps showing.
+      before_destroy { update_columns(changes_to_save.transform_values(&:last)) if has_changes_to_save? }
     end
 
     #
@@ -50,8 +55,9 @@ module Spree
     UNIT_SYSTEMS = %w[metric imperial].freeze
 
     # general preferences
-    preference :admin_locale, :string, format: :locale
-    preference :timezone, :string, format: :timezone, default: Time.zone.name
+    preference :admin_locale, :string, format: :locale, parse_on_set: ->(value) { Spree::Locales.listed(value) || value.presence }
+    preference :timezone, :string, format: :timezone, default: Spree::TimeZones.normalize(Time.zone.name),
+                                   parse_on_set: ->(value) { Spree::TimeZones.normalize(value) }
     preference :weight_unit, :string, default: 'lb', choices: -> { Spree::Variant::WEIGHT_UNITS }
     preference :unit_system, :string, default: 'imperial', choices: -> { UNIT_SYSTEMS }
     # Anonymous identifier of this installation, kept on the default store
@@ -78,6 +84,22 @@ module Spree
     # same reason as auto_approve_sellers: what the marketplace lists is what
     # it vouches for.
     preference :auto_approve_seller_products, :boolean, default: false
+    # Let sellers attach downloadable files to their own products. Off for the
+    # same reason again: a file a buyer downloads under the marketplace's name
+    # is something the marketplace vouches for, and that should be a choice.
+    preference :seller_digital_assets_enabled, :boolean, default: false
+    # What a seller's file may be, checked against the file's own signature
+    # rather than its name. An entry names one type or, with `*` as the
+    # subtype, a whole family. The operator's own uploads are not restricted.
+    preference :seller_digital_asset_content_types, :array, of: :string,
+                                                            default: Spree::DigitalAsset::DEFAULT_SELLER_CONTENT_TYPES
+    # A typo here would refuse every seller upload with a message about the
+    # file, so the list is checked for the type/subtype shape when written.
+    validate :seller_digital_asset_content_types_are_media_types
+    # A file added to or replaced on a seller's product already on sale sends
+    # the product back to review, so an approved listing cannot change what it
+    # delivers without anyone looking. Moot when seller products auto-approve.
+    preference :review_seller_digital_asset_changes, :boolean, default: true
     # Who pays this store's sellers. Blank means core's record-only provider,
     # so a marketplace that has connected nothing still keeps a correct ledger
     # and settles by hand.
@@ -157,6 +179,8 @@ module Spree
     # B2B store collects it from everyone, a mixed store only offers it.
     preference :address_requires_company, :boolean, default: false
     preference :address_requires_phone, :boolean, default: false
+    MEDIA_TYPE_FORMAT = %r{\A[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+*-]*\z}i
+
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true
@@ -186,7 +210,8 @@ module Spree
                         :pricing_provider, :inventory_provider, :pricing_provider_failure_policy,
                         :inventory_provider_failure_policy, :payout_provider, :default_payouts_schedule_interval,
                         :default_minimum_payout_amount, :auto_approve_sellers, :auto_approve_seller_products,
-                        :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
+                        :seller_digital_assets_enabled, :seller_digital_asset_content_types,
+                        :review_seller_digital_asset_changes, :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
                         :order_number_prefix, :order_number_suffix, :order_number_sequence_start,
                         :limit_digital_download_count, :digital_asset_authorized_clicks,
                         :limit_digital_download_days, :digital_asset_authorized_days,
@@ -384,6 +409,8 @@ module Spree
                         message: :invalid_document_number_affix }
     validates :preferred_capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }
     validate :preferred_storefront_url_is_an_origin
+    validate :preferred_admin_locale_is_listed
+    validate :preferred_timezone_is_a_time_zone
     validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
@@ -729,7 +756,9 @@ module Spree
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.
     def create_default_delivery_profile
-      Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)
+      Spree::Events.disable do
+        Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)
+      end
     end
 
     def create_default_policies
@@ -815,6 +844,31 @@ module Spree
       errors.add(:preferred_storefront_url, :invalid)
     end
 
+    def preferred_admin_locale_is_listed
+      locale = preferred_admin_locale
+      return if locale.blank? || Spree::Locales::ALL.include?(locale)
+      return if awaiting_upgrade?(:admin_locale) { Spree::Locales.listed(locale) }
+
+      errors.add(:preferred_admin_locale, :inclusion)
+    end
+
+    def preferred_timezone_is_a_time_zone
+      return if Spree::TimeZones.valid?(preferred_timezone)
+      return if awaiting_upgrade?(:timezone) { Spree::TimeZones.valid?(Spree::TimeZones.normalize(preferred_timezone)) }
+
+      errors.add(:preferred_timezone, :invalid)
+    end
+
+    # A value saved before 6.0 that the store settings upgrade step converts
+    # must not block saving the store's other settings until the step runs.
+    # The block says whether the step can convert it.
+    def awaiting_upgrade?(name)
+      return false unless persisted?
+      return false unless public_send(:"preferred_#{name}") == (attribute_was('preferences') || {})[name]
+
+      yield.present?
+    end
+
     # The starting value only shapes a counter that does not exist yet — once
     # the first number is issued the counter owns the value, so accepting a
     # change here would persist a setting that can never apply again. The
@@ -830,6 +884,14 @@ module Spree
       return unless Spree::NumberSequence.started?(store: self)
 
       errors.add(:preferred_order_number_sequence_start, :locked_after_first_number)
+    end
+
+    def seller_digital_asset_content_types_are_media_types
+      bad = Array(preferred_seller_digital_asset_content_types).reject { |type| type.to_s.match?(MEDIA_TYPE_FORMAT) }
+      return if bad.empty?
+
+      errors.add(:preferred_seller_digital_asset_content_types, :invalid,
+                 message: I18n.t('spree.digital_assets_content_type_list_invalid', types: bad.join(', ')))
     end
   end
 end

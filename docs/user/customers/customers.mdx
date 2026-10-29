@@ -1,0 +1,93 @@
+---
+title: "Customers"
+description: "Learn how to find, add, group and export the people who buy from your store in Spree Commerce."
+---
+
+A customer is anyone who has an account with your store or has bought from it. Each one carries their contact details, their addresses, what they have spent, every order they have placed, and whatever your team has recorded about them.
+
+The Customers list is where you find them. It answers the questions that come up day to day: who is this person who just emailed, which customers belong to a group, who has spent the most, and who has not bought anything for an extended period of time. Filters narrow the list to any of those, and an export can be used to take the answer out as a spreadsheet.
+
+Opening a specific customer profile shows everything about that person and is where you can edit their information. This is covered in [<u>Customer Profiles</u>](/user/customers/customer-profile).
+
+To manage customers, navigate to **Customers** in the admin dashboard.
+
+## Reviewing Customers
+
+![The Customers list with its search box, filters and columns](/docs/images/user/customers/customers/1-customers-overview.png)
+
+The list shows one row per customer.
+
+| Column | What it means |
+|---|---|
+| **Email** | The customer's email address, which is also the link to their profile page. |
+| **Name** | Their first and last name. |
+| **Orders** | How many orders they have placed. |
+| **Total spent** | What they have spent with you. |
+| **Last order** | How long ago they last bought something. |
+
+**Columns** adds further columns: phone, the groups and companies they belong to, their tags, whether they are subscribed to marketing, whether their personal data has been erased, and when the record was created or last updated. **Sort** orders the list by email, name, phone, newsletter status, or either date.
+
+### Finding a Customer
+
+The search box matches a customer's name and email address.
+
+**Add filter** narrows the list by phone, group, company, tags, newsletter subscription, erased status, or when the record was created or last updated.
+
+<Note>Searching for a company name only finds people whose own name or email happens to match it. To see everyone who buys for a company, use **Add filter → Companies** instead.</Note>
+
+## How to Add a Customer
+
+Most customers create their own account at checkout. You add one by hand when the account has to exist before they shop, or when they are not in front of a screen.
+
+A shopper who signs up at the till in your shop is one case: take their email there and then, and they already have an account when they visit online. A business buyer who calls to open an account is another, and the more common one, because you often need the account to exist before you can attach it to a company, put it in a group, or build an order for them.
+
+![The New Customer dialog, with its email, name, phone, tags and note fields](/docs/images/user/customers/customers/2-new-customer.png)
+
+Click **New Customer**. The dialog asks for the details you have:
+
+- **Email** - The customer's email address. It is the only required field.
+- **First name** and **Last name** - Their name.
+- **Phone** - A contact number.
+- **Tags** - Your own labels, such as `VIP` or `trade`. Type a new one to create it.
+- **Subscribed to marketing** - Whether they have agreed to receive marketing.
+- **Internal note** - Anything your team should know. Staff only.
+
+Click **Create customer** and their page opens.
+
+<Note>A customer created here has no password, and no email is sent to them. They receive a magic link the first time they sign in, or they can set a password themselves with **Forgot password?** on your storefront.</Note>
+
+## Update Customers in Bulk
+
+![Customers ticked, with the bulk actions shown above them](/docs/images/user/customers/customers/3-bulk-actions.png)
+
+Tick the box at the start of each row you want to change, and the bulk actions menu will appear above the list.
+
+| Action | What it does |
+|---|---|
+| **Add to group…** and **Remove from group…** | Puts the ticked customers into, or takes them out of, the groups you pick. See [<u>Customer Groups</u>](/user/customers/customer-groups). |
+| **Add tags…** and **Remove tags…** | Adds the tags you pick to every ticked customer, or removes them. |
+
+This is the quickest way to build a group in the dashboard: filter the list to the customers you want, tick them, and add them all at once.
+
+## How to Import and Export Customers
+
+![The Export to CSV dialog, offering the current filter or all records](/docs/images/user/customers/customers/4-import-export.png)
+
+Two buttons above the list move customers between your store and a CSV file.
+
+**Import** reads a CSV file into your store. It is how you bring an existing customer base across when you move to Spree, and how you load a list you have collected elsewhere, such as the sign-ups from a trade show. The panel offers a blank template and an example file, and the next step matches your file's columns to customer fields.
+
+**Export** writes your customers out to a CSV file. Choose **Current filter** to export what the list is showing, or **All records** to ignore the filter. The file downloads when it is ready, and you receive an email as well.
+
+Exports can help answer questions that a spreadsheet is better suited to answer than a screen: a mailing list for a campaign, a spend report for the year, or a copy to hand to another system. Filtering first is what makes one useful, since a group, a tag or a date range gives you exactly the list you meant to send on.
+
+<Note>The export carries each customer's name, email, phone, marketing consent, company, default address, tags, total spent and order count. It does not carry passwords, saved payment methods, store credit or gift card balances, individual orders, internal notes, or the groups they belong to.</Note>
+
+<Note>To get everything the store holds about one person, use **Export data** on their own page, which produces a full record rather than a spreadsheet row. See [<u>Customer Profiles</u>](/user/customers/customer-profile).</Note>
+
+## Further Reading
+
+- [<u>Customer Profiles</u>](/user/customers/customer-profile) - Everything on one customer's page, and how to change it
+- [<u>Customer Groups</u>](/user/customers/customer-groups) - Grouping customers for promotions and pricing
+- [<u>Companies</u>](/user/customers/companies) - Business accounts, their people and their tax details
+- [<u>Orders</u>](/user/orders/orders) - The orders these customers have placed

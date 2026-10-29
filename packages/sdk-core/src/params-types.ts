@@ -29,10 +29,17 @@ export interface ParamsSpec {
 const isRequestSchema = (name: string) => name.endsWith('Params')
 
 // Code lists the request schemas reference by name: ISO countries and
-// currencies, and Spree's locales. The response types generated beside these
-// files declare the same named types, so a request imports them from there
-// rather than repeating them.
-const SHARED_CODE_LISTS = new Set(['CountryCode', 'CurrencyCode', 'LocaleCode'])
+// currencies, Spree's locales, time zones and measurement units. The response types
+// generated beside these files declare the same named types, so a request
+// imports them from there rather than repeating them.
+const SHARED_CODE_LISTS = new Set([
+  'CountryCode',
+  'CurrencyCode',
+  'LocaleCode',
+  'TimeZone',
+  'WeightUnit',
+  'DimensionUnit',
+])
 
 function refName(ref: string): string {
   const name = ref.replace('#/components/schemas/', '')
@@ -165,7 +172,9 @@ export function renderParamsTypes(spec: ParamsSpec): Map<string, string> {
     }
     if (imports.length) out.push('')
     out.push(...docComment(schema.description, ''))
-    out.push(`export type ${name} = ${objectType(schema, '')}`)
+    out.push(
+      `export type ${name} = ${schema.allOf ? valueType(schema, '') : objectType(schema, '')}`,
+    )
     files.set(`${name}.ts`, `${out.join('\n')}\n`)
   }
 

@@ -31,6 +31,9 @@ export type DeliveryZoneFields = Filter.RangeFilters<'created_at' | 'updated_at'
   & Filter.IdFilters<'delivery_profile_id' | 'id'>
   & Filter.TextFilters<'name'>
 
+export type DigitalAssetFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+
 export type ExchangeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'number'>
@@ -50,11 +53,13 @@ export type ImportRowFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.RangeFilters<'row_number', number>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed'>
 
-export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'order_group_id' | 'seller_id'>
+export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'market_id' | 'order_group_id' | 'seller_id'>
   & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
-  & Filter.TextFilters<'currency' | 'number' | 'po_number'>
+  & Filter.TextFilters<'number' | 'po_number'>
   & Filter.RangeFilters<'total_quantity', number>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
+  & Filter.CodeFilters<'locale', Filter.LocaleCode>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'payment_status', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
@@ -95,13 +100,15 @@ export type ReturnReasonFields = Filter.BooleanFilters<'active'>
   & Filter.TextFilters<'name'>
 
 export type SellerPayoutFields = Filter.RangeFilters<'amount' | 'created_at' | 'period_end' | 'period_start' | 'updated_at'>
-  & Filter.TextFilters<'currency' | 'provider' | 'reference'>
   & Filter.IdFilters<'id' | 'seller_id'>
+  & Filter.TextFilters<'provider' | 'reference'>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
 export type SellerTransferFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
-  & Filter.TextFilters<'currency' | 'provider' | 'reference'>
   & Filter.IdFilters<'id' | 'order_id' | 'payout_id' | 'seller_id'>
+  & Filter.TextFilters<'provider' | 'reference'>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'kind', 'earning' | 'refund_reversal'>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed' | 'unresolved'>
 
@@ -112,9 +119,10 @@ export type ShippingLabelFields = Filter.TextFilters<'carrier' | 'tracking_numbe
   & Filter.EnumFilters<'status', 'purchased' | 'refund_requested' | 'refunded'>
 
 export type StockLocationFields = Filter.BooleanFilters<'active' | 'default' | 'pickup_enabled' | 'returns_enabled'>
-  & Filter.TextFilters<'country_code' | 'kind' | 'name' | 'state_code'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'seller_id'>
+  & Filter.TextFilters<'kind' | 'name' | 'state_code'>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type TaxIdentifierFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -249,6 +257,26 @@ export type DeliveryZoneFilters = DeliveryZoneFields
 export type DeliveryZoneSort = Filter.SortKey<'created_at' | 'delivery_profile_id' | 'id' | 'name' | 'updated_at' | (keyof DeliveryZoneSortExtensions & string)>
 
 /**
+ * Filters your app adds to DigitalAsset lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/seller-sdk' {
+ *       interface DigitalAssetFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface DigitalAssetFilterExtensions {}
+
+/** Sort fields your app adds to DigitalAsset lists, as keys: `{ erp_id: true }`. */
+export interface DigitalAssetSortExtensions {}
+
+export type DigitalAssetFilters = DigitalAssetFields
+  & Filter.OrFilters
+  & DigitalAssetFilterExtensions
+
+export type DigitalAssetSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof DigitalAssetSortExtensions & string)>
+
+/**
  * Filters your app adds to Exchange lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -358,7 +386,7 @@ export type OrderFilters = OrderFields
   & Filter.OrFilters
   & OrderFilterExtensions
 
-export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'fulfillment_status' | 'id' | 'item_total' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at' | (keyof OrderSortExtensions & string)>
+export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'fulfillment_status' | 'id' | 'item_total' | 'locale' | 'market_id' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at' | (keyof OrderSortExtensions & string)>
 
 /**
  * Filters your app adds to OrderCancellationReason lists. Generate them with `spree filters types`,

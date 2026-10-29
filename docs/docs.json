@@ -445,6 +445,22 @@
       "destination": "/user/loyalty/store-credits"
     },
     {
+      "source": "/user/customers/create-customer",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/searching-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/exporting-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/edit-customer",
+      "destination": "/user/customers/customer-profile"
+    },
+    {
       "source": "/user/loyalty/store-credits-list",
       "destination": "/user/loyalty/store-credits"
     },
@@ -474,7 +490,7 @@
     },
     {
       "source": "/user/vendors/vendor-management",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/user/vendors/vendor-onboarding-manual",
@@ -534,7 +550,7 @@
     },
     {
       "source": "/use-case/marketplace/admin-dashboard",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/use-case/marketplace/capabilities",
@@ -707,6 +723,10 @@
     {
       "source": "/developer/agentic/mcp",
       "destination": "/developer/agentic/docs-mcp"
+    },
+    {
+      "source": "/user/sellers/managing-sellers",
+      "destination": "/user/sellers/sellers"
     }
   ],
   "contextual": {
@@ -732,6 +752,7 @@
               {
                 "group": "Develop",
                 "pages": [
+                  "index",
                   {
                     "group": "Getting Started",
                     "pages": [
@@ -810,7 +831,7 @@
                     "icon": "book-open"
                   },
                   {
-                    "group": "AI-Assisted Development",
+                    "group": "Agentic Development",
                     "pages": [
                       "developer/agentic/overview",
                       "developer/agentic/agent-skills",
@@ -1066,7 +1087,8 @@
                       "developer/how-to/extend-reporting",
                       "developer/how-to/custom-document-numbers",
                       "developer/how-to/custom-order-routing",
-                      "developer/how-to/custom-stock-splitter"
+                      "developer/how-to/custom-stock-splitter",
+                      "developer/how-to/maintenance-tasks"
                     ],
                     "icon": "compass"
                   },
@@ -1195,7 +1217,7 @@
               },
               {
                 "item": "Seller API",
-                "icon": "shop",
+                "icon": "handshake",
                 "description": "REST API for the marketplace seller panel",
                 "groups": [
                   {
@@ -1307,11 +1329,8 @@
                   {
                     "group": "Customers",
                     "pages": [
-                      "user/customers/create-customer",
+                      "user/customers/customers",
                       "user/customers/customer-profile",
-                      "user/customers/edit-customer",
-                      "user/customers/searching-customers",
-                      "user/customers/exporting-customers",
                       "user/customers/customer-groups",
                       "user/customers/companies"
                     ],
@@ -1323,10 +1342,11 @@
                     "pages": [
                       "user/sellers/sellers",
                       "user/sellers/onboarding",
-                      "user/sellers/managing-sellers",
+                      "user/sellers/seller-panel",
                       "user/sellers/products",
                       "user/sellers/orders",
                       "user/sellers/commission-rates",
+                      "user/sellers/transfers",
                       "user/sellers/payouts"
                     ]
                   },
@@ -1352,6 +1372,15 @@
                     "icon": "chart-column",
                     "pages": [
                       "user/reports/reports"
+                    ]
+                  },
+                  {
+                    "group": "AI Agents",
+                    "icon": "bot",
+                    "pages": [
+                      "user/ai-agents/ai-agents",
+                      "user/ai-agents/connect-claude",
+                      "user/ai-agents/connect-chatgpt"
                     ]
                   },
                   {
@@ -2736,7 +2765,7 @@
           },
           {
             "item": "Seller API",
-            "icon": "shop",
+            "icon": "handshake",
             "description": "REST API for the marketplace seller panel",
             "groups": [
               {
@@ -2952,11 +2981,8 @@
           {
             "group": "Customers",
             "pages": [
-              "user/customers/create-customer",
+              "user/customers/customers",
               "user/customers/customer-profile",
-              "user/customers/edit-customer",
-              "user/customers/searching-customers",
-              "user/customers/exporting-customers",
               "user/customers/customer-groups",
               "user/customers/companies"
             ]
@@ -2967,10 +2993,11 @@
             "pages": [
               "user/sellers/sellers",
               "user/sellers/onboarding",
-              "user/sellers/managing-sellers",
+              "user/sellers/seller-panel",
               "user/sellers/products",
               "user/sellers/orders",
               "user/sellers/commission-rates",
+              "user/sellers/transfers",
               "user/sellers/payouts"
             ]
           },
@@ -2994,6 +3021,15 @@
             "icon": "chart-column",
             "pages": [
               "user/reports/reports"
+            ]
+          },
+          {
+            "group": "AI Agents",
+            "icon": "bot",
+            "pages": [
+              "user/ai-agents/ai-agents",
+              "user/ai-agents/connect-claude",
+              "user/ai-agents/connect-chatgpt"
             ]
           },
           {

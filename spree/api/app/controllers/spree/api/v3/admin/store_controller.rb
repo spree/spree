@@ -7,9 +7,16 @@ module Spree
 
           request_params :store do |body|
             body.attribute :name, :string, example: 'My Store'
-            body.attribute :admin_locale, :string, example: 'en'
-            body.attribute :timezone, :string, example: 'Europe/Berlin'
-            body.attribute :weight_unit, :string, choices: Spree::Variant::WEIGHT_UNITS
+            body.attribute :seo_title, :string,
+              nullable: true,
+              description: "The storefront's default page title, in the store's default language. Translate it through the translations endpoints."
+            body.attribute :meta_description, :string,
+              nullable: true,
+              description: "The storefront's default meta description, in the store's default language."
+            body.attribute :admin_locale, :locale, nullable: true, example: 'en',
+              description: 'The language the dashboard opens in for every staff member; null lets each use their own.'
+            body.attribute :timezone, :time_zone, example: 'Europe/Berlin'
+            body.attribute :weight_unit, :weight_unit
             body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS
             body.attribute :storefront_access, :string,
               choices: Spree::Channel::Gating::STOREFRONT_ACCESS,
@@ -65,6 +72,13 @@ module Spree
               description: 'Admits a seller as soon as they finish onboarding, with no operator review.'
             body.attribute :auto_approve_seller_products, :boolean,
               description: 'Puts a seller product on sale the moment it is submitted, with no review.'
+            body.attribute :seller_digital_assets_enabled, :boolean,
+              description: 'Lets sellers attach downloadable files to their own products.'
+            body.attribute :seller_digital_asset_content_types, :array, of: :string,
+              example: %w[application/pdf application/zip],
+              description: "The content types a seller's file may have, checked against the file's own signature where it has one. An entry names one type or, with `*` as the subtype, a whole family. The operator's own uploads are not restricted."
+            body.attribute :review_seller_digital_asset_changes, :boolean,
+              description: 'Sends a seller product already on sale back to review when the seller adds or replaces a file on it.'
             body.attribute :send_seller_transactional_emails, :boolean,
               description: 'When false, transactional seller emails (approval, payouts and so on) are not sent.'
             body.attribute :default_commission_tax_rate, :decimal,
@@ -136,17 +150,19 @@ module Spree
           # GET /api/v3/admin/store
           def show
             authorize! :show, current_store
-            render json: serialize_store
+            render json: in_default_locale { serialize_store }
           end
 
           # PATCH /api/v3/admin/store
           def update
             authorize! :update, current_store
 
-            if current_store.update(permitted_params)
-              render json: serialize_store
-            else
-              render_validation_error(current_store.errors)
+            in_default_locale do
+              if current_store.update(permitted_params)
+                render json: serialize_store
+              else
+                render_validation_error(current_store.errors)
+              end
             end
           end
 
@@ -169,6 +185,13 @@ module Spree
           end
 
           private
+
+          # Settings hold the store's default-language values, whatever locale
+          # the request resolved to. Other languages are written through the
+          # translations endpoints.
+          def in_default_locale(&)
+            Mobility.with_locale(current_store.default_locale, &)
+          end
 
           def describe(provider_classes)
             provider_classes.map do |provider_class|

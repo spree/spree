@@ -9,7 +9,7 @@ module Spree
       STORE_SERIALIZERS =
         %i[credit_card price price_history product product_type variant media option_type option_value cart order
            order_group line_item payment payment_session payment_setup_session payment_source store_credit
-           fulfillment delivery address customer data_request customer_group country channel product_publication
+           fulfillment delivery address address_owner customer data_request customer_group country channel product_publication
            market state wishlist wishlist_item payment_method delivery_method delivery_rate freight_summary
            stock_location category collection applied_promotion discount tax_line delivery_zone delivery_zone_member
            fee digital_link gift_card currency locale policy custom_field tax_category tax_identifier
@@ -18,7 +18,7 @@ module Spree
            product_filter_sort_option media_event return return_line_item exchange exchange_line_item claim
            claim_line_item return_reason claim_reason digital_asset export gift_card_batch import import_row
            invitation newsletter_subscriber promotion refund stock_level stock_movement stock_reservation
-           stock_transfer company company_membership company_invitation seller file_upload file_upload_target].freeze
+           stock_transfer company company_membership company_invitation seller file_upload file_upload_target store].freeze
 
       ADMIN_SERIALIZERS =
         %i[country state locale applied_promotion discount tax_line cart delivery_zone delivery_profile
@@ -34,13 +34,14 @@ module Spree
            catalog_product price_list_product catalog_assignment catalog_quantity_rule catalog_product_term
            catalog_order_minimum tax_exemption_certificate tax_exemption_reason admin_user actor seller_team_member product_submission
            seller seller_requirement seller_requirement_submission seller_requirement_status commission_rate
-           commission_rule commission_line seller_transfer seller_payout seller_balance payment_split payment_capture_event address
+           commission_rule commission_line seller_transfer seller_payout seller_balance payment_split payment_capture_event address address_owner
            channel order_routing_rule product_publication market delivery_method delivery_method_service
            stock_location stock_reservation delivery_rate freight_summary freight_summary_line payment_method
            credit_card store_credit store_credit_event customer_group payment_source digital_asset digital_link
            store setup_task update_status api_key oauth_application oauth_access_token oauth_consent_request oauth_redirect
            oauth_protected_resource allowed_origin webhook_endpoint webhook_event webhook_delivery invitation
            invitation_acceptance_link role permission export saved_report import import_row import_mapping promotion
+           maintenance_task_run
            promotion_action promotion_rule coupon_code price_adjustment_tier price_list price_rule
            resource_translations email_template email_template_draft email_template_revision email_template_preview
            email_template_sample_record file_upload file_upload_target].freeze
@@ -51,8 +52,8 @@ module Spree
            order_line_item fulfillment fulfillment_item delivery delivery_rate shipping_label return
            return_line_item exchange exchange_line_item claim claim_line_item reason package_type stock_location
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping
-           requirement_submission export transfer payout balance payment_split price price_history file_upload
-           file_upload_target].freeze
+           requirement_submission export transfer payout balance payment_split price price_history file_upload digital_asset
+           file_upload_target store].freeze
 
       INJECTION_POINTS_WITH_DEFAULTS = {
         **STORE_SERIALIZERS.to_h { |name| [:"#{name}_serializer", "Spree::Api::V3::#{name.to_s.camelize}Serializer"] },

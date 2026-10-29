@@ -1,0 +1,388 @@
+require 'spec_helper'
+require 'active_job/continuation/test_helper'
+
+RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
+  let(:store) { @default_store }
+
+  # A task with no dependencies on the rest of the catalog, so the runner's
+  # own behavior is what these examples measure.
+  before do
+    stub_const('SpecMaintenanceTask', Class.new(Spree::MaintenanceTask) do
+      cattr_accessor :processed, default: []
+      cattr_accessor :raise_on, default: nil
+      # Writes a pause/cancel request onto the row after N records, standing
+      # in for an operator clicking the button mid-run.
+      cattr_accessor :request_after, default: nil
+      cattr_accessor :request_status, default: nil
+      cattr_accessor :seconds_per_item, default: nil
+      cattr_accessor :statuses_seen, default: []
+      cattr_accessor :fail_in, default: nil
+
+      supports_dry_run
+      collection_batch_size 2
+
+      attribute :label, :string
+      validates :label, presence: true
+
+      def self.name = 'SpecMaintenanceTask'
+
+      def collection = Spree::Product.order(:id)
+
+      def after_complete
+        raise ArgumentError, 'complete failed' if self.class.fail_in == :after_complete
+      end
+
+      def process(product)
+        raise ArgumentError, 'boom' if self.class.raise_on == product.id
+
+        self.class.statuses_seen << run.class.where(id: run.id).pick(:status)
+        Timecop.travel(self.class.seconds_per_item.seconds) if self.class.seconds_per_item
+
+        return tally(:would_update) if dry_run?
+
+        self.class.processed << product.id
+        tally(:updated)
+
+        if self.class.request_after && self.class.processed.size == self.class.request_after
+          run.class.where(id: run.id).update_all(status: self.class.request_status)
+        end
+      end
+    end)
+
+    SpecMaintenanceTask.processed = []
+    SpecMaintenanceTask.raise_on = nil
+    SpecMaintenanceTask.request_after = nil
+    SpecMaintenanceTask.request_status = nil
+    SpecMaintenanceTask.seconds_per_item = nil
+    SpecMaintenanceTask.statuses_seen = []
+    SpecMaintenanceTask.fail_in = nil
+    Spree.maintenance_tasks << 'SpecMaintenanceTask'
+  end
+
+  after { Spree.maintenance_tasks.delete('SpecMaintenanceTask') }
+
+  def start_run(**overrides)
+    Spree::MaintenanceTasks::Start.call(
+      task_name: 'SpecMaintenanceTask',
+      arguments: { 'label' => 'x' },
+      initiated_via: 'api',
+      **overrides
+    ).value
+  end
+
+  describe 'a successful run' do
+    let!(:products) { create_list(:product, 3, store: store) }
+
+    it 'processes every record and succeeds' do
+      run = start_run
+      described_class.perform_now(run.id)
+
+      expect(SpecMaintenanceTask.processed).to match_array(products.map(&:id))
+      expect(run.reload).to be_succeeded
+    end
+
+    it 'records progress and the task tallies' do
+      run = start_run
+      described_class.perform_now(run.id)
+
+      expect(run.reload.tick_count).to eq(3)
+      expect(run.tick_total).to eq(3)
+      expect(run.tallies['updated']).to eq(3)
+    end
+
+    it 'stamps the cursor so a resume would not repeat work' do
+      run = start_run
+      described_class.perform_now(run.id)
+
+      expect(run.reload.cursor).to eq(products.max_by(&:id).id.to_s)
+    end
+
+    it 'records when it started and ended' do
+      run = start_run
+      described_class.perform_now(run.id)
+
+      expect(run.reload.started_at).to be_present
+      expect(run.ended_at).to be_present
+    end
+  end
+
+  describe 'dry run' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    it 'reports what it would do without doing it' do
+      run = start_run(dry_run: true)
+      described_class.perform_now(run.id)
+
+      expect(SpecMaintenanceTask.processed).to be_empty
+      expect(run.reload.tallies['would_update']).to eq(2)
+      expect(run).to be_succeeded
+    end
+  end
+
+  describe 'failure' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    before { SpecMaintenanceTask.raise_on = Spree::Product.order(:id).first.id }
+
+    it 'records the error on the run instead of raising' do
+      run = start_run
+
+      expect { described_class.perform_now(run.id) }.not_to raise_error
+
+      expect(run.reload).to be_errored
+      expect(run.error_class).to eq('ArgumentError')
+      expect(run.error_message).to eq('boom')
+    end
+  end
+
+  # The Cancel service writes the request onto the row and the runner
+  # observes it at its next checkpoint. This example writes the same column
+  # the service does, from inside the task, so the request lands mid-walk
+  # exactly as an operator's would.
+  describe 'operator cancel' do
+    let!(:products) { create_list(:product, 4, store: store) }
+
+    before { SpecMaintenanceTask.request_after = 2 }
+
+    it 'stops for good' do
+      run = start_run
+      SpecMaintenanceTask.request_status = 'cancelling'
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload).to be_cancelled
+      expect(run.ended_at).to be_present
+      expect(SpecMaintenanceTask.processed.size).to eq(2)
+    end
+  end
+
+  # A worker that stops mid-run leaves the run `running` and its job back in
+  # the queue. An operator who clicks Cancel in that gap writes the request,
+  # and the re-queued job is the only thing left to answer it.
+  describe 'a request written while the job waited in the queue' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    it 'settles cancelling as cancelled without doing more work' do
+      run = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' },
+                                          status: 'cancelling', started_at: 1.minute.ago)
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload).to be_cancelled
+      expect(SpecMaintenanceTask.processed).to be_empty
+    end
+  end
+
+  # A deploy can remove a parameter while a run waits; the run must fail
+  # where an operator sees it rather than stay queued and block the task.
+  describe 'arguments the task no longer accepts' do
+    it 'fails the run instead of leaving it queued' do
+      run = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask',
+                                          arguments: { 'label' => 'x', 'removed' => '1' })
+
+      expect { described_class.perform_now(run.id) }.not_to raise_error
+
+      expect(run.reload).to be_errored
+      expect(run.error_class).to eq('ActiveModel::UnknownAttributeError')
+      expect(run).not_to be_active
+    end
+  end
+
+  # Two requests can both pass Start's one-run-per-task check before either
+  # row is saved.
+  describe 'two runs of one task created together' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    it 'cancels the newer one before it does any work' do
+      older = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' })
+      newer = create(:maintenance_task_run, task_name: 'SpecMaintenanceTask', arguments: { 'label' => 'x' })
+
+      described_class.perform_now(newer.id)
+      described_class.perform_now(older.id)
+
+      expect(newer.reload).to be_cancelled
+      expect(newer.error_class).to eq('Spree::MaintenanceTasks::AlreadyRunning')
+      expect(older.reload).to be_succeeded
+      expect(SpecMaintenanceTask.processed).to match_array(products.map(&:id))
+    end
+  end
+
+  # Ctrl-C or a deploy stopping a command-line upgrade: no job was queued,
+  # so a run left `running` would block every later run of its task.
+  describe 'an inline run stopped by a signal' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    it 'is recorded as failed before the signal carries on' do
+      run = start_run
+      allow_any_instance_of(SpecMaintenanceTask).to receive(:process).and_raise(Interrupt)
+
+      expect { described_class.perform_now(run.id, inline: true) }.to raise_error(Interrupt)
+
+      expect(run.reload).to be_errored
+      expect(run).not_to be_active
+    end
+  end
+
+  describe 'a task removed from the registry' do
+    it 'fails the run rather than retrying forever' do
+      run = start_run
+      Spree.maintenance_tasks.delete('SpecMaintenanceTask')
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload).to be_errored
+      expect(run.error_class).to eq('Spree::MaintenanceTasks::TaskNotRegistered')
+    end
+  end
+
+  describe 'running time' do
+    let!(:products) { create_list(:product, 6, store: store) }
+
+    after { Timecop.return }
+
+    it 'adds each batch once rather than compounding the total' do
+      Timecop.freeze
+      SpecMaintenanceTask.seconds_per_item = 5
+      run = start_run
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload.time_running.to_f).to be_within(1).of(30)
+    end
+  end
+
+  describe 'batch fetching' do
+    let!(:products) { create_list(:product, 3, store: store) }
+
+    it 'never loads the whole collection to see whether it is empty' do
+      unbounded = []
+      callback = lambda do |*, payload|
+        sql = payload[:sql]
+        unbounded << sql if sql.include?(Spree::Product.table_name) && sql.start_with?('SELECT') && !sql.include?('LIMIT') && !sql.include?('COUNT')
+      end
+
+      run = start_run
+      ActiveSupport::Notifications.subscribed(callback, 'sql.active_record') { described_class.perform_now(run.id) }
+
+      expect(unbounded).to be_empty
+    end
+  end
+
+  describe 'a callback that fails' do
+    let!(:products) { create_list(:product, 2, store: store) }
+
+    %i[after_complete].each do |callback|
+      it "records a failing #{callback} as an error instead of retrying" do
+        SpecMaintenanceTask.fail_in = callback
+        run = start_run
+
+        expect { described_class.perform_now(run.id) }.not_to raise_error
+
+        expect(run.reload).to be_errored
+        expect(run.error_message).to end_with('failed')
+      end
+    end
+  end
+
+  describe 'a run marked cancelled while it works' do
+    let!(:products) { create_list(:product, 4, store: store) }
+
+    it 'stops instead of carrying on and overwriting the cancellation' do
+      SpecMaintenanceTask.request_after = 2
+      SpecMaintenanceTask.request_status = 'cancelled'
+      run = start_run
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload).to be_cancelled
+      expect(SpecMaintenanceTask.processed.size).to eq(2)
+    end
+
+    # The last checkpoint has passed, so only the final status write can
+    # still see the request.
+    it 'keeps a cancellation that arrives while the run finishes' do
+      run = start_run
+      allow_any_instance_of(SpecMaintenanceTask).to receive(:after_complete) do
+        Spree::MaintenanceTaskRun.where(id: run.id).update_all(status: 'cancelling')
+      end
+
+      described_class.perform_now(run.id)
+
+      expect(run.reload).to be_cancelled
+    end
+  end
+
+  describe 'an inline run' do
+    let!(:products) { create_list(:product, 4, store: store) }
+
+    it 'finishes in one go instead of handing the rest to a worker' do
+      stub_const('Spree::MaintenanceTask::MAX_RUN_TIME', 0.seconds)
+      run = start_run(inline: true)
+
+      expect(run.reload).to be_succeeded
+      expect(SpecMaintenanceTask.processed.size).to eq(4)
+    end
+  end
+
+  describe 'interruption and resume' do
+    include ActiveJob::Continuation::TestHelper
+
+    let!(:products) { create_list(:product, 4, store: store) }
+
+    around do |example|
+      original = ActiveJob::Base.queue_adapter
+      ActiveJob::Base.queue_adapter = :test
+      example.run
+    ensure
+      ActiveJob::Base.queue_adapter = original
+    end
+
+    it 'resumes from the cursor instead of restarting the walk' do
+      run = start_run
+      all_ids = Spree::Product.order(:id).pluck(:id)
+      first_batch_cursor = all_ids.first(2).last.to_s
+
+      described_class.perform_later(run.id)
+
+      # Interrupted at the checkpoint after the first batch. The test adapter
+      # drains the retry inside the same call, so what this proves is not that
+      # the run stopped — it is that the second execution picked up from the
+      # cursor rather than from the beginning.
+      interrupt_job_during_step(described_class, :process_collection, cursor: first_batch_cursor) do
+        perform_enqueued_jobs
+      end
+
+      expect(SpecMaintenanceTask.processed).to eq(all_ids)
+      expect(run.reload).to be_succeeded
+      expect(run.tick_count).to eq(4)
+    end
+
+    it 'reports itself running again once it resumes after its time slice' do
+      stub_const('Spree::MaintenanceTask::MAX_RUN_TIME', 0.seconds)
+      run = start_run
+
+      described_class.perform_later(run.id)
+      # Each execution processes one batch and re-queues the next.
+      5.times { perform_enqueued_jobs if enqueued_jobs.any? }
+
+      expect(run.reload).to be_succeeded
+      expect(SpecMaintenanceTask.statuses_seen.uniq).to eq(['running'])
+    end
+
+    it 'does not reprocess records that were already applied' do
+      run = start_run
+      all_ids = Spree::Product.order(:id).pluck(:id)
+
+      described_class.perform_later(run.id)
+
+      interrupt_job_during_step(described_class, :process_collection, cursor: all_ids.first(2).last.to_s) do
+        perform_enqueued_jobs
+      end
+
+      # Each id appears exactly once: the resumed execution re-read nothing the
+      # interrupted one had finished.
+      expect(SpecMaintenanceTask.processed).to eq(SpecMaintenanceTask.processed.uniq)
+      expect(SpecMaintenanceTask.processed.size).to eq(all_ids.size)
+    end
+  end
+end

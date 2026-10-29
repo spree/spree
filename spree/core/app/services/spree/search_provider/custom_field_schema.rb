@@ -15,13 +15,16 @@ module Spree
       ORDERED_FILTER_PREDICATES = (TEXT_FILTER_PREDICATES | NUMBER_FILTER_PREDICATES).
                                   sort_by { |predicate| -predicate.length }.freeze
 
-      attr_reader :store
+      attr_reader :store, :audience
 
       # @param store [Spree::Store] the store whose custom-field schema this
       #   describes — definitions are store-owned, so two stores have their own
       #   filter vocabularies.
-      def initialize(store)
+      # @param audience [Symbol, nil] who filters: `:store` (shoppers) sees only
+      #   storefront-visible definitions; `nil` is the back office
+      def initialize(store, audience: nil)
         @store = store
+        @audience = audience
       end
 
       # @return [Hash{String => Spree::CustomFieldDefinition}]
@@ -134,8 +137,13 @@ module Spree
 
       private
 
+      # A definition hidden from the storefront stays out of its filter and
+      # sort vocabulary too: the serializer withholds the value, and a sort or
+      # a range filter on it would hand that value back one comparison at a
+      # time.
       def product_definitions
         scope = store.custom_field_definitions.for_resource_type('Spree::Product')
+        scope = scope.storefront_visible if audience == :store
         scope.where(searchable: true).or(scope.where(sortable: true))
       end
 

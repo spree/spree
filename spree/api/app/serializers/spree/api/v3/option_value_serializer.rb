@@ -21,6 +21,8 @@ module Spree
         attribute :image_url do |option_value|
           image_url_for(option_value.image)
         end
+
+        expandable_custom_fields
       end
     end
   end

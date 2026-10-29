@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "لم يتم اختيار عنوان"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "مسار التنقل",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "الفوترة الافتراضية",
       "default_shipping": "الشحن الافتراضي",
+      "inherited_from": "موروث من {{name}}",
       "set_default_billing": "تعيين كعنوان فوترة افتراضي",
       "set_default_shipping": "تعيين كعنوان شحن افتراضي"
     },
@@ -113,6 +117,7 @@
         "title": "إعادة تعيين كلمة المرور"
       },
       "login": {
+        "account_deactivated": "تم إلغاء تفعيل هذا الحساب. تواصل مع المسؤول لاستعادة الوصول.",
         "account_not_provisioned": "هذا الحساب غير مصرح له بالوصول إلى هذا المتجر. اطلب دعوة من المسؤول.",
         "divider": "أو",
         "invalid_oauth_state": "انتهت صلاحية جلسة تسجيل الدخول أو أنها غير صالحة. يرجى بدء تسجيل الدخول من جديد.",
@@ -361,9 +366,12 @@
         "video_title": "معاينة الفيديو"
       },
       "metadata_card": {
+        "copy_reference": "نسخ مفتاح {{system}}",
         "empty_description": "تملأ التطبيقات والتكاملات هذا تلقائيًا.",
         "empty_title": "لا توجد بيانات وصفية",
-        "title": "البيانات الوصفية"
+        "external_references": "المراجع الخارجية",
+        "title": "البيانات الوصفية",
+        "view": "عرض البيانات الوصفية"
       },
       "page_header": {
         "copy_id": "نسخ ID",
@@ -416,6 +424,7 @@
       },
       "table_toolbar": {
         "add_filter": "إضافة فلتر",
+        "any_field": "{{field}}: الكل",
         "ascending": "تصاعدي",
         "clear_all": "مسح الكل",
         "columns_tooltip": "الأعمدة",
@@ -436,6 +445,8 @@
         "filter_select_placeholder": "اختر…",
         "filter_text_placeholder": "تصفية…",
         "filter_to_placeholder": "التصفية إلى…",
+        "n_selected": "{{count}} محدد",
+        "only": "فقط",
         "operators": {
           "after": "بعد",
           "before": "قبل",
@@ -461,6 +472,7 @@
         "remove_filter": "إزالة الفلتر",
         "reset_to_default": "إعادة إلى الافتراضي",
         "search_placeholder": "بحث…",
+        "select_all": "تحديد الكل",
         "sort_by": "ترتيب حسب",
         "sort_tooltip": "ترتيب",
         "visible_columns": "الأعمدة المرئية"
@@ -482,6 +494,12 @@
         "discard_message": "سيُفقد كل ما أدخلته حتى الآن، ولا يمكن التراجع عن ذلك.",
         "discard_title": "تجاهل هذه المسودة؟"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "المبلغ بعملة {{currency}}",
+      "help": "العملات المتروكة فارغة لا تُعرض لها طريقة التوصيل هذه.",
+      "label": "المبلغ",
+      "required": "أدخل مبلغًا بعملة واحدة على الأقل."
     },
     "custom_field_definitions": {
       "errors": {
@@ -937,6 +955,14 @@
       "order_multiple": {
         "label": "مضاعف الطلب",
         "help": "كل زيادة فوق الحد الأدنى. اتركه فارغًا للسماح بأي كمية."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "التنزيلات المسموح بها"
+        },
+        "digital_asset_authorized_days": {
+          "label": "الأيام المتاحة"
+        }
       }
     },
     "image_upload": {
@@ -2039,6 +2065,38 @@
           "description": "يجب على البائع تقديم عنوان للمرتجعات"
         }
       }
+    },
+    "digital_assets": {
+      "add": "إضافة",
+      "all_variants": "كل المتغيرات",
+      "columns": {
+        "file": "الملف",
+        "variant": "المتغير",
+        "size": "الحجم",
+        "downloads": "التنزيلات",
+        "days": "الأيام"
+      },
+      "delete_description": "لن يتمكن من اشترى «{{name}}» من تنزيله بعد الآن. يسري هذا فورًا.",
+      "delete_title": "حذف هذا الملف؟",
+      "description": "ملفات يمكن للمشترين تنزيلها بعد الشراء. أرفقها بمنتج رقمي، أو بمنتج مادي لتسليم دليل أو ضمان مع البضاعة.",
+      "download": "تنزيل",
+      "drop_hint": "اسحب الملفات وأفلتها هنا، أو انقر للتصفح",
+      "empty": "لا توجد ملفات بعد",
+      "limit_invalid": "يجب أن تكون الحدود أعدادًا صحيحة من 1 فأكثر، أو فارغة.",
+      "limits_help": "اترك حدود التنزيل والأيام فارغة لاستخدام إعدادات المتجر.",
+      "source": {
+        "upload": "رفع ملف"
+      },
+      "store_default": "{{count}} (افتراضي المتجر)",
+      "title": "الملفات الرقمية",
+      "untitled": "ملف بدون اسم",
+      "upload": "إضافة ملف",
+      "upload_failed": "فشل رفع {{name}}: {{message}}",
+      "uploading": "جارٍ رفع {{name}}…",
+      "uploading_short": "جارٍ الرفع…",
+      "replace": "استبدال الملف",
+      "replace_description": "سيُحذف \"{{name}}\" وسيحمّل كل من اشتراه الملف الجديد من روابطه الحالية. يسري فورًا.",
+      "replace_title": "استبدال هذا الملف؟"
     }
   }
 }

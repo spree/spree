@@ -271,6 +271,23 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(names).to eq(names.sort.reverse)
       end
 
+      context 'by name in a non-default locale' do
+        let!(:translated_product) { create(:product, name: 'Zulu Product') }
+
+        before do
+          create(:product_translation, translated_model: translated_product, locale: 'de', name: 'Aal')
+          allow(controller).to receive(:current_locale).and_return('de')
+        end
+
+        it 'sorts filtered products by the translation, falling back to the base name' do
+          ids = [product, second_product, translated_product].map(&:prefixed_id)
+          get :index, params: { sort: 'name', q: { id_in: ids } }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['data'].pluck('id')).to eq([translated_product, second_product, product].map(&:prefixed_id))
+        end
+      end
+
       context 'by price' do
         let!(:cheap_product) do
           create(:product, name: 'Cheap').tap do |p|
@@ -877,6 +894,15 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['product_type_id']).to eq(product_type.prefixed_id)
       expect(product.reload.product_type).to eq(product_type)
+    end
+
+    it 'refuses a product type from another store' do
+      product_type = create(:product_type, store: create(:store))
+
+      patch :update, params: { id: product.prefixed_id, product_type_id: product_type.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(product.reload.product_type).to be_nil
     end
 
     it 'clears the product type with null' do
@@ -2404,9 +2430,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     before { request.headers.merge!(headers) }
 
     around do |example|
-      original = Spree::Product.additional_permitted_attributes
+      originals = [Spree::Product, Spree::Media, Spree::Variant].index_with(&:additional_permitted_attributes)
       example.run
-      Spree::Product.additional_permitted_attributes = original
+      originals.each { |model, attributes| model.additional_permitted_attributes = attributes }
     end
 
     it 'permits an attribute the model declares' do
@@ -2420,6 +2446,24 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
 
       patch :update, params: { id: product.prefixed_id, brand_id: 'acme' }, as: :json
+    end
+
+    it 'permits attributes extensions declare on media and variants inside the nested lists' do
+      Spree::Media.additional_permitted_attributes += [:credit]
+      Spree::Variant.additional_permitted_attributes += [:brand_code]
+
+      expect_any_instance_of(described_class).to receive(:permitted_params).at_least(:once).and_wrap_original do |original|
+        result = original.call
+        expect(result[:media].first.keys).to include('credit')
+        expect(result[:variants].first.keys).to include('brand_code')
+        result.except('media', 'variants')
+      end
+
+      patch :update, params: {
+        id: product.prefixed_id,
+        media: [{ alt: 'Front', credit: 'Jane' }],
+        variants: [{ sku: 'EXT-1', brand_code: 'ACME' }]
+      }, as: :json
     end
 
     it 'drops an attribute nobody declared' do

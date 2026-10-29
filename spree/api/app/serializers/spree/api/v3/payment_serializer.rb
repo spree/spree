@@ -4,7 +4,7 @@ module Spree
       class PaymentSerializer < BaseSerializer
         typelize status: [:string, enum: Spree::Payment.statuses, enum_type_name: 'PaymentStatus'],
                  payment_method_id: :string, response_code: [:string, nullable: true], number: :string,
-                 source_type: [:string, nullable: true, enum: %w[credit_card store_credit payment_source]],
+                 source_type: [:string, nullable: true, enum: %w[credit_card store_credit payment_source], enum_type_name: 'PaymentSourceType'],
                  source_id: [:string, nullable: true], source: 'CreditCard | StoreCredit | PaymentSource | null'
 
         prefixed_id_attributes :payment_method
@@ -42,10 +42,12 @@ module Spree
                          Spree.api.payment_source_serializer
                        end
 
-          serializer.new(payment.source).to_h
+          serializer.new(payment.source, params: nested_params('source')).to_h
         end
 
         one :payment_method, resource: proc { Spree.api.payment_method_serializer }
+
+        expandable_custom_fields
       end
     end
   end

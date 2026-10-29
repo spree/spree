@@ -463,6 +463,9 @@ en:
               required_for_carton_purchase_unit: is required when the purchase unit is cartons
         spree/webhook_endpoint:
           attributes:
+            subscriptions:
+              invalid_pattern: 'must hold event names or patterns such as order.* or *.created (rejected: %{entries})'
+              too_many: can hold at most %{count} entries
             url:
               internal_address_not_allowed: must not point to an internal or private network address
               invalid_url: must be a valid http or https URL
@@ -685,6 +688,8 @@ en:
     canceler: Canceler
     cannot_be_destroyed: Order cannot be destroyed.
     capture: Capture
+    capture_amount_not_positive: The capture amount must be greater than zero.
+    capture_exceeds_payment_amount: The capture amount cannot exceed the payment amount.
     cart: Cart
     cart_already_updated: The cart has already been updated.
     cart_completion_in_progress: The cart is being completed. Please retry in a moment.
@@ -765,6 +770,7 @@ en:
     created_at: Created at
     credit_card: Credit Card
     currency: Currency
+    currency_does_not_match_market: must be %{currency}, the currency of the chosen market
     currency_not_supported_by_store: is not supported by this store
     custom_field_definitions: Custom Field Definitions
     custom_fields: Custom Fields
@@ -773,7 +779,9 @@ en:
       anonymize_failed: The erasure could not be completed and nothing was changed
     customers: Customers
     data_request_errors:
+      address_changed: The account's email address changed after this request was made
       already_anonymized: This customer's personal data has already been erased
+      confirmation_invalid: This confirmation link has expired or is no longer valid
       download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
     default: Default
@@ -814,6 +822,11 @@ en:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
     digital_assets_attachment_must_be_private: Upload the file to private storage before attaching it
+    digital_assets_content_type_list_invalid: 'Not a content type: %{types}. Use the type/subtype form, such as application/pdf'
+    digital_assets_content_type_not_accepted: "%{content_type} files are not accepted on this marketplace"
+    digital_assets_provider_takes_no_file: This file is delivered by the marketplace's own system, so a replacement file cannot be uploaded
+    digital_assets_sellers_disabled: This marketplace does not let sellers add or change digital files
+    digital_assets_upload_not_found: The uploaded file could not be found. Upload it again
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     display_delivery_range: Delivery in %{delivery_range} business days
@@ -1016,8 +1029,10 @@ en:
     line_items: Line items
     link: Link
     locale: Locale
+    locale_not_supported_by_market: is not offered by the chosen market
     locale_not_supported_by_store: is not supported by this store
     locales_not_listed: 'includes locales Spree does not support: %{codes}'
+    maintenance_tasks_turned_off: Maintenance tasks are turned off for this installation. Run upgrade steps from the command line with `spree upgrade` (or `bin/rake spree:upgrade`).
     manual: Manual
     market: Market
     me_no_current_user: No admin user authenticated this request

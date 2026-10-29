@@ -69,34 +69,34 @@ spree stop
 
 ### `spree restart`
 
-Restart `web` and `worker` in place — same image, same volumes, fresh Rails process. Good for `config/initializers/*.rb` changes or anything Zeitwerk doesn't auto-reload.
+Restart `web` and `worker` in place — same image, same volumes, fresh backend process. Good for configuration changes the backend doesn't reload on its own.
 
 ```bash
 spree restart
 ```
 
-Not appropriate for Gemfile changes (use `spree bundle install`, then Ctrl+C and re-run `spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
+Not appropriate for dependency changes (Ctrl+C and re-run `spree dev`), Dockerfile or runtime version changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
 
 ### `spree build`
 
-Rebuild the dev image after Dockerfile or `.ruby-version` changes. Only relevant after `spree eject`.
+Rebuild the dev image after Dockerfile or runtime version changes. Only relevant after `spree eject`.
 
 ```bash
 spree build
-spree build --reset-bundle   # Also drop the bundle_cache volume so gems re-seed
+spree build --reset-deps     # Also drop the cached backend dependencies so they re-install
 spree build --yes            # Skip confirmation prompts (for CI)
 ```
 
-`spree bundle add` does NOT require a rebuild — gems land in the `bundle_cache` volume which survives image rebuilds.
+`spree add <extension>` does NOT require a rebuild — dependencies land in a cache volume which survives image rebuilds.
 
-`--reset-bundle` only drops `bundle_cache`. Postgres, Redis, Meilisearch, and storage volumes are preserved.
+`--reset-deps` only drops that cache. Postgres, Redis, Meilisearch, and storage volumes are preserved.
 
 ### `spree upgrade`
 
 Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
 
 1. **Update the server** — on a project that runs the prebuilt image, it pulls the latest Spree image. On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`.
-2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
+2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and SDKs in `apps/dashboard` and `apps/seller-dashboard`. The dashboard packages and SDKs move to the Spree version your server now runs. `@spree/cli` moves to the newest release its range in `package.json` allows.
 3. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
 4. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
 
@@ -120,7 +120,7 @@ Production upgrades only need the data backfills — installing gems and migrati
 
 ### `spree eject`
 
-Switch from the prebuilt Docker image to building from your local `server/` directory. This lets you customize the Rails app — add gems, override models, add migrations, etc.
+Switch from the prebuilt Docker image to building from your local `server/` directory. This lets you customize the backend — add extensions, override models, add migrations, etc.
 
 ```bash
 spree eject
@@ -132,15 +132,46 @@ See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing
 
 ### `spree add`
 
-Add an optional part to an existing project.
+Add an optional part or an extension to an existing project.
 
 ```bash
 spree add dashboard           # the Admin Dashboard app in apps/dashboard/, to customize it
 spree add seller-dashboard    # the marketplace Seller Panel in apps/seller-dashboard/
 spree add ai                  # Spree agent skills + the docs MCP server for coding agents
+spree add stripe              # an extension, installed end to end
 ```
 
 `spree add ai` installs the [Spree agent skills](/developer/agentic/agent-skills) and connects Claude Code, Cursor and VS Code to the [docs MCP server](/developer/agentic/docs-mcp). It keeps the MCP servers your config files already list and is safe to re-run. Pass `--no-skills` or `--no-mcp` to set up only one of the two.
+
+#### Extensions
+
+`spree add <extension>` installs an official extension in one step: it adds the gem, runs the extension's installer if it has one, runs the migrations, installs its dashboard plugin if it has one, and restarts the server if it is running.
+
+| Extension | Command |
+| --- | --- |
+| [Stripe](/integrations/payments/stripe) | `spree add stripe` |
+| [PayPal](/integrations/payments/paypal) | `spree add paypal` |
+| [Adyen](/integrations/payments/adyen) | `spree add adyen` |
+| [Avalara AvaTax](/integrations/tax/avalara) | `spree add avatax` |
+| [Klaviyo](/integrations/marketing/klaviyo) | `spree add klaviyo` |
+| [EasyPost](/integrations/shipping/easypost) | `spree add easypost` |
+| [Meilisearch](/integrations/search/meilisearch) | `spree add meilisearch` |
+| [MCP server](/developer/mcp/quick-start) | `spree add mcp` |
+| [OpenTelemetry](/developer/providers/observability) | `spree add opentelemetry` |
+
+A few things to know:
+
+- **A project on the prebuilt image is ejected first.** The prebuilt image cannot load new gems, so the command offers to [eject](#spree-eject) the project. Ejecting switches to a new development database without your current data, so it asks before doing it. Pass `--yes` to agree up front, for example in a script.
+- **New projects already include some extensions.** Stripe, EasyPost, Meilisearch and OpenTelemetry come with every new project. Until you eject, the command tells you there is nothing to install for those. After ejecting, it runs their installer and migrations again, which is harmless.
+- **It is safe to run again.** If an install fails partway, the command puts your `Gemfile` and `config/` back as they were. Running it again finishes an install that stopped halfway, and keeps files the first run created.
+- **Setup notes come from the extension.** If an extension needs anything else, such as an environment variable, it says so while it installs.
+
+To install an extension that is not in this list, name its gem or dashboard plugin package. The command asks you to confirm, since Spree does not vouch for it:
+
+```bash
+spree add --gem spree_acme_loyalty
+spree add --gem spree_acme_loyalty --npm @acme/loyalty-dashboard
+```
 
 ### `spree logs`
 
@@ -153,7 +184,7 @@ spree logs worker  # Worker service
 
 ### `spree console`
 
-Open a Rails console.
+Open an interactive backend console.
 
 ```bash
 spree console
@@ -161,7 +192,7 @@ spree console
 
 ### `spree shell`
 
-Open an interactive bash shell inside the web container — the system-shell sibling of `spree console` (Rails) and `spree db:console` (psql). If the web container is down, it starts a one-off container against the same volumes instead. For one-off non-interactive commands, use `spree exec`.
+Open an interactive bash shell inside the web container — the system-shell sibling of `spree console` and `spree db:console` (psql). If the web container is down, it starts a one-off container against the same volumes instead. For one-off non-interactive commands, use `spree exec`.
 
 ```bash
 spree shell
@@ -249,7 +280,7 @@ spree auth logout --profile prod
 
 ## Dev workflow commands
 
-These mirror the Rails commands you'd run if you were running the app directly on your host — but each is routed through `docker compose exec` against the running stack.
+These commands run inside the project's containers against the running stack. The one exception is `spree filters types --from`, which reads a saved file and needs no running stack.
 
 ### `spree generate`
 
@@ -271,20 +302,23 @@ Generate TypeScript declarations for your app's list filters, so the SDKs accept
 ```bash
 spree filters types                                                    # every app under apps/
 spree filters types --api store --out ../my-storefront/src/types/spree-filters.d.ts   # one app elsewhere
-spree filters types --from filter-tables.json                         # from `bin/rails spree:api:filter_tables` output
+spree filters types --from filter-tables.json                         # from `spree task api:filter_tables` output
 ```
 
 See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
 
 ### `spree migrate`
 
-Install pending Spree migrations from gems, then run `db:migrate` — the canonical post-update sequence.
+Install pending Spree migrations, then run them — the canonical post-update sequence.
 
 ```bash
 spree migrate
-spree migrate:status            # show the migration log (`db:migrate:status`)
-spree migrate:rollback STEP=2   # roll back (`db:rollback`)
+spree migrate:status               # show which migrations have run
+spree migrate:rollback             # roll back the last migration
+spree migrate:rollback --steps 2   # roll back the last two
 ```
+
+`spree migrate:status` and `spree migrate:rollback` use the backend's own migration tooling, so they may change in a future major release. `spree migrate` itself stays the same.
 
 ### `spree db:reset`
 
@@ -303,84 +337,41 @@ Open a `psql` session against the dev Postgres database (runs inside the `postgr
 spree db:console
 ```
 
-### `spree routes`
+### `spree test`
 
-Show Rails routes. All flags pass through to `bin/rails routes`.
-
-```bash
-spree routes
-spree routes -g products                                 # Filter by pattern
-spree routes -c Spree::Api::V3::Store::ProductsController   # Filter by controller
-spree routes --expanded
-```
-
-### `spree rspec`
-
-Run the RSpec test suite inside the web container with `RAILS_ENV=test`, so tests hit the `spree_test` database — never your development data. Everything after `rspec` passes through, so file paths, line numbers, and flags work as usual.
+Run the backend test suite inside the web container against the test database — never your development data. Everything after `test` goes to the backend's test runner (RSpec today), so file paths, line numbers and flags follow that runner's format.
 
 ```bash
-spree rspec                                      # full suite
-spree rspec spec/models/spree/brand_spec.rb      # one file
-spree rspec spec/models/spree/brand_spec.rb:15   # one example
-spree rspec --format documentation
+spree test                                      # full suite
+spree test spec/models/spree/brand_spec.rb      # one file
+spree test spec/models/spree/brand_spec.rb:15   # one example
+spree test --format documentation
 ```
 
-Before the first run, create the test database with `spree rails db:test:prepare`. See the [Testing tutorial](/developer/tutorial/testing) for writing specs.
+The test database is created on the first run. See the [Testing tutorial](/developer/tutorial/testing) for writing specs.
 
 ## Running things inside the container
 
-These are passthrough commands — anything after the subcommand reaches the inner Rails/Bundle/Rake invocation as-is. Useful for ad-hoc commands that don't have a dedicated wrapper.
+### `spree task`
+
+Run a Spree maintenance task. The task names are stable; anything after the name goes to the task in the task runner's own format.
+
+```bash
+spree task load_sample_data
+spree task search:reindex
+spree task price_history:seed
+spree task price_history:prune
+```
 
 ### `spree exec`
 
-Run an arbitrary command inside the `web` container.
+Run an arbitrary command inside the `web` container. Use it for anything without a dedicated command.
 
 ```bash
 spree exec ls -la
 spree exec env
-spree exec ruby -v
-```
-
-### `spree rails`
-
-Run a `bin/rails` command.
-
-```bash
-spree rails c                                  # Console (alias of `spree console`)
-spree rails routes -g products                 # Alias of `spree routes -g products`
-spree rails runner "puts Spree::Product.count"
-spree rails new_subcommand arg1 arg2
-```
-
-### `spree bundle`
-
-Run a `bundle` command. Gems land in the `bundle_cache` volume (no image rebuild needed).
-
-```bash
-spree bundle install
-spree bundle add stripe
-spree bundle update spree_core
-spree bundle outdated
-```
-
-### `spree rake`
-
-Run a Rake task.
-
-```bash
-spree rake -T                          # List tasks
-spree rake spree:upgrade               # Run the version-specific data backfills
-spree rake spree:upgrade DRY_RUN=1     # Same, plan only
-```
-
-### `spree task`
-
-Shortcut for `bin/rails <task>` (Spree-style rake tasks registered as Rails tasks).
-
-```bash
-spree task load_sample_data
-spree task spree:price_history:seed
-spree task spree:price_history:prune
+spree exec bin/rails runner "puts Spree::Product.count"
+spree exec bundle outdated
 ```
 
 ## Pair with AI agents

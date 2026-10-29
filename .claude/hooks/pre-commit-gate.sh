@@ -18,7 +18,7 @@ set -u
 cmd=$(jq -r '.tool_input.command // empty')
 
 # Full test suites are queued machine-wide and are otherwise CI's job (see
-# CLAUDE.md "Testing"). Block the bare forms so a session that has not read the
+# AGENTS.md "Testing"). Block the bare forms so a session that has not read the
 # rule is redirected to the wrappers; targeted `rspec <paths>` runs pass.
 while IFS= read -r segment; do
   seg="${segment#"${segment%%[![:space:]]*}"}"
@@ -33,7 +33,7 @@ while IFS= read -r segment; do
       echo "  pnpm test:changed                    specs covering this branch's changed files"
       echo "  pnpm test:rspec <engine> [paths]     one engine; a full suite is queued, capped and low priority"
       echo "  pnpm wt:e2e [spec]                   Playwright, queued the same way"
-      echo "Then push and watch CI for the full suite. If these commands are missing, run 'git merge main' first. See CLAUDE.md, Testing."
+      echo "Then push and watch CI for the full suite. If these commands are missing, run 'git merge main' first. See AGENTS.md, Testing."
     } >&2
     exit 2
   fi

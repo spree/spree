@@ -4,8 +4,10 @@ import { SetupTaskSchema } from './SetupTask';
 
 export const StoreSchema = z.object({
   id: z.string(),
-  metadata: z.record(z.string(), z.unknown()),
   name: z.string(),
+  seo_title: z.string().nullable(),
+  meta_description: z.string().nullable(),
+  metadata: z.record(z.string(), z.unknown()),
   code: z.string(),
   default_currency: z.string(),
   default_locale: z.string(),
@@ -43,6 +45,9 @@ export const StoreSchema = z.object({
   default_payouts_schedule_interval: z.string(),
   auto_approve_sellers: z.boolean(),
   auto_approve_seller_products: z.boolean(),
+  seller_digital_assets_enabled: z.boolean(),
+  seller_digital_asset_content_types: z.array(z.string()),
+  review_seller_digital_asset_changes: z.boolean(),
   send_seller_transactional_emails: z.boolean(),
   document_number_format: z.string(),
   order_number_prefix: z.string(),

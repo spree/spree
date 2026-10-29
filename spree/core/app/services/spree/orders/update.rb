@@ -14,6 +14,7 @@ module Spree
 
         items_param = @params.delete(:items)
         address_params = extract_address_params
+        scope_store_references
 
         # requires_new: the rescue below sits outside the block, so joining a
         # caller's open transaction (the API's order lock) would let it commit
@@ -61,6 +62,24 @@ module Spree
         ADDRESS_PARAM_ALIASES.transform_values do |aliases|
           aliases.map { |key| @params.delete(key) }.compact.find(&:present?)
         end.compact_blank
+      end
+
+      # Named by id in the payload and read through the order's own store, as
+      # Orders::Create does: the model only checks that the record exists, so
+      # another store's market, channel or warehouse would otherwise be
+      # accepted.
+      STORE_REFERENCES = {
+        market_id: :markets,
+        channel_id: :channels,
+        preferred_stock_location_id: :stock_locations
+      }.freeze
+
+      def scope_store_references
+        STORE_REFERENCES.each do |key, association|
+          next if @params[key].blank?
+
+          @params[key] = @order.store.public_send(association).find_by_param!(@params[key]).id
+        end
       end
 
       def assign_addresses(address_params)

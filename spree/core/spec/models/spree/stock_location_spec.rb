@@ -195,7 +195,7 @@ module Spree
 
     it 'allocates a variant to a fulfillment' do
       fulfillment = double
-      expect(subject).to receive(:move).with(variant, 2, kind: 'allocated', cause: fulfillment)
+      expect(subject).to receive(:move).with(variant, 2, kind: 'allocated', cause: fulfillment, stock_level: nil)
       subject.allocate(variant, 2, fulfillment)
     end
 
@@ -206,7 +206,7 @@ module Spree
     end
 
     it 'adjusts a variant with a reason' do
-      expect(subject).to receive(:move).with(variant, -2, kind: 'adjusted', reason: 'Damaged')
+      expect(subject).to receive(:move).with(variant, -2, kind: 'adjusted', reason: 'Damaged', stock_level: nil)
       subject.adjust(variant, -2, reason: 'Damaged')
     end
 

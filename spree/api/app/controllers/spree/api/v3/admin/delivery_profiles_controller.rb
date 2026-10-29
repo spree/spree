@@ -74,7 +74,7 @@ module Spree
           end
 
           def collection_includes
-            [delivery_origin_groups: :stock_locations]
+            [:delivery_methods, :delivery_zones, { delivery_origin_groups: :stock_locations }]
           end
 
           private

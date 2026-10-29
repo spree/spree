@@ -13,13 +13,14 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { CurrencyCode } from '@spree/admin-sdk'
+import type { CurrencyCode } from '@spree/core'
 import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
 import {
   getApiClient,
   MediaPickerSheet,
   parseVideoUrl,
   ResourceMultiAutocomplete,
+  Slot,
   TagCombobox,
   useFileUpload,
   useOptionalStore,
@@ -86,7 +87,11 @@ import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
 import { ProductBulkPriceEditor } from './product-bulk-price-editor'
 import { variantHasTaxCategoryOverride } from './product-form-mapping'
-import type { VariantFormValues } from './product-schema'
+import {
+  ASSIGNABLE_PRODUCT_STATUSES,
+  type MediaFormValues,
+  type VariantFormValues,
+} from './product-schema'
 import type {
   PanelMedia as Media,
   PanelProduct as Product,
@@ -175,8 +180,12 @@ export function GeneralCard({
 // Variants (just a passthrough so the page composition reads top-down)
 // ---------------------------------------------------------------------------
 
-export function VariantsCard({ form, seedFromType }: FormCardProps & { seedFromType?: boolean }) {
-  return <VariantsSection form={form} seedFromType={seedFromType} />
+export function VariantsCard({
+  form,
+  seedFromType,
+  formKey = 'product',
+}: FormCardProps & { seedFromType?: boolean; formKey?: string }) {
+  return <VariantsSection form={form} seedFromType={seedFromType} formKey={formKey} />
 }
 
 // ---------------------------------------------------------------------------
@@ -260,6 +269,13 @@ export function PricesCard({
 // merchant sees where uploads will go but can't trigger them.
 // ---------------------------------------------------------------------------
 
+/**
+ * A media entry appended to the gallery without an upload: a `signed_id` from
+ * a finished upload, a library `source_media_id`, or an external video link.
+ * `previewUrl` is what the tile shows until the product is saved.
+ */
+export type NewMediaEntry = Omit<MediaFormValues, 'position' | 'uploadId'>
+
 interface PendingUpload {
   id: string
   file: File
@@ -289,8 +305,11 @@ export function MediaCard({
   productId,
   variants,
   form,
+  formKey = 'product',
 }: {
   productId?: string
+  /** The product form's key — names the media slots and the rows' extension fields. */
+  formKey?: string
   // The MediaEditSheet's "assign to variant" pill row needs the list of
   // server-persisted variants — only those have an id that can ride the
   // PATCH's media[].variant_ids. Form-state variants without a server id
@@ -413,45 +432,19 @@ export function MediaCard({
 
   // An external video has no file to upload — it goes straight into form state
   // with its link, and the provider's own still stands in as the preview.
-  const handleAddVideo = useCallback(
-    (url: string) => {
+  // Appends entries that need no upload of their own — a video link, a
+  // library pick, or whatever a `<formKey>.media.actions` widget hands over —
+  // positioned after the existing ones. They save with the product.
+  const appendMedia = useCallback(
+    (entries: NewMediaEntry[]) => {
       const current = form.getValues('media') ?? []
       form.setValue(
         'media',
         [
           ...current,
-          {
-            media_type: 'external_video' as const,
-            external_video_url: url,
-            position: current.length + 1,
-            previewUrl: parseVideoUrl(url)?.thumbnailUrl ?? undefined,
-            uploadId: crypto.randomUUID(),
-          },
-        ],
-        { shouldDirty: true },
-      )
-    },
-    [form],
-  )
-
-  // Files picked from the library become ordinary form entries carrying the
-  // source's id. The product save places them, sharing the file rather than
-  // uploading a second copy.
-  const handleAddFromLibrary = useCallback(
-    (picked: Media[]) => {
-      const current = form.getValues('media') ?? []
-      form.setValue(
-        'media',
-        [
-          ...current,
-          ...picked.map((media, index) => ({
-            source_media_id: media.id,
-            alt: media.alt ?? undefined,
-            media_type: (media.media_type ?? 'image') as MediaType,
+          ...entries.map((entry, index) => ({
+            ...entry,
             position: current.length + index + 1,
-            previewUrl: media.small_url ?? media.original_url ?? undefined,
-            videoUrl: media.video_url ?? null,
-            posterUrl: media.poster_url ?? null,
             uploadId: crypto.randomUUID(),
           })),
         ],
@@ -459,6 +452,36 @@ export function MediaCard({
       )
     },
     [form],
+  )
+
+  const handleAddVideo = useCallback(
+    (url: string) =>
+      appendMedia([
+        {
+          media_type: 'external_video',
+          external_video_url: url,
+          previewUrl: parseVideoUrl(url)?.thumbnailUrl ?? undefined,
+        },
+      ]),
+    [appendMedia],
+  )
+
+  // Files picked from the library become ordinary form entries carrying the
+  // source's id. The product save places them, sharing the file rather than
+  // uploading a second copy.
+  const handleAddFromLibrary = useCallback(
+    (picked: Media[]) =>
+      appendMedia(
+        picked.map((media) => ({
+          source_media_id: media.id,
+          alt: media.alt ?? undefined,
+          media_type: (media.media_type ?? 'image') as MediaType,
+          previewUrl: media.small_url ?? media.original_url ?? undefined,
+          videoUrl: media.video_url ?? null,
+          posterUrl: media.poster_url ?? null,
+        })),
+      ),
+    [appendMedia],
   )
 
   const handleDelete = useCallback(
@@ -620,6 +643,11 @@ export function MediaCard({
               <FilmIcon />
               {t('admin.products.media.add_video')}
             </Button>
+
+            <Slot
+              name={`${formKey}.media.actions`}
+              context={{ productId, addMedia: appendMedia }}
+            />
           </div>
         </CardContent>
       </Card>
@@ -649,6 +677,8 @@ export function MediaCard({
           onOpenChange={(open) => {
             if (!open) setEditingIndex(null)
           }}
+          formKey={formKey}
+          productId={productId}
         />
       )}
     </>
@@ -889,8 +919,6 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
 // Status
 // ---------------------------------------------------------------------------
 
-const ASSIGNABLE_STATUSES = ['draft', 'active', 'archived']
-
 export function StatusCard({
   form,
   reviewActions,
@@ -915,9 +943,11 @@ export function StatusCard({
   // made, so the operator can move the product on from here like any other —
   // overriding their own refusal is not a review action, and leaving the
   // picker disabled there was a dead end with no way out.
-  const inReview = Boolean(status) && !ASSIGNABLE_STATUSES.includes(status as string)
+  const inReview = Boolean(status) && !ASSIGNABLE_PRODUCT_STATUSES.includes(status as string)
   const awaitingDecision = status === 'proposed'
-  const values = inReview ? [status as string, ...ASSIGNABLE_STATUSES] : ASSIGNABLE_STATUSES
+  const values = inReview
+    ? [status as string, ...ASSIGNABLE_PRODUCT_STATUSES]
+    : ASSIGNABLE_PRODUCT_STATUSES
 
   return (
     <SharedStatusCard<ProductFormValues>

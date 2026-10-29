@@ -27,7 +27,8 @@ Upgrading an older store, or deliberately removed it? Add the gem back:
   </Tab>
   <Tab title="Without CLI">
     ```ruby server/Gemfile
-    gem 'spree_mcp'
+    # use the same version requirement as your `spree` gem
+    gem 'spree_mcp', '>= 6.0.0'
     ```
 
     ```bash

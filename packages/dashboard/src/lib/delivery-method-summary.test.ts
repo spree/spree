@@ -1,62 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  amountForCurrency,
-  applyCurrencyAmount,
-  formatListedPrice,
-  listedAmounts,
-} from './delivery-method-summary'
-
-describe('listedAmounts', () => {
-  it('reads the legacy single amount as the store default currency', () => {
-    expect(listedAmounts({ amount: '5' }, 'USD')).toEqual([{ amount: '5', currency: 'USD' }])
-  })
-
-  it('attributes the legacy amount to its own currency preference', () => {
-    expect(listedAmounts({ amount: '7', currency: 'EUR' }, 'USD')).toEqual([
-      { amount: '7', currency: 'EUR' },
-    ])
-  })
-
-  it('reads a non-default currency from the amounts hash when the default is empty', () => {
-    expect(listedAmounts({ amounts: { EUR: '7' } }, 'USD')).toEqual([
-      { amount: '7', currency: 'EUR' },
-    ])
-  })
-
-  it('reads the editor-written hash even when the single amount is zero', () => {
-    expect(listedAmounts({ amount: '0', amounts: { EUR: '11' } }, 'USD')).toEqual([
-      { amount: '0', currency: 'USD' },
-      { amount: '11', currency: 'EUR' },
-    ])
-  })
-
-  it('keeps each hash amount against the currency it was entered in', () => {
-    expect(listedAmounts({ amounts: { GBP: '8', EUR: '7' } }, 'USD')).toEqual([
-      { amount: '7', currency: 'EUR' },
-      { amount: '8', currency: 'GBP' },
-    ])
-  })
-
-  it('lists the default-currency amount first when both sources have a price', () => {
-    expect(listedAmounts({ amount: '5', amounts: { EUR: '7' } }, 'USD')).toEqual([
-      { amount: '5', currency: 'USD' },
-      { amount: '7', currency: 'EUR' },
-    ])
-  })
-
-  it('lets the amounts hash override the legacy amount for the same currency', () => {
-    expect(listedAmounts({ amount: '5', amounts: { USD: '6', EUR: '7' } }, 'USD')).toEqual([
-      { amount: '6', currency: 'USD' },
-      { amount: '7', currency: 'EUR' },
-    ])
-  })
-
-  it('ignores blank hash entries so an emptied currency is not offered', () => {
-    expect(listedAmounts({ amounts: { EUR: '', GBP: '8' } }, 'USD')).toEqual([
-      { amount: '8', currency: 'GBP' },
-    ])
-  })
-})
+import { formatListedPrice } from './delivery-method-summary'
 
 describe('formatListedPrice', () => {
   const separator = ' · '
@@ -79,7 +22,7 @@ describe('formatListedPrice', () => {
 
   it('joins one price per stored currency', () => {
     expect(
-      formatListedPrice({ amount: '5', amounts: { EUR: '7' } }, 'USD', 'en', 'Free', separator),
+      formatListedPrice({ amounts: { USD: '5', EUR: '7' } }, 'USD', 'en', 'Free', separator),
     ).toBe('$5.00 · €7.00')
   })
 
@@ -95,76 +38,5 @@ describe('formatListedPrice', () => {
     expect(
       formatListedPrice({ amount: '0', amounts: { EUR: '11' } }, 'USD', 'en', 'Free', separator),
     ).toBe('€11.00')
-  })
-})
-
-describe('amountForCurrency', () => {
-  it('puts a pre-6.0 euro amount in the euro row, not the store default', () => {
-    const preferences = { amount: '7', currency: 'EUR' }
-    expect(amountForCurrency(preferences, 'EUR', 'USD')).toBe('7')
-    expect(amountForCurrency(preferences, 'USD', 'USD')).toBeNull()
-  })
-
-  it('reads an editor-written euro price from the amounts hash', () => {
-    const preferences = { amount: '0', amounts: { EUR: '11' } }
-    expect(amountForCurrency(preferences, 'EUR', 'USD')).toBe('11')
-    expect(amountForCurrency(preferences, 'USD', 'USD')).toBe('0')
-  })
-
-  it('treats a blank currency preference as the store default', () => {
-    expect(amountForCurrency({ amount: '5' }, 'USD', 'USD')).toBe('5')
-    expect(amountForCurrency({ amount: '5' }, 'EUR', 'USD')).toBeNull()
-  })
-
-  it('trims surrounding space on the legacy currency preference', () => {
-    const preferences = { amount: '7', currency: ' EUR ' }
-    expect(amountForCurrency(preferences, 'EUR', 'USD')).toBe('7')
-    expect(amountForCurrency(preferences, 'USD', 'USD')).toBeNull()
-  })
-
-  it('reads a lowercase amounts-hash key as that currency', () => {
-    expect(amountForCurrency({ amounts: { eur: '7' } }, 'EUR', 'USD')).toBe('7')
-  })
-})
-
-describe('applyCurrencyAmount', () => {
-  it('keeps a pre-6.0 euro price when the dollar row is edited', () => {
-    expect(applyCurrencyAmount({ amount: '7', currency: 'EUR' }, 'USD', '10', 'USD')).toEqual({
-      amount: '10',
-      currency: 'USD',
-      amounts: { EUR: '7' },
-    })
-  })
-
-  it('updates the named currency in place on a pre-6.0 method', () => {
-    expect(applyCurrencyAmount({ amount: '7', currency: 'EUR' }, 'EUR', '11', 'USD')).toEqual({
-      amount: '11',
-      currency: 'EUR',
-      amounts: { EUR: '11' },
-    })
-  })
-
-  it('writes a non-default currency into the amounts hash', () => {
-    expect(applyCurrencyAmount({ amount: '5', currency: 'USD' }, 'EUR', '11', 'USD')).toEqual({
-      amount: '5',
-      currency: 'USD',
-      amounts: { EUR: '11' },
-    })
-  })
-
-  it('updates and clears a lowercase stored hash key without leaving a stale entry', () => {
-    expect(applyCurrencyAmount({ amounts: { eur: '7' } }, 'EUR', '11', 'USD')).toEqual({
-      amounts: { EUR: '11' },
-    })
-    expect(applyCurrencyAmount({ amounts: { eur: '7' } }, 'EUR', '', 'USD')).toEqual({
-      amounts: {},
-    })
-  })
-
-  it('sends the amount as the exact string typed, and a cleared default amount as zero', () => {
-    expect(applyCurrencyAmount({ amount: '5.0' }, 'USD', '9.99', 'USD')).toMatchObject({
-      amount: '9.99',
-    })
-    expect(applyCurrencyAmount({ amount: '5.0' }, 'USD', '', 'USD')).toMatchObject({ amount: '0' })
   })
 })

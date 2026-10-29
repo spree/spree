@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Field, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
+import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 /** A unit on the order that a return, exchange or claim can name. */
@@ -31,26 +32,27 @@ export function QuantityPicker({
   return (
     <div className="flex flex-col gap-2">
       {units.map((unit) => (
-        <div
-          key={unit.id}
-          className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-        >
-          <span className="min-w-0 truncate text-sm">{unit.label}</span>
-          <Input
-            type="number"
-            min={0}
-            max={unit.quantity}
-            className="w-20"
-            value={selection[unit.id] ?? 0}
-            aria-label={unit.label}
-            onChange={(event) =>
-              onChange({
-                ...selection,
-                [unit.id]: Math.max(0, Math.min(Number(event.target.value), unit.quantity)),
-              })
-            }
-          />
-        </div>
+        <Item key={unit.id} variant="outline" className="flex-nowrap border-border-subtle">
+          <ItemContent className="min-w-0">
+            <ItemTitle className="block truncate font-normal">{unit.label}</ItemTitle>
+          </ItemContent>
+          <ItemActions>
+            <Input
+              type="number"
+              min={0}
+              max={unit.quantity}
+              className="w-20"
+              value={selection[unit.id] ?? 0}
+              aria-label={unit.label}
+              onChange={(event) =>
+                onChange({
+                  ...selection,
+                  [unit.id]: Math.max(0, Math.min(Number(event.target.value), unit.quantity)),
+                })
+              }
+            />
+          </ItemActions>
+        </Item>
       ))}
     </div>
   )

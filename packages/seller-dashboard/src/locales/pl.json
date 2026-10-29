@@ -744,7 +744,8 @@
     "variant_remove_confirm_description": "Zniknie z produktu po zapisaniu.",
     "variant_remove_confirm_title": "Usunąć ten wariant?",
     "variants": "Warianty",
-    "variants_empty": "Ten produkt sprzedajesz jako jedną pozycję, w cenie powyżej. Dodaj wariant, aby sprzedawać go w opcjach takich jak rozmiar czy kolor."
+    "variants_empty": "Ten produkt sprzedajesz jako jedną pozycję, w cenie powyżej. Dodaj wariant, aby sprzedawać go w opcjach takich jak rozmiar czy kolor.",
+    "digital_files_review_notice": "Dodanie lub zastąpienie pliku wysyła ten produkt ponownie do weryfikacji; do ponownego zatwierdzenia przez marketplace nie jest w sprzedaży."
   },
   "profile": {
     "about": "O sprzedawcy",

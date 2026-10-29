@@ -5,6 +5,9 @@ module Spree
     included do
       extend Mobility
       default_scope { i18n }
+
+      # Before the translations are autosaved, so it has to run first.
+      after_update :discard_blank_new_translations, prepend: true
     end
 
     class_methods do
@@ -85,6 +88,40 @@ module Spree
       def arel_table_alias
         Arel::Table.new(translation_table_alias)
       end
+
+      # Sorts translated fields by the translation, or by the default-language
+      # value in the base column when the translation is missing or empty.
+      # Ransack sorts them by the translation alone, which leaves untranslated
+      # records unordered. On a DISTINCT relation the value is selected as
+      # well, because PostgreSQL rejects an ORDER BY the select list lacks.
+      #
+      # @return [ActiveRecord::Relation]
+      def with_translation_fallback_order
+        relation = all
+        return relation unless relation.order_values.any? { |node| translated_ordering?(node) }
+
+        relation = relation.select(arel_table[Arel.star]) if relation.distinct_value && relation.select_values.empty?
+        orders = relation.order_values.map do |node|
+          next node unless translated_ordering?(node)
+
+          value = Arel::Nodes::NamedFunction.new('COALESCE', [
+            Arel::Nodes::NamedFunction.new('NULLIF', [node.expr, Arel::Nodes.build_quoted('')]),
+            arel_table[node.expr.name]
+          ])
+          relation = relation.select(Arel::Nodes::As.new(value, Arel.sql('translated_sort'))) if relation.distinct_value
+          node.class.new(value)
+        end
+
+        relation.reorder(orders)
+      end
+
+      private
+
+      def translated_ordering?(node)
+        node.is_a?(Arel::Nodes::Ordering) &&
+          node.expr.is_a?(Mobility::Plugins::Arel::Attribute) &&
+          self <= node.expr.backend_class.model_class
+      end
     end
 
     def get_field_with_locale(locale, field_name, fallback: false)
@@ -134,10 +171,31 @@ module Spree
     def translatable_store
       return self if is_a?(Spree::Store)
 
-      try(:store) || Spree::Current.store
+      current_store = Spree::Current.store
+      # The request's store instance already carries its markets, so a batch
+      # of records does not re-read them once per record's own store copy.
+      return current_store if current_store && try(:store_id) == current_store.id
+
+      try(:store) || current_store
     end
 
     private
+
+    # Clearing a translation's last value deletes its row, and Mobility then
+    # rebuilds a blank one for that locale while it finalizes dirty tracking.
+    # Saved, that blank row is either junk or, where translation rows are soft
+    # deleted (stores), a duplicate of the deleted row.
+    def discard_blank_new_translations
+      return unless association(:translations).loaded?
+
+      columns = self.class.translatable_fields.map(&:to_s)
+      translations.each do |translation|
+        next unless translation.new_record?
+        next if columns.any? { |column| translation[column].present? }
+
+        translation.mark_for_destruction
+      end
+    end
 
     # @raise [ActiveRecord::RecordInvalid] if any locale isn't supported by the store
     def validate_translation_locales!(locales)

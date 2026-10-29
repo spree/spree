@@ -4,11 +4,13 @@ import type {
   CommissionRateCreateParams,
   CommissionRuleType,
 } from '@spree/admin-sdk'
+import { COMMISSION_KINDS } from '@spree/core'
 import {
   adminClient,
   Can,
   mapSpreeErrorsToForm,
   PreferencesForm,
+  RecordMetadataSection,
   ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
@@ -75,7 +77,6 @@ import {
 import { slugify } from '../../../../lib/slugify'
 import {
   COMMISSION_RATE_DEFAULTS,
-  COMMISSION_RATE_KINDS,
   type CommissionRateFormValues,
   commissionRateFormSchema,
   commissionRateToFormValues,
@@ -301,6 +302,7 @@ function EditCommissionRateSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <CommissionRateFormFields form={form} />
+              <RecordMetadataSection metadata={rate?.metadata} />
             </div>
             <SheetFooter>
               <Button
@@ -339,7 +341,7 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
     form.setValue('code', slugify(name ?? ''))
   }, [name, form])
 
-  const kindOptions = COMMISSION_RATE_KINDS.map((value) => ({
+  const kindOptions = COMMISSION_KINDS.map((value) => ({
     value,
     label: t(`admin.fields.commission_rate.kind.options.${value}`),
   }))

@@ -35,6 +35,8 @@ async function createMarket(
     await addSupportedLocale(page, locale)
   }
 
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: market.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create market/i }).click()
 }
 

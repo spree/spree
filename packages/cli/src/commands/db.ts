@@ -1,23 +1,16 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
+import { DATABASE_RESET } from '../backend.js'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
 import {
   appServices,
   dockerCompose,
   dockerComposeExec,
   dockerComposeRun,
+  dockerStackProblem,
   isServiceRunning,
 } from '../docker.js'
-
-export const RESET_TASK = [
-  'bin/rails',
-  'db:drop',
-  'db:create',
-  'spree:install:migrations',
-  'db:migrate',
-  'db:seed',
-]
 
 export function registerDbCommand(program: Command): void {
   program
@@ -57,8 +50,8 @@ export function registerDbCommand(program: Command): void {
         }
       }
 
-      // The long-running web (Rails) + worker (Sidekiq) containers hold pooled
-      // connections to spree_development. Rails' db:drop issues a PLAIN
+      // The long-running web + worker containers hold pooled
+      // connections to spree_development. The drop issues a PLAIN
       // `DROP DATABASE` (no WITH FORCE), which PostgreSQL rejects while any other
       // session is connected — so a reset against a running stack deadlocks. We
       // stop both regardless of which is up (the worker alone holds up to
@@ -73,17 +66,10 @@ export function registerDbCommand(program: Command): void {
         )
         stackUp = running.some(Boolean)
       } catch (err) {
-        // `compose ps` itself failed: broken/stale compose, daemon down, unknown
-        // service. Point home rather than dumping the raw env-file error (mirrors
-        // upgrade.ts; backstop for a stale API directory past detectProject re-rooting).
-        // `return` is load-bearing: it tells TS `stackUp` is assigned past here.
-        return refuse([
-          'Could not inspect the Docker stack from this directory.',
-          `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
-          '',
-          `Run ${pc.bold('spree db:reset')} from your project root (the directory holding the`,
-          '.env with SECRET_KEY_BASE), and make sure Docker is running.',
-        ])
+        // `compose ps` itself failed: daemon down, broken/stale compose, unknown
+        // service (mirrors upgrade.ts). `return` is load-bearing: it tells TS
+        // `stackUp` is assigned past here.
+        return refuse(dockerStackProblem(err, 'spree db:reset'))
       }
 
       if (stackUp) {
@@ -98,7 +84,7 @@ export function registerDbCommand(program: Command): void {
         // for service_healthy) but never restarts web/worker, so nothing reopens
         // a blocking connection. Works whether the stack was up, down, or partial.
         // captureStderr so the Postgres "being accessed" error below is matchable.
-        await dockerComposeRun(RESET_TASK, ctx.projectDir, { captureStderr: true })
+        await dockerComposeRun(DATABASE_RESET, ctx.projectDir, { captureStderr: true })
       } catch (err) {
         const stderr = String((err as { stderr?: string }).stderr ?? (err as Error).message ?? '')
         if (/being accessed by other users|55006/.test(stderr)) {
@@ -136,14 +122,7 @@ export function registerDbCommand(program: Command): void {
       try {
         postgresUp = await isServiceRunning('postgres', ctx.projectDir)
       } catch (err) {
-        p.cancel(
-          [
-            'Could not inspect the Docker stack from this directory.',
-            `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
-            '',
-            `Run ${pc.bold('spree db:console')} from your project root, and make sure Docker is running.`,
-          ].join('\n'),
-        )
+        p.cancel(dockerStackProblem(err, 'spree db:console').join('\n'))
         process.exit(1)
       }
 

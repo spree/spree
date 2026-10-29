@@ -12,8 +12,15 @@
 #     live in the upgrade doc at docs/developer/upgrades/5.6-to-6.0.mdx.
 #
 # This manifest is the machine-runnable shape — what `bin/rake spree:upgrade`
-# (in production) and `spree upgrade` (in dev) execute. Every step must be a
-# rake task and must be idempotent. Re-running the full manifest is safe.
+# (in production) and `spree upgrade` (in dev) execute. Every step must be
+# idempotent; re-running the full manifest is safe.
+#
+# Steps name a `task_class` — a Spree::MaintenanceTask that the walk runs
+# through the maintenance task runner, so a shell walk and a dashboard run
+# leave the same audit record and the same resume behaviour
+# (docs/plans/6.0-maintenance-tasks.md). Released manifests keep their `task`
+# rake names, which have shipped and may be scripted; the walker runs both
+# kinds.
 ---
 from: "5.6"
 to: "6.0"
@@ -151,7 +158,7 @@ steps:
 
   - id: migrate_users_to_customers
     name: "Move users onto the gem-owned Customer/AdminUser models"
-    task: "spree:upgrade:migrate_users_to_customers"
+    task_class: "Spree::MaintenanceTasks::Upgrade::UsersToCustomers"
     notes: |
       Copies the legacy Devise user table (default spree_users) into
       spree_customers, preserving ids so the renamed customer_id foreign keys
@@ -261,7 +268,7 @@ steps:
 
   - id: migrate_deliveries
     name: "Move tracking numbers onto deliveries"
-    task: "spree:migrate_deliveries"
+    task_class: "Spree::MaintenanceTasks::Upgrade::Deliveries"
     notes: |
       Every fulfillment carrying a 5.6 tracking number gets one delivery row
       with that number: the carrier axis (tracking number, carrier, carrier
@@ -322,7 +329,7 @@ steps:
 
   - id: migrate_promotion_option_value_rules
     name: "Rewrite Option Value promotion rules to stable option value ids"
-    task: "spree:upgrade:migrate_promotion_option_value_rules"
+    task_class: "Spree::MaintenanceTasks::Upgrade::PromotionOptionValueRules"
     notes: |
       Spree 6.0 stores Option Value promotion rules against Spree::OptionValue
       ids. Upgrades from 5.6 may still carry join-row ids from
@@ -365,7 +372,7 @@ steps:
 
   - id: migrate_returns
     name: "Move returns onto the new returns models"
-    task: "spree:upgrade:migrate_returns"
+    task_class: "Spree::MaintenanceTasks::Upgrade::Returns"
     notes: |
       Converts each ReturnAuthorization into a Spree::Return, or a
       Spree::Exchange when any of its return items named an exchange variant,
@@ -494,7 +501,7 @@ steps:
 
   - id: backfill_order_coupon_codes
     name: "Backfill coupon codes on placed orders"
-    task: "spree:backfill_order_coupon_codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::OrderCouponCodes"
     notes: |
       spree_orders gains a coupon_code column in Spree 6, matching carts.
       Historical placed orders applied coupons only through the promotion
@@ -510,7 +517,7 @@ steps:
 
   - id: backfill_order_markets
     name: "Backfill order markets"
-    task: "spree:backfill_order_markets"
+    task_class: "Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets"
     notes: |
       Market is mandatory in Spree 6. Assigns the store's default market to
       orders that predate markets. Channel needs no step here — the 5.4→5.5
@@ -573,7 +580,7 @@ steps:
 
   - id: migrate_capture_methods
     name: "Convert payment method auto_capture into capture_method"
-    task: "spree:migrate_capture_methods"
+    task_class: "Spree::MaintenanceTasks::Upgrade::CaptureMethods"
     notes: |
       Payment methods say when they charge with a capture_method string
       (checkout, on_dispatch or manual) rather than an auto_capture boolean,
@@ -589,6 +596,19 @@ steps:
       The auto_capture column stays readable as a fallback for one release and
       is dropped in 6.1. Idempotent — only rows without a capture_method are
       written.
+
+  - id: store_regional_settings
+    name: "Convert store time zones and admin languages to standard codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::StoreRegionalSettings"
+    notes: |
+      A store's time zone is now always an IANA name such as America/New_York,
+      and its admin language a locale code Spree lists, the forms the API
+      accepts and browsers understand. Rails time zone names such as
+      "Eastern Time (US & Canada)" and locale spellings such as en_US are
+      converted. A time zone that names no zone is reset to the store default,
+      which is what the store already ran on; an admin language Spree does not
+      list is cleared, so staff see their own language. Idempotent — stores
+      already on standard codes are skipped.
 
   - id: product_types_backfill
     name: "Backfill product type store ownership"
@@ -625,7 +645,7 @@ steps:
 
   - id: migrate_stripe_webhook_keys
     name: "Move Stripe webhook signing secrets onto the gateway"
-    task: "spree:upgrade:migrate_stripe_webhook_keys"
+    task_class: "SpreeStripe::MaintenanceTasks::MigrateWebhookKeys"
     optional: true
     notes: |
       Only runs when spree_stripe is installed; skipped otherwise.
@@ -819,3 +839,13 @@ steps:
       Run AFTER the steps that create or move attachments (media, categories,
       returns), so their files are covered. Idempotent — files that already
       have a store are skipped.
+
+  - id: backfill_tagging_tenants
+    name: "Stamp the store on taggings written without one"
+    task: "spree:upgrade:backfill_tagging_tenants"
+    notes: |
+      Tags added through the bulk endpoints carried no store on their
+      taggings, and the admin tag list filters by it, so those tags were
+      missing from the list. This stamps the store of the record on every
+      tagging without one, for each taggable that keeps its taggings per
+      store. Idempotent — taggings that already carry a store are skipped.

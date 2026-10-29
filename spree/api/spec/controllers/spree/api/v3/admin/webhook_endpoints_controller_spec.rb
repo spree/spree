@@ -87,6 +87,15 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
           expect { subject }.not_to change(Spree::WebhookEndpoint, :count)
           expect(response).to have_http_status(:forbidden)
         end
+
+        context 'when the event name is padded with whitespace the model strips' do
+          let(:params) { { url: 'https://example.com/hook', subscriptions: [' customer.password_reset_requested '] } }
+
+          it 'is forbidden' do
+            expect { subject }.not_to change(Spree::WebhookEndpoint, :count)
+            expect(response).to have_http_status(:forbidden)
+          end
+        end
       end
 
       context 'with permission to manage customers' do
@@ -106,6 +115,16 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
         subject
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
+      end
+    end
+
+    context 'when a subscription is not an event name or pattern' do
+      let(:params) { { url: 'https://example.com/hook', subscriptions: ['order.(placed|canceled)'] } }
+
+      it 'returns a validation error on subscriptions' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']).to have_key('subscriptions')
       end
     end
   end
@@ -145,6 +164,18 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
         patch :update, params: { id: endpoint.prefixed_id, name: 'Renamed' }, as: :json
 
         expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'subscribing to customer password resets with a whitespace-padded name' do
+      let(:caller_key) { create(:api_key, :secret, store: store, scopes: %w[write_webhooks]) }
+      let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
+
+      it 'is forbidden with only the webhooks permission' do
+        patch :update, params: { id: endpoint.prefixed_id, subscriptions: [' customer.password_reset_requested '] }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(endpoint.reload.subscriptions).not_to include('customer.password_reset_requested')
       end
     end
   end

@@ -187,6 +187,24 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
       end
 
+      describe 'default records', :events do
+        it 'are created without publishing events' do
+          published = []
+          allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+            published << name
+            original.call(name, *rest)
+          end
+
+          store = create(:store)
+
+          expect(store.policies).to be_present
+          expect(store.default_channel).to be_present
+          expect(store.default_delivery_profile).to be_present
+          expect(store.default_market).to be_present
+          expect(published).to be_empty
+        end
+      end
+
       describe '#default_channel' do
         let(:store) { create(:store) }
 
@@ -306,6 +324,25 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       expect(store_pl_translation).to be_present
       expect(store_pl_translation.name).to eq('Store PL')
+    end
+  end
+
+  describe 'seller digital asset content types' do
+    let(:store) { build(:store) }
+
+    it 'accepts a list of media types' do
+      store.preferred_seller_digital_asset_content_types = %w[application/pdf audio/mpeg image/svg+xml]
+
+      expect(store).to be_valid
+    end
+
+    # A bare "pdf" would refuse every seller upload with a message about the
+    # file, so it is caught where the operator types it.
+    it 'refuses an entry that is not a type/subtype' do
+      store.preferred_seller_digital_asset_content_types = %w[application/pdf pdf]
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_seller_digital_asset_content_types].first).to include('pdf')
     end
   end
 
@@ -928,6 +965,72 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       expect(store).not_to be_valid
       expect(store.errors[:preferred_storefront_url]).to be_present
+    end
+  end
+
+  describe 'preferred_timezone' do
+    let(:store) { create(:store, code: "regional-#{SecureRandom.hex(4)}") }
+
+    it 'converts a Rails time zone name to its IANA name' do
+      store.update!(preferred_timezone: 'Eastern Time (US & Canada)')
+
+      expect(store.preferred_timezone).to eq('America/New_York')
+    end
+
+    it 'keeps an IANA name and UTC as given' do
+      store.update!(preferred_timezone: 'Europe/Berlin')
+      expect(store.preferred_timezone).to eq('Europe/Berlin')
+
+      store.update!(preferred_timezone: 'UTC')
+      expect(store.preferred_timezone).to eq('UTC')
+    end
+
+    it 'rejects a value that names no time zone' do
+      store.preferred_timezone = 'Mars/Olympus_Mons'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_timezone]).to be_present
+    end
+
+    it 'does not block saving other settings while a Rails name awaits the upgrade step' do
+      store.update_columns(preferences: store.preferences.merge(timezone: 'Eastern Time (US & Canada)'))
+      store.reload
+
+      expect(store.update(preferred_guest_checkout: false)).to be(true)
+    end
+
+    it 'blocks saving while a stored value no upgrade can convert stays in place' do
+      store.update_columns(preferences: store.preferences.merge(timezone: 'Mars/Olympus_Mons'))
+      store.reload
+
+      expect(store.update(preferred_guest_checkout: false)).to be(false)
+      expect(store.errors[:preferred_timezone]).to be_present
+    end
+  end
+
+  describe 'preferred_admin_locale' do
+    let(:store) { create(:store, code: "regional-#{SecureRandom.hex(4)}") }
+
+    it 'stores the listed spelling of a locale code and clears a blank one' do
+      store.update!(preferred_admin_locale: 'pt_br')
+      expect(store.preferred_admin_locale).to eq('pt-BR')
+
+      store.update!(preferred_admin_locale: '')
+      expect(store.preferred_admin_locale).to be_blank
+    end
+
+    it 'rejects a locale Spree does not list' do
+      store.preferred_admin_locale = 'klingon'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_admin_locale]).to be_present
+    end
+
+    it 'does not block saving other settings while a stored spelling awaits the upgrade step' do
+      store.update_columns(preferences: store.preferences.merge(admin_locale: 'en_US'))
+      store.reload
+
+      expect(store.update(preferred_guest_checkout: false)).to be(true)
     end
   end
 

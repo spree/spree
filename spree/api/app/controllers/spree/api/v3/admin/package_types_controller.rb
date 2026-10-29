@@ -27,9 +27,8 @@ module Spree
             body.attribute :length, :number, nullable: true
             body.attribute :width, :number, nullable: true
             body.attribute :height, :number, nullable: true
-            body.attribute :dimensions_unit, :string,
+            body.attribute :dimensions_unit, :dimension_unit,
               nullable: true,
-              choices: Spree::Variant::DIMENSION_UNITS,
               example: 'cm',
               description: "Unit the three dimensions are in; falls back to the store's unit system."
             body.attribute :weight, :number,
@@ -38,7 +37,7 @@ module Spree
             body.attribute :max_weight, :number,
               nullable: true,
               description: 'What the package can hold, not the same as its own weight.'
-            body.attribute :weight_unit, :string, nullable: true, choices: Spree::Variant::WEIGHT_UNITS, example: 'kg'
+            body.attribute :weight_unit, :weight_unit, nullable: true, example: 'kg'
             body.attribute :default, :boolean,
               description: 'The box every parcel quote is built on. Setting this demotes whichever row held it.'
             body.attribute :metadata, :hash

@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Keine Adresse ausgewählt"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Breadcrumb",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Standard-Rechnung",
       "default_shipping": "Standard-Versand",
+      "inherited_from": "Geerbt von {{name}}",
       "set_default_billing": "Als Standard-Rechnungsadresse festlegen",
       "set_default_shipping": "Als Standard-Versandadresse festlegen"
     },
@@ -113,6 +117,7 @@
         "title": "Passwort zurücksetzen"
       },
       "login": {
+        "account_deactivated": "Dieses Konto wurde deaktiviert. Wenden Sie sich an einen Administrator, um den Zugang wiederherzustellen.",
         "account_not_provisioned": "Dieses Konto ist für diesen Shop nicht freigegeben. Bitten Sie einen Administrator um eine Einladung.",
         "divider": "oder",
         "invalid_oauth_state": "Die Anmeldesitzung ist abgelaufen oder ungültig. Bitte melden Sie sich erneut an.",
@@ -361,9 +366,12 @@
         "video_title": "Videovorschau"
       },
       "metadata_card": {
+        "copy_reference": "{{system}}-Schlüssel kopieren",
         "empty_description": "Apps und Integrationen füllen dies automatisch.",
         "empty_title": "Keine Metadaten",
-        "title": "Metadaten"
+        "external_references": "Externe Referenzen",
+        "title": "Metadaten",
+        "view": "Metadaten anzeigen"
       },
       "page_header": {
         "copy_id": "ID kopieren",
@@ -416,6 +424,7 @@
       },
       "table_toolbar": {
         "add_filter": "Filter hinzufügen",
+        "any_field": "Beliebig: {{field}}",
         "ascending": "Aufsteigend",
         "clear_all": "Alle löschen",
         "columns_tooltip": "Spalten",
@@ -436,6 +445,8 @@
         "filter_select_placeholder": "Auswählen…",
         "filter_text_placeholder": "Filtern…",
         "filter_to_placeholder": "Filtern auf…",
+        "n_selected": "{{count}} ausgewählt",
+        "only": "Nur",
         "operators": {
           "after": "nach",
           "before": "vor",
@@ -461,6 +472,7 @@
         "remove_filter": "Filter entfernen",
         "reset_to_default": "Auf Standard zurücksetzen",
         "search_placeholder": "Suchen…",
+        "select_all": "Alle auswählen",
         "sort_by": "Sortieren nach",
         "sort_tooltip": "Sortieren",
         "visible_columns": "Sichtbare Spalten"
@@ -482,6 +494,12 @@
         "discard_message": "Alles bisher Eingegebene geht verloren. Das lässt sich nicht rückgängig machen.",
         "discard_title": "Entwurf verwerfen?"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Betrag in {{currency}}",
+      "help": "Währungen ohne Betrag wird diese Versandart nicht angeboten.",
+      "label": "Betrag",
+      "required": "Gib einen Betrag in mindestens einer Währung ein."
     },
     "custom_field_definitions": {
       "errors": {
@@ -937,6 +955,14 @@
       "order_multiple": {
         "label": "Bestellvielfaches",
         "help": "Jeder Schritt über der Mindestmenge. Leer lassen für beliebige Mengen."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Erlaubte Downloads"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Verfügbare Tage"
+        }
       }
     },
     "image_upload": {
@@ -2034,6 +2060,38 @@
           "description": "Der Verkäufer muss eine Rücksendeadresse angeben"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Hinzufügen",
+      "all_variants": "Alle Varianten",
+      "columns": {
+        "file": "Datei",
+        "variant": "Variante",
+        "size": "Größe",
+        "downloads": "Downloads",
+        "days": "Tage"
+      },
+      "delete_description": "„{{name}}“ kann von niemandem mehr heruntergeladen werden, der sie gekauft hat. Dies wirkt sofort.",
+      "delete_title": "Diese Datei löschen?",
+      "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen Produkt, um eine Anleitung oder Garantie mitzuliefern.",
+      "download": "Herunterladen",
+      "drop_hint": "Dateien hierher ziehen und ablegen oder zum Durchsuchen klicken",
+      "empty": "Noch keine Dateien",
+      "limit_invalid": "Limits müssen ganze Zahlen ab 1 sein oder leer bleiben.",
+      "limits_help": "Lassen Sie die Download- und Tageslimits leer, um die Einstellungen des Shops zu verwenden.",
+      "source": {
+        "upload": "Datei hochladen"
+      },
+      "store_default": "{{count}} (Shop-Standard)",
+      "title": "Digitale Dateien",
+      "untitled": "Unbenannte Datei",
+      "upload": "Datei hinzufügen",
+      "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
+      "uploading": "{{name}} wird hochgeladen…",
+      "uploading_short": "Wird hochgeladen…",
+      "replace": "Datei ersetzen",
+      "replace_description": "„{{name}}“ wird entfernt, und alle Käufer laden über ihre bestehenden Links die neue Datei herunter. Dies gilt sofort.",
+      "replace_title": "Diese Datei ersetzen?"
     }
   }
 }

@@ -121,6 +121,21 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
       expect(created.amount).to eq(25.00)
       expect(created.memo).to eq('Goodwill')
     end
+
+    # A credit issued by an integration names the key it called with, as the
+    # order operations do.
+    context 'with a secret API key' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_store_credits]) }
+      let(:headers) { api_key_headers }
+
+      it 'records the key as the issuer' do
+        post :create, params: { customer_id: customer.prefixed_id, amount: '25.00', currency: 'USD' }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['created_by_type']).to eq('api_key')
+        expect(Spree::StoreCredit.find_by_prefix_id(json_response['id']).created_by).to eq(secret_api_key)
+      end
+    end
   end
 
   describe 'PATCH #update' do

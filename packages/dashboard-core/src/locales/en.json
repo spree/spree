@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "No address selected"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Breadcrumb",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Default billing",
       "default_shipping": "Default shipping",
+      "inherited_from": "Inherited from {{name}}",
       "set_default_billing": "Set as default billing",
       "set_default_shipping": "Set as default shipping"
     },
@@ -113,6 +117,7 @@
         "title": "Reset your password"
       },
       "login": {
+        "account_deactivated": "This account has been deactivated. Contact an administrator to restore access.",
         "account_not_provisioned": "This account is not authorized for this store. Ask an administrator for an invitation.",
         "divider": "or",
         "invalid_oauth_state": "That sign-in session expired or was invalid. Please start signing in again.",
@@ -363,9 +368,12 @@
         "video_title": "Video preview"
       },
       "metadata_card": {
+        "copy_reference": "Copy {{system}} key",
         "empty_description": "Apps and integrations populate this automatically.",
         "empty_title": "No metadata",
-        "title": "Metadata"
+        "external_references": "External references",
+        "title": "Metadata",
+        "view": "View metadata"
       },
       "page_header": {
         "copy_id": "Copy ID",
@@ -418,6 +426,7 @@
       },
       "table_toolbar": {
         "add_filter": "Add filter",
+        "any_field": "Any {{field}}",
         "ascending": "Ascending",
         "clear_all": "Clear all",
         "columns_tooltip": "Columns",
@@ -438,6 +447,8 @@
         "filter_select_placeholder": "Select…",
         "filter_text_placeholder": "Filter…",
         "filter_to_placeholder": "Filter to…",
+        "n_selected": "{{count}} selected",
+        "only": "Only",
         "operators": {
           "after": "after",
           "before": "before",
@@ -463,6 +474,7 @@
         "remove_filter": "Remove filter",
         "reset_to_default": "Reset to default",
         "search_placeholder": "Search…",
+        "select_all": "Select all",
         "sort_by": "Sort by",
         "sort_tooltip": "Sort",
         "visible_columns": "Visible columns"
@@ -484,6 +496,12 @@
         "discard_message": "Everything you have filled in so far will be lost. This cannot be undone.",
         "discard_title": "Discard this draft?"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Amount in {{currency}}",
+      "help": "Currencies left blank are not offered this delivery method.",
+      "label": "Amount",
+      "required": "Enter an amount in at least one currency."
     },
     "custom_field_definitions": {
       "errors": {
@@ -939,6 +957,14 @@
       "order_multiple": {
         "label": "Order multiple",
         "help": "Each step up from the minimum. Leave blank for any quantity."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Downloads allowed"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Days available"
+        }
       }
     },
     "image_upload": {
@@ -2036,6 +2062,38 @@
           "description": "The seller must provide an address for returns"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Add",
+      "all_variants": "All variants",
+      "columns": {
+        "file": "File",
+        "variant": "Variant",
+        "size": "Size",
+        "downloads": "Downloads",
+        "days": "Days"
+      },
+      "delete_description": "\"{{name}}\" will no longer be downloadable by anyone who bought it. This takes effect immediately.",
+      "delete_title": "Delete this file?",
+      "description": "Files buyers can download after purchase. Attach them to a digital product, or to a physical one to deliver a manual or warranty alongside the goods.",
+      "download": "Download",
+      "drop_hint": "Drag & drop files here, or click to browse",
+      "empty": "No files yet",
+      "limit_invalid": "Limits must be whole numbers of 1 or more, or blank.",
+      "limits_help": "Leave the download and day limits blank to use the store's settings.",
+      "source": {
+        "upload": "Upload a file"
+      },
+      "store_default": "{{count}} (store default)",
+      "title": "Digital files",
+      "untitled": "Untitled file",
+      "upload": "Add file",
+      "upload_failed": "Failed to upload {{name}}: {{message}}",
+      "uploading": "Uploading {{name}}…",
+      "uploading_short": "Uploading…",
+      "replace": "Replace file",
+      "replace_description": "\"{{name}}\" is removed and everyone who bought it downloads the new file from their existing links. This takes effect immediately.",
+      "replace_title": "Replace this file?"
     }
   }
 }

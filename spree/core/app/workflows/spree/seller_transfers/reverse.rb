@@ -202,34 +202,15 @@ module Spree
               kind: 'refund_reversal',
               provider: @earning.provider,
               status: 'pending'
-            }.merge(settlement_of(bounded))
+            }.merge(@earning.reversal_settlement(bounded))
           )
         end
       end
 
-      # A clawback has to settle where its earning settled. Payouts are swept by
-      # settlement currency, so a reversal left in the sale's currency would
-      # never join the batch that pays the earning it cancels — the seller would
-      # be paid in full for goods that came back, and the row would sit in a
-      # currency their account cannot pay.
-      #
-      # Prorated from the earning's own settled figure rather than converted at
-      # today's rate, so the money comes back at the rate it went out at.
-      def settlement_of(bounded)
-        return {} if @earning.settled_amount.blank? || @earning.amount.zero?
-
-        share = @earning.settled_amount * (bounded / @earning.amount)
-
-        {
-          settled_amount: -Spree::Money::Rounding.quantize(
-            share, Spree::Money::Rounding.precision(@earning.settlement_currency)
-          ),
-          settled_currency: @earning.settled_currency
-        }
-      end
-
+      # Asked of the provider that made the earning — see
+      # {Spree::SellerTransfer#payout_provider_instance}.
       def execute_reversal
-        provider.reverse!(reversal)
+        @earning.payout_provider_instance.reverse!(reversal)
       rescue Spree::Core::AmbiguousGatewayError => e
         # Whether the clawback happened is the provider's to say. Recorded as
         # such rather than as a refusal, so an operator reconciling knows which
@@ -238,30 +219,10 @@ module Spree
         Rails.error.report(e, handled: true, context: { seller_transfer_id: reversal.id }, source: 'spree.core')
         failure(reversal, e.message)
       rescue StandardError => e
+        # Left retryable: `ExecutePendingJob` asks the provider again.
         reversal.update!(status: 'processing')
         Rails.error.report(e, handled: true, context: { seller_transfer_id: reversal.id }, source: 'spree.core')
         failure(reversal, e.message)
-      end
-
-      # The provider that made the earning, not whichever one the store uses
-      # now. A marketplace that changes provider still has money sitting with
-      # the old one, and asking the new one to reverse a transfer it never
-      # made leaves the original standing — the seller keeps a refunded sale.
-      def provider
-        @provider ||= begin
-          configured = Spree.payout_providers.find { |candidate| candidate.to_s == @earning.provider }
-
-          # No silent fallback to whatever the store uses now. A provider that
-          # is no longer installed still holds the transfer this reverses, and
-          # handing the job to a different one would mark the row reversed
-          # while the money stayed where it was. An operator has to know.
-          if configured.nil?
-            raise Spree::Core::GatewayError,
-                  "Payout provider #{@earning.provider} is not registered, so its transfer cannot be reversed"
-          end
-
-          configured.new
-        end
       end
     end
   end

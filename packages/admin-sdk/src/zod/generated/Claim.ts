@@ -4,6 +4,7 @@ import type Claim from '../../types/generated/Claim';
 import { ActorSchema } from './Actor';
 import { ClaimLineItemSchema } from './ClaimLineItem';
 import { ClaimReasonSchema } from './ClaimReason';
+import { CustomFieldSchema } from './CustomField';
 import { OrderSchema } from './Order';
 import { RefundSchema } from './Refund';
 
@@ -21,6 +22,7 @@ export const ClaimSchema = z.object({
   canceled_at: z.string().nullable(),
   reason: ClaimReasonSchema.optional(),
   claim_line_items: z.array(ClaimLineItemSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   memo: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
@@ -44,6 +46,7 @@ export const ClaimSchema = z.object({
   canceled_at: z.ZodType<Claim['canceled_at']>;
   reason: z.ZodOptional<z.ZodType<Exclude<Claim['reason'], undefined>>>;
   claim_line_items: z.ZodOptional<z.ZodType<Exclude<Claim['claim_line_items'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Claim['custom_fields'], undefined>>>;
   memo: z.ZodType<Claim['memo']>;
   metadata: z.ZodType<Claim['metadata']>;
   created_at: z.ZodType<Claim['created_at']>;

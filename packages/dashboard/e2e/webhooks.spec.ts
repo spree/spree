@@ -158,6 +158,26 @@ test.describe('webhooks', () => {
     })
   })
 
+  test('refuses a custom event that is not an event name or pattern', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, WEBHOOKS_PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByRole('heading', { name: /add webhook endpoint/i })).toBeVisible()
+
+    const customInput = page.getByPlaceholder('custom.event_name')
+    await customInput.fill('order.(placed|canceled)')
+    await customInput.press('Enter')
+    await expect(page.getByText(/use event names, or patterns/i)).toBeVisible()
+    await expect(page.getByRole('button', { name: /order\.\(placed\|canceled\)/ })).toHaveCount(0)
+
+    await customInput.fill('order.*')
+    await customInput.press('Enter')
+    // A custom entry renders as a badge whose only control is its remove button.
+    await expect(page.getByRole('button', { name: /order\.\*/ })).toBeVisible()
+    await expect(page.getByText(/use event names, or patterns/i)).toHaveCount(0)
+  })
+
   test('deletes an endpoint via the row confirm dialog', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, WEBHOOKS_PATH(creds.store_id), CTA)

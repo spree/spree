@@ -3,6 +3,7 @@ import { type Product, SpreeError } from '@spree/admin-sdk'
 import {
   adminClient,
   CategorizationCard,
+  DigitalAssetsCard,
   extensionFormValues,
   extensionSubmitValues,
   GeneralCard,
@@ -16,17 +17,19 @@ import {
   prepareVariantsTaxForProductSave,
   productFormSchema,
   productToFormValues,
+  RecordMetadataCard,
   SEOCard,
   Slot,
   StatusCard,
   TaxCard,
+  useAssignableVariants,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import {
   ErrorState,
   FormActions,
-  MetadataCard,
   ResourceLayout,
   Skeleton,
   StatusBadge,
@@ -38,8 +41,8 @@ import { useEffect } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import '../../../../components/spree/custom-fields/register'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
-import { DigitalAssetsCard } from '../../../../components/spree/products/digital-assets-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
@@ -116,18 +119,8 @@ function ProductForm({ product }: { product: Product }) {
 
   const selectedProductTypeId = form.watch('product_type_id')
 
-  // Variants the MediaCard can assign uploaded images to. Only server-persisted
-  // variants have an `id` that can ride media[].variant_ids on the PATCH, so we
-  // start from `product.variants`. But the merchant may have queued one of those
-  // for deletion in the current session (matrix Trash button) — drop those by
-  // intersecting against the live form `variants` ids. Newly-added variants
-  // without a server id are unassignable until save (no id to send).
-  const liveVariants = useWatch({ control: form.control, name: 'variants' })
   const formStatus = useWatch({ control: form.control, name: 'status' }) ?? product?.status
-  const liveVariantIds = new Set(
-    (liveVariants ?? []).map((v) => v.id).filter((id): id is string => !!id),
-  )
-  const assignableVariants = (product.variants ?? []).filter((v) => liveVariantIds.has(v.id))
+  const assignableVariants = useAssignableVariants(form.control, product.variants)
 
   // Reset the form whenever the source data changes — product itself (PATCH
   // refetch) and media (separate query). Both queries invalidate on save so
@@ -171,10 +164,17 @@ function ProductForm({ product }: { product: Product }) {
     const current = form.getValues('media') ?? []
     if (current.length > 0) return
     if (form.formState.dirtyFields?.media) return
-    form.setValue('media', mediaItems.map(mediaToFormValues), { shouldDirty: false })
+    form.setValue(
+      'media',
+      mediaItems.map((media, index) => mediaToFormValues(media, index)),
+      { shouldDirty: false },
+    )
   }, [mediaItems, form])
 
-  const onSubmit = async (data: ProductFormValues) => {
+  const onSubmit = async (submitted: ProductFormValues) => {
+    // Media and variant rows get their extension fields back from live form
+    // state, which the parse behind `submitted` stripped.
+    const data = withExtensionRowValues('product', submitted, form.getValues())
     const { variants, media, ...rest } = data
     // Extension fields come from live form state: the Zod parse behind
     // `data` strips keys the first-party schema doesn't know.
@@ -238,7 +238,11 @@ function ProductForm({ product }: { product: Product }) {
       // read: a failed refetch keeps the stale list in `data`.
       const mediaRefetch = await refetchMedia()
       if (mediaRefetch.status === 'success' && !form.formState.dirtyFields.media) {
-        form.resetField('media', { defaultValue: mediaRefetch.data.data.map(mediaToFormValues) })
+        form.resetField('media', {
+          defaultValue: mediaRefetch.data.data.map((media, index) =>
+            mediaToFormValues(media, index),
+          ),
+        })
       }
       toastManager.add({ type: 'success', title: t('admin.messages.product_saved') })
     } catch (err) {
@@ -265,9 +269,10 @@ function ProductForm({ product }: { product: Product }) {
   }
 
   return (
-    // FormProvider exposes the form to slot widgets: a `product.form_sidebar`
-    // extension binds inputs via `useHostForm()` and they persist through
-    // this form's Save — no widget-owned save cycle.
+    // FormProvider exposes the form to slot widgets: a `product.*` extension
+    // (the page columns, the media and variant sheets) binds inputs via
+    // `useHostForm()` and they persist through this form's Save — no
+    // widget-owned save cycle.
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
@@ -315,16 +320,15 @@ function ProductForm({ product }: { product: Product }) {
                 }
               />
               <DigitalAssetsCard productId={productId} variants={assignableVariants} />
+              <ResourceTranslationsCard resourceType="product" resourceId={productId} />
               <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
                 <CustomFieldsInlineCard />
               </ProductCustomFieldsProvider>
-              <ResourceTranslationsCard resourceType="product" resourceId={productId} />
-              <MetadataCard
+              <RecordMetadataCard
                 metadata={product.metadata}
-                title={t('admin.components.metadata_card.title')}
-                emptyTitle={t('admin.components.metadata_card.empty_title')}
-                emptyDescription={t('admin.components.metadata_card.empty_description')}
+                externalReferences={product.external_references}
               />
+              <Slot name="product.form_main" context={{ product, mode: 'edit' }} />
             </>
           }
           sidebar={
@@ -344,7 +348,7 @@ function ProductForm({ product }: { product: Product }) {
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} product={product} />
-              <Slot name="product.form_sidebar" context={{ product }} />
+              <Slot name="product.form_sidebar" context={{ product, mode: 'edit' }} />
             </>
           }
         />

@@ -126,7 +126,7 @@ module Spree
           names = model.exposed_preference_names.to_a - except if names.empty?
           definitions = model.preference_definitions
           names.each do |name|
-            typelize name => preference_type_hint(Spree::PreferenceSchema::JsonSchema.property_schema(definitions.fetch(name)))
+            typelize name => preference_type_hint(Spree::PreferenceSchema::JsonSchema.property_schema(definitions.fetch(name)), name)
             reader = :"preferred_#{name}"
             attribute(name) do |object|
               value = object.public_send(reader)
@@ -138,12 +138,43 @@ module Spree
         TYPELIZER_TYPES = { 'string' => :string, 'integer' => :number, 'number' => :number, 'boolean' => :boolean }.freeze
         private_constant :TYPELIZER_TYPES
 
-        def self.preference_type_hint(schema)
+        # The shared name of each setting's value list, so it is defined once
+        # in `@spree/core` rather than inline wherever the setting appears.
+        PREFERENCE_LIST_NAMES = {
+          capture_method: 'CaptureMethod',
+          default_payouts_schedule_interval: 'PayoutScheduleInterval',
+          document_number_format: 'DocumentNumberFormat',
+          email_font: 'EmailFont',
+          inventory_provider_failure_policy: 'ProviderFailurePolicy',
+          pricing_provider_failure_policy: 'ProviderFailurePolicy',
+          storefront_access: 'StorefrontAccess',
+          unit_system: 'UnitSystem'
+        }.freeze
+        private_constant :PREFERENCE_LIST_NAMES
+
+        # Settings declared with a code format share the code list request
+        # bodies take, so a value read back is the type a write takes.
+        FORMAT_CODE_LISTS = { 'iso-country' => :country, 'currency' => :currency, 'locale' => :locale,
+                              'timezone' => :time_zone }.freeze
+        private_constant :FORMAT_CODE_LISTS
+
+        def self.preference_type_hint(schema, name)
           types = Array(schema['type'])
-          hint = TYPELIZER_TYPES.fetch((types - ['null']).first, :unknown)
           options = {}
           options[:nullable] = true if types.include?('null')
-          options[:enum] = schema['enum'].compact if schema['enum']
+          if types.include?('array')
+            hint = TYPELIZER_TYPES.fetch(Array(schema.dig('items', 'type')).first, :unknown)
+            options[:multi] = true
+          else
+            hint = TYPELIZER_TYPES.fetch((types - ['null']).first, :unknown)
+          end
+          if schema['enum']
+            options[:enum] = schema['enum'].compact
+            options[:enum_type_name] = PREFERENCE_LIST_NAMES[name.to_sym] if PREFERENCE_LIST_NAMES.key?(name.to_sym)
+          elsif (code_list = FORMAT_CODE_LISTS[(schema['items'] || schema)['format']])
+            options[:enum_type_name], values = Spree::Api::V3::RequestSchema::CODE_LISTS.fetch(code_list)
+            options[:enum] = values.call
+          end
           options.empty? ? hint : [hint, options]
         end
         private_class_method :preference_type_hint
@@ -167,6 +198,25 @@ module Spree
             one name,
                 resource: proc { Spree.api.admin_actor_serializer },
                 if: proc { expand?(name.to_s) }
+          end
+        end
+
+        # Declares the opt-in `custom_fields` expand. The Store API sends only
+        # values whose definition is storefront visible; Admin API serializers
+        # pass `admin: true` to send every value.
+        #
+        # @param admin [Boolean] whether to send every value rather than only storefront visible ones
+        # @return [void]
+        def self.expandable_custom_fields(admin: false)
+          if admin
+            many :custom_fields,
+                 resource: proc { Spree.api.admin_custom_field_serializer },
+                 if: proc { expand?('custom_fields') }
+          else
+            many :storefront_custom_fields,
+                 key: :custom_fields,
+                 resource: proc { Spree.api.custom_field_serializer },
+                 if: proc { expand?('custom_fields') }
           end
         end
 
@@ -277,6 +327,10 @@ module Spree
             currency: current_currency,
             store: current_store,
             user: current_user,
+            company: params[:company],
+            market: params[:market],
+            channel: params[:channel],
+            country: params[:country],
             quantity: quantity
           )
         end
@@ -295,8 +349,9 @@ module Spree
           return Spree::QuantityRule.new if current_store.nil?
 
           Spree::Current.quantity_rules_resolver_for(
-            company: Spree::Current.standing_company_for(current_user),
-            user: current_user
+            company: params.key?(:company) ? params[:company] : Spree::Current.standing_company_for(current_user),
+            user: current_user,
+            channel: params[:channel]
           ).call(variant)
         end
 

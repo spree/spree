@@ -1,3 +1,4 @@
+import { CLAIM_RESOLUTIONS, type ClaimResolution, isPositiveMoney } from '@spree/core'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -11,12 +12,12 @@ import {
 } from '../ui/dialog'
 import { Field, FieldLabel } from '../ui/field'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
+import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Switch } from '../ui/switch'
 import type { RefundMethod } from './return-dialogs'
 
-/** How a claim is settled. */
-export type ClaimResolution = 'refund' | 'replacement' | 'refund_and_replacement'
+export type { ClaimResolution }
 
 /** One claimed line, as the resolve form needs it. */
 export type ClaimLineForResolve = {
@@ -73,12 +74,10 @@ export function ClaimResolveDialog({
     .filter(([, on]) => on)
     .map(([id]) => id)
 
-  const resolutionOptions = (['refund', 'replacement', 'refund_and_replacement'] as const).map(
-    (value) => ({
-      value,
-      label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
-    }),
-  )
+  const resolutionOptions = CLAIM_RESOLUTIONS.map((value) => ({
+    value,
+    label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
+  }))
 
   const methodOptions = [
     {
@@ -91,11 +90,11 @@ export function ClaimResolveDialog({
     },
   ]
 
+  // A number input keeps `.5` as typed; the API reads only `0.5`.
+  const refundAmount = amount.startsWith('.') ? `0${amount}` : amount
   // Refunding nothing, or replacing nothing, is what the server rejects —
   // say so here instead of letting the request fail.
-  // The amount is the canonical decimal string a number input yields, so
-  // "above zero" is unsigned digits with a non-zero digit among them.
-  const positiveAmount = /^(\d+(\.\d+)?|\.\d+)$/.test(amount) && /[1-9]/.test(amount)
+  const positiveAmount = isPositiveMoney(refundAmount)
   const ready =
     (!refunding || positiveAmount) && (!sendingReplacement || chosenReplacements.length > 0)
 
@@ -178,21 +177,23 @@ export function ClaimResolveDialog({
                 {t('admin.pages.orders.detail.claims.replacement_items')}
               </span>
               {lines.map((line) => (
-                <div
-                  key={line.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-                >
-                  <span className="truncate text-sm">
-                    {line.label}
-                    <span className="text-muted-foreground"> ×{line.quantity}</span>
-                  </span>
-                  <Switch
-                    checked={replacing[line.id] ?? false}
-                    onCheckedChange={(checked) =>
-                      setReplacing({ ...replacing, [line.id]: checked })
-                    }
-                  />
-                </div>
+                <Item key={line.id} variant="outline" className="flex-nowrap border-border-subtle">
+                  <ItemContent className="min-w-0">
+                    <ItemTitle className="block truncate font-normal">
+                      {line.label}
+                      <span className="text-muted-foreground"> ×{line.quantity}</span>
+                    </ItemTitle>
+                  </ItemContent>
+                  <ItemActions>
+                    <Switch
+                      aria-label={line.label}
+                      checked={replacing[line.id] ?? false}
+                      onCheckedChange={(checked) =>
+                        setReplacing({ ...replacing, [line.id]: checked })
+                      }
+                    />
+                  </ItemActions>
+                </Item>
               ))}
             </div>
           )}
@@ -208,7 +209,7 @@ export function ClaimResolveDialog({
               onSubmit({
                 resolution,
                 refundMethod,
-                amount: refunding ? amount : undefined,
+                amount: refunding ? refundAmount : undefined,
                 replacementLineItemIds: chosenReplacements,
               })
             }

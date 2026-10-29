@@ -18,6 +18,7 @@ pre-commit:
         git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/ packages/sdk/src/webhooks/generated/
         git add packages/admin-sdk/src/types/generated/ packages/admin-sdk/src/zod/generated/
         git add packages/seller-sdk/src/types/generated/ packages/seller-sdk/src/zod/generated/
+        git add packages/core/src/enums.generated.ts
     zod:
       # Types regenerated or edited without a serializer change, and changes to
       # the generator itself, still need fresh schemas.
@@ -49,15 +50,16 @@ pre-commit:
         pnpm generate:params
         git add packages/sdk/src/types/params/ packages/admin-sdk/src/types/params/ packages/seller-sdk/src/types/params/
 
-    iso-codes:
-      # The country, currency and locale lists come from the Store API
-      # reference; regenerating it, or changing the generator, needs fresh lists.
+    code-lists:
+      # The country, currency, locale and unit lists come from the Store and
+      # Admin API references; regenerating them, or changing the generator,
+      # needs fresh lists.
       glob:
-        - "docs/api-reference/store.yaml"
-        - "packages/sdk-core/scripts/generate-iso-codes.ts"
+        - "docs/api-reference/{store,admin}.yaml"
+        - "packages/core/scripts/generate-code-lists.ts"
       run: |
-        pnpm generate:iso-codes
-        git add packages/sdk-core/src/iso-codes.generated.ts
+        pnpm generate:code-lists
+        git add packages/core/src/code-lists.generated.ts
 
 pre-push:
   commands:

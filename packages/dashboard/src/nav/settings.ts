@@ -23,6 +23,7 @@ import {
   UsersIcon,
   WarehouseIcon,
   WebhookIcon,
+  WrenchIcon,
 } from '@spree/dashboard-ui/icons'
 
 // Built-in entries use `labelKey` so labels re-render on language change —
@@ -130,6 +131,9 @@ settingsNav.add({
   group: 'store',
   position: 300,
   subject: Subject.Channel,
+  // Every staff member reads channels for the shell, so `read` would show
+  // the page to all of them; it is for whoever may change them.
+  action: 'update',
 })
 
 settingsNav.add({
@@ -156,6 +160,9 @@ settingsNav.add({
   group: 'selling',
   position: 100,
   subject: Subject.Market,
+  // Every staff member reads markets for the shell, so `read` would show
+  // the page to all of them; it is for whoever may change them.
+  action: 'update',
 })
 
 settingsNav.add({
@@ -406,4 +413,18 @@ settingsNav.add({
   position: 400,
   subject: Subject.Product,
   action: 'update',
+})
+
+// Running a task can rewrite any data in the install, so the entry follows the
+// same grant the API enforces rather than a proxy permission.
+settingsNav.add({
+  key: 'settings.maintenance-tasks',
+  labelKey: 'admin.settings_nav.items.maintenance_tasks',
+  descriptionKey: 'admin.settings_nav.descriptions.maintenance_tasks',
+  keywords: ['backfill', 'reindex', 'upgrade', 'migration', 'data'],
+  path: '/maintenance-tasks',
+  icon: WrenchIcon,
+  group: 'developer',
+  position: 500,
+  subject: Subject.MaintenanceTaskRun,
 })

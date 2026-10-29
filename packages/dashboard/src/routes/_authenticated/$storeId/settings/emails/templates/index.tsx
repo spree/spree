@@ -1,4 +1,5 @@
 import type { EmailTemplate } from '@spree/admin-sdk'
+import { EMAIL_TEMPLATE_KINDS, type EmailTemplateKind } from '@spree/core'
 import {
   PageHeader,
   Subject,
@@ -14,6 +15,11 @@ import {
   CardHeader,
   CardTitle,
   ErrorState,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
   ResourceLayout,
   Skeleton,
 } from '@spree/dashboard-ui'
@@ -27,8 +33,6 @@ import { emailTemplateName } from '../../../../../../lib/email-template-name'
 export const Route = createFileRoute('/_authenticated/$storeId/settings/emails/templates/')({
   component: EmailTemplatesPage,
 })
-
-const GROUPS = ['email', 'layout', 'partial'] as const
 
 function EmailTemplatesPage() {
   const { t } = useTranslation()
@@ -67,7 +71,7 @@ function EmailTemplatesPage() {
               </CardContent>
             </Card>
           ) : (
-            GROUPS.map((kind) => (
+            EMAIL_TEMPLATE_KINDS.map((kind) => (
               <TemplateGroup
                 key={kind}
                 kind={kind}
@@ -85,7 +89,7 @@ function TemplateGroup({
   kind,
   templates,
 }: {
-  kind: (typeof GROUPS)[number]
+  kind: EmailTemplateKind
   templates: EmailTemplate[]
 }) {
   const { t } = useTranslation()
@@ -104,22 +108,26 @@ function TemplateGroup({
         <ul className="divide-y divide-border">
           {templates.map((template) => (
             <li key={template.id}>
-              <Link
-                to="/$storeId/settings/emails/templates/$templateId"
-                params={{ storeId, templateId: template.id }}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-accent"
+              <Item
+                render={
+                  <Link
+                    to="/$storeId/settings/emails/templates/$templateId"
+                    params={{ storeId, templateId: template.id }}
+                  />
+                }
+                className="flex-nowrap gap-3 rounded-none px-4 py-3 hover:bg-accent"
               >
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <span className="font-medium">{emailTemplateName(t, template.key)}</span>
+                <ItemContent className="min-w-0 gap-0">
+                  <ItemTitle>{emailTemplateName(t, template.key)}</ItemTitle>
                   {template.subject && template.kind === 'email' && (
-                    <span className="truncate text-sm text-muted-foreground">
-                      {template.subject}
-                    </span>
+                    <ItemDescription className="line-clamp-1">{template.subject}</ItemDescription>
                   )}
-                </div>
-                <TemplateBadges template={template} />
-                <ChevronRightIcon className="size-4 text-muted-foreground" aria-hidden />
-              </Link>
+                </ItemContent>
+                <ItemActions>
+                  <TemplateBadges template={template} />
+                  <ChevronRightIcon className="size-4 text-muted-foreground" aria-hidden />
+                </ItemActions>
+              </Item>
             </li>
           ))}
         </ul>

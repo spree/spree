@@ -1,16 +1,22 @@
 import type { Command } from 'commander'
+import { routesCommand } from '../backend.js'
 import { detectProject } from '../context.js'
+import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
 
 export function registerRoutesCommand(program: Command): void {
   program
-    .command('routes')
-    .description('Show Rails routes (`bin/rails routes`)')
+    .command('routes', { hidden: true })
+    .description('Deprecated: use `spree api endpoints`')
     .argument('[args...]', 'arguments to pass to bin/rails routes')
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
+      warnDeprecated(
+        'spree routes',
+        args.length > 0 ? `spree exec bin/rails routes ${args.join(' ')}` : 'spree api endpoints',
+      )
       const ctx = detectProject()
-      await dockerComposeExecOrRun(['bin/rails', 'routes', ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(routesCommand(args), ctx.projectDir)
     })
 }

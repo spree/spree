@@ -68,4 +68,48 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldSerializer do
       expect(subject).not_to have_key('display_on')
     end
   end
+
+  # Every Store API record that can carry custom fields offers them on
+  # `expand=custom_fields`: storefront visible values on the Store API, every
+  # value on the Admin API.
+  describe 'custom_fields expand' do
+    let(:address) { create(:address) }
+    let(:public_definition) { create(:custom_field_definition, resource_type: 'Spree::Address') }
+    let(:private_definition) { create(:custom_field_definition, :admin_only, resource_type: 'Spree::Address') }
+    let(:expand_params) { base_params.merge(expand: ['custom_fields']) }
+
+    before do
+      create(:custom_field, resource: address, custom_field_definition: public_definition, value: 'public')
+      create(:custom_field, resource: address, custom_field_definition: private_definition, value: 'private')
+    end
+
+    it 'is omitted unless asked for' do
+      expect(Spree::Api::V3::AddressSerializer.new(address, params: base_params).to_h).not_to have_key('custom_fields')
+    end
+
+    it 'sends only storefront visible values on the Store API' do
+      result = Spree::Api::V3::AddressSerializer.new(address, params: expand_params).to_h
+
+      expect(result['custom_fields'].pluck('value')).to eq(['public'])
+    end
+
+    it 'sends every value on the Admin API' do
+      result = Spree::Api::V3::Admin::AddressSerializer.new(address, params: expand_params).to_h
+
+      expect(result['custom_fields'].pluck('value')).to contain_exactly('public', 'private')
+    end
+
+    it 'is offered by every Store API serializer of a record that can carry custom fields' do
+      serializers = %w[
+        Address Category Claim Collection Company CreditCard Customer DeliveryMethod Fulfillment GiftCard
+        LineItem Media NewsletterSubscriber OptionType OptionValue Order Payment PaymentMethod PaymentSource
+        Product Return Seller StoreCredit Variant
+      ]
+
+      serializers.each do |name|
+        expect(Spree::Api::V3.const_get("#{name}Serializer")._attributes).to have_key(:custom_fields), name
+        expect(Spree::Api::V3::Admin.const_get("#{name}Serializer")._attributes).to have_key(:custom_fields), name
+      end
+    end
+  end
 end

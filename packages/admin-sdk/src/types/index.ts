@@ -3,6 +3,7 @@
 // `spree filters types`).
 export type {
   BooleanFilters,
+  CodeFilters,
   CustomFieldValueFilters,
   EnumFilters,
   ErrorResponse,
@@ -129,6 +130,7 @@ export type { default as Invitation } from './generated/Invitation'
 export type { default as InvitationAcceptanceLink } from './generated/InvitationAcceptanceLink'
 export type { default as LineItem } from './generated/LineItem'
 export type { default as Locale } from './generated/Locale'
+export type { default as MaintenanceTaskRun } from './generated/MaintenanceTaskRun'
 export type { default as Market } from './generated/Market'
 export type { default as Media } from './generated/Media'
 export type { default as OauthAccessToken } from './generated/OauthAccessToken'
@@ -218,3 +220,4 @@ export type {
   TranslationCoverageRow,
   TranslationsUpsertParams,
 } from './translations'
+export type { UpgradeStep, UpgradeStepsMeta } from './upgrade-step'

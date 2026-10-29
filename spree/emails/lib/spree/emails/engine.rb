@@ -28,6 +28,7 @@ module Spree
           'spree/digital_asset_mailer/files_ready_email' => 'Spree::Emails::Samples::Downloads',
           'spree/customer_mailer/password_reset_email' => 'Spree::Emails::Samples::PasswordReset',
           'spree/customer_mailer/data_export_email' => 'Spree::Emails::Samples::DataExport',
+          'spree/customer_mailer/data_request_confirmation_email' => 'Spree::Emails::Samples::DataRequestConfirmation',
           'spree/newsletter_mailer/email_confirmation' => 'Spree::Emails::Samples::NewsletterConfirmation',
           'spree/company_mailer/invitation_email' => 'Spree::Emails::Samples::CompanyInvitation'
         }.each { |key, sample| Spree.editable_email_templates.register(key, kind: :email, sample: sample) }
@@ -48,6 +49,7 @@ module Spree
           Spree::NewsletterSubscriberEmailSubscriber,
           Spree::CustomerEmailSubscriber,
           Spree::DataRequestEmailSubscriber,
+          Spree::DataRequestConfirmationEmailSubscriber,
           Spree::CompanyEmailSubscriber,
           Spree::DigitalAssetEmailSubscriber,
           Spree::SellerEmailSubscriber

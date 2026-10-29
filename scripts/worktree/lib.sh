@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
-# Shared helpers for the multi-worktree dev workflow (see CLAUDE.md "Worktrees").
+# Shared helpers for the multi-worktree dev workflow (see AGENTS.md "Development environment").
 # Everything derives from the current git branch, so the scripts work both from
 # worktrunk hooks and when run by hand. Pass a branch name as WT_BRANCH (or as
 # the first argument to the calling script) to operate on another worktree's
 # resources, e.g. from a post-remove hook running in the primary checkout.
 set -euo pipefail
+
+# Hooks often run under long-lived parents (terminal multiplexers, editors)
+# whose PATH predates the shell's version-manager setup, so resolve ruby and
+# bundle through mise directly rather than trusting the inherited PATH.
+if command -v mise >/dev/null; then
+  eval "$(mise activate bash --shims)"
+fi
 
 TEMPLATE_DB="spree_worktree_template"
 STOREFRONT_REPO="https://github.com/spree/storefront.git"
@@ -27,7 +34,22 @@ require_current_starter() {
   local missing=()
   local report
 
-  report=$(cd server && DATABASE_NAME=__dev_probe__ DATABASE_NAME_TEST=__test_probe__ ruby -ryaml -rerb -e '
+  # Every fresh clone brings its own .mise.toml, which mise refuses until it is
+  # trusted, and the starter moves to new Ruby releases on its own schedule.
+  if command -v mise >/dev/null; then
+    [ -f server/.mise.toml ] && mise trust --quiet server/.mise.toml
+    (cd server && mise install --quiet)
+  fi
+
+  # The probe below hides its errors, so a Ruby that cannot start would read as
+  # every check failing.
+  if ! (cd server && ruby -e '' 2>/dev/null); then
+    echo "Ruby $(cat server/.ruby-version) (from server/.ruby-version) is not installed." >&2
+    echo "Install it with your Ruby version manager — with mise: (cd server && mise install)" >&2
+    return 1
+  fi
+
+  report=$(cd server && DATABASE_NAME=__dev_probe__ DATABASE_NAME_TEST=__test_probe__ ruby -E UTF-8 -ryaml -rerb -e '
     config = YAML.safe_load(ERB.new(File.read("config/database.yml")).result, aliases: true)
     puts "dev"  if config.dig("development", "database") == "__dev_probe__"
     puts "test" if config.dig("test", "database") == "__test_probe__"

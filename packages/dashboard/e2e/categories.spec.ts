@@ -45,6 +45,23 @@ test.describe('categories management', () => {
     await expect(treeRow(page, name)).toBeVisible()
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slots on the create and edit pages', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATEGORIES_PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByText('Slot probe: category.form_main (new)')).toBeVisible()
+    await expect(page.getByText('Slot probe: category.form_sidebar (new)')).toBeVisible()
+
+    await page.locator('#category-name').fill(`E2E Slots ${Date.now()}`)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText('Slot probe: category.form_main (edit)')).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Slot probe: category.form_sidebar (edit)')).toBeVisible()
+  })
+
   test('edits a category name', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATEGORIES_PATH(creds.store_id), CTA)

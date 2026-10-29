@@ -1,5 +1,12 @@
 import { expect, type Locator, type Page, test } from '@playwright/test'
-import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
+import {
+  adminRequest,
+  FIXTURE_BULK_CHANNEL_NAME,
+  gotoIndex,
+  login,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const DELIVERY_PROFILES_PATH = (storeId: string) => `/${storeId}/settings/delivery-profiles`
 const PROFILE_CTA = /add profile/i
@@ -34,6 +41,16 @@ test.describe('delivery profiles', () => {
     await expect(page.getByText(/^default$/i).first()).toBeVisible({ timeout: 15_000 })
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slots on a profile page', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+    await createProfile(page, `E2E Slots ${Date.now()}`)
+
+    await expect(page.getByText('Slot probe: delivery_profile.form_main')).toBeVisible()
+    await expect(page.getByText('Slot probe: delivery_profile.form_sidebar')).toBeVisible()
+  })
+
   test('creates a profile, a zone inside it, and a method inside the zone', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
@@ -65,6 +82,8 @@ test.describe('delivery profiles', () => {
     await zoneSheet.getByPlaceholder(/search countries and regions/i).fill('United States')
     await zoneSheet.getByRole('checkbox', { name: /^united states$/i }).check()
 
+    // The sheets' plugin slots, filled by src/testing/slot-probes.tsx.
+    await expect(zoneSheet.getByText('Slot probe: delivery_zone.form_fields (new)')).toBeVisible()
     await page.getByRole('button', { name: /create delivery zone/i }).click()
 
     await expect(page.getByText(zoneName)).toBeVisible({ timeout: 15_000 })
@@ -89,6 +108,9 @@ test.describe('delivery profiles', () => {
     await expect(page.getByRole('dialog').getByText(/^zone$/i)).toHaveCount(0)
 
     await page.getByRole('dialog').locator('#name').fill(methodName)
+    await expect(
+      page.getByRole('dialog').getByText('Slot probe: delivery_method.form_fields (new)'),
+    ).toBeVisible()
     await page.getByRole('button', { name: /create delivery method/i }).click()
 
     // Saving closes the sheet and the method appears under its zone.
@@ -228,6 +250,48 @@ test.describe('delivery profiles', () => {
     await expect(calculator).toContainText(/flexi rate/i, { timeout: 15_000 })
     await expect(sheet.locator('#preference-first_item')).toHaveValue(/^3(\.0+)?$/)
     await expect(sheet.getByText(FIXTURE_BULK_CHANNEL_NAME)).toBeVisible()
+  })
+
+  // A currency left blank is not offered, the store's default currency
+  // included, and a method with no amount in any currency is refused rather
+  // than saved as one nobody can be quoted.
+  test('leaves a blank currency out, the store default included, and asks for at least one amount', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const methodName = `E2E Euro Only ${stamp}`
+    await createProfile(page, `E2E Euro Only Profile ${stamp}`)
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    const sheet = page.getByRole('dialog')
+    await sheet.locator('#name').fill(methodName)
+
+    const calculator = sheet.locator('#calculator-type')
+    await expect(calculator).toBeEnabled({ timeout: 15_000 })
+    await calculator.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue('')
+
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(sheet.getByText(/enter an amount in at least one currency/i)).toBeVisible()
+
+    await sheet.locator('#calculator-amount-EUR').fill('4.50')
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    await page.getByText(methodName).click()
+    await expect(sheet.locator('#calculator-amount-EUR')).toHaveValue(/^4\.50?$/, {
+      timeout: 15_000,
+    })
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue('')
   })
 
   // Opening a method is a search-param change, so the sheet must survive a
@@ -453,11 +517,18 @@ test.describe('delivery profiles', () => {
     })
     const sheet = page.getByRole('dialog')
     await sheet.locator('#name').fill(methodName)
+    // A flat rate left without amounts must not block a method whose pricing fields the provider hides.
+    const calculator = sheet.locator('#calculator-type')
+    await expect(calculator).toBeEnabled({ timeout: 15_000 })
+    await calculator.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveValue('')
     const rateProvider = fieldSelect(sheet, 'Rate provider')
     await expect(rateProvider).toContainText(/^internal$/i, { timeout: 15_000 })
     await rateProvider.click()
     await page.getByRole('option', { name: /^freight$/i }).click()
     await expect(rateProvider).toContainText(/^freight$/i)
+    await expect(sheet.locator('#calculator-amount-USD')).toHaveCount(0)
     // A provider-priced method carries the store's markup on top of the quote.
     await sheet.locator('#markup_percent').fill('7.5')
     await sheet.locator('#markup_flat').fill('2.50')
@@ -474,5 +545,21 @@ test.describe('delivery profiles', () => {
     })
     await expect(reopened.locator('#markup_percent')).toHaveValue('7.5')
     await expect(reopened.locator('#markup_flat')).toHaveValue('2.50')
+  })
+
+  // An existing method: saving only a custom field leaves the method itself
+  // untouched, so the shared fixture stays as it was.
+  test('saves a custom field with the delivery method', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'delivery_method', async (label) => {
+      const methods = await adminRequest<{
+        data: { id: string; delivery_profile_id: string | null }[]
+      }>(page, creds, 'get', '/delivery_methods?limit=25')
+      const method = methods.data.find((candidate) => candidate.delivery_profile_id)
+      if (!method) throw new Error('no delivery method on a profile in the fixtures')
+      const url = `${DELIVERY_PROFILES_PATH(creds.store_id)}/${method.delivery_profile_id}?method=${method.id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'Carrier contract 12')
+    })
   })
 })

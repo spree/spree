@@ -66,6 +66,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Two copies of a shared library (React Query, the router) break type
+      # checking across packages, and Dependabot can leave them behind when it
+      # bumps only some of the packages that use one. Run `pnpm dedupe` to fix.
+      - name: Check lockfile has no duplicate packages
+        run: pnpm dedupe --check
+
       # The pre-commit hook regenerates schemas, but it can be skipped or not
       # installed, so a commit can still carry types without matching schemas.
       - name: Check Zod schemas are up to date
@@ -100,14 +106,14 @@ jobs:
             exit 1
           fi
 
-      # The country, currency and locale lists come from the closed code
-      # schemas in the Store API reference.
+      # The country, currency, locale and unit lists come from the closed code
+      # schemas in the Store and Admin API references.
       - name: Check SDK code lists are up to date
         run: |
-          pnpm generate:iso-codes
-          if [ -n "$(git status --porcelain -- packages/sdk-core/src/iso-codes.generated.ts)" ]; then
-            git diff -- packages/sdk-core/src/iso-codes.generated.ts
-            echo "::error::SDK code lists are out of date. Run 'pnpm generate:iso-codes' and commit the result."
+          pnpm generate:code-lists
+          if [ -n "$(git status --porcelain -- packages/core/src/code-lists.generated.ts)" ]; then
+            git diff -- packages/core/src/code-lists.generated.ts
+            echo "::error::SDK code lists are out of date. Run 'pnpm generate:code-lists' and commit the result."
             exit 1
           fi
 
@@ -150,10 +156,10 @@ jobs:
       - run: pnpm turbo build --cache-dir=.turbo
 
       # `pnpm pack` rewrites workspace: ranges to real versions, exactly as
-      # `pnpm publish` does in the release jobs below.
+      # `pnpm publish` does in release.yml.
       - name: Pack packages
         run: |
-          for pkg in admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli; do
+          for pkg in core admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli; do
             pnpm --dir "packages/$pkg" pack --pack-destination "$RUNNER_TEMP/tarballs"
           done
 
@@ -168,6 +174,9 @@ jobs:
 
       # The apps pin @spree/* to npm ranges. Overriding every package with its
       # tarball also replaces the copies other @spree/* packages depend on.
+      # The scaffolder already locked the published packages' dependencies, so
+      # `pnpm dedupe` drops copies those leave behind (as an upgrading app would).
+      # Without it, a bumped exact pin type checks against a second copy.
       - name: Point the apps at the packed packages
         run: |
           {
@@ -184,6 +193,7 @@ jobs:
         run: |
           cat "$RUNNER_TEMP/overrides.yaml" >> pnpm-workspace.yaml
           pnpm install --no-frozen-lockfile
+          pnpm dedupe
           pnpm build && pnpm typecheck && pnpm lint
 
       - name: Check Seller Panel
@@ -192,6 +202,7 @@ jobs:
         run: |
           cat "$RUNNER_TEMP/overrides.yaml" >> pnpm-workspace.yaml
           pnpm install --no-frozen-lockfile
+          pnpm dedupe
           pnpm build && pnpm typecheck && pnpm lint
 
       # New apps start on TypeScript 7, but apps created earlier stay on 6 and
@@ -298,7 +309,12 @@ jobs:
       # invitation happens there rather than in the dashboard. Its starter's
       # vite config imports `@spree/seller-dashboard/vite`, which resolves to
       # that package's `dist/`, so it must be built even to load the config.
+      #
+      # VITE_E2E_SLOT_PROBES builds in the slot probes the E2E specs assert
+      # against (packages/dashboard/src/testing/slot-probes.tsx).
       - name: Build dashboard packages
+        env:
+          VITE_E2E_SLOT_PROBES: "1"
         run: pnpm turbo build --filter=@spree/dashboard --filter=@spree/seller-dashboard-starter --cache-dir=.turbo
 
       - name: Setup dummy Rails app
@@ -375,426 +391,3 @@ jobs:
             exit 1
           fi
           echo "All E2E shards passed."
-
-  release-sdk:
-    name: "SDK - Release"
-    needs: check
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
-    defaults:
-      run:
-        working-directory: packages/sdk
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-        working-directory: .
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-        working-directory: .
-
-      - name: Check if version is published
-        id: check
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if npm view @spree/sdk@$PACKAGE_VERSION version 2>/dev/null; then
-            echo "published=true" >> $GITHUB_OUTPUT
-          else
-            echo "published=false" >> $GITHUB_OUTPUT
-          fi
-
-      # @spree/sdk is the one package with a stable `latest` that real
-      # storefronts already depend on (`^1.2.1` = the 5.x Store API). A 6.0
-      # prerelease published without a tag would land on `latest` and be
-      # resolved by every one of them on their next install, so the tag is
-      # load-bearing here rather than a nicety.
-      - name: Determine npm tag
-        id: tag
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if echo "$PACKAGE_VERSION" | grep -qE '^0\.'; then
-            echo "tag=next" >> $GITHUB_OUTPUT
-          elif echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
-            echo "tag=beta" >> $GITHUB_OUTPUT
-          else
-            echo "tag=latest" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Build and Publish
-        if: steps.check.outputs.published == 'false'
-        run: pnpm turbo build --filter=@spree/sdk && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
-
-  release-admin-sdk:
-    name: "Admin SDK - Release"
-    needs: [check, scaffolded-app]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
-    defaults:
-      run:
-        working-directory: packages/admin-sdk
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-        working-directory: .
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-        working-directory: .
-
-      - name: Check if version is published
-        id: check
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if npm view @spree/admin-sdk@$PACKAGE_VERSION version 2>/dev/null; then
-            echo "published=true" >> $GITHUB_OUTPUT
-          else
-            echo "published=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Determine npm tag
-        id: tag
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          # Pre-1.0 / Developer Preview releases ship under the `next` tag so
-          # `npm install @spree/admin-sdk` doesn't pick them up as `latest`.
-          if echo "$PACKAGE_VERSION" | grep -qE '^0\.'; then
-            echo "tag=next" >> $GITHUB_OUTPUT
-          elif echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
-            echo "tag=beta" >> $GITHUB_OUTPUT
-          else
-            echo "tag=latest" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Build and Publish
-        if: steps.check.outputs.published == 'false'
-        run: pnpm turbo build --filter=@spree/admin-sdk && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
-
-  release-cli:
-    name: "CLI - Release"
-    # Gated on release-dashboard and release-seller: the CLI tarball embeds the
-    # dashboard-starter AND seller-dashboard-starter templates with floating
-    # ranges floored at the @spree/dashboard{,-ui,-core} and @spree/seller-*
-    # versions being released — publishing it before those versions exist on
-    # npm would ship a scaffold whose install fails until they land.
-    needs: [check, scaffolded-app, release-dashboard, release-seller]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
-    defaults:
-      run:
-        working-directory: packages/cli
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-        working-directory: .
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-        working-directory: .
-
-      - name: Check if version is published
-        id: check
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if npm view @spree/cli@$PACKAGE_VERSION version 2>/dev/null; then
-            echo "published=true" >> $GITHUB_OUTPUT
-          else
-            echo "published=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Determine npm tag
-        id: tag
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
-            echo "tag=beta" >> $GITHUB_OUTPUT
-          else
-            echo "tag=latest" >> $GITHUB_OUTPUT
-          fi
-
-      # Build the CLI with its workspace deps first. The CLI bundles
-      # @spree/admin-sdk (tsup `noExternal: [/.*/]`), so esbuild must resolve
-      # that package's `dist/` at build time. A bare `pnpm build` only builds
-      # the CLI; `turbo build --filter` follows the `^build` graph and builds
-      # @spree/admin-sdk first (matching the SDK release jobs above).
-      - name: Build
-        if: steps.check.outputs.published == 'false'
-        run: pnpm turbo build --filter=@spree/cli
-        working-directory: .
-
-      # Use `pnpm publish`, not `npm publish`: the CLI keeps @spree/admin-sdk as a
-      # `workspace:` devDependency, which `npm publish` would ship to the registry
-      # verbatim (EUNSUPPORTEDPROTOCOL on install). `pnpm publish` rewrites the
-      # `workspace:` protocol to the resolved semver range while packing.
-      - name: Publish
-        if: steps.check.outputs.published == 'false'
-        run: pnpm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }} --no-git-checks
-
-  # The dashboard packages are source-only for everything the host's Vite
-  # compiles, but their Node-side Vite-plugin entries are compiled to JS by a
-  # per-package prepublishOnly hook (Node refuses to type-strip .ts under
-  # node_modules). They depend on each other via workspace:^, which
-  # `pnpm publish` rewrites to the concrete ^x.y.z while packing — so they
-  # publish in dependency order from a single job. Pre-1.0 Developer Preview versions ship under the `next` tag,
-  # matching @spree/admin-sdk.
-  release-dashboard:
-    name: "Dashboard packages - Release"
-    # Gated on release-admin-sdk: the dashboard packages' workspace:^ ranges
-    # are rewritten to concrete ^x.y.z of @spree/admin-sdk while packing — a
-    # same-push admin-sdk version bump must land on npm first, or installs of
-    # the just-published dashboard packages fail until it does. (release-cli
-    # waits on this job, completing the admin-sdk → dashboard → cli chain.)
-    needs: [check, scaffolded-app, release-admin-sdk]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-
-      # As in the seller job: prepublishOnly compiles the Vite-plugin entries
-      # with tsup, so the workspace dependency graph must be built first.
-      - name: Build
-        run: pnpm turbo build --filter=@spree/dashboard
-
-      - name: Publish unpublished versions (dependency order)
-        run: |
-          set -euo pipefail
-          for pkg in dashboard-ui dashboard-core dashboard; do
-            cd "packages/$pkg"
-            NAME=$(node -p "require('./package.json').name")
-            VERSION=$(node -p "require('./package.json').version")
-            if npm view "$NAME@$VERSION" version 2>/dev/null; then
-              echo "$NAME@$VERSION already published — skipping."
-            else
-              if echo "$VERSION" | grep -qE '^0\.'; then TAG=next
-              elif echo "$VERSION" | grep -qE '[-]'; then TAG=beta
-              else TAG=latest
-              fi
-              echo "Publishing $NAME@$VERSION with tag $TAG..."
-              pnpm publish --provenance --access public --tag "$TAG" --no-git-checks
-            fi
-            cd ../..
-          done
-
-  # The seller packages mirror the admin pair above: @spree/seller-sdk is the
-  # Seller API client, @spree/seller-dashboard the panel built on it. They
-  # publish on the same pre-1.0 `next` scheme, in dependency order, and must
-  # land before release-cli — the CLI tarball embeds the seller-dashboard
-  # starter with ranges floored at these versions.
-  release-seller:
-    name: "Seller packages - Release"
-    needs: [check, scaffolded-app]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-
-      # Each package's prepublishOnly runs tsup while packing, and tsup bundles
-      # its workspace dependencies from their dist/ — @spree/seller-sdk pulls
-      # in the private @spree/sdk-core, which nothing has built yet in a fresh
-      # checkout. Build the graph first; `--filter` follows ^build, exactly as
-      # the SDK and CLI release jobs do.
-      - name: Build
-        run: pnpm turbo build --filter=@spree/seller-sdk --filter=@spree/seller-dashboard
-
-      - name: Publish unpublished versions (dependency order)
-        run: |
-          set -euo pipefail
-          for pkg in seller-sdk seller-dashboard; do
-            cd "packages/$pkg"
-            NAME=$(node -p "require('./package.json').name")
-            VERSION=$(node -p "require('./package.json').version")
-            if npm view "$NAME@$VERSION" version 2>/dev/null; then
-              echo "$NAME@$VERSION already published — skipping."
-            else
-              if echo "$VERSION" | grep -qE '^0\.'; then TAG=next
-              elif echo "$VERSION" | grep -qE '[-]'; then TAG=beta
-              else TAG=latest
-              fi
-              echo "Publishing $NAME@$VERSION with tag $TAG..."
-              pnpm publish --provenance --access public --tag "$TAG" --no-git-checks
-            fi
-            cd ../..
-          done
-
-  # The dashboard-starter template is NOT distributed via a template repo:
-  # `@spree/cli` and `create-spree-app` embed it at build time
-  # (scripts/sync-starter.mjs renders packages/dashboard-starter
-  # with floating ranges floored at the released versions into their
-  # templates/ dir), so scaffolds install the newest dashboard release even
-  # from an older CLI, and never anything older than the template was built
-  # against.
-
-  release-create-spree-app:
-    name: "create-spree-app - Release"
-    # Gated on release-cli: the dashboard scaffold phase delegates to the
-    # project-local `spree add dashboard`, so a create-spree-app that offers
-    # the dashboard must not publish before the CLI implementing that command
-    # (with the embedded starter) is on npm. Completes the release chain:
-    # admin-sdk → dashboard → cli → create-spree-app.
-    needs: [check, scaffolded-app, release-cli]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
-    defaults:
-      run:
-        working-directory: packages/create-spree-app
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-        working-directory: .
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-        working-directory: .
-
-      - name: Check if version is published
-        id: check
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if npm view create-spree-app@$PACKAGE_VERSION version 2>/dev/null; then
-            echo "published=true" >> $GITHUB_OUTPUT
-          else
-            echo "published=false" >> $GITHUB_OUTPUT
-          fi
-
-      # Stable today, but a prerelease must never become the default for
-      # `npx create-spree-app` — the entry point every new project runs.
-      - name: Determine npm tag
-        id: tag
-        run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
-            echo "tag=beta" >> $GITHUB_OUTPUT
-          else
-            echo "tag=latest" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Build and Publish
-        if: steps.check.outputs.published == 'false'
-        run: pnpm build && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}

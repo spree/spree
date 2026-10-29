@@ -1,5 +1,5 @@
 import type { Category } from '@spree/admin-sdk'
-import { ResourceCombobox } from '@spree/dashboard-core'
+import { RecordMetadataCard, ResourceCombobox } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -10,7 +10,6 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
-  MetadataCard,
   Textarea,
 } from '@spree/dashboard-ui'
 import type { UseFormReturn } from 'react-hook-form'
@@ -89,6 +88,7 @@ export function CategoryMain({
       {category && (
         <>
           <CategoryProductsCard categoryId={category.id} />
+          <ResourceTranslationsCard resourceType="category" resourceId={category.id} />
           {/*
             Form-backed: custom field values ride along in the category form and
             persist on the page's Save.
@@ -96,12 +96,9 @@ export function CategoryMain({
           <FormBackedCustomFieldsProvider form={form} resourceType="category">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
-          <ResourceTranslationsCard resourceType="category" resourceId={category.id} />
-          <MetadataCard
+          <RecordMetadataCard
             metadata={category.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
+            externalReferences={category.external_references}
           />
         </>
       )}

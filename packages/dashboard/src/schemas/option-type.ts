@@ -1,11 +1,8 @@
 import type { OptionValue, OptionValueParams } from '@spree/admin-sdk'
+import { OPTION_TYPE_KINDS } from '@spree/core'
 import { i18n, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-
-// Labels live in `en.json` under `admin.products.options.kinds.*` — consumers
-// translate at render time.
-export const OPTION_TYPE_KINDS = ['dropdown', 'color_swatch', 'buttons'] as const
 
 const HEX_RE = /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/
 

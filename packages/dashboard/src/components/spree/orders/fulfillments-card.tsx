@@ -1,4 +1,5 @@
 import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
+import { FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
 import {
   type FulfillmentItemRow,
   formatAmount,
@@ -6,8 +7,10 @@ import {
   isPositiveMoney,
   Money,
   unfulfilledItemRows,
+  useMetadataSheet,
   useMoneyLocale,
   useStockLocations,
+  ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
 import {
   Badge,
@@ -38,6 +41,9 @@ import {
   type FulfillmentItemRowData,
   FulfillmentPanel,
   Input,
+  type PostSaleSelection,
+  type PostSaleUnit,
+  QuantityPicker,
   RelativeTime,
   Select,
   SelectContent,
@@ -45,6 +51,7 @@ import {
   SelectTrigger,
   SelectValue,
   StatusBadge,
+  selectedUnits,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -114,9 +121,9 @@ function unitsOf(fulfillment: Fulfillment): FulfillmentUnit[] {
  * unclaimed remainder is offered: units already sitting in a fulfillment move
  * via Split, and shipped ones do not move at all.
  */
-function orderUnits(order: Order): Array<{ itemId: string; label: string; quantity: number }> {
+function orderUnits(order: Order): PostSaleUnit[] {
   return unfulfilledItemRows(order.items ?? [], order.fulfillments ?? []).map((row) => ({
-    itemId: row.key,
+    id: row.key,
     label: [row.name, row.optionsText].filter(Boolean).join(' — ') || row.key,
     quantity: row.quantity,
   }))
@@ -300,11 +307,12 @@ function CreateFulfillmentDialog({
   const locations = data?.data ?? []
   const [stockLocationId, setStockLocationId] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [selection, setSelection] = useState<Record<string, number>>({})
+  const [selection, setSelection] = useState<PostSaleSelection>({})
 
-  const items = Object.entries(selection)
-    .filter(([, quantity]) => quantity > 0)
-    .map(([itemId, quantity]) => ({ item_id: itemId, quantity }))
+  const items = selectedUnits(selection).map(([itemId, quantity]) => ({
+    item_id: itemId,
+    quantity,
+  }))
 
   const locationOptions = locations.map((location) => ({
     value: location.id,
@@ -382,33 +390,7 @@ function CreateFulfillmentDialog({
 
             <Field>
               <FieldLabel>{t('admin.orders.detail.fulfillments.create_items')}</FieldLabel>
-              <div className="flex flex-col gap-2">
-                {units.map((unit) => (
-                  <div
-                    key={unit.itemId}
-                    className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-                  >
-                    <span className="text-sm truncate">{unit.label}</span>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={unit.quantity}
-                      className="w-20"
-                      aria-label={unit.label}
-                      value={selection[unit.itemId] ?? 0}
-                      onChange={(event) =>
-                        setSelection((current) => ({
-                          ...current,
-                          [unit.itemId]: Math.max(
-                            0,
-                            Math.min(Number(event.target.value), unit.quantity),
-                          ),
-                        }))
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
+              <QuantityPicker units={units} selection={selection} onChange={setSelection} />
             </Field>
           </FieldGroup>
         </DialogBody>
@@ -431,11 +413,11 @@ function CreateFulfillmentDialog({
 
 // Which transitions the workflows actually accept, so the card does not
 // present an action that can only 422.
-const CAN_SHIP = ['unfulfilled']
-const CAN_CANCEL = ['unfulfilled']
-const CAN_EDIT = ['unfulfilled']
+const CAN_SHIP = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_CANCEL = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 // Receipt is confirmed after handover, never before.
-const CAN_MARK_DELIVERED = ['fulfilled']
+const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const { t } = useTranslation()
@@ -451,6 +433,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
   const [uploadOpen, setUploadOpen] = useState(false)
   const [fulfilling, setFulfilling] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const editable = CAN_EDIT.includes(fulfillment.status)
   const splittable = editable && unitsOf(fulfillment).length > 0
@@ -534,6 +517,18 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                 {t('admin.orders.detail.fulfillments.upload_label')}
               </DropdownMenuItem>
             )}
+
+            <ViewMetadataMenuItem
+              metadata={fulfillment.metadata}
+              externalReferences={fulfillment.external_references}
+              onClick={() =>
+                metadataSheet.show(
+                  fulfillment.metadata,
+                  fulfillment.number,
+                  fulfillment.external_references,
+                )
+              }
+            />
 
             {CAN_CANCEL.includes(fulfillment.status) && (
               <>
@@ -753,6 +748,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           onOpenChange={setUploadOpen}
         />
       )}
+
+      {metadataSheet.sheet}
     </FulfillmentPanel>
   )
 }

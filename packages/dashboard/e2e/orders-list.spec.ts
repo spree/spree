@@ -1,6 +1,8 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  addRecordFilter,
   addTextFilter,
+  adminRequest,
   createPlacedOrder,
   type E2ELoginSession,
   FIXTURE_PROMO_SKU,
@@ -17,7 +19,7 @@ const SEARCH = /search by number/i
  * Two placed orders only this test owns: a shipped single item and an
  * unshipped three-item order, billed to names that carry a shared stamp.
  */
-async function seedOrders(page: Page, session: E2ELoginSession) {
+async function seedOrders(page: Page, session: E2ELoginSession, largeLocale?: string) {
   const stamp = `${Date.now()}`
   const lastName = `Listtest${stamp}`
   const small = {
@@ -35,14 +37,15 @@ async function seedOrders(page: Page, session: E2ELoginSession) {
       ship: false,
       firstName: `Bruno${stamp}`,
       lastName,
+      locale: largeLocale,
     })),
   }
 
   return { lastName, small, large }
 }
 
-async function openOrders(page: Page, storeId: string) {
-  await page.goto(ORDERS_PATH(storeId))
+async function openOrders(page: Page, storeId: string, columns?: string[]) {
+  await page.goto(`${ORDERS_PATH(storeId)}${columns ? `?columns=${columns.join(',')}` : ''}`)
   await expect(page.getByRole('heading', { name: /^orders$/i })).toBeVisible({ timeout: 15_000 })
 }
 
@@ -131,5 +134,37 @@ test.describe('orders list', () => {
 
     await sortList(page, /^total$/i, 'ascending')
     await expect(firstRow).toContainText(small.number, { timeout: 15_000 })
+  })
+
+  test('shows and filters by market and locale', async ({ page }) => {
+    const session = await login(page)
+    // `de` is a locale the seeded US market offers (see global-setup).
+    const { lastName, small, large } = await seedOrders(page, session, 'de')
+    const markets = await adminRequest<{ data: { name: string; currency: string }[] }>(
+      page,
+      session,
+      'get',
+      '/markets?limit=100',
+    )
+    const usMarket = markets.data.find((market) => market.currency === 'USD')?.name as string
+    await openOrders(page, session.store_id, ['number', 'market', 'locale'])
+    await addTextFilter(page, /^last name$/i, /^contains$/i, lastName)
+
+    await expect(row(page, small.number)).toContainText(usMarket, { timeout: 15_000 })
+    await expect(
+      row(page, large.number).getByRole('cell', { name: 'DE — German', exact: true }),
+    ).toBeVisible()
+
+    await addRecordFilter(page, /^locale$/i, 'German')
+    await expect(row(page, large.number)).toBeVisible({ timeout: 15_000 })
+    await expect(row(page, small.number)).toBeHidden()
+
+    await page
+      .getByRole('button', { name: /remove filter/i })
+      .last()
+      .click()
+    await addRecordFilter(page, /^market$/i, 'Europe')
+    await expect(row(page, small.number)).toBeHidden({ timeout: 15_000 })
+    await expect(row(page, large.number)).toBeHidden()
   })
 })

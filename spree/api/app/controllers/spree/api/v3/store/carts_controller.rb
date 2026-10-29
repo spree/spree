@@ -13,7 +13,7 @@ module Spree
 
           CART_ADDRESS = Spree::Api::V3::RequestSchema.shape('CartAddressParams') do |schema|
             schema.attribute :id, :id,
-              description: 'An existing address of the customer to use. The other fields are then ignored.'
+              description: "An existing address from the buyer's address book, or from the book of the company the cart is for. The other fields are then ignored."
             schema.include_attributes Spree::Api::V3::Store::AddressRequestSchema
           end
 
@@ -25,10 +25,10 @@ module Spree
             schema.attribute :currency, :currency
             schema.attribute :locale, :locale
             schema.attribute :shipping_address_id, :id,
-              description: 'An existing address to ship to.',
+              description: "An existing address to ship to, from the buyer's address book or from the book of the company the cart is for. List both with `GET /store/carts/:id/addresses`.",
               example: 'addr_abc123'
             schema.attribute :billing_address_id, :id,
-              description: 'An existing address to bill.',
+              description: "An existing address to bill, from the buyer's address book or from the book of the company the cart is for. List both with `GET /store/carts/:id/addresses`.",
               example: 'addr_def456'
             schema.attribute :preferred_stock_location_id, :id
             schema.attribute :company_id, :id, nullable: true, description: <<~TEXT.squish
@@ -112,6 +112,7 @@ module Spree
           # Auto-advances to the next checkout step when possible.
           def update
             find_cart!
+            authorize_address_book_access!
 
             with_order_lock do
               result = Spree.carts_update_service.call(
@@ -238,6 +239,19 @@ module Spree
 
           # Find incomplete cart for associate action.
           # Only finds guest carts (no user) or carts already owned by current user (idempotent).
+          ADDRESS_BOOK_PARAMS = %i[shipping_address billing_address shipping_address_id billing_address_id].freeze
+
+          # A typed address on a customer's cart is saved into that customer's
+          # address book and may become their default, and an address id names
+          # an entry of that book. The guest token proves the caller holds the
+          # cart, not the account, so those writes need the owner.
+          def authorize_address_book_access!
+            return if @cart.customer.nil?
+            return unless ADDRESS_BOOK_PARAMS.any? { |key| params.key?(key) }
+
+            authorize_storefront_write!(@cart, token: nil)
+          end
+
           def find_cart_for_association
             current_store.carts.incomplete.where(customer: [nil, current_user]).find_by_prefix_id!(params[:id])
           end

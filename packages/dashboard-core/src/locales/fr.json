@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Aucune adresse sélectionnée"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Fil d'Ariane",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Facturation par défaut",
       "default_shipping": "Livraison par défaut",
+      "inherited_from": "Héritée de {{name}}",
       "set_default_billing": "Définir comme adresse de facturation par défaut",
       "set_default_shipping": "Définir comme adresse de livraison par défaut"
     },
@@ -113,6 +117,7 @@
         "title": "Réinitialiser votre mot de passe"
       },
       "login": {
+        "account_deactivated": "Ce compte a été désactivé. Contactez un administrateur pour rétablir l'accès.",
         "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
         "divider": "ou",
         "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",
@@ -361,9 +366,12 @@
         "video_title": "Aperçu de la vidéo"
       },
       "metadata_card": {
+        "copy_reference": "Copier la clé {{system}}",
         "empty_description": "Les applications et intégrations remplissent ceci automatiquement.",
         "empty_title": "Aucune métadonnée",
-        "title": "Métadonnées"
+        "external_references": "Références externes",
+        "title": "Métadonnées",
+        "view": "Voir les métadonnées"
       },
       "page_header": {
         "copy_id": "Copier l'ID",
@@ -416,6 +424,7 @@
       },
       "table_toolbar": {
         "add_filter": "Ajouter un filtre",
+        "any_field": "{{field}} : tous",
         "ascending": "Croissant",
         "clear_all": "Tout effacer",
         "columns_tooltip": "Colonnes",
@@ -436,6 +445,8 @@
         "filter_select_placeholder": "Sélectionner…",
         "filter_text_placeholder": "Filtrer…",
         "filter_to_placeholder": "Filtrer sur…",
+        "n_selected": "{{count}} sélectionnés",
+        "only": "Uniquement",
         "operators": {
           "after": "après",
           "before": "avant",
@@ -461,6 +472,7 @@
         "remove_filter": "Supprimer le filtre",
         "reset_to_default": "Réinitialiser",
         "search_placeholder": "Rechercher…",
+        "select_all": "Tout sélectionner",
         "sort_by": "Trier par",
         "sort_tooltip": "Trier",
         "visible_columns": "Colonnes visibles"
@@ -482,6 +494,12 @@
         "discard_message": "Tout ce que vous avez saisi sera perdu. Cette action est irréversible.",
         "discard_title": "Abandonner ce brouillon ?"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Montant en {{currency}}",
+      "help": "Les devises laissées vides ne se voient pas proposer cette méthode de livraison.",
+      "label": "Montant",
+      "required": "Saisissez un montant dans au moins une devise."
     },
     "custom_field_definitions": {
       "errors": {
@@ -937,6 +955,14 @@
       "order_multiple": {
         "label": "Multiple de commande",
         "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Téléchargements autorisés"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Jours de disponibilité"
+        }
       }
     },
     "image_upload": {
@@ -2034,6 +2060,38 @@
           "description": "Le vendeur doit fournir une adresse pour les retours"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Ajouter",
+      "all_variants": "Toutes les variantes",
+      "columns": {
+        "file": "Fichier",
+        "variant": "Variante",
+        "size": "Taille",
+        "downloads": "Téléchargements",
+        "days": "Jours"
+      },
+      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
+      "delete_title": "Supprimer ce fichier ?",
+      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
+      "download": "Télécharger",
+      "drop_hint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+      "empty": "Aucun fichier pour le moment",
+      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
+      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "source": {
+        "upload": "Téléverser un fichier"
+      },
+      "store_default": "{{count}} (par défaut)",
+      "title": "Fichiers numériques",
+      "untitled": "Fichier sans nom",
+      "upload": "Ajouter un fichier",
+      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
+      "uploading": "Téléversement de {{name}}…",
+      "uploading_short": "Téléversement…",
+      "replace": "Remplacer le fichier",
+      "replace_description": "« {{name}} » est supprimé et tous les acheteurs téléchargent le nouveau fichier depuis leurs liens existants. Effet immédiat.",
+      "replace_title": "Remplacer ce fichier ?"
     }
   }
 }

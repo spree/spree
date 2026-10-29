@@ -4,6 +4,7 @@ module Spree
       module Admin
         class OrdersController < ResourceController
           include Spree::Api::V3::OrderLock
+          include Spree::Api::V3::Admin::RefundAuthorization
 
           scoped_resource :orders
 
@@ -17,10 +18,12 @@ module Spree
           request_params :order do |body|
             body.external_references
             body.attribute :email, :string, example: 'customer@example.com'
-            body.attribute :customer_id, :id
+            body.attribute :customer_id, :id,
+              nullable: true,
+              description: 'Null detaches the customer, leaving a guest order under its `email`.'
             body.attribute :use_customer_default_address, :boolean,
               only: :create,
-              description: "With `customer_id`, copies the customer's saved billing and shipping addresses onto the order."
+              description: "Copies the saved default billing and shipping addresses onto the order. Sent with `company_id`, it takes that company's defaults, inherited from its parent nodes when the company holds none of its own; otherwise it takes the customer's."
             body.attribute :currency, :currency, example: 'USD'
             body.attribute :market_id, :id
             body.attribute :channel_id, :id, description: 'Defaults to the store primary channel when omitted.'
@@ -35,10 +38,10 @@ module Spree
               description: "The `signed_id` of the buyer's purchase order, from `files.upload()` with `visibility: 'private'`. Null removes the document the order carries."
             body.attribute :shipping_address_id, :id,
               only: :create,
-              description: 'An existing address of the customer.'
+              description: "An existing address from the customer's address book, or from the address book of the company the order is for."
             body.attribute :billing_address_id, :id,
               only: :create,
-              description: 'An existing address of the customer.'
+              description: "An existing address from the customer's address book, or from the address book of the company the order is for."
             body.attribute :preferred_stock_location_id, :id,
               description: "Stock location to prefer for fulfillment. Order Routing's built-in preferred-location rule ranks it first; routing falls back to the next rule when the location can't cover the cart."
             body.attribute :company_id, :id,
@@ -51,6 +54,8 @@ module Spree
             body.attribute :tags, :array, of: :string
             body.attribute :shipping_address, :object, shape: ADDRESS
             body.attribute :billing_address, :object, shape: ADDRESS
+            body.attribute :use_shipping, :boolean,
+              description: 'When true, copies the shipping address to the billing address.'
             body.attribute :items, :array,
               description: 'Line items to upsert, keyed by variant. An entry sets that variant\'s quantity, creating the line item when the order has none; `quantity: 0` removes it. Variants you do not send are left alone.' do |item|
               item.attribute :variant_id, :id, required: true
@@ -82,6 +87,7 @@ module Spree
 
           skip_before_action :set_resource, only: [:index, :create]
           before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
+          before_action :require_refund_permission!, only: :cancel, if: -> { params[:refund_payments].to_b }
 
           # POST /api/v3/admin/orders
           def create
@@ -227,7 +233,9 @@ module Spree
           # `fields` list names an order's attributes, and narrowing a group by
           # it can drop the very keys that say it is one.
           def serialize_completion(record)
-            return serialize_resource(record.reload) unless record.is_a?(Spree::OrderGroup)
+            # Read back lazily preloading, as #show is, so its fulfillments and
+            # their rows load once for all of them rather than per fulfillment.
+            return serialize_resource(Spree::Order.preload_associations_lazily.find(record.id)) unless record.is_a?(Spree::OrderGroup)
 
             Spree.api.admin_order_group_serializer.new(completed_group(record), params: serializer_params).to_h
           end
@@ -239,7 +247,7 @@ module Spree
               :customer, :ship_address, :bill_address,
               { payments: %i[payment_method source] },
               { orders: [:seller, :market, :gift_card, :customer, { line_items: { variant: :prices } }] }
-            ).find(group.id)
+            ).preload_associations_lazily.find(group.id)
           end
 
           # Override scope — Order uses SingleStoreResource (for_store).
@@ -294,8 +302,12 @@ module Spree
             # are loaded with their selected rate because the freight summary
             # reads it — otherwise a page of orders costs a query per
             # fulfillment for a field that is nil on every parcel order.
+            # Both addresses are named because they are two associations on
+            # one table, so a row that reads them separately costs a lookup
+            # each.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
              :market, { fulfillments: %i[selected_delivery_rate external_references] },
+             :bill_address, :ship_address,
              { line_items: [:external_references, { variant: :prices }, { price_list: :catalog }] },
              { po_document_attachment: :blob }]
           end
@@ -343,7 +355,9 @@ module Spree
           # Named rather than read from the action, since an upsert reaches
           # update from the create action.
           def order_update_params
-            resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:update))))
+            permitted = resolve_company_param(normalize_params(params.permit(*request_params_schema.permit_list(:update))))
+            permitted[:customer_id] = resolve_customer&.id if permitted.key?(:customer_id)
+            permitted
           end
 
           # An incidental lookup like any other: resolved through the store so

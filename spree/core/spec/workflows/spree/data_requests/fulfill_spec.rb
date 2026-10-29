@@ -20,6 +20,25 @@ RSpec.describe Spree::DataRequests::Fulfill do
       expect(data_request.reload.export_file).not_to be_attached
     end
 
+    # Guest rows are matched by the account's address when the work runs, so a
+    # request for an address the account has since left must not be answered.
+    it 'refuses a request whose account has moved to another address' do
+      data_request
+      customer.update_columns(email: 'someone-else@example.com')
+
+      expect(result).to be_failure
+      expect(data_request.reload.export_file).not_to be_attached
+    end
+
+    it 'checks the address again under the lock the export is built in' do
+      allow_any_instance_of(described_class).to receive(:ensure_addressed_to_customer)
+      data_request
+      customer.update_columns(email: 'someone-else@example.com')
+
+      expect(result).to be_failure
+      expect(data_request.reload.export_file).not_to be_attached
+    end
+
     it 'completes the request' do
       expect(result).to be_success
       expect(data_request.reload).to be_completed
@@ -90,6 +109,14 @@ RSpec.describe Spree::DataRequests::Fulfill do
       described_class.call(data_request: data_request)
 
       expect(data_request.reload.export_file).not_to be_attached
+    end
+
+    it 'refuses a request whose account has moved to another address' do
+      data_request
+      customer.update_columns(email: 'someone-else@example.com')
+
+      expect(described_class.call(data_request: data_request)).to be_failure
+      expect(customer.reload.anonymized_at).to be_nil
     end
 
     # Staff may have erased this person while their own request sat in the

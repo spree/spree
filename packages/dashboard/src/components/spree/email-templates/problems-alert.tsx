@@ -1,4 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from '@spree/dashboard-ui'
+import { CircleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import type { EmailTemplateProblem } from '../../../hooks/use-email-templates'
 import { emailTemplateName } from '../../../lib/email-template-name'
@@ -9,6 +10,7 @@ export function EmailTemplateProblemsAlert({ problems }: { problems: EmailTempla
 
   return (
     <Alert variant="destructive">
+      <CircleAlertIcon />
       <AlertTitle>{t('admin.email_templates.problems.title')}</AlertTitle>
       <AlertDescription>
         <ul className="list-disc pl-4">

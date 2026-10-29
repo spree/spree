@@ -195,6 +195,12 @@ module Spree
       # imports
       preference :large_import_threshold, :integer, default: 500, env: 'SPREE_LARGE_IMPORT_THRESHOLD' # imports with more rows than this skip per-row UI broadcasts and use bulk processing
 
+      # maintenance tasks
+      # Turn off to run upgrade steps only from the command line: the dashboard
+      # page and its Admin API endpoints are refused. For hosts where the people
+      # holding a store's admin role are not the ones operating the installation,
+      # such as a platform serving many merchants from one database.
+      preference :maintenance_tasks_dashboard_enabled, :boolean, default: true, env: 'SPREE_MAINTENANCE_TASKS_DASHBOARD_ENABLED'
     end
   end
 end

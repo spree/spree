@@ -215,10 +215,22 @@ module Spree
     end
 
     # Per-status row counts for API status payloads, memoized so one request
-    # issues a single grouped COUNT instead of one per status.
+    # issues a single grouped COUNT instead of one per status — and, on a
+    # lazily preloaded list, one for every import of the list.
     # @return [Hash{String => Integer}]
     def rows_status_counts
-      @rows_status_counts ||= rows.group(:status).count
+      return @rows_status_counts if @rows_status_counts
+
+      siblings = lazy_preload_context&.records&.grep(Spree::Import)
+      return @rows_status_counts = rows.group(:status).count if siblings.blank?
+
+      counts = Spree::ImportRow.where(import_id: siblings.map(&:id)).group(:import_id, :status).count
+      siblings.each do |import|
+        import.preloaded_rows_status_counts = counts.each_with_object({}) do |((import_id, status), count), by_status|
+          by_status[status] = count if import_id == import.id
+        end
+      end
+      @rows_status_counts
     end
 
     # Public API name for the +results_url+ preference (read/write symmetry).
@@ -472,6 +484,12 @@ module Spree
 
         klass
       end
+    end
+
+    protected
+
+    def preloaded_rows_status_counts=(counts)
+      @rows_status_counts = counts
     end
 
     private

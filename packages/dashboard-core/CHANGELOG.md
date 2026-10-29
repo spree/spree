@@ -1,5 +1,75 @@
 # @spree/dashboard-core
 
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `Subject.MaintenanceTaskRun`, the permission subject for maintenance task runs.
+
+### Patch Changes
+
+- [#14983](https://github.com/spree/spree/pull/14983) [`e22669b`](https://github.com/spree/spree/commit/e22669b5ac1bfa28febd3a7fd831ff3eecdd8649) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the dashboard crashing when a Save button started saving while the browser was translating the page.
+- Updated dependencies [[`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553)]:
+  - @spree/core@6.0.0
+
+## 6.0.0-rc.7
+
+Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.
+
+## 1.0.0-rc.6
+
+### Minor Changes
+
+- [#14971](https://github.com/spree/spree/pull/14971) [`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Sellers can manage the downloadable files on their own digital products. The Seller SDK adds `products.digitalAssets` (`list`, `get`, `create`, `update`, `delete`), and the seller panel's product page shows the same Digital files card as the dashboard: upload, replace and delete files, and set per-file download limits. A file the marketplace delivers through its own provider is listed but cannot be replaced by the seller. The card now lives in `@spree/dashboard-core` as `DigitalAssetsCard`, and a panel enables it by registering `digitalAssets` on its API client; `readOnly` shows the files without any way to change them and `accept` narrows the file picker.
+  
+  Seller uploads are a marketplace decision: three store settings, edited on the dashboard's Marketplace settings page, say whether sellers may upload at all (off by default), which content types their files may have, and whether a file added to or replaced on an approved product sends it back to review. The seller `/me` response carries them under `store`, and the Admin SDK's `Store` type gains the three fields.
+
+### Patch Changes
+
+- [#14947](https://github.com/spree/spree/pull/14947) [`aebf883`](https://github.com/spree/spree/commit/aebf8832b6f207c0427f9f8384c2d6d0d7e1ae88) Thanks [@mad-eel](https://github.com/mad-eel)! - A delivery method's amount for the store's default currency is now saved with its other currencies, so leaving it blank means the method isn't offered in that currency, as the form says. Before, a blank default currency was saved as free. The admin dashboard and the seller panel share one per-currency amount editor, `CurrencyAmountsField` in `@spree/dashboard-core`, so sellers can price a method in every currency the marketplace sells in. Both forms ask for an amount in at least one currency.
+
+- [#14967](https://github.com/spree/spree/pull/14967) [`6a1b118`](https://github.com/spree/spree/commit/6a1b118cd86262d30c0b4ddcb98f8ceec150de22) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The login page explains a refused sign-in when a staff account has been deactivated, instead of reporting a generic sign-in failure.
+- Updated dependencies []:
+  - @spree/core@0.3.0
+
+## 1.0.0-rc.5
+
+### Minor Changes
+
+- [#14939](https://github.com/spree/spree/pull/14939) [`9c73a79`](https://github.com/spree/spree/commit/9c73a7908dbe35ecb0b3ce654f1b3d6705e9a0c3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added custom field editing to variants, option types, sellers, promotions, gift cards, store credits, stock transfers, purchase orders, companies, payment methods, delivery methods, tax rates, product types, media and store settings. Sheets show the custom fields card only once the store defines a field for that type. On the product page, variant and media custom fields save with the sheet's Done, and widgets in their `product.variant.form_fields` and `product.media.form_fields` slots can save on Done through `onSave`. `FormActions` and `useFormSubmitShortcut` accept `dirty` for unsaved changes held outside the form. `client.customFields(ownerType, ownerId)` accepts each of these types.
+
+- [#14935](https://github.com/spree/spree/pull/14935) [`ab4f2b0`](https://github.com/spree/spree/commit/ab4f2b055e7572d2f1d717a2e71e7630b16bd4f4) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added previews of Spree Enterprise features where they appear once installed: Quotes under Orders, Onboarding under Companies, Shopify under Sellers, Lots under Inventory, and Audit log in Users & permissions settings. Companies is now its own section in the sidebar rather than sitting under Customers. Set `VITE_SPREE_ENTERPRISE_PREVIEWS=false` at build time to leave the previews out. Settings entries accept a `badge`, and plugin pages under `/settings` get the settings page padding. Registry routes can sit under a built-in section (`/sellers/shopify`) instead of being taken by its record page.
+
+- [#14932](https://github.com/spree/spree/pull/14932) [`af9df9f`](https://github.com/spree/spree/commit/af9df9fc1d423ca88db7761ec9467fedfda76cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The orders and draft orders lists can be filtered by market and locale, and show both as optional columns. Table definitions gain a `locale` filter type that lists the store's languages by name.
+
+- [#14940](https://github.com/spree/spree/pull/14940) [`44b1933`](https://github.com/spree/spree/commit/44b1933854a83f505b0b901b1fd57b1aa9ac167d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added product page slots for plugins: `product.form_main` at the end of the main column, `product.media.form_fields` in the media editor, `product.media.actions` in the Media card, and `product.variant.form_fields` in the variant editor, with `seller.product.*` counterparts in the seller panel. `product.form_sidebar` now also renders on the new product page, and both column slots receive `mode`. Fields on a media or variant row register under the `product.media` and `product.variant` form keys and save with the product.
+
+- [#14940](https://github.com/spree/spree/pull/14940) [`44b1933`](https://github.com/spree/spree/commit/44b1933854a83f505b0b901b1fd57b1aa9ac167d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `<resource>.form_fields` slots to the create and edit sheets for markets, stock locations, tax rates, tax categories, sales channels, policies, package types, product types, delivery zones, delivery methods, option types and customer groups. Fields a widget binds there save with the sheet. The seller panel's stock location and package type sheets use `seller.stock_location.form_fields` and `seller.package_type.form_fields`. `HostFormSlot` renders a slot that exposes a form which isn't wrapped in `FormProvider`.
+
+### Patch Changes
+
+- [#14938](https://github.com/spree/spree/pull/14938) [`7c295c4`](https://github.com/spree/spree/commit/7c295c4d40c8c130209cbdc54ade3914888987b3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Moved the money, percentage, typed-amount, display-name and code-shape helpers and the list of currencies still in use into `@spree/core`, which the dashboard packages and the seller panel now depend on. `@spree/dashboard-core` still exports them under the same names.
+  
+  - A customer's average order value is now worked out exactly.
+  - Calculator summaries show money with each currency's own number of decimals.
+  - The bulk variant editor now reads `1,500` as fifteen hundred and `1,234.5` correctly when you type or paste a weight or dimension.
+
+- [#14944](https://github.com/spree/spree/pull/14944) [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added every status, kind and other value list the Spree API returns to `@spree/core`, each as a list of its values (`PRODUCT_STATUSES`, `MEDIA_TYPES`, …) and a type (`ProductStatus`, `MediaType`, …) — open where extensions may add values, closed otherwise — plus `subsetOf` for picking the values an action accepts with each one checked at compile time. The SDKs re-export these types instead of each carrying its own copy, so their names and values are unchanged. The dashboards and the seller panel build their status filters and action checks from these lists, so a status added on the server shows up without a dashboard change. Value lists the SDKs used to spell out inline, such as a seller transfer's `kind`, now have names of their own; `MediaType`, `CollectionRuleMatchPolicy` and `CollectionSortOrder` in `@spree/admin-sdk`, and `ClaimResolution` in `@spree/dashboard-ui`, now come from the generated lists under the same names. A seller's `tax_remittance` and `payouts_schedule_interval`, a claim's `resolution`, a collection's `sort_order`, a shipping label's `format`, purchase order and stock transfer statuses, and tax and commission lines' `taxability_reason` are now typed with their lists instead of as plain strings.
+- Updated dependencies [[`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1)]:
+  - @spree/core@0.2.0
+
+## 1.0.0-rc.4
+
+### Patch Changes
+
+- [#14917](https://github.com/spree/spree/pull/14917) [`dd72579`](https://github.com/spree/spree/commit/dd72579df100ac42e46137851941f292c378172e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Apps no longer choose the versions of `@tanstack/react-table`, `@tanstack/react-hotkeys` and `@hookform/resolvers` used inside the dashboard packages: they are now regular dependencies, so upgrading them in an app (for example to React Table 9) no longer breaks type checking or the dashboard itself. Table column definitions are available as `DataGridColumn` from `@spree/dashboard-ui`. The TipTap menu extensions are pinned to the same version as the rest of the editor.
+  
+  `@spree/dashboard` and `@spree/seller-dashboard` now list the libraries they share with the app (React, TanStack Router and Query, React Hook Form, i18next, react-i18next and the Spree dashboard packages) as peer dependencies, so the app's copy is the only one. Before, an app on a different version got a second copy, which crashes React or makes plugins disappear. Apps must list these packages as their own dependencies; the starter templates now include React Hook Form, i18next and react-i18next.
+
+- [#14907](https://github.com/spree/spree/pull/14907) [`04760bf`](https://github.com/spree/spree/commit/04760bf28c44a52fdf0c773af5fae7774b5910a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Ticking or unticking a value in the "Add filter" panel no longer reorders the list. Values selected when the panel opens are still shown first.
+
+- [#14907](https://github.com/spree/spree/pull/14907) [`04760bf`](https://github.com/spree/spree/commit/04760bf28c44a52fdf0c773af5fae7774b5910a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Search pickers keep the option you pick instead of flickering and switching to another value while results load.
+
 ## 1.0.0-rc.3
 
 ### Minor Changes

@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   CategorizationCard,
+  DigitalAssetsCard,
   extensionFormValues,
+  extensionRowValues,
   extensionSubmitValues,
   GeneralCard,
   InventoryCard,
@@ -15,8 +17,10 @@ import {
   productFormSchema,
   productToFormValues,
   Slot,
+  useAssignableVariants,
   VariantsCard,
   variantToWirePayload,
+  withExtensionRowValues,
 } from '@spree/dashboard-core'
 import { FormActions, ResourceLayout, StatusBadge, toastManager } from '@spree/dashboard-ui'
 import type { ProductCreateParams } from '@spree/seller-sdk'
@@ -29,6 +33,7 @@ import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { ProductStatusCard } from '../components/product-status-card'
 import { RetryableError } from '../components/retryable-error'
+import { useAccount } from '../hooks/use-account'
 
 /** Everything the form edits, in one request. */
 const PRODUCT_EXPAND = [
@@ -94,6 +99,11 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('seller.product', null) },
   })
 
+  const assignableVariants = useAssignableVariants(form.control, product?.variants)
+  // Whether this marketplace lets sellers upload files, and of which types,
+  // comes with the account the panel already holds.
+  const marketplace = useAccount().data?.store
+
   // Reset once the record arrives, so the inputs show what was last saved
   // rather than the blank defaults the form mounted with.
   //
@@ -106,7 +116,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     if (form.formState.isDirty) return
 
     form.reset({
-      ...productToFormValues(product as PanelProduct, product.media),
+      ...productToFormValues(product as PanelProduct, product.media, 'seller.product'),
       ...extensionFormValues('seller.product', product),
     })
   }, [product, form])
@@ -137,6 +147,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         // cards offer both — an allow-list that omitted them let a seller
         // set a crop or paste a video URL and watch it vanish on save.
         media: (values.media ?? []).map((item) => ({
+          ...extensionRowValues('seller.product.media', item),
           id: item.id,
           signed_id: item.signed_id ?? undefined,
           poster_signed_id: item.poster_signed_id ?? undefined,
@@ -149,7 +160,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
           variant_ids: item.variant_ids,
         })),
         variants: (values.variants ?? []).map((variant, index) =>
-          variantToWirePayload(variant, index),
+          variantToWirePayload(variant, index, 'seller.product'),
         ) as ProductCreateParams['variants'],
       }
 
@@ -181,7 +192,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
       // Raw form state, not `values`: the Zod parse strips keys the schema
       // doesn't know, which is every field a slot widget registered.
       await save.mutateAsync({
-        values,
+        values: withExtensionRowValues('seller.product', values, form.getValues()),
         extensionValues: extensionSubmitValues('seller.product', form),
       })
     } catch (err) {
@@ -236,8 +247,13 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
           main={
             <>
               <GeneralCard form={form} />
-              <VariantsCard form={form} />
-              <MediaCard productId={productId} variants={product?.variants ?? []} form={form} />
+              <VariantsCard form={form} formKey="seller.product" />
+              <MediaCard
+                productId={productId}
+                variants={assignableVariants}
+                form={form}
+                formKey="seller.product"
+              />
               <PricesCard
                 form={form}
                 productName={product?.name ?? ''}
@@ -245,6 +261,18 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 defaultCurrency={profile?.default_currency}
               />
               <InventoryCard form={form} />
+              <DigitalAssetsCard
+                productId={productId}
+                variants={assignableVariants}
+                readOnly={!marketplace?.seller_digital_assets_enabled}
+                accept={marketplace?.seller_digital_asset_content_types}
+                notice={
+                  product?.status === 'active' && marketplace?.review_seller_digital_asset_changes
+                    ? t('products.digital_files_review_notice')
+                    : undefined
+                }
+              />
+              <Slot name="seller.product.form_main" context={{ product, mode }} />
             </>
           }
           sidebar={

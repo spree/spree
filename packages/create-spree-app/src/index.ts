@@ -78,6 +78,11 @@ const program = new Command()
           )
         }
       }
+      if (mailpitSmtpPort !== 1025 || mailpitUiPort !== 8025) {
+        p.log.info(
+          `Another program is using those ports, often an earlier Spree project's mail catcher. ${pc.cyan('docker ps')} lists running containers; ${pc.cyan('docker compose down')} in that project's folder frees the ports.`,
+        )
+      }
 
       await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
 

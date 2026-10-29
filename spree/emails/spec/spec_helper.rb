@@ -38,7 +38,6 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 require 'ffaker'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
@@ -68,8 +67,6 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Spree::Events.disable!
-    # Clean out the database state before the tests run
-    DatabaseCleaner.clean_with(:truncation)
   end
 
   # Re-enable events for specs that need them

@@ -17,8 +17,8 @@ server/spec/controllers/spree/api/v3/admin/brands_controller_spec.rb
 You can now run them, a directory or a single file at a time:
 
 ```bash
-spree rspec spec/controllers/spree/api/v3/
-spree rspec spec/models/spree/brand_spec.rb
+spree test spec/controllers/spree/api/v3/
+spree test spec/models/spree/brand_spec.rb
 ```
 
 ## The dashboard
@@ -104,7 +104,7 @@ Two conventions matter here:
 Run what you changed, not everything:
 
 ```bash
-spree rspec spec/models/spree/brand_spec.rb   # the backend
+spree test spec/models/spree/brand_spec.rb   # the backend
 cd apps/dashboard && pnpm test                # the dashboard
 ```
 

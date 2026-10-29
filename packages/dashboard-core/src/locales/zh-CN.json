@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "未选择地址"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "面包屑导航",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "默认账单",
       "default_shipping": "默认收货",
+      "inherited_from": "继承自 {{name}}",
       "set_default_billing": "设为默认账单地址",
       "set_default_shipping": "设为默认收货地址"
     },
@@ -113,6 +117,7 @@
         "title": "重置密码"
       },
       "login": {
+        "account_deactivated": "此账户已被停用。请联系管理员恢复访问权限。",
         "account_not_provisioned": "此账户无权访问该店铺。请向管理员申请邀请。",
         "divider": "或",
         "invalid_oauth_state": "登录会话已过期或无效。请重新登录。",
@@ -361,9 +366,12 @@
         "video_title": "视频预览"
       },
       "metadata_card": {
+        "copy_reference": "复制 {{system}} 键",
         "empty_description": "应用和集成会自动填充此内容。",
         "empty_title": "暂无元数据",
-        "title": "元数据"
+        "external_references": "外部引用",
+        "title": "元数据",
+        "view": "查看元数据"
       },
       "page_header": {
         "copy_id": "复制 ID",
@@ -416,6 +424,7 @@
       },
       "table_toolbar": {
         "add_filter": "添加筛选条件",
+        "any_field": "任意{{field}}",
         "ascending": "升序",
         "clear_all": "全部清除",
         "columns_tooltip": "列",
@@ -436,6 +445,8 @@
         "filter_select_placeholder": "选择…",
         "filter_text_placeholder": "筛选…",
         "filter_to_placeholder": "筛选至…",
+        "n_selected": "已选 {{count}} 项",
+        "only": "仅此项",
         "operators": {
           "after": "晚于",
           "before": "早于",
@@ -461,6 +472,7 @@
         "remove_filter": "移除筛选",
         "reset_to_default": "重置为默认值",
         "search_placeholder": "搜索…",
+        "select_all": "全选",
         "sort_by": "排序方式",
         "sort_tooltip": "排序",
         "visible_columns": "可见列"
@@ -482,6 +494,12 @@
         "discard_message": "已填写的内容将全部丢失，且无法恢复。",
         "discard_title": "放弃此草稿？"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "{{currency}} 金额",
+      "help": "未填写金额的币种将不会提供该配送方式。",
+      "label": "金额",
+      "required": "请至少为一种货币输入金额。"
     },
     "custom_field_definitions": {
       "errors": {
@@ -937,6 +955,14 @@
       "order_multiple": {
         "label": "订购倍数",
         "help": "在最小起订量之上的每一档增量。留空表示不限数量。"
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "允许的下载次数"
+        },
+        "digital_asset_authorized_days": {
+          "label": "可用天数"
+        }
       }
     },
     "image_upload": {
@@ -2033,6 +2059,38 @@
           "description": "卖家必须提供退货地址"
         }
       }
+    },
+    "digital_assets": {
+      "add": "添加",
+      "all_variants": "所有变体",
+      "columns": {
+        "file": "文件",
+        "variant": "变体",
+        "size": "大小",
+        "downloads": "下载次数",
+        "days": "天数"
+      },
+      "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
+      "delete_title": "删除此文件？",
+      "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
+      "download": "下载",
+      "drop_hint": "将文件拖放到此处，或点击浏览",
+      "empty": "暂无文件",
+      "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
+      "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
+      "source": {
+        "upload": "上传文件"
+      },
+      "store_default": "{{count}}（商店默认）",
+      "title": "数字文件",
+      "untitled": "未命名文件",
+      "upload": "添加文件",
+      "upload_failed": "上传 {{name}} 失败：{{message}}",
+      "uploading": "正在上传 {{name}}…",
+      "uploading_short": "上传中…",
+      "replace": "替换文件",
+      "replace_description": "“{{name}}”将被移除，所有买家将通过现有链接下载新文件。立即生效。",
+      "replace_title": "替换此文件？"
     }
   }
 }
