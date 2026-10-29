@@ -47,6 +47,7 @@ import * as p from '@clack/prompts'
 import * as prompts from '@clack/prompts'
 import { execa } from 'execa'
 import {
+  alignPeerRanges,
   detectSpreeGems,
   detectSpreePackages,
   isExactVersion,
@@ -57,6 +58,8 @@ import {
   packageUpdateArgs,
   registerUpgradeCommand,
   sdkAdvisory,
+  specFloor,
+  spreePeerRanges,
 } from '../src/commands/upgrade'
 import { npmVersionOf, releaseLineFor } from '../src/lib/release-line'
 
@@ -265,6 +268,130 @@ describe('detectSpreePackages', () => {
   it('returns [] without a readable package.json', () => {
     expect(detectSpreePackages(withPackageJson('{ not json'))).toEqual([])
     expect(detectSpreePackages('/nonexistent')).toEqual([])
+  })
+})
+
+describe('specFloor', () => {
+  it('reads the lowest version a spec admits', () => {
+    expect(specFloor('^7.90.0')).toBe('7.90.0')
+    expect(specFloor('~7.0.2')).toBe('7.0.2')
+    expect(specFloor('>=4.7.0')).toBe('4.7.0')
+    expect(specFloor('^19')).toBe('19.0.0')
+    expect(specFloor('6.0.0-rc.7')).toBe('6.0.0-rc.7')
+    expect(specFloor('latest')).toBeNull()
+  })
+})
+
+describe('spreePeerRanges', () => {
+  const mockExeca = vi.mocked(execa)
+  afterEach(() => mockExeca.mockReset())
+
+  it('keeps the higher floor where two packages name the same peer, and skips @spree/* peers', async () => {
+    const answers: Record<string, unknown> = {
+      '@spree/dashboard@^6.0.0': { 'react-hook-form': '^7.90.0', '@spree/dashboard-ui': '>=6.0.0' },
+      // A range several versions match answers with one entry per version.
+      '@spree/dashboard-ui@^6.0.0': [
+        { 'react-hook-form': '^7.60.0' },
+        { 'react-hook-form': '^7.75.0', i18next: '^26.2.0' },
+      ],
+    }
+    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => ({
+      stdout: JSON.stringify(answers[args[1]]),
+    })) as never)
+
+    const ranges = await spreePeerRanges('/app', [
+      { name: '@spree/dashboard-ui', spec: '^6.0.0' },
+      { name: '@spree/dashboard', spec: '^6.0.0' },
+    ])
+
+    expect(ranges).toEqual({ 'react-hook-form': '^7.90.0', i18next: '^26.2.0' })
+    expect(mockExeca).toHaveBeenCalledWith(
+      'npm',
+      ['view', '@spree/dashboard@^6.0.0', 'peerDependencies', '--json'],
+      { cwd: '/app' },
+    )
+  })
+
+  it('skips a package the registry cannot answer for', async () => {
+    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+      if (args[1].startsWith('@spree/dashboard@')) throw new Error('E404')
+      return { stdout: args[1].startsWith('@spree/cli@') ? '' : JSON.stringify({ zod: '>=3.0.0' }) }
+    }) as never)
+
+    const ranges = await spreePeerRanges('/app', [
+      { name: '@spree/dashboard', spec: '^6.0.0' },
+      { name: '@spree/cli', spec: '^6.0.0' },
+      { name: '@spree/admin-sdk', spec: '^6.0.0' },
+    ])
+
+    expect(ranges).toEqual({ zod: '>=3.0.0' })
+    expect(prompts.log.warn).toHaveBeenCalledWith(
+      expect.stringContaining('@spree/dashboard@^6.0.0'),
+    )
+  })
+})
+
+describe('alignPeerRanges', () => {
+  let dir: string
+  beforeEach(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-peer-ranges-test-'))
+  })
+  afterEach(() => fs.rmSync(dir, { recursive: true, force: true }))
+
+  const PEERS = {
+    'react-hook-form': '^7.90.0',
+    i18next: '^26.5.3',
+    react: '^19.3.1',
+    zod: '>=3.0.0',
+  }
+
+  it('raises ranges that start below what Spree requires, keeping the formatting', () => {
+    fs.writeFileSync(
+      path.join(dir, 'package.json'),
+      [
+        '{',
+        '    "dependencies": {',
+        '        "react-hook-form": "^7.75.0",',
+        '        "react": "^19.3.2",',
+        '        "zod": "^4.0.0"',
+        '    },',
+        '    "devDependencies": { "i18next": "26.2.0" }',
+        '}',
+        '',
+      ].join('\n'),
+    )
+
+    expect(alignPeerRanges(dir, PEERS)).toEqual([
+      { name: 'react-hook-form', from: '^7.75.0', to: '^7.90.0', dev: false },
+      { name: 'i18next', from: '26.2.0', to: '26.5.3', dev: true },
+    ])
+    expect(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')).toBe(
+      [
+        '{',
+        '    "dependencies": {',
+        '        "react-hook-form": "^7.90.0",',
+        '        "react": "^19.3.2",',
+        '        "zod": "^4.0.0"',
+        '    },',
+        '    "devDependencies": { "i18next": "26.5.3" }',
+        '}',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('leaves local and tagged specs, and dependencies Spree does not require, alone', () => {
+    const source = JSON.stringify({
+      dependencies: { 'react-hook-form': 'workspace:*', i18next: 'latest', lodash: '^4.0.0' },
+    })
+    fs.writeFileSync(path.join(dir, 'package.json'), source)
+
+    expect(alignPeerRanges(dir, PEERS)).toEqual([])
+    expect(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')).toBe(source)
+  })
+
+  it('returns [] without a readable package.json', () => {
+    expect(alignPeerRanges('/nonexistent', PEERS)).toEqual([])
   })
 })
 
@@ -504,18 +631,28 @@ describe('spree upgrade', () => {
   const mockExeca = vi.mocked(execa)
   let commands: string[]
   let versionProbes: string[]
+  let registryProbes: string[]
 
   // Every docker and package-manager call goes through execa; record them in
   // order, leaving out the read-only probes (`compose ps`, `bundle list`, …).
   // `spreeVersion` is what the server's bundle reports for spree_core.
+  // `peers` is what the registry answers for each @spree/* package's
+  // peerDependencies (`npm view`, read-only like the probes above).
   function routeExeca({
     failOn,
     spreeVersion = '6.0.0.rc7',
+    peers = {},
   }: {
     failOn?: string
     spreeVersion?: string | null
+    peers?: Record<string, Record<string, string>>
   } = {}): void {
     mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
+      if (cmd === 'npm' && args[0] === 'view') {
+        registryProbes.push(`${cmd} ${args.join(' ')}`)
+        const name = args[1].slice(0, args[1].lastIndexOf('@'))
+        return { stdout: peers[name] ? JSON.stringify(peers[name]) : '' }
+      }
       if (args.includes('ps')) return { stdout: 'running' }
       if (args.includes('--name-only')) return { stdout: 'spree\nspree_core\n' }
       if (args.includes('list')) {
@@ -566,6 +703,7 @@ describe('spree upgrade', () => {
   beforeEach(() => {
     commands = []
     versionProbes = []
+    registryProbes = []
     vi.mocked(prompts.log.warn).mockClear()
     routeExeca()
   })
@@ -716,6 +854,46 @@ describe('spree upgrade', () => {
       '@spree/dashboard-core': '^6.0.0',
     })
     expect(dashboard.devDependencies).toEqual({ '@spree/admin-sdk': '^6.0.0' })
+  })
+
+  it('moves app dependencies below the peer ranges Spree requires, in the same update as the packages', async () => {
+    writeProject({
+      ejected: true,
+      dashboardDependencies: {
+        '@spree/dashboard': '^6.0.0-rc.6',
+        '@spree/dashboard-ui': '6.0.0-rc.6',
+        'react-hook-form': '^7.75.0',
+        i18next: '26.2.0',
+        react: '^19.3.1',
+      },
+    })
+    routeExeca({
+      peers: {
+        '@spree/dashboard': { 'react-hook-form': '^7.90.0', react: '^19.3.1' },
+        '@spree/dashboard-ui': { i18next: '^26.5.3', 'react-hook-form': '^7.75.0' },
+      },
+    })
+
+    await runUpgrade()
+
+    expect(registryProbes).toContain(
+      'npm view @spree/dashboard-ui@6.0.0-rc.7 peerDependencies --json',
+    )
+    expect(commands.filter((command) => command.startsWith('pnpm'))).toEqual([
+      'pnpm update @spree/cli',
+      'pnpm dedupe',
+      'pnpm update @spree/dashboard react-hook-form',
+      'pnpm add --save-exact @spree/dashboard-ui@6.0.0-rc.7 i18next@26.5.3',
+      'pnpm dedupe',
+    ])
+    const dashboard = JSON.parse(
+      fs.readFileSync(path.join(projectDir, 'apps', 'dashboard', 'package.json'), 'utf-8'),
+    )
+    expect(dashboard.dependencies).toMatchObject({
+      'react-hook-form': '^7.90.0',
+      i18next: '26.5.3',
+      react: '^19.3.1',
+    })
   })
 
   it('keeps a pin on a final version exact', async () => {
