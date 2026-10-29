@@ -517,10 +517,6 @@
       "destination": "/user/sellers/orders"
     },
     {
-      "source": "/user/settings/marketplace",
-      "destination": "/user/sellers/payouts"
-    },
-    {
       "source": "/use-case/b2b/b2b-admin-capabilities",
       "destination": "/user/how-to/selling-to-businesses"
     },
