@@ -446,7 +446,7 @@ export async function spreePeerRanges(
       if (peer.startsWith('@spree/') || typeof range !== 'string' || !SEMVER_RANGE.test(range))
         continue
       const floor = specFloor(range)
-      const current = ranges[peer] && specFloor(ranges[peer])
+      const current = Object.hasOwn(ranges, peer) ? specFloor(ranges[peer]) : null
       if (floor && (!current || isOlderVersion(current, floor))) ranges[peer] = range
     }
   }
@@ -458,9 +458,11 @@ export async function spreePeerRanges(
  * Form, i18next, the TanStack libraries, …) that start below what Spree
  * requires. Left alone, the app keeps its older copy: npm refuses the install,
  * and pnpm installs it with a warning, leaving Spree's components typed and
- * tested against a version the app doesn't run. Ranges become Spree's range,
- * and exact versions stay exact at its floor. The file is edited as text so
- * its formatting is kept.
+ * tested against a version the app doesn't run. Each becomes Spree's range,
+ * so the update that follows checks against it. An exact version is marked
+ * `exact` for the caller to pin again at the newest release the range allows:
+ * the range's floor need not be a published version. The file is edited as
+ * text so its formatting is kept.
  *
  * @param dir directory holding the package.json
  * @param peers peer name → the range Spree requires (see spreePeerRanges)
@@ -469,7 +471,7 @@ export async function spreePeerRanges(
 export function alignPeerRanges(
   dir: string,
   peers: Record<string, string>,
-): Array<{ name: string; from: string; to: string; dev: boolean }> {
+): Array<{ name: string; from: string; to: string; dev: boolean; exact: boolean }> {
   const manifestPath = path.join(dir, 'package.json')
   let source: string
   let pkg: PackageJson
@@ -492,9 +494,8 @@ export function alignPeerRanges(
     })
     .map((dependency) => ({
       ...dependency,
-      to: isExactVersion(dependency.from)
-        ? (specFloor(peers[dependency.name]) as string)
-        : peers[dependency.name],
+      to: peers[dependency.name],
+      exact: isExactVersion(dependency.from),
     }))
 
   for (const { name, from, to } of moved) {
@@ -656,7 +657,7 @@ async function updateSpreePackages(
     // checks the new peers against the new ranges.
     const ranged = [
       ...packages.filter((pkg) => !isExactVersion(pkg.spec)).map((pkg) => pkg.name),
-      ...peers.filter((peer) => !isExactVersion(peer.to)).map((peer) => peer.name),
+      ...peers.filter((peer) => !peer.exact).map((peer) => peer.name),
     ]
     if (ranged.length > 0) {
       await runPackageManager(pm, packageUpdateArgs(pm, ranged, projectDir, target.dir), target)
@@ -665,7 +666,7 @@ async function updateSpreePackages(
       const pinned = [
         ...pinnedOffRelease(packages, dev, line),
         ...peers
-          .filter((peer) => peer.dev === dev && isExactVersion(peer.to))
+          .filter((peer) => peer.dev === dev && peer.exact)
           .map((peer) => `${peer.name}@${peer.to}`),
       ]
       if (pinned.length > 0) await runPackageManager(pm, packageAddArgs(pm, pinned, dev), target)

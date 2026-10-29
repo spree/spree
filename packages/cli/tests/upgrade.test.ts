@@ -312,6 +312,17 @@ describe('spreePeerRanges', () => {
     )
   })
 
+  it('reads peers named like Object.prototype members as plain names', async () => {
+    mockExeca.mockImplementation((async () => ({
+      stdout: JSON.stringify({ constructor: '^1.0.0', toString: '^2.0.0' }),
+    })) as never)
+
+    expect(await spreePeerRanges('/app', [{ name: '@spree/dashboard', spec: '^6.0.0' }])).toEqual({
+      constructor: '^1.0.0',
+      toString: '^2.0.0',
+    })
+  })
+
   it('refuses peer ranges that are not plain version ranges', async () => {
     mockExeca.mockImplementation((async () => ({
       stdout: JSON.stringify({
@@ -377,8 +388,8 @@ describe('alignPeerRanges', () => {
     )
 
     expect(alignPeerRanges(dir, PEERS)).toEqual([
-      { name: 'react-hook-form', from: '^7.75.0', to: '^7.90.0', dev: false },
-      { name: 'i18next', from: '26.2.0', to: '26.5.3', dev: true },
+      { name: 'react-hook-form', from: '^7.75.0', to: '^7.90.0', dev: false, exact: false },
+      { name: 'i18next', from: '26.2.0', to: '^26.5.3', dev: true, exact: true },
     ])
     expect(fs.readFileSync(path.join(dir, 'package.json'), 'utf-8')).toBe(
       [
@@ -388,7 +399,7 @@ describe('alignPeerRanges', () => {
         '        "react": "^19.3.2",',
         '        "zod": "^4.0.0"',
         '    },',
-        '    "devDependencies": { "i18next": "26.5.3" }',
+        '    "devDependencies": { "i18next": "^26.5.3" }',
         '}',
         '',
       ].join('\n'),
@@ -898,7 +909,7 @@ describe('spree upgrade', () => {
       'pnpm update @spree/cli',
       'pnpm dedupe',
       'pnpm update @spree/dashboard react-hook-form',
-      'pnpm add --save-exact @spree/dashboard-ui@6.0.0-rc.7 i18next@26.5.3',
+      'pnpm add --save-exact @spree/dashboard-ui@6.0.0-rc.7 i18next@^26.5.3',
       'pnpm dedupe',
     ])
     const dashboard = JSON.parse(
@@ -906,7 +917,7 @@ describe('spree upgrade', () => {
     )
     expect(dashboard.dependencies).toMatchObject({
       'react-hook-form': '^7.90.0',
-      i18next: '26.5.3',
+      i18next: '^26.5.3',
       react: '^19.3.1',
     })
   })
