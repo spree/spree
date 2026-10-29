@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "Nie udało się przyjąć tego zaproszenia. Mogło wygasnąć lub hasło było nieprawidłowe.",
-    "first_name": "Imię",
-    "invalid_link": "W tym linku brakuje tokenu. Otwórz link z wiadomości z zaproszeniem.",
-    "last_name": "Nazwisko",
-    "not_found": "To zaproszenie jest już nieważne. Poproś osobę, która Cię zaprosiła, o nowe.",
-    "password": "Hasło",
-    "password_confirmation": "Potwierdź hasło",
-    "submit": "Przyjmij zaproszenie",
-    "submitting": "Przyjmowanie…",
-    "subtitle": "Zaproszenie otrzymał adres {{email}}. Ustaw hasło, aby zakończyć.",
-    "title": "Dołącz do zespołu"
-  },
   "account": {
     "avatar": "Zdjęcie",
     "avatar_help": "Wyświetlane obok Twojego imienia w całym panelu. Najlepiej wyglądają zdjęcia kwadratowe.",

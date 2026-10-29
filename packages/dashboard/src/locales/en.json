@@ -1575,14 +1575,6 @@
           "label": "Quantity"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "Password"
-        },
-        "password_confirmation": {
-          "label": "Confirm password"
-        }
-      },
       "issued_at": {
         "label": "Issued on"
       },
@@ -2713,28 +2705,6 @@
       "title": "Integrations",
       "toggle_label": "Turn {{name}} on or off",
       "view_cta": "View"
-    },
-    "invitation": {
-      "accept": "Accept invitation",
-      "accepting": "Accepting…",
-      "could_not_accept": "Could not accept invitation",
-      "create_and_accept": "Create account & accept",
-      "create_to_accept": ". Create your account to accept.",
-      "generic_error_message": "Something went wrong. Please try again.",
-      "generic_error_title": "Could not load invitation",
-      "invited_as_role": " as {{role}}",
-      "invited_by": "{{email}} invited you",
-      "invited_generic": "You have been invited",
-      "join_store": "Join {{store}}",
-      "loading": "Loading invitation…",
-      "missing_token_message": "This link looks incomplete. Ask whoever invited you to send it again.",
-      "missing_token_title": "Missing invitation token",
-      "not_found_message": "This invitation has expired, been revoked, or already been accepted. Ask the inviter to send a new one.",
-      "not_found_title": "Invitation not found",
-      "sign_in_and_accept": "Sign in & accept",
-      "sign_in_to_accept": ". Sign in to accept.",
-      "signed_in_as_another_account": "You are signed in as {{email}}, but this invitation is for {{invitee}}. Sign out to accept it.",
-      "signed_in_as_invitee": ". You are signed in as {{email}}."
     },
     "jurisdiction": {
       "everywhere": "Everywhere"

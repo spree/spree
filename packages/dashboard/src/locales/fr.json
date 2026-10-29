@@ -1575,14 +1575,6 @@
           "label": "Quantité"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "Mot de passe"
-        },
-        "password_confirmation": {
-          "label": "Confirmer le mot de passe"
-        }
-      },
       "issued_at": {
         "label": "Délivrée le"
       },
@@ -2713,28 +2705,6 @@
       "title": "Intégrations",
       "toggle_label": "Activer ou désactiver {{name}}",
       "view_cta": "Voir"
-    },
-    "invitation": {
-      "accept": "Accepter l’invitation",
-      "accepting": "Acceptation…",
-      "could_not_accept": "Impossible d'accepter l'invitation",
-      "create_and_accept": "Créer un compte et accepter",
-      "create_to_accept": ". Créez votre compte pour accepter.",
-      "generic_error_message": "Une erreur s'est produite. Veuillez réessayer.",
-      "generic_error_title": "Impossible de charger l'invitation",
-      "invited_as_role": " en tant que {{role}}",
-      "invited_by": "{{email}} vous a invité",
-      "invited_generic": "Vous avez été invité",
-      "join_store": "Rejoindre {{store}}",
-      "loading": "Chargement de l'invitation…",
-      "missing_token_message": "Ce lien semble incomplet. Demandez à la personne qui vous a invité de vous le renvoyer.",
-      "missing_token_title": "Jeton d'invitation manquant",
-      "not_found_message": "Cette invitation a expiré, a été révoquée ou a déjà été acceptée. Demandez à la personne qui vous a invité de vous en envoyer une nouvelle.",
-      "not_found_title": "Invitation introuvable",
-      "sign_in_and_accept": "Se connecter et accepter",
-      "sign_in_to_accept": ". Connectez-vous pour accepter.",
-      "signed_in_as_another_account": "Vous êtes connecté en tant que {{email}}, mais cette invitation est destinée à {{invitee}}. Déconnectez-vous pour l’accepter.",
-      "signed_in_as_invitee": ". Vous êtes connecté en tant que {{email}}."
     },
     "jurisdiction": {
       "everywhere": "Partout"

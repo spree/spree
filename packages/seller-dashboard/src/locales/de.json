@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "Diese Einladung konnte nicht angenommen werden. Möglicherweise ist sie abgelaufen oder das Passwort war falsch.",
-    "first_name": "Vorname",
-    "invalid_link": "Diesem Link fehlt sein Token. Öffnen Sie den Link aus Ihrer Einladungs-E-Mail.",
-    "last_name": "Nachname",
-    "not_found": "Diese Einladung ist nicht mehr gültig. Bitten Sie die Person, die Sie eingeladen hat, um eine neue.",
-    "password": "Passwort",
-    "password_confirmation": "Passwort bestätigen",
-    "submit": "Einladung annehmen",
-    "submitting": "Wird angenommen…",
-    "subtitle": "Sie wurden als {{email}} eingeladen. Legen Sie ein Passwort fest, um abzuschließen.",
-    "title": "Team beitreten"
-  },
   "account": {
     "avatar": "Foto",
     "avatar_help": "Wird im gesamten Panel neben Ihrem Namen angezeigt. Quadratische Bilder sehen am besten aus.",

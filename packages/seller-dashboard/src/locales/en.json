@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "That invitation could not be accepted. It may have expired, or the password was wrong.",
-    "first_name": "First name",
-    "invalid_link": "This link is missing its token. Open the link from your invitation email.",
-    "last_name": "Last name",
-    "not_found": "This invitation is no longer valid. Ask whoever invited you to send a new one.",
-    "password": "Password",
-    "password_confirmation": "Confirm password",
-    "submit": "Accept invitation",
-    "submitting": "Accepting…",
-    "subtitle": "You were invited as {{email}}. Set a password to finish.",
-    "title": "Join the team"
-  },
   "account": {
     "avatar": "Photo",
     "avatar_help": "Shown next to your name across the panel. Square images look best.",
