@@ -54,7 +54,7 @@
           "required": "登録の種類を選ぶか入力"
         },
         "value": {
-          "label": "数値",
+          "label": "番号",
           "placeholder": "DE123456789",
           "required": "登録番号を入れてください"
         }
