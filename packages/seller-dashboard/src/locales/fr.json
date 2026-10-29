@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "Cette invitation n’a pas pu être acceptée. Elle a peut-être expiré, ou le mot de passe était incorrect.",
-    "first_name": "Prénom",
-    "invalid_link": "Il manque le jeton dans ce lien. Ouvrez le lien depuis votre e-mail d’invitation.",
-    "last_name": "Nom",
-    "not_found": "Cette invitation n’est plus valable. Demandez à la personne qui vous a invité de vous en envoyer une nouvelle.",
-    "password": "Mot de passe",
-    "password_confirmation": "Confirmer le mot de passe",
-    "submit": "Accepter l’invitation",
-    "submitting": "Acceptation…",
-    "subtitle": "Vous avez été invité en tant que {{email}}. Choisissez un mot de passe pour terminer.",
-    "title": "Rejoindre l’équipe"
-  },
   "account": {
     "avatar": "Photo",
     "avatar_help": "Affichée à côté de votre nom dans tout le panneau. Les images carrées sont recommandées.",

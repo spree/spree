@@ -1593,14 +1593,6 @@
           "label": "Ilość"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "Hasło"
-        },
-        "password_confirmation": {
-          "label": "Potwierdź hasło"
-        }
-      },
       "issued_at": {
         "label": "Data wydania"
       },
@@ -2731,25 +2723,6 @@
       "title": "Integracje",
       "toggle_label": "Włącz lub wyłącz {{name}}",
       "view_cta": "Zobacz"
-    },
-    "invitation": {
-      "accepting": "Akceptowanie…",
-      "could_not_accept": "Nie udało się zaakceptować zaproszenia",
-      "create_and_accept": "Utwórz konto i zaakceptuj",
-      "create_to_accept": ". Utwórz konto, aby zaakceptować.",
-      "generic_error_message": "Coś poszło nie tak. Spróbuj ponownie.",
-      "generic_error_title": "Nie udało się wczytać zaproszenia",
-      "invited_as_role": " jako {{role}}",
-      "invited_by": "{{email}} zaprosił(a) Cię",
-      "invited_generic": "Zostałeś(-aś) zaproszony(-a)",
-      "join_store": "Dołącz do {{store}}",
-      "loading": "Wczytywanie zaproszenia…",
-      "missing_token_message": "Ten link wygląda na niekompletny. Poproś osobę, która Cię zaprosiła, o ponowne przesłanie go.",
-      "missing_token_title": "Brak tokenu zaproszenia",
-      "not_found_message": "To zaproszenie wygasło, zostało unieważnione lub już je zaakceptowano. Poproś osobę zapraszającą o wysłanie nowego.",
-      "not_found_title": "Nie znaleziono zaproszenia",
-      "sign_in_and_accept": "Zaloguj się i zaakceptuj",
-      "sign_in_to_accept": ". Zaloguj się, aby zaakceptować."
     },
     "jurisdiction": {
       "everywhere": "Wszędzie"

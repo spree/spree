@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "无法接受该邀请。邀请可能已过期，或密码有误。",
-    "first_name": "名字",
-    "invalid_link": "此链接缺少令牌。请从邀请邮件中打开链接。",
-    "last_name": "姓氏",
-    "not_found": "此邀请已失效。请让邀请你的人重新发送一份。",
-    "password": "密码",
-    "password_confirmation": "确认密码",
-    "submit": "接受邀请",
-    "submitting": "正在接受…",
-    "subtitle": "你以 {{email}} 的身份受邀。设置密码即可完成。",
-    "title": "加入团队"
-  },
   "account": {
     "avatar": "照片",
     "avatar_help": "在面板中显示在您的姓名旁边。方形图片效果最佳。",

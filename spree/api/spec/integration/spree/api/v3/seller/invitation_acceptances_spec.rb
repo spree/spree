@@ -73,7 +73,8 @@ RSpec.describe 'Seller Invitation Acceptance API', type: :request, swagger_doc: 
 
         `password` is required when no account exists for the invited address, in
         which case it sets one. When an account already exists, the same field is
-        how the person proves the account is theirs.
+        how the person proves the account is theirs — unless the request carries
+        that account's own access token, which proves it already.
       DESC
 
       seller_sdk_example 'auth/accept-invitation', as: :guest

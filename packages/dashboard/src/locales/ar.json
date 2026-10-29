@@ -1593,14 +1593,6 @@
           "label": "الكمية"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "كلمة المرور"
-        },
-        "password_confirmation": {
-          "label": "تأكيد كلمة المرور"
-        }
-      },
       "issued_at": {
         "label": "تاريخ الإصدار"
       },
@@ -2731,25 +2723,6 @@
       "title": "التكاملات",
       "toggle_label": "تشغيل {{name}} أو إيقافه",
       "view_cta": "عرض"
-    },
-    "invitation": {
-      "accepting": "قبول…",
-      "could_not_accept": "لا يمكن قبول الدعوة",
-      "create_and_accept": "Create account & accept",
-      "create_to_accept": ". أنشئ حسابك للقبول.",
-      "generic_error_message": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-      "generic_error_title": "تعذر تحميل الدعوة",
-      "invited_as_role": "مثل {{role}}",
-      "invited_by": "{{email}} دعوتك",
-      "invited_generic": "لقد تمت دعوتك",
-      "join_store": "انضم إلى {{store}}",
-      "loading": "جارٍ تحميل الدعوة…",
-      "missing_token_message": "هذا الرابط يبدو غير مكتمل. اطلب من الشخص الذي دعاك أن يرسلها مرة أخرى.",
-      "missing_token_title": "رمز الدعوة مفقود",
-      "not_found_message": "انتهت صلاحية هذه الدعوة، أو تم إلغاؤها، أو تم قبولها بالفعل. اطلب من الداعي إرسال واحدة جديدة.",
-      "not_found_title": "لم يتم العثور على الدعوة",
-      "sign_in_and_accept": "Sign in & accept",
-      "sign_in_to_accept": ". قم بتسجيل الدخول للقبول."
     },
     "jurisdiction": {
       "everywhere": "كل المناطق"

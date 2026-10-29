@@ -1575,14 +1575,6 @@
           "label": "数量"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "パスワード"
-        },
-        "password_confirmation": {
-          "label": "パスワード（確認）"
-        }
-      },
       "issued_at": {
         "label": "発行日"
       },
@@ -2713,25 +2705,6 @@
       "title": "連携",
       "toggle_label": "{{name}}のオン・オフを切り替え",
       "view_cta": "表示"
-    },
-    "invitation": {
-      "accepting": "承諾中…",
-      "could_not_accept": "招待を承諾できませんでした",
-      "create_and_accept": "アカウントを作成して承諾",
-      "create_to_accept": "。承諾するにはアカウントを作成してください。",
-      "generic_error_message": "問題が起きました。もう一度お試しください。",
-      "generic_error_title": "招待を読み込めませんでした",
-      "invited_as_role": "（{{role}}として）",
-      "invited_by": "{{email}}から招待が届いています",
-      "invited_generic": "招待されています",
-      "join_store": "{{store}}に参加",
-      "loading": "招待を読み込み中…",
-      "missing_token_message": "このリンクは不完全なようです。招待した人にもう一度送ってもらってください。",
-      "missing_token_title": "招待のトークンがありません",
-      "not_found_message": "この招待は期限切れか、取り消されたか、すでに承諾されています。招待した人に新しく送ってもらってください。",
-      "not_found_title": "招待が見つかりません",
-      "sign_in_and_accept": "ログインして承諾",
-      "sign_in_to_accept": "。承諾するにはログインしてください。"
     },
     "jurisdiction": {
       "everywhere": "すべての地域"

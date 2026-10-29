@@ -289,6 +289,11 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
+                inviter_email: cathy@framioreilly.co.uk
+                invitee_exists: false
+                seller:
+                  id: sel_UkLWZg9DAJ
+                  name: Seller 72
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -323,7 +328,8 @@ paths:
 
         `password` is required when no account exists for the invited address, in
         which case it sets one. When an account already exists, the same field is
-        how the person proves the account is theirs.
+        how the person proves the account is theirs — unless the request carries
+        that account's own access token, which proves it already.
       x-codeSamples:
       - lang: javascript
         label: Spree Seller SDK
@@ -16011,6 +16017,10 @@ paths:
                   expires_at: '2026-01-29T12:00:00.000Z'
                   accepted_at:
                   status: pending
+                  inviter_email: jayna_leuschke@hirtheschinner.info
+                  seller:
+                    id: sel_UkLWZg9DAJ
+                    name: Seller 76
               schema:
                 type: object
                 properties:
@@ -16116,6 +16126,10 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
+                inviter_email: carmelia_hodkiewicz@donnelly.us
+                seller:
+                  id: sel_UkLWZg9DAJ
+                  name: Seller 78
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -16278,6 +16292,10 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
+                inviter_email: hal_kiehn@herman.biz
+                seller:
+                  id: sel_UkLWZg9DAJ
+                  name: Seller 179
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -26634,6 +26652,12 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        inviter_email:
+          type: string
+        invitee_exists:
+          type: boolean
+        seller:
+          type: object
       required:
       - id
       - email
@@ -26641,6 +26665,8 @@ components:
       - expires_at
       - accepted_at
       - status
+      - inviter_email
+      - seller
       x-typelizer: true
     Media:
       type: object
@@ -32340,7 +32366,7 @@ components:
         password:
           type: string
           description: Sets the password of a new account, or confirms the password
-            of an existing one.
+            of an existing one, unless the request is already signed in as that account.
         password_confirmation:
           type: string
         first_name:

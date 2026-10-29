@@ -12,7 +12,7 @@ module Spree
 
           request_params 'InvitationAcceptParams', action: :accept do |body|
             body.attribute :password, :string,
-              description: 'Required when the invitee has no account yet: it creates one. An existing account signs in without it.'
+              description: 'Creates the account when the invitee has none yet. An existing account confirms it is theirs with it, unless the request is already signed in as that account.'
             body.attribute :password_confirmation, :string
             body.attribute :first_name, :string
             body.attribute :last_name, :string
@@ -74,10 +74,14 @@ module Spree
           # implicit: we look the user up by `invitation.email`, never by a
           # client-supplied email. The token is the credential.
           def resolve_or_create_invitee(invitation)
-            existing = Spree.admin_user_class.find_by(email: invitation.email)
-            return authenticate_existing(existing) if existing
+            existing = invitation.invitee_account
+            return create_new_invitee(invitation) unless existing
 
-            create_new_invitee(invitation)
+            # Someone already signed in as the invitee has proven who they are.
+            authenticate_user
+            return existing if current_user == existing
+
+            authenticate_existing(existing)
           end
 
           def authenticate_existing(user)

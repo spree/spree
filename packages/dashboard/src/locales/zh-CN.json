@@ -1570,14 +1570,6 @@
           "label": "数量"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "密码"
-        },
-        "password_confirmation": {
-          "label": "确认密码"
-        }
-      },
       "issued_at": {
         "label": "签发日期"
       },
@@ -2708,25 +2700,6 @@
       "title": "集成",
       "toggle_label": "开启或关闭 {{name}}",
       "view_cta": "查看"
-    },
-    "invitation": {
-      "accepting": "正在接受…",
-      "could_not_accept": "无法接受邀请",
-      "create_and_accept": "创建账户并接受",
-      "create_to_accept": "。创建账户以接受。",
-      "generic_error_message": "出现了一些问题。请重试。",
-      "generic_error_title": "无法加载邀请",
-      "invited_as_role": "，担任 {{role}}",
-      "invited_by": "{{email}} 邀请了你",
-      "invited_generic": "你已被邀请",
-      "join_store": "加入 {{store}}",
-      "loading": "正在加载邀请…",
-      "missing_token_message": "此链接似乎不完整。请让邀请你的人重新发送一次。",
-      "missing_token_title": "缺少邀请令牌",
-      "not_found_message": "此邀请已过期、被撤销或已被接受。请让邀请人发送一个新的邀请。",
-      "not_found_title": "未找到邀请",
-      "sign_in_and_accept": "登录并接受",
-      "sign_in_to_accept": "。登录以接受。"
     },
     "jurisdiction": {
       "everywhere": "所有地区"

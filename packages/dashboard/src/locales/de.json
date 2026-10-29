@@ -1575,14 +1575,6 @@
           "label": "Menge"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "Passwort"
-        },
-        "password_confirmation": {
-          "label": "Passwort bestätigen"
-        }
-      },
       "issued_at": {
         "label": "Ausgestellt am"
       },
@@ -2713,25 +2705,6 @@
       "title": "Integrationen",
       "toggle_label": "{{name}} ein- oder ausschalten",
       "view_cta": "Ansehen"
-    },
-    "invitation": {
-      "accepting": "Wird angenommen…",
-      "could_not_accept": "Einladung konnte nicht angenommen werden",
-      "create_and_accept": "Konto erstellen & annehmen",
-      "create_to_accept": ". Erstellen Sie Ihr Konto, um anzunehmen.",
-      "generic_error_message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-      "generic_error_title": "Einladung konnte nicht geladen werden",
-      "invited_as_role": " als {{role}}",
-      "invited_by": "{{email}} hat Sie eingeladen",
-      "invited_generic": "Sie wurden eingeladen",
-      "join_store": "{{store}} beitreten",
-      "loading": "Einladung wird geladen…",
-      "missing_token_message": "Dieser Link scheint unvollständig zu sein. Bitten Sie die Person, die Sie eingeladen hat, ihn erneut zu senden.",
-      "missing_token_title": "Einladungs-Token fehlt",
-      "not_found_message": "Diese Einladung ist abgelaufen, wurde widerrufen oder bereits angenommen. Bitten Sie die einladende Person, eine neue zu senden.",
-      "not_found_title": "Einladung nicht gefunden",
-      "sign_in_and_accept": "Anmelden & annehmen",
-      "sign_in_to_accept": ". Melden Sie sich an, um anzunehmen."
     },
     "jurisdiction": {
       "everywhere": "Überall"

@@ -289,7 +289,9 @@ paths:
 
         `password` is required when no account exists for the invited address,
         in which case it sets one. When an account already exists, the same
-        field is how the person proves the account is theirs.
+        field is how the person proves the account is theirs — unless the
+        request carries that account's own access token, which proves it
+        already.
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -81478,8 +81480,9 @@ components:
       properties:
         password:
           type: string
-          description: 'Required when the invitee has no account yet: it creates one.
-            An existing account signs in without it.'
+          description: Creates the account when the invitee has none yet. An existing
+            account confirms it is theirs with it, unless the request is already signed
+            in as that account.
         password_confirmation:
           type: string
         first_name:
