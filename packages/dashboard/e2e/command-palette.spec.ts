@@ -77,6 +77,47 @@ test.describe('command palette', () => {
     await expect(page.getByRole('option', { name: /^new order$/i })).toBeVisible()
   })
 
+  // A query naming a destination outright puts that page first, highlighted,
+  // so Enter alone reaches it.
+  test('Enter opens the highlighted destination', async ({ page }) => {
+    const creds = await login(page)
+    const input = await openPalette(page, creds.store_id)
+
+    await input.fill('orders')
+    const orders = page.getByRole('option', { name: /^orders$/i })
+    await expect(orders).toHaveAttribute('data-highlighted', '', { timeout: 15_000 })
+
+    await input.press('Enter')
+
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders`))
+    await expect(page.getByRole('dialog')).toBeHidden()
+  })
+
+  test('arrow keys move the highlight without changing the query', async ({ page }) => {
+    const creds = await login(page)
+    const input = await openPalette(page, creds.store_id)
+
+    await input.fill('new')
+    const options = page.getByRole('dialog').getByRole('option')
+    await expect(options.first()).toHaveAttribute('data-highlighted', '', { timeout: 15_000 })
+
+    await input.press('ArrowDown')
+
+    await expect(options.nth(1)).toHaveAttribute('data-highlighted', '')
+    await expect(options.first()).not.toHaveAttribute('data-highlighted', '')
+    await expect(input).toHaveValue('new')
+  })
+
+  test('Escape closes the palette', async ({ page }) => {
+    const creds = await login(page)
+    const input = await openPalette(page, creds.store_id)
+
+    await input.fill('orders')
+    await input.press('Escape')
+
+    await expect(page.getByRole('dialog')).toBeHidden()
+  })
+
   test('reports when a query matches nothing', async ({ page }) => {
     const creds = await login(page)
     const input = await openPalette(page, creds.store_id)

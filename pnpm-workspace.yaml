@@ -44,7 +44,6 @@ catalog:
   '@vitest/coverage-v8': ^5.0.5
   'class-variance-authority': ^0.7.1
   'clsx': ^2.1.1
-  'cmdk': ^1.1.1
   'commander': ^15.0.0
   'date-fns': ^4.4.0
   'date-fns-tz': ^3.2.0

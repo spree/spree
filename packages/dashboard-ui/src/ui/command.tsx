@@ -1,4 +1,4 @@
-import { Command as CommandPrimitive } from 'cmdk'
+import { Autocomplete as AutocompletePrimitive } from '@base-ui/react'
 import i18n from 'i18next'
 import * as React from 'react'
 import { cn } from '../lib/utils'
@@ -12,16 +12,53 @@ import {
 } from '../spree/icons'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './dialog'
 
-function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
+/**
+ * A search field over a list of actions, on Base UI's Autocomplete rendered
+ * inline. `value` and `onValueChange` hold the query. The list is never
+ * filtered here: callers render only the rows that match.
+ */
+function Command({
+  className,
+  children,
+  value,
+  onValueChange,
+}: {
+  className?: string
+  children?: React.ReactNode
+  value?: string
+  onValueChange?: (value: string) => void
+}) {
   return (
-    <CommandPrimitive
-      data-slot="command"
-      className={cn(
-        'flex size-full flex-col overflow-hidden rounded-2xl! bg-popover text-popover-foreground',
-        className,
-      )}
-      {...props}
-    />
+    <AutocompletePrimitive.Root
+      inline
+      open
+      autoHighlight="always"
+      keepHighlight
+      filter={null}
+      value={value}
+      onValueChange={(next, eventDetails) => {
+        // Choosing a row would otherwise write that row's value into the field.
+        if (eventDetails.reason === 'item-press') return
+        onValueChange?.(next)
+      }}
+      onOpenChange={(_open, eventDetails) => {
+        // The list is always shown, so Escape belongs to the dialog around it.
+        if (eventDetails.reason === 'escape-key') {
+          eventDetails.cancel()
+          eventDetails.allowPropagation()
+        }
+      }}
+    >
+      <div
+        data-slot="command"
+        className={cn(
+          'flex size-full flex-col overflow-hidden rounded-2xl! bg-popover text-popover-foreground',
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </AutocompletePrimitive.Root>
   )
 }
 
@@ -73,7 +110,7 @@ function CommandInput({
   className,
   loading = false,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input> & {
+}: AutocompletePrimitive.Input.Props & {
   /** Shows a spinner at the end of the field while results are in flight. */
   loading?: boolean
 }) {
@@ -83,7 +120,7 @@ function CommandInput({
       className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-5"
     >
       <SearchIcon className="size-5 shrink-0 text-muted-foreground" />
-      <CommandPrimitive.Input
+      <AutocompletePrimitive.Input
         data-slot="command-input"
         aria-busy={loading || undefined}
         className={cn(
@@ -115,9 +152,9 @@ function CommandInput({
  * every keystroke. Pass `className="h-…"` to change it, or `h-auto max-h-…`
  * for the shrink-to-fit behaviour a short static menu wants.
  */
-function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
+function CommandList({ className, ...props }: AutocompletePrimitive.List.Props) {
   return (
-    <CommandPrimitive.List
+    <AutocompletePrimitive.List
       data-slot="command-list"
       className={cn(
         'h-80 min-h-0 scroll-py-2 overflow-x-hidden overflow-y-auto p-2 outline-none',
@@ -128,12 +165,10 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
   )
 }
 
-function CommandEmpty({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Empty>) {
+/** The message for an empty list. Render it only when there is nothing to show. */
+function CommandEmpty({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <CommandPrimitive.Empty
+    <div
       data-slot="command-empty"
       className={cn('py-10 text-center text-sm text-muted-foreground', className)}
       {...props}
@@ -143,26 +178,32 @@ function CommandEmpty({
 
 function CommandGroup({
   className,
+  heading,
+  children,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Group>) {
+}: AutocompletePrimitive.Group.Props & { heading?: React.ReactNode }) {
   return (
-    <CommandPrimitive.Group
+    <AutocompletePrimitive.Group
       data-slot="command-group"
-      className={cn(
-        'overflow-hidden text-foreground not-last:pb-2 **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-2 **:[[cmdk-group-heading]]:pb-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground',
-        className,
-      )}
+      className={cn('overflow-hidden text-foreground not-last:pb-2', className)}
       {...props}
-    />
+    >
+      {heading && (
+        <AutocompletePrimitive.GroupLabel
+          data-slot="command-group-heading"
+          className="px-3 pt-2 pb-1.5 text-xs font-medium text-muted-foreground"
+        >
+          {heading}
+        </AutocompletePrimitive.GroupLabel>
+      )}
+      {children}
+    </AutocompletePrimitive.Group>
   )
 }
 
-function CommandSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
+function CommandSeparator({ className, ...props }: AutocompletePrimitive.Separator.Props) {
   return (
-    <CommandPrimitive.Separator
+    <AutocompletePrimitive.Separator
       data-slot="command-separator"
       className={cn('-mx-2 my-1 h-px bg-border-subtle', className)}
       {...props}
@@ -170,23 +211,26 @@ function CommandSeparator({
   )
 }
 
+/** One row. `onSelect` runs on click and on Enter while the row is highlighted. */
 function CommandItem({
   className,
   children,
+  onSelect,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+}: Omit<AutocompletePrimitive.Item.Props, 'onClick' | 'onSelect'> & { onSelect?: () => void }) {
   return (
-    <CommandPrimitive.Item
+    <AutocompletePrimitive.Item
       data-slot="command-item"
+      onClick={onSelect}
       className={cn(
-        "group/command-item relative flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-accent-strong data-selected:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-selected:*:[svg]:text-foreground",
+        "group/command-item relative flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-accent-strong data-highlighted:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-highlighted:*:[svg]:text-foreground",
         className,
       )}
       {...props}
     >
       {children}
       <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
-    </CommandPrimitive.Item>
+    </AutocompletePrimitive.Item>
   )
 }
 
@@ -195,7 +239,7 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) 
     <span
       data-slot="command-shortcut"
       className={cn(
-        'ml-auto text-xs tracking-widest text-muted-foreground group-data-selected/command-item:text-foreground',
+        'ml-auto text-xs tracking-widest text-muted-foreground group-data-highlighted/command-item:text-foreground',
         className,
       )}
       {...props}

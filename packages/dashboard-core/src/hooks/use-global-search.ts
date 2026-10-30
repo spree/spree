@@ -44,7 +44,7 @@ export function useGlobalSearch(rawQuery: string) {
     queries: permitted.map((entry) => ({
       // Scope by user so a logout→login on the same store can't serve the
       // previous user's cached results from React Query.
-      queryKey: ['cmdk', user?.id, storeId, entry.key, query],
+      queryKey: ['global-search', user?.id, storeId, entry.key, query],
       queryFn: () => entry.fetch(query, RESULT_LIMIT),
       enabled,
       gcTime: GC_TIME_MS,
