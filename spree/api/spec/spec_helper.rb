@@ -81,6 +81,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:suite) do
     Spree::Events.disable!

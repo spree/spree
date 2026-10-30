@@ -258,7 +258,7 @@ describe Spree::Order, type: :model do
 
     context 'when canceled_at is not given' do
       it 'saves canceled_at to Time.current' do
-        Timecop.freeze(Time.current) do
+        freeze_time do
           subject
           expect(order.reload.canceled_at.to_s).to eq Time.current.to_s
           expect(Spree::Deprecation).to have_received(:warn).with(/Order#canceled_by is deprecated/)
@@ -268,7 +268,7 @@ describe Spree::Order, type: :model do
 
     context 'when canceled_at is given' do
       it 'saves canceled_at to given time' do
-        Timecop.freeze(Time.current) do
+        freeze_time do
           order.canceled_by(admin_user, Time.current - 1.day)
           expect(order.reload.canceled_at.to_s).to eq (Time.current - 1.day).to_s
         end

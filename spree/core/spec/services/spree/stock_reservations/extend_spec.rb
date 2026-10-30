@@ -9,7 +9,7 @@ describe Spree::StockReservations::Extend do
     before { stub_store_preferences(store, stock_reservations_enabled: true) }
 
     it 'pushes expires_at out by the store TTL' do
-      Timecop.freeze do
+      freeze_time do
         described_class.call(cart: order)
         expect(reservation.reload.expires_at).to be_within(1.second).of(12.minutes.from_now)
       end

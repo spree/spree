@@ -1003,7 +1003,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         patch :update, params: { id: order.prefixed_id, email: 'customer@example.com', shipping_address: address_params }
         original_expiry = Spree::StockReservation.for_order(order).maximum(:expires_at)
 
-        Timecop.freeze(2.minutes.from_now) do
+        travel_to(2.minutes.from_now) do
           patch :update, params: { id: order.prefixed_id, customer_note: 'please ring bell' }
         end
 

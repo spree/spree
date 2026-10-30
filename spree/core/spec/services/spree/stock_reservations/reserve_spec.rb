@@ -31,7 +31,7 @@ describe Spree::StockReservations::Reserve do
 
     it 'sets expires_at according to the store TTL' do
       store.update!(preferred_stock_reservation_ttl_minutes: 7)
-      Timecop.freeze do
+      freeze_time do
         result
         expect(Spree::StockReservation.last.expires_at).to be_within(1.second).of(7.minutes.from_now)
       end

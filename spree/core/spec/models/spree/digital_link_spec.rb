@@ -32,7 +32,7 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'resets created_at timestamp' do
-      Timecop.travel Time.current + 1.day do
+      travel 1.day do
         expect do
           digital_link.reset!
           digital_link.reload
@@ -146,7 +146,7 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'touches the digital_link when autorized' do
-      Timecop.travel Time.current + 1.day do
+      travel 1.day do
         expect do
           digital_link.authorize!
           digital_link.reload
@@ -155,7 +155,7 @@ describe Spree::DigitalLink, type: :model do
     end
 
     it 'does not touch the digital_link if not authorized' do
-      Timecop.travel Time.current + 1.day do
+      travel 1.day do
         expect do
           digital_link_expired.authorize!
           digital_link_expired.reload

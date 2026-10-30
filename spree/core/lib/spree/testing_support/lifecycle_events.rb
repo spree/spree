@@ -23,9 +23,7 @@ shared_examples_for 'lifecycle events' do |factory: nil, event_prefix: nil|
 
         # update_attribute, not update!: Spree::Fulfillment#update! shadows the
         # Active Record method with the legacy state-recalculation API.
-        Timecop.travel(1.minute.from_now) do
-          record.update_attribute(:updated_at, Time.current)
-        end
+        record.update_attribute(:updated_at, 1.minute.from_now)
       end
 
       it 'does not publish updated event on a bare touch' do

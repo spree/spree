@@ -47,7 +47,7 @@ describe Spree.admin_user_class, type: :model do
       admin_user.deactivate!
       first = admin_user.reload.deactivated_at
 
-      Timecop.travel(1.hour.from_now) { admin_user.deactivate! }
+      travel(1.hour) { admin_user.deactivate! }
 
       expect(admin_user.reload.deactivated_at).to eq(first)
     end
