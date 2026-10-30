@@ -191,6 +191,12 @@ module SpreePaypalCheckout
       result = protect_from_error(money_moving: true) do
         refund_capture(capture['id'], money, request_id: request_id)
       end
+      # PayPal can answer a refund it did not make with a status, not an error.
+      # A PENDING refund is recorded, as Stripe's are: core has no pending refund.
+      if result['status'].in?(%w[FAILED CANCELLED])
+        raise PaypalError.new(I18n.t('spree.paypal_checkout.errors.refund_not_completed', status: result['status']),
+                              issue: result['status'])
+      end
 
       success(result['id'], result)
     end

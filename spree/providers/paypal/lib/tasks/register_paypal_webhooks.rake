@@ -16,7 +16,8 @@ namespace :spree do
       failed = []
 
       SpreePaypalCheckout::Gateway.find_each do |payment_method|
-        webhook = SpreePaypalCheckout::RegisterWebhook.new.call(payment_method: payment_method)
+        # Locked as RegisterWebhookJob locks it, since a save can run one meanwhile.
+        webhook = payment_method.with_lock { SpreePaypalCheckout::RegisterWebhook.new.call(payment_method: payment_method) }
         if webhook
           registered += 1
         else

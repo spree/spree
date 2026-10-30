@@ -8,6 +8,7 @@ module SpreePaypalCheckout
     include PaypalServerSdk
 
     ITEM_NAME_MAX_LENGTH = 127
+    ITEM_SKU_MAX_LENGTH = 127
 
     # @param order [Spree::Cart, Spree::Order]
     # @param amount [BigDecimal] what the session charges
@@ -90,7 +91,8 @@ module SpreePaypalCheckout
           name: line_item.name.to_s.first(ITEM_NAME_MAX_LENGTH),
           unit_amount: money(line_item.price),
           quantity: line_item.quantity.to_s,
-          sku: line_item.sku.presence,
+          # PayPal refuses a longer SKU, and a cut one could name another product.
+          sku: (line_item.sku.presence if line_item.sku.to_s.length <= ITEM_SKU_MAX_LENGTH),
           category: line_item.digital? ? ItemCategory::DIGITAL_GOODS : ItemCategory::PHYSICAL_GOODS
         }.compact)
       end

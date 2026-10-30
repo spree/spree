@@ -13,6 +13,7 @@ en:
         nothing_to_refund: "This PayPal order has no capture to refund."
         outcome_unknown: "PayPal could not say whether it took the payment: %{message}"
         paypal_unavailable: "PayPal could not be reached to check the client id and secret. Try again later."
+        refund_not_completed: "PayPal did not complete the refund (status %{status})."
         void_captured: "PayPal has already captured this payment; refund it instead."
         void_pending_capture: "PayPal is still holding a capture on this payment; refund it once it completes."
       payment_session_errors:

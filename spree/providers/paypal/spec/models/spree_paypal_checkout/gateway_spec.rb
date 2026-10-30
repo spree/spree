@@ -407,6 +407,14 @@ RSpec.describe SpreePaypalCheckout::Gateway do
         to raise_error(Spree::Core::GatewayError, 'This PayPal order has no capture to refund.')
     end
 
+    it 'raises when PayPal answers that it did not make the refund' do
+      allow(gateway).to receive(:paypal_order).and_return(paypal_order_data(captures: [paypal_capture]))
+      allow(gateway).to receive(:refund_capture).and_return({ 'id' => 'REFUND1234567890A', 'status' => 'FAILED' })
+
+      expect { gateway.credit(money, order_id, originator: refund) }.
+        to raise_error(Spree::Core::GatewayError, 'PayPal did not complete the refund (status FAILED).')
+    end
+
     it 'refunds a capture against PayPal', vcr: { cassette_name: 'refund_capture' } do
       # Recording needs a captured sandbox order; PAYPAL_CAPTURED_ORDER_ID names it.
       paypal_order_id = ENV.fetch('PAYPAL_CAPTURED_ORDER_ID', order_id)

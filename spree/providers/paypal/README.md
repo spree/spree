@@ -23,7 +23,9 @@ run.
 
 Create a PayPal payment method in the admin dashboard and enter the client id
 and secret of your PayPal REST app. Leave Test mode on for sandbox credentials
-and turn it off for live ones. The webhook is registered with PayPal on save.
+and turn it off for live ones. Saving queues a job that registers the webhook
+with PayPal; until it has run, PayPal's notifications are refused, so if none
+arrive, check the job queue for a failed `SpreePaypalCheckout::RegisterWebhookJob`.
 
 Set `PAYPAL_LOG_LEVEL` (for example `debug`) to change how much the PayPal
 client logs. Request and response bodies are never logged.

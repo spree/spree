@@ -156,6 +156,17 @@ RSpec.describe SpreePaypalCheckout::OrderPresenter do
     end
   end
 
+  context 'with a SKU longer than PayPal takes' do
+    before { cart.line_items.first.variant.update_columns(sku: 'S' * 128) }
+
+    it 'leaves that SKU out' do
+      skus = purchase_unit['items'].map { |item| item['sku'] }
+      expect(skus).not_to include('S' * 128)
+      expect(purchase_unit['items'].size).to eq(cart.line_items.size)
+      expect(purchase_unit['items'].count { |item| !item.key?('sku') }).to eq(1)
+    end
+  end
+
   context 'with a JPY amount with a fraction' do
     let(:amount) { BigDecimal('100.5') }
 
