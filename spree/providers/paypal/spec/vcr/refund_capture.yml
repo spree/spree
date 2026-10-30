@@ -1,0 +1,219 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v1/oauth2/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Authorization:
+      - Basic <FILTERED>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Paypal-Debug-Id:
+      - f2262649d4c6a
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f2262649d4c6a-236e255d2662fad8-01"
+      X-Paypal-Token-Service:
+      - IAAS
+      Content-Type:
+      - application/json
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - none
+      Date:
+      - Fri, 30 Oct 2026 14:40:42 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220094-FRA, cache-fra-etou8220094-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371243.684092,VS0,VE250
+      Vary:
+      - Accept-Encoding
+      Content-Encoding:
+      - gzip
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAEA5VV23LaMBD9lYwfO1HkW0LKG5cOZHJtU9qEF4+QF1vBSIouBtrpv1c24Ewmw5i8AbNn93D27NFfT1Mhwet6uTFSdzG2ip1JspGkOKNiiTWoklHQmPFSMMp4dtJWSXOgC2ENFhwQLRhdoBUzOVqCojnhBjGtLaTIiAXw1m6OyxK40XhujVWw/9qKK4ktDN6Vb2dprICkrciUaWmN+8tVNZrZDahWzJ5WhSkMW+55tgK1nWmqmDRMcI2p4HOmlmjXrhXdjHUyO5H2OI2gYBmbsYKZTdOEyHebLQO81YgqSJlBlKg3bT7WNqPOvjQdD3nloPYrxQy0womUzjVkK8kKZrkQC92Kkqq2J4Z15bLMWc8qBZxujtv6VgW8E1LM56CQVKCdrJX/jmvSWMfKlBhAGoriM+7ZiYyJNTklsjL8iTtPztKTviKMGwXQ/VU5u1WOhkrt4s8SESoF5fxY2yrR6SLZ/pI4Y7SObqyiYG75m6kO2aWh6nbgVGvvv9v0qxVO42bfymGPPXFB7TZVmtmpWPFCHBEP7qoKF4OIZG4ZdZNWwk0i7pRBzlfCKherh6CNhO6Di9K3uo+H+eGI8REX+i52vFOPUEdGJ3Uku8egFwa93s3TiywtT76vyJqfh7/Dqzu6uZ7wm6AcLW6nr2V/gKZ0mCM0za8inj1NbtIoVvL8/mI+zf+8DM8fR72ZSOB6mD6PHx/glrykdBjf3d1mbmQ9KzGb+vXpA1GgKiJSJiytKDw8oHA8/hpEl5eDiR/FnSgYuQJYS+bkSxj3upEfh+GpxwWn1RMW+uEFCnwU+T+DuOt3unE8HQw6o7L/g/lXPfH07XUczbJ7R2x9P1k8hx05LQZSRvpy+DjS3r//XLChYg4HAAA=
+  recorded_at: Fri, 30 Oct 2026 14:40:43 GMT
+- request:
+    method: get
+    uri: https://api-m.sandbox.paypal.com/v2/checkout/orders/89V54716S30437230
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Accept:
+      - application/json
+      Authorization:
+      - Bearer <FILTERED>
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Server:
+      - nginx
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f2262649f9044-d3d31a2a1a60325e-01"
+      Paypal-Debug-Id:
+      - f2262649f9044
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Content-Type:
+      - application/json
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - none
+      Date:
+      - Fri, 30 Oct 2026 14:40:43 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220094-FRA, cache-fra-etou8220094-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371243.032444,VS0,VE753
+      Vary:
+      - Accept-Encoding
+      Content-Encoding:
+      - gzip
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAEA61VXU/iQBT9K2YeN9pvPsqTLHQVRSC0suqGTIb2Ao2l00ynrIbw3/dOKy5x0cjGt3Y6955zz5w53ZA4Ii3SdCc1p2HWfdtw7IZlG+SUxKmEVOLHTnsU3I49XMolk0WuloY3o74XeF1czNjzCjfSnBciBNLaqJWMJeoJVixOKIsiAbmqy2dniZjNazWz5ti1pnWegch5yhINntgqS0AL+Qp7sjDkBfYsyfn3/evu4OrucuzbV3sfX9lMvHHvR68kk7JVSWERryGl1Ru54stUsS/Ey0KXA9kiyo7XhpRw4pmGPMJ6cuuT7RZ3ZDjSkuVAizSWOMCvDREwBwFpCBW5COasSKSitVKU1dRhIdSOvW5KpzVLCtXbNDRD6TsTwB4j/jvFkhKLPUPJ/YBoMyNZOg1Urdlw6/XzWZHHKSr6RrUVKLY72bqu647uft477fqFj3hRnGcJe6YRk0yxnAmWRjuJ/EwAnEw645OQZbIQEKEAKBmfSxpBHoo4k1wg+1H7ftTun3wLPD848YNh6YsXC6BAOHxVX4lVnp85umg6luVem65jWqZ9jWRez27fSccpiPTmMVqHviCSlhQFYGtIEhA0E1xCKGOu9P2L5/V7F73vfeVmJUghAeslLLiIQXEmvcC7oYNhQMdex+tNSlfdDtq3weVw3HvwujQYtwd+uxP0hgMyVRpVeAJCiNdslgDdP1myEDzP6dGjVXeIzitLfOwoQ6u7ys8pyE8DuZptqpo92u9zHPUHqNfOwHZNM8taeFJ2WwAVqGCpchkBdMe2vEjK+pKJBXLbW3/TUWs0jIaFDi9dl8TpY+WfJd427LKUMstbus6yWMvRtTP+pFUCqbzQ15a+c6C+s59+yHUCMJXUgc2R1Arkkqvwu/ACVGJDvhJMR+JFGiFMhfn6+oo6GvpHwoZLCB95IXUuIoxN/VBoV2hF9s9801MSYuCg3WWsIpJYhlU/M40z2whMp2W7Ldt5wKoiw3z4eNN2ut1iO5QcMBE25KjMPRBun/ojlGjv/A8+jvGvG/yU/IczP39qB3053f4BNGkil6MHAAA=
+  recorded_at: Fri, 30 Oct 2026 14:40:43 GMT
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v2/payments/captures/1PG84229K1941213K/refund
+    body:
+      encoding: UTF-8
+      string: '{"amount":{"currency_code":"USD","value":"1.00"}}'
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Content-Type:
+      - application/json
+      Paypal-Request-Id:
+      - spree-re_test123-refund
+      Prefer:
+      - return=representation
+      Accept:
+      - application/json
+      Authorization:
+      - Bearer <FILTERED>
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '889'
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f29522255de98-9757b2b1c6590891-01"
+      Paypal-Debug-Id:
+      - f29522255de98
+      Content-Type:
+      - application/json
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Server:
+      - nginx
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Fri, 30 Oct 2026 14:40:46 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220094-FRA, cache-fra-etou8220094-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371244.820414,VS0,VE3080
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: UTF-8
+      string: '{"id":"5XW526712M4413118","amount":{"currency_code":"USD","value":"1.00"},"seller_payable_breakdown":{"gross_amount":{"currency_code":"USD","value":"1.00"},"paypal_fee":{"currency_code":"USD","value":"0.00"},"net_amount":{"currency_code":"USD","value":"1.00"},"net_amount_breakdown":[{"payable_amount":{"currency_code":"PLN","value":"3.91"},"converted_amount":{"currency_code":"USD","value":"1.00"},"exchange_rate":{"source_currency":"PLN","target_currency":"USD","value":"0.255670124178979"}}],"total_refunded_amount":{"currency_code":"USD","value":"1.00"}},"status":"COMPLETED","create_time":"2026-10-30T07:40:45-07:00","update_time":"2026-10-30T07:40:45-07:00","links":[{"href":"https://api.sandbox.paypal.com/v2/payments/refunds/5XW526712M4413118","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v2/payments/captures/1PG84229K1941213K","rel":"up","method":"GET"}]}'
+  recorded_at: Fri, 30 Oct 2026 14:40:46 GMT
+recorded_with: VCR 6.4.0
