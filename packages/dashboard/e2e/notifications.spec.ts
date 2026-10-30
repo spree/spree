@@ -19,11 +19,17 @@ async function stubRelease(page: Page, bodyHtml: string) {
       },
     }),
   )
-  await page.route(`https://api.github.com/repos/spree/spree/releases/tags/v${VERSION}`, (route) =>
-    route.fulfill({
-      headers: { 'access-control-allow-origin': '*' },
-      json: { tag_name: `v${VERSION}`, body_html: bodyHtml },
-    }),
+  // GitHub sends rendered HTML only when asked for it, so a request that stops
+  // asking gets no notes and the spec fails.
+  await page.route(
+    `https://api.github.com/repos/spree/spree/releases/tags/v${VERSION}`,
+    (route) => {
+      const wantsHtml = route.request().headers().accept === 'application/vnd.github.html+json'
+      return route.fulfill({
+        headers: { 'access-control-allow-origin': '*' },
+        json: { tag_name: `v${VERSION}`, ...(wantsHtml ? { body_html: bodyHtml } : { body: '' }) },
+      })
+    },
   )
 }
 

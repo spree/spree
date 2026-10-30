@@ -36,15 +36,21 @@ function sanitize(html: string): string {
       if (node.tagName === 'IMG') node.setAttribute('loading', 'lazy')
     })
   }
-  const clean = purifier.sanitize(html, {
+  const notes = purifier.sanitize(html, {
     FORBID_TAGS: ['style', 'form', 'input', 'button', 'select', 'textarea'],
     FORBID_ATTR: ['style'],
+    RETURN_DOM_FRAGMENT: true,
   })
-  // Safe on sanitized output: a literal "<" outside a tag is escaped as "&lt;".
-  return clean.replace(
-    /<(\/?)h([1-6])\b/g,
-    (_, slash, level) => `<${slash}h${HEADING_LEVEL[level]}`,
-  )
+  for (const heading of notes.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+    const renamed = document.createElement(`h${HEADING_LEVEL[heading.tagName[1]]}`)
+    for (const attribute of heading.attributes)
+      renamed.setAttribute(attribute.name, attribute.value)
+    renamed.append(...heading.childNodes)
+    heading.replaceWith(renamed)
+  }
+  const container = document.createElement('div')
+  container.append(notes)
+  return container.innerHTML
 }
 
 /** Release notes from GitHub, rendered as the dashboard's own text. */
