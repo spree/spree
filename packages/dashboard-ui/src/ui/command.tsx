@@ -12,13 +12,12 @@ import {
 } from '../spree/icons'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './dialog'
 
-type CommandInputBinding = { value?: string; onValueChange?: (value: string) => void }
-
 const CommandContext = React.createContext<{
   query: string
+  setQuery: (query: string) => void
   shouldFilter: boolean
-  bindInput: (binding: CommandInputBinding) => void
-}>({ query: '', shouldFilter: false, bindInput: () => {} })
+  onInputChange: React.RefObject<((value: string) => void) | undefined>
+}>({ query: '', setQuery: () => {}, shouldFilter: false, onInputChange: { current: undefined } })
 
 /**
  * A search field over a list of actions, on Base UI's Autocomplete rendered
@@ -31,15 +30,13 @@ function Command({
   shouldFilter = true,
   ...props
 }: React.ComponentProps<'div'> & { shouldFilter?: boolean }) {
-  const [input, bindInput] = React.useState<CommandInputBinding>({})
   const [query, setQuery] = React.useState('')
+  const onInputChange = React.useRef<((value: string) => void) | undefined>(undefined)
 
-  // A controlled `CommandInput` can change the query from outside, such as a reset.
-  React.useLayoutEffect(() => {
-    if (input.value !== undefined) setQuery(input.value)
-  }, [input.value])
-
-  const context = React.useMemo(() => ({ query, shouldFilter, bindInput }), [query, shouldFilter])
+  const context = React.useMemo(
+    () => ({ query, setQuery, shouldFilter, onInputChange }),
+    [query, shouldFilter],
+  )
 
   return (
     <AutocompletePrimitive.Root
@@ -53,7 +50,7 @@ function Command({
         // Choosing a row would otherwise write that row's value into the field.
         if (eventDetails.reason === 'item-press') return
         setQuery(next)
-        input.onValueChange?.(next)
+        onInputChange.current?.(next)
       }}
       onOpenChange={(_open, eventDetails) => {
         // The list is always shown, so Escape belongs to the dialog around it.
@@ -135,11 +132,15 @@ function CommandInput({
   /** Shows a spinner at the end of the field while results are in flight. */
   loading?: boolean
 }) {
-  const { bindInput } = React.useContext(CommandContext)
-  React.useLayoutEffect(
-    () => bindInput({ value, onValueChange }),
-    [bindInput, value, onValueChange],
-  )
+  const { query, setQuery, onInputChange } = React.useContext(CommandContext)
+  React.useLayoutEffect(() => {
+    onInputChange.current = onValueChange
+  }, [onInputChange, onValueChange])
+  // A controlled field shows only what its owner accepts: a reset from outside,
+  // or the previous text when an edit is rejected.
+  React.useLayoutEffect(() => {
+    if (value !== undefined && value !== query) setQuery(value)
+  }, [value, query, setQuery])
 
   return (
     <div
