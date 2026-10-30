@@ -172,7 +172,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
         finalFocus={false}
       >
         {/* The server filters resource results via Ransack; static commands
-            are pre-filtered in JS. Either way, cmdk shouldn't filter again. */}
+            are pre-filtered in JS. Either way, `Command` shouldn't filter again. */}
         <Command shouldFilter={false}>
           <CommandInput
             value={input}
@@ -268,7 +268,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
 // ---------------------------------------------------------------------------
 
 interface GotoCommand {
-  /** Stable key — registry entry key, used as the React key + cmdk value. */
+  /** Stable key — registry entry key, used as the React key and the item value. */
   key: string
   /** Resolved, translated label shown in the list. */
   label: string
@@ -309,7 +309,7 @@ function buildGotoCommands({
 
   // Main + bottom nav, including nested children. Keys are namespaced per
   // registry because raw keys are only unique within their own registry —
-  // merging them risks duplicate React keys / cmdk values across sections.
+  // merging them risks duplicate React keys and item values across sections.
   for (const entry of [...main, ...bottom]) {
     // Mirror the sidebar: when the parent subject is denied, the whole subtree
     // (parent + children) is hidden, so don't surface its children either.

@@ -21,7 +21,7 @@ import type { SubjectName } from './permissions'
  */
 
 export interface SearchResultRow {
-  /** cmdk value — must be unique across the whole list; prefix with the entry key. */
+  /** Item value — must be unique across the whole list; prefix with the entry key. */
   value: string
   /** Row contents rendered inside the `CommandItem`. */
   content: ReactNode
