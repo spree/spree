@@ -135,7 +135,7 @@ module Spree
     end
 
     def generate_code=(generating_code)
-      if generating_code.to_b
+      if Spree::Boolean.cast(generating_code)
         self.code = random_code
       end
     end

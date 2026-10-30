@@ -19,8 +19,6 @@ module Spree
       publishes_event 'seller_user.password_reset_requested',
                       serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', webhook: false
 
-      has_person_name
-
       normalizes :email, :first_name, :last_name, with: ->(value) { value&.to_s&.squish&.presence }
 
       # Token auto-invalidates when password changes (salt changes)
@@ -87,7 +85,7 @@ module Spree
     # Returns the full name of the user
     # @return [String]
     def full_name
-      name&.full
+      [first_name, last_name].compact_blank.join(' ').presence
     end
 
     private

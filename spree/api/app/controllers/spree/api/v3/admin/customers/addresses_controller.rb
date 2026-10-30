@@ -80,11 +80,11 @@ module Spree
             end
 
             def default_billing_flag
-              params[:is_default_billing].to_b
+              Spree::Boolean.cast(params[:is_default_billing])
             end
 
             def default_shipping_flag
-              params[:is_default_shipping].to_b
+              Spree::Boolean.cast(params[:is_default_shipping])
             end
           end
         end

@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
       expect(items.length).to be >= 1
 
       item = items.first
-      # Alba with oj_rails returns string keys at top level but symbol keys in nested hashes
+      # serializable_hash returns string keys at top level but symbol keys in nested hashes
       item_id = item[:item_id] || item['item_id']
       variant_id = item[:variant_id] || item['variant_id']
       qty = item[:quantity] || item['quantity']
