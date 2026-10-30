@@ -73,13 +73,15 @@ test.describe('notifications', () => {
         '<img alt="Broken" src="x" onerror="window.__pwned = 2">',
         '<a href="javascript:window.__pwned = 3">Click me</a>',
         '<iframe src="https://evil.example"></iframe>',
+        '<style>body { display: none }</style>',
+        '<form action="https://evil.example"><input name="password"><button>Sign in</button></form>',
       ].join(''),
     )
     const dialog = await openNotifications(page)
 
     await expect(dialog.getByText('Safe text')).toBeVisible()
     const notes = dialog.locator('section')
-    await expect(notes.locator('script, iframe')).toHaveCount(0)
+    await expect(notes.locator('script, iframe, style, form, input, button')).toHaveCount(0)
     await expect(notes.locator('[onerror]')).toHaveCount(0)
     await expect(dialog.getByText('Click me')).not.toHaveAttribute('href', /javascript:/)
     expect(await page.evaluate(() => (window as { __pwned?: number }).__pwned)).toBeUndefined()

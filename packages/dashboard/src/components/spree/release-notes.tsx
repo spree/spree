@@ -34,7 +34,10 @@ function sanitize(html: string): string {
       if (node.tagName === 'IMG') node.setAttribute('loading', 'lazy')
     })
   }
-  return purifier.sanitize(html, { FORBID_ATTR: ['style'] })
+  return purifier.sanitize(html, {
+    FORBID_TAGS: ['style', 'form', 'input', 'button', 'select', 'textarea'],
+    FORBID_ATTR: ['style'],
+  })
 }
 
 /** Release notes from GitHub, rendered as the dashboard's own text. */
