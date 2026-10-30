@@ -39,8 +39,6 @@ require 'ransack'
 require 'active_storage_validations'
 require 'wannabe_bool'
 require 'geocoder'
-
-require 'safely_block'
 require 'ar_lazy_preload'
 require 'sqids'
 
