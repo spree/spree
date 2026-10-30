@@ -781,7 +781,7 @@ module Spree
     end
 
     def full_name
-      @full_name ||= if customer&.full_name.present?
+      @full_name ||= if customer&.first_name.present?
                        customer.full_name
                      else
                        billing_address&.full_name || email
