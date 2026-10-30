@@ -147,12 +147,12 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        I18n.t('spree.invitation_mailer.invitation_accepted.subject', invitee_name: invitee.name, resource_name: store.name)
+        I18n.t('spree.invitation_mailer.invitation_accepted.subject', invitee_name: invitee.full_name, resource_name: store.name)
       )
     end
 
     it 'includes the invitee name in the body' do
-      expect(email_body(mail)).to include(invitee.name)
+      expect(email_body(mail)).to include(invitee.full_name)
     end
 
     it 'sends to the correct recipient' do
