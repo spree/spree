@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
 
 
   s.add_dependency 'acts_as_list', '>= 0.8'
-  s.add_dependency 'alba', '~> 3.0'
+  s.add_dependency 'alba', '~> 4.0'
   s.add_dependency 'acts-as-taggable-on'
   s.add_dependency 'awesome_nested_set', '~> 3.3', '>= 3.3.1'
   s.add_dependency 'cancancan', '~> 3.2'
