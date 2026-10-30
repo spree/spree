@@ -23,17 +23,16 @@ SPREE_VERSION = ENV['SPREE_VERSION'] || '~> 6.0'
 def add_gems
   say 'Adding required gems to Gemfile...', :blue
 
-  # Spree gems - core (includes core, api, cli)
+  # Spree gems - core (includes core, api)
   gem 'spree', USE_LOCAL_SPREE ? { path: File.join(SPREE_LOCAL_PATH, 'spree') } : { version: SPREE_VERSION }
 
   # Optional Spree packages
   gem 'spree_emails', USE_LOCAL_SPREE ? { path: File.join(SPREE_LOCAL_PATH, 'spree', 'emails') } : { version: SPREE_VERSION }
+  gem 'spree_dashboard', USE_LOCAL_SPREE ? { path: File.join(SPREE_LOCAL_PATH, 'spree', 'dashboard') } : { version: SPREE_VERSION }
 
   # Development & Test gems
   gem_group :development, :test do
     gem 'spree_dev_tools'
-    gem 'letter_opener'
-    gem 'listen'
   end
 end
 
@@ -46,31 +45,15 @@ def install_spree
   generate 'spree:install', '--force', '--auto-accept', '--seed=false'
 end
 
-def configure_development_environment
-  say 'Configuring development environment...', :blue
-
-  # Letter opener and file watcher configuration
-  environment nil, env: 'development' do
-    <<-RUBY
-  # Letter Opener for email previews
-  config.action_mailer.delivery_method = :letter_opener
-  config.action_mailer.perform_deliveries = true
-
-  # Improved file watching
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-    RUBY
-  end
-end
-
 def seed_database
   say 'Loading seed data...', :blue
 
   if ADMIN_EMAIL.present? && ADMIN_PASSWORD.present?
     # rails_command interpolates into a shell command line, so a password
     # containing shell metacharacters would otherwise be mangled or executed.
-    rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{Shellwords.escape(ADMIN_EMAIL)} ADMIN_PASSWORD=#{Shellwords.escape(ADMIN_PASSWORD)}"
+    rails_command "db:seed ADMIN_EMAIL=#{Shellwords.escape(ADMIN_EMAIL)} ADMIN_PASSWORD=#{Shellwords.escape(ADMIN_PASSWORD)}"
   else
-    rails_command 'db:seed AUTO_ACCEPT=1'
+    rails_command 'db:seed'
   end
 end
 
@@ -119,7 +102,6 @@ end
 add_gems
 
 after_bundle do
-  configure_development_environment
   install_spree
   seed_database
   load_sample_data

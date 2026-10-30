@@ -91,7 +91,6 @@ module Spree
       if @load_seed_data
         say_status :loading, 'seed data'
         rake_options = []
-        rake_options << 'AUTO_ACCEPT=1' if options[:auto_accept]
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
         rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
 
