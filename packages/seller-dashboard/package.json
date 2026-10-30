@@ -45,14 +45,10 @@
   },
   "dependencies": {
     "@hookform/resolvers": "catalog:",
-    "@dnd-kit/core": "catalog:",
-    "@dnd-kit/sortable": "catalog:",
-    "@dnd-kit/utilities": "catalog:",
     "@spree/core": "workspace:^",
     "@spree/seller-sdk": "workspace:*",
     "@tanstack/router-plugin": "catalog:",
     "@tanstack/virtual-file-routes": "catalog:",
-    "lucide-react": "catalog:",
     "zod": "catalog:"
   },
   "peerDependencies": {

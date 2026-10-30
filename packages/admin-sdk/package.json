@@ -83,7 +83,6 @@
   "devDependencies": {
     "@spree/sdk-core": "workspace:*",
     "@types/node": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "msw": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",

@@ -82,13 +82,11 @@
   "devDependencies": {
     "@spree/sdk-core": "workspace:*",
     "@types/node": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "msw": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "yaml": "catalog:",
     "zod": "catalog:"
   },
   "peerDependencies": {

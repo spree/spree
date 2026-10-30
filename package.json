@@ -51,6 +51,7 @@
     "@biomejs/biome": "catalog:",
     "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
+    "@spree/cli": "workspace:*",
     "@typescript/typescript6": "catalog:",
     "semver": "^7.8.5",
     "turbo": "^2.11.9",
@@ -59,9 +60,5 @@
   "packageManager": "pnpm@11.1.1",
   "engines": {
     "node": ">=22"
-  },
-  "dependencies": {
-    "@base-ui/react": "catalog:",
-    "@spree/cli": "workspace:*"
   }
 }

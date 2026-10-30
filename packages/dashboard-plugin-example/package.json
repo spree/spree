@@ -34,7 +34,6 @@
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.2",
     "i18next": "^26.2.0",
-    "lucide-react": "^1.47.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-i18next": "^17.0.8"
@@ -48,7 +47,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "i18next": "catalog:",
-    "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-i18next": "catalog:",

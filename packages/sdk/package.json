@@ -101,7 +101,6 @@
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "yaml": "catalog:",
     "zod": "catalog:"
   },
   "peerDependencies": {
