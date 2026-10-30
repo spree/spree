@@ -16,7 +16,6 @@ module Spree
     class_option :admin_email, type: :string
     class_option :admin_password, type: :string
     class_option :enforce_available_locales, type: :boolean, default: nil
-    class_option :authentication, type: :string, default: nil
 
     def self.source_paths
       paths = superclass.source_paths
@@ -28,7 +27,6 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
-      @authentication = options[:authentication]
 
       unless @run_migrations
         @load_seed_data = false
@@ -38,10 +36,6 @@ module Spree
 
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
-    end
-
-    def install_authentication
-      generate 'spree:authentication:dummy' if @authentication == 'dummy'
     end
 
     def configure_application

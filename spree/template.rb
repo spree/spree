@@ -41,7 +41,7 @@ def install_spree
 
   # Run Spree installer with migrations but without seeds - seeds run after all
   # generators complete. Uses the gem-owned Spree::Customer / Spree::AdminUser
-  # defaults (has_secure_password); no --authentication scaffolding.
+  # defaults (has_secure_password).
   generate 'spree:install', '--force', '--auto-accept', '--seed=false'
 end
 
