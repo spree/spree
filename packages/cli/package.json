@@ -21,9 +21,6 @@
     "format": "biome format --write src tests",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
-    "changeset": "changeset",
-    "version": "changeset version",
-    "release": "npm run build && changeset publish",
     "generate:spec": "node scripts/bundle-spec.mjs"
   },
   "keywords": [
@@ -53,8 +50,6 @@
     "picocolors": "catalog:"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "catalog:",
-    "@changesets/cli": "catalog:",
     "@spree/admin-sdk": "workspace:^",
     "@spree/sdk-core": "workspace:*",
     "@types/node": "catalog:",
