@@ -1,8 +1,12 @@
 ---
 title: "Installing Spree"
 sidebarTitle: Installation
-description: "Install Spree Commerce locally, run your first store, and deploy it to production with the official starter template."
+description: "Try Spree in a free hosted sandbox, or install it locally, run your first store, and deploy it to production with the official starter template."
 ---
+
+<Tip>
+  **Just want to try Spree?** [Launch a free sandbox](https://console.spree.sh) — a hosted Spree store with the admin dashboard and APIs, ready in your browser. Nothing to install. See [Trying Spree in a sandbox](#trying-spree-in-a-sandbox).
+</Tip>
 
 ## Using `create-spree-app`
 
@@ -21,6 +25,16 @@ description: "Install Spree Commerce locally, run your first store, and deploy i
   <Frame caption="Setting up your first store">
     <video autoPlay muted loop playsInline controls className="block w-auto max-w-full h-auto rounded-xl" src="/videos/store-setup.mp4"></video>
   </Frame>
+
+## Trying Spree in a sandbox
+
+A [Spree sandbox](https://console.spree.sh) is a free, hosted Spree store at its own `*.spree.sh` address. Use it to explore the admin dashboard, try the APIs, or point a storefront at it — without installing Node.js, Docker or Ruby.
+
+1. Sign in at [console.spree.sh](https://console.spree.sh) and click **Create store**.
+2. Click **Open** to go to its admin dashboard and manage products, orders and settings.
+3. To call the Admin API, create a secret key under **Settings → API Keys** and use it with the [Spree CLI](/developer/cli/admin-api#use-with-a-sandbox) or the [Admin SDK](/developer/sdk/admin/quickstart).
+
+When you're ready to customize Spree's code, install it locally with `create-spree-app`.
 
 ## Project structure and overview
 
