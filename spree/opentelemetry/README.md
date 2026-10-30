@@ -33,7 +33,7 @@ is the kill switch.
 Span attributes never contain personal data — prefixed IDs, workflow/step
 names, gateway action names, and HTTP metadata only.
 
-See the [telemetry guide](https://docs.spreecommerce.org/developer/deployment/telemetry)
+See the [telemetry guide](https://spreecommerce.org/docs/developer/deployment/telemetry)
 for the full span catalog, collector examples, and sampling guidance.
 
 ## Code-level configuration

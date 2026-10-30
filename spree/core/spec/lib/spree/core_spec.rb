@@ -171,4 +171,18 @@ describe Spree do
       expect(registry).to include(anonymous)
     end
   end
+
+  describe 'Spree.queues.themes' do
+    it 'warns and returns the default queue' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree.queues.themes is deprecated/)
+      expect(described_class.queues.themes).to eq(:default)
+    end
+
+    it 'warns on assignment without adding a queue' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree.queues.themes= is deprecated/)
+      described_class.queues.themes = :low
+
+      expect(described_class.queues.to_h).not_to have_key(:themes)
+    end
+  end
 end

@@ -1,5 +1,5 @@
 # Spree settings are configured with environment variables — see
-# https://docs.spreecommerce.org/developer/customization/configuration
+# https://spreecommerce.org/docs/developer/customization/configuration
 # for every setting and the variable that sets it.
 #
 #   SPREE_MINIMUM_PASSWORD_LENGTH=10
@@ -19,11 +19,6 @@
 # Default is nil and your application host will be used
 # Spree.cdn_host = 'cdn.example.com'
 
-# Multi-store setup
-# You need to set a wildcard `root_domain` on the store to enable multi-store setup
-# all new stores will be created in a subdomain of the root domain, eg. store1.lvh.me, store2.lvh.me, etc.
-# Spree.root_domain = ENV.fetch('SPREE_ROOT_DOMAIN', 'lvh.me')
-
 # Use a different service for storage (S3, google, etc)
 # unless Rails.env.test?
 #   Spree.public_storage_service_name = :amazon_public   # public assets, such as product images
@@ -31,7 +26,7 @@
 # end
 
 # Swap a Spree service for your own — see
-# https://docs.spreecommerce.org/developer/customization/dependencies
+# https://spreecommerce.org/docs/developer/customization/dependencies
 Spree.dependencies do |dependencies|
   # Example:
   # Uncomment to change the default workflow handling adding items to the cart
@@ -50,7 +45,7 @@ Rails.application.config.after_initialize do
 
   # Stock splitters and adjusters
   # Spree.stock_splitters << Spree::Stock::Splitters::SecretLogicSplitter
-  # Spree.adjusters << Spree::Adjustable::Adjuster::TaxTheRich
+  # Spree.adjusters << Spree::Adjusters::TaxTheRich
 
   # Custom promotions
   # Spree.calculators.promotion_actions_create_adjustments << Spree::Calculators::PromotionActions::CreateAdjustments::AddDiscountForFriends
@@ -90,6 +85,7 @@ end
 # Spree.queues.gift_cards = :default
 # Spree.queues.images = :default
 # Spree.queues.imports = :default
+# Spree.queues.maintenance_tasks = :default
 # Spree.queues.payment_webhooks = :default
 # Spree.queues.payouts = :default
 # Spree.queues.products = :default
@@ -97,7 +93,6 @@ end
 # Spree.queues.stock_location_stock_levels = :default
 # Spree.queues.stock_reservations = :default
 # Spree.queues.tax_identifiers = :default
-# Spree.queues.themes = :default
 # Spree.queues.variants = :default
 # Spree.queues.webhooks = :default
 

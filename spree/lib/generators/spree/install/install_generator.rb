@@ -1,7 +1,4 @@
 require 'rails/generators'
-require 'highline/import'
-require 'bundler'
-require 'bundler/cli'
 require 'active_support/core_ext/string/indent'
 require 'spree/core'
 
@@ -15,7 +12,6 @@ module Spree
     class_option :admin_user_class, type: :string
     class_option :admin_email, type: :string
     class_option :admin_password, type: :string
-    class_option :enforce_available_locales, type: :boolean, default: nil
 
     def self.source_paths
       paths = superclass.source_paths
@@ -48,13 +44,6 @@ module Spree
           end
         end
       APP
-
-      unless options[:enforce_available_locales].nil?
-        application <<-APP.strip_heredoc.indent!(4)
-          # Prevent this deprecation message: https://github.com/svenfuchs/i18n/commit/3b6e56e
-          I18n.enforce_available_locales = #{options[:enforce_available_locales]}
-        APP
-      end
     end
 
     def include_seed_data
@@ -119,14 +108,6 @@ module Spree
       insert_into_file(File.join('config', 'routes.rb'),
                        after: "Rails.application.routes.draw do\n") do
         <<-ROUTES.strip_heredoc.indent!(2)
-          # This line mounts Spree's routes at the root of your application.
-          # This means, any requests to URLs such as /products, will go to
-          # Spree::ProductsController.
-          # If you would like to change where this engine is mounted, simply change the
-          # :at option to something different.
-          #
-          # We ask that you don't use the :as option here, as Spree relies on it being
-          # the default of "spree".
           mount Spree::Core::Engine, at: '/'
         ROUTES
       end

@@ -1,4 +1,4 @@
-class CreateSpreeDummyModels < ActiveRecord::Migration[5.1]
+class CreateSpreeDummyModels < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
     create_table :spree_dummy_models do |t|
       t.string :name

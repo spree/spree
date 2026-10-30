@@ -133,5 +133,6 @@ bundle exec rspec
 
 ## Documentation
 
-- [API Reference](https://docs.spreecommerce.org/api)
-- [Authentication Guide](https://docs.spreecommerce.org/developer/api/authentication)
+- [API Reference](https://spreecommerce.org/docs/api-reference)
+- [Store API authentication](https://spreecommerce.org/docs/api-reference/store-api/authentication)
+- [Admin API authentication](https://spreecommerce.org/docs/api-reference/admin-api/authentication)

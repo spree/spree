@@ -125,7 +125,6 @@ module Spree
       collections: :default,
       stock_location_stock_levels: :default,
       coupon_codes: :default,
-      themes: :default,
       addresses: :default,
       gift_cards: :default,
       webhooks: :default,
@@ -142,6 +141,16 @@ module Spree
       queues.define_singleton_method(:taxons) do
         Spree::Deprecation.warn('Spree.queues.taxons is deprecated and will be removed in Spree 6.1. Use Spree.queues.categories instead.') if defined?(Spree::Deprecation)
         categories
+      end
+
+      # @deprecated No job uses the themes queue; removed in 6.1.
+      queues.define_singleton_method(:themes) do
+        Spree::Deprecation.warn('Spree.queues.themes is deprecated and will be removed in Spree 6.1. No Spree job uses it.') if defined?(Spree::Deprecation)
+        :default
+      end
+
+      queues.define_singleton_method(:themes=) do |_value|
+        Spree::Deprecation.warn('Spree.queues.themes= is deprecated and will be removed in Spree 6.1. No Spree job uses it.') if defined?(Spree::Deprecation)
       end
 
       # @deprecated Renamed with the stock level rename in 6.0; removed in 6.1.
