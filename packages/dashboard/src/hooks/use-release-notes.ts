@@ -44,10 +44,10 @@ export function useReleaseNotes(version: string | null | undefined, enabled: boo
       })
       if (!response.ok) throw new Error(`GitHub answered ${response.status}`)
 
-      const release = (await response.json()) as { body_html?: string | null }
-      const notes = release.body_html ?? ''
-      writeStored(tag, notes)
-      return notes
+      const release = (await response.json()) as { body_html?: unknown }
+      if (typeof release.body_html !== 'string') return ''
+      writeStored(tag, release.body_html)
+      return release.body_html
     },
     enabled: enabled && tag !== null,
     staleTime: Number.POSITIVE_INFINITY,

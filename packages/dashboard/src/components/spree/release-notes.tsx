@@ -1,13 +1,11 @@
 import DOMPurify from 'dompurify'
 import { useMemo } from 'react'
 
-// Styles the HTML GitHub renders as the dashboard's own text. Headings are a
-// step smaller because they sit under the notification's own heading.
+// Styles the HTML GitHub renders as the dashboard's own text.
 const PROSE = [
   'min-w-0 break-words text-sm [&>:first-child]:mt-0',
-  '[&_h1]:mt-6 [&_h1]:mb-2 [&_h1]:font-semibold [&_h1]:text-base',
-  '[&_h2]:mt-6 [&_h2]:mb-2 [&_h2]:font-semibold [&_h2]:text-base',
-  '[&_h3]:mt-4 [&_h3]:mb-1 [&_h3]:font-semibold [&_h3]:text-sm',
+  '[&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-base',
+  '[&_h4]:mt-4 [&_h4]:mb-1 [&_h4]:font-semibold [&_h4]:text-sm',
   '[&_p]:my-2 [&_p]:leading-relaxed [&_hr]:my-4',
   '[&_ul]:my-2 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:ps-5',
   '[&_ol]:my-2 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:ps-5',
@@ -18,6 +16,10 @@ const PROSE = [
   '[&_pre_code]:bg-transparent [&_pre_code]:p-0',
   '[&_table]:my-3 [&_th]:pe-4 [&_th]:text-start [&_th]:font-medium [&_td]:pe-4 [&_td]:py-0.5',
 ].join(' ')
+
+// The notes sit under the notification's own h3, so their headings move down
+// to keep the page outline in order: h1 and h2 become h3, h3 becomes h4.
+const HEADING_LEVEL: Record<string, string> = { 1: '3', 2: '3', 3: '4', 4: '5', 5: '6', 6: '6' }
 
 let purifier: ReturnType<typeof DOMPurify> | undefined
 
@@ -34,10 +36,15 @@ function sanitize(html: string): string {
       if (node.tagName === 'IMG') node.setAttribute('loading', 'lazy')
     })
   }
-  return purifier.sanitize(html, {
+  const clean = purifier.sanitize(html, {
     FORBID_TAGS: ['style', 'form', 'input', 'button', 'select', 'textarea'],
     FORBID_ATTR: ['style'],
   })
+  // Safe on sanitized output: a literal "<" outside a tag is escaped as "&lt;".
+  return clean.replace(
+    /<(\/?)h([1-6])\b/g,
+    (_, slash, level) => `<${slash}h${HEADING_LEVEL[level]}`,
+  )
 }
 
 /** Release notes from GitHub, rendered as the dashboard's own text. */

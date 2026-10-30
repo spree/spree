@@ -54,7 +54,7 @@ test.describe('notifications', () => {
 
     await expect(dialog.getByText(`Spree ${VERSION} is available`)).toBeVisible()
     await expect(
-      dialog.getByRole('heading', { name: `Spree ${VERSION}`, exact: true }),
+      dialog.getByRole('heading', { name: `Spree ${VERSION}`, exact: true, level: 3 }),
     ).toBeVisible()
     await expect(dialog.getByText('Fixed a thing')).toBeVisible()
 
