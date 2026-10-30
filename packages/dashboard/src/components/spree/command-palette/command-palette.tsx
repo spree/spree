@@ -172,9 +172,11 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
         finalFocus={false}
       >
         {/* The server filters resource results via Ransack; static commands
-            are filtered here. `Command` renders the rows it is given. */}
-        <Command value={input} onValueChange={setInput}>
+            are pre-filtered in JS. Either way, `Command` shouldn't filter again. */}
+        <Command shouldFilter={false}>
           <CommandInput
+            value={input}
+            onValueChange={setInput}
             placeholder={t('admin.components.command_palette.placeholder')}
             loading={isLoading}
           />

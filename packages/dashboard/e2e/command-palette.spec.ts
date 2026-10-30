@@ -77,6 +77,18 @@ test.describe('command palette', () => {
     await expect(page.getByRole('option', { name: /^new order$/i })).toBeVisible()
   })
 
+  // With no query the destinations are listed, so there is no empty-list hint.
+  test('opens on the list of destinations', async ({ page }) => {
+    const creds = await login(page)
+    await openPalette(page, creds.store_id)
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('option', { name: /^orders$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(dialog.getByText(/type to search/i)).toBeHidden()
+  })
+
   // A query naming a destination outright puts that page first, highlighted,
   // so Enter alone reaches it.
   test('Enter opens the highlighted destination', async ({ page }) => {
@@ -89,7 +101,7 @@ test.describe('command palette', () => {
 
     await input.press('Enter')
 
-    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders`))
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders(?:[?#]|$)`))
     await expect(page.getByRole('dialog')).toBeHidden()
   })
 

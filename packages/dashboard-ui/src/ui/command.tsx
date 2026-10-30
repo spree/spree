@@ -12,22 +12,35 @@ import {
 } from '../spree/icons'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './dialog'
 
+type CommandInputBinding = { value?: string; onValueChange?: (value: string) => void }
+
+const CommandContext = React.createContext<{
+  query: string
+  shouldFilter: boolean
+  bindInput: (binding: CommandInputBinding) => void
+}>({ query: '', shouldFilter: false, bindInput: () => {} })
+
 /**
  * A search field over a list of actions, on Base UI's Autocomplete rendered
- * inline. `value` and `onValueChange` hold the query. The list is never
- * filtered here: callers render only the rows that match.
+ * inline. The query lives on `CommandInput`. Rows whose `value` or text does not
+ * contain the query are hidden unless `shouldFilter` is false.
  */
 function Command({
   className,
   children,
-  value,
-  onValueChange,
-}: {
-  className?: string
-  children?: React.ReactNode
-  value?: string
-  onValueChange?: (value: string) => void
-}) {
+  shouldFilter = true,
+  ...props
+}: React.ComponentProps<'div'> & { shouldFilter?: boolean }) {
+  const [input, bindInput] = React.useState<CommandInputBinding>({})
+  const [query, setQuery] = React.useState('')
+
+  // A controlled `CommandInput` can change the query from outside, such as a reset.
+  React.useLayoutEffect(() => {
+    if (input.value !== undefined) setQuery(input.value)
+  }, [input.value])
+
+  const context = React.useMemo(() => ({ query, shouldFilter, bindInput }), [query, shouldFilter])
+
   return (
     <AutocompletePrimitive.Root
       inline
@@ -35,11 +48,12 @@ function Command({
       autoHighlight="always"
       keepHighlight
       filter={null}
-      value={value}
+      value={query}
       onValueChange={(next, eventDetails) => {
         // Choosing a row would otherwise write that row's value into the field.
         if (eventDetails.reason === 'item-press') return
-        onValueChange?.(next)
+        setQuery(next)
+        input.onValueChange?.(next)
       }}
       onOpenChange={(_open, eventDetails) => {
         // The list is always shown, so Escape belongs to the dialog around it.
@@ -49,15 +63,18 @@ function Command({
         }
       }}
     >
-      <div
-        data-slot="command"
-        className={cn(
-          'flex size-full flex-col overflow-hidden rounded-2xl! bg-popover text-popover-foreground',
-          className,
-        )}
-      >
-        {children}
-      </div>
+      <CommandContext.Provider value={context}>
+        <div
+          data-slot="command"
+          className={cn(
+            'flex size-full flex-col overflow-hidden rounded-2xl! bg-popover text-popover-foreground',
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </div>
+      </CommandContext.Provider>
     </AutocompletePrimitive.Root>
   )
 }
@@ -109,11 +126,21 @@ function CommandDialog({
 function CommandInput({
   className,
   loading = false,
+  value,
+  onValueChange,
   ...props
-}: AutocompletePrimitive.Input.Props & {
+}: Omit<AutocompletePrimitive.Input.Props, 'value'> & {
+  value?: string
+  onValueChange?: (value: string) => void
   /** Shows a spinner at the end of the field while results are in flight. */
   loading?: boolean
 }) {
+  const { bindInput } = React.useContext(CommandContext)
+  React.useLayoutEffect(
+    () => bindInput({ value, onValueChange }),
+    [bindInput, value, onValueChange],
+  )
+
   return (
     <div
       data-slot="command-input-wrapper"
@@ -157,7 +184,7 @@ function CommandList({ className, ...props }: AutocompletePrimitive.List.Props) 
     <AutocompletePrimitive.List
       data-slot="command-list"
       className={cn(
-        'h-80 min-h-0 scroll-py-2 overflow-x-hidden overflow-y-auto p-2 outline-none',
+        'group/command-list h-80 min-h-0 scroll-py-2 overflow-x-hidden overflow-y-auto p-2 outline-none',
         className,
       )}
       {...props}
@@ -165,12 +192,15 @@ function CommandList({ className, ...props }: AutocompletePrimitive.List.Props) 
   )
 }
 
-/** The message for an empty list. Render it only when there is nothing to show. */
+/** The message for an empty list. Hidden while the list has any rows. */
 function CommandEmpty({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="command-empty"
-      className={cn('py-10 text-center text-sm text-muted-foreground', className)}
+      className={cn(
+        'py-10 text-center text-sm text-muted-foreground group-has-[[data-slot=command-item]]/command-list:hidden',
+        className,
+      )}
       {...props}
     />
   )
@@ -185,7 +215,10 @@ function CommandGroup({
   return (
     <AutocompletePrimitive.Group
       data-slot="command-group"
-      className={cn('overflow-hidden text-foreground not-last:pb-2', className)}
+      className={cn(
+        'overflow-hidden text-foreground not-last:pb-2 not-has-[[data-slot=command-item]]:hidden',
+        className,
+      )}
       {...props}
     >
       {heading && (
@@ -211,17 +244,38 @@ function CommandSeparator({ className, ...props }: AutocompletePrimitive.Separat
   )
 }
 
-/** One row. `onSelect` runs on click and on Enter while the row is highlighted. */
+/**
+ * One row. `onSelect` runs on click and on Enter while the row is highlighted,
+ * and receives the row's `value`.
+ */
 function CommandItem({
   className,
   children,
+  value,
+  keywords,
   onSelect,
   ...props
-}: Omit<AutocompletePrimitive.Item.Props, 'onClick' | 'onSelect'> & { onSelect?: () => void }) {
+}: Omit<AutocompletePrimitive.Item.Props, 'onClick' | 'onSelect' | 'value'> & {
+  value?: string
+  keywords?: string[]
+  onSelect?: (value: string) => void
+}) {
+  const { query, shouldFilter } = React.useContext(CommandContext)
+  const text = value ?? (typeof children === 'string' ? children : '')
+  const needle = query.trim().toLowerCase()
+  if (
+    shouldFilter &&
+    needle &&
+    ![text, ...(keywords ?? [])].some((term) => term.toLowerCase().includes(needle))
+  ) {
+    return null
+  }
+
   return (
     <AutocompletePrimitive.Item
       data-slot="command-item"
-      onClick={onSelect}
+      value={value}
+      onClick={() => onSelect?.(text)}
       className={cn(
         "group/command-item relative flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-accent-strong data-highlighted:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-highlighted:*:[svg]:text-foreground",
         className,
