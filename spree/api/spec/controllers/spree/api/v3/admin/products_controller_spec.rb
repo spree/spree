@@ -1186,7 +1186,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
 
       it 'persists the published_at window submitted with the channel' do
-        Timecop.freeze do
+        freeze_time do
           future = 2.days.from_now.change(usec: 0)
 
           patch :update, params: {
@@ -1923,7 +1923,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       product_old_updated_at = product.reload.updated_at
       second_product_old_updated_at = second_product.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_add_to_categories, params: {
           ids: [product.prefixed_id, second_product.prefixed_id],
           category_ids: [category.prefixed_id]
@@ -1937,7 +1937,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     it 'touches the category' do
       category_old_updated_at = category.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_add_to_categories, params: {
           ids: [product.prefixed_id],
           category_ids: [category.prefixed_id]
@@ -1988,7 +1988,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       product_old_updated_at = product.reload.updated_at
       second_product_old_updated_at = second_product.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_remove_from_categories, params: {
           ids: [product.prefixed_id, second_product.prefixed_id],
           category_ids: [category.prefixed_id]
@@ -2003,7 +2003,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       category_old_updated_at = category.reload.updated_at
       other_category_old_updated_at = other_category.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_remove_from_categories, params: {
           ids: [product.prefixed_id],
           category_ids: [category.prefixed_id, other_category.prefixed_id]

@@ -14,7 +14,7 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
       # in for an operator clicking the button mid-run.
       cattr_accessor :request_after, default: nil
       cattr_accessor :request_status, default: nil
-      cattr_accessor :seconds_per_item, default: nil
+      cattr_accessor :tick, default: nil
       cattr_accessor :statuses_seen, default: []
       cattr_accessor :fail_in, default: nil
 
@@ -36,7 +36,7 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
         raise ArgumentError, 'boom' if self.class.raise_on == product.id
 
         self.class.statuses_seen << run.class.where(id: run.id).pick(:status)
-        Timecop.travel(self.class.seconds_per_item.seconds) if self.class.seconds_per_item
+        self.class.tick&.call
 
         return tally(:would_update) if dry_run?
 
@@ -53,7 +53,7 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
     SpecMaintenanceTask.raise_on = nil
     SpecMaintenanceTask.request_after = nil
     SpecMaintenanceTask.request_status = nil
-    SpecMaintenanceTask.seconds_per_item = nil
+    SpecMaintenanceTask.tick = nil
     SpecMaintenanceTask.statuses_seen = []
     SpecMaintenanceTask.fail_in = nil
     Spree.maintenance_tasks << 'SpecMaintenanceTask'
@@ -238,11 +238,9 @@ RSpec.describe Spree::MaintenanceTasks::RunJob, type: :job do
   describe 'running time' do
     let!(:products) { create_list(:product, 6, store: store) }
 
-    after { Timecop.return }
-
     it 'adds each batch once rather than compounding the total' do
-      Timecop.freeze
-      SpecMaintenanceTask.seconds_per_item = 5
+      freeze_time
+      SpecMaintenanceTask.tick = -> { travel(5.seconds) }
       run = start_run
 
       described_class.perform_now(run.id)

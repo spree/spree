@@ -352,7 +352,7 @@ module Spree
         it 'touches variants and stock levels' do
           pending 'active_changed? is always false inside after_update, so nothing is touched'
 
-          Timecop.travel(1.minute.from_now) do
+          travel(1.minute) do
             expect { subject.update(active: false) }.to change { variant.reload.updated_at }.
               and change { stock_level.reload.updated_at }
           end
@@ -361,7 +361,7 @@ module Spree
 
       context 'active has not changed' do
         it 'does not touch variants' do
-          Timecop.travel(1.minute.from_now) do
+          travel(1.minute) do
             expect { subject.update(name: 'my other warehouse') }.not_to change { variant.reload.updated_at }
           end
         end

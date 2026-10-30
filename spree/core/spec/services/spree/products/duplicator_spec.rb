@@ -34,9 +34,7 @@ RSpec.describe Spree::Products::Duplicator do
   end
 
   it 'duplicates already duplicated product' do
-    Timecop.scale(3600)
     expect { 3.times { described_class.call(product: product) } }.to change { Spree::Product.count }.by(3)
-    Timecop.return
   end
 
   context 'when a variant in another store has a matching sku' do

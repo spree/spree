@@ -106,7 +106,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           get :index
           original_etag = response.headers['ETag']
 
-          Timecop.travel(1.minute.from_now) do
+          travel(1.minute) do
             product.update!(name: 'Updated Product Name')
 
             get :index

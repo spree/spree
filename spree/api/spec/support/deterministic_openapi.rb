@@ -10,7 +10,6 @@
 # unless the API itself changed. Nothing here is loaded by a normal spec run —
 # the suite keeps its random names and real clock.
 if ENV['OPENAPI'] == 'true'
-  require 'timecop'
   require 'securerandom'
   require 'digest/md5'
   require 'ffaker'
@@ -113,12 +112,8 @@ if ENV['OPENAPI'] == 'true'
   SecureRandom.singleton_class.prepend(Spree::OpenAPIDeterminism::PredictableSecureRandom)
 
   RSpec.configure do |config|
-    config.before(:suite) do
-      Timecop.freeze(Spree::OpenAPIDeterminism::FROZEN_TIME)
-    end
-
-    config.after(:suite) do
-      Timecop.return
+    config.before do
+      travel_to(Spree::OpenAPIDeterminism::FROZEN_TIME)
     end
 
     # Reset before each example rather than once for the run, so a value shown

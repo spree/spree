@@ -737,7 +737,7 @@ RSpec.describe Spree::Reporting::Query do
       # back, never with a neighbour. Frozen on the last day of a quarter,
       # where the range is three whole months and a plain day shift would
       # start the previous period on March 31.
-      around { |example| Timecop.freeze(Time.zone.parse('2026-09-30 12:00')) { example.run } }
+      around { |example| travel_to(Time.zone.parse('2026-09-30 12:00')) { example.run } }
 
       let(:from) { 2.months.ago.beginning_of_month.to_date }
       let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: (from + 45).in_time_zone.change(hour: 12)) }
@@ -924,7 +924,7 @@ RSpec.describe Spree::Reporting::Query do
     let!(:order) { create(:completed_order_with_totals, store: store, completed_at: midday) }
 
     it 'buckets sales by hour in the store timezone' do
-      result = Timecop.freeze(midday + 1.hour) do
+      result = travel_to(midday + 1.hour) do
         run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'hour' }],
             time_range: { preset: 'today' })
       end

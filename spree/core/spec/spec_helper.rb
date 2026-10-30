@@ -104,6 +104,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
   config.include Spree::TestingSupport::Imports
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.order = :random
   Kernel.srand config.seed

@@ -37,7 +37,6 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-cobertura'
   gem 'webmock'
-  gem 'timecop'
   # N+1 tripwire for API requests (see Spree::Api::V3::BaseController).
   # pg_query is Prosopite's SQL fingerprinter for every adapter but MySQL.
   # It has a C extension and no JRuby build, so it is scoped like the

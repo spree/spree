@@ -204,12 +204,6 @@ describe Spree::StoreCredits::Apply, type: :service do
       end
       let(:order) { create(:order, customer: older_store_credit.customer, total: order_total, store: store) }
 
-      before do
-        Timecop.scale(3600)
-      end
-
-      after { Timecop.return }
-
       it 'spends the oldest store credit first' do
         expect(subject).to be_success
 

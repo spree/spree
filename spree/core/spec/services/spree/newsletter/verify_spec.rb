@@ -13,7 +13,7 @@ module Spree
     let(:subscriber) { create(:newsletter_subscriber, :unverified, customer: user) }
 
     around do |example|
-      Timecop.freeze('2137-01-01') { example.run }
+      travel_to('2137-01-01') { example.run }
     end
 
     context 'with associated user' do

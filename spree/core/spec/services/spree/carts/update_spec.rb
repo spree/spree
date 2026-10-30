@@ -955,7 +955,7 @@ module Spree
           it 'extends existing reservations' do
             original_expiry = Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)
 
-            Timecop.freeze(2.minutes.from_now) do
+            travel_to(2.minutes.from_now) do
               described_class.call(cart: cart, params: params)
             end
 
