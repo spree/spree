@@ -6,13 +6,6 @@
 #
 # Anything that shapes how a shop sells — currency, taxes, when customers are
 # charged — belongs to the store and is edited in the dashboard, not here.
-#
-# Use a Spree.config block only for a value that has to be computed in Ruby;
-# it is applied at boot and wins over the environment.
-#
-# Spree.config do |config|
-#   config.minimum_password_length = 10
-# end
 
 # Use a CDN host for images, eg. Cloudfront
 # This is used in the frontend to generate absolute URLs to images

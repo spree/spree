@@ -1,7 +1,7 @@
 ---
 title: Quickstart
 og:title: Spree Customization Quickstart
-description: Recommended ways to customize the Spree backend — configuration, workflow hooks, events, checkout steps, providers, dependencies, and decorators as a last resort.
+description: Recommended ways to customize the Spree backend — environment configuration, workflow hooks, events, checkout steps, providers, dependencies, and decorators as a last resort.
 ---
 
 Spree is designed to be customized without forking it. This guide presents the options **in order of recommendation** — start at the top and only move down when a simpler option doesn't fit.
@@ -15,7 +15,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
 | What you want to do | Recommended approach |
 |---|---|
 | Change store settings (currency, markets, languages) | [Store settings](#store-settings) |
-| Tweak Spree behavior globally | [Configuration](#configuration) |
+| Change installation settings (limits, expiries, hosting) | [Configuration](#configuration) |
 | Run your own logic inside checkout, cancellation, refunds | [Workflow hooks](#workflow-hooks) |
 | Block an operation from happening | [Workflow hooks](#workflow-hooks) — `validate` |
 | React after something happened (sync, notifications) | [Events & subscribers](#events-and-subscribers) |
@@ -38,15 +38,16 @@ Business logic is extended through **workflow hooks** rather than by replacing c
     Most day-to-day configuration is data, not code. Change it in the dashboard under **Settings** — no deploy required.
   </Accordion>
   <Accordion title="Configuration">
-    **Best for:** tweaking Spree's behavior globally.
+    **Best for:** settings that describe the installation rather than the shop — limits, expiries, and where things are hosted.
 
-    ```ruby config/initializers/spree.rb
-    Spree.config do |config|
-      config.minimum_password_length = 10
-    end
+    Every setting is an environment variable, so changing one needs no code change:
+
+    ```bash .env
+    SPREE_MINIMUM_PASSWORD_LENGTH=10
+    SPREE_JWT_EXPIRATION=1800
     ```
 
-    See [Configuration](/developer/customization/configuration).
+    See [Configuration](/developer/customization/configuration) for every variable and its default.
   </Accordion>
   <Accordion title="Workflow hooks">
     **Best for:** running your own logic *inside* a core flow — checkout completion, order cancellation, refunds, fulfillment creation.
@@ -184,7 +185,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
     ```
 
     <Warning>
-      Seam names end in `_workflow`. The old `*_service` names still resolve with a warning, but **writes to them are ignored** — a class written against the old service contract isn't interchangeable with a workflow. Update the key if your code still uses the old name.
+      Dependency names end in `_workflow`. The old `*_service` names still resolve with a warning, but **writes to them are ignored** — a class written against the old service contract isn't interchangeable with a workflow. Update the key if your code still uses the old name.
     </Warning>
 
     Prefer a hook when you only need to add behavior. Replace the class only when you need to change what the flow fundamentally does.
