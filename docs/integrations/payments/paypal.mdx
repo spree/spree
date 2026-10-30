@@ -91,7 +91,7 @@ The Next.js storefront shows PayPal's buttons for every PayPal payment method, u
 If your storefront uses the Store API directly:
 
 1. Create a payment session for the PayPal payment method. Its `external_id` is the PayPal order ID, and its `external_data` holds `client_id` and `intent`.
-2. Load the PayPal JS SDK with that `client_id` and with `intent` in lowercase (`capture` or `authorize`). The SDK refuses an order created with a different intent.
+2. Load the PayPal JS SDK with that `client_id`, with `intent` in lowercase (`capture` or `authorize`), and with `enable-funding=paylater,venmo`. The SDK refuses an order created with a different intent. Without `enable-funding`, PayPal hides Pay Later outside the US, and Venmo everywhere; with it, each still appears only for shoppers PayPal finds eligible.
 3. Render one PayPal button for each of these funding sources, each only when PayPal says the shopper is eligible for it: `paypal`, `paylater`, `venmo` and `card`. Do not use PayPal's all-eligible buttons, and do not add other funding sources: PayPal would also offer payment methods that send the shopper to their bank, which this integration does not support.
 4. In `onApprove`, complete the payment session, then complete the cart.
 5. If completing the session fails, read the session. If it is still `pending`, PayPal declined the shopper's chosen card or account: call `actions.restart()` so they can choose another in PayPal's window. If it is `failed`, show the error and create a new payment session.
