@@ -3102,7 +3102,12 @@
           "name": "discord"
         }
       }
-    ]
+    ],
+    "primary": {
+      "label": "Try Sandbox",
+      "href": "https://spree.sh",
+      "type": "button"
+    }
   },
   "footer": {
     "socials": {
