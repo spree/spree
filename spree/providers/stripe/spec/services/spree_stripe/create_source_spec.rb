@@ -71,6 +71,7 @@ RSpec.describe SpreeStripe::CreateSource do
 
       context 'when that card belongs to another payment method' do
         let!(:credit_card) { create(:credit_card, customer: customer, gateway_payment_profile_id: source_id) }
+        let!(:gateway_customer) { create(:gateway_customer, customer: customer, payment_method: gateway) }
 
         it 'creates a new card for this payment method' do
           expect(subject).not_to eq(credit_card)
