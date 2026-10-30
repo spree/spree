@@ -13,9 +13,12 @@ VCR.configure do |c|
   # Offline by default: a missing cassette fails the example rather than quietly
   # recording one against whatever credentials happen to be in the environment.
   # Opt in with RECORD_VCR=1 when you genuinely intend to capture new interactions.
+  # PayPal gzips its responses, which the filters below cannot see into, so
+  # bodies are stored decompressed.
   c.default_cassette_options = {
     record: ENV['RECORD_VCR'] ? :new_episodes : :none,
-    match_requests_on: %i[method paypal_route]
+    match_requests_on: %i[method paypal_route],
+    decode_compressed_response: true
   }
 
   # PayPal ids in the path (orders, captures, authorizations, webhooks) differ

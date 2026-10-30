@@ -66,14 +66,26 @@ http_interactions:
       - S1793371238.857830,VS0,VE499
       Vary:
       - Accept-Encoding
-      Content-Encoding:
-      - gzip
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        H4sIAAAAAAAEA5VV23LaMBD9lYwfO1GELwkpb1w6kMm1TWkTXjxCXmzFRlJ0MdBO/72yAWcyGcbkDZg9u4ezZ4/+epoKCV7Py4yRuoexVexMko0kxRkVS6xBlYyCxoyXglHG05O2SpoBzYU1WHBAtGA0RytmMrQERTPCDWJaW0iQETnw1m6OyxK40XhhjVWw/9qKK4ktDN6Vb2dprIAkrciEaWmN+8tVNZrbDahWzJ5WhSkMW+55tgK1nWuqmDRMcI2p4AumlmjXrhXdjHUyO5H2OI2gYCmbs4KZTdOEyHebLX281YgqSJhBlKg3bT7WNqPOvjQdD3nloPYrxQy0womUzjVkK8kK5pkQuW5FSVXbE8O6clnqrGeVAk43x219qwLeCSkWC1BIKtBO1sp/xzVprGNlQgwgDUXxGffsRMbEmowSWRn+xJ0nZ8nJQBHGjQLo/aqc3SpHQ6V28WeJCJWAcn6sbRXrJI+3v8TOGK2jG6soWFj+ZqpDdmmouh041dr77zb9aoXTuNm3cthjT1xQu02VZnYiVrwQR8SDu6rCxSAiqVtG3aSVcJOIO2WQ85WwysXqIWgjofvgovSt7uNhfjhifMSFvosd79Qj1JHRcR3J7jHoB36/f/P0IkvL4+8rsubnwe/g6o5urqf8xi/H+e3stRwM0YyOMoRm2VXI06fpTRJGSp7fXyxm2Z+X0fnjuD8XMVyPkufJ4wPckpeEjqK7u9vUjaxnxWZTvz4DIApURUTKmCUVhYcHFEwmX/3w8nI47YRRN/THrgDWkjn5Ysa9XtiJgotTjwtOqycs6AQXyO+gsPPTj3qdbi+KZsNhd1wOfrDOVV88fXudhPP03hFb30/z56ArZ8VQylBfjh7H2vv3H2d+ODYOBwAA
+      string: '{"scope":"https://uri.paypal.com/services/invoicing https://uri.paypal.com/services/checkout/one-click-with-merchant-issued-token
+        https://uri.paypal.com/services/payments/futurepayments https://uri.paypal.com/services/vault/payment-tokens/read
+        https://uri.paypal.com/services/disputes/read-buyer https://uri.paypal.com/services/payments/realtimepayment
+        https://uri.paypal.com/services/subscriptions/confirm-payment https://uri.paypal.com/services/payments/client-payments-eligibility
+        https://api.paypal.com/v1/vault/credit-card https://api.paypal.com/v1/payments/.*
+        https://uri.paypal.com/services/vault/payment-tokens/readwrite https://uri.paypal.com/services/applications/webhooks
+        https://uri.paypal.com/services/pricing/exchange-currency/read https://uri.paypal.com/services/credit/client-offer-presentment/read
+        https://uri.paypal.com/services/disputes/update-seller https://uri.paypal.com/services/payments/payment/authcapture
+        openid Braintree:Vault https://uri.paypal.com/services/disputes/read-seller
+        https://uri.paypal.com/services/payments/orders/client_sdk_orders_api https://uri.paypal.com/services/payments/refund
+        https://uri.paypal.com/services/disputes/create https://uri.paypal.com/services/pricing/quote-exchange-rates/read
+        https://uri.paypal.com/services/documents/disputes/download https://uri.paypal.com/services/billing-agreements
+        https://uri.paypal.com/services/checkout/payment-resources https://uri.paypal.com/payments/payouts
+        https://api.paypal.com/v1/vault/credit-card/.* https://uri.paypal.com/services/subscriptions","access_token":"<PAYPAL_ACCESS_TOKEN>","token_type":"Bearer","app_id":"APP-2HH91388CU034731G","expires_in":30426,"nonce":"2026-10-30T14:07:44ZCC7GvBRi0IAoXEqH3bgOD5SxOUkY27pZlCpp3s8DSGs"}'
+    adapter_metadata:
+      vcr_decompressed: gzip
   recorded_at: Fri, 30 Oct 2026 14:40:38 GMT
 - request:
     method: get
@@ -135,14 +147,14 @@ http_interactions:
       - S1793371238.392087,VS0,VE844
       Vary:
       - Accept-Encoding
-      Content-Encoding:
-      - gzip
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        H4sIAAAAAAAEA7VT72/aMBD9Vyp/LiRAQgmfioC1pdMaJZS1m6rISY4lIrEt/2BFKP/7zmF0aGLTJm3f7PPdvXfvnvekzMmY9Gf3/sj3gihyg1Ew8nxySUqmgWl8nE7C5WM0x5DSVBuFoUkYRg+r+Qxjgu5qzEsUNzIDMt7biKCVPUFNyyqheS5B2TKVdiqZrn2/53sDf9S/FiAVZ7TqwiutRQXdjNfYk2YZN9iz5RY/v7+ffVg83UbxYHHy+EZmNY/u3t21ZBitWwpfyi2w5HAjC14wS97I74EZB9IgypHXnrRwcpdkPMd68hiTpsEMgSMVVEFiWKlxgM97ImENElgGB3I5rKmptKVVW8p26sxIm3HSzeq0pZWxvXtu13Xxnkqgm5x/ZVjSYtEdtNzPiJa6VeFdoWqjq2A4vE6NKhkq+pNqNVi2R9lmQRCETx+fvcnwJka8vFSiorskp5palqmkLD9KFAsJcLGaRhdUCMm3kCcZFdpIFKppXtotg7Rlf6XwmVH+aP/oIJC/2P7vl3ZJMtRVQ6JL6wTSd/vDTs/tDNxlzxsPhmN39AnFqEq2OeyzwIViXqG1UGPHoaLsKhQm5a/dg4+tJZ1t38kKyDbcaIfLHF3rnPsyEtD2REG1RowadMHt57qZL9Fue/IfoIzAdcIpWDhZTm//MZxz9MIl2t9O+OP+NmT4EOOUL803Bi83O1EEAAA=
+      string: '{"id":"2DK58549RR0989845","intent":"CAPTURE","status":"APPROVED","payment_source":{"paypal":{"email_address":"sb-lrbf551543582@personal.example.com","account_id":"SYLKDNJXHRS3J","account_status":"VERIFIED","name":{"given_name":"John","surname":"Doe"},"address":{"country_code":"US"}}},"purchase_units":[{"reference_id":"default","amount":{"currency_code":"USD","value":"10.00","breakdown":{}},"payee":{"email_address":"sb-b0lh4751587966@business.example.com","merchant_id":"D999PXWY4A6GS","display_data":{"brand_name":"Spree
+        VCR approved_capture"}}}],"payer":{"name":{"given_name":"John","surname":"Doe"},"email_address":"sb-lrbf551543582@personal.example.com","payer_id":"SYLKDNJXHRS3J","address":{"country_code":"US"}},"create_time":"2026-10-30T14:36:08Z","links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845","rel":"update","method":"PATCH"},{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845/capture","rel":"capture","method":"POST"}]}'
+    adapter_metadata:
+      vcr_decompressed: gzip
   recorded_at: Fri, 30 Oct 2026 14:40:39 GMT
 - request:
     method: post

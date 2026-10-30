@@ -62,14 +62,26 @@ http_interactions:
         Expires=Fri, 30 Oct 2026 15:12:41 GMT
       Cf-Cache-Status:
       - DYNAMIC
-      Content-Encoding:
-      - gzip
       Cf-Ray:
       - a52b301dda98b19d-WAW
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        H4sIAAAAAAAA/51VyW7bMBD9lUDHIow2J05981LYQdY2dZv4ItDkWGIkkwwX2W7Rfy9lR0ZzaCUVuojUvJnHN2+on54mQoI38DJjpB74vlXsTOKdxMUZEWtfgyoZAe0zXgpGGE9PmiJJBiQX1viCAyIFIznaMJOhNSiSYW4Q09oCRUbkwBuzub01cKP9lTVWQb1sxJXYFqZGH2ppXwGmjUjKtLQGDtFoaXeg2rN0mMKwdc2zEajtUhPFpGHC8SOCr5hao7boY1knc3XMeo2gYClbsoKZ3TEJlu+SlOGbRkQBZQYRrOg/Yo+lzj78v/YbxQw0wrGUzjX4IMkGlpkQeXPDpdrb04dt5bLUWc8qBZzs2nX9oEItpFitQCGpQLtVdYqO1rGSYgNIQ1F0cc/bi4+tyQiWleFP3HhyRk9GCjNuFMDgW6VuRxd3JSIUBVXbKtE0Tw47iTNGl2FYWd5BNdcD3MIfdadfrXAaH/utcH3c5oqC2APFY20qNrwQLbBuqgpXHeHUNaPdXXS8EeuRcL4SVrlPf4P+6QgH1F2GuM2Evrt2vFMPE7erk/2oup/BMAqHw5unF1lannze4C0/j75HV3dkdz3nN2E5zW8Xr+VojBZkkiG0yK5inj7Nb2jcU/L8/mK1yH68TM4fp8OlSOB6Qp9njw9wi18omfTu7m5TV3JfKzG7/d9nBFiBqohImTBaUXh4QNFs9jGMLy/H8yDu9eNw6gJgK5mTL2GOZxy459TjgpMqSRREFygMUBx8DXuDoD/o9RbjcX9ajr6w4Goonj69zuJleu+Ibe/n+XPUl4tiLGWsLyePU+39+g0v0bYpDgcAAA==
+      string: '{"scope":"https://uri.paypal.com/services/invoicing https://uri.paypal.com/services/checkout/one-click-with-merchant-issued-token
+        https://uri.paypal.com/services/payments/futurepayments https://uri.paypal.com/services/vault/payment-tokens/read
+        https://uri.paypal.com/services/disputes/read-buyer https://uri.paypal.com/services/payments/realtimepayment
+        https://uri.paypal.com/services/subscriptions/confirm-payment https://uri.paypal.com/services/payments/client-payments-eligibility
+        https://api.paypal.com/v1/vault/credit-card https://api.paypal.com/v1/payments/.*
+        https://uri.paypal.com/services/vault/payment-tokens/readwrite https://uri.paypal.com/services/applications/webhooks
+        https://uri.paypal.com/services/pricing/exchange-currency/read https://uri.paypal.com/services/credit/client-offer-presentment/read
+        https://uri.paypal.com/services/disputes/update-seller https://uri.paypal.com/services/payments/payment/authcapture
+        openid Braintree:Vault https://uri.paypal.com/services/disputes/read-seller
+        https://uri.paypal.com/services/payments/orders/client_sdk_orders_api https://uri.paypal.com/services/payments/refund
+        https://uri.paypal.com/services/disputes/create https://uri.paypal.com/services/pricing/quote-exchange-rates/read
+        https://uri.paypal.com/services/documents/disputes/download https://uri.paypal.com/services/billing-agreements
+        https://uri.paypal.com/services/checkout/payment-resources https://uri.paypal.com/payments/payouts
+        https://api.paypal.com/v1/vault/credit-card/.* https://uri.paypal.com/services/subscriptions","access_token":"<PAYPAL_ACCESS_TOKEN>","token_type":"Bearer","app_id":"APP-2HH91388CU034731G","expires_in":30303,"nonce":"2026-10-30T14:07:44ZCC7GvBRi0IAoXEqH3bgOD5SxOUkY27pZlCpp3s8DSGs"}'
+    adapter_metadata:
+      vcr_decompressed: gzip
   recorded_at: Fri, 30 Oct 2026 14:42:41 GMT
 - request:
     method: get
