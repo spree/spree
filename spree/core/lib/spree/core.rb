@@ -143,16 +143,6 @@ module Spree
         categories
       end
 
-      # @deprecated No job uses the themes queue; removed in 6.1.
-      queues.define_singleton_method(:themes) do
-        Spree::Deprecation.warn('Spree.queues.themes is deprecated and will be removed in Spree 6.1. No Spree job uses it.') if defined?(Spree::Deprecation)
-        :default
-      end
-
-      queues.define_singleton_method(:themes=) do |_value|
-        Spree::Deprecation.warn('Spree.queues.themes= is deprecated and will be removed in Spree 6.1. No Spree job uses it.') if defined?(Spree::Deprecation)
-      end
-
       # @deprecated Renamed with the stock level rename in 6.0; removed in 6.1.
       #
       # The writer matters as much as the reader here: these are ordered options, so
