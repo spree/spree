@@ -1,63 +1,46 @@
-import ReactMarkdown, { type Components } from 'react-markdown'
-import rehypeRaw from 'rehype-raw'
-import rehypeSanitize from 'rehype-sanitize'
-import remarkGfm from 'remark-gfm'
+import DOMPurify from 'dompurify'
+import { useMemo } from 'react'
 
-// Release notes mix markdown with raw HTML (screenshots are `<img>` tags), so
-// HTML is parsed and then sanitized with GitHub's own allowlist: nothing a
-// release author writes can run script in the dashboard.
-const REMARK_PLUGINS = [remarkGfm]
-const REHYPE_PLUGINS = [rehypeRaw, rehypeSanitize]
+// Styles the HTML GitHub renders as the dashboard's own text. Headings are a
+// step smaller because they sit under the notification's own heading.
+const PROSE = [
+  'min-w-0 break-words text-sm [&>:first-child]:mt-0',
+  '[&_h1]:mt-6 [&_h1]:mb-2 [&_h1]:font-semibold [&_h1]:text-base',
+  '[&_h2]:mt-6 [&_h2]:mb-2 [&_h2]:font-semibold [&_h2]:text-base',
+  '[&_h3]:mt-4 [&_h3]:mb-1 [&_h3]:font-semibold [&_h3]:text-sm',
+  '[&_p]:my-2 [&_p]:leading-relaxed [&_hr]:my-4',
+  '[&_ul]:my-2 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:ps-5',
+  '[&_ol]:my-2 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:ps-5',
+  '[&_a]:font-medium [&_a]:underline [&_a]:underline-offset-3 [&_a:hover]:text-foreground',
+  '[&_img]:my-3 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-md [&_img]:border',
+  '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs',
+  '[&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-md [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-xs',
+  '[&_pre_code]:bg-transparent [&_pre_code]:p-0',
+  '[&_table]:my-3 [&_th]:pe-4 [&_th]:text-start [&_th]:font-medium [&_td]:pe-4 [&_td]:py-0.5',
+].join(' ')
 
-const COMPONENTS: Components = {
-  h1: ({ node: _node, ...props }) => (
-    <h3 className="mt-6 mb-2 font-semibold text-base first:mt-0" {...props} />
-  ),
-  h2: ({ node: _node, ...props }) => (
-    <h3 className="mt-6 mb-2 font-semibold text-base first:mt-0" {...props} />
-  ),
-  h3: ({ node: _node, ...props }) => <h4 className="mt-4 mb-1 font-semibold text-sm" {...props} />,
-  p: ({ node: _node, ...props }) => <p className="my-2 leading-relaxed" {...props} />,
-  ul: ({ node: _node, ...props }) => <ul className="my-2 list-disc space-y-1 ps-5" {...props} />,
-  ol: ({ node: _node, ...props }) => <ol className="my-2 list-decimal space-y-1 ps-5" {...props} />,
-  a: ({ node: _node, ...props }) => (
-    <a
-      {...props}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="font-medium underline underline-offset-3 hover:text-foreground"
-    />
-  ),
-  img: ({ node: _node, alt, ...props }) => (
-    <img
-      {...props}
-      alt={alt ?? ''}
-      loading="lazy"
-      className="my-3 h-auto max-w-full rounded-md border"
-    />
-  ),
-  pre: ({ node: _node, ...props }) => (
-    <pre
-      className="my-3 overflow-x-auto rounded-md bg-muted p-3 text-xs [&_code]:bg-transparent [&_code]:p-0"
-      {...props}
-    />
-  ),
-  code: ({ node: _node, ...props }) => (
-    <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs" {...props} />
-  ),
+let purifier: ReturnType<typeof DOMPurify> | undefined
+
+// GitHub already sanitizes the notes it renders. They are sanitized again here
+// so nothing a release author writes can run script in the dashboard.
+function sanitize(html: string): string {
+  if (!purifier) {
+    purifier = DOMPurify(window)
+    purifier.addHook('afterSanitizeAttributes', (node) => {
+      if (node.tagName === 'A') {
+        node.setAttribute('target', '_blank')
+        node.setAttribute('rel', 'noopener noreferrer')
+      }
+      if (node.tagName === 'IMG') node.setAttribute('loading', 'lazy')
+    })
+  }
+  return purifier.sanitize(html, { FORBID_ATTR: ['style'] })
 }
 
 /** Release notes from GitHub, rendered as the dashboard's own text. */
-export function ReleaseNotes({ markdown }: { markdown: string }) {
-  return (
-    <div className="min-w-0 break-words text-sm">
-      <ReactMarkdown
-        remarkPlugins={REMARK_PLUGINS}
-        rehypePlugins={REHYPE_PLUGINS}
-        components={COMPONENTS}
-      >
-        {markdown}
-      </ReactMarkdown>
-    </div>
-  )
+export function ReleaseNotes({ html }: { html: string }) {
+  const clean = useMemo(() => sanitize(html), [html])
+
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized by DOMPurify above
+  return <div className={PROSE} dangerouslySetInnerHTML={{ __html: clean }} />
 }
