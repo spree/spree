@@ -3,22 +3,22 @@ en:
   spree:
     paypal_checkout:
       errors:
-        authorization_not_open: "PayPal can no longer capture this payment: its authorization is %{status}."
-        captured_other_amount: "PayPal already captured %{captured} on this order, not the %{requested} asked for."
-        capture_not_completed: "PayPal did not complete the capture (status %{status})."
-        capture_pending: "PayPal is holding this capture: %{reason}. It completes when PayPal releases it."
-        credentials_rejected: "PayPal %{environment} rejected this client id and secret — check that Test mode matches the credentials."
-        no_answer: "PayPal did not answer: %{message}"
-        nothing_to_capture: "This PayPal order has no authorization to capture (order status %{status})."
-        nothing_to_refund: "This PayPal order has no capture to refund."
-        outcome_unknown: "PayPal could not say whether it took the payment: %{message}"
-        paypal_unavailable: "PayPal could not be reached to check the client id and secret. Try again later."
-        refund_not_completed: "PayPal did not complete the refund (status %{status})."
-        void_captured: "PayPal has already captured this payment; refund it instead."
-        void_pending_capture: "PayPal is still holding a capture on this payment; refund it once it completes."
+        authorization_not_open: 'PayPal can no longer capture this payment: its authorization is %{status}.'
+        capture_not_completed: PayPal did not complete the capture (status %{status}).
+        capture_pending: 'PayPal is holding this capture: %{reason}. It completes when PayPal releases it.'
+        captured_other_amount: PayPal already captured %{captured} on this order, not the %{requested} asked for.
+        credentials_rejected: PayPal %{environment} rejected this client id and secret — check that Test mode matches the credentials.
+        no_answer: 'PayPal did not answer: %{message}'
+        nothing_to_capture: This PayPal order has no authorization to capture (order status %{status}).
+        nothing_to_refund: This PayPal order has no capture to refund.
+        outcome_unknown: 'PayPal could not say whether it took the payment: %{message}'
+        paypal_unavailable: PayPal could not be reached to check the client id and secret. Try again later.
+        refund_not_completed: PayPal did not complete the refund (status %{status}).
+        void_captured: PayPal has already captured this payment; refund it instead.
+        void_pending_capture: PayPal is still holding a capture on this payment; refund it once it completes.
       payment_session_errors:
-        declined: "PayPal declined the payment (status %{status})."
-        not_open: "This PayPal payment session can no longer be completed."
-        payment_captured: "PayPal has already taken the money for this session."
-        payment_in_progress: "A PayPal payment for this checkout is already in progress."
-        zero_amount: "Payment session amount must be greater than zero"
+        declined: PayPal declined the payment (status %{status}).
+        not_open: This PayPal payment session can no longer be completed.
+        payment_captured: PayPal has already taken the money for this session.
+        payment_in_progress: A PayPal payment for this checkout is already in progress.
+        zero_amount: Payment session amount must be greater than zero
