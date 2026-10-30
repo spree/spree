@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'benchmark'
 
 # The endpoint, from the header down. A request spec rather than a controller
 # spec because the unit under test is the whole request: the credential, the
@@ -99,9 +98,9 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     # Parsing the bearer header must not backtrack: this header arrives
     # unauthenticated, so a pathological value is free to send.
     it 'parses a bearer header of many spaces without stalling' do
-      elapsed = Benchmark.realtime do
-        post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{' ' * 50_000}x" })
-      end
+      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{' ' * 50_000}x" })
+      elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
 
       expect(response).to have_http_status(:unauthorized)
       expect(elapsed).to be < 1.0
