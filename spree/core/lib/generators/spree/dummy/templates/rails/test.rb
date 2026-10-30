@@ -17,8 +17,9 @@ Rails.application.configure do
 
   config.eager_load = false
 
-  # Raise exceptions instead of rendering exception templates
-  config.action_dispatch.show_exceptions = false
+  # Raise unexpected exceptions; render the ones Rails maps to a status, such
+  # as a 404 for an unknown route, the way production does.
+  config.action_dispatch.show_exceptions = :rescuable
 
   # Disable request forgery protection in test environment
   config.action_controller.allow_forgery_protection    = false
@@ -138,7 +139,10 @@ Rails.application.configure do
       %r{/spree/orders/complete\.rb:\d+:in '[^']*#place_sibling'},
       # Each requested line is priced, stock-checked, saved and taxed as it
       # is written.
-      %r{/spree/carts/upsert_items\.rb:\d+:in '[^']*#apply_item'}
+      %r{/spree/carts/upsert_items\.rb:\d+:in '[^']*#apply_item'},
+      # An import writes each row on its own, inside the request when the
+      # import is set to run inline.
+      %r{/spree/import_row\.rb:\d+:in '[^']*#process!'}
     ]
 
     # A purchase's billing and shipping addresses, and a transfer's two
