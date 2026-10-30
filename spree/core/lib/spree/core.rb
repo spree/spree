@@ -125,7 +125,6 @@ module Spree
       collections: :default,
       stock_location_stock_levels: :default,
       coupon_codes: :default,
-      themes: :default,
       addresses: :default,
       gift_cards: :default,
       webhooks: :default,

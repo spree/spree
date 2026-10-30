@@ -64,7 +64,7 @@ describe Spree.admin_user_class, type: :model do
     # Switching an account off must not depend on its other attributes
     # passing today's validations.
     it 'deactivates an account that no longer validates' do
-      admin_user.update_column(:email, '')
+      allow(admin_user).to receive(:valid?).and_return(false)
 
       admin_user.deactivate!
 

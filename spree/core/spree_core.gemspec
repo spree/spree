@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
     "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    "documentation_uri" => "https://docs.spreecommerce.org/",
+    "documentation_uri" => "https://spreecommerce.org/docs/",
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
@@ -48,7 +48,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'doorkeeper', '~> 6.0.0.rc2'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
-  s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator
   # json 3 removed the positional options hash, which ActiveSupport::JSON.decode
   # still passes (`::JSON.parse(json, options)`). Rolling a transaction back
   # restores JSON attributes through that path, so on json 3 any rollback
