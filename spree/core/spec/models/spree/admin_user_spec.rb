@@ -64,9 +64,12 @@ describe Spree.admin_user_class, type: :model do
     # Switching an account off must not depend on its other attributes
     # passing today's validations.
     it 'deactivates an account that no longer validates' do
-      other_admin = create(:admin_user)
-      admin_user.update_column(:email, other_admin.email.upcase)
-      expect(admin_user).not_to be_valid
+      # Written as a bare attachment row, the way an avatar stored before the
+      # content-type rule would sit in the database.
+      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new('text'), filename: 'avatar.txt',
+                                                    content_type: 'text/plain')
+      ActiveStorage::Attachment.create!(name: 'avatar', record: admin_user, blob: blob)
+      expect(admin_user.reload).not_to be_valid
 
       admin_user.deactivate!
 
