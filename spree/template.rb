@@ -18,7 +18,7 @@ SPREE_LOCAL_PATH = ENV['SPREE_LOCAL_PATH'] || '.'
 # scaffolded from this template.
 ADMIN_EMAIL = ENV['ADMIN_EMAIL']
 ADMIN_PASSWORD = ENV['ADMIN_PASSWORD']
-SPREE_VERSION = ENV['SPREE_VERSION'] || '>= 5.4.2'
+SPREE_VERSION = ENV['SPREE_VERSION'] || '~> 6.0'
 
 def add_gems
   say 'Adding required gems to Gemfile...', :blue
