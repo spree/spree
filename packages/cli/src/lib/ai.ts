@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { execa } from 'execa'
 import { isNotFound } from '../config.js'
+import { run } from './run.js'
 
 export const DOCS_MCP_URL = 'https://spreecommerce.org/docs/mcp'
 export const DOCS_MCP_SERVER_NAME = 'spree-docs'
@@ -157,7 +157,7 @@ export async function installAgentSkills(
   packageManager: string,
 ): Promise<void> {
   const [command, ...runnerArgs] = dlxCommand(packageManager)
-  await execa(
+  await run(
     command,
     [...runnerArgs, 'skills', 'add', AGENT_SKILLS_REPO, '--skill', '*', '--yes'],
     // A stalled download must fail rather than hang the command.

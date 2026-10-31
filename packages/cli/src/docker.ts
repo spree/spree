@@ -1,12 +1,12 @@
 import * as p from '@clack/prompts'
-import { type Options as ExecaOptions, execa } from 'execa'
 import pc from 'picocolors'
 import { backendTaskCommand, PREPARE_DATABASE } from './backend.js'
 import { hasMonorepoSpreePath } from './context.js'
+import { type RunOptions, run } from './lib/run.js'
 
-export async function dockerCompose(args: string[], projectDir: string, options?: ExecaOptions) {
+export async function dockerCompose(args: string[], projectDir: string, options?: RunOptions) {
   try {
-    return await execa('docker', ['compose', ...args], {
+    return await run('docker', ['compose', ...args], {
       cwd: projectDir,
       ...options,
     })
@@ -96,7 +96,7 @@ export async function captureTask(
  */
 export async function appServices(projectDir: string): Promise<string[]> {
   try {
-    const { stdout } = await execa('docker', ['compose', 'config', '--services'], {
+    const { stdout } = await run('docker', ['compose', 'config', '--services'], {
       cwd: projectDir,
     })
     const services = stdout.split('\n').map((line) => line.trim())
@@ -126,7 +126,7 @@ export async function restartAppServices(projectDir: string, message: string): P
  * for this project.
  */
 export async function hasProjectContainers(projectDir: string): Promise<boolean> {
-  const { stdout } = await execa('docker', ['compose', 'ps', '-a', '-q'], { cwd: projectDir })
+  const { stdout } = await run('docker', ['compose', 'ps', '-a', '-q'], { cwd: projectDir })
   return stdout.trim().length > 0
 }
 
@@ -137,7 +137,7 @@ export async function hasProjectContainers(projectDir: string): Promise<boolean>
 // file, unknown service — throws, so the caller surfaces the real error
 // instead of acting on a wrong "stopped" answer.
 export async function isServiceRunning(service: string, projectDir: string): Promise<boolean> {
-  const { stdout } = await execa('docker', ['compose', 'ps', service, '--format', '{{.State}}'], {
+  const { stdout } = await run('docker', ['compose', 'ps', service, '--format', '{{.State}}'], {
     cwd: projectDir,
   })
   return stdout.split('\n').some((line) => line.trim() === 'running')
@@ -152,7 +152,7 @@ const DAEMON_DOWN =
  * The refusal shown when `docker compose` itself failed while probing the
  * stack (see isServiceRunning). A missing or stopped Docker gets a plain
  * "install/start Docker"; anything else shows Docker's own reason rather than
- * execa's command line.
+ * the command line the error message starts with.
  *
  * @param error the error `compose ps` threw
  * @param command the spree command to re-run, e.g. `spree upgrade`
@@ -226,13 +226,13 @@ export async function dockerComposeExec(
   }
   args.push(service, ...argv)
 
-  await execa('docker', args, { cwd: projectDir, stdio: 'inherit' })
+  await run('docker', args, { cwd: projectDir, stdio: 'inherit' })
 }
 
 export interface DockerComposeRunOptions {
   service?: string
   env?: Record<string, string>
-  // Also buffer the child's stderr into the thrown ExecaError so the caller can
+  // Also buffer the child's stderr into the thrown the thrown error so the caller can
   // inspect failure output. Off by default: plain `stdio: 'inherit'` is right
   // for interactive sessions (a Rails console's TTY) and leaves stderr
   // unbuffered. db:reset opts in because it pattern-matches the Postgres error.
@@ -253,7 +253,7 @@ export interface DockerComposeRunOptions {
 // stdio is inherited so the command stays transparent: an interactive console
 // keeps its TTY, db:seed streams progress, and the inner exit code propagates.
 // With `captureStderr`, stderr is teed to `['pipe', 'inherit']` — still printed
-// live, but also buffered onto ExecaError.stderr (plain `'inherit'` would leave
+// live, but also buffered onto the thrown error's stderr (plain `'inherit'` would leave
 // it undefined, so the caller's error inspection would see nothing).
 export async function dockerComposeRun(
   argv: string[],
@@ -269,10 +269,10 @@ export async function dockerComposeRun(
   }
   args.push(service, ...argv)
 
-  const stdio: ExecaOptions = captureStderr
+  const stdio: RunOptions = captureStderr
     ? { stdin: 'inherit', stdout: 'inherit', stderr: ['pipe', 'inherit'] }
     : { stdio: 'inherit' }
-  await execa('docker', args, { cwd: projectDir, ...stdio })
+  await run('docker', args, { cwd: projectDir, ...stdio })
 }
 
 // The dev compose (an ejected project) starts `bin/rails server` directly,
@@ -361,7 +361,7 @@ export async function dockerComposeExecOrRun(
 // Captured-output twin of dockerComposeExecOrRun, for callers that parse
 // stdout (captureTask, `bundle list`). Non-interactive (`-T`) so a TTY never
 // mangles the captured stream; compose's own progress noise goes to stderr,
-// which stays off stdout and is buffered onto ExecaError for failure paths.
+// which stays off stdout and is buffered onto the thrown error for failure paths.
 export async function dockerComposeCapture(
   argv: string[],
   projectDir: string,
@@ -388,7 +388,7 @@ export async function dockerComposeCapture(
   let lastError: unknown
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
-      const { stdout } = await execa('docker', args, { cwd: projectDir })
+      const { stdout } = await run('docker', args, { cwd: projectDir })
       return stdout
     } catch (error) {
       lastError = error
@@ -413,7 +413,7 @@ function isContainerNotReady(error: unknown): boolean {
 }
 
 export async function streamLogs(service: string, projectDir: string): Promise<void> {
-  await execa('docker', ['compose', 'logs', '-f', service], {
+  await run('docker', ['compose', 'logs', '-f', service], {
     cwd: projectDir,
     stdio: 'inherit',
   })

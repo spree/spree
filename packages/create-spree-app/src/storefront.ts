@@ -1,9 +1,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { STOREFRONT_REPO } from './constants.js'
+import { run } from './run.js'
 import { storefrontEnvContent } from './templates/env.js'
 import type { PackageManager } from './types.js'
 import { installCommand, storefrontPm } from './utils.js'
@@ -45,7 +45,7 @@ export async function scaffoldStorefront(
 
 export async function downloadStorefront(projectDir: string): Promise<void> {
   const storefrontDir = path.join(projectDir, 'apps', 'storefront')
-  await execa('git', ['clone', '--depth', '1', STOREFRONT_REPO, storefrontDir], { stdio: 'ignore' })
+  await run('git', ['clone', '--depth', '1', STOREFRONT_REPO, storefrontDir], { stdio: 'ignore' })
   fs.rmSync(path.join(storefrontDir, '.git'), { recursive: true, force: true })
 
   prepareStorefrontTemplate(projectDir)
@@ -164,7 +164,7 @@ export function adaptStorefrontWorkflow(content: string): string {
 
 export async function installRootDeps(projectDir: string, pm: PackageManager): Promise<void> {
   const [cmd, ...args] = installCommand(pm).split(' ')
-  await execa(cmd, args, { cwd: projectDir, stdio: 'ignore' })
+  await run(cmd, args, { cwd: projectDir, stdio: 'ignore' })
 }
 
 export async function installStorefrontDeps(projectDir: string, pm: PackageManager): Promise<void> {
@@ -177,7 +177,7 @@ export async function installStorefrontDeps(projectDir: string, pm: PackageManag
   // manifest/lockfile drift in the template should fail this (warn-and-
   // continue) phase loudly, not resolve silently to an untested tree.
   if (spm === 'pnpm') args.push('--frozen-lockfile')
-  await execa(cmd, args, { cwd: storefrontDir, stdio: 'ignore' })
+  await run(cmd, args, { cwd: storefrontDir, stdio: 'ignore' })
 }
 
 export function writeStorefrontEnv(projectDir: string, port: number): void {

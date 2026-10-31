@@ -75,9 +75,6 @@ catalogs:
     date-fns-tz:
       specifier: ^3.2.0
       version: 3.2.0
-    execa:
-      specifier: ^10.2.0
-      version: 10.2.0
     i18next:
       specifier: ^26.5.3
       version: 26.5.3
@@ -111,6 +108,9 @@ catalogs:
     tailwindcss:
       specifier: ^4.2.4
       version: 4.3.3
+    tinyexec:
+      specifier: ^1.3.1
+      version: 1.3.1
     tsup:
       specifier: ^9.0.0
       version: 9.0.0
@@ -224,12 +224,12 @@ importers:
       console-table-printer:
         specifier: ^2.15.0
         version: 2.16.1
-      execa:
-        specifier: 'catalog:'
-        version: 10.2.0
       picocolors:
         specifier: 'catalog:'
         version: 1.1.1
+      tinyexec:
+        specifier: 'catalog:'
+        version: 1.3.1
     devDependencies:
       '@spree/admin-sdk':
         specifier: workspace:^
@@ -282,15 +282,12 @@ importers:
       commander:
         specifier: 'catalog:'
         version: 15.0.0
-      execa:
-        specifier: 'catalog:'
-        version: 10.2.0
-      get-port:
-        specifier: ^7.2.0
-        version: 7.2.0
       picocolors:
         specifier: 'catalog:'
         version: 1.1.1
+      tinyexec:
+        specifier: 'catalog:'
+        version: 1.3.1
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -3149,10 +3146,6 @@ packages:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
 
-  execa@10.2.0:
-    resolution: {integrity: sha512-j1pFOVxaybMVCTNHSBuISL2KQcDS3KIE1wBmUp4n2X+1FgaQI2ZDJVy9TYxDyMCzYojRIMh9O8X/UoWZtxTJdw==}
-    engines: {node: '>=22'}
-
   execa@5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
@@ -3277,10 +3270,6 @@ packages:
   get-own-enumerable-keys@1.0.0:
     resolution: {integrity: sha512-PKsK2FSrQCyxcGHsGrLDcK0lx+0Ke+6e8KFFozA9/fIQLhQzPaRvJFdcz7+Axg3jUH/Mq+NI4xa5u/UT2tQskA==}
     engines: {node: '>=14.16'}
-
-  get-port@7.2.0:
-    resolution: {integrity: sha512-afP4W205ONCuMoPBqcR6PSXnzX35KTcJygfJfcp+QY+uwm3p20p1YczWXhlICIzGMCxYBQcySEcOgsJcrkyobg==}
-    engines: {node: '>=16'}
 
   get-proto@1.0.1:
     resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
@@ -4910,11 +4899,6 @@ packages:
 
   webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
-
-  which-command@0.1.0:
-    resolution: {integrity: sha512-XZyoF5/5hZtXitIwzrU4NKK+Wtbb9aB9CezUEw2Q0wlYK8NUYQxC1rRXgNueYLtBAJwXIb+/tFVk4dozciNJMA==}
-    engines: {node: '>=22'}
-    hasBin: true
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -6912,21 +6896,6 @@ snapshots:
     dependencies:
       eventsource-parser: 3.1.1
 
-  execa@10.2.0:
-    dependencies:
-      '@sindresorhus/merge-streams': 4.0.0
-      figures: 6.1.0
-      get-stream: 9.0.1
-      human-signals: 8.0.1
-      is-plain-obj: 4.1.0
-      is-stream: 4.0.1
-      npm-run-path: 6.0.0
-      pretty-ms: 9.3.1
-      signal-exit: 4.1.0
-      strip-final-newline: 4.0.0
-      which-command: 0.1.0
-      yoctocolors: 2.2.0
-
   execa@5.1.1:
     dependencies:
       cross-spawn: 7.0.6
@@ -7099,8 +7068,6 @@ snapshots:
       math-intrinsics: 1.1.0
 
   get-own-enumerable-keys@1.0.0: {}
-
-  get-port@7.2.0: {}
 
   get-proto@1.0.1:
     dependencies:
@@ -8934,8 +8901,6 @@ snapshots:
   web-namespaces@2.0.1: {}
 
   webpack-virtual-modules@0.6.2: {}
-
-  which-command@0.1.0: {}
 
   which@2.0.2:
     dependencies:
