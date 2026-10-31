@@ -19,7 +19,8 @@ not silence.
 ## 2. Security review
 
 Run `/security-review` on the branch. Fix every confirmed finding, re-run
-`pnpm test:changed`, and commit. Record rejected findings the same way.
+`pnpm test:changed`, and commit. Record rejected findings the same way. If a
+fix changed code, go back to step 1 so the fix gets a code review too.
 
 ## 3. Record the reviewed commit
 
