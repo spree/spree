@@ -149,8 +149,10 @@ export {
   SunIcon,
   SwatchBookIcon,
   TableIcon,
+  TabletIcon,
   TagIcon,
   TagsIcon,
+  TerminalIcon,
   TicketPercentIcon,
   Trash2Icon,
   TrashIcon,
@@ -175,3 +177,4 @@ export {
   XIcon,
   ZapIcon,
 } from 'lucide-react'
+export { BrowserIcon, type BrowserName } from './browser-icon'

@@ -58,6 +58,8 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated fields to expand: inviter, sessions.'
 
       response '200', 'staff member found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -65,8 +67,31 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['id']).to eq(staff_member.prefixed_id)
+          expect(data['status']).to eq('active')
           expect(data['roles']).to be_an(Array)
           expect(data['roles'].pluck('name')).to include('admin')
+          expect(data).not_to have_key('sessions')
+        end
+      end
+
+      response '200', 'staff member found with sessions and inviter' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:expand) { 'inviter,sessions' }
+        let(:inviter) { create(:admin_user, first_name: 'Ada', last_name: 'Inviter') }
+
+        before do
+          create(:invitation, resource: store, inviter: inviter).
+            update_columns(invitee_type: staff_member.class.polymorphic_name, invitee_id: staff_member.id, status: 'accepted')
+          Spree::RefreshToken.create_for(staff_member, audience: 'admin_api',
+                                                       request_env: { ip_address: '203.0.113.7', user_agent: 'Mozilla/5.0 Firefox/131.0' })
+        end
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['last_active_at']).to be_present
+          expect(data['sessions'].sole).to include('ip_address' => '203.0.113.7', 'user_agent' => 'Mozilla/5.0 Firefox/131.0')
+          expect(data['sessions'].sole).not_to have_key('token')
+          expect(data['inviter']).to include('id' => inviter.prefixed_id, 'type' => 'admin_user', 'label' => 'Ada Inviter')
         end
       end
     end

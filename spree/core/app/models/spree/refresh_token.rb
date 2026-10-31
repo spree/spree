@@ -6,11 +6,18 @@ module Spree
 
     has_secure_token :token
 
+    # Personal data. Rows written before encryption was enabled stay readable
+    # and are encrypted when the token next rotates.
+    encrypts :ip_address, support_unencrypted_data: true if ActiveRecord::Encryption.config.has_primary_key?
+
     validates :user, :expires_at, presence: true
     # On create only: rows minted before the column exists keep their NULL and
     # stay loadable (they are simply unredeemable), while nothing new is born
     # without the surface it belongs to.
     validates :audience, presence: true, on: :create
+
+    # Starting a session and refreshing one both create a row.
+    after_create :record_user_activity
 
     scope :active, -> { where('expires_at > ?', Time.current) }
     scope :expired, -> { where('expires_at <= ?', Time.current) }
@@ -21,6 +28,12 @@ module Spree
 
     def expired?
       expires_at <= Time.current
+    end
+
+    # Each refresh replaces the row, so its creation is the session's last use.
+    # @return [ActiveSupport::TimeWithZone]
+    def last_active_at
+      created_at
     end
 
     # Rotate: destroy this token and create a new one.
@@ -73,6 +86,15 @@ module Spree
       Spree::Api::Config[:refresh_token_expiry].seconds
     rescue StandardError
       30.days
+    end
+
+    private
+
+    # Outlives the session itself, which signing out deletes. Skips callbacks
+    # and +updated_at+: activity is not an edit to the account. Users without
+    # the column (customers, custom admin classes) are left alone.
+    def record_user_activity
+      user.update_columns(last_active_at: created_at) if user.has_attribute?(:last_active_at)
     end
   end
 end

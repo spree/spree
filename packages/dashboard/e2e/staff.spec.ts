@@ -109,6 +109,36 @@ test.describe('staff', () => {
     })
   })
 
+  // Accepting the invitation signs the teammate in, so the sheet has a
+  // session to list as well as who sent the invitation.
+  test("shows a teammate's status, inviter and sessions", async ({ page }) => {
+    const session = await login(page)
+    const email = `e2e-details-${Date.now()}@example.com`
+    await addTeammate(page, session, email)
+    const staff = await adminRequest<{
+      data: Array<{ email: string; full_name: string | null }>
+    }>(page, session, 'get', '/admin_users')
+    const admin = staff.data.find((user) => user.email === session.admin_email)
+    const inviterLabel = admin?.full_name || session.admin_email
+
+    await page.goto(STAFF_PATH(session.store_id))
+    const row = page.getByRole('row').filter({ hasText: email })
+    await expect(row.getByText(/^active$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(row.getByText(/ago$/)).toBeVisible()
+
+    await openRowMenu(page, email)
+    await page.getByRole('menuitem', { name: /view details/i }).click()
+
+    const sheet = page.getByRole('dialog')
+    await expect(sheet.getByRole('heading', { name: /robin teammate/i })).toBeVisible()
+    await expect(sheet.getByText(new RegExp(escapeRegex(inviterLabel), 'i'))).toBeVisible({
+      timeout: 15_000,
+    })
+    const sessions = sheet.getByRole('listitem')
+    await expect(sessions).toHaveCount(1)
+    await expect(sessions.getByText(/ago$/)).toBeVisible()
+  })
+
   test('renames a teammate and then removes them from the store', async ({ page }) => {
     const session = await login(page)
     const email = `e2e-teammate-${Date.now()}@example.com`

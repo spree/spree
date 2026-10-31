@@ -57,10 +57,15 @@ module Spree
         has_spree_role?(Spree::Role::ADMIN_ROLE, resource)
       end
 
-      # Returns the user who invited the current user
-      # @return [Spree.admin_user_class]
-      def invited_by
-        invitations.first&.inviter
+      # Who sent the invitation this user accepted to get a role on +resource+.
+      # Nil for a user given a role without one, such as the store owner.
+      #
+      # @param resource [Spree::Base] the store or seller; defaults to the current store
+      # @return [Object, nil] an actor (see Spree.actor_classes)
+      def invited_by(resource = nil)
+        resource ||= Spree::Store.current
+
+        invitations.accepted.where(resource: resource).order(:created_at).first&.inviter
       end
 
       # Whether this user belongs to any marketplace seller. The seller login

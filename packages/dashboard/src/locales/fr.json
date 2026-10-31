@@ -4472,9 +4472,25 @@
         "table": {
           "member": "Membre",
           "role": "Rôle",
-          "roles": "Rôles"
+          "roles": "Rôles",
+          "status": "Statut",
+          "last_active": "Dernière activité"
         },
-        "title": "Équipe"
+        "title": "Équipe",
+        "status": {
+          "active": "Actif",
+          "locked": "Verrouillé",
+          "deactivated": "Désactivé"
+        },
+        "details": {
+          "joined": "Arrivée",
+          "invited_by": "Invité par"
+        },
+        "sessions": {
+          "title": "Sessions",
+          "empty": "Aucune session active.",
+          "unknown_device": "Appareil inconnu"
+        }
       },
       "translations": {
         "complete": "Entièrement traduit",

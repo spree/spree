@@ -72,6 +72,16 @@ module Spree
             [{ spree_roles: :resource, avatar_attachment: :blob }]
           end
 
+          # Sessions carry IP addresses and the inviter costs a query per row,
+          # so both are shown one person at a time.
+          ONE_AT_A_TIME_EXPANDS = %w[sessions inviter].freeze
+
+          def expand_list
+            return super unless action_name == 'index'
+
+            super.reject { |path| ONE_AT_A_TIME_EXPANDS.include?(path.split('.').first) }
+          end
+
           # Restrict to users with a role assignment on the current store.
           # `accessible_by` enforces CanCanCan on top. Deduplication happens via
           # an ID subquery rather than `SELECT DISTINCT *` — the users table is

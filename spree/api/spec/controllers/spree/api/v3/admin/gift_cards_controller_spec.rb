@@ -19,6 +19,27 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(json_response['data'].map { |g| g['id'] }).to include(gift_card.prefixed_id)
     end
 
+    # The issuer is an admin user, whose sessions carry IP addresses.
+    context 'when expanding the issuer\'s sessions without staff permission' do
+      let(:gift_cards_role) { create(:role, name: 'gift_cards_only', permissions: %w[read_gift_cards]) }
+      let(:caller) { create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: gift_cards_role) } }
+      let(:headers) do
+        api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(caller, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
+      end
+
+      before do
+        gift_card.update!(created_by: admin_user)
+        create(:refresh_token, :for_admin, user: admin_user, ip_address: '203.0.113.7')
+      end
+
+      it 'leaves the sessions out' do
+        get :index, params: { expand: 'created_by.sessions' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('203.0.113.7')
+      end
+    end
+
     it 'excludes gift cards from other stores' do
       other_store = create(:store)
       other_card = create(:gift_card, store: other_store, amount: 25, currency: 'USD')

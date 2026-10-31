@@ -4471,9 +4471,25 @@
         "table": {
           "member": "メンバー",
           "role": "役割",
-          "roles": "役割"
+          "roles": "役割",
+          "status": "ステータス",
+          "last_active": "最終アクティブ"
         },
-        "title": "スタッフ"
+        "title": "スタッフ",
+        "status": {
+          "active": "有効",
+          "locked": "ロック中",
+          "deactivated": "無効化"
+        },
+        "details": {
+          "joined": "参加日",
+          "invited_by": "招待者"
+        },
+        "sessions": {
+          "title": "セッション",
+          "empty": "アクティブなセッションはありません。",
+          "unknown_device": "不明なデバイス"
+        }
       },
       "translations": {
         "complete": "すべて翻訳済み",

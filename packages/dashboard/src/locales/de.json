@@ -4471,9 +4471,25 @@
         "table": {
           "member": "Mitglied",
           "role": "Rolle",
-          "roles": "Rollen"
+          "roles": "Rollen",
+          "status": "Status",
+          "last_active": "Zuletzt aktiv"
         },
-        "title": "Team"
+        "title": "Team",
+        "status": {
+          "active": "Aktiv",
+          "locked": "Gesperrt",
+          "deactivated": "Deaktiviert"
+        },
+        "details": {
+          "joined": "Beigetreten",
+          "invited_by": "Eingeladen von"
+        },
+        "sessions": {
+          "title": "Sitzungen",
+          "empty": "Keine aktiven Sitzungen.",
+          "unknown_device": "Unbekanntes Gerät"
+        }
       },
       "translations": {
         "complete": "Vollständig übersetzt",

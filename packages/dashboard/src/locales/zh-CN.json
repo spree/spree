@@ -4460,9 +4460,25 @@
         "table": {
           "member": "成员",
           "role": "角色",
-          "roles": "角色"
+          "roles": "角色",
+          "status": "状态",
+          "last_active": "上次活跃"
         },
-        "title": "员工"
+        "title": "员工",
+        "status": {
+          "active": "活跃",
+          "locked": "已锁定",
+          "deactivated": "已停用"
+        },
+        "details": {
+          "joined": "加入时间",
+          "invited_by": "邀请人"
+        },
+        "sessions": {
+          "title": "会话",
+          "empty": "没有活跃的会话。",
+          "unknown_device": "未知设备"
+        }
       },
       "translations": {
         "complete": "已完全翻译",

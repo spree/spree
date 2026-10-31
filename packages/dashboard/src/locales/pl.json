@@ -4527,9 +4527,25 @@
         "table": {
           "member": "Członek",
           "role": "Rola",
-          "roles": "Role"
+          "roles": "Role",
+          "status": "Status",
+          "last_active": "Ostatnia aktywność"
         },
-        "title": "Zespół"
+        "title": "Zespół",
+        "status": {
+          "active": "Aktywny",
+          "locked": "Zablokowany",
+          "deactivated": "Dezaktywowany"
+        },
+        "details": {
+          "joined": "Dołączył(a)",
+          "invited_by": "Zaproszony(-a) przez"
+        },
+        "sessions": {
+          "title": "Sesje",
+          "empty": "Brak aktywnych sesji.",
+          "unknown_device": "Nieznane urządzenie"
+        }
       },
       "translations": {
         "complete": "W pełni przetłumaczone",

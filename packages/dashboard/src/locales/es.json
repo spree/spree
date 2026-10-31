@@ -888,9 +888,25 @@
         "table": {
           "member": "Miembro",
           "role": "Rol",
-          "roles": "Roles"
+          "roles": "Roles",
+          "status": "Estado",
+          "last_active": "Última actividad"
         },
-        "title": "Staff"
+        "title": "Staff",
+        "status": {
+          "active": "Activo",
+          "locked": "Bloqueado",
+          "deactivated": "Desactivado"
+        },
+        "details": {
+          "joined": "Se unió",
+          "invited_by": "Invitado por"
+        },
+        "sessions": {
+          "title": "Sesiones",
+          "empty": "No hay sesiones activas.",
+          "unknown_device": "Dispositivo desconocido"
+        }
       },
       "translations": {
         "complete": "Traducido por completo",
