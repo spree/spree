@@ -514,7 +514,7 @@ jobs:
 
       - name: Check that this job waits for every other job
         run: |
-          missing=$(yq '(.jobs | keys) - .jobs.result.needs - ["result"] | .[]' .github/workflows/tests.yml)
+          missing=$(yq '((.jobs | keys) - .jobs.result.needs) - ["result"] | .[]' .github/workflows/tests.yml)
           if [ -n "$missing" ]; then
             echo "Add these jobs to result.needs: $missing"
             exit 1
