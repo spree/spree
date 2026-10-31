@@ -26,6 +26,7 @@ Feature plans live in `docs/plans/`, written from `docs/plans/_template.md` — 
 | `packages/sdk`, `admin-sdk`, `seller-sdk` | TypeScript clients for the Store, Admin and Seller APIs |
 | `packages/core` | `@spree/core` — universal TypeScript with no HTTP: code lists, enums, money helpers, filter vocabulary |
 | `packages/sdk-core` | Private shared HTTP, retry and error layer for the SDKs |
+| `packages/telemetry` | Private command line usage reporting, bundled into `@spree/cli` and `create-spree-app` |
 | `packages/cli`, `packages/create-spree-app` | `@spree/cli` and project scaffolding |
 | `packages/docs` | `@spree/docs` — offline docs package for AI agents |
 | `docs/` | Mintlify site deployed to spreecommerce.org/docs |

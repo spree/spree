@@ -51,6 +51,7 @@
     "picocolors": "catalog:"
   },
   "devDependencies": {
+    "@spree/telemetry": "workspace:*",
     "@types/node": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",

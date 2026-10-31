@@ -21,6 +21,7 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 | [`seller-sdk`](./seller-sdk) | [`@spree/seller-sdk`](https://www.npmjs.com/package/@spree/seller-sdk) | **Stable** (6.x) | TypeScript client for the **Seller API**, used by marketplace seller panels. |
 | [`core`](./core) | [`@spree/core`](https://www.npmjs.com/package/@spree/core) | **Stable** (6.x) | Universal code with no HTTP: country, currency, locale and unit code lists, unit systems, display names, exact money arithmetic and input parsing, the filter vocabulary. |
 | [`sdk-core`](./sdk-core) | — | **Internal** | Shared HTTP, retry and error layer the SDKs bundle. |
+| [`telemetry`](./telemetry) | — | **Internal** | Usage reporting shared by `@spree/cli` and `create-spree-app`; bundled into both, not published. |
 | [`dashboard`](./dashboard) | [`@spree/dashboard`](https://www.npmjs.com/package/@spree/dashboard) | **Stable** (6.x) | The Spree 6.0 admin dashboard, a React single-page app. Replaces the legacy Rails `spree/admin` engine. |
 | [`dashboard-core`](./dashboard-core) | [`@spree/dashboard-core`](https://www.npmjs.com/package/@spree/dashboard-core) | **Stable** (6.x) | Dashboard framework: registries (table, nav, slot, settings-nav), providers, shared hooks, `defineDashboardPlugin`. The extension API. |
 | [`dashboard-ui`](./dashboard-ui) | [`@spree/dashboard-ui`](https://www.npmjs.com/package/@spree/dashboard-ui) | **Stable** (6.x) | Design system: shadcn primitives, headless composed components, design tokens. Source-only. |
@@ -67,6 +68,10 @@ The code every Spree client shares, whatever it runs on: code lists generated fr
 ### `@spree/sdk-core` — Shared internals
 
 Private package. Provides `createRequestFn()`, `SpreeError`, retry logic, and Ransack query-param transformation (`transformListParams()`), and re-exports `@spree/core`. Consumed by the SDKs; not intended for direct use.
+
+### `@spree/telemetry` — Command line usage reporting
+
+Private package. Reports one anonymous event per lifecycle command run from a terminal (`create-spree-app`, `spree init`, `dev`, `add`, …), and holds the opt-out rules shared by both tools. Bundled into `@spree/cli` and `create-spree-app` at build time, so a change here needs a changeset for those two. What is sent and how to turn it off: [Update Checks and Usage Data](https://spreecommerce.org/docs/developer/deployment/usage-data).
 
 ### `@spree/cli` — Project management CLI
 
