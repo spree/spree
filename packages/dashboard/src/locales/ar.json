@@ -4503,9 +4503,26 @@
         "table": {
           "member": "عضو",
           "role": "دور",
-          "roles": "الأدوار"
+          "roles": "الأدوار",
+          "status": "الحالة",
+          "last_active": "آخر نشاط"
         },
-        "title": "طاقم عمل"
+        "title": "طاقم عمل",
+        "status": {
+          "active": "نشط",
+          "locked": "مقفل",
+          "deactivated": "معطّل"
+        },
+        "details": {
+          "joined": "تاريخ الانضمام",
+          "invited_by": "دعاه",
+          "load_failed": "تعذّر تحميل هذه التفاصيل. أغلق اللوحة وحاول مرة أخرى."
+        },
+        "sessions": {
+          "title": "الجلسات",
+          "empty": "لا توجد جلسات نشطة.",
+          "unknown_device": "جهاز غير معروف"
+        }
       },
       "translations": {
         "complete": "مُترجَم بالكامل",

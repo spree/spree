@@ -32,7 +32,7 @@ module Spree
            exchange exchange_line_item claim claim_line_item package_type policy tax_category tax_rate
            tax_identifier company company_membership company_invitation catalog catalog_price catalog_price_tier
            catalog_product price_list_product catalog_assignment catalog_quantity_rule catalog_product_term
-           catalog_order_minimum tax_exemption_certificate tax_exemption_reason admin_user actor seller_team_member product_submission
+           catalog_order_minimum tax_exemption_certificate tax_exemption_reason admin_user actor session seller_team_member product_submission
            seller seller_requirement seller_requirement_submission seller_requirement_status commission_rate
            commission_rule commission_line seller_transfer seller_payout seller_balance payment_split payment_capture_event address address_owner
            channel order_routing_rule product_publication market delivery_method delivery_method_service

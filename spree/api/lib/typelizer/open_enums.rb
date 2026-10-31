@@ -22,7 +22,7 @@ module Typelizer
     CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode WeightUnit DimensionUnit].freeze
 
     CLOSED_LIST_NAMES = %w[
-      ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
+      AdminUserStatus ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
       CollectionRuleMatchPolicy CollectionSortOrder CommissionKind CompanyInvitationStatus CompanyKind
       ConsentSource DataRequestKind DeliveryStatus DeliveryZoneMemberType DiscountKind DocumentNumberFormat
       EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType MatchPolicy MediaType OptionTypeKind

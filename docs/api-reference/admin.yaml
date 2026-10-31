@@ -100,8 +100,10 @@ paths:
                   last_name: Swift
                   full_name: Gavin Swift
                   selected_locale:
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -212,8 +214,10 @@ paths:
                   last_name: Jenkins
                   full_name: Clarine Jenkins
                   selected_locale:
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -336,8 +340,10 @@ paths:
                   last_name: Ellis
                   full_name: Robin Ellis
                   selected_locale:
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -421,8 +427,10 @@ paths:
                   last_name: Sanford
                   full_name: Zenobia Sanford
                   selected_locale:
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -564,8 +572,10 @@ paths:
                   last_name: Kuhlman
                   full_name: See Kuhlman
                   selected_locale: de
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -768,8 +778,10 @@ paths:
                   last_name: Schneider
                   full_name: Olga Schneider
                   selected_locale:
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -880,8 +892,10 @@ paths:
                   last_name: Owner
                   full_name: Olivia Owner
                   selected_locale:
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -32746,8 +32760,10 @@ paths:
                   last_name: Kling
                   full_name: Carole Kling
                   selected_locale:
+                  status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -32806,20 +32822,28 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: 'Comma-separated fields to expand: inviter, sessions.'
+        schema:
+          type: string
       responses:
         '200':
-          description: staff member found
+          description: staff member found with sessions and inviter
           content:
             application/json:
               example:
                 id: adm_UkLWZg9DAJ
-                email: karin_boyer@ebert.co.uk
-                first_name: Lynell
-                last_name: Heaney
-                full_name: Lynell Heaney
+                email: karie.marquardt@keebler.ca
+                first_name: Lester
+                last_name: Bartoletti
+                full_name: Lester Bartoletti
                 selected_locale:
+                status: active
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                last_active_at: '2026-01-15T12:00:00Z'
                 avatar_url:
                 roles:
                 - id: role_UkLWZg9DAJ
@@ -32828,6 +32852,15 @@ paths:
                 - id: store_UkLWZg9DAJ
                   name: Spree Test Store
                   code: spree_1
+                sessions:
+                - id: rt_UkLWZg9DAJ
+                  ip_address: 203.0.113.7
+                  user_agent: Mozilla/5.0 Firefox/131.0
+                  last_active_at: '2026-01-15T12:00:00.000Z'
+                inviter:
+                  id: adm_gbHJdmfrXB
+                  type: admin_user
+                  label: Ada Inviter
     patch:
       summary: Update a staff member
       tags:
@@ -32885,8 +32918,10 @@ paths:
                 last_name: King
                 full_name: Renamed King
                 selected_locale:
+                status: active
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                last_active_at:
                 avatar_url:
                 roles:
                 - id: role_UkLWZg9DAJ
@@ -58732,10 +58767,27 @@ components:
         selected_locale:
           type: string
           nullable: true
+        status:
+          type: string
+          enum:
+          - active
+          - locked
+          - deactivated
         created_at:
           type: string
         updated_at:
           type: string
+        last_active_at:
+          type: string
+          nullable: true
+        sessions:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Session"
+        inviter:
+          allOf:
+          - "$ref": "#/components/schemas/Actor"
+          nullable: true
         avatar_url:
           type: string
           nullable: true
@@ -58754,8 +58806,10 @@ components:
       - last_name
       - full_name
       - selected_locale
+      - status
       - created_at
       - updated_at
+      - last_active_at
       - avatar_url
       - roles
       - stores
@@ -71502,6 +71556,25 @@ components:
       - seller_name
       - order_number
       - provider
+      x-typelizer: true
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        ip_address:
+          type: string
+          nullable: true
+        user_agent:
+          type: string
+          nullable: true
+        last_active_at:
+          type: string
+      required:
+      - id
+      - ip_address
+      - user_agent
+      - last_active_at
       x-typelizer: true
     SetupTask:
       type: object
