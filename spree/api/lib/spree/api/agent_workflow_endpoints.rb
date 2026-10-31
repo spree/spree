@@ -95,8 +95,8 @@ module Spree
           path.gsub(/:([a-z_]+)/) { "{#{Regexp.last_match(1)}}" }
         end
 
-        # A packaged installation has no docs/ directory, and a body the
-        # document does not describe is simply passed through unchecked.
+        # A body the document does not describe is simply passed through
+        # unchecked.
         #
         # `AgentWriteSchemas` already holds this file parsed, so it is read
         # through there rather than a second time: the document is nearly a
