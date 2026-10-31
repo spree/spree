@@ -91,11 +91,6 @@ namespace :gem do
     pkgdir = File.expand_path("../pkg", __FILE__)
     FileUtils.mkdir_p pkgdir
 
-    # The agent tools read the API references at runtime; see
-    # Spree::Api::OpenAPI::Documents.
-    require_relative 'api/lib/spree/api/openapi/documents'
-    Spree::Api::OpenAPI::Documents.bundle!
-
     SPREE_CORE_GEMS.each do |gem_name|
       Dir.chdir(gem_name) do
         sh "gem build spree_#{gem_name}.gemspec"

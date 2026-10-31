@@ -33,9 +33,14 @@ module Spree
           self.for(key).keys
         end
 
-        # @return [String] where the generated document is
+        # Where the generated document lives: `docs/` in a source checkout,
+        # or the copy the release packs into the gem. Resolved lazily: the
+        # engine class does not exist yet while this file loads.
+        #
+        # @return [Pathname]
         def spec_path
-          Spree::Api::OpenAPI::Documents.path('admin')
+          source = Spree::Api::Engine.root.join('..', '..', 'docs', 'api-reference', 'admin.yaml')
+          source.exist? ? source : Spree::Api::Engine.root.join('openapi', 'admin.yaml')
         end
 
         # The parsed document, for a reader that needs more of it than the

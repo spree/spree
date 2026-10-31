@@ -61,6 +61,13 @@ jobs:
       - name: Configure RubyGems credentials
         uses: rubygems/configure-rubygems-credentials@main
 
+      # The agent tools read the API references at runtime, and docs/ is
+      # outside every gem.
+      - name: Pack the API references into spree_api
+        run: |
+          mkdir -p spree/api/openapi
+          cp docs/api-reference/admin.yaml docs/api-reference/store.yaml spree/api/openapi/
+
       - name: Build and push gems to RubyGems
         working-directory: spree
         run: bundle exec rake gem:release

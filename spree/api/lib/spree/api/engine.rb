@@ -2,7 +2,6 @@ require 'rails/engine'
 
 require_relative 'dependencies'
 require_relative 'configuration'
-require_relative 'openapi/documents'
 require_relative 'agent_write_schemas'
 require_relative 'agent_resource_map'
 require_relative 'agent_membership_map'
