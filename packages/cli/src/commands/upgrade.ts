@@ -4,6 +4,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
+import semver from 'semver'
 import {
   INSTALL_PACKAGES,
   LIST_PACKAGES,
@@ -292,6 +293,17 @@ const REGISTRY_SPEC = /^[\^~<>=\d*]|^latest$|^next$/
 // declared range, and a single version is a range nothing else satisfies.
 const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
 
+// A peer range read from the registry is written into the app's package.json,
+// so only a valid semver range is taken (no aliases, URLs or paths), and never
+// one with a control character, which semver trims but JSON can't hold raw.
+function isPlainRange(range: unknown): range is string {
+  return (
+    typeof range === 'string' &&
+    [...range].every((character) => character.charCodeAt(0) >= 0x20) &&
+    semver.validRange(range) !== null
+  )
+}
+
 export interface SpreePackage {
   name: string
   spec: string
@@ -388,6 +400,122 @@ export function moveToReleaseLine(
   }
   if (moved.length > 0) fs.writeFileSync(manifestPath, source)
   return moved
+}
+
+/**
+ * The third-party peer ranges the given @spree/* packages declare at the
+ * versions about to be installed, read from the registry before installing:
+ * npm refuses an install whose peers don't match, so the app's own ranges have
+ * to move first. Where two packages name the same peer, the higher floor wins.
+ * A package the registry can't answer for is skipped, leaving its peers to
+ * the package manager's own warnings.
+ *
+ * @param dir directory the registry is queried from, for its .npmrc
+ * @param packages the @spree/* packages and the specs they will be installed at
+ * @returns peer name → range, {} when nothing could be read
+ */
+export async function spreePeerRanges(
+  dir: string,
+  packages: Array<{ name: string; spec: string }>,
+): Promise<Record<string, string>> {
+  const ranges: Record<string, string> = {}
+  for (const { name, spec } of packages) {
+    let peers: Record<string, string>
+    try {
+      const { stdout } = await execa(
+        'npm',
+        ['view', `${name}@${spec}`, 'peerDependencies', '--json'],
+        {
+          cwd: dir,
+        },
+      )
+      // A range several versions match answers with one entry per version, oldest first.
+      const parsed = stdout.trim() ? JSON.parse(stdout) : {}
+      peers = (Array.isArray(parsed) ? parsed.at(-1) : parsed) ?? {}
+    } catch {
+      p.log.warn(
+        `Could not read the peer dependencies of ${name}@${spec}; leaving them as they are.`,
+      )
+      continue
+    }
+    for (const [peer, range] of Object.entries(peers)) {
+      if (peer.startsWith('@spree/') || !isPlainRange(range)) continue
+      const current = Object.hasOwn(ranges, peer) ? ranges[peer] : null
+      if (!current || semver.gt(minVersionOf(range), minVersionOf(current))) ranges[peer] = range
+    }
+  }
+  return ranges
+}
+
+/**
+ * Rewrites the app's own ranges for Spree's peer dependencies (React Hook
+ * Form, i18next, the TanStack libraries, …) that admit a version Spree's range
+ * doesn't (`^7.75.0` against `^7.90.0`). A range already inside Spree's, for
+ * any of its alternatives, stays as it is. Left alone, the app keeps its older copy: npm refuses the install,
+ * and pnpm installs it with a warning, leaving Spree's components typed and
+ * tested against a version the app doesn't run. Each becomes Spree's range,
+ * so the update that follows checks against it. An exact version is marked
+ * `exact` for the caller to pin again at the newest release the range allows:
+ * the range's floor need not be a published version. The file is edited as
+ * text so its formatting is kept.
+ *
+ * @param dir directory holding the package.json
+ * @param peers peer name → the range Spree requires (see spreePeerRanges)
+ * @returns the rewritten dependencies, [] when none
+ */
+export function alignPeerRanges(
+  dir: string,
+  peers: Record<string, string>,
+): Array<{ name: string; from: string; to: string; dev: boolean; exact: boolean }> {
+  const manifestPath = path.join(dir, 'package.json')
+  let source: string
+  let pkg: PackageJson
+  try {
+    source = fs.readFileSync(manifestPath, 'utf-8')
+    pkg = JSON.parse(source)
+  } catch {
+    return []
+  }
+
+  const warned = new Set<string>()
+  const moved = [
+    ...Object.entries(pkg.dependencies ?? {}).map(([name, from]) => ({ name, from, dev: false })),
+    ...Object.entries(pkg.devDependencies ?? {}).map(([name, from]) => ({ name, from, dev: true })),
+  ]
+    .filter(({ name, from }) => Object.hasOwn(peers, name) && REGISTRY_SPEC.test(from))
+    .filter(
+      ({ name, from }) => semver.validRange(from) !== null && !semver.subset(from, peers[name]),
+    )
+    .map((dependency) => ({
+      ...dependency,
+      to: peers[dependency.name],
+      exact: isExactVersion(dependency.from),
+    }))
+    // Listed in both groups, the package managers disagree on which group an
+    // install writes to, so the app's own manifest decides: it is left as is.
+    .filter(({ name }) => {
+      const both =
+        Object.hasOwn(pkg.dependencies ?? {}, name) &&
+        Object.hasOwn(pkg.devDependencies ?? {}, name)
+      if (both && !warned.has(name)) {
+        warned.add(name)
+        p.log.warn(
+          `${name} is in both dependencies and devDependencies; raise it to ${peers[name]} by hand.`,
+        )
+      }
+      return !both
+    })
+
+  for (const { name, from, to } of moved) {
+    const declaration = new RegExp(`("${escapeRegExp(name)}"\\s*:\\s*)"${escapeRegExp(from)}"`, 'g')
+    source = source.replace(declaration, `$1"${to}"`)
+  }
+  if (moved.length > 0) fs.writeFileSync(manifestPath, source)
+  return moved
+}
+
+function minVersionOf(range: string): string {
+  return semver.minVersion(range)?.version ?? '0.0.0'
 }
 
 /**
@@ -493,6 +621,15 @@ function pinnedOffRelease(packages: SpreePackage[], dev: boolean, line: ReleaseL
     .map((pkg) => `${pkg.name}@${line.version}`)
 }
 
+// The spec a Spree package is about to be installed at: the Spree version for
+// a pin the upgrade moves (see pinnedOffRelease), its declared spec otherwise.
+function installedSpec(line: ReleaseLine): (pkg: SpreePackage) => { name: string; spec: string } {
+  return (pkg) => ({
+    name: pkg.name,
+    spec: pinnedOffRelease([pkg], pkg.dev, line).length > 0 ? line.version : pkg.spec,
+  })
+}
+
 // The project root carries @spree/cli; each admin app carries the dashboard
 // packages and the Admin SDK. The storefront is the merchant's own fork, so
 // its SDK bump stays theirs (see sdkAdvisory).
@@ -520,17 +657,31 @@ async function updateSpreePackages(
     // Read again, since the rewrite above can turn a pin into a range.
     const packages = detectSpreePackages(target.dir)
 
-    const ranged = packages.filter((pkg) => !isExactVersion(pkg.spec)).map((pkg) => pkg.name)
+    const peers = alignPeerRanges(
+      target.dir,
+      await spreePeerRanges(target.dir, packages.map(installedSpec(line))),
+    )
+    for (const { name, from, to } of peers) {
+      p.log.info(`${name}: ${from} → ${to} ${pc.dim(`in ${target.relative}, required by Spree`)}`)
+    }
+
+    // Spree packages and the peers they require go in one command, so npm
+    // checks the new peers against the new ranges.
+    const ranged = [
+      ...packages.filter((pkg) => !isExactVersion(pkg.spec)).map((pkg) => pkg.name),
+      ...peers.filter((peer) => !peer.exact).map((peer) => peer.name),
+    ]
     if (ranged.length > 0) {
       await runPackageManager(pm, packageUpdateArgs(pm, ranged, projectDir, target.dir), target)
     }
-    const pinnedDependencies = pinnedOffRelease(packages, false, line)
-    if (pinnedDependencies.length > 0) {
-      await runPackageManager(pm, packageAddArgs(pm, pinnedDependencies, false), target)
-    }
-    const pinnedDevDependencies = pinnedOffRelease(packages, true, line)
-    if (pinnedDevDependencies.length > 0) {
-      await runPackageManager(pm, packageAddArgs(pm, pinnedDevDependencies, true), target)
+    for (const dev of [false, true]) {
+      const pinned = [
+        ...pinnedOffRelease(packages, dev, line),
+        ...peers
+          .filter((peer) => peer.dev === dev && peer.exact)
+          .map((peer) => `${peer.name}@${peer.to}`),
+      ]
+      if (pinned.length > 0) await runPackageManager(pm, packageAddArgs(pm, pinned, dev), target)
     }
     const dedupeArgs = packageDedupeArgs(pm, projectDir, target.dir)
     if (dedupeArgs) await runPackageManager(pm, dedupeArgs, target)

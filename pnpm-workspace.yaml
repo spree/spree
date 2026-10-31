@@ -60,6 +60,7 @@ catalog:
   'react-hook-form': ^7.90.0
   'react-i18next': ^17.1.0
   'recharts': 3.10.1
+  'semver': ^7.8.5
   'shadcn': ^4.22.1
   'tailwind-merge': ^3.7.0
   'tailwindcss': ^4.2.4

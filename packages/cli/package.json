@@ -47,12 +47,14 @@
     "commander": "catalog:",
     "console-table-printer": "^2.15.0",
     "execa": "catalog:",
-    "picocolors": "catalog:"
+    "picocolors": "catalog:",
+    "semver": "catalog:"
   },
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",
     "@spree/sdk-core": "workspace:*",
     "@types/node": "catalog:",
+    "@types/semver": "^7.8.0",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",

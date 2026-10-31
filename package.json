@@ -53,7 +53,7 @@
     "@changesets/cli": "catalog:",
     "@spree/cli": "workspace:*",
     "@typescript/typescript6": "catalog:",
-    "semver": "^7.8.5",
+    "semver": "catalog:",
     "turbo": "^2.11.9",
     "yaml": "catalog:"
   },
