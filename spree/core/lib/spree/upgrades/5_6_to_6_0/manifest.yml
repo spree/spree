@@ -661,6 +661,40 @@ steps:
       hold a secret are skipped, and the legacy tables stay in place as a
       rollback path until they are dropped in 6.1.
 
+  - id: migrate_paypal_payments
+    name: "Give PayPal payments taken before 6.0 the PayPal order id"
+    task_class: "SpreePaypalCheckout::MaintenanceTasks::MigratePayments"
+    optional: true
+    notes: |
+      Only runs when spree_paypal_checkout is installed; skipped otherwise.
+
+      The 0.x gem stored a PayPal payment's capture id as its response code.
+      In 6.0 the response code is always the PayPal order id, which is how a
+      payment session finds its payment, and the capture id lives in the
+      payment's metadata. This step rewrites each older payment to that shape,
+      finding its order through the payment session that took it or, for the
+      older checkout flow, through spree_paypal_checkout_orders.
+
+      Run it before dropping spree_paypal_checkout_orders: that table is the
+      only link from those older payments to their PayPal order. A payment it
+      cannot match is logged by id, counted, and left as it was; refund it in
+      PayPal. Supports a dry run, and is idempotent.
+
+  - id: register_paypal_webhooks
+    name: "Register each PayPal payment method's webhook"
+    task: "spree:upgrade:register_paypal_webhooks"
+    optional: true
+    notes: |
+      Only runs when spree_paypal_checkout is installed; skipped otherwise.
+
+      PayPal webhooks register themselves in 6.0 and are always verified with
+      the webhook's id. This finds or creates the webhook for each PayPal
+      method's URL, replaces the events of one created by hand under the 0.x
+      guide, and stores its id. Until it runs, methods created before the
+      upgrade reject every webhook delivery.
+
+      Idempotent.
+
   - id: backfill_import_export_tenancy
     name: "Place every import in a store, and a seller where one ran it"
     task: "spree:upgrade:backfill_import_export_tenancy"

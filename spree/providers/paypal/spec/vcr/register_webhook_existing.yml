@@ -1,0 +1,227 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v1/oauth2/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Authorization:
+      - Basic <FILTERED>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 30 Oct 2026 14:42:41 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - cloudflare
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Paypal-Debug-Id:
+      - ca52b301dda98
+      Pragma:
+      - no-cache
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000ca52b301dda98-f9e8d5484c0040d0-01"
+      Vary:
+      - Accept-Encoding
+      X-Paypal-Token-Service:
+      - IAAS
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Set-Cookie:
+      - __cf_bm=1pDlwRWp9MQUZ5oZ3zQvPIEHcPiXuzd21aWIfHC9QHM-1793371360.9346628-1.0.1.1-xQg6ks2snPvTaJ25mEklSEiHdL9eC3WwIUZZYkNCBRhak0bTKAp3F.f2YyPeC3wjQVd0zPO955wvLTNu.KysWG37KeiHYdILxceKes1Iy858jQdIRTGO2Zp0Seqedqcq;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api-m.sandbox.paypal.com;
+        Expires=Fri, 30 Oct 2026 15:12:41 GMT
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Ray:
+      - a52b301dda98b19d-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"scope":"https://uri.paypal.com/services/invoicing https://uri.paypal.com/services/checkout/one-click-with-merchant-issued-token
+        https://uri.paypal.com/services/payments/futurepayments https://uri.paypal.com/services/vault/payment-tokens/read
+        https://uri.paypal.com/services/disputes/read-buyer https://uri.paypal.com/services/payments/realtimepayment
+        https://uri.paypal.com/services/subscriptions/confirm-payment https://uri.paypal.com/services/payments/client-payments-eligibility
+        https://api.paypal.com/v1/vault/credit-card https://api.paypal.com/v1/payments/.*
+        https://uri.paypal.com/services/vault/payment-tokens/readwrite https://uri.paypal.com/services/applications/webhooks
+        https://uri.paypal.com/services/pricing/exchange-currency/read https://uri.paypal.com/services/credit/client-offer-presentment/read
+        https://uri.paypal.com/services/disputes/update-seller https://uri.paypal.com/services/payments/payment/authcapture
+        openid Braintree:Vault https://uri.paypal.com/services/disputes/read-seller
+        https://uri.paypal.com/services/payments/orders/client_sdk_orders_api https://uri.paypal.com/services/payments/refund
+        https://uri.paypal.com/services/disputes/create https://uri.paypal.com/services/pricing/quote-exchange-rates/read
+        https://uri.paypal.com/services/documents/disputes/download https://uri.paypal.com/services/billing-agreements
+        https://uri.paypal.com/services/checkout/payment-resources https://uri.paypal.com/payments/payouts
+        https://api.paypal.com/v1/vault/credit-card/.* https://uri.paypal.com/services/subscriptions","access_token":"<PAYPAL_ACCESS_TOKEN>","token_type":"Bearer","app_id":"APP-2HH91388CU034731G","expires_in":30303,"nonce":"2026-10-30T14:07:44ZCC7GvBRi0IAoXEqH3bgOD5SxOUkY27pZlCpp3s8DSGs"}'
+    adapter_metadata:
+      vcr_decompressed: gzip
+  recorded_at: Fri, 30 Oct 2026 14:42:41 GMT
+- request:
+    method: get
+    uri: https://api-m.sandbox.paypal.com/v1/notifications/webhooks
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Ruby
+      Host:
+      - api-m.sandbox.paypal.com
+      Authorization:
+      - Bearer <FILTERED>
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 30 Oct 2026 14:42:41 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Server:
+      - cloudflare
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Cf-Cache-Status:
+      - DYNAMIC
+      Content-Language:
+      - ''
+      Paypal-Debug-Id:
+      - ca52b301fccc4
+      Set-Cookie:
+      - __cf_bm=KbRT6OPm9t8_9TWP85HebgguCi57Lj0amx8RQv0vD68-1793371361.2431936-1.0.1.1-XX8EOx7kFMYF9ffDDN_S6rodXQUvTOmzSWaETmkLbC8dnCdTPOsAzLJ55omCzwmUhBJOUCRWCwU_ZOQe9Wdvbw0PHBdiTZQlQ06dFtpeZ_rYfmq5QCeRFDmwtFMtxE81;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api-m.sandbox.paypal.com;
+        Expires=Fri, 30 Oct 2026 15:12:41 GMT
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000ca52b301fccc4-155840ea870b8b87-01"
+      Vary:
+      - Accept-Encoding
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Cf-Ray:
+      - a52b301fccc48fc8-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"webhooks":[{"id":"69774819J5756413K","url":"https://spree-paypal-checkout.ngrok.app/api/v3/webhooks/payments/pm_VqXmZF31wY","event_types":[{"name":"PAYMENT.AUTHORIZATION.CREATED","description":"A
+        payment authorization is created, approved, executed, or a future payment
+        authorization is created.","status":"ENABLED"},{"name":"PAYMENT.CAPTURE.COMPLETED","description":"A
+        payment capture completes.","status":"ENABLED"},{"name":"PAYMENT.CAPTURE.DECLINED","description":"This
+        event is triggered when a payment capture is declined.","status":"ENABLED"},{"name":"PAYMENT.CAPTURE.DENIED","description":"A
+        payment capture is denied.","status":"ENABLED"},{"name":"PAYMENT.CAPTURE.PENDING","description":"The
+        state of a payment capture changes to pending.","status":"ENABLED"}],"links":[{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/69774819J5756413K","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/69774819J5756413K","rel":"update","method":"PATCH"},{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/69774819J5756413K","rel":"delete","method":"DELETE"}]},{"id":"1NN59311DJ0782520","url":"https://spree-paypal.example.com/api/v3/webhooks/payments/pm_test","event_types":[{"name":"CHECKOUT.ORDER.APPROVED","description":"An
+        order has been approved by buyer.","status":"ENABLED"}],"links":[{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/1NN59311DJ0782520","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/1NN59311DJ0782520","rel":"update","method":"PATCH"},{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/1NN59311DJ0782520","rel":"delete","method":"DELETE"}]}]}'
+  recorded_at: Fri, 30 Oct 2026 14:42:41 GMT
+- request:
+    method: patch
+    uri: https://api-m.sandbox.paypal.com/v1/notifications/webhooks/1NN59311DJ0782520
+    body:
+      encoding: UTF-8
+      string: '[{"op":"replace","path":"/event_types","value":[{"name":"PAYMENT.CAPTURE.COMPLETED"},{"name":"PAYMENT.CAPTURE.PENDING"},{"name":"PAYMENT.AUTHORIZATION.CREATED"},{"name":"PAYMENT.CAPTURE.DENIED"},{"name":"PAYMENT.CAPTURE.DECLINED"}]}]'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Ruby
+      Host:
+      - api-m.sandbox.paypal.com
+      Authorization:
+      - Bearer <FILTERED>
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 30 Oct 2026 14:42:41 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cf_bm=ax5zCRah741Nno7PAH8uiP0DE0QwKpnwRqAN1Z0lIwo-1793371361.5730877-1.0.1.1-6b4b6vwXRE9H0sFeHGq7OePxo3R8l_fNZanQ2c3va9_gGLdcP6HJSYNSlgtasV6CWE2kOCPv_q6oIA8UHV90yCTsEt2RA4I4rqdcJhWErlCOsX9hEmAVYvodHTKw5tk8;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=api-m.sandbox.paypal.com;
+        Expires=Fri, 30 Oct 2026 15:12:41 GMT
+      Server:
+      - cloudflare
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Content-Language:
+      - ''
+      Paypal-Debug-Id:
+      - ca52b3021de17
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000ca52b3021de17-470834be119230ae-01"
+      Vary:
+      - Accept-Encoding
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Cf-Ray:
+      - a52b3021de17bf7e-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"1NN59311DJ0782520","url":"https://spree-paypal.example.com/api/v3/webhooks/payments/pm_test","event_types":[{"name":"PAYMENT.CAPTURE.COMPLETED","description":"A
+        payment capture completes."},{"name":"PAYMENT.CAPTURE.PENDING","description":"The
+        state of a payment capture changes to pending."},{"name":"PAYMENT.AUTHORIZATION.CREATED","description":"A
+        payment authorization is created, approved, executed, or a future payment
+        authorization is created."},{"name":"PAYMENT.CAPTURE.DENIED","description":"A
+        payment capture is denied."},{"name":"PAYMENT.CAPTURE.DECLINED","description":"This
+        event is triggered when a payment capture is declined."}],"links":[{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/1NN59311DJ0782520","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/1NN59311DJ0782520","rel":"update","method":"PATCH"},{"href":"https://api.sandbox.paypal.com/v1/notifications/webhooks/1NN59311DJ0782520","rel":"delete","method":"DELETE"}]}'
+  recorded_at: Fri, 30 Oct 2026 14:42:41 GMT
+recorded_with: VCR 6.4.0

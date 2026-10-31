@@ -690,6 +690,46 @@ Some payloads changed so that every webhook carries the Store API shape and noth
 - **`saved_report.*`** no longer includes the author's name.
 - **Subscribing an endpoint to `customer.password_reset_requested`** needs the permission to manage customers. The staff and seller reset events are still never sent to webhooks.
 
+## PayPal
+
+`spree_paypal_checkout` 0.x does not run on Spree 6.0. PayPal now ships with Spree as a provider gem of the same name, released with Spree and pinned to its version (`spree add paypal` pins it for you). It keeps every stored class name, so existing payment methods, payment sessions and payment sources carry over.
+
+| 0.x | 6.0 |
+|---|---|
+| Payments whose response code is a PayPal capture ID | Rewritten by the `migrate_paypal_payments` upgrade step: the response code becomes the PayPal order ID, and the capture ID moves to the payment's metadata |
+| A Webhook ID field, filled in by hand | The webhook is registered automatically. The `register_paypal_webhooks` upgrade step finds or creates each payment method's webhook, replaces the events of one created by hand under the 0.x guide, and stores its ID |
+| `spree_paypal_checkout_orders` table and `SpreePaypalCheckout::Order` | The model is gone. The table stays until you drop it, after `migrate_paypal_payments` has run |
+| `use_legacy_api` configuration and the Storefront API v2 `paypal_orders` routes | Gone. Move to payment sessions before upgrading |
+| Saved PayPal accounts in the admin | Gone. 0.x never saved an account at PayPal, and charging a picked account failed |
+| `Spree::PaymentMethod.paypal_checkout` and `Store#paypal_checkout_gateway` | Gone. Use `Spree::PaymentMethod.where(type: 'SpreePaypalCheckout::Gateway')` |
+| Rails storefront assets, importmap, ERB partials and admin views | Gone |
+| `NEXT_PUBLIC_PAYPAL_CLIENT_ID` in the storefront | Still read as a fallback. The storefront takes the client ID from the payment session |
+
+Both upgrade steps run as part of `spree upgrade` when the gem is installed, and are skipped when it is not:
+
+- **`migrate_paypal_payments`** gives each PayPal payment taken before the upgrade the 6.0 shape, finding its PayPal order through the payment session that took it or, for the older checkout flow, through `spree_paypal_checkout_orders`. A payment it cannot match is left as it was, counted on the run and logged by ID; refund it in PayPal. It supports a preview.
+- **`register_paypal_webhooks`** registers the webhook of every PayPal payment method. Until it runs, payment methods created before the upgrade reject every PayPal notification. Your store must be reachable from the internet.
+
+Drop `spree_paypal_checkout_orders` only after `migrate_paypal_payments` has run. It is the only link from payments of the older checkout flow to their PayPal order. Then update the Next.js storefront to a version that reads the client ID from the payment session, or follow [Building your own storefront](/integrations/payments/paypal#building-your-own-storefront) if you built your own.
+
+### Already on 6.0 before installing the gem
+
+A store that upgraded to 6.0 before adding `spree_paypal_checkout` is already recorded as upgraded, so the dashboard's upgrade page does not list these steps. Run them by name:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree upgrade --step migrate_paypal_payments
+spree upgrade --step register_paypal_webhooks
+```
+
+```bash Without Spree CLI
+STEP=migrate_paypal_payments bundle exec rake spree:upgrade
+STEP=register_paypal_webhooks bundle exec rake spree:upgrade
+```
+
+</CodeGroup>
+
 ## Removed in 6.0
 
 These were deprecated in 5.x and are **gone now** — there is no bridge, so calls raise `NoMethodError`. Most were one-line delegations to a replacement that already exists.
