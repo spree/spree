@@ -96,11 +96,12 @@ match_segment() {
 # runs before the command does, so an earlier step in the same command that
 # changes directory or may move HEAD is blocked rather than parsed.
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
-gh_pr_create='^([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*(env[[:space:]]+)?(command[[:space:]]+)?gh[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
+assign='[A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+'
+gh_pr_create="^($assign)*(env[[:space:]]+($assign)*)?(command[[:space:]]+)?gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|\$)"
 chained=0
 while IFS= read -r segment; do
   seg="${segment#"${segment%%[![:space:]({]*}"}"
-  if [[ "$seg" =~ ^(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
+  if [[ "$seg" =~ ^((builtin|command)[[:space:]]+)?(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
   if match_segment "$seg" || [ -n "$GIT_SUB" ]; then
     case "$GIT_SUB" in push|status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
     continue
