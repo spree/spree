@@ -145,4 +145,13 @@ describe('findFreePort', () => {
       server.close()
     }
   })
+
+  it('never hands out the same port twice', async () => {
+    const first = await findFreePort(40100, 40120)
+    expect(await findFreePort(first, first + 20)).not.toBe(first)
+  })
+
+  it('picks a free port when asked for port 0', async () => {
+    expect(await findFreePort(0, 0)).toBeGreaterThan(0)
+  })
 })
