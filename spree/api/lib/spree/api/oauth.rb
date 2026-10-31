@@ -45,7 +45,8 @@ module Spree
         uri = URI.parse(uri.to_s) unless uri.respond_to?(:host)
         return true if loopback_uri?(uri)
 
-        uri.host.to_s.casecmp?('localhost') && uri.port != uri.default_port
+        uri.host.to_s.casecmp?('localhost') &&
+          (1..65_535).cover?(uri.port) && uri.port != uri.default_port
       rescue StandardError
         false
       end

@@ -53,6 +53,11 @@ RSpec.describe 'OAuth redirect URIs' do
       expect(build_with('http://localhost/callback')).not_to be_valid
     end
 
+    it 'refuses localhost on a port no client can listen on' do
+      expect(build_with('http://localhost:0/callback')).not_to be_valid
+      expect(build_with('http://localhost:65536/callback')).not_to be_valid
+    end
+
     it 'refuses a host that only starts with localhost' do
       expect(build_with('http://localhost.example.test:3118/callback')).not_to be_valid
     end
