@@ -1,11 +1,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { setupAgents } from './agents.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT, STOREFRONT_REPO } from './constants.js'
 import { scaffoldApp } from './dashboard.js'
+import { run } from './run.js'
 import { downloadServer } from './server.js'
 import { installRootDeps, scaffoldStorefront } from './storefront.js'
 import { agentsMdContent, claudeMdContent } from './templates/agents-md.js'
@@ -113,7 +113,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   // (skipping it leaves a stale local `latest` to boot) and a seeded,
   // credentialed server. A failed app's partial directory is removed so the
   // recovery command, which expects it absent, actually works.
-  const run = runCommand(options.packageManager)
+  const runner = runCommand(options.packageManager)
   const tryApp = async (dir: string, recovery: string, step: () => Promise<void>) => {
     try {
       await step()
@@ -130,12 +130,12 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   const dashboardReady =
     dashboard &&
-    (await tryApp('dashboard', `${run} spree add dashboard`, () =>
+    (await tryApp('dashboard', `${runner} spree add dashboard`, () =>
       scaffoldApp(projectDir, 'dashboard', appOpts),
     ))
   const sellerDashboardReady =
     sellerDashboard &&
-    (await tryApp('seller-dashboard', `${run} spree add seller-dashboard`, () =>
+    (await tryApp('seller-dashboard', `${runner} spree add seller-dashboard`, () =>
       scaffoldApp(projectDir, 'seller-dashboard', appOpts),
     ))
   const storefrontReady =
@@ -199,7 +199,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     const initArgs = ['spree', 'init', '--no-sample-data']
 
     try {
-      await execa(runCommand(options.packageManager), initArgs, {
+      await run(runCommand(options.packageManager), initArgs, {
         cwd: projectDir,
         stdio: 'inherit',
       })

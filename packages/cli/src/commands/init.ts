@@ -4,7 +4,6 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { SEED_TASK, spreeTask } from '../backend.js'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
@@ -23,6 +22,7 @@ import {
   primeBundleVolume,
   streamLogs,
 } from '../docker.js'
+import { run } from '../lib/run.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
@@ -292,7 +292,7 @@ async function installAppDeps(projectDir: string, app: string): Promise<void> {
   const s = p.spinner()
   s.start(`Installing apps/${app}/ dependencies with ${pm}...`)
   try {
-    await execa(pm, ['install'], { cwd: appDir })
+    await run(pm, ['install'], { cwd: appDir })
     s.stop(`apps/${app}/ dependencies installed.`)
   } catch (err) {
     s.stop(pc.yellow(`${pm} install failed — run it manually in apps/${app}/.`))
@@ -412,7 +412,7 @@ export async function openBrowser(url: string): Promise<void> {
         : ['xdg-open', [url]]
 
   try {
-    await execa(cmd, args, { stdio: 'ignore' })
+    await run(cmd, args, { stdio: 'ignore' })
   } catch {
     // best-effort
   }

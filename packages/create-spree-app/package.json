@@ -46,9 +46,8 @@
   "dependencies": {
     "@clack/prompts": "catalog:",
     "commander": "catalog:",
-    "execa": "catalog:",
-    "get-port": "^7.2.0",
-    "picocolors": "catalog:"
+    "picocolors": "catalog:",
+    "tinyexec": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

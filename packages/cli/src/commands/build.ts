@@ -2,11 +2,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import { type Command, Option } from 'commander'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { detectProject, findApiDir, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { appServices, dockerCompose } from '../docker.js'
+import { run } from '../lib/run.js'
 
 export function registerBuildCommand(program: Command): void {
   program
@@ -89,7 +89,7 @@ async function buildDevImage(flags: { resetDeps?: boolean; yes?: boolean }): Pro
       // from a real failure (wrong permissions, daemon issue).
       const exists = await volumeExists(volumeName, ctx.projectDir)
       if (exists) {
-        await execa('docker', ['volume', 'rm', volumeName], {
+        await run('docker', ['volume', 'rm', volumeName], {
           cwd: ctx.projectDir,
           stdio: 'ignore',
         })
@@ -232,7 +232,7 @@ async function buildProductionImage(projectDir: string, tag?: string): Promise<v
   }
 
   console.log(`\n${pc.bold(`Building production image ${plan.imageTag}...`)}\n`)
-  await execa('docker', plan.args, { cwd: projectDir, stdio: 'inherit' })
+  await run('docker', plan.args, { cwd: projectDir, stdio: 'inherit' })
 
   p.note(
     [
@@ -250,7 +250,7 @@ async function buildProductionImage(projectDir: string, tag?: string): Promise<v
 
 async function resolveComposeProjectName(projectDir: string): Promise<string> {
   try {
-    const { stdout } = await execa('docker', ['compose', 'config', '--format', 'json'], {
+    const { stdout } = await run('docker', ['compose', 'config', '--format', 'json'], {
       cwd: projectDir,
     })
     const parsed = JSON.parse(stdout) as { name?: string }
@@ -266,7 +266,7 @@ async function resolveComposeProjectName(projectDir: string): Promise<string> {
 
 async function volumeExists(name: string, projectDir: string): Promise<boolean> {
   try {
-    await execa('docker', ['volume', 'inspect', name], {
+    await run('docker', ['volume', 'inspect', name], {
       cwd: projectDir,
       stdio: 'ignore',
     })

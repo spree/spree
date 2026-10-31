@@ -1,12 +1,12 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { execa } from 'execa'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { addAi } from '../src/commands/add.js'
+import { run } from '../src/lib/run'
 import type { ProjectContext } from '../src/types.js'
 
-vi.mock('execa', () => ({ execa: vi.fn(async () => ({})) }))
+vi.mock('../src/lib/run', () => ({ run: vi.fn(async () => ({})) }))
 
 const URL = 'https://spreecommerce.org/docs/mcp'
 
@@ -29,7 +29,7 @@ describe('addAi', () => {
   beforeEach(() => {
     projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-add-ai-'))
     write('docker-compose.yml', 'services: {}\n')
-    vi.mocked(execa).mockClear()
+    vi.mocked(run).mockClear()
   })
 
   afterEach(() => {
@@ -108,7 +108,7 @@ describe('addAi', () => {
 
     await addAi(ctx(), { skills: true, mcp: false, quiet: true })
 
-    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+    expect(vi.mocked(run)).toHaveBeenCalledWith(
       'npx',
       ['--yes', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
       expect.anything(),
@@ -154,7 +154,7 @@ describe('addAi', () => {
     expect(read('AGENTS.md')).toBe('# Mine\n')
     expect(fs.readdirSync(projectDir).filter((file) => file.endsWith('.tmp'))).toEqual([])
     expect(JSON.parse(read('.mcp.json')).mcpServers['spree-docs']).toBeDefined()
-    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+    expect(vi.mocked(run)).toHaveBeenCalledWith(
       expect.any(String),
       expect.arrayContaining(['skills', 'add', 'spree/agent-skills']),
       expect.anything(),
@@ -195,7 +195,7 @@ describe('addAi', () => {
 
     expect(await addAi(ctx(), { skills: true, mcp: false, quiet: true })).toBe(true)
 
-    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+    expect(vi.mocked(run)).toHaveBeenCalledWith(
       'pnpm',
       ['dlx', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
       expect.objectContaining({ cwd: projectDir }),
@@ -204,7 +204,7 @@ describe('addAi', () => {
   })
 
   it('reports a failed skills install without undoing the docs server', async () => {
-    vi.mocked(execa).mockRejectedValueOnce(new Error('network down'))
+    vi.mocked(run).mockRejectedValueOnce(new Error('network down'))
 
     expect(await addAi(ctx(), { skills: true, mcp: true, quiet: true })).toBe(false)
 

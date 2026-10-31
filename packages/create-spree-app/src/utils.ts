@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
-import { execa } from 'execa'
+import net from 'node:net'
+import { run } from './run.js'
 import type { PackageManager } from './types.js'
 
 /**
@@ -21,7 +22,7 @@ export async function detectPackageManager(): Promise<PackageManager> {
 
 async function isPnpmAvailable(): Promise<boolean> {
   try {
-    await execa('pnpm', ['--version'], { stdio: 'ignore' })
+    await run('pnpm', ['--version'], { stdio: 'ignore' })
     return true
   } catch {
     return false
@@ -30,7 +31,7 @@ async function isPnpmAvailable(): Promise<boolean> {
 
 export async function isDockerRunning(): Promise<boolean> {
   try {
-    await execa('docker', ['info'], { stdio: 'ignore' })
+    await run('docker', ['info'], { stdio: 'ignore' })
     return true
   } catch {
     return false
@@ -102,4 +103,41 @@ export function globalAddCommand(pm: PackageManager): string {
   if (pm === 'npm') return 'npm install -g'
   if (pm === 'yarn') return 'yarn global add'
   return 'pnpm add -g'
+}
+
+/** Listens on `port` (0 picks one) and returns it, or null when it is taken. */
+function tryPort(port: number): Promise<number | null> {
+  return new Promise((resolve) => {
+    const server = net.createServer()
+    server.once('error', () => resolve(null))
+    server.listen(port, () => {
+      const { port: bound } = server.address() as net.AddressInfo
+      server.close(() => resolve(bound))
+    })
+  })
+}
+
+// Ports already handed out in this run, so overlapping ranges never share one.
+const claimedPorts = new Set<number>()
+
+const MAX_PORT = 65535
+
+/** The first free port from `from` to `to`, or any free port when all of them are taken. */
+export async function findFreePort(from: number, to: number): Promise<number> {
+  for (let port = from; port <= Math.min(to, MAX_PORT); port++) {
+    if (claimedPorts.has(port)) continue
+    const bound = await tryPort(port)
+    if (bound !== null) {
+      claimedPorts.add(bound)
+      return bound
+    }
+  }
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const any = await tryPort(0)
+    if (any !== null && !claimedPorts.has(any)) {
+      claimedPorts.add(any)
+      return any
+    }
+  }
+  return from
 }

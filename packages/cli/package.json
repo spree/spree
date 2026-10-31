@@ -46,8 +46,8 @@
     "@clack/prompts": "catalog:",
     "commander": "catalog:",
     "console-table-printer": "^2.15.0",
-    "execa": "catalog:",
-    "picocolors": "catalog:"
+    "picocolors": "catalog:",
+    "tinyexec": "catalog:"
   },
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",

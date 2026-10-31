@@ -3,7 +3,6 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { isNotFound } from '../config.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT } from '../constants.js'
@@ -23,6 +22,7 @@ import {
   resolveExtension,
 } from '../lib/extensions.js'
 import { confirmOrExit } from '../lib/prompt.js'
+import { run } from '../lib/run.js'
 import type { ProjectContext } from '../types.js'
 import { type AddExtensionOptions, addExtension } from './add-extension.js'
 
@@ -320,7 +320,7 @@ export async function addApp(
   if (opts.install) {
     s.start(`Installing dependencies with ${pm}...`)
     try {
-      await execa(pm, ['install'], { cwd: appDir })
+      await run(pm, ['install'], { cwd: appDir })
       s.stop('Dependencies installed.')
       await generateRouteTree(appDir)
     } catch (err) {
@@ -383,7 +383,7 @@ function resolveBundledTemplate(app: AppSpec): string {
  */
 export async function generateRouteTree(appDir: string): Promise<void> {
   // Best effort: the dev server generates the file on start regardless.
-  await execa(
+  await run(
     'node',
     [
       '--input-type=module',
@@ -416,7 +416,7 @@ async function fetchTemplate(template: string, dst: string): Promise<void> {
     return
   }
 
-  await execa('git', ['clone', '--depth', '1', '--', template, dst])
+  await run('git', ['clone', '--depth', '1', '--', template, dst])
   fs.rmSync(path.join(dst, '.git'), { recursive: true, force: true })
 }
 

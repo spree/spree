@@ -3,7 +3,6 @@ import os from 'node:os'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import { Command } from 'commander'
-import { execa } from 'execa'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { registerAddCommand } from '../src/commands/add.js'
 import { addExtension } from '../src/commands/add-extension.js'
@@ -17,9 +16,10 @@ import {
   lockedSpreeVersion,
   resolveExtension,
 } from '../src/lib/extensions.js'
+import { run } from '../src/lib/run'
 import type { ProjectContext } from '../src/types.js'
 
-vi.mock('execa', () => ({ execa: vi.fn(async () => ({})) }))
+vi.mock('../src/lib/run', () => ({ run: vi.fn(async () => ({})) }))
 
 vi.mock('@clack/prompts', () => ({
   log: { info: vi.fn(), warn: vi.fn(), step: vi.fn(), success: vi.fn() },
@@ -285,8 +285,8 @@ describe('addExtension', () => {
       { yes: false },
     )
 
-    expect(execa).toHaveBeenCalledTimes(1)
-    expect(execa).toHaveBeenCalledWith('pnpm', ['add', '@acme/loyalty'], {
+    expect(run).toHaveBeenCalledTimes(1)
+    expect(run).toHaveBeenCalledWith('pnpm', ['add', '@acme/loyalty'], {
       cwd: path.join(projectDir, 'apps/dashboard'),
       stdio: 'inherit',
     })
