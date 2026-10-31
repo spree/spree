@@ -15,23 +15,11 @@ module Spree
     # which is why this lives in `spree_api` rather than in any one gem that
     # happens to need it.
     module Oauth
-      # Protected resources, each registered by the surface that owns it as a
-      # path relative to this application's own origin.
-      #
-      #   Spree::Api::Oauth.register_resource(:admin, '/api/v3/admin')
-      #
-      # A path rather than a full URL because the identifier must equal the
-      # URL the client was actually pointed at: the origin comes from the
-      # request where there is one, and from the application's configured
-      # URL options otherwise. A store's own `url` column is deliberately not
-      # consulted — it describes the storefront, which is frequently neither
-      # the host nor the scheme the Admin API answers on.
-      # Whether a redirect URI points at the machine the client runs on.
+      # Whether a redirect URI points at the machine the client runs on, by IP
+      # literal (`127.0.0.1`, `[::1]`).
       #
       # Decided by parsing the host as an address, the same way Doorkeeper
-      # does when it ignores the port of a loopback redirect — so `localhost`
-      # is deliberately not loopback here either, and a registration must use
-      # the IP literal for an ephemeral port to match.
+      # does when it ignores the port of a loopback redirect.
       #
       # @param uri [URI, String]
       # @return [Boolean]
@@ -44,6 +32,35 @@ module Spree
         false
       end
 
+      # Whether a redirect URI may use plain http: an IP-literal loopback, or
+      # `localhost` with an explicit port.
+      #
+      # Claude Code only ever calls back on `http://localhost:<port>`. The port
+      # is required because Doorkeeper ignores it only for IP literals, so a
+      # port-less `localhost` registration could never match an authorization.
+      #
+      # @param uri [URI, String]
+      # @return [Boolean]
+      def self.local_redirect_uri?(uri)
+        uri = URI.parse(uri.to_s) unless uri.respond_to?(:host)
+        return true if loopback_uri?(uri)
+
+        uri.host.to_s.casecmp?('localhost') && uri.port != uri.default_port
+      rescue StandardError
+        false
+      end
+
+      # Protected resources, each registered by the surface that owns it as a
+      # path relative to this application's own origin.
+      #
+      #   Spree::Api::Oauth.register_resource(:admin, '/api/v3/admin')
+      #
+      # A path rather than a full URL because the identifier must equal the
+      # URL the client was actually pointed at: the origin comes from the
+      # request where there is one, and from the application's configured
+      # URL options otherwise. A store's own `url` column is deliberately not
+      # consulted — it describes the storefront, which is frequently neither
+      # the host nor the scheme the Admin API answers on.
       mattr_accessor :resources, default: {}
 
       class << self
@@ -191,9 +208,9 @@ module Spree
 
             # A redirect URI is where authorization codes are delivered, so a
             # plain-http one hands them to anyone on the path — except a
-            # loopback one, which never leaves the machine. A terminal client
-            # listens on an ephemeral local port and has no certificate for
-            # it, so RFC 8252 §7.3 makes that the recommended shape, and
+            # loopback or `localhost` one, which never leaves the machine. A
+            # terminal client listens on a local port and has no certificate
+            # for it, so RFC 8252 §7.3 makes that the recommended shape, and
             # refusing it would lock out Claude Code and Codex entirely.
             #
             # Passed as a callable so the exemption is per URI rather than
@@ -201,7 +218,7 @@ module Spree
             force_ssl_in_redirect_uri do |uri|
               next false if Rails.env.development?
 
-              !Spree::Api::Oauth.loopback_uri?(uri)
+              !Spree::Api::Oauth.local_redirect_uri?(uri)
             end
 
             # RFC 8707. Registering the validator is what binds an audience
