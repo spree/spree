@@ -14,8 +14,10 @@
 
 set -u
 
-# Parse the command out of the Claude hook input JSON.
-cmd=$(jq -r '.tool_input.command // empty')
+# Parse the command and its working directory out of the Claude hook input JSON.
+input=$(cat)
+cmd=$(jq -r '.tool_input.command // empty' <<<"$input")
+hook_cwd=$(jq -r '.cwd // empty' <<<"$input")
 
 # Full test suites are queued machine-wide and are otherwise CI's job (see
 # AGENTS.md "Testing"). Block the bare forms so a session that has not read the
@@ -46,21 +48,44 @@ done < <(echo "$cmd" | tr ';&|' '\n')
 # quoted strings (`echo 'git commit later'`) and other git subcommands
 # (`git checkout`, `git diff`) are not.
 #
+# GIT_SUB holds the git subcommand of any git segment, matched or not.
 # On match, GIT_C_PATH holds the value passed to `-C` (empty when -C wasn't
 # used) so the caller can scope the gate to the repo the command targets.
 GIT_C_PATH=""
+GIT_SUB=""
+
+# Sets LAUNCHED to the segment without what runs in front of the real command:
+# variable assignments (quoted values included), `env` with its options and
+# assignments, `command` and `builtin`.
+LAUNCHED=""
+strip_launchers() {
+  local s="$1" in_env=0 tok
+  local assign="^[A-Za-z_][A-Za-z0-9_]*=(\"[^\"]*\"|'[^']*'|[^[:space:]\"']*)+"
+  while :; do
+    s="${s#"${s%%[![:space:]]*}"}"
+    if [[ "$s" =~ $assign ]]; then s="${s:${#BASH_REMATCH[0]}}"; continue; fi
+    tok="${s%%[[:space:]]*}"
+    case "$tok" in
+      env) in_env=1 ;;
+      command|builtin) ;;
+      -u|-C|--unset|--chdir)
+        [ $in_env -eq 1 ] || break
+        s="${s#"$tok"}"; s="${s#"${s%%[![:space:]]*}"}"; tok="${s%%[[:space:]]*}" ;;
+      -*) [ $in_env -eq 1 ] || break ;;
+      *) break ;;
+    esac
+    s="${s#"$tok"}"
+  done
+  LAUNCHED="$s"
+}
+
 match_segment() {
   local seg="$1"
   GIT_C_PATH=""
+  GIT_SUB=""
+  strip_launchers "$seg"
   # shellcheck disable=SC2086
-  set -- $seg
-  # Skip leading env-var assignments (FOO=bar git ...)
-  while [ $# -gt 0 ] && [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do shift; done
-  # Skip optional `env` plus its own env assignments (env FOO=bar git ...)
-  if [ "${1:-}" = "env" ]; then
-    shift
-    while [ $# -gt 0 ] && [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do shift; done
-  fi
+  set -- $LAUNCHED
   # Must now start with literal `git`
   [ "${1:-}" = "git" ] || return 1
   shift
@@ -77,9 +102,41 @@ match_segment() {
       *) break ;;
     esac
   done
-  case "${1:-}" in commit|push) return 0 ;; esac
+  GIT_SUB="${1:-}"
+  case "$GIT_SUB" in commit|push) return 0 ;; esac
   return 1
 }
+
+# Pull requests open through /open-pr, which runs /code-review and
+# /security-review and then records the reviewed HEAD in the git dir. Block
+# `gh pr create` until that marker matches HEAD in the session's directory, so
+# a commit made after the reviews sends the branch back through them. The check
+# runs before the command does, so an earlier step in the same command that
+# changes directory or may move HEAD is blocked rather than parsed.
+pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
+gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
+chained=0
+while IFS= read -r segment; do
+  seg="${segment#"${segment%%[![:space:]({]*}"}"
+  if match_segment "$seg" || [ -n "$GIT_SUB" ]; then
+    case "$GIT_SUB" in push|status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
+    continue
+  fi
+  if [[ "$LAUNCHED" =~ ^(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
+  [[ "$LAUNCHED" =~ $gh_pr_create ]] || continue
+  if [ $chained -eq 1 ]; then
+    echo "Blocked: $seg" >&2
+    echo "Run gh pr create as its own command: an earlier cd or git step in the same command changes what it would open." >&2
+    exit 2
+  fi
+  head=$(git -C "$pr_dir" rev-parse HEAD 2>/dev/null)
+  marker="$(git -C "$pr_dir" rev-parse --absolute-git-dir 2>/dev/null)/claude-reviewed"
+  if [ -z "$head" ] || [ "$(cat "$marker" 2>/dev/null)" != "$head" ]; then
+    echo "Blocked: $seg" >&2
+    echo "Open pull requests with /open-pr: /code-review and /security-review have not run on this HEAD. See AGENTS.md, Git." >&2
+    exit 2
+  fi
+done < <(echo "$cmd" | tr ';&|' '\n')
 
 trigger=0
 while IFS= read -r segment; do
