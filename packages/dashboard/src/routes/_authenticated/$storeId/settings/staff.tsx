@@ -341,7 +341,7 @@ function StaffDetailsSheet({
           <section className="flex flex-col gap-2">
             <h3 className="font-medium text-sm">{t('admin.pages.staff.sessions.title')}</h3>
             {isError ? (
-              <p className="text-sm text-destructive">
+              <p className="text-sm text-destructive" role="alert">
                 {t('admin.pages.staff.details.load_failed')}
               </p>
             ) : isLoading ? (
