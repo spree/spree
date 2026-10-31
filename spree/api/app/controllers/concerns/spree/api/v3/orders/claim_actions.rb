@@ -70,7 +70,7 @@ module Spree
                 line_item: @order.line_items.find_by_prefix_id!(item[:line_item_id]),
                 quantity: item[:quantity].to_i,
                 description: item[:description],
-                send_replacement: item[:send_replacement].to_b,
+                send_replacement: Spree::Boolean.cast(item[:send_replacement]),
                 replacement_variant: replacement_variant_for(item[:replacement_variant_id]),
                 refund_amount: item[:refund_amount]
               }

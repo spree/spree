@@ -131,7 +131,7 @@ module Spree::Preferences
       end
 
       define_method(:"prefers_#{name}?") do
-        stored_preference(name) { raise KeyError, "key not found: #{name.inspect}" }.to_b
+        Spree::Boolean.cast(stored_preference(name) { raise KeyError, "key not found: #{name.inspect}" })
       end
     end
 

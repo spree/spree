@@ -351,11 +351,11 @@ module Spree
       conditions << search_condition(Spree::Address, :first_name, sanitized_query)
       conditions << search_condition(Spree::Address, :last_name, sanitized_query)
 
-      full_name = NameOfPerson::PersonName.full(sanitized_query)
+      first, last = sanitized_query.squish.split(' ', 2)
 
-      if full_name.first.present? && full_name.last.present?
-        conditions << search_condition(Spree::Address, :first_name, full_name.first)
-        conditions << search_condition(Spree::Address, :last_name, full_name.last)
+      if first.present? && last.present?
+        conditions << search_condition(Spree::Address, :first_name, first)
+        conditions << search_condition(Spree::Address, :last_name, last)
       end
 
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
@@ -781,7 +781,7 @@ module Spree
     end
 
     def full_name
-      @full_name ||= if customer.present? && customer.name.present?
+      @full_name ||= if customer&.first_name.present?
                        customer.full_name
                      else
                        billing_address&.full_name || email

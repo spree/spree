@@ -724,7 +724,7 @@ module Spree
       Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
       # Turning it off only says "not at checkout" — it cannot distinguish
       # dispatch from manual, so an existing on_dispatch choice is preserved.
-      self.preferred_capture_method = if value.to_b
+      self.preferred_capture_method = if Spree::Boolean.cast(value)
                                         'checkout'
                                       elsif capture_at_checkout?
                                         'manual'
@@ -742,7 +742,7 @@ module Spree
     # @deprecated Use #preferred_capture_method=; removed in 6.1.
     def preferred_auto_capture_on_dispatch=(value)
       Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
-      self.preferred_capture_method = if value.to_b
+      self.preferred_capture_method = if Spree::Boolean.cast(value)
                                         'on_dispatch'
                                       elsif capture_on_dispatch?
                                         'manual'

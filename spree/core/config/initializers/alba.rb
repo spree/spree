@@ -1,4 +1,4 @@
-Alba.backend = :oj_rails
+Alba.backend = :active_support
 Alba.inflector = :active_support
 
 # Custom types

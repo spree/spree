@@ -1,0 +1,30 @@
+---
+title: Upgrading to Spree 6.1
+description: Guide to upgrading a Spree 6.0 application to Spree 6.1
+noindex: true
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 6.0](/developer/upgrades/5.6-to-6.0).
+</Info>
+
+## Removed gem dependencies
+
+Spree 6.1 no longer installs the gems below. If your application or one of your extensions uses them, add them to your own `Gemfile`.
+
+| Gem | What stops working without it | Use instead |
+| --- | --- | --- |
+| `wannabe_bool` | `to_b`, `to_bool` and `to_boolean` on strings, symbols, numbers, `nil`, `true` and `false` | `Spree::Boolean.cast(value)`, which follows the same rules |
+| `name_of_person` | `name` and `name=` on `Spree::Customer` and `Spree::AdminUser`, including `name.familiar` and `name.initials` | `full_name`, `first_name` and `last_name` |
+| `oj` | The `Oj` constant | Nothing to change for API responses: Spree now renders them with the Rails JSON encoder, and they are byte for byte the same |
+| `safely_block` | `safely` and `Safely` | Rescue the error and report it with `Rails.error.report` |
+| `rexml` | `REXML` | `Nokogiri`, which Spree still depends on |
+| `benchmark` | `Benchmark` on Ruby 3.5 and later | `Process.clock_gettime(Process::CLOCK_MONOTONIC)` |
+
+To keep one of them, add it back:
+
+```ruby server/Gemfile
+gem 'wannabe_bool'
+```
+
+`Spree::Customer#full_name` and `Spree::AdminUser#full_name` now return the last name alone when the first name is blank. Before, they returned `nil`.

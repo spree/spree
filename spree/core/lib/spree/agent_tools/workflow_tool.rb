@@ -647,7 +647,7 @@ module Spree
       def label_for(record)
         return if record.nil?
 
-        record.try(:number) || record.try(:name) || record.try(:prefixed_id)
+        record.try(:number) || record.try(:name) || record.try(:full_name) || record.try(:prefixed_id)
       end
     end
   end

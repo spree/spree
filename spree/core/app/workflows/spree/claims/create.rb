@@ -103,7 +103,7 @@ module Spree
             description: item[:description],
             # A caller that omits this — or passes nil for an absent param —
             # must not write NULL over the column default.
-            send_replacement: item[:send_replacement].to_b,
+            send_replacement: Spree::Boolean.cast(item[:send_replacement]),
             replacement_variant: item[:replacement_variant],
             refund_amount: item[:refund_amount] || 0
           )

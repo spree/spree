@@ -580,7 +580,7 @@ module Spree
 
     def set_user_attributes
       customer = customer_owner
-      if customer.name.blank?
+      if customer.first_name.blank?
         customer.first_name = first_name
         customer.last_name = last_name
       end

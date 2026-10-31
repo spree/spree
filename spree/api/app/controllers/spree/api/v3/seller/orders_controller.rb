@@ -79,8 +79,8 @@ module Spree
                 canceler: current_actor,
                 reason: cancel_reason,
                 note: params[:cancel_note].presence,
-                refund_payments: params[:refund_payments].to_b,
-                notify_customer: params[:notify_customer].to_b
+                refund_payments: Spree::Boolean.cast(params[:refund_payments]),
+                notify_customer: Spree::Boolean.cast(params[:notify_customer])
               )
 
               if result.success?

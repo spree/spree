@@ -87,7 +87,8 @@ module Spree
 
           skip_before_action :set_resource, only: [:index, :create]
           before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :resend_confirmation, :resend_digital_links, :po_document]
-          before_action :require_refund_permission!, only: :cancel, if: -> { params[:refund_payments].to_b }
+          before_action :require_refund_permission!, only: :cancel,
+                                                     if: -> { Spree::Boolean.cast(params[:refund_payments]) }
 
           # POST /api/v3/admin/orders
           def create
@@ -133,7 +134,7 @@ module Spree
             with_order_lock do
               result = Spree.order_complete_workflow.call(
                 order: @resource,
-                payment_pending: params[:payment_pending].to_b,
+                payment_pending: Spree::Boolean.cast(params[:payment_pending]),
                 notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer])
               )
 
@@ -153,9 +154,9 @@ module Spree
                 canceler: current_actor,
                 reason: cancel_reason,
                 note: params[:cancel_note].presence,
-                refund_payments: params[:refund_payments].to_b,
+                refund_payments: Spree::Boolean.cast(params[:refund_payments]),
                 refund_amount: params[:refund_amount].presence,
-                notify_customer: params[:notify_customer].to_b
+                notify_customer: Spree::Boolean.cast(params[:notify_customer])
               )
 
               if result.success?
