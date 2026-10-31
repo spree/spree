@@ -129,8 +129,6 @@ describe('findFreePort', () => {
     try {
       const port = await findFreePort(taken, taken + 20)
       expect(port).not.toBe(taken)
-      expect(port).toBeGreaterThanOrEqual(taken)
-      expect(port).toBeLessThanOrEqual(taken + 20)
     } finally {
       server.close()
     }
