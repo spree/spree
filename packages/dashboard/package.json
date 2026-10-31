@@ -67,12 +67,9 @@
     "@tanstack/virtual-file-routes": "catalog:",
     "date-fns": "catalog:",
     "date-fns-tz": "catalog:",
+    "dompurify": "^3.4.17",
     "lucide-react": "catalog:",
-    "react-markdown": "^10.1.0",
     "recharts": "catalog:",
-    "rehype-raw": "^7.0.0",
-    "rehype-sanitize": "^6.0.0",
-    "remark-gfm": "^4.0.1",
     "zod": "catalog:"
   },
   "devDependencies": {
