@@ -42,6 +42,7 @@ module Spree
                 current_currency,
                 current_locale,
                 (hide_prices? ? 'prices_hidden' : nil),
+                (current_store.preferred_show_products_without_price ? 'unpriced_shown' : nil),
                 buyer_catalog_fragment,
                 category&.cache_key_with_version,
                 collection&.cache_key_with_version,

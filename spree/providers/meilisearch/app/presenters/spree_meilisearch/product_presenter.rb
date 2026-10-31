@@ -69,7 +69,8 @@ module SpreeMeilisearch
         # Non-locale/currency fields
         status: product.status,
         sku: product.sku,
-        in_stock: product.in_stock?,
+        # Read as Spree::Product.in_stock reads it, so both providers agree.
+        in_stock: product.variants.any? { |variant| stocked?(variant) },
         # True when the product has an active pre-order variant, so a
         # scheduled (future-published) launch still surfaces in search.
         preorder: product.preorder?,
@@ -81,8 +82,12 @@ module SpreeMeilisearch
         collection_ids: product.collections.map(&:prefixed_id),
         option_type_ids: product.option_types.map(&:prefixed_id),
         option_type_names: product.option_types.map { |ot| translated(ot, :label, fallback_locale) },
-        option_value_ids: variant_option_value_ids,
-        option_value_combination_ids: variant_option_value_combination_ids,
+        # Through the variants Spree::Variant.for_option_filters selects, so
+        # both providers count the same products for a value.
+        option_value_ids: option_value_ids_for(option_filter_variants(currency)),
+        option_value_combination_ids: option_value_combination_ids_for(option_filter_variants(currency)),
+        in_stock_option_value_ids: option_value_ids_for(in_stock_option_filter_variants(currency)),
+        in_stock_option_value_combination_ids: option_value_combination_ids_for(in_stock_option_filter_variants(currency)),
         option_values: variant_option_values_data.map { |ov| translated(ov, :label, fallback_locale) }.uniq,
         tags: product.tag_list || [],
         units_sold_count: product.units_sold_count || 0,
@@ -210,8 +215,25 @@ module SpreeMeilisearch
       "#{klass._prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([raw_id])}"
     end
 
-    def variant_option_value_ids
-      variant_option_values_data.map(&:prefixed_id).uniq
+    def option_filter_variants(currency)
+      @option_filter_variants ||= {}
+      @option_filter_variants[currency] ||= product.variants.reject(&:discontinued?).select do |variant|
+        Spree::StorePreferences.read(store, :show_products_without_price) || variant.amount_in(currency).present?
+      end
+    end
+
+    def in_stock_option_filter_variants(currency)
+      @in_stock_option_filter_variants ||= {}
+      @in_stock_option_filter_variants[currency] ||= option_filter_variants(currency).select { |variant| stocked?(variant) }
+    end
+
+    # Mirrors Spree::Variant.in_stock_or_backorderable, which ignores checkout reservations, unlike Variant#in_stock?.
+    def stocked?(variant)
+      !variant.track_inventory? || variant.stock_levels.any? { |level| level.available_count.positive? || level.backorderable? }
+    end
+
+    def option_value_ids_for(variants)
+      variants.flat_map(&:option_values).map(&:prefixed_id).uniq
     end
 
     # One token per combination of option values that appear on the SAME
@@ -233,8 +255,8 @@ module SpreeMeilisearch
     # narrows exactly — never to an approximation that would disagree with it.
     MAX_COMBINATION_AXES = 6
 
-    def variant_option_value_combination_ids
-      product.variants.flat_map do |variant|
+    def option_value_combination_ids_for(variants)
+      variants.flat_map do |variant|
         ids = variant.option_values.map(&:prefixed_id).sort
         (2..[ids.size, MAX_COMBINATION_AXES].min).flat_map do |size|
           ids.combination(size).map { |combination| combination.join('|') }

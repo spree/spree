@@ -631,6 +631,12 @@ steps:
       do not carry it, so a filter naming two or more option types matches
       nothing until the index is rebuilt.
 
+      Option values are now indexed only from variants that are not
+      discontinued and have a price (unless the store shows products without
+      one), with a second set for the "in stock" filter, and `in_stock` counts
+      backorderable stock as the database provider does. Until the rebuild,
+      an option filter combined with "in stock" matches nothing.
+
       Safe to run at any time and safe to repeat; it re-enqueues every product.
 
   - id: fold_store_credit_categories
