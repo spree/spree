@@ -7,9 +7,6 @@ on:
       - 'spree/**'
       - '.github/workflows/tests.yml'
   pull_request:
-    paths:
-      - 'spree/**'
-      - '.github/workflows/tests.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,8 +16,29 @@ permissions:
   contents: read
 
 jobs:
+  # Pull requests always start this workflow so its result check always
+  # reports; this job decides whether the backend suites need to run.
+  changes:
+    name: "Detect changes"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      backend: ${{ github.event_name != 'pull_request' || steps.filter.outputs.backend == 'true' }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        if: github.event_name == 'pull_request'
+        with:
+          filters: |
+            backend:
+              - 'spree/**'
+              - '.github/workflows/tests.yml'
+
   build-postgres:
     name: "Build (PostgreSQL)"
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     env:
       DB: postgres
@@ -70,6 +88,8 @@ jobs:
 
   build-mysql:
     name: "Build (MySQL)"
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     env:
       DB: mysql
@@ -474,3 +494,24 @@ jobs:
           name: brakeman-reports
           path: spree/brakeman-*.*
           if-no-files-found: ignore
+
+  # The one check branch protection should require from this workflow. It
+  # passes when every job passed or was skipped because nothing relevant
+  # changed, and fails on any failure or cancellation.
+  result:
+    name: "Tests passed"
+    needs: [changes, build-postgres, build-mysql, test-postgres, test-mysql, brakeman]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check job results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in $RESULTS; do
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              echo "A required job finished as: $result"
+              exit 1
+            fi
+          done
+          echo "All jobs passed or were not needed."
