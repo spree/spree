@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sandbox-rest.avatax.com/api/v2/transactions/create
+    body:
+      encoding: UTF-8
+      string: '{"type":"ReturnInvoice","companyCode":"AVALARA_COMPANY","code":"R-TAXDATE-1793272655-RET1","commit":true,"date":"2026-10-29","currencyCode":"USD","customerCode":"cust_UkLWZg9DAJ","addresses":{"shipFrom":{"line1":"2000
+        Main Street","city":"Irvine","region":"CA","country":"US","postalCode":"92614"},"shipTo":{"line1":"4
+        Lovely Street","line2":"Northwest","city":"New York","region":"NY","country":"US","postalCode":"10001"}},"lines":[{"number":"li_UkLWZg9DAJ","quantity":1,"amount":"-100.0","taxIncluded":false,"discounted":false,"discount":0,"description":"Product
+        41196","itemCode":"SKU-4","taxCode":"P0000000","addresses":{"shipFrom":{"line1":"2000
+        Main Street","city":"Irvine","region":"CA","country":"US","postalCode":"92614"},"shipTo":{"line1":"4
+        Lovely Street","line2":"Northwest","city":"New York","region":"NY","country":"US","postalCode":"10001"}},"taxOverride":{"type":"TaxAmount","reason":"Refund","taxAmount":"-8.88","taxDate":"2024-01-15"}}]}'
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.8.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.8.3;
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Thu, 29 Oct 2026 11:17:36 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Location:
+      - "/api/v2/companies/848106/transactions/95035507880423"
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - ba0e2787-7aed-4753-ac97-41d370410210
+      X-Avalara-Uid:
+      - ba0e2787-7aed-4753-ac97-41d370410210
+      X-Avalara-Gateway-Pod:
+      - avagateway-675d688f89-67dlg
+      Serverduration:
+      - '00:00:00.0437103'
+      Api-Supported-Versions:
+      - '2.0'
+      X-Envoy-Upstream-Service-Time:
+      - '44'
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      X-Download-Options:
+      - noopen
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Permissions-Policy:
+      - camera 'none';microphone 'none';geolocation 'none';encrypted-media 'none';payment
+        'none';speaker 'none';usb 'none';
+      X-Cip-Engine:
+      - containers
+      X-Cip-Site:
+      - gcp_us-west3
+      X-Cip-Environment:
+      - sbx
+    body:
+      encoding: UTF-8
+      string: '{"id":95035507880423,"code":"R-TAXDATE-1793272655-RET1","companyId":848106,"date":"2026-10-29","status":"Committed","type":"ReturnInvoice","batchCode":"","currencyCode":"USD","exchangeRateCurrencyCode":"USD","customerUsageType":"","entityUseCode":"","customerVendorCode":"cust_UkLWZg9DAJ","customerCode":"cust_UkLWZg9DAJ","exemptNo":"","reconciled":false,"locationCode":"","reportingLocationCode":"","purchaseOrderNo":"","referenceCode":"","salespersonCode":"","taxOverrideType":"None","taxOverrideAmount":0.0,"taxOverrideReason":"","totalAmount":-100.0,"totalExempt":0.0,"totalDiscount":0.0,"totalTax":-8.88,"totalTaxable":-100.0,"totalTaxCalculated":-8.88,"adjustmentReason":"NotAdjusted","adjustmentDescription":"","locked":false,"region":"NY","country":"US","version":1,"softwareVersion":"26.10.2.0","originAddressId":95035507880426,"destinationAddressId":95035507880427,"exchangeRateEffectiveDate":"2026-10-29","exchangeRate":1.0,"email":"","businessIdentificationNo":"","modifiedDate":"2026-10-29T11:17:36.5648243Z","modifiedUserId":429316,"taxDate":"2026-10-29","lines":[{"id":95035507880431,"transactionId":95035507880423,"lineNumber":"li_UkLWZg9DAJ","boundaryOverrideId":0,"customerUsageType":"","entityUseCode":"","description":"Product
+        41196","destinationAddressId":95035507880424,"originAddressId":95035507880425,"discountAmount":0.0,"discountTypeId":0,"exemptAmount":0.0,"exemptCertId":0,"exemptNo":"","isItemTaxable":true,"isSSTP":false,"itemCode":"SKU-4","lineAmount":-100.0,"quantity":1.0,"ref1":"","ref2":"","reportingDate":"2026-10-29","revAccount":"","sourcing":"Destination","tax":-8.88,"taxableAmount":-100.0,"taxCalculated":-8.88,"taxCode":"P0000000","taxCodeId":8087,"taxDate":"2024-01-15","taxEngine":"","taxOverrideType":"TaxAmount","businessIdentificationNo":"","taxOverrideAmount":-8.88,"taxOverrideReason":"Refund","taxIncluded":false,"details":[{"id":95035507880438,"transactionLineId":95035507880431,"transactionId":95035507880423,"addressId":95035507880424,"country":"US","region":"NY","countyFIPS":"","stateFIPS":"36","exemptAmount":0.0,"exemptReasonId":4,"exemptRuleId":0,"inState":false,"jurisCode":"36","jurisName":"NEW
+        YORK","jurisdictionId":42,"signatureCode":"BFEQ","stateAssignedNo":"","jurisType":"STA","jurisdictionType":"State","nonTaxableAmount":0.0,"nonTaxableRuleId":0,"nonTaxableType":"RateRule","rate":0.04,"rateRuleId":2908845,"rateSourceId":3,"serCode":"","sourcing":"Destination","tax":-4.0,"taxableAmount":-100.0,"taxType":"Sales","taxSubTypeId":"S","taxTypeGroupId":"SalesAndUse","taxName":"NY
+        STATE TAX","taxAuthorityTypeId":45,"taxAuthorityId":71,"taxRegionId":4028661,"taxCalculated":-4.0,"taxOverride":-4.0,"rateType":"General","rateTypeCode":"G","taxableUnits":-100.0,"nonTaxableUnits":0.0,"exemptUnits":0.0,"unitOfBasis":"PerCurrencyUnit","isNonPassThru":false,"isFee":false,"reportingTaxableUnits":-100.0,"reportingNonTaxableUnits":0.0,"reportingExemptUnits":0.0,"reportingTax":-4.0,"reportingTaxCalculated":-4.0,"liabilityType":"Seller","chargedTo":"Buyer","collectedBy":"Seller"},{"id":95035507880439,"transactionLineId":95035507880431,"transactionId":95035507880423,"addressId":95035507880424,"country":"US","region":"NY","countyFIPS":"","stateFIPS":"36","exemptAmount":0.0,"exemptReasonId":4,"exemptRuleId":0,"inState":false,"jurisCode":"51000","jurisName":"NEW
+        YORK CITY","jurisdictionId":2001053475,"signatureCode":"EHTG","stateAssignedNo":"NE
+        8081","jurisType":"CIT","jurisdictionType":"City","nonTaxableAmount":0.0,"nonTaxableRuleId":0,"nonTaxableType":"RateRule","rate":0.045,"rateRuleId":2908830,"rateSourceId":3,"serCode":"","sourcing":"Destination","tax":-4.5,"taxableAmount":-100.0,"taxType":"Sales","taxSubTypeId":"S","taxTypeGroupId":"SalesAndUse","taxName":"NY
+        CITY TAX","taxAuthorityTypeId":45,"taxAuthorityId":71,"taxRegionId":4028661,"taxCalculated":-4.5,"taxOverride":-4.5,"rateType":"General","rateTypeCode":"G","taxableUnits":-100.0,"nonTaxableUnits":0.0,"exemptUnits":0.0,"unitOfBasis":"PerCurrencyUnit","isNonPassThru":false,"isFee":false,"reportingTaxableUnits":-100.0,"reportingNonTaxableUnits":0.0,"reportingExemptUnits":0.0,"reportingTax":-4.5,"reportingTaxCalculated":-4.5,"liabilityType":"Seller","chargedTo":"Buyer","collectedBy":"Seller"},{"id":95035507880440,"transactionLineId":95035507880431,"transactionId":95035507880423,"addressId":95035507880424,"country":"US","region":"NY","countyFIPS":"","stateFIPS":"36","exemptAmount":0.0,"exemptReasonId":4,"exemptRuleId":0,"inState":false,"jurisCode":"359071","jurisName":"METROPOLITAN
+        COMMUTER TRANSPORTATION DISTRICT","jurisdictionId":359071,"signatureCode":"BGJP","stateAssignedNo":"NE
+        8081","jurisType":"STJ","jurisdictionType":"Special","nonTaxableAmount":0.0,"nonTaxableRuleId":0,"nonTaxableType":"RateRule","rate":0.00375,"rateRuleId":2908847,"rateSourceId":3,"serCode":"","sourcing":"Destination","tax":-0.38,"taxableAmount":-100.0,"taxType":"Sales","taxSubTypeId":"S","taxTypeGroupId":"SalesAndUse","taxName":"NY
+        SPECIAL TAX","taxAuthorityTypeId":45,"taxAuthorityId":71,"taxRegionId":4028661,"taxCalculated":-0.38,"taxOverride":-0.38,"rateType":"General","rateTypeCode":"G","taxableUnits":-100.0,"nonTaxableUnits":0.0,"exemptUnits":0.0,"unitOfBasis":"PerCurrencyUnit","isNonPassThru":false,"isFee":false,"reportingTaxableUnits":-100.0,"reportingNonTaxableUnits":0.0,"reportingExemptUnits":0.0,"reportingTax":-0.38,"reportingTaxCalculated":-0.38,"liabilityType":"Seller","chargedTo":"Buyer","collectedBy":"Seller"}],"nonPassthroughDetails":[],"lineLocationTypes":[{"documentLineLocationTypeId":95035507880433,"documentLineId":95035507880431,"documentAddressId":95035507880425,"locationTypeCode":"ShipFrom"},{"documentLineLocationTypeId":95035507880434,"documentLineId":95035507880431,"documentAddressId":95035507880424,"locationTypeCode":"ShipTo"}],"hsCode":"","costInsuranceFreight":0.0,"vatCode":"","vatNumberTypeId":0}],"addresses":[{"id":95035507880424,"transactionId":95035507880423,"boundaryLevel":"Zip5","line1":"4
+        Lovely Street","line2":"Northwest","line3":"","city":"New York","region":"NY","postalCode":"10001","country":"US","taxRegionId":4028661,"taxRegionIdAv":0,"latitude":"40.7483","longitude":"-73.9929"},{"id":95035507880425,"transactionId":95035507880423,"boundaryLevel":"Zip5","line1":"2000
+        Main St","line2":"","line3":"","city":"Irvine","region":"CA","postalCode":"92614-7211","country":"US","taxRegionId":4017409,"taxRegionIdAv":0,"latitude":"33.68433","longitude":"-117.850632"},{"id":95035507880426,"transactionId":95035507880423,"boundaryLevel":"Zip5","line1":"2000
+        Main Street","line2":"","line3":"","city":"Irvine","region":"CA","postalCode":"92614","country":"US","taxRegionId":0,"taxRegionIdAv":0},{"id":95035507880427,"transactionId":95035507880423,"boundaryLevel":"Zip5","line1":"4
+        Lovely Street","line2":"Northwest","line3":"","city":"New York","region":"NY","postalCode":"10001","country":"US","taxRegionId":0,"taxRegionIdAv":0}],"locationTypes":[{"documentLocationTypeId":95035507880429,"documentId":95035507880423,"documentAddressId":95035507880426,"locationTypeCode":"ShipFrom"},{"documentLocationTypeId":95035507880430,"documentId":95035507880423,"documentAddressId":95035507880427,"locationTypeCode":"ShipTo"}],"summary":[{"country":"US","region":"NY","jurisType":"State","jurisCode":"36","jurisName":"NEW
+        YORK","taxAuthorityType":45,"stateAssignedNo":"","taxType":"Sales","taxSubType":"S","taxName":"NY
+        STATE TAX","rateType":"General","taxable":-100.0,"rate":0.04,"tax":-4.0,"taxCalculated":-4.0,"nonTaxable":0.0,"exemption":0.0},{"country":"US","region":"NY","jurisType":"City","jurisCode":"51000","jurisName":"NEW
+        YORK CITY","taxAuthorityType":45,"stateAssignedNo":"NE 8081","taxType":"Sales","taxSubType":"S","taxName":"NY
+        CITY TAX","rateType":"General","taxable":-100.0,"rate":0.045,"tax":-4.5,"taxCalculated":-4.5,"nonTaxable":0.0,"exemption":0.0},{"country":"US","region":"NY","jurisType":"Special","jurisCode":"359071","jurisName":"METROPOLITAN
+        COMMUTER TRANSPORTATION DISTRICT","taxAuthorityType":45,"stateAssignedNo":"NE
+        8081","taxType":"Sales","taxSubType":"S","taxName":"NY SPECIAL TAX","rateType":"General","taxable":-100.0,"rate":0.00375,"tax":-0.38,"taxCalculated":-0.38,"nonTaxable":0.0,"exemption":0.0}]}'
+  recorded_at: Thu, 29 Oct 2026 11:17:36 GMT
+recorded_with: VCR 6.4.0

@@ -16,7 +16,7 @@ Feature plans live in `docs/plans/`, written from `docs/plans/_template.md` — 
 | `spree/dashboard` | `spree_dashboard` (optional) — serves a built dashboard at `/dashboard` and seller panel at `/sellers` from the Rails node |
 | `spree/mcp` | `spree_mcp` — MCP server for the back office, under the Admin API's tenancy and permission rules |
 | `spree/opentelemetry` | `spree_opentelemetry` — distributed tracing |
-| `spree/providers/*` | Provider gems with flat names: `spree_easypost` (rates, labels), `spree_meilisearch` (product search), `spree_stripe` (payments) |
+| `spree/providers/*` | Provider gems with flat names: `spree_avalara` (tax), `spree_easypost` (rates, labels), `spree_meilisearch` (product search), `spree_stripe` (payments) |
 | `packages/dashboard` | `@spree/dashboard` — React admin SPA: routes, schemas, resource hooks, locales |
 | `packages/dashboard-core` | `@spree/dashboard-core` — framework and plugin API: registries, providers, shared hooks and components, admin SDK client |
 | `packages/dashboard-ui` | `@spree/dashboard-ui` — design system (shadcn on Base UI); source-only, headless |
@@ -87,6 +87,6 @@ pnpm test:rspec core spec/models/spree/state_spec.rb:7   # targeted run in one e
 pnpm test:rspec api                   # a full engine suite (queued machine-wide)
 ```
 
-The full suite is CI's job: push and watch `gh pr checks --watch`. Run a full suite locally only to reproduce a CI failure, or when a change touches everything (a factory, a migration, `Spree::Base`). Engines: `core`, `api`, `emails`, `dashboard`, `opentelemetry`, `easypost`, `meilisearch`, `stripe`.
+The full suite is CI's job: push and watch `gh pr checks --watch`. Run a full suite locally only to reproduce a CI failure, or when a change touches everything (a factory, a migration, `Spree::Base`). Engines: `core`, `api`, `emails`, `dashboard`, `opentelemetry`, `avalara`, `easypost`, `meilisearch`, `stripe`.
 
 Every behaviour change a merchant or seller can see — including a backend-only validation or status rule — ships with a Playwright spec (see `packages/AGENTS.md`).
