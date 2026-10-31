@@ -39,6 +39,22 @@ while IFS= read -r segment; do
   fi
 done < <(echo "$cmd" | tr ';&|' '\n')
 
+# Pull requests open through /open-pr, which runs /code-review and
+# /security-review and then records the reviewed HEAD in the git dir. Block a
+# bare `gh pr create` until that marker matches HEAD, so a commit made after
+# the reviews sends the branch back through them.
+while IFS= read -r segment; do
+  seg="${segment#"${segment%%[![:space:]]*}"}"
+  [[ "$seg" =~ ^([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*(env[[:space:]]+)?gh[[:space:]]+pr[[:space:]]+create([[:space:]]|$) ]] || continue
+  repo_dir="${CLAUDE_PROJECT_DIR:-.}"
+  marker="$(git -C "$repo_dir" rev-parse --absolute-git-dir 2>/dev/null)/claude-reviewed"
+  if [ "$(cat "$marker" 2>/dev/null)" != "$(git -C "$repo_dir" rev-parse HEAD 2>/dev/null)" ]; then
+    echo "Blocked: $seg" >&2
+    echo "Open pull requests with /open-pr: /code-review and /security-review have not run on this HEAD. See AGENTS.md, Git." >&2
+    exit 2
+  fi
+done < <(echo "$cmd" | tr ';&|' '\n')
+
 # Split on shell separators (; && || | &) and check each segment for a real
 # git commit/push invocation. Handles env-var prefixes (FOO=bar, env FOO=bar)
 # and git's top-level option flags (-C path, -c k=v, --no-pager, etc.) so

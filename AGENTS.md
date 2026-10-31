@@ -74,6 +74,7 @@ pnpm wt:template         # rebuild the template DB after schema-changing pulls
 - Never commit to `main`. Branches start with `feat/`, `fix/` or `chore/`; bug-fix commits start with `Fix: `.
 - Titles use plain verbs (Added, Removed, Fixed, Changed). Bodies are three or four sentences on what and why.
 - No co-author or "generated with" trailers.
+- Open every pull request with `/open-pr` (code review, security review, open, monitor). A hook blocks a bare `gh pr create` until both reviews have run on `HEAD`.
 - Pull request descriptions are public: no credentials, personal data or local URLs. Keep them short; bullets for larger changes.
 
 ## Testing
