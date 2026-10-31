@@ -3,39 +3,8 @@ name: Packages
 on:
   push:
     branches: [main, '6-0-dev']
-    paths:
-      - "packages/**"
-      - "spree/api/app/**"
-      - "spree/api/lib/typelizer/**"
-      - "spree/core/app/**"
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - "biome.json"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - "scripts/sync-starter.mjs"
-      - "scripts/check-dependency-ranges.mjs"
-      - ".github/workflows/packages.yml"
   pull_request:
-    paths:
-      - "packages/**"
-      - "spree/api/app/**"
-      - "spree/api/lib/typelizer/**"
-      - "spree/core/app/**"
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - "biome.json"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - "scripts/sync-starter.mjs"
-      - "scripts/check-dependency-ranges.mjs"
-      - ".github/workflows/packages.yml"
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -45,8 +14,47 @@ permissions:
   contents: read
 
 jobs:
+  # Every pull request, merge queue entry and push starts this workflow so its
+  # result check always reports; this job decides whether the rest must run.
+  changes:
+    name: "Detect changes"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      packages: ${{ steps.filter.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v7
+        if: github.event_name != 'pull_request'
+
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          # Pushes compare against the branch's previous commit.
+          base: ${{ github.event_name == 'push' && github.ref_name || '' }}
+          filters: |
+            packages:
+              - "packages/**"
+              - "spree/api/app/**"
+              - "spree/api/lib/typelizer/**"
+              - "spree/core/app/**"
+              - "docs/developer/**"
+              - "docs/api-reference/**"
+              - "docs/integrations/**"
+              - "pnpm-lock.yaml"
+              - "turbo.json"
+              - "biome.json"
+              - "package.json"
+              - "pnpm-workspace.yaml"
+              - "scripts/sync-starter.mjs"
+              - "scripts/check-dependency-ranges.mjs"
+              - ".github/workflows/packages.yml"
+
   check:
     name: "Typecheck, Test & Build"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -137,6 +145,8 @@ jobs:
   # generated app installs packed tarballs on its own.
   scaffolded-app:
     name: "Scaffolded app - Typecheck & Lint"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     steps:
       # Runs the pull request's install and build scripts; nothing needs an
@@ -234,6 +244,8 @@ jobs:
 
   sdk-integration:
     name: "SDK Integration Tests"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -269,6 +281,8 @@ jobs:
 
   dashboard-e2e:
     name: "Dashboard - E2E (${{ matrix.shard }}/4)"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     # Each shard is a full isolated stack (own Rails + SQLite + Vite), so
     # shards can't interfere through shared server state the way parallel
@@ -386,18 +400,36 @@ jobs:
             packages/dashboard/test-results-first-run/
           retention-days: 14
 
-  # Stable single-status roll-up of the shard matrix, keeping the check name
-  # branch-protection rules and status badges can pin against.
-  dashboard-e2e-result:
-    name: "Dashboard - E2E"
-    needs: dashboard-e2e
-    if: ${{ !cancelled() }}
+  # The one check branch protection should require from this workflow. It
+  # passes when every job passed or was skipped because nothing relevant
+  # changed, and fails on any failure or cancellation.
+  result:
+    name: "Packages passed"
+    needs: [changes, check, scaffolded-app, sdk-integration, dashboard-e2e]
+    if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check shard results
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/workflows/packages.yml
+          sparse-checkout-cone-mode: false
+
+      - name: Check that this job waits for every other job
         run: |
-          if [ "${{ needs.dashboard-e2e.result }}" != "success" ]; then
-            echo "One or more E2E shards did not succeed: ${{ needs.dashboard-e2e.result }}"
+          missing=$(yq '((.jobs | keys) - .jobs.result.needs) - ["result"] | .[]' .github/workflows/packages.yml)
+          if [ -n "$missing" ]; then
+            echo "Add these jobs to result.needs: $missing"
             exit 1
           fi
-          echo "All E2E shards passed."
+
+      - name: Check job results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in $RESULTS; do
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              echo "A required job finished as: $result"
+              exit 1
+            fi
+          done
+          echo "All jobs passed or were not needed."
