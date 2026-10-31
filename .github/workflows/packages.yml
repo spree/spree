@@ -20,22 +20,6 @@ on:
       - "scripts/check-dependency-ranges.mjs"
       - ".github/workflows/packages.yml"
   pull_request:
-    paths:
-      - "packages/**"
-      - "spree/api/app/**"
-      - "spree/api/lib/typelizer/**"
-      - "spree/core/app/**"
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - "biome.json"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - "scripts/sync-starter.mjs"
-      - "scripts/check-dependency-ranges.mjs"
-      - ".github/workflows/packages.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -45,8 +29,42 @@ permissions:
   contents: read
 
 jobs:
+  # Pull requests always start this workflow so its result check always
+  # reports; this job decides whether the package jobs need to run.
+  changes:
+    name: "Detect changes"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      packages: ${{ github.event_name != 'pull_request' || steps.filter.outputs.packages == 'true' }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        if: github.event_name == 'pull_request'
+        with:
+          filters: |
+            packages:
+              - "packages/**"
+              - "spree/api/app/**"
+              - "spree/api/lib/typelizer/**"
+              - "spree/core/app/**"
+              - "docs/developer/**"
+              - "docs/api-reference/**"
+              - "docs/integrations/**"
+              - "pnpm-lock.yaml"
+              - "turbo.json"
+              - "biome.json"
+              - "package.json"
+              - "pnpm-workspace.yaml"
+              - "scripts/sync-starter.mjs"
+              - "scripts/check-dependency-ranges.mjs"
+              - ".github/workflows/packages.yml"
+
   check:
     name: "Typecheck, Test & Build"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -137,6 +155,8 @@ jobs:
   # generated app installs packed tarballs on its own.
   scaffolded-app:
     name: "Scaffolded app - Typecheck & Lint"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     steps:
       # Runs the pull request's install and build scripts; nothing needs an
@@ -234,6 +254,8 @@ jobs:
 
   sdk-integration:
     name: "SDK Integration Tests"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -269,6 +291,8 @@ jobs:
 
   dashboard-e2e:
     name: "Dashboard - E2E (${{ matrix.shard }}/4)"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     # Each shard is a full isolated stack (own Rails + SQLite + Vite), so
     # shards can't interfere through shared server state the way parallel
@@ -390,8 +414,8 @@ jobs:
   # branch-protection rules and status badges can pin against.
   dashboard-e2e-result:
     name: "Dashboard - E2E"
-    needs: dashboard-e2e
-    if: ${{ !cancelled() }}
+    needs: [changes, dashboard-e2e]
+    if: ${{ !cancelled() && needs.changes.outputs.packages == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check shard results
@@ -401,3 +425,24 @@ jobs:
             exit 1
           fi
           echo "All E2E shards passed."
+
+  # The one check branch protection should require from this workflow. It
+  # passes when every job passed or was skipped because nothing relevant
+  # changed, and fails on any failure or cancellation.
+  result:
+    name: "Packages passed"
+    needs: [changes, check, scaffolded-app, sdk-integration, dashboard-e2e, dashboard-e2e-result]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check job results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in $RESULTS; do
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              echo "A required job finished as: $result"
+              exit 1
+            fi
+          done
+          echo "All jobs passed or were not needed."
