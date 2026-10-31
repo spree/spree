@@ -41,4 +41,10 @@ describe('run', () => {
   it('surfaces a missing command as ENOENT', async () => {
     await expect(run('spree-command-that-does-not-exist')).rejects.toMatchObject({ code: 'ENOENT' })
   })
+
+  it('names a timeout as a timeout', async () => {
+    await expect(
+      run(process.execPath, node('setTimeout(() => {}, 5000)'), { timeout: 200 }),
+    ).rejects.toThrow(/timed out after 200 ms/)
+  })
 })

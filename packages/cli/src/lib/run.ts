@@ -74,8 +74,13 @@ export async function run(
       stderr: stripFinalNewline(output.stderr),
       exitCode: child.exitCode ?? (child.signalCode ? 1 : 0),
     }
-  } catch (error) {
+  } catch (cause) {
     // The command could not start (not installed) or ran past its timeout.
+    const timedOut =
+      cause instanceof Error && (cause.cause as Error | undefined)?.name === 'TimeoutError'
+    const error = timedOut
+      ? new Error(`Command timed out after ${timeout} ms: ${[file, ...args].join(' ')}`)
+      : cause
     if (reject) throw error
     return {
       stdout: '',

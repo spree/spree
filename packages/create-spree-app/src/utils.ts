@@ -120,9 +120,11 @@ function tryPort(port: number): Promise<number | null> {
 // Ports already handed out in this run, so overlapping ranges never share one.
 const claimedPorts = new Set<number>()
 
+const MAX_PORT = 65535
+
 /** The first free port from `from` to `to`, or any free port when all of them are taken. */
 export async function findFreePort(from: number, to: number): Promise<number> {
-  for (let port = from; port <= to; port++) {
+  for (let port = from; port <= Math.min(to, MAX_PORT); port++) {
     if (claimedPorts.has(port)) continue
     const bound = await tryPort(port)
     if (bound !== null) {
@@ -130,7 +132,12 @@ export async function findFreePort(from: number, to: number): Promise<number> {
       return bound
     }
   }
-  const any = (await tryPort(0)) ?? from
-  claimedPorts.add(any)
-  return any
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const any = await tryPort(0)
+    if (any !== null && !claimedPorts.has(any)) {
+      claimedPorts.add(any)
+      return any
+    }
+  }
+  return from
 }

@@ -127,7 +127,10 @@ describe('findFreePort', () => {
     await new Promise<void>((resolve) => server.listen(0, resolve))
     const taken = (server.address() as net.AddressInfo).port
     try {
-      expect(await findFreePort(taken, taken + 20)).not.toBe(taken)
+      const port = await findFreePort(taken, taken + 20)
+      expect(port).not.toBe(taken)
+      expect(port).toBeGreaterThanOrEqual(taken)
+      expect(port).toBeLessThanOrEqual(taken + 20)
     } finally {
       server.close()
     }
@@ -140,7 +143,11 @@ describe('findFreePort', () => {
     try {
       const port = await findFreePort(taken, taken)
       expect(port).not.toBe(taken)
-      expect(port).toBeGreaterThan(0)
+      await new Promise<void>((resolve, reject) => {
+        const probe = net.createServer()
+        probe.once('error', reject)
+        probe.listen(port, () => probe.close(() => resolve()))
+      })
     } finally {
       server.close()
     }
@@ -153,5 +160,11 @@ describe('findFreePort', () => {
 
   it('picks a free port when asked for port 0', async () => {
     expect(await findFreePort(0, 0)).toBeGreaterThan(0)
+  })
+
+  it('stops at the highest valid port', async () => {
+    const port = await findFreePort(65535, 65600)
+    expect(port).toBeGreaterThan(0)
+    expect(port).toBeLessThanOrEqual(65535)
   })
 })
