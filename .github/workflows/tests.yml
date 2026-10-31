@@ -3,10 +3,8 @@ name: Tests
 on:
   push:
     branches: [main, '6-0-dev', '*-stable']
-    paths:
-      - 'spree/**'
-      - '.github/workflows/tests.yml'
   pull_request:
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,20 +14,25 @@ permissions:
   contents: read
 
 jobs:
-  # Pull requests always start this workflow so its result check always
-  # reports; this job decides whether the backend suites need to run.
+  # Every pull request, merge queue entry and push starts this workflow so its
+  # result check always reports; this job decides whether the rest must run.
   changes:
     name: "Detect changes"
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
     outputs:
-      backend: ${{ github.event_name != 'pull_request' || steps.filter.outputs.backend == 'true' }}
+      backend: ${{ steps.filter.outputs.backend }}
     steps:
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v7
+        if: github.event_name != 'pull_request'
+
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
-        if: github.event_name == 'pull_request'
         with:
+          # Pushes compare against the branch's previous commit.
+          base: ${{ github.event_name == 'push' && github.ref_name || '' }}
           filters: |
             backend:
               - 'spree/**'
@@ -504,6 +507,19 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/workflows/tests.yml
+          sparse-checkout-cone-mode: false
+
+      - name: Check that this job waits for every other job
+        run: |
+          missing=$(yq '(.jobs | keys) - .jobs.result.needs - ["result"] | .[]' .github/workflows/tests.yml)
+          if [ -n "$missing" ]; then
+            echo "Add these jobs to result.needs: $missing"
+            exit 1
+          fi
+
       - name: Check job results
         env:
           RESULTS: ${{ join(needs.*.result, ' ') }}
