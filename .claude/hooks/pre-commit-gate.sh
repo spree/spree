@@ -53,21 +53,39 @@ done < <(echo "$cmd" | tr ';&|' '\n')
 # used) so the caller can scope the gate to the repo the command targets.
 GIT_C_PATH=""
 GIT_SUB=""
+
+# Sets LAUNCHED to the segment without what runs in front of the real command:
+# variable assignments (quoted values included), `env` with its options and
+# assignments, `command` and `builtin`.
+LAUNCHED=""
+strip_launchers() {
+  local s="$1" in_env=0 tok
+  local assign="^[A-Za-z_][A-Za-z0-9_]*=(\"[^\"]*\"|'[^']*'|[^[:space:]\"']*)+"
+  while :; do
+    s="${s#"${s%%[![:space:]]*}"}"
+    if [[ "$s" =~ $assign ]]; then s="${s:${#BASH_REMATCH[0]}}"; continue; fi
+    tok="${s%%[[:space:]]*}"
+    case "$tok" in
+      env) in_env=1 ;;
+      command|builtin) ;;
+      -u|-C|--unset|--chdir)
+        [ $in_env -eq 1 ] || break
+        s="${s#"$tok"}"; s="${s#"${s%%[![:space:]]*}"}"; tok="${s%%[[:space:]]*}" ;;
+      -*) [ $in_env -eq 1 ] || break ;;
+      *) break ;;
+    esac
+    s="${s#"$tok"}"
+  done
+  LAUNCHED="$s"
+}
+
 match_segment() {
   local seg="$1"
   GIT_C_PATH=""
   GIT_SUB=""
+  strip_launchers "$seg"
   # shellcheck disable=SC2086
-  set -- $seg
-  # Skip leading env-var assignments (FOO=bar git ...)
-  while [ $# -gt 0 ] && [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do shift; done
-  # Skip optional `env` plus its own env assignments (env FOO=bar git ...)
-  if [ "${1:-}" = "env" ]; then
-    shift
-    while [ $# -gt 0 ] && [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do shift; done
-  fi
-  # Skip the `command` builtin (command git ...)
-  if [ "${1:-}" = "command" ]; then shift; fi
+  set -- $LAUNCHED
   # Must now start with literal `git`
   [ "${1:-}" = "git" ] || return 1
   shift
@@ -96,17 +114,16 @@ match_segment() {
 # runs before the command does, so an earlier step in the same command that
 # changes directory or may move HEAD is blocked rather than parsed.
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
-assign='[A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+'
-gh_pr_create="^($assign)*(env[[:space:]]+($assign)*)?(command[[:space:]]+)?gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|\$)"
+gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
 chained=0
 while IFS= read -r segment; do
   seg="${segment#"${segment%%[![:space:]({]*}"}"
-  if [[ "$seg" =~ ^((builtin|command)[[:space:]]+)?(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
   if match_segment "$seg" || [ -n "$GIT_SUB" ]; then
     case "$GIT_SUB" in push|status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
     continue
   fi
-  [[ "$seg" =~ $gh_pr_create ]] || continue
+  if [[ "$LAUNCHED" =~ ^(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
+  [[ "$LAUNCHED" =~ $gh_pr_create ]] || continue
   if [ $chained -eq 1 ]; then
     echo "Blocked: $seg" >&2
     echo "Run gh pr create as its own command: an earlier cd or git step in the same command changes what it would open." >&2
