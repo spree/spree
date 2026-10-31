@@ -43,9 +43,18 @@ Paste the URL into your MCP client. It sends you to your store, you sign in, and
 
 <Tabs>
   <Tab title="Claude Code">
+    Register Claude Code under **Settings → OAuth clients** in your Spree
+    dashboard with the redirect URI `http://localhost:3118/callback`. Any
+    free port other than 80 works, as long as the same port is passed below. Then add the
+    server with the client ID that registration shows:
+
     ```bash
-    claude mcp add --transport http spree https://your-store.com/api/v3/admin/mcp
+    claude mcp add --transport http --client-id <client-id> --callback-port 3118 \
+      spree https://your-store.com/api/v3/admin/mcp
     ```
+
+    The port must be fixed: Claude Code calls back on `localhost`, and your
+    store only accepts the exact port that was registered.
   </Tab>
   <Tab title="Claude Desktop / claude.ai">
     **Settings → Connectors → Add custom connector**, then paste the URL.
