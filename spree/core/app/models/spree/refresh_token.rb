@@ -91,10 +91,14 @@ module Spree
     private
 
     # Outlives the session itself, which signing out deletes. Skips callbacks
-    # and +updated_at+: activity is not an edit to the account. Users without
-    # the column (customers, custom admin classes) are left alone.
+    # and +updated_at+: activity is not an edit to the account, and an older
+    # session committing last never moves it back. Users without the column
+    # (customers, custom admin classes) are left alone.
     def record_user_activity
-      user.update_columns(last_active_at: created_at) if user.has_attribute?(:last_active_at)
+      return unless user.has_attribute?(:last_active_at)
+
+      stale = user.class.where(id: user.id).where('last_active_at IS NULL OR last_active_at < ?', created_at)
+      stale.update_all(last_active_at: created_at)
     end
   end
 end

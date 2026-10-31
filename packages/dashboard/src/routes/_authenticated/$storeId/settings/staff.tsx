@@ -317,7 +317,7 @@ function StaffDetailsSheet({
 }) {
   const { t } = useTranslation()
   // The list row renders at once; the sheet adds what only it asks for.
-  const { data: details, isLoading } = useStaffMember(member.id, open)
+  const { data: details, isLoading, isError } = useStaffMember(member.id, open)
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -332,13 +332,19 @@ function StaffDetailsSheet({
             <DetailRow label={t('admin.pages.staff.details.joined')}>
               <RelativeTime iso={member.created_at} />
             </DetailRow>
-            <DetailRow label={t('admin.pages.staff.details.invited_by')}>
-              {isLoading ? <Skeleton className="h-4 w-32" /> : (details?.inviter?.label ?? '—')}
-            </DetailRow>
+            {!isError && (
+              <DetailRow label={t('admin.pages.staff.details.invited_by')}>
+                {isLoading ? <Skeleton className="h-4 w-32" /> : (details?.inviter?.label ?? '—')}
+              </DetailRow>
+            )}
           </dl>
           <section className="flex flex-col gap-2">
             <h3 className="font-medium text-sm">{t('admin.pages.staff.sessions.title')}</h3>
-            {isLoading ? (
+            {isError ? (
+              <p className="text-sm text-destructive">
+                {t('admin.pages.staff.details.load_failed')}
+              </p>
+            ) : isLoading ? (
               <Skeleton className="h-12 w-full" />
             ) : details?.sessions?.length ? (
               <ItemGroup className="gap-2">

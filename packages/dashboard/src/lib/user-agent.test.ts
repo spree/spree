@@ -26,6 +26,14 @@ describe('describeUserAgent', () => {
     ).toEqual({ label: 'Safari on iOS', browser: 'safari', device: 'mobile' })
   })
 
+  it('reads an iPod touch as an iOS phone', () => {
+    expect(
+      describeUserAgent(
+        'Mozilla/5.0 (iPod touch; CPU iPhone OS 15_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
+      ),
+    ).toEqual({ label: 'Safari on iOS', browser: 'safari', device: 'mobile' })
+  })
+
   it('reads Chrome and Edge on mobile by their own tokens', () => {
     expect(
       describeUserAgent(

@@ -150,6 +150,13 @@ describe Spree.admin_user_class, type: :model do
       end
     end
 
+    it 'never moves back when an older session is recorded last' do
+      newer = create(:refresh_token, :for_admin, user: admin_user, created_at: 1.minute.ago)
+      create(:refresh_token, :for_admin, user: admin_user, created_at: 1.hour.ago)
+
+      expect(admin_user.reload.last_active_at).to be_within(1.second).of(newer.created_at)
+    end
+
     it 'outlives the session when the account signs out' do
       token = Spree::RefreshToken.create_for(admin_user, audience: 'admin_api')
       token.destroy

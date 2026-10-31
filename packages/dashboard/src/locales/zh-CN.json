@@ -4472,7 +4472,8 @@
         },
         "details": {
           "joined": "加入时间",
-          "invited_by": "邀请人"
+          "invited_by": "邀请人",
+          "load_failed": "无法加载这些详情。请关闭面板后重试。"
         },
         "sessions": {
           "title": "会话",

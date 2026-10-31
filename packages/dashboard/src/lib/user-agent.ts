@@ -10,7 +10,7 @@ const BROWSERS: Array<[RegExp, Browser, string]> = [
 
 // iOS and Android before macOS and Linux, which their user agents also name.
 const SYSTEMS: Array<[RegExp, string]> = [
-  [/iPhone|iPad/, 'iOS'],
+  [/iPhone|iPad|iPod/, 'iOS'],
   [/Android/, 'Android'],
   [/Windows/, 'Windows'],
   [/Mac OS X/, 'macOS'],

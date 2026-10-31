@@ -4483,7 +4483,8 @@
         },
         "details": {
           "joined": "Beigetreten",
-          "invited_by": "Eingeladen von"
+          "invited_by": "Eingeladen von",
+          "load_failed": "Diese Details konnten nicht geladen werden. Schließe das Fenster und versuche es erneut."
         },
         "sessions": {
           "title": "Sitzungen",

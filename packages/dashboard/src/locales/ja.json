@@ -4483,7 +4483,8 @@
         },
         "details": {
           "joined": "参加日",
-          "invited_by": "招待者"
+          "invited_by": "招待者",
+          "load_failed": "詳細を読み込めませんでした。パネルを閉じて、もう一度お試しください。"
         },
         "sessions": {
           "title": "セッション",

@@ -30,9 +30,11 @@ module Spree
             'gift_cards' => 'read_gift_cards',
             'store_credit' => 'read_store_credits',
             'store_credits' => 'read_store_credits',
-            # A staff member's sessions carry IP addresses, and the admin user
-            # serializer is nested in gift cards, task runs and tokens.
-            'sessions' => 'read_staff'
+            # The admin user serializer is nested in gift cards, task runs and
+            # tokens; its sessions carry IP addresses and its inviter is
+            # another staff member.
+            'sessions' => 'read_staff',
+            'inviter' => 'read_staff'
           }.freeze
 
           protected

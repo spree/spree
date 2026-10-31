@@ -12,7 +12,8 @@ module Spree
                    roles: 'Array<{ id: string; name: string }>',
                    stores: 'Array<{ id: string; name: string; code: string }>',
                    status: [:string, enum: Spree::AdminUserMethods::STATUSES, enum_type_name: 'AdminUserStatus'],
-                   last_active_at: [:string, nullable: true]
+                   last_active_at: [:string, nullable: true],
+                   inviter: ['Actor', nullable: true]
 
           attributes :email, :first_name, :last_name, :full_name, :selected_locale, :status,
                      created_at: :iso8601, updated_at: :iso8601

@@ -4483,7 +4483,8 @@
         },
         "details": {
           "joined": "Joined",
-          "invited_by": "Invited by"
+          "invited_by": "Invited by",
+          "load_failed": "Couldn't load these details. Close the sheet and try again."
         },
         "sessions": {
           "title": "Sessions",

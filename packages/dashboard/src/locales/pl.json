@@ -4539,7 +4539,8 @@
         },
         "details": {
           "joined": "Dołączył(a)",
-          "invited_by": "Zaproszony(-a) przez"
+          "invited_by": "Zaproszony(-a) przez",
+          "load_failed": "Nie udało się wczytać szczegółów. Zamknij panel i spróbuj ponownie."
         },
         "sessions": {
           "title": "Sesje",

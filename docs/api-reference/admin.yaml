@@ -58785,7 +58785,9 @@ components:
           items:
             "$ref": "#/components/schemas/Session"
         inviter:
-          "$ref": "#/components/schemas/Actor"
+          allOf:
+          - "$ref": "#/components/schemas/Actor"
+          nullable: true
         avatar_url:
           type: string
           nullable: true

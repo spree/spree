@@ -15,7 +15,7 @@ export const AdminUserSchema = z.object({
   updated_at: z.string(),
   last_active_at: z.string().nullable(),
   sessions: z.array(SessionSchema).optional(),
-  inviter: ActorSchema.optional(),
+  inviter: ActorSchema.nullable().optional(),
   avatar_url: z.string().nullable(),
   roles: z.array(z.object({ id: z.string(), name: z.string() })),
   stores: z.array(z.object({ id: z.string(), name: z.string(), code: z.string() })),

@@ -4484,7 +4484,8 @@
         },
         "details": {
           "joined": "Arrivée",
-          "invited_by": "Invité par"
+          "invited_by": "Invité par",
+          "load_failed": "Impossible de charger ces détails. Fermez le panneau et réessayez."
         },
         "sessions": {
           "title": "Sessions",

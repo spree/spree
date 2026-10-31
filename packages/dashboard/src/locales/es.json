@@ -900,7 +900,8 @@
         },
         "details": {
           "joined": "Se unió",
-          "invited_by": "Invitado por"
+          "invited_by": "Invitado por",
+          "load_failed": "No se pudieron cargar estos detalles. Cierra el panel e inténtalo de nuevo."
         },
         "sessions": {
           "title": "Sesiones",
