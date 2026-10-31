@@ -66,6 +66,8 @@ match_segment() {
     shift
     while [ $# -gt 0 ] && [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do shift; done
   fi
+  # Skip the `command` builtin (command git ...)
+  if [ "${1:-}" = "command" ]; then shift; fi
   # Must now start with literal `git`
   [ "${1:-}" = "git" ] || return 1
   shift
@@ -89,32 +91,29 @@ match_segment() {
 
 # Pull requests open through /open-pr, which runs /code-review and
 # /security-review and then records the reviewed HEAD in the git dir. Block
-# `gh pr create` until that marker matches HEAD in the directory gh runs in, so
+# `gh pr create` until that marker matches HEAD in the session's directory, so
 # a commit made after the reviews sends the branch back through them. The check
-# runs before the command does, so a git step chained before gh that can move
-# HEAD is blocked too.
+# runs before the command does, so an earlier step in the same command that
+# changes directory or may move HEAD is blocked rather than parsed.
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
-head_may_move=0
+gh_pr_create='^([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*(env[[:space:]]+)?(command[[:space:]]+)?gh[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
+chained=0
 while IFS= read -r segment; do
-  seg="${segment#"${segment%%[![:space:]]*}"}"
-  seg="${seg%"${seg##*[![:space:]]}"}"
-  if [[ "$seg" =~ ^cd[[:space:]]+(.+)$ ]]; then
-    target="${BASH_REMATCH[1]}"; target="${target//[\"\']/}"; target="${target/#\~/$HOME}"
-    case "$target" in /*) pr_dir="$target" ;; *) pr_dir="$pr_dir/$target" ;; esac
-    continue
-  fi
+  seg="${segment#"${segment%%[![:space:]({]*}"}"
+  if [[ "$seg" =~ ^(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
   if match_segment "$seg" || [ -n "$GIT_SUB" ]; then
-    case "$GIT_SUB" in push|status|log|diff|show|rev-parse|fetch|remote|branch) ;; *) head_may_move=1 ;; esac
+    case "$GIT_SUB" in push|status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
     continue
   fi
-  [[ "$seg" =~ ^([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*(env[[:space:]]+)?gh[[:space:]]+pr[[:space:]]+create([[:space:]]|$) ]] || continue
-  if [ $head_may_move -eq 1 ]; then
+  [[ "$seg" =~ $gh_pr_create ]] || continue
+  if [ $chained -eq 1 ]; then
     echo "Blocked: $seg" >&2
-    echo "Run gh pr create as its own command: a git step before it in the same command can move HEAD past the reviewed commit." >&2
+    echo "Run gh pr create as its own command: an earlier cd or git step in the same command changes what it would open." >&2
     exit 2
   fi
+  head=$(git -C "$pr_dir" rev-parse HEAD 2>/dev/null)
   marker="$(git -C "$pr_dir" rev-parse --absolute-git-dir 2>/dev/null)/claude-reviewed"
-  if [ "$(cat "$marker" 2>/dev/null)" != "$(git -C "$pr_dir" rev-parse HEAD 2>/dev/null)" ]; then
+  if [ -z "$head" ] || [ "$(cat "$marker" 2>/dev/null)" != "$head" ]; then
     echo "Blocked: $seg" >&2
     echo "Open pull requests with /open-pr: /code-review and /security-review have not run on this HEAD. See AGENTS.md, Git." >&2
     exit 2
