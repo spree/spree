@@ -33,12 +33,9 @@ module Spree
           self.for(key).keys
         end
 
-        # Where the generated document lives, relative to this engine. Resolved
-        # lazily: the engine class does not exist yet while this file loads.
-        #
-        # @return [Pathname]
+        # @return [String] where the generated document is
         def spec_path
-          Spree::Api::Engine.root.join('..', '..', 'docs', 'api-reference', 'admin.yaml')
+          Spree::Api::OpenAPI::Documents.path('admin')
         end
 
         # The parsed document, for a reader that needs more of it than the
@@ -63,9 +60,7 @@ module Spree
         end
 
         # A missing or unparseable document is not a boot failure: the generic
-        # write tools simply offer nothing, which is the safe direction. An
-        # installation running from the packaged gems has no docs/ directory at
-        # all.
+        # write tools simply offer nothing, which is the safe direction.
         def load_schemas
           path = spec_path
           return {} unless File.exist?(path)
