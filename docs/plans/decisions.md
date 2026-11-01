@@ -7,6 +7,15 @@
 **Consequences:** A PayPal authorization can only be captured for 29 days (honored for 3), and this release does not reauthorize, the same as Stripe, whose card holds cannot be renewed. A later capture that PayPal leaves pending is reported as not taken, so dispatch waits until PayPal releases it (amended 2026-10-28). `spree_paypal_checkout_orders` must not be dropped before the payment upgrade step runs. A buyer who closes the tab right after approving gets no order and is not charged; a core `:approved` webhook outcome is the planned fix once payment methods that send the buyer to their bank are added. During a PayPal outage each checkout waits for the timeout before failing, as with Stripe; outage handling, if added, goes into core for every gateway. Card fields and Apple Pay / Google Pay through PayPal are deferred; whether saved PayPal accounts are needed straight after the first release is still open.
 
 **Plan:** `6.0-paypal-payment-provider.md`. **Plan amended:** `6.0-payment-gateways-monorepo.md` (its PayPal timing question is resolved).
+## 2026-11-01: The members-only posture is `company_required`, and `pricing_access` is a Store API field
+
+**Context:** Reviewing company self-registration before its 6.1 release raised two problems with the posture's name. Under the open-source default policy every company is active, so a merchant choosing `approval_required` got "company members only" with nothing approved. And `approval_required` is already the documented Enterprise order-approval checkout response, so one string would have named both approval concepts this log keeps apart. The same review found `pricing_access` rendered always-null on admin, seller, email and event payloads, and registration answers stored with no limits.
+
+**Decision:** The posture is `company_required`, matching the `pricing_access` code the default policy returns; an approval flow still shows "awaiting approval" through its own code. Nothing shipped under the old name, so there is no deprecation bridge. `pricing_access` renders only when the Store API's gating params supply it, is dropped by the back-office and email serializers, and is typed as the open list `PricingAccess`. `Companies::Register` refuses registration answers that are not a flat form: at most 50 answers, keys up to 100 characters, and scalar values with text up to 1,000 characters.
+
+**Consequences:** The price check still runs once per request on `company_required` channels for signed-in buyers. Making it lazy would mean a lazy value inside the serializer params, and any code path copying that hash would silently show prices, so it stays eager and the lookup reads memberships in small batches instead of loading them all.
+
+**Plans amended:** `6.1-b2b-company-self-registration.md` (posture, `pricing_access`, registration answers).
 
 ## 2026-10-27: Stripe transfer reversals on refund move to open source
 
@@ -5237,18 +5246,15 @@ Deliberately 6.1: every piece is additive, nothing needs the 6.0 breaking
 window, and 6.0 work must not build interim approval primitives in the
 meantime.
 
-**Enterprise** (`ee/docs/plans/b2b-company-onboarding.md`)
+**Enterprise** (the company onboarding plan in the Enterprise repository)
 registers the policy and owns the flow: an application record (FK → the
 OSS company; `spree_companies` stays status-free — this supersedes the
 same-day draft that put five statuses on Company), the seller-onboarding
 shape reused deliberately — requirements + submissions + evaluated-on-read
 statuses + exactly two enforcement points, reopen-with-note as the
 request-more-information move — plus the review queue, mails, and
-`approval_pending` pricing codes. Rationale: no modern platform ships
-registration approval in open source and everyone who has it charges for
-it, while the OSS side keeps a real free feature (instant self-registration
-— open-starter parity) and the funnel shape holds: registration works free,
-verification is the upgrade trigger. Two approval concepts stay distinct
+`approval_pending` pricing codes. The OSS side keeps a real free feature:
+instant self-registration with a members-only posture. Two approval concepts stay distinct
 forever: account verification (merchant ↔ company, this split) vs order
 approvals/spend limits (company-internal governance, the existing
 Enterprise plan).
