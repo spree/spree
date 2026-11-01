@@ -73,6 +73,8 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
       t.references :uploaded_by, polymorphic: true, index: false
       t.string :label, null: false
       t.boolean :customer_visible, null: false, default: false
+      # A guest buyer has no account to record as the uploader.
+      t.boolean :uploaded_by_customer, null: false, default: false
 
       if t.respond_to?(:jsonb)
         t.jsonb :metadata

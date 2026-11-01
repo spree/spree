@@ -27,7 +27,10 @@ module Spree
     CONTENT_TYPES = %w[application/pdf].freeze
     MAX_FILE_SIZE = 10.megabytes
 
-    belongs_to :issuer, polymorphic: true
+    # Optional only to the association: a soft-deleted seller still issued the
+    # invoice, so `issuer` reads through deletion and presence is validated
+    # on the columns.
+    belongs_to :issuer, polymorphic: true, optional: true
     belongs_to :order, class_name: 'Spree::Order', optional: true, inverse_of: :invoices
     belongs_to :seller_payout, class_name: 'Spree::SellerPayout', optional: true, inverse_of: :invoices
     belongs_to :original_invoice, class_name: 'Spree::Invoice', optional: true
@@ -43,7 +46,7 @@ module Spree
     validates :kind, inclusion: { in: KINDS }
     validates :source, inclusion: { in: SOURCES }
     validates :issuer_type, inclusion: { in: ISSUER_TYPES }
-    validates :number, :issued_on, :currency, :total, presence: true
+    validates :issuer_type, :issuer_id, :number, :issued_on, :currency, :total, presence: true
     validates :number, uniqueness: { scope: [:issuer_type, :issuer_id, :kind] }
     validates :total, :net_total, :tax_total, numericality: true, allow_nil: true
     validate :belongs_to_one_parent
@@ -72,8 +75,13 @@ module Spree
     # @param order [Spree::Order]
     # @return [Spree::Store, Spree::Seller]
     def self.issuer_for(order)
-      seller = order.seller
+      seller = order.seller_id && Spree::Seller.with_deleted.find_by(id: order.seller_id)
       seller && seller.tax_remittance != 'platform' ? seller : order.store
+    end
+
+    # @return [Spree::Store, Spree::Seller, nil] the issuer, a soft-deleted seller included
+    def issuer
+      super || (Spree::Seller.with_deleted.find_by(id: issuer_id) if issuer_type == 'Spree::Seller')
     end
 
     # The name printed for the issuer: a legal name when one is recorded.
@@ -107,11 +115,13 @@ module Spree
       source == 'uploaded' && !sent?
     end
 
-    # Records that the invoice reached its buyer. The only change an invoice
-    # takes after it is created.
+    # Records when the invoice first reached its buyer; sending it again keeps
+    # that date. The only change an invoice takes after it is created.
     #
     # @return [void]
     def mark_sent!
+      return if sent?
+
       update_columns(sent_at: Time.current, updated_at: Time.current)
       publish_event('invoice.sent')
     end
@@ -173,7 +183,10 @@ module Spree
     # A withdrawn upload has not answered the buyer, so their request is owed
     # again rather than left marked fulfilled by an invoice that is gone.
     def reopen_invoice_request
-      invoice_request&.update!(status: 'open', invoice: nil)
+      return if invoice_request.nil?
+
+      replacement = order&.invoices&.invoices&.where&.not(id: id)&.first
+      invoice_request.update!(status: replacement ? 'fulfilled' : 'open', invoice: replacement)
     end
 
     def ensure_deletable

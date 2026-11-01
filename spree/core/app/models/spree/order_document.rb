@@ -29,14 +29,6 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[label customer_visible created_at]
 
-    # Whether the order's buyer added it from their account rather than staff
-    # or a seller.
-    #
-    # @return [Boolean]
-    def uploaded_by_customer?
-      uploaded_by_type == Spree.customer_class.base_class.to_s
-    end
-
     private
 
     def buyer_upload_stays_visible

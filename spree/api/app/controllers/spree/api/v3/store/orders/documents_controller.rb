@@ -76,7 +76,8 @@ module Spree
             # What the buyer adds is theirs, and so always shown to them.
             def build_resource
               super.tap do |document|
-                document.assign_attributes(store: @parent.store, customer_visible: true, uploaded_by: try_spree_current_user)
+                document.assign_attributes(store: @parent.store, customer_visible: true, uploaded_by_customer: true,
+                                           uploaded_by: try_spree_current_user)
               end
             end
 

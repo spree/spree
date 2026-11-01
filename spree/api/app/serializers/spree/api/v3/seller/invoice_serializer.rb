@@ -12,8 +12,10 @@ module Spree
           _attributes.delete(:uploaded_by_id)
           _attributes.delete(:uploaded_by_type)
 
+          # Only the seller's own uploads: commission invoices and the store's
+          # invoices on a platform-remitted order are the marketplace's.
           attribute :can_be_deleted do |invoice|
-            invoice.order_id.present? && invoice.can_be_deleted?
+            invoice.issuer_type == 'Spree::Seller' && invoice.order_id.present? && invoice.can_be_deleted?
           end
 
           attribute :download_url do |invoice|

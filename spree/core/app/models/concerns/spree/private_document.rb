@@ -54,9 +54,12 @@ module Spree
       end
       return if stored_size <= max_size
 
+      # `<slot>_too_large`, so a purchase order keeps the code it had before
+      # this check was shared.
       errors.add(
-        slot, :private_document_too_large,
-        message: I18n.t('spree.private_document_too_large',
+        slot, :"#{slot}_too_large",
+        message: I18n.t("spree.#{slot}_too_large",
+                        default: :'spree.private_document_too_large',
                         size: ActiveSupport::NumberHelper.number_to_human_size(max_size))
       )
     end

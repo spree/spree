@@ -339,7 +339,7 @@ RSpec.describe Spree::Customers::Anonymize do
     let!(:order) { create(:completed_order_with_totals, customer: customer, store: store, email: 'buyer@example.com') }
     let!(:invoice) { create(:invoice, order: order) }
     let!(:request) { create(:invoice_request, order: order, status: 'fulfilled', invoice: invoice) }
-    let!(:buyer_document) { create(:order_document, order: order, uploaded_by: customer, customer_visible: true) }
+    let!(:buyer_document) { create(:order_document, order: order, uploaded_by: customer, uploaded_by_customer: true, customer_visible: true) }
     let!(:staff_document) { create(:order_document, order: order) }
 
     it 'keeps the invoice, which the law requires the merchant to hold' do

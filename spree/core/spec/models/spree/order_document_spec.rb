@@ -25,13 +25,13 @@ RSpec.describe Spree::OrderDocument, type: :model do
   end
 
   it "refuses hiding the buyer's own upload from them" do
-    document = create(:order_document, order: order, uploaded_by: create(:customer), customer_visible: true)
+    document = create(:order_document, order: order, uploaded_by: create(:customer), uploaded_by_customer: true, customer_visible: true)
 
     expect(document.update(customer_visible: false)).to be(false)
   end
 
   it 'knows when the buyer uploaded it' do
-    document = build(:order_document, order: order, uploaded_by: order.customer || create(:customer))
+    document = build(:order_document, order: order, uploaded_by_customer: true)
 
     expect(document.uploaded_by_customer?).to be(true)
   end

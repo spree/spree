@@ -17,9 +17,11 @@ module Spree
       deliver(invoice, resend: false)
     end
 
+    # Whatever the automatic invoice email setting says, but never past a
+    # store that turned this audience's emails off.
     def deliver_again(event)
       invoice = find_invoice(event)
-      deliver(invoice, resend: true) if invoice
+      deliver(invoice, resend: true) if invoice && audience_emails_enabled?(invoice)
     end
 
     private
