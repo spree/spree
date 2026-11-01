@@ -6670,3 +6670,15 @@ in each gem's `post_install_message`, not in the CLI.
 the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
 already lists is reported as installed rather than ejecting the project to
 re-add it.
+
+## 2026-11-01 — Sentry traces only through OpenTelemetry, behind `SENTRY_TRACING`
+
+Amends 2026-08-12. spree-starter's Sentry initializer now carries the OTLP
+recipe behind `SENTRY_TRACING=true`, and nothing else: it never sets
+`traces_sample_rate`, so Sentry's own tracer and its profiling are not
+supported. One tracer per process keeps Spree's workflow, gateway and webhook
+spans in the same trace as the Rails spans, rather than in two disconnected
+trace trees. The recipe also sets `config.otlp.setup_otlp_traces_exporter =
+true`: sentry-opentelemetry 7.x defaults it to false, and without it no
+exporter is registered, so the earlier recipe sent no spans. Sampling uses
+the standard `OTEL_TRACES_SAMPLER` variables.

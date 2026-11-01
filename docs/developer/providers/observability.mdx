@@ -116,55 +116,76 @@ service:
 
 ## Using with Sentry
 
-Sentry and OpenTelemetry are complementary — Sentry's error capture works
-independently of tracing, so having both installed (as spree-starter does)
-requires no special setup. For traces there are three arrangements:
+Sentry captures errors on its own: set `SENTRY_DSN` and nothing else is
+needed. For traces, use OpenTelemetry and treat Sentry as one more backend.
+Never also turn on Sentry's own tracer (`traces_sample_rate`), which would
+trace every request a second time, into a trace tree that doesn't connect
+to the OpenTelemetry one.
 
-**Sentry for errors, OpenTelemetry for traces (default).** Nothing to
-configure. Just don't *also* enable Sentry's own performance tracing
-(`traces_sample_rate`) — that would instrument every request twice and
-produce two disconnected trace systems.
+### Sentry as the trace backend
 
-**Sentry as the trace backend.** Sentry ingests OpenTelemetry spans directly
-through its [OTLP integration](https://docs.sentry.io/platforms/ruby/guides/rails/integrations/otlp/).
-Order matters here: Sentry registers its span processor inside `Sentry.init`,
-which only works if the OpenTelemetry SDK is already installed — so install
-Spree's telemetry explicitly at the top of the same initializer:
+Sentry ingests OpenTelemetry spans directly through its
+[OTLP integration](https://docs.sentry.io/platforms/ruby/guides/rails/integrations/otlp/).
+Spree's commerce spans (workflows, gateway calls, webhook deliveries) show up
+in Sentry's trace view, and errors are linked to the span that was active when
+they were raised.
+
+New Spree projects ship this behind one environment variable:
+
+```bash
+SENTRY_DSN=https://...@o0.ingest.sentry.io/0
+SENTRY_TRACING=true
+```
+
+A DSN alone does **not** send spans. Sentry bills for ingested spans, so
+error capture never silently becomes span ingestion. The OpenTelemetry SDK
+samples every trace by default; lower that with the standard variables:
+
+```bash
+OTEL_TRACES_SAMPLER=parentbased_traceidratio
+OTEL_TRACES_SAMPLER_ARG=0.1
+```
+
+To set this up in an older project, add `sentry-opentelemetry` and install
+Spree's telemetry at the top of the Sentry initializer. Order matters: Sentry
+registers its exporter inside `Sentry.init`, which only works if the
+OpenTelemetry SDK is already installed.
 
 ```ruby
 # Gemfile
 gem 'sentry-opentelemetry'
 
 # config/initializers/sentry.rb
-SpreeOpenTelemetry.configure { |config| config.enabled = true }
-SpreeOpenTelemetry.install!
+if ENV['SENTRY_TRACING'] == 'true'
+  # Sentry provides the exporter (derived from the DSN), so the SDK must not
+  # wire its own default OTLP exporter alongside it.
+  ENV['OTEL_TRACES_EXPORTER'] ||= 'none'
+  SpreeOpenTelemetry.configure { |config| config.enabled = true }
+  SpreeOpenTelemetry.install!
+end
 
 Sentry.init do |config|
   config.dsn = ENV['SENTRY_DSN']
-  config.otlp.enabled = true
-  # Do not set traces_sample_rate or instrumenter — OpenTelemetry owns tracing.
+  # Do not set traces_sample_rate or instrumenter: OpenTelemetry owns tracing.
+  if SpreeOpenTelemetry.installed?
+    config.otlp.enabled = true
+    # Off by default in sentry-opentelemetry 7.x; without it no spans are sent.
+    config.otlp.setup_otlp_traces_exporter = true
+  end
 end
 ```
 
-```bash
-# Sentry provides the exporter (derived from the DSN) — tell the SDK not to
-# wire its own default OTLP exporter alongside it.
-OTEL_TRACES_EXPORTER=none
-```
+<Note>
+Sentry's profiling (StackProf or Vernier) attaches profiles to transactions
+from Sentry's own tracer, so it doesn't work when traces arrive over OTLP.
+</Note>
 
-A DSN alone does **not** enable tracing; `config.otlp.enabled` is the
-explicit opt-in (Sentry bills for ingested spans, so error capture never
-silently becomes span ingestion).
+### Sentry and another backend
 
-Spree's commerce spans — workflows, gateway calls, webhook deliveries — show
-up in Sentry's trace view, and Sentry errors are linked automatically to the
-span that was active when they were captured.
-
-**Both, via the collector.** Point Spree at an OpenTelemetry Collector and
-fan out from there — one pipeline exporting to your tracing backend and
-another to Sentry's OTLP endpoint. This is the most flexible arrangement for
-teams that want Grafana/Jaeger for latency work and Sentry for error triage
-over the same traces.
+Point Spree at an OpenTelemetry Collector and fan out from there, with one
+pipeline exporting to your tracing backend and another to Sentry's OTLP
+endpoint. This suits teams that want Grafana or Jaeger for latency work and
+Sentry for error triage over the same traces.
 
 ## Correlating logs
 

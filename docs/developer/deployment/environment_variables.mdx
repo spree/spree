@@ -187,11 +187,13 @@ bundle exec rake spree:search:reindex
 
 </CodeGroup>
 
-## Error Tracking (Sentry)
+## Error Tracking and Tracing (Sentry)
 
 | Variable | Default | Description |
 | --- | --- | --- |
 | `SENTRY_DSN` | — | [Sentry](https://sentry.io/) DSN. When set, errors are reported to Sentry |
+| `SENTRY_TRACING` | `false` | When `true`, Spree's OpenTelemetry traces are also sent to Sentry over OTLP. Needs `SENTRY_DSN`. Sample with `OTEL_TRACES_SAMPLER` / `OTEL_TRACES_SAMPLER_ARG`. See [Observability](/developer/providers/observability#using-with-sentry) |
+| `SENTRY_REPORT_ON_DEVELOPMENT` | — | Set to report from the `development` environment too (by default only `production` and `staging` report) |
 
 ## SSL
 
