@@ -4,9 +4,10 @@
   "description": "CLI for managing Spree Commerce projects",
   "type": "module",
   "bin": {
-    "spree": "./dist/index.js"
+    "spree": "./bin/spree.js"
   },
   "files": [
+    "bin",
     "dist",
     "README.md",
     "LICENSE"
