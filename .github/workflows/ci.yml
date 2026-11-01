@@ -1,0 +1,109 @@
+name: CI
+
+# Starts on every pull request, merge queue entry and push, so the two
+# required checks (backend, frontend) always report. Each suite runs only when
+# files it covers changed; a suite that was not needed counts as passing.
+on:
+  push:
+    branches: [main, '6-0-dev', '*-stable']
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: "Detect changes"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v7
+        if: github.event_name != 'pull_request'
+
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          # Pushes compare against the branch's previous commit.
+          base: ${{ github.event_name == 'push' && github.ref_name || '' }}
+          filters: |
+            backend:
+              - "spree/**"
+              - ".github/workflows/ci.yml"
+              - ".github/workflows/backend.yml"
+            frontend:
+              - "packages/**"
+              - "spree/api/app/**"
+              - "spree/api/lib/typelizer/**"
+              - "spree/core/app/**"
+              - "docs/developer/**"
+              - "docs/api-reference/**"
+              - "docs/integrations/**"
+              - "pnpm-lock.yaml"
+              - "turbo.json"
+              - "biome.json"
+              - "package.json"
+              - "pnpm-workspace.yaml"
+              - "scripts/sync-starter.mjs"
+              - "scripts/check-dependency-ranges.mjs"
+              - ".github/workflows/ci.yml"
+              - ".github/workflows/frontend.yml"
+
+  backend-suite:
+    name: "Backend"
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    uses: ./.github/workflows/backend.yml
+    secrets: inherit
+
+  frontend-suite:
+    name: "Frontend"
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    uses: ./.github/workflows/frontend.yml
+    secrets: inherit
+
+  # The two checks branch protection requires. Each fails on any failed or
+  # cancelled job in its suite, and passes when the suite passed or was skipped.
+  backend:
+    name: "backend"
+    needs: [changes, backend-suite]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in $RESULTS; do
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              echo "A required job finished as: $result"
+              exit 1
+            fi
+          done
+
+  frontend:
+    name: "frontend"
+    needs: [changes, frontend-suite]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in $RESULTS; do
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              echo "A required job finished as: $result"
+              exit 1
+            fi
+          done

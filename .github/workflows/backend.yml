@@ -1,48 +1,15 @@
-name: CI
+name: Backend
 
+# Called by ci.yml, which runs this suite only when relevant files changed.
 on:
-  push:
-    branches: [main, '6-0-dev', '*-stable']
-  pull_request:
-  merge_group:
-
-# Both CI workflows share a name, so the group must not use github.workflow.
-concurrency:
-  group: backend-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 permissions:
   contents: read
 
 jobs:
-  # Every pull request, merge queue entry and push starts this workflow so its
-  # result check always reports; this job decides whether the rest must run.
-  changes:
-    name: "Detect changes"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-    steps:
-      - uses: actions/checkout@v7
-        if: github.event_name != 'pull_request'
-
-      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
-        id: filter
-        with:
-          # Pushes compare against the branch's previous commit.
-          base: ${{ github.event_name == 'push' && github.ref_name || '' }}
-          filters: |
-            backend:
-              - 'spree/**'
-              - '.github/workflows/tests.yml'
-
   build-postgres:
     name: "Build (PostgreSQL)"
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     env:
       DB: postgres
@@ -92,8 +59,6 @@ jobs:
 
   build-mysql:
     name: "Build (MySQL)"
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     env:
       DB: mysql
@@ -142,7 +107,7 @@ jobs:
           done
 
   test-postgres:
-    name: "PostgreSQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
+    name: "Test ${{ matrix.project }} (PostgreSQL, ${{ matrix.shard }}/${{ matrix.total_shards }})"
     needs: build-postgres
     runs-on: ubuntu-latest
     strategy:
@@ -312,7 +277,7 @@ jobs:
           if-no-files-found: ignore
 
   test-mysql:
-    name: "MySQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
+    name: "Test ${{ matrix.project }} (MySQL, ${{ matrix.shard }}/${{ matrix.total_shards }})"
     needs: build-mysql
     runs-on: ubuntu-latest
     strategy:
@@ -451,7 +416,7 @@ jobs:
           if-no-files-found: ignore
 
   brakeman:
-    name: Brakeman
+    name: "Security scan (Brakeman)"
     needs: build-postgres
     runs-on: ubuntu-latest
     env:
@@ -499,36 +464,3 @@ jobs:
           path: spree/brakeman-*.*
           if-no-files-found: ignore
 
-  # The one check branch protection should require from this workflow. It
-  # passes when every job passed or was skipped because nothing relevant
-  # changed, and fails on any failure or cancellation.
-  result:
-    name: "backend"
-    needs: [changes, build-postgres, build-mysql, test-postgres, test-mysql, brakeman]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          sparse-checkout: .github/workflows/tests.yml
-          sparse-checkout-cone-mode: false
-
-      - name: Check that this job waits for every other job
-        run: |
-          missing=$(yq '((.jobs | keys) - .jobs.result.needs) - ["result"] | .[]' .github/workflows/tests.yml)
-          if [ -n "$missing" ]; then
-            echo "Add these jobs to result.needs: $missing"
-            exit 1
-          fi
-
-      - name: Check job results
-        env:
-          RESULTS: ${{ join(needs.*.result, ' ') }}
-        run: |
-          for result in $RESULTS; do
-            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
-              echo "A required job finished as: $result"
-              exit 1
-            fi
-          done
-          echo "All jobs passed or were not needed."
