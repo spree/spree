@@ -167,7 +167,7 @@ end
 Sentry.init do |config|
   config.dsn = ENV['SENTRY_DSN']
   # Do not set traces_sample_rate or instrumenter: OpenTelemetry owns tracing.
-  if SpreeOpenTelemetry.installed?
+  if ENV['SENTRY_TRACING'] == 'true' && SpreeOpenTelemetry.installed?
     config.otlp.enabled = true
     # Off by default in sentry-opentelemetry 7.x; without it no spans are sent.
     config.otlp.setup_otlp_traces_exporter = true
