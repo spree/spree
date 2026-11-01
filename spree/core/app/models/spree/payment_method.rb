@@ -197,7 +197,7 @@ module Spree
     def webhook_url
       return nil unless store
 
-      "#{store.url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
+      "#{store.formatted_url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
     end
 
     class WebhookSignatureError < StandardError; end
