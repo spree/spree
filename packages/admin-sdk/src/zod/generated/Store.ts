@@ -64,6 +64,8 @@ export const StoreSchema = z.object({
   email_text_color: z.string().nullable(),
   email_heading_color: z.string().nullable(),
   email_font: z.string().nullable(),
+  invoice_request_window_days: z.number(),
+  send_invoice_email: z.boolean(),
   order_number_sequence_started: z.boolean(),
   default_minimum_payout_amount: z.string().nullable(),
   default_commission_tax_rate: z.string().nullable(),

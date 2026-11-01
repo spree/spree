@@ -91,6 +91,10 @@ import type {
   ImportRowSort,
   ImportSort,
   IntegrationFilters,
+  InvoiceFilters,
+  InvoiceRequestFilters,
+  InvoiceRequestSort,
+  InvoiceSort,
   IntegrationSort,
   InvitationFilters,
   InvitationSort,
@@ -501,6 +505,7 @@ import type {
   IntegrationUpdateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
+  InvoiceCreateParams,
   LineItemCreateParams,
   LineItemUpdateParams,
   MaintenanceTaskRunCreateParams,
@@ -563,6 +568,8 @@ import type {
   ReasonCreateParams,
   ReasonUpdateParams,
   ReceivableCloseParams,
+  OrderDocumentCreateParams,
+  OrderDocumentUpdateParams,
   RefundCreateParams,
   ResourceTypeDefinition,
   ReturnCancelParams,
@@ -682,6 +689,8 @@ import type {
   ImportRow,
   Integration,
   Invitation,
+  Invoice,
+  InvoiceRequest,
   InvitationAcceptanceLink,
   LineItem,
   Locale,
@@ -694,6 +703,7 @@ import type {
   OauthRedirect,
   OptionType,
   Order,
+  OrderDocument,
   OrderCancellationReason,
   OrderGroup,
   OrderRoutingRule,
@@ -2428,6 +2438,66 @@ export class AdminClient {
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),
     },
 
+    /**
+     * The order's invoices, receipts and credit notes. `create` records one
+     * issued in another system: upload the PDF with `files.upload()`
+     * (`visibility: 'private'`) and send its `signed_id`. Read, download,
+     * resend and delete one through `client.invoices`.
+     */
+    invoices: {
+      list: (
+        orderId: string,
+        params?: ListParams<InvoiceFilters, InvoiceSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Invoice>> =>
+        this.request<PaginatedResponse<Invoice>>('GET', `/orders/${orderId}/invoices`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      create: (orderId: string, params: InvoiceCreateParams, options?: RequestOptions): Promise<Invoice> =>
+        this.request<Invoice>('POST', `/orders/${orderId}/invoices`, { ...options, body: params }),
+    },
+
+    /** The buyer's requests for an invoice on this order. Fulfilled by adding an invoice. */
+    invoiceRequests: {
+      list: (
+        orderId: string,
+        params?: ListParams<InvoiceRequestFilters, InvoiceRequestSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<InvoiceRequest>> =>
+        this.request<PaginatedResponse<InvoiceRequest>>('GET', `/orders/${orderId}/invoice_requests`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+    },
+
+    /**
+     * Other paperwork on the order, private to staff unless
+     * `customer_visible` is set. Download from each document's `download_url`.
+     */
+    documents: {
+      list: (orderId: string, params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<OrderDocument>> =>
+        this.request<PaginatedResponse<OrderDocument>>('GET', `/orders/${orderId}/documents`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      create: (orderId: string, params: OrderDocumentCreateParams, options?: RequestOptions): Promise<OrderDocument> =>
+        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, { ...options, body: params }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: OrderDocumentUpdateParams,
+        options?: RequestOptions,
+      ): Promise<OrderDocument> =>
+        this.request<OrderDocument>('PATCH', `/orders/${orderId}/documents/${id}`, { ...options, body: params }),
+
+      delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/documents/${id}`, options),
+    },
+
     taxLines: {
       list: (
         orderId: string,
@@ -3733,6 +3803,22 @@ export class AdminClient {
         ...options,
         body: data,
       }),
+
+    /** Commission invoices the marketplace issued the seller for a payout. */
+    invoices: {
+      list: (
+        payoutId: string,
+        params?: ListParams<InvoiceFilters, InvoiceSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Invoice>> =>
+        this.request<PaginatedResponse<Invoice>>('GET', `/seller_payouts/${payoutId}/invoices`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      create: (payoutId: string, params: InvoiceCreateParams, options?: RequestOptions): Promise<Invoice> =>
+        this.request<Invoice>('POST', `/seller_payouts/${payoutId}/invoices`, { ...options, body: params }),
+    },
   }
 
   // ============================================
@@ -3835,6 +3921,36 @@ export class AdminClient {
   // Post-sale, across all orders (read-only — creating any of these needs an
   // order, so writes live on client.orders.{returns,exchanges,claims})
   // ============================================
+
+  /**
+   * Every invoice, receipt and credit note in the store, uploaded or
+   * generated. Created under the order (`client.orders.invoices`) or seller
+   * payout (`client.sellerPayouts.invoices`) it belongs to. An invoice is never
+   * edited; `delete` works only on an upload the buyer has not been sent.
+   */
+  readonly invoices = {
+    list: (
+      params?: ListParams<InvoiceFilters, InvoiceSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Invoice>> =>
+      this.request<PaginatedResponse<Invoice>>('GET', '/invoices', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Invoice> =>
+      this.request<Invoice>('GET', `/invoices/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/invoices/${id}`, options),
+
+    /** Emails the invoice to its recipient again. */
+    resend: (id: string, options?: RequestOptions): Promise<Invoice> =>
+      this.request<Invoice>('POST', `/invoices/${id}/resend`, options),
+  }
 
   readonly returns = {
     list: (

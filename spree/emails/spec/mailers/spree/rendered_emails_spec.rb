@@ -36,6 +36,10 @@ describe 'rendered emails', type: :mailer do
       'fulfillment' => Spree::FulfillmentMailer.fulfilled_email(create(:shipped_order, store: store).fulfillments.first),
       'files ready' => Spree::DigitalAssetMailer.files_ready_email(order_with_downloads),
       'refund' => Spree::ReturnMailer.refunded_email(create(:received_return, store: store)),
+      'invoice' => Spree::InvoiceMailer.invoice_email(create(:invoice, order: order)),
+      'commission invoice' => Spree::InvoiceMailer.commission_invoice_email(
+        create(:invoice, :commission, seller_payout: create(:seller_payout, seller: seller, store: store))
+      ),
       'password reset' => Spree::CustomerMailer.password_reset_email(create(:user, first_name: payload), 'token', store),
       'data export' => Spree::CustomerMailer.data_export_email(create(:data_request, store: store)),
       'data request confirmation' => Spree::CustomerMailer.data_request_confirmation_email(

@@ -19,11 +19,14 @@ import {
   ImportSchema,
   ImportRowSchema,
   InvitationSchema,
+  InvoiceSchema,
+  InvoiceRequestSchema,
   LineItemSchema,
   MediaEventSchema,
   NewsletterSubscriberSchema,
   NewsletterSubscriberRequestEventSchema,
   OrderSchema,
+  OrderDocumentSchema,
   OrderGroupSchema,
   PasswordResetRequestedEventSchema,
   PaymentSchema,
@@ -141,6 +144,10 @@ type WebhookEventName =
   | 'invitation.accepted'
   | 'invitation.created'
   | 'invitation.resent'
+  | 'invoice.created'
+  | 'invoice.deleted'
+  | 'invoice.sent'
+  | 'invoice.updated'
   | 'line_item.created'
   | 'line_item.deleted'
   | 'line_item.updated'
@@ -168,12 +175,16 @@ type WebhookEventName =
   | 'order.deleted'
   | 'order.delivered'
   | 'order.fulfilled'
+  | 'order.invoice_requested'
   | 'order.paid'
   | 'order.placed'
   | 'order.resend_confirmation_email'
   | 'order.resend_digital_links_email'
   | 'order.shipped'
   | 'order.updated'
+  | 'order_document.created'
+  | 'order_document.deleted'
+  | 'order_document.updated'
   | 'order_group.completed'
   | 'order_group.created'
   | 'order_group.deleted'
@@ -404,6 +415,10 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'invitation.accepted': InvitationSchema,
   'invitation.created': InvitationSchema,
   'invitation.resent': InvitationSchema,
+  'invoice.created': InvoiceSchema,
+  'invoice.deleted': InvoiceSchema,
+  'invoice.sent': InvoiceSchema,
+  'invoice.updated': InvoiceSchema,
   'line_item.created': LineItemSchema,
   'line_item.deleted': LineItemSchema,
   'line_item.updated': LineItemSchema,
@@ -431,12 +446,16 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'order.deleted': OrderSchema,
   'order.delivered': OrderSchema,
   'order.fulfilled': OrderSchema,
+  'order.invoice_requested': InvoiceRequestSchema,
   'order.paid': OrderSchema,
   'order.placed': OrderSchema,
   'order.resend_confirmation_email': OrderSchema,
   'order.resend_digital_links_email': OrderSchema,
   'order.shipped': OrderSchema,
   'order.updated': OrderSchema,
+  'order_document.created': OrderDocumentSchema,
+  'order_document.deleted': OrderDocumentSchema,
+  'order_document.updated': OrderDocumentSchema,
   'order_group.completed': OrderGroupSchema,
   'order_group.created': OrderGroupSchema,
   'order_group.deleted': OrderGroupSchema,

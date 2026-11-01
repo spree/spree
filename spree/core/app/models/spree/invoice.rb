@@ -63,6 +63,8 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[kind source number issued_on supplied_on currency total
                                                  order_id seller_payout_id issuer_type issuer_id created_at sent_at]
     self.whitelisted_ransackable_associations = %w[order seller_payout]
+    # Buyers see their own documents, not how they reached Spree.
+    self.private_ransackable_attributes = { store: %w[source sent_at created_at seller_payout_id issuer_id] }
 
     # The legal seller of an order: its seller when the seller is merchant of
     # record, otherwise the store. A platform-remitted seller's sales are

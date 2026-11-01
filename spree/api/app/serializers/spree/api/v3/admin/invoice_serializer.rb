@@ -13,6 +13,8 @@ module Spree
                    external_reference: [:string, nullable: true],
                    sent_at: [:string, nullable: true],
                    can_be_deleted: :boolean,
+                   uploaded_by_id: [:string, nullable: true],
+                   uploaded_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    metadata: 'Record<string, unknown> | null'
 
           attributes :source, :external_reference, :metadata,
