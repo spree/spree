@@ -219,8 +219,18 @@ module Spree
       status.in?(%w[checkout processing])
     end
 
+    # Whether the payment is in a status that can be voided and its payment
+    # method agrees. A gateway that cannot void a capture returns false from
+    # +can_void?(payment)+ for completed payments.
     def can_void?
-      status.in?(%w[pending processing completed checkout])
+      status.in?(%w[pending processing completed checkout]) &&
+        (!payment_method.respond_to?(:can_void?) || payment_method.can_void?(self))
+    end
+
+    # Whether the payment can be captured from the back office.
+    def can_capture?
+      status.in?(%w[checkout pending]) &&
+        (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
     end
 
     # @deprecated read +status+ — removed in 6.1

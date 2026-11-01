@@ -195,13 +195,16 @@ export function PaymentsCard({ order }: { order: Order }) {
                       // Capturing or voiding a grouped payment acts on every
                       // order in the checkout, so this page only links out.
                       canCapture={
-                        !grouped && (payment.status === 'checkout' || payment.status === 'pending')
+                        !grouped &&
+                        (payment.can_capture ??
+                          (payment.status === 'checkout' || payment.status === 'pending'))
                       }
                       canVoid={
                         !grouped &&
-                        (payment.status === 'checkout' ||
-                          payment.status === 'pending' ||
-                          payment.status === 'completed')
+                        (payment.can_void ??
+                          (payment.status === 'checkout' ||
+                            payment.status === 'pending' ||
+                            payment.status === 'completed'))
                       }
                       onCapture={async () => {
                         if (

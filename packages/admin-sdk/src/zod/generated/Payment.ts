@@ -32,6 +32,8 @@ export const PaymentSchema = z.object({
   updated_at: z.string(),
   avs_risky: z.boolean(),
   cvv_risky: z.boolean(),
+  can_void: z.boolean(),
+  can_capture: z.boolean(),
   captured_amount: z.string(),
   order_id: z.string().nullable(),
   capture_events: z.array(PaymentCaptureEventSchema).optional(),
@@ -59,6 +61,8 @@ export const PaymentSchema = z.object({
   updated_at: z.ZodType<Payment['updated_at']>;
   avs_risky: z.ZodType<Payment['avs_risky']>;
   cvv_risky: z.ZodType<Payment['cvv_risky']>;
+  can_void: z.ZodType<Payment['can_void']>;
+  can_capture: z.ZodType<Payment['can_capture']>;
   captured_amount: z.ZodType<Payment['captured_amount']>;
   order_id: z.ZodType<Payment['order_id']>;
   capture_events: z.ZodOptional<z.ZodType<Exclude<Payment['capture_events'], undefined>>>;
