@@ -33,8 +33,12 @@ module Spree
 
           this_order_used = Hash.new(0)
 
-          reservations = targets.map do |line_item, stock_level, quantity|
-            stock_level = locked_stock_levels.fetch(stock_level.id)
+          reservations = targets.filter_map do |line_item, stock_level, quantity|
+            # A shelf deleted since the allocation was read (a variant being
+            # discontinued removes its stock) has nothing left to hold.
+            stock_level = locked_stock_levels[stock_level.id]
+            next if stock_level.nil?
+
             available = stock_level.available_count - held.fetch(stock_level.id, 0) - this_order_used[stock_level.id]
 
             raise_insufficient_stock(line_item, available) if available < quantity
