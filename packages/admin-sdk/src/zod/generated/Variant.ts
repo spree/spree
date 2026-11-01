@@ -6,6 +6,7 @@ import { MediaSchema } from './Media';
 import { OptionValueSchema } from './OptionValue';
 import { PriceSchema } from './Price';
 import { PriceHistorySchema } from './PriceHistory';
+import { ProductSubmissionSchema } from './ProductSubmission';
 import { SellerSchema } from './Seller';
 import { StockLevelSchema } from './StockLevel';
 
@@ -42,6 +43,7 @@ export const VariantSchema = z.object({
   custom_fields: z.array(CustomFieldSchema).optional(),
   prior_price: PriceHistorySchema.nullable().optional(),
   external_references: z.record(z.string(), z.string()),
+  status: z.string(),
   metadata: z.record(z.string(), z.unknown()),
   position: z.number(),
   cost_currency: z.string().nullable(),
@@ -65,6 +67,7 @@ export const VariantSchema = z.object({
   total_on_hand: z.number().nullable(),
   product_name: z.string(),
   delivery_profile_id: z.string().nullable(),
+  submission: ProductSubmissionSchema.nullable().optional(),
   get prices() { return z.array(PriceSchema).optional(); },
   get stock_levels() { return z.array(StockLevelSchema).optional(); },
 }) as unknown as z.ZodObject<{
@@ -100,6 +103,7 @@ export const VariantSchema = z.object({
   custom_fields: z.ZodOptional<z.ZodType<Exclude<Variant['custom_fields'], undefined>>>;
   prior_price: z.ZodOptional<z.ZodType<Exclude<Variant['prior_price'], undefined>>>;
   external_references: z.ZodType<Variant['external_references']>;
+  status: z.ZodType<Variant['status']>;
   metadata: z.ZodType<Variant['metadata']>;
   position: z.ZodType<Variant['position']>;
   cost_currency: z.ZodType<Variant['cost_currency']>;
@@ -123,6 +127,7 @@ export const VariantSchema = z.object({
   total_on_hand: z.ZodType<Variant['total_on_hand']>;
   product_name: z.ZodType<Variant['product_name']>;
   delivery_profile_id: z.ZodType<Variant['delivery_profile_id']>;
+  submission: z.ZodOptional<z.ZodType<Exclude<Variant['submission'], undefined>>>;
   prices: z.ZodOptional<z.ZodType<Exclude<Variant['prices'], undefined>>>;
   stock_levels: z.ZodOptional<z.ZodType<Exclude<Variant['stock_levels'], undefined>>>;
 }>;

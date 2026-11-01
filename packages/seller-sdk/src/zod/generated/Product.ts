@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Product from '../../types/generated/Product';
 import { CategorySchema } from './Category';
 import { CustomFieldSchema } from './CustomField';
 import { MediaSchema } from './Media';
@@ -38,8 +39,8 @@ export const ProductSchema = z.object({
   seller: SellerSchema.optional(),
   primary_media: MediaSchema.optional(),
   media: z.array(MediaSchema).optional(),
-  variants: z.array(VariantSchema).optional(),
-  default_variant: VariantSchema.optional(),
+  get variants() { return z.array(VariantSchema).optional(); },
+  get default_variant() { return VariantSchema.optional(); },
   option_types: z.array(OptionTypeSchema).optional(),
   option_values: z.array(OptionValueSchema).optional(),
   get categories() { return z.array(CategorySchema).optional(); },
@@ -52,6 +53,47 @@ export const ProductSchema = z.object({
   product_type_id: z.string().nullable(),
   delivery_profile_id: z.string().nullable(),
   submission: ProductSubmissionSchema.nullable().optional(),
-});
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Product['id']>;
+  name: z.ZodType<Product['name']>;
+  slug: z.ZodType<Product['slug']>;
+  meta_title: z.ZodType<Product['meta_title']>;
+  meta_description: z.ZodType<Product['meta_description']>;
+  meta_keywords: z.ZodType<Product['meta_keywords']>;
+  variant_count: z.ZodType<Product['variant_count']>;
+  available_on: z.ZodType<Product['available_on']>;
+  preorder_ships_at: z.ZodType<Product['preorder_ships_at']>;
+  purchasable: z.ZodType<Product['purchasable']>;
+  preorder: z.ZodType<Product['preorder']>;
+  in_stock: z.ZodType<Product['in_stock']>;
+  backorderable: z.ZodType<Product['backorderable']>;
+  available: z.ZodType<Product['available']>;
+  description: z.ZodType<Product['description']>;
+  description_html: z.ZodType<Product['description_html']>;
+  default_variant_id: z.ZodType<Product['default_variant_id']>;
+  buy_box_variant_id: z.ZodType<Product['buy_box_variant_id']>;
+  thumbnail_url: z.ZodType<Product['thumbnail_url']>;
+  tags: z.ZodType<Product['tags']>;
+  price: z.ZodType<Product['price']>;
+  original_price: z.ZodType<Product['original_price']>;
+  seller_id: z.ZodType<Product['seller_id']>;
+  seller: z.ZodOptional<z.ZodType<Exclude<Product['seller'], undefined>>>;
+  primary_media: z.ZodOptional<z.ZodType<Exclude<Product['primary_media'], undefined>>>;
+  media: z.ZodOptional<z.ZodType<Exclude<Product['media'], undefined>>>;
+  variants: z.ZodOptional<z.ZodType<Exclude<Product['variants'], undefined>>>;
+  default_variant: z.ZodOptional<z.ZodType<Exclude<Product['default_variant'], undefined>>>;
+  option_types: z.ZodOptional<z.ZodType<Exclude<Product['option_types'], undefined>>>;
+  option_values: z.ZodOptional<z.ZodType<Exclude<Product['option_values'], undefined>>>;
+  categories: z.ZodOptional<z.ZodType<Exclude<Product['categories'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Product['custom_fields'], undefined>>>;
+  prior_price: z.ZodOptional<z.ZodType<Exclude<Product['prior_price'], undefined>>>;
+  status: z.ZodType<Product['status']>;
+  metadata: z.ZodType<Product['metadata']>;
+  created_at: z.ZodType<Product['created_at']>;
+  updated_at: z.ZodType<Product['updated_at']>;
+  product_type_id: z.ZodType<Product['product_type_id']>;
+  delivery_profile_id: z.ZodType<Product['delivery_profile_id']>;
+  submission: z.ZodOptional<z.ZodType<Exclude<Product['submission'], undefined>>>;
+}>;
 
-export type Product = z.infer<typeof ProductSchema>;
+export type { Product };

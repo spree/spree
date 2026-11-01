@@ -446,6 +446,14 @@ module Spree
                                              search in_stock out_of_stock with_option_value_ids
 
                                              ascend_by_price descend_by_price]
+    # Which products sellers may compete on, and which carry offers awaiting
+    # a decision, are the marketplace's own workflow: a shopper has no use
+    # for either, and a seller must not learn what a rival has pending.
+    self.private_ransackable_attributes = { store: %w[open_to_sellers], seller: %w[open_to_sellers] }
+    self.private_ransackable_scopes = {
+      store: %w[open_to_sellers with_proposed_offers],
+      seller: %w[open_to_sellers with_proposed_offers]
+    }
     self.ransackable_scope_types = {
       'in_taxon' => 'id', 'in_category' => 'id', 'in_collection' => 'id',
       'in_categories' => { list: 'id' }, 'with_option_value_ids' => { list: 'id' },

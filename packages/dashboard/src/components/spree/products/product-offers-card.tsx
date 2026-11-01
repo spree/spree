@@ -1,4 +1,4 @@
-import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import { adminClient, Money, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -114,7 +114,9 @@ export function ProductOffersCard({ productId }: { productId: string }) {
               <TableRow key={offer.id}>
                 <TableCell>{offer.seller?.name ?? '—'}</TableCell>
                 <TableCell>{offer.options_text || '—'}</TableCell>
-                <TableCell>{offer.price?.display_amount ?? '—'}</TableCell>
+                <TableCell>
+                  <Money amount={offer.price?.amount} currency={offer.price?.currency} />
+                </TableCell>
                 <TableCell>
                   <StatusBadge
                     status={offer.status}

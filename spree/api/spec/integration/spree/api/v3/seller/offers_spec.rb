@@ -29,6 +29,8 @@ RSpec.describe 'Seller Offers API', type: :request, swagger_doc: 'api-reference/
         product without seeing a rival's costs or warehouses.
       DESC
 
+      seller_sdk_example 'master-products/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -79,35 +81,12 @@ RSpec.describe 'Seller Offers API', type: :request, swagger_doc: 'api-reference/
         Stock levels naming a warehouse that is not this seller's are ignored.
       DESC
 
+      seller_sdk_example 'offers/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :master_product_id, in: :path, type: :string, required: true,
                 description: 'Master product ID'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          sku: { type: :string },
-          prices: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                amount: { type: :string },
-                currency: { type: :string }
-              }
-            }
-          },
-          stock_levels: {
-            type: :array,
-            items: {
-              type: :object,
-              properties: {
-                stock_location_id: { type: :string },
-                count_on_hand: { type: :integer }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'offer listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -145,6 +124,8 @@ RSpec.describe 'Seller Offers API', type: :request, swagger_doc: 'api-reference/
         each offer sits on.
       DESC
 
+      seller_sdk_example 'offers/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
@@ -181,12 +162,11 @@ RSpec.describe 'Seller Offers API', type: :request, swagger_doc: 'api-reference/
         never, and it goes on sale by being approved.
       DESC
 
+      seller_sdk_example 'offers/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Offer (variant) ID'
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: { sku: { type: :string }, barcode: { type: :string } }
-      }
+      request_body_for
 
       response '200', 'offer updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -215,6 +195,8 @@ RSpec.describe 'Seller Offers API', type: :request, swagger_doc: 'api-reference/
         approves offers automatically it goes straight on sale; otherwise it
         waits as `proposed` until the operator decides.
       DESC
+
+      seller_sdk_example 'offers/submit'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Offer (variant) ID'

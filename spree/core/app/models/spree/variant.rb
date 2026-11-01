@@ -15,6 +15,7 @@ module Spree
     include Spree::HasStatus
 
     publishes_lifecycle_events
+    publishes_events :activated, :approved, :archived, :drafted, :proposed, :rejected
 
     MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category tax_category_id options_text compare_at_price)
 

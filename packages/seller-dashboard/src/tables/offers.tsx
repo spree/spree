@@ -1,4 +1,4 @@
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, Money } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge, Thumbnail } from '@spree/dashboard-ui'
 import { TagIcon } from '@spree/dashboard-ui/icons'
 import type { Variant } from '@spree/seller-sdk'
@@ -21,6 +21,10 @@ defineTable<Variant>('seller-offers', {
     {
       key: 'product',
       label: i18n.t('offers.columns.product'),
+      // Requested only while the column is on: without it the list can only
+      // show a SKU, which is not how a seller thinks about a catalog whose
+      // products belong to somebody else.
+      expand: 'product',
       default: true,
       render: (offer) => (
         <div className="flex items-center gap-3">
@@ -66,7 +70,7 @@ defineTable<Variant>('seller-offers', {
       key: 'price',
       label: i18n.t('offers.columns.price'),
       default: true,
-      render: (offer) => offer.price?.display_amount ?? '—',
+      render: (offer) => <Money amount={offer.price?.amount} currency={offer.price?.currency} />,
     },
     {
       key: 'stock',

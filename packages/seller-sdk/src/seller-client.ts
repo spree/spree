@@ -99,6 +99,8 @@ import type {
   ImportCreateParams,
   InvitationAcceptParams,
   LoginParams,
+  OfferCreateParams,
+  OfferUpdateParams,
   OnboardingPayoutAccountParams,
   OrderAddressCorrectionParams,
   OrderCancelParams,
@@ -624,7 +626,7 @@ export class SellerClient {
      */
     create: (
       masterProductId: string,
-      params: OfferParams,
+      params: OfferCreateParams,
       options?: RequestOptions,
     ): Promise<Variant> =>
       this.request<Variant>('POST', `/master_products/${masterProductId}/variants`, {
@@ -632,7 +634,7 @@ export class SellerClient {
         body: params,
       }),
 
-    update: (id: string, params: OfferParams, options?: RequestOptions): Promise<Variant> =>
+    update: (id: string, params: OfferUpdateParams, options?: RequestOptions): Promise<Variant> =>
       this.request<Variant>('PATCH', `/variants/${id}`, { ...options, body: params }),
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
@@ -1587,63 +1589,6 @@ export type SellerExportType = 'orders' | 'products'
 
 /** A country as the address form needs it. Name it from `iso` with `Intl.DisplayNames`. */
 export type SellerCountry = Country
-
-/**
- * What a seller sends when listing or editing an offer against one of the
- * marketplace's master-catalog products.
- *
- * Narrower than a product's own variants: there is no `seller_id` (the offer
- * is yours by virtue of who is asking), no `status` (going on sale is the
- * marketplace's decision, asked for with `submit`), no `tax_category_id`
- * (marketplace configuration) and no `position` (the order of a shared
- * product's rows is the operator's).
- */
-export interface OfferParams {
-  sku?: string
-  barcode?: string | null
-  cost_price?: string | number | null
-  cost_currency?: string | null
-  weight?: string | number | null
-  height?: string | number | null
-  width?: string | number | null
-  depth?: string | number | null
-  weight_unit?: string | null
-  dimensions_unit?: string | null
-  hs_code?: string | null
-  country_of_origin?: string | null
-  customs_description?: string | null
-  minimum_order_quantity?: number | null
-  order_multiple?: number | null
-  purchase_unit?: string | null
-  units_per_carton?: number | null
-  track_inventory?: boolean
-  preorderable?: boolean
-  preorder_ships_at?: string | null
-  backorder_limit?: number | null
-  /** Blank ships the offer the way the master product does. */
-  delivery_profile_id?: string | null
-  metadata?: Record<string, unknown>
-  /**
-   * One entry per option type the master product is sold by, each naming a
-   * value the product already carries. A missing axis or an unknown value is
-   * refused — a seller picks from the marketplace's vocabulary rather than
-   * extending it.
-   */
-  options?: Array<{ name: string; value: string }>
-  /** Omit `currency` and the price is recorded in the store's. */
-  prices?: Array<{
-    amount: string | number
-    compare_at_amount?: string | number
-    currency?: string
-  }>
-  /** This seller's own warehouses. Naming another seller's is a 404. */
-  stock_levels?: Array<{
-    id?: string
-    stock_location_id?: string
-    count_on_hand?: number
-    backorderable?: boolean
-  }>
-}
 
 /** Where to send a seller to set up how they get paid. */
 export interface PayoutAccountLink {

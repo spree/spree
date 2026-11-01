@@ -1,9 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  formatAmount,
   InventoryCard,
   mapSpreeErrorsToForm,
   PageHeader,
   PricesCard,
+  useMoneyLocale,
   VariantAvailabilityFields,
   VariantCustomsFields,
   VariantFieldSection,
@@ -29,7 +31,7 @@ import {
   StatusBadge,
   toastManager,
 } from '@spree/dashboard-ui'
-import type { OfferParams } from '@spree/seller-sdk'
+import type { OfferCreateParams } from '@spree/seller-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -96,6 +98,7 @@ const OFFER_EXPAND = 'prices,stock_levels,product,submission,option_values'
  */
 export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const params = useParams({ strict: false }) as { variantId?: string }
   const search = useSearch({ strict: false }) as { product?: string }
@@ -208,7 +211,7 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
   const save = useMutation({
     mutationFn: (values: OfferFormValues) => {
       const row = values.variants[0]
-      const payload: OfferParams = {
+      const payload: OfferCreateParams = {
         ...pickOfferFields(row),
         track_inventory: row.track_inventory,
         preorderable: row.preorderable,
@@ -434,9 +437,15 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                   </CardHeader>
                   <CardContent className="flex flex-col gap-2">
                     <span className="font-medium">{master.name}</span>
-                    {master.price?.display_amount && (
+                    {master.price?.amount && master.price.currency && (
                       <span className="text-muted-foreground text-sm">
-                        {t('offers.marketplace_price', { price: master.price.display_amount })}
+                        {t('offers.marketplace_price', {
+                          price: formatAmount(
+                            master.price.amount,
+                            master.price.currency,
+                            moneyLocale,
+                          ),
+                        })}
                       </span>
                     )}
                   </CardContent>

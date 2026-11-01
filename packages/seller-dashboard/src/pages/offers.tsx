@@ -66,10 +66,7 @@ export function OffersPage({ search }: { search: ResourceSearch }) {
         hideHeader
         tableKey="seller-offers"
         queryKey="seller-offers"
-        // `product` names what each offer sits on; without it the list can
-        // only show a SKU, which is not how a seller thinks about a catalog
-        // whose products belong to somebody else.
-        queryFn={(params) => sellerClient().variants.list({ ...params, expand: ['product'] })}
+        queryFn={(params) => sellerClient().variants.list(params)}
         searchParams={search}
         bulkActions={bulkActions}
         actions={() => (

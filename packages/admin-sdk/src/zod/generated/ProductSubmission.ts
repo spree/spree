@@ -8,6 +8,7 @@ export const ProductSubmissionSchema = z.object({
   reviewed_at: z.string().nullable(),
   created_at: z.string(),
   product_id: z.string(),
+  variant_id: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()).nullable(),
   updated_at: z.string(),
   submitted_by_id: z.string().nullable(),

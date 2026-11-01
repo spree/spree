@@ -37,6 +37,11 @@ export type ProductCreateParams = {
    */
   delivery_profile_id?: string | null
   promotionable?: boolean
+  /**
+   * Whether sellers may list their own offers against this product. Only first-party products can
+   * be opened.
+   */
+  open_to_sellers?: boolean
   tags?: string[]
   category_ids?: string[]
   /**

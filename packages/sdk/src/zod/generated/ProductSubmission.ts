@@ -8,6 +8,7 @@ export const ProductSubmissionSchema = z.object({
   reviewed_at: z.string().nullable(),
   created_at: z.string(),
   product_id: z.string(),
+  variant_id: z.string().nullable(),
 });
 
 export type ProductSubmission = z.infer<typeof ProductSubmissionSchema>;

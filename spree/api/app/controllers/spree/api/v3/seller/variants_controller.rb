@@ -22,6 +22,45 @@ module Spree
 
           scoped_resource :products
 
+          # No `seller_id`: the row carries the seller from the scope it was
+          # built in. No `status`: an offer moves through the member actions,
+          # so a decision always records who made it. No `tax_category_id` or
+          # `position`: tax is marketplace configuration, and the order of a
+          # shared product's rows is the operator's.
+          request_params :offer do |body|
+            body.attribute :sku, :string
+            body.attribute :barcode, :string
+            body.attribute :cost_price, :decimal, nullable: true
+            body.attribute :cost_currency, :currency
+            body.attribute :weight, :number, nullable: true
+            body.attribute :height, :number, nullable: true
+            body.attribute :width, :number, nullable: true
+            body.attribute :depth, :number, nullable: true
+            body.attribute :weight_unit, :weight_unit, nullable: true
+            body.attribute :dimensions_unit, :dimension_unit, nullable: true
+            body.attribute :hs_code, :string
+            body.attribute :customs_description, :string
+            body.attribute :country_of_origin, :country
+            body.attribute :minimum_order_quantity, :integer, nullable: true
+            body.attribute :order_multiple, :integer, nullable: true
+            body.attribute :purchase_unit, :string, nullable: true, choices: Spree::Variant::PURCHASE_UNITS
+            body.attribute :units_per_carton, :integer, nullable: true
+            body.attribute :track_inventory, :boolean
+            body.attribute :preorderable, :boolean
+            body.attribute :preorder_ships_at, :datetime, nullable: true
+            body.attribute :backorder_limit, :integer, nullable: true
+            body.attribute :delivery_profile_id, :id,
+              nullable: true,
+              description: "Which of the marketplace's delivery profiles this offer ships under. Blank ships it the way the master product does."
+            body.attribute :metadata, :hash
+            body.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
+              description: 'One entry per option type the master product is sold by, each naming a value the product already carries. A missing axis or an unknown value is refused. On update, omit to leave the options untouched.'
+            body.attribute :prices, :array, of: Spree::Api::V3::Seller::PriceRequestSchema,
+              description: "Per-currency prices. Omit `currency` and the price is recorded in the store's."
+            body.attribute :stock_levels, :array, of: Spree::Api::V3::StockLevelRequestSchema,
+              description: "Stock per location, at this seller's own locations only."
+          end
+
           before_action :set_status_resource, only: [:submit, :draft, :archive]
           before_action :validate_offer_payload, only: [:create, :update]
 
@@ -116,25 +155,7 @@ module Spree
           end
 
           def permitted_params
-            attrs = params.permit(
-              :sku, :barcode,
-              :cost_price, :cost_currency,
-              :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-              :hs_code, :country_of_origin, :customs_description,
-              :minimum_order_quantity, :order_multiple, :purchase_unit, :units_per_carton,
-              :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit,
-              # No `seller_id`: the row carries the seller from the scope it
-              # was built in. No `status`: an offer moves through the member
-              # actions, so a decision always records who made it. No
-              # `tax_category_id` or `position`: tax is marketplace
-              # configuration, and the order of a shared product's rows is
-              # the operator's.
-              :delivery_profile_id,
-              metadata: {},
-              options: [:name, :value],
-              prices: [:amount, :compare_at_amount, :currency],
-              stock_levels: [:id, :stock_location_id, :count_on_hand, :backorderable]
-            )
+            attrs = params.permit(*permitted_attributes)
 
             # Assigned only when present: writing a nil `prices` or
             # `stock_levels` key reaches the association setter as nil, which

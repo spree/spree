@@ -1,10 +1,13 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import type Variant from '../../types/generated/Variant';
 import { CustomFieldSchema } from './CustomField';
 import { MediaSchema } from './Media';
 import { OptionValueSchema } from './OptionValue';
 import { PriceSchema } from './Price';
 import { PriceHistorySchema } from './PriceHistory';
+import { ProductSchema } from './Product';
+import { ProductSubmissionSchema } from './ProductSubmission';
 import { SellerSchema } from './Seller';
 import { StockLevelSchema } from './StockLevel';
 
@@ -40,6 +43,7 @@ export const VariantSchema = z.object({
   option_values: z.array(OptionValueSchema),
   custom_fields: z.array(CustomFieldSchema).optional(),
   prior_price: PriceHistorySchema.nullable().optional(),
+  status: z.string(),
   metadata: z.record(z.string(), z.unknown()),
   position: z.number(),
   cost_currency: z.string().nullable(),
@@ -52,10 +56,65 @@ export const VariantSchema = z.object({
   updated_at: z.string(),
   cost_price: z.string().nullable(),
   preorderable: z.boolean(),
+  delivery_profile_id: z.string().nullable(),
+  submission: ProductSubmissionSchema.nullable().optional(),
+  get product() { return ProductSchema.optional(); },
   available_stock: z.number().nullable(),
   total_on_hand: z.number().nullable(),
   prices: z.array(PriceSchema).optional(),
   stock_levels: z.array(StockLevelSchema).optional(),
-});
+}) as unknown as z.ZodObject<{
+  id: z.ZodType<Variant['id']>;
+  product_id: z.ZodType<Variant['product_id']>;
+  sku: z.ZodType<Variant['sku']>;
+  options_text: z.ZodType<Variant['options_text']>;
+  track_inventory: z.ZodType<Variant['track_inventory']>;
+  media_count: z.ZodType<Variant['media_count']>;
+  preorder_ships_at: z.ZodType<Variant['preorder_ships_at']>;
+  thumbnail_url: z.ZodType<Variant['thumbnail_url']>;
+  purchasable: z.ZodType<Variant['purchasable']>;
+  in_stock: z.ZodType<Variant['in_stock']>;
+  backorderable: z.ZodType<Variant['backorderable']>;
+  preorder: z.ZodType<Variant['preorder']>;
+  weight: z.ZodType<Variant['weight']>;
+  height: z.ZodType<Variant['height']>;
+  width: z.ZodType<Variant['width']>;
+  depth: z.ZodType<Variant['depth']>;
+  weight_unit: z.ZodType<Variant['weight_unit']>;
+  dimensions_unit: z.ZodType<Variant['dimensions_unit']>;
+  minimum_order_quantity: z.ZodType<Variant['minimum_order_quantity']>;
+  order_multiple: z.ZodType<Variant['order_multiple']>;
+  purchase_unit: z.ZodType<Variant['purchase_unit']>;
+  units_per_carton: z.ZodType<Variant['units_per_carton']>;
+  price: z.ZodType<Variant['price']>;
+  original_price: z.ZodType<Variant['original_price']>;
+  seller_id: z.ZodType<Variant['seller_id']>;
+  seller: z.ZodOptional<z.ZodType<Exclude<Variant['seller'], undefined>>>;
+  primary_media: z.ZodOptional<z.ZodType<Exclude<Variant['primary_media'], undefined>>>;
+  media: z.ZodOptional<z.ZodType<Exclude<Variant['media'], undefined>>>;
+  option_values: z.ZodType<Variant['option_values']>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Variant['custom_fields'], undefined>>>;
+  prior_price: z.ZodOptional<z.ZodType<Exclude<Variant['prior_price'], undefined>>>;
+  status: z.ZodType<Variant['status']>;
+  metadata: z.ZodType<Variant['metadata']>;
+  position: z.ZodType<Variant['position']>;
+  cost_currency: z.ZodType<Variant['cost_currency']>;
+  barcode: z.ZodType<Variant['barcode']>;
+  backorder_limit: z.ZodType<Variant['backorder_limit']>;
+  hs_code: z.ZodType<Variant['hs_code']>;
+  country_of_origin: z.ZodType<Variant['country_of_origin']>;
+  customs_description: z.ZodType<Variant['customs_description']>;
+  created_at: z.ZodType<Variant['created_at']>;
+  updated_at: z.ZodType<Variant['updated_at']>;
+  cost_price: z.ZodType<Variant['cost_price']>;
+  preorderable: z.ZodType<Variant['preorderable']>;
+  delivery_profile_id: z.ZodType<Variant['delivery_profile_id']>;
+  submission: z.ZodOptional<z.ZodType<Exclude<Variant['submission'], undefined>>>;
+  product: z.ZodOptional<z.ZodType<Exclude<Variant['product'], undefined>>>;
+  available_stock: z.ZodType<Variant['available_stock']>;
+  total_on_hand: z.ZodType<Variant['total_on_hand']>;
+  prices: z.ZodOptional<z.ZodType<Exclude<Variant['prices'], undefined>>>;
+  stock_levels: z.ZodOptional<z.ZodType<Exclude<Variant['stock_levels'], undefined>>>;
+}>;
 
-export type Variant = z.infer<typeof VariantSchema>;
+export type { Variant };

@@ -53,6 +53,7 @@ export const ProductSchema = z.object({
   external_references: z.record(z.string(), z.string()),
   translations: z.record(z.string(), z.record(z.string(), z.union([z.string(), z.number()]).nullable())).optional(),
   status: z.string(),
+  open_to_sellers: z.boolean(),
   metadata: z.record(z.string(), z.unknown()),
   deleted_at: z.string().nullable(),
   created_at: z.string(),
