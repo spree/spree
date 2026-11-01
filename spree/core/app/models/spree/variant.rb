@@ -67,7 +67,9 @@ module Spree
     # product. Append-only, the latest row live — the same shape and the same
     # table as a product's, since the decision being recorded is the same one
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
-    has_many :submissions, class_name: 'Spree::ProductSubmission', dependent: :destroy, inverse_of: :variant
+    # Kept when the offer is deleted: the trail is the record of who decided
+    # what, and a soft-deleted variant can come back.
+    has_many :submissions, class_name: 'Spree::ProductSubmission', dependent: nil, inverse_of: :variant
 
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :product_type_id,
              :meta_description, :meta_keywords, :product_type, :store_id, to: :product
@@ -199,8 +201,11 @@ module Spree
     after_save :create_default_stock_level, unless: :track_inventory?
     after_update_commit :handle_track_inventory_change
 
-    after_create :increment_product_variant_count
-    after_destroy :decrement_product_variant_count
+    # The count a shopper reads, so it follows the rows on sale: an offer
+    # nobody approved must neither add a picker nor reveal that it exists.
+    after_create :increment_product_variant_count, if: :active?
+    after_update :adjust_product_variant_count, if: :saved_change_to_status?
+    after_destroy :decrement_product_variant_count, if: :active?
 
     scope :in_stock, -> { left_joins(:stock_levels).where("#{Spree::Variant.table_name}.track_inventory = ? OR (#{Spree::StockLevel.table_name}.count_on_hand - #{Spree::StockLevel.table_name}.allocated_count) > ?", false, 0) }
     scope :backorderable, -> { left_joins(:stock_levels).where(Spree::StockLevel.table_name => { backorderable: true }) }
@@ -293,7 +298,15 @@ module Spree
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
     scope :listed, -> { where(status: 'active') }
 
-    scope :offers, -> { where.not(seller_id: nil) }
+    # Two-sided, so the operator's filter can ask for either; see
+    # Spree::Base.ransack_flag.
+    scope :offers, lambda { |*values|
+      case Spree::Base.ransack_flag(*values)
+      when true then where.not(seller_id: nil)
+      when false then where(seller_id: nil)
+      else all
+      end
+    }
 
     scope :with_option_value, lambda { |option_name, option_value|
       # Option types are per store, so two stores may each define `size`;
@@ -372,6 +385,11 @@ module Spree
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
                                              available_at_stock_location offers)
     self.ransackable_scope_types = { 'available_at_stock_location' => 'id', 'offers' => 'boolean' }
+
+    # `offers` casts its own value; see Spree::Base.ransack_flag.
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[offers]
+    end
     self.private_ransackable_attributes = { store: %w[cost_price cost_currency deleted_at] }
 
     def self.product_name_or_sku_cont(query)
@@ -1419,6 +1437,13 @@ module Spree
 
     def decrement_product_variant_count
       Spree::Product.decrement_counter(:variant_count, product_id)
+    end
+
+    def adjust_product_variant_count
+      was_active, now_active = saved_change_to_status.map { |status| status == 'active' }
+      return if was_active == now_active
+
+      now_active ? increment_product_variant_count : decrement_product_variant_count
     end
   end
 end

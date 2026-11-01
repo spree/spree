@@ -69,13 +69,14 @@ export function OfferStatusCard({ offer, onDone }: { offer: Variant; onDone: () 
 
         <div className="flex flex-wrap gap-2">
           {canSubmit && (
-            <Button disabled={move.isPending} onClick={() => move.mutate('submit')}>
+            <Button type="button" disabled={move.isPending} onClick={() => move.mutate('submit')}>
               {t('offers.submit_for_review')}
             </Button>
           )}
 
           {canTakeDown && (
             <Button
+              type="button"
               variant="outline"
               disabled={move.isPending}
               onClick={async () => {
@@ -92,13 +93,14 @@ export function OfferStatusCard({ offer, onDone }: { offer: Variant; onDone: () 
           )}
 
           {canRestore && (
-            <Button disabled={move.isPending} onClick={() => move.mutate('draft')}>
+            <Button type="button" disabled={move.isPending} onClick={() => move.mutate('draft')}>
               {t('offers.restore')}
             </Button>
           )}
 
           {status !== 'archived' && (
             <Button
+              type="button"
               variant="outline"
               disabled={move.isPending}
               onClick={async () => {

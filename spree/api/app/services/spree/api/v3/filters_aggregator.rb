@@ -49,13 +49,13 @@ module Spree
           direction == 'desc' ? "-#{field}" : field
         end
 
-
         def price_filter
           # Remove ordering to avoid PostgreSQL DISTINCT + ORDER BY conflicts.
           # Base prices only: a price list's rows are for its own audience
           # (a company's contract, a draft or scheduled list), and the range is
-          # shown to everyone.
-          prices = Spree::Price.base_prices.for_products(@scope.reorder(''), @currency)
+          # shown to everyone. Only variants on sale count, so an unapproved
+          # offer cannot set the range.
+          prices = Spree::Price.base_prices.for_products(@scope.reorder(''), @currency).merge(Spree::Variant.listed)
           min = prices.minimum(:amount)
           max = prices.maximum(:amount)
           return nil if min.nil? || max.nil?

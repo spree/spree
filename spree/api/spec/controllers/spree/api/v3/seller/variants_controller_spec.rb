@@ -110,7 +110,9 @@ RSpec.describe Spree::Api::V3::Seller::VariantsController, type: :controller do
     end
 
     it 'refuses a product another seller owns' do
-      owned = create(:product, store: store, status: 'active', seller: other_seller, open_to_sellers: true)
+      # Written past the model's refusal, as a row flagged before it existed.
+      owned = create(:product, store: store, status: 'active', seller: other_seller)
+      owned.update_column(:open_to_sellers, true)
 
       post :create, params: payload.merge(master_product_id: owned.prefixed_id), as: :json
 
@@ -221,6 +223,19 @@ RSpec.describe Spree::Api::V3::Seller::VariantsController, type: :controller do
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('duplicate_offer')
+      end
+
+      # Archived rows do not block a new listing, so bringing one back is the
+      # move that could leave two live rows in the same buy box.
+      it 'refuses to restore an archived offer whose combination is listed again' do
+        my_offer.update!(option_values: [used], status: 'archived')
+        create(:variant, product: master, seller: seller, status: 'draft', option_values: [used])
+
+        patch :draft, params: { id: my_offer.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('duplicate_offer')
+        expect(my_offer.reload).to be_archived
       end
 
       # Two sellers listing the same condition is the whole point of a shared

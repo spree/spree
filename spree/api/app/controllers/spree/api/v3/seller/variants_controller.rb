@@ -63,6 +63,7 @@ module Spree
 
           before_action :set_status_resource, only: [:submit, :draft, :archive]
           before_action :validate_offer_payload, only: [:create, :update]
+          before_action :refuse_duplicate_restore, only: :draft
 
           # PATCH /api/v3/seller/variants/:id/submit
           #
@@ -286,6 +287,19 @@ module Spree
             render_error(**error)
           end
 
+          # Archived rows are left out of the duplicate check so a seller can
+          # list that combination again, which means bringing an archived row
+          # back is the one move that can make a second live row. It is
+          # checked against the row's own option values.
+          def refuse_duplicate_restore
+            return unless @resource.archived?
+
+            @resolved_options = @resource.option_values.includes(:option_type).map do |value|
+              { name: value.option_type.name, value: value.name }
+            end
+            error = refuse_duplicate_combination
+            render_error(**error) if error
+          end
         end
       end
     end

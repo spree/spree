@@ -96,6 +96,8 @@ const OFFER_EXPAND = 'prices,stock_levels,product,submission,option_values'
  * and images belong to the marketplace's listing, and a seller sets a price,
  * a condition and what is on their shelf.
  */
+const INHERIT_DELIVERY_PROFILE = '__inherit__'
+
 export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
   const { t } = useTranslation()
   const moneyLocale = useMoneyLocale()
@@ -465,16 +467,26 @@ export function OfferPage({ mode }: { mode: 'new' | 'edit' }) {
                       name="variants.0.delivery_profile_id"
                       control={form.control}
                       render={({ field }) => {
-                        const items = (profiles?.data ?? []).map((deliveryProfile) => ({
-                          value: deliveryProfile.id,
-                          label: deliveryProfile.name,
-                        }))
+                        // Blank ships the offer the way the master product
+                        // does, so it follows the operator's later changes.
+                        const items = [
+                          {
+                            value: INHERIT_DELIVERY_PROFILE,
+                            label: t('offers.fields.delivery_profile_inherit'),
+                          },
+                          ...(profiles?.data ?? []).map((deliveryProfile) => ({
+                            value: deliveryProfile.id,
+                            label: deliveryProfile.name,
+                          })),
+                        ]
 
                         return (
                           <Select
                             items={items}
-                            value={(field.value as string) ?? ''}
-                            onValueChange={field.onChange}
+                            value={(field.value as string | null) || INHERIT_DELIVERY_PROFILE}
+                            onValueChange={(value) =>
+                              field.onChange(value === INHERIT_DELIVERY_PROFILE ? null : value)
+                            }
                           >
                             <SelectTrigger id="offer-delivery-profile">
                               <SelectValue />

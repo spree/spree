@@ -295,6 +295,7 @@ module Spree
     validates :default_variant, presence: true, on: :update
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
+    validate :only_first_party_products_open_to_sellers, if: -> { open_to_sellers? && seller_id.present? }
 
     scope :for_store, ->(store) { where(store_id: store.id) }
     # Products belonging to the given seller. Passing nil selects the
@@ -304,19 +305,23 @@ module Spree
     # Products a seller may list an offer against. Closed by default, so this
     # is the operator's explicit choice rather than everything they sell
     # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
-    scope :open_to_sellers, -> { where(open_to_sellers: true) }
+    scope :open_to_sellers, lambda { |*values|
+      flag = Spree::Base.ransack_flag(*values)
+      flag.nil? ? all : where(open_to_sellers: flag)
+    }
     # Products carrying at least one offer awaiting a decision — the review
     # queue, as a filter on the catalog rather than a page of its own.
-    # Takes the value so the operator's filter can ask for either side.
-    # Ransack skips an arity-zero scope whenever the value is falsey, which
-    # would answer "every product" to "show me the ones with nothing to
-    # review" — the opposite of what was asked.
-    scope :with_proposed_offers, lambda { |value = true|
+    # Two-sided, so the operator's filter can ask for either; see
+    # Spree::Base.ransack_flag.
+    scope :with_proposed_offers, lambda { |*values|
+      flag = Spree::Base.ransack_flag(*values)
+      next all if flag.nil?
+
       exists = Spree::Variant.where(Spree::Variant.arel_table[:product_id].eq(arel_table[:id])).
                where(status: 'proposed', deleted_at: nil).
                where.not(seller_id: nil).arel.exists
 
-      ActiveModel::Type::Boolean.new.cast(value) ? where(exists) : where.not(exists)
+      flag ? where(exists) : where.not(exists)
     }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
@@ -454,6 +459,11 @@ module Spree
       store: %w[open_to_sellers with_proposed_offers],
       seller: %w[open_to_sellers with_proposed_offers]
     }
+    # The two-sided flags cast their own value; see Spree::Base.ransack_flag.
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[open_to_sellers with_proposed_offers]
+    end
+
     self.ransackable_scope_types = {
       'in_taxon' => 'id', 'in_category' => 'id', 'in_collection' => 'id',
       'in_categories' => { list: 'id' }, 'with_option_value_ids' => { list: 'id' },
@@ -1111,6 +1121,12 @@ module Spree
     def remove_category(category)
       removed_product_categories = product_categories.where(category: category)
       removed_product_categories.each(&:remove_from_list)
+    end
+
+    # A product a seller owns outright is theirs; inviting rival offers onto it
+    # would be the marketplace reselling someone else's listing.
+    def only_first_party_products_open_to_sellers
+      errors.add(:open_to_sellers, :seller_owned)
     end
 
     def discontinue_on_must_be_later_than_make_active_at

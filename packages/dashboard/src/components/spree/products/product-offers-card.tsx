@@ -88,6 +88,9 @@ export function ProductOffersCard({ productId }: { productId: string }) {
       }),
   })
 
+  const reject = (variantId: string) =>
+    decide.mutate({ variantId, action: 'reject', note: reason.trim() || undefined })
+
   const offers = data?.data ?? []
   // Nothing to review on a product the marketplace sells alone, so the card
   // stays out of the way entirely.
@@ -129,24 +132,31 @@ export function ProductOffersCard({ productId }: { productId: string }) {
                       <Input
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
+                        // The card sits inside the product form, so Enter
+                        // would save the product rather than send the offer back.
+                        onKeyDown={(e) => {
+                          if (e.key !== 'Enter') return
+                          e.preventDefault()
+                          if (!decide.isPending) reject(offer.id)
+                        }}
                         placeholder={t('admin.products.offers.reason_placeholder')}
                         className="max-w-56"
                       />
                       <Button
+                        type="button"
                         variant="destructive"
                         size="sm"
                         disabled={decide.isPending}
-                        onClick={() =>
-                          decide.mutate({
-                            variantId: offer.id,
-                            action: 'reject',
-                            note: reason.trim() || undefined,
-                          })
-                        }
+                        onClick={() => reject(offer.id)}
                       >
                         {t('admin.products.offers.reject')}
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => openRejectFor(null)}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openRejectFor(null)}
+                      >
                         {t('admin.common.cancel')}
                       </Button>
                     </div>
@@ -157,6 +167,7 @@ export function ProductOffersCard({ productId }: { productId: string }) {
                     <div className="flex items-center justify-end gap-2">
                       {offer.status === 'proposed' && (
                         <Button
+                          type="button"
                           size="sm"
                           disabled={decide.isPending}
                           onClick={async () => {
@@ -175,6 +186,7 @@ export function ProductOffersCard({ productId }: { productId: string }) {
                       )}
                       {(offer.status === 'proposed' || offer.status === 'rejected') && (
                         <Button
+                          type="button"
                           variant="outline"
                           size="sm"
                           disabled={decide.isPending}

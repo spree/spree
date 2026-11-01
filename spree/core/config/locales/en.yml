@@ -402,6 +402,8 @@ en:
               status_decided_by_review: A product in review changes status by being approved or sent back, not by editing it.
             discontinue_on:
               invalid_date_range: must be later than available date
+            open_to_sellers:
+              seller_owned: can only be set on the marketplace's own products
         spree/product_publication:
           attributes:
             unpublished_at:

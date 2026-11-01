@@ -62,11 +62,14 @@ module Spree
             variant.product&.prefixed_id
           end
 
-          # Read resolved and written to the column, exactly as on the admin
-          # serializer: a read-then-write round trip on an owned variant
-          # therefore changes nothing.
+          # An offer reads its own column, where blank means "ship as the
+          # master does" — reading the resolved profile there would pin the
+          # master's current one on the next save. A variant of an owned
+          # product reads resolved, as on the admin serializer; the model
+          # blanks the column on write, so its round trip changes nothing.
           attribute :delivery_profile_id do |variant|
-            variant.resolved_delivery_profile&.prefixed_id
+            profile = variant.seller_id.present? ? variant.delivery_profile : variant.resolved_delivery_profile
+            profile&.prefixed_id
           end
 
           # Why the marketplace sent this offer back, so the panel can show it

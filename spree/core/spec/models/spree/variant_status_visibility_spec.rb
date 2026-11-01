@@ -150,6 +150,47 @@ RSpec.describe 'variant status and shopper-facing visibility' do
     end
   end
 
+  describe 'price, stock and sale filters' do
+    let(:cheap_master) { create(:product, store: store, seller: nil, status: 'active') }
+
+    before { cheap_master.default_variant.set_price('USD', 10) }
+
+    # The offer is priced at 5 against the marketplace's 20, so a shopper
+    # sorting by price would otherwise see this product ranked as a 5.
+    it 'ranks a product by the prices on sale, not by an offer awaiting review' do
+      sorted = Spree::Product.where(id: [master.id, cheap_master.id]).ascend_by_price.to_a
+
+      expect(sorted.first).to eq(cheap_master)
+    end
+
+    it 'does not match a price filter through an offer awaiting review' do
+      expect(Spree::Product.with_currency('USD').price_lte(6)).not_to include(master)
+    end
+
+    it 'does not count an offer awaiting review as stock' do
+      product = create(:product, store: store, seller: nil, status: 'active')
+      product.default_variant.update!(track_inventory: true)
+      product.default_variant.set_stock(0, false, store.stock_locations.first)
+      create(:variant, product: product, seller: seller, status: 'proposed').
+        set_stock(5, false, store.stock_locations.first)
+
+      expect(Spree::Product.where(id: product.id).in_stock).to be_empty
+    end
+  end
+
+  describe 'variant count' do
+    it 'counts only the variants on sale' do
+      expect { offer.update!(status: 'active') }.to change { master.reload.variant_count }.by(1)
+      expect { offer.update!(status: 'archived') }.to change { master.reload.variant_count }.by(-1)
+    end
+
+    it 'does not count an offer created awaiting review' do
+      expect {
+        create(:variant, product: master, seller: seller, status: 'draft')
+      }.not_to change { master.reload.variant_count }
+    end
+  end
+
   # A store selling only its own goods must notice none of this.
   describe 'a first-party catalog' do
     it 'creates variants active by default' do

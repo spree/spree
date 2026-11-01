@@ -47,8 +47,9 @@ RSpec.describe Spree::Api::V3::Seller::MasterProductsController, type: :controll
 
     it 'hides a product another seller owns outright' do
       other = create(:seller, :approved, store: store)
-      create(:product, name: 'Their Lamp', store: store, status: 'active',
-                       seller: other, open_to_sellers: true)
+      # Written past the model's refusal, as a row flagged before it existed.
+      create(:product, name: 'Their Lamp', store: store, status: 'active', seller: other).
+        update_column(:open_to_sellers, true)
 
       get :index, as: :json
 
