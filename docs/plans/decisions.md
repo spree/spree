@@ -8,6 +8,16 @@
 
 **Plan:** `6.1-payment-method-rules.md` (renamed from `6.0-payment-method-rules.md`; links updated in seven plans). **Plans amended:** `6.0-integrations-admin.md` (multi-account note).
 
+## 2026-11-01: The invoice record is open source; invoice generation is Enterprise
+
+**Context:** Two European marketplace prospects asked for automatic PDF invoices per seller, with the seller's business details and VAT. On 2026-08-30 `6.1-b2b-order-documents.md` kept invoices out of open source entirely ("no invoice vocabulary in OSS, no PDF stack in core"). An earlier version of today's plan moved all of invoicing, generation included, into open source; it was revised the same day.
+
+**Decision:** `6.1-invoices-and-receipts.md` adds `Spree::Invoice` (invoice, receipt, credit note) to core as the one record for every invoice, uploaded or generated, issued by whoever sold the goods (the store or a seller). Open source covers uploads (admin, seller panel, Admin and Seller APIs), private storage, delivery to buyers (Documents card, Store API, invoice email), consumer invoice requests with `order.invoice_requested`, and a calculated missing-invoice view for operators. Generation (gapless series, EN 16931 snapshot, PDF rendering, automatic issuing, credit notes, commission invoices, e-invoicing formats) is Enterprise, in `ee/docs/plans/invoice-generation.md`, writing the same records with `source: generated`. This is Saleor's split.
+
+**Consequences:** Supersedes the "no invoice vocabulary in OSS" half of 2026-08-30; "no PDF stack in core" still holds. Invoices are never `OrderDocument` rows; the order page shows both in one Documents card sharing a private-file concern. Invoices are never edited (uploads deletable only until sent) and survive anonymization. Order numbers are never invoice numbers. Open source gives up free generation, which Magento and Sylius offer.
+
+**Plans amended:** `6.1-b2b-order-documents.md` (superseded in part: summary note, dashboard card, constraint), `6.0-6.1-b2b-payment-terms.md` (constraint clarified).
+
 ## 2026-10-06: Custom fields stay a merchant-facing feature, not a data modelling system
 
 **Context:** Custom fields were heading toward a general-purpose schema (record references, files, value lists, reusable content types) while basic gaps went unfixed: admin-only fields leaked through storefront search, a definition's type can change under existing values, shoppers cannot fill a field in at checkout, and core itself stores integration data in auto-created definitions. Revised 2026-11-02 after a review against the code and the plans written since, with 6.0.0 already released.
