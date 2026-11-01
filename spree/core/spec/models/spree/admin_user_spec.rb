@@ -79,6 +79,96 @@ describe Spree.admin_user_class, type: :model do
     end
   end
 
+  describe '#status' do
+    it 'is active by default' do
+      expect(admin_user.status).to eq('active')
+    end
+
+    it 'is locked within the lockout window' do
+      admin_user.update!(locked_at: Time.current)
+
+      expect(admin_user.status).to eq('locked')
+    end
+
+    it 'is deactivated, even while locked' do
+      admin_user.update!(locked_at: Time.current)
+      admin_user.deactivate!
+
+      expect(admin_user.status).to eq('deactivated')
+    end
+  end
+
+  describe '#invited_by' do
+    let(:store) { @default_store }
+    let(:inviter) { create(:admin_user) }
+
+    def invite(status:)
+      create(:invitation, resource: store, inviter: inviter).tap do |invitation|
+        invitation.update_columns(invitee_type: admin_user.class.polymorphic_name, invitee_id: admin_user.id, status: status)
+      end
+    end
+
+    it 'is the inviter of the invitation the user accepted on the store' do
+      invite(status: 'accepted')
+
+      expect(admin_user.invited_by(store)).to eq(inviter)
+    end
+
+    it 'ignores an invitation the user has not accepted' do
+      invite(status: 'pending')
+
+      expect(admin_user.invited_by(store)).to be_nil
+    end
+
+    it 'is nil for a user added without an invitation' do
+      expect(admin_user.invited_by(store)).to be_nil
+    end
+  end
+
+  describe 'sessions' do
+    let!(:older) { create(:refresh_token, :for_admin, user: admin_user, created_at: 2.days.ago) }
+    let!(:newer) { create(:refresh_token, user: admin_user, audience: 'seller_api', created_at: 1.hour.ago) }
+    let!(:expired) { create(:refresh_token, :for_admin, user: admin_user, created_at: 1.minute.ago, expires_at: 1.second.ago) }
+
+    it 'lists the sessions that can still be refreshed, most recently used first' do
+      expect(admin_user.active_sessions).to eq([newer, older])
+    end
+
+    it 'deletes its sessions with the account' do
+      expect { admin_user.destroy }.to change { Spree::RefreshToken.where(user: admin_user).count }.from(3).to(0)
+    end
+  end
+
+  describe '#last_active_at' do
+    it 'is stamped when a session starts and when it refreshes' do
+      token = Spree::RefreshToken.create_for(admin_user, audience: 'admin_api')
+      expect(admin_user.reload.last_active_at).to be_within(1.second).of(token.created_at)
+
+      travel 10.minutes do
+        refreshed = token.rotate!
+        expect(admin_user.reload.last_active_at).to be_within(1.second).of(refreshed.created_at)
+      end
+    end
+
+    it 'never moves back when an older session is recorded last' do
+      newer = create(:refresh_token, :for_admin, user: admin_user, created_at: 1.minute.ago)
+      create(:refresh_token, :for_admin, user: admin_user, created_at: 1.hour.ago)
+
+      expect(admin_user.reload.last_active_at).to be_within(1.second).of(newer.created_at)
+    end
+
+    it 'outlives the session when the account signs out' do
+      token = Spree::RefreshToken.create_for(admin_user, audience: 'admin_api')
+      token.destroy
+
+      expect(admin_user.reload.last_active_at).to be_present
+    end
+
+    it 'is nil for an account that never signed in' do
+      expect(admin_user.last_active_at).to be_nil
+    end
+  end
+
   describe '#can_be_deleted?' do
     subject { admin_user.can_be_deleted? }
 

@@ -4471,9 +4471,26 @@
         "table": {
           "member": "Member",
           "role": "Role",
-          "roles": "Roles"
+          "roles": "Roles",
+          "status": "Status",
+          "last_active": "Last active"
         },
-        "title": "Staff"
+        "title": "Staff",
+        "status": {
+          "active": "Active",
+          "locked": "Locked",
+          "deactivated": "Deactivated"
+        },
+        "details": {
+          "joined": "Joined",
+          "invited_by": "Invited by",
+          "load_failed": "Couldn't load these details. Close the sheet and try again."
+        },
+        "sessions": {
+          "title": "Sessions",
+          "empty": "No active sessions.",
+          "unknown_device": "Unknown device"
+        }
       },
       "translations": {
         "complete": "Fully translated",

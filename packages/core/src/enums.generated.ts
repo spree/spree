@@ -8,6 +8,10 @@ export type ActorKind = (typeof ACTOR_KINDS)[number] | (string & {})
 export const ADDRESS_OWNER_TYPES = ['customer', 'company', 'seller'] as const
 export type AddressOwnerType = (typeof ADDRESS_OWNER_TYPES)[number] | (string & {})
 
+/** Every value of `AdminUserStatus`. */
+export const ADMIN_USER_STATUSES = ['active', 'locked', 'deactivated'] as const
+export type AdminUserStatus = (typeof ADMIN_USER_STATUSES)[number]
+
 /** Every value of `ApiKeyType`. */
 export const API_KEY_TYPES = ['publishable', 'secret'] as const
 export type ApiKeyType = (typeof API_KEY_TYPES)[number]
@@ -675,6 +679,7 @@ export type UnitSystem = (typeof UNIT_SYSTEMS)[number]
 
 /** Every built-in value of every status list above. */
 export type BuiltInStatus =
+  | (typeof ADMIN_USER_STATUSES)[number]
   | (typeof CLAIM_STATUSES)[number]
   | (typeof COMPANY_INVITATION_STATUSES)[number]
   | (typeof DATA_REQUEST_STATUSES)[number]

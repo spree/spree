@@ -78,6 +78,9 @@ type StatusTone = 'success' | 'warning' | 'destructive' | 'info' | 'neutral'
  */
 const statusToneMap: Record<string, StatusTone> = {
   active: 'success',
+  // Staff accounts: locked after too many failed sign-ins, deactivated by an admin.
+  locked: 'warning',
+  deactivated: 'neutral',
   authorized: 'info',
   complete: 'success',
   completed: 'success',

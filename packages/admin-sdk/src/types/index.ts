@@ -178,6 +178,7 @@ export type { default as SellerRequirementStatus } from './generated/SellerRequi
 export type { default as SellerRequirementSubmission } from './generated/SellerRequirementSubmission'
 export type { default as SellerTeamMember } from './generated/SellerTeamMember'
 export type { default as SellerTransfer } from './generated/SellerTransfer'
+export type { default as Session } from './generated/Session'
 export type { default as SetupTask } from './generated/SetupTask'
 export type { default as ShippingLabel } from './generated/ShippingLabel'
 export type { default as State } from './generated/State'
