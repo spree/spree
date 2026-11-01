@@ -171,6 +171,11 @@ namespace :spree do
       end
     end
 
+    # 5.x methods have no store until backfill_delivery_and_stock_store_ids
+    # runs (later in the upgrade), and a DeliveryZone requires one. Resolve
+    # them to the default store, exactly as that backfill will.
+    default_store_id = Spree::Store.default&.id
+
     legacy_zones.find_each do |zone|
       if Spree::DeliveryZone.exists?(id: zone.id) && !migrated.value?(zone.id)
         puts "SKIP zone #{zone.id} (#{zone.name}): a DeliveryZone with the same id already exists — resolve manually"
@@ -178,7 +183,7 @@ namespace :spree do
       end
 
       methods_by_home = Spree::DeliveryMethod.unscoped.where(delivery_zone_id: zone.id).
-        group_by { |method| [method.store_id, method.delivery_profile_id] }
+        group_by { |method| [method.store_id || default_store_id, method.delivery_profile_id] }
 
       methods_by_home.each do |(store_id, profile_id), methods|
         profile_id ||= Spree::DeliveryProfile.where(store_id: store_id, default: true).pick(:id)
@@ -206,6 +211,12 @@ namespace :spree do
     unreferenced = Spree::Zone.where.not(id: referenced_ids).where(kind: 'shipping')
     unreferenced.find_each do |zone|
       puts "SKIP unreferenced shipping zone #{zone.id} (#{zone.name}) — no delivery method uses it"
+    end
+
+    zoneless = Spree::DeliveryMethod.unscoped.where(delivery_zone_id: nil).pluck(:id, :name)
+    if zoneless.any?
+      puts "WARNING: #{zoneless.size} delivery methods have no delivery zone and return no rates at checkout. Assign a zone to each in the admin:"
+      zoneless.each { |id, name| puts "  - ##{id} #{name}" }
     end
 
     puts 'migrate_zones_to_delivery_zones done. Tax-scoped zones stay on Spree::Zone for the tax provider migration.'
