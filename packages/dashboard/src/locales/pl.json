@@ -2454,6 +2454,15 @@
         "meta_description": {
           "label": "Opis meta",
           "help": "Krótkie podsumowanie, które wyszukiwarki pokazują pod tytułem."
+        },
+        "send_invoice_email": {
+          "help": "Wysyła klientowi PDF po dodaniu faktury. Wyłącz, jeśli program do fakturowania sam wysyła faktury.",
+          "label": "Wysyłaj nowe faktury klientom"
+        },
+        "invoice_request_window_days": {
+          "help": "Ile dni po zapłacie klient może poprosić o fakturę. 0 wyłącza prośby.",
+          "label": "Prośby o fakturę",
+          "suffix": "dni"
         }
       },
       "store_credit": {
@@ -3002,7 +3011,8 @@
       "suppliers": "Dostawcy",
       "loyalty": "Lojalność",
       "store_credits": "Środki w sklepie",
-      "commission_rates": "Stawki prowizji"
+      "commission_rates": "Stawki prowizji",
+      "invoices": "Faktury"
     },
     "option_types": {
       "columns": {
@@ -3043,7 +3053,8 @@
         "payment": "Płatność",
         "po_number": "Numer zamówienia",
         "sku": "SKU",
-        "tags": "Tagi"
+        "tags": "Tagi",
+        "missing_invoice": "Brak faktury"
       },
       "detail": {
         "add_line_item": {
@@ -3503,6 +3514,10 @@
       "table": {
         "empty": "Nie znaleziono zamówień",
         "search_placeholder": "Szukaj po numerze, numerze zamówienia lub kliencie…"
+      },
+      "filters": {
+        "missing_invoice": "Bez faktury",
+        "has_invoice": "Z fakturą"
       }
     },
     "pages": {
@@ -4340,7 +4355,8 @@
           "tab_downloads": "Pobrania cyfrowe",
           "downloads_help": "Jak długo działa link do pobrania i ile razy można go użyć. Poszczególne pliki mogą nadpisać te wartości.",
           "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
-          "tab_default_package": "Domyślna paczka"
+          "tab_default_package": "Domyślna paczka",
+          "tab_invoices": "Faktury"
         },
         "tax_categories": {
           "add_sheet_title": "Dodaj kategorię podatkową",
@@ -5679,7 +5695,8 @@
         },
         "title": "Zespół"
       },
-      "team_column": "Zespół"
+      "team_column": "Zespół",
+      "missing_invoices": "Zamówienia bez faktury"
     },
     "settings": {
       "webhooks": {
@@ -6125,7 +6142,8 @@
       "webhook_endpoints": "Gdzie Twoje inne systemy są powiadamiane, gdy coś dzieje się w sklepie.",
       "returns": "Towary wracające do sklepu, od zgłoszenia do zwrotu pieniędzy.",
       "exchanges": "Zakupy wymieniane na inny rozmiar, kolor lub produkt.",
-      "claims": "Nieudane dostawy — uszkodzone, brakujące lub błędne produkty — i sposób ich rozwiązania."
+      "claims": "Nieudane dostawy — uszkodzone, brakujące lub błędne produkty — i sposób ich rozwiązania.",
+      "invoices": "Wszystkie faktury, paragony i faktury korygujące w sklepie, z zamówień i wypłat dla sprzedawców."
     },
     "tax_categories": {
       "add_cta": "Dodaj kategorię podatkową",
@@ -6369,7 +6387,11 @@
         "title": "Rozliczyć tego sprzedawcę teraz?",
         "message": "Zbiera wszystko, co należy się {{name}}, w jedną wypłatę na walutę. Nie wysyła pieniędzy — oznacz wypłatę jako zapłaconą po wykonaniu przelewu."
       },
-      "settle_failed": "Nie udało się rozliczyć tego sprzedawcy."
+      "settle_failed": "Nie udało się rozliczyć tego sprzedawcy.",
+      "invoices": {
+        "title": "Faktury prowizyjne",
+        "empty": "Brak faktur prowizyjnych dla tej wypłaty."
+      }
     },
     "inventory_lines": {
       "add_label": "Dodaj produkt",
@@ -6959,6 +6981,16 @@
       "run_label": "Uruchom to",
       "copy_command": "Kopiuj polecenie",
       "cli_then_sign_in": "Otworzy przeglądarkę, abyś mógł się zalogować i zatwierdzić uprawnienia agenta."
+    },
+    "invoices": {
+      "search_placeholder": "Szukaj po numerze",
+      "empty": "Brak faktur. Prześlij je z poziomu zamówienia lub wypłaty.",
+      "number": "Numer",
+      "kind": "Rodzaj",
+      "issuer": "Wystawca",
+      "total": "Kwota",
+      "issued_on": "Data wystawienia",
+      "sent_at": "Wysłano"
     }
   }
 }

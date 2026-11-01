@@ -132,6 +132,13 @@ export type StoreUpdateParams = {
   /** When false, transactional customer emails (order confirmation and so on) are not sent. */
   send_consumer_transactional_emails?: boolean
   /**
+   * Emails the buyer an invoice's PDF when it is added. Off when the store's own invoicing system
+   * sends invoices.
+   */
+  send_invoice_email?: boolean
+  /** How many days after paying a buyer may request an invoice; 0 turns requests off. */
+  invoice_request_window_days?: number
+  /**
    * Customer email buttons and links, as `#RRGGBB`. Blank keeps the outlined buttons emails ship
    * with.
    */

@@ -33,7 +33,8 @@ module Typelizer
       AdminUserStatus ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
       CollectionRuleMatchPolicy CollectionSortOrder CommissionKind CompanyInvitationStatus CompanyKind
       ConsentSource DataRequestKind DeliveryStatus DeliveryZoneMemberType DiscountKind DocumentNumberFormat
-      EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType MatchPolicy MediaType OptionTypeKind
+      EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType InvoiceIssuerType InvoiceKind InvoiceSource
+      MatchPolicy MediaType OptionTypeKind
       OrderFulfillmentStatus OrderPaymentStatus OrderStatus PackageTypeKind PaymentSourceType
       PayoutScheduleInterval PermissionKind PickupStockPolicy ProviderFailurePolicy PurchaseUnit
       SellerRequirementState SellerTransferKind ShippingLabelFormat ShippingLabelOwnerType ShippingLabelSource

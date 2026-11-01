@@ -360,7 +360,8 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "sign_out": "Se déconnecter",
-    "team": "Équipe"
+    "team": "Équipe",
+    "invoices": "Factures"
   },
   "onboarding": {
     "accept_terms": "Accepter les conditions",
@@ -408,7 +409,8 @@
       "payment": "Paiement",
       "placed": "Passée le",
       "quantity": "Quantité",
-      "total": "Total"
+      "total": "Total",
+      "missing_invoice": "Facture manquante"
     },
     "customer": {
       "title": "Client"
@@ -567,7 +569,11 @@
       "total": "Total"
     },
     "title": "Commandes",
-    "tracking_label": "Numéro de suivi"
+    "tracking_label": "Numéro de suivi",
+    "filters": {
+      "missing_invoice": "Sans facture",
+      "has_invoice": "Avec facture"
+    }
   },
   "payouts": {
     "columns": {
@@ -848,5 +854,19 @@
       "member": "Membre"
     },
     "title": "Votre équipe"
+  },
+  "invoices": {
+    "title": "Factures",
+    "subtitle": "Les factures émises à votre nom et les factures de commission de la marketplace.",
+    "search_placeholder": "Rechercher par numéro",
+    "empty": "Aucune facture pour le moment. Téléversez-les depuis chaque commande ou versement.",
+    "commission": "Commission de la marketplace",
+    "columns": {
+      "number": "Numéro",
+      "kind": "Type",
+      "issuer": "Émise par",
+      "total": "Total",
+      "issued_on": "Date d'émission"
+    }
   }
 }

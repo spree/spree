@@ -111,6 +111,10 @@ module Spree
               description: 'Recipient of "new order placed" staff notifications.'
             body.attribute :send_consumer_transactional_emails, :boolean,
               description: 'When false, transactional customer emails (order confirmation and so on) are not sent.'
+            body.attribute :send_invoice_email, :boolean,
+              description: "Emails the buyer an invoice's PDF when it is added. Off when the store's own invoicing system sends invoices."
+            body.attribute :invoice_request_window_days, :integer,
+              description: 'How many days after paying a buyer may request an invoice; 0 turns requests off.'
             body.attribute :email_accent_color, :string,
               nullable: true,
               description: 'Customer email buttons and links, as `#RRGGBB`. Blank keeps the outlined buttons emails ship with.'

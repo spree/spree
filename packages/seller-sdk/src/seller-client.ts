@@ -104,10 +104,12 @@ import type {
   ImportCompleteMappingParams,
   ImportCreateParams,
   InvitationAcceptParams,
+  InvoiceCreateParams,
   LoginParams,
   OnboardingPayoutAccountParams,
   OrderAddressCorrectionParams,
   OrderCancelParams,
+  OrderDocumentCreateParams,
   OrderNotesParams,
   PackageTypeCreateParams,
   PackageTypeUpdateParams,
@@ -124,8 +126,6 @@ import type {
   ProfileUpdateParams,
   RequirementSubmissionParams,
   ReturnCancelParams,
-  InvoiceCreateParams,
-  OrderDocumentCreateParams,
   ReturnCreateParams,
   ReturnReceiveParams,
   ReturnRefundParams,
@@ -847,14 +847,25 @@ export class SellerClient {
           params: params ? transformListParams(params) : undefined,
         }),
 
-      create: (orderId: string, params: InvoiceCreateParams, options?: RequestOptions): Promise<Invoice> =>
+      create: (
+        orderId: string,
+        params: InvoiceCreateParams,
+        options?: RequestOptions,
+      ): Promise<Invoice> =>
         this.request<Invoice>('POST', `/orders/${orderId}/invoices`, { ...options, body: params }),
     },
 
     /** The buyer's requests for an invoice on this order. */
     invoiceRequests: {
-      list: (orderId: string, options?: RequestOptions): Promise<PaginatedResponse<InvoiceRequest>> =>
-        this.request<PaginatedResponse<InvoiceRequest>>('GET', `/orders/${orderId}/invoice_requests`, options),
+      list: (
+        orderId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<InvoiceRequest>> =>
+        this.request<PaginatedResponse<InvoiceRequest>>(
+          'GET',
+          `/orders/${orderId}/invoice_requests`,
+          options,
+        ),
     },
 
     /** Other paperwork on the order, private unless `customer_visible` is set. */
@@ -869,8 +880,15 @@ export class SellerClient {
           params: params ? transformListParams(params) : undefined,
         }),
 
-      create: (orderId: string, params: OrderDocumentCreateParams, options?: RequestOptions): Promise<OrderDocument> =>
-        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, { ...options, body: params }),
+      create: (
+        orderId: string,
+        params: OrderDocumentCreateParams,
+        options?: RequestOptions,
+      ): Promise<OrderDocument> =>
+        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, {
+          ...options,
+          body: params,
+        }),
 
       update: (
         orderId: string,
@@ -878,7 +896,10 @@ export class SellerClient {
         params: { label?: string; customer_visible?: boolean },
         options?: RequestOptions,
       ): Promise<OrderDocument> =>
-        this.request<OrderDocument>('PATCH', `/orders/${orderId}/documents/${id}`, { ...options, body: params }),
+        this.request<OrderDocument>('PATCH', `/orders/${orderId}/documents/${id}`, {
+          ...options,
+          body: params,
+        }),
 
       delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/orders/${orderId}/documents/${id}`, options),

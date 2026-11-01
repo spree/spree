@@ -5,6 +5,7 @@ import {
   HandCoinsIcon,
   HomeIcon,
   PackageIcon,
+  ReceiptTextIcon,
   SettingsIcon,
   StoreIcon,
   TagIcon,
@@ -59,6 +60,15 @@ nav.add({
   path: '/orders',
   icon: PackageIcon,
   position: 120,
+  subject: Subject.Order,
+})
+
+nav.add({
+  key: 'invoices',
+  label: i18n.t('nav.invoices'),
+  path: '/invoices',
+  icon: ReceiptTextIcon,
+  position: 125,
   subject: Subject.Order,
 })
 

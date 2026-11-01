@@ -52,6 +52,7 @@ import {
   HashIcon,
   LanguagesIcon,
   PackageIcon,
+  ReceiptTextIcon,
   SearchIcon,
   StoreIcon,
   TagsIcon,
@@ -115,6 +116,8 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     order_number_prefix: store.order_number_prefix ?? 'R',
     order_number_suffix: store.order_number_suffix ?? '',
     order_number_sequence_start: Number(store.order_number_sequence_start ?? 1001),
+    send_invoice_email: store.send_invoice_email ?? true,
+    invoice_request_window_days: Number(store.invoice_request_window_days ?? 90),
     limit_digital_download_count: store.limit_digital_download_count ?? true,
     digital_asset_authorized_clicks: store.digital_asset_authorized_clicks ?? 5,
     limit_digital_download_days: store.limit_digital_download_days ?? true,
@@ -238,6 +241,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
           order_number_prefix: values.order_number_prefix,
           order_number_suffix: values.order_number_suffix,
           order_number_sequence_start: values.order_number_sequence_start,
+          send_invoice_email: values.send_invoice_email,
+          invoice_request_window_days: values.invoice_request_window_days,
           limit_digital_download_count: values.limit_digital_download_count,
           digital_asset_authorized_clicks: values.digital_asset_authorized_clicks,
           limit_digital_download_days: values.limit_digital_download_days,
@@ -547,6 +552,45 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       help={t('admin.fields.store.order_number_preview.help')}
                     >
                       <span className="font-mono text-base">{orderNumberPreview}</span>
+                    </SettingsRow>
+                  </SettingsFieldGroup>
+                </CardContent>
+              </SettingsSection>
+
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_invoices')}
+                icon={<ReceiptTextIcon />}
+              >
+                <CardContent>
+                  <SettingsFieldGroup>
+                    <SettingsSwitchField
+                      id="store-send-invoice-email"
+                      label={t('admin.fields.store.send_invoice_email.label')}
+                      help={t('admin.fields.store.send_invoice_email.help')}
+                      name="send_invoice_email"
+                      control={form.control}
+                    />
+                    <SettingsRow
+                      label={t('admin.fields.store.invoice_request_window_days.label')}
+                      htmlFor="store-invoice-request-window-days"
+                      help={t('admin.fields.store.invoice_request_window_days.help')}
+                      error={errors.invoice_request_window_days}
+                    >
+                      <InputGroup className="@md/field-group:w-40">
+                        <InputGroupInput
+                          id="store-invoice-request-window-days"
+                          type="number"
+                          min={0}
+                          step={1}
+                          aria-invalid={!!errors.invoice_request_window_days || undefined}
+                          {...form.register('invoice_request_window_days')}
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>
+                            {t('admin.fields.store.invoice_request_window_days.suffix')}
+                          </InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
                     </SettingsRow>
                   </SettingsFieldGroup>
                 </CardContent>

@@ -360,7 +360,8 @@
     "delivery_methods": "配送方法",
     "package_types": "こん包タイプ",
     "earnings": "収益",
-    "payouts": "支払い"
+    "payouts": "支払い",
+    "invoices": "請求書"
   },
   "onboarding": {
     "accept_terms": "規約に同意する",
@@ -408,7 +409,8 @@
       "payment": "支払い",
       "placed": "受注",
       "quantity": "数量",
-      "total": "合計"
+      "total": "合計",
+      "missing_invoice": "請求書なし"
     },
     "customer": {
       "title": "顧客"
@@ -567,7 +569,11 @@
       "total": "合計"
     },
     "title": "注文",
-    "tracking_label": "追跡番号"
+    "tracking_label": "追跡番号",
+    "filters": {
+      "missing_invoice": "請求書なし",
+      "has_invoice": "請求書あり"
+    }
   },
   "payouts": {
     "columns": {
@@ -848,5 +854,19 @@
       "member": "メンバー"
     },
     "title": "チーム"
+  },
+  "invoices": {
+    "title": "請求書",
+    "subtitle": "あなたの名義で発行された請求書と、マーケットプレイスからの手数料請求書。",
+    "search_placeholder": "番号で検索",
+    "empty": "請求書はまだありません。各注文または支払いからアップロードしてください。",
+    "commission": "マーケットプレイス手数料",
+    "columns": {
+      "number": "番号",
+      "kind": "種類",
+      "issuer": "発行者",
+      "total": "合計",
+      "issued_on": "発行日"
+    }
   }
 }

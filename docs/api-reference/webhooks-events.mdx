@@ -675,6 +675,49 @@ The returned items are not included. Fetch the return from the API with `expand=
 }
 ```
 
+## Invoice Events
+
+Events: `invoice.created`, `invoice.updated`, `invoice.deleted`, `invoice.sent`
+
+`invoice.created` fires for every invoice, receipt or credit note added to an order or seller payout, whether it was uploaded or generated. `invoice.sent` fires when it was emailed to its recipient. `invoice.deleted` fires only for an upload removed before it was sent.
+
+```json
+{
+  "id": "inv_8mXz3wPq",
+  "kind": "invoice",
+  "number": "FV/2026/11/42",
+  "currency": "EUR",
+  "issued_on": "2026-11-01",
+  "supplied_on": null,
+  "total": "123.00",
+  "net_total": "100.00",
+  "tax_total": "23.00",
+  "original_invoice_id": null,
+  "issuer_type": "seller",
+  "issuer_name": "Acme GmbH",
+  "file_filename": "FV-2026-11-42.pdf",
+  "file_byte_size": 48210,
+  "download_url": "/api/v3/store/orders/or_m3Rp9wXz/invoices/inv_8mXz3wPq/download"
+}
+```
+
+## Invoice Request Events
+
+Events: `order.invoice_requested`
+
+A buyer asked for an invoice on their order. Whoever issues the order's invoices issues one and uploads it to the order, which fulfils the request.
+
+```json
+{
+  "id": "ireq_4xLq8nRt",
+  "status": "open",
+  "company_name": "Acme GmbH",
+  "tax_id": "DE123456789",
+  "order_id": "or_m3Rp9wXz",
+  "invoice_id": null
+}
+```
+
 ## Exchange Events
 
 Events: `exchange.created`, `exchange.updated`, `exchange.deleted`, `exchange.requested`, `exchange.approved`, `exchange.received`, `exchange.fulfilled`, `exchange.canceled`
