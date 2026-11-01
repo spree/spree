@@ -355,12 +355,82 @@
     "orders": "订单",
     "package_types": "包装类型",
     "payouts": "打款",
+    "offers": "报价",
     "policies": "政策",
     "products": "商品",
     "profile": "资料",
     "settings": "设置",
     "sign_out": "退出登录",
     "team": "团队"
+  },
+  "offers": {
+    "add": "添加报价",
+    "archive": "归档",
+    "restore": "恢复",
+    "archive_confirm_description": "此报价将停止销售。你可以稍后将其恢复为草稿。",
+    "archive_confirm_title": "归档此报价？",
+    "bulk": {
+      "submit_confirm_description": "市场会在上架前审核每一个报价。",
+      "submit_confirm_title": "提交这些报价审核？",
+      "submit_failed": "无法提交这些报价",
+      "submitted": "已提交 {n} 个报价审核"
+    },
+    "columns": {
+      "options": "规格",
+      "price": "你的价格",
+      "product": "商品",
+      "sku": "SKU",
+      "status": "状态",
+      "stock": "库存"
+    },
+    "delivery_help": "选择“与商品相同”，即按市场发货此商品的方式发货。",
+    "delivery_title": "配送",
+    "description": "销售市场已在销售的同款商品。你自行设定价格、库存和成色，市场会在上架前审核每一个报价。",
+    "details_title": "报价详情",
+    "empty": "你还没有报价。找到市场在售的商品，为它添加你的报价。",
+    "fields": {
+      "delivery_profile": "配送方案",
+      "delivery_profile_inherit": "与商品相同",
+      "status": "状态"
+    },
+    "marketplace_price": "市场价格：{{price}}",
+    "new": "添加报价",
+    "new_title": "新报价",
+    "not_found": "此报价已不存在。",
+    "options_title": "你销售的版本",
+    "pick_a_product_first": "请先选择要添加报价的商品。",
+    "picker": {
+      "confirm": "添加报价",
+      "description": "搜索此市场向卖家开放的商品。",
+      "search_placeholder": "按商品名称搜索",
+      "title": "你要销售哪个商品？"
+    },
+    "pricing_title": "你的价格",
+    "product_title": "市场商品页",
+    "rejection_reason": "市场已退回：{{reason}}",
+    "saved": "报价已保存",
+    "search_placeholder": "按 SKU 搜索",
+    "status_help": {
+      "active": "此报价正在销售。",
+      "archived": "此报价已永久下架。",
+      "draft": "只有你能看到。准备好后提交给市场审核。",
+      "proposed": "市场正在审核此报价。",
+      "rejected": "市场已退回此报价。请按要求修改后重新提交。"
+    },
+    "status_updated": "报价已更新",
+    "statuses": {
+      "active": "在售",
+      "archived": "已归档",
+      "draft": "草稿",
+      "proposed": "审核中",
+      "rejected": "需要修改"
+    },
+    "stock_title": "你的库存",
+    "submit_for_review": "提交审核",
+    "take_down": "下架",
+    "take_down_confirm_description": "在你重新提交之前，此报价将停止销售。",
+    "take_down_confirm_title": "下架此报价？",
+    "title": "报价"
   },
   "onboarding": {
     "accept_terms": "接受条款",
@@ -566,6 +636,7 @@
       "total": "合计"
     },
     "title": "订单",
+    "description": "客户向你购买的商品，以及你需要寄出的包裹。",
     "tracking_label": "物流单号"
   },
   "payouts": {
@@ -717,6 +788,7 @@
     "take_down_confirm_description": "买家将不再看到它。你之后可以重新提交。",
     "take_down_confirm_title": "下架此商品？",
     "title": "商品",
+    "description": "你自己上架的商品。市场会在上架前审核每一个商品。",
     "uploading": "正在上传 {{count}} 个文件…",
     "uploading_plural": "正在上传 {{count}} 个文件…",
     "variant_remove_confirm_description": "保存后它会从商品中移除。",

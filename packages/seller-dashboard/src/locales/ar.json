@@ -355,12 +355,82 @@
     "orders": "الطلبات",
     "package_types": "أنواع الطرود",
     "payouts": "الدفعات",
+    "offers": "العروض",
     "policies": "السياسات",
     "products": "المنتجات",
     "profile": "الملف التعريفي",
     "settings": "الإعدادات",
     "sign_out": "تسجيل الخروج",
     "team": "الفريق"
+  },
+  "offers": {
+    "add": "إضافة عرض",
+    "archive": "أرشفة",
+    "restore": "استعادة",
+    "archive_confirm_description": "سيتوقف بيع هذا العرض. يمكنك استعادته كمسودة لاحقًا.",
+    "archive_confirm_title": "أرشفة هذا العرض؟",
+    "bulk": {
+      "submit_confirm_description": "سيراجع السوق كل عرض من هذه العروض قبل عرضه للبيع.",
+      "submit_confirm_title": "إرسال هذه العروض للمراجعة؟",
+      "submit_failed": "تعذّر إرسال هذه العروض",
+      "submitted": "عدد العروض المرسلة للمراجعة: {n}"
+    },
+    "columns": {
+      "options": "الخيار",
+      "price": "سعرك",
+      "product": "المنتج",
+      "sku": "SKU",
+      "status": "الحالة",
+      "stock": "المتوفر في المخزون"
+    },
+    "delivery_help": "اختر «مثل المنتج» للشحن بالطريقة التي يشحن بها السوق هذا المنتج.",
+    "delivery_title": "التوصيل",
+    "description": "بِع المنتج نفسه الذي يعرضه السوق بالفعل. أنت تحدد سعرك ومخزونك وحالة المنتج، ويراجع السوق كل عرض قبل عرضه للبيع.",
+    "details_title": "تفاصيل العرض",
+    "empty": "ليس لديك أي عروض بعد. ابحث عن منتج يبيعه السوق وأضف عرضك عليه.",
+    "fields": {
+      "delivery_profile": "ملف التوصيل",
+      "delivery_profile_inherit": "مثل المنتج",
+      "status": "الحالة"
+    },
+    "marketplace_price": "سعر السوق: {{price}}",
+    "new": "إضافة عرض",
+    "new_title": "عرض جديد",
+    "not_found": "لم يعد هذا العرض موجودًا.",
+    "options_title": "النسخة التي تبيعها",
+    "pick_a_product_first": "اختر أولاً المنتج الذي تريد إضافة عرضك عليه.",
+    "picker": {
+      "confirm": "إضافة عرض",
+      "description": "ابحث في المنتجات التي فتحها هذا السوق للبائعين.",
+      "search_placeholder": "البحث باسم المنتج",
+      "title": "ما المنتج الذي تبيعه؟"
+    },
+    "pricing_title": "سعرك",
+    "product_title": "قائمة السوق",
+    "rejection_reason": "أعاد السوق هذا العرض: {{reason}}",
+    "saved": "تم حفظ العرض",
+    "search_placeholder": "البحث برمز SKU",
+    "status_help": {
+      "active": "هذا العرض معروض للبيع.",
+      "archived": "تم إيقاف بيع هذا العرض نهائيًا.",
+      "draft": "أنت وحدك من يراه. أرسِله عندما تكون مستعدًا لمراجعة السوق له.",
+      "proposed": "يراجع السوق هذا العرض.",
+      "rejected": "أعاد السوق هذا العرض. أجرِ التعديلات المطلوبة ثم أرسِله مرة أخرى."
+    },
+    "status_updated": "تم تحديث العرض",
+    "statuses": {
+      "active": "معروض للبيع",
+      "archived": "مؤرشف",
+      "draft": "مسودة",
+      "proposed": "قيد المراجعة",
+      "rejected": "يحتاج إلى تعديلات"
+    },
+    "stock_title": "ما لديك في المخزون",
+    "submit_for_review": "إرسال للمراجعة",
+    "take_down": "سحب",
+    "take_down_confirm_description": "سيتوقف بيع هذا العرض حتى ترسله مرة أخرى.",
+    "take_down_confirm_title": "سحب هذا العرض؟",
+    "title": "العروض"
   },
   "onboarding": {
     "accept_terms": "اقبل الشروط",
@@ -571,6 +641,7 @@
       "total": "الإجمالي"
     },
     "title": "الطلبات",
+    "description": "ما اشتراه العملاء منك، والطرود التي عليك إرسالها إليهم.",
     "tracking_label": "رقم التتبُّع"
   },
   "payouts": {
@@ -732,6 +803,7 @@
     "take_down_confirm_description": "لن يراه المتسوقون بعد الآن. يمكنك إرساله مرة أخرى لاحقًا.",
     "take_down_confirm_title": "سحب هذه القائمة؟",
     "title": "المنتجات",
+    "description": "المنتجات التي تعرضها بنفسك. يراجع السوق كل منتج منها قبل عرضه للبيع.",
     "uploading": "جارٍ رفع {{count}} ملف…",
     "uploading_plural": "جارٍ رفع {{count}} ملفات…",
     "variant_remove_confirm_description": "يُزال من المنتج عند الحفظ.",

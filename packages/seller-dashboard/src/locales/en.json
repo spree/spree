@@ -373,8 +373,7 @@
       "submit_confirm_description": "The marketplace will review each of these offers before it goes on sale.",
       "submit_confirm_title": "Submit these offers for review?",
       "submit_failed": "Could not submit these offers",
-      "submitted": "{{count}} offer submitted for review",
-      "submitted_plural": "{{count}} offers submitted for review"
+      "submitted": "Submitted {n} offers for review"
     },
     "columns": {
       "options": "Variation",
@@ -384,13 +383,14 @@
       "status": "Status",
       "stock": "In stock"
     },
-    "delivery_help": "Leave this blank to ship the way the marketplace ships this product.",
+    "delivery_help": "Choose “Same as the product” to ship the way the marketplace ships this product.",
     "delivery_title": "Delivery",
     "description": "Sell the same product the marketplace already lists. You set your own price, stock and condition, and the marketplace reviews each offer before it goes on sale.",
     "details_title": "Offer details",
     "empty": "You have no offers yet. Find a product the marketplace sells and list yours against it.",
     "fields": {
       "delivery_profile": "Delivery profile",
+      "delivery_profile_inherit": "Same as the product",
       "status": "Status"
     },
     "marketplace_price": "Marketplace price: {{price}}",

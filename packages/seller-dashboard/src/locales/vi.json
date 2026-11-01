@@ -360,7 +360,77 @@
     "delivery_methods": "Phương thức giao hàng",
     "package_types": "Các loại gói",
     "earnings": "Thu nhập",
-    "payouts": "Xuất chi"
+    "payouts": "Xuất chi",
+    "offers": "Tin chào bán"
+  },
+  "offers": {
+    "add": "Đăng tin chào bán",
+    "archive": "Lưu trữ",
+    "restore": "Khôi phục",
+    "archive_confirm_description": "Tin chào bán này sẽ ngừng bán. Bạn có thể khôi phục nó về bản nháp sau.",
+    "archive_confirm_title": "Lưu trữ tin chào bán này?",
+    "bulk": {
+      "submit_confirm_description": "Sàn sẽ duyệt từng tin chào bán trước khi mở bán.",
+      "submit_confirm_title": "Gửi các tin chào bán này để duyệt?",
+      "submit_failed": "Không thể gửi các tin chào bán này",
+      "submitted": "Đã gửi {n} tin chào bán để duyệt"
+    },
+    "columns": {
+      "options": "Phân loại",
+      "price": "Giá của bạn",
+      "product": "Sản phẩm",
+      "sku": "Mã hàng",
+      "status": "Trạng thái",
+      "stock": "Còn hàng"
+    },
+    "delivery_help": "Chọn “Giống sản phẩm” để giao hàng theo cách sàn giao sản phẩm này.",
+    "delivery_title": "Giao hàng",
+    "description": "Bán cùng sản phẩm mà sàn đang niêm yết. Bạn tự đặt giá, tồn kho và tình trạng hàng, và sàn sẽ duyệt từng tin chào bán trước khi mở bán.",
+    "details_title": "Chi tiết tin chào bán",
+    "empty": "Bạn chưa có tin chào bán nào. Hãy tìm một sản phẩm sàn đang bán và đăng tin chào bán của bạn cho sản phẩm đó.",
+    "fields": {
+      "delivery_profile": "Hồ sơ giao hàng",
+      "delivery_profile_inherit": "Giống sản phẩm",
+      "status": "Trạng thái"
+    },
+    "marketplace_price": "Giá trên sàn: {{price}}",
+    "new": "Đăng tin chào bán",
+    "new_title": "Tin chào bán mới",
+    "not_found": "Tin chào bán này không còn tồn tại.",
+    "options_title": "Phiên bản bạn bán",
+    "pick_a_product_first": "Hãy chọn sản phẩm bạn muốn chào bán trước.",
+    "picker": {
+      "confirm": "Đăng tin chào bán",
+      "description": "Tìm trong các sản phẩm mà sàn này đã mở cho người bán.",
+      "search_placeholder": "Tìm theo tên sản phẩm",
+      "title": "Bạn bán sản phẩm nào?"
+    },
+    "pricing_title": "Giá của bạn",
+    "product_title": "Trang sản phẩm trên sàn",
+    "rejection_reason": "Sàn đã gửi trả tin chào bán này: {{reason}}",
+    "saved": "Đã lưu tin chào bán",
+    "search_placeholder": "Tìm theo mã hàng",
+    "status_help": {
+      "active": "Tin chào bán này đang được bán.",
+      "archived": "Tin chào bán này đã ngừng bán vĩnh viễn.",
+      "draft": "Chỉ bạn nhìn thấy tin này. Hãy gửi khi bạn sẵn sàng để sàn duyệt.",
+      "proposed": "Sàn đang duyệt tin chào bán này.",
+      "rejected": "Sàn đã gửi trả tin chào bán này. Hãy sửa theo yêu cầu rồi gửi lại."
+    },
+    "status_updated": "Đã cập nhật tin chào bán",
+    "statuses": {
+      "active": "Đang bán",
+      "archived": "Đã lưu trữ",
+      "draft": "Bản nháp",
+      "proposed": "Đang duyệt",
+      "rejected": "Cần chỉnh sửa"
+    },
+    "stock_title": "Hàng bạn có trong kho",
+    "submit_for_review": "Gửi để duyệt",
+    "take_down": "Ngừng bán",
+    "take_down_confirm_description": "Tin chào bán này sẽ ngừng bán cho đến khi bạn gửi lại.",
+    "take_down_confirm_title": "Ngừng bán tin chào bán này?",
+    "title": "Tin chào bán"
   },
   "onboarding": {
     "accept_terms": "Chấp nhận các điều khoản",
@@ -567,6 +637,7 @@
       "total": "Tổng cộng"
     },
     "title": "Đơn đặt hàng",
+    "description": "Những gì khách hàng đã mua từ bạn và các kiện hàng bạn cần gửi cho họ.",
     "tracking_label": "Số theo dõi"
   },
   "payouts": {
@@ -720,6 +791,7 @@
     "take_down_confirm_description": "Người mua hàng sẽ không còn nhìn thấy nó nữa. Bạn có thể gửi lại sau.",
     "take_down_confirm_title": "Đưa danh sách này xuống?",
     "title": "Sản phẩm",
+    "description": "Các sản phẩm bạn tự niêm yết. Sàn sẽ duyệt từng sản phẩm trước khi mở bán.",
     "uploading": "Đang tải lên tệp {{count}}…",
     "uploading_plural": "Đang tải lên tệp {{count}}…",
     "variant_remove_confirm_description": "Nó tắt sản phẩm khi bạn lưu.",

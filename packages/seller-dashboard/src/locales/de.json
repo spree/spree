@@ -355,12 +355,82 @@
     "orders": "Bestellungen",
     "package_types": "Verpackungsarten",
     "payouts": "Auszahlungen",
+    "offers": "Angebote",
     "policies": "Richtlinien",
     "products": "Produkte",
     "profile": "Profil",
     "settings": "Einstellungen",
     "sign_out": "Abmelden",
     "team": "Team"
+  },
+  "offers": {
+    "add": "Angebot erstellen",
+    "archive": "Archivieren",
+    "restore": "Wiederherstellen",
+    "archive_confirm_description": "Dieses Angebot wird aus dem Verkauf genommen. Sie können es später als Entwurf wiederherstellen.",
+    "archive_confirm_title": "Dieses Angebot archivieren?",
+    "bulk": {
+      "submit_confirm_description": "Der Marktplatz prüft jedes dieser Angebote, bevor es in den Verkauf geht.",
+      "submit_confirm_title": "Diese Angebote zur Prüfung einreichen?",
+      "submit_failed": "Diese Angebote konnten nicht eingereicht werden",
+      "submitted": "{n} Angebote zur Prüfung eingereicht"
+    },
+    "columns": {
+      "options": "Variante",
+      "price": "Ihr Preis",
+      "product": "Produkt",
+      "sku": "SKU",
+      "status": "Status",
+      "stock": "Auf Lager"
+    },
+    "delivery_help": "Wählen Sie „Wie beim Produkt“, um so zu versenden, wie der Marktplatz dieses Produkt versendet.",
+    "delivery_title": "Versand",
+    "description": "Verkaufen Sie dasselbe Produkt, das der Marktplatz bereits anbietet. Sie legen Ihren eigenen Preis, Bestand und Zustand fest, und der Marktplatz prüft jedes Angebot, bevor es in den Verkauf geht.",
+    "details_title": "Angebotsdetails",
+    "empty": "Sie haben noch keine Angebote. Suchen Sie ein Produkt, das der Marktplatz verkauft, und erstellen Sie Ihr Angebot dafür.",
+    "fields": {
+      "delivery_profile": "Versandprofil",
+      "delivery_profile_inherit": "Wie beim Produkt",
+      "status": "Status"
+    },
+    "marketplace_price": "Preis des Marktplatzes: {{price}}",
+    "new": "Angebot erstellen",
+    "new_title": "Neues Angebot",
+    "not_found": "Dieses Angebot existiert nicht mehr.",
+    "options_title": "Welche Ausführung Sie verkaufen",
+    "pick_a_product_first": "Wählen Sie zuerst ein Produkt, für das Sie Ihr Angebot erstellen.",
+    "picker": {
+      "confirm": "Angebot erstellen",
+      "description": "Durchsuchen Sie die Produkte, die dieser Marktplatz für Verkäufer geöffnet hat.",
+      "search_placeholder": "Nach Produktname suchen",
+      "title": "Welches Produkt verkaufen Sie?"
+    },
+    "pricing_title": "Ihr Preis",
+    "product_title": "Angebot des Marktplatzes",
+    "rejection_reason": "Der Marktplatz hat dies zurückgeschickt: {{reason}}",
+    "saved": "Angebot gespeichert",
+    "search_placeholder": "Nach SKU suchen",
+    "status_help": {
+      "active": "Dieses Angebot ist im Verkauf.",
+      "archived": "Dieses Angebot wurde endgültig aus dem Verkauf genommen.",
+      "draft": "Nur Sie sehen das. Reichen Sie es ein, wenn es für die Prüfung durch den Marktplatz bereit ist.",
+      "proposed": "Der Marktplatz prüft dieses Angebot.",
+      "rejected": "Der Marktplatz hat dies zurückgeschickt. Nehmen Sie die verlangten Änderungen vor und reichen Sie es erneut ein."
+    },
+    "status_updated": "Angebot aktualisiert",
+    "statuses": {
+      "active": "Im Verkauf",
+      "archived": "Archiviert",
+      "draft": "Entwurf",
+      "proposed": "In Prüfung",
+      "rejected": "Änderungen nötig"
+    },
+    "stock_title": "Was Sie auf Lager haben",
+    "submit_for_review": "Zur Prüfung einreichen",
+    "take_down": "Vom Netz nehmen",
+    "take_down_confirm_description": "Dieses Angebot ist nicht mehr im Verkauf, bis Sie es erneut einreichen.",
+    "take_down_confirm_title": "Dieses Angebot vom Netz nehmen?",
+    "title": "Angebote"
   },
   "onboarding": {
     "accept_terms": "Bedingungen annehmen",
@@ -567,6 +637,7 @@
       "total": "Gesamt"
     },
     "title": "Bestellungen",
+    "description": "Was Kunden bei Ihnen gekauft haben und welche Pakete Sie ihnen noch schulden.",
     "tracking_label": "Sendungsnummer"
   },
   "payouts": {
@@ -720,6 +791,7 @@
     "take_down_confirm_description": "Käufer sehen es nicht mehr. Sie können es später erneut einreichen.",
     "take_down_confirm_title": "Dieses Angebot vom Netz nehmen?",
     "title": "Produkte",
+    "description": "Produkte, die Sie selbst anbieten. Der Marktplatz prüft jedes davon, bevor es in den Verkauf geht.",
     "uploading": "{{count}} Datei wird hochgeladen…",
     "uploading_plural": "{{count}} Dateien werden hochgeladen…",
     "variant_remove_confirm_description": "Sie wird beim Speichern vom Produkt entfernt.",

@@ -1896,6 +1896,10 @@
           "label": "Nombre",
           "placeholder": "Nombre del producto"
         },
+        "open_to_sellers": {
+          "label": "Abierto a vendedores",
+          "help": "Permite que los vendedores publiquen sus propias ofertas de este producto."
+        },
         "product_type_id": {
           "help": "Controla qué opciones de entrega se ofrecen al finalizar la compra.",
           "label": "Tipo de producto"
@@ -3133,6 +3137,9 @@
         "on_hand_aria": "Disponible en {{location}}",
         "unknown_location": "Ubicación desconocida"
       },
+      "marketplace": {
+        "title": "Marketplace"
+      },
       "media": {
         "add_from_library": "Agregar desde la biblioteca",
         "add_video": "Agregar enlace de video",
@@ -3155,6 +3162,34 @@
       },
       "no_categories_found": "No se encontraron categorías",
       "no_collections_found": "No se encontraron colecciones",
+      "offers": {
+        "approve": "Aprobar",
+        "approve_confirm_message": "Se pone a la venta en cuanto la apruebes.",
+        "approve_confirm_title": "¿Aprobar esta oferta?",
+        "awaiting_review_filter": "Ofertas pendientes de revisión",
+        "bulk_close": "Cerrar a vendedores",
+        "bulk_closed": "{n} productos cerrados a vendedores",
+        "bulk_failed": "No se pudieron cambiar estos productos",
+        "bulk_open": "Abrir a vendedores",
+        "bulk_opened": "{n} productos abiertos a vendedores",
+        "columns": {
+          "options": "Variante",
+          "price": "Precio",
+          "seller": "Vendedor",
+          "status": "Estado"
+        },
+        "decided": "Oferta actualizada",
+        "reason_placeholder": "¿Qué debería cambiar el vendedor?",
+        "reject": "Devolver",
+        "statuses": {
+          "active": "En venta",
+          "archived": "Archivada",
+          "draft": "Borrador",
+          "proposed": "En revisión",
+          "rejected": "Necesita cambios"
+        },
+        "title": "Ofertas de vendedores"
+      },
       "options": {
         "add_cta": "Agregar tipo de opción",
         "count_one": "{{count}} valor",
