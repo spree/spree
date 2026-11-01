@@ -315,8 +315,7 @@ module Spree
       # seller uploads stay: they are the merchant's paperwork. Invoices are
       # never touched — the law keeps them, and Spree::Invoice is not here.
       def remove_buyer_order_documents
-        Spree::OrderDocument.where(order_id: owned_purchases(Spree::Order).select(:id),
-                                   uploaded_by_type: customer.class.base_class.to_s).
+        Spree::OrderDocument.where(order_id: owned_purchases(Spree::Order).select(:id), uploaded_by_customer: true).
           includes(file_attachment: :blob).find_each do |document|
             @buyer_order_document_ids = (@buyer_order_document_ids || []) << document.id
             purge_after_commit(document.file_attachment) if document.file_attachment

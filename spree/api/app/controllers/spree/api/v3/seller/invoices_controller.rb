@@ -19,10 +19,13 @@ module Spree
 
           def scope
             base = Spree::Invoice.for_store(current_store)
-            own = current_seller.issued_invoices.for_store(current_store).where(order_id: current_seller_orders.select(:id))
-            return own if %w[destroy resend].include?(action_name)
+            on_orders = base.where(order_id: current_seller_orders.select(:id))
+            return on_orders.where(issuer: current_seller) if %w[destroy resend].include?(action_name)
+            # Commission invoices are part of the seller's books, which their
+            # earnings permission guards, not the orders one.
+            return on_orders unless holds_permission?('read_seller_earnings')
 
-            own.or(base.where(seller_payout_id: current_seller.seller_payouts.select(:id)))
+            on_orders.or(base.where(seller_payout_id: current_seller.seller_payouts.select(:id)))
           end
         end
       end

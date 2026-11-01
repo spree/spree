@@ -15,10 +15,11 @@ module Spree
         Spree::CSV::InvoicePresenter::HEADERS
       end
 
-      # Commission invoices belong to seller payouts, so a creator who may not
-      # read payouts gets the store's sales documents only.
+      # Commission invoices belong to seller payouts, so only a creator known
+      # to read payouts gets them. An export made with an API key records no
+      # user, and so cannot show it may.
       def scope
-        user.present? && current_ability.cannot?(:read, Spree::SellerPayout) ? super.where(seller_payout_id: nil) : super
+        user.present? && current_ability.can?(:read, Spree::SellerPayout) ? super : super.where(seller_payout_id: nil)
       end
     end
   end
