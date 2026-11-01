@@ -10,11 +10,6 @@ module Spree
 
             before_action :set_resource, only: [:download]
 
-            # GET /api/v3/store/orders/:order_id/invoices/:id/download
-            def download
-              stream_private_file(@resource.file)
-            end
-
             protected
 
             def model_class

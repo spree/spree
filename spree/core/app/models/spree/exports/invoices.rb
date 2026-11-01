@@ -7,29 +7,18 @@ module Spree
         :orders
       end
 
-      def self.model_class
-        Spree::Invoice
-      end
-
-      def model_class
-        Spree::Invoice
-      end
-
       def scope_includes
-        [:issuer, :order, :original_invoice, { seller_payout: :seller }]
+        [:issuer, :order, :original_invoice, :seller_payout]
       end
 
       def csv_headers
         Spree::CSV::InvoicePresenter::HEADERS
       end
 
-      def generate_csv
-        ::CSV.open(export_tmp_file_path, 'wb', encoding: 'UTF-8', col_sep: ',', row_sep: "\r\n") do |csv|
-          csv << csv_headers
-          records_to_export.includes(scope_includes).find_each do |invoice|
-            csv << Spree::CSV::FormulaSanitizer.row(Spree::CSV::InvoicePresenter.new(invoice).call)
-          end
-        end
+      # Commission invoices belong to seller payouts, so a creator who may not
+      # read payouts gets the store's sales documents only.
+      def scope
+        user.present? && current_ability.cannot?(:read, Spree::SellerPayout) ? super.where(seller_payout_id: nil) : super
       end
     end
   end

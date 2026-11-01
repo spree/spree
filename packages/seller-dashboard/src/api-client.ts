@@ -125,7 +125,11 @@ export function createSellerApiClient({
         resend: (id) => sellerClient().invoices.resend(id) as never,
       },
       invoiceRequests: {
-        list: (orderId) => sellerClient().orders.invoiceRequests.list(orderId) as never,
+        list: (orderId) =>
+          sellerClient().orders.invoiceRequests.list(orderId, {
+            status_eq: 'open',
+            limit: 1,
+          }) as never,
       },
       documents: {
         list: (orderId) => sellerClient().orders.documents.list(orderId, { limit: 100 }) as never,

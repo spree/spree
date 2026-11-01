@@ -292,7 +292,6 @@ defineTable('orders', {
       // merchant or marketplace operator works through to chase invoices.
       key: 'missing_invoice',
       label: i18n.t('admin.orders.columns.missing_invoice'),
-      ransackAttribute: 'missing_invoice',
       ransackScope: true,
       filterable: true,
       filterType: 'boolean',

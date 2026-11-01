@@ -27,7 +27,6 @@ function InvoicesPage() {
       queryKey="invoices"
       queryFn={(params) => adminClient.invoices.list(params)}
       searchParams={searchParams}
-      defaultParams={{ expand: ['order'] }}
       title={t('admin.nav.invoices')}
       actions={(ctx) => <ExportButton type="invoices" {...ctx} />}
     />

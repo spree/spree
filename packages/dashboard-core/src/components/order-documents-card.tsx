@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Invoice, InvoiceRequest, OrderDocument } from '@spree/admin-sdk'
-import { INVOICE_KINDS } from '@spree/core'
+import { compareMoney, INVOICE_KINDS, isDecimalString, isZeroMoney } from '@spree/core'
 import {
   Badge,
   Button,
@@ -49,12 +49,12 @@ import {
   SendIcon,
   UploadIcon,
 } from '@spree/dashboard-ui/icons'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
-import { getApiClient, type PanelInvoiceCreateParams } from '../api-client'
-import { useAuth } from '../hooks/use-auth'
+import type { PanelInvoiceCreateParams } from '../api-client'
+import { useDownload } from '../hooks/use-download'
 import {
   useCreateOrderDocument,
   useCreateOrderInvoice,
@@ -66,9 +66,9 @@ import {
   useResendOrderInvoice,
   useUpdateOrderDocument,
 } from '../hooks/use-order-paperwork'
-import { downloadFromApi } from '../lib/download'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
 import { FileUploadField, formatFileSize } from './file-upload-field'
+import { InvoiceKindBadge, invoiceKindLabel } from './invoice-kind-badge'
 import { Money } from './money'
 import { StoreDatePicker } from './store-date-picker'
 
@@ -158,20 +158,6 @@ export function OrderDocumentsCard({
   )
 }
 
-/** Streams a private file through the API with the signed-in user's credentials. */
-function useDownload() {
-  const { token } = useAuth()
-  return (url: string | null | undefined, filename: string | null | undefined) => {
-    if (!url) return
-    void downloadFromApi(
-      token,
-      url,
-      filename ?? 'document',
-      getApiClient().downloadHeaders?.() ?? {},
-    )
-  }
-}
-
 function OpenInvoiceRequest({ orderId }: { orderId: string }) {
   const { t } = useTranslation()
   const { data } = useOrderInvoiceRequests(orderId)
@@ -210,7 +196,7 @@ function InvoiceList({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const download = useDownload()
-  const resend = useResendOrderInvoice(orderId)
+  const resend = useResendOrderInvoice()
   const remove = useDeleteOrderInvoice(orderId)
 
   if (isLoading) return <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
@@ -242,12 +228,8 @@ function InvoiceList({
               >
                 {invoice.number}
               </Button>
-              <StatusBadge
-                status={invoice.kind}
-                tone={invoice.kind === 'credit_note' ? 'warning' : 'neutral'}
-                label={t(`admin.order_documents.kinds.${invoice.kind}`)}
-              />
-              {'source' in invoice && invoice.source === 'generated' && (
+              <InvoiceKindBadge kind={invoice.kind} />
+              {invoice.source === 'generated' && (
                 <Badge variant="outline">{t('admin.order_documents.generated')}</Badge>
               )}
             </ItemTitle>
@@ -408,6 +390,12 @@ function DocumentList({ orderId, canEdit }: { orderId: string; canEdit: boolean 
   )
 }
 
+// Blank optional fields are sent as null, not empty strings.
+const optional = z
+  .string()
+  .trim()
+  .transform((value) => value || null)
+
 function invoiceFormSchema(t: (key: string) => string) {
   return z
     .object({
@@ -421,40 +409,35 @@ function invoiceFormSchema(t: (key: string) => string) {
       total: z
         .string()
         .trim()
-        .regex(/^-?\d+(\.\d{1,4})?$/, {
-          error: t('admin.order_documents.errors.total_invalid'),
-        }),
-      net_total: z.string().trim(),
-      tax_total: z.string().trim(),
-      original_invoice_id: z.string(),
-      external_reference: z.string().trim(),
+        .refine(isDecimalString, { error: t('admin.order_documents.errors.total_invalid') }),
+      net_total: optional,
+      tax_total: optional,
+      original_invoice_id: optional,
+      external_reference: optional,
       file_signed_id: z.string().min(1, { error: t('admin.order_documents.errors.file_required') }),
     })
     .superRefine((values, ctx) => {
-      // Read from the string, never a float: a sign and whether any digit is
-      // non-zero is all the check needs.
-      const negative = values.total.startsWith('-')
-      const zero = !/[1-9]/.test(values.total)
-      if (values.kind === 'credit_note' && !negative && !zero) {
+      if (!isDecimalString(values.total) || isZeroMoney(values.total)) return
+
+      const negative = compareMoney(values.total, '0') < 0
+      if (values.kind === 'credit_note' ? !negative : negative) {
         ctx.addIssue({
           code: 'custom',
           path: ['total'],
-          message: t('admin.order_documents.errors.credit_note_negative'),
-        })
-      }
-      if (values.kind !== 'credit_note' && negative && !zero) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['total'],
-          message: t('admin.order_documents.errors.total_not_negative'),
+          message: t(
+            values.kind === 'credit_note'
+              ? 'admin.order_documents.errors.credit_note_negative'
+              : 'admin.order_documents.errors.total_not_negative',
+          ),
         })
       }
     })
 }
 
-type InvoiceFormValues = z.infer<ReturnType<typeof invoiceFormSchema>>
+type InvoiceFormInput = z.input<ReturnType<typeof invoiceFormSchema>>
+type InvoiceFormValues = z.output<ReturnType<typeof invoiceFormSchema>>
 
-const INVOICE_DEFAULTS: InvoiceFormValues = {
+const INVOICE_DEFAULTS: InvoiceFormInput = {
   kind: 'invoice',
   number: '',
   issued_on: '',
@@ -485,7 +468,7 @@ export function InvoiceUploadSheet({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
-  const form = useForm<InvoiceFormValues>({
+  const form = useForm<InvoiceFormInput, unknown, InvoiceFormValues>({
     resolver: zodResolver(invoiceFormSchema(t)),
     defaultValues: INVOICE_DEFAULTS,
   })
@@ -493,27 +476,16 @@ export function InvoiceUploadSheet({
   const correctable = invoices.filter((invoice) => invoice.kind !== 'credit_note')
   const kindItems = INVOICE_KINDS.map((value) => ({
     value,
-    label: t(`admin.order_documents.kinds.${value}`),
+    label: invoiceKindLabel(value),
   }))
   const originalItems = correctable.map((invoice) => ({ value: invoice.id, label: invoice.number }))
 
-  useEffect(() => {
-    if (kind !== 'credit_note') form.setValue('original_invoice_id', '')
-  }, [kind, form])
-
   async function handleSubmit(values: InvoiceFormValues) {
     try {
+      // Only a credit note corrects an earlier invoice.
       await onCreate({
-        kind: values.kind,
-        number: values.number,
-        issued_on: values.issued_on,
-        supplied_on: values.supplied_on || null,
-        total: values.total,
-        net_total: values.net_total || null,
-        tax_total: values.tax_total || null,
-        original_invoice_id: values.original_invoice_id || null,
-        external_reference: values.external_reference || null,
-        file_signed_id: values.file_signed_id,
+        ...values,
+        original_invoice_id: values.kind === 'credit_note' ? values.original_invoice_id : null,
       })
       onOpenChange(false)
     } catch (err) {

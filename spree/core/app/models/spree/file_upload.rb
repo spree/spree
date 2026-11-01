@@ -28,6 +28,19 @@ module Spree
     attribute :max_byte_size, :integer
     attribute :allowed_content_types
 
+    # A private upload for a `has_private_document` slot, held to that slot's
+    # declared types and size before any storage URL is minted.
+    #
+    # @param model [Class] a model declaring the slot
+    # @param slot [Symbol]
+    # @param params [Hash] filename, content_type, byte_size, checksum
+    # @return [Spree::FileUpload]
+    def self.for_private_document(model, slot, store:, **params)
+      limits = model.private_document_limits.fetch(slot)
+      new(store: store, visibility: 'private', max_byte_size: limits[:max_size],
+          allowed_content_types: limits[:content_types], **params)
+    end
+
     attr_reader :blob, :signed_id, :expires_at
 
     validates :store, presence: true

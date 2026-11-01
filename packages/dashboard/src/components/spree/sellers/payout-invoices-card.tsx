@@ -1,11 +1,5 @@
 import type { SellerPayout } from '@spree/admin-sdk'
-import {
-  downloadFromApi,
-  getApiClient,
-  InvoiceUploadSheet,
-  Money,
-  useAuth,
-} from '@spree/dashboard-core'
+import { InvoiceKindBadge, InvoiceUploadSheet, Money, useDownload } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -19,7 +13,6 @@ import {
   ItemDescription,
   ItemGroup,
   ItemTitle,
-  StatusBadge,
 } from '@spree/dashboard-ui'
 import { UploadIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
@@ -39,7 +32,7 @@ export function PayoutInvoicesCard({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
-  const { token } = useAuth()
+  const download = useDownload()
   const [uploading, setUploading] = useState(false)
   const { data, isLoading } = usePayoutInvoices(payout.id)
   const create = useCreatePayoutInvoice(payout.id)
@@ -77,22 +70,12 @@ export function PayoutInvoicesCard({
                       variant="link"
                       className="h-auto p-0"
                       onClick={() =>
-                        invoice.download_url &&
-                        downloadFromApi(
-                          token,
-                          invoice.download_url,
-                          invoice.file_filename ?? invoice.number,
-                          getApiClient().downloadHeaders?.() ?? {},
-                        )
+                        download(invoice.download_url, invoice.file_filename ?? invoice.number)
                       }
                     >
                       {invoice.number}
                     </Button>
-                    <StatusBadge
-                      status={invoice.kind}
-                      tone={invoice.kind === 'credit_note' ? 'warning' : 'neutral'}
-                      label={t(`admin.order_documents.kinds.${invoice.kind}`)}
-                    />
+                    <InvoiceKindBadge kind={invoice.kind} />
                   </ItemTitle>
                   <ItemDescription className="text-xs">
                     {invoice.issued_on}

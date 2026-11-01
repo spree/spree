@@ -5,12 +5,13 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
   # accountant need without opening them.
   def change
     create_table :spree_invoices do |t|
-      t.references :store, null: false
-      t.references :issuer, polymorphic: true, null: false
-      t.references :order
+      t.references :store, null: false, index: false
+      # Indexed by the unique index below, which leads with these columns.
+      t.references :issuer, polymorphic: true, null: false, index: false
+      t.references :order, index: false
       t.references :seller_payout
       t.references :original_invoice
-      t.references :uploaded_by, polymorphic: true
+      t.references :uploaded_by, polymorphic: true, index: false
       t.string :kind, null: false
       t.string :source, null: false, default: 'uploaded'
       t.string :number, null: false
@@ -36,6 +37,10 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
     # note may share a number in systems that keep separate series.
     add_index :spree_invoices, [:issuer_type, :issuer_id, :kind, :number], unique: true,
               name: 'idx_spree_invoices_on_issuer_kind_and_number'
+    # The missing-invoice filter asks "has this order an invoice or receipt";
+    # the accountants' list sorts a store's invoices by issue date.
+    add_index :spree_invoices, [:order_id, :kind]
+    add_index :spree_invoices, [:store_id, :issued_on]
 
     create_table :spree_invoice_requests do |t|
       t.references :store, null: false
@@ -65,7 +70,7 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
     create_table :spree_order_documents do |t|
       t.references :store, null: false
       t.references :order, null: false
-      t.references :uploaded_by, polymorphic: true
+      t.references :uploaded_by, polymorphic: true, index: false
       t.string :label, null: false
       t.boolean :customer_visible, null: false, default: false
 

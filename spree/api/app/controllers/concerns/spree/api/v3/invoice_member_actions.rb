@@ -14,12 +14,6 @@ module Spree
           before_action :set_resource, only: [:show, :destroy, :download, :resend]
         end
 
-        # GET .../invoices/:id/download — streamed, so the credentials that
-        # reached the action are what protect the file.
-        def download
-          stream_private_file(@resource.file)
-        end
-
         # POST .../invoices/:id/resend — emails the invoice to its recipient
         # again, whatever the store's automatic invoice email setting says.
         def resend

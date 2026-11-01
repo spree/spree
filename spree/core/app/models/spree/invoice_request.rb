@@ -30,8 +30,6 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[status created_at]
 
-    delegate :issuer, to: :invoice, allow_nil: true
-
     # @param invoice [Spree::Invoice]
     # @return [void]
     def fulfill!(invoice)

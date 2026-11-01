@@ -14,8 +14,6 @@ export const OrderDocumentSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   order_id: z.string(),
-  uploaded_by_id: z.string().nullable(),
-  uploaded_by_type: z.string().nullable(),
 });
 
 export type OrderDocument = z.infer<typeof OrderDocumentSchema>;

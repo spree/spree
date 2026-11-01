@@ -19,7 +19,7 @@ module Spree
 
           def scope
             base = Spree::Invoice.for_store(current_store)
-            own = base.where(issuer: current_seller, order_id: current_seller_orders.select(:id))
+            own = current_seller.issued_invoices.for_store(current_store).where(order_id: current_seller_orders.select(:id))
             return own if %w[destroy resend].include?(action_name)
 
             own.or(base.where(seller_payout_id: current_seller.seller_payouts.select(:id)))
