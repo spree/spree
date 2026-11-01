@@ -31,7 +31,7 @@
     },
     "api_keys": {
       "badge": {
-        "never_used": "không bao giờ",
+        "never_used": "Không bao giờ",
         "revoked": "Đã thu hồi"
       },
       "create_key_cta": "Tạo khóa",
@@ -175,7 +175,7 @@
       },
       "products": {
         "add_cta": "Thêm sản phẩm",
-        "column_product": "sản phẩm",
+        "column_product": "Sản phẩm",
         "empty": "Chưa có sản phẩm nào trong danh mục này.",
         "filter_placeholder": "Lọc sản phẩm…",
         "no_matches": "Không có sản phẩm nào phù hợp với bộ lọc của bạn.",
@@ -210,7 +210,7 @@
         "mixed": "Hỗn hợp",
         "inherits": "Mặc định",
         "default_help": "Áp dụng cho mọi sản phẩm trong danh mục này, trừ khi có sản phẩm nào nêu rõ sản phẩm đó trong danh sách.",
-        "column_minimum": "tối thiểu",
+        "column_minimum": "Tối thiểu",
         "column_multiple": "Nhiều",
         "help": {
           "minimum": "Ít nhất người mua có thể đặt hàng một sản phẩm. Một đơn đặt hàng dưới đây bị từ chối với số lượng hợp lệ gần nhất được nêu tên - không có gì được làm tròn cho chúng.",
@@ -242,7 +242,7 @@
         "products_failed": "Danh mục đã được tạo nhưng không thể thêm sản phẩm vào. Thêm chúng từ trang danh mục.",
         "products_none_warning": "Chưa có sản phẩm nào. Một danh mục giá trống không che giấu bất cứ điều gì - mọi người mua hàng vẫn nhìn thấy toàn bộ cửa hàng.",
         "review": {
-          "everyone": "mọi người",
+          "everyone": "Mọi người",
           "everything": "Mọi thứ trong cửa hàng",
           "inactive": "Danh mục được tạo không hoạt động. Kích hoạt nó từ trang của nó khi thỏa thuận đã sẵn sàng."
         },
@@ -294,7 +294,7 @@
       "no_results": "Không có danh mục nào phù hợp với tìm kiếm của bạn.",
       "products": {
         "add_cta": "Thêm sản phẩm",
-        "column_product": "sản phẩm",
+        "column_product": "Sản phẩm",
         "empty": "Chưa có sản phẩm nào trong danh mục này.",
         "filter_placeholder": "Lọc sản phẩm…",
         "no_matches": "Không có sản phẩm nào phù hợp với bộ lọc của bạn.",
@@ -331,7 +331,7 @@
     "collections": {
       "add_cta": "Bộ sưu tập mới",
       "columns": {
-        "kind": "loại",
+        "kind": "Loại",
         "products_count": "Sản phẩm",
         "sort_order": "Sắp xếp"
       },
@@ -346,10 +346,10 @@
           "label": "Đặt thành viên tự động từ các quy tắc"
         },
         "rule_match_policy": {
-          "label": "tình trạng"
+          "label": "Tình trạng"
         },
         "rule_type": {
-          "label": "quy tắc"
+          "label": "Quy tắc"
         },
         "rule_value": {
           "label": "Giá trị",
@@ -371,7 +371,7 @@
       },
       "load_failed": "Không tải được bộ sưu tập. Vui lòng thử lại.",
       "membership": {
-        "automatic": "tự động",
+        "automatic": "Tự động",
         "manual": "Hướng dẫn sử dụng"
       },
       "messages": {
@@ -384,7 +384,7 @@
       "products": {
         "add_cta": "Thêm sản phẩm",
         "automatic_hint": "Thành viên được thiết lập theo các quy tắc trên và tự động làm mới.",
-        "column_product": "sản phẩm",
+        "column_product": "Sản phẩm",
         "empty": "Chưa có sản phẩm nào trong bộ sưu tập này.",
         "empty_automatic": "Chưa có sản phẩm nào phù hợp với quy tắc.",
         "filter_placeholder": "Lọc sản phẩm…",
@@ -672,7 +672,7 @@
           "table": {
             "memo": "Bản ghi nhớ",
             "remaining": "Còn lại",
-            "used": "đã qua sử dụng"
+            "used": "Đã qua sử dụng"
           },
           "title": "Lưu trữ tín dụng"
         },
@@ -759,7 +759,7 @@
       "cards": {
         "estimate": "Ước tính giao hàng"
       },
-      "carrier_rates": "cước vận chuyển",
+      "carrier_rates": "Cước vận chuyển",
       "carrier_rates_hint": "Giá từ {{name}} khi thanh toán, được trích dẫn trực tiếp cho mỗi đơn hàng.",
       "carrier_services": {
         "add_service": "Thêm dịch vụ",
@@ -792,7 +792,7 @@
       },
       "detail": {},
       "edit_sheet_title": "Chỉnh sửa phương thức giao hàng",
-      "free": "miễn phí",
+      "free": "Miễn phí",
       "messages": {
         "created": "Đã tạo phương thức phân phối",
         "deleted": "Đã xóa phương thức giao hàng",
@@ -837,9 +837,9 @@
       "add_dialog_title": "Hồ sơ giao hàng mới",
       "all_locations": "Tất cả địa điểm",
       "capabilities": {
-        "digital": "kỹ thuật số",
+        "digital": "Kỹ thuật số",
         "pickup": "Nhận hàng",
-        "ships": "tàu"
+        "ships": "Tàu"
       },
       "create_description": "Nhóm các sản phẩm vận chuyển theo cùng một cách, có địa điểm, khu vực và phương thức giao hàng riêng.",
       "create_label": "Tạo hồ sơ",
@@ -861,7 +861,7 @@
         "digital_empty": "Chưa có phương thức phân phối kỹ thuật số nào.",
         "digital_hint": "Giao hàng mà không cần vận chuyển hoặc thu thập.",
         "digital_title": "Giao hàng kỹ thuật số",
-        "general_title": "chung",
+        "general_title": "Chung",
         "hidden_badge": "Ẩn giấu",
         "load_failed_title": "Không thể tải hồ sơ vận chuyển này",
         "no_methods": "Chưa có phương thức giao hàng nào ở đây.",
@@ -880,8 +880,8 @@
       "is_default_hint": "Sản phẩm không có hồ sơ tàu riêng của họ trên này.",
       "kind_immutable_hint": "Loại được cố định khi hồ sơ được tạo.",
       "kinds": {
-        "digital": "kỹ thuật số",
-        "shipping": "vận chuyển"
+        "digital": "Kỹ thuật số",
+        "shipping": "Vận chuyển"
       },
       "locations_count": "{{count}} địa điểm",
       "make_default": "Đặt làm mặc định",
@@ -938,7 +938,7 @@
     },
     "digital_links": {
       "columns": {
-        "file": "tập tin",
+        "file": "Tập tin",
         "item": "Mục",
         "downloads": "Tải xuống được sử dụng",
         "expires": "Hết hạn",
@@ -1064,7 +1064,7 @@
             },
             "ship": {
               "description": "Mỗi lô hàng ghi lại lô hàng chứa trong đó.",
-              "title": "tàu"
+              "title": "Tàu"
             },
             "trace": {
               "description": "Tìm kiếm rất nhiều để tìm thấy đơn đặt hàng và khách hàng của mình.",
@@ -1144,7 +1144,7 @@
             },
             "install": {
               "description": "Người bán cài đặt ứng dụng trong cửa hàng Shopify của họ.",
-              "title": "cài đặt"
+              "title": "Cài đặt"
             },
             "sell": {
               "description": "Đơn đặt hàng được chuyển đến cửa hàng của họ và lô hàng sẽ quay trở lại.",
@@ -1183,7 +1183,7 @@
           "label": "Kênh"
         },
         "key_type": {
-          "label": "loại"
+          "label": "Loại"
         },
         "name": {
           "label": "Tên",
@@ -1323,7 +1323,7 @@
           "label": "Tối đa"
         },
         "min_amount": {
-          "label": "tối thiểu"
+          "label": "Tối thiểu"
         },
         "name": {
           "placeholder": "Hoa hồng tiêu chuẩn"
@@ -1349,7 +1349,7 @@
         "help": "Lấy từ công ty địa chỉ này thuộc về.",
         "kind": {
           "help": "Công ty là một pháp nhân có thể đăng ký thuế. Một bộ phận mượn pháp nhân của nó.",
-          "label": "loại"
+          "label": "Loại"
         },
         "label": "Công ty",
         "name": {
@@ -1376,13 +1376,13 @@
       },
       "custom_field_definition": {
         "field_type": {
-          "label": "loại",
+          "label": "Loại",
           "options": {
             "boolean": "Boolean",
             "json": "JSON",
             "long_text": "Văn bản dài",
             "number": "Số",
-            "rich_text": "văn bản phong phú",
+            "rich_text": "Văn bản phong phú",
             "short_text": "Văn bản ngắn"
           },
           "read_only_help": "Không thể thay đổi loại khi giá trị tồn tại — việc chuyển đổi loại này sẽ khiến các giá trị được lưu trữ bị hiểu sai."
@@ -1422,7 +1422,7 @@
             "tax_rate": "Thuế suất",
             "product_type": "Các loại sản phẩm",
             "media": "Phương tiện truyền thông",
-            "store": "cửa hàng"
+            "store": "Cửa hàng"
           },
           "read_only_help": "Không thể thay đổi chủ sở hữu khi đã có giá trị cho trường này.",
           "api_only_group": "Chỉ thông qua API"
@@ -1531,10 +1531,10 @@
         },
         "kind": {
           "help": "Quyết định nhà cung cấp dịch vụ thực hiện nào mà phương pháp của hồ sơ này có thể sử dụng.",
-          "label": "loại"
+          "label": "Loại"
         },
         "methods_count": {
-          "label": "phương pháp"
+          "label": "Phương pháp"
         },
         "origins": {
           "label": "Vận chuyển từ"
@@ -1572,7 +1572,7 @@
         },
         "quantity": {
           "help": "1 phát hành một thẻ duy nhất. Nhiều hơn 1 phát hành một đợt với mã được tạo tự động.",
-          "label": "số lượng"
+          "label": "Số lượng"
         }
       },
       "issued_at": {
@@ -1639,7 +1639,7 @@
         },
         "kind": {
           "help": "Kiểm soát cách tùy chọn hiển thị trên mặt tiền cửa hàng. Mẫu màu hiển thị màu lục giác; các nút hiển thị hình ảnh thu nhỏ.",
-          "label": "loại"
+          "label": "Loại"
         },
         "label": {
           "help": "Hiển thị cho khách hàng trên mặt tiền cửa hàng.",
@@ -1706,7 +1706,7 @@
         },
         "po_number": {
           "help": "Tài liệu tham khảo riêng của người mua cho đơn đặt hàng này.",
-          "label": "số PO",
+          "label": "Số PO",
           "placeholder": "PO-4471"
         },
         "seller": {
@@ -1736,7 +1736,7 @@
           "label": "Hiển thị trên mặt tiền cửa hàng"
         },
         "type": {
-          "label": "nhà cung cấp",
+          "label": "Nhà cung cấp",
           "placeholder": "Chọn nhà cung cấp"
         }
       },
@@ -1784,7 +1784,7 @@
         "ends_at": {
           "help": "Để trống nếu không có ngày kết thúc.",
           "label": "Kết thúc",
-          "placeholder": "không bao giờ"
+          "placeholder": "Không bao giờ"
         },
         "match_policy": {
           "all": "Tất cả các quy tắc phải phù hợp",
@@ -1808,7 +1808,7 @@
         },
         "status": {
           "active": "Đang hoạt động",
-          "draft": "bản nháp",
+          "draft": "Bản nháp",
           "inactive": "Không hoạt động",
           "scheduled": "Đã lên lịch"
         }
@@ -1892,7 +1892,7 @@
         "unpublished_at": {
           "help": "Để trống để giữ danh sách vô thời hạn.",
           "label": "Hủy xuất bản trên",
-          "placeholder": "không bao giờ"
+          "placeholder": "Không bao giờ"
         }
       },
       "product_type": {
@@ -2021,7 +2021,7 @@
           "label": "Thanh toán tối thiểu"
         },
         "name": {
-          "placeholder": "âm thanh tia lửa"
+          "placeholder": "Âm thanh tia lửa"
         },
         "payouts_schedule_interval": {
           "help": "Tần suất người bán này được thanh toán.",
@@ -2036,7 +2036,7 @@
         }
       },
       "state": {
-        "label": "tiểu bang"
+        "label": "Tiểu bang"
       },
       "stock_location": {
         "active": {
@@ -2056,7 +2056,7 @@
           "label": "Vị trí mặc định"
         },
         "kind": {
-          "label": "loại"
+          "label": "Loại"
         },
         "name": {
           "placeholder": "Nhà kho Brooklyn"
@@ -2100,7 +2100,7 @@
             },
             "manual": {
               "description": "Đặt trước số tiền khi thanh toán và để nhân viên lấy sau.",
-              "label": "thủ công"
+              "label": "Thủ công"
             },
             "on_dispatch": {
               "description": "Dự trữ số tiền khi thanh toán và lấy khi hết hàng.",
@@ -2272,10 +2272,10 @@
             "help": "Tần suất thu nhập được gộp vào một khoản thanh toán. Thay vào đó, người bán có thể thực hiện lịch trình riêng của họ."
           },
           "schedule_intervals": {
-            "daily": "hàng ngày",
-            "weekly": "hàng tuần",
+            "daily": "Hàng ngày",
+            "weekly": "Hàng tuần",
             "biweekly": "Hai tuần một lần",
-            "monthly": "hàng tháng",
+            "monthly": "Hàng tháng",
             "manual": "Chỉ khi bạn nói như vậy"
           },
           "minimum": {
@@ -2417,7 +2417,7 @@
       "tax_identifier": {
         "kind": {
           "help": "Đây là đăng ký nào. Nó phải khớp với trình xác thực đã đăng ký cho nó, vì vậy chính tả rất quan trọng.",
-          "label": "loại",
+          "label": "Loại",
           "required": "Chọn hoặc nhập loại đăng ký"
         },
         "value": {
@@ -2429,7 +2429,7 @@
       "tax_rate": {
         "amount": {
           "help": "Như một tỷ lệ phần trăm. Nhập 20 được 20%.",
-          "label": "tỷ lệ"
+          "label": "Tỷ lệ"
         },
         "country_code": {
           "help": "Để trống để đánh thuế mọi quốc gia."
@@ -2478,7 +2478,7 @@
           "label": "Chiều cao"
         },
         "hs_code": {
-          "label": "mã HS",
+          "label": "Mã HS",
           "placeholder": "ví dụ: 640411"
         },
         "preorder_ships_at": {
@@ -2495,7 +2495,7 @@
           "placeholder": "SẢN PHẨM-ĐỎ-S"
         },
         "weight": {
-          "label": "cân nặng"
+          "label": "Cân nặng"
         },
         "weight_unit": {
           "label": "Đơn vị"
@@ -2517,7 +2517,7 @@
           "label": "Đơn vị mua hàng",
           "options": {
             "unit": "Đơn vị",
-            "carton": "thùng carton"
+            "carton": "Thùng carton"
           }
         },
         "units_per_carton": {
@@ -2525,7 +2525,7 @@
         },
         "quantity_rule_invalid": "Nhập số nguyên lớn hơn 0 hoặc để trống.",
         "carton_package_type_id": {
-          "label": "thùng carton",
+          "label": "Thùng carton",
           "help": "Sản phẩm này được đóng gói trong thùng carton. Kích thước của nó được chia sẻ bởi mọi thứ được đóng gói theo cùng một cách."
         },
         "carton_weight": {
@@ -2571,7 +2571,7 @@
           "label": "Tên"
         },
         "kind": {
-          "label": "loại",
+          "label": "Loại",
           "help": "Chỉ có thùng carton mới có thể là bao bì đựng sản phẩm."
         },
         "length": {
@@ -2630,7 +2630,7 @@
         "customer": "Khách hàng",
         "issued_by": "Phát hành bởi",
         "remaining": "Còn lại",
-        "used": "đã qua sử dụng"
+        "used": "Đã qua sử dụng"
       },
       "messages": {
         "batch_create_failed": "Không thể tạo lô thẻ quà tặng",
@@ -2676,7 +2676,7 @@
       "groups": {
         "other": "Khác",
         "payments": "Thanh toán",
-        "shipping": "vận chuyển",
+        "shipping": "Vận chuyển",
         "tax": "Thuế"
       },
       "manage_payment_methods": "Quản lý phương thức thanh toán",
@@ -2758,7 +2758,7 @@
         "cancelled": "Đã hủy",
         "cancelling": "Đang hủy…",
         "enqueued": "Đã xếp hàng",
-        "errored": "thất bại",
+        "errored": "Thất bại",
         "interrupted": "Đang tiếp tục…",
         "running": "Đang chạy",
         "succeeded": "Đã hoàn thành"
@@ -2837,9 +2837,9 @@
       "empty": "Chưa có tập tin nào. Tải lên một cái để bắt đầu.",
       "facts": {
         "size": "Kích thước",
-        "type": "loại"
+        "type": "Loại"
       },
-      "file": "tập tin",
+      "file": "Tập tin",
       "no_results": "Không có tập tin nào phù hợp với bộ lọc của bạn.",
       "placement": {
         "all": "Tất cả các tập tin",
@@ -2862,13 +2862,13 @@
         "empty": "Tập tin này không được sử dụng ở bất cứ đâu.",
         "kind": {
           "attachment": "Trường hình ảnh",
-          "media": "sản phẩm",
+          "media": "Sản phẩm",
           "rich_text": "Mô tả"
         },
         "owner": {
           "category": "Danh mục",
           "collection": "Bộ sưu tập",
-          "product": "sản phẩm",
+          "product": "Sản phẩm",
           "variant": "Biến thể"
         },
         "title": "Được sử dụng trong"
@@ -2900,12 +2900,12 @@
       "seller_transfers": "Chuyển nhượng người bán",
       "sellers": "Người bán",
       "settings": "Cài đặt",
-      "transfers": "chuyển nhượng",
+      "transfers": "Chuyển nhượng",
       "translations": "Bản dịch",
       "purchase_orders": "Đơn đặt hàng",
       "inventory": "Hàng tồn kho",
-      "suppliers": "nhà cung cấp",
-      "loyalty": "lòng trung thành",
+      "suppliers": "Nhà cung cấp",
+      "loyalty": "Lòng trung thành",
       "store_credits": "Tín dụng cửa hàng",
       "commission_rates": "Tỷ lệ hoa hồng"
     },
@@ -2944,7 +2944,7 @@
         "items": "Mặt hàng",
         "number": "Số",
         "payment": "Thanh toán",
-        "po_number": "số PO",
+        "po_number": "Số PO",
         "sku": "Mã hàng",
         "tags": "Thẻ"
       },
@@ -2965,7 +2965,7 @@
           "amount_field": "Số tiền",
           "column_amount": "Số tiền",
           "column_code": "Mã",
-          "column_kind": "loại",
+          "column_kind": "Loại",
           "column_label": "Mô tả",
           "column_source": "Nguồn",
           "delete_discount_message": "Xóa giảm giá \"{{label}}\" khỏi đơn hàng này? Tổng số sẽ được tính toán lại.",
@@ -2975,15 +2975,15 @@
           "discounts": "Giảm giá",
           "discounts_empty": "Chưa có giảm giá cho đơn hàng này.",
           "fee_kind_cod": "Tiền mặt khi giao hàng",
-          "fee_kind_duty": "nhiệm vụ",
-          "fee_kind_exchange": "trao đổi",
+          "fee_kind_duty": "Nhiệm vụ",
+          "fee_kind_exchange": "Trao đổi",
           "fee_kind_gift_wrap": "Gói quà",
           "fee_kind_handling": "Xử lý",
           "fee_kind_payment": "Phí thanh toán",
           "fee_kind_surcharge": "Phụ phí",
           "fees": "Phí",
           "fees_empty": "Chưa có phí cho đơn hàng này.",
-          "kind_field": "loại",
+          "kind_field": "Loại",
           "kind_manual": "Hướng dẫn sử dụng",
           "kind_promotion": "Khuyến mãi",
           "label_field": "Nhãn",
@@ -3008,7 +3008,7 @@
           "taxes_empty": "Chưa có thuế cho đơn đặt hàng này.",
           "taxes_unmatched": "Không có thuế suất nào khớp với địa chỉ này.",
           "value_field": "Giá trị",
-          "value_type_field": "loại",
+          "value_type_field": "Loại",
           "value_type_flat": "Số tiền",
           "value_type_percent": "Phần trăm"
         },
@@ -3025,7 +3025,7 @@
         },
         "commission_lines": {
           "column_fee": "Phí",
-          "column_rate": "tỷ lệ",
+          "column_rate": "Tỷ lệ",
           "column_subject": "Mục",
           "column_tax": "Thuế",
           "column_total": "Tổng cộng",
@@ -3035,7 +3035,7 @@
           "rate_named_fixed": "{{name}} · {{amount}}",
           "rate_named_percentage": "{{name}} · {{rate}}%",
           "rate_unknown": "Tỷ lệ đã xóa",
-          "subject_fallback": "bán hàng",
+          "subject_fallback": "Bán hàng",
           "title": "Hoa hồng",
           "total": "Tổng cộng"
         },
@@ -3120,14 +3120,14 @@
             "cn23": "Mẫu hải quan CN23",
             "commercial_invoice": "Hoá đơn thương mại",
             "customs_form": "Mẫu hải quan",
-            "form": "tài liệu"
+            "form": "Tài liệu"
           },
           "documents_title": "Chứng từ vận chuyển",
           "edit_description": "Thay đổi nơi vận chuyển đơn hàng này và phương thức giao hàng nào vận chuyển đơn hàng đó.",
           "edit_title": "Chỉnh sửa thực hiện",
           "edit_tracking_title": "Chỉnh sửa theo dõi",
           "empty": "Chưa có sự thực hiện nào đối với đơn đặt hàng này.",
-          "free": "miễn phí",
+          "free": "Miễn phí",
           "label_cost": "Bưu phí",
           "label_refund_requested": "Đã yêu cầu hoàn tiền",
           "label_refunded": "Đã hoàn tiền",
@@ -3142,7 +3142,7 @@
           "packing_slip_footer": "Cảm ơn bạn đã đặt hàng.",
           "packing_slip_fulfillment": "Hoàn thành #{{number}}",
           "packing_slip_order": "Đơn hàng #{{number}}",
-          "packing_slip_shipping": "vận chuyển",
+          "packing_slip_shipping": "Vận chuyển",
           "packing_slip_subtotal": "Tổng phụ",
           "packing_slip_tax": "Thuế",
           "packing_slip_title": "Phiếu đóng gói — đơn hàng {{number}}",
@@ -3157,7 +3157,7 @@
           "ships_from": "Vận chuyển từ",
           "split": "Tách",
           "split_description": "Di chuyển một số đơn vị vào một đơn vị mới. Mỗi lần một sản phẩm.",
-          "split_item": "sản phẩm",
+          "split_item": "Sản phẩm",
           "split_quantity": "Số lượng cần di chuyển",
           "split_title": "Tách thực hiện",
           "split_would_empty": "Hãy để lại ít nhất một đơn vị hoặc thay đổi nguồn gốc của toàn bộ quá trình thực hiện.",
@@ -3211,9 +3211,9 @@
           "title": "Thêm thanh toán"
         },
         "payments_table": {
-          "method": "phương pháp",
+          "method": "Phương pháp",
           "number": "Số",
-          "state": "tiểu bang",
+          "state": "Tiểu bang",
           "this_order": "Lệnh này",
           "shared_help": "Được trả tiền một lần cho một giỏ hàng gồm nhiều người bán. Lệnh này có một phần của nó.",
           "load_error": "Không thể tải các khoản thanh toán cho đơn đặt hàng này.",
@@ -3260,11 +3260,11 @@
           "sku_prefix": "Mã hàng"
         },
         "logistics": {
-          "title": "hậu cần",
+          "title": "Hậu cần",
           "units": "Đơn vị",
-          "cartons": "thùng carton",
+          "cartons": "Thùng carton",
           "pallets": "Pallet",
-          "volume": "khối lượng",
+          "volume": "Khối lượng",
           "weight": "Tổng trọng lượng",
           "cbm": "{{value}} CBM",
           "kg": "{{value}}kg",
@@ -3315,7 +3315,7 @@
         "catalog_price_unknown": "giá danh mục",
         "columns": {
           "line_total": "Tổng số dòng",
-          "product": "sản phẩm",
+          "product": "Sản phẩm",
           "unit_price": "Đơn giá"
         },
         "empty": "Đơn hàng này không có mặt hàng nào.",
@@ -3357,7 +3357,7 @@
         "canceled": "Đã hủy",
         "delivered": "Đã giao",
         "fulfilled": "Đã hoàn thành",
-        "partial": "một phần",
+        "partial": "Một phần",
         "pending": "Đang chờ xử lý",
         "ready": "Sẵn sàng",
         "unfulfilled": "Chưa thực hiện"
@@ -3385,13 +3385,13 @@
         "overcharged": "Quá tải",
         "voided": "Vô hiệu",
         "balance_due": "Số dư đến hạn",
-        "credit_owed": "nợ tín dụng",
-        "failed": "thất bại",
+        "credit_owed": "Nợ tín dụng",
+        "failed": "Thất bại",
         "void": "Vô hiệu"
       },
       "statuses": {
         "canceled": "Đã hủy",
-        "draft": "bản nháp",
+        "draft": "Bản nháp",
         "placed": "Đã đặt"
       },
       "table": {
@@ -3523,14 +3523,14 @@
       "home": {
         "columns": {
           "price": "Giá",
-          "product": "sản phẩm",
-          "sold": "đã bán",
+          "product": "Sản phẩm",
+          "sold": "Đã bán",
           "trend": "Xu hướng"
         },
         "metric_short": {
           "avg_order_value": "AOV",
           "orders": "Đơn đặt hàng",
-          "sales": "bán hàng",
+          "sales": "Bán hàng",
           "units": "Đơn vị",
           "customers": "Khách hàng"
         },
@@ -3635,7 +3635,7 @@
             "actions": {
               "create": "Xác nhận quyền sở hữu mới",
               "deny": "Từ chối",
-              "resolve": "giải quyết",
+              "resolve": "Giải quyết",
               "resolve_refund": "Giải quyết bằng cách hoàn lại tiền",
               "resolve_replacement": "Giải quyết bằng cách thay thế"
             },
@@ -3652,7 +3652,7 @@
             "resolutions": {
               "refund": "Hoàn tiền",
               "refund_and_replacement": "Hoàn tiền và thay thế",
-              "replacement": "thay thế"
+              "replacement": "Thay thế"
             },
             "resolve_title": "Giải quyết khiếu nại"
           },
@@ -3739,7 +3739,7 @@
           "summary": {
             "channel": "Kênh bán hàng",
             "created_by": "Tạo bởi",
-            "ip_address": "địa chỉ IP",
+            "ip_address": "Địa chỉ IP",
             "locale": "Ngôn ngữ",
             "market": "Chợ"
           }
@@ -3887,7 +3887,7 @@
             "columns": {
               "compare_at_price": "So sánh theo giá",
               "price": "Giá",
-              "product": "sản phẩm",
+              "product": "Sản phẩm",
               "sku": "Mã hàng",
               "variant": "Biến thể"
             },
@@ -3923,7 +3923,7 @@
           "no_changes": "Không có thay đổi nào để lưu.",
           "products": {
             "add_cta": "Thêm sản phẩm",
-            "column_product": "sản phẩm",
+            "column_product": "Sản phẩm",
             "empty": "Chưa có sản phẩm nào - hãy thêm một sản phẩm để bắt đầu chỉnh sửa giá.",
             "filter_placeholder": "Lọc sản phẩm…",
             "no_matches": "Không có sản phẩm nào phù hợp với bộ lọc của bạn.",
@@ -3967,12 +3967,12 @@
           "rules_empty": "Không có quy tắc - danh sách này áp dụng cho mọi người mua hàng.",
           "rules_help": "Các điều kiện quyết định thời điểm áp dụng danh sách này. Sử dụng \"tất cả\" để yêu cầu mọi quy tắc, \"bất kỳ\" để lấy trận đầu tiên.",
           "rules_section": "Quy tắc",
-          "schedule": "lịch trình",
+          "schedule": "Lịch trình",
           "schedule_confirm": {
             "message": "\"{{name}}\" sẽ xuất hiện vào {{starts_at}} và tiếp tục hoạt động cho đến ngày kết thúc.",
             "title": "Lên lịch bảng giá?"
           },
-          "schedule_section": "lịch trình",
+          "schedule_section": "Lịch trình",
           "sheet_title_create": "Tạo bảng giá",
           "sheet_title_edit": "Chỉnh sửa bảng giá",
           "subtitle": "Định giá mục tiêu cho các nhóm khách hàng, khu vực hoặc cấp số lượng.",
@@ -4019,7 +4019,7 @@
         "status_options": {
           "active": "Đang hoạt động",
           "archived": "Đã lưu trữ",
-          "draft": "bản nháp",
+          "draft": "Bản nháp",
           "proposed": "Đang xem xét",
           "rejected": "Những thay đổi cần thiết"
         },
@@ -4077,7 +4077,7 @@
             "issued_by": "Phát hành bởi",
             "remaining": "Còn lại",
             "title": "Cách sử dụng",
-            "used": "đã qua sử dụng"
+            "used": "Đã qua sử dụng"
           },
           "validation": {
             "amount_positive": "Số tiền phải lớn hơn 0",
@@ -4156,7 +4156,7 @@
               "system": "Phông chữ hệ thống",
               "helvetica": "Helvetica",
               "georgia": "Gruzia",
-              "roboto": "người máy",
+              "roboto": "Người máy",
               "lato": "Lato",
               "merriweather": "Merriweather"
             }
@@ -4171,12 +4171,12 @@
           "search_placeholder": "Tìm theo số…",
           "table": {
             "failed_count": "{{failed}} không thành công",
-            "first_party": "bạn",
+            "first_party": "Bạn",
             "number": "Số",
             "rows": "Hàng",
             "seller": "Người bán",
             "status": "Trạng thái",
-            "type": "loại"
+            "type": "Loại"
           },
           "title": "Nhập khẩu"
         },
@@ -4201,7 +4201,7 @@
           "subtitle": "Cấu hình chung và mặc định trên toàn cửa hàng.",
           "tab_addresses": "Địa chỉ",
           "tab_catalog": "Danh mục",
-          "tab_general": "chung",
+          "tab_general": "Chung",
           "tab_inventory": "Hàng tồn kho",
           "tab_order_numbers": "Số đơn hàng",
           "tab_payments": "Thanh toán",
@@ -4255,12 +4255,12 @@
             "search_placeholder": "Tìm kiếm theo tên sự kiện…",
             "status": {
               "error": "Lỗi",
-              "failure": "thất bại",
+              "failure": "Thất bại",
               "pending": "Đang chờ xử lý",
-              "success": "thành công"
+              "success": "Thành công"
             },
             "table": {
-              "code": "phản hồi",
+              "code": "Phản hồi",
               "delivered_at": "Giao tại",
               "event": "Sự kiện",
               "execution_time": "Thời lượng"
@@ -4281,21 +4281,21 @@
           "empty_description": "Tạo điểm cuối để nhận POST đã ký mỗi khi sự kiện đã đăng ký diễn ra.",
           "empty_title": "Chưa có điểm cuối webhook",
           "event_groups": {
-            "admin_user": "nhân viên",
+            "admin_user": "Nhân viên",
             "cart": "Giỏ hàng",
             "catalog": "Danh mục",
             "claim": "Yêu cầu",
             "company": "Công ty",
             "company_invitation": "Lời mời của công ty",
-            "custom": "tùy chỉnh",
+            "custom": "Tùy chỉnh",
             "customer": "Khách hàng",
             "data_request": "Yêu cầu dữ liệu",
             "delivery": "Giao hàng tận nơi",
-            "digital": "kỹ thuật số",
+            "digital": "Kỹ thuật số",
             "digital_asset": "Tài sản kỹ thuật số",
             "digital_link": "Liên kết kỹ thuật số",
             "email_template": "Mẫu email",
-            "exchange": "trao đổi",
+            "exchange": "Trao đổi",
             "export": "Xuất khẩu",
             "fulfillment": "Thực hiện",
             "gift_card": "Thẻ quà tặng",
@@ -4313,7 +4313,7 @@
             "payment_session": "Phiên thanh toán",
             "payment_setup_session": "Phiên thiết lập thanh toán",
             "price": "Giá",
-            "product": "sản phẩm",
+            "product": "Sản phẩm",
             "product_submission": "Gửi sản phẩm",
             "promotion": "Khuyến mãi",
             "purchase_order": "Đơn đặt hàng",
@@ -4356,9 +4356,9 @@
             "disabled": "Đã tắt",
             "failing": "Thất bại ({{percentage}}%)",
             "healthy": "Khỏe mạnh ({{percentage}}%)",
-            "label": "sức khỏe",
-            "metric_failed": "thất bại",
-            "metric_successful": "thành công",
+            "label": "Sức khỏe",
+            "metric_failed": "Thất bại",
+            "metric_successful": "Thành công",
             "metric_total": "Giao hàng",
             "no_deliveries": "Chưa có chuyến giao hàng nào",
             "re_enable_cta": "Kích hoạt lại",
@@ -4416,7 +4416,7 @@
           },
           "manage_connections": "Quản lý kết nối",
           "connections": {
-            "person": "người",
+            "person": "Người",
             "empty": "Không ai được kết nối thông qua đại lý này.",
             "unknown_person": "Không xác định",
             "count_one": "{{count}} người được kết nối",
@@ -4473,7 +4473,7 @@
           "role": "Vai trò",
           "roles": "Vai trò"
         },
-        "title": "nhân viên"
+        "title": "Nhân viên"
       },
       "translations": {
         "complete": "Đã dịch đầy đủ",
@@ -4582,7 +4582,7 @@
         "analytics": "Phân tích",
         "catalog": "Danh mục",
         "customers": "Khách hàng",
-        "loyalty": "lòng trung thành",
+        "loyalty": "Lòng trung thành",
         "marketing": "Tiếp thị",
         "orders": "Đơn đặt hàng",
         "sellers": "Người bán",
@@ -4618,7 +4618,7 @@
         "sellers": "Người bán",
         "settings": "Cài đặt",
         "staff": "Nhân viên & vai trò",
-        "stock": "kho",
+        "stock": "Kho",
         "store_credits": "Lưu trữ tín dụng",
         "webhooks": "Webhook",
         "oauth_applications": "Ứng dụng OAuth"
@@ -4678,7 +4678,7 @@
         "humanitarian_donation": "Đóng góp nhân đạo",
         "merchandise": "Hàng hóa",
         "returned_goods": "Hàng trả lại",
-        "sample": "mẫu"
+        "sample": "Mẫu"
       },
       "customs_signer": "Người ký hải quan",
       "customs_signer_description": "Người tại công ty của bạn chịu trách nhiệm pháp lý về nội dung khai báo của bưu kiện quốc tế.",
@@ -4738,7 +4738,7 @@
       },
       "create_description": "Nhóm các sản phẩm và xác định cách chúng có thể được phân phối.",
       "create_label": "Tạo loại sản phẩm",
-      "custom_delivery_profile": "tùy chỉnh",
+      "custom_delivery_profile": "Tùy chỉnh",
       "default_delivery_profile": "Lưu trữ hồ sơ mặc định",
       "delete_confirm": {
         "message": "Bạn có chắc chắn muốn xóa “{{name}}” không? Không thể xóa các loại sản phẩm vẫn được sử dụng.",
@@ -4800,7 +4800,7 @@
         "unsupported_file_one": "Tệp {{count}} chưa được thêm vào — chỉ hỗ trợ hình ảnh và video.",
         "unsupported_file_other": "Tệp {{count}} chưa được thêm vào — chỉ hỗ trợ hình ảnh và video.",
         "upload_failed": "Không tải lên được {{name}}: {{message}}",
-        "upload_status_failed": "thất bại",
+        "upload_status_failed": "Thất bại",
         "video_preview_title": "Xem trước video",
         "video_url_invalid": "Nhập liên kết YouTube hoặc Vimeo."
       },
@@ -4889,7 +4889,7 @@
           "immutable_note": "Chuyển nhượng cổ phiếu là bất biến một khi được tạo ra.",
           "internal": "Nội bộ",
           "reference": "Tài liệu tham khảo",
-          "type": "loại"
+          "type": "Loại"
         },
         "items_table": {
           "qty": "Số lượng",
@@ -4908,7 +4908,7 @@
           "grid_aria": "Bảng tính chỉnh sửa hàng loạt biến thể",
           "title": "Các biến thể chỉnh sửa hàng loạt",
           "trigger": "Chỉnh sửa hàng loạt",
-          "unset": "không có"
+          "unset": "Không có"
         },
         "create_option_type": "Tạo loại tùy chọn mới",
         "create_option_type_title": "Loại tùy chọn mới",
@@ -4929,14 +4929,14 @@
         "orphan_warning_other": "{{count}} các biến thể hiện có không còn khớp với các tùy chọn đã chọn và sẽ bị xóa khi lưu:",
         "remove_row_aria": "Xóa {{name}}",
         "sheet": {
-          "availability": "sẵn có",
-          "customs": "hải quan",
+          "availability": "Sẵn có",
+          "customs": "Hải quan",
           "customs_help": "Được sử dụng trên các biểu mẫu hải quan khi mặt hàng này được vận chuyển qua biên giới.",
           "identity": "Danh tính",
           "tax_category_placeholder": "Kế thừa từ sản phẩm",
           "ordering": "Đặt hàng B2B",
           "ordering_help": "Người mua phải mất bao nhiêu. Hàng tồn kho vẫn được tính theo đơn vị.",
-          "packing": "đóng gói",
+          "packing": "Đóng gói",
           "packing_help": "Làm thế nào sản phẩm này rời khỏi kho với số lượng lớn. Báo giá cước vận chuyển được xây dựng từ những con số này.",
           "carton_placeholder": "Không có thùng carton",
           "pending_save": "Những thay đổi ở đây được lưu cùng với sản phẩm."
@@ -4966,7 +4966,7 @@
         "title": "Khái niệm cơ bản"
       },
       "code": {
-        "automatic": "tự động",
+        "automatic": "Tự động",
         "multi": "đa"
       },
       "coupon_codes": {
@@ -4976,11 +4976,11 @@
         "export_csv": "Xuất CSV",
         "states": {
           "partially_used": "Được sử dụng một phần",
-          "used": "đã qua sử dụng"
+          "used": "Đã qua sử dụng"
         },
         "title": "Mã phiếu giảm giá",
         "unused": "Chưa sử dụng",
-        "used": "đã qua sử dụng"
+        "used": "Đã qua sử dụng"
       },
       "delete_confirm": {
         "default_name": "Khuyến mãi này",
@@ -5226,7 +5226,7 @@
       "add_cta": "Thêm yêu cầu",
       "add_title": "Thêm một yêu cầu",
       "columns": {
-        "kind": "loại",
+        "kind": "Loại",
         "required": "Bắt buộc"
       },
       "delete_confirm": {
@@ -5255,7 +5255,7 @@
           "placeholder": "Nói cho người bán biết bạn cần gì và tại sao"
         },
         "kind": {
-          "label": "loại",
+          "label": "Loại",
           "placeholder": "Chọn những gì để yêu cầu"
         },
         "name": {
@@ -5300,7 +5300,7 @@
       "add_cta": "Thêm người bán",
       "add_sheet_title": "Người bán mới",
       "address": {
-        "filled": "đầy",
+        "filled": "Đầy",
         "not_filled": "Không đầy",
         "not_provided_by_seller": "Người bán chưa cung cấp"
       },
@@ -5339,7 +5339,7 @@
         "cover_photo_help": "Một biểu ngữ rộng trên đầu hồ sơ người bán.",
         "cover_photo_label": "Ảnh bìa",
         "logo_help": "Hình vuông hoạt động tốt nhất. Hiển thị bên cạnh người bán ở mọi nơi họ xuất hiện.",
-        "logo_label": "biểu tượng",
+        "logo_label": "Biểu tượng",
         "square_logo_help": "Được sử dụng khi cần có hình vuông chặt chẽ, chẳng hạn như hình đại diện.",
         "square_logo_label": "Logo hình vuông"
       },
@@ -5402,11 +5402,11 @@
       "onboarding_column": "Giới thiệu",
       "payout_interval": {
         "biweekly": "Hai tuần một lần",
-        "daily": "hàng ngày",
+        "daily": "Hàng ngày",
         "inherit": "Sử dụng mặc định của cửa hàng",
         "manual": "Hướng dẫn sử dụng",
-        "monthly": "hàng tháng",
-        "weekly": "hàng tuần"
+        "monthly": "Hàng tháng",
+        "weekly": "Hàng tuần"
       },
       "products_column": "Sản phẩm",
       "reject_confirm": {
@@ -5466,9 +5466,9 @@
           "message": "Ưu đãi được gửi tới {{email}} sẽ ngừng hoạt động.",
           "title": "Thu hồi lời mời?"
         },
-        "title": "đội"
+        "title": "Đội"
       },
-      "team_column": "đội"
+      "team_column": "Đội"
     },
     "settings": {
       "webhooks": {
@@ -5516,9 +5516,9 @@
         "audit": "Kiểm toán",
         "developer": "Nhà phát triển",
         "payments": "Thanh toán và thuế",
-        "selling": "bán hàng",
+        "selling": "Bán hàng",
         "shipping": "Vận chuyển & giao hàng",
-        "store": "cửa hàng",
+        "store": "Cửa hàng",
         "team": "Người dùng và quyền",
         "marketplace": "Thị trường"
       },
@@ -5541,14 +5541,14 @@
         "reasons": "Trả lại & lý do",
         "roles": "Vai trò",
         "seller_requirements": "Yêu cầu của người bán",
-        "staff": "nhân viên",
-        "stock_locations": "địa điểm chứng khoán",
-        "store": "cửa hàng",
+        "staff": "Nhân viên",
+        "stock_locations": "Địa điểm chứng khoán",
+        "store": "Cửa hàng",
         "tax_categories": "Danh mục thuế",
         "tax_rates": "Thuế suất",
         "webhooks": "Webhook",
         "package_types": "Các loại gói",
-        "suppliers": "nhà cung cấp",
+        "suppliers": "Nhà cung cấp",
         "marketplace": "Cài đặt",
         "taxes": "Thuế",
         "ai_agents": "Đại lý AI",
@@ -5586,7 +5586,7 @@
         "copy_invitation_link": "Sao chép liên kết lời mời",
         "invitation_link_copied": "Đã sao chép liên kết lời mời"
       },
-      "actions_aria": "hành động",
+      "actions_aria": "Hành động",
       "autocomplete": {
         "empty": "Không có nhân viên phù hợp",
         "placeholder": "Nhân viên tìm kiếm…"
@@ -5632,7 +5632,7 @@
         "incoming": "Đang đến",
         "location": "Vị trí",
         "on_hand": "Trên tay",
-        "product": "sản phẩm",
+        "product": "Sản phẩm",
         "reserved": "Đã đặt trước",
         "sku": "Mã hàng",
         "stock_status": "Tình trạng hàng"
@@ -5696,7 +5696,7 @@
         "location": "Vị trí",
         "pickup": "Nhận hàng",
         "returns": "Trả lại",
-        "type": "loại"
+        "type": "Loại"
       },
       "create_description": "Thêm nhà kho, cửa hàng hoặc điểm nhận hàng để thực hiện đơn hàng.",
       "create_label": "Tạo vị trí chứng khoán",
@@ -5708,7 +5708,7 @@
       "empty": "Chưa có địa điểm còn hàng",
       "kinds": {
         "fulfillment_center": "Trung tâm thực hiện",
-        "store": "cửa hàng",
+        "store": "Cửa hàng",
         "warehouse": "Kho"
       },
       "pickup_stock_policies": {
@@ -5794,7 +5794,7 @@
       "history_title": "Biến động cổ phiếu cho đợt chuyển nhượng này",
       "units_summary": "{{received}} đã nhận được trong số {{shipped}} đã giao hàng",
       "statuses": {
-        "draft": "bản nháp",
+        "draft": "Bản nháp",
         "ready_to_ship": "Sẵn sàng vận chuyển",
         "in_transit": "Đang chuyển tiếp",
         "partially_received": "Đã nhận được một phần",
@@ -5855,7 +5855,7 @@
     "store": {
       "load_failed_title": "Không tải được cài đặt cửa hàng",
       "unit_systems": {
-        "imperial": "hoàng gia",
+        "imperial": "Hoàng gia",
         "metric": "Số liệu"
       },
       "weight_units": {
@@ -6032,7 +6032,7 @@
         "message": "Bạn có {{count}} thay đổi bản dịch chưa được lưu. Vứt bỏ chúng?",
         "title": "Hủy thay đổi?"
       },
-      "field": "trường",
+      "field": "Trường",
       "load_error": "Không thể tải bản dịch",
       "locale": "Ngôn ngữ",
       "manage": "Quản lý bản dịch",
@@ -6054,13 +6054,13 @@
       "create_description": "Hàng hóa được đóng thành hộp, thùng carton, pallet hoặc container.",
       "edit_description": "Sản phẩm được đóng gói trong thùng carton này tuân theo số đo của nó nên chỉ cần chỉnh sửa một lần là có thể chỉnh sửa tất cả.",
       "dimensions_column": "Kích thước",
-      "volume_column": "khối lượng",
+      "volume_column": "Khối lượng",
       "kinds": {
-        "box": "hộp",
-        "envelope": "phong bì",
-        "carton": "thùng carton",
+        "box": "Hộp",
+        "envelope": "Phong bì",
+        "carton": "Thùng carton",
         "pallet": "Pallet",
-        "container": "thùng chứa"
+        "container": "Thùng chứa"
       },
       "messages": {
         "added": "Đã thêm loại gói",
@@ -6075,7 +6075,7 @@
         "non_negative": "phải bằng 0 hoặc nhiều hơn"
       },
       "columns": {
-        "seller": "chủ sở hữu"
+        "seller": "Chủ sở hữu"
       },
       "owner": {
         "marketplace": "Thị trường"
@@ -6091,26 +6091,26 @@
       "columns": {
         "date": "Ngày",
         "order": "Đặt hàng",
-        "kind": "loại",
+        "kind": "Loại",
         "reference": "Tài liệu tham khảo",
-        "provider": "nhà cung cấp",
+        "provider": "Nhà cung cấp",
         "earnings": "Thu nhập"
       },
       "kinds": {
-        "earning": "bán hàng",
+        "earning": "Bán hàng",
         "refund_reversal": "Hoàn tiền"
       },
       "statuses": {
         "pending": "Đang chờ xử lý",
         "processing": "Đang xử lý",
         "completed": "Đã hoàn thành",
-        "failed": "thất bại",
+        "failed": "Thất bại",
         "unresolved": "Cần kiểm tra"
       },
       "balance": {
         "title": "Số dư",
         "owed": "Còn nợ ({{currency}})",
-        "earned": "kiếm được",
+        "earned": "Kiếm được",
         "paid": "Đã thanh toán",
         "pending": "Trên đường đi",
         "earned_in": "Đã kiếm được ({{currency}})",
@@ -6150,7 +6150,7 @@
       "search_placeholder": "Tìm kiếm sản phẩm theo tên hoặc SKU…",
       "pick_source_first": "Chọn kho mà nó rời đi trước tiên — danh sách chỉ cung cấp những gì mà kho đó có thể gửi.",
       "columns": {
-        "variant": "sản phẩm",
+        "variant": "Sản phẩm",
         "sku": "Mã hàng",
         "unit_cost": "Đơn giá"
       },
@@ -6163,11 +6163,11 @@
       "empty": "Chưa có gì thay đổi cổ phiếu này",
       "columns": {
         "date": "Ngày",
-        "product": "sản phẩm",
+        "product": "Sản phẩm",
         "change": "Thay đổi",
         "where": "Ở đâu",
         "kind": "Chuyện gì đã xảy ra",
-        "cause": "tại sao"
+        "cause": "Tại sao"
       },
       "kinds": {
         "received": "Đã nhận",
@@ -6180,7 +6180,7 @@
         "purchase_order": "Đơn đặt hàng",
         "stock_transfer": "Chuyển nhượng cổ phiếu",
         "return": "Trở lại",
-        "exchange": "trao đổi",
+        "exchange": "Trao đổi",
         "fulfillment": "Thực hiện",
         "order": "Đặt hàng",
         "manual": "Điều chỉnh thủ công"
@@ -6217,7 +6217,7 @@
         "past_cancel_by": "Hủy bỏ trước đây"
       },
       "statuses": {
-        "draft": "bản nháp",
+        "draft": "Bản nháp",
         "ordered": "Đã đặt hàng",
         "partially_received": "Đã nhận được một phần",
         "received": "Đã nhận",
@@ -6300,7 +6300,7 @@
       }
     },
     "suppliers": {
-      "title": "nhà cung cấp",
+      "title": "Nhà cung cấp",
       "new_cta": "Nhà cung cấp mới",
       "new_title": "Nhà cung cấp mới",
       "edit_title": "Chỉnh sửa nhà cung cấp",
@@ -6355,7 +6355,7 @@
         "reference": "Phiếu giao hàng",
         "reference_placeholder": "Phiếu đóng gói hoặc số phiếu giao hàng",
         "received_at": "Đã nhận vào",
-        "received_at_placeholder": "bây giờ",
+        "received_at_placeholder": "Bây giờ",
         "notes": "Ghi chú"
       },
       "delivery_total": "{{accepted}} đã chấp nhận, {{rejected}} bị từ chối trong lần gửi này",
@@ -6389,13 +6389,13 @@
         "empty": "Chưa có báo cáo nào. Tạo một cái để bắt đầu.",
         "columns": {
           "name": "Tên",
-          "kind": "loại",
+          "kind": "Loại",
           "author": "Tạo bởi"
         }
       },
       "kind": {
         "built_in": "Tích hợp sẵn",
-        "custom": "tùy chỉnh"
+        "custom": "Tùy chỉnh"
       },
       "builder": {
         "metrics": "Số liệu",
@@ -6421,9 +6421,9 @@
       },
       "grains": {
         "hour": "Hàng giờ",
-        "day": "hàng ngày",
-        "week": "hàng tuần",
-        "month": "hàng tháng"
+        "day": "Hàng ngày",
+        "week": "Hàng tuần",
+        "month": "Hàng tháng"
       },
       "view": {
         "empty": "Không có dữ liệu cho giai đoạn này.",
@@ -6458,7 +6458,7 @@
     "store_credits": {
       "columns": {
         "customer": "Khách hàng",
-        "used": "đã qua sử dụng",
+        "used": "Đã qua sử dụng",
         "remaining": "Còn lại",
         "authorized": "Đang chờ",
         "standing": "Đứng",
@@ -6469,7 +6469,7 @@
         "manual": "Phát hành bằng tay",
         "gift_card": "Thẻ quà tặng",
         "return": "Trở lại",
-        "exchange": "trao đổi",
+        "exchange": "Trao đổi",
         "claim": "Yêu cầu",
         "refund": "Hoàn tiền"
       },
@@ -6481,7 +6481,7 @@
       "totals": {
         "outstanding": "Nổi bật",
         "issued": "Đã phát hành",
-        "used": "đã qua sử dụng"
+        "used": "Đã qua sử dụng"
       },
       "ledger": {
         "title": "Sổ cái",
@@ -6547,9 +6547,9 @@
         "shared_summary_row": "Hàng tóm tắt"
       },
       "badges": {
-        "customized": "tùy chỉnh",
+        "customized": "Tùy chỉnh",
         "default": "Mặc định",
-        "draft": "bản nháp",
+        "draft": "Bản nháp",
         "other_languages": "Cũng được tùy chỉnh: {{languages}}",
         "default_updated": "Được cập nhật bởi Spree",
         "unsaved": "Những thay đổi chưa được lưu",
@@ -6578,8 +6578,8 @@
         "revert_every_language_message": "Khách hàng ở mọi ngôn ngữ sẽ nhận được email mặc định của Spree kể từ bây giờ và bản nháp sẽ bị xóa. Các phiên bản đã xuất bản vẫn được lưu trong lịch sử nên bạn có thể khôi phục phiên bản này sau."
       },
       "editor": {
-        "title": "mẫu",
-        "subject": "chủ đề",
+        "title": "Mẫu",
+        "subject": "Chủ đề",
         "body": "Mã mẫu",
         "language": "Ngôn ngữ"
       },

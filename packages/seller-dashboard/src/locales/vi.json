@@ -15,7 +15,7 @@
   },
   "admin": {
     "actions": {
-      "actions_menu": "hành động",
+      "actions_menu": "Hành động",
       "cancel": "Hủy bỏ",
       "delete": "Xóa",
       "edit": "Chỉnh sửa",
@@ -37,7 +37,7 @@
       "tax_identifier": {
         "kind": {
           "help": "Đây là đăng ký nào. Nó phải khớp với trình xác thực đã đăng ký cho nó, vì vậy chính tả rất quan trọng.",
-          "label": "loại",
+          "label": "Loại",
           "required": "Chọn hoặc nhập loại đăng ký"
         },
         "value": {
@@ -167,13 +167,13 @@
             "resolution": "Cách giải quyết",
             "resolutions": {
               "refund": "Hoàn tiền",
-              "replacement": "thay thế",
+              "replacement": "Thay thế",
               "refund_and_replacement": "Hoàn tiền và thay thế"
             },
             "refund_amount": "Số tiền hoàn lại",
             "replacement_items": "Gửi một sự thay thế cho",
             "actions": {
-              "resolve": "giải quyết",
+              "resolve": "Giải quyết",
               "create": "Xác nhận quyền sở hữu mới"
             },
             "create_title": "Xác nhận quyền sở hữu mới"
@@ -214,14 +214,14 @@
     "retry": "Thử lại",
     "save": "Lưu",
     "saving": "Đang lưu…",
-    "actions": "hành động",
+    "actions": "Hành động",
     "edit": "Chỉnh sửa"
   },
   "delivery_methods": {
     "add": "Thêm phương thức giao hàng",
     "columns": {
       "name": "Tên",
-      "owner": "chủ sở hữu",
+      "owner": "Chủ sở hữu",
       "visibility": "Khả năng hiển thị"
     },
     "conditions": {
@@ -252,7 +252,7 @@
     },
     "owner": {
       "marketplace": "Thị trường",
-      "mine": "của bạn"
+      "mine": "Của bạn"
     },
     "search_placeholder": "Tìm kiếm theo tên…",
     "sections": {
@@ -276,7 +276,7 @@
   "earnings": {
     "balance": {
       "converted": "Kiếm được bằng {{currency}}, được thanh toán bằng loại tiền tệ của bạn",
-      "earned": "kiếm được",
+      "earned": "Kiếm được",
       "empty": "Sau khi đơn hàng của bạn được hoàn thành, số tiền mà đơn hàng đó kiếm được sẽ hiển thị ở đây.",
       "load_error": "Không thể tải số dư của bạn.",
       "owed": "Còn nợ bạn ({{currency}})",
@@ -288,12 +288,12 @@
     "columns": {
       "date": "Ngày",
       "order": "Đặt hàng",
-      "kind": "loại",
+      "kind": "Loại",
       "status": "Trạng thái",
       "amount": "Số tiền"
     },
     "kinds": {
-      "earning": "bán hàng",
+      "earning": "Bán hàng",
       "refund_reversal": "Hoàn tiền"
     },
     "search_placeholder": "Tìm kiếm theo tham chiếu",
@@ -301,7 +301,7 @@
       "pending": "Đang chờ xử lý",
       "processing": "Đang xử lý",
       "completed": "Đã hoàn thành",
-      "failed": "thất bại",
+      "failed": "Thất bại",
       "unresolved": "Cần kiểm tra"
     },
     "subtitle": "Doanh số bán hàng của bạn đã kiếm được là bao nhiêu và vị thế của bạn trên thị trường.",
@@ -325,7 +325,7 @@
   "home": {
     "products": "Sản phẩm",
     "selling_no": "Sản phẩm của bạn chưa được bán.",
-    "selling_title": "bán hàng",
+    "selling_title": "Bán hàng",
     "selling_yes": "Sản phẩm của bạn đang được bán.",
     "setup_cta": "Tiếp tục thiết lập",
     "setup_description": "{{done}} trong tổng số {{total}} đã xong — hãy hoàn tất những điều này để bắt đầu bán.",
@@ -348,15 +348,15 @@
   },
   "nav": {
     "home": "Trang chủ",
-    "legal": "pháp lý",
-    "onboarding": "thiết lập",
+    "legal": "Pháp lý",
+    "onboarding": "Thiết lập",
     "orders": "Đơn đặt hàng",
     "policies": "Chính sách",
     "products": "Sản phẩm",
     "profile": "Hồ sơ",
     "settings": "Cài đặt",
     "sign_out": "Đăng xuất",
-    "team": "đội",
+    "team": "Đội",
     "delivery_methods": "Phương thức giao hàng",
     "package_types": "Các loại gói",
     "earnings": "Thu nhập",
@@ -370,7 +370,7 @@
     "awaiting_payout_provider": "Đang chờ nhà cung cấp dịch vụ thanh toán hoàn tất việc kiểm tra thông tin chi tiết của bạn.",
     "confirm": "Xác nhận",
     "document_help": "PDF hoặc hình ảnh của tài liệu.",
-    "document_label": "tài liệu",
+    "document_label": "Tài liệu",
     "done": "Việc này đã xong.",
     "go": "Đến đó",
     "note_placeholder": "Bất cứ điều gì thị trường nên biết (tùy chọn)",
@@ -393,7 +393,7 @@
     "submitting": "Đang gửi…",
     "subtitle": "Thị trường này yêu cầu những gì trước khi bạn có thể bắt đầu bán hàng.",
     "terms_accepted": "Điều khoản được chấp nhận",
-    "title": "thiết lập",
+    "title": "Thiết lập",
     "under_review": "Thị trường đang xem xét đơn đăng ký của bạn. Chúng tôi sẽ gửi email cho bạn khi có tin tức."
   },
   "orders": {
@@ -407,7 +407,7 @@
       "number": "Đặt hàng",
       "payment": "Thanh toán",
       "placed": "Đã đặt",
-      "quantity": "số lượng",
+      "quantity": "Số lượng",
       "total": "Tổng cộng"
     },
     "customer": {
@@ -427,7 +427,7 @@
       "canceled": "Đã hủy",
       "delivered": "Đã giao",
       "fulfilled": "Đã hoàn thành",
-      "partial": "một phần",
+      "partial": "Một phần",
       "unfulfilled": "Chưa thực hiện"
     },
     "fulfillments": {
@@ -450,7 +450,7 @@
       "confirm_split": "Điều này có hiệu lực ngay lập tức.",
       "delete_label": "Xóa nhãn",
       "empty": "Không có gì để gửi theo đơn đặt hàng này.",
-      "free": "miễn phí",
+      "free": "Miễn phí",
       "label_cost": "Chi phí {{amount}}",
       "label_title": "Nhãn vận chuyển",
       "label_uploaded": "Đã tải lên",
@@ -501,7 +501,7 @@
         "deny_message": "Khách hàng được thông báo rằng yêu cầu bồi thường không được chấp nhận.",
         "deny_title": "Từ chối yêu cầu bồi thường này?",
         "empty": "Không có gì được báo cáo về lệnh này.",
-        "resolve": "giải quyết",
+        "resolve": "Giải quyết",
         "title": "Khiếu nại"
       },
       "exchanges": {
@@ -558,7 +558,7 @@
       "outstanding_balance": "Số dư chưa thanh toán",
       "payment_total": "Tổng số tiền thanh toán",
       "promotions": "Khuyến mãi",
-      "shipping": "vận chuyển",
+      "shipping": "Vận chuyển",
       "subtotal": "Tổng phụ",
       "tax_additional": "Thuế (bổ sung)",
       "tax_included": "Thuế (đã bao gồm)",
@@ -653,7 +653,7 @@
       "submitted": "Đã gửi {n} sản phẩm để xem xét"
     },
     "columns": {
-      "name": "sản phẩm",
+      "name": "Sản phẩm",
       "price": "Giá",
       "status": "Trạng thái"
     },
@@ -669,7 +669,7 @@
       "country_of_origin": "Nước xuất xứ",
       "country_of_origin_placeholder": "ví dụ. PL",
       "description": "Mô tả",
-      "hs_code": "mã HS",
+      "hs_code": "Mã HS",
       "hs_code_placeholder": "ví dụ: 9405.20",
       "meta_description": "Mô tả meta",
       "meta_keywords": "Từ khóa meta",
@@ -686,8 +686,8 @@
       "sku": "Mã hàng",
       "slug": "Xử lý URL",
       "status": "Trạng thái",
-      "stock": "kho",
-      "weight": "cân nặng"
+      "stock": "Kho",
+      "weight": "Cân nặng"
     },
     "media": "Phương tiện truyền thông",
     "media_remove_confirm_description": "Nó tắt sản phẩm khi bạn lưu.",
@@ -711,7 +711,7 @@
     "statuses": {
       "active": "Đang hoạt động",
       "archived": "Đã lưu trữ",
-      "draft": "bản nháp",
+      "draft": "Bản nháp",
       "proposed": "Đang xem xét",
       "rejected": "Những thay đổi cần thiết"
     },
@@ -781,7 +781,7 @@
     },
     "tax_remittance": "Thuế được nộp bởi",
     "team_count": "Thành viên nhóm",
-    "vat_number": "số thuế GTGT",
+    "vat_number": "Số thuế GTGT",
     "vat_status": {
       "pending": "Chúng tôi đang kiểm tra con số này.",
       "unavailable": "Không thể truy cập cơ quan đăng ký - chúng tôi sẽ thử lại.",
