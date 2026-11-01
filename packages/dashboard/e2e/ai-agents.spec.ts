@@ -143,6 +143,33 @@ test.describe('connecting a client we do not know', () => {
     await sheet.getByRole('button', { name: /^done$/i }).click()
     await expect(page.getByText(name).first()).toBeVisible({ timeout: 15_000 })
   })
+  // Reconnecting under the same name is how a developer adds a callback
+  // their client now uses; the ones already registered stay.
+  test('adds a new callback when the same client connects again', async ({ page }) => {
+    const creds = await login(page)
+    const name = `CI reconnect ${Date.now()}`
+    await registerClient(page, creds.store_id, creds.accessToken, {
+      name,
+      redirect_uri: 'https://old.example.com/oauth/callback',
+    })
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+
+    await page.getByRole('button', { name: CONNECT_CTA }).click()
+    const sheet = page.getByRole('dialog')
+    await sheet.getByText(/any other client that speaks mcp/i).click()
+    await sheet.locator('#mcp-other-name').fill(name)
+    await sheet.locator('#mcp-other-uri').fill('https://new.example.com/oauth/callback')
+    await sheet.getByRole('button', { name: /^continue$/i }).click()
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+
+    const client = (await listClients(page, creds.store_id, creds.accessToken)).find(
+      (candidate) => candidate.name === name,
+    )
+    expect(client?.redirect_uri.split(/\s+/)).toEqual([
+      'https://old.example.com/oauth/callback',
+      'https://new.example.com/oauth/callback',
+    ])
+  })
 })
 
 // A store registers an agent once and every staff member connects to that

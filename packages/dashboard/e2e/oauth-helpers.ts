@@ -46,7 +46,12 @@ export async function listClients(page: Page, storeId: string, accessToken: stri
   const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
   const res = await page.request.get('/api/v3/admin/oauth/applications?limit=100', { headers })
   if (!res.ok()) throw new Error(`Listing clients failed: ${res.status()} ${await res.text()}`)
-  return ((await res.json()).data ?? []) as { id: string; client_id: string }[]
+  return ((await res.json()).data ?? []) as {
+    id: string
+    name: string
+    client_id: string
+    redirect_uri: string
+  }[]
 }
 
 /** Registers a client straight through the API, as a store set up earlier would hold it. */
