@@ -93,8 +93,23 @@ RSpec.describe Spree::Invoice, type: :model do
       expect(invoice.update(metadata: { 'erp' => '42' })).to be(true)
     end
 
-    it 'records that it was sent' do
-      expect { invoice.mark_sent! }.to change { invoice.reload.sent_at }.from(nil)
+    it 'records when it was first sent, and keeps that date when sent again' do
+      invoice.mark_sent!
+      first_sent_at = invoice.reload.sent_at
+
+      travel 1.day { invoice.mark_sent! }
+
+      expect(invoice.reload.sent_at).to eq(first_sent_at)
+    end
+
+    it "still names a seller who has since left the marketplace" do
+      seller = create(:seller, store: store, legal_name: 'Acme GmbH')
+      order.update_columns(seller_id: seller.id)
+      seller_invoice = create(:invoice, order: order.reload)
+      seller.destroy
+
+      expect(seller_invoice.reload.issuer_name).to eq('Acme GmbH')
+      expect(seller_invoice.update(metadata: { 'k' => 'v' })).to be(true)
     end
   end
 
@@ -112,6 +127,16 @@ RSpec.describe Spree::Invoice, type: :model do
       invoice.destroy
 
       expect(request.reload).to have_attributes(status: 'open', invoice_id: nil)
+    end
+
+    it 'hands the request to another invoice on the order rather than reopening it' do
+      first = create(:invoice, order: order)
+      second = create(:invoice, order: order)
+      request = create(:invoice_request, order: order, status: 'fulfilled', invoice: first)
+
+      first.destroy
+
+      expect(request.reload).to have_attributes(status: 'fulfilled', invoice: second)
     end
 
     it 'refuses deleting a sent invoice' do
