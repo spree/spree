@@ -21,7 +21,7 @@ module Spree
     # Mirrors Spree::StoreCredit#can_void?: a checkout payment can still be
     # voided while its order is incomplete.
     def can_void?(payment)
-      payment.pending? || (payment.checkout? && !payment.order.completed?)
+      payment.pending? || (payment.checkout? && !payment.order&.completed?)
     end
 
     def authorize(money, store_credit, gateway_options = {})

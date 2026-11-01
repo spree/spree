@@ -346,6 +346,12 @@ describe Spree::PaymentMethod::StoreCredit do
       expect(store_credit_payment_method.can_void?(payment)).to be true
     end
 
+    it 'allows a checkout payment held by a cart, with no order' do
+      payment = build_stubbed(:payment, status: 'checkout', order: nil, cart: build_stubbed(:cart))
+
+      expect(store_credit_payment_method.can_void?(payment)).to be true
+    end
+
     it 'refuses a checkout payment once the order is complete' do
       payment = build_stubbed(:payment, status: 'checkout', order: build_stubbed(:order, completed_at: Time.current))
 
