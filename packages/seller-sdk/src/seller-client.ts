@@ -32,8 +32,11 @@ import type {
   ImportSort,
   Invitation,
   InvitationAcceptanceLink,
+  Invoice,
+  InvoiceRequest,
   OptionType,
   Order,
+  OrderDocument,
   PackageType,
   Payout,
   PayoutAccountLink,
@@ -60,8 +63,12 @@ import type {
   DeliveryProfileSort,
   DigitalAssetFilters,
   DigitalAssetSort,
+  InvoiceFilters,
+  InvoiceSort,
   OptionTypeFilters,
   OptionTypeSort,
+  OrderDocumentFilters,
+  OrderDocumentSort,
   OrderFilters,
   OrderSort,
   PackageTypeFilters,
@@ -122,6 +129,8 @@ import type {
   ProfileUpdateParams,
   RequirementSubmissionParams,
   ReturnCancelParams,
+  InvoiceCreateParams,
+  OrderDocumentCreateParams,
   ReturnCreateParams,
   ReturnReceiveParams,
   ReturnRefundParams,
@@ -828,6 +837,59 @@ export class SellerClient {
     },
 
     /**
+     * The order's invoices, issued in the seller's name. `create` records one
+     * from the seller's own invoicing software: upload the PDF with
+     * `files.upload()` (`visibility: 'private'`) and send its `signed_id`.
+     */
+    invoices: {
+      list: (
+        orderId: string,
+        params?: ListParams<InvoiceFilters, InvoiceSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Invoice>> =>
+        this.request<PaginatedResponse<Invoice>>('GET', `/orders/${orderId}/invoices`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      create: (orderId: string, params: InvoiceCreateParams, options?: RequestOptions): Promise<Invoice> =>
+        this.request<Invoice>('POST', `/orders/${orderId}/invoices`, { ...options, body: params }),
+    },
+
+    /** The buyer's requests for an invoice on this order. */
+    invoiceRequests: {
+      list: (orderId: string, options?: RequestOptions): Promise<PaginatedResponse<InvoiceRequest>> =>
+        this.request<PaginatedResponse<InvoiceRequest>>('GET', `/orders/${orderId}/invoice_requests`, options),
+    },
+
+    /** Other paperwork on the order, private unless `customer_visible` is set. */
+    documents: {
+      list: (
+        orderId: string,
+        params?: ListParams<OrderDocumentFilters, OrderDocumentSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OrderDocument>> =>
+        this.request<PaginatedResponse<OrderDocument>>('GET', `/orders/${orderId}/documents`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      create: (orderId: string, params: OrderDocumentCreateParams, options?: RequestOptions): Promise<OrderDocument> =>
+        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, { ...options, body: params }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: { label?: string; customer_visible?: boolean },
+        options?: RequestOptions,
+      ): Promise<OrderDocument> =>
+        this.request<OrderDocument>('PATCH', `/orders/${orderId}/documents/${id}`, { ...options, body: params }),
+
+      delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/documents/${id}`, options),
+    },
+
+    /**
      * Goods coming back. The seller is merchant of record for their own
      * child order, so approving, receiving and refunding are all theirs.
      */
@@ -1378,6 +1440,31 @@ export class SellerClient {
 
     get: (id: string, options?: RequestOptions): Promise<Payout> =>
       this.request<Payout>('GET', `/payouts/${id}`, options),
+  }
+
+  /**
+   * Invoices on this seller's orders, and the commission invoices the
+   * marketplace issued them. Only an unsent upload on the seller's own order
+   * can be deleted or sent again.
+   */
+  readonly invoices = {
+    list: (
+      params?: ListParams<InvoiceFilters, InvoiceSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Invoice>> =>
+      this.request<PaginatedResponse<Invoice>>('GET', '/invoices', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Invoice> =>
+      this.request<Invoice>('GET', `/invoices/${id}`, options),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/invoices/${id}`, options),
+
+    resend: (id: string, options?: RequestOptions): Promise<Invoice> =>
+      this.request<Invoice>('POST', `/invoices/${id}/resend`, options),
   }
 
   /**

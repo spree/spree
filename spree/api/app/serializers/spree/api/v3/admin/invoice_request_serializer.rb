@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class InvoiceRequestSerializer < V3::InvoiceRequestSerializer
-          typelize customer_id: [:string, nullable: true],
+          typelize customer_id: [:string, nullable: true], billing_address: { nullable: true },
                    metadata: 'Record<string, unknown> | null'
 
           attributes :metadata, created_at: :iso8601, updated_at: :iso8601

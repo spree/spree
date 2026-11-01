@@ -8,7 +8,7 @@ module Spree
           class InvoiceRequestsController < Store::ResourceController
             include Spree::Api::V3::Store::CustomerOrderParent
 
-            request_params :invoice_request, action: :create do |body|
+            request_params 'CreateInvoiceRequestParams', action: :create do |body|
               body.attribute :company_name, :string, nullable: true, example: 'Acme GmbH'
               body.attribute :tax_id, :string, nullable: true, example: 'DE123456789',
                 description: 'The VAT or tax number to print on the invoice.'

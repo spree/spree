@@ -86,6 +86,7 @@ Spree::Core::Engine.add_routes do
           # Paperwork staff made visible, plus what the buyer added.
           resources :documents, only: [:index, :create], controller: 'orders/documents' do
             get :download, on: :member
+            post :upload, on: :collection
           end
         end
 

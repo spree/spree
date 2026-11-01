@@ -27,7 +27,7 @@ RSpec.describe Spree::InvoiceRequests::Create do
   end
 
   it 'refuses when the store accepts no requests' do
-    order.store.update!(preferred_invoice_request_window_days: 0)
+    allow(order.store).to receive(:preferred_invoice_request_window_days).and_return(0)
 
     expect(described_class.call(order: order)).to be_failure
   end

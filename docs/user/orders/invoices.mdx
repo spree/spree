@@ -1,0 +1,78 @@
+---
+title: "Invoices & Documents"
+description: "Learn how to keep invoices, receipts and other paperwork on orders in Spree Commerce, send them to customers, and handle invoice requests."
+---
+
+An invoice is the legal record of a sale, issued by whoever sold the goods. Your customers need it for their accounts, and in many countries you must keep it for years. Spree keeps every invoice, receipt and credit note on the order it belongs to, sends it to the customer, and lets customers ask for one.
+
+Spree doesn't create the invoice document itself. You issue invoices in your own accounting or invoicing software and upload the PDF to the order. If your software is connected to Spree, it can upload them for you. Generating invoices inside Spree is part of Spree Enterprise.
+
+Other paperwork, such as the customer's purchase order, a specification or a shipping document, lives next to invoices on the same order.
+
+## The Documents Card
+
+Every order has a **Documents** card with two parts:
+
+- **Invoices** - The order's invoices, receipts and credit notes, with their number, type and total, and any open invoice request from the customer.
+- **Other documents** - Everything else. Each document is private to your team unless you choose to show it to the customer.
+
+Click a file's name to download it.
+
+## How to Upload an Invoice
+
+1. Open the order and find the **Documents** card.
+2. Under **Invoices**, click **Upload invoice**.
+3. Choose the PDF and fill in:
+   - **Type** - Invoice, Receipt, or Credit note.
+   - **Number** - The number your invoicing software gave it. Each number can be used once per type.
+   - **Issue date** - The date on the invoice.
+   - **Total** - The gross total. For a credit note, enter it as a negative amount.
+   - **Corrects** - For a credit note, the invoice it corrects.
+4. Click **Upload**.
+
+If **Email new invoices to customers** is on in your settings, the customer is sent the PDF straight away.
+
+### Correcting an Invoice
+
+An invoice can't be edited once it exists, because it's a legal record. If you uploaded the wrong file and the customer hasn't been sent it yet, delete it and upload the right one. Once the customer has it, issue a credit note in your invoicing software and upload it with **Type** set to **Credit note** and **Corrects** pointing at the original.
+
+## How to Send an Invoice Again
+
+Click the **⋯** menu next to an invoice and choose **Send again**. The customer is emailed the PDF, even if automatic invoice emails are turned off.
+
+## Invoice Requests
+
+A customer who bought as a private person can ask for an invoice from their order page, adding their company name and tax number. In some countries, such as Poland, customers have a right to ask for one.
+
+An open request shows on the order's **Documents** card with the details the customer gave. It's fulfilled as soon as you upload an invoice to the order.
+
+Customers can ask while the order has no invoice, for as many days after paying as you allow in **Settings → Store → Invoices**. Set it to 0 to turn requests off.
+
+## Orders Missing an Invoice
+
+In **Orders**, add the **Missing invoice** filter to see every placed and paid order that doesn't have an invoice or receipt yet. On a marketplace, each seller's page shows how many of their orders are missing one.
+
+## All Invoices
+
+**Orders → Invoices** lists every invoice, receipt and credit note in the store, across all orders and seller payouts. Filter it by type or date and click **Export** for your accountant.
+
+## How to Add Another Document
+
+1. On the order's **Documents** card, under **Other documents**, click **Upload document**.
+2. Give it a name, choose the file, and switch on **Visible to customer** if the customer should see it.
+3. Click **Upload**.
+
+You can change a document's name or visibility later from its **⋯** menu. Documents the customer added from their account are marked as theirs and are always visible to them.
+
+## Settings
+
+In **Settings → Store**, the **Invoices** card has two settings:
+
+- **Email new invoices to customers** - Sends the customer the PDF when an invoice is added. Turn it off if your invoicing software already emails invoices.
+- **Invoice requests** - How many days after paying a customer can ask for an invoice. Set it to 0 to turn requests off.
+
+## Marketplaces
+
+On a marketplace, each seller invoices the orders they sell, in their own name. Sellers upload invoices from their own panel, and customers see them on their order. When a checkout includes items from several sellers, the customer gets one invoice from each.
+
+Your commission invoices to sellers belong on their payouts: open a payout in **Sellers → Payouts** and upload the invoice there. Sellers see these invoices in their panel.

@@ -79,6 +79,8 @@ export { IntegrationConnectionResultSchema, type IntegrationConnectionResult } f
 export { IntegrationTypeDefinitionSchema, type IntegrationTypeDefinition } from './IntegrationTypeDefinition';
 export { InvitationSchema, type Invitation } from './Invitation';
 export { InvitationAcceptanceLinkSchema, type InvitationAcceptanceLink } from './InvitationAcceptanceLink';
+export { InvoiceSchema, type Invoice } from './Invoice';
+export { InvoiceRequestSchema, type InvoiceRequest } from './InvoiceRequest';
 export { LineItemSchema, type LineItem } from './LineItem';
 export { LocaleSchema, type Locale } from './Locale';
 export { MaintenanceTaskRunSchema, type MaintenanceTaskRun } from './MaintenanceTaskRun';
@@ -95,6 +97,7 @@ export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';
 export { OrderCancellationReasonSchema, type OrderCancellationReason } from './OrderCancellationReason';
+export { OrderDocumentSchema, type OrderDocument } from './OrderDocument';
 export { OrderGroupSchema, type OrderGroup } from './OrderGroup';
 export { OrderRoutingRuleSchema, type OrderRoutingRule } from './OrderRoutingRule';
 export { PackageTypeSchema, type PackageType } from './PackageType';

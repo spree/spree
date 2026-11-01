@@ -1,0 +1,21 @@
+// This file is auto-generated. Do not edit directly.
+import { z } from 'zod';
+
+export const EmailInvoiceSchema = z.object({
+  id: z.string(),
+  kind: z.string(),
+  number: z.string(),
+  currency: z.string(),
+  issued_on: z.string(),
+  supplied_on: z.string().nullable(),
+  total: z.string(),
+  net_total: z.string().nullable(),
+  tax_total: z.string().nullable(),
+  original_invoice_id: z.string().nullable(),
+  issuer_type: z.string(),
+  issuer_name: z.string().nullable(),
+  file_filename: z.string().nullable(),
+  file_byte_size: z.number().nullable(),
+});
+
+export type EmailInvoice = z.infer<typeof EmailInvoiceSchema>;
