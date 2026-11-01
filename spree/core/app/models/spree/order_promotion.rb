@@ -35,7 +35,7 @@ module Spree
     end
 
     def amount
-      return 0 if promotion.nil?
+      return BigDecimal(0) if promotion.nil?
 
       owner.discounts.promotion.where(promotion_action_id: promotion.actions.ids).sum(:amount)
     end

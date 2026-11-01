@@ -381,7 +381,7 @@ module Spree
     # discounts are tied back to the promotion through them.
     def detach_from_open_carts
       Spree::Cart.where(id: order_promotions.where.not(cart_id: nil).select(:cart_id)).find_each do |cart|
-        Spree::Promotions::DetachFromOrder.call(order: cart, promotion: self, clear_coupon_code: true)
+        Spree::Promotions::DetachFromOwner.call(owner: cart, promotion: self, clear_coupon_code: true)
       end
     end
 

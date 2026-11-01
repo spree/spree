@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Promotions::DetachFromOrder do
+describe Spree::Promotions::DetachFromOwner do
   let(:store) { @default_store }
   let(:promotion) { create(:promotion_with_order_adjustment, code: 'save10', weighted_order_adjustment_amount: 10, store: store) }
   let(:cart) { create(:cart_with_line_items, line_items_count: 1, store: store) }
@@ -12,7 +12,7 @@ describe Spree::Promotions::DetachFromOrder do
   end
 
   it 'removes the order promotion and discounts and recalculates the cart' do
-    result = described_class.call(order: cart, promotion: promotion, clear_coupon_code: true)
+    result = described_class.call(owner: cart, promotion: promotion, clear_coupon_code: true)
 
     expect(result).to be_success
     cart.reload
@@ -23,13 +23,13 @@ describe Spree::Promotions::DetachFromOrder do
   end
 
   it 'keeps the entered code on the cart by default' do
-    described_class.call(order: cart, promotion: promotion)
+    described_class.call(owner: cart, promotion: promotion)
 
     expect(cart.reload.coupon_code).to eq('save10')
   end
 
   it 'keeps the promotion itself' do
-    described_class.call(order: cart, promotion: promotion)
+    described_class.call(owner: cart, promotion: promotion)
 
     expect(Spree::Promotion.exists?(promotion.id)).to be(true)
   end

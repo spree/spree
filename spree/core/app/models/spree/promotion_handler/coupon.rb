@@ -166,7 +166,7 @@ module Spree
       end
 
       def detach_promotion(promotion)
-        Spree::Promotions::DetachFromOrder.call(order: order, promotion: promotion)
+        Spree::Promotions::DetachFromOwner.call(owner: order, promotion: promotion)
       end
 
       def handle_present_promotion
