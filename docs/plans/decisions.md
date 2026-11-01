@@ -1,3 +1,13 @@
+## 2026-11-01: The invoice record is open source; invoice generation is Enterprise
+
+**Context:** Two European marketplace prospects asked for automatic PDF invoices per seller, with the seller's business details and VAT. On 2026-08-30 `6.1-b2b-order-documents.md` kept invoices out of open source entirely ("no invoice vocabulary in OSS, no PDF stack in core"). An earlier version of today's plan moved all of invoicing, generation included, into open source; it was revised the same day.
+
+**Decision:** `6.1-invoices-and-receipts.md` adds `Spree::Invoice` (invoice, receipt, credit note) to core as the one record for every invoice, uploaded or generated, issued by whoever sold the goods (the store or a seller). Open source covers uploads (admin, seller panel, Admin and Seller APIs), private storage, delivery to buyers (Documents card, Store API, invoice email), consumer invoice requests with `order.invoice_requested`, and a calculated missing-invoice view for operators. Generation (gapless series, EN 16931 snapshot, PDF rendering, automatic issuing, credit notes, commission invoices, e-invoicing formats) is Enterprise, in `ee/docs/plans/invoice-generation.md`, writing the same records with `source: generated`. This is Saleor's split.
+
+**Consequences:** Supersedes the "no invoice vocabulary in OSS" half of 2026-08-30; "no PDF stack in core" still holds. Invoices are never `OrderDocument` rows; the order page shows both in one Documents card sharing a private-file concern. Invoices are never edited (uploads deletable only until sent) and survive anonymization. Order numbers are never invoice numbers. Open source gives up free generation, which Magento and Sylius offer.
+
+**Plans amended:** `6.1-b2b-order-documents.md` (superseded in part: summary note, dashboard card, constraint), `6.0-6.1-b2b-payment-terms.md` (constraint clarified).
+
 ## 2026-10-27: Stripe transfer reversals on refund move to open source
 
 **Context:** A refund on a seller's order wrote the reversal row, and the next payout to the seller's bank subtracted it, but the open-source Stripe provider never reversed the transfer. The seller's share stayed on their connected account while the marketplace had refunded the customer from its own balance, and nothing in the books said where that money now was. The 2026-07-15 decision kept the pullback in Enterprise.

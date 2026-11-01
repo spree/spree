@@ -84,6 +84,14 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 
 `record.publish_event('order.completed')`; subscribers in `app/subscribers/spree/` subclass `Spree::Subscriber`. Payloads use Store serializers only — never a hand-built hash or an Admin serializer; extras go in `metadata` (`docs/plans/6.0-typed-webhook-events.md`).
 
+## Invoices and receipts
+
+See `docs/plans/6.1-invoices-and-receipts.md`.
+
+- Every invoice, receipt and credit note is a `Spree::Invoice`, uploaded or generated — never an `OrderDocument` row or a loose attachment. Anonymization and seller deletion leave invoices untouched.
+- Invoices are never edited: corrections are credit notes, and an upload may be deleted only until it is sent.
+- An order, payment or other `HasNumber` value is never an invoice number. Numbering series, snapshots and PDF generation are Enterprise (`ee/docs/plans/invoice-generation.md`); core's model works without them.
+
 ## Emails (Liquid + MJML)
 
 See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/emails.mdx`.
