@@ -18,7 +18,8 @@ module Spree
            product_filter_sort_option media_event return return_line_item exchange exchange_line_item claim
            claim_line_item return_reason claim_reason digital_asset export gift_card_batch import import_row
            invitation newsletter_subscriber promotion refund stock_level stock_movement stock_reservation
-           stock_transfer company company_membership company_invitation seller file_upload file_upload_target store].freeze
+           stock_transfer company company_membership company_invitation seller file_upload file_upload_target store
+           invoice invoice_request order_document].freeze
 
       ADMIN_SERIALIZERS =
         %i[country state locale applied_promotion discount tax_line cart delivery_zone delivery_profile
@@ -48,7 +49,7 @@ module Spree
            product_membership_result bulk_stock_level_result bulk_product_result setup_status
            password_reset_acknowledgement integration_connection_result tag
            email_template email_template_draft email_template_revision email_template_preview
-           email_template_sample_record file_upload file_upload_target].freeze
+           email_template_sample_record file_upload file_upload_target invoice invoice_request order_document].freeze
 
       SELLER_SERIALIZERS =
         %i[address country state profile policy team_member account invitation invitation_acceptance_link product product_type
@@ -58,7 +59,7 @@ module Spree
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping
            requirement_submission export transfer payout payout_account_link bulk_product_result
            password_reset_acknowledgement balance payment_split price price_history file_upload digital_asset
-           file_upload_target store].freeze
+           file_upload_target store invoice invoice_request order_document].freeze
 
       INJECTION_POINTS_WITH_DEFAULTS = {
         **STORE_SERIALIZERS.to_h { |name| [:"#{name}_serializer", "Spree::Api::V3::#{name.to_s.camelize}Serializer"] },

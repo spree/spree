@@ -1,0 +1,15 @@
+---
+subject: "{% if resend %}[{{ 'resend' | t }}] {% endif %}{{ store.name }} {{ 'invoice_mailer.commission_invoice_email.subject' | t: number: invoice.number }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'invoice_mailer.commission_invoice_email.heading' | t }}</mj-text>
+    <mj-text mj-class="lead">{{ 'invoice_mailer.commission_invoice_email.message' | t: number: invoice.number, store_name: store.name }}</mj-text>
+  </mj-column>
+</mj-section>
+<mj-section padding="48px 0 0">
+  <mj-column>
+    {%- assign total = invoice.total | money -%}
+    <mj-text mj-class="body" padding="0" font-weight="500" color="{{ store.branding.heading_color }}">{{ 'invoice_mailer.invoice_email.total' | t: total: total }}</mj-text>
+  </mj-column>
+</mj-section>
