@@ -1461,7 +1461,7 @@
       "empty": "Chưa có địa điểm còn hàng",
       "kinds": {
         "fulfillment_center": "Trung tâm thực hiện",
-        "store": "cửa hàng",
+        "store": "Cửa hàng",
         "warehouse": "Kho"
       },
       "pickup_stock_policies": {
