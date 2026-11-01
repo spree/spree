@@ -194,15 +194,8 @@ export function PaymentsCard({ order }: { order: Order }) {
                       currency={order.currency}
                       // Capturing or voiding a grouped payment acts on every
                       // order in the checkout, so this page only links out.
-                      canCapture={
-                        !grouped && (payment.status === 'checkout' || payment.status === 'pending')
-                      }
-                      canVoid={
-                        !grouped &&
-                        (payment.status === 'checkout' ||
-                          payment.status === 'pending' ||
-                          payment.status === 'completed')
-                      }
+                      canCapture={!grouped && payment.can_capture}
+                      canVoid={!grouped && payment.can_void}
                       onCapture={async () => {
                         if (
                           await confirm({

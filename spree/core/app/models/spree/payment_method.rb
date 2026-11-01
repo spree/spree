@@ -309,6 +309,19 @@ module Spree
       raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
     end
 
+    # Whether the payment can be voided in its current state. Gateways that
+    # cannot void a captured payment override this.
+    # @param _payment [Spree::Payment]
+    def can_void?(_payment)
+      true
+    end
+
+    # Whether the payment can be captured in its current state.
+    # @param _payment [Spree::Payment]
+    def can_capture?(_payment)
+      true
+    end
+
     def store_credit?
       self.class == Spree::PaymentMethod::StoreCredit
     end
