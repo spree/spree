@@ -24,6 +24,12 @@ RSpec.describe Spree::OrderDocument, type: :model do
     expect(document.errors.details[:file]).to include(error: :spree_content_type_not_allowed)
   end
 
+  it "refuses hiding the buyer's own upload from them" do
+    document = create(:order_document, order: order, uploaded_by: create(:customer), customer_visible: true)
+
+    expect(document.update(customer_visible: false)).to be(false)
+  end
+
   it 'knows when the buyer uploaded it' do
     document = build(:order_document, order: order, uploaded_by: order.customer || create(:customer))
 

@@ -7,7 +7,7 @@ module Spree
           # the buyer's own uploads, which are always visible to them.
           class DocumentsController < Store::ResourceController
             include Spree::Api::V3::Store::CustomerOrderParent
-            include ActiveStorage::SetCurrent
+            include Spree::Api::V3::StreamsPrivateFile
 
             before_action :set_resource, only: [:download]
 
@@ -66,12 +66,7 @@ module Spree
 
             # GET /api/v3/store/orders/:order_id/documents/:id/download
             def download
-              send_data(
-                @resource.file.download,
-                filename: @resource.file.filename.to_s,
-                type: @resource.file.content_type || 'application/octet-stream',
-                disposition: 'attachment'
-              )
+              stream_private_file(@resource.file)
             end
 
             protected
@@ -84,6 +79,8 @@ module Spree
               Spree.api.order_document_serializer
             end
 
+            # The buyer's own uploads are always visible: the model refuses
+            # hiding them, so this one scope covers both.
             def scope
               @parent.order_documents.customer_visible
             end

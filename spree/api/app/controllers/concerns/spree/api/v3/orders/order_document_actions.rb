@@ -10,7 +10,7 @@ module Spree
           extend ActiveSupport::Concern
 
           included do
-            include ActiveStorage::SetCurrent
+            include Spree::Api::V3::StreamsPrivateFile
 
             before_action :set_resource, only: [:show, :update, :destroy, :download]
 
@@ -26,12 +26,7 @@ module Spree
 
           # GET .../documents/:id/download
           def download
-            send_data(
-              @resource.file.download,
-              filename: @resource.file.filename.to_s,
-              type: @resource.file.content_type || 'application/octet-stream',
-              disposition: 'attachment'
-            )
+            stream_private_file(@resource.file)
           end
 
           protected

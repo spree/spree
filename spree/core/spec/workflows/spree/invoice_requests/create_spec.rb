@@ -32,6 +32,22 @@ RSpec.describe Spree::InvoiceRequests::Create do
     expect(described_class.call(order: order)).to be_failure
   end
 
+  it 'saves the billing address with the request' do
+    params = { first_name: 'Ada', last_name: 'Lovelace', address1: '1 Main St', city: 'Berlin',
+               postal_code: '10115', country_code: 'DE', company: 'Acme GmbH' }
+
+    result = described_class.call(order: order, billing_address_params: params)
+
+    expect(result.value.billing_address).to have_attributes(city: 'Berlin', company: 'Acme GmbH')
+  end
+
+  it 'leaves no address behind when the request is refused' do
+    create(:invoice, order: order)
+    params = { first_name: 'Ada', last_name: 'Lovelace', address1: '1 Main St', city: 'Berlin', postal_code: '10115', country_code: 'DE' }
+
+    expect { described_class.call(order: order, billing_address_params: params) }.not_to change(Spree::Address, :count)
+  end
+
   it 'refuses a second open request' do
     described_class.call(order: order)
 
