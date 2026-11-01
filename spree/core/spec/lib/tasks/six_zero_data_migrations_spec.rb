@@ -121,6 +121,19 @@ describe '6.0 data migration tasks' do
       expect(method.reload.read_attribute(:storefront_visible)).to be(true)
     end
 
+    it 'repoints legacy shipping method calculators at the delivery method' do
+      method = create(:delivery_method)
+      calculator = method.calculator
+      calculator.update_columns(calculable_type: 'Spree::ShippingMethod')
+      expect(method.reload.calculator).to be_nil
+
+      run_task('spree:migrate_shipping_to_delivery')
+      run_task('spree:migrate_shipping_to_delivery')
+
+      expect(calculator.reload.calculable_type).to eq('Spree::DeliveryMethod')
+      expect(method.reload.calculator).to eq(calculator)
+    end
+
     it 'is idempotent' do
       fulfillment.update_columns(status: 'shipped')
       run_task('spree:migrate_shipping_to_delivery')

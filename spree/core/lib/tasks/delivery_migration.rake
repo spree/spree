@@ -29,6 +29,11 @@ namespace :spree do
       say.call "spree_adjustments.adjustable_type: #{count} rows Spree::Shipment → Spree::Fulfillment"
     end
 
+    # Calculators are polymorphic on the renamed shipping method; without this
+    # DeliveryMethod#calculator finds nothing.
+    count = Spree::Calculator.where(calculable_type: 'Spree::ShippingMethod').in_batches(of: batch_size).update_all(calculable_type: 'Spree::DeliveryMethod')
+    say.call "spree_calculators.calculable_type: #{count} rows Spree::ShippingMethod → Spree::DeliveryMethod"
+
     # The name column distinguishes the machine ('shipment' rows become
     # 'fulfillment'); the recorded states keep their history except the
     # renamed terminal value.
