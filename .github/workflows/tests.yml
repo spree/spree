@@ -1,4 +1,4 @@
-name: Tests
+name: CI
 
 on:
   push:
@@ -6,8 +6,9 @@ on:
   pull_request:
   merge_group:
 
+# Both CI workflows share a name, so the group must not use github.workflow.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: backend-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -502,7 +503,7 @@ jobs:
   # passes when every job passed or was skipped because nothing relevant
   # changed, and fails on any failure or cancellation.
   result:
-    name: "Tests passed"
+    name: "backend"
     needs: [changes, build-postgres, build-mysql, test-postgres, test-mysql, brakeman]
     if: always()
     runs-on: ubuntu-latest

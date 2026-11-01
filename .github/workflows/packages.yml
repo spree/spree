@@ -1,4 +1,4 @@
-name: Packages
+name: CI
 
 on:
   push:
@@ -6,8 +6,9 @@ on:
   pull_request:
   merge_group:
 
+# Both CI workflows share a name, so the group must not use github.workflow.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: frontend-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -404,7 +405,7 @@ jobs:
   # passes when every job passed or was skipped because nothing relevant
   # changed, and fails on any failure or cancellation.
   result:
-    name: "Packages passed"
+    name: "frontend"
     needs: [changes, check, scaffolded-app, sdk-integration, dashboard-e2e]
     if: always()
     runs-on: ubuntu-latest
