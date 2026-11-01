@@ -69,6 +69,12 @@ module Spree
     # be silenced — a marketplace fronting its own seller comms turns these off
     # without also stopping customer receipts.
     preference :send_seller_transactional_emails, :boolean, default: true
+    # Invoices (docs/plans/6.1-invoices-and-receipts.md): how long after
+    # payment a buyer may ask for an invoice, and whether a new invoice is
+    # emailed to them. A store whose own system already emails invoices turns
+    # the second off.
+    preference :invoice_request_window_days, :integer, default: 90
+    preference :send_invoice_email, :boolean, default: true
     # Marketplace preferences
     #
     # VAT on the commission itself, as a fraction, when neither the rate nor
@@ -216,13 +222,17 @@ module Spree
                         :limit_digital_download_count, :digital_asset_authorized_clicks,
                         :limit_digital_download_days, :digital_asset_authorized_days,
                         :send_consumer_transactional_emails, :email_accent_color, :email_background_color,
-                        :email_card_color, :email_text_color, :email_heading_color, :email_font
+                        :email_card_color, :email_text_color, :email_heading_color, :email_font,
+                        :invoice_request_window_days, :send_invoice_email
 
     #
     # Associations
     #
     has_many :carts, class_name: 'Spree::Cart', inverse_of: :store, dependent: :destroy
     has_many :orders, class_name: 'Spree::Order'
+    has_many :invoices, class_name: 'Spree::Invoice', dependent: :restrict_with_error
+    has_many :invoice_requests, class_name: 'Spree::InvoiceRequest', dependent: :destroy
+    has_many :order_documents, class_name: 'Spree::OrderDocument', dependent: :destroy
     has_many :order_groups, class_name: 'Spree::OrderGroup'
     has_many :customers, through: :orders, source: :customer, class_name: "::#{Spree.customer_class}"
     has_many :saved_reports, class_name: 'Spree::SavedReport', dependent: :destroy
