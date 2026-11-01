@@ -4719,7 +4719,23 @@
       "terms_url": "Terms URL",
       "terms_url_description": "Optional published copy of the same terms, opened in a new tab.",
       "webhook_secret": "Webhook signing secret",
-      "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it."
+      "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it.",
+      "operator_max": "Maximum comparison",
+      "operator_max_description": "Choose whether an order exactly at Amount Max qualifies.",
+      "operator_max_options": {
+        "lt": "Less than (excludes the maximum)",
+        "lte": "Less than or equal to (includes the maximum)"
+      },
+      "operator_min": "Minimum comparison",
+      "operator_min_description": "Example: for free shipping on item totals of 150 or more, set Minimum item total to 150 and choose “Greater than or equal to.”",
+      "operator_min_options": {
+        "gt": "Greater than (excludes the minimum)",
+        "gte": "Greater than or equal to (includes the minimum)"
+      },
+      "amount_min": "Minimum item total",
+      "amount_min_description": "The order item total must reach this amount to qualify.",
+      "amount_max": "Maximum item total",
+      "amount_max_description": "Optional upper limit. Leave blank for no maximum."
     },
     "product_types": {
       "add_cta": "Add product type",

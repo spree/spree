@@ -4720,7 +4720,23 @@
       "terms_url": "URL des conditions",
       "terms_url_description": "Copie publiée facultative des mêmes conditions, ouverte dans un nouvel onglet.",
       "webhook_secret": "Clé de signature du webhook",
-      "webhook_secret_description": "Le secret défini sur le webhook EasyPost. Sans lui, les mises à jour du transporteur sont refusées."
+      "webhook_secret_description": "Le secret défini sur le webhook EasyPost. Sans lui, les mises à jour du transporteur sont refusées.",
+      "operator_max": "Comparaison du montant maximal",
+      "operator_max_description": "Choisissez si une commande égale au montant maximal est admissible.",
+      "operator_max_options": {
+        "lt": "Inférieur à (plafond exclu)",
+        "lte": "Inférieur ou égal à (plafond inclus)"
+      },
+      "operator_min": "Comparaison du montant minimal",
+      "operator_min_description": "Exemple : pour la livraison gratuite dès 150, indiquez 150 comme montant minimum des articles et choisissez « Supérieur ou égal à ».",
+      "operator_min_options": {
+        "gt": "Supérieur à (minimum exclu)",
+        "gte": "Supérieur ou égal à (minimum inclus)"
+      },
+      "amount_min": "Montant minimum des articles",
+      "amount_min_description": "Le montant des articles de la commande doit atteindre ce seuil pour remplir la condition.",
+      "amount_max": "Montant maximum des articles",
+      "amount_max_description": "Limite supérieure facultative. Laissez vide pour ne pas fixer de maximum."
     },
     "product_types": {
       "add_cta": "Ajouter un type de produit",
