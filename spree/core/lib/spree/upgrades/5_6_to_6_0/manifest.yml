@@ -212,7 +212,8 @@ steps:
     task: "spree:migrate_shipping_to_delivery"
     notes: |
       Rewrites stored 'Spree::Shipment' class-name strings (state changes,
-      stock movements, legacy adjustments), renames the terminal fulfillment
+      stock movements, legacy adjustments) and the calculators' 'Spree::ShippingMethod'
+      calculable type (so delivery methods find their calculator), renames the terminal fulfillment
       status 'shipped' -> 'fulfilled', backfills the fulfillment provider on
       delivery methods (DigitalDelivery calculators become the Digital
       provider) and copies the provider-derived type onto existing
