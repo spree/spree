@@ -65,7 +65,6 @@ export interface PanelPermissions {
   keys: string[]
 }
 
-/** What every panel's client can do, whichever API it talks to. */
 /**
  * The order's invoices, invoice requests and other documents, as both panels
  * read and write them (docs/plans/6.1-invoices-and-receipts.md). The admin
@@ -112,6 +111,7 @@ export interface PanelOrderDocumentCreateParams {
   file_signed_id: string
 }
 
+/** What every panel's client can do, whichever API it talks to. */
 export interface PanelApiClient {
   auth: {
     login(params: { email: string; password: string }): Promise<PanelSession>

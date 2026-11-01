@@ -47,8 +47,13 @@ module Spree
         end
       end
 
+      # The unique index is the guarantee: two uploads of one number racing
+      # past the validation get the same answer the validation gives.
       def save_invoice
         failure(invoice) unless invoice.save
+      rescue ActiveRecord::RecordNotUnique
+        invoice.errors.add(:number, :taken)
+        failure(invoice)
       end
 
       # Any invoice of kind `invoice` answers the buyer's request, however it

@@ -311,9 +311,6 @@ module Spree
         end
       end
 
-      # A carrier label is a picture of the parcel's address: the buyer's name
-      # and street are printed on the PDF, so rewriting the address row leaves
-      # the document still carrying them.
       # What the buyer uploaded to their orders from their account. Staff and
       # seller uploads stay: they are the merchant's paperwork. Invoices are
       # never touched — the law keeps them, and Spree::Invoice is not here.
@@ -336,6 +333,9 @@ module Spree
         Spree::OrderDocument.where(id: @buyer_order_document_ids).delete_all if @buyer_order_document_ids.present?
       end
 
+      # A carrier label is a picture of the parcel's address: the buyer's name
+      # and street are printed on the PDF, so rewriting the address row leaves
+      # the document still carrying them.
       def remove_carrier_documents
         order_ids = owned_purchases(Spree::Order).select(:id)
 

@@ -2,10 +2,10 @@ module Spree
   module Api
     module V3
       module Seller
-        # Invoices on this seller's orders, and the commission invoices the
-        # marketplace issued them. A seller may delete or resend only the
-        # invoices on their own orders: commission invoices are the
-        # marketplace's documents.
+        # Invoices issued in this seller's name, and the commission invoices the
+        # marketplace issued them. A seller may delete or resend only their own:
+        # commission invoices, and the store's invoices for a platform-remitted
+        # seller, are the marketplace's documents.
         class InvoicesController < Seller::ResourceController
           include Spree::Api::V3::InvoiceMemberActions
 
@@ -19,10 +19,10 @@ module Spree
 
           def scope
             base = Spree::Invoice.for_store(current_store)
-            visible = base.where(order_id: current_seller_orders.select(:id))
-            return visible if %w[destroy resend].include?(action_name)
+            own = base.where(issuer: current_seller, order_id: current_seller_orders.select(:id))
+            return own if %w[destroy resend].include?(action_name)
 
-            visible.or(base.where(seller_payout_id: current_seller.seller_payouts.select(:id)))
+            own.or(base.where(seller_payout_id: current_seller.seller_payouts.select(:id)))
           end
         end
       end

@@ -26,7 +26,11 @@ module Spree
         validates_with Spree::AttachmentContentTypeValidator,
                        attributes: [slot], in: content_types,
                        if: -> { public_send(slot).attached? }
-        validate(if: -> { public_send(slot).attached? }) { private_document_within_size_on_disk(slot, max_size) }
+        # Only when a file arrives: the check downloads up to the cap, which an
+        # edit to the record's other fields has no reason to pay for.
+        validate(if: -> { attachment_changes[slot.to_s].present? }) do
+          private_document_within_size_on_disk(slot, max_size)
+        end
       end
     end
 

@@ -32,6 +32,24 @@ RSpec.describe Spree::Api::V3::Admin::InvoicesController, type: :controller do
       expect(json_response['data'].map { |row| row['id'] }).not_to include(other.prefixed_id)
     end
 
+    context 'with a key that may read orders but not payouts' do
+      let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['read_orders']) }
+      let!(:commission) { create(:invoice, :commission, seller_payout: create(:seller_payout, store: store)) }
+
+      before do
+        request.headers['Authorization'] = nil
+        request.headers['x-spree-api-key'] = caller_key.plaintext_token
+      end
+
+      it 'leaves commission invoices out of the list and refuses to open one' do
+        get :index, as: :json
+        expect(json_response['data'].map { |row| row['id'] }).not_to include(commission.prefixed_id)
+
+        get :show, params: { id: commission.prefixed_id }, as: :json
+        expect(response.status).to be_in([403, 404])
+      end
+    end
+
     it_behaves_like 'a list without N+1 queries' do
       subject { get :index, params: { expand: 'order' }, as: :json }
     end

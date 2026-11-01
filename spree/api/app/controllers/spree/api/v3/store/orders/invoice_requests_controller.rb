@@ -24,7 +24,7 @@ module Spree
                 customer: try_spree_current_user,
                 company_name: request_params[:company_name],
                 tax_id: request_params[:tax_id],
-                billing_address: billing_address
+                billing_address_params: request_params[:billing_address]
               )
 
               render_result(result, status: :created)
@@ -48,18 +48,6 @@ module Spree
 
             def request_params
               @request_params ||= params.permit(*declared_permitted_attributes)
-            end
-
-            # Not added to the buyer's address book: it is where this one
-            # invoice is addressed, nothing more.
-            def billing_address
-              attributes = request_params[:billing_address]
-              return if attributes.blank?
-
-              result = Spree.address_create_service.call(address_params: attributes.to_h.symbolize_keys)
-              raise ActiveRecord::RecordInvalid, result.value unless result.success?
-
-              result.value
             end
           end
         end

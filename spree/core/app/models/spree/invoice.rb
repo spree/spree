@@ -36,7 +36,7 @@ module Spree
 
     has_many :credit_notes, class_name: 'Spree::Invoice', foreign_key: :original_invoice_id,
                             inverse_of: :original_invoice, dependent: :restrict_with_error
-    has_one :invoice_request, class_name: 'Spree::InvoiceRequest', dependent: :nullify, inverse_of: :invoice
+    has_one :invoice_request, class_name: 'Spree::InvoiceRequest', dependent: nil, inverse_of: :invoice
 
     has_private_document :file, content_types: CONTENT_TYPES, max_size: MAX_FILE_SIZE, required: true
 
@@ -53,6 +53,7 @@ module Spree
     validate :unchanged_once_created, on: :update
 
     before_destroy :ensure_deletable, prepend: true
+    after_destroy :reopen_invoice_request
 
     scope :invoices, -> { where(kind: 'invoice') }
     scope :credit_notes, -> { where(kind: 'credit_note') }
@@ -156,6 +157,12 @@ module Spree
       locked = changed - %w[metadata updated_at sent_at]
       locked.each { |attribute| errors.add(attribute, :invoice_immutable) }
       errors.add(:file, :invoice_immutable) if attachment_changes['file']
+    end
+
+    # A withdrawn upload has not answered the buyer, so their request is owed
+    # again rather than left marked fulfilled by an invoice that is gone.
+    def reopen_invoice_request
+      invoice_request&.update!(status: 'open', invoice: nil)
     end
 
     def ensure_deletable

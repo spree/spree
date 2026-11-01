@@ -9,7 +9,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          include ActiveStorage::SetCurrent
+          include Spree::Api::V3::StreamsPrivateFile
 
           before_action :set_resource, only: [:show, :destroy, :download, :resend]
         end
@@ -17,12 +17,7 @@ module Spree
         # GET .../invoices/:id/download — streamed, so the credentials that
         # reached the action are what protect the file.
         def download
-          send_data(
-            @resource.file.download,
-            filename: @resource.file.filename.to_s,
-            type: @resource.file.content_type || 'application/pdf',
-            disposition: 'attachment'
-          )
+          stream_private_file(@resource.file)
         end
 
         # POST .../invoices/:id/resend — emails the invoice to its recipient

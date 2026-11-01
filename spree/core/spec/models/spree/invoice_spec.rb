@@ -105,6 +105,15 @@ RSpec.describe Spree::Invoice, type: :model do
       expect(invoice.destroy).to be_truthy
     end
 
+    it "reopens the buyer's request the deleted upload had fulfilled" do
+      invoice = create(:invoice, order: order)
+      request = create(:invoice_request, order: order, status: 'fulfilled', invoice: invoice)
+
+      invoice.destroy
+
+      expect(request.reload).to have_attributes(status: 'open', invoice_id: nil)
+    end
+
     it 'refuses deleting a sent invoice' do
       invoice = create(:invoice, :sent, order: order)
 
@@ -157,6 +166,14 @@ RSpec.describe Spree::Invoice, type: :model do
       invoice.delete
 
       expect(Spree::Order.missing_invoice).to include(paid_order)
+    end
+
+    it 'lists the invoiced orders on the other side of the filter' do
+      invoiced = create(:completed_order_with_totals, store: store)
+      create(:invoice, order: invoiced)
+
+      expect(Spree::Order.missing_invoice(false)).to contain_exactly(invoiced)
+      expect(Spree::Order.ransack(missing_invoice: 'false').result).to contain_exactly(invoiced)
     end
 
     it 'ignores unpaid orders' do
