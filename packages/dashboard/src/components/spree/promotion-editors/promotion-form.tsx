@@ -1052,10 +1052,38 @@ function RuleEditSheet({
 
 function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
   const { t } = useTranslation()
-  const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
+  const [values, setValues] = useState<Record<string, unknown>>(() => {
+    const preferences = draft.preferences ?? {}
+    if (draft.type !== 'item_total') return preferences
+
+    return {
+      ...preferences,
+      operator_min: preferences.operator_min === 'gte' ? 'gte' : 'gt',
+      operator_max: preferences.operator_max === 'lte' ? 'lte' : 'lt',
+    }
+  })
   const { data: typesData } = usePromotionRuleTypes()
   const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
-  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
+  const ruleSchema =
+    draft.type === 'item_total' && schema
+      ? {
+          ...schema,
+          properties: {
+            ...schema.properties,
+            operator_min: {
+              ...(schema.properties.operator_min ?? { type: 'string' }),
+              default: 'gt',
+              enum: ['gt', 'gte'],
+            },
+            operator_max: {
+              ...(schema.properties.operator_max ?? { type: 'string' }),
+              default: 'lt',
+              enum: ['lt', 'lte'],
+            },
+          },
+        }
+      : schema
+  const hasPreferences = Object.keys(ruleSchema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1070,7 +1098,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={ruleSchema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
           {t('admin.promotions.rule_edit.no_options')}

@@ -4708,7 +4708,23 @@
       "terms_url": "条款链接",
       "terms_url_description": "同一条款的可选已发布副本，在新标签页中打开。",
       "webhook_secret": "Webhook 签名密钥",
-      "webhook_secret_description": "您在 EasyPost webhook 上设置的密钥。缺少它，承运商更新将被拒绝。"
+      "webhook_secret_description": "您在 EasyPost webhook 上设置的密钥。缺少它，承运商更新将被拒绝。",
+      "operator_max": "最高金额比较方式",
+      "operator_max_description": "订单金额刚好等于最高金额时，决定是否仍符合条件。",
+      "operator_max_options": {
+        "lt": "小于（不含最高金额）",
+        "lte": "小于或等于（含最高金额）"
+      },
+      "operator_min": "最低金额比较方式",
+      "operator_min_description": "例如满 150 包邮：最低商品总额填 150，并选择“大于或等于”。",
+      "operator_min_options": {
+        "gt": "大于（不含最低金额）",
+        "gte": "大于或等于（含最低金额）"
+      },
+      "amount_min": "最低商品总额",
+      "amount_min_description": "订单中的商品金额需要达到此金额，优惠才符合条件。",
+      "amount_max": "最高商品总额",
+      "amount_max_description": "可选。留空表示不设最高金额。"
     },
     "product_types": {
       "add_cta": "添加商品类型",

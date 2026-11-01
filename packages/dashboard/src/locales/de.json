@@ -4719,7 +4719,23 @@
       "terms_url": "URL der Bedingungen",
       "terms_url_description": "Optionale veröffentlichte Fassung derselben Bedingungen, öffnet in einem neuen Tab.",
       "webhook_secret": "Webhook-Signaturschlüssel",
-      "webhook_secret_description": "Das Geheimnis, das Sie im EasyPost-Webhook festgelegt haben. Ohne es werden Carrier-Updates abgelehnt."
+      "webhook_secret_description": "Das Geheimnis, das Sie im EasyPost-Webhook festgelegt haben. Ohne es werden Carrier-Updates abgelehnt.",
+      "operator_max": "Vergleich des Höchstbetrags",
+      "operator_max_description": "Wählen Sie, ob eine Bestellung genau am Höchstbetrag noch berechtigt ist.",
+      "operator_max_options": {
+        "lt": "Kleiner als (Höchstbetrag ausgeschlossen)",
+        "lte": "Kleiner oder gleich (Höchstbetrag eingeschlossen)"
+      },
+      "operator_min": "Vergleich des Mindestbetrags",
+      "operator_min_description": "Beispiel: Für kostenlosen Versand ab 150 setzen Sie den Mindestwarenwert auf 150 und wählen „Größer oder gleich“.",
+      "operator_min_options": {
+        "gt": "Größer als (Mindestbetrag ausgeschlossen)",
+        "gte": "Größer oder gleich (Mindestbetrag eingeschlossen)"
+      },
+      "amount_min": "Mindestwarenwert",
+      "amount_min_description": "Der Warenwert der Bestellung muss diesen Betrag erreichen, damit die Bestellung berechtigt ist.",
+      "amount_max": "Höchstwarenwert",
+      "amount_max_description": "Optionale Obergrenze. Leer lassen, wenn es kein Maximum gibt."
     },
     "product_types": {
       "add_cta": "Produkttyp hinzufügen",

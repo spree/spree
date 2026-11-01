@@ -4775,7 +4775,23 @@
       "terms_url": "Adres URL regulaminu",
       "terms_url_description": "Opcjonalna opublikowana kopia tego samego regulaminu, otwierana w nowej karcie.",
       "webhook_secret": "Sekret podpisu webhooka",
-      "webhook_secret_description": "Sekret ustawiony na webhooku EasyPost. Bez niego aktualizacje od przewoźnika są odrzucane."
+      "webhook_secret_description": "Sekret ustawiony na webhooku EasyPost. Bez niego aktualizacje od przewoźnika są odrzucane.",
+      "operator_max": "Porównanie kwoty maksymalnej",
+      "operator_max_description": "Wybierz, czy zamówienie równe kwocie maksymalnej spełnia warunek.",
+      "operator_max_options": {
+        "lt": "Mniej niż (bez kwoty maksymalnej)",
+        "lte": "Mniej niż lub równo (z kwotą maksymalną)"
+      },
+      "operator_min": "Porównanie kwoty minimalnej",
+      "operator_min_description": "Przykład: aby zapewnić darmową dostawę od 150, wpisz 150 jako minimalną wartość produktów i wybierz „Większe niż lub równe”.",
+      "operator_min_options": {
+        "gt": "Więcej niż (bez kwoty minimalnej)",
+        "gte": "Więcej niż lub równo (z kwotą minimalną)"
+      },
+      "amount_min": "Minimalna wartość produktów",
+      "amount_min_description": "Wartość produktów w zamówieniu musi osiągnąć tę kwotę, aby spełnić warunek.",
+      "amount_max": "Maksymalna wartość produktów",
+      "amount_max_description": "Opcjonalny limit górny. Pozostaw puste, aby nie ustawiać maksimum."
     },
     "product_types": {
       "add_cta": "Dodaj typ produktu",

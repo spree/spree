@@ -4606,7 +4606,23 @@
       "terms_url": "URL de las condiciones",
       "terms_url_description": "Copia publicada opcional de las mismas condiciones, que se abre en una pestaña nueva.",
       "webhook_secret": "Secreto de firma del webhook",
-      "webhook_secret_description": "El secreto que configuraste en el webhook de EasyPost. Sin él se rechazan las actualizaciones del transportista."
+      "webhook_secret_description": "El secreto que configuraste en el webhook de EasyPost. Sin él se rechazan las actualizaciones del transportista.",
+      "operator_max": "Comparación del importe máximo",
+      "operator_max_description": "Elige si un pedido que alcanza exactamente el importe máximo cumple la condición.",
+      "operator_max_options": {
+        "lt": "Menor que (excluye el máximo)",
+        "lte": "Menor o igual que (incluye el máximo)"
+      },
+      "operator_min": "Comparación del importe mínimo",
+      "operator_min_description": "Ejemplo: para envío gratis desde 150, indica 150 como importe mínimo de productos y elige “Mayor o igual que”.",
+      "operator_min_options": {
+        "gt": "Mayor que (excluye el mínimo)",
+        "gte": "Mayor o igual que (incluye el mínimo)"
+      },
+      "amount_min": "Importe mínimo de productos",
+      "amount_min_description": "El importe de los productos del pedido debe alcanzar esta cantidad para cumplir la condición.",
+      "amount_max": "Importe máximo de productos",
+      "amount_max_description": "Límite superior opcional. Déjalo en blanco para no establecer un máximo."
     },
     "categories": {
       "add_cta": "Nueva categoría",

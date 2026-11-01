@@ -4719,7 +4719,23 @@
       "terms_url": "規約の URL",
       "terms_url_description": "同じ規約を公開したもの（任意）。新しいタブで開きます。",
       "webhook_secret": "Webhook の署名用の秘密",
-      "webhook_secret_description": "EasyPost の Webhook に設定した秘密です。これがないと運送会社からの更新を受け付けません。"
+      "webhook_secret_description": "EasyPost の Webhook に設定した秘密です。これがないと運送会社からの更新を受け付けません。",
+      "operator_max": "上限金額の比較方法",
+      "operator_max_description": "注文金額が上限金額と同じ場合に対象にするか選びます。",
+      "operator_max_options": {
+        "lt": "未満（上限を含まない）",
+        "lte": "以下（上限を含む）"
+      },
+      "operator_min": "下限金額の比較方法",
+      "operator_min_description": "例：150以上で送料無料にする場合、商品合計の最低額に150を入力して「以上」を選びます。",
+      "operator_min_options": {
+        "gt": "より大きい（下限を含まない）",
+        "gte": "以上（下限を含む）"
+      },
+      "amount_min": "商品合計の最低額",
+      "amount_min_description": "条件を満たすには、注文の商品合計がこの金額に達する必要があります。",
+      "amount_max": "商品合計の最高額",
+      "amount_max_description": "任意の上限です。上限を設けない場合は空欄にします。"
     },
     "product_types": {
       "add_cta": "商品タイプを追加",
