@@ -52,6 +52,7 @@ class PromoteShippingCategoriesToDeliveryProfiles < ActiveRecord::Migration[8.1]
     remove_column :spree_product_types, :fulfillment_types
 
     backfill_store_defaults
+    copy_first_zone_onto_methods
 
     drop_table :spree_delivery_method_zones
   end
@@ -141,13 +142,21 @@ class PromoteShippingCategoriesToDeliveryProfiles < ActiveRecord::Migration[8.1]
       # never carried a category, so they all belong to the default profile.
       MigrationProduct.where(store_id: store.id, delivery_profile_id: nil).update_all(delivery_profile_id: profile.id)
 
-      MigrationMethod.where(store_id: store.id).find_each do |method|
-        zone_ids = MigrationMethodZone.where(delivery_method_id: method.id).order(:id).pluck(:delivery_zone_id)
-        if zone_ids.size > 1
-          say "Delivery method #{method.id} was linked to #{zone_ids.size} zones; keeping the first — recreate the method for the other zones if both were intended."
-        end
-        method.update_columns(delivery_profile_id: profile.id, delivery_origin_group_id: origin_group.id, delivery_zone_id: zone_ids.first)
+      MigrationMethod.where(store_id: store.id).update_all(delivery_profile_id: profile.id, delivery_origin_group_id: origin_group.id)
+    end
+  end
+
+  # Runs for every method, including 5.x rows whose store_id is still nil: the
+  # link table is dropped right after, so this is the last chance to keep it.
+  def copy_first_zone_onto_methods
+    zone_ids_by_method = MigrationMethodZone.order(:id).pluck(:delivery_method_id, :delivery_zone_id).
+      group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+
+    zone_ids_by_method.each do |method_id, zone_ids|
+      if zone_ids.size > 1
+        say "Delivery method #{method_id} was linked to #{zone_ids.size} zones; keeping the first — recreate the method for the other zones if both were intended."
       end
+      MigrationMethod.where(id: method_id).update_all(delivery_zone_id: zone_ids.first)
     end
   end
 end
