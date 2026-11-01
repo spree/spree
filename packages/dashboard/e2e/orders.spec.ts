@@ -576,4 +576,58 @@ test.describe('order payments', () => {
     await expect(dialog.getByText('CVV does not match')).toBeVisible()
     await expect(dialog.getByRole('row').filter({ hasText: '€10.00' })).toBeVisible()
   })
+
+  test('offers Void on a payment the gateway can void', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    await expect(page.getByRole('menuitem', { name: 'Void' })).toBeVisible()
+  })
+
+  test('hides Void when the gateway cannot void the payment', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    const orderId = orders.data[0].id
+
+    // The fixture gateway can void, so the order payload reports a gateway
+    // that cannot (as Stripe does for a captured payment).
+    await page.route(`**/api/v3/admin/orders/${orderId}**`, async (route) => {
+      const url = new URL(route.request().url())
+      if (route.request().method() !== 'GET' || !url.pathname.endsWith(`/orders/${orderId}`)) {
+        return route.fallback()
+      }
+      const response = await route.fetch()
+      const order = await response.json()
+      order.payments = order.payments.map((payment: object) => ({ ...payment, can_void: false }))
+      await route.fulfill({ response, json: order })
+    })
+
+    await page.goto(`/${creds.comma_store_id}/orders/${orderId}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    await expect(page.getByRole('menuitem', { name: 'View details' })).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: 'Void' })).toHaveCount(0)
+  })
 })
