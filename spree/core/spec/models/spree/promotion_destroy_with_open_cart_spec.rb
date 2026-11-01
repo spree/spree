@@ -44,4 +44,30 @@ describe Spree::Promotion, type: :model do
       expect(cart.discount_total).to be_negative
     end
   end
+
+  describe 'destroying an automatic promotion that added a gift to an open cart' do
+    let(:store) { @default_store }
+    let(:gift) { create(:variant) }
+    let(:promotion) { create(:promotion, kind: :automatic, code: nil, store: store) }
+    let(:cart) { create(:cart_with_line_items, line_items_count: 1, store: store) }
+
+    before do
+      action = Spree::Promotion::Actions::CreateLineItems.create!(promotion: promotion)
+      action.promotion_action_line_items.create!(variant: gift, quantity: 1)
+      Spree.cart_recalculate_workflow.call(cart: cart)
+      cart.reload
+    end
+
+    it 'starts with the gift in the cart' do
+      expect(cart.line_items.map(&:variant)).to include(gift)
+    end
+
+    it 'removes the gift and does not add it back' do
+      promotion.destroy
+      cart.reload
+
+      expect(cart.line_items.map(&:variant)).not_to include(gift)
+      expect(cart.order_promotions).to be_empty
+    end
+  end
 end

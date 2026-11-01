@@ -9,6 +9,8 @@ module Spree
 
       # @param cart [Spree::Cart, Spree::Order] draft orders ride the same pipeline
       # @param line_item [Spree::LineItem, nil] the item whose change triggered this
+      # @param options [Hash] +skip_promotion_activation: true+ leaves promotions as they are,
+      #   for callers that are removing a promotion's effects
       def perform(cart: nil, order: nil, line_item: nil, line_item_created: false, options: {})
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::Recalculate with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
@@ -21,7 +23,7 @@ module Spree
         # rate calculators (e.g. price sack) read them.
         step :refresh_totals, with: -> { Spree.cart_recalculate_totals_workflow }
         step :rebuild_delivery_proposals
-        step :activate_promotions
+        step :activate_promotions unless options[:skip_promotion_activation]
         # Typed rows (discounts + tax) are rebuilt by the full recalculation.
         step :final_recalculation, with: -> { Spree.cart_recalculate_totals_workflow }
 
