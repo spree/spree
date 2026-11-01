@@ -247,15 +247,15 @@ en:
       messages:
         already_linked: is already linked to this product
         blank: can't be blank
+        invoice_cannot_be_deleted: An invoice can be deleted only while it is an upload that has not been sent
+        invoice_immutable: cannot be changed once the invoice exists
+        invoice_issuer_mismatch: must be the order's seller, or the store when the store invoices the sale
+        invoice_parent_required: An invoice belongs to either an order or a seller payout
+        invoice_request_already_open: This order already has an open invoice request
         must_apply_to_products: must be a custom field definition for products
         must_belong_to_same_store: must belong to the same store
         not_registered: is not a registered provider
         spree_content_type_not_allowed: is not a file type we accept
-        invoice_parent_required: An invoice belongs to either an order or a seller payout
-        invoice_issuer_mismatch: must be the order's seller, or the store when the store invoices the sale
-        invoice_immutable: cannot be changed once the invoice exists
-        invoice_cannot_be_deleted: An invoice can be deleted only while it is an upload that has not been sent
-        invoice_request_already_open: This order already has an open invoice request
         too_many_decimals: has more than %{count} decimal places
       models:
         spree/allowed_origin:
@@ -1023,6 +1023,11 @@ en:
         subject: Invitation to join %{resource_name}
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
+    invoice_requests:
+      errors:
+        already_invoiced: This order already has an invoice.
+        not_placed: An invoice can be requested only for a placed order.
+        window_closed: The time to request an invoice for this order has passed.
     iso: ISO Alpha-2
     item: Item
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
@@ -1178,7 +1183,6 @@ en:
       store_pickup: Store Pickup
     po_document_invalid: A purchase order document must be a PDF, image, Word document, spreadsheet or CSV file of %{size} or less.
     po_document_missing: This order has no attached purchase order document.
-    private_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
     price: Price
     price_list_import_ambiguous_sku: More than one product in this store has the SKU %{sku}. Give each a SKU of its own before importing prices for it.
@@ -1200,6 +1204,7 @@ en:
     price_sack: Price Sack
     prices: Prices
     privacy_policy: Privacy Policy
+    private_document_too_large: is larger than %{size}.
     processing: Processing
     product: Product
     product_import_unknown_stock_location: You have no stock location named %{name}.
@@ -1705,11 +1710,6 @@ en:
     shipping_flat_rate_per_item: Flat rate per package item
     shipping_flat_rate_per_order: Flat rate
     shipping_flexible_rate: Flexible Rate per package item
-    invoice_requests:
-      errors:
-        already_invoiced: This order already has an invoice.
-        not_placed: An invoice can be requested only for a placed order.
-        window_closed: The time to request an invoice for this order has passed.
     shipping_labels:
       errors:
         already_purchased: This parcel already has an active shipping label
