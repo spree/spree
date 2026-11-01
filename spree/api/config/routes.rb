@@ -78,6 +78,15 @@ Spree::Core::Engine.add_routes do
           resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
           # Read-only — the registration frozen onto the order at completion.
           resource :tax_identifier, only: [:show], controller: 'orders/tax_identifiers'
+          # The buyer's invoices, read-only; asking for one is a request.
+          resources :invoices, only: [:index], controller: 'orders/invoices' do
+            get :download, on: :member
+          end
+          resources :invoice_requests, only: [:index, :create], controller: 'orders/invoice_requests'
+          # Paperwork staff made visible, plus what the buyer added.
+          resources :documents, only: [:index, :create], controller: 'orders/documents' do
+            get :download, on: :member
+          end
         end
 
         # Policies (return policy, privacy policy, terms of service, etc.)
@@ -646,6 +655,8 @@ Spree::Core::Engine.add_routes do
         resources :seller_transfers, only: [:index, :show]
         resources :seller_payouts, only: [:index, :show] do
           patch :complete, on: :member
+          # Commission invoices the marketplace issued the seller.
+          resources :invoices, controller: 'seller_payouts/invoices', only: [:index, :create]
         end
 
         # What one checkout produced when it reached several sellers. Read-only:
@@ -754,6 +765,14 @@ Spree::Core::Engine.add_routes do
         resources :returns, only: [:index, :show]
         resources :exchanges, only: [:index, :show]
         resources :claims, only: [:index, :show]
+        # Every invoice in the store, for accountants. Created under the order
+        # or seller payout it belongs to.
+        resources :invoices, only: [:index, :show, :destroy] do
+          member do
+            get :download
+            post :resend
+          end
+        end
 
         # Channels (per-store distribution surfaces)
         resources :channels do
@@ -854,6 +873,11 @@ Spree::Core::Engine.add_routes do
           resources :fees, controller: 'orders/fees', only: [:index, :show, :create, :update, :destroy]
           resources :gift_cards, controller: 'orders/gift_cards', only: [:create, :destroy]
           resource :store_credits, controller: 'orders/store_credits', only: [:create, :destroy]
+          resources :invoices, controller: 'orders/invoices', only: [:index, :create]
+          resources :invoice_requests, controller: 'orders/invoice_requests', only: [:index]
+          resources :documents, controller: 'orders/documents', only: [:index, :show, :create, :update, :destroy] do
+            get :download, on: :member
+          end
         end
       end
 
@@ -946,6 +970,13 @@ Spree::Core::Engine.add_routes do
           # Singular: an order has one set of notes, so they are a resource to
           # read and update rather than a verb on the order.
           resource :notes, only: [:show, :update], controller: 'orders/notes'
+
+          # Invoices are created here and read across orders at /invoices.
+          resources :invoices, controller: 'orders/invoices', only: [:index, :create]
+          resources :invoice_requests, controller: 'orders/invoice_requests', only: [:index]
+          resources :documents, controller: 'orders/documents', only: [:index, :show, :create, :update, :destroy] do
+            get :download, on: :member
+          end
 
           # No `mark_delivered`: that a parcel arrived is the buyer's word,
           # not the sender's, so confirming receipt stays with the operator
@@ -1079,6 +1110,14 @@ Spree::Core::Engine.add_routes do
         resources :balances, only: [:index]
         resources :transfers, only: [:index, :show]
         resources :payouts, only: [:index, :show]
+        # Invoices on the seller's orders, and the commission invoices the
+        # marketplace issued them.
+        resources :invoices, only: [:index, :show, :destroy] do
+          member do
+            get :download
+            post :resend
+          end
+        end
 
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do

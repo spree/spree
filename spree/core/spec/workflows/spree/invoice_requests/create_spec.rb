@@ -1,0 +1,40 @@
+require 'spec_helper'
+
+RSpec.describe Spree::InvoiceRequests::Create do
+  let(:order) { create(:completed_order_with_totals) }
+
+  before { order.update_columns(status: 'placed') }
+
+  it 'records the request and publishes order.invoice_requested', :events do
+    allow(Spree::Events).to receive(:publish).and_call_original
+    result = described_class.call(order: order, company_name: 'Acme GmbH', tax_id: 'DE123456789')
+
+    expect(Spree::Events).to have_received(:publish).with('order.invoice_requested', any_args)
+    expect(result).to be_success
+    expect(result.value).to have_attributes(status: 'open', company_name: 'Acme GmbH', store: order.store)
+  end
+
+  it 'refuses an order that already has an invoice' do
+    create(:invoice, order: order)
+
+    expect(described_class.call(order: order)).to be_failure
+  end
+
+  it 'refuses once the window has passed' do
+    order.update_columns(completed_at: 120.days.ago)
+
+    expect(described_class.call(order: order)).to be_failure
+  end
+
+  it 'refuses when the store accepts no requests' do
+    order.store.update!(preferred_invoice_request_window_days: 0)
+
+    expect(described_class.call(order: order)).to be_failure
+  end
+
+  it 'refuses a second open request' do
+    described_class.call(order: order)
+
+    expect(described_class.call(order: order)).to be_failure
+  end
+end
