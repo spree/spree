@@ -28,7 +28,7 @@ module Spree
             skip_before_action :enforce_storefront_login_required!, raise: false
           end
 
-          # Opts a controller out of the +approval_required+ price gate. Use
+          # Opts a controller out of the +company_required+ price gate. Use
           # for receipt surfaces — completed purchases and the customer's own
           # stored value, money already taken. The posture protects catalog
           # prices, never a buyer's record of what they were charged; the
@@ -100,7 +100,7 @@ module Spree
 
           if channel.storefront_prices_hidden?
             'login_required' if try_spree_current_user.blank?
-          elsif channel.storefront_approval_required? && !receipt_response?
+          elsif channel.storefront_company_required? && !receipt_response?
             Spree.company_activation_policy.pricing_access_code(
               user: try_spree_current_user, store: current_store
             )

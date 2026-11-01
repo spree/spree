@@ -15,6 +15,13 @@ module Spree
     class Register < Spree::Workflow
       hooks :validate, :after_register
 
+      # Registration answers are untrusted storefront input stored verbatim
+      # and repeated in the `company.registered` payload, so they are held to
+      # a flat form's shape: a bounded set of short keys and scalar values.
+      MAX_REGISTRATION_ANSWERS = 50
+      MAX_REGISTRATION_KEY_LENGTH = 100
+      MAX_REGISTRATION_VALUE_LENGTH = 1_000
+
       # The company being founded — built (unsaved) while :validate runs.
       attr_reader :company
 
@@ -30,6 +37,7 @@ module Spree
       def perform(store:, customer:, name:, registration: nil, metadata: nil)
         super
 
+        step :check_registration_answers
         step :ensure_no_existing_root
         step :build_company
 
@@ -53,6 +61,27 @@ module Spree
       end
 
       private
+
+      def check_registration_answers
+        return if registration.blank?
+        return if registration.is_a?(Hash) &&
+                  registration.size <= MAX_REGISTRATION_ANSWERS &&
+                  registration.all? { |key, value| registration_answer?(key, value) }
+
+        reject!(:invalid_registration, message: I18n.t('spree.company_registration.invalid_registration',
+                                                         count: MAX_REGISTRATION_ANSWERS,
+                                                         length: MAX_REGISTRATION_VALUE_LENGTH))
+      end
+
+      def registration_answer?(key, value)
+        return false if key.to_s.length > MAX_REGISTRATION_KEY_LENGTH
+
+        case value
+        when String then value.length <= MAX_REGISTRATION_VALUE_LENGTH
+        when Numeric, true, false, nil then true
+        else false
+        end
+      end
 
       # At most one root company per customer per store: a duplicate
       # submission must not found a second business, and a buyer who really

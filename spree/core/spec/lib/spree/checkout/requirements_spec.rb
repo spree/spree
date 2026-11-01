@@ -193,12 +193,12 @@ RSpec.describe Spree::Checkout::Requirements do
 
   describe 'company activation requirement' do
     let(:customer) { create(:user) }
-    let(:channel) { create(:channel, store: store, preferred_storefront_access: 'approval_required') }
+    let(:channel) { create(:channel, store: store, preferred_storefront_access: 'company_required') }
     let(:cart) { create(:cart, store: store, customer: customer, channel: channel) }
 
     subject { described_class.new(cart).call(completion: true) }
 
-    it 'refuses completion without a company on an approval_required channel' do
+    it 'refuses completion without a company on an company_required channel' do
       expect(subject).to include(
         a_hash_including(step: 'address', field: 'company', code: 'company_activation_required')
       )

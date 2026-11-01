@@ -11,10 +11,10 @@ module Spree
       # - +public+            products + prices visible to anyone
       # - +prices_hidden+     products browsable, prices null for guests
       # - +login_required+    catalog reads rejected for guests
-      # - +approval_required+ products browsable by anyone, prices and
+      # - +company_required+ products browsable by anyone, prices and
       #   checkout only for buyers with standing over a policy-active company
       #   (docs/plans/6.1-b2b-company-self-registration.md)
-      STOREFRONT_ACCESS = %w[public prices_hidden login_required approval_required].freeze
+      STOREFRONT_ACCESS = %w[public prices_hidden login_required company_required].freeze
 
       included do
         # Empty -> falls back to the Store-level preference. Both are `nullable`
@@ -56,8 +56,8 @@ module Spree
 
       # @return [Boolean] true when prices and checkout require standing over
       #   a policy-active company on this channel.
-      def storefront_approval_required?
-        resolved_storefront_access == 'approval_required'
+      def storefront_company_required?
+        resolved_storefront_access == 'company_required'
       end
 
       private

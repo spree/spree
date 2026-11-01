@@ -19,6 +19,13 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
       expect(subject).to have_key('price')
     end
 
+    it 'renders pricing_access only when the Store API supplies it' do
+      expect(subject).not_to have_key('pricing_access')
+
+      gated = described_class.new(product, params: base_params.merge(hide_prices: true, pricing_access: 'company_required')).to_h
+      expect(gated['pricing_access']).to eq('company_required')
+    end
+
     it 'does not include admin-only attributes' do
       expect(subject.keys).not_to include('cost_price', 'cost_currency', 'deleted_at', 'sku', 'barcode')
     end

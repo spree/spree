@@ -76,14 +76,14 @@ RSpec.shared_examples 'a company host' do
   end
 
   describe '#company_activation_missing?' do
-    let(:approval_channel) { create(:channel, store: store, preferred_storefront_access: 'approval_required') }
+    let(:company_channel) { create(:channel, store: store, preferred_storefront_access: 'company_required') }
 
     it 'is false away from the approval posture' do
       expect(record.company_activation_missing?).to be(false)
     end
 
-    context 'on an approval_required channel' do
-      before { record.update!(channel: approval_channel) }
+    context 'on an company_required channel' do
+      before { record.update!(channel: company_channel) }
 
       it 'is true when the sale resolves to no company' do
         expect(record.company_activation_missing?).to be(true)

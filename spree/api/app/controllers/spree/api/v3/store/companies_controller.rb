@@ -50,7 +50,7 @@ module Spree
             {
               store: current_store,
               customer: current_user,
-              name: params[:name],
+              name: permitted_params[:name],
               registration: registration_answers
             }
           end

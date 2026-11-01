@@ -2194,7 +2194,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a555c7b0b87e56073061823916df7bdd827d931d
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -2202,7 +2202,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--f33347a9444b2c88570a0bd99c8e4b31e8aec5cf
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--a1cd2d86668ed0f8ee036f069cc17e73e6083909
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -11856,7 +11856,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-10-27T18:14:03.250Z'
+                  updated_at: '2026-11-01T22:21:16.994Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11874,19 +11874,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-10-27T18:14:03.256Z'
+                  updated_at: '2026-11-01T22:21:16.997Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-10-27T18:14:03.260Z'
+                  updated_at: '2026-11-01T22:21:16.999Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-10-27T18:14:03.243Z'
+                  updated_at: '2026-11-01T22:21:16.991Z'
                 meta:
                   page: 1
                   limit: 25
@@ -14569,8 +14569,15 @@ components:
           type: number
           nullable: true
         pricing_access:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         number:
           type: string
           deprecated: true
@@ -15182,7 +15189,6 @@ components:
       - po_number_required
       - po_document_filename
       - po_document_byte_size
-      - pricing_access
       - number
       - token
       - email
@@ -18038,8 +18044,15 @@ components:
           type: string
           nullable: true
         pricing_access:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         quantity:
           type: number
         currency:
@@ -18348,7 +18361,6 @@ components:
       - seller_id
       - preorder
       - preorder_ships_at
-      - pricing_access
       - quantity
       - currency
       - name
@@ -20136,8 +20148,15 @@ components:
           type: number
           nullable: true
         pricing_access:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         number:
           type: string
         email:
@@ -20746,7 +20765,6 @@ components:
       - company_name
       - po_document_filename
       - po_document_byte_size
-      - pricing_access
       - number
       - email
       - customer_note
@@ -22071,8 +22089,15 @@ components:
         id:
           type: string
         pricing_access:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         name:
           type: string
         slug:
@@ -22167,7 +22192,6 @@ components:
           nullable: true
       required:
       - id
-      - pricing_access
       - name
       - slug
       - meta_title
@@ -23435,8 +23459,15 @@ components:
         product_id:
           type: string
         pricing_access:
-          type: string
-          nullable: true
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         sku:
           type: string
           nullable: true
@@ -23530,7 +23561,6 @@ components:
       required:
       - id
       - product_id
-      - pricing_access
       - sku
       - options_text
       - track_inventory

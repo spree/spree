@@ -31,11 +31,25 @@ module Spree
           define_method(:price_history_serializer) { Spree.api.public_send(:"#{surface}_price_history_serializer") }
         end
 
-        # Drops the inherited display_* money attributes, keeping labels.
-        # Emails use it alone: their templates format amounts with the `money`
+        # Drops the inherited display_* money attributes, keeping labels, and
+        # the storefront-only +pricing_access+ code. Emails use it alone: their templates format amounts with the `money`
         # Liquid filter.
         def self.without_display_money
-          _attributes.delete_if { |key, _| display_money?(key) }
+          _attributes.delete_if { |key, _| display_money?(key) || key == :pricing_access }
+        end
+
+        # Declares the +pricing_access+ reason code on a payload that nulls
+        # prices — +login_required+ | +company_required+ | a code the
+        # registered activation policy supplies — so a storefront renders
+        # "sign in" / "register your business" from the code instead of
+        # interpreting bare nulls. Null when prices are visible.
+        #
+        # Store API only: event payloads render these serializers without
+        # the request's gating params, and back-office surfaces drop it.
+        def self.pricing_access_attribute
+          typelize pricing_access: [:string, nullable: true, enum: Spree::Companies::ActivationPolicy::PRICING_ACCESS_CODES,
+                                             enum_type_name: 'PricingAccess']
+          attribute(:pricing_access, if: proc { params.key?(:pricing_access) }) { |_object| params[:pricing_access] }
         end
 
         # Declares money attributes, written as decimal strings with exactly
@@ -50,16 +64,6 @@ module Spree
         # @param unit_price [Boolean]
         # @param descriptions [Hash{Symbol => String}] what each amount is, for
         #   the API reference and the SDK types
-        # Declares the +pricing_access+ reason code on a payload that nulls
-        # prices — +login_required+ | +company_required+ | a code the
-        # registered activation policy supplies — so a storefront renders
-        # "sign in" / "register your business" from the code instead of
-        # interpreting bare nulls. Null when prices are visible.
-        def self.pricing_access_attribute
-          typelize pricing_access: [:string, nullable: true]
-          attribute(:pricing_access) { |_object| params[:pricing_access] }
-        end
-
         def self.money_attributes(*names, currency: :currency, unit_price: false, descriptions: {})
           typelize(**names.index_with do |name|
             next display_money_type(name) if display_money?(name)

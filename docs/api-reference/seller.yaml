@@ -293,7 +293,7 @@ paths:
                 invitee_exists: false
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 72
+                  name: Seller 77
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -14132,7 +14132,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--fbdbc3947829b95cdec74c3eaa8ea5d971ccf5ed/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--0efd9710ff004bded2af58c11b0823edc1991653/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                 meta:
@@ -14220,7 +14220,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--fcfaed645f4fe45731c0bd4b82a7595de81d0fd7/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--cbb51a76f8da8af02202379440ac6d3338361a21/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
               schema:
@@ -14300,7 +14300,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--5906305df79448b5c1dfaa19e0617c71dec8d7d7/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--abbeca9c1c8fe2d3aa111bcab4dbdb6cea52c186/thinking-cat.jpg
                 effective_authorized_clicks: 5
                 effective_authorized_days: 7
               schema:
@@ -14356,7 +14356,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--4d8b8737a917a62d29d1a99398559997a6f01f03/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--357551806c830499c65adf4c51cdfcf2fc89ffe3/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
               schema:
@@ -14603,7 +14603,6 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  pricing_access:
                   name: Product 2943250
                   slug: product-2943250
                   meta_title:
@@ -14719,7 +14718,6 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                pricing_access:
                 name: Hand-thrown mug
                 slug: hand-thrown-mug
                 meta_title:
@@ -14819,7 +14817,6 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                pricing_access:
                 name: Product 2976710
                 slug: product-2976710
                 meta_title:
@@ -14910,7 +14907,6 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                pricing_access:
                 name: Hand-thrown mug, large
                 slug: product-3008212
                 meta_title:
@@ -15035,7 +15031,6 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                pricing_access:
                 name: Product 3037816
                 slug: product-3037816
                 meta_title:
@@ -15147,7 +15142,6 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                pricing_access:
                 name: Product 305209
                 slug: product-305209
                 meta_title:
@@ -15238,7 +15232,6 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                pricing_access:
                 name: Product 3069405
                 slug: product-3069405
                 meta_title:
@@ -16027,7 +16020,7 @@ paths:
                   inviter_email: jayna_leuschke@hirtheschinner.info
                   seller:
                     id: sel_UkLWZg9DAJ
-                    name: Seller 76
+                    name: Seller 81
               schema:
                 type: object
                 properties:
@@ -16136,7 +16129,7 @@ paths:
                 inviter_email: carmelia_hodkiewicz@donnelly.us
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 78
+                  name: Seller 83
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -16302,7 +16295,7 @@ paths:
                 inviter_email: hal_kiehn@herman.biz
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 179
+                  name: Seller 184
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -16440,7 +16433,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--089ca4ce238aa47a443352890fee34e7f6ebd433
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a555c7b0b87e56073061823916df7bdd827d931d
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -16448,7 +16441,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--8f8bb2ff5c7b1a3a229577342b9c090d52d9cd4f
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--6640cf478c667c4ff62db871d2cba880e007d591
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -28277,9 +28270,6 @@ components:
       properties:
         id:
           type: string
-        pricing_access:
-          type: string
-          nullable: true
         name:
           type: string
         slug:
@@ -28402,7 +28392,6 @@ components:
           nullable: true
       required:
       - id
-      - pricing_access
       - name
       - slug
       - meta_title
@@ -30558,9 +30547,6 @@ components:
           type: string
         product_id:
           type: string
-        pricing_access:
-          type: string
-          nullable: true
         sku:
           type: string
           nullable: true
@@ -31122,7 +31108,6 @@ components:
       required:
       - id
       - product_id
-      - pricing_access
       - sku
       - options_text
       - track_inventory
