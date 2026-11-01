@@ -15,11 +15,14 @@ module Spree
       # @param attributes [Hash] kind, number, issued_on, totals, file (or file_signed_id)…
       # @param uploaded_by [Object, nil] the admin user, seller user or integration
       # @param source [String] uploaded | generated
+      # @param issuer [Spree::Store, Spree::Seller, nil] who the caller issues as;
+      #   refused when the parent is invoiced by someone else
       # @return [Spree::ServiceModule::Result] the invoice on success
-      def perform(parent:, attributes:, uploaded_by: nil, source: 'uploaded')
+      def perform(parent:, attributes:, uploaded_by: nil, source: 'uploaded', issuer: nil)
         super
 
         step :build_invoice
+        step :ensure_issuer
         run_hooks :validate
 
         ApplicationRecord.transaction do
@@ -28,7 +31,7 @@ module Spree
         end
 
         run_hooks :after_create
-        success(invoice.reload)
+        success(invoice)
       end
 
       private
@@ -39,12 +42,20 @@ module Spree
 
         case parent
         when Spree::Order
-          invoice.assign_attributes(order: parent, store: parent.store, issuer: Spree::Invoice.issuer_for(parent))
-          invoice.currency ||= parent.currency
+          invoice.assign_attributes(order: parent, issuer: Spree::Invoice.issuer_for(parent))
         when Spree::SellerPayout
-          invoice.assign_attributes(seller_payout: parent, store: parent.store, issuer: parent.store)
-          invoice.currency ||= parent.currency
+          invoice.assign_attributes(seller_payout: parent, issuer: parent.store)
         end
+        invoice.store = parent.store
+        invoice.currency ||= parent.currency
+      end
+
+      # A seller invoices their own orders; a platform-remitted seller's are
+      # the store's, in the store's numbering.
+      def ensure_issuer
+        return if issuer.nil? || invoice.issuer == issuer
+
+        failure(invoice, I18n.t('spree.invoices.errors.store_invoices_order'))
       end
 
       # The unique index is the guarantee: two uploads of one number racing

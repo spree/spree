@@ -25,22 +25,6 @@ module Spree
                 description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. PDF, image, office document or CSV."
             end
 
-            def create
-              document = @parent.order_documents.new(
-                store: @parent.store,
-                label: params[:label],
-                file_signed_id: params[:file_signed_id],
-                customer_visible: true,
-                uploaded_by: try_spree_current_user
-              )
-
-              if document.save
-                render json: serialize_resource(document), status: :created
-              else
-                render_validation_error(document.errors)
-              end
-            end
-
             # POST /api/v3/store/orders/:order_id/documents/upload
             #
             # Prepares a private upload for the buyer's document. Nested under
@@ -49,12 +33,9 @@ module Spree
             # the order. The declared size and type are checked before any URL
             # is minted; attaching re-checks the stored bytes.
             def upload
-              file_upload = Spree::FileUpload.new(
-                store: current_store,
-                visibility: 'private',
-                max_byte_size: Spree::OrderDocument::MAX_FILE_SIZE,
-                allowed_content_types: Spree::OrderDocument::CONTENT_TYPES,
-                **params.permit(*declared_permitted_attributes).to_h.symbolize_keys
+              file_upload = Spree::FileUpload.for_private_document(
+                Spree::OrderDocument, :file,
+                store: current_store, **params.permit(*declared_permitted_attributes).to_h.symbolize_keys
               )
 
               if file_upload.save
@@ -62,11 +43,6 @@ module Spree
               else
                 render_validation_error(file_upload.errors)
               end
-            end
-
-            # GET /api/v3/store/orders/:order_id/documents/:id/download
-            def download
-              stream_private_file(@resource.file)
             end
 
             protected
@@ -87,6 +63,21 @@ module Spree
 
             def collection_includes
               [{ file_attachment: :blob }]
+            end
+
+            def parent_association
+              :order_documents
+            end
+
+            def permitted_params
+              params.permit(*declared_permitted_attributes)
+            end
+
+            # What the buyer adds is theirs, and so always shown to them.
+            def build_resource
+              super.tap do |document|
+                document.assign_attributes(store: @parent.store, customer_visible: true, uploaded_by: try_spree_current_user)
+              end
             end
 
             def read_actions

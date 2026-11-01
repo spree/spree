@@ -13,8 +13,6 @@ module Spree
                  issuer_type: [:string, enum: Spree::Invoice::ISSUER_TYPES.map { |type| Spree::Base.polymorphic_api_type(type) }, enum_type_name: 'InvoiceIssuerType'],
                  issuer_name: [:string, nullable: true],
                  original_invoice_id: [:string, nullable: true],
-                 file_filename: [:string, nullable: true],
-                 file_byte_size: ['number | null'],
                  download_url: [:string, nullable: true]
 
         attributes :kind, :number, :currency
@@ -31,18 +29,9 @@ module Spree
           Spree::Base.polymorphic_api_type(invoice.issuer_type)
         end
 
-        attribute :issuer_name do |invoice|
-          issuer = invoice.issuer
-          issuer.try(:legal_name).presence || issuer&.name
-        end
+        attribute :issuer_name, &:issuer_name
 
-        attribute :file_filename do |invoice|
-          invoice.file.blob&.filename&.to_s if invoice.file.attached?
-        end
-
-        attribute :file_byte_size do |invoice|
-          invoice.file.blob&.byte_size if invoice.file.attached?
-        end
+        private_file_attributes :file
 
         # Our own endpoint, streamed to whoever owns the order.
         attribute :download_url do |invoice|

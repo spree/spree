@@ -71,10 +71,10 @@ export function useDeleteOrderInvoice(orderId: string) {
   })
 }
 
-export function useResendOrderInvoice(orderId: string) {
+export function useResendOrderInvoice() {
   return useResourceMutation<Invoice, Error, string>({
+    // Sending happens later in a job, so there is nothing new to refetch.
     mutationFn: (id) => resource().invoices.resend(id),
-    invalidate: [['order-invoices', orderId]],
     successMessage: i18n.t('admin.order_documents.invoice_resent'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })

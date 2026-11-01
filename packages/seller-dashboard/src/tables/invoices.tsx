@@ -1,38 +1,26 @@
 import { INVOICE_KINDS } from '@spree/core'
 import {
   defineTable,
-  downloadFromApi,
   formatMoney,
-  getApiClient,
-  useAuth,
+  InvoiceKindBadge,
+  invoiceKindLabel,
+  useDownload,
 } from '@spree/dashboard-core'
-import { Button, StatusBadge } from '@spree/dashboard-ui'
+import { Button } from '@spree/dashboard-ui'
 import { ReceiptTextIcon } from '@spree/dashboard-ui/icons'
 import type { Invoice } from '@spree/seller-sdk'
 import i18n from 'i18next'
 
-function kindLabel(kind: string): string {
-  return i18n.t(`admin.order_documents.kinds.${kind}`, { defaultValue: kind })
-}
-
 /** The invoice number, downloading the PDF through the Seller API. */
 function InvoiceNumber({ invoice }: { invoice: Invoice }) {
-  const { token } = useAuth()
+  const download = useDownload()
 
   return (
     <Button
       type="button"
       variant="link"
       className="h-auto p-0 font-medium"
-      onClick={() =>
-        invoice.download_url &&
-        downloadFromApi(
-          token,
-          invoice.download_url,
-          invoice.file_filename ?? invoice.number,
-          getApiClient().downloadHeaders?.() ?? {},
-        )
-      }
+      onClick={() => download(invoice.download_url, invoice.file_filename ?? invoice.number)}
     >
       {invoice.number}
     </Button>
@@ -60,16 +48,10 @@ defineTable<Invoice>('seller-invoices', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: INVOICE_KINDS.map((value) => ({ value, label: kindLabel(value) })),
+      filterOptions: INVOICE_KINDS.map((value) => ({ value, label: invoiceKindLabel(value) })),
       quickFilter: true,
       default: true,
-      render: (invoice) => (
-        <StatusBadge
-          status={invoice.kind}
-          tone={invoice.kind === 'credit_note' ? 'warning' : 'neutral'}
-          label={kindLabel(invoice.kind)}
-        />
-      ),
+      render: (invoice) => <InvoiceKindBadge kind={invoice.kind} />,
     },
     {
       key: 'issuer_name',

@@ -11,6 +11,12 @@ module Spree
   module PrivateDocument
     extend ActiveSupport::Concern
 
+    included do
+      # Each slot's accepted types and size cap, so an upload can be refused
+      # before a byte is sent (see Spree::FileUpload.for_private_document).
+      class_attribute :private_document_limits, instance_writer: false, default: {}
+    end
+
     class_methods do
       # @param slot [Symbol] the `has_one_attached` name
       # @param content_types [Array<String>] accepted types, decided from the bytes
@@ -20,6 +26,7 @@ module Spree
       def has_private_document(slot, content_types:, max_size:, required: false)
         has_one_attached slot, service: Spree.private_storage_service_name
         signed_id_attachments slot
+        self.private_document_limits = private_document_limits.merge(slot => { content_types: content_types, max_size: max_size })
 
         validates slot, attached: true if required
         validates slot, size: { less_than_or_equal_to: max_size }, if: -> { public_send(slot).attached? }

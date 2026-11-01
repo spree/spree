@@ -12,8 +12,6 @@ module Spree
           extend ActiveSupport::Concern
 
           included do
-            include ActiveStorage::SetCurrent
-
             request_params :invoice do |body|
               body.attribute :kind, :string, required: true, choices: Spree::Invoice::KINDS,
                 description: 'A credit note corrects an earlier invoice or receipt and carries negative totals.'
@@ -52,19 +50,16 @@ module Spree
             Spree.invoice_create_workflow
           end
 
+          # The model keeps a credit note's original on the same order or
+          # payout, whoever calls.
           def create_workflow_arguments
-            { parent: @parent, attributes: invoice_attributes, uploaded_by: current_actor }
+            { parent: @parent, attributes: permitted_params, uploaded_by: current_actor, issuer: acting_issuer }
           end
 
-          private
-
-          # The original invoice is read through the parent, so an id from
-          # another order or payout is a 404 rather than a cross-link.
-          def invoice_attributes
-            attributes = params.permit(*declared_permitted_attributes).to_h
-            original_id = attributes.delete('original_invoice_id')
-            attributes['original_invoice'] = @parent.invoices.find_by_prefix_id!(original_id) if original_id.present?
-            attributes
+          # Who the caller issues as, or nil when the order decides (the
+          # operator uploads for whoever sold the goods).
+          def acting_issuer
+            nil
           end
         end
       end

@@ -56,10 +56,8 @@ module Spree
     after_destroy :reopen_invoice_request
 
     scope :invoices, -> { where(kind: 'invoice') }
-    scope :credit_notes, -> { where(kind: 'credit_note') }
     # What counts as an order having been invoiced: an invoice or a receipt.
     scope :sale_documents, -> { where(kind: %w[invoice receipt]) }
-    scope :sent, -> { where.not(sent_at: nil) }
 
     self.whitelisted_ransackable_attributes = %w[kind source number issued_on supplied_on currency total
                                                  order_id seller_payout_id issuer_type issuer_id created_at sent_at]
@@ -76,6 +74,19 @@ module Spree
     def self.issuer_for(order)
       seller = order.seller
       seller && seller.tax_remittance != 'platform' ? seller : order.store
+    end
+
+    # The name printed for the issuer: a legal name when one is recorded.
+    #
+    # @return [String, nil]
+    def issuer_name
+      issuer.try(:legal_name).presence || issuer&.name
+    end
+
+    # @param _store [Spree::Store, nil] the exporting store, unused: an invoice knows its own
+    # @return [Array] one CSV row
+    def to_csv(_store = nil)
+      Spree::CSV::InvoicePresenter.new(self).call
     end
 
     # @return [Boolean]

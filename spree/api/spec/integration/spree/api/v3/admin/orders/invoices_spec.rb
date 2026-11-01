@@ -84,7 +84,7 @@ RSpec.describe 'Admin Order Invoices API', type: :request, swagger_doc: 'api-ref
         run_test!
       end
 
-      response '404', "credit note pointing at another order's invoice" do
+      response '422', "credit note pointing at another order's invoice" do
         let(:body) do
           { kind: 'credit_note', number: 'CN/1', issued_on: '2026-11-01', total: '-5.00', file_signed_id: pdf.signed_id,
             original_invoice_id: create(:invoice).prefixed_id }

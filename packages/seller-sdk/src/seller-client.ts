@@ -859,12 +859,16 @@ export class SellerClient {
     invoiceRequests: {
       list: (
         orderId: string,
+        params?: ListParams<{ status_eq?: 'open' | 'fulfilled' }>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<InvoiceRequest>> =>
         this.request<PaginatedResponse<InvoiceRequest>>(
           'GET',
           `/orders/${orderId}/invoice_requests`,
-          options,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
         ),
     },
 
