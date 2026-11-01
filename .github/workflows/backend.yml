@@ -3,6 +3,9 @@ name: Backend
 # Called by ci.yml, which runs this suite only when relevant files changed.
 on:
   workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: false
 
 permissions:
   contents: read

@@ -63,14 +63,14 @@ jobs:
     needs: changes
     if: needs.changes.outputs.backend == 'true'
     uses: ./.github/workflows/backend.yml
-    secrets: inherit
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   frontend-suite:
     name: "Frontend"
     needs: changes
     if: needs.changes.outputs.frontend == 'true'
     uses: ./.github/workflows/frontend.yml
-    secrets: inherit
 
   # The two checks branch protection requires. Each fails on any failed or
   # cancelled job in its suite, and passes when the suite passed or was skipped.
