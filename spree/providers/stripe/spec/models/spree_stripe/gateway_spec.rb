@@ -241,7 +241,13 @@ RSpec.describe SpreeStripe::Gateway do
     subject { gateway.webhook_url }
 
     it 'returns the core payment webhook url' do
-      expect(subject).to eq("#{store.url_or_custom_domain}/api/v3/webhooks/payments/#{gateway.prefixed_id}")
+      expect(subject).to eq("#{store.formatted_url_or_custom_domain}/api/v3/webhooks/payments/#{gateway.prefixed_id}")
+    end
+
+    it 'is an absolute url when the store url is a bare host' do
+      store.update!(url: 'shop.example.com')
+
+      expect(URI.parse(subject).scheme).to be_present
     end
   end
 
