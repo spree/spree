@@ -5,9 +5,9 @@
     },
     "app_name": "Quản trị viên Spree",
     "a11y": {
-      "breadcrumb": "Vụn bánh mì",
+      "breadcrumb": "Đường dẫn điều hướng",
       "breadcrumb_more": "Thêm",
-      "bulk_actions": "Hành động hàng loạt",
+      "bulk_actions": "Thao tác hàng loạt",
       "change_color": "Thay đổi màu sắc ({{value}})",
       "clear_date": "Xóa ngày",
       "clear_selection": "Xóa lựa chọn",
@@ -49,7 +49,7 @@
       "view_store": "Xem cửa hàng"
     },
     "actions": {
-      "actions_menu": "Hành động",
+      "actions_menu": "Thao tác",
       "add": "Thêm",
       "adding": "Đang thêm…",
       "apply": "Áp dụng",
@@ -75,7 +75,7 @@
       "hide": "Ẩn",
       "import": "Nhập khẩu",
       "invite": "Mời",
-      "more_actions": "Thêm hành động",
+      "more_actions": "Thao tác khác",
       "remove": "Xóa",
       "remove_item": "Xóa {{label}}",
       "remove_rule": "Xóa quy tắc",
@@ -245,7 +245,7 @@
             "stock_location": "Vị trí",
             "stock_location_plural": "Địa điểm",
             "stock_transfer": "Chuyển khoản",
-            "stock_transfer_plural": "Chuyển nhượng"
+            "stock_transfer_plural": "Chuyển kho"
           },
           "verbs": "thêm, mới, tạo"
         },
@@ -742,7 +742,7 @@
         "label": "Vận chuyển"
       },
       "slug": {
-        "label": "Sên"
+        "label": "Slug"
       },
       "starts_at": {
         "label": "Bắt đầu"
@@ -770,7 +770,7 @@
           "label": "Có thể đặt hàng trước theo mặc định"
         },
         "default": {
-          "help": "Mức cổ phiếu mới lan truyền ở đây. Chỉ có một vị trí có thể được mặc định.",
+          "help": "Các mức tồn kho mới được tạo tại đây. Chỉ một địa điểm có thể được đặt làm mặc định.",
           "label": "Vị trí mặc định"
         },
         "kind": {
@@ -792,7 +792,7 @@
           "placeholder": "60"
         },
         "pickup_stock_policy": {
-          "label": "Chính sách chứng khoán"
+          "label": "Chính sách tồn kho"
         },
         "propagate_all_variants": {
           "help": "Tạo mức tồn kho tại vị trí này cho mọi mẫu mã sản phẩm.",
@@ -805,7 +805,7 @@
       },
       "storefront_visible": {
         "help": "Khi tắt, chỉ nhân viên quản trị mới thấy tùy chọn này (lệnh hỗ trợ, nhập thủ công).",
-        "label": "Hiển thị trên mặt tiền cửa hàng"
+        "label": "Hiển thị trên cửa hàng trực tuyến"
       },
       "subtotal": {
         "label": "Tổng phụ"
@@ -1110,7 +1110,7 @@
       "removed": "Đã xóa",
       "saved": "Đã lưu",
       "settings_updated": "Đã cập nhật cài đặt",
-      "stock_location_saved": "Đã lưu vị trí chứng khoán",
+      "stock_location_saved": "Đã lưu địa điểm lưu kho",
       "store_credit_removed": "Đã xóa tín dụng cửa hàng",
       "store_credit_saved": "Đã lưu tín dụng cửa hàng",
       "store_settings_updated": "Đã cập nhật cài đặt cửa hàng",
@@ -1152,9 +1152,9 @@
     "pages": {
       "settings": {
         "stock_locations": {
-          "add_sheet_title": "Thêm vị trí chứng khoán",
+          "add_sheet_title": "Thêm địa điểm lưu kho",
           "edit_sheet_title": "Chỉnh sửa vị trí kho",
-          "search_placeholder": "Tìm kiếm địa điểm chứng khoán…"
+          "search_placeholder": "Tìm kiếm địa điểm lưu kho…"
         },
         "package_types": {
           "add_sheet_title": "Thêm loại gói"
@@ -1236,7 +1236,7 @@
           "create_failed": "Không tạo được sản phẩm",
           "create_succeeded": "Sản phẩm đã được tạo",
           "description": "Thiết lập sản phẩm của bạn - thêm các biến thể, giá cả, khoảng không quảng cáo, phương tiện và trường tùy chỉnh",
-          "preview_slug_placeholder": "sên-sản phẩm của bạn",
+          "preview_slug_placeholder": "duong-dan-san-pham",
           "save_label": "Tạo sản phẩm",
           "title": "Sản phẩm mới"
         },
@@ -1392,7 +1392,7 @@
           "section_from": "Từ",
           "section_items": "Mặt hàng",
           "section_to": "Đến",
-          "sheet_title": "Chuyển nhượng cổ phiếu mới"
+          "sheet_title": "Tạo phiếu chuyển kho"
         },
         "variants_empty": "Chưa có biến thể nào.",
         "variants_one": "{{count}} biến thể",
@@ -1418,15 +1418,15 @@
       "clone": "Trùng lặp",
       "delete": "Xóa",
       "edit": "Chỉnh sửa",
-      "menu_label": "Mở hành động"
+      "menu_label": "Mở menu thao tác"
     },
     "settings_nav": {
       "groups": {
-        "fulfillment": "Thực hiện",
+        "fulfillment": "Xử lý đơn hàng",
         "team": "Nhóm và quyền truy cập"
       },
       "items": {
-        "stock_locations": "Địa điểm chứng khoán"
+        "stock_locations": "Địa điểm lưu kho"
       }
     },
     "settings_page": {
@@ -1437,7 +1437,7 @@
       "title": "Cài đặt"
     },
     "stock_locations": {
-      "add_cta": "Thêm vị trí chứng khoán",
+      "add_cta": "Thêm địa điểm lưu kho",
       "badges": {
         "default": "Mặc định",
         "enabled": "Đã bật",
@@ -1452,7 +1452,7 @@
         "type": "Loại"
       },
       "create_description": "Thêm nhà kho, cửa hàng hoặc điểm nhận hàng để thực hiện đơn hàng.",
-      "create_label": "Tạo vị trí chứng khoán",
+      "create_label": "Tạo địa điểm lưu kho",
       "delete_confirm": {
         "message": "{{name}} sẽ bị xóa. Mức tồn kho tại địa điểm này cũng sẽ bị xóa.",
         "title": "Xóa vị trí kho hàng?"
@@ -1460,7 +1460,7 @@
       "edit_description": "Cập nhật chính sách về tên, địa chỉ, nhận hàng hoặc tồn kho.",
       "empty": "Chưa có địa điểm còn hàng",
       "kinds": {
-        "fulfillment_center": "Trung tâm thực hiện",
+        "fulfillment_center": "Trung tâm xử lý đơn hàng",
         "store": "Cửa hàng",
         "warehouse": "Kho"
       },
@@ -1477,7 +1477,7 @@
         "empty": "Chưa có mức tồn kho tại địa điểm này.",
         "empty_search": "Không có mức tồn kho phù hợp với tìm kiếm của bạn.",
         "help": "Điều chỉnh số lượng có sẵn và có thể đặt hàng trước cho mỗi biến thể.",
-        "low_stock_marker": "cổ phiếu thấp",
+        "low_stock_marker": "Sắp hết hàng",
         "search_placeholder": "Tìm kiếm SKU hoặc sản phẩm…",
         "table": {
           "backorder": "Đặt hàng trước",
@@ -1514,7 +1514,7 @@
         "product_not_in_store": "tất cả phải thuộc về cửa hàng này",
         "required": "phải tồn tại",
         "seeded_report_read_only": "Đây là một báo cáo tích hợp và không thể thay đổi. Thay vào đó hãy lưu một bản sao.",
-        "taken": "đã được thực hiện rồi",
+        "taken": "đã được sử dụng",
         "too_long": "quá dài (tối đa là {{count}} ký tự)",
         "too_many_decimals": "có nhiều hơn {{count}} chữ số thập phân",
         "too_short": "quá ngắn (tối thiểu là {{count}} ký tự)",
@@ -1629,7 +1629,7 @@
       "seo": {
         "meta_description_placeholder": "Mô tả SEO",
         "meta_title_placeholder": "Tiêu đề SEO",
-        "slug_placeholder": "sản phẩm-url-xử lý"
+        "slug_placeholder": "duong-dan-san-pham"
       },
       "tax_category_placeholder": "Chọn danh mục thuế",
       "tax": {
@@ -1641,7 +1641,7 @@
       "transfers": {
         "create_description": "Di chuyển hàng giữa các địa điểm hoặc nhận hàng mới từ nhà cung cấp bên ngoài.",
         "delete_confirm": {
-          "message": "Biến động cổ phiếu được tạo ra bởi việc chuyển nhượng này sẽ bị đảo ngược.",
+          "message": "Các biến động tồn kho do phiếu chuyển kho này tạo ra sẽ được hoàn tác.",
           "title": "Xóa đợt chuyển này?"
         },
         "destination_placeholder": "Chọn vị trí đích",
@@ -1651,7 +1651,7 @@
         "fields": {
           "created": "Đã tạo",
           "external_receive": "Nhận bên ngoài",
-          "immutable_note": "Chuyển nhượng cổ phiếu là bất biến một khi được tạo ra.",
+          "immutable_note": "Không thể chỉnh sửa phiếu chuyển kho sau khi tạo.",
           "internal": "Nội bộ",
           "reference": "Tài liệu tham khảo",
           "type": "Loại"
@@ -1661,7 +1661,7 @@
           "sku": "Mã hàng",
           "variant": "Biến thể"
         },
-        "new_cta": "Chuyển nhượng mới",
+        "new_cta": "Tạo phiếu chuyển kho",
         "reference_label": "Tài liệu tham khảo",
         "reference_placeholder": "Số PO, hóa đơn nhà cung cấp,…",
         "review_description": "Xem lại quá trình chuyển trước khi tạo. Các mục không thể thay đổi sau đó.",

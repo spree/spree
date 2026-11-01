@@ -15,7 +15,7 @@
   },
   "admin": {
     "actions": {
-      "actions_menu": "Hành động",
+      "actions_menu": "Thao tác",
       "cancel": "Hủy bỏ",
       "delete": "Xóa",
       "edit": "Chỉnh sửa",
@@ -67,7 +67,7 @@
           "carrier_search": "Tìm kiếm nhà mạng",
           "delivery_method": "Phương thức giao hàng",
           "edit_description": "Thay đổi nơi vận chuyển đơn hàng này và phương thức giao hàng nào vận chuyển đơn hàng đó.",
-          "edit_title": "Chỉnh sửa thực hiện",
+          "edit_title": "Chỉnh sửa phiếu xử lý đơn hàng",
           "edit_tracking_title": "Chỉnh sửa theo dõi",
           "move_and_requote": "Di chuyển và báo giá lại",
           "no_rates": "Không có phương thức giao hàng nào được trích dẫn cho việc thực hiện này.",
@@ -92,7 +92,7 @@
         "notify_customer": "Gửi thông báo lô hàng cho khách hàng",
         "partial_hint": "Các đơn vị bạn đã chọn sẽ chuyển sang đơn hàng mới được vận chuyển ngay bây giờ. Phần còn lại ở trên cái này, vẫn mở.",
         "units_selected": "Đơn vị vận chuyển",
-        "submit": "Hoàn thành các mục"
+        "submit": "Xử lý sản phẩm"
       }
     },
     "tax_identifiers": {
@@ -214,7 +214,7 @@
     "retry": "Thử lại",
     "save": "Lưu",
     "saving": "Đang lưu…",
-    "actions": "Hành động",
+    "actions": "Thao tác",
     "edit": "Chỉnh sửa"
   },
   "delivery_methods": {
@@ -251,7 +251,7 @@
       "saved": "Đã lưu phương thức giao hàng"
     },
     "owner": {
-      "marketplace": "Thị trường",
+      "marketplace": "Sàn thương mại điện tử",
       "mine": "Của bạn"
     },
     "search_placeholder": "Tìm kiếm theo tên…",
@@ -267,7 +267,7 @@
     "title": "Phương thức giao hàng",
     "visibility": {
       "hidden": "Ẩn giấu",
-      "storefront": "Mặt tiền cửa hàng"
+      "storefront": "Cửa hàng trực tuyến"
     },
     "zone": {
       "everywhere": "Ở mọi nơi loại hàng hóa này đến"
@@ -331,7 +331,7 @@
     "setup_description": "{{done}} trong tổng số {{total}} đã xong — hãy hoàn tất những điều này để bắt đầu bán.",
     "setup_title": "Hoàn tất việc thiết lập",
     "status": "Trạng thái",
-    "subtitle": "Làm thế nào bạn đứng vững với thị trường này.",
+    "subtitle": "Tình hình hoạt động của bạn trên sàn thương mại điện tử.",
     "team": "Thành viên nhóm",
     "title": "Xin chào, {{name}}"
   },
@@ -343,7 +343,7 @@
     "password": "Mật khẩu",
     "submit": "Đăng nhập",
     "submitting": "Đang đăng nhập…",
-    "subtitle": "Quản lý mặt tiền cửa hàng, nhóm và các khoản thanh toán của bạn.",
+    "subtitle": "Quản lý cửa hàng trực tuyến, nhóm và các khoản thanh toán của bạn.",
     "title": "Đăng nhập vào bảng điều khiển người bán của bạn"
   },
   "nav": {
@@ -403,7 +403,7 @@
     },
     "billing_address": "Địa chỉ thanh toán",
     "columns": {
-      "fulfillment": "Thực hiện",
+      "fulfillment": "Xử lý đơn hàng",
       "number": "Đặt hàng",
       "payment": "Thanh toán",
       "placed": "Đã đặt",
@@ -421,14 +421,14 @@
       "not_settled": "Chưa thanh toán"
     },
     "empty": "Chưa có đơn đặt hàng nào. Chúng xuất hiện ở đây khi khách hàng mua hàng của bạn.",
-    "fulfill": "Đánh dấu là đã hoàn thành",
+    "fulfill": "Đánh dấu đã xử lý",
     "fulfillment_statuses": {
       "backorder": "Đặt hàng trước",
       "canceled": "Đã hủy",
       "delivered": "Đã giao",
-      "fulfilled": "Đã hoàn thành",
+      "fulfilled": "Đã xử lý",
       "partial": "Một phần",
-      "unfulfilled": "Chưa thực hiện"
+      "unfulfilled": "Chưa xử lý"
     },
     "fulfillments": {
       "add_delivery": "Thêm theo dõi",
@@ -467,7 +467,7 @@
       "split_title": "Chia bưu kiện này",
       "split_would_empty": "Di chuyển mọi thứ sẽ khiến bưu kiện này trống rỗng.",
       "splitting": "Chia tách…",
-      "title": "Thực hiện",
+      "title": "Phiếu xử lý đơn hàng",
       "upload_label": "Tải nhãn lên"
     },
     "items": "Mặt hàng",
@@ -533,7 +533,7 @@
         "approved": "Đã được phê duyệt",
         "received": "Đã nhận",
         "refunded": "Đã hoàn tiền",
-        "fulfilled": "Đã hoàn thành",
+        "fulfilled": "Đã xử lý",
         "open": "Mở",
         "resolved": "Đã giải quyết",
         "denied": "Bị từ chối",
@@ -548,9 +548,9 @@
       "cancel_note": "Thông báo hủy",
       "cancel_reason": "Lý do hủy",
       "canceled_at": "Đã hủy vào lúc",
-      "commission_fee": "Phí thị trường",
-      "commission_tax": "Thuế phí thị trường",
-      "commission_total": "Tổng phí thị trường",
+      "commission_fee": "Phí sàn",
+      "commission_tax": "Thuế phí sàn",
+      "commission_total": "Tổng phí sàn",
       "completed_at": "Hoàn thành lúc",
       "created_at": "Được tạo vào lúc",
       "currency": "Tiền tệ",
@@ -601,7 +601,7 @@
       "title": "Xóa chính sách?",
       "message": "{{name}} sẽ bị xóa. Nếu thị trường yêu cầu nó, việc giới thiệu của bạn sẽ lại cho thấy nó nổi bật."
     },
-    "description": "Các tài liệu pháp lý mà người mua hàng nhìn thấy trên mặt tiền cửa hàng của bạn.",
+    "description": "Các tài liệu pháp lý mà người mua hàng nhìn thấy trên cửa hàng trực tuyến của bạn.",
     "empty": {
       "title": "Chưa có chính sách",
       "description": "Xuất bản các tài liệu mà thị trường này yêu cầu bạn."
@@ -684,7 +684,7 @@
       "product_type": "Loại sản phẩm",
       "product_type_placeholder": "Chọn một loại",
       "sku": "Mã hàng",
-      "slug": "Xử lý URL",
+      "slug": "Đường dẫn URL",
       "status": "Trạng thái",
       "stock": "Kho",
       "weight": "Cân nặng"
@@ -748,7 +748,7 @@
     "no_about": "Bạn chưa viết mô tả.",
     "not_provided": "Không được cung cấp",
     "on_holiday_notice": "Chế độ nghỉ lễ đang bật nên sản phẩm của bạn có thể nhìn thấy nhưng không thể mua được.",
-    "operator_managed": "Do thị trường đặt ra",
+    "operator_managed": "Do sàn thương mại điện tử thiết lập",
     "payout_schedule": "Lịch thanh toán",
     "products_count": "Sản phẩm",
     "registration_number": "Số đăng ký",
@@ -770,7 +770,7 @@
       "rejected": "Đơn đăng ký của bạn không được chấp nhận. Hãy liên hệ với thị trường để tìm hiểu thêm.",
       "suspended": "Việc bán hàng bị tạm dừng. Hãy liên hệ với thị trường để tìm hiểu thêm."
     },
-    "subtitle": "Mặt tiền cửa hàng của bạn giới thiệu bạn như thế nào và thị trường tiếp cận bạn như thế nào.",
+    "subtitle": "Cửa hàng trực tuyến của bạn giới thiệu bạn như thế nào và thị trường tiếp cận bạn như thế nào.",
     "tax_identifier_kind": "Loại đăng ký",
     "tax_identifier_kinds": {
       "au_abn": "Số doanh nghiệp Úc",

@@ -316,7 +316,7 @@
       "products_count_other": "{{count}} sản phẩm",
       "search_placeholder": "Tìm kiếm danh mục…",
       "seo": {
-        "preview_slug_placeholder": "sên thể loại",
+        "preview_slug_placeholder": "duong-dan-danh-muc",
         "title": "Tối ưu hóa công cụ tìm kiếm"
       },
       "title": "Danh mục"
@@ -419,11 +419,11 @@
       },
       "search_placeholder": "Tìm kiếm bộ sưu tập…",
       "seo": {
-        "preview_slug_placeholder": "bộ sưu tập sên",
+        "preview_slug_placeholder": "duong-dan-bo-suu-tap",
         "title": "Tối ưu hóa công cụ tìm kiếm"
       },
       "sort_order": {
-        "description": "Cách thức đặt hàng sản phẩm trên mặt tiền cửa hàng trừ khi người mua hàng tự chọn cách phân loại.",
+        "description": "Thứ tự hiển thị sản phẩm trên cửa hàng trực tuyến khi khách hàng chưa chọn cách sắp xếp khác.",
         "title": "Sắp xếp mặc định"
       },
       "sort_orders": {
@@ -595,7 +595,7 @@
         "message": "{{label}} sẽ bị xóa cùng với mọi giá trị được lưu trữ cho nó.",
         "title": "Xóa trường tùy chỉnh?"
       },
-      "edit_description": "Cập nhật nhãn, khóa hoặc khả năng hiển thị mặt tiền cửa hàng. Chủ sở hữu không thể thay đổi khi giá trị tồn tại.",
+      "edit_description": "Cập nhật nhãn, khóa hoặc khả năng hiển thị cửa hàng trực tuyến. Chủ sở hữu không thể thay đổi khi giá trị tồn tại.",
       "empty": "Chưa có định nghĩa trường tùy chỉnh",
       "errors": {
         "failed_to_create": "Không tạo được định nghĩa trường tùy chỉnh",
@@ -787,7 +787,7 @@
       "connect_provider_hint": "{{name}} có thể báo giá cước trực tiếp của nhà cung cấp dịch vụ — kết nối nó để kích hoạt.",
       "create_label": "Tạo phương thức giao hàng",
       "delete_confirm": {
-        "message": "Xóa \"{{name}}\"? Mặt tiền cửa hàng sẽ ngừng cung cấp nó ngay lập tức.",
+        "message": "Xóa \"{{name}}\"? Cửa hàng trực tuyến sẽ ngừng cung cấp nó ngay lập tức.",
         "title": "Xóa phương thức giao hàng"
       },
       "detail": {},
@@ -960,7 +960,7 @@
       "available_in": "Có sẵn trong Spree Enterprise",
       "badge": "Doanh nghiệp",
       "cta": "Nhận doanh nghiệp Spree",
-      "footer": "Spree Enterprise bổ sung tính năng này vào Spree nguồn mở mà bạn đã chạy. Dữ liệu, mặt tiền cửa hàng và tiện ích tích hợp của bạn vẫn giữ nguyên như cũ.",
+      "footer": "Spree Enterprise bổ sung tính năng này vào Spree nguồn mở mà bạn đã chạy. Dữ liệu, cửa hàng trực tuyến và tiện ích tích hợp của bạn vẫn giữ nguyên như cũ.",
       "how_it_works": "Nó hoạt động như thế nào",
       "learn_more": "Tìm hiểu về Spree Enterprise",
       "previews": {
@@ -1009,7 +1009,7 @@
               "title": "Danh sách kiểm tra của riêng bạn"
             },
             "dialogue": {
-              "description": "Gửi lại đơn đăng ký kèm theo một ghi chú thay vì từ chối nó. Câu trả lời kinh doanh từ mặt tiền cửa hàng của bạn.",
+              "description": "Gửi trả hồ sơ kèm ghi chú thay vì từ chối. Doanh nghiệp phản hồi trên cửa hàng trực tuyến của bạn.",
               "title": "Hỏi thêm thông tin"
             }
           },
@@ -1021,7 +1021,7 @@
               "title": "Chấp thuận"
             },
             "register": {
-              "description": "Một doanh nghiệp đăng ký trên mặt tiền cửa hàng của bạn.",
+              "description": "Một doanh nghiệp đăng ký trên cửa hàng trực tuyến của bạn.",
               "title": "Đăng ký"
             },
             "review": {
@@ -1247,7 +1247,7 @@
         "fulfillment_locations": {
           "all": "Tất cả địa điểm",
           "help": "Kho, quầy lấy hàng nào thực hiện đơn hàng đặt trên kênh bán hàng này.",
-          "label": "Địa điểm thực hiện",
+          "label": "Địa điểm xử lý đơn hàng",
           "none_selected_hint": "Chọn ít nhất một vị trí hoặc chọn \"Tất cả vị trí\".",
           "selected": "Địa điểm đã chọn"
         },
@@ -1274,7 +1274,7 @@
         "storefront_access": {
           "help": "Kiểm soát những gì khách truy cập ẩn danh có thể xem trên kênh này. Để trống để kế thừa cài đặt cửa hàng. Khi giá bị ẩn, khách phải đăng nhập để thanh toán.",
           "inherit": "Kế thừa từ cửa hàng",
-          "label": "Quyền truy cập mặt tiền cửa hàng",
+          "label": "Quyền truy cập cửa hàng trực tuyến",
           "options": {
             "login_required": "Yêu cầu đăng nhập - khách truy cập phải đăng nhập để duyệt",
             "prices_hidden": "Giá ẩn - khách truy cập phải đăng nhập để xem giá",
@@ -1414,7 +1414,7 @@
             "promotion": "Khuyến mãi",
             "gift_card": "Thẻ quà tặng",
             "store_credit": "Lưu trữ tín dụng",
-            "stock_transfer": "Chuyển nhượng cổ phiếu",
+            "stock_transfer": "Chuyển kho",
             "purchase_order": "Đơn đặt hàng",
             "company": "Công ty",
             "payment_method": "Phương thức thanh toán",
@@ -1428,16 +1428,16 @@
           "api_only_group": "Chỉ thông qua API"
         },
         "searchable": {
-          "help": "Bao gồm các giá trị trong tìm kiếm văn bản sản phẩm trên mặt tiền cửa hàng (văn bản ngắn, văn bản dài và chỉ số). Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
+          "help": "Bao gồm các giá trị trong tìm kiếm văn bản sản phẩm trên cửa hàng trực tuyến (văn bản ngắn, văn bản dài và chỉ số). Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
           "label": "Có thể tìm kiếm"
         },
         "sortable": {
-          "help": "Cho phép danh sách sản phẩm trên mặt tiền cửa hàng sắp xếp theo trường này (chỉ văn bản ngắn và số). Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
+          "help": "Cho phép danh sách sản phẩm trên cửa hàng trực tuyến sắp xếp theo trường này (chỉ văn bản ngắn và số). Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
           "label": "Có thể sắp xếp"
         },
         "storefront_visible": {
-          "column_label": "Mặt tiền cửa hàng",
-          "label": "Hiển thị trên mặt tiền cửa hàng"
+          "column_label": "Cửa hàng trực tuyến",
+          "label": "Hiển thị trên cửa hàng trực tuyến"
         }
       },
       "customer": {
@@ -1487,7 +1487,7 @@
         },
         "fulfillment_provider": {
           "help": "Cách thức thực hiện của phương pháp này được gửi đi và theo dõi.",
-          "label": "Nhà cung cấp thực hiện"
+          "label": "Đơn vị xử lý đơn hàng"
         },
         "markup_flat": {
           "label": "Đánh dấu (phẳng)"
@@ -1638,11 +1638,11 @@
           "label": "Có thể lọc"
         },
         "kind": {
-          "help": "Kiểm soát cách tùy chọn hiển thị trên mặt tiền cửa hàng. Mẫu màu hiển thị màu lục giác; các nút hiển thị hình ảnh thu nhỏ.",
+          "help": "Quy định cách hiển thị tùy chọn trên cửa hàng trực tuyến. Mẫu màu hiển thị màu theo mã hex; nút hiển thị ảnh thu nhỏ.",
           "label": "Loại"
         },
         "label": {
-          "help": "Hiển thị cho khách hàng trên mặt tiền cửa hàng.",
+          "help": "Hiển thị cho khách hàng trên cửa hàng trực tuyến.",
           "label": "Nhãn",
           "placeholder": "ví dụ. Cỡ áo"
         },
@@ -1733,7 +1733,7 @@
         },
         "provider_configuration": "Cấu hình nhà cung cấp",
         "storefront_visible": {
-          "label": "Hiển thị trên mặt tiền cửa hàng"
+          "label": "Hiển thị trên cửa hàng trực tuyến"
         },
         "type": {
           "label": "Nhà cung cấp",
@@ -1748,7 +1748,7 @@
           "placeholder": "Chính sách hoàn trả"
         },
         "slug": {
-          "help": "Địa chỉ mặt tiền cửa hàng cho chính sách này. Để trống, nó theo sau tên.",
+          "help": "Đường dẫn của chính sách trên cửa hàng trực tuyến. Để trống để tự tạo theo tên.",
           "placeholder": "chính sách hoàn trả"
         }
       },
@@ -2000,7 +2000,7 @@
       },
       "seller": {
         "about": {
-          "help": "Hiển thị trên hồ sơ mặt tiền cửa hàng của người bán.",
+          "help": "Hiển thị trên hồ sơ cửa hàng trực tuyến của người bán.",
           "label": "Về"
         },
         "billing_email": {
@@ -2052,7 +2052,7 @@
           "label": "Có thể đặt hàng trước theo mặc định"
         },
         "default": {
-          "help": "Mức cổ phiếu mới lan truyền ở đây. Chỉ có một vị trí có thể được mặc định.",
+          "help": "Các mức tồn kho mới được tạo tại đây. Chỉ một địa điểm có thể được đặt làm mặc định.",
           "label": "Vị trí mặc định"
         },
         "kind": {
@@ -2074,7 +2074,7 @@
           "placeholder": "60"
         },
         "pickup_stock_policy": {
-          "label": "Chính sách chứng khoán"
+          "label": "Chính sách tồn kho"
         },
         "propagate_all_variants": {
           "help": "Tạo mức tồn kho tại vị trí này cho mọi mẫu mã sản phẩm.",
@@ -2125,11 +2125,11 @@
           },
           "inventory_failure_policy": {
             "help": "Việc bán một mặt hàng không có sẵn sẽ có thể phục hồi được, vì vậy việc rút lui sẽ giúp bạn tiếp tục giao dịch.",
-            "label": "Nếu cổ phiếu không thể được xác nhận"
+            "label": "Nếu không thể xác nhận tồn kho"
           },
           "inventory_provider": {
             "docs_link": "Xây dựng nhà cung cấp hàng tồn kho",
-            "help": "Một nguồn bên ngoài sẽ được hỏi khi một mặt hàng được thêm vào giỏ hàng và khi thanh toán. Danh sách luôn hiển thị hồ sơ chứng khoán của riêng bạn.",
+            "help": "Nguồn bên ngoài được truy vấn khi thêm sản phẩm vào giỏ hàng và khi thanh toán. Danh sách sản phẩm luôn hiển thị dữ liệu tồn kho của bạn.",
             "label": "Mức tồn kho đến từ"
           },
           "not_connected": "Kết nối tích hợp này để sử dụng nó",
@@ -2235,7 +2235,7 @@
         },
         "storefront_access": {
           "help": "Mặc định trên toàn cửa hàng cho những gì khách truy cập ẩn danh có thể nhìn thấy. Các kênh có thể ghi đè điều này. Khi giá bị ẩn, khách phải đăng nhập để thanh toán.",
-          "label": "Quyền truy cập mặt tiền cửa hàng",
+          "label": "Quyền truy cập cửa hàng trực tuyến",
           "options": {
             "login_required": "Yêu cầu đăng nhập - khách truy cập phải đăng nhập để duyệt",
             "prices_hidden": "Giá ẩn - khách truy cập phải đăng nhập để xem giá",
@@ -2256,7 +2256,7 @@
           "label": "Theo dõi mức tồn kho"
         },
         "track_price_history": {
-          "help": "Giữ giá cũ để mặt tiền cửa hàng có thể hiển thị mức giá thấp nhất trong 30 ngày qua theo yêu cầu của quy định của EU.",
+          "help": "Giữ giá cũ để cửa hàng trực tuyến có thể hiển thị mức giá thấp nhất trong 30 ngày qua theo yêu cầu của quy định của EU.",
           "label": "Ghi lại lịch sử giá"
         },
         "payouts": {
@@ -2385,7 +2385,7 @@
         }
       },
       "storefront_visible": {
-        "label": "Hiển thị ở mặt tiền cửa hàng"
+        "label": "Hiển thị ở cửa hàng trực tuyến"
       },
       "tax_category": {
         "description": {
@@ -2897,10 +2897,10 @@
       "reports": "Báo cáo",
       "returns": "Trả lại",
       "seller_payouts": "Xuất chi",
-      "seller_transfers": "Chuyển nhượng người bán",
+      "seller_transfers": "Chuyển tiền cho người bán",
       "sellers": "Người bán",
       "settings": "Cài đặt",
-      "transfers": "Chuyển nhượng",
+      "transfers": "Chuyển kho",
       "translations": "Bản dịch",
       "purchase_orders": "Đơn đặt hàng",
       "inventory": "Hàng tồn kho",
@@ -2940,7 +2940,7 @@
       "columns": {
         "customer": "Khách hàng",
         "date": "Ngày",
-        "fulfillment": "Thực hiện",
+        "fulfillment": "Xử lý đơn hàng",
         "items": "Mặt hàng",
         "number": "Số",
         "payment": "Thanh toán",
@@ -3043,9 +3043,9 @@
         "confirm": {
           "approve_message": "Phê duyệt đơn đặt hàng này?",
           "cancel_message": "Bạn có chắc chắn muốn hủy đơn hàng này không?",
-          "cancel_shipment_confirm": "Hủy thực hiện",
-          "cancel_shipment_dismiss": "Giữ sự hoàn thành",
-          "cancel_shipment_message": "Hủy việc thực hiện này?",
+          "cancel_shipment_confirm": "Hủy xử lý đơn hàng",
+          "cancel_shipment_dismiss": "Giữ phiếu xử lý đơn hàng",
+          "cancel_shipment_message": "Hủy phiếu xử lý đơn hàng này?",
           "capture_message": "Nắm bắt khoản thanh toán này?",
           "complete_message": "Hoàn tất đơn đặt hàng dự thảo này ngay bây giờ?",
           "delete_message": "Xóa đơn hàng nháp {{number}}? Điều này không thể hoàn tác được.",
@@ -3084,8 +3084,8 @@
           "add_delivery": "Thêm theo dõi",
           "add_tracking": "Thêm theo dõi",
           "add_tracking_title": "Thêm theo dõi",
-          "awaiting_fulfillment_one": "{{count}} mục vẫn cần hoàn thành",
-          "awaiting_fulfillment_other": "{{count}} mục vẫn cần hoàn thành",
+          "awaiting_fulfillment_one": "Còn {{count}} sản phẩm cần xử lý",
+          "awaiting_fulfillment_other": "Còn {{count}} sản phẩm cần xử lý",
           "awaiting_hint": "Thêm đơn hàng để vận chuyển chúng.",
           "awaiting_hint_draft": "Chúng có thể được thực hiện sau khi đơn hàng được đặt.",
           "buy_label": "Mua nhãn",
@@ -3110,7 +3110,7 @@
           "confirm_split": "Chuyển những đơn vị này sang một đơn vị mới? Điều này có hiệu lực ngay lập tức.",
           "create_description": "Tạo ra sự hoàn thành và chuyển số lượng đã chọn vào đó.",
           "create_items": "Mặt hàng",
-          "create_title": "Thêm thực hiện",
+          "create_title": "Thêm phiếu xử lý đơn hàng",
           "delete_label": "Xóa nhãn",
           "deliveries_title": "Theo dõi",
           "delivery_method": "Phương thức giao hàng",
@@ -3124,9 +3124,9 @@
           },
           "documents_title": "Chứng từ vận chuyển",
           "edit_description": "Thay đổi nơi vận chuyển đơn hàng này và phương thức giao hàng nào vận chuyển đơn hàng đó.",
-          "edit_title": "Chỉnh sửa thực hiện",
+          "edit_title": "Chỉnh sửa phiếu xử lý đơn hàng",
           "edit_tracking_title": "Chỉnh sửa theo dõi",
-          "empty": "Chưa có sự thực hiện nào đối với đơn đặt hàng này.",
+          "empty": "Đơn hàng này chưa có phiếu xử lý nào.",
           "free": "Miễn phí",
           "label_cost": "Bưu phí",
           "label_refund_requested": "Đã yêu cầu hoàn tiền",
@@ -3140,7 +3140,7 @@
           "out_of_stock": "Hết hàng",
           "packing_slip_discount": "Giảm giá",
           "packing_slip_footer": "Cảm ơn bạn đã đặt hàng.",
-          "packing_slip_fulfillment": "Hoàn thành #{{number}}",
+          "packing_slip_fulfillment": "Phiếu xử lý #{{number}}",
           "packing_slip_order": "Đơn hàng #{{number}}",
           "packing_slip_shipping": "Vận chuyển",
           "packing_slip_subtotal": "Tổng phụ",
@@ -3159,11 +3159,11 @@
           "split_description": "Di chuyển một số đơn vị vào một đơn vị mới. Mỗi lần một sản phẩm.",
           "split_item": "Sản phẩm",
           "split_quantity": "Số lượng cần di chuyển",
-          "split_title": "Tách thực hiện",
+          "split_title": "Tách phiếu xử lý đơn hàng",
           "split_would_empty": "Hãy để lại ít nhất một đơn vị hoặc thay đổi nguồn gốc của toàn bộ quá trình thực hiện.",
           "tracking_description": "Số theo dõi của nhà cung cấp dịch vụ hoặc liên kết theo dõi đầy đủ.",
-          "unfulfilled_one": "Chưa thực hiện ({{count}})",
-          "unfulfilled_other": "Chưa thực hiện ({{count}})",
+          "unfulfilled_one": "Chưa xử lý ({{count}})",
+          "unfulfilled_other": "Chưa xử lý ({{count}})",
           "upload_label": "Tải nhãn lên",
           "upload_label_cost": "Chi phí bưu chính",
           "upload_label_description": "Ghi lại nhãn bạn đã mua ở nơi khác để bưu kiện có hồ sơ, số theo dõi và giá cả.",
@@ -3239,9 +3239,9 @@
           "cancel_reason": "Lý do hủy",
           "canceled_at": "Đã hủy vào lúc",
           "canceler": "Người hủy",
-          "commission_fee": "Phí thị trường",
-          "commission_tax": "Thuế phí thị trường",
-          "commission_total": "Tổng phí thị trường",
+          "commission_fee": "Phí sàn",
+          "commission_tax": "Thuế phí sàn",
+          "commission_total": "Tổng phí sàn",
           "outstanding_balance": "Số dư chưa thanh toán",
           "payment_total": "Tổng số tiền thanh toán",
           "promotions": "Khuyến mãi",
@@ -3249,7 +3249,7 @@
           "tax_included": "Thuế (đã bao gồm)"
         },
         "tracking": {
-          "fulfilled_prefix": "Đã hoàn thành",
+          "fulfilled_prefix": "Đã xử lý",
           "prefix": "Theo dõi"
         },
         "variant_search": {
@@ -3305,8 +3305,8 @@
           "restore_item": "Giữ {{name}}"
         },
         "badges": {
-          "fulfilled_count_one": "{{count}} đã hoàn thành",
-          "fulfilled_count_other": "{{count}} đã hoàn thành",
+          "fulfilled_count_one": "Đã xử lý {{count}} sản phẩm",
+          "fulfilled_count_other": "Đã xử lý {{count}} sản phẩm",
           "negotiated": "Đã thương lượng",
           "pending": "Chưa lưu",
           "price_reverting": "Hoàn nguyên về giá danh mục",
@@ -3337,14 +3337,14 @@
         "failed_to_update_address": "Không thể cập nhật địa chỉ"
       },
       "fulfill": {
-        "action": "Đánh dấu là đã hoàn thành",
+        "action": "Đánh dấu đã xử lý",
         "empty": "Việc thực hiện này không có mục nào có thể được thực hiện.",
         "include_item": "Tàu {{name}}",
         "notify_customer": "Gửi thông báo lô hàng cho khách hàng",
         "of_units": "của {{count}}",
         "partial_hint": "Các đơn vị bạn đã chọn sẽ chuyển sang đơn hàng mới được vận chuyển ngay bây giờ. Phần còn lại ở trên cái này, vẫn mở.",
         "quantity_for": "Số lượng vận chuyển {{name}}",
-        "submit": "Hoàn thành các mục",
+        "submit": "Xử lý sản phẩm",
         "tracking_label": "Số theo dõi",
         "tracking_placeholder": "Số theo dõi hoặc liên kết",
         "units_selected": "Đơn vị vận chuyển",
@@ -3356,11 +3356,11 @@
         "backorder": "Đặt hàng trước",
         "canceled": "Đã hủy",
         "delivered": "Đã giao",
-        "fulfilled": "Đã hoàn thành",
+        "fulfilled": "Đã xử lý",
         "partial": "Một phần",
         "pending": "Đang chờ xử lý",
         "ready": "Sẵn sàng",
-        "unfulfilled": "Chưa thực hiện"
+        "unfulfilled": "Chưa xử lý"
       },
       "item_count_one": "{{count}} mục",
       "item_count_other": "{{count}} mục",
@@ -3468,21 +3468,21 @@
         "storefront_sheet": {
           "api_url_label": "URL API lưu trữ",
           "deploy_button": "Triển khai tới Vercel",
-          "deploy_copy": "Việc triển khai sẽ sao chép mặt tiền cửa hàng nguồn mở vào tài khoản Git của bạn và xây dựng nó trên Vercel với thông tin đăng nhập được điền sẵn của bạn. Sau khi hoàn tất, hãy sao chép URL của nó vào trường bên dưới.",
+          "deploy_copy": "Việc triển khai sẽ sao chép cửa hàng trực tuyến nguồn mở vào tài khoản Git của bạn và xây dựng nó trên Vercel với thông tin đăng nhập được điền sẵn của bạn. Sau khi hoàn tất, hãy sao chép URL của nó vào trường bên dưới.",
           "deploy_title": "Khuyến nghị: triển khai cửa hàng Next.js chính thức",
-          "description": "Sử dụng những thông tin xác thực này trong bất kỳ ứng dụng khách nào tương tác với API Store — mặt tiền cửa hàng trên web, ứng dụng dành cho thiết bị di động hoặc bất kỳ thứ gì khác.",
+          "description": "Sử dụng những thông tin xác thực này trong bất kỳ ứng dụng khách nào tương tác với API Store — cửa hàng trực tuyến trên web, ứng dụng dành cho thiết bị di động hoặc bất kỳ thứ gì khác.",
           "env_description": "URL API cửa hàng Spree của bạn và khóa có thể xuất bản. Cả hai đều được điền sẵn từ cửa hàng của bạn — hãy điều chỉnh chúng trước khi triển khai nếu cần.",
-          "invalid_url": "Có vẻ như đây không phải là URL mặt tiền cửa hàng hợp lệ.",
+          "invalid_url": "Có vẻ như đây không phải là URL cửa hàng trực tuyến hợp lệ.",
           "key_error": "Không thể tải khóa API có thể xuất bản của bạn.",
           "local_installation_instructions": "Hướng dẫn cài đặt cục bộ",
           "publishable_key_label": "Khóa API có thể xuất bản",
           "save": "Lưu và hoàn tất thiết lập",
-          "saved": "Đã lưu URL mặt tiền cửa hàng: {{url}}",
+          "saved": "Đã lưu URL cửa hàng trực tuyến: {{url}}",
           "see_online_demo": "Xem bản demo trực tuyến",
           "storefront_url_help": "URL mà khách hàng sử dụng để tiếp cận cửa hàng của bạn. Nó trở thành cơ sở cho các liên kết trong email của khách hàng và được tự động thêm làm nguồn gốc được phép để các cửa hàng dựa trên trình duyệt có thể gọi API Store.",
-          "storefront_url_label": "URL mặt tiền cửa hàng",
+          "storefront_url_label": "URL cửa hàng trực tuyến",
           "storefront_url_placeholder": "https://myshop.com",
-          "title": "Kết nối mặt tiền cửa hàng của bạn"
+          "title": "Kết nối cửa hàng trực tuyến của bạn"
         },
         "tasks": {
           "add_products": {
@@ -3493,7 +3493,7 @@
           },
           "set_customer_support_email": {
             "cta": "Cài đặt email",
-            "description": "Hiển thị trên mặt tiền cửa hàng của bạn dưới dạng đầu mối liên hệ khi có thắc mắc và hỗ trợ của khách hàng.",
+            "description": "Hiển thị trên cửa hàng trực tuyến của bạn dưới dạng đầu mối liên hệ khi có thắc mắc và hỗ trợ của khách hàng.",
             "title": "Đặt email hỗ trợ khách hàng"
           },
           "setup_address": {
@@ -3508,9 +3508,9 @@
             "title": "Thiết lập phương thức thanh toán"
           },
           "setup_storefront": {
-            "cta": "Kết nối mặt tiền cửa hàng",
-            "description": "Kết nối mặt tiền cửa hàng web hoặc ứng dụng di động của bạn với thông tin xác thực API Store và lưu URL mặt tiền cửa hàng của bạn.",
-            "title": "Thiết lập mặt tiền cửa hàng"
+            "cta": "Kết nối cửa hàng trực tuyến",
+            "description": "Kết nối cửa hàng trực tuyến web hoặc ứng dụng di động của bạn với thông tin xác thực API Store và lưu URL cửa hàng trực tuyến của bạn.",
+            "title": "Thiết lập cửa hàng trực tuyến"
           },
           "setup_taxes_collection": {
             "cta": "Cài đặt thuế",
@@ -3571,14 +3571,14 @@
             },
             "open_exchanges": {
               "label": "Trao đổi mở",
-              "description": "Trao đổi vẫn chưa được thực hiện."
+              "description": "Các yêu cầu đổi hàng chưa được xử lý."
             },
             "open_returns": {
               "label": "Trả lại mở",
               "description": "Trả lại chưa được hoàn trả."
             },
             "orders_to_fulfill": {
-              "label": "Những mệnh lệnh phải thực hiện",
+              "label": "Đơn hàng cần xử lý",
               "description": "Đặt hàng mà chưa thấy giao hàng."
             },
             "out_of_stock_items": {
@@ -3729,7 +3729,7 @@
           "section_customer": "Khách hàng",
           "section_customer_note": "Ghi chú của khách hàng",
           "section_exchanges": "Trao đổi",
-          "section_fulfillments": "Thực hiện",
+          "section_fulfillments": "Phiếu xử lý đơn hàng",
           "section_history": "Lịch sử",
           "section_internal_note": "Ghi chú nội bộ",
           "section_payments": "Thanh toán",
@@ -3848,7 +3848,7 @@
           "create_failed": "Không tạo được sản phẩm",
           "create_succeeded": "Sản phẩm đã được tạo",
           "description": "Thiết lập sản phẩm của bạn - thêm các biến thể, giá cả, khoảng không quảng cáo, phương tiện và trường tùy chỉnh",
-          "preview_slug_placeholder": "sên-sản phẩm của bạn",
+          "preview_slug_placeholder": "duong-dan-san-pham",
           "save_label": "Tạo sản phẩm",
           "title": "Sản phẩm mới"
         },
@@ -4032,7 +4032,7 @@
           "section_from": "Từ",
           "section_items": "Mặt hàng",
           "section_to": "Đến",
-          "sheet_title": "Chuyển nhượng cổ phiếu mới"
+          "sheet_title": "Tạo phiếu chuyển kho"
         },
         "variants_empty": "Chưa có biến thể nào.",
         "variants_one": "{{count}} biến thể",
@@ -4112,7 +4112,7 @@
           "empty_publishable": "Chưa có khóa nào có thể xuất bản.",
           "empty_secret": "Chưa có khóa bí mật.",
           "new_cta": "Chìa khóa mới",
-          "publishable_help": "Được sử dụng bởi mặt tiền cửa hàng của bạn. An toàn để hiển thị trong mã phía máy khách.",
+          "publishable_help": "Được sử dụng bởi cửa hàng trực tuyến của bạn. An toàn để hiển thị trong mã phía máy khách.",
           "publishable_section": "Khóa có thể xuất bản",
           "save_secret_description": "Sao chép giá trị này ngay bây giờ — chúng tôi sẽ không hiển thị lại.",
           "save_secret_title": "Lưu khóa bí mật của bạn",
@@ -4193,9 +4193,9 @@
           "edit_sheet_title": "Chỉnh sửa chính sách"
         },
         "stock_locations": {
-          "add_sheet_title": "Thêm vị trí chứng khoán",
+          "add_sheet_title": "Thêm địa điểm lưu kho",
           "edit_sheet_title": "Chỉnh sửa vị trí kho",
-          "search_placeholder": "Tìm kiếm địa điểm chứng khoán…"
+          "search_placeholder": "Tìm kiếm địa điểm lưu kho…"
         },
         "store": {
           "subtitle": "Cấu hình chung và mặc định trên toàn cửa hàng.",
@@ -4206,7 +4206,7 @@
           "tab_order_numbers": "Số đơn hàng",
           "tab_payments": "Thanh toán",
           "tab_standards": "Tiêu chuẩn và định dạng",
-          "tab_storefront_access": "Quyền truy cập mặt tiền cửa hàng",
+          "tab_storefront_access": "Quyền truy cập cửa hàng trực tuyến",
           "title": "Cài đặt cửa hàng",
           "tab_downloads": "Tải xuống kỹ thuật số",
           "downloads_help": "Liên kết tải xuống hoạt động trong bao lâu và có thể sử dụng được bao nhiêu lần. Các tệp riêng lẻ có thể ghi đè những con số này.",
@@ -4297,7 +4297,7 @@
             "email_template": "Mẫu email",
             "exchange": "Trao đổi",
             "export": "Xuất khẩu",
-            "fulfillment": "Thực hiện",
+            "fulfillment": "Xử lý đơn hàng",
             "gift_card": "Thẻ quà tặng",
             "gift_card_batch": "Lô thẻ quà tặng",
             "import": "Nhập khẩu",
@@ -4328,10 +4328,10 @@
             "shipping_label": "Nhãn vận chuyển",
             "stock_item": "Hàng tồn kho",
             "stock_level": "Mức tồn kho",
-            "stock_movement": "Biến động chứng khoán",
-            "stock_receipt": "Biên nhận chứng khoán",
+            "stock_movement": "Biến động tồn kho",
+            "stock_receipt": "Phiếu nhập kho",
             "stock_reservation": "Đặt kho hàng",
-            "stock_transfer": "Chuyển nhượng cổ phiếu",
+            "stock_transfer": "Chuyển kho",
             "store_credit": "Lưu trữ tín dụng",
             "supplier": "Nhà cung cấp",
             "tax_exemption_certificate": "Giấy chứng nhận miễn thuế",
@@ -4390,7 +4390,7 @@
           "add_sheet_title": "Thêm loại gói"
         },
         "marketplace": {
-          "title": "Thị trường",
+          "title": "Sàn thương mại điện tử",
           "subtitle": "Thị trường này trả tiền cho người bán như thế nào, người bán tham gia như thế nào, họ nghe được gì từ bạn và thuế hoa hồng của bạn.",
           "payouts_title": "Xuất chi",
           "payouts_description": "Thị trường này trả tiền cho người bán như thế nào và khi nào. Thay vào đó, người bán có thể thực hiện lịch trình và mức tối thiểu của riêng mình.",
@@ -4512,7 +4512,7 @@
     "payment_methods": {
       "add_cta": "Thêm phương thức thanh toán",
       "columns": {
-        "storefront": "Mặt tiền cửa hàng"
+        "storefront": "Cửa hàng trực tuyến"
       },
       "create_description": "Chọn một nhà cung cấp và định cấu hình thông tin đăng nhập của nó.",
       "create_label": "Tạo phương thức thanh toán",
@@ -4558,7 +4558,7 @@
         "product_types": "Định nghĩa loại sản phẩm và các trường tùy chỉnh của chúng",
         "products": "Sản phẩm, mẫu mã, tùy chọn, giá cả và phương tiện truyền thông",
         "promotions": "Khuyến mãi, quy tắc và mã phiếu giảm giá",
-        "publishing": "Những gì hiển thị ở mặt tiền cửa hàng và khi nào",
+        "publishing": "Những gì hiển thị ở cửa hàng trực tuyến và khi nào",
         "purchasing": "Nhà cung cấp và đơn đặt hàng",
         "refunds": "Phát hành và xem tiền hoàn lại",
         "seller_profile": "Thông tin chi tiết, địa chỉ và chính sách của người bán",
@@ -4601,7 +4601,7 @@
         "dashboard": "Trang tổng quan",
         "delivery_methods": "Phương thức giao hàng",
         "email_templates": "Mẫu email",
-        "fulfillments": "Thực hiện",
+        "fulfillments": "Phiếu xử lý đơn hàng",
         "gift_cards": "Thẻ quà tặng",
         "integrations": "Tích hợp",
         "media": "Phương tiện truyền thông",
@@ -4632,7 +4632,7 @@
         "message": "{{name}} sẽ bị xóa và trang chủ cửa hàng của nó sẽ ngừng hoạt động.",
         "title": "Xóa chính sách?"
       },
-      "edit_description": "Viết tài liệu mà khách hàng nhìn thấy trên mặt tiền cửa hàng của bạn.",
+      "edit_description": "Viết tài liệu mà khách hàng nhìn thấy trên cửa hàng trực tuyến của bạn.",
       "empty": "Chưa có chính sách",
       "messages": {
         "created": "Đã tạo chính sách",
@@ -4651,7 +4651,7 @@
         "approved": "Đã được phê duyệt",
         "canceled": "Đã hủy",
         "denied": "Bị từ chối",
-        "fulfilled": "Đã hoàn thành",
+        "fulfilled": "Đã xử lý",
         "open": "Mở",
         "received": "Đã nhận",
         "refunded": "Đã hoàn tiền",
@@ -4870,13 +4870,13 @@
       "seo": {
         "meta_description_placeholder": "Mô tả SEO",
         "meta_title_placeholder": "Tiêu đề SEO",
-        "slug_placeholder": "sản phẩm-url-xử lý"
+        "slug_placeholder": "duong-dan-san-pham"
       },
       "tax_category_placeholder": "Chọn danh mục thuế",
       "transfers": {
         "create_description": "Di chuyển hàng giữa các địa điểm hoặc nhận hàng mới từ nhà cung cấp bên ngoài.",
         "delete_confirm": {
-          "message": "Biến động cổ phiếu được tạo ra bởi việc chuyển nhượng này sẽ bị đảo ngược.",
+          "message": "Các biến động tồn kho do phiếu chuyển kho này tạo ra sẽ được hoàn tác.",
           "title": "Xóa đợt chuyển này?"
         },
         "destination_placeholder": "Chọn vị trí đích",
@@ -4886,7 +4886,7 @@
         "fields": {
           "created": "Đã tạo",
           "external_receive": "Nhận bên ngoài",
-          "immutable_note": "Chuyển nhượng cổ phiếu là bất biến một khi được tạo ra.",
+          "immutable_note": "Không thể chỉnh sửa phiếu chuyển kho sau khi tạo.",
           "internal": "Nội bộ",
           "reference": "Tài liệu tham khảo",
           "type": "Loại"
@@ -4896,7 +4896,7 @@
           "sku": "Mã hàng",
           "variant": "Biến thể"
         },
-        "new_cta": "Chuyển nhượng mới",
+        "new_cta": "Tạo phiếu chuyển kho",
         "reference_label": "Tài liệu tham khảo",
         "reference_placeholder": "Số PO, hóa đơn nhà cung cấp,…",
         "review_description": "Xem lại quá trình chuyển trước khi tạo. Các mục không thể thay đổi sau đó.",
@@ -5429,13 +5429,13 @@
         "suspended": "Bị đình chỉ"
       },
       "status_help": {
-        "approved": "Bán hàng trên thị trường.",
+        "approved": "Đang bán hàng trên sàn thương mại điện tử.",
         "canceled": "Họ đã rút lui trước khi tham gia.",
         "invited": "Đang chờ ai đó chấp nhận lời mời.",
         "onboarding": "Điền thông tin chi tiết của họ.",
         "pending": "Đã tạo nhưng chưa có ai được mời.",
         "ready_for_review": "Đang chờ bạn phê duyệt chúng.",
-        "rejected": "Không được thừa nhận vào thị trường.",
+        "rejected": "Không được chấp thuận tham gia sàn thương mại điện tử.",
         "suspended": "Đã ngừng bán. Phục hồi để cho họ giao dịch trở lại."
       },
       "suspend_confirm": {
@@ -5443,7 +5443,7 @@
         "title": "Đình chỉ người bán?"
       },
       "tax_remittance": {
-        "platform": "Thị trường chuyển tiền",
+        "platform": "Sàn thương mại điện tử kê khai và nộp thuế",
         "seller": "Người bán chuyển tiền"
       },
       "team": {
@@ -5484,10 +5484,10 @@
     },
     "settings_nav": {
       "descriptions": {
-        "allowed_origins": "Các miền được phép gọi API mặt tiền cửa hàng của bạn",
+        "allowed_origins": "Các miền được phép gọi API cửa hàng trực tuyến của bạn",
         "api_keys": "Khóa ủy quyền cho ứng dụng và tiện ích tích hợp",
         "channels": "Các kênh bán hàng và nơi cung cấp sản phẩm của bạn",
-        "commission_rates": "Thị trường của bạn tính phí người bán như thế nào",
+        "commission_rates": "Các khoản phí sàn thu từ người bán",
         "custom_field_definitions": "Các trường bổ sung về sản phẩm, đơn đặt hàng và khách hàng",
         "delivery_profiles": "Phương thức giao hàng, khu vực và giá vận chuyển",
         "emails": "Địa chỉ người gửi và cài đặt email giao dịch",
@@ -5506,7 +5506,7 @@
         "store": "Tên cửa hàng, múi giờ, đơn vị và mặc định khu vực",
         "webhooks": "Điểm cuối được thông báo khi sự kiện xảy ra",
         "package_types": "Hộp, thùng carton, pallet và container",
-        "suppliers": "Bạn mua cổ phiếu từ ai và làm thế nào để tiếp cận họ",
+        "suppliers": "Nhà cung cấp hàng hóa và thông tin liên hệ",
         "marketplace": "Các khoản thanh toán của người bán, sự chấp thuận của người bán, email của người bán và thuế hoa hồng",
         "taxes": "Các loại thuế, thuế suất và lý do miễn thuế",
         "ai_agents": "Đại lý AI có quyền truy cập vào cửa hàng này",
@@ -5520,7 +5520,7 @@
         "shipping": "Vận chuyển & giao hàng",
         "store": "Cửa hàng",
         "team": "Người dùng và quyền",
-        "marketplace": "Thị trường"
+        "marketplace": "Sàn thương mại điện tử"
       },
       "items": {
         "allowed_origins": "Nguồn gốc được phép",
@@ -5542,7 +5542,7 @@
         "roles": "Vai trò",
         "seller_requirements": "Yêu cầu của người bán",
         "staff": "Nhân viên",
-        "stock_locations": "Địa điểm chứng khoán",
+        "stock_locations": "Địa điểm lưu kho",
         "store": "Cửa hàng",
         "tax_categories": "Danh mục thuế",
         "tax_rates": "Thuế suất",
@@ -5555,7 +5555,7 @@
         "oauth_clients": "Ứng dụng khách OAuth"
       },
       "breadcrumbs": {
-        "marketplace": "Thị trường"
+        "marketplace": "Sàn thương mại điện tử"
       }
     },
     "setup": {
@@ -5586,7 +5586,7 @@
         "copy_invitation_link": "Sao chép liên kết lời mời",
         "invitation_link_copied": "Đã sao chép liên kết lời mời"
       },
-      "actions_aria": "Hành động",
+      "actions_aria": "Thao tác",
       "autocomplete": {
         "empty": "Không có nhân viên phù hợp",
         "placeholder": "Nhân viên tìm kiếm…"
@@ -5685,7 +5685,7 @@
       "title": "Hàng tồn kho"
     },
     "stock_locations": {
-      "add_cta": "Thêm vị trí chứng khoán",
+      "add_cta": "Thêm địa điểm lưu kho",
       "badges": {
         "default": "Mặc định",
         "enabled": "Đã bật",
@@ -5699,7 +5699,7 @@
         "type": "Loại"
       },
       "create_description": "Thêm nhà kho, cửa hàng hoặc điểm nhận hàng để thực hiện đơn hàng.",
-      "create_label": "Tạo vị trí chứng khoán",
+      "create_label": "Tạo địa điểm lưu kho",
       "delete_confirm": {
         "message": "{{name}} sẽ bị xóa. Mức tồn kho tại địa điểm này cũng sẽ bị xóa.",
         "title": "Xóa vị trí kho hàng?"
@@ -5707,7 +5707,7 @@
       "edit_description": "Cập nhật chính sách về tên, địa chỉ, nhận hàng hoặc tồn kho.",
       "empty": "Chưa có địa điểm còn hàng",
       "kinds": {
-        "fulfillment_center": "Trung tâm thực hiện",
+        "fulfillment_center": "Trung tâm xử lý đơn hàng",
         "store": "Cửa hàng",
         "warehouse": "Kho"
       },
@@ -5723,7 +5723,7 @@
         "empty": "Chưa có mức tồn kho tại địa điểm này.",
         "empty_search": "Không có mức tồn kho phù hợp với tìm kiếm của bạn.",
         "help": "Điều chỉnh số lượng có sẵn và có thể đặt hàng trước cho mỗi biến thể.",
-        "low_stock_marker": "cổ phiếu thấp",
+        "low_stock_marker": "Sắp hết hàng",
         "search_placeholder": "Tìm kiếm SKU hoặc sản phẩm…",
         "table": {
           "backorder": "Đặt hàng trước",
@@ -5755,7 +5755,7 @@
       },
       "errors": {
         "failed_to_delete": "Không thể xóa quá trình chuyển",
-        "failed_to_record": "Không thể ghi lại chuyển nhượng cổ phiếu",
+        "failed_to_record": "Không thể ghi nhận chuyển kho",
         "same_location": "Hai kho phải khác nhau.",
         "failed_to_create": "Không tạo được lệnh chuyển",
         "failed_to_save": "Không lưu được lệnh chuyển",
@@ -5770,7 +5770,7 @@
       },
       "messages": {
         "deleted": "Đã xóa chuyển khoản",
-        "recorded": "Ghi nhận chuyển nhượng cổ phiếu",
+        "recorded": "Đã ghi nhận chuyển kho",
         "created": "Đã tạo chuyển khoản",
         "saved": "Đã lưu chuyển khoản",
         "marked_ready": "Chuyển khoản đã sẵn sàng để vận chuyển",
@@ -5781,17 +5781,17 @@
         "closed": "Đóng ngắn - những gì đến vẫn còn, phần còn lại sẽ bị xóa"
       },
       "table": {
-        "empty": "Chưa có chuyển nhượng cổ phiếu",
+        "empty": "Chưa có phiếu chuyển kho",
         "search_placeholder": "Tìm kiếm theo số hoặc tham chiếu…"
       },
-      "title": "Chuyển nhượng cổ phiếu",
-      "new_cta": "Chuyển nhượng mới",
-      "new_title": "Chuyển nhượng cổ phiếu mới",
+      "title": "Chuyển kho",
+      "new_cta": "Tạo phiếu chuyển kho",
+      "new_title": "Tạo phiếu chuyển kho",
       "details_title": "Chi tiết",
       "items_title": "Mặt hàng",
       "items_empty": "Chưa có mục nào - thêm sản phẩm để gửi.",
       "receive_title": "Nhận",
-      "history_title": "Biến động cổ phiếu cho đợt chuyển nhượng này",
+      "history_title": "Biến động tồn kho của phiếu chuyển kho này",
       "units_summary": "{{received}} đã nhận được trong số {{shipped}} đã giao hàng",
       "statuses": {
         "draft": "Bản nháp",
@@ -5842,7 +5842,7 @@
       },
       "cancel_confirm": {
         "title": "Hủy quá trình chuyển này?",
-        "message": "Chưa có cổ phiếu nào chuyển động nên sẽ không có gì đảo ngược.",
+        "message": "Chưa có hàng hóa nào được chuyển nên không cần hoàn tác tồn kho.",
         "in_flight_restock": "Các đơn vị sẽ quay trở lại kệ của kho nguồn, như thể đợt vận chuyển chưa bao giờ được vận chuyển.",
         "in_flight_write_off": "Các đơn vị ở ngoài sổ sách coi như bị mất. Không có gì được thêm vào bất cứ nơi nào."
       },
@@ -5866,7 +5866,7 @@
       },
       "seo": {
         "title": "Danh sách công cụ tìm kiếm",
-        "description": "Tiêu đề và mô tả mặc định về mặt tiền cửa hàng của bạn. Dịch chúng cho từng ngôn ngữ mà cửa hàng của bạn hỗ trợ."
+        "description": "Tiêu đề và mô tả mặc định về cửa hàng trực tuyến của bạn. Dịch chúng cho từng ngôn ngữ mà cửa hàng của bạn hỗ trợ."
       }
     },
     "table_descriptions": {
@@ -5894,7 +5894,7 @@
       "orders": "Mọi đơn hàng được đặt tại cửa hàng của bạn và vị trí của mỗi đơn hàng.",
       "draft_orders": "Các đơn đặt hàng mà nhóm của bạn đang xây dựng thay mặt cho khách hàng, chưa được đặt.",
       "payment_methods": "Cách khách hàng có thể thanh toán và các nhà cung cấp đằng sau mỗi lựa chọn.",
-      "policies": "Các điều khoản, quyền riêng tư, chính sách trả lại và vận chuyển của bạn, được công bố trên mặt tiền cửa hàng.",
+      "policies": "Các điều khoản, quyền riêng tư, chính sách trả lại và vận chuyển của bạn, được công bố trên cửa hàng trực tuyến.",
       "products": "Mọi thứ bạn bán, với các biến thể, giá cả và hàng tồn kho.",
       "promotions": "Giảm giá và ưu đãi cũng như các quy tắc quyết định thời điểm áp dụng.",
       "seller_requirements": "Người bán danh sách kiểm tra hoàn thành trước khi chúng có thể được phê duyệt.",
@@ -6078,7 +6078,7 @@
         "seller": "Chủ sở hữu"
       },
       "owner": {
-        "marketplace": "Thị trường"
+        "marketplace": "Sàn thương mại điện tử"
       }
     },
     "payouts": {
@@ -6132,7 +6132,7 @@
         "covers_error": "Không thể tải khoản thu nhập mà khoản thanh toán này chi trả."
       },
       "order_card": {
-        "title": "Chuyển nhượng người bán",
+        "title": "Chuyển tiền cho người bán",
         "view_payout": "Xem khoản thanh toán",
         "not_settled": "Chưa thanh toán"
       },
@@ -6159,8 +6159,8 @@
       "empty_description": "Thêm các sản phẩm mà đơn đặt hàng này dành cho."
     },
     "stock_history": {
-      "title": "Lịch sử chứng khoán",
-      "empty": "Chưa có gì thay đổi cổ phiếu này",
+      "title": "Lịch sử tồn kho",
+      "empty": "Chưa có thay đổi tồn kho",
       "columns": {
         "date": "Ngày",
         "product": "Sản phẩm",
@@ -6178,14 +6178,14 @@
       },
       "causes": {
         "purchase_order": "Đơn đặt hàng",
-        "stock_transfer": "Chuyển nhượng cổ phiếu",
+        "stock_transfer": "Chuyển kho",
         "return": "Trở lại",
         "exchange": "Trao đổi",
-        "fulfillment": "Thực hiện",
+        "fulfillment": "Xử lý đơn hàng",
         "order": "Đặt hàng",
         "manual": "Điều chỉnh thủ công"
       },
-      "description": "Mọi thay đổi đối với cổ phiếu này, mới nhất trước tiên và nguyên nhân gây ra nó."
+      "description": "Các thay đổi tồn kho và nguyên nhân, sắp xếp từ mới nhất."
     },
     "purchase_orders": {
       "title": "Đơn đặt hàng",
@@ -6304,7 +6304,7 @@
       "new_cta": "Nhà cung cấp mới",
       "new_title": "Nhà cung cấp mới",
       "edit_title": "Chỉnh sửa nhà cung cấp",
-      "sheet_description": "Bạn mua cổ phiếu từ ai và làm thế nào để tiếp cận họ.",
+      "sheet_description": "Nhà cung cấp hàng hóa và thông tin liên hệ.",
       "table": {
         "empty": "Chưa có nhà cung cấp",
         "search_placeholder": "Tìm kiếm theo tên, liên hệ hoặc email…"
