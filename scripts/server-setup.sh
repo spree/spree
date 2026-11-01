@@ -56,6 +56,14 @@ step "Building @spree/cli (so the spree CLI works in server/)"
 # doesn't exist yet.
 pnpm turbo build --filter=@spree/cli
 
+# Clones installed before bin/spree.js existed never got the `spree` shim, and
+# pnpm does not recreate it while it considers node_modules up to date.
+if [ ! -e "$ROOT/node_modules/.bin/spree" ]; then
+  step "Linking the missing spree bin shim"
+  mkdir -p "$ROOT/node_modules/.bin"
+  ln -sf ../../packages/cli/bin/spree.js "$ROOT/node_modules/.bin/spree"
+fi
+
 step "Starting the edge stack"
 # Detached on purpose — `pnpm server:dev` runs the stack in the foreground
 # (streaming logs, Ctrl+C to stop); setup needs to continue past the boot.
