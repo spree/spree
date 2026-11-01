@@ -142,6 +142,8 @@ SpreeOpenTelemetry.install!
 Sentry.init do |config|
   config.dsn = ENV['SENTRY_DSN']
   config.otlp.enabled = true
+  # Registers Sentry's OTLP span exporter. Without it, no spans reach Sentry.
+  config.otlp.setup_otlp_traces_exporter = true
   # Do not set traces_sample_rate or instrumenter — OpenTelemetry owns tracing.
 end
 ```
@@ -154,7 +156,14 @@ OTEL_TRACES_EXPORTER=none
 
 A DSN alone does **not** enable tracing; `config.otlp.enabled` is the
 explicit opt-in (Sentry bills for ingested spans, so error capture never
-silently becomes span ingestion).
+silently becomes span ingestion). It needs
+`config.otlp.setup_otlp_traces_exporter = true` alongside it: that setting
+defaults to `false`, and without it Sentry adds no exporter, so spans are
+recorded but never sent.
+
+Sentry profiling (StackProf or Vernier) does not work in this mode. Sentry
+attaches profiles to its own transactions, and with OpenTelemetry owning
+tracing there are none.
 
 Spree's commerce spans — workflows, gateway calls, webhook deliveries — show
 up in Sentry's trace view, and Sentry errors are linked automatically to the

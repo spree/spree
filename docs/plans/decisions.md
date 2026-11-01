@@ -4463,17 +4463,20 @@ disconnected trace systems. Teams that want traces in Sentry use the
 inside `Sentry.init` (`after(:configured)`), which requires the OpenTelemetry
 SDK to already be installed — so the recipe is `SpreeOpenTelemetry.configure
 { |c| c.enabled = true }` + `SpreeOpenTelemetry.install!` at the top of the
-Sentry initializer, before `Sentry.init` with `config.otlp.enabled = true`,
-plus `OTEL_TRACES_EXPORTER=none` so the SDK wires no competing default
+Sentry initializer, before `Sentry.init` with `config.otlp.enabled = true` and
+`config.otlp.setup_otlp_traces_exporter = true` (it defaults to `false` in
+sentry-opentelemetry 7.x, and without it no exporter is registered and no
+spans reach Sentry), plus `OTEL_TRACES_EXPORTER=none` so the SDK wires no competing default
 exporter (Sentry derives its endpoint from the DSN). Auto-detecting Sentry's
 OTLP mode from `spree_opentelemetry` was tried and reverted — the gem
 installs after `load_config_initializers` by design, so detection can never
 run early enough. A bare SENTRY_DSN deliberately does NOT activate tracing:
 Sentry bills for ingested spans, so error capture must never silently become
-span ingestion. The starter's own sentry initializer encapsulates the whole
+span ingestion. Sentry profiling (StackProf/Vernier) does not work in OTLP
+mode, because Sentry attaches profiles to its own transactions. The starter's own sentry initializer encapsulates the whole
 recipe behind an env var (e.g. `SENTRY_OTLP_ENABLED=true`) so container
 users still flip it without code. Docs:
-`docs/developer/deployment/telemetry.mdx`.
+`docs/developer/providers/observability.mdx`.
 
 ## 2026-08-14 — Duties are fees, not tax lines; landed cost is a provider gem, not core
 
