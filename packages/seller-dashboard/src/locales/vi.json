@@ -1,0 +1,851 @@
+{
+  "account": {
+    "avatar": "Ảnh",
+    "avatar_help": "Hiển thị bên cạnh tên của bạn trên bảng điều khiển. Hình ảnh vuông trông đẹp nhất.",
+    "email": "Email",
+    "first_name": "Tên",
+    "language": "Ngôn ngữ",
+    "last_name": "Họ",
+    "load_failed_title": "Không thể tải hồ sơ của bạn",
+    "save_failed": "Không thể lưu hồ sơ của bạn",
+    "saved": "Đã cập nhật hồ sơ",
+    "saving": "Đang lưu…",
+    "subtitle": "Quản lý thông tin cá nhân và ngôn ngữ bảng điều khiển của bạn.",
+    "title": "Hồ sơ"
+  },
+  "admin": {
+    "actions": {
+      "actions_menu": "hành động",
+      "cancel": "Hủy bỏ",
+      "delete": "Xóa",
+      "edit": "Chỉnh sửa",
+      "save": "Lưu",
+      "saving": "Đang lưu…"
+    },
+    "common": {
+      "loading": "Đang tải…",
+      "no_results": "Không có kết quả"
+    },
+    "components": {
+      "export_button": {
+        "all": {
+          "description": "Bỏ qua các bộ lọc và xuất tất cả hồ sơ của bạn."
+        }
+      }
+    },
+    "fields": {
+      "tax_identifier": {
+        "kind": {
+          "help": "Đây là đăng ký nào. Nó phải khớp với trình xác thực đã đăng ký cho nó, vì vậy chính tả rất quan trọng.",
+          "label": "loại",
+          "required": "Chọn hoặc nhập loại đăng ký"
+        },
+        "value": {
+          "label": "Số",
+          "placeholder": "DE123456789",
+          "required": "Nhập số đăng ký"
+        }
+      }
+    },
+    "orders": {
+      "detail": {
+        "cancel": {
+          "description": "Lý do và ghi chú được ghi lại trong đơn đặt hàng và mọi khoản thanh toán sẽ được giải quyết.",
+          "keep_order": "Giữ trật tự",
+          "no_reason": "Không có lý do nào được đưa ra",
+          "note_label": "Lưu ý",
+          "note_placeholder": "Chỉ nhân viên mới thấy ghi chú này",
+          "notify_customer": "Gửi email cho khách hàng",
+          "reason_label": "Lý do",
+          "refund_payments": "Hoàn tiền cho khách hàng",
+          "refund_payments_help": "Tiền đã lấy sẽ được trả lại. Một ủy quyền chưa được xác nhận sẽ được phát hành theo một trong hai cách."
+        },
+        "fulfillments": {
+          "add_tracking_title": "Thêm theo dõi",
+          "carrier_auto": "Tự động phát hiện",
+          "carrier_label": "Hãng vận chuyển",
+          "carrier_search": "Tìm kiếm nhà mạng",
+          "delivery_method": "Phương thức giao hàng",
+          "edit_description": "Thay đổi nơi vận chuyển đơn hàng này và phương thức giao hàng nào vận chuyển đơn hàng đó.",
+          "edit_title": "Chỉnh sửa thực hiện",
+          "edit_tracking_title": "Chỉnh sửa theo dõi",
+          "move_and_requote": "Di chuyển và báo giá lại",
+          "no_rates": "Không có phương thức giao hàng nào được trích dẫn cho việc thực hiện này.",
+          "rates_pending_origin": "Lưu nguồn gốc mới để xem các phương thức phân phối mà nó cung cấp.",
+          "ships_from": "Vận chuyển từ",
+          "tracking_description": "Số theo dõi của nhà cung cấp dịch vụ hoặc liên kết theo dõi đầy đủ.",
+          "upload_label_cost": "Chi phí bưu chính",
+          "upload_label_description": "Ghi lại nhãn bạn đã mua ở nơi khác để bưu kiện có hồ sơ, số theo dõi và giá cả.",
+          "upload_label_file": "Tập tin nhãn",
+          "upload_label_title": "Tải nhãn lên"
+        },
+        "section_customer_note": "Hướng dẫn đặc biệt",
+        "section_internal_note": "Ghi chú nội bộ"
+      },
+      "fulfill": {
+        "include_item": "Tàu {{name}}",
+        "quantity_for": "Số lượng vận chuyển {{name}}",
+        "of_units": "của {{count}}",
+        "empty": "Việc thực hiện này không có mục nào có thể được thực hiện.",
+        "tracking_label": "Số theo dõi",
+        "tracking_placeholder": "Số theo dõi hoặc liên kết",
+        "notify_customer": "Gửi thông báo lô hàng cho khách hàng",
+        "partial_hint": "Các đơn vị bạn đã chọn sẽ chuyển sang đơn hàng mới được vận chuyển ngay bây giờ. Phần còn lại ở trên cái này, vẫn mở.",
+        "units_selected": "Đơn vị vận chuyển",
+        "submit": "Hoàn thành các mục"
+      }
+    },
+    "tax_identifiers": {
+      "add_cta": "Thêm đăng ký",
+      "add_title": "Thêm đăng ký thuế",
+      "checked_prefix": "Đã kiểm tra",
+      "delete_confirm": {
+        "message": "{{value}} sẽ bị xóa. Các đơn đặt hàng đã được đặt giữ nguyên số lượng mà chúng đã được lập hóa đơn.",
+        "title": "Xóa đăng ký này?"
+      },
+      "dialog_description": "Số VAT hoặc mã số doanh nghiệp xuất hiện trên hóa đơn. Đó là điều khiến cho việc thu hồi ngược B2B của EU có thể thực hiện được.",
+      "edit_title": "Chỉnh sửa đăng ký thuế",
+      "empty": "Không có hồ sơ đăng ký thuế",
+      "kinds": {
+        "au_abn": "Số doanh nghiệp Úc",
+        "ch_vat": "Thuế VAT Thụy Sĩ",
+        "eu_vat": "VAT EU",
+        "gb_vat": "VAT của Vương quốc Anh",
+        "us_ein": "EIN Hoa Kỳ"
+      },
+      "messages": {
+        "created": "Đã thêm đăng ký",
+        "deleted": "Đã xóa đăng ký",
+        "updated": "Đã cập nhật đăng ký",
+        "validation_failed": "Không thể kiểm tra số",
+        "validation_requested": "Kiểm tra số với sổ đăng ký"
+      },
+      "not_validatable": "Không có cơ quan đăng ký nào để kiểm tra loại này nên số được ghi là đã nhập.",
+      "select_kind": "Chọn một loại",
+      "title": "Đăng ký thuế",
+      "validate_action": "Kiểm tra với sổ đăng ký",
+      "validation_status": {
+        "not_checked": "Chưa được kiểm tra",
+        "pending": "Kiểm tra",
+        "unavailable": "Sổ đăng ký không có sẵn",
+        "unsupported": "Không thể kiểm tra được",
+        "unverified": "Không hợp lệ",
+        "verified": "Đã xác minh"
+      }
+    },
+    "pages": {
+      "orders": {
+        "detail": {
+          "returns": {
+            "receive_title": "Nhận hàng trả lại",
+            "received_quantity": "Đã nhận",
+            "resellable": "Có thể bán lại",
+            "actions": {
+              "receive": "Nhận vật phẩm",
+              "refund": "Hoàn tiền",
+              "complete": "Hoàn trả đầy đủ"
+            },
+            "refund_title": "Hoàn tiền",
+            "complete_title": "Hoàn trả đầy đủ",
+            "nothing_owed": "Không có khoản nợ nào trong lần hoàn trả này nên không có tiền được trả lại. Hoàn thành nó sẽ đóng lại.",
+            "refund_amount": "Số tiền",
+            "refund_includes_tax": "Toàn bộ số tiền đã bao gồm {{tax}} thuế. Một số tiền nhỏ hơn sẽ hoàn lại thuế theo tỷ lệ tương tự.",
+            "refund_method": "Hoàn tiền vào",
+            "refund_methods": {
+              "original_payment": "Thanh toán gốc",
+              "store_credit": "Lưu trữ tín dụng"
+            },
+            "reason": "Lý do",
+            "location": "Quay lại",
+            "location_default": "Vị trí trả về mặc định",
+            "location_no_returns": "{{name}} (không chấp nhận trả lại)",
+            "memo": "Lưu ý",
+            "create_title": "Sự trở lại mới"
+          },
+          "claims": {
+            "resolve_title": "Giải quyết khiếu nại",
+            "resolution": "Cách giải quyết",
+            "resolutions": {
+              "refund": "Hoàn tiền",
+              "replacement": "thay thế",
+              "refund_and_replacement": "Hoàn tiền và thay thế"
+            },
+            "refund_amount": "Số tiền hoàn lại",
+            "replacement_items": "Gửi một sự thay thế cho",
+            "actions": {
+              "resolve": "giải quyết",
+              "create": "Xác nhận quyền sở hữu mới"
+            },
+            "create_title": "Xác nhận quyền sở hữu mới"
+          },
+          "dialogs": {
+            "cancel_title": "Hủy đơn hàng?"
+          },
+          "actions": {
+            "cancel": "Hủy đơn hàng"
+          }
+        }
+      }
+    },
+    "settings_nav": {
+      "descriptions": {
+        "delivery_methods": "Hàng hóa của bạn được vận chuyển đến khách hàng như thế nào",
+        "package_types": "Hộp, thùng carton và hộp đựng để bạn đóng gói đơn hàng",
+        "policies": "Điều khoản, quyền riêng tư, tài liệu trả lại và vận chuyển",
+        "stock_locations": "Kho và điểm lấy hàng có chứa hàng",
+        "team": "Những người có quyền truy cập vào người bán này"
+      }
+    },
+    "settings_page": {
+      "description": "Quản lý việc thực hiện, tài liệu pháp lý và nhóm của bạn."
+    }
+  },
+  "app": {
+    "name": "Bảng điều khiển người bán"
+  },
+  "common": {
+    "apply": "Áp dụng",
+    "cancel": "Hủy bỏ",
+    "delete": "Xóa",
+    "error": "Đã xảy ra lỗi.",
+    "loading": "Đang tải…",
+    "no_results": "Không có kết quả",
+    "remove": "Xóa",
+    "retry": "Thử lại",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "actions": "hành động",
+    "edit": "Chỉnh sửa"
+  },
+  "delivery_methods": {
+    "add": "Thêm phương thức giao hàng",
+    "columns": {
+      "name": "Tên",
+      "owner": "chủ sở hữu",
+      "visibility": "Khả năng hiển thị"
+    },
+    "conditions": {
+      "add": "Thêm một điều kiện",
+      "description": "Không có điều kiện, phương pháp này được cung cấp cho mọi đơn hàng có thể vận chuyển.",
+      "remove": "Xóa điều kiện"
+    },
+    "delete_confirm": {
+      "title": "Xóa phương thức giao hàng?",
+      "message": "{{name}} sẽ bị xóa. Các đơn đặt hàng đã được vận chuyển cùng với nó sẽ được lưu giữ trong hồ sơ của họ."
+    },
+    "description": "Đơn đặt hàng của bạn đến tay khách hàng như thế nào và chi phí vận chuyển của họ là bao nhiêu.",
+    "empty": {
+      "title": "Chưa có phương thức giao hàng nào",
+      "description": "Thêm một phương thức vận chuyển hoặc sử dụng một phương thức mà thị trường này chia sẻ với người bán."
+    },
+    "fields": {
+      "admin_name": "Tên nội bộ",
+      "calculator": "Định giá",
+      "delivery_profile": "Loại hàng hóa",
+      "delivery_zone": "Vận chuyển đến",
+      "name": "Tên",
+      "storefront_visible": "Hiển thị lúc thanh toán"
+    },
+    "messages": {
+      "deleted": "Đã xóa phương thức giao hàng",
+      "saved": "Đã lưu phương thức giao hàng"
+    },
+    "owner": {
+      "marketplace": "Thị trường",
+      "mine": "của bạn"
+    },
+    "search_placeholder": "Tìm kiếm theo tên…",
+    "sections": {
+      "conditions": "Khi áp dụng phương pháp này",
+      "goods": "Những gì nó vận chuyển",
+      "price": "Chi phí bao nhiêu"
+    },
+    "sheet": {
+      "new_title": "Phương thức giao hàng mới",
+      "description": "Người mua hàng chọn sản phẩm này khi thanh toán, vì vậy hãy đặt tên theo cách bạn mô tả cho họ."
+    },
+    "title": "Phương thức giao hàng",
+    "visibility": {
+      "hidden": "Ẩn giấu",
+      "storefront": "Mặt tiền cửa hàng"
+    },
+    "zone": {
+      "everywhere": "Ở mọi nơi loại hàng hóa này đến"
+    }
+  },
+  "earnings": {
+    "balance": {
+      "converted": "Kiếm được bằng {{currency}}, được thanh toán bằng loại tiền tệ của bạn",
+      "earned": "kiếm được",
+      "empty": "Sau khi đơn hàng của bạn được hoàn thành, số tiền mà đơn hàng đó kiếm được sẽ hiển thị ở đây.",
+      "load_error": "Không thể tải số dư của bạn.",
+      "owed": "Còn nợ bạn ({{currency}})",
+      "paid": "Đã thanh toán",
+      "payable": "Phải trả cho bạn",
+      "pending": "Trên đường đi",
+      "title": "Số dư"
+    },
+    "columns": {
+      "date": "Ngày",
+      "order": "Đặt hàng",
+      "kind": "loại",
+      "status": "Trạng thái",
+      "amount": "Số tiền"
+    },
+    "kinds": {
+      "earning": "bán hàng",
+      "refund_reversal": "Hoàn tiền"
+    },
+    "search_placeholder": "Tìm kiếm theo tham chiếu",
+    "statuses": {
+      "pending": "Đang chờ xử lý",
+      "processing": "Đang xử lý",
+      "completed": "Đã hoàn thành",
+      "failed": "thất bại",
+      "unresolved": "Cần kiểm tra"
+    },
+    "subtitle": "Doanh số bán hàng của bạn đã kiếm được là bao nhiêu và vị thế của bạn trên thị trường.",
+    "title": "Thu nhập",
+    "transfers": {
+      "title": "Thu nhập",
+      "empty": "Chưa có thu nhập."
+    }
+  },
+  "forgot_password": {
+    "back_to_login": "Quay lại để đăng nhập",
+    "email": "Email",
+    "failed": "Không thể gửi yêu cầu đó. Hãy thử lại sau giây lát.",
+    "sent_subtitle": "Nếu địa chỉ đó thuộc về tài khoản người bán thì liên kết đặt lại sẽ được gửi đến. Liên kết sẽ hết hạn trong thời gian ngắn.",
+    "sent_title": "Kiểm tra email của bạn",
+    "submit": "Gửi liên kết đặt lại",
+    "submitting": "Đang gửi…",
+    "subtitle": "Nhập email của bạn và chúng tôi sẽ gửi cho bạn một liên kết để chọn một liên kết mới.",
+    "title": "Bạn quên mật khẩu?"
+  },
+  "home": {
+    "products": "Sản phẩm",
+    "selling_no": "Sản phẩm của bạn chưa được bán.",
+    "selling_title": "bán hàng",
+    "selling_yes": "Sản phẩm của bạn đang được bán.",
+    "setup_cta": "Tiếp tục thiết lập",
+    "setup_description": "{{done}} trong tổng số {{total}} đã xong — hãy hoàn tất những điều này để bắt đầu bán.",
+    "setup_title": "Hoàn tất việc thiết lập",
+    "status": "Trạng thái",
+    "subtitle": "Làm thế nào bạn đứng vững với thị trường này.",
+    "team": "Thành viên nhóm",
+    "title": "Xin chào, {{name}}"
+  },
+  "login": {
+    "email": "Email",
+    "failed": "Email và mật khẩu đó không khớp với tài khoản người bán.",
+    "forgot_password": "Bạn quên mật khẩu?",
+    "no_seller": "Tài khoản này không có người bán trên thị trường này.",
+    "password": "Mật khẩu",
+    "submit": "Đăng nhập",
+    "submitting": "Đang đăng nhập…",
+    "subtitle": "Quản lý mặt tiền cửa hàng, nhóm và các khoản thanh toán của bạn.",
+    "title": "Đăng nhập vào bảng điều khiển người bán của bạn"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "legal": "pháp lý",
+    "onboarding": "thiết lập",
+    "orders": "Đơn đặt hàng",
+    "policies": "Chính sách",
+    "products": "Sản phẩm",
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt",
+    "sign_out": "Đăng xuất",
+    "team": "đội",
+    "delivery_methods": "Phương thức giao hàng",
+    "package_types": "Các loại gói",
+    "earnings": "Thu nhập",
+    "payouts": "Xuất chi"
+  },
+  "onboarding": {
+    "accept_terms": "Chấp nhận các điều khoản",
+    "awaiting_review": "Đang chờ thị trường xem xét điều này.",
+    "connect_payout_account": "Thiết lập cách bạn được thanh toán",
+    "payout_account_rejected": "Liên hệ với nhà cung cấp thanh toán của bạn",
+    "awaiting_payout_provider": "Đang chờ nhà cung cấp dịch vụ thanh toán hoàn tất việc kiểm tra thông tin chi tiết của bạn.",
+    "confirm": "Xác nhận",
+    "document_help": "PDF hoặc hình ảnh của tài liệu.",
+    "document_label": "tài liệu",
+    "done": "Việc này đã xong.",
+    "go": "Đến đó",
+    "note_placeholder": "Bất cứ điều gì thị trường nên biết (tùy chọn)",
+    "optional": "Tùy chọn",
+    "progress_count": "{{done}} trong tổng số {{total}} đã xong",
+    "progress_title": "Sự tiến bộ của bạn",
+    "read_terms": "Đọc các điều khoản",
+    "ready": "Mọi thứ cần thiết đã được thực hiện.",
+    "remaining_one": "{{count}} việc còn phải làm trước khi bạn có thể gửi",
+    "remaining_other": "{{count}} những việc còn phải làm trước khi bạn có thể gửi",
+    "status": {
+      "complete": "Xong",
+      "pending": "Đang xem xét",
+      "rejected": "Cần một cái nhìn khác"
+    },
+    "submit": "Gửi để xem xét",
+    "submit_document": "Gửi để xem xét",
+    "submitted": "Đã gửi để xem xét",
+    "submitted_requirement": "Đã gửi",
+    "submitting": "Đang gửi…",
+    "subtitle": "Thị trường này yêu cầu những gì trước khi bạn có thể bắt đầu bán hàng.",
+    "terms_accepted": "Điều khoản được chấp nhận",
+    "title": "thiết lập",
+    "under_review": "Thị trường đang xem xét đơn đăng ký của bạn. Chúng tôi sẽ gửi email cho bạn khi có tin tức."
+  },
+  "orders": {
+    "address_edit": {
+      "billing_title": "Chỉnh sửa địa chỉ thanh toán",
+      "shipping_title": "Chỉnh sửa địa chỉ giao hàng"
+    },
+    "billing_address": "Địa chỉ thanh toán",
+    "columns": {
+      "fulfillment": "Thực hiện",
+      "number": "Đặt hàng",
+      "payment": "Thanh toán",
+      "placed": "Đã đặt",
+      "quantity": "số lượng",
+      "total": "Tổng cộng"
+    },
+    "customer": {
+      "title": "Khách hàng"
+    },
+    "customer_note": "Ghi chú của khách hàng",
+    "earnings": {
+      "title": "Những gì bạn kiếm được",
+      "payout": "Thanh toán",
+      "view_payout": "Xem khoản thanh toán",
+      "not_settled": "Chưa thanh toán"
+    },
+    "empty": "Chưa có đơn đặt hàng nào. Chúng xuất hiện ở đây khi khách hàng mua hàng của bạn.",
+    "fulfill": "Đánh dấu là đã hoàn thành",
+    "fulfillment_statuses": {
+      "backorder": "Đặt hàng trước",
+      "canceled": "Đã hủy",
+      "delivered": "Đã giao",
+      "fulfilled": "Đã hoàn thành",
+      "partial": "một phần",
+      "unfulfilled": "Chưa thực hiện"
+    },
+    "fulfillments": {
+      "add_delivery": "Thêm theo dõi",
+      "add_tracking": "Thêm theo dõi",
+      "cancel": "Hủy bưu kiện",
+      "cancel_message": "Hàng hóa trở lại kệ và người vận chuyển dừng lại.",
+      "cancel_title": "Hủy bưu kiện này?",
+      "carrier_status_available_for_pickup": "Có sẵn để đón",
+      "carrier_status_delivered": "Đã giao",
+      "carrier_status_failure": "Giao hàng không thành công",
+      "carrier_status_in_transit": "Đang chuyển tiếp",
+      "carrier_status_out_for_delivery": "Ra ngoài để giao hàng",
+      "carrier_status_pending": "Đang chờ hãng vận chuyển",
+      "carrier_status_pre_transit": "Đã tạo nhãn",
+      "carrier_status_return_to_sender": "Trả lại người gửi",
+      "carrier_status_unknown": "Trạng thái không xác định",
+      "confirm_delete_delivery": "Xóa số theo dõi này?",
+      "confirm_delete_label": "Xóa nhãn này? Tập tin đã bị xóa và không thể in lại được.",
+      "confirm_split": "Điều này có hiệu lực ngay lập tức.",
+      "delete_label": "Xóa nhãn",
+      "empty": "Không có gì để gửi theo đơn đặt hàng này.",
+      "free": "miễn phí",
+      "label_cost": "Chi phí {{amount}}",
+      "label_title": "Nhãn vận chuyển",
+      "label_uploaded": "Đã tải lên",
+      "packing_slip_title": "Phiếu đóng gói — đơn hàng {{number}}",
+      "print_label": "In nhãn",
+      "print_packing_slip": "In phiếu đóng gói",
+      "quoted_after_review": "Trích dẫn sau khi xem xét",
+      "ship_to": "Gửi hàng tới",
+      "ships_from_label": "Vận chuyển từ",
+      "split": "Tách",
+      "split_description": "Chuyển một phần của bưu kiện này sang một phần của chính nó.",
+      "split_item": "Mục",
+      "split_quantity": "Số lượng cần di chuyển",
+      "split_title": "Chia bưu kiện này",
+      "split_would_empty": "Di chuyển mọi thứ sẽ khiến bưu kiện này trống rỗng.",
+      "splitting": "Chia tách…",
+      "title": "Thực hiện",
+      "upload_label": "Tải nhãn lên"
+    },
+    "items": "Mặt hàng",
+    "not_found": "Không thể tìm thấy đơn hàng đó.",
+    "payment": {
+      "title": "Thanh toán",
+      "share_help": "Phần của bạn trong số tiền khách hàng đã trả cho giỏ hàng này.",
+      "authorized": "Được ủy quyền",
+      "captured": "Đã chụp",
+      "refunded": "Đã hoàn tiền",
+      "refundable": "Có thể hoàn lại"
+    },
+    "payment_statuses": {
+      "none": "Chưa thanh toán",
+      "authorized": "Được ủy quyền",
+      "partially_paid": "Trả một phần",
+      "paid": "Đã trả tiền",
+      "partially_refunded": "Đã hoàn lại một phần",
+      "refunded": "Đã hoàn tiền",
+      "overcharged": "Quá tải",
+      "voided": "Vô hiệu"
+    },
+    "post_sale": {
+      "approve": "Chấp thuận",
+      "cancel": "Hủy bỏ",
+      "claims": {
+        "cancel_message": "Khách hàng được thông báo rằng nó sẽ không tiếp tục.",
+        "cancel_title": "Hủy khiếu nại này?",
+        "create": "Xác nhận quyền sở hữu mới",
+        "deny": "Từ chối",
+        "deny_message": "Khách hàng được thông báo rằng yêu cầu bồi thường không được chấp nhận.",
+        "deny_title": "Từ chối yêu cầu bồi thường này?",
+        "empty": "Không có gì được báo cáo về lệnh này.",
+        "resolve": "giải quyết",
+        "title": "Khiếu nại"
+      },
+      "exchanges": {
+        "title": "Trao đổi",
+        "receive": "Nhận",
+        "fulfill": "Gửi thay thế",
+        "balance_due_confirm": "Chi phí thay thế cao hơn những gì nhận lại. Việc gửi nó sẽ thêm phần chênh lệch vào đơn hàng dưới dạng số dư đến hạn. Không có gì được tính phí tự động.",
+        "price_difference": "Chênh lệch giá: {{amount}}",
+        "cancel_title": "Hủy trao đổi này?",
+        "cancel_message": "Khách hàng được thông báo rằng nó sẽ không tiếp tục."
+      },
+      "reason": "Lý do",
+      "returns": {
+        "cancel_message": "Khách hàng được thông báo rằng nó sẽ không tiếp tục.",
+        "cancel_title": "Hủy việc trả lại hàng này?",
+        "create": "Sự trở lại mới",
+        "empty": "Không có gì trở lại từ đơn đặt hàng này.",
+        "not_resellable": "Không thể bán lại",
+        "partially_received": "Đã nhận được {{received}} trong tổng số {{quantity}}",
+        "receive": "Nhận",
+        "refund": "Hoàn tiền",
+        "refund_total": "Tổng số tiền hoàn lại: {{amount}}",
+        "refunded": "Đã hoàn tiền: {{amount}}",
+        "refunded_of": "Đã hoàn lại: {{amount}} trong tổng số {{total}}",
+        "title": "Trả lại"
+      },
+      "statuses": {
+        "requested": "Đã yêu cầu",
+        "approved": "Đã được phê duyệt",
+        "received": "Đã nhận",
+        "refunded": "Đã hoàn tiền",
+        "fulfilled": "Đã hoàn thành",
+        "open": "Mở",
+        "resolved": "Đã giải quyết",
+        "denied": "Bị từ chối",
+        "canceled": "Đã hủy"
+      }
+    },
+    "search_placeholder": "Tìm kiếm theo số đơn hàng…",
+    "shipping_address": "Vận chuyển đến",
+    "ships_from": "Vận chuyển từ {{name}}",
+    "summary": {
+      "adjustments": "Điều chỉnh",
+      "cancel_note": "Thông báo hủy",
+      "cancel_reason": "Lý do hủy",
+      "canceled_at": "Đã hủy vào lúc",
+      "commission_fee": "Phí thị trường",
+      "commission_tax": "Thuế phí thị trường",
+      "commission_total": "Tổng phí thị trường",
+      "completed_at": "Hoàn thành lúc",
+      "created_at": "Được tạo vào lúc",
+      "currency": "Tiền tệ",
+      "item_total": "Mặt hàng",
+      "outstanding_balance": "Số dư chưa thanh toán",
+      "payment_total": "Tổng số tiền thanh toán",
+      "promotions": "Khuyến mãi",
+      "shipping": "vận chuyển",
+      "subtotal": "Tổng phụ",
+      "tax_additional": "Thuế (bổ sung)",
+      "tax_included": "Thuế (đã bao gồm)",
+      "tax_total": "Thuế",
+      "title": "Tóm tắt",
+      "total": "Tổng cộng"
+    },
+    "title": "Đơn đặt hàng",
+    "tracking_label": "Số theo dõi"
+  },
+  "payouts": {
+    "columns": {
+      "date": "Ngày",
+      "status": "Trạng thái",
+      "earnings": "Thu nhập",
+      "reference": "Tài liệu tham khảo",
+      "amount": "Số tiền"
+    },
+    "detail": {
+      "covers_empty": "Khoản thanh toán này không bao gồm thu nhập.",
+      "covers_error": "Không thể tải khoản thu nhập mà khoản thanh toán này chi trả.",
+      "covers_one": "Bao gồm thu nhập {{count}}",
+      "covers_other": "Bao gồm thu nhập {{count}}",
+      "period": "Thời kỳ",
+      "settlement": "Thanh toán"
+    },
+    "empty": "Chưa có khoản thanh toán nào.",
+    "not_found": "Không thể tìm thấy khoản thanh toán này.",
+    "search_placeholder": "Tìm kiếm theo tham chiếu",
+    "subtitle": "Những gì thị trường đã gửi cho bạn và những gì đang trên đường đến.",
+    "title": "Xuất chi"
+  },
+  "policies": {
+    "add": "Thêm chính sách",
+    "columns": {
+      "name": "Tên",
+      "updated": "Đã cập nhật"
+    },
+    "delete_confirm": {
+      "title": "Xóa chính sách?",
+      "message": "{{name}} sẽ bị xóa. Nếu thị trường yêu cầu nó, việc giới thiệu của bạn sẽ lại cho thấy nó nổi bật."
+    },
+    "description": "Các tài liệu pháp lý mà người mua hàng nhìn thấy trên mặt tiền cửa hàng của bạn.",
+    "empty": {
+      "title": "Chưa có chính sách",
+      "description": "Xuất bản các tài liệu mà thị trường này yêu cầu bạn."
+    },
+    "fields": {
+      "name": "Tên",
+      "body": "Nội dung"
+    },
+    "messages": {
+      "deleted": "Đã xóa chính sách",
+      "saved": "Đã lưu chính sách"
+    },
+    "required": {
+      "title": "Đã hỏi bạn",
+      "description": "Thị trường này yêu cầu những chính sách này trước khi chấp thuận bạn.",
+      "write": "Viết nó"
+    },
+    "search_placeholder": "Tìm kiếm theo tên…",
+    "sheet": {
+      "new_title": "Chính sách mới",
+      "description": "Người mua hàng đọc thông tin này trên trang cửa hàng của bạn."
+    },
+    "title": "Chính sách"
+  },
+  "products": {
+    "add": "Thêm sản phẩm",
+    "add_images": "Thêm hình ảnh",
+    "add_variant": "Thêm biến thể",
+    "archive": "Lưu trữ",
+    "archive_confirm_description": "Nó được giảm giá và nằm ngoài danh sách đang hoạt động của bạn.",
+    "archive_confirm_title": "Lưu trữ sản phẩm này?",
+    "bulk": {
+      "delete_confirm_description": "Việc này sẽ xóa {n} khỏi danh mục của bạn. Người mua hàng sẽ không còn nhìn thấy chúng nữa.",
+      "delete_confirm_title": "Xóa các sản phẩm đã chọn?",
+      "delete_failed": "Những sản phẩm đó không thể bị xóa.",
+      "deleted": "Đã xóa {n} sản phẩm",
+      "set_status_action": "Đặt trạng thái",
+      "skipped_one": "{{count}} bị bỏ lại một mình. {{message}}",
+      "skipped_other": "{{count}} bị bỏ lại một mình. {{message}}",
+      "skipped_refused": "Thị trường sẽ không để họ di chuyển. Mở một cái để xem tại sao.",
+      "skipped_submit": "Chỉ có thể gửi danh sách dự thảo và danh sách mà thị trường yêu cầu bạn thay đổi.",
+      "status_dialog_description": "Hãy gỡ những danh sách này xuống trong khi bạn làm việc với chúng hoặc lưu trữ chúng vĩnh viễn. Việc bán một sản phẩm là quyết định của thị trường — thay vào đó hãy gửi sản phẩm đó để xem xét.",
+      "status_dialog_title": "Đặt trạng thái",
+      "status_update_failed": "Những sản phẩm đó không thể được cập nhật.",
+      "status_updated": "Đã cập nhật {n} sản phẩm",
+      "submit_confirm_description": "Thị trường sẽ xem xét {n} sản phẩm và quyết định có bán chúng hay không.",
+      "submit_confirm_title": "Gửi các sản phẩm đã chọn để xem xét?",
+      "submit_failed": "Những sản phẩm đó không thể được gửi.",
+      "submitted": "Đã gửi {n} sản phẩm để xem xét"
+    },
+    "columns": {
+      "name": "sản phẩm",
+      "price": "Giá",
+      "status": "Trạng thái"
+    },
+    "custom_fields": "Chi tiết sản phẩm",
+    "details": "Chi tiết",
+    "empty": "Chưa có sản phẩm nào. Thêm một để bắt đầu bán hàng.",
+    "fields": {
+      "alt": "Văn bản thay thế",
+      "categories": "Danh mục",
+      "categories_placeholder": "Tìm kiếm danh mục…",
+      "collections": "Bộ sưu tập",
+      "collections_placeholder": "Tìm kiếm bộ sưu tập…",
+      "country_of_origin": "Nước xuất xứ",
+      "country_of_origin_placeholder": "ví dụ. PL",
+      "description": "Mô tả",
+      "hs_code": "mã HS",
+      "hs_code_placeholder": "ví dụ: 9405.20",
+      "meta_description": "Mô tả meta",
+      "meta_keywords": "Từ khóa meta",
+      "meta_title": "Tiêu đề trang",
+      "name": "Tên",
+      "option": "Tùy chọn",
+      "option_name": "Tùy chọn",
+      "option_value": "Giá trị",
+      "price": "Giá",
+      "price_in": "Giá ({{currency}})",
+      "price_placeholder": "Để trống để giữ giá hiện tại",
+      "product_type": "Loại sản phẩm",
+      "product_type_placeholder": "Chọn một loại",
+      "sku": "Mã hàng",
+      "slug": "Xử lý URL",
+      "status": "Trạng thái",
+      "stock": "kho",
+      "weight": "cân nặng"
+    },
+    "media": "Phương tiện truyền thông",
+    "media_remove_confirm_description": "Nó tắt sản phẩm khi bạn lưu.",
+    "media_remove_confirm_title": "Xóa hình ảnh này?",
+    "new_title": "Sản phẩm mới",
+    "not_found": "Sản phẩm đó không thể được tìm thấy.",
+    "organization": "Tổ chức",
+    "rejection_reason": "Lý do: {{reason}}",
+    "saved": "Đã lưu sản phẩm",
+    "search_placeholder": "Tìm kiếm theo tên…",
+    "seo": "Danh sách công cụ tìm kiếm",
+    "shipping": "Vận chuyển và hải quan",
+    "status_help": {
+      "active": "Đang giảm giá và hiển thị cho người mua hàng.",
+      "archived": "Giảm giá và ra khỏi danh sách hoạt động của bạn.",
+      "draft": "Chỉ có bạn mới có thể nhìn thấy điều này. Hãy gửi nó khi bạn đã sẵn sàng để thị trường xem xét nó.",
+      "proposed": "Chờ thị trường xem xét lại. Bạn vẫn có thể thực hiện thay đổi.",
+      "rejected": "Thị trường yêu cầu thay đổi. Chỉnh sửa nó, sau đó gửi lại."
+    },
+    "status_updated": "Đã cập nhật trạng thái",
+    "statuses": {
+      "active": "Đang hoạt động",
+      "archived": "Đã lưu trữ",
+      "draft": "bản nháp",
+      "proposed": "Đang xem xét",
+      "rejected": "Những thay đổi cần thiết"
+    },
+    "submit_for_review": "Gửi để xem xét",
+    "take_down": "Hạ gục",
+    "take_down_confirm_description": "Người mua hàng sẽ không còn nhìn thấy nó nữa. Bạn có thể gửi lại sau.",
+    "take_down_confirm_title": "Đưa danh sách này xuống?",
+    "title": "Sản phẩm",
+    "uploading": "Đang tải lên tệp {{count}}…",
+    "uploading_plural": "Đang tải lên tệp {{count}}…",
+    "variant_remove_confirm_description": "Nó tắt sản phẩm khi bạn lưu.",
+    "variant_remove_confirm_title": "Xóa biến thể này?",
+    "variants": "Biến thể",
+    "variants_empty": "Sản phẩm này được bán như một mặt hàng, với mức giá trên. Thêm một biến thể để bán nó với các tùy chọn như kích thước hoặc màu sắc.",
+    "digital_files_review_notice": "Việc thêm hoặc thay thế tệp sẽ gửi sản phẩm này trở lại để xem xét và sản phẩm sẽ được giảm giá cho đến khi được thị trường chấp thuận lại."
+  },
+  "profile": {
+    "about": "Về",
+    "add_address": "Thêm địa chỉ",
+    "address_filled": "Đã thêm",
+    "address_missing": "Chưa được thêm",
+    "address_not_provided": "Chưa có địa chỉ.",
+    "at_a_glance": "Trong nháy mắt",
+    "billing_address": "Địa chỉ thanh toán",
+    "billing_email": "Email thanh toán",
+    "business_details": "Chi tiết doanh nghiệp",
+    "contact_email": "Email liên hệ",
+    "edit": "Chỉnh sửa",
+    "edit_title": "Chỉnh sửa hồ sơ của bạn",
+    "joined": "Đã tham gia",
+    "legal_name": "Tên pháp lý",
+    "minimum_payout": "Thanh toán tối thiểu",
+    "name": "Tên",
+    "no_about": "Bạn chưa viết mô tả.",
+    "not_provided": "Không được cung cấp",
+    "on_holiday_notice": "Chế độ nghỉ lễ đang bật nên sản phẩm của bạn có thể nhìn thấy nhưng không thể mua được.",
+    "operator_managed": "Do thị trường đặt ra",
+    "payout_schedule": "Lịch thanh toán",
+    "products_count": "Sản phẩm",
+    "registration_number": "Số đăng ký",
+    "returns_address": "Trả về địa chỉ",
+    "save": "Lưu thay đổi",
+    "saved": "Đã lưu hồ sơ",
+    "saving": "Đang lưu…",
+    "section_contact": "Liên hệ",
+    "section_settlement": "Các khoản thanh toán và thuế",
+    "section_standing": "Đứng",
+    "select_tax_identifier_kind": "Chọn hoặc nhập loại đăng ký",
+    "status_help": {
+      "approved": "Bạn được chấp thuận và có thể bán trên thị trường này.",
+      "canceled": "Tài khoản người bán này đã bị đóng.",
+      "invited": "Bạn đã được mời. Hoàn tất việc thiết lập để áp dụng.",
+      "onboarding": "Làm việc thông qua danh sách kiểm tra của bạn, sau đó gửi để xem xét.",
+      "pending": "Thị trường vẫn chưa bắt đầu ứng dụng của bạn.",
+      "ready_for_review": "Thị trường đang xem xét đơn đăng ký của bạn.",
+      "rejected": "Đơn đăng ký của bạn không được chấp nhận. Hãy liên hệ với thị trường để tìm hiểu thêm.",
+      "suspended": "Việc bán hàng bị tạm dừng. Hãy liên hệ với thị trường để tìm hiểu thêm."
+    },
+    "subtitle": "Mặt tiền cửa hàng của bạn giới thiệu bạn như thế nào và thị trường tiếp cận bạn như thế nào.",
+    "tax_identifier_kind": "Loại đăng ký",
+    "tax_identifier_kinds": {
+      "au_abn": "Số doanh nghiệp Úc",
+      "ch_vat": "Thuế VAT Thụy Sĩ",
+      "eu_vat": "VAT EU",
+      "gb_vat": "VAT của Vương quốc Anh",
+      "us_ein": "EIN Hoa Kỳ"
+    },
+    "tax_remittance": "Thuế được nộp bởi",
+    "team_count": "Thành viên nhóm",
+    "vat_number": "số thuế GTGT",
+    "vat_status": {
+      "pending": "Chúng tôi đang kiểm tra con số này.",
+      "unavailable": "Không thể truy cập cơ quan đăng ký - chúng tôi sẽ thử lại.",
+      "unsupported": "Số này được ghi lại như đã nhập; chúng tôi không thể kiểm tra nó một cách tự động.",
+      "unverified": "Con số này không thể được xác minh."
+    }
+  },
+  "reset_password": {
+    "failed": "Liên kết đó không thể được sử dụng. Nó có thể đã hết hạn hoặc mật khẩu không được chấp nhận.",
+    "invalid_link": "Liên kết này thiếu mã thông báo. Mở liên kết từ email đặt lại của bạn.",
+    "mismatch": "Cả hai mật khẩu phải trùng khớp.",
+    "password": "Mật khẩu mới",
+    "password_confirmation": "Xác nhận mật khẩu mới",
+    "request_new_link": "Yêu cầu một liên kết mới",
+    "submit": "Thay đổi mật khẩu",
+    "submitting": "Đang lưu…",
+    "subtitle": "Chọn mật khẩu mới để hoàn tất đăng nhập.",
+    "title": "Chọn mật khẩu mới"
+  },
+  "seller_picker": {
+    "status": "Trạng thái",
+    "subtitle": "Bạn chạy nhiều hơn một. Chọn cái nào để quản lý.",
+    "title": "Chọn người bán"
+  },
+  "seller_switcher": {
+    "label": "Chuyển đổi người bán"
+  },
+  "team": {
+    "actions": {
+      "copy_link": "Sao chép liên kết lời mời",
+      "remove": "Xóa",
+      "resend": "Gửi lại lời mời",
+      "revoke": "Thu hồi"
+    },
+    "confirm": {
+      "remove_message": "{{name}} sẽ mất quyền truy cập vào người bán này ngay lập tức.",
+      "remove_title": "Xóa thành viên",
+      "revoke_message": "Lời mời tới {{email}} sẽ ngừng hoạt động.",
+      "revoke_title": "Thu hồi lời mời"
+    },
+    "empty": "Chưa có ai trong đội",
+    "empty_description": "Mời một đồng nghiệp và họ sẽ xuất hiện ở đây sau khi chấp nhận.",
+    "invitations_section": "Lời mời đang chờ xử lý",
+    "invite_cta": "Mời thành viên",
+    "invite_description": "Họ sẽ nhận được email có liên kết để tham gia với người bán này.",
+    "invite_email": "Email",
+    "invite_email_placeholder": "đồng nghiệp@example.com",
+    "invite_sending": "Đang gửi…",
+    "invite_submit": "Gửi lời mời",
+    "invite_title": "Mời đồng nghiệp",
+    "members_section": "Thành viên",
+    "messages": {
+      "invited": "Đã gửi lời mời",
+      "link_copied": "Đã sao chép liên kết lời mời",
+      "removed": "Thành viên đã bị xóa",
+      "resent": "Đã gửi lại lời mời",
+      "revoked": "Đã thu hồi lời mời"
+    },
+    "subtitle": "Những người có thể đăng nhập và quản lý người bán này.",
+    "table": {
+      "email": "Email",
+      "expires": "Hết hạn",
+      "member": "Thành viên"
+    },
+    "title": "Nhóm của bạn"
+  }
+}

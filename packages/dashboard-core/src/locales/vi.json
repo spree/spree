@@ -1,0 +1,2122 @@
+{
+  "admin": {
+    "address_select": {
+      "none": "Không có địa chỉ nào được chọn"
+    },
+    "app_name": "Quản trị viên Spree",
+    "a11y": {
+      "breadcrumb": "vụn bánh mì",
+      "breadcrumb_more": "Thêm",
+      "bulk_actions": "Hành động hàng loạt",
+      "change_color": "Thay đổi màu sắc ({{value}})",
+      "clear_date": "Xóa ngày",
+      "clear_selection": "Xóa lựa chọn",
+      "collapse_all": "Thu gọn tất cả",
+      "delete_image": "Xóa hình ảnh",
+      "drag_to_reorder": "Kéo để sắp xếp lại",
+      "edit_media": "Chỉnh sửa phương tiện",
+      "expand_all": "Mở rộng tất cả",
+      "hide_value": "Ẩn giá trị",
+      "pick_color": "Chọn một màu",
+      "refetch": "Tải lại",
+      "remove_image": "Xóa hình ảnh",
+      "remove_value": "Xóa giá trị",
+      "reorder": "Sắp xếp lại",
+      "select_all_rows": "Chọn tất cả các hàng trên trang này",
+      "select_row": "Chọn hàng",
+      "settings_navigation": "Điều hướng cài đặt",
+      "show_value": "Hiển thị giá trị",
+      "sidebar": "Thanh bên",
+      "sidebar_description": "Hiển thị thanh bên di động.",
+      "stock_at_locations": "Hàng tồn kho tại các địa điểm",
+      "store_switcher": "Chuyển đổi cửa hàng",
+      "toggle_sidebar": "Chuyển đổi thanh bên",
+      "upload_image": "Tải hình ảnh lên",
+      "user_menu": "Trình đơn người dùng",
+      "view_image": "Xem hình ảnh"
+    },
+    "account": {
+      "community": "cộng đồng",
+      "contact_support": "Liên hệ hỗ trợ",
+      "documentation": "Tài liệu",
+      "edit_profile": "Chỉnh sửa hồ sơ",
+      "language": {
+        "label": "Ngôn ngữ",
+        "update_failed": "Không thể lưu tùy chọn ngôn ngữ của bạn. Vui lòng thử lại."
+      },
+      "log_out": "Đăng xuất",
+      "preferences": "Tùy chọn",
+      "view_store": "Xem cửa hàng"
+    },
+    "actions": {
+      "actions_menu": "hành động",
+      "add": "Thêm",
+      "adding": "Đang thêm…",
+      "apply": "Áp dụng",
+      "back": "Quay lại",
+      "cancel": "Hủy bỏ",
+      "clear": "Xóa",
+      "close": "Đóng",
+      "confirm": "Xác nhận",
+      "copied": "Đã sao chép!",
+      "copy": "Sao chép",
+      "create": "Tạo",
+      "creating": "Đang tạo…",
+      "delete": "Xóa",
+      "deleting": "Đang xóa…",
+      "discard": "Loại bỏ",
+      "discard_changes": "Hủy thay đổi",
+      "done": "Xong",
+      "duplicate": "trùng lặp",
+      "edit": "Chỉnh sửa",
+      "export": "Xuất khẩu",
+      "exporting": "Đang xuất…",
+      "generate": "Tạo",
+      "hide": "Ẩn",
+      "import": "Nhập khẩu",
+      "invite": "Mời",
+      "more_actions": "Thêm hành động",
+      "remove": "Xóa",
+      "remove_item": "Xóa {{label}}",
+      "remove_rule": "Xóa quy tắc",
+      "reset": "Đặt lại",
+      "revoke": "Thu hồi",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "search": "Tìm kiếm",
+      "send": "Gửi",
+      "send_invitation": "Gửi lời mời",
+      "sending": "Đang gửi…",
+      "show": "Hiển thị",
+      "sign_in": "Đăng nhập",
+      "signing_in": "Đang đăng nhập…",
+      "view": "Xem",
+      "view_all": "Xem tất cả",
+      "view_details": "Xem chi tiết"
+    },
+    "address": {
+      "not_located_yet": "Bản đồ xuất hiện khi địa chỉ này đã được định vị."
+    },
+    "address_book": {
+      "default_billing": "Thanh toán mặc định",
+      "default_shipping": "vận chuyển mặc định",
+      "inherited_from": "Kế thừa từ {{name}}",
+      "set_default_billing": "Đặt làm thanh toán mặc định",
+      "set_default_shipping": "Đặt làm vận chuyển mặc định"
+    },
+    "auth": {
+      "back_to_login": "Quay lại để đăng nhập",
+      "forgot_password": {
+        "error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+        "link": "Quên mật khẩu?",
+        "sending": "Đang gửi…",
+        "sent_subtitle": "Nếu có tài khoản cho email đó thì liên kết đặt lại mật khẩu sẽ được gửi đến.",
+        "sent_title": "Kiểm tra email của bạn",
+        "submit": "Gửi liên kết đặt lại",
+        "subtitle": "Nhập email của bạn và chúng tôi sẽ gửi cho bạn một liên kết để đặt lại mật khẩu của bạn.",
+        "title": "Đặt lại mật khẩu của bạn"
+      },
+      "login": {
+        "account_deactivated": "Tài khoản này đã bị vô hiệu hóa. Hãy liên hệ với quản trị viên để khôi phục quyền truy cập.",
+        "account_not_provisioned": "Tài khoản này không được ủy quyền cho cửa hàng này. Yêu cầu quản trị viên cho một lời mời.",
+        "divider": "hoặc",
+        "invalid_oauth_state": "Phiên đăng nhập đó đã hết hạn hoặc không hợp lệ. Vui lòng bắt đầu đăng nhập lại.",
+        "providers_error_message": "Chúng tôi không thể tải các tùy chọn đăng nhập. Vui lòng làm mới trang hoặc liên hệ với quản trị viên của bạn.",
+        "providers_error_title": "Đăng nhập không khả dụng",
+        "rate_limit_exceeded": "Quá nhiều lần đăng nhập. Vui lòng đợi một lát và thử lại.",
+        "sso_button": "Tiếp tục với {{provider}}",
+        "sso_failed": "Chúng tôi không thể đăng nhập cho bạn với nhà cung cấp đó. Vui lòng thử lại.",
+        "subtitle": "Đăng nhập vào tài khoản quản trị của bạn",
+        "title": "Chào mừng trở lại"
+      },
+      "logout": "Đăng xuất",
+      "no_store_access": {
+        "description": "Bạn đã đăng nhập nhưng tài khoản của bạn chưa là thành viên của bất kỳ cửa hàng nào. Yêu cầu quản trị viên cửa hàng mời bạn hoặc đăng nhập bằng tài khoản khác.",
+        "signed_in_as": "Đã đăng nhập với tên {{email}}",
+        "title": "Bạn không có quyền truy cập vào bất kỳ cửa hàng nào"
+      },
+      "reset_password": {
+        "confirm_password_label": "Xác nhận mật khẩu mới",
+        "error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+        "missing_token_message": "Liên kết đặt lại mật khẩu này thiếu mã thông báo.",
+        "missing_token_title": "Liên kết đặt lại không hợp lệ",
+        "new_password_label": "Mật khẩu mới",
+        "request_new_link": "Yêu cầu liên kết đặt lại mới",
+        "submit": "Đặt lại mật khẩu",
+        "submitting": "Đang đặt lại…",
+        "subtitle": "Nhập mật khẩu mới cho tài khoản quản trị viên của bạn.",
+        "title": "Chọn mật khẩu mới",
+        "token_invalid": "Liên kết đặt lại này không hợp lệ hoặc đã hết hạn. Yêu cầu một cái mới."
+      }
+    },
+    "color_picker": {
+      "no_color": "không có màu sắc"
+    },
+    "common": {
+      "active": "Đang hoạt động",
+      "adjust_search_or_filters": "Hãy thử điều chỉnh tìm kiếm hoặc bộ lọc của bạn",
+      "all": "Tất cả",
+      "and": "và",
+      "are_you_sure": "Bạn có chắc không?",
+      "cancel": "Hủy bỏ",
+      "clear": "Xóa",
+      "comma_separated_hint": "Phân tách các giá trị bằng dấu phẩy.",
+      "default": "Mặc định",
+      "delete_confirm_message": "Bạn có chắc không? Không thể hoàn tác hành động này.",
+      "deleted": "Đã xóa",
+      "empty_value": "—",
+      "inactive": "Không hoạt động",
+      "learn_more": "Tìm hiểu thêm",
+      "skip_to_content": "Chuyển đến nội dung",
+      "loading": "Đang tải…",
+      "next": "Tiếp theo",
+      "no": "Không",
+      "no_results": "Không có kết quả",
+      "combobox_more_results_one": "1 kết quả nữa không được hiển thị Nhập để tìm kiếm.",
+      "combobox_more_results_other": "{{count}} kết quả khác không được hiển thị. Nhập để tìm kiếm.",
+      "none": "không có",
+      "optional": "Tùy chọn",
+      "or": "hoặc",
+      "page_of": "Trang {{page}} trong số {{total}}",
+      "pick_date": "Chọn một ngày",
+      "prev": "Trước đó",
+      "prices": "Giá cả",
+      "remove_question": "Xóa?",
+      "required": "Bắt buộc",
+      "retry": "Thử lại",
+      "search_placeholder": "Tìm kiếm…",
+      "searching": "Đang tìm kiếm…",
+      "select_placeholder": "Chọn…",
+      "unsaved_changes": "Bạn có những thay đổi chưa được lưu.",
+      "yes": "Có",
+      "done": "Xong",
+      "error": "Đã xảy ra lỗi."
+    },
+    "components": {
+      "address_block": {
+        "not_provided": "Không được cung cấp"
+      },
+      "address_form_dialog": {
+        "description": "Cập nhật chi tiết địa chỉ.",
+        "edit_title": "Chỉnh sửa địa chỉ"
+      },
+      "bulk_action_bar": {
+        "default_error": "Thao tác hàng loạt không thành công",
+        "default_success": "Đã cập nhật bản ghi {n}",
+        "selected": "{{count}} đã chọn"
+      },
+      "channel_select": {
+        "placeholder": "Chọn kênh bán hàng",
+        "all_channels": "Tất cả các kênh"
+      },
+      "command_palette": {
+        "create": {
+          "heading": "Tạo",
+          "label": "Mới {{noun}}",
+          "nouns": {
+            "catalog": "Danh mục",
+            "catalog_plural": "Danh mục",
+            "category": "Danh mục",
+            "category_plural": "Danh mục",
+            "collection": "Bộ sưu tập",
+            "collection_plural": "Bộ sưu tập",
+            "company": "Công ty",
+            "company_plural": "Công ty",
+            "customer": "Khách hàng",
+            "customer_group": "Nhóm khách hàng",
+            "customer_group_plural": "Nhóm khách hàng",
+            "customer_plural": "Khách hàng",
+            "discount": "Giảm giá",
+            "discount_plural": "Giảm giá",
+            "gift_card": "Thẻ quà tặng",
+            "gift_card_plural": "Thẻ quà tặng",
+            "option_type": "Tùy chọn",
+            "option_type_plural": "Tùy chọn",
+            "order": "Đặt hàng",
+            "order_plural": "Đơn đặt hàng",
+            "price_list": "Bảng giá",
+            "price_list_plural": "Bảng giá",
+            "product": "sản phẩm",
+            "product_plural": "Sản phẩm",
+            "promotion": "Khuyến mãi",
+            "promotion_plural": "Khuyến mãi",
+            "seller": "Người bán",
+            "seller_plural": "Người bán",
+            "stock_location": "Vị trí",
+            "stock_location_plural": "Địa điểm",
+            "stock_transfer": "Chuyển khoản",
+            "stock_transfer_plural": "chuyển nhượng"
+          },
+          "verbs": "thêm, mới, tạo"
+        },
+        "description": "Tìm kiếm trên các sản phẩm, đơn đặt hàng và khách hàng hoặc chạy lệnh.",
+        "empty_hint": "Nhập để tìm kiếm hoặc chọn một lệnh bên dưới.",
+        "goto": "đi đến",
+        "goto_label": "Đi đến {{label}}",
+        "hints": {
+          "close": "đóng",
+          "esc_key": "thoát",
+          "navigate": "điều hướng",
+          "select": "chọn"
+        },
+        "no_results": "Không có kết quả nào cho \"{{query}}\".",
+        "placeholder": "Tìm kiếm sản phẩm, đơn hàng, khách hàng…",
+        "search_label": "Tìm kiếm bất cứ điều gì…",
+        "title": "Tìm kiếm và lệnh"
+      },
+      "confirm_dialog": {
+        "title": "Bạn có chắc không?"
+      },
+      "country_combobox": {
+        "empty": "Không tìm thấy quốc gia nào",
+        "placeholder": "Chọn một quốc gia",
+        "search_placeholder": "Tìm kiếm quốc gia…"
+      },
+      "currency_select": {
+        "empty": "Không tìm thấy loại tiền tệ nào",
+        "placeholder": "Chọn một loại tiền tệ",
+        "search_placeholder": "Tìm kiếm tiền tệ…"
+      },
+      "custom_fields": {
+        "json_placeholder": "{ \"ví dụ\": \"giá trị\" }"
+      },
+      "date_range_picker": {
+        "presets": {
+          "last_14_days": "14 ngày qua",
+          "last_30_days": "30 ngày qua",
+          "last_7_days": "7 ngày qua",
+          "last_90_days": "90 ngày qua",
+          "this_month": "Tháng này",
+          "year_to_date": "Từ đầu năm đến nay"
+        }
+      },
+      "error_state": {
+        "retry": "Thử lại"
+      },
+      "export_button": {
+        "all": {
+          "description": "Bỏ qua các bộ lọc và xuất mọi thứ trong cửa hàng này.",
+          "title": "Tất cả hồ sơ"
+        },
+        "description": "Chúng tôi sẽ chuẩn bị CSV của bạn ở chế độ nền và tải xuống ngay khi sẵn sàng. Nếu phải mất một thời gian bạn cũng sẽ nhận được một liên kết email.",
+        "downloaded": "Xuất đã tải xuống",
+        "email_fallback": "Vẫn đang xử lý — chúng tôi sẽ gửi cho bạn một liên kết qua email khi nó sẵn sàng.",
+        "failed": "Xuất không thành công: {{message}}",
+        "filtered": {
+          "count_few": "Xuất bản ghi {{formattedCount}} phù hợp với bộ lọc hiện tại của bạn.",
+          "count_many": "Xuất bản ghi {{formattedCount}} phù hợp với bộ lọc hiện tại của bạn.",
+          "count_one": "Xuất bản ghi {{formattedCount}} khớp với bộ lọc hiện tại của bạn.",
+          "count_other": "Xuất bản ghi {{formattedCount}} phù hợp với bộ lọc hiện tại của bạn.",
+          "no_filter": "Không có bộ lọc nào hoạt động - giống như xuất tất cả bản ghi.",
+          "title": "Bộ lọc hiện tại",
+          "unknown_count": "Xuất bản ghi phù hợp với bộ lọc hiện tại của bạn."
+        },
+        "preparing": "Đang chuẩn bị xuất khẩu…",
+        "title": "Xuất sang CSV"
+      },
+      "file_upload": {
+        "attached": "Tệp đính kèm",
+        "browse": "Duyệt tập tin",
+        "drop_image_label": "Thả hình ảnh vào đây hoặc nhấp để duyệt",
+        "drop_label": "Thả một tập tin ở đây, hoặc bấm vào để duyệt",
+        "invalid_type": "Loại tệp này không được chấp nhận (dự kiến: {{accept}})",
+        "upload_failed": "Tải lên không thành công: {{message}}",
+        "uploading": "Đang tải lên…"
+      },
+      "import_button": {
+        "delimiter_label": "Dấu phân cách cột",
+        "delimiters": {
+          "comma": "Dấu phẩy (,)",
+          "pipe": "Ống (|)",
+          "semicolon": "Dấu chấm phẩy (;)",
+          "tab": "Thẻ"
+        },
+        "description": "Tải lên tệp CSV. Bạn sẽ khớp các cột của nó với các trường trong bước tiếp theo.",
+        "download_example": "Tải xuống một tệp CSV mẫu",
+        "download_template": "Tải xuống mẫu CSV",
+        "drop_label": "Thả tệp CSV vào đây hoặc nhấp để duyệt",
+        "example_failed": "Tải xuống ví dụ không thành công: {{message}}",
+        "failed": "Nhập không thành công: {{message}}",
+        "submit": "Tiếp tục",
+        "template_failed": "Tải xuống mẫu không thành công: {{message}}",
+        "title": "Nhập từ CSV"
+      },
+      "json_preview_drawer": {
+        "collapse_depth": "Độ sâu thu gọn",
+        "copied": "Đã sao chép",
+        "copy_all": "Sao chép tất cả",
+        "depth": "Độ sâu {{level}}",
+        "failed_to_load": "Không tải được: {{message}}",
+        "open_raw": "Mở phản hồi thô",
+        "raw": "thô",
+        "title": "JSON"
+      },
+      "locale_select": {
+        "empty": "Không tìm thấy ngôn ngữ nào",
+        "multi_placeholder": "Thêm ngôn ngữ…",
+        "placeholder": "Chọn một địa điểm",
+        "search_placeholder": "Tìm kiếm ngôn ngữ…"
+      },
+      "market_combobox": {
+        "empty": "Không có thị trường nào phù hợp",
+        "search_placeholder": "Tìm kiếm thị trường…"
+      },
+      "media": {
+        "remove_tooltip": "Xóa hình ảnh"
+      },
+      "media_preview": {
+        "video_title": "Xem trước video"
+      },
+      "metadata_card": {
+        "copy_reference": "Sao chép khóa {{system}}",
+        "empty_description": "Các ứng dụng và tiện ích tích hợp sẽ tự động được điền vào đây.",
+        "empty_title": "Không có siêu dữ liệu",
+        "external_references": "Tài liệu tham khảo bên ngoài",
+        "title": "Siêu dữ liệu",
+        "view": "Xem siêu dữ liệu"
+      },
+      "page_header": {
+        "copy_id": "Sao chép giấy tờ tùy thân",
+        "copy_number": "Sao chép số",
+        "view_as_json": "Xem dưới dạng JSON"
+      },
+      "pagination": {
+        "first_page": "Tới trang đầu tiên",
+        "last_page": "Tới trang cuối cùng",
+        "next_page": "Chuyển đến trang tiếp theo",
+        "previous_page": "Đi tới trang trước",
+        "range": "{{from}}–{{to}} trong số {{count}}",
+        "rows_per_page": "Hàng trên mỗi trang"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "Phân tách các giá trị bằng dấu phẩy.",
+        "tiers": {
+          "add_tier": "Thêm cấp độ",
+          "empty": "Chưa có cấp độ nào. Giá cơ bản được áp dụng cho đến khi bạn thêm một cấp độ.",
+          "header_threshold": "Tổng đơn hàng ≥",
+          "header_value": "Giảm giá",
+          "label": "Bậc",
+          "remove_tier": "Xóa cấp độ"
+        },
+        "unlimited": "Không giới hạn"
+      },
+      "rich_text_editor": {
+        "blockquote": "Trích dẫn chặn",
+        "bold": "Đậm",
+        "bullet_list": "Danh sách dấu đầu dòng",
+        "image": "Hình ảnh",
+        "italic": "Nghiêng",
+        "link": "liên kết",
+        "link_url_prompt": "URL",
+        "ordered_list": "Danh sách đặt hàng",
+        "placeholder": "Viết cái gì đó…",
+        "redo": "Làm lại",
+        "strikethrough": "Gạch ngang",
+        "undo": "Hoàn tác"
+      },
+      "secret_input": {
+        "new_value_placeholder": "Giá trị mới",
+        "replace": "Thay thế",
+        "stored_help": "Được lưu trữ trên máy chủ. Bấm vào Thay thế để xoay."
+      },
+      "state_combobox": {
+        "empty": "Không tìm thấy tiểu bang nào",
+        "placeholder": "Chọn một tiểu bang",
+        "search_placeholder": "Trạng thái tìm kiếm…"
+      },
+      "table_toolbar": {
+        "add_filter": "Thêm bộ lọc",
+        "any_field": "Bất kỳ {{field}}",
+        "ascending": "Tăng dần",
+        "clear_all": "Xóa tất cả",
+        "columns_tooltip": "Cột",
+        "date_presets": {
+          "all": "Bất kỳ ngày nào",
+          "custom": "tùy chỉnh",
+          "last_30_days": "30 ngày qua",
+          "last_7_days": "7 ngày qua",
+          "last_month": "Tháng trước",
+          "this_month": "Tháng này",
+          "today": "hôm nay"
+        },
+        "date_range_end": "Kết thúc",
+        "date_range_start": "Bắt đầu",
+        "descending": "Giảm dần",
+        "filter_by": "Lọc theo…",
+        "filter_date_placeholder": "Chọn một ngày",
+        "filter_select_placeholder": "Chọn…",
+        "filter_text_placeholder": "Lọc…",
+        "filter_to_placeholder": "Lọc để…",
+        "n_selected": "{{count}} đã chọn",
+        "only": "Chỉ",
+        "operators": {
+          "after": "sau",
+          "before": "trước đây",
+          "contains": "chứa",
+          "does_not_equal": "không bằng",
+          "ends_with": "kết thúc bằng",
+          "equals": "bằng",
+          "greater_than": "lớn hơn",
+          "greater_than_or_equal": "lớn hơn hoặc bằng",
+          "is": "là",
+          "is_any_of": "là bất kỳ",
+          "is_none_of": "không có cái nào trong số đó",
+          "is_not": "không phải",
+          "is_not_set": "chưa được thiết lập",
+          "is_set": "được thiết lập",
+          "less_than": "ít hơn",
+          "less_than_or_equal": "nhỏ hơn hoặc bằng",
+          "on_or_after": "vào hoặc sau",
+          "on_or_before": "vào hoặc trước",
+          "starts_with": "bắt đầu bằng"
+        },
+        "order": "Đặt hàng",
+        "remove_filter": "Xóa bộ lọc",
+        "reset_to_default": "Đặt lại về mặc định",
+        "search_placeholder": "Tìm kiếm…",
+        "select_all": "Chọn tất cả",
+        "sort_by": "Sắp xếp theo",
+        "sort_tooltip": "Sắp xếp",
+        "visible_columns": "Cột hiển thị"
+      },
+      "tag_combobox": {
+        "create_option": "Tạo \"{{tag}}\"",
+        "empty_hint": "Nhập và nhấn Enter để tạo thẻ",
+        "placeholder": "Nhập để thêm thẻ…"
+      },
+      "theme_toggle": {
+        "dark": "Tối",
+        "label": "chủ đề",
+        "light": "Ánh sáng",
+        "system": "Hệ thống"
+      },
+      "wizard": {
+        "discard_cancel": "Tiếp tục chỉnh sửa",
+        "discard_confirm": "Loại bỏ",
+        "discard_message": "Mọi thứ bạn đã điền cho đến nay sẽ bị mất. Điều này không thể hoàn tác được.",
+        "discard_title": "Hủy bản nháp này?"
+      }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Số tiền trong {{currency}}",
+      "help": "Các loại tiền tệ để trống không được cung cấp theo phương thức phân phối này.",
+      "label": "Số tiền",
+      "required": "Nhập số tiền bằng ít nhất một loại tiền tệ."
+    },
+    "custom_field_definitions": {
+      "errors": {
+        "failed_to_create": "Không tạo được định nghĩa trường tùy chỉnh",
+        "failed_to_delete": "Không thể xóa định nghĩa trường tùy chỉnh",
+        "failed_to_update": "Không thể cập nhật định nghĩa trường tùy chỉnh"
+      },
+      "messages": {
+        "created": "Đã tạo định nghĩa trường tùy chỉnh",
+        "deleted": "Đã xóa định nghĩa trường tùy chỉnh",
+        "updated": "Đã cập nhật định nghĩa trường tùy chỉnh"
+      }
+    },
+    "errors": {
+      "failed_to_create": "Không tạo được",
+      "failed_to_delete": "Không thể xóa",
+      "failed_to_load": "Không tải được",
+      "failed_to_load_customer": "Không tải được khách hàng",
+      "failed_to_load_order": "Không thể tải đơn hàng",
+      "failed_to_load_product": "Không thể tải sản phẩm",
+      "failed_to_revoke_key": "Không thể thu hồi khóa",
+      "failed_to_save": "Không lưu được",
+      "failed_to_send_invitation": "Không gửi được lời mời",
+      "failed_to_update": "Không thể cập nhật",
+      "failed_to_update_profile": "Không thể cập nhật hồ sơ",
+      "failed_to_update_staff": "Không thể cập nhật nhân viên",
+      "failed_to_update_store": "Không cập nhật được cài đặt cửa hàng",
+      "generic": "Đã xảy ra lỗi",
+      "label_download_failed": "Không thể tải nhãn xuống",
+      "network": "Lỗi mạng - vui lòng thử lại",
+      "not_found": "Không tìm thấy",
+      "required": "Trường này là bắt buộc",
+      "unauthorized": "Bạn không có quyền làm điều đó",
+      "unexpected": "Đã xảy ra lỗi không mong muốn",
+      "unexpected_retry": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại."
+    },
+    "fields": {
+      "active": {
+        "label": "Đang hoạt động"
+      },
+      "address": {
+        "address1": {
+          "label": "Địa chỉ"
+        },
+        "address2": {
+          "label": "Căn hộ, dãy phòng, v.v."
+        },
+        "is_default_billing": {
+          "label": "Địa chỉ thanh toán mặc định"
+        },
+        "is_default_shipping": {
+          "label": "Địa chỉ giao hàng mặc định"
+        },
+        "label": {
+          "label": "Nhãn",
+          "placeholder": "ví dụ. nhà, văn phòng"
+        },
+        "postal_code": {
+          "label": "Mã bưu chính"
+        }
+      },
+      "address1": {
+        "label": "Dòng địa chỉ 1"
+      },
+      "address2": {
+        "label": "Dòng địa chỉ 2"
+      },
+      "amount": {
+        "label": "Số tiền"
+      },
+      "city": {
+        "label": "Thành phố"
+      },
+      "code": {
+        "label": "Mã"
+      },
+      "company": {
+        "label": "Công ty"
+      },
+      "completed_at": {
+        "label": "Hoàn thành lúc"
+      },
+      "contact_email": {
+        "label": "Email liên hệ"
+      },
+      "country_code": {
+        "label": "Quốc gia"
+      },
+      "created_at": {
+        "label": "Được tạo vào lúc"
+      },
+      "currency": {
+        "label": "Tiền tệ"
+      },
+      "description": {
+        "label": "Mô tả"
+      },
+      "discount": {
+        "label": "Giảm giá"
+      },
+      "email": {
+        "label": "Email"
+      },
+      "enabled": {
+        "label": "Đã bật"
+      },
+      "ends_at": {
+        "label": "Kết thúc"
+      },
+      "expires_at": {
+        "label": "Hết hạn"
+      },
+      "first_name": {
+        "label": "Tên"
+      },
+      "kind": {
+        "label": "loại"
+      },
+      "label": {
+        "label": "Nhãn"
+      },
+      "last_name": {
+        "label": "Họ"
+      },
+      "login": {
+        "email": {
+          "placeholder": "quản trị viên@example.com"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Văn bản thay thế",
+          "placeholder": "Mô tả hình ảnh cho khả năng tiếp cận và SEO"
+        },
+        "external_video_url": {
+          "help": "Dán liên kết YouTube hoặc Vimeo.",
+          "label": "Liên kết video",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "Hình ảnh vẫn được hiển thị trước khi video phát. Để trống để sử dụng hình ảnh của chính nhà cung cấp nếu có.",
+          "label": "Hình ảnh áp phích"
+        }
+      },
+      "meta_description": {
+        "label": "Mô tả meta"
+      },
+      "meta_title": {
+        "label": "Tiêu đề meta"
+      },
+      "name": {
+        "label": "Tên"
+      },
+      "package_type": {
+        "name": {
+          "label": "Tên"
+        },
+        "kind": {
+          "label": "loại",
+          "help": "Chỉ có thùng carton mới có thể là bao bì đựng sản phẩm."
+        },
+        "length": {
+          "label": "Chiều dài"
+        },
+        "width": {
+          "label": "Chiều rộng"
+        },
+        "height": {
+          "label": "Chiều cao"
+        },
+        "dimensions_unit": {
+          "label": "Đơn vị"
+        },
+        "dimensions": {
+          "help": "Được sử dụng để so sánh trọng lượng kích thước của phương tiện vận chuyển và để so sánh các bậc vận chuyển theo mét khối."
+        },
+        "weight": {
+          "label": "Trọng lượng rỗng",
+          "help": "Bản thân bao bì đã được thêm vào những gì nó chứa đựng."
+        },
+        "max_weight": {
+          "label": "Trọng lượng tối đa",
+          "help": "Những gì nó có thể mang theo."
+        },
+        "weight_unit": {
+          "label": "Đơn vị"
+        },
+        "default": {
+          "label": "Hộp mặc định",
+          "help": "Bao bì mà báo giá bưu kiện của bạn được xây dựng trên đó. Một mặc định tại một thời điểm."
+        }
+      },
+      "number": {
+        "label": "Số"
+      },
+      "password": {
+        "label": "Mật khẩu"
+      },
+      "permalink": {
+        "label": "Liên kết cố định"
+      },
+      "phone": {
+        "label": "Điện thoại"
+      },
+      "pretty_name": {
+        "label": "Tên đầy đủ"
+      },
+      "quantity": {
+        "label": "số lượng"
+      },
+      "setup": {
+        "country_code": {
+          "help": "Bạn gửi hàng từ đâu. Cửa hàng của bạn có thể bán hàng trên toàn thế giới — việc này chỉ đặt đơn vị tiền tệ ban đầu, kho hàng và khu vực giao hàng, tất cả đều có thể chỉnh sửa sau này.",
+          "label": "Quốc gia",
+          "placeholder": "Tìm kiếm quốc gia"
+        },
+        "currency": {
+          "help": "Đơn vị tiền tệ mặc định của bạn. Thêm nhiều hơn bất cứ lúc nào.",
+          "label": "Tiền tệ",
+          "placeholder": "Tìm kiếm tiền tệ"
+        },
+        "locale": {
+          "help": "Ngôn ngữ mặc định của bạn. Thêm nhiều hơn bất cứ lúc nào.",
+          "label": "Ngôn ngữ"
+        },
+        "password_confirmation": {
+          "label": "Xác nhận mật khẩu"
+        },
+        "sample_data": {
+          "help": "Thêm các sản phẩm demo, danh mục, khách hàng và đơn đặt hàng ở chế độ nền để bạn có thể khám phá trang tổng quan. Mất vài phút và tải hình ảnh sản phẩm.",
+          "label": "Tải dữ liệu mẫu"
+        },
+        "store_name": {
+          "label": "Tên cửa hàng"
+        }
+      },
+      "shipping": {
+        "label": "vận chuyển"
+      },
+      "slug": {
+        "label": "sên"
+      },
+      "starts_at": {
+        "label": "Bắt đầu"
+      },
+      "state_code": {
+        "label": "Bang/Tỉnh"
+      },
+      "state_name": {
+        "label": "Bang/Tỉnh"
+      },
+      "status": {
+        "label": "Trạng thái"
+      },
+      "stock_location": {
+        "active": {
+          "help": "Các vị trí không hoạt động không xuất hiện trong lựa chọn thực hiện đơn hàng.",
+          "label": "Đang hoạt động"
+        },
+        "admin_name": {
+          "label": "Tên nội bộ",
+          "placeholder": "Tùy chọn - chỉ hiển thị trong quản trị viên"
+        },
+        "backorderable_default": {
+          "help": "Mức tồn kho mới mặc định cho phép đặt hàng trước khi hết hàng.",
+          "label": "Có thể đặt hàng trước theo mặc định"
+        },
+        "default": {
+          "help": "Mức cổ phiếu mới lan truyền ở đây. Chỉ có một vị trí có thể được mặc định.",
+          "label": "Vị trí mặc định"
+        },
+        "kind": {
+          "label": "loại"
+        },
+        "name": {
+          "placeholder": "Nhà kho Brooklyn"
+        },
+        "pickup_enabled": {
+          "help": "Khách hàng có thể nhận đơn đặt hàng từ vị trí này khi thanh toán.",
+          "label": "Cho phép đón khách hàng"
+        },
+        "pickup_instructions": {
+          "label": "Hướng dẫn nhận hàng",
+          "placeholder": "Nơi khách hàng nên đến để nhận đơn đặt hàng của họ."
+        },
+        "pickup_ready_in_minutes": {
+          "label": "Sẵn sàng sau (phút)",
+          "placeholder": "60"
+        },
+        "pickup_stock_policy": {
+          "label": "Chính sách chứng khoán"
+        },
+        "propagate_all_variants": {
+          "help": "Tạo mức tồn kho tại vị trí này cho mọi mẫu mã sản phẩm.",
+          "label": "Tự động tạo mức tồn kho cho tất cả các mẫu mã"
+        },
+        "returns_enabled": {
+          "help": "Hàng trả lại quay trở lại vị trí này. Tắt nó đi nếu hàng trả lại được kiểm tra ở nơi khác.",
+          "label": "Chấp nhận trả lại ở đây"
+        }
+      },
+      "storefront_visible": {
+        "help": "Khi tắt, chỉ nhân viên quản trị mới thấy tùy chọn này (lệnh hỗ trợ, nhập thủ công).",
+        "label": "Hiển thị trên mặt tiền cửa hàng"
+      },
+      "subtotal": {
+        "label": "Tổng phụ"
+      },
+      "tax": {
+        "label": "Thuế"
+      },
+      "total": {
+        "label": "Tổng cộng"
+      },
+      "updated_at": {
+        "label": "Cập nhật lúc"
+      },
+      "zipcode": {
+        "label": "Mã bưu chính"
+      },
+      "product": {
+        "available_on": {
+          "label": "Có sẵn trên"
+        },
+        "category_ids": {
+          "label": "Danh mục"
+        },
+        "channels": {
+          "label": "Kênh bán hàng"
+        },
+        "collection_ids": {
+          "help": "Chỉ có thể đặt các bộ sưu tập thủ công ở đây; những người tự động tuân theo quy tắc của họ.",
+          "label": "Bộ sưu tập"
+        },
+        "delivery_profile_id": {
+          "help": "Quyết định khu vực và phương thức giao hàng nào tiếp cận được sản phẩm này.",
+          "label": "Hồ sơ vận chuyển"
+        },
+        "description": {
+          "label": "Mô tả",
+          "placeholder": "Viết mô tả sản phẩm…"
+        },
+        "discontinue_on": {
+          "label": "Ngừng bật"
+        },
+        "make_active_at": {
+          "label": "Hãy hoạt động tại"
+        },
+        "name": {
+          "label": "Tên",
+          "placeholder": "Tên sản phẩm"
+        },
+        "product_type_id": {
+          "help": "Kiểm soát những tùy chọn giao hàng nào được cung cấp khi thanh toán.",
+          "label": "Loại sản phẩm"
+        },
+        "seller": {
+          "label": "Người bán"
+        },
+        "tags": {
+          "label": "Thẻ"
+        }
+      },
+      "variant": {
+        "backorder_limit": {
+          "help": "Số lượng đơn vị tối đa được bán vượt quá lượng hàng sẵn có - giới hạn số lượng đặt hàng trước và đặt hàng trước. Để trống không giới hạn.",
+          "label": "Giới hạn đặt hàng trước",
+          "placeholder": "Không giới hạn"
+        },
+        "barcode": {
+          "label": "Mã vạch"
+        },
+        "country_of_origin": {
+          "label": "Nước xuất xứ"
+        },
+        "customs_description": {
+          "label": "Mô tả hải quan",
+          "placeholder": "Mô tả đơn giản về hàng hóa"
+        },
+        "depth": {
+          "label": "Độ sâu"
+        },
+        "dimensions_unit": {
+          "label": "Đơn vị"
+        },
+        "height": {
+          "label": "Chiều cao"
+        },
+        "hs_code": {
+          "label": "mã HS",
+          "placeholder": "ví dụ: 640411"
+        },
+        "preorder_ships_at": {
+          "help": "Khi bạn dự kiến gửi đơn đặt hàng trước. Hiển thị cho khách hàng như lời hứa giao hàng; đơn đặt hàng trước sẽ kết thúc sau khi ngày này trôi qua.",
+          "label": "Vận chuyển bằng",
+          "placeholder": "Chọn một ngày"
+        },
+        "preorderable": {
+          "help": "Bán biến thể này trước khi có hàng. Giới hạn số lượng bạn sẽ lấy với giới hạn đơn hàng đặt sẵn, nhập lượng hàng sắp đến làm số lượng hoặc để trống là không giới hạn.",
+          "label": "Có sẵn để đặt hàng trước"
+        },
+        "sku": {
+          "label": "Mã hàng",
+          "placeholder": "SẢN PHẨM-ĐỎ-S"
+        },
+        "weight": {
+          "label": "cân nặng"
+        },
+        "weight_unit": {
+          "label": "Đơn vị"
+        },
+        "width": {
+          "label": "Chiều rộng"
+        },
+        "minimum_order_quantity": {
+          "label": "Số lượng đặt hàng tối thiểu",
+          "placeholder": "Không có mức tối thiểu",
+          "help": "Ít nhất người mua có thể đặt hàng. Để trống không có mức tối thiểu."
+        },
+        "order_multiple": {
+          "label": "Đặt hàng nhiều",
+          "placeholder": "Không có bội số",
+          "help": "Mỗi bước tăng lên từ mức tối thiểu. Để trống cho bất kỳ số lượng nào."
+        },
+        "purchase_unit": {
+          "label": "Đơn vị mua hàng",
+          "options": {
+            "unit": "Đơn vị",
+            "carton": "thùng carton"
+          }
+        },
+        "units_per_carton": {
+          "label": "Đơn vị mỗi thùng"
+        },
+        "quantity_rule_invalid": "Nhập số nguyên lớn hơn 0 hoặc để trống.",
+        "carton_package_type_id": {
+          "label": "thùng carton",
+          "help": "Sản phẩm này được đóng gói trong thùng carton. Kích thước của nó được chia sẻ bởi mọi thứ được đóng gói theo cùng một cách."
+        },
+        "carton_weight": {
+          "label": "Trọng lượng thùng carton",
+          "help": "Một thùng carton đóng gói nặng bao nhiêu."
+        },
+        "cartons_per_pallet": {
+          "label": "Thùng mỗi pallet"
+        },
+        "carton_weight_invalid": "Nhập trọng lượng thùng carton lớn hơn 0 hoặc để trống."
+      },
+      "minimum_order_quantity": {
+        "label": "Số lượng đặt hàng tối thiểu",
+        "help": "Ít nhất người mua có thể đặt hàng. Để trống không có mức tối thiểu."
+      },
+      "order_multiple": {
+        "label": "Đặt hàng nhiều",
+        "help": "Mỗi bước tăng lên từ mức tối thiểu. Để trống cho bất kỳ số lượng nào."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Cho phép tải xuống"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Số ngày có sẵn"
+        }
+      }
+    },
+    "image_upload": {
+      "remove_cta": "Xóa",
+      "replace_cta": "Thay thế hình ảnh",
+      "upload_cta": "Tải hình ảnh lên",
+      "upload_failed": "Tải hình ảnh lên không thành công",
+      "uploading": "Đang tải lên…"
+    },
+    "imports": {
+      "download_original": "Tải tập tin gốc",
+      "failed": {
+        "description": "Không thể xử lý tập tin.",
+        "title": "Nhập không thành công"
+      },
+      "failed_rows": {
+        "error": "Lỗi",
+        "hide_data": "Ẩn dữ liệu hàng",
+        "next_page": "Trang tiếp theo",
+        "prev_page": "Trang trước",
+        "row_number": "Hàng",
+        "title": "Hàng không thành công",
+        "view_data": "Xem dữ liệu hàng"
+      },
+      "load_failed": "Không thể tải quá trình nhập.",
+      "mapping": {
+        "description": "Khớp các cột trong tệp của bạn với các trường {{type}}.",
+        "field": "trường",
+        "file_column": "Cột tệp",
+        "missing_required": "Ánh xạ các trường bắt buộc để tiếp tục: {{fields}}",
+        "not_mapped": "Chưa được ánh xạ",
+        "required": "Bắt buộc",
+        "sample": "Ví dụ",
+        "start": "Bắt đầu nhập",
+        "starting": "Bắt đầu…",
+        "title": "Cột bản đồ"
+      },
+      "processing": {
+        "failed_count": "{{failed}} không thành công",
+        "note": "Bạn có thể rời khỏi trang này - quá trình nhập vẫn tiếp tục ở chế độ nền.",
+        "preparing": "Đang chuẩn bị hàng…",
+        "progress": "Đã xử lý {{processed}} trong số {{total}} hàng",
+        "retrying": "Đang thử lại các hàng không thành công · Còn lại {{remaining}}",
+        "title": "Đang xử lý hàng"
+      },
+      "results": {
+        "completed_title": "Đã nhập xong",
+        "retry_failed": "Thử lại các hàng không thành công ({{failed}})",
+        "retrying": "Đang thử lại…",
+        "summary": "Đã nhập {{completed}} hàng · {{failed}} không thành công",
+        "view_records": "Xem {{type}}"
+      },
+      "status": {
+        "completed": "Đã hoàn thành",
+        "completed_mapping": "Đã xếp hàng",
+        "failed": "thất bại",
+        "mapping": "Lập bản đồ",
+        "pending": "Đang chờ xử lý",
+        "processing": "Đang xử lý"
+      },
+      "step_descriptions": {
+        "complete": "Quá trình nhập của bạn đã hoàn tất. Xem lại những gì đã được tạo và cập nhật.",
+        "map_fields": "Ghép từng cột trong tệp của bạn với một trường trong Spree.",
+        "process_rows": "Chúng tôi đang nhập hàng của bạn. Việc này có thể mất vài phút."
+      },
+      "steps": {
+        "complete": "Hoàn thành",
+        "map_fields": "Các trường bản đồ",
+        "process_rows": "Xử lý hàng"
+      },
+      "try_again": "Thử lại",
+      "types": {
+        "customers": "Khách hàng",
+        "price_list_prices": "Giá niêm yết",
+        "product_translations": "Dịch sản phẩm",
+        "products": "Sản phẩm",
+        "purchase_orders": "Đơn đặt hàng"
+      },
+      "wizard_title": "Nhập khẩu"
+    },
+    "invitation": {
+      "accept": "Chấp nhận lời mời",
+      "accepting": "Đang chấp nhận…",
+      "could_not_accept": "Không thể chấp nhận lời mời",
+      "create_and_accept": "Tạo tài khoản và chấp nhận",
+      "create_to_accept": ". Tạo tài khoản của bạn để chấp nhận.",
+      "generic_error_message": "Đã xảy ra lỗi. Vui lòng thử lại.",
+      "generic_error_title": "Không thể tải lời mời",
+      "invited_as_role": " như {{role}}",
+      "invited_by": "{{email}} đã mời bạn",
+      "invited_generic": "Bạn đã được mời",
+      "join_store": "Tham gia {{store}}",
+      "loading": "Đang tải lời mời…",
+      "missing_token_message": "Liên kết này có vẻ không đầy đủ. Hãy hỏi người đã mời bạn gửi lại.",
+      "missing_token_title": "Thiếu mã thông báo lời mời",
+      "not_found_message": "Lời mời này đã hết hạn, đã bị thu hồi hoặc đã được chấp nhận. Yêu cầu người mời gửi một cái mới.",
+      "not_found_title": "Không tìm thấy lời mời",
+      "password_confirmation": "Xác nhận mật khẩu",
+      "sign_in_and_accept": "Đăng nhập và chấp nhận",
+      "sign_in_to_accept": ". Đăng nhập để chấp nhận.",
+      "signed_in_as_another_account": "Bạn đã đăng nhập với tên {{email}}, nhưng lời mời này dành cho {{invitee}}. Đăng xuất để chấp nhận nó.",
+      "signed_in_as_invitee": ". Bạn đã đăng nhập với tên {{email}}."
+    },
+    "media_picker": {
+      "confirm": "Thêm đã chọn",
+      "description": "Chọn các tệp đã có trong thư viện của bạn hoặc tải lên tệp mới.",
+      "empty": "Thư viện của bạn trống. Tải lên một tập tin để bắt đầu.",
+      "no_results": "Không có tập tin phù hợp với tìm kiếm của bạn.",
+      "search_placeholder": "Tìm kiếm theo tên…",
+      "selected_count_one": "{{count}} đã chọn",
+      "selected_count_other": "{{count}} đã chọn",
+      "title": "Thư viện phương tiện",
+      "upload": "Tải lên"
+    },
+    "messages": {
+      "address_removed": "Đã xóa địa chỉ",
+      "address_saved": "Đã lưu địa chỉ",
+      "copied_to_clipboard": "Đã sao chép vào bảng nhớ tạm",
+      "created": "Đã tạo",
+      "customer_deleted": "Khách hàng đã xóa",
+      "customer_saved": "Khách hàng đã lưu",
+      "digital_asset_removed": "Đã xóa tệp",
+      "digital_asset_saved": "Đã lưu tệp",
+      "digital_link_reset": "Đã khôi phục quyền truy cập tải xuống",
+      "digital_links_email_sent": "Tải email đã gửi",
+      "gift_card_created": "Đã tạo thẻ quà tặng",
+      "invitation_accepted": "Chào mừng đến với Spree",
+      "invitation_resent": "Đã gửi lại lời mời",
+      "invitation_sent": "Đã gửi lời mời",
+      "key_created": "Đã tạo khóa",
+      "key_deleted": "Đã xóa khóa",
+      "key_revoked": "Khóa đã bị thu hồi",
+      "key_updated": "Đã cập nhật khóa",
+      "order_saved": "Đã lưu đơn hàng",
+      "payment_method_saved": "Đã lưu phương thức thanh toán",
+      "product_created": "Sản phẩm đã được tạo",
+      "product_deleted": "Đã xóa sản phẩm",
+      "product_saved": "Đã lưu sản phẩm",
+      "profile_updated": "Đã cập nhật hồ sơ",
+      "promotion_created": "Đã tạo khuyến mãi",
+      "promotion_deleted": "Đã xóa khuyến mại",
+      "promotion_saved": "Đã lưu khuyến mại",
+      "removed": "Đã xóa",
+      "saved": "Đã lưu",
+      "settings_updated": "Đã cập nhật cài đặt",
+      "stock_location_saved": "Đã lưu vị trí chứng khoán",
+      "store_credit_removed": "Đã xóa tín dụng cửa hàng",
+      "store_credit_saved": "Đã lưu tín dụng cửa hàng",
+      "store_settings_updated": "Đã cập nhật cài đặt cửa hàng",
+      "tax_category_saved": "Đã lưu danh mục thuế",
+      "updated": "Đã cập nhật"
+    },
+    "package_types": {
+      "table_title": "Các loại gói",
+      "search_placeholder": "Tìm kiếm bao bì",
+      "empty": "Chưa có bao bì. Thêm hộp bạn gửi vào và các đơn đặt hàng bán buôn bằng thùng carton và pallet sẽ được giữ nguyên.",
+      "add_cta": "Thêm loại gói",
+      "default_badge": "Mặc định",
+      "edit_sheet_title": "Loại gói",
+      "create_description": "Hàng hóa được đóng thành hộp, thùng carton, pallet hoặc container.",
+      "edit_description": "Sản phẩm được đóng gói trong thùng carton này tuân theo số đo của nó nên chỉ cần chỉnh sửa một lần là có thể chỉnh sửa tất cả.",
+      "dimensions_column": "Kích thước",
+      "volume_column": "khối lượng",
+      "kinds": {
+        "box": "hộp",
+        "envelope": "phong bì",
+        "carton": "thùng carton",
+        "pallet": "Pallet",
+        "container": "thùng chứa"
+      },
+      "messages": {
+        "added": "Đã thêm loại gói",
+        "updated": "Đã cập nhật loại gói",
+        "deleted": "Loại gói đã bị xóa"
+      },
+      "delete_confirm": {
+        "title": "Xóa loại gói?",
+        "message": "{{name}} sẽ bị xóa. Sản phẩm đóng gói vào đó phải được đóng gói lại trước."
+      },
+      "validation": {
+        "non_negative": "phải bằng 0 hoặc nhiều hơn"
+      },
+      "description": "Các hộp, thùng carton và pallet mà hàng hóa của bạn được vận chuyển sẽ có báo giá về kích thước và trọng lượng của hãng vận chuyển."
+    },
+    "pages": {
+      "settings": {
+        "stock_locations": {
+          "add_sheet_title": "Thêm vị trí chứng khoán",
+          "edit_sheet_title": "Chỉnh sửa vị trí kho",
+          "search_placeholder": "Tìm kiếm địa điểm chứng khoán…"
+        },
+        "package_types": {
+          "add_sheet_title": "Thêm loại gói"
+        }
+      },
+      "products": {
+        "add_cta": "Thêm sản phẩm",
+        "bulk": {
+          "add_categories_action": "Thêm vào danh mục…",
+          "add_channels_action": "Thêm vào kênh bán hàng…",
+          "add_collections_action": "Thêm vào bộ sưu tập",
+          "add_tags_action": "Thêm thẻ…",
+          "categories_add_description": "Chọn danh mục để thêm các sản phẩm này vào.",
+          "categories_add_failed": "Không thể thêm sản phẩm vào danh mục",
+          "categories_add_title": "Thêm vào danh mục",
+          "categories_added": "Đã thêm {n} sản phẩm vào danh mục",
+          "categories_remove_description": "Chọn danh mục để loại bỏ các sản phẩm này.",
+          "categories_remove_failed": "Không thể xóa sản phẩm khỏi danh mục",
+          "categories_remove_title": "Xóa khỏi danh mục",
+          "categories_removed": "Đã xóa {n} sản phẩm khỏi danh mục",
+          "channels_add_description": "Chọn các kênh bán hàng để liệt kê các sản phẩm này.",
+          "channels_add_failed": "Không đăng được sản phẩm trên các kênh bán hàng",
+          "channels_add_title": "Thêm vào kênh bán hàng",
+          "channels_added": "Liệt kê {n} sản phẩm trên các kênh bán hàng",
+          "channels_remove_description": "Chọn các kênh bán hàng để hủy niêm yết các sản phẩm này.",
+          "channels_remove_failed": "Không thể hủy niêm yết sản phẩm khỏi kênh bán hàng",
+          "channels_remove_title": "Loại khỏi kênh bán hàng",
+          "channels_removed": "{n} sản phẩm chưa được niêm yết từ các kênh bán hàng",
+          "collections_add_description": "Các sản phẩm đã chọn sẽ được thêm vào mọi bộ sưu tập bạn chọn.",
+          "collections_add_failed": "Không thể thêm sản phẩm vào bộ sưu tập",
+          "collections_add_title": "Thêm vào bộ sưu tập",
+          "collections_added": "Sản phẩm được thêm vào bộ sưu tập",
+          "collections_remove_description": "Các sản phẩm đã chọn sẽ bị xóa khỏi mọi bộ sưu tập bạn chọn.",
+          "collections_remove_failed": "Không thể xóa sản phẩm khỏi bộ sưu tập",
+          "collections_remove_title": "Xóa khỏi bộ sưu tập",
+          "collections_removed": "Sản phẩm bị xóa khỏi bộ sưu tập",
+          "delete_confirm": {
+            "message": "Các sản phẩm được chọn sẽ bị loại bỏ. Không thể hoàn tác hành động này.",
+            "title": "Xóa {n} sản phẩm?"
+          },
+          "delete_failed": "Không thể xóa sản phẩm",
+          "deleted": "Đã xóa {n} sản phẩm",
+          "remove_categories_action": "Xóa khỏi danh mục…",
+          "remove_channels_action": "Loại khỏi kênh bán hàng…",
+          "remove_collections_action": "Xóa khỏi bộ sưu tập",
+          "remove_tags_action": "Xóa thẻ…",
+          "set_status_action": "Đặt trạng thái…",
+          "status_sheet_description": "Chọn trạng thái để áp dụng cho các sản phẩm đã chọn.",
+          "status_sheet_title": "Đặt trạng thái sản phẩm",
+          "status_update_failed": "Không cập nhật được trạng thái sản phẩm",
+          "status_updated": "Đã cập nhật trạng thái trên {n} sản phẩm",
+          "tags_add_description": "Chọn hoặc tạo thẻ để thêm vào các sản phẩm này.",
+          "tags_add_failed": "Không thể thêm thẻ",
+          "tags_add_title": "Thêm thẻ",
+          "tags_added": "Đã thêm thẻ vào {n} sản phẩm",
+          "tags_remove_description": "Chọn thẻ để xóa khỏi các sản phẩm này.",
+          "tags_remove_failed": "Không xóa được thẻ",
+          "tags_remove_title": "Xóa thẻ",
+          "tags_removed": "Đã xóa thẻ khỏi {n} sản phẩm"
+        },
+        "clone_failed": "Không thể sao chép sản phẩm",
+        "clone_succeeded": "Sản phẩm bị trùng lặp",
+        "delete_failed": "Không thể xóa sản phẩm",
+        "delete_succeeded": "Đã xóa sản phẩm",
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "Thêm ít nhất một biến thể để bắt đầu chỉnh sửa giá."
+          }
+        },
+        "inventory": {
+          "in_stock": "{{count}} còn hàng",
+          "in_stock_short": "Còn hàng",
+          "on_backorder": "Đang đặt hàng trước",
+          "out_of_stock": "Hết hàng"
+        },
+        "media_empty": "Chưa có phương tiện truyền thông nào.",
+        "media_upload": "Tải lên phương tiện",
+        "new": {
+          "create_failed": "Không tạo được sản phẩm",
+          "create_succeeded": "Sản phẩm đã được tạo",
+          "description": "Thiết lập sản phẩm của bạn - thêm các biến thể, giá cả, khoảng không quảng cáo, phương tiện và trường tùy chỉnh",
+          "preview_slug_placeholder": "sên-sản phẩm của bạn",
+          "save_label": "Tạo sản phẩm",
+          "title": "Sản phẩm mới"
+        },
+        "options": {
+          "add_value": "Thêm giá trị tùy chọn",
+          "sheet_title_create": "Tạo loại tùy chọn",
+          "sheet_title_edit": "Chỉnh sửa loại tùy chọn",
+          "table": {
+            "values": "Giá trị"
+          },
+          "values_empty": "Chưa có giá trị nào.",
+          "values_section": "Giá trị"
+        },
+        "price_lists": {
+          "activate": "Kích hoạt",
+          "activate_confirm": {
+            "message": "\"{{name}}\" sẽ áp dụng ngay cho khách hàng đủ điều kiện và duy trì hoạt động cho đến khi bị vô hiệu hóa theo cách thủ công.",
+            "message_with_end": "\"{{name}}\" sẽ áp dụng ngay cho khách hàng đủ điều kiện và duy trì hoạt động cho đến khi bị vô hiệu hóa thủ công hoặc ngày kết thúc ({{ends_at}}).",
+            "title": "Kích hoạt bảng giá?"
+          },
+          "add_cta": "Bảng giá mới",
+          "add_products_cta": "Thêm sản phẩm",
+          "add_rule": "Thêm quy tắc",
+          "add_rule_help": "Chọn một loại quy tắc để định cấu hình.",
+          "basics_section": "Khái niệm cơ bản",
+          "deactivate": "Vô hiệu hóa",
+          "deactivate_confirm": {
+            "message": "\"{{name}}\" sẽ ngừng áp dụng cho khách hàng ngay lập tức. Các đơn đặt hàng hiện tại không bị ảnh hưởng.",
+            "title": "Vô hiệu hóa bảng giá?"
+          },
+          "delete_confirm": {
+            "message": "Xóa \"{{name}}\" sẽ xóa giá của nó. Điều này không thể hoàn tác được.",
+            "title": "Xóa bảng giá?"
+          },
+          "edit_prices": {
+            "add_products_link": "Thêm sản phẩm",
+            "columns": {
+              "compare_at_price": "So sánh theo giá",
+              "price": "Giá",
+              "product": "sản phẩm",
+              "sku": "Mã hàng",
+              "variant": "Biến thể"
+            },
+            "compare_at_aria": "So sánh với mức giá {{label}}",
+            "count_summary_one": "{{count}} giá bằng {{currency}}",
+            "count_summary_other": "{{count}} giá ở {{currency}}",
+            "currency_label": "Tiền tệ",
+            "dirty_summary_one": "{{count}} thay đổi chưa được lưu",
+            "dirty_summary_other": "{{count}} thay đổi chưa được lưu",
+            "discard_confirm": {
+              "message_close_one": "Bạn có {{count}} giá chưa được lưu. Đóng sẽ loại bỏ nó.",
+              "message_close_other": "Bạn có {{count}} giá chưa được lưu. Việc đóng sẽ loại bỏ chúng.",
+              "message_currency": "Việc chuyển đổi đơn vị tiền tệ sẽ loại bỏ giá chưa lưu của bạn.",
+              "title": "Hủy giá chưa lưu?"
+            },
+            "empty": "Chưa có sản phẩm nào trong danh sách này.",
+            "empty_no_base_prices": "Chưa có giá cơ bản.",
+            "empty_pick_products": "Chọn sản phẩm trong bảng giá để bắt đầu đặt giá.",
+            "grid_aria": "Giá biến thể",
+            "no_matches_for_filters": "Không có giá phù hợp với các bộ lọc hiện tại.",
+            "no_matches_for_search": "Không có giá nào khớp với \"{{search}}\".",
+            "price_aria": "Giá {{label}}",
+            "save_cta": "Tiết kiệm giá",
+            "save_failed": "Không thể lưu giá",
+            "save_success_one": "Đã lưu giá {{count}}",
+            "save_success_other": "Đã lưu {{count}} giá",
+            "search_placeholder": "Tìm kiếm theo sản phẩm, SKU hoặc tùy chọn…",
+            "title": "Chỉnh sửa giá — {{name}}",
+            "variant_default": "Mặc định"
+          },
+          "edit_prices_cta": "Chỉnh sửa giá",
+          "no_changes": "Không có thay đổi nào để lưu.",
+          "prices_help_one": "{{count}} giá được định cấu hình. Mở trình chỉnh sửa hàng loạt để cập nhật nó.",
+          "prices_help_other": "{{count}} giá được định cấu hình. Mở trình chỉnh sửa hàng loạt để cập nhật chúng.",
+          "prices_help_zero": "Chọn các sản phẩm ở trên để đặt giá giữ chỗ, sau đó mở trình chỉnh sửa hàng loạt.",
+          "products_empty": "Chưa có sản phẩm nào - hãy thêm một sản phẩm để bắt đầu chỉnh sửa giá.",
+          "products_empty_search": "Không có sản phẩm nào phù hợp",
+          "products_help": "Chọn các sản phẩm mà danh sách này áp dụng. Giá giữ chỗ được tạo khi lưu - hãy điền chúng vào bên dưới.",
+          "products_search_placeholder": "Tìm kiếm sản phẩm theo tên…",
+          "products_section": "Sản phẩm",
+          "products_selected_one": "{{count}} sản phẩm đã chọn.",
+          "products_selected_other": "{{count}} sản phẩm đã chọn.",
+          "remove_rule_confirm": {
+            "message": "Quy tắc sẽ bị xóa khi bạn lưu bảng giá.",
+            "title": "Xóa quy tắc?"
+          },
+          "remove_selected": "Xóa đã chọn",
+          "rule_click_to_configure": "Bấm để cấu hình",
+          "rule_default_description": "Điều chỉnh các tham số của quy tắc.",
+          "rule_name_overflow": "{{names}} +{{count}} thêm",
+          "rule_no_options": "Quy tắc này không có tùy chọn có thể định cấu hình - chỉ sự hiện diện của nó cũng áp dụng ràng buộc.",
+          "rule_types_all_used": "Mọi loại quy tắc có sẵn đều đã có trong danh sách này.",
+          "rule_types_empty": "Không có loại quy tắc nào được đăng ký.",
+          "rules_empty": "Không có quy tắc - danh sách này áp dụng cho mọi người mua hàng.",
+          "rules_help": "Các điều kiện quyết định thời điểm áp dụng danh sách này. Sử dụng \"tất cả\" để yêu cầu mọi quy tắc, \"bất kỳ\" để lấy trận đầu tiên.",
+          "rules_section": "Quy tắc",
+          "schedule": "lịch trình",
+          "schedule_confirm": {
+            "message": "\"{{name}}\" sẽ xuất hiện vào {{starts_at}} và tiếp tục hoạt động cho đến ngày kết thúc.",
+            "title": "Lên lịch bảng giá?"
+          },
+          "schedule_section": "lịch trình",
+          "sheet_title_create": "Tạo bảng giá",
+          "sheet_title_edit": "Chỉnh sửa bảng giá",
+          "subtitle": "Định giá mục tiêu cho các nhóm khách hàng, khu vực hoặc cấp số lượng.",
+          "title": "Bảng giá",
+          "unschedule": "Hủy lịch",
+          "unschedule_confirm": {
+            "message": "\"{{name}}\" sẽ không còn kích hoạt vào ngày đã lên lịch. Bạn có thể lên lịch lại hoặc kích hoạt nó theo cách thủ công sau.",
+            "title": "Bảng giá đột xuất?"
+          }
+        },
+        "publishing": {
+          "caption_hidden_after": "Đi xuống {{date}}",
+          "caption_live": "Hiển thị cho khách hàng ngay bây giờ",
+          "caption_not_available": "Ẩn — sản phẩm là {{product_status}}",
+          "caption_scheduled": "Phát trực tiếp {{date}}",
+          "caption_unpublished": "Đã bị ẩn trên {{date}}",
+          "caption_window": "Trực tiếp {{start}} → {{end}}",
+          "empty": "Chưa được liệt kê trên bất kỳ kênh bán hàng nào.",
+          "inactive_marker": "Không hoạt động",
+          "manage_cta": "Quản lý",
+          "manage_description": "Chọn kênh bán hàng liệt kê sản phẩm này. Tắt một kênh để hủy niêm yết kênh đó ở mọi nơi.",
+          "manage_title": "Quản lý các kênh bán hàng",
+          "no_channels": "Không có kênh bán hàng nào. Tạo một kênh trong Cài đặt → Kênh bán hàng.",
+          "status_hidden": "Ẩn giấu",
+          "status_live": "Trực tiếp",
+          "status_not_available": "Không có sẵn",
+          "status_scheduled": "Đã lên lịch",
+          "title": "Xuất bản"
+        },
+        "section_basics": "Khái niệm cơ bản",
+        "section_categorization": "Phân loại",
+        "section_inventory": "Hàng tồn kho",
+        "section_media": "Phương tiện truyền thông",
+        "section_organization": "Tổ chức",
+        "section_pricing": "Định giá",
+        "section_seo": "SEO",
+        "section_variants": "Biến thể",
+        "status_options": {
+          "active": "Đang hoạt động",
+          "archived": "Đã lưu trữ",
+          "draft": "bản nháp",
+          "proposed": "Đang xem xét",
+          "rejected": "Những thay đổi cần thiết"
+        },
+        "status_under_review": "Sản phẩm này đang được xem xét. Sử dụng Phê duyệt hoặc Từ chối để quyết định.",
+        "transfers": {
+          "description_external": "Nhận bên ngoài vào <strong>{{destination}}</strong>.",
+          "description_internal": "Khoảng không quảng cáo được chuyển từ <strong>{{source}}</strong> sang <strong>_{{destination}}</strong>.",
+          "edit_sheet_title": "Chuyển khoản {{number}}",
+          "items_empty": "Chưa có mục nào.",
+          "section_from": "Từ",
+          "section_items": "Mặt hàng",
+          "section_to": "Đến",
+          "sheet_title": "Chuyển nhượng cổ phiếu mới"
+        },
+        "variants_empty": "Chưa có biến thể nào.",
+        "variants_one": "{{count}} biến thể",
+        "variants_other": "{{count}} biến thể"
+      }
+    },
+    "resource_picker": {
+      "add_count_one": "Thêm {{count}}",
+      "add_count_other": "Thêm {{count}}",
+      "already_added": "Đã thêm",
+      "empty": "Không tìm thấy kết quả nào.",
+      "load_more": "Tải thêm",
+      "search_placeholder": "Tìm kiếm…",
+      "select_all_matching_one": "Chọn tất cả {{count}} kết quả phù hợp",
+      "select_all_matching_other": "Chọn tất cả {{count}} kết quả phù hợp",
+      "select_page_one": "Chọn {{count}} trên trang này",
+      "select_page_other": "Chọn tất cả {{count}} trên trang này",
+      "selected_count_one": "{{count}} đã chọn",
+      "selected_count_other": "{{count}} đã chọn",
+      "title": "Thêm sản phẩm"
+    },
+    "row_actions": {
+      "clone": "trùng lặp",
+      "delete": "Xóa",
+      "edit": "Chỉnh sửa",
+      "menu_label": "Mở hành động"
+    },
+    "settings_nav": {
+      "groups": {
+        "fulfillment": "Thực hiện",
+        "team": "Nhóm và quyền truy cập"
+      },
+      "items": {
+        "stock_locations": "địa điểm chứng khoán"
+      }
+    },
+    "settings_page": {
+      "back_to_dashboard": "Quay lại trang tổng quan",
+      "description": "Quản lý cửa hàng, thiết lập bán hàng và nhóm của bạn.",
+      "no_results": "Không có cài đặt nào khớp với “{{query}}”.",
+      "search_placeholder": "Cài đặt tìm kiếm",
+      "title": "Cài đặt"
+    },
+    "stock_locations": {
+      "add_cta": "Thêm vị trí chứng khoán",
+      "badges": {
+        "default": "Mặc định",
+        "enabled": "Đã bật",
+        "inactive": "Không hoạt động"
+      },
+      "columns": {
+        "default": "Mặc định",
+        "location": "Vị trí",
+        "pickup": "Nhận hàng",
+        "returns": "Trả lại",
+        "seller": "Người bán",
+        "type": "loại"
+      },
+      "create_description": "Thêm nhà kho, cửa hàng hoặc điểm nhận hàng để thực hiện đơn hàng.",
+      "create_label": "Tạo vị trí chứng khoán",
+      "delete_confirm": {
+        "message": "{{name}} sẽ bị xóa. Mức tồn kho tại địa điểm này cũng sẽ bị xóa.",
+        "title": "Xóa vị trí kho hàng?"
+      },
+      "edit_description": "Cập nhật chính sách về tên, địa chỉ, nhận hàng hoặc tồn kho.",
+      "empty": "Chưa có địa điểm còn hàng",
+      "kinds": {
+        "fulfillment_center": "Trung tâm thực hiện",
+        "store": "cửa hàng",
+        "warehouse": "Kho"
+      },
+      "pickup_stock_policies": {
+        "any": "Cho phép chuyển từ các địa điểm khác",
+        "local": "Chỉ các mặt hàng tại vị trí này"
+      },
+      "search_placeholder": "Tìm kiếm theo tên…",
+      "section_behavior": "Hành vi",
+      "section_details": "Chi tiết",
+      "section_pickup": "Nhận hàng",
+      "section_returns": "Trả lại",
+      "stock_levels": {
+        "empty": "Chưa có mức tồn kho tại địa điểm này.",
+        "empty_search": "Không có mức tồn kho phù hợp với tìm kiếm của bạn.",
+        "help": "Điều chỉnh số lượng có sẵn và có thể đặt hàng trước cho mỗi biến thể.",
+        "low_stock_marker": "cổ phiếu thấp",
+        "search_placeholder": "Tìm kiếm SKU hoặc sản phẩm…",
+        "table": {
+          "backorder": "Đặt hàng trước",
+          "on_hand": "Trên tay",
+          "variant": "Biến thể"
+        },
+        "title": "Kho hàng tại địa điểm này",
+        "unknown_product": "Sản phẩm không xác định",
+        "variant_count_one": "{{count}} biến thể",
+        "variant_count_other": "{{count}} biến thể"
+      },
+      "description": "Các nhà kho và cửa hàng mà bạn lưu trữ hàng hóa và thực hiện các đơn đặt hàng từ đó."
+    },
+    "validation": {
+      "codes": {
+        "accepted": "phải được chấp nhận",
+        "blank": "không thể để trống",
+        "confirmation": "không khớp",
+        "empty": "không thể trống",
+        "equal_to": "phải bằng {{count}}",
+        "exclusion": "được bảo lưu",
+        "forbidden_reporting_member": "Báo cáo này tham khảo dữ liệu bạn không được phép đọc.",
+        "greater_than": "phải lớn hơn {{count}}",
+        "greater_than_or_equal_to": "phải lớn hơn hoặc bằng {{count}}",
+        "inclusion": "không có trong danh sách",
+        "invalid": "không hợp lệ",
+        "invalid_commission_rule_type": "{{type}} không phải là quy tắc hoa hồng mà cửa hàng này đưa ra",
+        "less_than": "phải nhỏ hơn {{count}}",
+        "less_than_or_equal_to": "phải nhỏ hơn hoặc bằng {{count}}",
+        "not_a_number": "không phải là một con số",
+        "not_an_integer": "phải là một số nguyên",
+        "other_than": "phải khác {{count}}",
+        "present": "phải trống",
+        "product_not_in_store": "tất cả phải thuộc về cửa hàng này",
+        "required": "phải tồn tại",
+        "seeded_report_read_only": "Đây là một báo cáo tích hợp và không thể thay đổi. Thay vào đó hãy lưu một bản sao.",
+        "taken": "đã được thực hiện rồi",
+        "too_long": "quá dài (tối đa là {{count}} ký tự)",
+        "too_many_decimals": "có nhiều hơn {{count}} chữ số thập phân",
+        "too_short": "quá ngắn (tối thiểu là {{count}} ký tự)",
+        "wrong_length": "có độ dài sai (phải là {{count}} ký tự)"
+      },
+      "country_required": "Quốc gia là bắt buộc",
+      "currency_required": "Cần phải có đơn vị tiền tệ",
+      "locale_required": "Ngôn ngữ là bắt buộc",
+      "first_name_required": "Tên là bắt buộc",
+      "invalid_email": "Nhập email hợp lệ",
+      "invalid_email_or_password": "Email hoặc mật khẩu không hợp lệ",
+      "invalid_hex_color": "Màu hex không hợp lệ",
+      "invalid_password": "Mật khẩu không hợp lệ",
+      "last_name_required": "Họ là bắt buộc",
+      "min_length": "{{field}} phải có ít nhất {{count}} ký tự",
+      "password_required": "Cần có mật khẩu",
+      "passwords_dont_match": "Mật khẩu không khớp",
+      "positive_number": "{{field}} phải lớn hơn 0",
+      "required": "{{field}} là bắt buộc",
+      "store_name_required": "Tên cửa hàng là bắt buộc",
+      "too_many_decimals": "{{field}} có thể có tối đa {{count}} chữ số thập phân"
+    },
+    "products": {
+      "autocomplete": {
+        "empty": "Không có sản phẩm nào phù hợp",
+        "placeholder": "Tìm kiếm sản phẩm theo tên…"
+      },
+      "category_search_placeholder": "Tìm kiếm danh mục…",
+      "collection_search_placeholder": "Tìm kiếm bộ sưu tập…",
+      "columns": {
+        "in_stock": "Còn hàng",
+        "price": "Giá",
+        "sku": "Mã hàng"
+      },
+      "delete_confirm": "Bạn có chắc chắn muốn xóa sản phẩm này?",
+      "delete_label": "Xóa sản phẩm",
+      "inventory": {
+        "backorder_aria": "Cho phép giao hàng tại {{location}}",
+        "columns": {
+          "backorder": "Đặt hàng trước",
+          "location": "Vị trí",
+          "on_hand": "Trên tay"
+        },
+        "empty_no_locations": "Thêm vị trí kho trong Cài đặt để bắt đầu theo dõi hàng tồn kho.",
+        "empty_no_variants": "Mức tồn kho được quản lý theo từng vị trí tồn kho. Thêm một mẫu mã để bắt đầu theo dõi hàng tồn kho.",
+        "on_hand_aria": "Có mặt tại {{location}}",
+        "unknown_location": "Vị trí không xác định"
+      },
+      "media": {
+        "add_from_library": "Thêm từ thư viện",
+        "add_video": "Thêm liên kết video",
+        "add_video_submit": "Thêm video",
+        "add_video_title": "Thêm liên kết video",
+        "assigned_variants_help": "Chọn các biến thể mà hình ảnh này đại diện. Để trống để áp dụng cho tất cả các biến thể.",
+        "assigned_variants_label": "Các biến thể được chỉ định",
+        "delete_confirm": "Xóa phương tiện này? Điều này không thể hoàn tác được.",
+        "drop_hint": "Kéo và thả phương tiện vào đây hoặc nhấp để duyệt",
+        "edit_title": "Chỉnh sửa phương tiện",
+        "file_types_hint": "Hình ảnh (PNG, JPG, WebP) và video (MP4, WebM, MOV)",
+        "focal_point_help": "Nhấp vào hình ảnh để đặt nội dung vẫn ở trong khung khi bị cắt.",
+        "focal_point_reset": "Đặt lại",
+        "unsupported_file_one": "Tệp {{count}} chưa được thêm vào — chỉ hỗ trợ hình ảnh và video.",
+        "unsupported_file_other": "Tệp {{count}} chưa được thêm vào — chỉ hỗ trợ hình ảnh và video.",
+        "upload_failed": "Không tải lên được {{name}}: {{message}}",
+        "upload_status_failed": "thất bại",
+        "video_preview_title": "Xem trước video",
+        "video_url_invalid": "Nhập liên kết YouTube hoặc Vimeo."
+      },
+      "no_categories_found": "Không tìm thấy danh mục nào",
+      "no_collections_found": "Không tìm thấy bộ sưu tập nào",
+      "options": {
+        "add_cta": "Thêm loại tùy chọn",
+        "count_one": "Giá trị {{count}}",
+        "count_other": "giá trị {{count}}",
+        "create_description": "Xác định tùy chọn mà biến thể có thể sử dụng (ví dụ: kích thước, màu sắc).",
+        "create_label": "Tạo loại tùy chọn",
+        "delete_confirm": {
+          "message": "Điều này cũng sẽ xóa tất cả các giá trị của nó. Các biến thể sử dụng các giá trị này sẽ mất chúng.",
+          "title": "Xóa loại tùy chọn?"
+        },
+        "edit_description": "Chỉnh sửa loại tùy chọn và giá trị của nó.",
+        "image_upload_failed": "Không thể tải hình ảnh lên",
+        "kinds": {
+          "buttons": "Nút",
+          "color_swatch": "Mẫu màu",
+          "dropdown": "Thả xuống"
+        },
+        "value_label_placeholder": "ví dụ: nhỏ",
+        "value_name_placeholder": "ví dụ: nhỏ bé",
+        "values_help": "Kéo giá trị để sắp xếp lại. Giá trị đầu tiên là giá trị mặc định cho các biến thể mới."
+      },
+      "price_lists": {
+        "errors": {
+          "failed_to_activate": "Không thể kích hoạt bảng giá",
+          "failed_to_deactivate": "Không thể hủy kích hoạt bảng giá"
+        },
+        "messages": {
+          "activated": "Bảng giá đã kích hoạt",
+          "created": "Đã tạo bảng giá",
+          "deactivated": "Bảng giá đã bị vô hiệu hóa",
+          "deleted": "Bảng giá đã bị xóa",
+          "updated": "Bảng giá đã cập nhật"
+        },
+        "validation": {
+          "ends_after_starts": "Phải sau ngày bắt đầu."
+        }
+      },
+      "product_type_adds_options_one": "Loại này thêm {{options}} vào sản phẩm mới.",
+      "product_type_adds_options_other": "Loại này thêm {{options}} vào sản phẩm mới.",
+      "product_type_placeholder": "Không có loại sản phẩm",
+      "save_label": "Lưu sản phẩm",
+      "seo": {
+        "meta_description_placeholder": "Mô tả SEO",
+        "meta_title_placeholder": "Tiêu đề SEO",
+        "slug_placeholder": "sản phẩm-url-xử lý"
+      },
+      "tax_category_placeholder": "Chọn danh mục thuế",
+      "tax": {
+        "apply_to_variants_help": "Danh mục này áp dụng cho mọi biến thể không có danh mục thuế riêng. Khi bạn lưu, các biến thể đó sẽ sử dụng cài đặt này.",
+        "variant_overrides_heading": "Các biến thể có danh mục thuế riêng",
+        "variant_overrides_description": "Các biến thể này sẽ giữ nguyên danh mục của chúng cho đến khi bạn xóa phần ghi đè. Tất cả các biến thể khác đều tuân theo danh mục sản phẩm ở trên.",
+        "clear_variant_override": "Sử dụng danh mục sản phẩm"
+      },
+      "transfers": {
+        "create_description": "Di chuyển hàng giữa các địa điểm hoặc nhận hàng mới từ nhà cung cấp bên ngoài.",
+        "delete_confirm": {
+          "message": "Biến động cổ phiếu được tạo ra bởi việc chuyển nhượng này sẽ bị đảo ngược.",
+          "title": "Xóa đợt chuyển này?"
+        },
+        "destination_placeholder": "Chọn vị trí đích",
+        "details_card": "Chi tiết",
+        "different_locations_error": "Nguồn và đích phải khác nhau.",
+        "external_label": "Bên ngoài (nhà cung cấp nhận)",
+        "fields": {
+          "created": "Đã tạo",
+          "external_receive": "Nhận bên ngoài",
+          "immutable_note": "Chuyển nhượng cổ phiếu là bất biến một khi được tạo ra.",
+          "internal": "Nội bộ",
+          "reference": "Tài liệu tham khảo",
+          "type": "loại"
+        },
+        "items_table": {
+          "qty": "Số lượng",
+          "sku": "Mã hàng",
+          "variant": "Biến thể"
+        },
+        "new_cta": "Chuyển nhượng mới",
+        "reference_label": "Tài liệu tham khảo",
+        "reference_placeholder": "Số PO, hóa đơn nhà cung cấp,…",
+        "review_description": "Xem lại quá trình chuyển trước khi tạo. Các mục không thể thay đổi sau đó.",
+        "search_items_placeholder": "Tìm kiếm theo tên hoặc SKU (3+ ký tự)…"
+      },
+      "variants": {
+        "add_option": "Thêm tùy chọn",
+        "bulk_edit": {
+          "grid_aria": "Bảng tính chỉnh sửa hàng loạt biến thể",
+          "title": "Các biến thể chỉnh sửa hàng loạt",
+          "trigger": "Chỉnh sửa hàng loạt",
+          "unset": "không có"
+        },
+        "create_option_type": "Tạo loại tùy chọn mới",
+        "create_option_type_title": "Loại tùy chọn mới",
+        "create_value": "Giá trị mới",
+        "create_value_title": "Giá trị tùy chọn mới",
+        "default_variant": "Biến thể mặc định",
+        "edit_row_aria": "Chỉnh sửa {{name}}",
+        "edit_variant": "Chỉnh sửa biến thể — {{name}}",
+        "errors": {
+          "failed_to_create_option_type": "Không tạo được loại tùy chọn",
+          "failed_to_create_value": "Không thể tạo ra giá trị"
+        },
+        "keep": "Giữ tất cả",
+        "option_type_label": "Loại tùy chọn",
+        "option_type_placeholder": "Chọn một loại tùy chọn",
+        "orphan_warning": "{{count}} (các) biến thể hiện có sẽ bị xóa khi lưu:",
+        "orphan_warning_one": "{{count}} biến thể hiện tại không còn khớp với các tùy chọn đã chọn và sẽ bị xóa khi lưu:",
+        "orphan_warning_other": "{{count}} các biến thể hiện có không còn khớp với các tùy chọn đã chọn và sẽ bị xóa khi lưu:",
+        "remove_row_aria": "Xóa {{name}}",
+        "sheet": {
+          "availability": "sẵn có",
+          "customs": "hải quan",
+          "customs_help": "Được sử dụng trên các biểu mẫu hải quan khi mặt hàng này được vận chuyển qua biên giới.",
+          "identity": "Danh tính",
+          "tax_category_placeholder": "Kế thừa từ sản phẩm",
+          "ordering": "Đặt hàng B2B",
+          "ordering_help": "Người mua phải mất bao nhiêu. Được thực thi khi các mặt hàng được thêm vào giỏ hàng và một lần nữa khi thanh toán. Một nhóm khách hàng hoặc danh mục công ty có thể ghi đè những điều này cho người mua của mình. Hàng tồn kho vẫn được tính theo đơn vị.",
+          "packing": "đóng gói",
+          "packing_help": "Làm thế nào sản phẩm này rời khỏi kho với số lượng lớn. Báo giá cước vận chuyển được xây dựng từ những con số này.",
+          "no_carton_types": "Thêm loại thùng carton trong <settingsLink>Cài đặt → Loại gói</settingsLink> để ghi lại cách đóng gói sản phẩm này.",
+          "carton_placeholder": "Không có thùng carton",
+          "pending_save": "Những thay đổi ở đây được lưu cùng với sản phẩm."
+        },
+        "title": "Biến thể",
+        "variant_label": "Biến thể"
+      }
+    },
+    "product_types": {
+      "add_cta": "Thêm loại sản phẩm",
+      "add_sheet_title": "Loại sản phẩm mới",
+      "affects_new_only": {
+        "description": "Chỉnh sửa các loại tùy chọn và danh mục sẽ định hình các sản phẩm được tạo từ bây giờ. Những sản phẩm đã có loại này hãy giữ lại những gì họ có. Các trường tùy chỉnh bên dưới luôn hiển thị trên mọi sản phẩm thuộc loại này.",
+        "title": "Những thay đổi áp dụng cho sản phẩm mới"
+      },
+      "apply_to_products": {
+        "confirm_label": "Áp dụng",
+        "cta_one": "Áp dụng cho {{count}} sản phẩm hiện có",
+        "cta_other": "Áp dụng cho {{count}} sản phẩm hiện có",
+        "message_one": "Thao tác này sẽ thêm các loại và danh mục tùy chọn còn thiếu của loại này vào sản phẩm {{count}}. Không có gì được gỡ bỏ.",
+        "message_other": "Thao tác này sẽ thêm các loại và danh mục tùy chọn còn thiếu của loại này vào các sản phẩm {{count}}. Không có gì được gỡ bỏ.",
+        "title": "Áp dụng cho sản phẩm hiện có"
+      },
+      "create_description": "Nhóm các sản phẩm và xác định cách chúng có thể được phân phối.",
+      "create_label": "Tạo loại sản phẩm",
+      "custom_delivery_profile": "tùy chỉnh",
+      "default_delivery_profile": "Lưu trữ hồ sơ mặc định",
+      "delete_confirm": {
+        "message": "Bạn có chắc chắn muốn xóa “{{name}}” không? Không thể xóa các loại sản phẩm vẫn được sử dụng.",
+        "title": "Xóa loại sản phẩm"
+      },
+      "edit_description": "Thay đổi tên hoặc cách thức phân phối các sản phẩm thuộc loại này.",
+      "edit_sheet_title": "Chỉnh sửa loại sản phẩm",
+      "empty": "Chưa có loại sản phẩm",
+      "messages": {
+        "applied_to_products": "Áp dụng cho sản phẩm hiện có",
+        "created": "Loại sản phẩm đã tạo",
+        "deleted": "Đã xóa loại sản phẩm",
+        "updated": "Đã cập nhật loại sản phẩm"
+      },
+      "no_categories": "Chưa có danh mục nào",
+      "no_option_types": "Chưa có loại tùy chọn nào",
+      "option_type_search_placeholder": "Các loại tùy chọn tìm kiếm",
+      "search_placeholder": "Tìm kiếm loại sản phẩm"
+    },
+    "calculators": {
+      "default_refund_amount": "Số tiền hoàn trả mặc định",
+      "default_tax": "Thuế mặc định",
+      "digital_delivery": "Giao hàng kỹ thuật số",
+      "flat_percent_item_total": "Phần trăm phẳng",
+      "flat_rate": "Tỷ giá cố định",
+      "flexi_rate": "Tỷ lệ linh hoạt",
+      "per_item": "mỗi mục",
+      "percent_on_line_item": "Phần trăm trên mỗi mục hàng",
+      "price_sack": "Bao giá",
+      "tiered_flat_rate": "Tỷ lệ cố định theo bậc",
+      "tiered_percent": "Phần trăm theo bậc"
+    },
+    "stock_levels": {
+      "messages": {
+        "stock_level_deleted": "Đã xóa mức tồn kho",
+        "stock_updated": "Đã cập nhật hàng"
+      }
+    },
+    "option_types": {
+      "columns": {
+        "values": "Giá trị"
+      },
+      "kinds": {
+        "buttons": "Nút",
+        "color_swatch": "Mẫu màu",
+        "dropdown": "Thả xuống"
+      },
+      "messages": {
+        "created": "Đã tạo loại tùy chọn",
+        "deleted": "Loại tùy chọn đã bị xóa",
+        "updated": "Đã cập nhật loại tùy chọn"
+      },
+      "table": {
+        "empty": "Chưa có loại tùy chọn nào",
+        "search_placeholder": "Tìm kiếm theo tên…"
+      },
+      "value_count_one": "Giá trị {{count}}",
+      "value_count_other": "giá trị {{count}}"
+    },
+    "media_library": {
+      "download": "Tải xuống"
+    },
+    "catalogs": {
+      "terms": {
+        "title": "Điều kiện thương mại",
+        "description": "Người mua theo thỏa thuận này phải đặt hàng bao nhiêu.",
+        "no_rule_placeholder": "Không có quy tắc",
+        "minimums_title": "Đặt hàng tối thiểu",
+        "minimums_description": "Ít nhất toàn bộ đơn đặt hàng phải đạt tới, trên mỗi loại tiền tệ.",
+        "minimums_empty": "Không có đơn đặt hàng tối thiểu. Người mua có thể thanh toán với bất kỳ tổng số nào.",
+        "minimum_amount_label": "Số tiền tối thiểu",
+        "validation": {
+          "positive_integer": "Nhập số nguyên lớn hơn 0 hoặc để trống.",
+          "currency_taken": "Đồng tiền này đã có mức tối thiểu.",
+          "positive_amount": "Nhập số tiền lớn hơn 0.",
+          "fix_terms": "Sửa các quy tắc số lượng được đánh dấu trước khi lưu."
+        },
+        "mixed": "Hỗn hợp",
+        "inherits": "Mặc định",
+        "default_help": "Áp dụng cho mọi sản phẩm trong danh mục này, trừ khi có sản phẩm nào nêu rõ sản phẩm đó trong danh sách.",
+        "column_minimum": "tối thiểu",
+        "column_multiple": "Nhiều",
+        "help": {
+          "minimum": "Ít nhất người mua có thể đặt hàng một sản phẩm. Một đơn đặt hàng dưới đây bị từ chối với số lượng hợp lệ gần nhất được nêu tên - không có gì được làm tròn cho chúng.",
+          "multiple": "Kích thước bước. Với bội số của 24, người mua đặt hàng 24, 48 hoặc 72 - không bao giờ là 30. Các bước được tính từ mức tối thiểu, do đó, tối thiểu 50 trong các bước 24 sẽ cho phép 50, 74 và 98.",
+          "order_minimum": "Ít nhất toàn bộ đơn hàng phải đến, chỉ đếm các mặt hàng - giao hàng và thuế không giúp đạt được điều đó. Người mua sẽ thấy họ còn thiếu bao nhiêu khi mua sắm và việc thanh toán sẽ bị từ chối cho đến khi họ đạt được số tiền đó."
+        }
+      }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "Số tiền hoàn trả mặc định",
+          "description": "Hoàn lại số tiền ban đầu đã trả cho các mặt hàng được trả lại"
+        },
+        "default_tax": {
+          "name": "Thuế mặc định",
+          "description": "Áp dụng thuế suất cho số tiền chịu thuế"
+        },
+        "digital_delivery": {
+          "name": "Giao hàng kỹ thuật số",
+          "description": "Không có chi phí vận chuyển - đơn hàng được giao kỹ thuật số"
+        },
+        "flat_percent_item_total": {
+          "name": "Phần trăm phẳng",
+          "description": "Tỷ lệ phần trăm của tổng số mặt hàng đặt hàng"
+        },
+        "flat_rate": {
+          "name": "Tỷ giá cố định",
+          "description": "Một số tiền cố định, bất kể đơn hàng chứa gì"
+        },
+        "flexi_rate": {
+          "name": "Tỷ lệ linh hoạt",
+          "description": "Số tiền cơ bản cộng với số tiền cho mỗi mặt hàng"
+        },
+        "per_item": {
+          "name": "mỗi mục",
+          "description": "Một số tiền cố định cho mỗi mặt hàng trong đơn hàng"
+        },
+        "percent_on_line_item": {
+          "name": "Phần trăm trên mỗi mục hàng",
+          "description": "Tỷ lệ phần trăm của mỗi mục hàng"
+        },
+        "price_sack": {
+          "name": "Bao giá",
+          "description": "Một số tiền dưới ngưỡng, một số khác ở hoặc cao hơn ngưỡng đó"
+        },
+        "tiered_flat_rate": {
+          "name": "Tỷ lệ cố định theo bậc",
+          "description": "Một số tiền cố định thay đổi theo tổng đơn hàng"
+        },
+        "tiered_percent": {
+          "name": "Phần trăm theo bậc",
+          "description": "Tỷ lệ phần trăm thay đổi theo tổng đơn hàng"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "Được xuất bản gần đây",
+          "description": "Sản phẩm được xuất bản trong N ngày qua"
+        },
+        "sale": {
+          "name": "Đang giảm giá",
+          "description": "Sản phẩm hiện đang được giảm giá dưới mức giá so sánh"
+        },
+        "tag": {
+          "name": "Gắn thẻ",
+          "description": "Sản phẩm có thẻ phù hợp"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "Danh mục",
+          "description": "Chỉ tính mức giá này cho các sản phẩm trong danh mục đã chọn và bất kỳ sản phẩm nào được liệt kê bên dưới chúng"
+        },
+        "item_total_rule": {
+          "name": "Giá trị bán",
+          "description": "Chỉ tính phí theo tỷ lệ này khi bán hàng trong phạm vi giá trị"
+        },
+        "product_rule": {
+          "name": "sản phẩm",
+          "description": "Chỉ tính mức giá này cho các sản phẩm đã chọn"
+        },
+        "seller_rule": {
+          "name": "Người bán",
+          "description": "Chỉ tính mức giá này khi người bán là một trong những người được chọn"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "Kênh",
+          "description": "Chỉ cung cấp phương thức phân phối này trên các kênh bán hàng đã chọn"
+        },
+        "company_rule": {
+          "name": "Công ty",
+          "description": "Chỉ cung cấp phương thức giao hàng này cho các đơn hàng được đặt cho một công ty hoặc chỉ cho những đơn hàng không"
+        },
+        "excluded_products_rule": {
+          "name": "Sản phẩm bị loại trừ",
+          "description": "Ẩn phương thức giao hàng này khi đơn hàng có chứa bất kỳ sản phẩm nào trong số này"
+        },
+        "item_total_rule": {
+          "name": "Tổng số mặt hàng",
+          "description": "Chỉ cung cấp phương thức giao hàng này khi tổng số đơn hàng nằm trong phạm vi"
+        },
+        "volume_rule": {
+          "name": "khối lượng",
+          "description": "Chỉ cung cấp phương thức giao hàng này khi khối lượng lô hàng nằm trong phạm vi, tính bằng mét khối"
+        },
+        "weight_rule": {
+          "name": "cân nặng",
+          "description": "Chỉ cung cấp phương thức giao hàng này khi trọng lượng bưu kiện nằm trong phạm vi"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "Vị trí mặc định",
+          "description": "Ưu tiên vị trí kho được đánh dấu là mặc định"
+        },
+        "minimize_splits": {
+          "name": "Giảm thiểu sự chia tách",
+          "description": "Ưu tiên địa điểm có thể tự mình thực hiện nhiều mặt hàng nhất, tránh phân chia lô hàng"
+        },
+        "preferred_location": {
+          "name": "Vị trí ưa thích",
+          "description": "Thực hiện từ vị trí được ghim trên đơn hàng, khi vị trí được đặt"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "Kênh",
+          "description": "Áp dụng giá theo kênh bán hàng"
+        },
+        "customer_group_rule": {
+          "name": "Nhóm khách hàng",
+          "description": "Áp dụng giá cho các nhóm khách hàng cụ thể"
+        },
+        "market_rule": {
+          "name": "Chợ",
+          "description": "Áp dụng giá cả theo thị trường"
+        },
+        "user_rule": {
+          "name": "Khách hàng",
+          "description": "Áp dụng giá cho khách hàng cụ thể"
+        },
+        "volume_rule": {
+          "name": "Định giá theo số lượng",
+          "description": "Áp dụng giá dựa trên số lượng mua"
+        },
+        "zone_rule": {
+          "name": "Khu vực",
+          "description": "Áp dụng giá dựa trên khu vực vận chuyển"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "Tạo điều chỉnh toàn bộ đơn hàng",
+          "description": "Tạo điều chỉnh tín dụng khuyến mãi trên đơn đặt hàng"
+        },
+        "create_item_adjustments": {
+          "name": "Tạo điều chỉnh theo từng mục hàng",
+          "description": "Tạo điều chỉnh tín dụng khuyến mãi trên một chi tiết đơn hàng"
+        },
+        "create_line_items": {
+          "name": "Tạo chi tiết đơn hàng",
+          "description": "Thêm miễn phí số lượng mẫu mã đã chỉ định vào giỏ hàng"
+        },
+        "free_shipping": {
+          "name": "miễn phí vận chuyển",
+          "description": "Làm cho tất cả các lô hàng cho đơn hàng đều miễn phí"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "Danh mục",
+          "description": "Đơn hàng bao gồm các sản phẩm trong danh mục được chỉ định"
+        },
+        "channel": {
+          "name": "(Các) kênh",
+          "description": "Giới hạn các đơn hàng được đặt qua các kênh bán hàng cụ thể"
+        },
+        "country": {
+          "name": "Quốc gia",
+          "description": "Giới hạn các đơn hàng có địa chỉ giao hàng ở một quốc gia cụ thể"
+        },
+        "currency": {
+          "name": "Tiền tệ",
+          "description": "Giới hạn các đơn đặt hàng bằng một loại tiền tệ cụ thể"
+        },
+        "customer": {
+          "name": "Khách hàng",
+          "description": "Chỉ có sẵn cho các khách hàng được chỉ định"
+        },
+        "customer_group": {
+          "name": "(Các) nhóm khách hàng",
+          "description": "Chỉ dành cho khách hàng trong (các) nhóm khách hàng được chỉ định"
+        },
+        "customer_logged_in": {
+          "name": "Chỉ khách hàng đăng nhập",
+          "description": "Chỉ dành cho khách hàng đã đăng nhập"
+        },
+        "first_order": {
+          "name": "Đơn hàng đầu tiên",
+          "description": "Phải là đơn hàng đầu tiên của khách hàng"
+        },
+        "item_total": {
+          "name": "Tổng số mặt hàng",
+          "description": "Tổng số đơn đặt hàng đáp ứng các tiêu chí này"
+        },
+        "market": {
+          "name": "(Các) thị trường",
+          "description": "Giới hạn các đơn đặt hàng từ các thị trường cụ thể"
+        },
+        "one_use_per_user": {
+          "name": "Một lần sử dụng cho mỗi người dùng",
+          "description": "Chỉ một lần sử dụng cho mỗi người dùng"
+        },
+        "option_value": {
+          "name": "(Các) Giá trị tùy chọn",
+          "description": "Đơn hàng bao gồm các sản phẩm có (các) giá trị tùy chọn phù hợp"
+        },
+        "product": {
+          "name": "(Các) sản phẩm",
+          "description": "Đơn hàng bao gồm (các) sản phẩm được chỉ định"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "Chấp nhận điều khoản",
+          "description": "Người bán phải chấp nhận các điều khoản thị trường của bạn trước khi bán"
+        },
+        "attestation": {
+          "name": "Xác nhận của người bán",
+          "description": "Người bán phải xác nhận tuyên bố bạn viết"
+        },
+        "billing_address": {
+          "name": "Địa chỉ thanh toán",
+          "description": "Người bán phải cung cấp địa chỉ thanh toán"
+        },
+        "complete_profile": {
+          "name": "Hoàn thiện hồ sơ",
+          "description": "Người bán phải điền vào hồ sơ công khai của họ"
+        },
+        "delivery_method": {
+          "name": "Phương thức giao hàng",
+          "description": "Người bán phải định cấu hình ít nhất một phương thức giao hàng"
+        },
+        "document": {
+          "name": "tài liệu",
+          "description": "Người bán phải tải lên một tài liệu để xem xét"
+        },
+        "minimum_products": {
+          "name": "Sản phẩm tối thiểu",
+          "description": "Người bán phải liệt kê số lượng sản phẩm tối thiểu"
+        },
+        "operator_review": {
+          "name": "Kiểm tra thủ công",
+          "description": "Một thành viên trong nhóm của bạn phải phê duyệt trực tiếp người bán"
+        },
+        "payout_account": {
+          "name": "Tài khoản thanh toán",
+          "description": "Người bán phải kết nối tài khoản để nhận thanh toán"
+        },
+        "policy": {
+          "name": "Chính sách người bán",
+          "description": "Người bán phải công bố chính sách cửa hàng của họ"
+        },
+        "required_custom_fields": {
+          "name": "Các trường tùy chỉnh bắt buộc",
+          "description": "Người bán phải điền vào các trường tùy chỉnh mà bạn đánh dấu là bắt buộc"
+        },
+        "returns_address": {
+          "name": "Trả về địa chỉ",
+          "description": "Người bán phải cung cấp địa chỉ để trả lại"
+        }
+      }
+    },
+    "digital_assets": {
+      "add": "Thêm",
+      "all_variants": "Tất cả các biến thể",
+      "columns": {
+        "file": "tập tin",
+        "variant": "Biến thể",
+        "size": "Kích thước",
+        "downloads": "Tải xuống",
+        "days": "ngày"
+      },
+      "delete_description": "\"{{name}}\" sẽ không thể tải xuống được nữa bởi bất kỳ ai đã mua nó. Điều này có hiệu lực ngay lập tức.",
+      "delete_title": "Xóa tập tin này?",
+      "description": "Người mua tập tin có thể tải xuống sau khi mua. Gắn chúng vào sản phẩm kỹ thuật số hoặc sản phẩm vật lý để cung cấp hướng dẫn sử dụng hoặc bảo hành cùng với hàng hóa.",
+      "download": "Tải xuống",
+      "drop_hint": "Kéo và thả tập tin vào đây hoặc nhấp để duyệt",
+      "empty": "Chưa có tập tin nào",
+      "limit_invalid": "Giới hạn phải là số nguyên từ 1 trở lên hoặc để trống.",
+      "limits_help": "Để trống phần tải xuống và giới hạn ngày để sử dụng cài đặt của cửa hàng.",
+      "source": {
+        "upload": "Tải lên một tập tin"
+      },
+      "store_default": "{{count}} (mặc định của cửa hàng)",
+      "title": "Tập tin kỹ thuật số",
+      "untitled": "Tệp không có tiêu đề",
+      "upload": "Thêm tập tin",
+      "upload_failed": "Không tải lên được {{name}}: {{message}}",
+      "uploading": "Đang tải lên {{name}}…",
+      "uploading_short": "Đang tải lên…",
+      "replace": "Thay thế tập tin",
+      "replace_description": "\"{{name}}\" bị xóa và tất cả những người đã mua nó sẽ tải xuống tệp mới từ các liên kết hiện có của họ. Điều này có hiệu lực ngay lập tức.",
+      "replace_title": "Thay thế tập tin này?"
+    }
+  }
+}
