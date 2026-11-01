@@ -806,6 +806,7 @@
                           "developer/core-concepts/delivery-setup",
                           "developer/core-concepts/freight",
                           "developer/core-concepts/returns-exchanges-claims",
+                          "developer/core-concepts/invoices",
                           "developer/core-concepts/addresses",
                           "developer/core-concepts/calculators"
                         ]
@@ -1318,7 +1319,8 @@
                       "user/orders/draft-orders",
                       "user/orders/returns",
                       "user/orders/exchanges",
-                      "user/orders/claims"
+                      "user/orders/claims",
+                      "user/orders/invoices"
                     ],
                     "icon": "shopping-cart"
                   },

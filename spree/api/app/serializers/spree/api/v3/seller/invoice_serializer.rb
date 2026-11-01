@@ -5,7 +5,9 @@ module Spree
         # The seller's view of an invoice on one of their orders, or of a
         # commission invoice the marketplace issued them.
         class InvoiceSerializer < Admin::InvoiceSerializer
+          # The admin actor shape is not the seller branch's to publish.
           _attributes.delete(:order)
+          _attributes.delete(:uploaded_by)
 
           attribute :can_be_deleted do |invoice|
             invoice.order_id.present? && invoice.can_be_deleted?

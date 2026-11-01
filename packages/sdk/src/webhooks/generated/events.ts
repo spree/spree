@@ -18,11 +18,14 @@ import type {
   Import,
   ImportRow,
   Invitation,
+  Invoice,
+  InvoiceRequest,
   LineItem,
   MediaEvent,
   NewsletterSubscriber,
   NewsletterSubscriberRequestEvent,
   Order,
+  OrderDocument,
   OrderGroup,
   PasswordResetRequestedEvent,
   Payment,
@@ -153,6 +156,10 @@ export interface WebhookEventMap {
   'invitation.accepted': Invitation
   'invitation.created': Invitation
   'invitation.resent': Invitation
+  'invoice.created': Invoice
+  'invoice.deleted': Invoice
+  'invoice.sent': Invoice
+  'invoice.updated': Invoice
   'line_item.created': LineItem
   'line_item.deleted': LineItem
   'line_item.updated': LineItem
@@ -181,6 +188,7 @@ export interface WebhookEventMap {
   'order.deleted': Order
   'order.delivered': Order
   'order.fulfilled': Order
+  'order.invoice_requested': InvoiceRequest
   'order.paid': Order
   'order.placed': Order
   'order.resend_confirmation_email': Order
@@ -188,6 +196,9 @@ export interface WebhookEventMap {
   /** @deprecated Use `order.fulfilled` instead. */
   'order.shipped': Order
   'order.updated': Order
+  'order_document.created': OrderDocument
+  'order_document.deleted': OrderDocument
+  'order_document.updated': OrderDocument
   'order_group.completed': OrderGroup
   'order_group.created': OrderGroup
   'order_group.deleted': OrderGroup

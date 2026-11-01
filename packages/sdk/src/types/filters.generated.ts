@@ -57,6 +57,13 @@ export type GiftCardFields = Filter.TextFilters<'code'>
   & Filter.EnumFilters<'state', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
   & Filter.EnumFilters<'status', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
 
+export type InvoiceFields = Filter.RangeFilters<'created_at' | 'issued_on' | 'sent_at' | 'supplied_on' | 'total' | 'updated_at'>
+  & Filter.IdFilters<'id' | 'issuer_id' | 'issuer_type' | 'order_id' | 'seller_payout_id'>
+  & Filter.TextFilters<'number'>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
+  & Filter.EnumFilters<'kind', 'invoice' | 'receipt' | 'credit_note'>
+  & Filter.EnumFilters<'source', 'uploaded' | 'generated'>
+
 export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'market_id' | 'order_group_id' | 'seller_id'>
   & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
   & Filter.TextFilters<'number' | 'po_number'>
@@ -68,6 +75,11 @@ export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' |
   & Filter.EnumFilters<'payment_status', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
   & Filter.EnumFilters<'status', 'draft' | 'placed' | 'canceled'>
+
+export type OrderDocumentFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.BooleanFilters<'customer_visible'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'label'>
 
 export type PolicyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'owner_id' | 'owner_type'>
@@ -344,6 +356,26 @@ export type GiftCardFilters = GiftCardFields
 export type GiftCardSort = Filter.SortKey<'code' | 'created_at' | 'created_by_id' | 'currency' | 'customer_id' | 'expires_at' | 'gift_card_batch_id' | 'id' | 'state' | 'status' | 'updated_at' | (keyof GiftCardSortExtensions & string)>
 
 /**
+ * Filters your app adds to Invoice lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/sdk' {
+ *       interface InvoiceFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface InvoiceFilterExtensions {}
+
+/** Sort fields your app adds to Invoice lists, as keys: `{ erp_id: true }`. */
+export interface InvoiceSortExtensions {}
+
+export type InvoiceFilters = InvoiceFields
+  & Filter.OrFilters
+  & InvoiceFilterExtensions
+
+export type InvoiceSort = Filter.SortKey<'created_at' | 'currency' | 'id' | 'issued_on' | 'issuer_id' | 'issuer_type' | 'kind' | 'number' | 'order_id' | 'seller_payout_id' | 'sent_at' | 'source' | 'supplied_on' | 'total' | 'updated_at' | (keyof InvoiceSortExtensions & string)>
+
+/**
  * Filters your app adds to Order lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -361,6 +393,7 @@ export type OrderFilters = OrderFields
   & {
     complete?: boolean
     incomplete?: boolean
+    missing_invoice?: boolean
     partially_refunded?: boolean
     refunded?: boolean
   }
@@ -368,6 +401,26 @@ export type OrderFilters = OrderFields
   & OrderFilterExtensions
 
 export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'fulfillment_status' | 'id' | 'item_total' | 'locale' | 'market_id' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at' | (keyof OrderSortExtensions & string)>
+
+/**
+ * Filters your app adds to OrderDocument lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/sdk' {
+ *       interface OrderDocumentFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface OrderDocumentFilterExtensions {}
+
+/** Sort fields your app adds to OrderDocument lists, as keys: `{ erp_id: true }`. */
+export interface OrderDocumentSortExtensions {}
+
+export type OrderDocumentFilters = OrderDocumentFields
+  & Filter.OrFilters
+  & OrderDocumentFilterExtensions
+
+export type OrderDocumentSort = Filter.SortKey<'created_at' | 'customer_visible' | 'id' | 'label' | 'updated_at' | (keyof OrderDocumentSortExtensions & string)>
 
 /**
  * Filters your app adds to Policy lists. Generate them with `spree filters types`,
