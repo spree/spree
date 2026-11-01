@@ -3,6 +3,11 @@ module Spree
     module V3
       module Seller
         class OrderDocumentSerializer < Admin::OrderDocumentSerializer
+          # The buyer's customer account and the operator's staff are not the
+          # seller's to know; `uploaded_by_customer` says whose it is.
+          _attributes.delete(:uploaded_by_id)
+          _attributes.delete(:uploaded_by_type)
+
           attribute :download_url do |document|
             next nil unless document.file.attached?
 

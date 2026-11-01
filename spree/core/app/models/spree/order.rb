@@ -156,6 +156,12 @@ module Spree
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded missing_invoice search]
     self.ransackable_scope_types = %w[complete incomplete refunded partially_refunded missing_invoice].index_with('boolean')
+
+    # Two-state scope: see Spree::Base.ransack_flag for why the cast is done
+    # inside the scope.
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[missing_invoice]
+    end
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.
@@ -340,9 +346,14 @@ module Spree
     scope :partially_refunded, -> { where(payment_status: 'partially_refunded') }
     # Placed and paid, with no invoice or receipt yet: what an operator chases
     # sellers for. Derived rather than stored, so an upload clears it.
-    scope :missing_invoice, lambda {
-      where(status: 'placed', payment_status: %w[paid partially_refunded overcharged]).
-        where.not(id: Spree::Invoice.sale_documents.where.not(order_id: nil).select(:order_id))
+    # As a filter it has two sides: `false` lists the orders that have one.
+    scope :missing_invoice, lambda { |*values|
+      invoiced = Spree::Invoice.sale_documents.where.not(order_id: nil).select(:order_id)
+      case Spree::Base.ransack_flag(*values)
+      when true then where(status: 'placed', payment_status: %w[paid partially_refunded overcharged]).where.not(id: invoiced)
+      when false then where(id: invoiced)
+      else all
+      end
     }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }

@@ -149,12 +149,12 @@ module Spree
     # delete, while a TaxIdentifier is not — cascading would permanently
     # erase the evidence behind commission invoices already issued, which is
     # exactly what it exists to preserve.
+    has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
+                               dependent: nil, inverse_of: :owner
+
     # Invoices issued in the seller's name, for their seller orders. Kept when
     # the seller is soft-deleted, like the legal identity they print.
     has_many :issued_invoices, class_name: 'Spree::Invoice', as: :issuer, dependent: nil
-
-    has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
-                               dependent: nil, inverse_of: :owner
 
     # Products and stock survive the seller leaving: the operator decides what
     # happens to a departed seller's catalog, so it is never cascade-deleted.

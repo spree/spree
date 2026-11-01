@@ -1028,6 +1028,9 @@ en:
         already_invoiced: This order already has an invoice.
         not_placed: An invoice can be requested only for a placed order.
         window_closed: The time to request an invoice for this order has passed.
+    invoices:
+      errors:
+        store_invoices_order: The marketplace invoices this order, so its invoices are uploaded by the marketplace.
     iso: ISO Alpha-2
     item: Item
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.

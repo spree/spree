@@ -22,6 +22,8 @@ module Spree
     normalizes :label, with: ->(value) { value.strip }
 
     validates :label, presence: true, length: { maximum: 255 }
+    # A buyer's own upload is theirs to see; staff cannot hide it from them.
+    validate :buyer_upload_stays_visible, if: :uploaded_by_customer?
 
     scope :customer_visible, -> { where(customer_visible: true) }
 
@@ -32,7 +34,13 @@ module Spree
     #
     # @return [Boolean]
     def uploaded_by_customer?
-      uploaded_by_type == Spree.customer_class.to_s
+      uploaded_by_type == Spree.customer_class.base_class.to_s
+    end
+
+    private
+
+    def buyer_upload_stays_visible
+      errors.add(:customer_visible, :invalid) unless customer_visible?
     end
   end
 end

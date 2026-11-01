@@ -47,6 +47,18 @@ RSpec.describe 'Seller Order Invoices API', type: :request, swagger_doc: 'api-re
         end
       end
 
+      response '422', 'an order the marketplace invoices' do
+        before { seller.update!(tax_remittance: 'platform') }
+
+        let(:blob) do
+          ActiveStorage::Blob.create_and_upload!(io: StringIO.new("%PDF-1.4\n%%EOF\n"), filename: 'fv.pdf',
+                                                 content_type: 'application/pdf', service_name: Spree.private_storage_service_name)
+        end
+        let(:body) { { kind: 'invoice', number: 'S-19', issued_on: '2026-11-01', total: '1.00', file_signed_id: blob.signed_id } }
+
+        run_test!
+      end
+
       response '404', "another seller's order" do
         let(:order_id) { create(:shipped_order, store: store, seller: create(:seller, store: store), line_items_count: 1).prefixed_id }
         let(:body) { { kind: 'invoice', number: 'S-18', issued_on: '2026-11-01', total: '1.00', file_signed_id: 'x' } }

@@ -65,6 +65,16 @@ RSpec.describe 'Seller Invoices API', type: :request, swagger_doc: 'api-referenc
 
         run_test!
       end
+
+      response '404', 'an invoice the store issued on the seller\'s order' do
+        let(:id) do
+          store_invoice = build(:invoice, order: order, issuer: store)
+          store_invoice.save!(validate: false)
+          store_invoice.prefixed_id
+        end
+
+        run_test!
+      end
     end
   end
 

@@ -15,14 +15,19 @@ module Spree
       # @param customer [Object, nil] the signed-in buyer, nil for a guest
       # @param company_name [String, nil]
       # @param tax_id [String, nil]
-      # @param billing_address [Spree::Address, nil]
+      # @param billing_address_params [Hash, nil] where the invoice is addressed
       # @return [Spree::ServiceModule::Result] the request on success
-      def perform(order:, customer: nil, company_name: nil, tax_id: nil, billing_address: nil)
+      def perform(order:, customer: nil, company_name: nil, tax_id: nil, billing_address_params: nil)
         super
 
         step :ensure_requestable
         run_hooks :validate
-        step :create_request
+        # The address is saved only once the request is allowed, and with it,
+        # so a refused request leaves no personal data behind.
+        ApplicationRecord.transaction do
+          step :create_billing_address
+          step :create_request
+        end
         run_hooks :after_create
 
         invoice_request.publish_event('order.invoice_requested')
@@ -38,19 +43,30 @@ module Spree
       end
 
       # The window runs from when the buyer paid, falling back to when they
-      # placed the order for one settled outside Spree.
+      # placed the order for one settled outside Spree. Creation times, because
+      # a payment's `updated_at` moves with every refund and would reopen it.
       def within_window?
         days = order.store.preferred_invoice_request_window_days.to_i
         return false if days <= 0
 
-        started_at = order.settlement_payments.completed.maximum(:updated_at) || order.completed_at
+        started_at = order.settlement_payments.completed.maximum(:created_at) || order.completed_at
         started_at.nil? || started_at >= days.days.ago
+      end
+
+      # Not added to the buyer's address book: it is where this one invoice is
+      # addressed, nothing more.
+      def create_billing_address
+        return if billing_address_params.blank?
+
+        result = Spree.address_create_service.call(address_params: billing_address_params.to_h.symbolize_keys)
+        failure(result.value) unless result.success?
+        @billing_address = result.value
       end
 
       def create_request
         @invoice_request = order.invoice_requests.new(
           store: order.store, customer: customer, company_name: company_name,
-          tax_id: tax_id, billing_address: billing_address
+          tax_id: tax_id, billing_address: @billing_address
         )
         failure(invoice_request) unless invoice_request.save
       rescue ActiveRecord::RecordNotUnique

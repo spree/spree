@@ -431,15 +431,18 @@ function invoiceFormSchema(t: (key: string) => string) {
       file_signed_id: z.string().min(1, { error: t('admin.order_documents.errors.file_required') }),
     })
     .superRefine((values, ctx) => {
-      const total = Number(values.total)
-      if (values.kind === 'credit_note' && total > 0) {
+      // Read from the string, never a float: a sign and whether any digit is
+      // non-zero is all the check needs.
+      const negative = values.total.startsWith('-')
+      const zero = !/[1-9]/.test(values.total)
+      if (values.kind === 'credit_note' && !negative && !zero) {
         ctx.addIssue({
           code: 'custom',
           path: ['total'],
           message: t('admin.order_documents.errors.credit_note_negative'),
         })
       }
-      if (values.kind !== 'credit_note' && total < 0) {
+      if (values.kind !== 'credit_note' && negative && !zero) {
         ctx.addIssue({
           code: 'custom',
           path: ['total'],
