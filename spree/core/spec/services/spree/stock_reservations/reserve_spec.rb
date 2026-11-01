@@ -29,6 +29,18 @@ describe Spree::StockReservations::Reserve do
       expect(reservation.quantity).to eq(3)
     end
 
+    it 'skips a stock level deleted after the allocation was read' do
+      allow_any_instance_of(described_class).to receive(:build_targets) do
+        stale = [line_item, stock_level, 3]
+        stock_level.delete
+        [stale]
+      end
+
+      expect { result }.not_to raise_error
+      expect(result).to be_success
+      expect(Spree::StockReservation.count).to eq(0)
+    end
+
     it 'sets expires_at according to the store TTL' do
       store.update!(preferred_stock_reservation_ttl_minutes: 7)
       freeze_time do
