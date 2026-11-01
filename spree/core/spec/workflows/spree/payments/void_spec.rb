@@ -63,6 +63,17 @@ RSpec.describe Spree::Payments::Void do
       expect(result.error.value).to eq(:payment_not_voidable)
     end
 
+    it 'fails without calling the gateway when the payment method cannot void the payment' do
+      allow(gateway).to receive(:can_void?).with(payment).and_return(false)
+      expect(gateway).not_to receive(:void)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:payment_not_voidable)
+      expect(payment.reload).to be_pending
+    end
+
     it 'surfaces a gateway failure as a failure result and does not void' do
       allow(gateway).to receive(:void).and_return(failed_response)
 

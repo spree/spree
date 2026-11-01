@@ -690,6 +690,40 @@ describe Spree::Payment, type: :model do
     end
   end
 
+  describe '#can_void?' do
+    let(:payment) { build_stubbed(:payment, status: 'completed') }
+
+    it 'is true for a completed payment by default' do
+      expect(payment.can_void?).to be true
+    end
+
+    it 'is false when the payment method cannot void the payment' do
+      allow(payment.payment_method).to receive(:can_void?).with(payment).and_return(false)
+
+      expect(payment.can_void?).to be false
+    end
+
+    it 'is false for a failed payment whatever the payment method says' do
+      payment.status = 'failed'
+
+      expect(payment.can_void?).to be false
+    end
+  end
+
+  describe '#can_capture?' do
+    it 'is true for a pending payment and false for a completed one' do
+      expect(build_stubbed(:payment, status: 'pending').can_capture?).to be true
+      expect(build_stubbed(:payment, status: 'completed').can_capture?).to be false
+    end
+
+    it 'is false when the payment method refuses' do
+      payment = build_stubbed(:payment, status: 'pending')
+      allow(payment.payment_method).to receive(:can_capture?).with(payment).and_return(false)
+
+      expect(payment.can_capture?).to be false
+    end
+  end
+
   describe '#credit_allowed' do
     # Regression test for #4403 & #4407
     it 'is the difference between offsets total and payment amount' do
