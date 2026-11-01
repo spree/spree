@@ -103,7 +103,6 @@ defineTable<Order>('seller-orders', {
       // ask this seller for.
       key: 'missing_invoice',
       label: i18n.t('orders.columns.missing_invoice'),
-      ransackAttribute: 'missing_invoice',
       ransackScope: true,
       filterable: true,
       filterType: 'boolean',

@@ -32,7 +32,7 @@ module Spree
           invoice.kind,
           invoice.issued_on&.iso8601,
           invoice.supplied_on&.iso8601,
-          invoice.issuer.try(:legal_name).presence || invoice.issuer&.name,
+          invoice.issuer_name,
           invoice.order&.number,
           invoice.seller_payout&.prefixed_id,
           invoice.original_invoice&.number,

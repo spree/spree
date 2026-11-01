@@ -187,6 +187,20 @@ module Spree
         #
         # Declare the matching `typelize` entries alongside, as with any
         # other attribute.
+        # Declares `<slot>_filename`, `<slot>_byte_size` and
+        # `<slot>_content_type` for a private attachment, nil when nothing is
+        # attached. The file itself is served by the record's download action.
+        def self.private_file_attributes(slot)
+          { filename: ->(blob) { blob.filename.to_s }, byte_size: :byte_size.to_proc, content_type: :content_type.to_proc }.each do |field, read|
+            attribute(:"#{slot}_#{field}") do |record|
+              attachment = record.public_send(slot)
+              read.call(attachment.blob) if attachment.attached?
+            end
+          end
+          typelize "#{slot}_filename": [:string, nullable: true], "#{slot}_byte_size": ['number | null'],
+                   "#{slot}_content_type": [:string, nullable: true]
+        end
+
         def self.actor_attributes(*names)
           names.each do |name|
             attribute(:"#{name}_id") { |object| object.acted_by_prefixed_id(name) }

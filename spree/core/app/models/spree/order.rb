@@ -348,10 +348,10 @@ module Spree
     # sellers for. Derived rather than stored, so an upload clears it.
     # As a filter it has two sides: `false` lists the orders that have one.
     scope :missing_invoice, lambda { |*values|
-      invoiced = Spree::Invoice.sale_documents.where.not(order_id: nil).select(:order_id)
+      invoiced = Spree::Invoice.sale_documents.where(Spree::Invoice.arel_table[:order_id].eq(arel_table[:id])).arel.exists
       case Spree::Base.ransack_flag(*values)
-      when true then where(status: 'placed', payment_status: %w[paid partially_refunded overcharged]).where.not(id: invoiced)
-      when false then where(id: invoiced)
+      when true then where(status: 'placed', payment_status: %w[paid partially_refunded overcharged]).where(invoiced.not)
+      when false then where(invoiced)
       else all
       end
     }

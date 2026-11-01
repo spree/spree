@@ -16,6 +16,7 @@ export const EmailInvoiceSchema = z.object({
   issuer_name: z.string().nullable(),
   file_filename: z.string().nullable(),
   file_byte_size: z.number().nullable(),
+  file_content_type: z.string().nullable(),
 });
 
 export type EmailInvoice = z.infer<typeof EmailInvoiceSchema>;

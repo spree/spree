@@ -51,7 +51,8 @@ setApiClient({
       resend: (id) => adminClient.invoices.resend(id),
     },
     invoiceRequests: {
-      list: (orderId) => adminClient.orders.invoiceRequests.list(orderId, { limit: 100 }),
+      list: (orderId) =>
+        adminClient.orders.invoiceRequests.list(orderId, { status_eq: 'open', limit: 1 }),
     },
     documents: {
       list: (orderId) => adminClient.orders.documents.list(orderId, { limit: 100 }),

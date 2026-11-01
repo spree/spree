@@ -28,7 +28,12 @@ export function useSellerMissingInvoicesCount(sellerId: string) {
   return useQuery({
     queryKey: useResourceKey('orders', 'missing-invoices', sellerId),
     queryFn: () =>
-      adminClient.orders.list({ seller_id_eq: sellerId, missing_invoice: true, limit: 1 }),
+      adminClient.orders.list({
+        seller_id_eq: sellerId,
+        missing_invoice: true,
+        limit: 1,
+        fields: ['id'],
+      }),
     select: (response) => response.meta.count,
   })
 }

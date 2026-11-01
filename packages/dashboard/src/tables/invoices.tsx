@@ -1,14 +1,10 @@
 import type { Invoice } from '@spree/admin-sdk'
 import { INVOICE_KINDS } from '@spree/core'
-import { defineTable, Money } from '@spree/dashboard-core'
-import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
+import { defineTable, InvoiceKindBadge, invoiceKindLabel, Money } from '@spree/dashboard-core'
+import { RelativeTime } from '@spree/dashboard-ui'
 import { ReceiptTextIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-
-function kindLabel(kind: string): string {
-  return i18n.t(`admin.order_documents.kinds.${kind}`, { defaultValue: kind })
-}
 
 /**
  * Every invoice, receipt and credit note in the store, whichever order or
@@ -56,22 +52,16 @@ defineTable<Invoice>('invoices', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: INVOICE_KINDS.map((value) => ({ value, label: kindLabel(value) })),
+      filterOptions: INVOICE_KINDS.map((value) => ({ value, label: invoiceKindLabel(value) })),
       quickFilter: true,
       default: true,
-      render: (invoice) => (
-        <StatusBadge
-          status={invoice.kind}
-          tone={invoice.kind === 'credit_note' ? 'warning' : 'neutral'}
-          label={kindLabel(invoice.kind)}
-        />
-      ),
+      render: (invoice) => <InvoiceKindBadge kind={invoice.kind} />,
     },
     {
       key: 'order',
       label: i18n.t('admin.nav.orders'),
       default: true,
-      render: (invoice) => invoice.order?.number ?? '—',
+      render: (invoice) => invoice.order_number ?? '—',
     },
     {
       key: 'issuer_name',

@@ -8,6 +8,7 @@ module Spree
         class InvoiceSerializer < V3::InvoiceSerializer
           typelize source: [:string, enum: Spree::Invoice::SOURCES, enum_type_name: 'InvoiceSource'],
                    order_id: [:string, nullable: true],
+                   order_number: [:string, nullable: true],
                    seller_payout_id: [:string, nullable: true],
                    issuer_id: :string,
                    external_reference: [:string, nullable: true],
@@ -21,6 +22,9 @@ module Spree
                      sent_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
           prefixed_id_attributes :order, :seller_payout, :issuer
+
+          # What a list shows for the order, without expanding all of it.
+          attribute(:order_number) { |invoice| invoice.order&.number }
 
           actor_attributes :uploaded_by
 
