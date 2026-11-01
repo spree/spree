@@ -42,10 +42,6 @@ module Spree
 
       # Carts keep the entered code, and recalculation would apply it again.
       # Callers that let the shopper be told the code went keep it.
-      #
-      # @param owner [Spree::Cart, Spree::Order]
-      # @param code [String, nil]
-      # @return [void]
       def clear_entered_coupon_code(owner, code)
         return if code.blank? || !owner.has_attribute?(:coupon_code)
         return unless owner.read_attribute(:coupon_code).to_s.casecmp?(code)
@@ -54,10 +50,6 @@ module Spree
       end
 
       # Removes the line items a promotion's create-line-items actions added.
-      #
-      # @param owner [Spree::Cart, Spree::Order]
-      # @param promotion [Spree::Promotion]
-      # @return [void]
       def remove_promotion_line_items(owner, promotion)
         action_ids = promotion.actions.where(type: CREATE_LINE_ITEMS_ACTION_TYPES).ids
         remove_service = owner.is_a?(Spree::Cart) ? Spree.cart_remove_item_service : Spree.order_remove_item_service
