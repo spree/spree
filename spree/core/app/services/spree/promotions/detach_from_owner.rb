@@ -58,8 +58,9 @@ module Spree
         Spree::PromotionActionLineItem.where(promotion_action: action_ids).find_each do |item|
           next if owner.find_line_item_by_variant(item.variant).blank?
 
-          # The promotion is still active here, so recalculating would add its items back.
-          options = owner.is_a?(Spree::Cart) ? { skip_promotion_activation: true } : {}
+          # The promotion is still active here, so recalculating would add its items back;
+          # other promotions are still re-evaluated.
+          options = owner.is_a?(Spree::Cart) ? { excluded_promotion_ids: [promotion.id] } : {}
           remove_service.call(owner_key => owner, variant: item.variant, quantity: item.quantity, options: options)
         end
       end

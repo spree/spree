@@ -16,14 +16,20 @@ module Spree
       attr_reader :line_item, :order, :store
       attr_accessor :error, :success
 
-      def initialize(order, line_item = nil)
+      # @param order [Spree::Cart, Spree::Order]
+      # @param line_item [Spree::LineItem, nil]
+      # @param excluded_promotion_ids [Array<String>] promotions to leave alone, e.g. one that is being removed
+      def initialize(order, line_item = nil, excluded_promotion_ids: [])
         @order = order
         @line_item = line_item
         @store = order.store
+        @excluded_promotion_ids = Array(excluded_promotion_ids)
       end
 
       def activate
         promotions.each do |promotion|
+          next if @excluded_promotion_ids.include?(promotion.id)
+
           if (line_item && promotion.eligible?(line_item)) || promotion.eligible?(order)
             promotion.activate(line_item: line_item, order: order)
           else

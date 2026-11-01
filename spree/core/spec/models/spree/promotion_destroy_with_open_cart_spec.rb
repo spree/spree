@@ -68,6 +68,7 @@ describe Spree::Promotion, type: :model do
 
       expect(cart.line_items.map(&:variant)).not_to include(gift)
       expect(cart.order_promotions).to be_empty
+      expect(cart.item_total).to eq(cart.line_items.sum(&:amount))
     end
   end
 end
