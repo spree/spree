@@ -53,6 +53,36 @@ RSpec.describe Spree::Companies::Register do
     expect(customer.company_memberships.count).to eq(0)
   end
 
+  describe 'registration answers' do
+    it 'accepts scalar answers' do
+      result = register(registration: { vat_number: 'PL123', employees: 50, exporter: true, fax: nil })
+
+      expect(result).to be_success
+    end
+
+    it 'refuses nested answers' do
+      result = register(registration: { address: { city: 'Warsaw' } })
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to include('Registration answers')
+      expect(store.companies.count).to eq(0)
+    end
+
+    it 'refuses too many answers' do
+      answers = (1..(described_class::MAX_REGISTRATION_ANSWERS + 1)).to_h { |index| ["question_#{index}", 'yes'] }
+
+      expect(register(registration: answers)).to be_failure
+    end
+
+    it 'refuses an over-long answer' do
+      expect(register(registration: { notes: 'a' * (described_class::MAX_REGISTRATION_VALUE_LENGTH + 1) })).to be_failure
+    end
+
+    it 'refuses an over-long question' do
+      expect(register(registration: { ('q' * (described_class::MAX_REGISTRATION_KEY_LENGTH + 1)) => 'yes' })).to be_failure
+    end
+  end
+
   describe 'the one-root guard' do
     it 'refuses a second founding by the same customer' do
       register

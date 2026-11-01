@@ -61,4 +61,21 @@ RSpec.describe Spree::Companies::ActivationPolicy, type: :model do
       end
     end
   end
+
+  describe '#first_active' do
+    let(:companies) { create_list(:company, described_class::PAGE_SIZE + 2, store: store) }
+    let(:relation) { Spree::Company.where(id: companies.map(&:id)) }
+
+    it 'stops at the limit' do
+      expect(policy.first_active(relation, limit: 2)).to eq(companies.first(2))
+    end
+
+    it 'pages past inactive companies to find active ones' do
+      with_company_activation_policy(inactive: companies.first(described_class::PAGE_SIZE + 1)) do
+        found = Spree.company_activation_policy_class.new.first_active(relation, limit: 2)
+
+        expect(found).to eq([companies.last])
+      end
+    end
+  end
 end

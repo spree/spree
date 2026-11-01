@@ -146,10 +146,8 @@ module Spree
       # inactive company must not price or exempt a sale
       # (docs/plans/6.1-b2b-company-self-registration.md). The question is
       # still "exactly one, or not", so the walk stops at the second active
-      # node — lazily, because a replacement policy may hit the database for
-      # each one it is asked about.
-      policy = Spree.company_activation_policy
-      active_companies = companies.lazy.select { |company| policy.active?(company) }.first(2)
+      # node.
+      active_companies = Spree.company_activation_policy.first_active(companies, limit: 2)
 
       active_companies.one? ? active_companies.first : nil
     end

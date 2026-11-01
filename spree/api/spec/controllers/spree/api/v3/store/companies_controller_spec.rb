@@ -106,6 +106,14 @@ RSpec.describe Spree::Api::V3::Store::CompaniesController, type: :controller do
       expect(store.companies.find_by(name: 'Nowak Tools').metadata).not_to have_key('registration')
     end
 
+    it 'refuses nested registration answers' do
+      post :create, params: { name: 'Nowak Tools', registration: { address: { city: 'Warsaw' } } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('Registration answers')
+      expect(store.companies.where(name: 'Nowak Tools')).to be_empty
+    end
+
     it 'refuses an invalid registration' do
       post :create, params: { name: '' }, as: :json
 

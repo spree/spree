@@ -42,8 +42,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     end
   end
 
-  describe 'approval_required storefront access' do
-    before { channel.update!(preferred_storefront_access: 'approval_required') }
+  describe 'company_required storefront access' do
+    before { channel.update!(preferred_storefront_access: 'company_required') }
 
     it 'lets a guest browse with prices null and a login_required reason' do
       get :index
@@ -199,8 +199,8 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
     request.headers['X-Spree-Channel'] = channel.code
   end
 
-  describe 'approval_required and receipts' do
-    before { channel.update!(preferred_storefront_access: 'approval_required') }
+  describe 'company_required and receipts' do
+    before { channel.update!(preferred_storefront_access: 'company_required') }
 
     # Money already taken is the buyer's record of purchase — the posture
     # protects catalog prices, never a receipt.
