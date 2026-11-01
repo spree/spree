@@ -27,6 +27,11 @@ module Spree
     INVALID_STATES      = INVALID_STATUSES
     deprecate_constant :INVALID_STATES
 
+    # Statuses a payment can be voided / captured from, before the payment
+    # method is consulted. Extend them to support gateways with other flows.
+    VOIDABLE_STATUSES   = %w[pending processing completed checkout].freeze
+    CAPTURABLE_STATUSES = %w[checkout pending].freeze
+
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
       belongs_to :cart, class_name: 'Spree::Cart', optional: true
@@ -223,13 +228,13 @@ module Spree
     # method agrees. A gateway that cannot void a capture returns false from
     # +can_void?(payment)+ for completed payments.
     def can_void?
-      status.in?(%w[pending processing completed checkout]) &&
+      status.in?(VOIDABLE_STATUSES) &&
         (!payment_method.respond_to?(:can_void?) || payment_method.can_void?(self))
     end
 
     # Whether the payment can be captured from the back office.
     def can_capture?
-      status.in?(%w[checkout pending]) &&
+      status.in?(CAPTURABLE_STATUSES) &&
         (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
     end
 

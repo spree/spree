@@ -65,10 +65,12 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
     it 'reports whether the payment method allows voiding and capturing' do
       allow_any_instance_of(Spree::PaymentMethod).to receive(:can_void?).and_return(false)
+      allow_any_instance_of(Spree::PaymentMethod).to receive(:can_capture?).and_return(false)
+      payment.update_columns(status: 'checkout')
 
       get :show, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
 
-      expect(json_response).to include('can_void' => false, 'can_capture' => payment.status.in?(%w[checkout pending]))
+      expect(json_response).to include('can_void' => false, 'can_capture' => false)
     end
 
     it 'returns 404 for unknown payment id' do

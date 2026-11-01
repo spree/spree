@@ -711,7 +711,8 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#can_capture?' do
-    it 'is true for a pending payment and false for a completed one' do
+    it 'is true for a checkout or pending payment and false for a completed one' do
+      expect(build_stubbed(:payment, status: 'checkout').can_capture?).to be true
       expect(build_stubbed(:payment, status: 'pending').can_capture?).to be true
       expect(build_stubbed(:payment, status: 'completed').can_capture?).to be false
     end
