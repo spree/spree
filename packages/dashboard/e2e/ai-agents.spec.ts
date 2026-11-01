@@ -7,6 +7,7 @@ import {
   clearRegistrations,
   connectKnownClient,
   REGISTER_CTA,
+  registerClient,
   seedConnection,
 } from './oauth-helpers'
 
@@ -73,14 +74,10 @@ test.describe('connecting an agent', () => {
   test('adds the Claude Code callback to an older Claude registration', async ({ page }) => {
     const creds = await login(page)
     await clearRegistrations(page, creds.store_id, creds.accessToken)
-    const registered = await page.request.post('/api/v3/admin/oauth/applications', {
-      headers: { 'X-Spree-Store-Id': creds.store_id, Authorization: `Bearer ${creds.accessToken}` },
-      data: {
-        name: 'Claude',
-        redirect_uri: 'https://claude.ai/api/mcp/auth_callback\nhttp://127.0.0.1/callback',
-      },
+    await registerClient(page, creds.store_id, creds.accessToken, {
+      name: 'Claude',
+      redirect_uri: 'https://claude.ai/api/mcp/auth_callback\nhttp://127.0.0.1/callback',
     })
-    expect(registered.ok()).toBeTruthy()
 
     await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
     const sheet = await connectKnownClient(page)

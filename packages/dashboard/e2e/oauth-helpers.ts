@@ -44,6 +44,25 @@ export async function clearRegistrations(page: Page, storeId: string, accessToke
   }
 }
 
+/** Registers a client straight through the API, as a store set up earlier would hold it. */
+export async function registerClient(
+  page: Page,
+  storeId: string,
+  accessToken: string,
+  data: { name: string; redirect_uri: string },
+) {
+  const registered = await page.request.post('/api/v3/admin/oauth/applications', {
+    headers: { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` },
+    data,
+  })
+  if (!registered.ok()) {
+    throw new Error(
+      `Registering ${data.name} failed: ${registered.status()} ${await registered.text()}`,
+    )
+  }
+  return registered.json()
+}
+
 /**
  * Connects an agent for real: registers a client, then walks consent and the
  * token exchange exactly as a client does.
@@ -60,14 +79,10 @@ export async function seedConnection(
 ) {
   const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
 
-  const registered = await page.request.post('/api/v3/admin/oauth/applications', {
-    headers,
-    data: { name, redirect_uri: 'https://example.test/callback' },
+  const application = await registerClient(page, storeId, accessToken, {
+    name,
+    redirect_uri: 'https://example.test/callback',
   })
-  if (!registered.ok()) {
-    throw new Error(`Registering ${name} failed: ${registered.status()} ${await registered.text()}`)
-  }
-  const application = await registered.json()
 
   // A fixed verifier and its S256 challenge. The pair only has to be
   // self-consistent — the server checks one against the other.

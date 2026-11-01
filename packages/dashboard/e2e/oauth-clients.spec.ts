@@ -63,20 +63,26 @@ test.describe('a localhost callback', () => {
     })
   })
 
-  test('is refused without a port', async ({ page }) => {
-    const creds = await login(page)
-    await gotoIndex(page, CLIENTS_PATH(creds.store_id), REGISTER_CTA)
+  // Neither shape can ever match what a client sends at sign-in.
+  for (const [label, uri] of [
+    ['without a port', 'http://localhost/callback'],
+    ['written in capitals', 'http://LocalHost:3118/callback'],
+  ]) {
+    test(`is refused ${label}`, async ({ page }) => {
+      const creds = await login(page)
+      await gotoIndex(page, CLIENTS_PATH(creds.store_id), REGISTER_CTA)
 
-    await page.getByRole('button', { name: REGISTER_CTA }).click()
-    const sheet = page.getByRole('dialog')
-    await sheet.locator('#oauth-application-name').fill(`CI portless ${Date.now()}`)
-    await sheet.locator('#oauth-application-redirect-uri').fill('http://localhost/callback')
-    await sheet.getByRole('button', { name: /^save$/i }).click()
+      await page.getByRole('button', { name: REGISTER_CTA }).click()
+      const sheet = page.getByRole('dialog')
+      await sheet.locator('#oauth-application-name').fill(`CI refused ${Date.now()}`)
+      await sheet.locator('#oauth-application-redirect-uri').fill(uri)
+      await sheet.getByRole('button', { name: /^save$/i }).click()
 
-    await expect(
-      sheet.getByRole('alert').filter({ hasText: /must start with https/i }),
-    ).toBeVisible({ timeout: 15_000 })
-  })
+      await expect(
+        sheet.getByRole('alert').filter({ hasText: /must start with https/i }),
+      ).toBeVisible({ timeout: 15_000 })
+    })
+  }
 })
 
 test.describe('managing a registered client', () => {

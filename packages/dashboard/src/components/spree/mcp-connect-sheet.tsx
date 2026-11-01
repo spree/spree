@@ -1,5 +1,4 @@
 import type { OauthApplication } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -20,10 +19,9 @@ import {
   TabsTrigger,
 } from '@spree/dashboard-ui'
 import { CircleAlertIcon, InfoIcon } from '@spree/dashboard-ui/icons'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOauthApplications } from '../../hooks/use-oauth'
+import { useOauthApplications, useSaveOauthApplication } from '../../hooks/use-oauth'
 import { ChoiceCardPicker } from './choice-card-picker'
 
 type McpConnectSheetProps = {
@@ -44,9 +42,9 @@ type McpConnectSheetProps = {
 /**
  * The loopback callback a terminal client listens on.
  *
- * Registered alongside the hosted one because Claude Code and Codex redirect
- * to a local port rather than the vendor's servers, and the port is chosen
- * at run time. RFC 8252 §7.3 says to compare loopback redirects ignoring the
+ * Registered alongside the hosted one because terminal clients such as Codex
+ * redirect to a local port rather than the vendor's servers, and the port is
+ * chosen at run time. RFC 8252 §7.3 says to compare loopback redirects ignoring the
  * port, which Doorkeeper does — but only for an IP literal, since it decides
  * by parsing the host as an address.
  */
@@ -84,10 +82,7 @@ const KNOWN_CLIENTS = [
     redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect', LOOPBACK_CALLBACK],
     surfaces: [
       { id: 'app', command: null },
-      {
-        id: 'cli',
-        command: (url: string, _clientId: string) => `codex mcp add spree --url ${url}`,
-      },
+      { id: 'cli', command: (url: string) => `codex mcp add spree --url ${url}` },
     ],
   },
 ] as const
@@ -96,7 +91,6 @@ const OTHER = 'other'
 
 export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const { t } = useTranslation()
-  const queryClient = useQueryClient()
   const [choice, setChoice] = useState<string>(KNOWN_CLIENTS[0].value)
   const [created, setCreated] = useState<OauthApplication | null>(null)
   const [customName, setCustomName] = useState('')
@@ -111,14 +105,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const endpoint = `${apiOrigin}/api/v3/admin/mcp`
   const selected = KNOWN_CLIENTS.find((client) => client.value === choice)
 
-  const register = useMutation({
-    mutationFn: (params: { name: string; redirect_uri: string }) =>
-      adminClient.oauth.applications.create(params),
-    onSuccess: (application) => {
-      queryClient.invalidateQueries({ queryKey: ['oauth-applications'] })
-      setCreated(application)
-    },
-  })
+  const register = useSaveOauthApplication()
 
   async function connect() {
     setFailure(null)
@@ -134,7 +121,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
 
     try {
       if (!already) {
-        await register.mutateAsync({ name, redirect_uri: redirectUri })
+        setCreated(await register.mutateAsync({ name, redirect_uri: redirectUri }))
         return
       }
 
@@ -148,11 +135,13 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
         setCreated(already)
         return
       }
-      const updated = await adminClient.oauth.applications.update(already.id, {
-        redirect_uri: [...registered, ...missing].join('\n'),
-      })
-      queryClient.invalidateQueries({ queryKey: ['oauth-applications'] })
-      setCreated(updated)
+      setCreated(
+        await register.mutateAsync({
+          id: already.id,
+          name,
+          redirect_uri: [...registered, ...missing].join('\n'),
+        }),
+      )
     } catch (error) {
       setFailure(error instanceof Error ? error.message : t('admin.common.error'))
     }
