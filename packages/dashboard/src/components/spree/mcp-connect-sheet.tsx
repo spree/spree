@@ -125,12 +125,14 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
         return
       }
 
-      // A registration made before a callback was added to the preset would
-      // refuse that client at sign-in, so reconnecting adds what is missing.
+      // A callback the registration lacks — added to a preset since, or
+      // typed in for a custom client — would be refused at sign-in, so
+      // reconnecting adds it.
       const registered = (already.redirect_uri ?? '').split(/\s+/).filter(Boolean)
-      const missing = selected
-        ? selected.redirectUris.filter((uri) => !registered.includes(uri))
-        : []
+      const offered: readonly string[] = selected
+        ? selected.redirectUris
+        : redirectUri.split(/\s+/).filter(Boolean)
+      const missing = offered.filter((uri) => !registered.includes(uri))
       if (missing.length === 0) {
         setCreated(already)
         return

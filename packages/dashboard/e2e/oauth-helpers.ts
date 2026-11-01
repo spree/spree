@@ -31,10 +31,7 @@ export async function connectKnownClient(page: Page) {
  */
 export async function clearRegistrations(page: Page, storeId: string, accessToken: string) {
   const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
-  const res = await page.request.get('/api/v3/admin/oauth/applications?limit=100', { headers })
-  if (!res.ok()) throw new Error(`Listing clients failed: ${res.status()} ${await res.text()}`)
-
-  for (const client of (await res.json()).data ?? []) {
+  for (const client of await listClients(page, storeId, accessToken)) {
     const deleted = await page.request.delete(`/api/v3/admin/oauth/applications/${client.id}`, {
       headers,
     })
@@ -42,6 +39,14 @@ export async function clearRegistrations(page: Page, storeId: string, accessToke
       throw new Error(`Deleting ${client.id} failed: ${deleted.status()} ${await deleted.text()}`)
     }
   }
+}
+
+/** Every client this store has registered, read straight from the API. */
+export async function listClients(page: Page, storeId: string, accessToken: string) {
+  const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
+  const res = await page.request.get('/api/v3/admin/oauth/applications?limit=100', { headers })
+  if (!res.ok()) throw new Error(`Listing clients failed: ${res.status()} ${await res.text()}`)
+  return ((await res.json()).data ?? []) as { id: string; client_id: string }[]
 }
 
 /** Registers a client straight through the API, as a store set up earlier would hold it. */

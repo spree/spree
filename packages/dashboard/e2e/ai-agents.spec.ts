@@ -6,6 +6,7 @@ import {
   CONNECT_CTA,
   clearRegistrations,
   connectKnownClient,
+  listClients,
   REGISTER_CTA,
   registerClient,
   seedConnection,
@@ -66,7 +67,10 @@ test.describe('connecting an agent', () => {
     const sheet = await connectKnownClient(page)
     await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
     await sheet.getByRole('tab', { name: /claude code/i }).click()
-    await expect(sheet.getByText(/--client-id \S+ --callback-port 3118/)).toBeVisible()
+    const [client] = await listClients(page, creds.store_id, creds.accessToken)
+    await expect(
+      sheet.getByText(`--client-id ${client.client_id} --callback-port 3118`),
+    ).toBeVisible()
   })
 
   // A Claude registration made before Claude Code's callback was added would
@@ -84,10 +88,12 @@ test.describe('connecting an agent', () => {
     await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
     await sheet.getByRole('button', { name: /^done$/i }).click()
 
+    // The missing callback is added and the ones already registered stay.
     await gotoIndex(page, CLIENTS_PATH(creds.store_id), REGISTER_CTA)
-    await expect(
-      page.getByRole('row', { name: /Claude/ }).getByText(/localhost:3118\/callback/),
-    ).toBeVisible({ timeout: 15_000 })
+    const row = page.getByRole('row', { name: /Claude/ })
+    await expect(row.getByText(/localhost:3118\/callback/)).toBeVisible({ timeout: 15_000 })
+    await expect(row.getByText(/claude\.ai\/api\/mcp\/auth_callback/)).toBeVisible()
+    await expect(row.getByText(/127\.0\.0\.1\/callback/)).toBeVisible()
   })
 
   // Revoking keeps the registration so the same client can be connected
