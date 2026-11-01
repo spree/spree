@@ -128,7 +128,7 @@ bundle exec rake spree:migrate_zones_to_delivery_zones
 bundle exec rake spree:migrate_calculator_bounds_to_delivery_method_rules
 ```
 
-Moves stored strings, statuses and class names to the fulfillment/delivery vocabulary, converts delivery-referenced `Spree::Zone` records into `Spree::DeliveryZone` with typed members, and converts FlatRate calculator eligibility bounds into `Spree::DeliveryMethodRule` records.
+Moves stored strings, statuses and class names to the fulfillment/delivery vocabulary (including the calculator link of each delivery method), converts delivery-referenced `Spree::Zone` records into `Spree::DeliveryZone` with typed members, and converts FlatRate calculator eligibility bounds into `Spree::DeliveryMethodRule` records.
 
 ### Remove master variants
 
