@@ -35,9 +35,10 @@ module Spree
       # Whether a redirect URI may use plain http: an IP-literal loopback, or
       # `localhost` with an explicit port.
       #
-      # Claude Code only ever calls back on `http://localhost:<port>`. The port
-      # is required because Doorkeeper ignores it only for IP literals, so a
-      # port-less `localhost` registration could never match an authorization.
+      # Claude Code only ever calls back on `http://localhost:<port>`. Doorkeeper
+      # compares a `localhost` callback exactly, so the host must be lowercase
+      # and the port explicit: anything else could never match an
+      # authorization.
       #
       # @param uri [URI, String]
       # @return [Boolean]
@@ -45,7 +46,7 @@ module Spree
         uri = URI.parse(uri.to_s) unless uri.respond_to?(:host)
         return true if loopback_uri?(uri)
 
-        uri.host.to_s.casecmp?('localhost') &&
+        uri.host == 'localhost' &&
           (1..65_535).cover?(uri.port) && uri.port != uri.default_port
       rescue StandardError
         false
@@ -211,8 +212,9 @@ module Spree
             # plain-http one hands them to anyone on the path — except a
             # loopback or `localhost` one, which never leaves the machine. A
             # terminal client listens on a local port and has no certificate
-            # for it, so RFC 8252 §7.3 makes that the recommended shape, and
-            # refusing it would lock out Claude Code and Codex entirely.
+            # for it. RFC 8252 §7.3 recommends the IP literal, but Claude Code
+            # only sends `localhost`, so refusing it would lock Claude Code
+            # out entirely.
             #
             # Passed as a callable so the exemption is per URI rather than
             # per environment: everything else still has to be https.

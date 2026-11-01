@@ -58,6 +58,12 @@ RSpec.describe 'OAuth redirect URIs' do
       expect(build_with('http://localhost:65536/callback')).not_to be_valid
     end
 
+    # Doorkeeper matches a `localhost` callback exactly, and clients send it
+    # lowercase.
+    it 'refuses localhost written in capitals' do
+      expect(build_with('http://LocalHost:3118/callback')).not_to be_valid
+    end
+
     it 'refuses a host that only starts with localhost' do
       expect(build_with('http://localhost.example.test:3118/callback')).not_to be_valid
     end

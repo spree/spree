@@ -55,6 +55,44 @@ test.describe('connecting an agent', () => {
     await expect(sheet.getByText(/claude mcp add/i)).toBeVisible()
   })
 
+  // Claude Code calls back on `localhost` and the store only accepts the
+  // registered port, so the command has to carry the client id and pin it.
+  test('gives Claude Code a command with its client id and callback port', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+
+    const sheet = await connectKnownClient(page)
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+    await sheet.getByRole('tab', { name: /claude code/i }).click()
+    await expect(sheet.getByText(/--client-id \S+ --callback-port 3118/)).toBeVisible()
+  })
+
+  // A Claude registration made before Claude Code's callback was added would
+  // refuse it at sign-in, so connecting Claude again brings it up to date.
+  test('adds the Claude Code callback to an older Claude registration', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    const registered = await page.request.post('/api/v3/admin/oauth/applications', {
+      headers: { 'X-Spree-Store-Id': creds.store_id, Authorization: `Bearer ${creds.accessToken}` },
+      data: {
+        name: 'Claude',
+        redirect_uri: 'https://claude.ai/api/mcp/auth_callback\nhttp://127.0.0.1/callback',
+      },
+    })
+    expect(registered.ok()).toBeTruthy()
+
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+    const sheet = await connectKnownClient(page)
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+    await sheet.getByRole('button', { name: /^done$/i }).click()
+
+    await gotoIndex(page, CLIENTS_PATH(creds.store_id), REGISTER_CTA)
+    await expect(
+      page.getByRole('row', { name: /Claude/ }).getByText(/localhost:3118\/callback/),
+    ).toBeVisible({ timeout: 15_000 })
+  })
+
   // Revoking keeps the registration so the same client can be connected
   // again — which is exactly why the card has to say who holds access now.
   test('says who is connected through a registration', async ({ page }) => {
