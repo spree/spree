@@ -455,15 +455,17 @@ describe '6.0 data migration tasks' do
     let(:stored_method) { create(:delivery_method) }
     let(:unbound_method) { create(:delivery_method).tap { |method| method.update_columns(store_id: nil) } }
 
-    before do
-      connection.create_table :spree_delivery_method_zones do |t|
+    # DDL commits implicitly on MySQL, so the table is created and dropped
+    # outside the per-example transaction.
+    before(:all) do
+      ActiveRecord::Base.connection.create_table :spree_delivery_method_zones, force: true do |t|
         t.references :delivery_method, null: false
         t.references :delivery_zone, null: false
         t.timestamps
       end
     end
 
-    after { connection.drop_table :spree_delivery_method_zones }
+    after(:all) { ActiveRecord::Base.connection.drop_table :spree_delivery_method_zones, if_exists: true }
 
     it 'copies the first linked zone onto every method, including those without a store' do
       now = Time.current
