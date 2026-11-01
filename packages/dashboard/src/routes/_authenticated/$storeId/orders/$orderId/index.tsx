@@ -1,4 +1,10 @@
-import { RecordMetadataCard, Slot } from '@spree/dashboard-core'
+import {
+  OrderDocumentsCard,
+  RecordMetadataCard,
+  Slot,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import { ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
@@ -45,6 +51,7 @@ function OrderDetailPage() {
   const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const { data: order, isLoading, error, refetch } = useOrder(orderId)
+  const { permissions } = usePermissions()
 
   if (isLoading) return <OrderSkeleton />
   if (error || !order) {
@@ -76,6 +83,13 @@ function OrderDetailPage() {
             </>
           )}
           <PaymentsCard order={order} />
+          {order.completed_at && (
+            <OrderDocumentsCard
+              orderId={order.id}
+              currency={order.currency}
+              canEdit={permissions.can('update', Subject.Order)}
+            />
+          )}
           <TaxLinesCard order={order} />
           <OrderDiscountsCard order={order} />
           <FeesCard order={order} />

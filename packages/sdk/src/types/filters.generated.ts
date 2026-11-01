@@ -57,12 +57,11 @@ export type GiftCardFields = Filter.TextFilters<'code'>
   & Filter.EnumFilters<'state', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
   & Filter.EnumFilters<'status', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
 
-export type InvoiceFields = Filter.RangeFilters<'created_at' | 'issued_on' | 'sent_at' | 'supplied_on' | 'total' | 'updated_at'>
-  & Filter.IdFilters<'id' | 'issuer_id' | 'issuer_type' | 'order_id' | 'seller_payout_id'>
+export type InvoiceFields = Filter.IdFilters<'id' | 'issuer_type' | 'order_id'>
+  & Filter.RangeFilters<'issued_on' | 'supplied_on' | 'total' | 'updated_at'>
   & Filter.TextFilters<'number'>
   & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'kind', 'invoice' | 'receipt' | 'credit_note'>
-  & Filter.EnumFilters<'source', 'uploaded' | 'generated'>
 
 export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'market_id' | 'order_group_id' | 'seller_id'>
   & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
@@ -373,7 +372,7 @@ export type InvoiceFilters = InvoiceFields
   & Filter.OrFilters
   & InvoiceFilterExtensions
 
-export type InvoiceSort = Filter.SortKey<'created_at' | 'currency' | 'id' | 'issued_on' | 'issuer_id' | 'issuer_type' | 'kind' | 'number' | 'order_id' | 'seller_payout_id' | 'sent_at' | 'source' | 'supplied_on' | 'total' | 'updated_at' | (keyof InvoiceSortExtensions & string)>
+export type InvoiceSort = Filter.SortKey<'currency' | 'id' | 'issued_on' | 'issuer_type' | 'kind' | 'number' | 'order_id' | 'supplied_on' | 'total' | 'updated_at' | (keyof InvoiceSortExtensions & string)>
 
 /**
  * Filters your app adds to Order lists. Generate them with `spree filters types`,

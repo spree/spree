@@ -1390,8 +1390,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 4499085
-                  slug: product-4499085
+                  name: Product 4519085
+                  slug: product-4519085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1422,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 4508209
-                  slug: product-4508209
+                  name: Product 4528209
+                  slug: product-4528209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1552,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4776885
-                slug: product-4776885
+                name: Product 4796885
+                slug: product-4796885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -6154,8 +6154,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 5009789
-                  slug: product-5009789
+                  name: Product 5029789
+                  slug: product-5029789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6339,8 +6339,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 502179
-                  slug: product-502179
+                  name: Product 504179
+                  slug: product-504179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6579,9 +6579,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const { data: invoices } = await client.orders.invoices.list('or_abc123', {}, {
-            token: '<token>',
-          })
+          const { data: invoices } = await client.orders.invoices.list(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6616,38 +6620,28 @@ paths:
 
           | Attribute | Kind | Predicates |
           |---|---|---|
-          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `issued_on` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `issuer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `issuer_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `kind` | One of `invoice`, `receipt`, `credit_note` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `seller_payout_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
-          | `sent_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
-          | `source` | One of `uploaded`, `generated` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `supplied_on` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `created_at`, `currency`, `id`, `issued_on`, `issuer_id`, `issuer_type`, `kind`, `number`, `order_id`, `seller_payout_id`, `sent_at`, `source`, `supplied_on`, `total`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `currency`, `id`, `issued_on`, `issuer_type`, `kind`, `number`, `order_id`, `supplied_on`, `total`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Invoice
         sortable:
-        - created_at
         - currency
         - id
         - issued_on
-        - issuer_id
         - issuer_type
         - kind
         - number
         - order_id
-        - seller_payout_id
-        - sent_at
-        - source
         - supplied_on
         - total
         - updated_at
@@ -6847,9 +6841,13 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const { data: documents } = await client.orders.documents.list('or_abc123', {}, {
-            token: '<token>',
-          })
+          const { data: documents } = await client.orders.documents.list(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6957,7 +6955,7 @@ paths:
 
           declare const file: Blob
 
-          const upload = await client.files.upload(file)
+          const upload = await client.orders.documents.upload('or_abc123', file, {}, { token: '<token>' })
           const document = await client.orders.documents.create(
             'or_abc123',
             { label: 'Purchase order 4471', file_signed_id: upload.signed_id },
@@ -6999,6 +6997,76 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/CreateOrderDocumentParams"
+        required: true
+  "/api/v3/store/orders/{order_id}/documents/upload":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Prepare a document upload
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Prepares a private upload for a document the customer adds to their order. Send the file's metadata,
+        `PUT` the bytes to `upload.url` with exactly `upload.headers`, then create the document with the
+        returned `signed_id`. Returns 422 when the declared size or type is not accepted.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: upload target created
+          content:
+            application/json:
+              example:
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--80c1dacf323a1a848c6d13c9228e564f22ef4e67
+                filename: po.pdf
+                content_type: application/pdf
+                byte_size: 48210
+                visibility: private
+                expires_at: '2026-01-16T12:00:00.000Z'
+                upload:
+                  method: PUT
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0MW1xcmtuY2t1M3V2M2h4ajlud290M2F3bGFhIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjloSXNseHJyQTBkcjhCWWpzSjNmMUE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ac170c4cc2869d223f7ad0b0a46e1f3e70c58a32
+                  headers:
+                    Content-Type: application/pdf
+              schema:
+                "$ref": "#/components/schemas/FileUpload"
+        '422':
+          description: a file type documents do not accept
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Content type is not included in the list
+                  details:
+                    content_type:
+                    - is not included in the list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateOrderDocumentUploadParams"
         required: true
   "/api/v3/store/orders/{id}":
     get:
@@ -7148,8 +7216,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 439496
-                  slug: product-439496
+                  name: Product 441496
+                  slug: product-441496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -7212,8 +7280,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 255
-                    code: UPS_GROUND_274
+                    name: UPS Ground 257
+                    code: UPS_GROUND_276
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -7236,7 +7304,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 255
+                    name: UPS Ground 257
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -7255,8 +7323,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 255
-                      code: UPS_GROUND_274
+                      name: UPS Ground 257
+                      code: UPS_GROUND_276
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -7268,7 +7336,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 671 Lovely Street
+                  address1: 679 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7291,7 +7359,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 672 Lovely Street
+                  address1: 680 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -11758,7 +11826,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-610
+                  sku: SKU-612
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11844,7 +11912,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-611
+                  sku: SKU-613
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -18395,15 +18463,11 @@ components:
         id:
           type: string
         kind:
-          anyOf:
-          - type: string
-            enum:
-            - invoice
-            - receipt
-            - credit_note
-          - type: string
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          type: string
+          enum:
+          - invoice
+          - receipt
+          - credit_note
         number:
           type: string
         currency:
@@ -18604,14 +18668,10 @@ components:
           type: string
           nullable: true
         issuer_type:
-          anyOf:
-          - type: string
-            enum:
-            - store
-            - seller
-          - type: string
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          type: string
+          enum:
+          - store
+          - seller
         issuer_name:
           type: string
           nullable: true
@@ -25406,6 +25466,24 @@ components:
       required:
       - label
       - file_signed_id
+    CreateOrderDocumentUploadParams:
+      type: object
+      properties:
+        filename:
+          type: string
+        content_type:
+          type: string
+        byte_size:
+          type: integer
+        checksum:
+          type: string
+          description: Base64-encoded MD5 digest of the file; the storage service
+            checks the bytes against it.
+      required:
+      - filename
+      - content_type
+      - byte_size
+      - checksum
     CreatePaymentParams:
       type: object
       properties:
@@ -25987,12 +26065,10 @@ components:
         search: text
     Invoice:
       attributes:
-        created_at: datetime
         currency:
           code: CurrencyCode
         id: id
         issued_on: date
-        issuer_id: id
         issuer_type: type
         kind:
           enum:
@@ -26001,12 +26077,6 @@ components:
           - credit_note
         number: text
         order_id: id
-        seller_payout_id: id
-        sent_at: datetime
-        source:
-          enum:
-          - uploaded
-          - generated
         supplied_on: date
         total: decimal
         updated_at: datetime

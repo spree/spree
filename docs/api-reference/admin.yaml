@@ -47509,6 +47509,38 @@ paths:
         Streams the PDF. Served through the API, never a storage link, so these credentials protect it.
 
         **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The PDF is served through the API, so fetch it with the API key,
+          // then drive the browser download from a Blob.
+          const invoice = await client.invoices.get('inv_UkLWZg9DAJ')
+
+          if (invoice.download_url) {
+            const response = await fetch(`https://your-store.com${invoice.download_url}`, {
+              headers: { 'X-Spree-API-Key': 'sk_xxx' },
+            })
+            if (!response.ok) throw new Error(`Download failed: ${response.status}`)
+
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: invoice.file_filename ?? invoice.number,
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /invoices/{id}/download
       parameters:
       - name: x-spree-api-key
         in: header
@@ -50034,6 +50066,39 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_orders` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The file is served through the API, so fetch it with the API key,
+          // then drive the browser download from a Blob.
+          const { data: documents } = await client.orders.documents.list('or_UkLWZg9DAJ')
+          const document_ = documents[0]
+
+          if (document_?.download_url) {
+            const response = await fetch(`https://your-store.com${document_.download_url}`, {
+              headers: { 'X-Spree-API-Key': 'sk_xxx' },
+            })
+            if (!response.ok) throw new Error(`Download failed: ${response.status}`)
+
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: document_.file_filename ?? document_.label,
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/documents/{id}/download
       parameters:
       - name: x-spree-api-key
         in: header
@@ -66073,15 +66138,11 @@ components:
         id:
           type: string
         kind:
-          anyOf:
-          - type: string
-            enum:
-            - invoice
-            - receipt
-            - credit_note
-          - type: string
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          type: string
+          enum:
+          - invoice
+          - receipt
+          - credit_note
         number:
           type: string
         currency:
@@ -66282,14 +66343,10 @@ components:
           type: string
           nullable: true
         issuer_type:
-          anyOf:
-          - type: string
-            enum:
-            - store
-            - seller
-          - type: string
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          type: string
+          enum:
+          - store
+          - seller
         issuer_name:
           type: string
           nullable: true
@@ -66303,14 +66360,10 @@ components:
           type: string
           nullable: true
         source:
-          anyOf:
-          - type: string
-            enum:
-            - uploaded
-            - generated
-          - type: string
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          type: string
+          enum:
+          - uploaded
+          - generated
         external_reference:
           type: string
           nullable: true
@@ -83115,7 +83168,8 @@ components:
           type: string
           description: 'Which dataset to export, as its shorthand: `products`, `orders`,
             `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`,
-            `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+            `price_list_prices`, `purchase_orders`, `invoices`, or a type an extension
+            registers.'
           example: products
         record_selection:
           type: string
@@ -87393,6 +87447,14 @@ components:
           type: boolean
           description: When false, transactional customer emails (order confirmation
             and so on) are not sent.
+        send_invoice_email:
+          type: boolean
+          description: Emails the buyer an invoice's PDF when it is added. Off when
+            the store's own invoicing system sends invoices.
+        invoice_request_window_days:
+          type: integer
+          description: How many days after paying a buyer may request an invoice;
+            0 turns requests off.
         email_accent_color:
           type: string
           description: Customer email buttons and links, as `#RRGGBB`. Blank keeps

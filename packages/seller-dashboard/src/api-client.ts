@@ -114,6 +114,28 @@ export function createSellerApiClient({
       exampleUrl: (type) => `/api/v3/seller/imports/example?type=${encodeURIComponent(type)}`,
       downloadUrl: (id) => `/api/v3/seller/imports/${id}/download`,
     },
+    // Backs the shared order Documents card. The Seller API's shapes are
+    // the Admin API's minus operator-only expansions.
+    orderPaperwork: {
+      invoices: {
+        list: (orderId) => sellerClient().orders.invoices.list(orderId, { limit: 100 }) as never,
+        create: (orderId, params) =>
+          sellerClient().orders.invoices.create(orderId, params as never) as never,
+        delete: (id) => sellerClient().invoices.delete(id),
+        resend: (id) => sellerClient().invoices.resend(id) as never,
+      },
+      invoiceRequests: {
+        list: (orderId) => sellerClient().orders.invoiceRequests.list(orderId) as never,
+      },
+      documents: {
+        list: (orderId) => sellerClient().orders.documents.list(orderId, { limit: 100 }) as never,
+        create: (orderId, params) =>
+          sellerClient().orders.documents.create(orderId, params) as never,
+        update: (orderId, id, params) =>
+          sellerClient().orders.documents.update(orderId, id, params) as never,
+        delete: (orderId, id) => sellerClient().orders.documents.delete(orderId, id),
+      },
+    },
     // Backs the shared stock-locations page. No `delete`: a location holds
     // stock levels and is named on historical fulfillments, so the Seller API
     // does not offer it and the page hides the action accordingly.

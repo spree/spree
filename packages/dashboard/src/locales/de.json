@@ -2370,6 +2370,15 @@
         "meta_description": {
           "label": "Meta-Beschreibung",
           "help": "Eine kurze Zusammenfassung, die Suchmaschinen unter dem Titel anzeigen."
+        },
+        "send_invoice_email": {
+          "help": "Sendet dem Kunden die PDF, sobald eine Rechnung hinzugefügt wird. Schalten Sie dies aus, wenn Ihre Rechnungssoftware Rechnungen bereits versendet.",
+          "label": "Neue Rechnungen an Kunden senden"
+        },
+        "invoice_request_window_days": {
+          "help": "Wie viele Tage nach der Zahlung ein Kunde eine Rechnung anfordern kann. 0 deaktiviert Anforderungen.",
+          "label": "Rechnungsanforderungen",
+          "suffix": "Tage"
         }
       },
       "store_credit": {
@@ -2907,7 +2916,8 @@
       "suppliers": "Lieferanten",
       "loyalty": "Treue",
       "store_credits": "Guthaben",
-      "commission_rates": "Provisionssätze"
+      "commission_rates": "Provisionssätze",
+      "invoices": "Rechnungen"
     },
     "option_types": {
       "columns": {
@@ -2946,7 +2956,8 @@
         "payment": "Zahlung",
         "po_number": "Bestellnummer",
         "sku": "SKU",
-        "tags": "Tags"
+        "tags": "Tags",
+        "missing_invoice": "Rechnung fehlt"
       },
       "detail": {
         "add_line_item": {
@@ -3397,6 +3408,10 @@
       "table": {
         "empty": "Keine Bestellungen gefunden",
         "search_placeholder": "Nach Nummer, Bestellnummer oder Kunde suchen…"
+      },
+      "filters": {
+        "missing_invoice": "Ohne Rechnung",
+        "has_invoice": "Mit Rechnung"
       }
     },
     "pages": {
@@ -4211,7 +4226,8 @@
           "tab_downloads": "Digitale Downloads",
           "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben.",
           "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
-          "tab_default_package": "Standardpaket"
+          "tab_default_package": "Standardpaket",
+          "tab_invoices": "Rechnungen"
         },
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",
@@ -5501,7 +5517,8 @@
         },
         "title": "Team"
       },
-      "team_column": "Team"
+      "team_column": "Team",
+      "missing_invoices": "Bestellungen ohne Rechnung"
     },
     "settings": {
       "webhooks": {
@@ -5938,7 +5955,8 @@
       "webhook_endpoints": "Wohin Ihre anderen Systeme benachrichtigt werden, wenn im Shop etwas passiert.",
       "returns": "Zurückkommende Ware, von der Anfrage bis zur Erstattung.",
       "exchanges": "Käufe, die gegen eine andere Größe, Farbe oder ein anderes Produkt getauscht werden.",
-      "claims": "Fehlgeschlagene Lieferungen — beschädigte, fehlende oder falsche Artikel — und wie sie gelöst wurden."
+      "claims": "Fehlgeschlagene Lieferungen — beschädigte, fehlende oder falsche Artikel — und wie sie gelöst wurden.",
+      "invoices": "Alle Rechnungen, Quittungen und Gutschriften im Shop, über Bestellungen und Verkäufer-Auszahlungen hinweg."
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",
@@ -6176,7 +6194,11 @@
         "title": "Diesen Verkäufer jetzt abrechnen?",
         "message": "Fasst alles zusammen, was {{name}} zusteht, als eine Auszahlung je Währung. Es wird kein Geld gesendet — markieren Sie die Auszahlung als bezahlt, sobald die Überweisung raus ist."
       },
-      "settle_failed": "Dieser Verkäufer konnte nicht abgerechnet werden."
+      "settle_failed": "Dieser Verkäufer konnte nicht abgerechnet werden.",
+      "invoices": {
+        "title": "Provisionsrechnungen",
+        "empty": "Noch keine Provisionsrechnungen für diese Auszahlung."
+      }
     },
     "inventory_lines": {
       "add_label": "Produkt hinzufügen",
@@ -6760,6 +6782,16 @@
       "run_label": "Diesen Befehl ausführen",
       "copy_command": "Befehl kopieren",
       "cli_then_sign_in": "Es öffnet den Browser zum Anmelden und Genehmigen dessen, was der Agent tun darf."
+    },
+    "invoices": {
+      "search_placeholder": "Nach Nummer suchen",
+      "empty": "Noch keine Rechnungen. Laden Sie sie bei der jeweiligen Bestellung oder Auszahlung hoch.",
+      "number": "Nummer",
+      "kind": "Art",
+      "issuer": "Ausgestellt von",
+      "total": "Gesamt",
+      "issued_on": "Rechnungsdatum",
+      "sent_at": "Gesendet"
     }
   }
 }

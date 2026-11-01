@@ -944,15 +944,25 @@ export class StoreClient {
      * within the store's request window while the order has no invoice.
      */
     invoiceRequests: {
-      list: (orderId: string, options?: RequestOptions): Promise<PaginatedResponse<InvoiceRequest>> =>
-        this.request<PaginatedResponse<InvoiceRequest>>('GET', `/orders/${orderId}/invoice_requests`, options),
+      list: (
+        orderId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<InvoiceRequest>> =>
+        this.request<PaginatedResponse<InvoiceRequest>>(
+          'GET',
+          `/orders/${orderId}/invoice_requests`,
+          options,
+        ),
 
       create: (
         orderId: string,
         params: CreateInvoiceRequestParams,
         options?: RequestOptions,
       ): Promise<InvoiceRequest> =>
-        this.request<InvoiceRequest>('POST', `/orders/${orderId}/invoice_requests`, { ...options, body: params }),
+        this.request<InvoiceRequest>('POST', `/orders/${orderId}/invoice_requests`, {
+          ...options,
+          body: params,
+        }),
     },
 
     /**
@@ -993,7 +1003,10 @@ export class StoreClient {
         params: CreateOrderDocumentParams,
         options?: RequestOptions,
       ): Promise<OrderDocument> =>
-        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, { ...options, body: params }),
+        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, {
+          ...options,
+          body: params,
+        }),
     },
 
     /**

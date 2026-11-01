@@ -2370,6 +2370,15 @@
         "meta_description": {
           "label": "メタディスクリプション",
           "help": "検索結果でタイトルの下に表示される短い説明文です。"
+        },
+        "send_invoice_email": {
+          "help": "請求書が追加されたときに顧客へPDFを送信します。請求書ソフトが送信する場合はオフにしてください。",
+          "label": "新しい請求書を顧客にメール送信"
+        },
+        "invoice_request_window_days": {
+          "help": "支払い後、顧客が請求書を依頼できる日数。0で依頼を無効にします。",
+          "label": "請求書の依頼",
+          "suffix": "日"
         }
       },
       "store_credit": {
@@ -2907,7 +2916,8 @@
       "suppliers": "仕入れ先",
       "loyalty": "ロイヤルティ",
       "store_credits": "ストアクレジット",
-      "commission_rates": "手数料率"
+      "commission_rates": "手数料率",
+      "invoices": "請求書"
     },
     "option_types": {
       "columns": {
@@ -2946,7 +2956,8 @@
         "payment": "支払い",
         "po_number": "発注番号",
         "sku": "SKU",
-        "tags": "タグ"
+        "tags": "タグ",
+        "missing_invoice": "請求書なし"
       },
       "detail": {
         "add_line_item": {
@@ -3397,6 +3408,10 @@
       "table": {
         "empty": "注文が見つかりません",
         "search_placeholder": "番号・発注番号・顧客で検索…"
+      },
+      "filters": {
+        "missing_invoice": "請求書なし",
+        "has_invoice": "請求書あり"
       }
     },
     "pages": {
@@ -4211,7 +4226,8 @@
           "tab_downloads": "デジタルダウンロード",
           "downloads_help": "ダウンロードのリンクが使える期間と回数です。ファイルごとに上書きできます。",
           "default_package_description": "いつも出荷に使う箱です。運送会社の料金プロバイダーは、すべての荷物にこの重さを加え、寸法を容積重量の料金計算に使います。",
-          "tab_default_package": "既定のこん包"
+          "tab_default_package": "既定のこん包",
+          "tab_invoices": "請求書"
         },
         "tax_categories": {
           "add_sheet_title": "税区分を追加",
@@ -5501,7 +5517,8 @@
         },
         "title": "チーム"
       },
-      "team_column": "チーム"
+      "team_column": "チーム",
+      "missing_invoices": "請求書のない注文"
     },
     "settings": {
       "webhooks": {
@@ -5938,7 +5955,8 @@
       "webhook_endpoints": "ストアで何か起きたときに、ほかのシステムへ通知する先です。",
       "returns": "戻ってくる品物です。依頼から返金まで。",
       "exchanges": "別のサイズ・色・商品と取り替えた購入です。",
-      "claims": "問題のあった配送です — 破損・不足・誤った品目と、それぞれの解決方法。"
+      "claims": "問題のあった配送です — 破損・不足・誤った品目と、それぞれの解決方法。",
+      "invoices": "注文と販売者への支払いにわたる、ストアのすべての請求書、領収書、返金伝票。"
     },
     "tax_categories": {
       "add_cta": "税区分を追加",
@@ -6176,7 +6194,11 @@
         "title": "この販売者を今すぐ精算しますか？",
         "message": "{{name}}に支払うべき額をすべて、通貨ごとの支払いにまとめます。お金は送りません — 送金したら支払い済みにしてください。"
       },
-      "settle_failed": "この販売者を精算できませんでした。"
+      "settle_failed": "この販売者を精算できませんでした。",
+      "invoices": {
+        "title": "手数料請求書",
+        "empty": "この支払いの手数料請求書はまだありません。"
+      }
     },
     "inventory_lines": {
       "add_label": "商品を追加",
@@ -6760,6 +6782,16 @@
       "run_label": "これを実行",
       "copy_command": "コマンドをコピー",
       "cli_then_sign_in": "ブラウザが開くので、サインインしてエージェントにできることを承認してください。"
+    },
+    "invoices": {
+      "search_placeholder": "番号で検索",
+      "empty": "請求書はまだありません。各注文または支払いからアップロードしてください。",
+      "number": "番号",
+      "kind": "種類",
+      "issuer": "発行者",
+      "total": "合計",
+      "issued_on": "発行日",
+      "sent_at": "送信日"
     }
   }
 }

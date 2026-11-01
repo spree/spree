@@ -91,13 +91,13 @@ import type {
   ImportRowSort,
   ImportSort,
   IntegrationFilters,
+  IntegrationSort,
+  InvitationFilters,
+  InvitationSort,
   InvoiceFilters,
   InvoiceRequestFilters,
   InvoiceRequestSort,
   InvoiceSort,
-  IntegrationSort,
-  InvitationFilters,
-  InvitationSort,
   LineItemFilters,
   LineItemSort,
   MarketFilters,
@@ -523,6 +523,8 @@ import type {
   OrderCancelParams,
   OrderCompleteParams,
   OrderCreateParams,
+  OrderDocumentCreateParams,
+  OrderDocumentUpdateParams,
   OrderRoutingRuleCreateParams,
   OrderRoutingRuleUpdateParams,
   OrderUpdateParams,
@@ -568,8 +570,6 @@ import type {
   ReasonCreateParams,
   ReasonUpdateParams,
   ReceivableCloseParams,
-  OrderDocumentCreateParams,
-  OrderDocumentUpdateParams,
   RefundCreateParams,
   ResourceTypeDefinition,
   ReturnCancelParams,
@@ -689,9 +689,9 @@ import type {
   ImportRow,
   Integration,
   Invitation,
+  InvitationAcceptanceLink,
   Invoice,
   InvoiceRequest,
-  InvitationAcceptanceLink,
   LineItem,
   Locale,
   MaintenanceTaskRun,
@@ -703,8 +703,8 @@ import type {
   OauthRedirect,
   OptionType,
   Order,
-  OrderDocument,
   OrderCancellationReason,
+  OrderDocument,
   OrderGroup,
   OrderRoutingRule,
   PackageType,
@@ -2455,7 +2455,11 @@ export class AdminClient {
           params: params ? transformListParams(params) : undefined,
         }),
 
-      create: (orderId: string, params: InvoiceCreateParams, options?: RequestOptions): Promise<Invoice> =>
+      create: (
+        orderId: string,
+        params: InvoiceCreateParams,
+        options?: RequestOptions,
+      ): Promise<Invoice> =>
         this.request<Invoice>('POST', `/orders/${orderId}/invoices`, { ...options, body: params }),
     },
 
@@ -2466,10 +2470,14 @@ export class AdminClient {
         params?: ListParams<InvoiceRequestFilters, InvoiceRequestSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<InvoiceRequest>> =>
-        this.request<PaginatedResponse<InvoiceRequest>>('GET', `/orders/${orderId}/invoice_requests`, {
-          ...options,
-          params: params ? transformListParams(params) : undefined,
-        }),
+        this.request<PaginatedResponse<InvoiceRequest>>(
+          'GET',
+          `/orders/${orderId}/invoice_requests`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
     },
 
     /**
@@ -2477,14 +2485,25 @@ export class AdminClient {
      * `customer_visible` is set. Download from each document's `download_url`.
      */
     documents: {
-      list: (orderId: string, params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<OrderDocument>> =>
+      list: (
+        orderId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OrderDocument>> =>
         this.request<PaginatedResponse<OrderDocument>>('GET', `/orders/${orderId}/documents`, {
           ...options,
           params: params ? transformListParams(params) : undefined,
         }),
 
-      create: (orderId: string, params: OrderDocumentCreateParams, options?: RequestOptions): Promise<OrderDocument> =>
-        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, { ...options, body: params }),
+      create: (
+        orderId: string,
+        params: OrderDocumentCreateParams,
+        options?: RequestOptions,
+      ): Promise<OrderDocument> =>
+        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, {
+          ...options,
+          body: params,
+        }),
 
       update: (
         orderId: string,
@@ -2492,7 +2511,10 @@ export class AdminClient {
         params: OrderDocumentUpdateParams,
         options?: RequestOptions,
       ): Promise<OrderDocument> =>
-        this.request<OrderDocument>('PATCH', `/orders/${orderId}/documents/${id}`, { ...options, body: params }),
+        this.request<OrderDocument>('PATCH', `/orders/${orderId}/documents/${id}`, {
+          ...options,
+          body: params,
+        }),
 
       delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/orders/${orderId}/documents/${id}`, options),
@@ -3816,8 +3838,15 @@ export class AdminClient {
           params: params ? transformListParams(params) : undefined,
         }),
 
-      create: (payoutId: string, params: InvoiceCreateParams, options?: RequestOptions): Promise<Invoice> =>
-        this.request<Invoice>('POST', `/seller_payouts/${payoutId}/invoices`, { ...options, body: params }),
+      create: (
+        payoutId: string,
+        params: InvoiceCreateParams,
+        options?: RequestOptions,
+      ): Promise<Invoice> =>
+        this.request<Invoice>('POST', `/seller_payouts/${payoutId}/invoices`, {
+          ...options,
+          body: params,
+        }),
     },
   }
 

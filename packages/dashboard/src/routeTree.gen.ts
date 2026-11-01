@@ -22,6 +22,7 @@ import { Route as SplatRouteImport } from './routes/_authenticated/$storeId/$'
 import { Route as ClaimsRouteImport } from './routes/_authenticated/$storeId/claims'
 import { Route as ExchangesRouteImport } from './routes/_authenticated/$storeId/exchanges'
 import { Route as GettingStartedRouteImport } from './routes/_authenticated/$storeId/getting-started'
+import { Route as InvoicesRouteImport } from './routes/_authenticated/$storeId/invoices'
 import { Route as ReturnsRouteImport } from './routes/_authenticated/$storeId/returns'
 import { Route as SettingsRouteImport } from './routes/_authenticated/$storeId/settings'
 import { Route as SuppliersRouteImport } from './routes/_authenticated/$storeId/suppliers'
@@ -179,6 +180,11 @@ const ExchangesRoute = ExchangesRouteImport.update({
 const GettingStartedRoute = GettingStartedRouteImport.update({
   id: '/getting-started',
   path: '/getting-started',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const InvoicesRoute = InvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const ReturnsRoute = ReturnsRouteImport.update({
@@ -678,6 +684,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/claims': typeof ClaimsRoute
   '/$storeId/exchanges': typeof ExchangesRoute
   '/$storeId/getting-started': typeof GettingStartedRoute
+  '/$storeId/invoices': typeof InvoicesRoute
   '/$storeId/returns': typeof ReturnsRoute
   '/$storeId/settings': typeof SettingsRouteWithChildren
   '/$storeId/suppliers': typeof SuppliersRoute
@@ -784,6 +791,7 @@ export interface FileRoutesByTo {
   '/$storeId/claims': typeof ClaimsRoute
   '/$storeId/exchanges': typeof ExchangesRoute
   '/$storeId/getting-started': typeof GettingStartedRoute
+  '/$storeId/invoices': typeof InvoicesRoute
   '/$storeId/returns': typeof ReturnsRoute
   '/$storeId/suppliers': typeof SuppliersRoute
   '/$storeId': typeof IndexRoute
@@ -891,6 +899,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/claims': typeof ClaimsRoute
   '/_authenticated/$storeId/exchanges': typeof ExchangesRoute
   '/_authenticated/$storeId/getting-started': typeof GettingStartedRoute
+  '/_authenticated/$storeId/invoices': typeof InvoicesRoute
   '/_authenticated/$storeId/returns': typeof ReturnsRoute
   '/_authenticated/$storeId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$storeId/suppliers': typeof SuppliersRoute
@@ -1000,6 +1009,7 @@ export interface FileRouteTypes {
     | '/$storeId/claims'
     | '/$storeId/exchanges'
     | '/$storeId/getting-started'
+    | '/$storeId/invoices'
     | '/$storeId/returns'
     | '/$storeId/settings'
     | '/$storeId/suppliers'
@@ -1106,6 +1116,7 @@ export interface FileRouteTypes {
     | '/$storeId/claims'
     | '/$storeId/exchanges'
     | '/$storeId/getting-started'
+    | '/$storeId/invoices'
     | '/$storeId/returns'
     | '/$storeId/suppliers'
     | '/$storeId'
@@ -1212,6 +1223,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/claims'
     | '/_authenticated/$storeId/exchanges'
     | '/_authenticated/$storeId/getting-started'
+    | '/_authenticated/$storeId/invoices'
     | '/_authenticated/$storeId/returns'
     | '/_authenticated/$storeId/settings'
     | '/_authenticated/$storeId/suppliers'
@@ -1408,6 +1420,13 @@ declare module '@tanstack/react-router' {
       path: '/getting-started'
       fullPath: '/$storeId/getting-started'
       preLoaderRoute: typeof GettingStartedRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/invoices': {
+      id: '/_authenticated/$storeId/invoices'
+      path: '/invoices'
+      fullPath: '/$storeId/invoices'
+      preLoaderRoute: typeof InvoicesRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/returns': {
@@ -2170,6 +2189,7 @@ interface authenticatedStoreIdRouteChildren {
   ClaimsRoute: typeof ClaimsRoute
   ExchangesRoute: typeof ExchangesRoute
   GettingStartedRoute: typeof GettingStartedRoute
+  InvoicesRoute: typeof InvoicesRoute
   ReturnsRoute: typeof ReturnsRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   SuppliersRoute: typeof SuppliersRoute
@@ -2233,6 +2253,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   ClaimsRoute: ClaimsRoute,
   ExchangesRoute: ExchangesRoute,
   GettingStartedRoute: GettingStartedRoute,
+  InvoicesRoute: InvoicesRoute,
   ReturnsRoute: ReturnsRoute,
   SettingsRoute: SettingsRouteWithChildren,
   SuppliersRoute: SuppliersRoute,
