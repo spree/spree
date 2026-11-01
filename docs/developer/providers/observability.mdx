@@ -157,9 +157,10 @@ gem 'sentry-opentelemetry'
 
 # config/initializers/sentry.rb
 if ENV['SENTRY_TRACING'] == 'true'
-  # Sentry provides the exporter (derived from the DSN), so the SDK must not
-  # wire its own default OTLP exporter alongside it.
-  ENV['OTEL_TRACES_EXPORTER'] ||= 'none'
+  # Sentry provides the exporter (derived from the DSN). Unless an OTEL_*
+  # exporter is already configured (to also send traces to a collector),
+  # the SDK must not wire its own default OTLP exporter alongside it.
+  ENV['OTEL_TRACES_EXPORTER'] ||= 'none' unless SpreeOpenTelemetry.enabled?
   SpreeOpenTelemetry.configure { |config| config.enabled = true }
   SpreeOpenTelemetry.install!
 end
