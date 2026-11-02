@@ -39,9 +39,9 @@ RSpec.describe Spree::AgentTools::CreateExport do
   end
 
   it 'refuses a resource Spree cannot export, and says what it can' do
-    result = tool.call(resource: 'invoices')
+    result = tool.call(resource: 'returns')
 
-    expect(result[:error]).to include('invoices')
+    expect(result[:error]).to include('returns')
     expect(result[:available]).to include('products', 'orders')
   end
 
