@@ -83,8 +83,9 @@ module Spree
             render json: purchase_serializer_for(record).new(record, params: serializer_params).to_h
           end
 
-          # Placed orders, and the drafts a merchant raised for the buyer to
-          # pay — never a checkout's transient draft, which belongs to its cart.
+          # Placed orders, and the drafts a merchant asked the buyer to pay —
+          # never one still being prepared, nor a checkout's transient draft,
+          # which belongs to its cart.
           #
           # Preloaded lazily, which `collection` would do for a list: this
           # controller loads through `find_order!`, so it asks for it itself.
@@ -93,7 +94,7 @@ module Spree
           # need it, rather than once per row.
           def scope
             storefront_access_policy.
-              scope(current_store.orders.complete.or(current_store.orders.standalone_drafts), token: order_token).
+              scope(current_store.orders.complete.or(current_store.orders.payable_drafts), token: order_token).
               preload_associations_lazily
           end
 

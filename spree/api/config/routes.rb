@@ -788,6 +788,8 @@ Spree::Core::Engine.add_routes do
             patch :complete
             patch :cancel
             patch :approve
+            # Opens a draft to its buyer for payment on the storefront.
+            patch :request_payment
             post :resend_confirmation
             post :resend_digital_links
             # The buyer's purchase order, streamed through the API so it is

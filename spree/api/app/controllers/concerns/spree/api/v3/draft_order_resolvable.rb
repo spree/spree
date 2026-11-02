@@ -2,9 +2,10 @@ module Spree
   module Api
     module V3
       # Resolves a draft order a storefront buyer pays for: one raised by
-      # staff or an extension, in this store, that the caller owns or holds
-      # the order token for. Anything else — another store's order, another
-      # buyer's, or a checkout's transient draft — is not found.
+      # staff or an extension and requested for payment, in this store, that
+      # the caller owns or holds the order token for. Anything else — a draft
+      # still being prepared, another store's order, another buyer's, or a
+      # checkout's transient draft — is not found.
       module DraftOrderResolvable
         extend ActiveSupport::Concern
 
@@ -16,7 +17,7 @@ module Spree
         #
         # @return [Spree::Order]
         def find_draft_order!(include_placed: false)
-          orders = current_store.orders.standalone_drafts
+          orders = current_store.orders.payable_drafts
           orders = orders.or(current_store.orders.placed_orders) if include_placed
 
           @order = storefront_access_policy.scope(orders, token: order_token).

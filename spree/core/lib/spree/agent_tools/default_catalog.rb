@@ -63,6 +63,7 @@ module Spree
         # to a model it would be a way around orders.complete.validate.
         order_cancel_workflow: { permission: 'write_orders', except: %i[restock_items] },
         order_complete_workflow: { permission: 'write_orders', except: %i[validated] },
+        order_request_payment_workflow: 'write_orders',
 
         # Fulfillment
         fulfillment_create_workflow: 'write_fulfillments',

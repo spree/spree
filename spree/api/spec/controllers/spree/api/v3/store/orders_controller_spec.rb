@@ -189,14 +189,14 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       # A checkout's own draft belongs to its cart, which the buyer reads.
       it 'returns not found for the transient draft of a checkout' do
         cart = create(:cart_with_line_items, customer: user, store: store)
-        incomplete_order = create(:order_with_line_items, customer: user, store: store, cart_id: cart.id)
+        incomplete_order = create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: store, cart_id: cart.id)
         get :show, params: { id: incomplete_order.to_param }
 
         expect(response).to have_http_status(:not_found)
       end
 
       it 'returns not found for a canceled draft' do
-        canceled_draft = create(:order_with_line_items, customer: user, store: store)
+        canceled_draft = create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: store)
         canceled_draft.update_columns(status: 'canceled')
         get :show, params: { id: canceled_draft.to_param }
 
@@ -206,7 +206,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
     context 'with a draft order raised for the buyer' do
       let!(:payment_method) { create(:bogus_payment_method) }
-      let(:draft) { create(:order_with_line_items, customer: user, store: store) }
+      let(:draft) { create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: store) }
 
       before { request.headers['Authorization'] = "Bearer #{jwt_token}" }
 
@@ -219,6 +219,13 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         expect(json_response['payment_methods'].map { |method| method['id'] }).to include(payment_method.prefixed_id)
       end
 
+      it 'returns not found until the merchant requests payment' do
+        draft.update_columns(payment_requested_at: nil)
+        get :show, params: { id: draft.to_param }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
       it 'leaves the payment methods off a placed order' do
         get :show, params: { id: order.to_param }
 
@@ -226,14 +233,14 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns not found for another customer’s draft' do
-        other_draft = create(:order_with_line_items, customer: create(:user), store: store)
+        other_draft = create(:order_with_line_items, payment_requested_at: Time.current, customer: create(:user), store: store)
         get :show, params: { id: other_draft.to_param }
 
         expect(response).to have_http_status(:not_found)
       end
 
       it 'returns a guest draft to the bearer of its token' do
-        guest_draft = create(:order_with_line_items, customer: nil, store: store)
+        guest_draft = create(:order_with_line_items, payment_requested_at: Time.current, customer: nil, store: store)
         request.headers['Authorization'] = nil
         request.headers['x-spree-token'] = guest_draft.token
 
@@ -246,7 +253,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
   end
 
   describe 'POST #complete' do
-    let(:draft) { create(:order_with_line_items, customer: user, store: store) }
+    let(:draft) { create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: store) }
     let(:published) { [] }
 
     before do
@@ -280,7 +287,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
     end
 
     it 'places a guest draft for the bearer of its token' do
-      guest_draft = create(:order_with_line_items, customer: nil, email: 'buyer@example.com', store: store)
+      guest_draft = create(:order_with_line_items, payment_requested_at: Time.current, customer: nil, email: 'buyer@example.com', store: store)
       create(:payment, order: guest_draft, amount: guest_draft.total).tap(&:create_payment_profile)
       request.headers['Authorization'] = nil
       request.headers['x-spree-token'] = guest_draft.token
@@ -311,7 +318,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
     end
 
     it 'returns not found for another customer’s draft' do
-      other_draft = create(:order_with_line_items, customer: create(:user), store: store)
+      other_draft = create(:order_with_line_items, payment_requested_at: Time.current, customer: create(:user), store: store)
 
       post :complete, params: { id: other_draft.prefixed_id }
 
@@ -320,11 +327,21 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
     end
 
     it 'returns not found for a draft in another store' do
-      other_draft = create(:order_with_line_items, customer: user, store: create(:store))
+      other_draft = create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: create(:store))
 
       post :complete, params: { id: other_draft.prefixed_id }
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 'returns not found for a draft without a payment request' do
+      draft.update_columns(payment_requested_at: nil)
+      create(:payment, order: draft, amount: draft.total).tap(&:create_payment_profile)
+
+      post :complete, params: { id: draft.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+      expect(draft.reload).to be_draft
     end
 
     it 'returns not found for a canceled order' do

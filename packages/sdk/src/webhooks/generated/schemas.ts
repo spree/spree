@@ -169,6 +169,7 @@ type WebhookEventName =
   | 'order.delivered'
   | 'order.fulfilled'
   | 'order.paid'
+  | 'order.payment_requested'
   | 'order.placed'
   | 'order.resend_confirmation_email'
   | 'order.resend_digital_links_email'
@@ -432,6 +433,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'order.delivered': OrderSchema,
   'order.fulfilled': OrderSchema,
   'order.paid': OrderSchema,
+  'order.payment_requested': OrderSchema,
   'order.placed': OrderSchema,
   'order.resend_confirmation_email': OrderSchema,
   'order.resend_digital_links_email': OrderSchema,
