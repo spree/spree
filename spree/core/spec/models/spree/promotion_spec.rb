@@ -1066,6 +1066,22 @@ describe Spree::Promotion, type: :model do
       expect(fresh).to be_pending_rules_or_actions
     end
 
+    # The rules write before the actions; a refused action rolls them back,
+    # so a retry that corrects only the actions has to bring the rules too.
+    it 'keeps every pending list when a later one is refused' do
+      fresh = build(:promotion, name: 'Retried')
+      fresh.rules = [{ type: 'first_order' }]
+      fresh.actions = [{ type: 'NotARealAction' }]
+
+      expect { fresh.save! }.to raise_error(Spree::Preferences::InvalidPreferences)
+
+      fresh.actions = [{ type: 'free_shipping' }]
+      fresh.save!
+
+      expect(fresh.reload.rules.map { |rule| rule.class.api_type }).to eq(['first_order'])
+      expect(fresh.actions.map { |action| action.class.api_type }).to eq(['free_shipping'])
+    end
+
     it 'falls through to AR when assigned PromotionRule instances' do
       rule = Spree::Promotion::Rules::FirstOrder.new
       promotion.rules = [rule]

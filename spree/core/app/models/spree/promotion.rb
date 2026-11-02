@@ -373,8 +373,7 @@ module Spree
     end
 
     def apply_pending_rules_and_actions
-      flush_pending_typed_association(:promotion_rules)
-      flush_pending_typed_association(:promotion_actions)
+      flush_pending_typed_associations(:promotion_rules, :promotion_actions)
     end
 
     # Runs before the promotion's actions are destroyed, since the carts'

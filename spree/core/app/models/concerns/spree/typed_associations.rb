@@ -37,21 +37,26 @@ module Spree
       reconcile_typed_association(association, pending)
     end
 
-    # Flushes a pending payload from `@pending_<assoc>` (typically from
-    # an `after_save` hook) and clears the ivar.
+    # Flushes the pending payloads from `@pending_<assoc>` (typically from
+    # an `after_save` hook) and clears them.
     #
+    # Every association is written before any buffer is cleared: a refused
+    # row rolls the whole save back, and a retried save must carry every
+    # payload again rather than persist the owner with the rows that
+    # happened to come first.
+    #
+    # @param associations [Array<Symbol>]
+    # @return [void]
+    def flush_pending_typed_associations(*associations)
+      pending = associations.to_h { |association| [association, instance_variable_get(:"@pending_#{association}")] }.compact
+      pending.each { |association, rows| reconcile_typed_association(association, rows) }
+      pending.each_key { |association| instance_variable_set(:"@pending_#{association}", nil) }
+    end
+
     # @param association [Symbol]
     # @return [void]
     def flush_pending_typed_association(association)
-      ivar = :"@pending_#{association}"
-      pending = instance_variable_get(ivar)
-      return unless pending
-
-      # Cleared only once the rows are written: a refused row rolls the save
-      # back, and a retried save must carry the rows again rather than
-      # persist the owner without them.
-      reconcile_typed_association(association, pending)
-      instance_variable_set(ivar, nil)
+      flush_pending_typed_associations(association)
     end
 
     # All or nothing: on a saved parent the rows are written as they are
