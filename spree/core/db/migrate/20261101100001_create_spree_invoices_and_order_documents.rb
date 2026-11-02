@@ -18,9 +18,12 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
       t.date :issued_on, null: false
       t.date :supplied_on
       t.string :currency, null: false
-      t.decimal :net_total, precision: 10, scale: 2
-      t.decimal :tax_total, precision: 10, scale: 2
-      t.decimal :total, precision: 10, scale: 2, null: false
+      # Money columns are decimal(19, 4), as everywhere since 6.0
+      # (docs/plans/6.0-money-correctness.md): an uploaded invoice must hold
+      # the amounts its PDF shows, three-decimal currencies included.
+      t.decimal :net_total, precision: 19, scale: 4
+      t.decimal :tax_total, precision: 19, scale: 4
+      t.decimal :total, precision: 19, scale: 4, null: false
       t.string :external_reference
       t.datetime :sent_at
 

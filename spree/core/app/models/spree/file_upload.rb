@@ -37,8 +37,9 @@ module Spree
     # @return [Spree::FileUpload]
     def self.for_private_document(model, slot, store:, **params)
       limits = model.private_document_limits.fetch(slot)
-      new(store: store, visibility: 'private', max_byte_size: limits[:max_size],
-          allowed_content_types: limits[:content_types], **params)
+      # The slot's limits come last, so nothing a caller sends overrides them.
+      new(**params, store: store, visibility: 'private', max_byte_size: limits[:max_size],
+                    allowed_content_types: limits[:content_types])
     end
 
     attr_reader :blob, :signed_id, :expires_at
