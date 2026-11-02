@@ -69,10 +69,6 @@ module Spree
               :order_documents
             end
 
-            def permitted_params
-              params.permit(*declared_permitted_attributes)
-            end
-
             # What the buyer adds is theirs, and so always shown to them.
             def build_resource
               super.tap do |document|

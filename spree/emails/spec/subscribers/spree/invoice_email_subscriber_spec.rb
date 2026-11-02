@@ -33,6 +33,14 @@ describe Spree::InvoiceEmailSubscriber do
       with('Spree::InvoiceMailer', 'invoice_email', 'deliver_now', args: [invoice.id, true])
   end
 
+  it "sends sellers their commission invoices even when the store's own system sends buyer invoices" do
+    store.update!(preferred_send_invoice_email: false)
+    seller = create(:seller, store: store, billing_email: 'accounts@seller.test')
+    commission = create(:invoice, :commission, seller_payout: create(:seller_payout, seller: seller, store: store))
+
+    expect { subscriber.call(event(commission, 'invoice.created')) }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+  end
+
   it 'sends a commission invoice to the seller' do
     seller = create(:seller, store: store, billing_email: 'accounts@seller.test')
     commission = create(:invoice, :commission, seller_payout: create(:seller_payout, seller: seller, store: store))

@@ -493,7 +493,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 139
+                  name: Seller 141
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -14603,8 +14603,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3343250
-                  slug: product-3343250
+                  name: Product 3363250
+                  slug: product-3363250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14817,8 +14817,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3376710
-                slug: product-3376710
+                name: Product 3396710
+                slug: product-3396710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14908,7 +14908,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-3408212
+                slug: product-3428212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15031,8 +15031,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 3437816
-                slug: product-3437816
+                name: Product 3457816
+                slug: product-3457816
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15142,8 +15142,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 345209
-                slug: product-345209
+                name: Product 347209
+                slug: product-347209
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15232,8 +15232,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3469405
-                slug: product-3469405
+                name: Product 3489405
+                slug: product-3489405
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15451,8 +15451,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 174
-                slug: seller-174
+                name: Seller 176
+                slug: seller-176
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15542,7 +15542,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-176
+                slug: seller-178
                 about: ''
                 about_html: ''
                 logo_url:
@@ -16295,7 +16295,7 @@ paths:
                 inviter_email: hal_kiehn@herman.biz
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 206
+                  name: Seller 208
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -21289,6 +21289,56 @@ paths:
                 error:
                   code: record_not_found
                   message: Invoice not found
+  "/api/v3/seller/orders/{order_id}/documents/{id}":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    delete:
+      summary: Delete an order document
+      tags:
+      - Order Documents
+      security:
+      - bearer_auth: []
+      description: 'Only a document the seller''s own team uploaded: the operator''s
+        and the buyer''s paperwork stay.'
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.orders.documents.delete('or_UkLWZg9DAJ', 'odoc_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: the seller's own document
+        '404':
+          description: the operator's document
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Order document not found
   "/api/v3/seller/orders/{order_id}/documents":
     parameters:
     - name: order_id
@@ -21510,7 +21560,7 @@ paths:
                 tax_total:
                 original_invoice_id:
                 issuer_type: seller
-                issuer_name: Seller 116
+                issuer_name: Seller 118
                 file_filename: fv.pdf
                 file_byte_size: 15
                 file_content_type: application/pdf
@@ -21743,7 +21793,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 31295
+                    name: Product 31495
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -21752,7 +21802,7 @@ paths:
                     additional_tax_total: '0.00'
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-398
+                    sku: SKU-400
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -21765,7 +21815,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 188
+                    delivery_method_name: UPS Ground 190
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -21773,13 +21823,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 31295
-                      sku: SKU-398
+                      name: Product 31495
+                      sku: SKU-400
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 188
+                      name: UPS Ground 190
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -21807,7 +21857,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 366 Lovely Street
+                    address1: 370 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -21827,7 +21877,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 365 Lovely Street
+                    address1: 369 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -21939,7 +21989,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3139755
+                  name: Product 3159755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21948,7 +21998,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-399
+                  sku: SKU-401
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21961,7 +22011,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 189
+                  delivery_method_name: UPS Ground 191
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21969,13 +22019,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3139755
-                    sku: SKU-399
+                    name: Product 3159755
+                    sku: SKU-401
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 189
+                    name: UPS Ground 191
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22003,7 +22053,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 368 Lovely Street
+                  address1: 372 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22023,7 +22073,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 367 Lovely Street
+                  address1: 371 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22135,7 +22185,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3166554
+                  name: Product 3186554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22144,7 +22194,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-402
+                  sku: SKU-404
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22157,7 +22207,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 192
+                  delivery_method_name: UPS Ground 194
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22165,13 +22215,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3166554
-                    sku: SKU-402
+                    name: Product 3186554
+                    sku: SKU-404
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 192
+                    name: UPS Ground 194
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22199,7 +22249,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 374 Lovely Street
+                  address1: 378 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22219,7 +22269,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 373 Lovely Street
+                  address1: 377 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22321,7 +22371,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3175038
+                  name: Product 3195038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22330,7 +22380,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-403
+                  sku: SKU-405
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22343,7 +22393,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 193
+                  delivery_method_name: UPS Ground 195
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22351,13 +22401,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3175038
-                    sku: SKU-403
+                    name: Product 3195038
+                    sku: SKU-405
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 193
+                    name: UPS Ground 195
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22405,7 +22455,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 375 Lovely Street
+                  address1: 379 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22514,7 +22564,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3193962
+                  name: Product 3213962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22523,7 +22573,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-405
+                  sku: SKU-407
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22536,7 +22586,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 195
+                  delivery_method_name: UPS Ground 197
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22544,13 +22594,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3193962
-                    sku: SKU-405
+                    name: Product 3213962
+                    sku: SKU-407
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 195
+                    name: UPS Ground 197
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22578,7 +22628,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 380 Lovely Street
+                  address1: 384 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22598,7 +22648,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 379 Lovely Street
+                  address1: 383 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22684,7 +22734,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3205749
+                  name: Product 3225749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22693,7 +22743,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-406
+                  sku: SKU-408
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22706,7 +22756,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 196
+                  delivery_method_name: UPS Ground 198
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22714,13 +22764,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3205749
-                    sku: SKU-406
+                    name: Product 3225749
+                    sku: SKU-408
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 196
+                    name: UPS Ground 198
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22748,7 +22798,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 382 Lovely Street
+                  address1: 386 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22768,7 +22818,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 381 Lovely Street
+                  address1: 385 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -23690,7 +23740,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 3537120 can be returned
+                  message: Only 1 of Product 3557120 can be returned
       requestBody:
         content:
           application/json:
