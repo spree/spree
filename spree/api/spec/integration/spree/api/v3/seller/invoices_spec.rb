@@ -46,6 +46,31 @@ RSpec.describe 'Seller Invoices API', type: :request, swagger_doc: 'api-referenc
   path '/api/v3/seller/invoices/{id}' do
     parameter name: :id, in: :path, type: :string, required: true
 
+    get 'Get an invoice' do
+      tags 'Invoices'
+      produces 'application/json'
+      security [bearer_auth: []]
+      seller_sdk_example 'invoices/get'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'invoice found' do
+        let(:id) { invoice.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Invoice'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['download_url']).to eq("/api/v3/seller/invoices/#{invoice.prefixed_id}/download")
+        end
+      end
+
+      response '404', "another seller's invoice" do
+        let(:id) { other_sellers_invoice.prefixed_id }
+
+        run_test!
+      end
+    end
+
     delete 'Delete an invoice' do
       tags 'Invoices'
       security [bearer_auth: []]

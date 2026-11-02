@@ -32,7 +32,7 @@ module Spree
         end
 
         def collection_includes
-          [:issuer, :order, { file_attachment: :blob }]
+          [:issuer, :order, { seller_payout: :seller, file_attachment: :blob }]
         end
 
         # Downloading is reading; resending is acting on the invoice, which

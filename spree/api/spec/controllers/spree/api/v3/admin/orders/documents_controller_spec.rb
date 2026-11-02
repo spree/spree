@@ -37,4 +37,16 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DocumentsController, type: :contro
       expect(document.file.blob).not_to eq(blob)
     end
   end
+
+  describe 'DELETE #destroy' do
+    it 'removes the document' do
+      document = order.order_documents.first
+
+      expect {
+        delete :destroy, params: { order_id: order.prefixed_id, id: document.prefixed_id }, as: :json
+      }.to change(Spree::OrderDocument, :count).by(-1)
+
+      expect(response).to have_http_status(:no_content)
+    end
+  end
 end

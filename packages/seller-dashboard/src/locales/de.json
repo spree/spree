@@ -859,7 +859,7 @@
     "title": "Rechnungen",
     "subtitle": "In Ihrem Namen ausgestellte Rechnungen und die Provisionsrechnungen des Marktplatzes an Sie.",
     "search_placeholder": "Nach Nummer suchen",
-    "empty": "Noch keine Rechnungen. Laden Sie sie bei der jeweiligen Bestellung oder Auszahlung hoch.",
+    "empty": "Noch keine Rechnungen. Laden Sie sie bei der jeweiligen Bestellung hoch.",
     "commission": "Marktplatz-Provision",
     "columns": {
       "number": "Nummer",

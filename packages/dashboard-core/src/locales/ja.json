@@ -548,6 +548,7 @@
       "failed_to_update_staff": "スタッフを更新できませんでした",
       "failed_to_update_store": "ストアの設定を更新できませんでした",
       "generic": "問題が起きました",
+      "download_failed": "ファイルをダウンロードできませんでした",
       "label_download_failed": "ラベルをダウンロードできませんでした",
       "network": "ネットワークエラーです。もう一度お試しください",
       "not_found": "見つかりません",

@@ -548,6 +548,7 @@
       "failed_to_update_staff": "Không thể cập nhật nhân viên",
       "failed_to_update_store": "Không cập nhật được cài đặt cửa hàng",
       "generic": "Đã xảy ra lỗi",
+      "download_failed": "Không thể tải tệp xuống",
       "label_download_failed": "Không thể tải nhãn xuống",
       "network": "Lỗi mạng - vui lòng thử lại",
       "not_found": "Không tìm thấy",

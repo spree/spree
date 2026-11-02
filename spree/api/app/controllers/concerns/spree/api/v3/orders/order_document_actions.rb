@@ -18,7 +18,8 @@ module Spree
               body.attribute :label, :string, required: true, on: :create, example: 'Signed purchase order'
               body.attribute :customer_visible, :boolean,
                 description: "Whether the buyer sees it on their order. Off unless set; the buyer's own uploads are always visible to them."
-              body.attribute :file_signed_id, :string, required: true, on: :create,
+              # A file is the document; replacing it is uploading a new one.
+              body.attribute :file_signed_id, :string, required: true, only: :create,
                 description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. PDF, image, office document or CSV."
               body.attribute :metadata, :hash
             end
@@ -43,10 +44,7 @@ module Spree
           end
 
           def permitted_params
-            attributes = params.permit(*declared_permitted_attributes)
-            # A file is the document; replacing it is uploading a new one.
-            attributes = attributes.except(:file_signed_id) if action_name == 'update'
-            attributes
+            params.permit(*declared_permitted_attributes)
           end
 
           def build_resource

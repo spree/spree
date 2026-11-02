@@ -68,30 +68,31 @@ Numbers belong to the issuer: an uploaded invoice keeps the number its issuing s
 
 Upload the PDF privately first, then record the invoice on the order.
 
-<CodeGroup>
+<Tabs>
+  <Tab title="Admin SDK">
+    ```typescript
+    const upload = await client.files.upload(file, { visibility: 'private' })
 
-```typescript Admin SDK
-const upload = await client.files.upload(file, { visibility: 'private' })
-
-const invoice = await client.orders.invoices.create('or_xxx', {
-  kind: 'invoice',
-  number: 'FV/2026/11/42',
-  issued_on: '2026-11-01',
-  total: '123.00',
-  net_total: '100.00',
-  tax_total: '23.00',
-  file_signed_id: upload.signed_id,
-})
-```
-
-```bash cURL
-curl -X POST https://your-store.com/api/v3/admin/orders/or_xxx/invoices \
-  -H "Authorization: Bearer $SECRET_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"kind":"invoice","number":"FV/2026/11/42","issued_on":"2026-11-01","total":"123.00","file_signed_id":"eyJfcmFpbHMi..."}'
-```
-
-</CodeGroup>
+    const invoice = await client.orders.invoices.create('or_xxx', {
+      kind: 'invoice',
+      number: 'FV/2026/11/42',
+      issued_on: '2026-11-01',
+      total: '123.00',
+      net_total: '100.00',
+      tax_total: '23.00',
+      file_signed_id: upload.signed_id,
+    })
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X POST https://your-store.com/api/v3/admin/orders/or_xxx/invoices \
+      -H "Authorization: Bearer $SECRET_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"kind":"invoice","number":"FV/2026/11/42","issued_on":"2026-11-01","total":"123.00","file_signed_id":"eyJfcmFpbHMi..."}'
+    ```
+  </Tab>
+</Tabs>
 
 A marketplace seller uploads to their own orders through the Seller API (`client.orders.invoices.create` in `@spree/seller-sdk`). Commission invoices are uploaded to the payout: `client.sellerPayouts.invoices.create`.
 

@@ -865,7 +865,7 @@
     "title": "Faktury",
     "subtitle": "Faktury wystawione w Twoim imieniu i faktury prowizyjne marketplace'u dla Ciebie.",
     "search_placeholder": "Szukaj po numerze",
-    "empty": "Brak faktur. Prześlij je z poziomu zamówienia lub wypłaty.",
+    "empty": "Brak faktur. Prześlij je z poziomu zamówienia.",
     "commission": "Prowizja marketplace'u",
     "columns": {
       "number": "Numer",

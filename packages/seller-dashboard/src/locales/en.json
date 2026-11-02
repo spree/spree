@@ -859,7 +859,7 @@
     "title": "Invoices",
     "subtitle": "Invoices issued in your name, and the marketplace's commission invoices to you.",
     "search_placeholder": "Search by number",
-    "empty": "No invoices yet. Upload them from each order or seller payout.",
+    "empty": "No invoices yet. Upload them from each order.",
     "commission": "Marketplace commission",
     "columns": {
       "number": "Number",

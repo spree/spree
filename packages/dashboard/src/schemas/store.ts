@@ -49,10 +49,15 @@ export const storeSettingsFormSchema = z.object({
     .regex(NUMBER_AFFIX_PATTERN, { error: 'admin.fields.store.order_number_suffix.invalid' }),
   order_number_sequence_start: z.coerce.number().int().min(1),
   send_invoice_email: z.boolean(),
-  invoice_request_window_days: z.coerce
-    .number()
-    .int()
-    .min(0, { error: requiredMessage('store.invoice_request_window_days') }),
+  // A cleared field is refused rather than coerced to 0, which turns
+  // invoice requests off.
+  invoice_request_window_days: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.coerce
+      .number({ error: requiredMessage('store.invoice_request_window_days') })
+      .int()
+      .min(0, { error: requiredMessage('store.invoice_request_window_days') }),
+  ),
   // Store-wide download allowances. Individual files can override the numbers;
   // switching a limit off here removes it for the whole store.
   limit_digital_download_count: z.boolean(),

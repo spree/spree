@@ -24,5 +24,17 @@ RSpec.describe Spree::Api::V3::Store::Orders::InvoicesController, type: :control
 
       expect(json_response['data'].first.keys).not_to include('source', 'sent_at', 'uploaded_by_id', 'metadata')
     end
+
+    it "lists a guest order's invoices for the holder of its token" do
+      guest_order = create(:completed_order_with_totals, customer: nil, store: store)
+      guest_invoice = create(:invoice, order: guest_order)
+      request.headers['Authorization'] = nil
+      request.headers['x-spree-token'] = guest_order.token
+
+      get :index, params: { order_id: guest_order.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |row| row['id'] }).to eq([guest_invoice.prefixed_id])
+    end
   end
 end
