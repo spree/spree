@@ -17,8 +17,11 @@ module Spree
       # @param clear_coupon_code [Boolean] also clear the code the shopper entered on the
       #   owner, so recalculating does not apply the promotion again. Leave it off when the
       #   shopper should be told the code was lost.
-      # @return [Spree::ServiceModule::Result] success, holding the owner
+      # @return [Spree::ServiceModule::Result] success, holding the owner; a failure when the
+      #   owner is already completed, since placed orders are never changed this way
       def call(owner:, promotion:, clear_coupon_code: false)
+        return failure(owner, 'Cannot remove a promotion from a completed order') if owner.completed?
+
         held_code = promotion.coupon_codes.held_by(owner).first if promotion.multi_codes?
         clear_entered_coupon_code(owner, held_code&.code || promotion.code) if clear_coupon_code
 

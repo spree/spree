@@ -33,4 +33,17 @@ describe Spree::Promotions::DetachFromOwner do
 
     expect(Spree::Promotion.exists?(promotion.id)).to be(true)
   end
+
+  context 'when the owner is a completed order' do
+    let(:order) { create(:completed_order_with_totals, store: store) }
+
+    before { Spree::OrderPromotion.create!(order: order, promotion: promotion) }
+
+    it 'fails and leaves the order alone' do
+      result = described_class.call(owner: order, promotion: promotion)
+
+      expect(result).to be_failure
+      expect(order.reload.order_promotions.count).to eq(1)
+    end
+  end
 end
