@@ -434,8 +434,7 @@ function stripHtml(html: string): string {
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     if (node.textContent?.trim() !== '' || node.parentElement?.closest('pre')) continue
     const isBlock = (n: Node | null) => n instanceof Element && n.matches(BLOCK_SELECTOR)
-    const atBlockEdge =
-      isBlock(node.parentElement) && (!node.previousSibling || !node.nextSibling)
+    const atBlockEdge = isBlock(node.parentElement) && (!node.previousSibling || !node.nextSibling)
     if (atBlockEdge || isBlock(node.previousSibling) || isBlock(node.nextSibling)) {
       blankNodes.push(node)
     }
