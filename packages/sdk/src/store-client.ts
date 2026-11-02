@@ -69,7 +69,6 @@ import type {
   ProductFiltersResponse,
   ProductListParams,
   RefreshTokenParams,
-  RegisterCompanyParams,
   RegisterParams,
   RequestNewsletterUnsubscribeParams,
   RequestPasswordResetParams,
@@ -1382,15 +1381,6 @@ export class StoreClient {
   }
 
   readonly companies = {
-    /**
-     * Registers a company: the signed-in customer founds a root node and
-     * becomes its first member in one call. Free-form answers from the
-     * merchant's registration form ride `registration`. At most one company
-     * per customer per store.
-     */
-    create: (params: RegisterCompanyParams, options?: RequestOptions): Promise<Company> =>
-      this.request<Company>('POST', '/companies', { ...options, body: params }),
-
     get: (id: string, options?: RequestOptions): Promise<Company> =>
       this.request<Company>('GET', `/companies/${id}`, options),
 

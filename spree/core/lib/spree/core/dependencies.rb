@@ -225,7 +225,6 @@ module Spree
         # converge on these
         company_add_member_service: 'Spree::Companies::AddMember',
         company_invitation_accept_service: 'Spree::CompanyInvitations::Accept',
-        company_register_workflow: 'Spree::Companies::Register',
 
         # catalog-aware product visibility for a buyer
         products_for_context_service: 'Spree::Products::ForContext',

@@ -129,9 +129,7 @@ Spree::Core::Engine.add_routes do
         # standing + the storefront access policy, never roles.
         get 'account/companies', to: 'account/companies#index'
 
-        # POST founds a root company + the caller's membership in one call —
-        # the B2B front door (docs/plans/6.1-b2b-company-self-registration.md).
-        resources :companies, only: [:create, :show, :update] do
+        resources :companies, only: [:show, :update] do
           resources :addresses, only: [:index, :create, :update, :destroy],
                                 controller: 'companies/addresses'
           # POST takes customer_email — a membership for an existing customer,

@@ -34,7 +34,7 @@ module Spree
         # An inactive company must not exempt a sale in flight: the
         # certificates stay on file, they just stop applying while the
         # activation policy says the business may not act commercially
-        # (docs/plans/6.1-b2b-company-self-registration.md).
+        # (docs/plans/6.1-b2b-company-activation.md).
         #
         # A placed order is exempt from the question, the way its tax
         # registration is: deactivating a company months later must not

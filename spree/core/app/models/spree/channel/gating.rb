@@ -13,7 +13,7 @@ module Spree
       # - +login_required+   catalog reads rejected for guests
       # - +company_required+ products browsable by anyone, prices and
       #   checkout only for buyers with standing over a policy-active company
-      #   (docs/plans/6.1-b2b-company-self-registration.md)
+      #   (docs/plans/6.1-b2b-company-activation.md)
       STOREFRONT_ACCESS = %w[public prices_hidden login_required company_required].freeze
 
       included do

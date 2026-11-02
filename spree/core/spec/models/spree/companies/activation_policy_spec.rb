@@ -16,7 +16,7 @@ RSpec.describe Spree::Companies::ActivationPolicy, type: :model do
       expect(policy.pricing_access_code(user: nil, store: store)).to eq('login_required')
     end
 
-    it 'asks a customer without a company to register one' do
+    it 'asks a customer without a company to join one' do
       expect(policy.pricing_access_code(user: customer, store: store)).to eq('company_required')
     end
 
