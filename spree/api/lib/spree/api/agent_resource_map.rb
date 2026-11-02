@@ -280,8 +280,8 @@ module Spree
           entries.group_by { |entry| entry[:key] }.map do |_key, candidates|
             next candidates.first if candidates.one?
 
-            narrowest = top_level_candidate(candidates) ||
-                        candidates.min_by { |entry| [scope_breadth(entry[:permission]), entry[:permission]] }
+            narrowest = (candidates.select { |entry| top_level?(entry) }.presence || candidates).
+                        min_by { |entry| [scope_breadth(entry[:permission]), entry[:permission]] }
             contested = candidates.map { |entry| entry[:permission] }.uniq.size > 1
 
             # A workflow declaration is not in dispute — whichever controller
@@ -313,16 +313,14 @@ module Spree
           end
         end
 
+        def top_level?(entry)
+          path = Array(entry[:api_paths]).to_h[:index]
+          path.present? && !path.include?(':')
+        end
+
         # How much a scope covers, so the narrowest wins a collision. Measured
         # by the number of resources the catalog grants it, which is the only
         # ranking the catalog actually gives us.
-        def top_level_candidate(candidates)
-          candidates.find do |entry|
-            path = Array(entry[:api_paths]).to_h[:index]
-            path.present? && !path.include?(':')
-          end
-        end
-
         def scope_breadth(permission)
           _kind, scope = Spree.permissions.resolve_key(permission)
           scope ? Array(scope.resources).size : Float::INFINITY

@@ -1213,6 +1213,7 @@ en:
     prices: Prices
     privacy_policy: Privacy Policy
     private_document_too_large: is larger than %{size}.
+    private_document_upload_incomplete: was not uploaded completely. Please upload it again.
     processing: Processing
     product: Product
     product_import_unknown_stock_location: You have no stock location named %{name}.
