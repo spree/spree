@@ -8,7 +8,7 @@ module Spree
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :order_promotions
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
-    delegate :name, :description, :code, to: :promotion
+    delegate :name, :description, :code, to: :promotion, allow_nil: true
     delegate :currency, to: :owner
 
     validates :order, uniqueness: { scope: :promotion }, allow_nil: true
@@ -35,6 +35,8 @@ module Spree
     end
 
     def amount
+      return BigDecimal(0) if promotion.nil?
+
       owner.discounts.promotion.where(promotion_action_id: promotion.actions.ids).sum(:amount)
     end
 
