@@ -58,9 +58,9 @@ module Spree
       # Two distinct remediations behind one gate: a buyer whose standing
       # covers an active company merely has to say which node the order is
       # for (the same test that shows them prices — a nil pricing_access
-      # code), while everyone else has to register or await activation.
-      # One code for both would send the multi-company buyer to a
-      # "register your business" page.
+      # code), while everyone else has to join a company or await
+      # activation. One code for both would send the multi-company buyer to
+      # a "join or register your business" page.
       def company_requirement
         access_code = Spree.company_activation_policy.
                       pricing_access_code(user: @cart.customer, store: @cart.store)

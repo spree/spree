@@ -4470,7 +4470,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 517 Lovely Street
+                  address1: 513 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6852,7 +6852,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 573 Lovely Street
+                  address1: 569 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6875,7 +6875,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 574 Lovely Street
+                  address1: 570 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8234,7 +8234,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 457 Lovely Street
+                    address1: 453 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8257,7 +8257,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 458 Lovely Street
+                    address1: 454 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8565,7 +8565,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 463 Lovely Street
+                  address1: 459 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8588,7 +8588,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 464 Lovely Street
+                  address1: 460 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8782,7 +8782,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 469 Lovely Street
+                  address1: 465 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8807,7 +8807,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 470 Lovely Street
+                  address1: 466 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8833,7 +8833,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 470 Lovely Street
+                  address1: 466 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8859,7 +8859,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 469 Lovely Street
+                  address1: 465 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8955,7 +8955,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 471 Lovely Street
+                  address1: 467 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8980,7 +8980,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 472 Lovely Street
+                  address1: 468 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9006,7 +9006,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 472 Lovely Street
+                  address1: 468 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9032,7 +9032,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 471 Lovely Street
+                  address1: 467 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12136,88 +12136,6 @@ paths:
                 error:
                   code: authentication_required
                   message: Authentication required
-  "/api/v3/store/companies":
-    post:
-      summary: Register a company
-      tags:
-      - Companies
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |
-        Founds a company: the authenticated customer — an existing retail customer
-        included — creates a root node and becomes its first member in one call.
-        Free-form answers from the merchant's registration form ride `registration`
-        and are stored on the company. Whether the new company may already see
-        B2B catalogs, prices and checkout is the store's activation policy's answer;
-        out of the box every company is active immediately. Rate-limited like
-        customer registration. At most one company per customer per store.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree SDK
-        source: |-
-          import { createClient } from '@spree/sdk'
-
-          const client = createClient({
-            baseUrl: 'https://your-store.com',
-            publishableKey: '<api-key>',
-          })
-
-          const company = await client.companies.create(
-            {
-              name: 'Nowak Tools sp. z o.o.',
-              registration: { vat_number: 'PL1234567890', employees: '50' },
-            },
-            { token: '<token>' },
-          )
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: company registered
-          content:
-            application/json:
-              example:
-                id: comp_UkLWZg9DAJ
-                name: Nowak Tools sp. z o.o.
-                kind: company
-                po_number_required: false
-                parent_id:
-                ancestors: []
-        '422':
-          description: already registered
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: You have already registered a company on this store
-                  details:
-                    base:
-                    - You have already registered a company on this store
-        '401':
-          description: not authenticated
-          content:
-            application/json:
-              example:
-                error:
-                  code: authentication_required
-                  message: Authentication required
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/RegisterCompanyParams"
-        required: true
   "/api/v3/store/companies/{id}":
     parameters:
     - name: id
@@ -12636,7 +12554,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 427 Lovely Street
+                  address1: 423 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12770,7 +12688,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 433 Lovely Street
+                address1: 429 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -13161,7 +13079,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 441 Lovely Street
+                    address1: 437 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -13184,7 +13102,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 442 Lovely Street
+                    address1: 438 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -24877,19 +24795,6 @@ components:
           description: The refresh token from the login response.
       required:
       - refresh_token
-    RegisterCompanyParams:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Nowak Tools sp. z o.o.
-        registration:
-          type: object
-          additionalProperties: true
-          description: Free-form answers from the merchant's registration form, stored
-            on the company.
-      required:
-      - name
     RegisterParams:
       type: object
       properties:

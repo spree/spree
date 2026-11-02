@@ -37877,12 +37877,6 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
-                - name: company.registered
-                  group: company
-                  credential_permission:
-                  credential: false
-                  deprecated: false
-                  replaced_by:
                 - name: company.updated
                   group: company
                   credential_permission:
@@ -39342,7 +39336,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 261
+                  count: 260
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs

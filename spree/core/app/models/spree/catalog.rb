@@ -114,7 +114,7 @@ module Spree
       # An inactive company has no agreements: its assignments neither price
       # nor narrow. Guarded here rather than in {.for_company} so the flat and
       # grouped readers answer alike. Asked about the node — subtree semantics
-      # are the policy's job (docs/plans/6.1-b2b-company-self-registration.md).
+      # are the policy's job (docs/plans/6.1-b2b-company-activation.md).
       return [] unless Spree.company_activation_policy.active?(company)
 
       nodes = company.self_and_ancestors

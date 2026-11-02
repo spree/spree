@@ -22,9 +22,6 @@ module Spree
     include Spree::HasExternalReferences
 
     publishes_lifecycle_events
-    # Founded from the storefront rather than created by staff
-    # (docs/plans/6.1-b2b-company-self-registration.md).
-    publishes_event :registered
 
     KINDS = %w[company division].freeze
     MAX_DEPTH = 5
@@ -144,7 +141,7 @@ module Spree
       # Only policy-active companies count: a buyer whose second membership
       # is on a not-yet-approved business is still unambiguous, and an
       # inactive company must not price or exempt a sale
-      # (docs/plans/6.1-b2b-company-self-registration.md). The question is
+      # (docs/plans/6.1-b2b-company-activation.md). The question is
       # still "exactly one, or not", so the walk stops at the second active
       # node.
       active_companies = Spree.company_activation_policy.first_active(companies, limit: 2)

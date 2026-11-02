@@ -108,7 +108,7 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
   end
   # An inactive company has no agreements — its catalogs neither price nor
   # narrow, whichever way the buyer reaches them
-  # (docs/plans/6.1-b2b-company-self-registration.md).
+  # (docs/plans/6.1-b2b-company-activation.md).
   describe 'the activation policy' do
     it 'resolves no catalogs for an explicitly named inactive company' do
       with_company_activation_policy(inactive: [company]) do

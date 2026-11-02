@@ -4,7 +4,7 @@ module Spree
     # its agreements, be bought for. The single answer every company-resolving
     # read consults: catalog resolution, sole-standing resolution, cart
     # +company_id+ writes and the +company_required+ storefront posture
-    # (docs/plans/6.1-b2b-company-self-registration.md).
+    # (docs/plans/6.1-b2b-company-activation.md).
     #
     # The OSS default activates every company, so self-registration is
     # instant and the +company_required+ posture reads "company members

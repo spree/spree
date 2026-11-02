@@ -66,7 +66,7 @@ module Spree
       # stands over or the policy has not activated (an inactive sole standing
       # already resolves to nothing). The staff exemption lives with the
       # checkout requirement that consumes this
-      # (docs/plans/6.1-b2b-company-self-registration.md).
+      # (docs/plans/6.1-b2b-company-activation.md).
       #
       # @return [Boolean]
       def company_activation_missing?
