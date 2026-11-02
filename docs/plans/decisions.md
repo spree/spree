@@ -6680,3 +6680,21 @@ in each gem's `post_install_message`, not in the CLI.
 the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
 already lists is reported as installed rather than ejecting the project to
 re-add it.
+
+## 2026-11-02 — Dashboard packages are tree-shakeable; registration at import time lives only in the bootstrap modules
+
+The dashboard and seller panel ship as one JavaScript file because the four
+dashboard packages declare no `sideEffects`, so a route that imports one
+button through the `@spree/dashboard-ui` barrel keeps the editors and charts
+reachable. `docs/plans/6.1-dashboard-code-splitting.md` declares `sideEffects`
+on `@spree/dashboard-ui`, `@spree/dashboard-core`, `@spree/dashboard` and
+`@spree/seller-dashboard`, listing only stylesheets and the shells' bootstrap
+modules (admin `i18n-setup`, `api-client-setup`, `nav/*`, `search/*`; seller
+`i18n`, `nav/*`), the `tables/*` modules list routes bare-import for their
+`defineTable` call, and the `register.ts(x)` slot modules next to the editors
+they register, and turns on TanStack Router's `autoCodeSplitting` in both Vite
+plugins. From now on a module that registers something at import time (nav,
+settings nav, search, slots, tables, translations) belongs in one of those
+places; anywhere else the build drops it once the flag lands. TipTap,
+CodeMirror and Recharts are imported only by their `dashboard-ui` component,
+which loads them on demand.
