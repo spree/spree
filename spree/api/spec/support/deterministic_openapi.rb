@@ -112,6 +112,17 @@ if ENV['OPENAPI'] == 'true'
   SecureRandom.singleton_class.prepend(Spree::OpenAPIDeterminism::PredictableSecureRandom)
 
   RSpec.configure do |config|
+    # The default store, its channel and their routing rules are created in a
+    # before(:all) hook, ahead of any per-example freeze, so the clock is
+    # pinned for that hook too.
+    config.prepend_before(:all) do
+      travel_to(Spree::OpenAPIDeterminism::FROZEN_TIME)
+    end
+
+    config.append_after(:all) do
+      travel_back
+    end
+
     config.before do
       travel_to(Spree::OpenAPIDeterminism::FROZEN_TIME)
     end

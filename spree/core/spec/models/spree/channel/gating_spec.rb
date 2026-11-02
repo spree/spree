@@ -93,5 +93,12 @@ RSpec.describe Spree::Channel::Gating, type: :model do
       expect(channel.storefront_login_required?).to be true
       expect(channel.storefront_prices_hidden?).to be false
     end
+
+    it '#storefront_company_required? is true only for company_required' do
+      channel.update!(preferred_storefront_access: 'company_required')
+      expect(channel.storefront_company_required?).to be true
+      expect(channel.storefront_prices_hidden?).to be false
+      expect(channel.storefront_login_required?).to be false
+    end
   end
 end

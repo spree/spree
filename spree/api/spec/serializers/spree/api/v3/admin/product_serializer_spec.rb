@@ -8,6 +8,12 @@ RSpec.describe Spree::Api::V3::Admin::ProductSerializer do
   describe 'admin serializer' do
     subject { described_class.new(product, params: base_params).to_h }
 
+    it 'never renders the storefront pricing_access code' do
+      result = described_class.new(product, params: base_params.merge(pricing_access: nil)).to_h
+
+      expect(result).not_to have_key('pricing_access')
+    end
+
     it 'includes admin-only attributes' do
       expect(subject.keys).to include('deleted_at', 'status', 'created_at', 'updated_at')
     end

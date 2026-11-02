@@ -1,3 +1,23 @@
+## 2026-11-02: Storefront company registration moves to Enterprise
+
+**Context:** With instant registration in open source, the `company_required` posture protected nothing: anyone with an email address could create an account, register a company and see prices in two calls. Adding a simple approve or reject step to open source was considered and rejected. Merchants who want approval almost always want checks as well, such as tax ID validation, documents or rules that differ by country, so a simple step is the part every merchant outgrows first, and it would leave two versions of one flow to maintain.
+
+**Decision:** `POST /store/companies`, the `Companies::Register` workflow and the `company.registered` event leave open source before release. Business registration ships as one Enterprise product: application, verification requirements, review and approval. Open source keeps the mechanisms both tiers and host apps need: the activation policy, the `company_required` posture, the `pricing_access` codes and the two checkout requirement codes. In open source, companies are created by staff and joined through invitations, so `company_required` means "only businesses the merchant set up". Company requirements stay separate from seller requirements, in their own tables, rather than sharing one STI hierarchy.
+
+**Consequences:** Supersedes the registration half of 2026-08-30 and the registration answer limits of 2026-11-01. Nothing shipped, so nothing is deprecated. A host app that wants its own front door builds it on the activation policy and the company models. The plan is renamed `6.1-b2b-company-activation.md`.
+
+**Plans amended:** `6.1-b2b-company-activation.md` (renamed from `6.1-b2b-company-self-registration.md`).
+
+## 2026-11-01: The members-only posture is `company_required`, and `pricing_access` is a Store API field
+
+**Context:** Reviewing company self-registration before its 6.1 release raised two problems with the posture's name. Under the open-source default policy every company is active, so a merchant choosing `approval_required` got "company members only" with nothing approved. And `approval_required` is already the documented Enterprise order-approval checkout response, so one string would have named both approval concepts this log keeps apart. The same review found `pricing_access` rendered always-null on admin, seller, email and event payloads, and registration answers stored with no limits.
+
+**Decision:** The posture is `company_required`, matching the `pricing_access` code the default policy returns; an approval flow still shows "awaiting approval" through its own code. Nothing shipped under the old name, so there is no deprecation bridge. `pricing_access` renders only when the Store API's gating params supply it, is dropped by the back-office and email serializers, and is typed as the open list `PricingAccess`. `Companies::Register` refuses registration answers that are not a flat form: at most 50 answers, keys up to 100 characters, and scalar values with text up to 1,000 characters.
+
+**Consequences:** The price check still runs once per request on `company_required` channels for signed-in buyers. Making it lazy would mean a lazy value inside the serializer params, and any code path copying that hash would silently show prices, so it stays eager and the lookup reads memberships in small batches instead of loading them all.
+
+**Plans amended:** `6.1-b2b-company-activation.md` (posture, `pricing_access`, registration answers).
+
 ## 2026-10-27: PayPal becomes a provider gem in a 6.0 patch release
 
 **Context:** `spree_paypal_checkout` 0.7.1 does not run on 6.0, so merchants taking PayPal on 5.x cannot upgrade. Its payment-session code predates the cart/order split, `settle_payment!` and money amounts, and several of its behaviours are wrong under 6.0: it stores the capture id as the payment's reference, maps the buyer's approval to an authorization, which in 6.0 would place an order with no money taken, and logs buyer details.
@@ -5237,18 +5257,15 @@ Deliberately 6.1: every piece is additive, nothing needs the 6.0 breaking
 window, and 6.0 work must not build interim approval primitives in the
 meantime.
 
-**Enterprise** (`ee/docs/plans/b2b-company-onboarding.md`)
+**Enterprise** (the company onboarding plan in the Enterprise repository)
 registers the policy and owns the flow: an application record (FK → the
 OSS company; `spree_companies` stays status-free — this supersedes the
 same-day draft that put five statuses on Company), the seller-onboarding
 shape reused deliberately — requirements + submissions + evaluated-on-read
 statuses + exactly two enforcement points, reopen-with-note as the
 request-more-information move — plus the review queue, mails, and
-`approval_pending` pricing codes. Rationale: no modern platform ships
-registration approval in open source and everyone who has it charges for
-it, while the OSS side keeps a real free feature (instant self-registration
-— open-starter parity) and the funnel shape holds: registration works free,
-verification is the upgrade trigger. Two approval concepts stay distinct
+`approval_pending` pricing codes. The OSS side keeps a real free feature:
+instant self-registration with a members-only posture. Two approval concepts stay distinct
 forever: account verification (merchant ↔ company, this split) vs order
 approvals/spend limits (company-internal governance, the existing
 Enterprise plan).
@@ -6681,6 +6698,29 @@ the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
 already lists is reported as installed rather than ejecting the project to
 re-add it.
 
+## 2026-10-27 — Company self-registration retargets to 6.1 and is built on released 6.0
+
+6.0 shipped stable without the B2B front door. The mechanisms
+(`6.1-b2b-company-activation.md`, renamed from 6.0) are additive and
+need no breaking window, so they land in the next minor rather than a patch
+release. The August pull-forward to 6.0 GA is spent; Enterprise onboarding
+builds on 6.1.
+
+Implementation choices, settled while porting the work onto released 6.0:
+the one-root guard refuses a second founding (`already_registered`) in a store
+where the customer already holds a root membership; `pricing_access` rides every
+payload that nulls a price rather than the channel, and admin and event
+payloads carry it always-null as an additive constant; receipts (completed
+orders, order history, own balances) opt out of the posture through a
+`renders_receipts!` macro, because the posture protects catalog prices and
+not the record of money already taken; an explicitly named inactive company
+keeps the sale's attribution and loses only its agreements and exemptions,
+with a placed order exempt from the question entirely; and completion
+distinguishes `company_selection_required` from `company_activation_required`
+so a multi-company buyer is asked to choose rather than to register.
+
+Plans amended: `6.1-b2b-company-activation.md` (retargeted, In
+development).
 ## 2026-11-02 — Dashboard packages are tree-shakeable; registration at import time lives only in the bootstrap modules
 
 The dashboard and seller panel ship as one JavaScript file because the four
