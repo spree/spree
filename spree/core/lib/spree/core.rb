@@ -323,6 +323,20 @@ module Spree
   # @return [Array<Class>]
   singleton_class.delegate :tax_providers, :tax_providers=, to: :spree_config
 
+  # Extensions that copy their own cart data onto the order a cart becomes.
+  # Each entry responds to +call(cart:, order:, line_item_map:)+, where the map
+  # pairs each cart line item with its copy on the order. Both copies run them
+  # — checkout ({Spree::Carts::Complete}) and the draft-order copy
+  # ({Spree::Orders::CreateFromCart}) — inside their transaction, once the
+  # order's line items exist, so an entry that raises rolls the order back.
+  #
+  # Append, never assign, so an extension does not drop what another added:
+  #
+  #   Spree.cart_copiers << MyApp::CopyEngravings
+  #
+  # @return [Array<#call>]
+  singleton_class.delegate :cart_copiers, :cart_copiers=, to: :spree_config
+
   # Pricing engines a store can be pointed at. Connector gems append their own,
   # so a merchant picks from what is actually installed.
   #

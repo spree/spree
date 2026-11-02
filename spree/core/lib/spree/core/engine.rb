@@ -10,6 +10,7 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
+                               :cart_copiers,
                                :media_viewable_types,
                                :default_tax_provider,
                                :tax_providers,
@@ -79,7 +80,7 @@ module Spree
         %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
            delivery_rate_providers tax_providers pricing_providers inventory_providers
            payout_providers digital_asset_providers delivery_profile_types pickup_point_providers
-           maintenance_tasks].each do |registry|
+           maintenance_tasks cart_copiers].each do |registry|
           app.config.spree[registry] = []
         end
         app.config.spree.line_item_comparison_hooks = Set.new

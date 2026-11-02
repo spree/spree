@@ -292,6 +292,7 @@ module Spree
           copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
           copy_po_document!(cart, order)
           repoint_money_records!(cart, order)
+          Spree.cart_copiers.each { |copier| copier.call(cart: cart, order: order, line_item_map: line_item_map) }
 
           order.update_columns(
             item_total: cart.item_total,
