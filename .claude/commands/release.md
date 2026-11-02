@@ -181,9 +181,11 @@ Stop when `/open-pr` reports: the merge needs a human review.
 Run from a checkout of `main` at the merge commit (`git pull`). Check
 `Spree::VERSION` is the target, no `v<version>` tag exists yet, and every
 workflow that ran on the merge commit succeeded: `gh run list --commit <merge
-sha> --json name,conclusion`. A workflow that did not run is fine (Tests runs
-only for changes under `spree/`); a failed or cancelled one is not. Do not run
-any of the commands below; print them for the user, who tags and publishes.
+sha> --json name,conclusion`. Tests must be among them: every release commit
+changes `Spree::VERSION` under `spree/`, so a missing Tests run means CI never
+covered the merge commit. Stop on a missing, failed or cancelled run. Do not
+run any of the commands below; print them for the user, who tags and
+publishes.
 
 1. The tag commands, for the merge commit, with a tag for each tool that moved
    and three tags at most in one push (GitHub starts no workflow beyond that):
