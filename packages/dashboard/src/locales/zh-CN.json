@@ -3313,6 +3313,7 @@
         "empty": "此订单没有商品。",
         "fully_fulfilled": "此订单已全部履行，无法再编辑。",
         "items_title": "商品",
+        "saved_not_reloaded": "已保存，但无法重新加载订单。请刷新页面以查看最新合计。",
         "subtitle": "订单 {{number}}",
         "title": "编辑订单",
         "totals_hint": "保存后，服务器会重新计算金额。",

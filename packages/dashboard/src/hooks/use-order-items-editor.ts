@@ -68,9 +68,11 @@ export function useOrderItemsEditor(order: Order | undefined) {
 
   useEffect(() => {
     if (!order) return
+    // The saved side follows every refresh — discard and the totals read it —
+    // even when staged edits keep the form from re-hydrating.
+    setSavedOrder(order)
     if (form.formState.isDirty && hydratedOrderId.current === order.id) return
     hydratedOrderId.current = order.id
-    setSavedOrder(order)
     form.reset(editFormFor(order))
   }, [order, form])
 
@@ -103,6 +105,10 @@ export function useOrderItemsEditor(order: Order | undefined) {
     // while the save is in flight, nothing below may touch the form.
     const savingOrderId = order?.id
     const stillShown = () => shownOrderId.current === savingOrderId
+
+    // One save at a time: the first to finish would unlock the editor while
+    // the other is still in flight.
+    if (savingRef.current) return false
 
     if (payload.length > 0 && !savingOrderId) {
       toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
@@ -162,6 +168,7 @@ export function useOrderItemsEditor(order: Order | undefined) {
         // The lines were saved but could not be read back. Keep what was
         // sent as the saved values, so the form is pristine and the next
         // read of the order re-hydrates it with the server's totals.
+        toastManager.add({ type: 'warning', title: t('admin.orders.edit.saved_not_reloaded') })
         form.reset({
           items: values.items
             .filter((item) => !item.removed)

@@ -3321,6 +3321,7 @@
         "empty": "Đơn hàng này không có mặt hàng nào.",
         "fully_fulfilled": "Lệnh này đã được thực hiện đầy đủ và không thể chỉnh sửa được nữa.",
         "items_title": "Mặt hàng",
+        "saved_not_reloaded": "Đã lưu, nhưng không thể tải lại đơn hàng. Hãy làm mới trang để xem tổng mới nhất.",
         "subtitle": "Đặt hàng {{number}}",
         "title": "Chỉnh sửa đơn hàng",
         "totals_hint": "Tổng số được máy chủ tính toán lại sau khi bạn lưu.",

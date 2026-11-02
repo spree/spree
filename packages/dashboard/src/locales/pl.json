@@ -3351,6 +3351,7 @@
         "empty": "To zamówienie nie zawiera pozycji.",
         "fully_fulfilled": "To zamówienie jest w pełni zrealizowane i nie można go już edytować.",
         "items_title": "Pozycje",
+        "saved_not_reloaded": "Zapisano, ale nie udało się ponownie wczytać zamówienia. Odśwież stronę, aby zobaczyć aktualne sumy.",
         "subtitle": "Zamówienie {{number}}",
         "title": "Edytuj zamówienie",
         "totals_hint": "Sumy są przeliczane przez serwer po zapisaniu zmian.",
