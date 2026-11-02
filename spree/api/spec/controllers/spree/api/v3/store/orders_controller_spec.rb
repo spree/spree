@@ -186,12 +186,153 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         expect(response).to have_http_status(:not_found)
       end
 
-      it 'returns not found for incomplete orders' do
-        incomplete_order = create(:order_with_line_items, customer: user, store: store)
+      # A checkout's own draft belongs to its cart, which the buyer reads.
+      it 'returns not found for the transient draft of a checkout' do
+        cart = create(:cart_with_line_items, customer: user, store: store)
+        incomplete_order = create(:order_with_line_items, customer: user, store: store, cart_id: cart.id)
         get :show, params: { id: incomplete_order.to_param }
 
         expect(response).to have_http_status(:not_found)
       end
+
+      it 'returns not found for a canceled draft' do
+        canceled_draft = create(:order_with_line_items, customer: user, store: store)
+        canceled_draft.update_columns(status: 'canceled')
+        get :show, params: { id: canceled_draft.to_param }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'with a draft order raised for the buyer' do
+      let!(:payment_method) { create(:bogus_payment_method) }
+      let(:draft) { create(:order_with_line_items, customer: user, store: store) }
+
+      before { request.headers['Authorization'] = "Bearer #{jwt_token}" }
+
+      it 'returns the draft with the methods it can be paid with' do
+        get :show, params: { id: draft.to_param }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(draft.prefixed_id)
+        expect(json_response['completed_at']).to be_nil
+        expect(json_response['payment_methods'].map { |method| method['id'] }).to include(payment_method.prefixed_id)
+      end
+
+      it 'leaves the payment methods off a placed order' do
+        get :show, params: { id: order.to_param }
+
+        expect(json_response).not_to have_key('payment_methods')
+      end
+
+      it 'returns not found for another customer’s draft' do
+        other_draft = create(:order_with_line_items, customer: create(:user), store: store)
+        get :show, params: { id: other_draft.to_param }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'returns a guest draft to the bearer of its token' do
+        guest_draft = create(:order_with_line_items, customer: nil, store: store)
+        request.headers['Authorization'] = nil
+        request.headers['x-spree-token'] = guest_draft.token
+
+        get :show, params: { id: guest_draft.to_param }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(guest_draft.prefixed_id)
+      end
+    end
+  end
+
+  describe 'POST #complete' do
+    let(:draft) { create(:order_with_line_items, customer: user, store: store) }
+    let(:published) { [] }
+
+    before do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+      allow(Spree::Events).to receive(:publish) { |name, *| published << name }
+    end
+
+    it 'places the draft, processing its payment', :events do
+      payment = create(:payment, order: draft, amount: draft.total).tap(&:create_payment_profile)
+
+      post :complete, params: { id: draft.prefixed_id }
+
+      expect(published).to include('order.placed')
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(draft.prefixed_id)
+      expect(json_response['completed_at']).to be_present
+      expect(draft.reload).to be_placed
+      expect(payment.reload).to be_completed
+    end
+
+    it 'places the draft once a payment session settled its payment' do
+      session = create(:bogus_payment_session, order: draft, payment_method: create(:bogus_payment_method),
+                                               amount: draft.total)
+      session.settle_payment!(captured: true)
+
+      post :complete, params: { id: draft.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(draft.reload).to be_placed
+      expect(draft.payments.completed.sum(:amount)).to eq(draft.total)
+    end
+
+    it 'places a guest draft for the bearer of its token' do
+      guest_draft = create(:order_with_line_items, customer: nil, email: 'buyer@example.com', store: store)
+      create(:payment, order: guest_draft, amount: guest_draft.total).tap(&:create_payment_profile)
+      request.headers['Authorization'] = nil
+      request.headers['x-spree-token'] = guest_draft.token
+
+      post :complete, params: { id: guest_draft.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(guest_draft.reload).to be_placed
+    end
+
+    it 'refuses without a payment covering the total, leaving the draft' do
+      post :complete, params: { id: draft.prefixed_id }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('order_cannot_complete')
+      expect(draft.reload).to be_draft
+    end
+
+    # A double-clicked Pay, or a webhook that placed it first.
+    it 'answers with an already placed order without placing it again', :events do
+      draft.update_columns(status: 'placed', completed_at: Time.current)
+
+      post :complete, params: { id: draft.prefixed_id }
+
+      expect(published).not_to include('order.placed')
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(draft.prefixed_id)
+    end
+
+    it 'returns not found for another customer’s draft' do
+      other_draft = create(:order_with_line_items, customer: create(:user), store: store)
+
+      post :complete, params: { id: other_draft.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+      expect(other_draft.reload).to be_draft
+    end
+
+    it 'returns not found for a draft in another store' do
+      other_draft = create(:order_with_line_items, customer: user, store: create(:store))
+
+      post :complete, params: { id: other_draft.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'returns not found for a canceled order' do
+      draft.update_columns(status: 'canceled')
+
+      post :complete, params: { id: draft.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

@@ -9,6 +9,7 @@ import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
 import { MarketSchema } from './Market';
 import { PaymentSchema } from './Payment';
+import { PaymentMethodSchema } from './PaymentMethod';
 
 export const OrderSchema = z.object({
   id: z.string(),
@@ -67,6 +68,7 @@ export const OrderSchema = z.object({
   shipping_address: AddressSchema.nullable(),
   gift_card: GiftCardSchema.nullable(),
   get market() { return MarketSchema.nullable(); },
+  payment_methods: z.array(PaymentMethodSchema).optional(),
   custom_fields: z.array(CustomFieldSchema).optional(),
 });
 

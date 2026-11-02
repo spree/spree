@@ -66,6 +66,7 @@ export const OrderSchema = z.object({
   shipping_address: AddressSchema.nullable().optional(),
   get gift_card() { return GiftCardSchema.nullable(); },
   get market() { return MarketSchema.nullable(); },
+  payment_methods: z.array(PaymentMethodSchema).optional(),
   custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   status: z.string(),
@@ -108,7 +109,6 @@ export const OrderSchema = z.object({
   cart: CartSchema.optional(),
   channel: ChannelSchema.optional(),
   preferred_stock_location: StockLocationSchema.optional(),
-  payment_methods: z.array(PaymentMethodSchema).optional(),
   get customer() { return CustomerSchema.optional(); },
   cancel_reason: OrderCancellationReasonSchema.optional(),
   get returns() { return z.array(ReturnSchema).optional(); },
@@ -158,6 +158,7 @@ export const OrderSchema = z.object({
   shipping_address: z.ZodOptional<z.ZodType<Exclude<Order['shipping_address'], undefined>>>;
   gift_card: z.ZodType<Order['gift_card']>;
   market: z.ZodType<Order['market']>;
+  payment_methods: z.ZodOptional<z.ZodType<Exclude<Order['payment_methods'], undefined>>>;
   custom_fields: z.ZodOptional<z.ZodType<Exclude<Order['custom_fields'], undefined>>>;
   external_references: z.ZodType<Order['external_references']>;
   status: z.ZodType<Order['status']>;
@@ -200,7 +201,6 @@ export const OrderSchema = z.object({
   cart: z.ZodOptional<z.ZodType<Exclude<Order['cart'], undefined>>>;
   channel: z.ZodOptional<z.ZodType<Exclude<Order['channel'], undefined>>>;
   preferred_stock_location: z.ZodOptional<z.ZodType<Exclude<Order['preferred_stock_location'], undefined>>>;
-  payment_methods: z.ZodOptional<z.ZodType<Exclude<Order['payment_methods'], undefined>>>;
   customer: z.ZodOptional<z.ZodType<Exclude<Order['customer'], undefined>>>;
   cancel_reason: z.ZodOptional<z.ZodType<Exclude<Order['cancel_reason'], undefined>>>;
   returns: z.ZodOptional<z.ZodType<Exclude<Order['returns'], undefined>>>;
