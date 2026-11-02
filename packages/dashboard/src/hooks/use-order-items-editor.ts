@@ -3,7 +3,7 @@ import type { Order, Variant } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, useResourceKey } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -56,12 +56,29 @@ export function useOrderItemsEditor(order: Order | undefined) {
   // which a save in flight checks before it touches the form.
   const shownOrderId = useRef<string | undefined>(undefined)
   shownOrderId.current = order?.id
+  // The order the form's saved values come from: the `order` prop, or what a
+  // save read back when the caller's prop has not caught up yet.
+  const [savedOrder, setSavedOrder] = useState<Order | undefined>(order)
+
+  function rebaseline(next: Order) {
+    hydratedOrderId.current = next.id
+    setSavedOrder(next)
+    form.reset(editFormFor(next))
+  }
+
   useEffect(() => {
     if (!order) return
     if (form.formState.isDirty && hydratedOrderId.current === order.id) return
     hydratedOrderId.current = order.id
+    setSavedOrder(order)
     form.reset(editFormFor(order))
   }, [order, form])
+
+  // Covers the whole save, the read-back included: the form is replaced at
+  // the end, so nothing may be staged until then. The ref answers the same
+  // question synchronously for `stageVariant`.
+  const [isSaving, setIsSaving] = useState(false)
+  const savingRef = useRef(false)
 
   const queryClient = useQueryClient()
   const orderKey = useResourceKey('orders', order?.id ?? '')
@@ -92,22 +109,41 @@ export function useOrderItemsEditor(order: Order | undefined) {
       return false
     }
 
-    try {
-      if (payload.length === 0) {
-        // Nothing was sent, so every remaining row is as the server has it:
-        // re-baseline them as they are, server totals included. Leaving the
-        // form dirty would trip the unsaved-changes guard on the way out.
-        form.reset({
-          items: values.items
-            .filter((item) => !item.added && !item.removed)
-            .map((item) => ({ ...item, revert_price: false })),
-        })
-        return true
-      }
-
-      await saveMutation.mutateAsync(payload)
+    if (payload.length === 0) {
       if (!stillShown()) return false
+      // Nothing was sent, so every remaining row is as the server has it:
+      // re-baseline them as they are, server totals included. Leaving the
+      // form dirty would trip the unsaved-changes guard on the way out.
+      form.reset({
+        items: values.items
+          .filter((item) => !item.added && !item.removed)
+          .map((item) => ({ ...item, revert_price: false })),
+      })
+      return true
+    }
 
+    savingRef.current = true
+    setIsSaving(true)
+    let patched = false
+    try {
+      await saveMutation.mutateAsync(payload)
+      patched = true
+    } catch (err) {
+      if (!stillShown()) return false
+      if (mapSpreeErrorsToForm(err, form.setError)) return false
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
+      return false
+    } finally {
+      // A failed save unlocks here; one that went through stays locked until
+      // the read-back below has replaced the form.
+      if (!patched) {
+        savingRef.current = false
+        setIsSaving(false)
+      }
+    }
+
+    try {
+      if (!stillShown()) return false
       // Re-baseline on what the server saved — the client cannot know a saved
       // line's adjustments. The mutation awaits the order refetch, so a page
       // that loads the order through `useOrder` already has it in the cache;
@@ -116,23 +152,39 @@ export function useOrderItemsEditor(order: Order | undefined) {
       const saved =
         cached?.data && cached.dataUpdatedAt >= startedAt
           ? cached.data
-          : await adminClient.orders.get(savingOrderId as string, {
-              expand: ['items', 'fulfillments'],
-            })
+          : await adminClient.orders
+              .get(savingOrderId as string, { expand: ['items', 'fulfillments'] })
+              .catch(() => null)
       if (!stillShown()) return false
-      form.reset(editFormFor(saved))
+      if (saved) {
+        rebaseline(saved)
+      } else {
+        // The lines were saved but could not be read back. Keep what was
+        // sent as the saved values, so the form is pristine and the next
+        // read of the order re-hydrates it with the server's totals.
+        form.reset({
+          items: values.items
+            .filter((item) => !item.removed)
+            .map((item) => ({
+              ...item,
+              added: false,
+              saved_quantity: item.quantity,
+              saved_price: item.price,
+              revert_price: false,
+            })),
+        })
+      }
       return true
-    } catch (err) {
-      if (!stillShown()) return false
-      if (mapSpreeErrorsToForm(err, form.setError)) return false
-      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
-      return false
+    } finally {
+      savingRef.current = false
+      setIsSaving(false)
     }
   }
 
   /** Drops every staged edit and returns to the saved lines. */
   function discard() {
-    if (order) form.reset(editFormFor(order))
+    const saved = savedOrder?.id === order?.id ? savedOrder : order
+    if (saved) form.reset(editFormFor(saved))
   }
 
   /**
@@ -143,7 +195,7 @@ export function useOrderItemsEditor(order: Order | undefined) {
    */
   function stageVariant(variant: Variant, quantity: number) {
     // The post-save reset would erase a row staged while the save is pending.
-    if (saveMutation.isPending) return
+    if (savingRef.current) return
     const current = form.getValues('items')
     const existingIndex = current.findIndex((item) => item.variant_id === variant.id)
 
@@ -189,6 +241,12 @@ export function useOrderItemsEditor(order: Order | undefined) {
     save,
     discard,
     stageVariant,
-    isSaving: saveMutation.isPending,
+    isSaving,
+    /**
+     * The order as last saved — render `OrderTotalsCard` against it. Usually
+     * the `order` passed in; after a save on a page whose `order` has not
+     * refreshed yet, the order the save read back.
+     */
+    savedOrder: savedOrder?.id === order?.id ? savedOrder : order,
   }
 }

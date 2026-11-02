@@ -136,7 +136,7 @@ function OrderEditPage() {
               </CardContent>
             </Card>
           }
-          sidebar={<OrderTotalsCard order={order} items={editor.items} />}
+          sidebar={<OrderTotalsCard order={editor.savedOrder ?? order} items={editor.items} />}
         />
       </form>
 
