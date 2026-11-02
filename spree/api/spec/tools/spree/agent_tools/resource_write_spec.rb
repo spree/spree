@@ -424,5 +424,18 @@ RSpec.describe 'agent generic record writes' do
 
       expect(result[:error]).to include('belong to an order', 'orders')
     end
+
+    # A hint is only offered when the caller could follow it: a read-only key
+    # is told how to read the rows, not how to write them.
+    context 'with a read-only key' do
+      let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_promotions']) }
+
+      it 'suggests only the calls the caller may make' do
+        result = tool('search_resources').call(resource: 'promotion_rules')
+
+        expect(result[:error]).to include('belong to a promotion', 'expand: ["rules"]')
+        expect(result[:error]).not_to include('Write them')
+      end
+    end
   end
 end

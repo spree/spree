@@ -184,12 +184,16 @@ class AgentTool
 
       owner = parent.singularize.tr('_', ' ')
       sentences = ["#{entry.key} belong to #{owner.match?(/\A[aeiou]/) ? 'an' : 'a'} #{owner} and cannot be #{verb} on their own."]
-      if attribute
+      # Each suggested call is one this caller may actually make; a hint
+      # that leads straight to a permission refusal is worse than none.
+      readable = parent_entry && context.permitted?(parent_entry.permission)
+      writable = parent_entry&.write_permission.present? && context.permitted?(parent_entry.write_permission)
+      if attribute && writable
         sentences << "Write them in the #{attribute} attribute of #{parent} — describe_resource #{parent} shows the shape and the accepted types."
-        if parent_entry.expandable_associations.include?(attribute)
-          sentences << "Read them with get_resource on #{parent} and expand: [\"#{attribute}\"]."
-        end
-      elsif parent_entry
+      end
+      if attribute && readable && parent_entry.expandable_associations.include?(attribute)
+        sentences << "Read them with get_resource on #{parent} and expand: [\"#{attribute}\"]."
+      elsif readable && !attribute
         sentences << "Start from #{parent}: get_resource with expand lists what it carries (describe_resource #{parent} names the options)."
       end
 

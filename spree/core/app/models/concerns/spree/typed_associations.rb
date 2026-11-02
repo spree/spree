@@ -47,8 +47,11 @@ module Spree
       pending = instance_variable_get(ivar)
       return unless pending
 
-      instance_variable_set(ivar, nil)
+      # Cleared only once the rows are written: a refused row rolls the save
+      # back, and a retried save must carry the rows again rather than
+      # persist the owner without them.
       reconcile_typed_association(association, pending)
+      instance_variable_set(ivar, nil)
     end
 
     # All or nothing: on a saved parent the rows are written as they are

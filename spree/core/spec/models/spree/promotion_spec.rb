@@ -1062,6 +1062,8 @@ describe Spree::Promotion, type: :model do
 
       expect { fresh.save! }.to raise_error(Spree::Preferences::InvalidPreferences)
       expect(Spree::Promotion.where(name: 'Unsaved')).not_to exist
+      # Still pending, so a retried save cannot persist the promotion bare.
+      expect(fresh).to be_pending_rules_or_actions
     end
 
     it 'falls through to AR when assigned PromotionRule instances' do
