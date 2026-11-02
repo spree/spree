@@ -72,6 +72,8 @@ module Spree
             other_line_item
           end
         end
+        # Matching loaded the surviving cart's items before any moved in.
+        cart.line_items.reset
       end
 
       def destroy_absorbed_line_items

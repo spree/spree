@@ -83,13 +83,16 @@ RSpec.describe Spree::Carts::Merge do
 
       it 'maps each guest line to the line now holding it, before the absorbed ones are deleted' do
         seen = nil
+        seen_cart_lines = nil
         Spree.hooks.register('carts.merge.after_items_moved') do |flow|
           seen = flow.line_item_map.to_h { |from, to| [from.id, [to.id, Spree::LineItem.exists?(from.id)]] }
+          seen_cart_lines = flow.cart.line_items.to_a
         end
 
         described_class.call(cart: cart, other_cart: other_cart)
 
         expect(seen).to eq(absorbed.id => [existing.id, true], moved.id => [moved.id, true])
+        expect(seen_cart_lines).to contain_exactly(existing, moved)
         expect(Spree::LineItem.exists?(absorbed.id)).to be(false)
         expect(cart.reload.line_items).to contain_exactly(existing, moved)
       end
