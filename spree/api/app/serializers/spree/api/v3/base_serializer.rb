@@ -179,14 +179,6 @@ module Spree
         end
         private_class_method :preference_type_hint
 
-        # Declares the wire form of an `acted_by` association: the actor's
-        # prefixed id, the kind of actor it is, and the expansion. Both
-        # halves read off the columns, so naming an actor costs no query and
-        # the id and the kind always describe the same row (see
-        # docs/plans/6.0-action-actors.md).
-        #
-        # Declare the matching `typelize` entries alongside, as with any
-        # other attribute.
         # Declares `<slot>_filename`, `<slot>_byte_size` and
         # `<slot>_content_type` for a private attachment, nil when nothing is
         # attached. The file itself is served by the record's download action.
@@ -201,6 +193,14 @@ module Spree
                    "#{slot}_content_type": [:string, nullable: true]
         end
 
+        # Declares the wire form of an `acted_by` association: the actor's
+        # prefixed id, the kind of actor it is, and the expansion. Both
+        # halves read off the columns, so naming an actor costs no query and
+        # the id and the kind always describe the same row (see
+        # docs/plans/6.0-action-actors.md).
+        #
+        # Declare the matching `typelize` entries alongside, as with any
+        # other attribute.
         def self.actor_attributes(*names)
           names.each do |name|
             attribute(:"#{name}_id") { |object| object.acted_by_prefixed_id(name) }

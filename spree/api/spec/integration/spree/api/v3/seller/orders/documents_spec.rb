@@ -15,6 +15,32 @@ RSpec.describe 'Seller Order Documents API', type: :request, swagger_doc: 'api-r
   let(:order_id) { order.prefixed_id }
   let!(:document) { create(:order_document, order: order) }
 
+  path '/api/v3/seller/orders/{order_id}/documents/{id}' do
+    parameter name: :order_id, in: :path, type: :string, required: true
+    parameter name: :id, in: :path, type: :string, required: true
+
+    delete 'Delete an order document' do
+      tags 'Order Documents'
+      security [bearer_auth: []]
+      description "Only a document the seller's own team uploaded: the operator's and the buyer's paperwork stay."
+      seller_sdk_example 'order-documents/delete'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '204', "the seller's own document" do
+        let(:id) { create(:order_document, order: order, uploaded_by: seller_user).prefixed_id }
+
+        run_test!
+      end
+
+      response '404', "the operator's document" do
+        let(:id) { document.prefixed_id }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/seller/orders/{order_id}/documents' do
     parameter name: :order_id, in: :path, type: :string, required: true
 

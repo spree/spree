@@ -9,10 +9,12 @@ module Spree
     on 'invoice.created', :deliver_new
     on 'invoice.delivery_requested', :deliver_again
 
+    # The invoice email setting is the buyer's: a store whose own system sends
+    # buyer invoices still sends sellers their commission invoices.
     def deliver_new(event)
       invoice = find_invoice(event)
-      return unless invoice&.store&.prefers_send_invoice_email?
-      return unless audience_emails_enabled?(invoice)
+      return if invoice.nil? || !audience_emails_enabled?(invoice)
+      return if invoice.order && !invoice.store.prefers_send_invoice_email?
 
       deliver(invoice, resend: false)
     end

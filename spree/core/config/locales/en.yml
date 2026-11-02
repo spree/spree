@@ -255,6 +255,7 @@ en:
         must_apply_to_products: must be a custom field definition for products
         must_belong_to_same_store: must belong to the same store
         not_registered: is not a registered provider
+        order_document_limit_reached: An order can hold at most %{count} documents added by the buyer
         spree_content_type_not_allowed: is not a file type we accept
         too_many_decimals: has more than %{count} decimal places
       models:

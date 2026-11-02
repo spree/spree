@@ -30,6 +30,14 @@ RSpec.describe Spree::OrderDocument, type: :model do
     expect(document.update(customer_visible: false)).to be(false)
   end
 
+  it 'caps how many documents the buyer can add to one order' do
+    stub_const('Spree::OrderDocument::MAX_CUSTOMER_UPLOADS', 1)
+    create(:order_document, order: order, uploaded_by_customer: true, customer_visible: true)
+
+    expect(build(:order_document, order: order, uploaded_by_customer: true, customer_visible: true)).not_to be_valid
+    expect(build(:order_document, order: order)).to be_valid
+  end
+
   it 'knows when the buyer uploaded it' do
     document = build(:order_document, order: order, uploaded_by_customer: true)
 
