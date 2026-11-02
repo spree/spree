@@ -60,6 +60,11 @@ export type VariantParams = {
    * created when missing.
    */
   options?: VariantOptionParams[]
+  /**
+   * Which of the marketplace's delivery profiles this offer ships under. Ignored on a variant of a
+   * product the seller owns.
+   */
+  delivery_profile_id?: string | null
   /** Per-currency prices. Upserted by currency. */
   prices?: {
     /** Omit to price in the store's currency. A seller has no currency of their own. */

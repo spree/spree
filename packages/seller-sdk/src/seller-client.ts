@@ -49,6 +49,7 @@ import type {
   TaxIdentifier,
   TeamMember,
   Transfer,
+  Variant,
 } from './types'
 import type {
   DeliveryMethodFilters,
@@ -98,6 +99,8 @@ import type {
   ImportCreateParams,
   InvitationAcceptParams,
   LoginParams,
+  OfferCreateParams,
+  OfferUpdateParams,
   OnboardingPayoutAccountParams,
   OrderAddressCorrectionParams,
   OrderCancelParams,
@@ -417,8 +420,8 @@ export class SellerClient {
   /**
    * The seller's own catalog — products they own outright. Every call is
    * rooted in the seller server-side, so an id belonging to another seller
-   * is a 404. Variants listed against shared master-catalog products are a
-   * separate surface.
+   * is a 404. Offers listed against the marketplace's shared master-catalog
+   * products are `masterProducts` and `variants` below.
    */
   readonly products = {
     list: (
@@ -547,6 +550,106 @@ export class SellerClient {
       delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/products/${productId}/digital_assets/${id}`, options),
     },
+  }
+
+  /**
+   * The marketplace's shared catalog — the products a seller can list their
+   * own offer against.
+   *
+   * Read only, and only what the operator has opened: a product is closed to
+   * sellers until they say otherwise. Serialized exactly as the storefront
+   * sees it, so a seller compares rival offers on price, seller and stock and
+   * never sees a rival's costs or warehouses.
+   */
+  readonly masterProducts = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Product>> =>
+      this.request<PaginatedResponse<Product>>('GET', '/master_products', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    /**
+     * @param expand associations to include — the offer form asks for
+     *   `option_types,variants`, which is the axes it must fill in and the
+     *   offers already on the product.
+     */
+    get: (id: string, expand?: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('GET', `/master_products/${id}`, {
+        ...options,
+        params: expand ? { expand } : undefined,
+      }),
+  }
+
+  /**
+   * This seller's offers — the rows they list against the marketplace's own
+   * products.
+   *
+   * Rooted in the seller server-side, so a rival's offer on the same product
+   * is a 404. Creating one names the product; everything after that addresses
+   * the offer itself.
+   */
+  readonly variants = {
+    /** Every offer this seller holds. `expand=product` names what each is on. */
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Variant>> =>
+      this.request<PaginatedResponse<Variant>>('GET', '/variants', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    /** This seller's offers on one master product. */
+    listFor: (
+      masterProductId: string,
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Variant>> =>
+      this.request<PaginatedResponse<Variant>>(
+        'GET',
+        `/master_products/${masterProductId}/variants`,
+        { ...options, params: params ? transformListParams(params) : undefined },
+      ),
+
+    get: (id: string, expand?: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('GET', `/variants/${id}`, {
+        ...options,
+        params: expand ? { expand } : undefined,
+      }),
+
+    /**
+     * List an offer against a master product. It opens as a draft — going on
+     * sale is the marketplace's decision, asked for with `submit`.
+     */
+    create: (
+      masterProductId: string,
+      params: OfferCreateParams,
+      options?: RequestOptions,
+    ): Promise<Variant> =>
+      this.request<Variant>('POST', `/master_products/${masterProductId}/variants`, {
+        ...options,
+        body: params,
+      }),
+
+    update: (id: string, params: OfferUpdateParams, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/variants/${id}`, options),
+
+    /** Ask the marketplace to put this offer on sale. */
+    submit: (id: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}/submit`, options),
+
+    /** Take an offer back down while it is worked on. */
+    draft: (id: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}/draft`, options),
+
+    archive: (id: string, options?: RequestOptions): Promise<Variant> =>
+      this.request<Variant>('PATCH', `/variants/${id}/archive`, options),
   }
 
   /**

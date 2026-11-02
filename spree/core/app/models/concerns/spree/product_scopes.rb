@@ -8,14 +8,15 @@ module Spree
       scope :ascend_by_name, -> { order("#{Product.quoted_table_name}.name ASC") }
       scope :descend_by_name, -> { order("#{Product.quoted_table_name}.name DESC") }
 
-      # Price sorting scopes that use a derived table JOIN to get prices across all variants.
-      # These ensure products are matched on any of their variants' prices.
+      # Price sorting scopes that use a derived table JOIN to get prices across
+      # the variants on sale. An offer nobody approved is left out, so a
+      # seller's draft price cannot move a product up the list.
       #
       # Uses Arel::Nodes::As for select expressions so that:
       # - PG allows ORDER BY with DISTINCT (expressions must appear in SELECT list)
       # - Mobility's select_for_count can safely call .right on all select_values
       scope :ascend_by_price, -> {
-        price_agg_sql = Price.non_zero.joins(:variant)
+        price_agg_sql = Price.non_zero.joins(:variant).merge(Variant.listed)
                             .select("#{Variant.table_name}.product_id AS product_id, MIN(#{Price.table_name}.amount) AS agg_price")
                             .group("#{Variant.table_name}.product_id")
                             .to_sql
@@ -30,7 +31,7 @@ module Spree
       }
 
       scope :descend_by_price, -> {
-        price_agg_sql = Price.non_zero.joins(:variant)
+        price_agg_sql = Price.non_zero.joins(:variant).merge(Variant.listed)
                             .select("#{Variant.table_name}.product_id AS product_id, MAX(#{Price.table_name}.amount) AS agg_price")
                             .group("#{Variant.table_name}.product_id")
                             .to_sql
@@ -47,12 +48,12 @@ module Spree
         where(Price.table_name => { amount: low..high })
       }
 
-      # Joins spree_variants and spree_stock_levels directly (without association
-      # aliases) so that the table names stay as-is. This avoids alias conflicts
+      # Joins the variants on sale and their stock levels directly (without
+      # association aliases) so that the table names stay as-is. This avoids alias conflicts
       # when combined with other scopes (e.g., price sorting) that also join
       # spree_variants through associations which generate aliases.
       def self.join_variants_and_stock_levels
-        joins("INNER JOIN #{Variant.table_name} ON #{Variant.table_name}.deleted_at IS NULL AND #{Variant.table_name}.product_id = #{Product.table_name}.id").
+        joins("INNER JOIN #{Variant.table_name} ON #{Variant.table_name}.deleted_at IS NULL AND #{Variant.table_name}.status = 'active' AND #{Variant.table_name}.product_id = #{Product.table_name}.id").
           joins("LEFT OUTER JOIN #{StockLevel.table_name} ON #{StockLevel.table_name}.deleted_at IS NULL AND #{StockLevel.table_name}.variant_id = #{Variant.table_name}.id")
       end
       private_class_method :join_variants_and_stock_levels
@@ -153,6 +154,11 @@ module Spree
         joins(:product_collections).where(Spree::ProductCollection.table_name => { collection_id: collection.id }).distinct
       end
 
+      # Ties broken by id, because several products routinely share a minimum
+      # position and ordering by position alone leaves their relative order to
+      # whatever the database returns — stable on SQLite, not on PostgreSQL,
+      # which is why the tie only ever surfaced as an intermittent CI failure
+      # rather than a local one.
       scope :ascend_by_taxons_min_position, ->(taxon_ids) {
         min_position_sql = "MIN(#{Spree::ProductCategory.table_name}.position)"
 
@@ -203,7 +209,11 @@ module Spree
         grouped = OptionValue.where(id: actual_ids).group_by(&:option_type_id)
         return none if grouped.empty?
 
-        matching_product_ids = Variant.where(deleted_at: nil).
+        # Active rows only, matching what the search providers index and what
+        # the Store API serializes: a filter must not surface a product
+        # through a seller's offer nobody has approved yet
+        # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+        matching_product_ids = Variant.where(deleted_at: nil).listed.
                                joins(option_value_variants: :option_value).
                                where(OptionValue.table_name => { id: actual_ids }).
                                group(Variant.arel_table[:id]).
@@ -238,9 +248,11 @@ module Spree
       # Products the shop sells in this currency. Base prices only: a price
       # list's rows are what one audience pays under an agreement, so a product
       # priced only by a contract is not on sale here to everyone
-      # (docs/plans/6.0-volume-pricing.md).
+      # (docs/plans/6.0-volume-pricing.md). Only the variants on sale count, so
+      # an unapproved offer's price never decides the range, filter or sale
+      # badge (docs/plans/6.0-seller-master-catalog-listings.md).
       def self.with_currency(currency)
-        joins(variants: :prices).
+        joins(listed_variants: :prices).
           where(Price.table_name => { currency: currency.upcase, price_list_id: nil }).
           where.not(Price.table_name => { amount: nil }).
           distinct

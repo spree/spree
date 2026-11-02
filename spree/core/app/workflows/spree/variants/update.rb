@@ -18,6 +18,7 @@ module Spree
         super
 
         step :assign_attributes
+        step :refuse_review_status_write
         run_hooks :validate
 
         ApplicationRecord.transaction do
@@ -33,12 +34,35 @@ module Spree
 
       def assign_attributes
         attrs = attributes.to_h.with_indifferent_access
+        @status_in_payload = attrs.key?(:status)
 
         @options_params = attrs.delete(:options)
         @prices_params = attrs.delete(:prices)
         @stock_levels_params = attrs.delete(:stock_levels) || attrs.delete(:stock_levels_attributes)
 
         variant.assign_attributes(attrs)
+      end
+
+      # An offer's status is a decision, and a decision belongs to the review
+      # workflows — they are what record who made it and settle the submission
+      # row. A plain status write would put a seller's offer on sale with
+      # nobody's name against it, so it refuses
+      # (docs/plans/6.0-seller-master-catalog-listings.md).
+      #
+      # Guarded on the row being an offer rather than on where it was: a
+      # `draft` or `archived` offer is not in review, but flipping one to
+      # `active` is exactly the write this exists to stop. `Variants::Activate`
+      # refuses an offer for the same reason.
+      #
+      # Only what this call asked for: a caller that assigns attributes itself
+      # and hands over an already-dirty record must not be refused for an edit
+      # it did not make.
+      def refuse_review_status_write
+        return unless @status_in_payload
+        return unless variant.status_changed?
+        return unless variant.offer? || variant.status_was.in?(Spree::Variant::REVIEW_STATUSES)
+
+        reject!(:status_decided_by_review, message: I18n.t('activerecord.errors.models.spree/variant.attributes.base.status_decided_by_review'))
       end
 
       def save_variant

@@ -16,4 +16,6 @@ export type VariantUpdateParams = VariantParams & {
    * entries is accepted too.
    */
   external_references?: Record<string, unknown>
+  /** The values listed are the built-in ones; extensions may add more. */
+  status?: 'draft' | 'proposed' | 'active' | 'rejected' | 'archived' | (string & {})
 }

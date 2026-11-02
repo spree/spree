@@ -302,6 +302,7 @@ export type PriceListFields = Filter.IdFilters<'catalog_id' | 'id'>
 export type ProductFields = Filter.RangeFilters<'available_on' | 'created_at' | 'discontinue_on' | 'price' | 'updated_at'>
   & Filter.TextFilters<'description' | 'name' | 'slug'>
   & Filter.IdFilters<'id' | 'seller_id'>
+  & Filter.BooleanFilters<'open_to_sellers'>
   & Filter.EnumFilters<'status', 'draft' | 'active' | 'archived' | 'proposed' | 'rejected'>
 
 export type ProductCategoryFields = Filter.IdFilters<'category_id' | 'id' | 'product_id'>
@@ -485,6 +486,7 @@ export type VariantFields = Filter.IdFilters<'carton_package_type_id' | 'id' | '
   & Filter.CodeFilters<'cost_currency', Filter.CurrencyCode>
   & Filter.CodeFilters<'country_of_origin', Filter.CountryCode>
   & Filter.EnumFilters<'purchase_unit', 'unit' | 'carton'>
+  & Filter.EnumFilters<'status', 'draft' | 'proposed' | 'active' | 'rejected' | 'archived'>
 
 export type WebhookDeliveryFields = Filter.RangeFilters<'created_at' | 'delivered_at' | 'updated_at'>
   & Filter.TextFilters<'event_name'>
@@ -1837,6 +1839,7 @@ export type ProductFilters = ProductFields
     in_stock?: boolean
     in_taxon?: string
     not_discontinued?: boolean
+    open_to_sellers?: boolean
     out_of_stock?: boolean
     price_between?: [string, string]
     price_gte?: string
@@ -1844,11 +1847,12 @@ export type ProductFilters = ProductFields
     search?: string
     search_by_name?: string
     with_option_value_ids?: string | string[]
+    with_proposed_offers?: boolean
   }
   & Filter.OrFilters
   & ProductFilterExtensions
 
-export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string)>
+export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'open_to_sellers' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string)>
 
 export type ProductSearchFilters = ProductFields
   & Filter.Prefixed<'categories_', CategoryFields & Filter.Prefixed<'parent_', CategoryFields>>
@@ -1872,6 +1876,7 @@ export type ProductSearchFilters = ProductFields
     in_stock?: boolean
     in_taxon?: string
     not_discontinued?: boolean
+    open_to_sellers?: boolean
     out_of_stock?: boolean
     price_between?: [string, string]
     price_gte?: string
@@ -1879,12 +1884,13 @@ export type ProductSearchFilters = ProductFields
     search?: string
     search_by_name?: string
     with_option_value_ids?: string | string[]
+    with_proposed_offers?: boolean
   }
   & Filter.OrFilters
   & Filter.CustomFieldValueFilters
   & ProductFilterExtensions
 
-export type ProductSearchSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string) | `cf_${string}`>
+export type ProductSearchSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'open_to_sellers' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string) | `cf_${string}`>
 
 /**
  * Filters your app adds to ProductType lists. Generate them with `spree filters types`,
@@ -2629,6 +2635,7 @@ export type VariantFilters = VariantFields
   & Filter.Prefixed<'tax_category_', TaxCategoryFields>
   & {
     available_at_stock_location?: string
+    offers?: boolean
     product_name_or_sku_cont?: string
     search?: string
     search_by_product_name_or_sku?: string
@@ -2636,7 +2643,7 @@ export type VariantFilters = VariantFields
   & Filter.OrFilters
   & VariantFilterExtensions
 
-export type VariantSort = Filter.SortKey<'carton_package_type_id' | 'carton_weight' | 'cartons_per_pallet' | 'cost_currency' | 'cost_price' | 'country_of_origin' | 'created_at' | 'deleted_at' | 'depth' | 'discontinue_on' | 'height' | 'hs_code' | 'id' | 'minimum_order_quantity' | 'order_multiple' | 'position' | 'product_id' | 'purchase_unit' | 'sku' | 'track_inventory' | 'units_per_carton' | 'updated_at' | 'weight' | 'width' | (keyof VariantSortExtensions & string)>
+export type VariantSort = Filter.SortKey<'carton_package_type_id' | 'carton_weight' | 'cartons_per_pallet' | 'cost_currency' | 'cost_price' | 'country_of_origin' | 'created_at' | 'deleted_at' | 'depth' | 'discontinue_on' | 'height' | 'hs_code' | 'id' | 'minimum_order_quantity' | 'order_multiple' | 'position' | 'product_id' | 'purchase_unit' | 'sku' | 'status' | 'track_inventory' | 'units_per_carton' | 'updated_at' | 'weight' | 'width' | (keyof VariantSortExtensions & string)>
 
 /**
  * Filters your app adds to WebhookDelivery lists. Generate them with `spree filters types`,

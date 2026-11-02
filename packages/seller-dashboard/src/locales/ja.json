@@ -360,7 +360,77 @@
     "delivery_methods": "配送方法",
     "package_types": "こん包タイプ",
     "earnings": "収益",
-    "payouts": "支払い"
+    "payouts": "支払い",
+    "offers": "出品"
+  },
+  "offers": {
+    "add": "出品を追加",
+    "archive": "アーカイブ",
+    "restore": "元に戻す",
+    "archive_confirm_description": "この出品は販売停止になります。あとで下書きとして元に戻せます。",
+    "archive_confirm_title": "この出品をアーカイブしますか？",
+    "bulk": {
+      "submit_confirm_description": "マーケットプレイスが各出品を審査してから販売を始めます。",
+      "submit_confirm_title": "これらの出品の審査を申請しますか？",
+      "submit_failed": "これらの出品を申請できませんでした",
+      "submitted": "{n} 件の出品の審査を申請しました"
+    },
+    "columns": {
+      "options": "バリエーション",
+      "price": "あなたの価格",
+      "product": "商品",
+      "sku": "SKU",
+      "status": "ステータス",
+      "stock": "在庫"
+    },
+    "delivery_help": "「商品と同じ」を選ぶと、マーケットプレイスがこの商品を発送するのと同じ方法で発送します。",
+    "delivery_title": "配送",
+    "description": "マーケットプレイスがすでに掲載している商品を、あなたも販売できます。価格・在庫・状態はあなたが決め、各出品はマーケットプレイスの審査を経てから販売されます。",
+    "details_title": "出品の詳細",
+    "empty": "まだ出品がありません。マーケットプレイスが販売している商品を探して、あなたの出品を追加してください。",
+    "fields": {
+      "delivery_profile": "配送プロファイル",
+      "delivery_profile_inherit": "商品と同じ",
+      "status": "ステータス"
+    },
+    "marketplace_price": "マーケットプレイスの価格: {{price}}",
+    "new": "出品を追加",
+    "new_title": "新しい出品",
+    "not_found": "この出品はもう存在しません。",
+    "options_title": "販売するバリエーション",
+    "pick_a_product_first": "まず出品する商品を選んでください。",
+    "picker": {
+      "confirm": "出品を追加",
+      "description": "このマーケットプレイスが販売者に公開している商品を検索します。",
+      "search_placeholder": "商品名で検索",
+      "title": "どの商品を販売しますか？"
+    },
+    "pricing_title": "あなたの価格",
+    "product_title": "マーケットプレイスの商品ページ",
+    "rejection_reason": "マーケットプレイスから差し戻されました: {{reason}}",
+    "saved": "出品を保存しました",
+    "search_placeholder": "SKU で検索",
+    "status_help": {
+      "active": "この出品は販売中です。",
+      "archived": "この出品は完全に販売停止になっています。",
+      "draft": "あなただけが見られます。準備ができたら、マーケットプレイスに審査を申請してください。",
+      "proposed": "マーケットプレイスがこの出品を審査しています。",
+      "rejected": "マーケットプレイスから差し戻されました。求められた修正をしてから、もう一度申請してください。"
+    },
+    "status_updated": "出品を更新しました",
+    "statuses": {
+      "active": "販売中",
+      "archived": "アーカイブ済み",
+      "draft": "下書き",
+      "proposed": "審査中",
+      "rejected": "修正が必要"
+    },
+    "stock_title": "在庫数",
+    "submit_for_review": "審査を申請",
+    "take_down": "非公開にする",
+    "take_down_confirm_description": "もう一度申請するまで、この出品は販売されません。",
+    "take_down_confirm_title": "この出品を非公開にしますか？",
+    "title": "出品"
   },
   "onboarding": {
     "accept_terms": "規約に同意する",
@@ -567,6 +637,7 @@
       "total": "合計"
     },
     "title": "注文",
+    "description": "お客様があなたから購入したものと、発送が必要な荷物です。",
     "tracking_label": "追跡番号"
   },
   "payouts": {
@@ -720,6 +791,7 @@
     "take_down_confirm_description": "お客様には表示されなくなります。後でもう一度申請できます。",
     "take_down_confirm_title": "この商品を非公開にしますか？",
     "title": "商品",
+    "description": "あなた自身が出品する商品です。各商品はマーケットプレイスの審査を経てから販売されます。",
     "uploading": "{{count}} 件のファイルをアップロード中…",
     "uploading_plural": "{{count}} 件のファイルをアップロード中…",
     "variant_remove_confirm_description": "保存すると商品から外れます。",

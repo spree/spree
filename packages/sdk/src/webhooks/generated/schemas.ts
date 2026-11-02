@@ -307,8 +307,14 @@ type WebhookEventName =
   | 'user.created'
   | 'user.deleted'
   | 'user.updated'
+  | 'variant.activated'
+  | 'variant.approved'
+  | 'variant.archived'
   | 'variant.created'
   | 'variant.deleted'
+  | 'variant.drafted'
+  | 'variant.proposed'
+  | 'variant.rejected'
   | 'variant.updated'
   | 'wished_item.created'
   | 'wished_item.deleted'
@@ -570,8 +576,14 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'user.created': CustomerSchema,
   'user.deleted': CustomerSchema,
   'user.updated': CustomerSchema,
+  'variant.activated': VariantSchema,
+  'variant.approved': VariantSchema,
+  'variant.archived': VariantSchema,
   'variant.created': VariantSchema,
   'variant.deleted': VariantSchema,
+  'variant.drafted': VariantSchema,
+  'variant.proposed': VariantSchema,
+  'variant.rejected': VariantSchema,
   'variant.updated': VariantSchema,
   'wished_item.created': WishlistItemSchema,
   'wished_item.deleted': WishlistItemSchema,

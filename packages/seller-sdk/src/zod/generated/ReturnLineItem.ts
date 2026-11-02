@@ -15,7 +15,7 @@ export const ReturnLineItemSchema = z.object({
   variant_id: z.string().nullable(),
   line_item_id: z.string().nullable(),
   fulfillment_item_id: z.string().nullable(),
-  variant: VariantSchema.optional(),
+  get variant() { return VariantSchema.optional(); },
   name: z.string().nullable(),
 });
 

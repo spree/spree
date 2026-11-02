@@ -187,6 +187,12 @@ export const productFormSchema = z.object({
   // the whole form unsavable rather than flagging a field
   // (docs/plans/6.0-seller-product-submission.md).
   status: z.string().optional(),
+  /**
+   * Whether sellers may list their own offers against this product. Closed
+   * by default, and meaningless on a product a seller owns outright
+   * (docs/plans/6.0-seller-master-catalog-listings.md, Decision 2).
+   */
+  open_to_sellers: z.boolean().optional(),
 
   // Categorization
   category_ids: z.array(z.string()).optional(),
@@ -245,6 +251,7 @@ export function newProductFormDefaults(): ProductFormValues {
     name: '',
     description: '',
     status: 'draft',
+    open_to_sellers: false,
     category_ids: [],
     collection_ids: [],
     tags: [],

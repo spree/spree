@@ -1872,6 +1872,10 @@
           "label": "名前",
           "placeholder": "商品名"
         },
+        "open_to_sellers": {
+          "label": "販売者に公開",
+          "help": "販売者がこの商品に自分の出品を追加できるようにします。"
+        },
         "product_type_id": {
           "help": "チェックアウトで提供する配送の選択肢を決めます。",
           "label": "商品タイプ"
@@ -4817,6 +4821,9 @@
         "on_hand_aria": "{{location}}の手持ち",
         "unknown_location": "不明なロケーション"
       },
+      "marketplace": {
+        "title": "マーケットプレイス"
+      },
       "media": {
         "add_from_library": "ライブラリから追加",
         "add_video": "動画のリンクを追加",
@@ -4839,6 +4846,34 @@
       },
       "no_categories_found": "カテゴリが見つかりません",
       "no_collections_found": "コレクションが見つかりません",
+      "offers": {
+        "approve": "承認",
+        "approve_confirm_message": "承認するとすぐに販売が始まります。",
+        "approve_confirm_title": "この出品を承認しますか？",
+        "awaiting_review_filter": "審査待ちの出品",
+        "bulk_close": "販売者への公開を停止",
+        "bulk_closed": "{n} 件の商品の販売者への公開を停止しました",
+        "bulk_failed": "これらの商品を変更できませんでした",
+        "bulk_open": "販売者に公開",
+        "bulk_opened": "{n} 件の商品を販売者に公開しました",
+        "columns": {
+          "options": "バリエーション",
+          "price": "価格",
+          "seller": "販売者",
+          "status": "ステータス"
+        },
+        "decided": "出品を更新しました",
+        "reason_placeholder": "販売者に何を直してほしいですか？",
+        "reject": "差し戻す",
+        "statuses": {
+          "active": "販売中",
+          "archived": "アーカイブ済み",
+          "draft": "下書き",
+          "proposed": "審査中",
+          "rejected": "修正が必要"
+        },
+        "title": "販売者の出品"
+      },
       "options": {
         "add_cta": "オプションタイプを追加",
         "count_one": "値 {{count}} 件",

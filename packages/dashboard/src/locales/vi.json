@@ -1872,6 +1872,10 @@
           "label": "Tên",
           "placeholder": "Tên sản phẩm"
         },
+        "open_to_sellers": {
+          "label": "Mở cho người bán",
+          "help": "Cho phép người bán đăng tin chào bán của riêng họ cho sản phẩm này."
+        },
         "product_type_id": {
           "help": "Kiểm soát những tùy chọn giao hàng nào được cung cấp khi thanh toán.",
           "label": "Loại sản phẩm"
@@ -4784,6 +4788,9 @@
         "on_hand_aria": "Có mặt tại {{location}}",
         "unknown_location": "Vị trí không xác định"
       },
+      "marketplace": {
+        "title": "Sàn thương mại"
+      },
       "media": {
         "add_from_library": "Thêm từ thư viện",
         "add_video": "Thêm liên kết video",
@@ -4806,6 +4813,34 @@
       },
       "no_categories_found": "Không tìm thấy danh mục nào",
       "no_collections_found": "Không tìm thấy bộ sưu tập nào",
+      "offers": {
+        "approve": "Phê duyệt",
+        "approve_confirm_message": "Tin sẽ được mở bán ngay khi bạn phê duyệt.",
+        "approve_confirm_title": "Phê duyệt tin chào bán này?",
+        "awaiting_review_filter": "Tin chào bán chờ duyệt",
+        "bulk_close": "Đóng với người bán",
+        "bulk_closed": "Đã đóng {n} sản phẩm với người bán",
+        "bulk_failed": "Không thể thay đổi các sản phẩm này",
+        "bulk_open": "Mở cho người bán",
+        "bulk_opened": "Đã mở {n} sản phẩm cho người bán",
+        "columns": {
+          "options": "Phân loại",
+          "price": "Giá",
+          "seller": "Người bán",
+          "status": "Trạng thái"
+        },
+        "decided": "Đã cập nhật tin chào bán",
+        "reason_placeholder": "Người bán nên thay đổi điều gì?",
+        "reject": "Gửi trả",
+        "statuses": {
+          "active": "Đang bán",
+          "archived": "Đã lưu trữ",
+          "draft": "Bản nháp",
+          "proposed": "Đang duyệt",
+          "rejected": "Cần chỉnh sửa"
+        },
+        "title": "Tin chào bán của người bán"
+      },
       "options": {
         "add_cta": "Thêm loại tùy chọn",
         "count_one": "Giá trị {{count}}",

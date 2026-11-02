@@ -1676,6 +1676,37 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe 'open to sellers' do
+    let(:seller) { create(:seller, :approved, store: @default_store) }
+
+    it "refuses the flag on a product a seller owns" do
+      product = build(:product, seller: seller, open_to_sellers: true)
+
+      expect(product).not_to be_valid
+      expect(product.errors[:open_to_sellers]).to be_present
+    end
+
+    it 'allows it on a first-party product' do
+      expect(build(:product, open_to_sellers: true)).to be_valid
+    end
+
+    describe '.with_proposed_offers' do
+      let!(:product) { create(:product, open_to_sellers: true) }
+      let!(:quiet_product) { create(:product) }
+
+      before { create(:variant, product: product, seller: seller, status: 'proposed') }
+
+      # Values arrive as the request sends them, and a list is splatted.
+      it 'answers both sides and ignores asking for both' do
+        expect(Spree::Product.ransack(with_proposed_offers: 'true').result).to include(product)
+        expect(Spree::Product.ransack(with_proposed_offers: 'true').result).not_to include(quiet_product)
+        expect(Spree::Product.ransack(with_proposed_offers: 'false').result).to include(quiet_product)
+        expect(Spree::Product.ransack(with_proposed_offers: 'false').result).not_to include(product)
+        expect(Spree::Product.ransack(with_proposed_offers: %w[true false]).result).to include(product, quiet_product)
+      end
+    end
+  end
+
   describe 'scopes' do
     describe '.not_discontinued' do
       let(:product) { create(:product) }

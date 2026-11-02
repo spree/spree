@@ -3645,6 +3645,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `not_discontinued`.
+      - name: q[open_to_sellers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `open_to_sellers`.
       - name: q[out_of_stock]
         in: query
         required: false
@@ -3687,6 +3693,12 @@ paths:
           items:
             type: string
         description: Applies `with_option_value_ids` to the given value.
+      - name: q[with_proposed_offers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `with_proposed_offers`.
       - name: q
         in: query
         required: false
@@ -3711,6 +3723,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `open_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -3727,7 +3740,7 @@ paths:
           | `categories_parent_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
-          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `default_variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `default_variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `default_variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -3740,7 +3753,7 @@ paths:
           | `seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `store_` | `created_at`, `id`, `name`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variants_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variants_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `variants_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -3748,7 +3761,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -3758,6 +3771,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - open_to_sellers
         - price
         - seller_id
         - slug
@@ -4206,8 +4220,8 @@ paths:
                   default: true
                   storefront_access:
                   guest_checkout:
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.683Z'
+                  updated_at: '2026-11-01T08:49:35.683Z'
                   order_routing_strategy:
                   stock_location_ids: []
                   default_catalog_id:
@@ -4700,24 +4714,24 @@ paths:
                 - id: orule_UkLWZg9DAJ
                   position: 1
                   active: true
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.686Z'
+                  updated_at: '2026-11-01T08:49:35.686Z'
                   type: preferred_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                 - id: orule_gbHJdmfrXB
                   position: 2
                   active: true
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.689Z'
+                  updated_at: '2026-11-01T08:49:35.689Z'
                   type: minimize_splits
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                 - id: orule_EfhxLZ9ck8
                   position: 3
                   active: true
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.692Z'
+                  updated_at: '2026-11-01T08:49:35.692Z'
                   type: default_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
@@ -4860,7 +4874,7 @@ paths:
                 id: orule_UkLWZg9DAJ
                 position: 2
                 active: false
-                created_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-11-01T08:49:35.686Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: preferred_location
                 channel_id: ch_UkLWZg9DAJ
@@ -10229,7 +10243,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e7e9fcd23988e3e6b579586ad5b3c9149fa6301a
                 filename: products.csv
                 content_type: text/csv
                 byte_size: 48213
@@ -10237,7 +10251,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJxcmZsMnNod3YwYmR4cWF3ZWFocDZvYjhlYzh5IiwiY29udGVudF90eXBlIjoidGV4dC9jc3YiLCJjb250ZW50X2xlbmd0aCI6NDgyMTMsImNoZWNrc3VtIjoiaGdKTXJSNkRFQjJYTloxelVRVVJWZz09Iiwic2VydmljZV9uYW1lIjoidGVzdCJ9LCJleHAiOiIyMDI2LTAxLTE1VDEyOjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--c3b32cb7c8370747da83a558fab123e28b943128
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJxcmZsMnNod3YwYmR4cWF3ZWFocDZvYjhlYzh5IiwiY29udGVudF90eXBlIjoidGV4dC9jc3YiLCJjb250ZW50X2xlbmd0aCI6NDgyMTMsImNoZWNrc3VtIjoiaGdKTXJSNkRFQjJYTloxelVRVVJWZz09Iiwic2VydmljZV9uYW1lIjoidGVzdCJ9LCJleHAiOiIyMDI2LTAxLTE1VDEyOjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--f1ee26074fef8064416fb14e645ddeaeb1452729
                   headers:
                     Content-Type: text/csv
               schema:
@@ -14539,8 +14553,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 - id: mkt_gbHJdmfrXB
                   name: EU
@@ -16510,6 +16524,81 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/digital_links/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Digital link ID
+      schema:
+        type: string
+    get:
+      summary: Get a digital link
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single download link with its download count and expiry.
+
+        **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const digitalLink = await client.digitalLinks.retrieve('dl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /digital_links/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: digital link found
+          content:
+            application/json:
+              example:
+                id: dl_UkLWZg9DAJ
+                access_counter: 0
+                filename: thinking-cat.jpg
+                content_type: image/jpeg
+                download_url: "/api/v3/store/digital_links/ks9F16gjTLQPCzwFDpj2ifrJ"
+                expires_at: '2026-01-22T12:00:00Z'
+                authorizable: true
+                expired: false
+                access_limit_exceeded: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/DigitalLink"
+        '404':
+          description: digital link not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Digital link not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/exchanges":
     get:
       summary: List exchanges
@@ -18173,8 +18262,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -18465,10 +18554,10 @@ paths:
           | `order_store_` | `created_at`, `id`, `name`, `updated_at` |
           | `order_tags_` | `created_at`, `id`, `name`, `updated_at` |
           | `tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
-          | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
-          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `variant_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
 
@@ -18508,8 +18597,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 779180
-                  slug: product-779180
+                  name: Product 799180
+                  slug: product-799180
                   options_text: 'Size: S'
                   price: '10.00'
                   total: '20.00'
@@ -18617,8 +18706,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 7999
-                slug: product-7999
+                name: Product 8199
+                slug: product-8199
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '59.97'
@@ -18740,8 +18829,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 802714
-                slug: product-802714
+                name: Product 822714
+                slug: product-822714
                 options_text: 'Size: S'
                 price: '10.00'
                 total: '20.00'
@@ -18844,8 +18933,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 819758
-                slug: product-819758
+                name: Product 839758
+                slug: product-839758
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '99.95'
@@ -19042,8 +19131,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19299,7 +19388,7 @@ paths:
           | `fulfillments_` | `created_at`, `id`, `number`, `updated_at` |
           | `line_items_` | `additional_tax_total`, `adjustment_total`, `cost_price`, `created_at`, `discount_total`, `id`, `included_tax_total`, `non_taxable_adjustment_total`, `order_id`, `pre_tax_amount`, `price`, `quantity`, `tax_category_id`, `taxable_adjustment_total`, `updated_at`, `variant_id` |
           | `line_items_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
-          | `line_items_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `line_items_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `order_group_` | `created_at`, `currency`, `email`, `id`, `number`, `updated_at` |
           | `order_group_customer_` | `accepts_email_marketing`, `created_at`, `email`, `first_name`, `id`, `last_name`, `phone`, `updated_at` |
           | `promotions_` | `code`, `created_at`, `expires_at`, `id`, `kind`, `name`, `path`, `promotion_category_id`, `starts_at`, `updated_at` |
@@ -19395,8 +19484,8 @@ paths:
                     - US
                     supported_locales:
                     - en
-                    created_at: '2026-01-15T12:00:00.000Z'
-                    updated_at: '2026-01-15T12:00:00.000Z'
+                    created_at: '2026-11-01T08:49:35.676Z'
+                    updated_at: '2026-11-01T08:49:35.676Z'
                     tax_provider:
                   external_references: {}
                   status: draft
@@ -19621,8 +19710,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19778,8 +19867,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19925,8 +20014,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -20124,8 +20213,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -20303,8 +20392,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: canceled
@@ -20443,8 +20532,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -20577,8 +20666,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.676Z'
+                  updated_at: '2026-11-01T08:49:35.676Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -21037,7 +21126,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1792493 can be returned
+                  message: Only 1 of Product 1812493 can be returned
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -23452,9 +23541,9 @@ paths:
           | Prefix | Attributes |
           |---|---|
           | `price_list_` | `catalog_id`, `created_at`, `ends_at`, `id`, `match_policy`, `name`, `position`, `starts_at`, `status`, `updated_at` |
-          | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
-          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `variant_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
 
@@ -24399,7 +24488,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0Z252N2l0MG55YnkwbHhkczg5Y2hteTd6aXlvIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--06a160c64f398ed4eb70327ef6932eaf662f98d7/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0Z252N2l0MG55YnkwbHhkczg5Y2hteTd6aXlvIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--aabf0f5e21ac946df37181ce665ffa264c100ce4/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                   provider_settings: {}
@@ -24490,7 +24579,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJhOXR0cGNpbmxxbThvbmtlNHM1NmI2Y3gxMWVzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--0df5c2167c42cdda6a5f6639d3ddc1b4473c5a81/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJhOXR0cGNpbmxxbThvbmtlNHM1NmI2Y3gxMWVzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--39a4e1992c6f926caff360e16d95fd798113646a/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
                 provider_settings: {}
@@ -24579,7 +24668,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwZXp6d3IzMzE3ajRoem9kc3Awc2czN3EzMnhzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--da799713969a4775b10b6055f685e92f410f5176/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwZXp6d3IzMzE3ajRoem9kc3Awc2czN3EzMnhzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--dfd06d4ec962198d97c8411ed7094c9e27d9fc68/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
                 provider_settings: {}
@@ -24785,6 +24874,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `not_discontinued`.
+      - name: q[open_to_sellers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `open_to_sellers`.
       - name: q[out_of_stock]
         in: query
         required: false
@@ -24827,6 +24922,12 @@ paths:
           items:
             type: string
         description: Applies `with_option_value_ids` to the given value.
+      - name: q[with_proposed_offers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `with_proposed_offers`.
       - name: page
         in: query
         required: false
@@ -24883,6 +24984,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `open_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -24899,7 +25001,7 @@ paths:
           | `categories_parent_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
-          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `default_variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `default_variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `default_variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -24912,7 +25014,7 @@ paths:
           | `seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `store_` | `created_at`, `id`, `name`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variants_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variants_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `variants_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -24922,7 +25024,7 @@ paths:
 
           Also filters and sorts on the store's searchable custom fields, as `q[cf_<namespace>_<key>_<predicate>]` and `sort=cf_<namespace>_<key>`.
 
-          **Sort by:** `available_on`, `best_selling`, `created_at`, `description`, `discontinue_on`, `id`, `manual`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `best_selling`, `created_at`, `description`, `discontinue_on`, `id`, `manual`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -24934,6 +25036,7 @@ paths:
         - id
         - manual
         - name
+        - open_to_sellers
         - price
         - seller_id
         - slug
@@ -24948,8 +25051,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1296550
-                  slug: product-1296550
+                  name: Product 1316550
+                  slug: product-1316550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -24985,6 +25088,7 @@ paths:
                   seller_id:
                   external_references: {}
                   status: active
+                  open_to_sellers: false
                   metadata: {}
                   deleted_at:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -25109,7 +25213,7 @@ paths:
                 meta_title:
                 meta_description:
                 meta_keywords:
-                variant_count: 0
+                variant_count: 1
                 available_on:
                 preorder_ships_at:
                 purchasable: false
@@ -25128,6 +25232,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: draft
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -25227,8 +25332,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1332061
-                slug: product-1332061
+                name: Product 1352061
+                slug: product-1352061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25262,6 +25367,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: active
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -25338,7 +25444,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-1355339
+                slug: product-1375339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25382,6 +25488,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: active
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -26146,8 +26253,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1538682
-                slug: product-1538682
+                name: Product 1558682
+                slug: product-1558682
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26190,6 +26297,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: active
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -26268,15 +26376,15 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1564387
-                slug: product-1564387
+                name: Product 1584387
+                slug: product-1584387
                 meta_title:
                 meta_description:
                 meta_keywords:
                 variant_count: 1
                 available_on:
                 preorder_ships_at:
-                purchasable: true
+                purchasable: false
                 preorder: false
                 in_stock: false
                 backorderable: true
@@ -26317,6 +26425,7 @@ paths:
                 seller_id:
                 external_references: {}
                 status: rejected
+                open_to_sellers: false
                 metadata: {}
                 deleted_at:
                 created_at: '2026-01-15T12:00:00.000Z'
@@ -26556,8 +26665,8 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-01T08:49:35.717Z'
+                  created_at: '2026-11-01T08:49:35.717Z'
                 - id: pol_uw2YK1rnl0
                   name: Restocking Policy
                   slug: restocking-policy
@@ -26570,22 +26679,22 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-01T08:49:35.722Z'
+                  created_at: '2026-11-01T08:49:35.722Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-01T08:49:35.728Z'
+                  created_at: '2026-11-01T08:49:35.728Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
-                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-01T08:49:35.708Z'
+                  created_at: '2026-11-01T08:49:35.708Z'
                 meta:
                   page: 1
                   limit: 25
@@ -30906,7 +31015,7 @@ paths:
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                created_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-11-01T08:49:35.656Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_routing_strategy: rules
                 payout_provider:
@@ -31278,7 +31387,7 @@ paths:
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                created_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-11-01T08:49:35.656Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_routing_strategy: rules
                 payout_provider:
@@ -32481,7 +32590,7 @@ paths:
                     type: string
                   - key: contact_phone
                     type: string
-                  readable: false
+                  readable: true
                 - resource_type: policy
                   fields:
                   - key: name
@@ -32645,7 +32754,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.0.rc5
+                current_version: 6.0.1
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
@@ -35422,6 +35531,12 @@ paths:
         schema:
           type: string
         description: Applies `available_at_stock_location` to the given value.
+      - name: q[offers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `offers`.
       - name: q[product_name_or_sku_cont]
         in: query
         required: false
@@ -35498,6 +35613,7 @@ paths:
           | `product_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `purchase_unit` | One of `unit`, `carton` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `sku` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `draft`, `proposed`, `active`, `rejected`, `archived` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `track_inventory` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `units_per_carton` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -35513,7 +35629,7 @@ paths:
           | `option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `prices_price_list_` | `catalog_id`, `created_at`, `ends_at`, `id`, `match_policy`, `name`, `position`, `starts_at`, `status`, `updated_at` |
-          | `product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `product_categories_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `product_channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `product_collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
@@ -35529,7 +35645,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width`. Prefix a field with `-` to sort descending.
+          **Sort by:** `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Variant
         sortable:
@@ -35552,6 +35668,7 @@ paths:
         - product_id
         - purchase_unit
         - sku
+        - status
         - track_inventory
         - units_per_carton
         - updated_at
@@ -35566,7 +35683,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-285
+                  sku: SKU-287
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -35600,6 +35717,7 @@ paths:
                   seller_id:
                   option_values: []
                   external_references: {}
+                  status: active
                   metadata: {}
                   position: 1
                   cost_currency: USD
@@ -35621,11 +35739,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2146804
+                  product_name: Product 2166804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-286
+                  sku: SKU-288
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -35671,6 +35789,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                   external_references: {}
+                  status: active
                   metadata: {}
                   position: 2
                   cost_currency: USD
@@ -35692,7 +35811,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2146804
+                  product_name: Product 2166804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -35817,6 +35936,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 external_references: {}
+                status: active
                 metadata: {}
                 position: 3
                 cost_currency: USD
@@ -35838,7 +35958,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2151771
+                product_name: Product 2171771
                 delivery_profile_id: fp_UkLWZg9DAJ
         '422':
           description: validation error
@@ -35850,7 +35970,7 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - value: SKU-290
+                    - value: SKU-292
                       code: taken
                       message: has already been taken
                       specific: false
@@ -35938,7 +36058,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-292
+                sku: SKU-294
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -35984,6 +36104,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 external_references: {}
+                status: active
                 metadata: {}
                 position: 2
                 cost_currency: USD
@@ -36005,7 +36126,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2174025
+                product_name: Product 2194025
                 delivery_profile_id: fp_UkLWZg9DAJ
         '404':
           description: variant not found
@@ -36124,6 +36245,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 external_references: {}
+                status: active
                 metadata: {}
                 position: 2
                 cost_currency: USD
@@ -36145,7 +36267,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2195672
+                product_name: Product 2215672
                 delivery_profile_id: fp_UkLWZg9DAJ
       requestBody:
         content:
@@ -36262,6 +36384,12 @@ paths:
         schema:
           type: string
         description: Applies `available_at_stock_location` to the given value.
+      - name: q[offers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `offers`.
       - name: q[product_name_or_sku_cont]
         in: query
         required: false
@@ -36368,6 +36496,7 @@ paths:
           | `product_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `purchase_unit` | One of `unit`, `carton` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `sku` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `draft`, `proposed`, `active`, `rejected`, `archived` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `track_inventory` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `units_per_carton` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -36383,7 +36512,7 @@ paths:
           | `option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `prices_price_list_` | `catalog_id`, `created_at`, `ends_at`, `id`, `match_policy`, `name`, `position`, `starts_at`, `status`, `updated_at` |
-          | `product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `product_categories_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `product_channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `product_collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
@@ -36399,7 +36528,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width`. Prefix a field with `-` to sort descending.
+          **Sort by:** `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Variant
         sortable:
@@ -36422,6 +36551,7 @@ paths:
         - product_id
         - purchase_unit
         - sku
+        - status
         - track_inventory
         - units_per_carton
         - updated_at
@@ -36436,7 +36566,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-299
+                  sku: SKU-301
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -36470,6 +36600,7 @@ paths:
                   seller_id:
                   option_values: []
                   external_references: {}
+                  status: active
                   metadata: {}
                   position: 1
                   cost_currency: USD
@@ -36491,11 +36622,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2213647
+                  product_name: Product 2233647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-300
+                  sku: SKU-302
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -36541,6 +36672,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                   external_references: {}
+                  status: active
                   metadata: {}
                   position: 2
                   cost_currency: USD
@@ -36562,7 +36694,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2213647
+                  product_name: Product 2233647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -39178,6 +39310,24 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
+                - name: variant.activated
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.approved
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.archived
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
                 - name: variant.created
                   group: variant
                   credential_permission:
@@ -39185,6 +39335,24 @@ paths:
                   deprecated: false
                   replaced_by:
                 - name: variant.deleted
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.drafted
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.proposed
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.rejected
                   group: variant
                   credential_permission:
                   credential: false
@@ -39251,7 +39419,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 260
+                  count: 266
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -39689,6 +39857,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `not_discontinued`.
+      - name: q[open_to_sellers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `open_to_sellers`.
       - name: q[out_of_stock]
         in: query
         required: false
@@ -39731,6 +39905,12 @@ paths:
           items:
             type: string
         description: Applies `with_option_value_ids` to the given value.
+      - name: q[with_proposed_offers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `with_proposed_offers`.
       - name: expand
         in: query
         required: false
@@ -39763,6 +39943,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `open_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -39779,7 +39960,7 @@ paths:
           | `categories_parent_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
-          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `default_variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `default_variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `default_variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -39792,7 +39973,7 @@ paths:
           | `seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `store_` | `created_at`, `id`, `name`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variants_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variants_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `variants_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -39800,7 +39981,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -39810,6 +39991,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - open_to_sellers
         - price
         - seller_id
         - slug
@@ -41023,6 +41205,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `not_discontinued`.
+      - name: q[open_to_sellers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `open_to_sellers`.
       - name: q[out_of_stock]
         in: query
         required: false
@@ -41065,6 +41253,12 @@ paths:
           items:
             type: string
         description: Applies `with_option_value_ids` to the given value.
+      - name: q[with_proposed_offers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `with_proposed_offers`.
       - name: q
         in: query
         required: false
@@ -41089,6 +41283,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `open_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -41105,7 +41300,7 @@ paths:
           | `categories_parent_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
-          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `default_variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `default_variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `default_variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -41118,7 +41313,7 @@ paths:
           | `seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `store_` | `created_at`, `id`, `name`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variants_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variants_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `variants_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -41126,7 +41321,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -41136,6 +41331,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - open_to_sellers
         - price
         - seller_id
         - slug
@@ -45213,8 +45409,8 @@ paths:
                   name: General
                   default: true
                   position: 1
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-11-01T08:49:35.733Z'
+                  updated_at: '2026-11-01T08:49:35.733Z'
                   kind: shipping
                   digital: false
                   offers_pickup: false
@@ -47169,13 +47365,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--08547ed2ea754769edc744f74fd6602d6ecec117/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--993480d93b00e1cb99948e8f4cdf2168a21d2252/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d4986eeb91ad4601bad42b454ab4db4d15f9499c/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--74b95bdbfc96096f395c1ecc1fe21e62c023ad24/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ccb1fbd1a206e6014e32e079494f63b0eb232ee5/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2520922008aeb1fa0a308d5580e7e336e14d574e/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -47183,10 +47379,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--de7eda6d37b8d943aeba4b0bfe6b8ee1bd67902a/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e7e9fcd23988e3e6b579586ad5b3c9149fa6301a
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -47277,13 +47473,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--08547ed2ea754769edc744f74fd6602d6ecec117/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--993480d93b00e1cb99948e8f4cdf2168a21d2252/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d4986eeb91ad4601bad42b454ab4db4d15f9499c/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--74b95bdbfc96096f395c1ecc1fe21e62c023ad24/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ccb1fbd1a206e6014e32e079494f63b0eb232ee5/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2520922008aeb1fa0a308d5580e7e336e14d574e/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47291,10 +47487,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a5b15043f3d33016108bd19e25acb6a0e4656b64
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--de7eda6d37b8d943aeba4b0bfe6b8ee1bd67902a/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--da047501b5a88a7224385d6214682d5d623dbb4e
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -47372,13 +47568,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--08547ed2ea754769edc744f74fd6602d6ecec117/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--993480d93b00e1cb99948e8f4cdf2168a21d2252/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d4986eeb91ad4601bad42b454ab4db4d15f9499c/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--74b95bdbfc96096f395c1ecc1fe21e62c023ad24/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ccb1fbd1a206e6014e32e079494f63b0eb232ee5/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2520922008aeb1fa0a308d5580e7e336e14d574e/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47386,10 +47582,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--de7eda6d37b8d943aeba4b0bfe6b8ee1bd67902a/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e7e9fcd23988e3e6b579586ad5b3c9149fa6301a
                 viewable_id: prod_UkLWZg9DAJ
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -47463,7 +47659,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 413397
+                  name: Product 433397
                   owner_type: product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -47623,13 +47819,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--08547ed2ea754769edc744f74fd6602d6ecec117/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--993480d93b00e1cb99948e8f4cdf2168a21d2252/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d4986eeb91ad4601bad42b454ab4db4d15f9499c/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--74b95bdbfc96096f395c1ecc1fe21e62c023ad24/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ccb1fbd1a206e6014e32e079494f63b0eb232ee5/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2520922008aeb1fa0a308d5580e7e336e14d574e/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -47637,10 +47833,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--de7eda6d37b8d943aeba4b0bfe6b8ee1bd67902a/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e7e9fcd23988e3e6b579586ad5b3c9149fa6301a
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -47731,13 +47927,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--08547ed2ea754769edc744f74fd6602d6ecec117/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--993480d93b00e1cb99948e8f4cdf2168a21d2252/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d4986eeb91ad4601bad42b454ab4db4d15f9499c/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--74b95bdbfc96096f395c1ecc1fe21e62c023ad24/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ccb1fbd1a206e6014e32e079494f63b0eb232ee5/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2520922008aeb1fa0a308d5580e7e336e14d574e/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47745,10 +47941,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--de7eda6d37b8d943aeba4b0bfe6b8ee1bd67902a/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e7e9fcd23988e3e6b579586ad5b3c9149fa6301a
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -47838,13 +48034,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--08547ed2ea754769edc744f74fd6602d6ecec117/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--993480d93b00e1cb99948e8f4cdf2168a21d2252/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d4986eeb91ad4601bad42b454ab4db4d15f9499c/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--74b95bdbfc96096f395c1ecc1fe21e62c023ad24/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ccb1fbd1a206e6014e32e079494f63b0eb232ee5/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2520922008aeb1fa0a308d5580e7e336e14d574e/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -47852,10 +48048,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--aacde269a0019661ac951ab66e97e4338f76c0e3
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--de7eda6d37b8d943aeba4b0bfe6b8ee1bd67902a/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e7e9fcd23988e3e6b579586ad5b3c9149fa6301a
                 viewable_id: prod_UkLWZg9DAJ
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--d70605a927dcb85741046d8205814708ad86c814/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--1803a6ae221d914c730c035626242d8f782331d3/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -48007,13 +48203,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--3f903649ac66e0043c8adaf4863ea52cd1300ab6/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--f5bdfe7939f0f56c6c00267593e387bb24b3b3e5/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--52ada528efaa0103221a6e3001cf4a46a7889310/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--722217e606f0088e8714f1db5cc39930b087612a/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--6a35f609b2c6745523c0ae722d7c0dd6779a568a/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0020ff44ca68bbdeb3bb2115e8c3563594f79f50/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--08547ed2ea754769edc744f74fd6602d6ecec117/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--993480d93b00e1cb99948e8f4cdf2168a21d2252/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--d4986eeb91ad4601bad42b454ab4db4d15f9499c/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--74b95bdbfc96096f395c1ecc1fe21e62c023ad24/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--ccb1fbd1a206e6014e32e079494f63b0eb232ee5/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--2520922008aeb1fa0a308d5580e7e336e14d574e/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -48021,10 +48217,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6755f4503fb7441d5f39947f4cfd801b3ad8d627/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a5b15043f3d33016108bd19e25acb6a0e4656b64
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--de7eda6d37b8d943aeba4b0bfe6b8ee1bd67902a/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--da047501b5a88a7224385d6214682d5d623dbb4e
                   viewable_id: variant_gbHJdmfrXB
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--d09b5425a813f091eba0215bef6560cfbfe00b36/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--14e382fc1b27fa02c92548f0413f0fb082e7e3f8/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: variant
                 meta:
@@ -50176,6 +50372,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `not_discontinued`.
+      - name: q[open_to_sellers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `open_to_sellers`.
       - name: q[out_of_stock]
         in: query
         required: false
@@ -50218,6 +50420,12 @@ paths:
           items:
             type: string
         description: Applies `with_option_value_ids` to the given value.
+      - name: q[with_proposed_offers]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `with_proposed_offers`.
       - name: expand
         in: query
         required: false
@@ -50250,6 +50458,7 @@ paths:
           | `discontinue_on` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `open_to_sellers` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `price` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `seller_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `slug` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
@@ -50266,7 +50475,7 @@ paths:
           | `categories_parent_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
           | `channels_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
           | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
-          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `default_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `default_variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `default_variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `default_variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -50279,7 +50488,7 @@ paths:
           | `seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `store_` | `created_at`, `id`, `name`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
-          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variants_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variants_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variants_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
           | `variants_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
@@ -50287,7 +50496,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -50297,6 +50506,7 @@ paths:
         - discontinue_on
         - id
         - name
+        - open_to_sellers
         - price
         - seller_id
         - slug
@@ -50310,12 +50520,12 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1083365
+                  name: Product 1103365
                   thumbnail_url:
                   price_list_variants:
                   - id: variant_UkLWZg9DAJ
                     label:
-                    sku: SKU-127
+                    sku: SKU-129
                     currency: USD
                     source: base
                     break_count: 1
@@ -51091,7 +51301,7 @@ paths:
           | `destination_location_` | `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at` |
           | `destination_location_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `items_` | `created_at`, `id`, `quantity_ordered`, `quantity_received`, `quantity_rejected`, `unit_cost`, `updated_at`, `variant_id` |
-          | `items_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `items_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `supplier_` | `city`, `contact_name`, `country_code`, `created_at`, `email`, `id`, `name`, `phone`, `updated_at` |
 
           </Accordion>
@@ -51370,8 +51580,8 @@ paths:
                   purchase_order_id: po_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 1639018
-                  variant_sku: SKU-198
+                  variant_name: Product 1659018
+                  variant_sku: SKU-200
                   options_text: 'Size: S'
                   thumbnail_url:
                 supplier:
@@ -55394,10 +55604,10 @@ paths:
           |---|---|
           | `stock_location_` | `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at` |
           | `stock_location_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
-          | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `variant_option_values_` | `created_at`, `id`, `label`, `name`, `position`, `updated_at` |
           | `variant_prices_` | `amount`, `compare_at_amount`, `created_at`, `currency`, `id`, `min_quantity`, `price_list_id`, `updated_at`, `variant_id` |
-          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
+          | `variant_product_` | `available_on`, `created_at`, `description`, `discontinue_on`, `id`, `name`, `open_to_sellers`, `price`, `seller_id`, `slug`, `status`, `updated_at` |
           | `variant_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `variant_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
 
@@ -55433,8 +55643,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1885410
-                  variant_sku: SKU-233
+                  variant_name: Product 1905410
+                  variant_sku: SKU-235
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -55453,8 +55663,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 1885410
-                  variant_sku: SKU-234
+                  variant_name: Product 1905410
+                  variant_sku: SKU-236
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -55473,8 +55683,8 @@ paths:
                   reserved_count: 2
                   incoming_count: 20
                   purchasable_count: 35
-                  variant_name: Product 1885410
-                  variant_sku: SKU-234
+                  variant_name: Product 1905410
+                  variant_sku: SKU-236
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Pilar Stokes
@@ -55658,8 +55868,8 @@ paths:
                 reserved_count: 0
                 incoming_count: 0
                 purchasable_count: 25
-                variant_name: Product 1919378
-                variant_sku: SKU-240
+                variant_name: Product 1939378
+                variant_sku: SKU-242
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_name: Gilbert Marquardt
@@ -55796,7 +56006,7 @@ paths:
           |---|---|
           | `stock_level_` | `allocated_count`, `count_on_hand`, `created_at`, `id`, `incoming_count`, `reserved_count`, `stock_location_id`, `updated_at`, `variant_id` |
           | `stock_level_stock_location_` | `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at` |
-          | `stock_level_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `stock_level_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
 
           </Accordion>
 
@@ -55837,8 +56047,8 @@ paths:
                   stock_location_id: sloc_UkLWZg9DAJ
                   stock_location_name: Mona Hegmann
                   variant_id: variant_gbHJdmfrXB
-                  variant_name: Product 1928513
-                  variant_sku: SKU-241
+                  variant_name: Product 1948513
+                  variant_sku: SKU-243
                   order_id:
                   fulfillment_id:
                   return_id:
@@ -55952,8 +56162,8 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 stock_location_name: Chrystal Sauer
                 variant_id: variant_gbHJdmfrXB
-                variant_name: Product 1942954
-                variant_sku: SKU-245
+                variant_name: Product 1962954
+                variant_sku: SKU-247
                 order_id:
                 fulfillment_id:
                 return_id:
@@ -56069,7 +56279,7 @@ paths:
           | `line_item_` | `additional_tax_total`, `adjustment_total`, `cost_price`, `created_at`, `discount_total`, `id`, `included_tax_total`, `non_taxable_adjustment_total`, `order_id`, `pre_tax_amount`, `price`, `quantity`, `tax_category_id`, `taxable_adjustment_total`, `updated_at`, `variant_id` |
           | `line_item_order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `line_item_tax_category_` | `created_at`, `id`, `is_default`, `name`, `tax_code`, `updated_at` |
-          | `line_item_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `line_item_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `order_` | `channel_id`, `completed_at`, `considered_risky`, `coupon_code`, `created_at`, `currency`, `customer_id`, `delivery_total`, `email`, `fulfillment_status`, `id`, `item_total`, `locale`, `market_id`, `number`, `order_group_id`, `payment_status`, `po_number`, `seller_id`, `status`, `total`, `total_quantity`, `updated_at` |
           | `order_bill_address_` | `address1`, `address2`, `city`, `company`, `country_code`, `created_at`, `first_name`, `id`, `last_name`, `phone`, `postal_code`, `state_code`, `updated_at` |
           | `order_channel_` | `active`, `code`, `created_at`, `default`, `id`, `name`, `store_id`, `updated_at` |
@@ -56085,7 +56295,7 @@ paths:
           | `order_tags_` | `created_at`, `id`, `name`, `updated_at` |
           | `stock_level_` | `allocated_count`, `count_on_hand`, `created_at`, `id`, `incoming_count`, `reserved_count`, `stock_location_id`, `updated_at`, `variant_id` |
           | `stock_level_stock_location_` | `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at` |
-          | `stock_level_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `stock_level_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
 
           </Accordion>
 
@@ -56277,7 +56487,7 @@ paths:
           | `destination_location_` | `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at` |
           | `destination_location_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
           | `items_` | `created_at`, `id`, `quantity_received`, `quantity_rejected`, `quantity_shipped`, `updated_at`, `variant_id` |
-          | `items_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
+          | `items_variant_` | `carton_package_type_id`, `carton_weight`, `cartons_per_pallet`, `cost_currency`, `cost_price`, `country_of_origin`, `created_at`, `deleted_at`, `depth`, `discontinue_on`, `height`, `hs_code`, `id`, `minimum_order_quantity`, `order_multiple`, `position`, `product_id`, `purchase_unit`, `sku`, `status`, `track_inventory`, `units_per_carton`, `updated_at`, `weight`, `width` |
           | `source_location_` | `active`, `country_code`, `created_at`, `default`, `id`, `kind`, `name`, `pickup_enabled`, `returns_enabled`, `seller_id`, `state_code`, `updated_at` |
           | `source_location_seller_` | `contact_email`, `created_at`, `id`, `name`, `status`, `updated_at` |
 
@@ -56544,8 +56754,8 @@ paths:
                   stock_transfer_id: st_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 2012176
-                  variant_sku: SKU-258
+                  variant_name: Product 2032176
+                  variant_sku: SKU-260
                   options_text: 'Size: S'
                   thumbnail_url:
                 source_location:
@@ -66268,6 +66478,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CustomField"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
         translations:
           type: object
         metadata:
@@ -66278,10 +66492,6 @@ components:
           type: string
         updated_at:
           type: string
-        option_values:
-          type: array
-          items:
-            "$ref": "#/components/schemas/OptionValue"
       required:
       - id
       - name
@@ -68828,6 +69038,8 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        open_to_sellers:
+          type: boolean
         metadata:
           type: object
         deleted_at:
@@ -68897,6 +69109,7 @@ components:
       - seller_id
       - external_references
       - status
+      - open_to_sellers
       - metadata
       - deleted_at
       - created_at
@@ -68932,6 +69145,9 @@ components:
           type: string
         product_id:
           type: string
+        variant_id:
+          type: string
+          nullable: true
         metadata:
           type: object
           nullable: true
@@ -68955,6 +69171,7 @@ components:
       - reviewed_at
       - created_at
       - product_id
+      - variant_id
       - metadata
       - updated_at
       - submitted_by_id
@@ -73967,6 +74184,7 @@ components:
             - Asia/Magadan
             - Asia/Muscat
             - Asia/Novosibirsk
+            - Asia/Rangoon
             - Asia/Riyadh
             - Asia/Seoul
             - Asia/Shanghai
@@ -73981,7 +74199,6 @@ components:
             - Asia/Urumqi
             - Asia/Vladivostok
             - Asia/Yakutsk
-            - Asia/Yangon
             - Asia/Yekaterinburg
             - Asia/Yerevan
             - Atlantic/Azores
@@ -74009,7 +74226,7 @@ components:
             - Europe/Helsinki
             - Europe/Istanbul
             - Europe/Kaliningrad
-            - Europe/Kyiv
+            - Europe/Kiev
             - Europe/Lisbon
             - Europe/Ljubljana
             - Europe/London
@@ -76407,6 +76624,8 @@ components:
           nullable: true
         external_references:
           type: object
+        status:
+          type: string
         metadata:
           type: object
         position:
@@ -76889,6 +77108,10 @@ components:
         delivery_profile_id:
           type: string
           nullable: true
+        submission:
+          allOf:
+          - "$ref": "#/components/schemas/ProductSubmission"
+          nullable: true
         prices:
           type: array
           items:
@@ -76925,6 +77148,7 @@ components:
       - seller_id
       - option_values
       - external_references
+      - status
       - metadata
       - position
       - cost_currency
@@ -78602,6 +78826,20 @@ components:
       - zh-HK
       - zh-TW
       - zu
+    DimensionUnit:
+      type: string
+      enum:
+      - mm
+      - cm
+      - in
+      - ft
+    WeightUnit:
+      type: string
+      enum:
+      - g
+      - kg
+      - lb
+      - oz
     TimeZone:
       anyOf:
       - type: string
@@ -78663,6 +78901,7 @@ components:
         - Asia/Magadan
         - Asia/Muscat
         - Asia/Novosibirsk
+        - Asia/Rangoon
         - Asia/Riyadh
         - Asia/Seoul
         - Asia/Shanghai
@@ -78677,7 +78916,6 @@ components:
         - Asia/Urumqi
         - Asia/Vladivostok
         - Asia/Yakutsk
-        - Asia/Yangon
         - Asia/Yekaterinburg
         - Asia/Yerevan
         - Atlantic/Azores
@@ -78705,7 +78943,7 @@ components:
         - Europe/Helsinki
         - Europe/Istanbul
         - Europe/Kaliningrad
-        - Europe/Kyiv
+        - Europe/Kiev
         - Europe/Lisbon
         - Europe/Ljubljana
         - Europe/London
@@ -78746,20 +78984,6 @@ components:
       - type: string
       description: Common IANA time zones; any other IANA time zone identifier is
         accepted too.
-    DimensionUnit:
-      type: string
-      enum:
-      - mm
-      - cm
-      - in
-      - ft
-    WeightUnit:
-      type: string
-      enum:
-      - g
-      - kg
-      - lb
-      - oz
     AddressInputParams:
       type: object
       properties:
@@ -83100,6 +83324,10 @@ components:
           nullable: true
         promotionable:
           type: boolean
+        open_to_sellers:
+          type: boolean
+          description: Whether sellers may list their own offers against this product.
+            Only first-party products can be opened.
         tags:
           type: array
           items:
@@ -83402,6 +83630,10 @@ components:
           nullable: true
         promotionable:
           type: boolean
+        open_to_sellers:
+          type: boolean
+          description: Whether sellers may list their own offers against this product.
+            Only first-party products can be opened.
         tags:
           type: array
           items:
@@ -85306,7 +85538,6 @@ components:
           description: A `signed_id` from `files.upload()` for the logo in transactional
             emails, or null to remove it.
           nullable: true
-
     SupplierCreateParams:
       type: object
       properties:
@@ -85710,6 +85941,18 @@ components:
               so what you read can be sent straight back. Systems you do not name
               keep the reference they have. A list of `{ system, external_id }` entries
               is accepted too.'
+          status:
+            anyOf:
+            - type: string
+              enum:
+              - draft
+              - proposed
+              - active
+              - rejected
+              - archived
+            - type: string
+            description: The values listed are the built-in ones; extensions may add
+              more.
         required:
         - options
     VariantOptionParams:
@@ -85891,6 +86134,18 @@ components:
               so what you read can be sent straight back. Systems you do not name
               keep the reference they have. A list of `{ system, external_id }` entries
               is accepted too.'
+          status:
+            anyOf:
+            - type: string
+              enum:
+              - draft
+              - proposed
+              - active
+              - rejected
+              - archived
+            - type: string
+            description: The values listed are the built-in ones; extensions may add
+              more.
     WebhookEndpointCreateParams:
       type: object
       properties:
@@ -86889,6 +87144,7 @@ components:
         discontinue_on: datetime
         id: id
         name: text
+        open_to_sellers: boolean
         price: decimal
         seller_id: id
         slug: text
@@ -86923,6 +87179,7 @@ components:
         in_stock: boolean
         in_taxon: id
         not_discontinued: boolean
+        open_to_sellers: boolean
         out_of_stock: boolean
         price_between:
         - decimal
@@ -86933,6 +87190,7 @@ components:
         search_by_name: text
         with_option_value_ids:
           list: id
+        with_proposed_offers: boolean
     ProductCategory:
       attributes:
         category_id: id
@@ -87501,6 +87759,13 @@ components:
           - unit
           - carton
         sku: text
+        status:
+          enum:
+          - draft
+          - proposed
+          - active
+          - rejected
+          - archived
         track_inventory: boolean
         units_per_carton: integer
         updated_at: datetime
@@ -87514,6 +87779,7 @@ components:
         tax_category: TaxCategory
       scopes:
         available_at_stock_location: id
+        offers: boolean
         product_name_or_sku_cont: text
         search: text
         search_by_product_name_or_sku: text

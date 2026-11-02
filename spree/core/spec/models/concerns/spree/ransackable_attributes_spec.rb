@@ -21,6 +21,12 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Variant.ransackable_attributes(:store)).not_to include('cost_price')
       expect(Spree::StoreCredit.ransackable_attributes(:store)).not_to include('memo')
     end
+
+    it "drops the marketplace's offer review filters" do
+      expect(Spree::Product.ransackable_attributes(:store)).not_to include('open_to_sellers')
+      expect(Spree::Product.ransackable_scopes(:store)).not_to include('open_to_sellers', 'with_proposed_offers')
+      expect(Spree::Product.ransackable_scopes).to include('open_to_sellers', 'with_proposed_offers')
+    end
   end
 
   describe 'for the Seller API' do
@@ -32,6 +38,10 @@ RSpec.describe Spree::RansackableAttributes do
     it "drops the buyer's email and the searches that match on it" do
       expect(Spree::Order.ransackable_attributes(:seller)).not_to include('email')
       expect(Spree::Order.ransackable_scopes(:seller)).not_to include('search')
+    end
+
+    it "drops the filter that would reveal a rival's pending offers" do
+      expect(Spree::Product.ransackable_scopes(:seller)).not_to include('with_proposed_offers')
     end
   end
 

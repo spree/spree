@@ -355,12 +355,82 @@
     "orders": "Commandes",
     "package_types": "Types d’emballage",
     "payouts": "Versements",
+    "offers": "Offres",
     "policies": "Conditions",
     "products": "Produits",
     "profile": "Profil",
     "settings": "Paramètres",
     "sign_out": "Se déconnecter",
     "team": "Équipe"
+  },
+  "offers": {
+    "add": "Proposer une offre",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "archive_confirm_description": "Cette offre est retirée de la vente. Vous pourrez la restaurer en brouillon plus tard.",
+    "archive_confirm_title": "Archiver cette offre ?",
+    "bulk": {
+      "submit_confirm_description": "La place de marché examinera chacune de ces offres avant sa mise en vente.",
+      "submit_confirm_title": "Soumettre ces offres pour examen ?",
+      "submit_failed": "Impossible de soumettre ces offres",
+      "submitted": "{n} offres soumises pour examen"
+    },
+    "columns": {
+      "options": "Variante",
+      "price": "Votre prix",
+      "product": "Produit",
+      "sku": "SKU",
+      "status": "Statut",
+      "stock": "En stock"
+    },
+    "delivery_help": "Choisissez « Comme le produit » pour expédier comme la place de marché expédie ce produit.",
+    "delivery_title": "Livraison",
+    "description": "Vendez le même produit que celui que la place de marché propose déjà. Vous fixez votre propre prix, votre stock et l’état du produit, et la place de marché examine chaque offre avant sa mise en vente.",
+    "details_title": "Détails de l’offre",
+    "empty": "Vous n’avez pas encore d’offre. Trouvez un produit vendu par la place de marché et proposez-y la vôtre.",
+    "fields": {
+      "delivery_profile": "Profil de livraison",
+      "delivery_profile_inherit": "Comme le produit",
+      "status": "Statut"
+    },
+    "marketplace_price": "Prix de la place de marché : {{price}}",
+    "new": "Proposer une offre",
+    "new_title": "Nouvelle offre",
+    "not_found": "Cette offre n’existe plus.",
+    "options_title": "La version que vous vendez",
+    "pick_a_product_first": "Choisissez d’abord le produit sur lequel proposer votre offre.",
+    "picker": {
+      "confirm": "Proposer une offre",
+      "description": "Recherchez parmi les produits que cette place de marché a ouverts aux vendeurs.",
+      "search_placeholder": "Rechercher par nom de produit",
+      "title": "Quel produit vendez-vous ?"
+    },
+    "pricing_title": "Votre prix",
+    "product_title": "Fiche de la place de marché",
+    "rejection_reason": "La place de marché vous l’a renvoyée : {{reason}}",
+    "saved": "Offre enregistrée",
+    "search_placeholder": "Rechercher par SKU",
+    "status_help": {
+      "active": "Cette offre est en vente.",
+      "archived": "Cette offre a été retirée de la vente définitivement.",
+      "draft": "Vous seul la voyez. Soumettez-la quand vous êtes prêt à la faire examiner par la place de marché.",
+      "proposed": "La place de marché examine cette offre.",
+      "rejected": "La place de marché vous l’a renvoyée. Apportez les modifications demandées, puis soumettez-la à nouveau."
+    },
+    "status_updated": "Offre mise à jour",
+    "statuses": {
+      "active": "En vente",
+      "archived": "Archivée",
+      "draft": "Brouillon",
+      "proposed": "En cours d’examen",
+      "rejected": "Modifications requises"
+    },
+    "stock_title": "Ce que vous avez en stock",
+    "submit_for_review": "Soumettre pour examen",
+    "take_down": "Retirer de la vente",
+    "take_down_confirm_description": "Cette offre ne sera plus en vente jusqu’à ce que vous la soumettiez à nouveau.",
+    "take_down_confirm_title": "Retirer cette offre de la vente ?",
+    "title": "Offres"
   },
   "onboarding": {
     "accept_terms": "Accepter les conditions",
@@ -567,6 +637,7 @@
       "total": "Total"
     },
     "title": "Commandes",
+    "description": "Ce que les clients vous ont acheté, et les colis que vous leur devez.",
     "tracking_label": "Numéro de suivi"
   },
   "payouts": {
@@ -720,6 +791,7 @@
     "take_down_confirm_description": "Les acheteurs ne le verront plus. Vous pourrez le soumettre à nouveau plus tard.",
     "take_down_confirm_title": "Retirer cette annonce de la vente ?",
     "title": "Produits",
+    "description": "Les produits que vous proposez vous-même. La place de marché examine chacun d’eux avant sa mise en vente.",
     "uploading": "Envoi de {{count}} fichier…",
     "uploading_plural": "Envoi de {{count}} fichiers…",
     "variant_remove_confirm_description": "Elle sera retirée du produit à l’enregistrement.",

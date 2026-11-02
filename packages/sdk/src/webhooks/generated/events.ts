@@ -324,8 +324,14 @@ export interface WebhookEventMap {
   'user.created': Customer
   'user.deleted': Customer
   'user.updated': Customer
+  'variant.activated': Variant
+  'variant.approved': Variant
+  'variant.archived': Variant
   'variant.created': Variant
   'variant.deleted': Variant
+  'variant.drafted': Variant
+  'variant.proposed': Variant
+  'variant.rejected': Variant
   'variant.updated': Variant
   /** @deprecated Use `wishlist_item.created` instead. */
   'wished_item.created': WishlistItem

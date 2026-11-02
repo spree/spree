@@ -16,8 +16,8 @@ export const ExchangeLineItemSchema = z.object({
   new_variant_id: z.string().nullable(),
   line_item_id: z.string().nullable(),
   fulfillment_item_id: z.string().nullable(),
-  original_variant: VariantSchema.optional(),
-  new_variant: VariantSchema.optional(),
+  get original_variant() { return VariantSchema.optional(); },
+  get new_variant() { return VariantSchema.optional(); },
   name: z.string().nullable(),
   new_variant_name: z.string().nullable(),
 });

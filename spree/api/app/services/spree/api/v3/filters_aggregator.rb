@@ -49,13 +49,13 @@ module Spree
           direction == 'desc' ? "-#{field}" : field
         end
 
-
         def price_filter
           # Remove ordering to avoid PostgreSQL DISTINCT + ORDER BY conflicts.
           # Base prices only: a price list's rows are for its own audience
           # (a company's contract, a draft or scheduled list), and the range is
-          # shown to everyone.
-          prices = Spree::Price.base_prices.for_products(@scope.reorder(''), @currency)
+          # shown to everyone. Only variants on sale count, so an unapproved
+          # offer cannot set the range.
+          prices = Spree::Price.base_prices.for_products(@scope.reorder(''), @currency).merge(Spree::Variant.listed)
           min = prices.minimum(:amount)
           max = prices.maximum(:amount)
           return nil if min.nil? || max.nil?
@@ -140,7 +140,8 @@ module Spree
           var_table = Spree::Variant.table_name
 
           Spree::OptionValueVariant
-            .joins("INNER JOIN #{var_table} ON #{var_table}.id = #{ovv_table}.variant_id AND #{var_table}.deleted_at IS NULL")
+            .joins("INNER JOIN #{var_table} ON #{var_table}.id = #{ovv_table}.variant_id " \
+                   "AND #{var_table}.deleted_at IS NULL AND #{var_table}.status = 'active'")
             .where(var_table => { product_id: product_scope.reorder('').select(:id) })
             .where(ovv_table => { option_value_id: option_value_ids })
             .group("#{ovv_table}.option_value_id")
@@ -227,7 +228,7 @@ module Spree
           # Rebuild: start from scope before options, apply only other option types
           scope = @scope_before_options
           other_groups.each_value do |ov_ids|
-            matching = Spree::Variant.where(deleted_at: nil)
+            matching = Spree::Variant.where(deleted_at: nil).listed
                                      .joins(:option_value_variants)
                                      .where(Spree::OptionValueVariant.table_name => { option_value_id: ov_ids })
                                      .select(:product_id)

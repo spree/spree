@@ -355,12 +355,82 @@
     "orders": "Zamówienia",
     "package_types": "Rodzaje opakowań",
     "payouts": "Wypłaty",
+    "offers": "Oferty",
     "policies": "Regulaminy",
     "products": "Produkty",
     "profile": "Profil",
     "settings": "Ustawienia",
     "sign_out": "Wyloguj się",
     "team": "Zespół"
+  },
+  "offers": {
+    "add": "Dodaj ofertę",
+    "archive": "Archiwizuj",
+    "restore": "Przywróć",
+    "archive_confirm_description": "Ta oferta zostanie wycofana ze sprzedaży. Później możesz przywrócić ją jako wersję roboczą.",
+    "archive_confirm_title": "Zarchiwizować tę ofertę?",
+    "bulk": {
+      "submit_confirm_description": "Marketplace sprawdzi każdą z tych ofert, zanim trafi do sprzedaży.",
+      "submit_confirm_title": "Wysłać te oferty do weryfikacji?",
+      "submit_failed": "Nie udało się wysłać tych ofert",
+      "submitted": "Wysłano oferty do weryfikacji: {n}"
+    },
+    "columns": {
+      "options": "Wariant",
+      "price": "Twoja cena",
+      "product": "Produkt",
+      "sku": "SKU",
+      "status": "Status",
+      "stock": "Na stanie"
+    },
+    "delivery_help": "Wybierz „Tak jak produkt”, aby wysyłać tak, jak marketplace wysyła ten produkt.",
+    "delivery_title": "Dostawa",
+    "description": "Sprzedawaj ten sam produkt, który marketplace już oferuje. Ustalasz własną cenę, stan magazynowy i stan produktu, a marketplace sprawdza każdą ofertę, zanim trafi do sprzedaży.",
+    "details_title": "Szczegóły oferty",
+    "empty": "Nie masz jeszcze ofert. Znajdź produkt, który sprzedaje marketplace, i dodaj do niego swoją ofertę.",
+    "fields": {
+      "delivery_profile": "Profil dostawy",
+      "delivery_profile_inherit": "Tak jak produkt",
+      "status": "Status"
+    },
+    "marketplace_price": "Cena marketplace: {{price}}",
+    "new": "Dodaj ofertę",
+    "new_title": "Nowa oferta",
+    "not_found": "Ta oferta już nie istnieje.",
+    "options_title": "Którą wersję sprzedajesz",
+    "pick_a_product_first": "Najpierw wybierz produkt, do którego chcesz dodać ofertę.",
+    "picker": {
+      "confirm": "Dodaj ofertę",
+      "description": "Przeszukaj produkty, które ten marketplace udostępnił sprzedawcom.",
+      "search_placeholder": "Szukaj po nazwie produktu",
+      "title": "Który produkt sprzedajesz?"
+    },
+    "pricing_title": "Twoja cena",
+    "product_title": "Produkt w marketplace",
+    "rejection_reason": "Marketplace odesłał ofertę: {{reason}}",
+    "saved": "Zapisano ofertę",
+    "search_placeholder": "Szukaj po SKU",
+    "status_help": {
+      "active": "Ta oferta jest w sprzedaży.",
+      "archived": "Ta oferta została na stałe wycofana ze sprzedaży.",
+      "draft": "Widzisz ją tylko Ty. Wyślij ją, gdy będzie gotowa do weryfikacji przez marketplace.",
+      "proposed": "Marketplace weryfikuje tę ofertę.",
+      "rejected": "Marketplace odesłał tę ofertę. Wprowadź wymagane zmiany i wyślij ją ponownie."
+    },
+    "status_updated": "Zaktualizowano ofertę",
+    "statuses": {
+      "active": "W sprzedaży",
+      "archived": "Zarchiwizowana",
+      "draft": "Wersja robocza",
+      "proposed": "W weryfikacji",
+      "rejected": "Wymaga zmian"
+    },
+    "stock_title": "Co masz na stanie",
+    "submit_for_review": "Wyślij do weryfikacji",
+    "take_down": "Wycofaj",
+    "take_down_confirm_description": "Ta oferta nie będzie w sprzedaży, dopóki nie wyślesz jej ponownie.",
+    "take_down_confirm_title": "Wycofać tę ofertę?",
+    "title": "Oferty"
   },
   "onboarding": {
     "accept_terms": "Zaakceptuj regulamin",
@@ -569,6 +639,7 @@
       "total": "Razem"
     },
     "title": "Zamówienia",
+    "description": "Co klienci u Ciebie kupili i jakie paczki musisz im wysłać.",
     "tracking_label": "Numer śledzenia"
   },
   "payouts": {
@@ -726,6 +797,7 @@
     "take_down_confirm_description": "Kupujący przestaną go widzieć. Możesz wysłać go ponownie później.",
     "take_down_confirm_title": "Wycofać tę ofertę?",
     "title": "Produkty",
+    "description": "Produkty, które wystawiasz sam. Marketplace sprawdza każdy z nich, zanim trafi do sprzedaży.",
     "uploading": "Wysyłanie {{count}} pliku…",
     "uploading_plural": "Wysyłanie plików: {{count}}…",
     "variant_remove_confirm_description": "Zniknie z produktu po zapisaniu.",
