@@ -998,6 +998,44 @@
           "subtitle": "See who changed what in your store, and when.",
           "title": "Audit log"
         },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Products are added to the right categories when they are imported, when the seller changes them and when you change a mapping.",
+              "title": "Always up to date"
+            },
+            "kept": {
+              "description": "Categories you add or remove by hand stay as you left them. The mapper only takes out what it added.",
+              "title": "Your changes stay"
+            },
+            "once": {
+              "description": "Map a seller's category to one of yours and every product in it follows. Map the same category for many sellers at once.",
+              "title": "Map once"
+            }
+          },
+          "intro": "Every seller organizes their products their own way. Map each seller's categories to your marketplace's categories once, and their products are added to your categories when they are imported and whenever they change.",
+          "nav": "Category mapper",
+          "steps": {
+            "add": {
+              "description": "Products are added to your categories automatically.",
+              "title": "Add"
+            },
+            "import": {
+              "description": "Seller products arrive with the seller's own categories.",
+              "title": "Import"
+            },
+            "map": {
+              "description": "You map each seller category to one of your categories.",
+              "title": "Map"
+            },
+            "review": {
+              "description": "Products reach your review already in their categories.",
+              "title": "Review"
+            }
+          },
+          "subtitle": "Put every seller's products into your categories automatically.",
+          "title": "Category mapper"
+        },
         "company_onboarding": {
           "benefits": {
             "agreement": {

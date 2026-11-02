@@ -993,6 +993,44 @@
           "subtitle": "查看谁在何时更改了店铺中的哪些内容。",
           "title": "审计日志"
         },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "商品在导入时、卖家修改时以及您更改映射时都会被添加到正确的分类。",
+              "title": "始终保持最新"
+            },
+            "kept": {
+              "description": "您手动添加或移除的分类会保持不变。映射器只移除它自己添加的分类。",
+              "title": "您的更改会保留"
+            },
+            "once": {
+              "description": "将卖家的分类映射到您的某个分类，其中的每个商品都会随之归类。还可以一次为多个卖家映射同一分类。",
+              "title": "只需映射一次"
+            }
+          },
+          "intro": "每个卖家都用自己的方式组织商品。将每个卖家的分类一次性映射到您市场的分类，其商品在导入时以及每次变更时都会被添加到您的分类中。",
+          "nav": "分类映射器",
+          "steps": {
+            "add": {
+              "description": "商品会自动添加到您的分类。",
+              "title": "添加"
+            },
+            "import": {
+              "description": "卖家的商品带着卖家自己的分类到达。",
+              "title": "导入"
+            },
+            "map": {
+              "description": "您将每个卖家分类映射到您的某个分类。",
+              "title": "映射"
+            },
+            "review": {
+              "description": "商品进入审核时已归入分类。",
+              "title": "审核"
+            }
+          },
+          "subtitle": "自动将每个卖家的商品归入您的分类。",
+          "title": "分类映射器"
+        },
         "company_onboarding": {
           "benefits": {
             "agreement": {
