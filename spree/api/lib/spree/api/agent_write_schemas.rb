@@ -33,6 +33,28 @@ module Spree
           self.for(key).keys
         end
 
+        # What a controller's `request_params` declaration accepts for an
+        # action, for endpoints the document does not describe — an
+        # extension's, whose integration specs publish their own document.
+        # A member action without a body of its own takes what update takes,
+        # as the controller itself permits.
+        #
+        # @param controller [Class, nil]
+        # @param action [Symbol, String]
+        # @return [Array<String>]
+        def declared_attribute_names(controller, action)
+          return [] unless controller.respond_to?(:request_params_schema)
+
+          action = action.to_s
+          schema = controller.request_params_schema(action) || controller.request_params_schema(:update)
+          return [] if schema.nil?
+
+          list = schema.permit_list(Spree::Api::V3::RequestParams::RESOURCE_ACTIONS.include?(action) ? action : :update)
+          list.flat_map { |entry| entry.is_a?(Hash) ? entry.keys : [entry] }.map(&:to_s).uniq
+        rescue StandardError
+          []
+        end
+
         # Where the generated document lives: `docs/` in a source checkout,
         # or the copy the release packs into the gem. Resolved lazily: the
         # engine class does not exist yet while this file loads.
