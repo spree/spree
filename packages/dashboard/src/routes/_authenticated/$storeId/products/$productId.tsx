@@ -11,6 +11,7 @@ import {
   MediaCard,
   mapSpreeErrorsToForm,
   mediaToFormValues,
+  omitUnchangedListFields,
   PageHeader,
   PricesCard,
   type ProductFormValues,
@@ -181,7 +182,10 @@ function ProductForm({ product }: { product: Product }) {
     const extensionValues = extensionSubmitValues('product', form)
     // `description` rides through as HTML — the editor's output is what the
     // column stores; the API reads it back as plain text plus `description_html`.
-    const payload: Record<string, unknown> = { ...rest, ...extensionValues }
+    const payload = omitUnchangedListFields(
+      { ...rest, ...extensionValues },
+      form.formState.dirtyFields,
+    )
 
     if (variants && variants.length > 0) {
       const variantsForSave = prepareVariantsTaxForProductSave(
