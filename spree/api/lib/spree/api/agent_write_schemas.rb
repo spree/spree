@@ -49,8 +49,10 @@ module Spree
           schema = controller.request_params_schema(action) || controller.request_params_schema(:update)
           return [] if schema.nil?
 
-          list = schema.permit_list(Spree::Api::V3::RequestParams::RESOURCE_ACTIONS.include?(action) ? action : :update)
-          list.flat_map { |entry| entry.is_a?(Hash) ? entry.keys : [entry] }.map(&:to_s).uniq
+          # Every declared field, including `permit: false` ones the
+          # controller reads from the raw params: they are still in the body.
+          on = Spree::Api::V3::RequestParams::RESOURCE_ACTIONS.include?(action) ? action.to_sym : :update
+          schema.fields.each_value.select { |field| field.accepted_on?(on) }.map { |field| field.name.to_s }
         rescue StandardError
           []
         end
