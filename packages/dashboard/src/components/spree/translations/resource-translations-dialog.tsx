@@ -426,11 +426,33 @@ const BLOCK_SELECTOR = 'p, div, li, ul, ol, blockquote, pre, h1, h2, h3, h4, h5,
 
 function stripHtml(html: string): string {
   const doc = new DOMParser().parseFromString(html, 'text/html')
+  // Drop indentation-only text nodes at block boundaries — the cell renders with
+  // `whitespace-pre-wrap`, so they would show up as leading spaces. Whitespace
+  // between inline elements (`<b>a</b> <i>b</i>`) and inside `<pre>` is kept.
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT)
+  const blankNodes: Node[] = []
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node.textContent?.trim() !== '' || node.parentElement?.closest('pre')) continue
+    const isBlock = (n: Node | null) => n instanceof Element && n.matches(BLOCK_SELECTOR)
+    const atBlockEdge =
+      isBlock(node.parentElement) && (!node.previousSibling || !node.nextSibling)
+    if (atBlockEdge || isBlock(node.previousSibling) || isBlock(node.nextSibling)) {
+      blankNodes.push(node)
+    }
+  }
+  for (const node of blankNodes) node.parentNode?.removeChild(node)
+
   for (const br of Array.from(doc.body.querySelectorAll('br'))) {
     br.replaceWith(doc.createTextNode('\n'))
   }
   for (const block of Array.from(doc.body.querySelectorAll(BLOCK_SELECTOR))) {
-    block.append(doc.createTextNode('\n\n'))
+    if (block.tagName === 'LI') {
+      block.append(doc.createTextNode('\n'))
+    } else if (
+      !(block.tagName === 'P' && block.parentElement?.tagName === 'LI' && !block.nextElementSibling)
+    ) {
+      block.append(doc.createTextNode('\n\n'))
+    }
   }
   return (doc.body.textContent ?? '').replace(/\n{3,}/g, '\n\n').trim()
 }
