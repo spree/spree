@@ -192,7 +192,7 @@ module Spree
     def reopen_invoice_request
       return if invoice_request.nil?
 
-      replacement = order&.invoices&.invoices&.where&.not(id: id)&.first
+      replacement = order.invoices.invoices.where.not(id: id).first
       invoice_request.update!(status: replacement ? 'fulfilled' : 'open', invoice: replacement)
     end
 

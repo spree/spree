@@ -45,7 +45,15 @@ module Spree
 
     def private_document_within_size_on_disk(slot, max_size)
       blob = public_send(slot).blob
-      return if blob.nil? || !blob.service.exist?(blob.key)
+      return if blob.nil?
+
+      unless blob.service.exist?(blob.key)
+        # A direct upload attached before its bytes arrived would leave a
+        # record nothing can download. A file handed in as IO is uploaded on
+        # save, so its bytes are not expected yet.
+        errors.add(slot, :blank) unless attachment_changes[slot.to_s].try(:attachable).is_a?(Hash)
+        return
+      end
 
       stored_size = 0
       blob.service.download(blob.key) do |chunk|
