@@ -86,6 +86,11 @@ describe Spree::Order, type: :model do
       let!(:order_4) { create(:order, number: 'R300', customer: create(:user, email: 'johndoe@example.com'), bill_address: create(:address, first_name: 'Ayn', last_name: 'Rand')) }
       let!(:order_5) { create(:order, number: 'R400', customer: create(:user, email: 'john_doe@example.com'), bill_address: create(:address, first_name: 'John', last_name: 'Doe')) }
 
+      it 'returns no orders for a non-string query' do
+        expect(described_class.search(true)).to be_empty
+        expect(described_class.search(nil)).to be_empty
+      end
+
       it 'returns orders based on an email' do
         expect(described_class.search('don.roe@example.com')).to eq([order_1])
         expect(described_class.search('jane.gone@example.com')).to eq([order_2])
