@@ -17,6 +17,9 @@ API, so they keep their own versions and release on their own tags.
 
 ## Releasing
 
+`/release <version>` runs the whole process below with the audit and release
+notes a release needs; this section records the mechanics.
+
 Every release is published by `.github/workflows/release.yml` from a tag
 pushed on a commit already on `main`. The workflow checks the tag against the
 versions in the repository first, and skips any version already published, so
@@ -31,10 +34,11 @@ a failed release can be re-run.
 **A Spree release:**
 
 1. Bump `Spree::VERSION` in `spree/core/lib/spree/core/version.rb`.
-2. Run `pnpm version:packages`. It runs `changeset version`, then moves every
-   package in the group to the Spree version. A package with no changes still
-   gets the new version and a changelog entry saying so. Pending changesets
-   for the tools are versioned too.
+2. Run `GITHUB_TOKEN=$(gh auth token) pnpm version:packages` — the changelog
+   writer needs the token to link pull requests. It runs `changeset version`,
+   then moves every package in the group to the Spree version. A package with
+   no changes still gets the new version and a changelog entry saying so.
+   Pending changesets for the tools are versioned too.
 3. Merge, then push the Spree tag, plus a tag for each tool whose version
    changed: `git push origin v6.0.0.rc7 @spree/cli@3.5.0`.
 

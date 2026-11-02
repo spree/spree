@@ -76,6 +76,7 @@ pnpm wt:template         # rebuild the template DB after schema-changing pulls
 - No co-author or "generated with" trailers.
 - Open every pull request with `/open-pr` (code review, security review, open, monitor). A hook blocks a bare `gh pr create` until both reviews have run on `HEAD`.
 - Pull request descriptions are public: no credentials, personal data or local URLs. Keep them short; bullets for larger changes.
+- Cut releases with `/release <version>` (audit, version bump, release notes, pull request, tags and the GitHub release).
 
 ## Testing
 
