@@ -56,21 +56,23 @@ module Spree
     # behind — a list the caller never asked for, answered with a 422.
     def reconcile_typed_association(association, rows)
       collection = public_send(association)
-      self.class.transaction do
-        kept_ids = rows.each_with_index.map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
-        collection.where.not(id: kept_ids).destroy_all
-        # `where.not(...).destroy_all` deletes the dropped rows from the DB but
-        # leaves them in the already-loaded association target. Reset so a
-        # same-request read (e.g. the serializer rendering `rule_ids`) reflects
-        # the removal instead of echoing ghosts.
+      begin
+        self.class.transaction do
+          kept_ids = rows.each_with_index.map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
+          collection.where.not(id: kept_ids).destroy_all
+          # `where.not(...).destroy_all` deletes the dropped rows from the DB but
+          # leaves them in the already-loaded association target. Reset so a
+          # same-request read (e.g. the serializer rendering `rule_ids`) reflects
+          # the removal instead of echoing ghosts.
+          collection.reset
+        end
+      rescue StandardError
+        # The rows built before the refusal are still in the loaded target, and
+        # the owner's next save would write them; the rollback only undid the
+        # database.
         collection.reset
+        raise
       end
-    rescue StandardError
-      # The rows built before the refusal are still in the loaded target, and
-      # the owner's next save would write them; the rollback only undid the
-      # database.
-      collection.reset
-      raise
     end
 
     # @param pointer [String] where the row sits in the request, e.g. `/rules/1`
