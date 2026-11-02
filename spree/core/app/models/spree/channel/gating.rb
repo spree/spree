@@ -7,10 +7,10 @@ module Spree
     module Gating
       extend ActiveSupport::Concern
 
-      # Posture controlling catalog/price visibility for anonymous visitors:
-      # - +public+            products + prices visible to anyone
-      # - +prices_hidden+     products browsable, prices null for guests
-      # - +login_required+    catalog reads rejected for guests
+      # Posture controlling catalog/price visibility:
+      # - +public+           products + prices visible to anyone
+      # - +prices_hidden+    products browsable, prices null for guests
+      # - +login_required+   catalog reads rejected for guests
       # - +company_required+ products browsable by anyone, prices and
       #   checkout only for buyers with standing over a policy-active company
       #   (docs/plans/6.1-b2b-company-self-registration.md)

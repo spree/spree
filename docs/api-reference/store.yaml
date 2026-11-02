@@ -11856,7 +11856,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.994Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11874,19 +11874,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.997Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.999Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.991Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
                   page: 1
                   limit: 25

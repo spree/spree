@@ -45,6 +45,17 @@ RSpec.describe Spree::Companies::Register do
     expect(Spree::Events).to have_received(:publish).with('company.registered', anything, anything)
   end
 
+  it 'carries the registration answers in the company.registered metadata' do
+    allow(Spree::Events).to receive(:enabled?).and_return(true)
+    allow(Spree::Events).to receive(:publish)
+
+    register(registration: { vat_number: 'PL123' })
+
+    expect(Spree::Events).to have_received(:publish).with(
+      'company.registered', anything, { registration: { 'vat_number' => 'PL123' } }
+    )
+  end
+
   it 'fails on an invalid company without creating anything' do
     result = described_class.call(store: store, customer: customer, name: '')
 

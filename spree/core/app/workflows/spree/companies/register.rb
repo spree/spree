@@ -15,9 +15,10 @@ module Spree
     class Register < Spree::Workflow
       hooks :validate, :after_register
 
-      # Registration answers are untrusted storefront input stored verbatim
-      # and repeated in the `company.registered` payload, so they are held to
-      # a flat form's shape: a bounded set of short keys and scalar values.
+      # Registration answers are untrusted storefront input, stored verbatim
+      # and repeated in the `company.registered` event metadata, so they are
+      # held to a flat form's shape: a bounded set of short keys and scalar
+      # values.
       MAX_REGISTRATION_ANSWERS = 50
       MAX_REGISTRATION_KEY_LENGTH = 100
       MAX_REGISTRATION_VALUE_LENGTH = 1_000
@@ -135,8 +136,11 @@ module Spree
         failure(membership) unless membership.save
       end
 
+      # The Store serializer carries no metadata, so the answers ride the
+      # event's metadata for whoever reviews the registration.
       def publish_registered
-        company.publish_event('company.registered')
+        answers = company.metadata['registration']
+        company.publish_event('company.registered', nil, answers.present? ? { registration: answers } : {})
       end
     end
   end

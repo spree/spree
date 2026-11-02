@@ -4206,8 +4206,8 @@ paths:
                   default: true
                   storefront_access:
                   guest_checkout:
-                  created_at: '2026-11-01T22:21:16.980Z'
-                  updated_at: '2026-11-01T22:21:16.980Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   order_routing_strategy:
                   stock_location_ids: []
                   default_catalog_id:
@@ -4700,24 +4700,24 @@ paths:
                 - id: orule_UkLWZg9DAJ
                   position: 1
                   active: true
-                  created_at: '2026-11-01T22:21:16.981Z'
-                  updated_at: '2026-11-01T22:21:16.981Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   type: preferred_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                 - id: orule_gbHJdmfrXB
                   position: 2
                   active: true
-                  created_at: '2026-11-01T22:21:16.982Z'
-                  updated_at: '2026-11-01T22:21:16.982Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   type: minimize_splits
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
                 - id: orule_EfhxLZ9ck8
                   position: 3
                   active: true
-                  created_at: '2026-11-01T22:21:16.983Z'
-                  updated_at: '2026-11-01T22:21:16.983Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   type: default_location
                   channel_id: ch_UkLWZg9DAJ
                   preferences: {}
@@ -4860,7 +4860,7 @@ paths:
                 id: orule_UkLWZg9DAJ
                 position: 2
                 active: false
-                created_at: '2026-11-01T22:21:16.981Z'
+                created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: preferred_location
                 channel_id: ch_UkLWZg9DAJ
@@ -14539,8 +14539,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 - id: mkt_gbHJdmfrXB
                   name: EU
@@ -18248,8 +18248,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19117,8 +19117,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19470,8 +19470,8 @@ paths:
                     - US
                     supported_locales:
                     - en
-                    created_at: '2026-11-01T22:21:16.976Z'
-                    updated_at: '2026-11-01T22:21:16.976Z'
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
                     tax_provider:
                   external_references: {}
                   status: draft
@@ -19696,8 +19696,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -19853,8 +19853,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -20000,8 +20000,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: draft
@@ -20199,8 +20199,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -20378,8 +20378,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: canceled
@@ -20518,8 +20518,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -20652,8 +20652,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-01T22:21:16.976Z'
-                  updated_at: '2026-11-01T22:21:16.976Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -26641,8 +26641,8 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.994Z'
-                  created_at: '2026-11-01T22:21:16.994Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_uw2YK1rnl0
                   name: Restocking Policy
                   slug: restocking-policy
@@ -26655,22 +26655,22 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.997Z'
-                  created_at: '2026-11-01T22:21:16.997Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.999Z'
-                  created_at: '2026-11-01T22:21:16.999Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-01T22:21:16.991Z'
-                  created_at: '2026-11-01T22:21:16.991Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
                 meta:
                   page: 1
                   limit: 25
@@ -30991,7 +30991,7 @@ paths:
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                created_at: '2026-11-01T22:21:16.968Z'
+                created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_routing_strategy: rules
                 payout_provider:
@@ -31363,7 +31363,7 @@ paths:
                 mail_from_address: no-reply@example.com
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
-                created_at: '2026-11-01T22:21:16.968Z'
+                created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 order_routing_strategy: rules
                 payout_provider:
@@ -45304,8 +45304,8 @@ paths:
                   name: General
                   default: true
                   position: 1
-                  created_at: '2026-11-01T22:21:17.002Z'
-                  updated_at: '2026-11-01T22:21:17.002Z'
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                   kind: shipping
                   digital: false
                   offers_pickup: false
@@ -79350,7 +79350,9 @@ components:
           - prices_hidden
           - login_required
           - company_required
-          description: What anonymous visitors can see. Null inherits the store setting.
+          description: What visitors can see. Under company_required, signed-in buyers
+            without an active company also get no prices or checkout. Null inherits
+            the store setting.
           nullable: true
         guest_checkout:
           type: boolean
@@ -79406,7 +79408,9 @@ components:
           - prices_hidden
           - login_required
           - company_required
-          description: What anonymous visitors can see. Null inherits the store setting.
+          description: What visitors can see. Under company_required, signed-in buyers
+            without an active company also get no prices or checkout. Null inherits
+            the store setting.
           nullable: true
         guest_checkout:
           type: boolean
@@ -85187,7 +85191,8 @@ components:
           - prices_hidden
           - login_required
           - company_required
-          description: The store-wide default for what anonymous visitors can see.
+          description: The store-wide default for what visitors can see. Under company_required,
+            signed-in buyers without an active company also get no prices or checkout.
             Channels fall back to it when they don't set their own.
         storefront_url:
           type: string

@@ -31,7 +31,7 @@ module Spree
         true
       end
 
-      # The +pricing_access+ reason code for a viewer an +company_required+
+      # The +pricing_access+ reason code for a viewer a +company_required+
       # channel withholds prices from, or nil when prices are visible.
       #
       # @param user [Object, nil] the authenticated customer, nil for guests
