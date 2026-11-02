@@ -3046,6 +3046,7 @@
         "empty": "Este pedido no tiene artículos.",
         "fully_fulfilled": "Este pedido está completamente cumplido y ya no se puede editar.",
         "items_title": "Artículos",
+        "saved_not_reloaded": "Guardado, pero no se pudo volver a cargar el pedido. Actualiza la página para ver los totales más recientes.",
         "subtitle": "Pedido {{number}}",
         "title": "Editar pedido",
         "totals_hint": "El servidor recalcula los totales después de guardar.",

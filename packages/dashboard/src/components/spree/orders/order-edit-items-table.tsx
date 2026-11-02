@@ -27,18 +27,25 @@ import {
  * sent until the page's Save. `pricesEditable` is on for drafts only — a
  * negotiated price is a pre-placement gesture.
  *
- * The field array lives on the page because the catalog picker appends to it
- * too, and two `useFieldArray` calls on one name keep separate row lists.
+ * The field array lives in `useOrderItemsEditor` because the catalog picker
+ * appends to it too, and two `useFieldArray` calls on one name keep separate
+ * row lists.
  */
 export function OrderEditItemsTable({
   form,
   fields,
   pricesEditable = false,
+  disabled = false,
   currency,
 }: {
   form: UseFormReturn<OrderEditFormValues>
   fields: FieldArrayWithId<OrderEditFormValues, 'items', 'id'>[]
   pricesEditable?: boolean
+  /**
+   * Locks every control, e.g. while a save is in flight: the post-save reset
+   * would otherwise erase what is typed meanwhile.
+   */
+  disabled?: boolean
   /** Order currency, for formatting the projected line totals. */
   currency: string
 }) {
@@ -49,28 +56,34 @@ export function OrderEditItemsTable({
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t('admin.orders.edit.columns.product')}</TableHead>
-          <TableHead className="text-right">{t('admin.orders.edit.columns.unit_price')}</TableHead>
-          <TableHead className="w-32 text-right">{t('admin.fields.quantity.label')}</TableHead>
-          <TableHead className="text-right">{t('admin.orders.edit.columns.line_total')}</TableHead>
-          <TableHead className="w-16" />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {fields.map((field, index) => (
-          <OrderEditItemRow
-            key={field.id}
-            form={form}
-            index={index}
-            pricesEditable={pricesEditable}
-            currency={currency}
-          />
-        ))}
-      </TableBody>
-    </Table>
+    <fieldset disabled={disabled} className="contents">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t('admin.orders.edit.columns.product')}</TableHead>
+            <TableHead className="text-right">
+              {t('admin.orders.edit.columns.unit_price')}
+            </TableHead>
+            <TableHead className="w-32 text-right">{t('admin.fields.quantity.label')}</TableHead>
+            <TableHead className="text-right">
+              {t('admin.orders.edit.columns.line_total')}
+            </TableHead>
+            <TableHead className="w-16" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {fields.map((field, index) => (
+            <OrderEditItemRow
+              key={field.id}
+              form={form}
+              index={index}
+              pricesEditable={pricesEditable}
+              currency={currency}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </fieldset>
   )
 }
 
