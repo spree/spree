@@ -72,6 +72,17 @@ RSpec.describe Spree::Invoice, type: :model do
       expect(build(:invoice, :credit_note, order: order, total: 5)).not_to be_valid
     end
 
+    it 'lets only a credit note or an invoice replacing a receipt point at an original' do
+      original = create(:invoice, order: order)
+      receipt = create(:invoice, :receipt, order: order)
+      credit_note = create(:invoice, :credit_note, order: order, original_invoice: original)
+
+      expect(build(:invoice, order: order, original_invoice: receipt)).to be_valid
+      expect(build(:invoice, order: order, original_invoice: original)).not_to be_valid
+      expect(build(:invoice, :credit_note, order: order, original_invoice: credit_note)).not_to be_valid
+      expect(build(:invoice, :credit_note, order: order, original_invoice_id: 0)).not_to be_valid
+    end
+
     it 'refuses an original invoice from another order' do
       other = create(:invoice)
       credit_note = build(:invoice, :credit_note, order: order, original_invoice: other)

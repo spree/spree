@@ -34,6 +34,7 @@ export const InvoiceSchema = z.object({
   uploaded_by_type: z.string().nullable(),
   uploaded_by: ActorSchema.optional(),
   can_be_deleted: z.boolean(),
+  can_be_resent: z.boolean(),
   get order() { return OrderSchema.optional(); },
 });
 

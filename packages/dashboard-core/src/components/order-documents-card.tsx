@@ -258,7 +258,7 @@ function InvoiceList({
                   key: 'resend',
                   label: t('admin.order_documents.send_again'),
                   icon: <SendIcon className="size-4" />,
-                  visible: canEdit,
+                  visible: canEdit && !!invoice.can_be_resent,
                   disabled: resend.isPending,
                   onSelect: () => resend.mutateAsync(invoice.id).catch(() => undefined),
                 },

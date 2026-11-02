@@ -14,6 +14,7 @@ module Spree
                    external_reference: [:string, nullable: true],
                    sent_at: [:string, nullable: true],
                    can_be_deleted: :boolean,
+                   can_be_resent: :boolean,
                    uploaded_by_id: [:string, nullable: true],
                    uploaded_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    metadata: 'Record<string, unknown> | null'
@@ -30,6 +31,7 @@ module Spree
 
           # Lets the panels hide a delete the model will refuse.
           attribute :can_be_deleted, &:can_be_deleted?
+          attribute(:can_be_resent) { true }
 
           one :order,
               resource: proc { Spree.api.admin_order_serializer },
