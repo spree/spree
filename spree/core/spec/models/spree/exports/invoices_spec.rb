@@ -32,6 +32,17 @@ RSpec.describe Spree::Exports::Invoices, type: :model do
     expect(export_rows(search_params: { kind_eq: 'invoice' }.to_json).map { |row| row['Number'] }).to eq(['FV/2026/11/42'])
   end
 
+  it 'includes commission invoices only when its creator reads payouts, and says so' do
+    create(:invoice, :commission, seller_payout: create(:seller_payout, store: store), number: 'COM/1')
+    export = described_class.create!(store: store, user: user, record_selection: 'all')
+    keyless = described_class.create!(store: store, record_selection: 'all')
+
+    expect(export.additional_read_permission).to eq('read_payouts')
+    expect(export.scope.pluck(:number)).to include('COM/1')
+    expect(keyless.additional_read_permission).to be_nil
+    expect(keyless.scope.pluck(:number)).not_to include('COM/1')
+  end
+
   it "never includes another store's invoices" do
     create(:invoice, order: create(:completed_order_with_totals, store: create(:store)), number: 'OTHER-1')
 

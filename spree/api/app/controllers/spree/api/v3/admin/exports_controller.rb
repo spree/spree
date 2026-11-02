@@ -67,6 +67,14 @@ module Spree
             Spree::Export
           end
 
+          # The file is shared across the store, so a reader needs whatever
+          # its contents demanded of the creator, not only the type's scope.
+          def authorize_resource!(resource = @resource, action = action_name.to_sym)
+            super
+            permission = resource.try(:additional_read_permission)
+            raise CanCan::AccessDenied if permission && !holds_permission?(permission)
+          end
+
           def serializer_class
             Spree.api.admin_export_serializer
           end
