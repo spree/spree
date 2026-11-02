@@ -1,5 +1,13 @@
 # @spree/dashboard-core
 
+## 6.0.2
+
+### Patch Changes
+
+- [#15029](https://github.com/spree/spree/pull/15029) [`4cfb2ab`](https://github.com/spree/spree/commit/4cfb2abfd613044e91a7e4b689f8294acb7dd700) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The command palette is now built on Base UI's Autocomplete instead of `cmdk`, so the dashboard no longer installs `cmdk` or any Radix packages. It looks and works the same: arrow keys move the highlight, Enter opens the highlighted row and Escape closes the palette. The `Command` components in `@spree/dashboard-ui` keep the props the dashboard uses: `shouldFilter` on `Command`, `value` and `onValueChange` on `CommandInput`, `value`, `keywords` and `onSelect` on `CommandItem`, and `heading` on `CommandGroup`. The `cmdk` options on `Command` for the highlighted row (`value`, `onValueChange`), custom matching (`filter`) and wrap-around (`loop`) are no longer available.
+- Updated dependencies [[`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b)]:
+  - @spree/core@6.0.2
+
 ## 6.0.1
 
 ### Patch Changes

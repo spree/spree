@@ -1,5 +1,23 @@
 # @spree/dashboard
 
+## 6.0.2
+
+### Patch Changes
+
+- [#15029](https://github.com/spree/spree/pull/15029) [`4cfb2ab`](https://github.com/spree/spree/commit/4cfb2abfd613044e91a7e4b689f8294acb7dd700) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The command palette is now built on Base UI's Autocomplete instead of `cmdk`, so the dashboard no longer installs `cmdk` or any Radix packages. It looks and works the same: arrow keys move the highlight, Enter opens the highlighted row and Escape closes the palette. The `Command` components in `@spree/dashboard-ui` keep the props the dashboard uses: `shouldFilter` on `Command`, `value` and `onValueChange` on `CommandInput`, `value`, `keywords` and `onSelect` on `CommandItem`, and `heading` on `CommandGroup`. The `cmdk` options on `Command` for the highlighted row (`value`, `onValueChange`), custom matching (`filter`) and wrap-around (`loop`) are no longer available.
+
+- [#15067](https://github.com/spree/spree/pull/15067) [`7152857`](https://github.com/spree/spree/commit/7152857e0c2d7c418cd95c4da59501c20b01b998) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Plugins can build their own order pages from the order page's building blocks, exported from `@spree/dashboard/orders`: `useOrderItemsEditor` (staged line editing with negotiated draft prices and a one-transaction save), `OrderEditItemsTable`, `AddLineItemDialog`, `OrderTotalsCard`, `useOrder`, the customer, logistics, purchase order, discounts and notes cards, and the new-order page's company and customer pickers. The order edit page now runs on the same hook.
+
+- [#15057](https://github.com/spree/spree/pull/15057) [`ab0dec3`](https://github.com/spree/spree/commit/ab0dec332d93bf69deaa2ff794f5cfd7c2c75e79) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API payments now return `can_void` and `can_capture`, which the payment method decides. The order page uses them to hide Void on captured payments that the gateway cannot void, such as Stripe. The dashboard no longer checks the payment status itself, so it needs a server that returns them.
+
+- [#15032](https://github.com/spree/spree/pull/15032) [`5646a0b`](https://github.com/spree/spree/commit/5646a0be5e5b26ed5b1aaf8dc06eb5ba6a3e197e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Release notes in the dashboard's notifications now use the HTML GitHub renders for each release, cleaned with DOMPurify, instead of parsing the markdown in the browser. They look the same as on GitHub, tables and code blocks included, and the dashboard installs about 100 fewer packages.
+
+- [#15022](https://github.com/spree/spree/pull/15022) [`8890e33`](https://github.com/spree/spree/commit/8890e33bae96e6edc9e66d92b90feb012561a740) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Removed dependencies the packages no longer use, so installs are smaller. `@spree/dashboard` no longer lists `next-themes` or its own copies of the packages `@spree/dashboard-ui` already brings. `@spree/seller-dashboard` drops `@dnd-kit` and `lucide-react`, and `@spree/dashboard-ui` drops the unused TipTap bubble and floating menu extensions. Nothing changes for host apps or plugins.
+
+- [#15040](https://github.com/spree/spree/pull/15040) [`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The staff settings page shows each member's status (active, locked or deactivated) and when they were last active. A new "View details" action opens a sheet with when they joined, who invited them and their signed-in sessions, each with its browser, IP address and last use. The admin SDK types gain `status`, `last_active_at`, the `inviter` and `sessions` expands, and the `Session` and `AdminUserStatus` types; `@spree/dashboard-ui` adds `BrowserIcon`.
+- Updated dependencies [[`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b)]:
+  - @spree/core@6.0.2
+
 ## 6.0.1
 
 ### Patch Changes

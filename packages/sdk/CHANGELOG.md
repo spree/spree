@@ -1,5 +1,9 @@
 # @spree/sdk
 
+## 6.0.2
+
+Released with Spree 6.0.2, with no changes of its own.
+
 ## 6.0.1
 
 ### Patch Changes
