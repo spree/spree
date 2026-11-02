@@ -61,7 +61,7 @@ module Spree
         resolved_company&.legal_entity
       end
 
-      # Whether an +company_required+ channel must refuse completion: the
+      # Whether a +company_required+ channel must refuse completion: the
       # sale resolves to no company, or to a named node the buyer no longer
       # stands over or the policy has not activated (an inactive sole standing
       # already resolves to nothing). The staff exemption lives with the

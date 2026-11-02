@@ -58,12 +58,10 @@ module Spree
           # The declared :hash type shapes the generated schema and the
           # permitted list; it does not stop a caller sending a scalar or an
           # array under the key, and this path reads the raw params. Anything
-          # that is not a hash carries no answers.
+          # else passes through for the workflow to refuse.
           def registration_answers
-            case (value = params[:registration])
-            when ActionController::Parameters then value.to_unsafe_h
-            when Hash then value
-            end
+            value = params[:registration]
+            value.is_a?(ActionController::Parameters) ? value.to_unsafe_h : value
           end
 
           def serializer_class
