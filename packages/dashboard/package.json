@@ -34,7 +34,8 @@
     "./components/spree/auth-shell": "./src/components/spree/auth-shell.tsx",
     "./components/spree/store-setup-fields": "./src/components/spree/store-setup-fields.tsx",
     "./hooks/use-auth-providers": "./src/hooks/use-auth-providers.ts",
-    "./schemas/auth": "./src/schemas/auth.ts"
+    "./schemas/auth": "./src/schemas/auth.ts",
+    "./orders": "./src/orders.ts"
   },
   "files": [
     "src",
