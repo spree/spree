@@ -86,6 +86,14 @@ RSpec.describe Spree::AgentTools::ResourceMap do
       end
     end
 
+    # Invoices are listed store-wide under the orders scope and per payout
+    # under the payouts one. A search goes to the store-wide list, so the
+    # permission is the one that list enforces.
+    it "takes the permission of the top-level controller a search is sent to" do
+      expect(described_class.find('invoices').permission).to eq('read_orders')
+      expect(described_class.find('media').permission).to eq('read_media')
+    end
+
     it 'keeps the parent segment for a genuinely nested resource' do
       expect(described_class.find('line_items').api_path(:index)).to include(':')
     end

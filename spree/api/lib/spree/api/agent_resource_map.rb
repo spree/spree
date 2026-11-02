@@ -268,15 +268,20 @@ module Spree
         # happened to sort last is not an answer: it would grant a key holding
         # `read_orders` the customers' records too.
         #
-        # So a collision resolves to the narrowest scope offered, and the
-        # resource stays read-only, because the two controllers do not agree
-        # on who may write it. A caller holding the wider scope reaches the
-        # record through the endpoint, as before.
+        # So a collision resolves to the scope of the top-level controller,
+        # when there is one: searches and reads are sent to its route, and
+        # that controller enforces its own scope, so any other key would
+        # offer a tool the endpoint then refuses. Without a top-level route
+        # it resolves to the narrowest scope offered. Either way the resource
+        # stays read-only, because the controllers do not agree on who may
+        # write it. A caller holding the wider scope reaches the record
+        # through the endpoint, as before.
         def resolve_collisions(entries)
           entries.group_by { |entry| entry[:key] }.map do |_key, candidates|
             next candidates.first if candidates.one?
 
-            narrowest = candidates.min_by { |entry| [scope_breadth(entry[:permission]), entry[:permission]] }
+            narrowest = top_level_candidate(candidates) ||
+                        candidates.min_by { |entry| [scope_breadth(entry[:permission]), entry[:permission]] }
             contested = candidates.map { |entry| entry[:permission] }.uniq.size > 1
 
             # A workflow declaration is not in dispute — whichever controller
@@ -311,6 +316,13 @@ module Spree
         # How much a scope covers, so the narrowest wins a collision. Measured
         # by the number of resources the catalog grants it, which is the only
         # ranking the catalog actually gives us.
+        def top_level_candidate(candidates)
+          candidates.find do |entry|
+            path = Array(entry[:api_paths]).to_h[:index]
+            path.present? && !path.include?(':')
+          end
+        end
+
         def scope_breadth(permission)
           _kind, scope = Spree.permissions.resolve_key(permission)
           scope ? Array(scope.resources).size : Float::INFINITY
