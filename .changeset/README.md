@@ -17,9 +17,9 @@ API, so they keep their own versions and release on their own tags.
 
 ## Releasing
 
-`/release <version>` prepares a release with the audit and release notes it
-needs and prints the tag commands for a human to run; this section records the
-mechanics.
+`/release <version>` runs the process below with the audit and release notes a
+release needs, publishing a patch release itself and leaving a minor, major or
+prerelease to a human; this section records the mechanics.
 
 Every release is published by `.github/workflows/release.yml` from a tag
 pushed on a commit already on `main`. The workflow checks the tag against the

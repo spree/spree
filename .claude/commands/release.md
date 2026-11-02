@@ -1,5 +1,5 @@
 ---
-description: Prepare a Spree release — audit, version bump, release notes, pull request, and the tag and release commands for a human to run.
+description: Cut a Spree release — audit, version bump, release notes, pull request, then tags and the GitHub release (automatic for a patch, printed for a human otherwise) and the spree-starter bump.
 ---
 
 Cut the Spree release named in the arguments: `6.0.2`, `6.1.0` or a
@@ -10,11 +10,12 @@ Version: $ARGUMENTS
 
 Releases are published by `.github/workflows/release.yml` from tags pushed on a
 commit already on `main`; `.changeset/README.md` has the mechanics. This command
-wraps them with the review a release needs. Run the phases in order. Pushing
-the tags and creating the GitHub release are done by a human, never by this
-command: phase 5 only prints the commands and the notes. It needs the pull
-request merged, so the command usually stops after phase 4 and is run again
-for the hand-over.
+wraps them with the review a release needs. Run the phases in order. Phase 5
+pushes the tags and creates the GitHub release itself for a patch release
+(`X.Y.Z` with `Z` above zero and no prerelease label); for a minor, major or
+prerelease it only prints the commands, and a human runs them. Phase 6 bumps
+spree-starter once the gems are published. Both need the pull request merged,
+so the command usually stops after phase 4 and is run again to publish.
 
 Work on a branch named `chore/release-<version>` with the workspace installed
 (`node_modules` present), never on `main`.
@@ -176,19 +177,22 @@ phase 5 reads them back from it. Only collaborators can edit a pull request
 description, so never post the notes as a comment, which anyone can write.
 Stop when `/open-pr` reports: the merge needs a human review.
 
-## 5. Hand over (after the merge)
+## 5. Publish (after the merge)
 
 Run from a checkout of `main` at the merge commit (`git pull`). Check
 `Spree::VERSION` is the target, no `v<version>` tag exists yet, and every
 workflow that ran on the merge commit succeeded: `gh run list --commit <merge
 sha> --json name,conclusion`. Tests must be among them: every release commit
 changes `Spree::VERSION` under `spree/`, so a missing Tests run means CI never
-covered the merge commit. Stop on a missing, failed or cancelled run. Do not
-run any of the commands below; print them for the user, who tags and
-publishes.
+covered the merge commit. Stop on a missing, failed or cancelled run.
 
-1. The tag commands, for the merge commit, with a tag for each tool that moved
-   and three tags at most in one push (GitHub starts no workflow beyond that):
+Decide who publishes. A **patch release** (`X.Y.Z`, `Z` above zero, no
+prerelease label) is published by this command: run the commands below in
+order. A **minor, major or prerelease** is published by a human: print the
+same commands and the notes, run none of them, and stop.
+
+1. Tag the merge commit, with a tag for each tool that moved, and push at most
+   three tags in one push (GitHub starts no workflow beyond that):
 
    ```bash
    git tag v<version> <merge sha>
@@ -196,13 +200,14 @@ publishes.
    git push origin v<version> '@spree/cli@<version>'
    ```
 
-   Say that the push starts `release.yml`, that every job skips versions
-   already on its registry, and that a failed run is re-run with
-   `gh run rerun <id> --failed`, never with a new tag.
+   The push starts `release.yml`. Watch it: `gh run list --workflow release.yml
+   --limit 3`, then `gh run watch <id>` for each tag's run. Every job skips
+   versions already on its registry, so a failed run is re-run with `gh run
+   rerun <id> --failed`, never with a new tag.
 
-2. The release notes. Take them from the pull request description, from the
-   `# Spree <version>` heading to the end; `<n>` is the number in the merge
-   commit subject:
+2. Recover the notes from the pull request description, from the `# Spree
+   <version>` heading to the end; `<n>` is the number in the merge commit
+   subject:
 
    ```bash
    mkdir -p tmp
@@ -210,9 +215,13 @@ publishes.
    ```
 
    The `tr` matters: a description edited on github.com comes back with CRLF
-   line endings, and the heading match would otherwise find nothing. Show the
-   file's content in full as a markdown block, so it can be pasted into the
-   GitHub release form, and give the command for the same result:
+   line endings, and the heading match would otherwise find nothing. The file
+   must start with the heading and end with the **Full Changelog** line; an
+   empty or truncated file stops the release. Print it in full as a markdown
+   block, so the user sees what is published and can paste it by hand.
+
+3. Create the GitHub release once the gems and packages are on their
+   registries:
 
    ```bash
    gh release create v<version> --title v<version> --notes-file tmp/release-notes-<version>.md --latest
@@ -220,18 +229,56 @@ publishes.
 
    `--latest` only when this is the newest stable release; a patch for an older
    minor takes `--latest=false`. A prerelease takes `--prerelease` and not
-   `--latest`. The body reaches every admin's notifications panel, so the user
-   reads it before publishing.
+   `--latest`.
 
-3. How to confirm afterwards, by exact version (a prerelease publishes under
-   npm's `beta` tag and RubyGems hides prereleases by default):
-   `gem info spree_core --remote --prerelease -v <version>`,
-   `npm view @spree/sdk@<npm version> version`, and the dashboard's
-   notification panel on a store running the new version names the release.
+4. Confirm by exact version (a prerelease publishes under npm's `beta` tag and
+   RubyGems hides prereleases by default): `gem info spree_core --remote
+   --prerelease -v <version>`, `npm view @spree/sdk@<npm version> version`, and
+   `gh release view v<version>`.
+
+## 6. Bump spree-starter
+
+New projects come from [spree/spree-starter](https://github.com/spree/spree-starter),
+whose lockfile pins the Spree gems and whose `db/migrate` holds a copy of every
+gem migration. Run this once the gems are on RubyGems (phase 5 step 4), from
+the repository root of a worktree, whose Postgres the scratch database below
+uses.
+
+```bash
+rm -rf tmp/spree-starter
+git clone --quiet https://github.com/spree/spree-starter.git tmp/spree-starter
+cd tmp/spree-starter
+git switch -c chore/spree-<version with dots as dashes>
+bundle update $(bundle list --name-only | grep '^spree')
+DATABASE_NAME=spree_starter_release bin/rails db:create spree:install:migrations db:migrate
+DATABASE_NAME=spree_starter_release bin/rails db:drop
+```
+
+- `bundle update` on the Spree gems only, never a bare `bundle update`: the
+  starter's `Gemfile` already allows the new version (`~> 6.0`), so this moves
+  the lockfile and the dependencies the gems require (6.0.2 moved Alba to 4)
+  and nothing else. The Ruby in `.ruby-version` must be installed; the
+  worktree's Rails runs on it.
+- `spree:install:migrations` copies the gem migrations the starter lacks into
+  `db/migrate`; `db:migrate` runs them on the scratch database so
+  `db/schema.rb` is regenerated. The starter's `config/database.yml` reads
+  `DATABASE_NAME` (and `DATABASE_HOST`, `DATABASE_USERNAME`, `DATABASE_PORT`
+  when the worktree's Postgres is not the default local one) in development;
+  `DATABASE_URL` applies only in production. The scratch database is dropped
+  afterwards.
+- The diff must touch only `Gemfile.lock`, `db/migrate/` and `db/schema.rb`.
+  Anything else means a step ran against the wrong app; stop and look.
+- Commit as `Bump Spree to <version>`, with the copied migrations named in the
+  body, push, and open the pull request with `gh pr create --repo
+  spree/spree-starter --base main`. Its description lists the new migrations
+  and says what each one does. Its CI builds the Docker image and runs the
+  specs; watch it with `gh pr checks --watch --repo spree/spree-starter`. A
+  human merges it.
 
 ## Final report
 
 The pull request URL, the audit items the user accepted or deferred, the tool
 versions bumped or kept, the follow-ups the audit produced (regenerated docs, a
-changeset a commit forgot, an upgrade note) and, after the merge, the tag and
-release commands with the notes.
+changeset a commit forgot, an upgrade note) and, after the merge, the release
+URL (or the tag and release commands for a human), the registry checks and the
+spree-starter pull request.
