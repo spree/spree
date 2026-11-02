@@ -34,10 +34,12 @@ module Spree
                resource: proc { Spree.api.admin_channel_serializer },
                if: proc { |rule| rule.respond_to?(:channels) }
 
+          # Only for a caller who may read customers; see the promotion rule
+          # serializer.
           many :users,
                key: :customers,
                resource: proc { Spree.api.admin_customer_serializer },
-               if: proc { |rule| rule.respond_to?(:users) }
+               if: proc { |rule| rule.respond_to?(:users) && params[:customer_records] }
         end
       end
     end

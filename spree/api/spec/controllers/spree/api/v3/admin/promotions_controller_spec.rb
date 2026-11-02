@@ -57,6 +57,35 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       expect(json_response['actions'].map { |action| action['type'] }).to eq(['create_item_adjustments'])
       expect(json_response['actions'].first['calculator']).to include('type')
     end
+
+    # A promotion is readable under `read_promotions`; the customers a rule
+    # targets are another resource's records and stay behind `read_customers`.
+    context 'with a customer rule' do
+      let(:customer) { create(:user) }
+
+      before do
+        rule = promotion.rules.create!(type: 'Spree::Promotion::Rules::User')
+        rule.users = [customer]
+      end
+
+      it 'embeds the targeted customers for a caller who may read customers' do
+        get :show, params: { id: promotion.prefixed_id, expand: 'rules' }, as: :json
+
+        expect(json_response['rules'].first['customers'].map { |record| record['id'] }).to eq([customer.prefixed_id])
+      end
+
+      context 'with a promotions-only key' do
+        let(:headers) { { 'x-spree-api-key' => create(:api_key, :secret, store: store, scopes: ['read_promotions']).plaintext_token } }
+
+        it 'keeps the customer ids and leaves the records out' do
+          get :show, params: { id: promotion.prefixed_id, expand: 'rules' }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['rules'].first['customer_ids']).to eq([customer.prefixed_id])
+          expect(json_response['rules'].first).not_to have_key('customers')
+        end
+      end
+    end
   end
 
   describe 'POST #create' do

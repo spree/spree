@@ -61,9 +61,12 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { |rule| rule.respond_to?(:categories) }
 
+          # Only for a caller who may read customers: a promotion is readable
+          # under `read_promotions`, and a customer rule would otherwise carry
+          # every targeted customer's email and notes along with it.
           many :customers,
                resource: proc { Spree.api.admin_customer_serializer },
-               if: proc { |rule| rule.respond_to?(:customers) }
+               if: proc { |rule| rule.respond_to?(:customers) && params[:customer_records] }
 
           many :customer_groups,
                resource: proc { Spree.api.admin_customer_group_serializer },
