@@ -240,10 +240,22 @@ same commands and the notes, run none of them, and stop.
    minor takes `--latest=false`. A prerelease takes `--prerelease` and not
    `--latest`.
 
-4. Confirm by exact version (a prerelease publishes under npm's `beta` tag and
-   RubyGems hides prereleases by default): `gem info spree_core --remote
-   --prerelease -v <version>`, `npm view @spree/sdk@<npm version> version`, and
-   `gh release view v<version>`.
+4. Wait until the registries serve the exact version. A green release
+   workflow means the upload finished, not that the version is installable:
+   RubyGems' API, Bundler's compact index and npm's replicated metadata each
+   lag the publish by anything from seconds to several minutes. Poll both
+   (a prerelease publishes under npm's `beta` tag and RubyGems hides
+   prereleases by default, so the checks name the version):
+
+   ```bash
+   until gem info spree_core --remote --prerelease -v <version> | grep -q "spree_core (<version>)"; do sleep 30; done
+   until npm view @spree/sdk@<npm version> version >/dev/null 2>&1; do sleep 30; done
+   ```
+
+   Give up and report after 30 minutes. Then `gh release view v<version>`
+   shows the release. Phases 6 and 7 start only after this step passes, and
+   each still retries its own install, because the index a resolver reads can
+   trail the API the checks above hit.
 
 ## 6. Bump spree-starter
 
@@ -264,6 +276,11 @@ DATABASE_NAME=spree_starter_release bin/rails db:create spree:install:migrations
 DATABASE_NAME=spree_starter_release bin/rails db:drop
 ```
 
+- `bundle update` resolves from Bundler's compact index, which can trail the
+  RubyGems API phase 5 polled by several minutes. A failure naming `Could not
+  find gem 'spree'` or a version other than `<version>` in the `grep` means
+  the index has not caught up: wait a minute and run the `bundle update` line
+  again, up to ten times, before treating it as an error.
 - `bundle update` on the gems this repository releases (the `spree` meta gem
   and the gemspecs under `spree/*/` and `spree/providers/*/`), never a bare
   `bundle update` and not every
@@ -310,7 +327,12 @@ pnpm exec tsc --noEmit && pnpm run check && pnpm run test
 ```
 
 - `pnpm add` with the caret spec rewrites the range in `package.json` and
-  resolves the lockfile to the new version; nothing else moves. The diff must
+  resolves the lockfile to the new version; nothing else moves. An
+  `ERR_PNPM_NO_MATCHING_VERSION` for `@spree/sdk` means npm's metadata has
+  not replicated to the mirror pnpm hit: wait a minute and run it again, up
+  to ten times. After it succeeds, the lockfile must name
+  `@spree/sdk@<npm version>`; an older version resolved means the range was
+  satisfied by stale metadata, so run `pnpm update @spree/sdk` once more. The diff must
   touch only `package.json` and `pnpm-lock.yaml`. A type error here means the
   Store API changed shape in this release; stop and report it rather than
   patching the storefront inside the release.
