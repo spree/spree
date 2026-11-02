@@ -18,6 +18,10 @@ module Spree
             invoice.issuer_type == 'Spree::Seller' && invoice.order_id.present? && invoice.can_be_deleted?
           end
 
+          attribute :can_be_resent do |invoice|
+            invoice.issuer_type == 'Spree::Seller' && invoice.order_id.present?
+          end
+
           attribute :download_url do |invoice|
             next nil unless invoice.file.attached?
 

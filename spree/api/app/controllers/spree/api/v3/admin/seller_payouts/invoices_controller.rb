@@ -22,6 +22,13 @@ module Spree
               authorize_parent!(@parent)
             end
 
+            # A commission invoice is payout paperwork: updating the payout,
+            # already checked above, is the permission it needs, not the
+            # orders one that `Spree::Invoice` sits under.
+            def authorize_resource!(resource = @resource, action = action_name.to_sym)
+              action == :create ? authorize!(:update, @parent) : super
+            end
+
             def serializer_class
               Spree.api.admin_invoice_serializer
             end

@@ -29,6 +29,7 @@ export const InvoiceSchema = z.object({
   issuer_id: z.string(),
   order_number: z.string().nullable(),
   can_be_deleted: z.boolean(),
+  can_be_resent: z.boolean(),
 });
 
 export type Invoice = z.infer<typeof InvoiceSchema>;

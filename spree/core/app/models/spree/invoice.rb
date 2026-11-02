@@ -26,6 +26,9 @@ module Spree
     ISSUER_TYPES = %w[Spree::Store Spree::Seller].freeze
     CONTENT_TYPES = %w[application/pdf].freeze
     MAX_FILE_SIZE = 10.megabytes
+    # A credit note corrects an invoice or receipt; an invoice may replace the
+    # receipt a buyer asked to have invoiced; a receipt corrects nothing.
+    ORIGINAL_KINDS = { 'credit_note' => %w[invoice receipt], 'invoice' => %w[receipt], 'receipt' => [] }.freeze
 
     # Optional only to the association: a soft-deleted seller still issued the
     # invoice, so `issuer` reads through deletion and presence is validated
@@ -52,7 +55,7 @@ module Spree
     validate :belongs_to_one_parent
     validate :issuer_matches_parent, on: :create
     validate :sign_matches_kind
-    validate :original_invoice_on_same_parent, if: :original_invoice
+    validate :original_invoice_fits_kind
     validate :unchanged_once_created, on: :update
 
     before_destroy :ensure_deletable, prepend: true
@@ -81,7 +84,7 @@ module Spree
 
     # @return [Spree::Store, Spree::Seller, nil] the issuer, a soft-deleted seller included
     def issuer
-      super || (Spree::Seller.with_deleted.find_by(id: issuer_id) if issuer_type == 'Spree::Seller')
+      super || (@deleted_issuer ||= Spree::Seller.with_deleted.find_by(id: issuer_id) if issuer_type == 'Spree::Seller')
     end
 
     # The name printed for the issuer: a legal name when one is recorded.
@@ -166,10 +169,14 @@ module Spree
       end
     end
 
-    def original_invoice_on_same_parent
-      return if original_invoice.order_id == order_id && original_invoice.seller_payout_id == seller_payout_id
+    # The original is always on the same order or payout.
+    def original_invoice_fits_kind
+      return if original_invoice_id.nil?
 
-      errors.add(:original_invoice, :invalid)
+      valid = original_invoice &&
+              ORIGINAL_KINDS.fetch(kind, []).include?(original_invoice.kind) &&
+              original_invoice.order_id == order_id && original_invoice.seller_payout_id == seller_payout_id
+      errors.add(:original_invoice, :invalid) unless valid
     end
 
     # An invoice is a legal record: once written, only metadata and the sent

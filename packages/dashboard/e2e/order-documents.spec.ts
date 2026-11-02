@@ -1,7 +1,14 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Locator, type Page, test } from '@playwright/test'
-import { addListFilter, createPlacedOrder, login, SELLER_PANEL, sellerLogin } from './helpers'
+import {
+  addListFilter,
+  createPlacedOrder,
+  FIXTURE_LEDGER_PAYOUT_AMOUNT,
+  login,
+  SELLER_PANEL,
+  sellerLogin,
+} from './helpers'
 
 const FIXTURES = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixtures')
 const INVOICE_PDF = path.join(FIXTURES, 'test-invoice.pdf')
@@ -21,11 +28,9 @@ async function attach(sheet: Locator, file: string) {
 
 async function uploadInvoice(
   page: Page,
-  { number, kind, total }: { number: string; kind?: RegExp; total: string },
+  { number, kind, total, card }: { number: string; kind?: RegExp; total: string; card?: Locator },
 ) {
-  await documentsCard(page)
-    .getByRole('button', { name: /upload invoice/i })
-    .click()
+  await (card ?? documentsCard(page)).getByRole('button', { name: /upload invoice/i }).click()
   const sheet = page.getByRole('dialog')
   await attach(sheet, INVOICE_PDF)
   if (kind) {
@@ -154,7 +159,45 @@ test.describe('order documents', () => {
   })
 })
 
+test.describe('commission invoices', () => {
+  test('uploads the commission invoice for a seller payout', async ({ page }) => {
+    const session = await login(page)
+    await page.goto(`/${session.store_id}/sellers/payouts`)
+    const row = page
+      .getByRole('row')
+      .filter({ hasText: `$${Number(FIXTURE_LEDGER_PAYOUT_AMOUNT).toFixed(2)}` })
+    await row.locator('[data-payout-id]').first().click()
+
+    const card = page.locator('[data-slot="card"]').filter({
+      has: page.locator('[data-slot="card-title"]', { hasText: /commission invoices/i }),
+    })
+    await expect(card).toBeVisible({ timeout: 15_000 })
+
+    const number = `COM/${Date.now()}`
+    await uploadInvoice(page, { number, total: '12.30', card })
+    await expect(card.getByRole('button', { name: number })).toBeVisible({ timeout: 15_000 })
+  })
+})
+
 test.describe('seller panel — invoices', () => {
+  test("uploads an invoice to the seller's own order", async ({ page }) => {
+    await sellerLogin(page)
+    await page
+      .getByRole('link', { name: /^orders$/i })
+      .first()
+      .click()
+    const order = page.getByRole('button', { name: /^R\d+/ }).first()
+    await expect(order).toBeVisible({ timeout: 15_000 })
+    await order.click()
+    await expect(documentsCard(page)).toBeVisible({ timeout: 15_000 })
+
+    const number = `S/${Date.now()}`
+    await uploadInvoice(page, { number, total: '120.00' })
+
+    const row = documentsCard(page).getByRole('listitem').filter({ hasText: number })
+    await expect(row).toBeVisible({ timeout: 15_000 })
+  })
+
   test('shows the Documents card on an order and the Invoices list', async ({ page }) => {
     await sellerLogin(page)
 
