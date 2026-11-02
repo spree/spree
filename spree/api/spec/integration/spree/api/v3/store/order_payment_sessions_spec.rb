@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Order Payment Sessions API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order_with_line_items, store: store, customer: user) }
+  let!(:order) { create(:order_with_line_items, payment_requested_at: Time.current, store: store, customer: user) }
   let(:payment_method) { create(:bogus_payment_method) }
   let!(:payment_session) do
     create(:bogus_payment_session,

@@ -81,8 +81,8 @@ module Spree
         one :market, resource: proc { Spree.api.market_serializer }
 
         # What the buyer can pay a draft order with. A placed order is past
-        # choosing, so only a draft raised for the buyer carries it.
-        many :payment_methods, resource: proc { Spree.api.payment_method_serializer }, if: proc { |order| order.standalone_draft? }
+        # choosing, so only a draft the buyer was asked to pay carries it.
+        many :payment_methods, resource: proc { Spree.api.payment_method_serializer }, if: proc { |order| order.payable_draft? }
 
         expandable_custom_fields
       end

@@ -101,7 +101,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
 
       response '404', 'checkout draft not accessible' do
         let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
-        let(:incomplete_order) { create(:order_with_line_items, store: store, customer: user, cart_id: cart.id) }
+        let(:incomplete_order) { create(:order_with_line_items, payment_requested_at: Time.current, store: store, customer: user, cart_id: cart.id) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { incomplete_order.to_param }
@@ -139,7 +139,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
 
-      let(:draft) { create(:order_with_line_items, store: store, customer: user) }
+      let(:draft) { create(:order_with_line_items, payment_requested_at: Time.current, store: store, customer: user) }
       let(:'x-spree-api-key') { api_key.token }
       let(:'Authorization') { "Bearer #{jwt_token}" }
       let(:id) { draft.prefixed_id }

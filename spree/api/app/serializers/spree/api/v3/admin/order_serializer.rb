@@ -44,6 +44,7 @@ module Spree
                    customer_id: [:string, nullable: true],
                    preferred_stock_location_id: [:string, nullable: true],
                    canceled_at: [:string, nullable: true], approved_at: [:string, nullable: true],
+                   payment_requested_at: [:string, nullable: true],
                    cancel_reason_id: [:string, nullable: true],
                    cancel_reason_name: [:string, nullable: true],
                    cancel_note: [:string, nullable: true],
@@ -54,7 +55,7 @@ module Spree
           attributes :status, :last_ip_address, :considered_risky,
                      :confirmation_delivered, :store_owner_notification_delivered,
                      :metadata, :cancel_note,
-                     canceled_at: :iso8601, approved_at: :iso8601,
+                     canceled_at: :iso8601, approved_at: :iso8601, payment_requested_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
           money_attributes :payment_total

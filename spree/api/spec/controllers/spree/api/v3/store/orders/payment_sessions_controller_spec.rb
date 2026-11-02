@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
 
   include_context 'API v3 Store'
 
-  let(:order) { create(:order_with_line_items, customer: user, store: store) }
+  let(:order) { create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: store) }
   let(:payment_method) { create(:bogus_payment_method) }
   let!(:payment_session) do
     create(:bogus_payment_session,
@@ -49,7 +49,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
     end
 
     context 'with the order token (guest)' do
-      let(:guest_order) { create(:order_with_line_items, customer: nil, store: store) }
+      let(:guest_order) { create(:order_with_line_items, payment_requested_at: Time.current, customer: nil, store: store) }
 
       before { request.headers['Authorization'] = nil }
 
@@ -78,7 +78,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
     end
 
     it 'returns not found for another customer’s draft' do
-      other_order = create(:order_with_line_items, customer: create(:user), store: store)
+      other_order = create(:order_with_line_items, payment_requested_at: Time.current, customer: create(:user), store: store)
 
       post :create, params: { order_id: other_order.prefixed_id, payment_method_id: payment_method.prefixed_id }
 
@@ -86,9 +86,18 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
     end
 
     it 'returns not found for a draft in another store' do
-      other_order = create(:order_with_line_items, customer: user, store: create(:store))
+      other_order = create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: create(:store))
 
       post :create, params: { order_id: other_order.prefixed_id, payment_method_id: payment_method.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    # Until the merchant requests payment the draft is still being prepared.
+    it 'returns not found for a draft without a payment request' do
+      order.update_columns(payment_requested_at: nil)
+
+      post :create, params: { order_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }
 
       expect(response).to have_http_status(:not_found)
     end
@@ -138,7 +147,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
 
     it 'returns not found for another order’s payment session' do
       other_session = create(:bogus_payment_session,
-                             order: create(:order_with_line_items, customer: user, store: store),
+                             order: create(:order_with_line_items, payment_requested_at: Time.current, customer: user, store: store),
                              payment_method: payment_method)
 
       get :show, params: { order_id: order.prefixed_id, id: other_session.to_param }

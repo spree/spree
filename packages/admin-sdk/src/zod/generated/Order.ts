@@ -78,6 +78,7 @@ export const OrderSchema = z.object({
   cancel_note: z.string().nullable(),
   canceled_at: z.string().nullable(),
   approved_at: z.string().nullable(),
+  payment_requested_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   payment_total: z.string(),
@@ -170,6 +171,7 @@ export const OrderSchema = z.object({
   cancel_note: z.ZodType<Order['cancel_note']>;
   canceled_at: z.ZodType<Order['canceled_at']>;
   approved_at: z.ZodType<Order['approved_at']>;
+  payment_requested_at: z.ZodType<Order['payment_requested_at']>;
   created_at: z.ZodType<Order['created_at']>;
   updated_at: z.ZodType<Order['updated_at']>;
   payment_total: z.ZodType<Order['payment_total']>;
