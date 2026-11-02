@@ -32730,7 +32730,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.1
+                current_version: 6.0.2
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
