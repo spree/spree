@@ -59,8 +59,10 @@ module Spree
 
         # Orders. `restock_items` is hidden: it is deprecated and ignored, so
         # offering it would invite a model to set something that does nothing.
+        # `validated` is for callers that already ran their own veto; offered
+        # to a model it would be a way around orders.complete.validate.
         order_cancel_workflow: { permission: 'write_orders', except: %i[restock_items] },
-        order_complete_workflow: 'write_orders',
+        order_complete_workflow: { permission: 'write_orders', except: %i[validated] },
 
         # Fulfillment
         fulfillment_create_workflow: 'write_fulfillments',

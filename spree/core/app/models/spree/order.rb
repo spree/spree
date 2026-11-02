@@ -829,7 +829,7 @@ module Spree
     #   reaches it through +Spree.carts_complete_workflow+). Removed in 6.1.
     def finalize!
       Spree::Deprecation.warn('Spree::Order#finalize! is deprecated and will be removed in Spree 6.1. Completion runs through Spree.order_complete_workflow (Spree::Orders::Complete).')
-      Spree.order_complete_workflow.call(order: self, payment_pending: true)
+      Spree.order_complete_workflow.call(order: self, payment_pending: true, validated: true)
     end
 
     def fulfill!
