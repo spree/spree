@@ -69,6 +69,13 @@ module Spree
               :order_documents
             end
 
+            # Only what the storefront request declares: attributes an extension
+            # adds to the model are for staff, not for whoever holds the
+            # publishable key.
+            def permitted_params
+              params.permit(*declared_permitted_attributes)
+            end
+
             # What the buyer adds is theirs, and so always shown to them.
             def build_resource
               super.tap do |document|

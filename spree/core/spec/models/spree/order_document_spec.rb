@@ -24,6 +24,23 @@ RSpec.describe Spree::OrderDocument, type: :model do
     expect(document.errors.details[:file]).to include(error: :spree_content_type_not_allowed)
   end
 
+  it 'refuses a direct upload whose bytes never arrived' do
+    orphan = ActiveStorage::Blob.create_before_direct_upload!(
+      filename: 'po.pdf', byte_size: 12, checksum: 'x' * 22,
+      content_type: 'application/pdf', service_name: Spree.private_storage_service_name
+    )
+    document = Spree::OrderDocument.new(order: order, store: order.store, label: 'PO', file_signed_id: orphan.signed_id)
+
+    expect(document).not_to be_valid
+    expect(document.errors.details[:file]).to include(error: :file_upload_incomplete)
+  end
+
+  it 'accepts an uploaded file, whose bytes are stored on save' do
+    file = Rack::Test::UploadedFile.new(StringIO.new("%PDF-1.4\n%doc\n%%EOF\n"), 'application/pdf', original_filename: 'po.pdf')
+
+    expect(Spree::OrderDocument.new(order: order, store: order.store, label: 'PO', file: file)).to be_valid
+  end
+
   it "refuses hiding the buyer's own upload from them" do
     document = create(:order_document, order: order, uploaded_by: create(:customer), uploaded_by_customer: true, customer_visible: true)
 
