@@ -16510,6 +16510,81 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/digital_links/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Digital link ID
+      schema:
+        type: string
+    get:
+      summary: Get a digital link
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single download link with its download count and expiry.
+
+        **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const digitalLink = await client.digitalLinks.retrieve('dl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /digital_links/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: digital link found
+          content:
+            application/json:
+              example:
+                id: dl_UkLWZg9DAJ
+                access_counter: 0
+                filename: thinking-cat.jpg
+                content_type: image/jpeg
+                download_url: "/api/v3/store/digital_links/ks9F16gjTLQPCzwFDpj2ifrJ"
+                expires_at: '2026-01-22T12:00:00Z'
+                authorizable: true
+                expired: false
+                access_limit_exceeded: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/DigitalLink"
+        '404':
+          description: digital link not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Digital link not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/exchanges":
     get:
       summary: List exchanges
@@ -22319,6 +22394,8 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   avs_risky: false
                   cvv_risky: false
+                  can_void: true
+                  can_capture: false
                   captured_amount: '0.00'
                   order_id: or_UkLWZg9DAJ
                 meta:
@@ -22403,6 +22480,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
                 cvv_risky: false
+                can_void: true
+                can_capture: true
                 captured_amount: '0.00'
                 order_id: or_gbHJdmfrXB
       requestBody:
@@ -22513,6 +22592,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
                 cvv_risky: false
+                can_void: true
+                can_capture: false
                 captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
@@ -22604,6 +22685,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
                 cvv_risky: false
+                can_void: true
+                can_capture: false
                 captured_amount: '110.00'
                 order_id: or_UkLWZg9DAJ
         '422':
@@ -22709,6 +22792,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
                 cvv_risky: false
+                can_void: false
+                can_capture: false
                 captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/price_lists":
@@ -67750,6 +67835,14 @@ components:
           type: boolean
           description: Whether the card issuer reported that the security code did
             not match.
+        can_void:
+          type: boolean
+          description: Whether the payment can be voided now, as decided by its payment
+            method.
+        can_capture:
+          type: boolean
+          description: Whether the payment can be captured now, as decided by its
+            payment method.
         captured_amount:
           type: string
         order_id:
@@ -67788,6 +67881,8 @@ components:
       - updated_at
       - avs_risky
       - cvv_risky
+      - can_void
+      - can_capture
       - captured_amount
       - order_id
       x-typelizer: true
