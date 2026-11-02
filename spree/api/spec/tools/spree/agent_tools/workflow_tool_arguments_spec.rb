@@ -165,6 +165,18 @@ RSpec.describe 'agent workflow tool arguments' do
       )
     end
 
+    # An extension exposes its workflows on the same registry, so mapping is
+    # driven by what is exposed rather than by core's catalog.
+    it 'maps the workflows the admin registry exposes' do
+      registry = Spree::AgentTools::Registry.new(audience: :admin).expose_workflows(order_cancel_workflow: 'write_orders')
+      allow(Spree).to receive(:admin_agent_tools).and_return(registry)
+      Spree::AgentTools::WorkflowEndpoints.reset!
+
+      expect(Spree::AgentTools::WorkflowEndpoints.all.keys).to eq([:order_cancel_workflow])
+    ensure
+      Spree::AgentTools::WorkflowEndpoints.reset!
+    end
+
     it 'fills a parent segment from the record the caller named' do
       order = create(:order_with_line_items, store: store)
       payment = create(:payment, order: order, amount: 10)

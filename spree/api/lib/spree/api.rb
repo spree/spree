@@ -62,7 +62,7 @@ module Spree
 
       # Check V3, dynamically added V2, and the pre-rename names that forward
       # to their replacement for one release.
-      dependencies::INJECTION_POINTS.include?(name) ||
+      Spree::Api::Dependencies.injection_point?(name) ||
         (dependencies.const_defined?(:LEGACY_SERIALIZER_KEYS) &&
           dependencies::LEGACY_SERIALIZER_KEYS.key?(name))
     end

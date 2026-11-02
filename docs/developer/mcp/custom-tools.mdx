@@ -4,15 +4,16 @@ sidebarTitle: Custom tools
 description: "Add your own tools to the MCP server, or expose a workflow your extension already ships."
 ---
 
-The catalog is a registry in `spree_core`, so an extension or a host application adds to it without depending on the MCP gem. Anything registered is offered to the admin MCP server and to any other adapter reading the same registry.
+The catalog is a registry in `spree_core`, so an extension or a host application adds to it without depending on the MCP gem. Anything registered is offered to the admin MCP server and to any other adapter reading the same registry. Two kinds of thing to add.
 
-The catalog is a registry in `spree_core`, so an extension or a host application adds to it without depending on the MCP gem. Two kinds of thing to add.
-
-**A back-office operation you already have as a workflow.** Name its `Spree::Dependencies` key and the permission that should gate it:
+**A back-office operation you already have as a workflow.** Give it a `Spree::Dependencies` key, if it does not have one yet, and expose that key with the permission that should gate it:
 
 ```ruby server/config/initializers/spree.rb
+Spree::Dependencies.register(:supplier_sync_workflow, 'MyShop::Suppliers::Sync')
 Spree.admin_agent_tools.expose_workflows(supplier_sync_workflow: 'write_purchasing')
 ```
+
+When your Admin API controller runs the workflow through that key (`Spree.supplier_sync_workflow.call(...)`), the tool calls the endpoint rather than running the workflow in process, so the agent gets exactly what an API client gets.
 
 That is the whole change. The tool's name comes from the workflow's own key (`suppliers.sync` becomes `suppliers_sync`), its description from the class's leading comment, and its parameters from `perform`'s signature and the YARD `@param` lines above it — so the tool and the workflow cannot drift apart. Two rules the derivation relies on: every parameter needs an `@param` with a type, and a parameter naming a record must be typed as a model the agent can already read.
 

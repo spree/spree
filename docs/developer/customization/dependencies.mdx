@@ -116,6 +116,21 @@ Spree.cart_add_item_workflow.call(cart: cart, variant: variant, quantity: 1)
 Spree.api.cart_serializer.new(cart).serializable_hash
 ```
 
+## Adding your own dependency
+
+An extension can register keys for its own workflows and services, so a host app swaps them the same way it swaps core's, and they can be [exposed to agents](/developer/mcp/custom-tools):
+
+```ruby
+# In your extension's engine initializer
+Spree::Dependencies.register(:quote_send_workflow, 'MyExtension::Quotes::Send')
+
+# Anywhere, including the host app
+Spree.quote_send_workflow                                   # => MyExtension::Quotes::Send
+Spree.dependencies { |d| d.quote_send_workflow = MyApp::QuoteSend }
+```
+
+Pass the default as a class name so the class loads on first use. Registering a key that already exists raises `ArgumentError`, so two extensions cannot quietly claim the same name. Registered keys appear in `spree:dependencies:list` and are checked by `spree:dependencies:validate`.
+
 ## Controller level customization
 
 If you need to replace a serializer in a specific API endpoint only, you can create a [code decorator](/developer/customization/decorators):

@@ -21,7 +21,9 @@ module Spree
         # @return [Integer] how many workflows were mapped
         def install(map: Spree::AgentTools::WorkflowEndpoints)
           map.reset!
-          keys = Spree::AgentTools::DefaultCatalog::WORKFLOWS.keys
+          # Every workflow the admin surface exposes, core's and those an
+          # extension exposed under a key it registered.
+          keys = Spree.admin_agent_tools.exposed_workflows.keys
           document = openapi_document
 
           admin_routes.each do |route|
