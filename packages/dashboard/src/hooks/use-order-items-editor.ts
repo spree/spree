@@ -64,7 +64,10 @@ export function useOrderItemsEditor(order: Order | undefined) {
   /**
    * Saves the staged edits. Resolves `true` once they are saved (or there was
    * nothing to send), `false` when the server rejected them — field errors are
-   * then on the form, anything else was toasted.
+   * then on the form, anything else was toasted. Also `false` when the page
+   * moved to another order while the save was in flight: the save went through
+   * for the order it was made on, but nothing the caller does next (leaving the
+   * page, refreshing) applies to the order it now shows.
    */
   async function save(values: OrderEditFormValues): Promise<boolean> {
     // Rows the merchant staged and then unstaged net out to nothing, so the
@@ -83,7 +86,7 @@ export function useOrderItemsEditor(order: Order | undefined) {
 
     try {
       if (payload.length > 0) await saveMutation.mutateAsync(payload)
-      if (hydratedOrderId.current !== savingOrderId) return true
+      if (hydratedOrderId.current !== savingOrderId) return false
 
       // The mutation awaits the order refetch, so when `useOrder` is mounted
       // the server's rows are already in the cache — re-baseline on them. The
