@@ -6,7 +6,7 @@ const client = createAdminClient({
 })
 
 // region:example
-const invoice = await client.invoices.resend('inv_UkLWZg9DAJ')
+const invoice = await client.invoices.resend('invc_UkLWZg9DAJ')
 
 // endregion:example
 
