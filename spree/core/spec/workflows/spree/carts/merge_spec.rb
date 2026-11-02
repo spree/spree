@@ -72,5 +72,35 @@ RSpec.describe Spree::Carts::Merge do
 
       expect(merged_count).to eq(1)
     end
+
+    # Extensions keep records against the guest cart's lines; the map tells
+    # them where each line went while the folded-in lines still exist.
+    describe 'after_items_moved' do
+      let(:other_variant) { create(:variant) }
+      let!(:existing) { cart.line_items.create!(variant: variant, quantity: 1, currency: cart.currency) }
+      let!(:absorbed) { other_cart.line_items.create!(variant: variant, quantity: 2, currency: other_cart.currency) }
+      let!(:moved) { other_cart.line_items.create!(variant: other_variant, quantity: 1, currency: other_cart.currency) }
+
+      it 'maps each guest line to the line now holding it, before the absorbed ones are deleted' do
+        seen = nil
+        Spree.hooks.register('carts.merge.after_items_moved') do |flow|
+          seen = flow.line_item_map.to_h { |from, to| [from.id, [to.id, Spree::LineItem.exists?(from.id)]] }
+        end
+
+        described_class.call(cart: cart, other_cart: other_cart)
+
+        expect(seen).to eq(absorbed.id => [existing.id, true], moved.id => [moved.id, true])
+        expect(Spree::LineItem.exists?(absorbed.id)).to be(false)
+        expect(cart.reload.line_items).to contain_exactly(existing, moved)
+      end
+
+      it 'rolls the merge back when a handler raises' do
+        Spree.hooks.register('carts.merge.after_items_moved') { |_flow| raise ActiveRecord::RecordInvalid, Spree::Cart.new }
+
+        expect { described_class.call(cart: cart, other_cart: other_cart) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(other_cart.reload.line_items).to contain_exactly(absorbed, moved)
+        expect(existing.reload.quantity).to eq(1)
+      end
+    end
   end
 end

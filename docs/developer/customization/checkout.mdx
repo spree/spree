@@ -151,6 +151,24 @@ When a checkout spans several sellers, the order is divided after the copy. Line
 keep their ids as they move to each seller's order, so key your records by line item
 rather than by order.
 
+### When a guest signs in
+
+A guest's cart is folded into the customer's cart when they sign in, and the guest cart
+is then deleted. That is a move, not a copy, so it has its own hook rather than a cart
+copier. A guest item the customer's cart did not have moves across with its id; one it
+already had is added to the matching item and deleted. `carts.merge.after_items_moved`
+runs before those deletions, inside the merge's transaction:
+
+```ruby config/initializers/engravings.rb
+Spree.hooks.register('carts.merge.after_items_moved') do |merge|
+  merge.line_item_map.each do |guest_line_item, line_item|
+    next if guest_line_item == line_item
+
+    MyApp::Engraving.where(line_item: guest_line_item).update_all(line_item_id: line_item.id)
+  end
+end
+```
+
 ## Related
 
 - [Carts](/developer/core-concepts/carts) — reading requirements and completing a cart

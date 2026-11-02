@@ -10,7 +10,14 @@ module Spree
     # cap the merged quantity) and previously required replacing the whole
     # strategy class.
     class Merge < Spree::Workflow
-      hooks :validate, :after_merge
+      hooks :validate, :after_items_moved, :after_merge
+
+      # Every line item of the folded-in cart → the line item now holding its
+      # quantity: itself when it moved across, or the surviving cart's line it
+      # was added to. Set before +after_items_moved+ runs.
+      #
+      # @return [Hash{Spree::LineItem => Spree::LineItem}]
+      attr_reader :line_item_map
 
       # @param cart [Spree::Cart] the surviving cart
       # @param other_cart [Spree::Cart, nil] the cart folded in and destroyed
@@ -28,6 +35,10 @@ module Spree
 
         ApplicationRecord.transaction do
           step :move_line_items
+          # Inside the transaction and before the absorbed lines are deleted,
+          # so an extension can move what it keeps against them.
+          run_hooks :after_items_moved
+          step :destroy_absorbed_line_items
           step :associate_customer
           step :destroy_drained_cart
         end
@@ -46,18 +57,26 @@ module Spree
       end
 
       # A matching item absorbs the quantity; everything else is re-pointed
-      # at the surviving cart.
+      # at the surviving cart. Absorbed items are deleted only after the
+      # +after_items_moved+ hook.
       def move_line_items
-        other_cart.line_items.reload.each do |other_line_item|
+        @line_item_map = other_cart.line_items.reload.to_a.index_with do |other_line_item|
           existing = matching_line_item(other_line_item)
 
           if existing
             existing.quantity += other_line_item.quantity
             existing.save!
-            other_line_item.destroy!
+            existing
           else
             other_line_item.update!(cart: cart, order: nil)
+            other_line_item
           end
+        end
+      end
+
+      def destroy_absorbed_line_items
+        line_item_map.each do |other_line_item, line_item|
+          other_line_item.destroy! unless other_line_item == line_item
         end
       end
 
