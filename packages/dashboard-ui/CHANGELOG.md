@@ -1,5 +1,19 @@
 # @spree/dashboard-ui
 
+## 6.0.2
+
+### Patch Changes
+
+- [#15029](https://github.com/spree/spree/pull/15029) [`4cfb2ab`](https://github.com/spree/spree/commit/4cfb2abfd613044e91a7e4b689f8294acb7dd700) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The command palette is now built on Base UI's Autocomplete instead of `cmdk`, so the dashboard no longer installs `cmdk` or any Radix packages. It looks and works the same: arrow keys move the highlight, Enter opens the highlighted row and Escape closes the palette. The `Command` components in `@spree/dashboard-ui` keep the props the dashboard uses: `shouldFilter` on `Command`, `value` and `onValueChange` on `CommandInput`, `value`, `keywords` and `onSelect` on `CommandItem`, and `heading` on `CommandGroup`. The `cmdk` options on `Command` for the highlighted row (`value`, `onValueChange`), custom matching (`filter`) and wrap-around (`loop`) are no longer available.
+
+- [#15026](https://github.com/spree/spree/pull/15026) [`4e46436`](https://github.com/spree/spree/commit/4e46436f33634676027b10bec18a69c5528f0843) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/dashboard-ui` no longer installs the shadcn CLI and its roughly 300 dependencies in host apps. The one stylesheet it used from that package now ships inside `@spree/dashboard-ui`, so the dashboard looks exactly the same.
+
+- [#15022](https://github.com/spree/spree/pull/15022) [`8890e33`](https://github.com/spree/spree/commit/8890e33bae96e6edc9e66d92b90feb012561a740) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Removed dependencies the packages no longer use, so installs are smaller. `@spree/dashboard` no longer lists `next-themes` or its own copies of the packages `@spree/dashboard-ui` already brings. `@spree/seller-dashboard` drops `@dnd-kit` and `lucide-react`, and `@spree/dashboard-ui` drops the unused TipTap bubble and floating menu extensions. Nothing changes for host apps or plugins.
+
+- [#15040](https://github.com/spree/spree/pull/15040) [`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The staff settings page shows each member's status (active, locked or deactivated) and when they were last active. A new "View details" action opens a sheet with when they joined, who invited them and their signed-in sessions, each with its browser, IP address and last use. The admin SDK types gain `status`, `last_active_at`, the `inviter` and `sessions` expands, and the `Session` and `AdminUserStatus` types; `@spree/dashboard-ui` adds `BrowserIcon`.
+- Updated dependencies [[`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b)]:
+  - @spree/core@6.0.2
+
 ## 6.0.1
 
 ### Patch Changes
