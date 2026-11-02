@@ -182,6 +182,10 @@ module Spree
     scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
 
     scope :drafts,         -> { where(status: 'draft') }
+    # Drafts raised by staff or an extension for a buyer to pay — never the
+    # transient draft a checkout completes through, which carries its cart,
+    # nor one a division between sellers left behind, which its group places.
+    scope :standalone_drafts, -> { drafts.where(cart_id: nil, order_group_id: nil) }
     scope :not_drafts,     -> { where.not(status: 'draft') }
     scope :placed_orders,  -> { where(status: 'placed') }
     scope :canceled_orders, -> { where(status: 'canceled') }
@@ -430,6 +434,11 @@ module Spree
 
     def draft?
       status == 'draft'
+    end
+
+    # @see .standalone_drafts
+    def standalone_draft?
+      draft? && cart_id.nil? && order_group_id.nil?
     end
 
     def placed?

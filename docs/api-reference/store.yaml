@@ -6546,6 +6546,357 @@ paths:
             schema:
               "$ref": "#/components/schemas/CreateClaimParams"
         required: true
+  "/api/v3/store/orders/{order_id}/payment_sessions":
+    post:
+      summary: Create payment session for a draft order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Creates a payment session for a draft order the merchant raised
+        for the customer, as the cart endpoint does at checkout. Delegates to the
+        payment gateway to initialize a provider-specific session.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const session = await client.orders.paymentSessions.create(
+            'or_abc123',
+            {
+              payment_method_id: 'pm_abc123',
+            },
+            {
+              token: '<token>',
+            },
+          )
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Draft order prefixed ID (e.g., or_abc123)
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        required: false
+        description: Unique key for request idempotency.
+        schema:
+          type: string
+      responses:
+        '201':
+          description: payment session created
+          content:
+            application/json:
+              example:
+                id: ps_gbHJdmfrXB
+                status: pending
+                currency: USD
+                external_id: bogus_a603d2ffbec1ae856efbdf53
+                external_data:
+                  client_secret: bogus_secret_f8c62abb973182f5
+                customer_external_id:
+                expires_at:
+                amount: '110.00'
+                payment_method_id: pm_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
+                cart_id:
+                payment_method:
+                  id: pm_UkLWZg9DAJ
+                  name: Credit Card 221
+                  description:
+                  type: bogus
+                  session_required: true
+                  source_required: true
+              schema:
+                "$ref": "#/components/schemas/PaymentSession"
+        '404':
+          description: draft order not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreatePaymentSessionParams"
+        required: true
+  "/api/v3/store/orders/{order_id}/payment_sessions/{id}":
+    parameters:
+    - name: x-spree-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: false
+      description: Bearer token for authenticated customers
+      schema:
+        type: string
+    - name: order_id
+      in: path
+      required: true
+      description: Draft order prefixed ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Payment session ID
+      schema:
+        type: string
+    - name: x-spree-token
+      in: header
+      required: false
+      description: Order token for guest access
+      schema:
+        type: string
+    get:
+      summary: Get payment session for a draft order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns a single payment session of a draft order with its current
+        status and provider data.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const session = await client.orders.paymentSessions.get('or_abc123', 'ps_abc123', {
+            token: '<token>',
+          })
+      responses:
+        '200':
+          description: payment session found
+          content:
+            application/json:
+              example:
+                id: ps_UkLWZg9DAJ
+                status: pending
+                currency: USD
+                external_id: bogus_4cd504fb818a96cc302a120e
+                external_data:
+                  client_secret: secret_123
+                customer_external_id:
+                expires_at:
+                amount: '110.00'
+                payment_method_id: pm_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
+                cart_id:
+                payment_method:
+                  id: pm_UkLWZg9DAJ
+                  name: Credit Card 223
+                  description:
+                  type: bogus
+                  session_required: true
+                  source_required: true
+              schema:
+                "$ref": "#/components/schemas/PaymentSession"
+    patch:
+      summary: Update payment session for a draft order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Updates a payment session of a draft order. Delegates to the payment
+        gateway to sync changes with the provider.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const session = await client.orders.paymentSessions.update(
+            'or_abc123',
+            'ps_abc123',
+            {
+              amount: '50.00',
+            },
+            {
+              token: '<token>',
+            },
+          )
+      parameters: []
+      responses:
+        '200':
+          description: payment session updated
+          content:
+            application/json:
+              example:
+                id: ps_UkLWZg9DAJ
+                status: pending
+                currency: USD
+                external_id: bogus_810ed2a513358414a97df8ad
+                external_data:
+                  client_secret: secret_123
+                customer_external_id:
+                expires_at:
+                amount: '50.00'
+                payment_method_id: pm_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
+                cart_id:
+                payment_method:
+                  id: pm_UkLWZg9DAJ
+                  name: Credit Card 224
+                  description:
+                  type: bogus
+                  session_required: true
+                  source_required: true
+              schema:
+                "$ref": "#/components/schemas/PaymentSession"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdatePaymentSessionParams"
+        required: true
+  "/api/v3/store/orders/{order_id}/payment_sessions/{id}/complete":
+    parameters:
+    - name: x-spree-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: false
+      description: Bearer token for authenticated customers
+      schema:
+        type: string
+    - name: order_id
+      in: path
+      required: true
+      description: Draft order prefixed ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Payment session ID
+      schema:
+        type: string
+    - name: x-spree-token
+      in: header
+      required: false
+      description: Order token for guest access
+      schema:
+        type: string
+    patch:
+      summary: Complete payment session for a draft order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Confirms a draft order’s payment with the provider. Place the order
+        afterwards with `POST /orders/{id}/complete`; a gateway webhook may place
+        it first.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const session = await client.orders.paymentSessions.complete(
+            'or_abc123',
+            'ps_abc123',
+            {
+              session_result: 'success',
+            },
+            {
+              token: '<token>',
+            },
+          )
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        description: Unique key for request idempotency.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment session completed
+          content:
+            application/json:
+              example:
+                id: ps_UkLWZg9DAJ
+                status: completed
+                currency: USD
+                external_id: bogus_bf2d21a8f73d116b8c0da76a
+                external_data:
+                  client_secret: secret_123
+                customer_external_id:
+                expires_at:
+                amount: '110.00'
+                payment_method_id: pm_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
+                cart_id:
+                payment_method:
+                  id: pm_UkLWZg9DAJ
+                  name: Credit Card 225
+                  description:
+                  type: bogus
+                  session_required: true
+                  source_required: true
+              schema:
+                "$ref": "#/components/schemas/PaymentSession"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CompletePaymentSessionParams"
+        required: true
   "/api/v3/store/orders/{id}":
     get:
       summary: Get an order
@@ -6555,7 +6906,11 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |
-        Returns a completed purchase. Accessible via JWT (authenticated users) or order token header (guests).
+        Returns a completed purchase, or a draft order the merchant raised for the customer to pay. Accessible
+        via JWT (authenticated users) or order token header (guests).
+
+        A draft has no `completed_at` and lists the `payment_methods` it can be paid with. Pay for it with
+        the order's payment sessions, then place it with `POST /orders/{id}/complete`.
 
         Resolves three kinds of id: the order's own (`or_…`), the id of the cart it was placed from, and the
         id of an order group (`ogrp_…`). The cart's id is the handle a storefront keeps through checkout, so
@@ -6694,8 +7049,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 385496
-                  slug: product-385496
+                  name: Product 400496
+                  slug: product-400496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6758,8 +7113,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
-                    code: UPS_GROUND_228
+                    name: UPS Ground 216
+                    code: UPS_GROUND_235
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6782,7 +7137,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
+                    name: UPS Ground 216
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6801,8 +7156,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 209
-                      code: UPS_GROUND_228
+                      name: UPS Ground 216
+                      code: UPS_GROUND_235
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6814,7 +7169,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 565 Lovely Street
+                  address1: 589 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6837,7 +7192,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 566 Lovely Street
+                  address1: 590 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6871,7 +7226,352 @@ paths:
               schema:
                 "$ref": "#/components/schemas/Order"
         '404':
-          description: incomplete order not accessible
+          description: checkout draft not accessible
+          content:
+            application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{id}/complete":
+    post:
+      summary: Complete a draft order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Places a draft order the merchant raised for the customer, processing its payments. Pay for it first
+        through the order's payment sessions; without a payment covering the total the order stays a draft
+        and the request fails with `order_cannot_complete`.
+
+        Completing an order that is already placed (a webhook got there first, or a retried request) answers
+        with the order. An order holding several sellers' goods divides into one order per seller, and the
+        **order group** holding them comes back instead.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const order = await client.orders.complete('or_abc123', {
+            token: '<token>',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Draft order prefixed ID
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        required: false
+        description: Unique key for request idempotency.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: draft order placed
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: true
+                shipping_eq_billing_address: false
+                cart_id:
+                channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
+                po_document_filename:
+                po_document_byte_size:
+                number: R1001
+                email: adan.conroy@johnson.ca
+                customer_note:
+                po_number:
+                currency: USD
+                locale: en
+                total_quantity: 1
+                coupon_code:
+                fulfillment_status: unfulfilled
+                payment_status: paid
+                completed_at: '2026-01-15T12:00:00.000Z'
+                item_total: '10.00'
+                display_item_total: "$10.00"
+                discount_total: '0.00'
+                display_discount_total: "$0.00"
+                tax_total: '0.00'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.00'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.00'
+                display_additional_tax_total: "$0.00"
+                delivery_total: '100.00'
+                display_delivery_total: "$100.00"
+                fee_total: '0.00'
+                display_fee_total: "$0.00"
+                gift_card_total: '0.00'
+                display_gift_card_total: "$0.00"
+                store_credit_total: '0.00'
+                display_store_credit_total: "$0.00"
+                total: '110.00'
+                display_total: "$110.00"
+                amount_due: '110.00'
+                display_amount_due: "$110.00"
+                covered_by_store_credit: false
+                payments:
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
+                  response_code: BGS-41f4dd6ae9fa
+                  number: R1001-P1
+                  status: completed
+                  amount: '110.00'
+                  display_amount: "$110.00"
+                  source_type: credit_card
+                  source_id: card_UkLWZg9DAJ
+                  source:
+                    id: card_UkLWZg9DAJ
+                    brand: visa
+                    last4: '1111'
+                    month: 12
+                    year: 2027
+                    name: Spree Commerce
+                    default: false
+                    gateway_payment_profile_id:
+                  payment_method:
+                    id: pm_UkLWZg9DAJ
+                    name: Credit Card 226
+                    description:
+                    type: bogus
+                    session_required: true
+                    source_required: true
+                adjustment_total: '0.00'
+                display_adjustment_total: "$0.00"
+                discounts: []
+                fees: []
+                items:
+                - id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  seller_id:
+                  preorder: false
+                  preorder_ships_at:
+                  quantity: 1
+                  currency: USD
+                  name: Product 4032069
+                  slug: product-4032069
+                  options_text: ''
+                  price: '10.00'
+                  display_price: "$10.00"
+                  total: '10.00'
+                  display_total: "$10.00"
+                  adjustment_total: '0.00'
+                  display_adjustment_total: "$0.00"
+                  additional_tax_total: '0.00'
+                  display_additional_tax_total: "$0.00"
+                  included_tax_total: '0.00'
+                  display_included_tax_total: "$0.00"
+                  discount_total: '0.00'
+                  display_discount_total: "$0.00"
+                  pre_tax_amount: '10.00'
+                  display_pre_tax_amount: "$10.00"
+                  discounted_amount: '10.00'
+                  display_discounted_amount: "$10.00"
+                  display_compare_at_amount: "$0.00"
+                  compare_at_amount:
+                  thumbnail_url:
+                  option_values: []
+                  digital_links: []
+                fulfillments:
+                - id: ful_UkLWZg9DAJ
+                  number: R1001-F1
+                  tracking: U10000
+                  tracking_url:
+                  pickup_point_data:
+                  selected_delivery_rate_id: dr_UkLWZg9DAJ
+                  unpriced: false
+                  cost: '100.00'
+                  display_cost: "$100.00"
+                  total: '100.00'
+                  display_total: "$100.00"
+                  discount_total: '0.00'
+                  display_discount_total: "$0.00"
+                  additional_tax_total: '0.00'
+                  display_additional_tax_total: "$0.00"
+                  included_tax_total: '0.00'
+                  display_included_tax_total: "$0.00"
+                  tax_total: '0.00'
+                  display_tax_total: "$0.00"
+                  status: unfulfilled
+                  fulfillment_type: shipping
+                  fulfilled_at:
+                  delivered_at:
+                  items:
+                  - item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    quantity: 1
+                  deliveries:
+                  - id: dlv_UkLWZg9DAJ
+                    tracking_number: U10000
+                    carrier:
+                    carrier_name:
+                    service:
+                    status: pending
+                    tracking_url:
+                    estimated_delivery_at:
+                    delivered_at:
+                  delivery_method:
+                    id: dm_UkLWZg9DAJ
+                    name: UPS Ground 218
+                    code: UPS_GROUND_237
+                    estimated_transit_business_days_min:
+                    estimated_transit_business_days_max:
+                    digital: false
+                    pickup: false
+                    pickup_point: false
+                  stock_location:
+                    id: sloc_UkLWZg9DAJ
+                    name: Lala Tillman
+                    address1: 1600 Pennsylvania Ave NW
+                    city: Washington
+                    zipcode: '20500'
+                    country_code: US
+                    country_name: United States
+                    state_code: AL
+                    state_text: AL
+                    country_iso: US
+                    state_abbr: AL
+                    pickup_ready_in_minutes:
+                    pickup_instructions:
+                  delivery_rates:
+                  - id: dr_UkLWZg9DAJ
+                    delivery_method_id: dm_UkLWZg9DAJ
+                    name: UPS Ground 218
+                    selected: true
+                    cost: '100.00'
+                    total: '100.00'
+                    additional_tax_total: '0.00'
+                    included_tax_total: '0.00'
+                    tax_total: '0.00'
+                    carrier:
+                    service_level:
+                    estimated_delivery_date:
+                    unpriced: false
+                    freight_summary:
+                    display_cost: "$100.00"
+                    display_total: "$100.00"
+                    display_additional_tax_total: "$0.00"
+                    display_included_tax_total: "$0.00"
+                    display_tax_total: "$0.00"
+                    delivery_method:
+                      id: dm_UkLWZg9DAJ
+                      name: UPS Ground 218
+                      code: UPS_GROUND_237
+                      estimated_transit_business_days_min:
+                      estimated_transit_business_days_max:
+                      digital: false
+                      pickup: false
+                      pickup_point: false
+                billing_address:
+                  id: addr_EfhxLZ9ck8
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 599 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                  owner:
+                shipping_address:
+                  id: addr_VqXmZF31wY
+                  label:
+                  first_name: John
+                  last_name: Doe
+                  full_name: John Doe
+                  address1: 600 Lovely Street
+                  address2: Northwest
+                  postal_code: '10118'
+                  city: New York
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States
+                  country_code: US
+                  state_text: NY
+                  state_code: NY
+                  quick_checkout: false
+                  is_default_billing: false
+                  is_default_shipping: false
+                  state_abbr: NY
+                  country_iso: US
+                  state_name: New York
+                  owner:
+                gift_card:
+                market:
+                  id: mkt_UkLWZg9DAJ
+                  name: United States
+                  currency: USD
+                  default_locale: en
+                  tax_inclusive: false
+                  default: true
+                  country_codes:
+                  - US
+                  country_isos:
+                  - US
+                  supported_locales:
+                  - en
+              schema:
+                "$ref": "#/components/schemas/Order"
+        '422':
+          description: no payment covers the total
+          content:
+            application/json:
+              example:
+                error:
+                  code: order_cannot_complete
+                  message: No payment found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: draft order not found
           content:
             application/json:
               example:
@@ -20591,6 +21291,10 @@ components:
           allOf:
           - "$ref": "#/components/schemas/Market"
           nullable: true
+        payment_methods:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PaymentMethod"
         custom_fields:
           type: array
           items:

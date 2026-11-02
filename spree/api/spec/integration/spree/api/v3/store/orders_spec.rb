@@ -13,7 +13,11 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESCRIPTION
-        Returns a completed purchase. Accessible via JWT (authenticated users) or order token header (guests).
+        Returns a completed purchase, or a draft order the merchant raised for the customer to pay. Accessible
+        via JWT (authenticated users) or order token header (guests).
+
+        A draft has no `completed_at` and lists the `payment_methods` it can be paid with. Pay for it with
+        the order's payment sessions, then place it with `POST /orders/{id}/complete`.
 
         Resolves three kinds of id: the order's own (`or_…`), the id of the cart it was placed from, and the
         id of an order group (`ogrp_…`). The cart's id is the handle a storefront keeps through checkout, so
@@ -95,11 +99,73 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         run_test!
       end
 
-      response '404', 'incomplete order not accessible' do
-        let(:incomplete_order) { create(:order_with_line_items, store: store, customer: user) }
+      response '404', 'checkout draft not accessible' do
+        let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
+        let(:incomplete_order) { create(:order_with_line_items, store: store, customer: user, cart_id: cart.id) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { incomplete_order.to_param }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/store/orders/{id}/complete' do
+    post 'Complete a draft order' do
+      tags 'Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESCRIPTION
+        Places a draft order the merchant raised for the customer, processing its payments. Pay for it first
+        through the order's payment sessions; without a payment covering the total the order stays a draft
+        and the request fails with `order_cannot_complete`.
+
+        Completing an order that is already placed (a webhook got there first, or a retried request) answers
+        with the order. An order holding several sellers' goods divides into one order per seller, and the
+        **order group** holding them comes back instead.
+      DESCRIPTION
+
+      sdk_example 'orders/complete'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: false,
+                description: 'Bearer token for authenticated customers'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Draft order prefixed ID'
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false,
+                description: 'Order token for guest access'
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency.'
+
+      let(:draft) { create(:order_with_line_items, store: store, customer: user) }
+      let(:'x-spree-api-key') { api_key.token }
+      let(:'Authorization') { "Bearer #{jwt_token}" }
+      let(:id) { draft.prefixed_id }
+
+      response '200', 'draft order placed' do
+        before { create(:payment, order: draft, amount: draft.total).tap(&:create_payment_profile) }
+
+        schema '$ref' => '#/components/schemas/Order'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['id']).to eq(draft.prefixed_id)
+          expect(data['completed_at']).to be_present
+        end
+      end
+
+      response '422', 'no payment covers the total' do
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['error']['code']).to eq('order_cannot_complete')
+        end
+      end
+
+      response '404', 'draft order not found' do
+        let(:id) { 'or_nonexistent' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

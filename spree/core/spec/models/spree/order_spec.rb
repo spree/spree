@@ -69,6 +69,18 @@ describe Spree::Order, type: :model do
       it { expect(Spree::Order.not_canceled).not_to include canceled_order }
     end
 
+    describe '.standalone_drafts' do
+      it 'holds the drafts raised for a buyer, not a checkout’s or a division’s' do
+        raised = create(:order, customer: user)
+        checkout_draft = create(:order, customer: user, cart_id: create(:cart).id)
+        divided_draft = create(:order, customer: user, order_group: create(:order_group))
+
+        expect(described_class.standalone_drafts).to include(raised)
+        expect(described_class.standalone_drafts).not_to include(checkout_draft, divided_draft)
+        expect([raised, checkout_draft, divided_draft].map(&:standalone_draft?)).to eq([true, false, false])
+      end
+    end
+
     describe '.for_channel' do
       let!(:channel) { create(:channel) }
       let!(:channeled_order) { create(:order, customer: user, channel: channel) }

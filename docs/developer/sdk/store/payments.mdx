@@ -82,6 +82,21 @@ const completed = await client.carts.paymentSessions.complete(
 console.log(completed.status); // 'completed'
 ```
 
+### Paying for a draft order
+
+A draft order a merchant raised for the customer is paid the same way, through `client.orders.paymentSessions`, and placed with `client.orders.complete`. See [Paying for a draft order](/developer/core-concepts/payments#paying-for-a-draft-order).
+
+```typescript
+const options = { spreeToken: orderToken };
+
+const session = await client.orders.paymentSessions.create(orderId, {
+  payment_method_id: 'pm_xxx',
+}, options);
+await client.orders.paymentSessions.complete(orderId, session.id, {}, options);
+
+const order = await client.orders.complete(orderId, options);
+```
+
 ## Fulfillments
 
 ```typescript

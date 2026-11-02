@@ -836,8 +836,13 @@ export class StoreClient {
 
   readonly orders = {
     /**
-     * Get a completed order by prefixed ID.
+     * Get a completed order, or a draft order the merchant raised for the
+     * customer to pay, by prefixed ID.
      * Accessible via JWT (authenticated users) or spreeToken (guests).
+     *
+     * A draft has no `completed_at` and lists the `payment_methods` it can be
+     * paid with — pay for it with `orders.paymentSessions`, then place it with
+     * `orders.complete`.
      *
      * Also accepts the id of the cart the checkout was placed from — the
      * handle a storefront still holds on its confirmation page. A checkout
@@ -854,6 +859,87 @@ export class StoreClient {
         ...options,
         params: getParams(params),
       }),
+
+    /**
+     * Place a draft order the merchant raised, processing its payments.
+     * Pay for it first with `orders.paymentSessions`. Completing an order
+     * that is already placed answers with it. An order holding several
+     * sellers' goods divides into one order per seller, and the group it
+     * produced comes back — narrow the result with `isOrderGroup`.
+     * @param orderId - Draft order prefixed ID
+     */
+    complete: (orderId: string, options?: RequestOptions): Promise<Order | OrderGroup> =>
+      this.request<Order | OrderGroup>('POST', `/orders/${orderId}/complete`, options),
+
+    /**
+     * Nested resource: payment sessions for a draft order, as
+     * `carts.paymentSessions` are for a checkout.
+     */
+    paymentSessions: {
+      /**
+       * Create a payment session for a draft order.
+       * Delegates to the payment gateway to initialize a provider-specific session.
+       * @param orderId - Draft order prefixed ID
+       */
+      create: (
+        orderId: string,
+        params: CreatePaymentSessionParams,
+        options?: RequestOptions,
+      ): Promise<PaymentSession> =>
+        this.request<PaymentSession>('POST', `/orders/${orderId}/payment_sessions`, {
+          ...options,
+          body: params,
+        }),
+
+      /**
+       * Get a payment session of a draft order by ID
+       * @param orderId - Draft order prefixed ID
+       */
+      get: (
+        orderId: string,
+        sessionId: string,
+        options?: RequestOptions,
+      ): Promise<PaymentSession> =>
+        this.request<PaymentSession>(
+          'GET',
+          `/orders/${orderId}/payment_sessions/${sessionId}`,
+          options,
+        ),
+
+      /**
+       * Update a payment session of a draft order.
+       * Delegates to the payment gateway to sync changes with the provider.
+       * @param orderId - Draft order prefixed ID
+       */
+      update: (
+        orderId: string,
+        sessionId: string,
+        params: UpdatePaymentSessionParams,
+        options?: RequestOptions,
+      ): Promise<PaymentSession> =>
+        this.request<PaymentSession>('PATCH', `/orders/${orderId}/payment_sessions/${sessionId}`, {
+          ...options,
+          body: params,
+        }),
+
+      /**
+       * Complete a payment session of a draft order.
+       * Confirms the payment with the provider; place the order afterwards
+       * with `orders.complete`.
+       * @param orderId - Draft order prefixed ID
+       */
+      complete: (
+        orderId: string,
+        sessionId: string,
+        params?: CompletePaymentSessionParams,
+        options?: RequestOptions,
+      ): Promise<PaymentSession> =>
+        this.request<PaymentSession>(
+          'PATCH',
+          `/orders/${orderId}/payment_sessions/${sessionId}/complete`,
+          { ...options, body: params },
+        ),
+    },
 
     /**
      * Returns the customer opened on this order.
