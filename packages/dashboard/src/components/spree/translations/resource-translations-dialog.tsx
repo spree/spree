@@ -355,7 +355,7 @@ function TranslationGrid({
                   {row.rowLabel ?? fieldLabel(row.resourceType, field)}
                 </th>
                 <td
-                  className="border-b border-r px-3 py-2 align-top text-muted-foreground"
+                  className="border-b border-r px-3 py-2 align-top whitespace-pre-wrap text-muted-foreground"
                   data-testid={`source-${cellName}`}
                 >
                   {stripHtml(field.source ?? '')}
@@ -417,9 +417,20 @@ function flattenTree(data: ResourceTranslations, fields?: readonly string[]): Tr
   return rows
 }
 
-// Plain text of an HTML fragment. DOMParser handles nested/malformed tags
-// correctly — a single-pass regex strip can leak tags via patterns like
-// `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
+// Plain text of an HTML fragment, keeping paragraph and line breaks so the
+// read-only "Original" column mirrors the structure translators are working on.
+// DOMParser handles nested/malformed tags correctly — a single-pass regex strip
+// can leak tags via patterns like `<scr<script>ipt>`
+// (CodeQL js/incomplete-multi-character-sanitization).
+const BLOCK_SELECTOR = 'p, div, li, ul, ol, blockquote, pre, h1, h2, h3, h4, h5, h6, tr'
+
 function stripHtml(html: string): string {
-  return (new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '').trim()
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  for (const br of Array.from(doc.body.querySelectorAll('br'))) {
+    br.replaceWith(doc.createTextNode('\n'))
+  }
+  for (const block of Array.from(doc.body.querySelectorAll(BLOCK_SELECTOR))) {
+    block.append(doc.createTextNode('\n\n'))
+  }
+  return (doc.body.textContent ?? '').replace(/\n{3,}/g, '\n\n').trim()
 }
