@@ -31,6 +31,7 @@ export type { OrderAddressCorrectionParams } from './OrderAddressCorrectionParam
 export type { OrderAddressParams } from './OrderAddressParams'
 export type { OrderCancelParams } from './OrderCancelParams'
 export type { OrderDocumentCreateParams } from './OrderDocumentCreateParams'
+export type { OrderDocumentUpdateParams } from './OrderDocumentUpdateParams'
 export type { OrderNotesParams } from './OrderNotesParams'
 export type { PackageTypeCreateParams } from './PackageTypeCreateParams'
 export type { PackageTypeUpdateParams } from './PackageTypeUpdateParams'

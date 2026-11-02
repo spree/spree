@@ -6,6 +6,6 @@ const client = createAdminClient({
 })
 
 // region:example
-await client.invoices.delete('inv_UkLWZg9DAJ')
+await client.invoices.delete('invc_UkLWZg9DAJ')
 
 // endregion:example

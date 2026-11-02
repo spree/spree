@@ -13,7 +13,7 @@ module Spree
     include Spree::Metadata
     include Spree::ActedBy
 
-    has_prefix_id :inv
+    has_prefix_id :invc
 
     publishes_lifecycle_events
     publishes_event :sent

@@ -9,7 +9,7 @@ const client = createSellerClient({
 // region:example
 // The PDF is served through the API, so fetch it with the seller's
 // credentials, then drive the browser download from a Blob.
-const invoice = await client.invoices.get('inv_UkLWZg9DAJ')
+const invoice = await client.invoices.get('invc_UkLWZg9DAJ')
 
 if (invoice.download_url) {
   const response = await fetch(`https://your-store.com${invoice.download_url}`, {
