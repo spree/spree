@@ -49,7 +49,9 @@ function OrderEditPage() {
     }
   }
 
-  useFormSubmitShortcut(form, onSubmit)
+  // Not while the picker is open: a variant picked during the save would be
+  // ignored, and the dialog closes on pick with no word of it.
+  useFormSubmitShortcut(form, (values) => (addingItem ? undefined : onSubmit(values)))
 
   if (!order && isLoading) return null
 

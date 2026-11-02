@@ -12,7 +12,6 @@ import {
   type OrderItemsPayload,
   orderEditFormSchema,
   orderToEditForm,
-  projectedLineTotal,
 } from '../schemas/order'
 import { useOrderMutation } from './use-order'
 
@@ -30,6 +29,11 @@ function editFormFor(order: Order): OrderEditFormValues {
  * order's lines in its own layout — render `OrderEditItemsTable` with `form`
  * and `fields`, `AddLineItemDialog` with `stageVariant`, and
  * `OrderTotalsCard` with `items`.
+ *
+ * `save` replaces the form with the saved lines when it finishes, so lock the
+ * editing controls while `isSaving`: pass `disabled={isSaving}` to
+ * `OrderEditItemsTable` and disable whatever opens the picker. Anything typed
+ * meanwhile would be erased; a variant picked meanwhile is ignored.
  */
 export function useOrderItemsEditor(order: Order | undefined) {
   const { t } = useTranslation()
@@ -48,6 +52,10 @@ export function useOrderItemsEditor(order: Order | undefined) {
   // flight on this same order. A different order always replaces the rows:
   // staged lines of one order must never be saved against another.
   const hydratedOrderId = useRef<string | undefined>(undefined)
+  // The order on screen right now — undefined while the next one loads —
+  // which a save in flight checks before it touches the form.
+  const shownOrderId = useRef<string | undefined>(undefined)
+  shownOrderId.current = order?.id
   useEffect(() => {
     if (!order) return
     if (form.formState.isDirty && hydratedOrderId.current === order.id) return
@@ -75,9 +83,9 @@ export function useOrderItemsEditor(order: Order | undefined) {
     const payload = buildOrderItemsPayload(values.items)
     const startedAt = Date.now()
     // The order these rows belong to. If the page moves to another order
-    // while the save is in flight, the hydrate effect has already replaced the
-    // rows, and nothing below may touch the form.
+    // while the save is in flight, nothing below may touch the form.
     const savingOrderId = order?.id
+    const stillShown = () => shownOrderId.current === savingOrderId
 
     if (payload.length > 0 && !savingOrderId) {
       toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
@@ -85,49 +93,37 @@ export function useOrderItemsEditor(order: Order | undefined) {
     }
 
     try {
-      if (payload.length > 0) await saveMutation.mutateAsync(payload)
-      if (hydratedOrderId.current !== savingOrderId) return false
-
-      // The mutation awaits the order refetch, so when `useOrder` is mounted
-      // the server's rows are already in the cache — re-baseline on them. The
-      // hydrate effect cannot: it ran while the form was still dirty.
-      const fresh = queryClient.getQueryState<Order>(orderKey)
-      if (payload.length > 0 && fresh?.data && fresh.dataUpdatedAt >= startedAt) {
-        form.reset(editFormFor(fresh.data))
+      if (payload.length === 0) {
+        // Nothing was sent, so every remaining row is as the server has it:
+        // re-baseline them as they are, server totals included. Leaving the
+        // form dirty would trip the unsaved-changes guard on the way out.
+        form.reset({
+          items: values.items
+            .filter((item) => !item.added && !item.removed)
+            .map((item) => ({ ...item, revert_price: false })),
+        })
         return true
       }
 
-      // Otherwise drop the rows that are gone and re-baseline the rest, so the
-      // form is pristine — leaving it dirty would trip the unsaved-changes
-      // guard on the way out, and would keep a later refetch from hydrating.
-      form.reset({
-        items: values.items
-          .filter((item) => !item.removed)
-          .map((item) => {
-            // A revert re-prices server-side; carry the catalog estimate until
-            // the refetch corrects it.
-            const reverted = item.revert_price
-            const price = reverted ? (item.catalog_price ?? item.price) : item.price
+      await saveMutation.mutateAsync(payload)
+      if (!stillShown()) return false
 
-            return {
-              ...item,
-              added: false,
-              saved_quantity: item.quantity,
-              price,
-              saved_price: price,
-              total: projectedLineTotal({ ...item, price }) ?? item.total,
-              price_source: reverted
-                ? null
-                : item.price !== item.saved_price
-                  ? 'manual'
-                  : item.price_source,
-              revert_price: false,
-            }
-          }),
-      })
+      // Re-baseline on what the server saved — the client cannot know a saved
+      // line's adjustments. The mutation awaits the order refetch, so a page
+      // that loads the order through `useOrder` already has it in the cache;
+      // any other page reads it once here.
+      const cached = queryClient.getQueryState<Order>(orderKey)
+      const saved =
+        cached?.data && cached.dataUpdatedAt >= startedAt
+          ? cached.data
+          : await adminClient.orders.get(savingOrderId as string, {
+              expand: ['items', 'fulfillments'],
+            })
+      if (!stillShown()) return false
+      form.reset(editFormFor(saved))
       return true
     } catch (err) {
-      if (hydratedOrderId.current !== savingOrderId) return false
+      if (!stillShown()) return false
       if (mapSpreeErrorsToForm(err, form.setError)) return false
       toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
       return false
