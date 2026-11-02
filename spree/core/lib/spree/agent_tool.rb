@@ -167,6 +167,34 @@ class AgentTool
 
     protected
 
+    # A resource that lives under a parent — a promotion's rules, an order's
+    # payments — has no path of its own to dispatch to, so every tool refuses
+    # it the same way: naming the parent and, where the parent carries the
+    # rows as an attribute, how to write and read them there. The old answer
+    # was the endpoint's 404 for a parent id nobody supplied.
+    #
+    # @param entry [Spree::AgentTools::ResourceMap::Entry]
+    # @param verb [String] 'searched', 'fetched', 'created'…
+    # @return [Hash]
+    def nested_resource_error(entry, verb)
+      parent = entry.parent_key
+      parent_entry = Spree::AgentTools::ResourceMap.find(parent)
+      attribute = parent_entry&.nested_typed_families&.key(entry.model_class)
+
+      owner = parent.singularize.tr('_', ' ')
+      sentences = ["#{entry.key} belong to #{owner.match?(/\A[aeiou]/) ? 'an' : 'a'} #{owner} and cannot be #{verb} on their own."]
+      if attribute
+        sentences << "Write them in the #{attribute} attribute of #{parent} — describe_resource #{parent} shows the shape and the accepted types."
+        if parent_entry.expandable_associations.include?(attribute)
+          sentences << "Read them with get_resource on #{parent} and expand: [\"#{attribute}\"]."
+        end
+      elsif parent_entry
+        sentences << "Start from #{parent}: get_resource with expand lists what it carries (describe_resource #{parent} names the options)."
+      end
+
+      { error: sentences.join(' '), parent: parent }
+    end
+
     # Refuses unless this admin may take `action` on `record`.
     #
     # Holding `write_products` says an admin may edit products; it does not

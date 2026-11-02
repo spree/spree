@@ -21,8 +21,10 @@ module Spree
         return { error: "You do not have permission to read #{entry.key}." } unless
           context.permitted?(entry.permission)
 
+        return nested_resource_error(entry, 'fetched') if entry.nested?
+
         path = entry.api_path(:show)
-        return { error: "#{entry.key} cannot be fetched one at a time." } if path.blank? || path.include?('/:') && path.count(':') > 1
+        return { error: "#{entry.key} cannot be fetched one at a time." } if path.blank?
 
         requested, refusal = expansions(entry, expand)
         return refusal if refusal

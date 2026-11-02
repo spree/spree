@@ -203,10 +203,15 @@ module Spree
       existing_by_id = rules.to_a.index_by(&:id)
       retained_ids = []
 
-      rules_params.each do |rule_data|
+      rules_params.each_with_index do |rule_data, index|
         data = rule_data.to_h.with_indifferent_access
         rule_id = data.delete(:id)
-        data[:type] = self.class.resolve_rule_type(data[:type]) if data.key?(:type)
+        if data.key?(:type)
+          # Refused with the accepted kinds named; letting the nil through
+          # answered "type can't be blank" to a caller who had sent one.
+          data[:type] = self.class.resolve_rule_type(data[:type]) ||
+                        raise(unknown_row_type_error(Spree::CollectionRule, data[:type], "/rules/#{index}"))
+        end
 
         record = if rule_id.present?
                    existing_by_id[Spree::PrefixedId.decode_prefixed_id(rule_id) || rule_id] ||

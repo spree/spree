@@ -16,6 +16,10 @@ module Spree
       # than quietly leaking another store's records.
       UnscopedResourceError = Class.new(StandardError)
 
+      # The parent segment of a nested path: `/promotions/:promotion_id/promotion_rules`
+      # names `promotions`.
+      PARENT_SEGMENT = %r{/(?<parent>[a-z_]+)/:[a-z_]+_id(?:/|\z)}
+
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, :write_permission,
                          :writable_attributes, :create_workflow_key, :update_workflow_key,
@@ -29,9 +33,32 @@ module Spree
           Array(api_paths).to_h[action.to_sym]
         end
 
-        # @return [Boolean] whether a tool can dispatch to this resource
+        # Whether a tool can dispatch to this resource's collection on its own.
+        #
+        # A resource reached only under a parent is not: the tool has no
+        # parent id to put in the path, and dispatching the template as it
+        # stands answered "Promotion not found" for a search of promotion
+        # rules, which a model repeats as a fact about the store.
+        #
+        # @return [Boolean]
         def dispatchable?
-          api_path(:index).present?
+          api_path(:index).present? && !nested?
+        end
+
+        # @return [Boolean] whether every path to this resource runs under a parent
+        def nested?
+          parent_key.present?
+        end
+
+        # The resource key of the parent this resource lives under, read
+        # from the route rather than guessed from the model, so a renamed
+        # nested route (`/orders/:order_id/items`) still names `orders`. The
+        # innermost parent, for a path nested twice.
+        #
+        # @return [String, nil]
+        def parent_key
+          path = api_path(:index) || api_path(:create) || api_path(:show)
+          path.to_s.scan(PARENT_SEGMENT).flatten.last
         end
 
         # Whether a search may add DISTINCT.
@@ -92,12 +119,66 @@ module Spree
         end
 
         def expand_names_in(klass)
-          file = Object.const_source_location(klass.name)&.first
-          return [] if file.nil? || !File.exist?(file)
+          file = serializer_file(klass)
+          return [] if file.nil?
 
-          File.read(file).scan(/expand\?\('([a-z_]+)'\)/).flatten
+          # Comment lines are skipped: the base serializer explains `expand?`
+          # with an example, which put `variants` on every resource's list.
+          code = File.readlines(file).reject { |line| line.lstrip.start_with?('#') }.join
+          code.scan(/expand\?\('([a-z_]+)'\)/).flatten
         rescue StandardError
           []
+        end
+
+        # The file the autoloader maps the class to, under whichever engine
+        # holds it. `const_source_location` is the fallback: it names the file
+        # that first touched the constant, which for a serializer another one
+        # inherits from was the subclass's file.
+        def serializer_file(klass)
+          relative = "#{klass.name.underscore}.rb"
+          found = Rails.autoloaders.main.dirs.lazy.map { |dir| File.join(dir, relative) }.find { |path| File.exist?(path) }
+          found || Object.const_source_location(klass.name)&.first.then { |path| path if path && File.exist?(path) }
+        end
+
+        # The STI family this resource is, when its rows are selected by a
+        # `type` the model's own registry resolves — payment methods, seller
+        # requirements, promotion rules. Nil for an ordinary resource.
+        #
+        # @return [Class, nil]
+        def typed_family
+          typed_family_class(model_class)
+        end
+
+        # The STI family behind each list-valued attribute whose rows carry a
+        # `type` — a promotion's `rules` and `actions`, a price list's
+        # `rules`. The attribute is the short name the write accepts; the
+        # association behind it carries the model's prefix
+        # (`promotion_rules`), which is how the two are matched.
+        #
+        # @return [Hash{String => Class}] attribute => family class
+        def nested_typed_families
+          nested_collection_shapes.each_with_object({}) do |(name, fields), families|
+            next unless fields.any? { |field| field['name'] == 'type' }
+
+            family = typed_family_class(typed_association_for(name)&.klass)
+            families[name] = family if family
+          end
+        rescue StandardError
+          {}
+        end
+
+        def typed_association_for(name)
+          reflections = model_class.reflect_on_all_associations(:has_many)
+          reflections.find { |reflection| reflection.name.to_s == name } ||
+            reflections.find { |reflection| reflection.name.to_s.end_with?("_#{name}") }
+        end
+
+        def typed_family_class(klass)
+          return unless klass.respond_to?(:subclass_registry) && klass.subclass_registry
+
+          klass
+        rescue StandardError
+          nil
         end
 
         # The shape of each attribute that carries a list of records — a

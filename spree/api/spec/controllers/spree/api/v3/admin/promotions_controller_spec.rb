@@ -41,6 +41,21 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(promotion.prefixed_id)
       expect(json_response['name']).to eq(promotion.name)
+      expect(json_response).not_to have_key('rules')
+      expect(json_response).not_to have_key('actions')
+    end
+
+    # Under the names the write accepts, so a reader can tell what a
+    # promotion does without a request per `rule_ids` entry.
+    it 'embeds the rules and actions when asked to expand them' do
+      promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder')
+
+      get :show, params: { id: promotion.prefixed_id, expand: 'rules,actions' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['rules'].map { |rule| rule['type'] }).to eq(['first_order'])
+      expect(json_response['actions'].map { |action| action['type'] }).to eq(['create_item_adjustments'])
+      expect(json_response['actions'].first['calculator']).to include('type')
     end
   end
 
@@ -154,20 +169,31 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         expect(types).to contain_exactly(Spree::Promotion::Rules::Currency, Spree::Promotion::Rules::FirstOrder)
       end
 
-      it 'silently ignores rules with an unknown type' do
+      # A row with a type nobody registered used to be dropped from a 201, so
+      # a client that sent a class name got a live promotion with no rules.
+      it 'refuses a rule with an unknown type and creates nothing' do
         post :create,
              params: base_params.merge(
                rules: [
                  { type: 'currency', preferences: { currency: 'USD' } },
-                 { type: 'NotARealRule' }
+                 { type: 'Spree::Promotion::Rules::ItemTotal' }
                ]
              ),
              as: :json
 
-        expect(response).to have_http_status(:created)
-        promotion = Spree::Promotion.find_by_prefix_id(json_response['id'])
-        expect(promotion.rules.size).to eq(1)
-        expect(promotion.rules.first).to be_a(Spree::Promotion::Rules::Currency)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']).to include('/rules/1/type')
+        expect(json_response['error']['details']['/rules/1/type'].first).to include('item_total', 'currency')
+        expect(Spree::Promotion.where(name: 'Spring Sale')).not_to exist
+      end
+
+      it 'refuses an action with an unknown type' do
+        post :create,
+             params: base_params.merge(actions: [{ type: 'Spree::Promotion::Actions::CreateItemAdjustments' }]),
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']['/actions/0/type'].first).to include('create_item_adjustments')
       end
     end
 
@@ -311,9 +337,8 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
              ),
              as: :json
 
-        # Unknown shorthand → rule silently dropped (same behavior as unknown class name).
-        expect(response).to have_http_status(:created)
-        expect(Spree::Promotion.find_by_prefix_id(json_response['id']).rules).to be_empty
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to include('not_a_real_rule is not a promotion rule offered here')
       end
     end
   end
