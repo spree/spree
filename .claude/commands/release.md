@@ -257,14 +257,15 @@ rm -rf tmp/spree-starter
 git clone --quiet https://github.com/spree/spree-starter.git tmp/spree-starter
 cd tmp/spree-starter
 git switch -c chore/spree-<version with dots as dashes>
-bundle update $(ls ../../spree/*/*.gemspec ../../spree/providers/*/*.gemspec | xargs -n1 basename | sed 's/\.gemspec$//')
+bundle update $(ls ../../spree/*.gemspec ../../spree/*/*.gemspec ../../spree/providers/*/*.gemspec | xargs -n1 basename | sed 's/\.gemspec$//')
 grep -E "^    spree[a-z_]* \(" Gemfile.lock
 DATABASE_NAME=spree_starter_release bin/rails db:create spree:install:migrations db:migrate
 DATABASE_NAME=spree_starter_release bin/rails db:drop
 ```
 
-- `bundle update` on the gems this repository releases (the gemspecs under
-  `spree/` and `spree/providers/`), never a bare `bundle update` and not every
+- `bundle update` on the gems this repository releases (the `spree` meta gem
+  and the gemspecs under `spree/*/` and `spree/providers/*/`), never a bare
+  `bundle update` and not every
   `spree*` gem: `spree_dev_tools` has its own version. The starter's `Gemfile`
   already allows the new version (`~> 6.0`), so this moves the lockfile and the
   dependencies the gems require (6.0.2 moved Alba to 4) and nothing else. The
