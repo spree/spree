@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Invoice, InvoiceRequest, OrderDocument } from '@spree/admin-sdk'
-import { compareMoney, INVOICE_KINDS, isDecimalString, isZeroMoney } from '@spree/core'
+import {
+  compareMoney,
+  decimalPlaces,
+  INVOICE_KINDS,
+  isDecimalString,
+  isZeroMoney,
+} from '@spree/core'
 import {
   Badge,
   Button,
@@ -122,6 +128,7 @@ export function OrderDocumentsCard({
             orderId={orderId}
             invoices={invoices}
             isLoading={invoicesQuery.isLoading}
+            isError={invoicesQuery.isError}
             canEdit={canEdit}
           />
         </section>
@@ -186,11 +193,13 @@ function InvoiceList({
   orderId,
   invoices,
   isLoading,
+  isError,
   canEdit,
 }: {
   orderId: string
   invoices: Invoice[]
   isLoading: boolean
+  isError: boolean
   canEdit: boolean
 }) {
   const { t } = useTranslation()
@@ -200,6 +209,7 @@ function InvoiceList({
   const remove = useDeleteOrderInvoice(orderId)
 
   if (isLoading) return <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+  if (isError && invoices.length === 0) return <LoadError />
   if (invoices.length === 0) {
     return <p className="text-muted-foreground text-sm">{t('admin.order_documents.no_invoices')}</p>
   }
@@ -277,16 +287,26 @@ function InvoiceList({
   )
 }
 
+function LoadError() {
+  const { t } = useTranslation()
+  return (
+    <p className="text-destructive text-sm" role="alert">
+      {t('admin.errors.failed_to_load')}
+    </p>
+  )
+}
+
 function DocumentList({ orderId, canEdit }: { orderId: string; canEdit: boolean }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const download = useDownload()
-  const { data, isLoading } = useOrderDocuments(orderId)
+  const { data, isLoading, isError } = useOrderDocuments(orderId)
   const update = useUpdateOrderDocument(orderId)
   const remove = useDeleteOrderDocument(orderId)
   const documents = data?.data ?? []
 
   if (isLoading) return <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+  if (isError && documents.length === 0) return <LoadError />
   if (documents.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">{t('admin.order_documents.no_documents')}</p>
@@ -626,7 +646,7 @@ export function InvoiceUploadSheet({
                     <InputGroupInput
                       id={`invoice-${name}`}
                       type="number"
-                      step="0.01"
+                      step={10 ** -decimalPlaces(currency)}
                       aria-invalid={!!errors[name] || undefined}
                       {...form.register(name)}
                     />

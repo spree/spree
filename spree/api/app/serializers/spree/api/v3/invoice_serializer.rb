@@ -21,7 +21,6 @@ module Spree
         attribute(:supplied_on) { |invoice| invoice.supplied_on&.iso8601 }
 
         money_attributes :total, :net_total, :tax_total
-        typelize total: [:string, nullable: false]
 
         prefixed_id_attributes :original_invoice
 

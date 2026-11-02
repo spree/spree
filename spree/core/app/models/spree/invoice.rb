@@ -94,10 +94,10 @@ module Spree
       issuer.try(:legal_name).presence || issuer&.name
     end
 
-    # @param _store [Spree::Store, nil] the exporting store, unused: an invoice knows its own
+    # @param store [Spree::Store, nil] the exporting store, whose time zone the times are in
     # @return [Array] one CSV row
-    def to_csv(_store = nil)
-      Spree::CSV::InvoicePresenter.new(self).call
+    def to_csv(store = nil)
+      Spree::CSV::InvoicePresenter.new(self, store || self.store).call
     end
 
     # @return [Boolean]
@@ -125,8 +125,25 @@ module Spree
     def mark_sent!
       return if sent?
 
-      update_columns(sent_at: Time.current, updated_at: Time.current)
+      # Claimed in one conditional write, so two deliveries finishing at once
+      # publish `invoice.sent` only once.
+      now = Time.current
+      return if self.class.where(id: id, sent_at: nil).update_all(sent_at: now, updated_at: now).zero?
+
+      self.sent_at = now
+      self.updated_at = now
+      clear_attribute_changes(%i[sent_at updated_at])
       publish_event('invoice.sent')
+    end
+
+    # The seller a commission invoice was issued to, a soft-deleted one
+    # included: the invoice outlives the seller.
+    #
+    # @return [Spree::Seller, nil]
+    def commission_seller
+      return if seller_payout.nil?
+
+      seller_payout.seller || (@commission_seller ||= Spree::Seller.with_deleted.find_by(id: seller_payout.seller_id))
     end
 
     # The address the invoice is emailed to: the order's buyer, or for a
@@ -136,8 +153,14 @@ module Spree
     def recipient_email
       return order.email if order
 
-      seller = seller_payout&.seller
-      seller&.billing_email.presence || seller&.contact_email
+      commission_seller&.billing_email.presence || commission_seller&.contact_email
+    end
+
+    # Whether sending it again would reach anyone.
+    #
+    # @return [Boolean]
+    def can_be_resent?
+      recipient_email.present?
     end
 
     private
@@ -160,11 +183,11 @@ module Spree
     end
 
     def sign_matches_kind
-      return if total.nil?
-
       if credit_note?
-        errors.add(:total, :less_than_or_equal_to, count: 0) if total.positive?
-      elsif total.negative?
+        { total: total, net_total: net_total, tax_total: tax_total }.each do |attribute, amount|
+          errors.add(attribute, :less_than_or_equal_to, count: 0) if amount&.positive?
+        end
+      elsif total&.negative?
         errors.add(:total, :greater_than_or_equal_to, count: 0)
       end
     end

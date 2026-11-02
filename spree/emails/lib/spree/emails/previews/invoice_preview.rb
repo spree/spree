@@ -11,6 +11,8 @@ class Spree::InvoicePreview < ActionMailer::Preview
   end
 
   def commission_invoice_email
-    Spree::InvoiceMailer.commission_invoice_email(Spree::Invoice.where.not(seller_payout_id: nil).last)
+    invoice = Spree::Invoice.where.not(seller_payout_id: nil).last
+    invoice.store.default_locale = locale if invoice && locale.present?
+    Spree::InvoiceMailer.commission_invoice_email(invoice)
   end
 end

@@ -20,8 +20,11 @@ module Spree
         'Created At'
       ].freeze
 
-      def initialize(invoice)
+      # @param invoice [Spree::Invoice]
+      # @param store [Spree::Store] whose time zone the times are written in
+      def initialize(invoice, store = invoice.store)
         @invoice = invoice
+        @time_zone = Time.find_zone(store.preferred_timezone) || Time.zone
       end
 
       attr_reader :invoice
@@ -42,12 +45,16 @@ module Spree
           amount(invoice.total),
           invoice.source,
           invoice.external_reference,
-          invoice.sent_at&.strftime('%Y-%m-%d %H:%M:%S'),
-          invoice.created_at&.strftime('%Y-%m-%d %H:%M:%S')
+          store_time(invoice.sent_at),
+          store_time(invoice.created_at)
         ]
       end
 
       private
+
+      def store_time(time)
+        time&.in_time_zone(@time_zone)&.strftime('%Y-%m-%d %H:%M:%S')
+      end
 
       def amount(value)
         Spree::Money::Rounding.format(value, invoice.currency) unless value.nil?

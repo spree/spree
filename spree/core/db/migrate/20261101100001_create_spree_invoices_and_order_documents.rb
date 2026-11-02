@@ -13,7 +13,7 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
       t.references :original_invoice
       t.references :uploaded_by, polymorphic: true, index: false
       t.string :kind, null: false
-      t.string :source, null: false, default: 'uploaded'
+      t.string :source, null: false
       t.string :number, null: false
       t.date :issued_on, null: false
       t.date :supplied_on

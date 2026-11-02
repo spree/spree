@@ -20,11 +20,14 @@ module Spree
       def perform(order:, customer: nil, company_name: nil, tax_id: nil, billing_address_params: nil)
         super
 
-        step :ensure_requestable
-        run_hooks :validate
-        # The address is saved only once the request is allowed, and with it,
-        # so a refused request leaves no personal data behind.
+        # Checked under the order's row lock, which an invoice upload takes
+        # too, so a request cannot slip in beside an invoice being added. The
+        # address is saved only once the request is allowed, and with it, so
+        # a refused request leaves no personal data behind.
         ApplicationRecord.transaction do
+          order.class.lock.find(order.id)
+          step :ensure_requestable
+          run_hooks :validate
           step :create_billing_address
           step :create_request
         end

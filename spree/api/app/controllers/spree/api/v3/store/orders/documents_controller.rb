@@ -22,7 +22,7 @@ module Spree
             request_params 'CreateOrderDocumentParams', action: :create do |body|
               body.attribute :label, :string, required: true, example: 'Purchase order 4471'
               body.attribute :file_signed_id, :string, required: true,
-                description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. PDF, image, office document or CSV."
+                description: 'A `signed_id` from `orders.documents.upload()`. PDF, image, office document or CSV.'
             end
 
             # POST /api/v3/store/orders/:order_id/documents/upload
@@ -43,6 +43,12 @@ module Spree
               else
                 render_validation_error(file_upload.errors)
               end
+            end
+
+            # Under the order's lock, so two uploads at once cannot both take
+            # the buyer's last place under the upload limit.
+            def create
+              @parent.with_lock { super }
             end
 
             protected

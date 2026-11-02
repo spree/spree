@@ -356,9 +356,12 @@ RSpec.describe Spree::Customers::Anonymize do
     end
 
     it "removes the buyer's own uploads and keeps the merchant's" do
-      result
+      blob_id = buyer_document.file.blob.id
+
+      perform_enqueued_jobs { result }
 
       expect(Spree::OrderDocument.exists?(buyer_document.id)).to be(false)
+      expect(ActiveStorage::Blob.exists?(blob_id)).to be(false)
       expect(Spree::OrderDocument.exists?(staff_document.id)).to be(true)
     end
   end

@@ -6,22 +6,22 @@ const client = createAdminClient({
 })
 
 // region:example
-// The PDF is served through the API, so fetch it with the API key,
-// then drive the browser download from a Blob.
-const invoice = await client.invoices.get('invc_UkLWZg9DAJ')
+// The PDF is served through the API with the secret key, which must never
+// reach a browser. Pass it on from a route on your own server instead.
+export async function GET(): Promise<Response> {
+  const invoice = await client.invoices.get('invc_UkLWZg9DAJ')
+  if (!invoice.download_url) return new Response(null, { status: 404 })
 
-if (invoice.download_url) {
-  const response = await fetch(`https://your-store.com${invoice.download_url}`, {
+  const file = await fetch(`https://your-store.com${invoice.download_url}`, {
     headers: { 'X-Spree-API-Key': 'sk_xxx' },
   })
-  if (!response.ok) throw new Error(`Download failed: ${response.status}`)
+  if (!file.ok) return new Response(null, { status: file.status })
 
-  const url = URL.createObjectURL(await response.blob())
-  const link = Object.assign(document.createElement('a'), {
-    href: url,
-    download: invoice.file_filename ?? invoice.number,
+  return new Response(file.body, {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${invoice.file_filename ?? `${invoice.number}.pdf`}"`,
+    },
   })
-  link.click()
-  URL.revokeObjectURL(url)
 }
 // endregion:example

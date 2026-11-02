@@ -28,6 +28,15 @@ RSpec.describe Spree::Exports::Invoices, type: :model do
     )
   end
 
+  it "writes times in the store's time zone" do
+    allow(store).to receive(:preferred_timezone).and_return('Europe/Warsaw')
+    invoice.update_columns(created_at: Time.utc(2026, 11, 2, 12, 0))
+
+    row = Spree::CSV::InvoicePresenter.new(invoice, store).call
+
+    expect(row[Spree::CSV::InvoicePresenter::HEADERS.index('Created At')]).to eq('2026-11-02 13:00:00')
+  end
+
   it 'exports the filtered list' do
     expect(export_rows(search_params: { kind_eq: 'invoice' }.to_json).map { |row| row['Number'] }).to eq(['FV/2026/11/42'])
   end

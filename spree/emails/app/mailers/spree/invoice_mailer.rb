@@ -31,7 +31,7 @@ module Spree
     # @param resend [Boolean]
     def commission_invoice_email(invoice, resend = false)
       load_invoice(invoice)
-      @seller = @invoice.seller_payout.seller
+      @seller = @invoice.commission_seller
 
       with_store_locale(current_store) do
         attach_invoice_file

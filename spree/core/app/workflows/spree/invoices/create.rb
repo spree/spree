@@ -26,6 +26,8 @@ module Spree
         run_hooks :validate
 
         ApplicationRecord.transaction do
+          # Serializes with a buyer's invoice request on the same order.
+          parent.class.lock.find(parent.id) if parent.is_a?(Spree::Order)
           step :save_invoice
           step :fulfil_open_request
         end

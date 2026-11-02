@@ -33,11 +33,15 @@ RSpec.describe 'Seller Order Documents API', type: :request, swagger_doc: 'api-r
       response '200', "the seller's own document" do
         let(:own) { create(:order_document, order: order, uploaded_by: seller_user) }
         let(:id) { own.prefixed_id }
-        let(:body) { { customer_visible: true } }
+        let(:body) { { label: 'Renamed', customer_visible: true } }
 
         schema '$ref' => '#/components/schemas/OrderDocument'
 
-        run_test! { expect(own.reload.customer_visible).to be(true) }
+        run_test! do
+          own.reload
+          expect(own.label).to eq('Renamed')
+          expect(own.customer_visible).to be(true)
+        end
       end
 
       response '404', "the operator's document" do

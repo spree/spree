@@ -1,5 +1,7 @@
+import { toastManager } from '@spree/dashboard-ui'
 import { getApiClient } from '../api-client'
 import { downloadFromApi } from '../lib/download'
+import { i18n } from '../lib/i18n'
 import { useAuth } from './use-auth'
 
 /**
@@ -11,11 +13,13 @@ export function useDownload() {
 
   return (url: string | null | undefined, filename: string | null | undefined) => {
     if (!url) return
-    void downloadFromApi(
+    downloadFromApi(
       token,
       url,
       filename ?? 'document',
       getApiClient().downloadHeaders?.() ?? {},
+    ).catch(() =>
+      toastManager.add({ type: 'error', title: i18n.t('admin.errors.download_failed') }),
     )
   }
 }
