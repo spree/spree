@@ -27,8 +27,9 @@ import {
  * sent until the page's Save. `pricesEditable` is on for drafts only — a
  * negotiated price is a pre-placement gesture.
  *
- * The field array lives on the page because the catalog picker appends to it
- * too, and two `useFieldArray` calls on one name keep separate row lists.
+ * The field array lives in `useOrderItemsEditor` because the catalog picker
+ * appends to it too, and two `useFieldArray` calls on one name keep separate
+ * row lists.
  */
 export function OrderEditItemsTable({
   form,

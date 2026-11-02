@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type Order, SpreeError, type Variant } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import type { Order, Variant } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, useResourceKey } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
-import { useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -13,6 +14,10 @@ import {
   orderToEditForm,
 } from '../schemas/order'
 import { useOrderMutation } from './use-order'
+
+function editFormFor(order: Order): OrderEditFormValues {
+  return orderToEditForm(order.items ?? [], order.fulfillments ?? [])
+}
 
 /**
  * Staged line-item editing for one order: the form behind the items table,
@@ -38,13 +43,19 @@ export function useOrderItemsEditor(order: Order | undefined) {
   // to re-render on every keystroke in the items table.
   const items = form.watch('items')
 
-  // Hydrate (and re-baseline after save) from the server rows, unless the
-  // merchant has staged edits in flight.
+  // Hydrate from the server rows, unless the merchant has staged edits in
+  // flight on this same order. A different order always replaces the rows:
+  // staged lines of one order must never be saved against another.
+  const hydratedOrderId = useRef<string | undefined>(undefined)
   useEffect(() => {
-    if (!order || form.formState.isDirty) return
-    form.reset(orderToEditForm(order.items ?? [], order.fulfillments ?? []))
+    if (!order) return
+    if (form.formState.isDirty && hydratedOrderId.current === order.id) return
+    hydratedOrderId.current = order.id
+    form.reset(editFormFor(order))
   }, [order, form])
 
+  const queryClient = useQueryClient()
+  const orderKey = useResourceKey('orders', order?.id ?? '')
   const saveMutation = useOrderMutation(order?.id ?? '', (payload: OrderItemsPayload) =>
     adminClient.orders.update(order?.id ?? '', { items: payload }),
   )
@@ -58,12 +69,23 @@ export function useOrderItemsEditor(order: Order | undefined) {
     // Rows the merchant staged and then unstaged net out to nothing, so the
     // payload can legitimately be empty even on a dirty form.
     const payload = buildOrderItemsPayload(values.items)
+    const startedAt = Date.now()
 
     try {
       if (payload.length > 0) await saveMutation.mutateAsync(payload)
-      // Drop the rows that are gone and re-baseline the rest, so the form is
-      // pristine before the refetch lands — leaving it dirty would trip the
-      // unsaved-changes guard on the way out.
+
+      // The mutation awaits the order refetch, so when `useOrder` is mounted
+      // the server's rows are already in the cache — re-baseline on them. The
+      // hydrate effect cannot: it ran while the form was still dirty.
+      const fresh = queryClient.getQueryState<Order>(orderKey)
+      if (payload.length > 0 && fresh?.data && fresh.dataUpdatedAt >= startedAt) {
+        form.reset(editFormFor(fresh.data))
+        return true
+      }
+
+      // Otherwise drop the rows that are gone and re-baseline the rest, so the
+      // form is pristine — leaving it dirty would trip the unsaved-changes
+      // guard on the way out, and would keep a later refetch from hydrating.
       form.reset({
         items: values.items
           .filter((item) => !item.removed)
@@ -91,7 +113,6 @@ export function useOrderItemsEditor(order: Order | undefined) {
       return true
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return false
-      if (err instanceof SpreeError) throw err
       toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
       return false
     }
@@ -99,8 +120,7 @@ export function useOrderItemsEditor(order: Order | undefined) {
 
   /** Drops every staged edit and returns to the saved lines. */
   function discard() {
-    if (!order) return
-    form.reset(orderToEditForm(order.items ?? [], order.fulfillments ?? []))
+    if (order) form.reset(editFormFor(order))
   }
 
   /**
