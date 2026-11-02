@@ -323,6 +323,22 @@ module Spree
   # @return [Array<Class>]
   singleton_class.delegate :tax_providers, :tax_providers=, to: :spree_config
 
+  # Extensions that copy their own cart data onto the order a cart becomes.
+  # Each entry is a class with a class-level +call(cart:, order:,
+  # line_item_map:)+ (a class, so it is re-resolved when code reloads in
+  # development; see {.refresh_provider_registries!}), where the map
+  # pairs each cart line item with its copy on the order. Both copies run them
+  # — checkout ({Spree::Carts::Complete}) and the draft-order copy
+  # ({Spree::Orders::CreateFromCart}) — inside their transaction, once the
+  # order's line items exist, so an entry that raises rolls the order back.
+  #
+  # Append, never assign, so an extension does not drop what another added:
+  #
+  #   Spree.cart_copiers << MyApp::CopyEngravings
+  #
+  # @return [Array<Class>]
+  singleton_class.delegate :cart_copiers, :cart_copiers=, to: :spree_config
+
   # Pricing engines a store can be pointed at. Connector gems append their own,
   # so a merchant picks from what is actually installed.
   #
@@ -400,7 +416,8 @@ module Spree
   def self.refresh_provider_registries!
     [Rails.application.config.spree.delivery_rate_providers,
      Rails.application.config.spree.fulfillment_providers,
-     Rails.application.config.spree.pickup_point_providers].compact.each do |registry|
+     Rails.application.config.spree.pickup_point_providers,
+     Rails.application.config.spree.cart_copiers].compact.each do |registry|
       registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
     end
   end

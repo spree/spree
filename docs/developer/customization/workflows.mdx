@@ -259,6 +259,7 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `carts.complete` | `before_finalize` | lifecycle | After payment, before the order is placed |
 | `carts.complete` | `after_finalize` | lifecycle | After the order is placed |
 | `carts.merge` | `validate` | validate | Before any items move between carts |
+| `carts.merge` | `after_items_moved` | lifecycle | Inside the merge's transaction, once the guest cart's items have moved or been added to matching ones, and before those absorbed items are deleted. `workflow.line_item_map` pairs each guest item with the item now holding it |
 | `carts.merge` | `after_merge` | lifecycle | After the carts are folded together |
 | `carts.recalculate` | `set_promotion_context` | context | Before promotions are evaluated |
 | `carts.recalculate` | `after_recalculate` | lifecycle | After the cart is fully repriced |
