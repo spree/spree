@@ -191,23 +191,10 @@ prerelease label) is published by this command: run the commands below in
 order. A **minor, major or prerelease** is published by a human: print the
 same commands and the notes, run none of them, and stop.
 
-1. Tag the merge commit, with a tag for each tool that moved, and push at most
-   three tags in one push (GitHub starts no workflow beyond that):
-
-   ```bash
-   git tag v<version> <merge sha>
-   git tag '@spree/cli@<version>' <merge sha>     # only tools that moved
-   git push origin v<version> '@spree/cli@<version>'
-   ```
-
-   The push starts `release.yml`. Watch it: `gh run list --workflow release.yml
-   --limit 3`, then `gh run watch <id>` for each tag's run. Every job skips
-   versions already on its registry, so a failed run is re-run with `gh run
-   rerun <id> --failed`, never with a new tag.
-
-2. Recover the notes from the pull request description, from the `# Spree
-   <version>` heading to the end; `<n>` is the number in the merge commit
-   subject:
+1. Recover the notes first, before anything is pushed, so a problem with them
+   stops the release while nothing has happened yet. They are in the pull
+   request description, from the `# Spree <version>` heading to the end; `<n>`
+   is the number in the merge commit subject:
 
    ```bash
    mkdir -p tmp
@@ -220,8 +207,29 @@ same commands and the notes, run none of them, and stop.
    empty or truncated file stops the release. Print it in full as a markdown
    block, so the user sees what is published and can paste it by hand.
 
-3. Create the GitHub release once the gems and packages are on their
-   registries:
+2. Tag the merge commit, with a tag for each tool that moved, and push at most
+   three tags in one push (GitHub starts no workflow beyond that):
+
+   ```bash
+   git tag v<version> <merge sha>
+   git tag '@spree/cli@<version>' <merge sha>     # only tools that moved
+   git push origin v<version> '@spree/cli@<version>'
+   ```
+
+   The push starts one `release.yml` run per tag. Find each run by its tag,
+   not by its place in the recent list, and wait for every one of them:
+
+   ```bash
+   gh run list --workflow release.yml --branch v<version> --json databaseId,conclusion
+   gh run watch <id>
+   ```
+
+   (`--branch` takes the tag name for tag pushes; repeat for each tool tag.)
+   Every job skips versions already on its registry, so a failed run is re-run
+   with `gh run rerun <id> --failed`, never with a new tag. Stop before the
+   next step unless every tag's run concluded `success`.
+
+3. Create the GitHub release:
 
    ```bash
    gh release create v<version> --title v<version> --notes-file tmp/release-notes-<version>.md --latest
@@ -249,16 +257,21 @@ rm -rf tmp/spree-starter
 git clone --quiet https://github.com/spree/spree-starter.git tmp/spree-starter
 cd tmp/spree-starter
 git switch -c chore/spree-<version with dots as dashes>
-bundle update $(bundle list --name-only | grep '^spree')
+bundle update $(ls ../../spree/*/*.gemspec ../../spree/providers/*/*.gemspec | xargs -n1 basename | sed 's/\.gemspec$//')
+grep -E "^    spree[a-z_]* \(" Gemfile.lock
 DATABASE_NAME=spree_starter_release bin/rails db:create spree:install:migrations db:migrate
 DATABASE_NAME=spree_starter_release bin/rails db:drop
 ```
 
-- `bundle update` on the Spree gems only, never a bare `bundle update`: the
-  starter's `Gemfile` already allows the new version (`~> 6.0`), so this moves
-  the lockfile and the dependencies the gems require (6.0.2 moved Alba to 4)
-  and nothing else. The Ruby in `.ruby-version` must be installed; the
-  worktree's Rails runs on it.
+- `bundle update` on the gems this repository releases (the gemspecs under
+  `spree/` and `spree/providers/`), never a bare `bundle update` and not every
+  `spree*` gem: `spree_dev_tools` has its own version. The starter's `Gemfile`
+  already allows the new version (`~> 6.0`), so this moves the lockfile and the
+  dependencies the gems require (6.0.2 moved Alba to 4) and nothing else. The
+  `grep` must then show `<version>` for every one of those gems; another
+  version means the gems are not on RubyGems yet or the `Gemfile` constraint
+  excludes them. Stop in that case. The Ruby in `.ruby-version` must be
+  installed; the worktree's Rails runs on it.
 - `spree:install:migrations` copies the gem migrations the starter lacks into
   `db/migrate`; `db:migrate` runs them on the scratch database so
   `db/schema.rb` is regenerated. The starter's `config/database.yml` reads
