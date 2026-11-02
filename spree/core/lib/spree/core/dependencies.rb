@@ -64,6 +64,7 @@ module Spree
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_workflow: 'Spree::Orders::Cancel',
         order_complete_workflow: 'Spree::Orders::Complete',
+        order_request_payment_workflow: 'Spree::Orders::RequestPayment',
         order_discount_create_service: 'Spree::Orders::Discounts::Create',
         order_discount_update_service: 'Spree::Orders::Discounts::Update',
         order_discount_destroy_service: 'Spree::Orders::Discounts::Destroy',

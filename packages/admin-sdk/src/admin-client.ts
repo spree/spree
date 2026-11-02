@@ -1721,6 +1721,13 @@ export class AdminClient {
     approve: (id: string, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/approve`, options),
 
+    /**
+     * Opens a draft order to its customer for payment on the storefront and
+     * publishes `order.payment_requested`. Requesting again re-stamps it.
+     */
+    requestPayment: (id: string, options?: RequestOptions): Promise<Order> =>
+      this.request<Order>('PATCH', `/orders/${id}/request_payment`, options),
+
     resendConfirmation: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', `/orders/${id}/resend_confirmation`, options),
 

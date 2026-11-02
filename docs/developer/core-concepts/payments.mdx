@@ -856,6 +856,59 @@ Spree publishes events throughout the payment lifecycle that you can subscribe t
 
 See [Events](/developer/core-concepts/events) for more details on subscribing to events.
 
+## Paying for a draft order
+
+A merchant, or an extension, can raise a **draft order** for a customer instead of letting them build a cart — a negotiated quote, a reorder prepared by a sales rep, a custom job. Once it is priced, the merchant requests payment, and the customer pays for it at the store's own checkout with the same payment sessions a cart uses. The order is placed once the payment covers its total.
+
+<Steps>
+  <Step title="Request payment">
+    While the merchant prepares the draft, the storefront cannot see it. `PATCH /api/v3/admin/orders/:id/request_payment` (or the `orders_request_payment` [MCP tool](/developer/mcp/tools)) opens it to the customer and publishes `order.payment_requested`. Spree sends no email for it: subscribe to that event to send the customer a link to pay. Requesting again re-stamps the request and publishes the event again.
+  </Step>
+  <Step title="Read the draft">
+    `GET /orders/:id` returns the draft to its customer (by JWT) or to whoever holds its order token (`X-Spree-Token`), the way it returns a placed order. A draft has no `completed_at` and lists the `payment_methods` it can be paid with. A draft without a payment request, or from another store or another customer, is not found.
+  </Step>
+  <Step title="Pay with a payment session">
+    Create, update and complete a payment session under `/orders/:id/payment_sessions`, exactly as under `/carts/:id/payment_sessions`. Only session-based methods (`session_required: true`) are offered this way.
+  </Step>
+  <Step title="Place the order">
+    `POST /orders/:id/complete` processes the payments and places the order, publishing `order.placed` as checkout does. Without a payment covering the total the order stays a draft and the request fails with `order_cannot_complete`. If the provider's webhook placed it first, completing again answers with the placed order.
+  </Step>
+</Steps>
+
+<CodeGroup>
+
+```typescript Store SDK
+const options = { spreeToken: orderToken } // or { token: customerJwt }
+
+// A draft lists the methods it can be paid with in `payment_methods`
+const draft = await client.orders.get('or_abc123', {}, options)
+
+const session = await client.orders.paymentSessions.create('or_abc123', {
+  payment_method_id: 'pm_xyz789',
+}, options)
+
+// ...the customer confirms the payment with the provider's SDK...
+
+await client.orders.paymentSessions.complete('or_abc123', session.id, {}, options)
+const order = await client.orders.complete('or_abc123', options)
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_abc123/payment_sessions' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: ORDER_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{ "payment_method_id": "pm_xyz789" }'
+
+curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_abc123/complete' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: ORDER_TOKEN'
+```
+
+</CodeGroup>
+
+Who may pay for a draft is decided by the storefront access policy, so an extension can narrow it — for example, only once the customer accepted a quote — by replacing `Spree::Dependencies.storefront_access_policy_class`.
+
 ## Two paths to a completed order
 
 A payment can finish in two places, and both have to end at the same result.
