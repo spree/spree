@@ -1,5 +1,5 @@
 ---
-description: Cut a Spree release — audit, version bump, release notes, pull request, then tags and the GitHub release (automatic for a patch, printed for a human otherwise) and the spree-starter bump.
+description: Cut a Spree release — audit, version bump, release notes, pull request, then tags and the GitHub release (automatic for a patch, printed for a human otherwise), the spree-starter bump and the storefront SDK bump.
 ---
 
 Cut the Spree release named in the arguments: `6.0.2`, `6.1.0` or a
@@ -13,9 +13,10 @@ commit already on `main`; `.changeset/README.md` has the mechanics. This command
 wraps them with the review a release needs. Run the phases in order. Phase 5
 pushes the tags and creates the GitHub release itself for a patch release
 (`X.Y.Z` with `Z` above zero and no prerelease label); for a minor, major or
-prerelease it only prints the commands, and a human runs them. Phase 6 bumps
-spree-starter once the gems are published. Both need the pull request merged,
-so the command usually stops after phase 4 and is run again to publish.
+prerelease it only prints the commands, and a human runs them. Phases 6 and 7
+bump spree-starter and the storefront once the gems and packages are
+published. All three need the pull request merged, so the command usually
+stops after phase 4 and is run again to publish.
 
 Work on a branch named `chore/release-<version>` with the workspace installed
 (`node_modules` present), never on `main`.
@@ -289,10 +290,40 @@ DATABASE_NAME=spree_starter_release bin/rails db:drop
   specs; watch it with `gh pr checks --watch --repo spree/spree-starter`. A
   human merges it.
 
+## 7. Bump the storefront's SDK
+
+The Next.js storefront at [spree/storefront](https://github.com/spree/storefront)
+depends on `@spree/sdk` by caret range, so new installs already get the new
+version; the lockfile and the range still move so the repository builds and
+tests against it. Run once `@spree/sdk@<npm version>` is on npm (phase 5
+step 4). Clone fresh rather than using a worktree's `storefront/`: that
+clone's lockfile points at the worktree's own SDK build and must never be
+committed.
+
+```bash
+rm -rf tmp/storefront
+git clone --quiet https://github.com/spree/storefront.git tmp/storefront
+cd tmp/storefront
+git switch -c chore/sdk-<version with dots as dashes>
+pnpm add @spree/sdk@^<npm version>
+pnpm exec tsc --noEmit && pnpm run check && pnpm run test
+```
+
+- `pnpm add` with the caret spec rewrites the range in `package.json` and
+  resolves the lockfile to the new version; nothing else moves. The diff must
+  touch only `package.json` and `pnpm-lock.yaml`. A type error here means the
+  Store API changed shape in this release; stop and report it rather than
+  patching the storefront inside the release.
+- Commit as `Updated @spree/sdk to ^<npm version>` with a one-sentence body
+  naming the Spree release, push, and open the pull request with `gh pr create
+  --repo spree/storefront --base main`. Its CI runs lint, type check, unit
+  tests and the Playwright suite against a Spree server; watch it with `gh pr
+  checks --watch --repo spree/storefront`. A human merges it.
+
 ## Final report
 
 The pull request URL, the audit items the user accepted or deferred, the tool
 versions bumped or kept, the follow-ups the audit produced (regenerated docs, a
 changeset a commit forgot, an upgrade note) and, after the merge, the release
 URL (or the tag and release commands for a human), the registry checks and the
-spree-starter pull request.
+spree-starter and storefront pull requests.
