@@ -147,11 +147,12 @@ cart (`Spree::Orders::CreateFromCart`, which quoting extensions use). They run i
 that copy's transaction once the order's line items exist, so a copier that raises rolls
 the whole copy back, and the cart is left as it was.
 
-The copy commits before the payment is taken. If the payment then fails, the order is
-deleted rather than rolled back, and the customer's next attempt runs your copier again
-on a new order. Tie the copied records to the order's line items with a dependent or
-cascading delete, so they go with the order, and don't assume a copier runs only once per
-cart.
+The copy commits before the payment is taken. If the payment fails before anything was
+captured, the order is deleted rather than rolled back, and the customer's next attempt
+runs your copier again on a new order. Once a payment has been captured the order is
+kept, and completing it resumes that order without copying again. Tie the copied records
+to the order's line items with a dependent or cascading delete, so they go with a deleted
+order.
 
 When a checkout spans several sellers, the order is divided after the copy. Line items
 keep their ids as they move to each seller's order, so key your records by line item
