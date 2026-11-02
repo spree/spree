@@ -337,8 +337,10 @@ module Spree
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
 
     def self.search(query)
+      # Ransack passes `true` when the scope is called as a bare flag (`q[search]=1`)
+      return none unless query.is_a?(String) && query.present?
+
       sanitized_query = sanitize_query_for_search(query)
-      return none if query.blank?
 
       query_pattern = "%#{sanitized_query}%"
 
