@@ -160,8 +160,6 @@ module Spree
           original.call(*args) do
             locked = true
             block.call
-          ensure
-            locked = false
           end
         end
         seen = nil
