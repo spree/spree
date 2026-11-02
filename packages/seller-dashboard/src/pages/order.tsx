@@ -1,4 +1,11 @@
-import { formatStoreDateTime, PageHeader, Slot } from '@spree/dashboard-core'
+import {
+  formatStoreDateTime,
+  OrderDocumentsCard,
+  PageHeader,
+  Slot,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import { DropdownMenuItem, ResourceLayout, StatusBadge } from '@spree/dashboard-ui'
 import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
@@ -27,6 +34,7 @@ import { useStoreTimezone } from '../hooks/use-store-timezone'
  */
 export function OrderPage() {
   const { t } = useTranslation()
+  const { permissions } = usePermissions()
   const { orderId } = useParams({ from: '/_authenticated/$sellerId/orders/$orderId' })
   const timezone = useStoreTimezone()
   const [canceling, setCanceling] = useState(false)
@@ -103,6 +111,11 @@ export function OrderPage() {
             {placed && (
               <>
                 <OrderPaymentCard order={order} />
+                <OrderDocumentsCard
+                  orderId={order.id}
+                  currency={order.currency}
+                  canEdit={permissions.can('update', Subject.Order)}
+                />
                 <OrderEarningsCard order={order} />
               </>
             )}

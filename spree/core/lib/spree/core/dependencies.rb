@@ -170,6 +170,10 @@ module Spree
 
         tax_exemption_certificate_verify_workflow: 'Spree::TaxExemptionCertificates::Verify',
 
+        # invoices (docs/plans/6.1-invoices-and-receipts.md)
+        invoice_create_workflow: 'Spree::Invoices::Create',
+        invoice_request_create_workflow: 'Spree::InvoiceRequests::Create',
+
         # customers
         customer_create_workflow: 'Spree::Customers::Create',
         customer_anonymize_workflow: 'Spree::Customers::Anonymize',

@@ -16,6 +16,7 @@ These are the emails your customers receive. Every one of their templates receiv
 | `spree/order_group_mailer/confirm_email` | `order_group`, `resend` |
 | `spree/fulfillment_mailer/fulfilled_email` | `fulfillment`, `order`, `resend` |
 | `spree/return_mailer/refunded_email` | `return`, `order`, `resend` |
+| `spree/invoice_mailer/invoice_email` | `invoice`, `order`, `resend` |
 | `spree/digital_asset_mailer/files_ready_email` | `order`, `downloads`, `resend` |
 | `spree/customer_mailer/password_reset_email` | `customer`, `reset_url` |
 | `spree/customer_mailer/data_export_email` | `download_url`, `expires_at` |
@@ -98,6 +99,12 @@ Each object's fields, and the fields of the objects nested in it. Format an amou
 - `fulfillment.delivery_rates.freight_summary`: `total_units`, `total_cartons`, `total_pallets`, `total_volume`, `total_weight`, `complete`
 - `fulfillment.delivery_rates.delivery_method`: `id`, `name`, `code`, `estimated_transit_business_days_min`, `estimated_transit_business_days_max`, `digital`, `pickup`, `pickup_point`
 - `fulfillment.manifest_items`: `id`, `url`, `image_url`, `name`, `quantity`, `sku`, `options_text`, `price`, `amount`
+
+### `invoice`
+
+- `invoice`: `id`, `kind`, `number`, `currency`, `issued_on`, `supplied_on`, `total`, `net_total`, `tax_total`, `original_invoice_id`, `issuer_type`, `issuer_name`, `file_filename`, `file_byte_size`
+
+`kind` is `invoice`, `receipt` or `credit_note`. The PDF is attached to the email, so the template carries no download link.
 
 ### `return`
 

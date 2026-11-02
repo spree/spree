@@ -94,6 +94,14 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 - Leaving something out takes a stated reason in `EXCLUDED_WORKFLOWS`. Irreversible, platform-wide or wizard-only steps qualify; "not done yet" doesn't. `spree/api/spec/lib/spree/api/agent_tools_contract_spec.rb` fails on a workflow in neither list, but it only scans controllers under `app/controllers/spree/api/v3/admin` — a workflow run from a controller concern (returns, claims, exchanges…) needs the same decision by hand.
 - Tool descriptions are how an agent learns the feature: say what it does and when to use it. Update `docs/developer/mcp/tools.mdx` with the new tool.
 
+## Invoices and receipts
+
+See `docs/plans/6.1-invoices-and-receipts.md`.
+
+- Every invoice, receipt and credit note is a `Spree::Invoice`, uploaded or generated — never an `OrderDocument` row or a loose attachment. Anonymization and seller deletion leave invoices untouched.
+- Invoices are never edited: corrections are credit notes, and an upload may be deleted only until it is sent.
+- An order, payment or other `HasNumber` value is never an invoice number. Numbering series, snapshots and PDF generation are Enterprise (`ee/docs/plans/invoice-generation.md`); core's model works without them.
+
 ## Emails (Liquid + MJML)
 
 See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/emails.mdx`.

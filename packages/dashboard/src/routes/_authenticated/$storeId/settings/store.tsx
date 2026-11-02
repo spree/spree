@@ -143,6 +143,8 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     order_number_prefix: store.order_number_prefix ?? 'R',
     order_number_suffix: store.order_number_suffix ?? '',
     order_number_sequence_start: Number(store.order_number_sequence_start ?? 1001),
+    send_invoice_email: store.send_invoice_email ?? true,
+    invoice_request_window_days: Number(store.invoice_request_window_days ?? 90),
     limit_digital_download_count: store.limit_digital_download_count ?? true,
     digital_asset_authorized_clicks: store.digital_asset_authorized_clicks ?? 5,
     limit_digital_download_days: store.limit_digital_download_days ?? true,
@@ -273,6 +275,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
           order_number_prefix: values.order_number_prefix,
           order_number_suffix: values.order_number_suffix,
           order_number_sequence_start: values.order_number_sequence_start,
+          send_invoice_email: values.send_invoice_email,
+          invoice_request_window_days: values.invoice_request_window_days,
           limit_digital_download_count: values.limit_digital_download_count,
           digital_asset_authorized_clicks: values.digital_asset_authorized_clicks,
           limit_digital_download_days: values.limit_digital_download_days,
@@ -704,6 +708,46 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       name="tax_using_ship_address"
                       control={form.control}
                     />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_invoices')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SwitchField
+                      id="store-send-invoice-email"
+                      label={t('admin.fields.store.send_invoice_email.label')}
+                      help={t('admin.fields.store.send_invoice_email.help')}
+                      name="send_invoice_email"
+                      control={form.control}
+                    />
+                    <Field>
+                      <FieldLabel htmlFor="store-invoice-request-window-days">
+                        {t('admin.fields.store.invoice_request_window_days.label')}
+                      </FieldLabel>
+                      <InputGroup>
+                        <InputGroupInput
+                          id="store-invoice-request-window-days"
+                          type="number"
+                          min={0}
+                          step={1}
+                          aria-invalid={!!errors.invoice_request_window_days || undefined}
+                          {...form.register('invoice_request_window_days')}
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>
+                            {t('admin.fields.store.invoice_request_window_days.suffix')}
+                          </InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
+                      <FieldDescription>
+                        {t('admin.fields.store.invoice_request_window_days.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.invoice_request_window_days]} />
+                    </Field>
                   </FieldGroup>
                 </CardContent>
               </Card>

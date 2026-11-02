@@ -152,6 +152,10 @@ module Spree
     has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', as: :owner,
                                dependent: nil, inverse_of: :owner
 
+    # Invoices issued in the seller's name, for their seller orders. Kept when
+    # the seller is soft-deleted, like the legal identity they print.
+    has_many :issued_invoices, class_name: 'Spree::Invoice', as: :issuer, dependent: nil
+
     # Products and stock survive the seller leaving: the operator decides what
     # happens to a departed seller's catalog, so it is never cascade-deleted.
     # Both levels are released — a variant can carry the seller on its own

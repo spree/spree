@@ -360,7 +360,8 @@
     "delivery_methods": "Phương thức giao hàng",
     "package_types": "Các loại gói",
     "earnings": "Thu nhập",
-    "payouts": "Xuất chi"
+    "payouts": "Xuất chi",
+    "invoices": "Hóa đơn"
   },
   "onboarding": {
     "accept_terms": "Chấp nhận các điều khoản",
@@ -408,7 +409,8 @@
       "payment": "Thanh toán",
       "placed": "Đã đặt",
       "quantity": "Số lượng",
-      "total": "Tổng cộng"
+      "total": "Tổng cộng",
+      "missing_invoice": "Thiếu hóa đơn"
     },
     "customer": {
       "title": "Khách hàng"
@@ -567,7 +569,11 @@
       "total": "Tổng cộng"
     },
     "title": "Đơn đặt hàng",
-    "tracking_label": "Số theo dõi"
+    "tracking_label": "Số theo dõi",
+    "filters": {
+      "missing_invoice": "Chưa có hóa đơn",
+      "has_invoice": "Đã có hóa đơn"
+    }
   },
   "payouts": {
     "columns": {
@@ -847,5 +853,19 @@
       "member": "Thành viên"
     },
     "title": "Nhóm của bạn"
+  },
+  "invoices": {
+    "title": "Hóa đơn",
+    "subtitle": "Hóa đơn phát hành dưới tên bạn và hóa đơn hoa hồng sàn gửi cho bạn.",
+    "search_placeholder": "Tìm theo số",
+    "empty": "Chưa có hóa đơn. Tải lên từ từng đơn hàng.",
+    "commission": "Hoa hồng sàn",
+    "columns": {
+      "number": "Số",
+      "kind": "Loại",
+      "issuer": "Người phát hành",
+      "total": "Tổng cộng",
+      "issued_on": "Ngày phát hành"
+    }
   }
 }

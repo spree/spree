@@ -2370,6 +2370,15 @@
         "meta_description": {
           "label": "Mô tả meta",
           "help": "Một công cụ tìm kiếm tóm tắt ngắn hiển thị dưới tiêu đề."
+        },
+        "send_invoice_email": {
+          "help": "Gửi PDF cho khách hàng khi có hóa đơn mới. Tắt nếu phần mềm hóa đơn của bạn đã gửi hóa đơn.",
+          "label": "Gửi hóa đơn mới cho khách hàng"
+        },
+        "invoice_request_window_days": {
+          "help": "Số ngày sau khi thanh toán khách hàng có thể yêu cầu hóa đơn. 0 sẽ tắt yêu cầu.",
+          "label": "Yêu cầu hóa đơn",
+          "suffix": "ngày"
         }
       },
       "store_credit": {
@@ -2907,7 +2916,8 @@
       "suppliers": "Nhà cung cấp",
       "loyalty": "Lòng trung thành",
       "store_credits": "Tín dụng cửa hàng",
-      "commission_rates": "Tỷ lệ hoa hồng"
+      "commission_rates": "Tỷ lệ hoa hồng",
+      "invoices": "Hóa đơn"
     },
     "option_types": {
       "columns": {
@@ -2946,7 +2956,8 @@
         "payment": "Thanh toán",
         "po_number": "Số PO",
         "sku": "Mã hàng",
-        "tags": "Thẻ"
+        "tags": "Thẻ",
+        "missing_invoice": "Thiếu hóa đơn"
       },
       "detail": {
         "add_line_item": {
@@ -3398,6 +3409,10 @@
       "table": {
         "empty": "Không tìm thấy đơn hàng nào",
         "search_placeholder": "Tìm kiếm theo số lượng, PO, khách hàng…"
+      },
+      "filters": {
+        "missing_invoice": "Chưa có hóa đơn",
+        "has_invoice": "Đã có hóa đơn"
       }
     },
     "pages": {
@@ -4212,7 +4227,8 @@
           "tab_downloads": "Tải xuống kỹ thuật số",
           "downloads_help": "Liên kết tải xuống hoạt động trong bao lâu và có thể sử dụng được bao nhiêu lần. Các tệp riêng lẻ có thể ghi đè những con số này.",
           "default_package_description": "Hộp bạn thường gửi. Các nhà cung cấp cước vận chuyển thêm trọng lượng của gói hàng vào mỗi gói hàng và sử dụng kích thước của gói hàng đó để định giá theo trọng lượng theo chiều.",
-          "tab_default_package": "Gói mặc định"
+          "tab_default_package": "Gói mặc định",
+          "tab_invoices": "Hóa đơn"
         },
         "tax_categories": {
           "add_sheet_title": "Thêm danh mục thuế",
@@ -4304,11 +4320,13 @@
             "import": "Nhập khẩu",
             "import_row": "Nhập hàng",
             "invitation": "Lời mời",
+            "invoice": "Hóa đơn",
             "line_item": "Mục hàng",
             "maintenance_task_run": "Chạy nhiệm vụ bảo trì",
             "media": "Phương tiện truyền thông",
             "newsletter_subscriber": "Người đăng ký nhận bản tin",
             "order": "Đặt hàng",
+            "order_document": "Tài liệu đơn hàng",
             "order_group": "Nhóm đặt hàng",
             "payment": "Thanh toán",
             "payment_session": "Phiên thanh toán",
@@ -5469,7 +5487,8 @@
         },
         "title": "Đội"
       },
-      "team_column": "Đội"
+      "team_column": "Đội",
+      "missing_invoices": "Đơn hàng thiếu hóa đơn"
     },
     "settings": {
       "webhooks": {
@@ -5906,7 +5925,8 @@
       "webhook_endpoints": "Nơi các hệ thống khác của bạn được thông báo khi có điều gì đó xảy ra trong cửa hàng.",
       "returns": "Hàng về, từ yêu cầu đến hoàn tiền.",
       "exchanges": "Các giao dịch mua được đổi lấy kích thước, màu sắc hoặc sản phẩm khác.",
-      "claims": "Việc giao hàng không thành công — mặt hàng bị hư hỏng, thiếu hoặc sai — và cách giải quyết từng vấn đề."
+      "claims": "Việc giao hàng không thành công — mặt hàng bị hư hỏng, thiếu hoặc sai — và cách giải quyết từng vấn đề.",
+      "invoices": "Mọi hóa đơn, biên nhận và phiếu điều chỉnh giảm của cửa hàng, từ đơn hàng và các khoản chi trả cho người bán."
     },
     "tax_categories": {
       "add_cta": "Thêm danh mục thuế",
@@ -6144,7 +6164,11 @@
         "title": "Giải quyết người bán này bây giờ?",
         "message": "Quét tất cả mọi thứ {{name}} còn nợ thành khoản thanh toán cho mỗi loại tiền tệ. Nó không gửi tiền — đánh dấu khoản thanh toán đã thanh toán sau khi quá trình chuyển tiền diễn ra."
       },
-      "settle_failed": "Không thể giải quyết người bán này."
+      "settle_failed": "Không thể giải quyết người bán này.",
+      "invoices": {
+        "title": "Hóa đơn hoa hồng",
+        "empty": "Chưa có hóa đơn hoa hồng cho khoản chi trả này."
+      }
     },
     "inventory_lines": {
       "add_label": "Thêm một sản phẩm",
@@ -6728,6 +6752,16 @@
       "run_label": "Chạy cái này",
       "copy_command": "Sao chép lệnh",
       "cli_then_sign_in": "Nó sẽ mở trình duyệt của bạn để đăng nhập và phê duyệt những gì đại lý có thể làm."
+    },
+    "invoices": {
+      "search_placeholder": "Tìm theo số",
+      "empty": "Chưa có hóa đơn. Tải lên từ từng đơn hàng hoặc khoản chi trả.",
+      "number": "Số",
+      "kind": "Loại",
+      "issuer": "Người phát hành",
+      "total": "Tổng cộng",
+      "issued_on": "Ngày phát hành",
+      "sent_at": "Đã gửi"
     }
   }
 }

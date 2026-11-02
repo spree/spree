@@ -360,7 +360,8 @@
     "profile": "Profil",
     "settings": "Einstellungen",
     "sign_out": "Abmelden",
-    "team": "Team"
+    "team": "Team",
+    "invoices": "Rechnungen"
   },
   "onboarding": {
     "accept_terms": "Bedingungen annehmen",
@@ -408,7 +409,8 @@
       "payment": "Zahlung",
       "placed": "Aufgegeben",
       "quantity": "Menge",
-      "total": "Gesamt"
+      "total": "Gesamt",
+      "missing_invoice": "Rechnung fehlt"
     },
     "customer": {
       "title": "Kunde"
@@ -567,7 +569,11 @@
       "total": "Gesamt"
     },
     "title": "Bestellungen",
-    "tracking_label": "Sendungsnummer"
+    "tracking_label": "Sendungsnummer",
+    "filters": {
+      "missing_invoice": "Ohne Rechnung",
+      "has_invoice": "Mit Rechnung"
+    }
   },
   "payouts": {
     "columns": {
@@ -847,5 +853,19 @@
       "member": "Mitglied"
     },
     "title": "Ihr Team"
+  },
+  "invoices": {
+    "title": "Rechnungen",
+    "subtitle": "In Ihrem Namen ausgestellte Rechnungen und die Provisionsrechnungen des Marktplatzes an Sie.",
+    "search_placeholder": "Nach Nummer suchen",
+    "empty": "Noch keine Rechnungen. Laden Sie sie bei der jeweiligen Bestellung hoch.",
+    "commission": "Marktplatz-Provision",
+    "columns": {
+      "number": "Nummer",
+      "kind": "Art",
+      "issuer": "Ausgestellt von",
+      "total": "Gesamt",
+      "issued_on": "Rechnungsdatum"
+    }
   }
 }

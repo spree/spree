@@ -20,7 +20,7 @@ module Spree
             body.attribute :type, :string,
               required: true, on: :create,
               example: 'products',
-              description: 'Which dataset to export, as its shorthand: `products`, `orders`, `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+              description: 'Which dataset to export, as its shorthand: `products`, `orders`, `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`, `price_list_prices`, `purchase_orders`, `invoices`, or a type an extension registers.'
             body.attribute :record_selection, :string,
               choices: %w[filtered all],
               example: 'filtered',
@@ -65,6 +65,14 @@ module Spree
 
           def model_class
             Spree::Export
+          end
+
+          # The file is shared across the store, so a reader needs whatever
+          # its contents demanded of the creator, not only the type's scope.
+          def authorize_resource!(resource = @resource, action = action_name.to_sym)
+            super
+            permission = resource.try(:additional_read_permission)
+            raise CanCan::AccessDenied if permission && !holds_permission?(permission)
           end
 
           def serializer_class

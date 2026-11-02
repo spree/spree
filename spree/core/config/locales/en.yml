@@ -247,9 +247,15 @@ en:
       messages:
         already_linked: is already linked to this product
         blank: can't be blank
+        invoice_cannot_be_deleted: An invoice can be deleted only while it is an upload that has not been sent
+        invoice_immutable: cannot be changed once the invoice exists
+        invoice_issuer_mismatch: must be the order's seller, or the store when the store invoices the sale
+        invoice_parent_required: An invoice belongs to either an order or a seller payout
+        invoice_request_already_open: This order already has an open invoice request
         must_apply_to_products: must be a custom field definition for products
         must_belong_to_same_store: must belong to the same store
         not_registered: is not a registered provider
+        order_document_limit_reached: An order can hold at most %{count} documents added by the buyer
         spree_content_type_not_allowed: is not a file type we accept
         too_many_decimals: has more than %{count} decimal places
       models:
@@ -1018,6 +1024,14 @@ en:
         subject: Invitation to join %{resource_name}
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
+    invoice_requests:
+      errors:
+        already_invoiced: This order already has an invoice.
+        not_placed: An invoice can be requested only for a placed order.
+        window_closed: The time to request an invoice for this order has passed.
+    invoices:
+      errors:
+        store_invoices_order: The marketplace invoices this order, so its invoices are uploaded by the marketplace.
     iso: ISO Alpha-2
     item: Item
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
@@ -1195,6 +1209,8 @@ en:
     price_sack: Price Sack
     prices: Prices
     privacy_policy: Privacy Policy
+    private_document_too_large: is larger than %{size}.
+    private_document_upload_incomplete: was not uploaded completely. Please upload it again.
     processing: Processing
     product: Product
     product_import_unknown_stock_location: You have no stock location named %{name}.

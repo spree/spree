@@ -32,6 +32,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { PayoutCompleteDialog } from '../../../../../components/spree/sellers/payout-complete-dialog'
+import { PayoutInvoicesCard } from '../../../../../components/spree/sellers/payout-invoices-card'
 import { ReadRow } from '../../../../../components/spree/sellers/seller-read-row'
 import {
   OWED_PAYOUT_STATUSES,
@@ -181,6 +182,10 @@ function PayoutDetailPage() {
                 <Pagination meta={transfers.meta} onPageChange={setPage} />
               )}
             </Card>
+            <PayoutInvoicesCard
+              payout={payout}
+              canEdit={permissions.can('update', Subject.SellerPayout)}
+            />
             <RecordMetadataCard metadata={payout.metadata} />
             <Slot name="seller_payout.form_main" context={{ payout }} />
           </>

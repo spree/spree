@@ -297,6 +297,14 @@ module Spree
       end
     end
 
+    # A catalog key a reader needs beyond the export type's own scope, for a
+    # file that carries records that scope does not cover.
+    #
+    # @return [String, nil]
+    def additional_read_permission
+      nil
+    end
+
     # Capability is read against whatever granted it: a seller's roles are held
     # on the seller, not the store, so an ability built from the store alone
     # would answer "no rules" and empty the file.

@@ -42,6 +42,25 @@ setApiClient({
     exampleUrl: (type) => `/api/v3/admin/imports/example?type=${encodeURIComponent(type)}`,
     downloadUrl: (id) => `/api/v3/admin/imports/${id}/download`,
   },
+  // Backs the shared order Documents card, which both panels render.
+  orderPaperwork: {
+    invoices: {
+      list: (orderId) => adminClient.orders.invoices.list(orderId, { limit: 100 }),
+      create: (orderId, params) => adminClient.orders.invoices.create(orderId, params),
+      delete: (id) => adminClient.invoices.delete(id),
+      resend: (id) => adminClient.invoices.resend(id),
+    },
+    invoiceRequests: {
+      list: (orderId) =>
+        adminClient.orders.invoiceRequests.list(orderId, { status_eq: 'open', limit: 1 }),
+    },
+    documents: {
+      list: (orderId) => adminClient.orders.documents.list(orderId, { limit: 100 }),
+      create: (orderId, params) => adminClient.orders.documents.create(orderId, params),
+      update: (orderId, id, params) => adminClient.orders.documents.update(orderId, id, params),
+      delete: (orderId, id) => adminClient.orders.documents.delete(orderId, id),
+    },
+  },
   // Backs the shared stock-locations page, which both panels render.
   stockLocations: {
     list: (params) => adminClient.stockLocations.list(runtimeListParams(params)),

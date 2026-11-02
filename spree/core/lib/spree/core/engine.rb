@@ -427,6 +427,7 @@ module Spree
           Spree::Exports::CouponCodes,
           Spree::Exports::PriceListPrices,
           Spree::Exports::PurchaseOrders,
+          Spree::Exports::Invoices,
           Spree::Exports::Report
         ]
 

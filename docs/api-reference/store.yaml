@@ -1097,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3476979
-                  slug: product-3476979
+                  name: Product 4056979
+                  slug: product-4056979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1390,8 +1390,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3959085
-                  slug: product-3959085
+                  name: Product 4649085
+                  slug: product-4649085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1422,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3968209
-                  slug: product-3968209
+                  name: Product 4658209
+                  slug: product-4658209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1552,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4236885
-                slug: product-4236885
+                name: Product 4926885
+                slug: product-4926885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -2037,7 +2037,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 362 Lovely Street
+                  address1: 462 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2062,7 +2062,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 363 Lovely Street
+                  address1: 463 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2087,7 +2087,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 364 Lovely Street
+                  address1: 464 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2190,7 +2190,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a9cd29e72a70654182038480207bd929343f6a07
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--cadbe1651c8720a325182bdd21289fa40b7b0ef7
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -2198,7 +2198,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--d1ccdf3e94900f0c8f62feb07f43a3d33eb3b0df
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--f26ab5390cd6ce6a7eaf6000f53cce99868ad068
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -2308,6 +2308,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `incomplete`.
+      - name: q[missing_invoice]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `missing_invoice`.
       - name: q[partially_refunded]
         in: query
         required: false
@@ -2505,8 +2511,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 318715
-                    slug: product-318715
+                    name: Product 376715
+                    slug: product-376715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2626,8 +2632,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3192171
-                    slug: product-3192171
+                    name: Product 3772171
+                    slug: product-3772171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2915,7 +2921,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 323307 was removed because it was sold out
+                  message: Product 381307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -3158,8 +3164,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3243263
-                  slug: product-3243263
+                  name: Product 3823263
+                  slug: product-3823263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3382,8 +3388,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3268992
-                  slug: product-3268992
+                  name: Product 3848992
+                  slug: product-3848992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3413,7 +3419,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 384 Lovely Street
+                  address1: 484 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3439,7 +3445,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 383 Lovely Street
+                  address1: 483 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3631,8 +3637,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3294794
-                  slug: product-3294794
+                  name: Product 3874794
+                  slug: product-3874794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3686,8 +3692,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 174
-                    code: UPS_GROUND_192
+                    name: UPS Ground 224
+                    code: UPS_GROUND_242
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -3710,7 +3716,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 174
+                    name: UPS Ground 224
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -3729,8 +3735,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 174
-                      code: UPS_GROUND_192
+                      name: UPS Ground 224
+                      code: UPS_GROUND_242
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -3742,7 +3748,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 390 Lovely Street
+                  address1: 490 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3765,7 +3771,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 389 Lovely Street
+                  address1: 489 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3952,8 +3958,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3622614
-                  slug: product-3622614
+                  name: Product 4202614
+                  slug: product-4202614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4147,8 +4153,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3633461
-                  slug: product-3633461
+                  name: Product 4213461
+                  slug: product-4213461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4336,8 +4342,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3658182
-                  slug: product-3658182
+                  name: Product 4238182
+                  slug: product-4238182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4391,8 +4397,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 195
-                    code: UPS_GROUND_214
+                    name: UPS Ground 245
+                    code: UPS_GROUND_264
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4415,7 +4421,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 195
+                    name: UPS Ground 245
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -4434,8 +4440,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 195
-                      code: UPS_GROUND_214
+                      name: UPS Ground 245
+                      code: UPS_GROUND_264
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4448,7 +4454,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 509 Lovely Street
+                  address1: 609 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4657,8 +4663,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3675702
-                  slug: product-3675702
+                  name: Product 4255702
+                  slug: product-4255702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4901,8 +4907,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3719569
-                  slug: product-3719569
+                  name: Product 4299569
+                  slug: product-4299569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5031,10 +5037,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 37463 cannot be delivered to the selected address
+                  message: Product 43263 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 375298 cannot be delivered to the selected address
+                  message: Product 433298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -5093,8 +5099,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 37463
-                  slug: product-37463
+                  name: Product 43263
+                  slug: product-43263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5124,8 +5130,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 375298
-                  slug: product-375298
+                  name: Product 433298
+                  slug: product-433298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5340,8 +5346,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3819165
-                  slug: product-3819165
+                  name: Product 4399165
+                  slug: product-4399165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5620,7 +5626,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 221
+                  name: Credit Card 277
                   description:
                   type: bogus
                   session_required: true
@@ -5707,7 +5713,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 222
+                  name: Credit Card 278
                   description:
                   type: bogus
                   session_required: true
@@ -5775,7 +5781,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 224
+                  name: Credit Card 280
                   description:
                   type: bogus
                   session_required: true
@@ -5876,7 +5882,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 225
+                  name: Credit Card 281
                   description:
                   type: bogus
                   session_required: true
@@ -6148,8 +6154,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4469789
-                  slug: product-4469789
+                  name: Product 5159789
+                  slug: product-5159789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6333,8 +6339,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 448179
-                  slug: product-448179
+                  name: Product 517179
+                  slug: product-517179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6546,6 +6552,523 @@ paths:
             schema:
               "$ref": "#/components/schemas/CreateClaimParams"
         required: true
+  "/api/v3/store/orders/{order_id}/invoices":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List the order's invoices
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The invoices, receipts and credit notes on one of the customer's
+        orders. Accessible via JWT or the order token header for guests.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const { data: invoices } = await client.orders.invoices.list(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `issued_on` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `issuer_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `invoice`, `receipt`, `credit_note` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `supplied_on` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `currency`, `id`, `issued_on`, `issuer_type`, `kind`, `number`, `order_id`, `supplied_on`, `total`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Invoice
+        sortable:
+        - currency
+        - id
+        - issued_on
+        - issuer_type
+        - kind
+        - number
+        - order_id
+        - supplied_on
+        - total
+        - updated_at
+      responses:
+        '200':
+          description: invoices listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: invc_UkLWZg9DAJ
+                  kind: invoice
+                  number: INV-2026-0035
+                  currency: USD
+                  issued_on: '2026-01-15'
+                  supplied_on:
+                  total: '100.00'
+                  net_total: '81.30'
+                  tax_total: '18.70'
+                  original_invoice_id:
+                  issuer_type: store
+                  issuer_name: Spree Test Store
+                  file_filename: INV-2026-0035.pdf
+                  file_byte_size: 24
+                  file_content_type: application/pdf
+                  download_url: "/api/v3/store/orders/or_UkLWZg9DAJ/invoices/invc_UkLWZg9DAJ/download"
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Invoice"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '404':
+          description: somebody else's order
+          content:
+            application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
+  "/api/v3/store/orders/{order_id}/invoices/{id}/download":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Download an invoice
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Streams the PDF to whoever owns the order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: the PDF
+  "/api/v3/store/orders/{order_id}/invoice_requests":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Request an invoice
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Asks for an invoice on an order bought as a private buyer, within the store's request window and while the
+        order has no invoice. Whoever issues the order's invoices is told through the `order.invoice_requested`
+        event. Accessible via JWT or the order token header for guests.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const invoiceRequest = await client.orders.invoiceRequests.create(
+            'or_abc123',
+            { company_name: 'Acme GmbH', tax_id: 'DE123456789' },
+            { token: '<token>' },
+          )
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: request recorded
+          content:
+            application/json:
+              example:
+                id: ireq_UkLWZg9DAJ
+                status: open
+                company_name: Acme GmbH
+                tax_id: DE123456789
+                order_id: or_gbHJdmfrXB
+                invoice_id:
+              schema:
+                "$ref": "#/components/schemas/InvoiceRequest"
+        '422':
+          description: the order already has an invoice
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This order already has an invoice.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateInvoiceRequestParams"
+        required: true
+  "/api/v3/store/orders/{order_id}/documents":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List the order's documents
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Documents the merchant made visible on the order, and those the
+        customer added.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const { data: documents } = await client.orders.documents.list(
+            'or_abc123',
+            {},
+            {
+              token: '<token>',
+            },
+          )
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[label_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `customer_visible` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `label` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `customer_visible`, `id`, `label`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: OrderDocument
+        sortable:
+        - created_at
+        - customer_visible
+        - id
+        - label
+        - updated_at
+      responses:
+        '200':
+          description: visible documents only
+          content:
+            application/json:
+              example:
+                data:
+                - id: odoc_UkLWZg9DAJ
+                  label: Signed purchase order
+                  uploaded_by_customer: false
+                  file_filename: po.pdf
+                  file_byte_size: 20
+                  file_content_type: application/pdf
+                  download_url: "/api/v3/store/orders/or_UkLWZg9DAJ/documents/odoc_UkLWZg9DAJ/download"
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OrderDocument"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Add a document to the order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The customer's own paperwork — a purchase order, a tax form. Always
+        visible to them, flagged as theirs for the merchant.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          declare const file: Blob
+
+          const upload = await client.orders.documents.upload('or_abc123', file, {}, { token: '<token>' })
+          const document = await client.orders.documents.create(
+            'or_abc123',
+            { label: 'Purchase order 4471', file_signed_id: upload.signed_id },
+            { token: '<token>' },
+          )
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: document added
+          content:
+            application/json:
+              example:
+                id: odoc_UkLWZg9DAJ
+                label: Purchase order 4471
+                uploaded_by_customer: true
+                file_filename: po.pdf
+                file_byte_size: 15
+                file_content_type: application/pdf
+                download_url: "/api/v3/store/orders/or_UkLWZg9DAJ/documents/odoc_UkLWZg9DAJ/download"
+              schema:
+                "$ref": "#/components/schemas/OrderDocument"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateOrderDocumentParams"
+        required: true
+  "/api/v3/store/orders/{order_id}/documents/upload":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Prepare a document upload
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Prepares a private upload for a document the customer adds to their order. Send the file's metadata,
+        `PUT` the bytes to `upload.url` with exactly `upload.headers`, then create the document with the
+        returned `signed_id`. Returns 422 when the declared size or type is not accepted.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: upload target created
+          content:
+            application/json:
+              example:
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--14b1dee39ca3fef307ef84c50139a6f002f7e34c
+                filename: po.pdf
+                content_type: application/pdf
+                byte_size: 48210
+                visibility: private
+                expires_at: '2026-01-16T12:00:00.000Z'
+                upload:
+                  method: PUT
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJ0MW1xcmtuY2t1M3V2M2h4ajlud290M2F3bGFhIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjloSXNseHJyQTBkcjhCWWpzSjNmMUE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--bef95860be3f18ea2cbb332c3a46f91c115c5586
+                  headers:
+                    Content-Type: application/pdf
+              schema:
+                "$ref": "#/components/schemas/FileUpload"
+        '422':
+          description: a file type documents do not accept
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Content type is not included in the list
+                  details:
+                    content_type:
+                    - is not included in the list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateOrderDocumentUploadParams"
+        required: true
   "/api/v3/store/orders/{id}":
     get:
       summary: Get an order
@@ -6694,8 +7217,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 385496
-                  slug: product-385496
+                  name: Product 454496
+                  slug: product-454496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6758,8 +7281,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
-                    code: UPS_GROUND_228
+                    name: UPS Ground 270
+                    code: UPS_GROUND_289
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6782,7 +7305,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
+                    name: UPS Ground 270
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6801,8 +7324,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 209
-                      code: UPS_GROUND_228
+                      name: UPS Ground 270
+                      code: UPS_GROUND_289
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6814,7 +7337,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 565 Lovely Street
+                  address1: 705 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6837,7 +7360,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 566 Lovely Street
+                  address1: 706 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7166,7 +7689,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 335 Lovely Street
+                  address1: 435 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7191,7 +7714,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 336 Lovely Street
+                  address1: 436 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7216,7 +7739,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 337 Lovely Street
+                  address1: 437 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7430,7 +7953,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 349 Lovely Street
+                address1: 449 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -7516,7 +8039,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 355 Lovely Street
+                address1: 455 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -7898,6 +8421,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `incomplete`.
+      - name: q[missing_invoice]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `missing_invoice`.
       - name: q[partially_refunded]
         in: query
         required: false
@@ -8074,8 +8603,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3495270
-                    slug: product-3495270
+                    name: Product 4075270
+                    slug: product-4075270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -8138,8 +8667,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 187
-                      code: UPS_GROUND_205
+                      name: UPS Ground 237
+                      code: UPS_GROUND_255
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8162,7 +8691,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 187
+                      name: UPS Ground 237
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -8181,8 +8710,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 187
-                        code: UPS_GROUND_205
+                        name: UPS Ground 237
+                        code: UPS_GROUND_255
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -8194,7 +8723,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 449 Lovely Street
+                    address1: 549 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8217,7 +8746,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 450 Lovely Street
+                    address1: 550 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8403,8 +8932,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3515633
-                  slug: product-3515633
+                  name: Product 4095633
+                  slug: product-4095633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -8467,8 +8996,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 189
-                    code: UPS_GROUND_207
+                    name: UPS Ground 239
+                    code: UPS_GROUND_257
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -8491,7 +9020,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 189
+                    name: UPS Ground 239
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -8510,8 +9039,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 189
-                      code: UPS_GROUND_207
+                      name: UPS Ground 239
+                      code: UPS_GROUND_257
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8523,7 +9052,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 455 Lovely Street
+                  address1: 555 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8546,7 +9075,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 456 Lovely Street
+                  address1: 556 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8740,7 +9269,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 561 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8765,7 +9294,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 462 Lovely Street
+                  address1: 562 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8791,7 +9320,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 462 Lovely Street
+                  address1: 562 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8817,7 +9346,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 561 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8913,7 +9442,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 463 Lovely Street
+                  address1: 563 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8938,7 +9467,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 464 Lovely Street
+                  address1: 564 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8964,7 +9493,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 464 Lovely Street
+                  address1: 564 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8990,7 +9519,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 463 Lovely Street
+                  address1: 563 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9690,7 +10219,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 227
+                  name: Credit Card 283
                   description:
                   type: bogus
                   session_required: true
@@ -9782,7 +10311,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 230
+                  name: Credit Card 286
                   description:
                   type: bogus
                   session_required: true
@@ -9863,7 +10392,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 232
+                  name: Credit Card 288
                   description:
                   type: bogus
                   session_required: true
@@ -11298,7 +11827,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-556
+                  sku: SKU-625
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11384,7 +11913,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-557
+                  sku: SKU-626
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11812,7 +12341,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-02T22:20:35.093Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11830,19 +12359,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-02T22:20:35.098Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-02T22:20:35.104Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-02T22:20:35.085Z'
                 meta:
                   page: 1
                   limit: 25
@@ -12510,7 +13039,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 419 Lovely Street
+                  address1: 519 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12644,7 +13173,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 425 Lovely Street
+                address1: 525 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -12772,6 +13301,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `incomplete`.
+      - name: q[missing_invoice]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `missing_invoice`.
       - name: q[partially_refunded]
         in: query
         required: false
@@ -12914,8 +13449,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3485649
-                    slug: product-3485649
+                    name: Product 4065649
+                    slug: product-4065649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -12977,8 +13512,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 178
-                      code: UPS_GROUND_196
+                      name: UPS Ground 228
+                      code: UPS_GROUND_246
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -13001,7 +13536,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 178
+                      name: UPS Ground 228
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -13020,8 +13555,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 178
-                        code: UPS_GROUND_196
+                        name: UPS Ground 228
+                        code: UPS_GROUND_246
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -13033,7 +13568,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 433 Lovely Street
+                    address1: 533 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -13056,7 +13591,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 434 Lovely Street
+                    address1: 534 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -17890,6 +18425,288 @@ components:
       - expires_at
       - accepted_at
       x-typelizer: true
+    InvoiceRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - open
+            - fulfilled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        company_name:
+          type: string
+          nullable: true
+        tax_id:
+          type: string
+          nullable: true
+        order_id:
+          type: string
+        invoice_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - status
+      - company_name
+      - tax_id
+      - order_id
+      - invoice_id
+      x-typelizer: true
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum:
+          - invoice
+          - receipt
+          - credit_note
+        number:
+          type: string
+        currency:
+          type: string
+          enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BYR
+          - BZD
+          - CAD
+          - CDF
+          - CHF
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EEK
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LTL
+          - LVL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MRU
+          - MTL
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SKK
+          - SLE
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - STN
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMM
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - UYI
+          - UYU
+          - UYW
+          - UZS
+          - VED
+          - VEF
+          - VES
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XCD
+          - XCG
+          - XOF
+          - XPF
+          - YER
+          - ZAR
+          - ZMK
+          - ZMW
+          - ZWD
+          - ZWG
+          - ZWL
+          - ZWN
+          - ZWR
+        issued_on:
+          type: string
+        supplied_on:
+          type: string
+          nullable: true
+        total:
+          type: string
+          nullable: true
+        net_total:
+          type: string
+          nullable: true
+        tax_total:
+          type: string
+          nullable: true
+        original_invoice_id:
+          type: string
+          nullable: true
+        issuer_type:
+          type: string
+          enum:
+          - store
+          - seller
+        issuer_name:
+          type: string
+          nullable: true
+        file_filename:
+          type: string
+          nullable: true
+        file_byte_size:
+          type: number
+          nullable: true
+        file_content_type:
+          type: string
+          nullable: true
+        download_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - kind
+      - number
+      - currency
+      - issued_on
+      - supplied_on
+      - total
+      - net_total
+      - tax_total
+      - original_invoice_id
+      - issuer_type
+      - issuer_name
+      - file_filename
+      - file_byte_size
+      - file_content_type
+      - download_url
+      x-typelizer: true
     LineItem:
       type: object
       properties:
@@ -19578,6 +20395,36 @@ components:
       - option_type_name
       - option_type_label
       - image_url
+      x-typelizer: true
+    OrderDocument:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        uploaded_by_customer:
+          type: boolean
+        file_filename:
+          type: string
+          nullable: true
+        file_byte_size:
+          type: number
+          nullable: true
+        file_content_type:
+          type: string
+          nullable: true
+        download_url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - label
+      - uploaded_by_customer
+      - file_filename
+      - file_byte_size
+      - file_content_type
+      - download_url
       x-typelizer: true
     OrderGroup:
       type: object
@@ -24537,6 +25384,65 @@ components:
           description: The storefront page the confirmation link opens, with the token
             appended. Ignored unless it matches one of the store's allowed origins.
           example: https://myshop.com/account/data-requests/confirm
+    CreateInvoiceRequestParams:
+      type: object
+      properties:
+        company_name:
+          type: string
+          example: Acme GmbH
+          nullable: true
+        tax_id:
+          type: string
+          description: The VAT or tax number to print on the invoice.
+          example: DE123456789
+          nullable: true
+        billing_address:
+          type: object
+          properties:
+            first_name:
+              type: string
+            last_name:
+              type: string
+            company:
+              type: string
+            address1:
+              type: string
+            address2:
+              type: string
+            city:
+              type: string
+            postal_code:
+              type: string
+            phone:
+              type: string
+            country_code:
+              allOf:
+              - "$ref": "#/components/schemas/CountryCode"
+              description: ISO 3166-1 alpha-2 country code, such as `US` or `DE`.
+              example: US
+            state_code:
+              type: string
+              description: ISO 3166-2 subdivision code without the country prefix,
+                such as `CA` or `NY`.
+              example: NY
+            state_name:
+              type: string
+              description: The state name, for countries without predefined states.
+            quick_checkout:
+              type: boolean
+              description: Relaxes validation (name, phone, postal code, street),
+                for express checkouts that share a partial address.
+            country_iso:
+              type: string
+              description: 'Deprecated: Use `country_code`. Removed in 6.1.'
+              deprecated: true
+            state_abbr:
+              type: string
+              description: 'Deprecated: Use `state_code`. Removed in 6.1.'
+              deprecated: true
+          description: Where the invoice is addressed, when not the order's billing
+            address.
+          nullable: true
     CreateNewsletterSubscriberParams:
       type: object
       properties:
@@ -24553,6 +25459,37 @@ components:
           example: https://your-store.com/newsletter/confirm
       required:
       - email
+    CreateOrderDocumentParams:
+      type: object
+      properties:
+        label:
+          type: string
+          example: Purchase order 4471
+        file_signed_id:
+          type: string
+          description: A `signed_id` from `orders.documents.upload()`. PDF, image,
+            office document or CSV.
+      required:
+      - label
+      - file_signed_id
+    CreateOrderDocumentUploadParams:
+      type: object
+      properties:
+        filename:
+          type: string
+        content_type:
+          type: string
+        byte_size:
+          type: integer
+        checksum:
+          type: string
+          description: Base64-encoded MD5 digest of the file; the storage service
+            checks the bytes against it.
+      required:
+      - filename
+      - content_type
+      - byte_size
+      - checksum
     CreatePaymentParams:
       type: object
       properties:
@@ -25132,6 +26069,25 @@ components:
         partially_redeemed: boolean
         redeemed: boolean
         search: text
+    Invoice:
+      attributes:
+        currency:
+          code: CurrencyCode
+        id: id
+        issued_on: date
+        issuer_type: type
+        kind:
+          enum:
+          - invoice
+          - receipt
+          - credit_note
+        number: text
+        order_id: id
+        supplied_on: date
+        total: decimal
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     Order:
       attributes:
         channel_id: id
@@ -25212,8 +26168,18 @@ components:
       scopes:
         complete: boolean
         incomplete: boolean
+        missing_invoice: boolean
         partially_refunded: boolean
         refunded: boolean
+    OrderDocument:
+      attributes:
+        created_at: datetime
+        customer_visible: boolean
+        id: id
+        label: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     Policy:
       attributes:
         created_at: datetime
