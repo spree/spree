@@ -790,6 +790,7 @@ Spree::Core::Engine.add_routes do
             patch :approve
             # Opens a draft to its buyer for payment on the storefront.
             patch :request_payment
+            patch :withdraw_payment_request
             post :resend_confirmation
             post :resend_digital_links
             # The buyer's purchase order, streamed through the API so it is
