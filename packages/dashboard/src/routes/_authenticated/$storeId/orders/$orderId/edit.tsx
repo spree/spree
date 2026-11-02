@@ -102,7 +102,12 @@ function OrderEditPage() {
               backTo={`orders/${orderId}`}
               actions={
                 <>
-                  <Button type="button" variant="outline" onClick={() => setAddingItem(true)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={editor.isSaving}
+                    onClick={() => setAddingItem(true)}
+                  >
                     <PlusIcon className="size-4" />
                     {t('admin.orders.edit.actions.add_product')}
                   </Button>
@@ -123,6 +128,7 @@ function OrderEditPage() {
                   form={form}
                   fields={editor.fields}
                   pricesEditable={order.status === 'draft'}
+                  disabled={editor.isSaving}
                   currency={order.currency}
                 />
               </CardContent>

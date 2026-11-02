@@ -12,6 +12,7 @@ import {
   type OrderItemsPayload,
   orderEditFormSchema,
   orderToEditForm,
+  projectedLineTotal,
 } from '../schemas/order'
 import { useOrderMutation } from './use-order'
 
@@ -70,9 +71,19 @@ export function useOrderItemsEditor(order: Order | undefined) {
     // payload can legitimately be empty even on a dirty form.
     const payload = buildOrderItemsPayload(values.items)
     const startedAt = Date.now()
+    // The order these rows belong to. If the page moves to another order
+    // while the save is in flight, the hydrate effect has already replaced the
+    // rows, and nothing below may touch the form.
+    const savingOrderId = order?.id
+
+    if (payload.length > 0 && !savingOrderId) {
+      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
+      return false
+    }
 
     try {
       if (payload.length > 0) await saveMutation.mutateAsync(payload)
+      if (hydratedOrderId.current !== savingOrderId) return true
 
       // The mutation awaits the order refetch, so when `useOrder` is mounted
       // the server's rows are already in the cache — re-baseline on them. The
@@ -101,6 +112,7 @@ export function useOrderItemsEditor(order: Order | undefined) {
               saved_quantity: item.quantity,
               price,
               saved_price: price,
+              total: projectedLineTotal({ ...item, price }) ?? item.total,
               price_source: reverted
                 ? null
                 : item.price !== item.saved_price
@@ -112,6 +124,7 @@ export function useOrderItemsEditor(order: Order | undefined) {
       })
       return true
     } catch (err) {
+      if (hydratedOrderId.current !== savingOrderId) return false
       if (mapSpreeErrorsToForm(err, form.setError)) return false
       toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
       return false
@@ -130,6 +143,8 @@ export function useOrderItemsEditor(order: Order | undefined) {
    * survive a save.
    */
   function stageVariant(variant: Variant, quantity: number) {
+    // The post-save reset would erase a row staged while the save is pending.
+    if (saveMutation.isPending) return
     const current = form.getValues('items')
     const existingIndex = current.findIndex((item) => item.variant_id === variant.id)
 
