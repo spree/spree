@@ -145,7 +145,7 @@ module Spree
       # resolves its scope per request. Named rather than guessed at, because
       # a tool cannot invent the parent id such a path needs.
       def not_searchable(entry)
-        refusal = entry.nested? ? nested_resource_error(entry, 'searched') : { error: "#{entry.key} cannot be searched on its own." }
+        refusal = entry.nested?(:index) ? nested_resource_error(entry, 'searched', :index) : { error: "#{entry.key} cannot be searched on its own." }
 
         refusal.merge(available: ResourceMap.available_for(context).select(&:dispatchable?).map(&:key).sort)
       end

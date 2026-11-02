@@ -57,16 +57,20 @@ module Spree
     def reconcile_typed_association(association, rows)
       collection = public_send(association)
       self.class.transaction do
-        kept_ids = rows.each_with_index.filter_map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
-        if kept_ids.any? || rows.empty?
-          collection.where.not(id: kept_ids).destroy_all
-          # `where.not(...).destroy_all` deletes the dropped rows from the DB but
-          # leaves them in the already-loaded association target. Reset so a
-          # same-request read (e.g. the serializer rendering `rule_ids`) reflects
-          # the removal instead of echoing ghosts.
-          collection.reset
-        end
+        kept_ids = rows.each_with_index.map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
+        collection.where.not(id: kept_ids).destroy_all
+        # `where.not(...).destroy_all` deletes the dropped rows from the DB but
+        # leaves them in the already-loaded association target. Reset so a
+        # same-request read (e.g. the serializer rendering `rule_ids`) reflects
+        # the removal instead of echoing ghosts.
+        collection.reset
       end
+    rescue StandardError
+      # The rows built before the refusal are still in the loaded target, and
+      # the owner's next save would write them; the rollback only undid the
+      # database.
+      collection.reset
+      raise
     end
 
     # @param pointer [String] where the row sits in the request, e.g. `/rules/1`
@@ -127,7 +131,7 @@ module Spree
     end
 
     def unknown_row_type_error(family, type, pointer)
-      types = family.subclasses_with_preference_schema.map { |kind| kind[:type] }.sort.join(', ')
+      types = family.api_types.sort.join(', ')
       message = if type.blank?
                   I18n.t('spree.errors.messages.missing_row_type', types: types)
                 else

@@ -175,9 +175,10 @@ class AgentTool
     #
     # @param entry [Spree::AgentTools::ResourceMap::Entry]
     # @param verb [String] 'searched', 'fetched', 'created'…
+    # @param action [Symbol] the operation whose path runs under the parent
     # @return [Hash]
-    def nested_resource_error(entry, verb)
-      parent = entry.parent_key
+    def nested_resource_error(entry, verb, action)
+      parent = entry.parent_key(action)
       parent_entry = Spree::AgentTools::ResourceMap.find(parent)
       attribute = parent_entry&.nested_typed_families&.key(entry.model_class)
 

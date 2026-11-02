@@ -206,7 +206,7 @@ module Spree
       rules_params.each_with_index do |rule_data, index|
         data = rule_data.to_h.with_indifferent_access
         rule_id = data.delete(:id)
-        if data.key?(:type)
+        if data.key?(:type) || rule_id.blank?
           # Refused with the accepted kinds named; letting the nil through
           # answered "type can't be blank" to a caller who had sent one.
           data[:type] = self.class.resolve_rule_type(data[:type]) ||

@@ -1045,6 +1045,17 @@ describe Spree::Promotion, type: :model do
         to raise_error(Spree::Preferences::InvalidPreferences, %r{/rules/0/type: is required})
     end
 
+    # The rollback undoes the database; the rows built before the refusal
+    # must not linger in the loaded association for the next save to write.
+    it 'keeps nothing of a refused list for a later save' do
+      expect { promotion.rules = [{ type: 'item_total' }, { type: 'NotARealRule' }] }.
+        to raise_error(Spree::Preferences::InvalidPreferences)
+
+      promotion.save!
+
+      expect(promotion.reload.rules).to be_empty
+    end
+
     it 'saves nothing of a new promotion whose rows carry an unknown type' do
       fresh = build(:promotion, name: 'Unsaved')
       fresh.rules = [{ type: 'Spree::Promotion::Rules::ItemTotal' }]

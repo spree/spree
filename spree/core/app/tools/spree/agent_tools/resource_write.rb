@@ -41,7 +41,7 @@ module Spree
 
         path = entry.api_path(action)
         return [nil, { error: not_writable(entry, action) }] if path.blank?
-        return [nil, nested_resource_error(entry, verb_for(action))] if entry.nested?
+        return [nil, nested_resource_error(entry, verb_for(action), action)] if entry.nested?(action)
 
         # The endpoint answers 403 for a scope the credential lacks, in its
         # own words. This check only avoids offering a tool that cannot work

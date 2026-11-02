@@ -41,10 +41,9 @@ module Spree
       def types_for(family, detailed)
         return if family.nil?
 
-        listing = family.subclasses_with_preference_schema
-        return listing.map { |kind| kind[:type] } unless detailed
+        return family.api_types.sort unless detailed
 
-        listing.map do |kind|
+        family.subclasses_with_preference_schema.map do |kind|
           kind.slice(:type, :label, :description, :schema).merge(calculators: calculators_for(family, kind[:type])).compact
         end
       rescue StandardError
@@ -59,9 +58,7 @@ module Spree
         return unless klass.respond_to?(:calculators)
 
         klass.calculators.map do |calculator|
-          { type: calculator.api_type,
-            label: calculator.respond_to?(:description) ? calculator.description : calculator.to_s.demodulize.titleize,
-            schema: calculator.preference_json_schema }
+          { type: calculator.api_type, label: calculator.description, schema: calculator.preference_json_schema }
         end.sort_by { |entry| entry[:label].to_s }.presence
       end
 

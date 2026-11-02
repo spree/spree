@@ -42,23 +42,29 @@ module Spree
         #
         # @return [Boolean]
         def dispatchable?
-          api_path(:index).present? && !nested?
+          api_path(:index).present? && !nested?(:index)
         end
 
-        # @return [Boolean] whether every path to this resource runs under a parent
-        def nested?
-          parent_key.present?
+        # Whether the path a tool would dispatch `action` to runs under a
+        # parent. Asked per action, because a resource can be listed at the
+        # top level and written under its parent (`/variants`,
+        # `/products/:product_id/variants`).
+        #
+        # @param action [Symbol]
+        # @return [Boolean]
+        def nested?(action = :index)
+          parent_key(action).present?
         end
 
-        # The resource key of the parent this resource lives under, read
+        # The resource key of the parent `action`'s path runs under, read
         # from the route rather than guessed from the model, so a renamed
         # nested route (`/orders/:order_id/items`) still names `orders`. The
         # innermost parent, for a path nested twice.
         #
+        # @param action [Symbol]
         # @return [String, nil]
-        def parent_key
-          path = api_path(:index) || api_path(:create) || api_path(:show)
-          path.to_s.scan(PARENT_SEGMENT).flatten.last
+        def parent_key(action = :index)
+          api_path(action).to_s.scan(PARENT_SEGMENT).flatten.last
         end
 
         # Whether a search may add DISTINCT.
