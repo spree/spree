@@ -67,6 +67,34 @@ module Spree
           Array(writable_attributes).map(&:to_s).sort
         end
 
+        # The record a nested resource is reached through — `order_id` for an
+        # order's items, discounts and fees — or nil for a top-level one.
+        #
+        # @param action [Symbol]
+        # @return [String, nil]
+        def parent_param(action)
+          Array(api_path(action)&.scan(/:([a-z_]+)/)).flatten.reject { |name| name == 'id' }.first
+        end
+
+        # The operation's path with its segments filled, or nil when a nested
+        # resource was not given the record it lives under.
+        #
+        # @param action [Symbol]
+        # @param id [String, nil]
+        # @param parent_id [String, nil]
+        # @return [String, nil]
+        def path_for(action, id: nil, parent_id: nil)
+          path = api_path(action)
+          return if path.blank?
+
+          path = path.sub(':id', id.to_s) if id
+          parent = parent_param(action)
+          return path if parent.nil?
+          return if parent_id.blank?
+
+          path.sub(":#{parent}", parent_id.to_s)
+        end
+
         # The associations the show operation will include when asked, read
         # from the serializer that renders it.
         #

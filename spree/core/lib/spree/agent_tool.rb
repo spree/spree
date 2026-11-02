@@ -27,6 +27,12 @@ class AgentTool
     # subclass would come back `mutating? == false` — writing to the store
     # immediately, with no approval card, no permission gate and no argument
     # validation. Inheritance here is a safety property, not a convenience.
+    # The parameter every generic resource tool takes for a resource that
+    # lives under another record, such as an order's items.
+    PARENT_ID_DESCRIPTION = 'For a resource reached through another record (describe_resource names ' \
+                            'it as parent, e.g. an order for its items, discounts and fees): that ' \
+                            'record\'s id as shown in search results'.freeze
+
     class_attribute :declared_tool_name, instance_accessor: false
     class_attribute :declared_description, instance_accessor: false
     class_attribute :declared_permission, instance_accessor: false
@@ -158,6 +164,12 @@ class AgentTool
     #
     # @param key [String]
     # @return [Hash]
+    def missing_parent(entry, action)
+      parent = entry.parent_param(action).to_s.delete_suffix('_id').tr('_', ' ')
+
+      "#{entry.key} belong to a #{parent}. Pass that #{parent}'s id as parent_id."
+    end
+
     def unknown_resource(key)
       {
         error: "Unknown resource #{key.to_s.inspect}. Call describe_resource for the list.",

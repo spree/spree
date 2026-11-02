@@ -126,6 +126,11 @@ The dash is the point: each call is gated on the resource being written, so a
 connection approved for products can create a product and is refused a market.
 Call `describe_resource` for what a resource accepts.
 
+Some records exist only inside another: an order's items, discounts and fees.
+`describe_resource` names that record as the resource's `parent`, and every
+generic tool takes its id as `parent_id`. That is how an assistant changes a
+quantity, sets a negotiated unit price or adds a discount on a draft order.
+
 
 ## Resources
 

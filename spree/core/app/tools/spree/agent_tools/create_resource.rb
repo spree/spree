@@ -13,15 +13,19 @@ module Spree
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :attributes, type: :object, description: 'Attributes to set on the new record', required: true
+      param :parent_id, description: PARENT_ID_DESCRIPTION
 
-      def call(resource:, attributes: {})
+      def call(resource:, attributes: {}, parent_id: nil)
         entry, refusal = writable_entry(resource, :create)
         return refusal if refusal
 
         body, rejection = body_for(entry, attributes)
         return rejection if rejection
 
-        response = dispatch.call(method: :post, path: entry.api_path(:create), body: body)
+        path, missing = write_path(entry, :create, parent_id: parent_id)
+        return missing if missing
+
+        response = dispatch.call(method: :post, path: path, body: body)
 
         result_for(response, entry, summary: summary(resource: resource, attributes: attributes))
       end

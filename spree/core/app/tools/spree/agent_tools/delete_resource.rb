@@ -9,12 +9,16 @@ module Spree
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :id, description: 'The record id as shown in search results', required: true
+      param :parent_id, description: PARENT_ID_DESCRIPTION
 
-      def call(resource:, id:)
+      def call(resource:, id:, parent_id: nil)
         entry, refusal = writable_entry(resource, :destroy)
         return refusal if refusal
 
-        response = dispatch.call(method: :delete, path: entry.api_path(:destroy).sub(':id', id.to_s))
+        path, missing = write_path(entry, :destroy, id: id, parent_id: parent_id)
+        return missing if missing
+
+        response = dispatch.call(method: :delete, path: path)
         return { error: response.error_message } unless response.success?
 
         { summary: summary(resource: resource, id: id) }

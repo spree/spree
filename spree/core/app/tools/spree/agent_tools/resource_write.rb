@@ -77,6 +77,17 @@ module Spree
                 accepted_attributes: accepted }]
       end
 
+      # The path for this write, or the refusal saying which record a nested
+      # resource needs.
+      #
+      # @return [Array(String, nil), Array(nil, Hash)]
+      def write_path(entry, action, id: nil, parent_id: nil)
+        path = entry.path_for(action, id: id, parent_id: parent_id)
+        return [path, nil] if path
+
+        [nil, { error: missing_parent(entry, action) }]
+      end
+
       def result_for(response, entry, summary:)
         return { error: response.error_message } unless response.success?
 

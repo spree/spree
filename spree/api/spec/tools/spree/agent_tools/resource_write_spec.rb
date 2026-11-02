@@ -110,6 +110,43 @@ RSpec.describe 'agent generic record writes' do
     end
   end
 
+  # An order's items, discounts and fees exist only under their order, so
+  # the generic tools take the order as parent_id and fill it into the path.
+  describe 'a resource nested under an order' do
+    let(:order) { create(:order_with_line_items, store: store, line_items_count: 1) }
+    let(:line_item) { order.line_items.first }
+    let(:items_key) { Spree::AgentTools::ResourceMap.all.find { |entry| entry.model_name == 'Spree::LineItem' }.key }
+
+    it 'changes a line through its order' do
+      result = tool('update_resource').call(resource: items_key, id: line_item.prefixed_id,
+                                            parent_id: order.prefixed_id, attributes: { 'quantity' => 4 })
+
+      expect(result[:error]).to be_nil
+      expect(line_item.reload.quantity).to eq(4)
+    end
+
+    it 'lists the lines of one order' do
+      result = tool('search_resources').call(resource: items_key, parent_id: order.prefixed_id)
+
+      expect(result[:error]).to be_nil
+      expect(result[:total]).to eq(1)
+    end
+
+    it 'asks for the order rather than calling a path with a hole in it' do
+      result = tool('update_resource').call(resource: items_key, id: line_item.prefixed_id,
+                                            attributes: { 'quantity' => 4 })
+
+      expect(result[:error]).to include('parent_id')
+      expect(line_item.reload.quantity).not_to eq(4)
+    end
+
+    it 'is described with the record it belongs to' do
+      described = tool('describe_resource').call(resource: items_key)[:resources].first
+
+      expect(described[:parent]).to eq('order')
+    end
+  end
+
   # The write tools tell the caller to call describe_resource for the
   # attributes a resource accepts, so it has to answer that question.
   describe 'describe_resource and the write tools agree' do

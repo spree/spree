@@ -49,6 +49,9 @@ module Spree
       def describe(entry)
         {
           resource: entry.key,
+          # A resource reached through another record — an order's items —
+          # needs that record's id as parent_id on every call.
+          parent: entry.parent_param(:index)&.delete_suffix('_id'),
           filterable_fields: entry.filterable_fields,
           # What a generic write accepts, so the model learns the schema here
           # rather than by sending an invalid write and reading the refusal —

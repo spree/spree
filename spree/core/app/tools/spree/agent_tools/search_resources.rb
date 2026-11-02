@@ -26,8 +26,9 @@ module Spree
       param :filters, type: :object, description: 'Ransack filter hash, e.g. {"name_cont": "shirt"}'
       param :sort, description: 'Sort, e.g. "created_at desc"'
       param :limit, type: :integer, description: "Max records to return (default #{DEFAULT_LIMIT})"
+      param :parent_id, description: PARENT_ID_DESCRIPTION
 
-      def call(resource:, filters: nil, sort: nil, limit: nil)
+      def call(resource:, filters: nil, sort: nil, limit: nil, parent_id: nil)
         entry = ResourceMap.find(resource)
         return unknown_resource(resource) if entry.nil?
         return not_searchable(entry) unless entry.dispatchable?
@@ -42,11 +43,10 @@ module Spree
         unrecognised = unrecognised_filters(entry, applied)
         return invalid_filters(entry, unrecognised) if unrecognised.any?
 
-        response = dispatch.call(
-          method: :get,
-          path: entry.api_path(:index),
-          params: query_for(applied, sort, limit)
-        )
+        path = entry.path_for(:index, parent_id: parent_id)
+        return { error: missing_parent(entry, :index) } if path.nil?
+
+        response = dispatch.call(method: :get, path: path, params: query_for(applied, sort, limit))
         return { error: response.error_message } unless response.success?
 
         rows = Array(response.data)

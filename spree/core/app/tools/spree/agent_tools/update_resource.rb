@@ -14,19 +14,19 @@ module Spree
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :id, description: 'The record id as shown in search results', required: true
       param :attributes, type: :object, description: 'Attributes to change', required: true
+      param :parent_id, description: PARENT_ID_DESCRIPTION
 
-      def call(resource:, id:, attributes: {})
+      def call(resource:, id:, attributes: {}, parent_id: nil)
         entry, refusal = writable_entry(resource, :update)
         return refusal if refusal
 
         body, rejection = body_for(entry, attributes)
         return rejection if rejection
 
-        response = dispatch.call(
-          method: :patch,
-          path: entry.api_path(:update).sub(':id', id.to_s),
-          body: body
-        )
+        path, missing = write_path(entry, :update, id: id, parent_id: parent_id)
+        return missing if missing
+
+        response = dispatch.call(method: :patch, path: path, body: body)
 
         result_for(response, entry, summary: summary(resource: resource, id: id, attributes: attributes))
       end
