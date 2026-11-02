@@ -72,7 +72,7 @@ module Spree
           return @sources[controller_path] if @sources.key?(controller_path)
 
           @sources[controller_path] = begin
-            klass = "#{controller_path.camelize}Controller".safe_constantize
+            klass = controller_class(controller_path)
             file = klass && Object.const_source_location(klass.name)&.first
             file && File.exist?(file) ? File.read(file) : nil
           rescue StandardError
@@ -89,8 +89,16 @@ module Spree
           # Bodies are declared once and published as components, so the
           # operation points at one rather than carrying its properties.
           schema = Spree::Api::AgentWriteSchemas.resolve_schema(schema)
+          keys = (schema&.dig('properties') || {}).keys
+          return keys if keys.any?
 
-          (schema&.dig('properties') || {}).keys
+          # An extension's endpoints are not in core's document, so its tools
+          # would send an empty body. Its controller declares the body itself.
+          Spree::Api::AgentWriteSchemas.declared_attribute_names(controller_class(route[:controller]), route[:action])
+        end
+
+        def controller_class(controller_path)
+          "#{controller_path.camelize}Controller".safe_constantize
         end
 
         def openapi_path(path)

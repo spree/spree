@@ -174,6 +174,12 @@ module Spree
           create_workflow = workflow_key(instance, :create_workflow)
           update_workflow = workflow_key(instance, :update_workflow)
           writable = AgentWriteSchemas.attribute_names(key)
+          # Core's resources write only what the document describes. An
+          # extension's are not in it, so its controller's declaration counts.
+          if writable.empty? && extension_controller?(controller)
+            writable = AgentWriteSchemas.declared_attribute_names(controller, :create).presence ||
+                       AgentWriteSchemas.declared_attribute_names(controller, :update)
+          end
 
           {
             key: key,
@@ -191,6 +197,15 @@ module Spree
         end
 
         private
+
+        # A controller defined outside this gem, whose endpoints the core
+        # document cannot describe.
+        def extension_controller?(controller)
+          file = Object.const_source_location(controller.name)&.first
+          file.present? && !file.start_with?(Spree::Api::Engine.root.to_s)
+        rescue StandardError
+          false
+        end
 
         # What the controller does with its own collection. A controller that
         # disables DISTINCT has a reason — Postgres refuses it beside an

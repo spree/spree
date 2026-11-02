@@ -177,6 +177,22 @@ RSpec.describe 'agent workflow tool arguments' do
       Spree::AgentTools::WorkflowEndpoints.reset!
     end
 
+    # An extension's endpoints are not in core's document; the controller's
+    # own request_params declaration has to stand in, or the tool would send
+    # an empty body and lose every argument.
+    it 'reads an undocumented operation\'s body from the controller declaration' do
+      documented = Spree::AgentTools::WorkflowEndpoints.find(:purchase_order_cancel_workflow).body_keys
+      allow(Spree::Api::AgentWriteSchemas).to receive(:document).and_return({})
+      Spree::AgentTools::WorkflowEndpoints.reset!
+
+      declared = Spree::AgentTools::WorkflowEndpoints.find(:purchase_order_cancel_workflow).body_keys
+
+      expect(declared).to be_present
+      expect(declared).to match_array(documented)
+    ensure
+      Spree::AgentTools::WorkflowEndpoints.reset!
+    end
+
     it 'fills a parent segment from the record the caller named' do
       order = create(:order_with_line_items, store: store)
       payment = create(:payment, order: order, amount: 10)
