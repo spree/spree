@@ -6,7 +6,9 @@ module Spree
         # uploaded it, whether the buyer has been sent it, and whether it may
         # still be deleted.
         class InvoiceSerializer < V3::InvoiceSerializer
-          typelize source: [:string, enum: Spree::Invoice::SOURCES, enum_type_name: 'InvoiceSource'],
+          # Staff always see prices; only the storefront hides them.
+          typelize total: [:string, nullable: false],
+                   source: [:string, enum: Spree::Invoice::SOURCES, enum_type_name: 'InvoiceSource'],
                    order_id: [:string, nullable: true],
                    order_number: [:string, nullable: true],
                    seller_payout_id: [:string, nullable: true],
@@ -29,9 +31,10 @@ module Spree
 
           actor_attributes :uploaded_by
 
-          # Lets the panels hide a delete the model will refuse.
+          # Lets the panels hide a delete the model will refuse, and a resend
+          # that would reach no one.
           attribute :can_be_deleted, &:can_be_deleted?
-          attribute(:can_be_resent) { true }
+          attribute :can_be_resent, &:can_be_resent?
 
           one :order,
               resource: proc { Spree.api.admin_order_serializer },

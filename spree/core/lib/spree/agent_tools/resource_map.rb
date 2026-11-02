@@ -29,9 +29,13 @@ module Spree
           Array(api_paths).to_h[action.to_sym]
         end
 
+        # A resource listed only under a parent is not: a search carries no
+        # parent id to fill the path with.
+        #
         # @return [Boolean] whether a tool can dispatch to this resource
         def dispatchable?
-          api_path(:index).present?
+          path = api_path(:index)
+          path.present? && !path.include?(':')
         end
 
         # Whether a search may add DISTINCT.

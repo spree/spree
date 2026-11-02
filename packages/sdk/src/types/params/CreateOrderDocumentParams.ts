@@ -2,9 +2,6 @@
 
 export type CreateOrderDocumentParams = {
   label: string
-  /**
-   * A `signed_id` from `files.upload()` with `visibility: 'private'`. PDF, image, office document
-   * or CSV.
-   */
+  /** A `signed_id` from `orders.documents.upload()`. PDF, image, office document or CSV. */
   file_signed_id: string
 }

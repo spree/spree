@@ -7,10 +7,5 @@ export type OrderDocumentUpdateParams = {
    * visible to them.
    */
   customer_visible?: boolean
-  /**
-   * A `signed_id` from `files.upload()` with `visibility: 'private'`. PDF, image, office document
-   * or CSV.
-   */
-  file_signed_id?: string
   metadata?: Record<string, unknown>
 }

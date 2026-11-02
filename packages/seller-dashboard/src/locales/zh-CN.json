@@ -855,7 +855,7 @@
     "title": "发票",
     "subtitle": "以你的名义开具的发票，以及平台开给你的佣金发票。",
     "search_placeholder": "按编号搜索",
-    "empty": "暂无发票。请在各订单或结算中上传。",
+    "empty": "暂无发票。请在各订单中上传。",
     "commission": "平台佣金",
     "columns": {
       "number": "编号",

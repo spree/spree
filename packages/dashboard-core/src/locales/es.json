@@ -1914,6 +1914,7 @@
       "failed_to_update_staff": "No se pudo actualizar el personal",
       "failed_to_update_store": "No se pudieron actualizar las configuraciones de la tienda",
       "generic": "Algo salió mal",
+      "download_failed": "No se pudo descargar el archivo",
       "label_download_failed": "No se pudo descargar la etiqueta",
       "network": "Error de red: volvé a intentar",
       "not_found": "No encontrado",

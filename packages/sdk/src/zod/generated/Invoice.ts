@@ -8,7 +8,7 @@ export const InvoiceSchema = z.object({
   currency: z.string(),
   issued_on: z.string(),
   supplied_on: z.string().nullable(),
-  total: z.string(),
+  total: z.string().nullable(),
   net_total: z.string().nullable(),
   tax_total: z.string().nullable(),
   original_invoice_id: z.string().nullable(),

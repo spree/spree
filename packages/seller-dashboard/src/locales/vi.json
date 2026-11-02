@@ -858,7 +858,7 @@
     "title": "Hóa đơn",
     "subtitle": "Hóa đơn phát hành dưới tên bạn và hóa đơn hoa hồng sàn gửi cho bạn.",
     "search_placeholder": "Tìm theo số",
-    "empty": "Chưa có hóa đơn. Tải lên từ từng đơn hàng hoặc khoản chi trả.",
+    "empty": "Chưa có hóa đơn. Tải lên từ từng đơn hàng.",
     "commission": "Hoa hồng sàn",
     "columns": {
       "number": "Số",

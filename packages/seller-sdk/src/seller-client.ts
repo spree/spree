@@ -110,6 +110,7 @@ import type {
   OrderAddressCorrectionParams,
   OrderCancelParams,
   OrderDocumentCreateParams,
+  OrderDocumentUpdateParams,
   OrderNotesParams,
   PackageTypeCreateParams,
   PackageTypeUpdateParams,
@@ -888,7 +889,7 @@ export class SellerClient {
       update: (
         orderId: string,
         id: string,
-        params: { label?: string; customer_visible?: boolean },
+        params: OrderDocumentUpdateParams,
         options?: RequestOptions,
       ): Promise<OrderDocument> =>
         this.request<OrderDocument>('PATCH', `/orders/${orderId}/documents/${id}`, {

@@ -18,7 +18,7 @@ export function InvoicesPage({ search }: { search: ResourceSearch }) {
       <ResourceTable<Invoice>
         hideHeader
         tableKey="seller-invoices"
-        queryKey="seller-invoices-list"
+        queryKey="invoices"
         queryFn={(params) => sellerClient().invoices.list(params)}
         searchParams={search}
       />

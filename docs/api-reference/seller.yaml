@@ -493,7 +493,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 143
+                  name: Seller 147
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -566,8 +566,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 105
-                  slug: seller-105
+                  name: Seller 109
+                  slug: seller-109
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -867,8 +867,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 107
-                  slug: seller-107
+                  name: Seller 111
+                  slug: seller-111
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -14132,7 +14132,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--fde17eb3743815f76fb668f1c21c4e7f3767aba5/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--7777eed6f20ebb5b44726deeae03a443015d931a/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                 meta:
@@ -14220,7 +14220,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--0bc7a103f707ad8e61aa285e4e1e315a5063fe91/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--4a5ef0ba1adfea50028014bb7def00a2d6c228d3/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
               schema:
@@ -14300,7 +14300,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--0b7d093a1353e0bb826dcde61165dfa12e720c14/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--52317e4c56eaff70f0ffb330623efc8ea0e33a95/thinking-cat.jpg
                 effective_authorized_clicks: 5
                 effective_authorized_days: 7
               schema:
@@ -14356,7 +14356,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--5460accf6bb2f0cbce0ec902062459e405119e32/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--4d1a7255cb7d15c6f00e23536f369ac1480fb6df/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
               schema:
@@ -14603,8 +14603,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3383250
-                  slug: product-3383250
+                  name: Product 3423250
+                  slug: product-3423250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14817,8 +14817,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3416710
-                slug: product-3416710
+                name: Product 3456710
+                slug: product-3456710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14908,7 +14908,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-3448212
+                slug: product-3488212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15031,8 +15031,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 3477816
-                slug: product-3477816
+                name: Product 3517816
+                slug: product-3517816
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15142,8 +15142,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 349209
-                slug: product-349209
+                name: Product 353209
+                slug: product-353209
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15232,8 +15232,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3509405
-                slug: product-3509405
+                name: Product 3549405
+                slug: product-3549405
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15451,8 +15451,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 178
-                slug: seller-178
+                name: Seller 182
+                slug: seller-182
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15542,7 +15542,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-180
+                slug: seller-184
                 about: ''
                 about_html: ''
                 logo_url:
@@ -16295,7 +16295,7 @@ paths:
                 inviter_email: hal_kiehn@herman.biz
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 210
+                  name: Seller 214
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -16433,7 +16433,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--8c7d20e112676f037296e280a3c798b597baa007
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--cadbe1651c8720a325182bdd21289fa40b7b0ef7
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -16441,7 +16441,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--9961529ba02688779493675635cbe769b28f46e3
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--8133852152d08774fc0be3f4941f5a0926f9ad28
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -21191,6 +21191,75 @@ paths:
       required: true
       schema:
         type: string
+    get:
+      summary: Get an invoice
+      tags:
+      - Invoices
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const invoice = await client.invoices.get('invc_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: invoice found
+          content:
+            application/json:
+              example:
+                id: invc_UkLWZg9DAJ
+                kind: invoice
+                number: INV-2026-0009
+                currency: USD
+                issued_on: '2026-01-15'
+                supplied_on:
+                total: '100.00'
+                net_total: '81.30'
+                tax_total: '18.70'
+                original_invoice_id:
+                issuer_type: seller
+                issuer_name: Seller 93
+                file_filename: INV-2026-0009.pdf
+                file_byte_size: 24
+                file_content_type: application/pdf
+                download_url: "/api/v3/seller/invoices/invc_UkLWZg9DAJ/download"
+                source: uploaded
+                external_reference:
+                metadata: {}
+                sent_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+                seller_payout_id:
+                issuer_id: sel_UkLWZg9DAJ
+                order_number: R1001
+                can_be_deleted: true
+                can_be_resent: true
+              schema:
+                "$ref": "#/components/schemas/Invoice"
+        '404':
+          description: another seller's invoice
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invoice not found
     delete:
       summary: Delete an invoice
       tags:
@@ -21337,7 +21406,7 @@ paths:
             application/json:
               example:
                 id: odoc_gbHJdmfrXB
-                label: Signed purchase order
+                label: Renamed
                 uploaded_by_customer: false
                 file_filename: po.pdf
                 file_byte_size: 20
@@ -21623,7 +21692,7 @@ paths:
                 tax_total:
                 original_invoice_id:
                 issuer_type: seller
-                issuer_name: Seller 120
+                issuer_name: Seller 124
                 file_filename: fv.pdf
                 file_byte_size: 15
                 file_content_type: application/pdf
@@ -21856,7 +21925,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 31695
+                    name: Product 32095
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -21865,7 +21934,7 @@ paths:
                     additional_tax_total: '0.00'
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-402
+                    sku: SKU-406
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -21878,7 +21947,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 192
+                    delivery_method_name: UPS Ground 196
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -21886,13 +21955,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 31695
-                      sku: SKU-402
+                      name: Product 32095
+                      sku: SKU-406
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 192
+                      name: UPS Ground 196
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -21920,7 +21989,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 374 Lovely Street
+                    address1: 382 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -21940,7 +22009,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 373 Lovely Street
+                    address1: 381 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -22052,7 +22121,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3179755
+                  name: Product 3219755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22061,7 +22130,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-403
+                  sku: SKU-407
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22074,7 +22143,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 193
+                  delivery_method_name: UPS Ground 197
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22082,13 +22151,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3179755
-                    sku: SKU-403
+                    name: Product 3219755
+                    sku: SKU-407
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 193
+                    name: UPS Ground 197
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22116,7 +22185,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 376 Lovely Street
+                  address1: 384 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22136,7 +22205,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 375 Lovely Street
+                  address1: 383 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22248,7 +22317,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3206554
+                  name: Product 3246554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22257,7 +22326,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-406
+                  sku: SKU-410
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22270,7 +22339,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 196
+                  delivery_method_name: UPS Ground 200
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22278,13 +22347,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3206554
-                    sku: SKU-406
+                    name: Product 3246554
+                    sku: SKU-410
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 196
+                    name: UPS Ground 200
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22312,7 +22381,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 382 Lovely Street
+                  address1: 390 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22332,7 +22401,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 381 Lovely Street
+                  address1: 389 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22434,7 +22503,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3215038
+                  name: Product 3255038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22443,7 +22512,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-407
+                  sku: SKU-411
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22456,7 +22525,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 197
+                  delivery_method_name: UPS Ground 201
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22464,13 +22533,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3215038
-                    sku: SKU-407
+                    name: Product 3255038
+                    sku: SKU-411
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 197
+                    name: UPS Ground 201
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22518,7 +22587,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 383 Lovely Street
+                  address1: 391 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22627,7 +22696,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3233962
+                  name: Product 3273962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22636,7 +22705,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-409
+                  sku: SKU-413
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22649,7 +22718,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 199
+                  delivery_method_name: UPS Ground 203
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22657,13 +22726,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3233962
-                    sku: SKU-409
+                    name: Product 3273962
+                    sku: SKU-413
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 199
+                    name: UPS Ground 203
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22691,7 +22760,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 388 Lovely Street
+                  address1: 396 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22711,7 +22780,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 387 Lovely Street
+                  address1: 395 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22797,7 +22866,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3245749
+                  name: Product 3285749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22806,7 +22875,7 @@ paths:
                   additional_tax_total: '0.00'
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-410
+                  sku: SKU-414
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22819,7 +22888,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 200
+                  delivery_method_name: UPS Ground 204
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22827,13 +22896,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3245749
-                    sku: SKU-410
+                    name: Product 3285749
+                    sku: SKU-414
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 200
+                    name: UPS Ground 204
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22861,7 +22930,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 390 Lovely Street
+                  address1: 398 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22881,7 +22950,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 389 Lovely Street
+                  address1: 397 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -23803,7 +23872,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 3577120 can be returned
+                  message: Only 1 of Product 3617120 can be returned
       requestBody:
         content:
           application/json:
@@ -33600,10 +33669,6 @@ components:
           type: boolean
           description: Whether the buyer sees it on their order. Off unless set; the
             buyer's own uploads are always visible to them.
-        file_signed_id:
-          type: string
-          description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
-            PDF, image, office document or CSV.'
         metadata:
           type: object
           additionalProperties: true

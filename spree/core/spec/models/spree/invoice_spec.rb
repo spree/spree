@@ -72,6 +72,14 @@ RSpec.describe Spree::Invoice, type: :model do
       expect(build(:invoice, :credit_note, order: order, total: 5)).not_to be_valid
     end
 
+    it 'needs a credit note to carry net and tax totals of zero or less too' do
+      credit_note = build(:invoice, :credit_note, order: order, net_total: 16.26, tax_total: 3.74)
+
+      expect(credit_note).not_to be_valid
+      expect(credit_note.errors.details).to include(net_total: [hash_including(error: :less_than_or_equal_to)],
+                                                    tax_total: [hash_including(error: :less_than_or_equal_to)])
+    end
+
     it 'lets only a credit note or an invoice replacing a receipt point at an original' do
       original = create(:invoice, order: order)
       receipt = create(:invoice, :receipt, order: order)
@@ -111,6 +119,14 @@ RSpec.describe Spree::Invoice, type: :model do
       travel 1.day { invoice.mark_sent! }
 
       expect(invoice.reload.sent_at).to eq(first_sent_at)
+    end
+
+    it 'publishes invoice.sent once when another delivery marked it sent first' do
+      stale_copy = described_class.find(invoice.id)
+      invoice.mark_sent!
+
+      expect(stale_copy).not_to receive(:publish_event)
+      stale_copy.mark_sent!
     end
 
     it "still names a seller who has since left the marketplace" do
@@ -160,7 +176,9 @@ RSpec.describe Spree::Invoice, type: :model do
     it 'refuses deleting a generated invoice' do
       invoice = create(:invoice, order: order, source: 'generated')
 
-      expect(invoice.can_be_deleted?).to be(false)
+      expect(invoice.destroy).to be(false)
+      expect(invoice.errors.details[:base]).to include(error: :invoice_cannot_be_deleted)
+      expect(described_class.exists?(invoice.id)).to be(true)
     end
 
     it 'keeps an order holding an invoice from being destroyed' do
@@ -180,6 +198,24 @@ RSpec.describe Spree::Invoice, type: :model do
       payout = create(:seller_payout, seller: seller, store: store)
 
       expect(build(:invoice, :commission, seller_payout: payout).recipient_email).to eq('billing@seller.test')
+    end
+
+    it 'still reaches a seller who has since left the marketplace' do
+      seller = create(:seller, store: store, billing_email: 'billing@seller.test')
+      invoice = create(:invoice, :commission, seller_payout: create(:seller_payout, seller: seller, store: store))
+      seller.destroy
+
+      expect(described_class.find(invoice.id).recipient_email).to eq('billing@seller.test')
+    end
+  end
+
+  describe '#can_be_resent?' do
+    it 'is false for a commission invoice whose seller has no email to send it to' do
+      seller = create(:seller, store: store)
+      seller.update_columns(billing_email: nil, contact_email: nil)
+      invoice = build(:invoice, :commission, seller_payout: create(:seller_payout, seller: seller, store: store))
+
+      expect(invoice.can_be_resent?).to be(false)
     end
   end
 

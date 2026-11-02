@@ -6,23 +6,23 @@ const client = createAdminClient({
 })
 
 // region:example
-// The file is served through the API, so fetch it with the API key,
-// then drive the browser download from a Blob.
-const { data: documents } = await client.orders.documents.list('or_UkLWZg9DAJ')
-const document_ = documents[0]
+// The file is served through the API with the secret key, which must never
+// reach a browser. Pass it on from a route on your own server instead.
+export async function GET(): Promise<Response> {
+  const { data: documents } = await client.orders.documents.list('or_UkLWZg9DAJ')
+  const document_ = documents[0]
+  if (!document_?.download_url) return new Response(null, { status: 404 })
 
-if (document_?.download_url) {
-  const response = await fetch(`https://your-store.com${document_.download_url}`, {
+  const file = await fetch(`https://your-store.com${document_.download_url}`, {
     headers: { 'X-Spree-API-Key': 'sk_xxx' },
   })
-  if (!response.ok) throw new Error(`Download failed: ${response.status}`)
+  if (!file.ok) return new Response(null, { status: file.status })
 
-  const url = URL.createObjectURL(await response.blob())
-  const link = Object.assign(document.createElement('a'), {
-    href: url,
-    download: document_.file_filename ?? document_.label,
+  return new Response(file.body, {
+    headers: {
+      'Content-Type': file.headers.get('Content-Type') ?? 'application/octet-stream',
+      'Content-Disposition': `attachment; filename="${document_.file_filename ?? document_.label}"`,
+    },
   })
-  link.click()
-  URL.revokeObjectURL(url)
 }
 // endregion:example

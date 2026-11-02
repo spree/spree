@@ -46,11 +46,13 @@ export function useOrderDocuments(orderId: string) {
   })
 }
 
-// Uploading an invoice can fulfil the buyer's request, so both lists refresh.
+// Uploading an invoice can fulfil the buyer's request, so both lists refresh,
+// with the panel's invoices list and the admin's count of orders missing one.
 const invoiceKeys = (orderId: string) => [
   ['order-invoices', orderId],
   ['order-invoice-requests', orderId],
   ['invoices'],
+  ['orders', 'missing-invoices'],
 ]
 
 export function useCreateOrderInvoice(orderId: string) {
