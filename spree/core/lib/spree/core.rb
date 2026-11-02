@@ -414,7 +414,8 @@ module Spree
   def self.refresh_provider_registries!
     [Rails.application.config.spree.delivery_rate_providers,
      Rails.application.config.spree.fulfillment_providers,
-     Rails.application.config.spree.pickup_point_providers].compact.each do |registry|
+     Rails.application.config.spree.pickup_point_providers,
+     Rails.application.config.spree.cart_copiers].compact.each do |registry|
       registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
     end
   end
