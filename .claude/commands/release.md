@@ -1,5 +1,5 @@
 ---
-description: Cut a Spree release end to end — audit, version bump, release notes, pull request, tags and the GitHub release.
+description: Prepare a Spree release — audit, version bump, release notes, pull request, and the tag and release commands for a human to run.
 ---
 
 Cut the Spree release named in the arguments: `6.0.2`, `6.1.0` or a
@@ -10,9 +10,11 @@ Version: $ARGUMENTS
 
 Releases are published by `.github/workflows/release.yml` from tags pushed on a
 commit already on `main`; `.changeset/README.md` has the mechanics. This command
-wraps them with the review a release needs. Run the phases in order. Phase 5
-needs the pull request merged, so the command usually stops after phase 4 and
-is run again to publish.
+wraps them with the review a release needs. Run the phases in order. Pushing
+the tags and creating the GitHub release are done by a human, never by this
+command: phase 5 only prints the commands and the notes. It needs the pull
+request merged, so the command usually stops after phase 4 and is run again
+for the hand-over.
 
 Work on a branch named `chore/release-<version>` with the workspace installed
 (`node_modules` present), never on `main`.
@@ -171,38 +173,37 @@ phase 5 reads them back from it. Only collaborators can edit a pull request
 description, so never post the notes as a comment, which anyone can write.
 Stop when `/open-pr` reports: the merge needs a human review.
 
-## 5. Publish (after the merge)
+## 5. Hand over (after the merge)
 
 Run from a checkout of `main` at the merge commit (`git pull`). Check
-`Spree::VERSION` is the target and the tag does not exist yet.
+`Spree::VERSION` is the target and no `v<version>` tag exists yet. Do not run
+any of the commands below; print them for the user, who tags and publishes.
 
-1. Tag the merge commit and push, three tags at most in one push (GitHub starts
-   no workflow beyond that):
+1. The tag commands, for the merge commit, with a tag for each tool that moved
+   and three tags at most in one push (GitHub starts no workflow beyond that):
 
    ```bash
-   git tag v<version> && git tag '@spree/cli@<version>'   # only tools that moved
+   git tag v<version> <merge sha>
+   git tag '@spree/cli@<version>' <merge sha>     # only tools that moved
    git push origin v<version> '@spree/cli@<version>'
    ```
 
-2. Watch the release workflow: `gh run list --workflow release.yml --limit 3`,
-   then `gh run watch <id>`. Every job skips versions already on its registry,
-   so a failed run is re-run with `gh run rerun <id> --failed`, never with a
-   new tag.
+   Say that the push starts `release.yml`, that every job skips versions
+   already on its registry, and that a failed run is re-run with
+   `gh run rerun <id> --failed`, never with a new tag.
 
-3. Create the GitHub release from the notes once the gems and packages are on
-   their registries. Take the notes from the pull request description, from
-   the `# Spree <version>` heading to the end:
+2. The release notes. Take them from the pull request description, from the
+   `# Spree <version>` heading to the end; `<n>` is the number in the merge
+   commit subject:
 
    ```bash
    gh pr view <n> --repo spree/spree --json body --jq .body | tr -d '\r' | sed -n '/^# Spree <version>$/,$p' > tmp/release-notes-<version>.md
    ```
 
    The `tr` matters: a description edited on github.com comes back with CRLF
-   line endings, and the heading match would otherwise find nothing.
-
-   Show the file to the user and wait for their go-ahead before publishing:
-   the body reaches every admin's notifications panel, so a wrong or tampered
-   body is a security problem, not a typo.
+   line endings, and the heading match would otherwise find nothing. Show the
+   file's content in full as a markdown block, so it can be pasted into the
+   GitHub release form, and give the command for the same result:
 
    ```bash
    gh release create v<version> --title v<version> --notes-file tmp/release-notes-<version>.md --latest
@@ -210,9 +211,10 @@ Run from a checkout of `main` at the merge commit (`git pull`). Check
 
    `--latest` only when this is the newest stable release; a patch for an older
    minor takes `--latest=false`. A prerelease takes `--prerelease` and not
-   `--latest`.
+   `--latest`. The body reaches every admin's notifications panel, so the user
+   reads it before publishing.
 
-4. Confirm the exact version, not the latest one (a prerelease publishes under
+3. How to confirm afterwards, by exact version (a prerelease publishes under
    npm's `beta` tag and RubyGems hides prereleases by default):
    `gem info spree_core --remote --prerelease -v <version>`,
    `npm view @spree/sdk@<npm version> version`, and the dashboard's
@@ -220,6 +222,7 @@ Run from a checkout of `main` at the merge commit (`git pull`). Check
 
 ## Final report
 
-The pull request or release URL, the audit items the user accepted or
-deferred, the tool versions released or kept, and the follow-ups the audit
-produced (regenerated docs, a changeset a commit forgot, an upgrade note).
+The pull request URL, the audit items the user accepted or deferred, the tool
+versions bumped or kept, the follow-ups the audit produced (regenerated docs, a
+changeset a commit forgot, an upgrade note) and, after the merge, the tag and
+release commands with the notes.
