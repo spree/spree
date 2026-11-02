@@ -8,7 +8,7 @@ const client = createAdminClient({
 // region:example
 // The PDF is served through the API, so fetch it with the API key,
 // then drive the browser download from a Blob.
-const invoice = await client.invoices.get('inv_UkLWZg9DAJ')
+const invoice = await client.invoices.get('invc_UkLWZg9DAJ')
 
 if (invoice.download_url) {
   const response = await fetch(`https://your-store.com${invoice.download_url}`, {
