@@ -862,7 +862,7 @@ A merchant, or an extension, can raise a **draft order** for a customer instead 
 
 <Steps>
   <Step title="Request payment">
-    While the merchant prepares the draft, the storefront cannot see it. `PATCH /api/v3/admin/orders/:id/request_payment` (or the `orders_request_payment` [MCP tool](/developer/mcp/tools)) opens it to the customer and publishes `order.payment_requested`. Spree sends no email for it: subscribe to that event to send the customer a link to pay. Requesting again re-stamps the request and publishes the event again.
+    While the merchant prepares the draft, the storefront cannot see it. `PATCH /api/v3/admin/orders/:id/request_payment` (or the `orders_request_payment` [MCP tool](/developer/mcp/tools)) opens it to the customer and publishes `order.payment_requested`. Spree sends no email for it: subscribe to that event to send the customer a link to pay. Requesting again re-stamps the request and publishes the event again. `PATCH /api/v3/admin/orders/:id/withdraw_payment_request` takes it back: the draft leaves the storefront again and the payment sessions the customer opened for it are cancelled.
   </Step>
   <Step title="Read the draft">
     `GET /orders/:id` returns the draft to its customer (by JWT) or to whoever holds its order token (`X-Spree-Token`), the way it returns a placed order. A draft has no `completed_at` and lists the `payment_methods` it can be paid with. A draft without a payment request, or from another store or another customer, is not found.

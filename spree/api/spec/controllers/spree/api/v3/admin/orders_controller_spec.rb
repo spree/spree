@@ -1309,6 +1309,28 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     end
   end
 
+  describe 'PATCH #withdraw_payment_request' do
+    let!(:draft) { create(:order_with_line_items, store: store, payment_requested_at: 1.hour.ago) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'takes the draft back from its buyer' do
+      patch :withdraw_payment_request, params: { id: draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['payment_requested_at']).to be_nil
+      expect(draft.reload).not_to be_payable_draft
+    end
+
+    it 'refuses a placed order' do
+      placed = create(:completed_order_with_totals, store: store)
+
+      patch :withdraw_payment_request, params: { id: placed.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
   describe 'POST #resend_confirmation' do
     let!(:order) { create(:completed_order_with_totals, store: store) }
 

@@ -64,6 +64,7 @@ module Spree
         order_cancel_workflow: { permission: 'write_orders', except: %i[restock_items] },
         order_complete_workflow: { permission: 'write_orders', except: %i[validated] },
         order_request_payment_workflow: 'write_orders',
+        order_withdraw_payment_request_workflow: 'write_orders',
 
         # Fulfillment
         fulfillment_create_workflow: 'write_fulfillments',

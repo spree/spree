@@ -86,7 +86,7 @@ module Spree
           end
 
           skip_before_action :set_resource, only: [:index, :create]
-          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :request_payment, :resend_confirmation, :resend_digital_links, :po_document]
+          before_action :set_resource, only: [:show, :update, :destroy, :complete, :cancel, :approve, :request_payment, :withdraw_payment_request, :resend_confirmation, :resend_digital_links, :po_document]
           before_action :require_refund_permission!, only: :cancel, if: -> { params[:refund_payments].to_b }
 
           # POST /api/v3/admin/orders
@@ -173,6 +173,22 @@ module Spree
           def request_payment
             with_order_lock do
               result = Spree.order_request_payment_workflow.call(order: @resource)
+
+              if result.success?
+                render json: serialize_resource(result.value)
+              else
+                render_service_error(@resource.errors.presence || result.error)
+              end
+            end
+          end
+
+          # PATCH /api/v3/admin/orders/:id/withdraw_payment_request
+          #
+          # Takes the draft back out of the storefront and cancels the payment
+          # sessions the buyer opened for it.
+          def withdraw_payment_request
+            with_order_lock do
+              result = Spree.order_withdraw_payment_request_workflow.call(order: @resource)
 
               if result.success?
                 render json: serialize_resource(result.value)
@@ -294,7 +310,7 @@ module Spree
           # Map state transition actions to :update permission
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
             mapped_action = case action
-                            when :complete, :cancel, :approve, :request_payment, :resend_confirmation, :resend_digital_links
+                            when :complete, :cancel, :approve, :request_payment, :withdraw_payment_request, :resend_confirmation, :resend_digital_links
                               :update
                             when :po_document
                               :show
