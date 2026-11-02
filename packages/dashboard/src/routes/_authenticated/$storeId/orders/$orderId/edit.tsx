@@ -1,14 +1,4 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { type Order, SpreeError, type Variant } from '@spree/admin-sdk'
-import { compareMoney, isZeroMoney } from '@spree/core'
-import {
-  adminClient,
-  GONE_STATUSES,
-  isPositiveMoney,
-  Money,
-  mapSpreeErrorsToForm,
-  PageHeader,
-} from '@spree/dashboard-core'
+import { GONE_STATUSES, PageHeader } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -17,149 +7,25 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  cn,
   ErrorState,
   FormActions,
   ResourceLayout,
-  Separator,
-  toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { InfoIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { type ReactNode, useEffect, useState } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AddLineItemDialog } from '../../../../../components/spree/orders/line-item-dialogs'
 import { OrderEditItemsTable } from '../../../../../components/spree/orders/order-edit-items-table'
-import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
-import {
-  buildOrderItemsPayload,
-  type OrderEditFormValues,
-  type OrderEditItemValues,
-  type OrderItemsPayload,
-  orderEditFormSchema,
-  orderToEditForm,
-  projectedSubtotal,
-} from '../../../../../schemas/order'
+import { OrderTotalsCard } from '../../../../../components/spree/orders/order-totals-card'
+import { useOrder } from '../../../../../hooks/use-order'
+import { useOrderItemsEditor } from '../../../../../hooks/use-order-items-editor'
+import type { OrderEditFormValues } from '../../../../../schemas/order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId/edit')({
   component: OrderEditPage,
 })
-
-function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bold?: boolean }) {
-  return (
-    <div className="flex items-center justify-between px-5 py-2.5">
-      <span className="text-sm">{label}</span>
-      <span className={cn('text-sm', bold && 'font-bold')}>{value}</span>
-    </div>
-  )
-}
-
-/**
- * The order's totals, previewing staged edits. The subtotal is exact
- * (price × quantity); the grand total is only projected when every other line
- * is zero, since shipping, tax and promotions are recomputed server-side.
- */
-function OrderTotalsCard({ order, items }: { order: Order; items: OrderEditItemValues[] }) {
-  const { t } = useTranslation()
-
-  const projected = projectedSubtotal(items)
-  const subtotalChanged = projected !== null && compareMoney(projected, order.item_total) !== 0
-
-  // Derived from the order's own totals, so charges not itemised here count.
-  const totalProjectable = subtotalChanged && compareMoney(order.total, order.item_total) === 0
-
-  return (
-    <Card className="gap-0 py-0">
-      <CardHeader>
-        <CardTitle>{t('admin.orders.edit.totals_title')}</CardTitle>
-      </CardHeader>
-
-      <div className="py-2">
-        <TotalRow
-          label={t('admin.fields.subtotal.label')}
-          value={
-            subtotalChanged ? (
-              <span className="flex items-center justify-end gap-2">
-                <span className="text-muted-foreground line-through">
-                  <Money amount={order.item_total} currency={order.currency} />
-                </span>
-                <span className="font-medium">
-                  <Money amount={projected} currency={order.currency} />
-                </span>
-              </span>
-            ) : (
-              <Money amount={order.item_total} currency={order.currency} />
-            )
-          }
-        />
-
-        {isPositiveMoney(order.delivery_total) && (
-          <TotalRow
-            label={t('admin.fields.shipping.label')}
-            value={<Money amount={order.delivery_total} currency={order.currency} />}
-          />
-        )}
-
-        {!isZeroMoney(order.discount_total) && (
-          <TotalRow
-            label={t('admin.orders.detail.summary.promotions')}
-            value={<Money amount={order.discount_total} currency={order.currency} />}
-          />
-        )}
-
-        {isPositiveMoney(order.included_tax_total) && (
-          <TotalRow
-            label={t('admin.orders.detail.summary.tax_included')}
-            value={<Money amount={order.included_tax_total} currency={order.currency} />}
-          />
-        )}
-
-        {(isPositiveMoney(order.additional_tax_total) ||
-          (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
-          <TotalRow
-            label={t('admin.orders.detail.summary.tax_additional')}
-            value={<Money amount={order.additional_tax_total} currency={order.currency} />}
-          />
-        )}
-
-        <Separator />
-
-        <TotalRow
-          label={t('admin.fields.total.label')}
-          value={
-            totalProjectable ? (
-              <span className="flex items-center justify-end gap-2">
-                <span className="font-normal text-muted-foreground line-through">
-                  <Money amount={order.total} currency={order.currency} />
-                </span>
-                <span>
-                  <Money amount={projected} currency={order.currency} />
-                </span>
-              </span>
-            ) : (
-              <Money amount={order.total} currency={order.currency} />
-            )
-          }
-          bold
-        />
-      </div>
-
-      <Separator />
-
-      <CardContent className="px-5 py-4">
-        <p className="text-xs text-muted-foreground">
-          {!subtotalChanged
-            ? t('admin.orders.edit.totals_hint')
-            : totalProjectable
-              ? t('admin.orders.edit.totals_preview_confirm_hint')
-              : t('admin.orders.edit.totals_preview_hint')}
-        </p>
-      </CardContent>
-    </Card>
-  )
-}
 
 /**
  * Post-placement line-item management. Quantity changes, removals and picker
@@ -172,118 +38,20 @@ function OrderEditPage() {
   const navigate = useNavigate()
   const { data: order, isLoading, error, refetch } = useOrder(orderId)
   const [addingItem, setAddingItem] = useState(false)
-
-  const form = useForm<OrderEditFormValues>({
-    resolver: zodResolver(orderEditFormSchema),
-    defaultValues: { items: [] },
-  })
-
-  const { fields, append } = useFieldArray({ control: form.control, name: 'items' })
-  // Watched, not read once: the totals card previews staged edits, so it has
-  // to re-render on every keystroke in the items table.
-  const watchedItems = form.watch('items')
-
-  // Hydrate (and re-baseline after save) from the server rows, unless the
-  // merchant has staged edits in flight.
-  useEffect(() => {
-    if (!order || form.formState.isDirty) return
-    form.reset(orderToEditForm(order.items ?? [], order.fulfillments ?? []))
-  }, [order, form])
-
-  const saveMutation = useOrderMutation(orderId, (items: OrderItemsPayload) =>
-    adminClient.orders.update(orderId, { items }),
-  )
+  const editor = useOrderItemsEditor(order)
+  const { form } = editor
 
   async function onSubmit(values: OrderEditFormValues) {
-    // Rows the merchant staged and then unstaged net out to nothing, so the
-    // payload can legitimately be empty even on a dirty form.
-    const payload = buildOrderItemsPayload(values.items)
-
-    try {
-      if (payload.length > 0) await saveMutation.mutateAsync(payload)
-      // Drop the rows that are gone and re-baseline the rest, so the form is
-      // pristine before the refetch lands — leaving it dirty would trip the
-      // unsaved-changes guard on the way out.
-      form.reset({
-        items: values.items
-          .filter((item) => !item.removed)
-          .map((item) => {
-            // A revert re-prices server-side; carry the catalog estimate until
-            // the refetch corrects it.
-            const reverted = item.revert_price
-            const price = reverted ? (item.catalog_price ?? item.price) : item.price
-
-            return {
-              ...item,
-              added: false,
-              saved_quantity: item.quantity,
-              price,
-              saved_price: price,
-              price_source: reverted
-                ? null
-                : item.price !== item.saved_price
-                  ? 'manual'
-                  : item.price_source,
-              revert_price: false,
-            }
-          }),
-      })
-      // Editing is a detour from the order, not a place to stay: hand the
-      // merchant back the view that shows what the edit did.
+    // Editing is a detour from the order, not a place to stay: hand the
+    // merchant back the view that shows what the edit did.
+    if (await editor.save(values)) {
       navigate({ to: '/$storeId/orders/$orderId', params: { storeId, orderId } })
-    } catch (err) {
-      if (mapSpreeErrorsToForm(err, form.setError)) return
-      if (err instanceof SpreeError) throw err
-      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
     }
   }
 
-  useFormSubmitShortcut(form, onSubmit)
-
-  /**
-   * Stages a picked variant. Picking one the order already carries (or one that
-   * is sitting removed) bumps the existing row rather than adding a duplicate —
-   * the endpoint is keyed by variant, so two rows for one variant could not both
-   * survive a save.
-   */
-  function stageVariant(variant: Variant, quantity: number) {
-    const items = form.getValues('items')
-    const existingIndex = items.findIndex((item) => item.variant_id === variant.id)
-
-    if (existingIndex >= 0) {
-      const existing = items[existingIndex]
-      form.setValue(
-        `items.${existingIndex}`,
-        {
-          ...existing,
-          removed: false,
-          quantity: existing.removed ? quantity : existing.quantity + quantity,
-        },
-        { shouldDirty: true, shouldValidate: true },
-      )
-      return
-    }
-
-    append({
-      variant_id: variant.id,
-      quantity,
-      removed: false,
-      added: true,
-      saved_quantity: 0,
-      fulfilled_quantity: 0,
-      // Seeded as both current and saved value, so an untouched price is
-      // omitted from the payload and the server prices the line itself.
-      price: variant.price?.amount ?? '0',
-      saved_price: variant.price?.amount ?? '0',
-      price_source: null,
-      catalog_price: variant.price?.amount ?? null,
-      revert_price: false,
-      name: variant.product_name,
-      options_text: variant.options_text ?? '',
-      thumbnail_url: variant.thumbnail_url,
-      total: null,
-    })
-  }
+  // Not while the picker is open: a variant picked during the save would be
+  // ignored, and the dialog closes on pick with no word of it.
+  useFormSubmitShortcut(form, (values) => (addingItem ? undefined : onSubmit(values)))
 
   if (!order && isLoading) return null
 
@@ -336,16 +104,16 @@ function OrderEditPage() {
               backTo={`orders/${orderId}`}
               actions={
                 <>
-                  <Button type="button" variant="outline" onClick={() => setAddingItem(true)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={editor.isSaving}
+                    onClick={() => setAddingItem(true)}
+                  >
                     <PlusIcon className="size-4" />
                     {t('admin.orders.edit.actions.add_product')}
                   </Button>
-                  <FormActions
-                    form={form}
-                    onDiscard={() =>
-                      form.reset(orderToEditForm(order.items ?? [], order.fulfillments ?? []))
-                    }
-                  />
+                  <FormActions form={form} onDiscard={editor.discard} />
                 </>
               }
             />
@@ -360,14 +128,15 @@ function OrderEditPage() {
                     order's money edits stay fees and discounts. */}
                 <OrderEditItemsTable
                   form={form}
-                  fields={fields}
+                  fields={editor.fields}
                   pricesEditable={order.status === 'draft'}
+                  disabled={editor.isSaving}
                   currency={order.currency}
                 />
               </CardContent>
             </Card>
           }
-          sidebar={<OrderTotalsCard order={order} items={watchedItems} />}
+          sidebar={<OrderTotalsCard order={editor.savedOrder ?? order} items={editor.items} />}
         />
       </form>
 
@@ -376,7 +145,7 @@ function OrderEditPage() {
           orderId={orderId}
           open={addingItem}
           onOpenChange={setAddingItem}
-          onSelect={stageVariant}
+          onSelect={editor.stageVariant}
         />
       )}
     </>

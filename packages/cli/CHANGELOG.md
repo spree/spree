@@ -1,5 +1,13 @@
 # @spree/cli
 
+## 3.6.2
+
+### Patch Changes
+
+- [#15063](https://github.com/spree/spree/pull/15063) [`f114556`](https://github.com/spree/spree/commit/f114556b7bfa7d3b649c035aaea8dadd855d2010) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The `spree` command now starts from `bin/spree.js`, which loads the built `dist/index.js`. Running `spree` works the same as before.
+
+- [#15022](https://github.com/spree/spree/pull/15022) [`8890e33`](https://github.com/spree/spree/commit/8890e33bae96e6edc9e66d92b90feb012561a740) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Removed the CLI's leftover Changesets dev dependencies and scripts; releases run from the repository root. Nothing changes for users of the `spree` command.
+
 ## 3.6.1
 
 ### Patch Changes

@@ -3332,6 +3332,7 @@
         "empty": "This order has no items.",
         "fully_fulfilled": "This order is fully fulfilled and can no longer be edited.",
         "items_title": "Items",
+        "saved_not_reloaded": "Saved, but the order couldn't be reloaded. Refresh the page to see the latest totals.",
         "subtitle": "Order {{number}}",
         "title": "Edit order",
         "totals_hint": "Totals are recalculated by the server after you save.",

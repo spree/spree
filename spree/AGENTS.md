@@ -84,6 +84,16 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 
 `record.publish_event('order.completed')`; subscribers in `app/subscribers/spree/` subclass `Spree::Subscriber`. Payloads use Store serializers only — never a hand-built hash or an Admin serializer; extras go in `metadata` (`docs/plans/6.0-typed-webhook-events.md`).
 
+## MCP and agent tools
+
+**Every new back-office workflow or feature also ships in the MCP server** — anything a merchant can do in the admin dashboard or Admin API, an agent can do too. Tools live in `spree_core` (`Spree.admin_agent_tools`, `app/tools/spree/agent_tools/`), not in `spree_mcp`, so the dashboard assistant gets them as well (`docs/plans/6.0-mcp-server.md`).
+
+- A new workflow goes into `Spree::AgentTools::DefaultCatalog::WORKFLOWS`, with the same write scope as the admin controller that runs it. Hide parameters an agent must not set with `except:`.
+- Plain CRUD on a new resource goes through the generic `search_resources` / `get_resource` / `create_resource` / `update_resource` / `delete_resource` tools. These reach a resource only through its Admin API controller (`Spree::AgentTools::ResourceMap`), so a back-office resource needs one.
+- Anything that is neither a workflow nor CRUD (reports, imports, files) gets its own `Spree::AgentTool` subclass, registered in `DefaultCatalog::TOOLS`.
+- Leaving something out takes a stated reason in `EXCLUDED_WORKFLOWS`. Irreversible, platform-wide or wizard-only steps qualify; "not done yet" doesn't. `spree/api/spec/lib/spree/api/agent_tools_contract_spec.rb` fails on a workflow in neither list, but it only scans controllers under `app/controllers/spree/api/v3/admin` — a workflow run from a controller concern (returns, claims, exchanges…) needs the same decision by hand.
+- Tool descriptions are how an agent learns the feature: say what it does and when to use it. Update `docs/developer/mcp/tools.mdx` with the new tool.
+
 ## Invoices and receipts
 
 See `docs/plans/6.1-invoices-and-receipts.md`.

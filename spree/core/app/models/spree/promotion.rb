@@ -51,7 +51,8 @@ module Spree
     before_validation :set_starts_at_to_current_time, if: -> { starts_at.blank? }
     after_commit :generate_coupon_codes, if: -> { multi_codes? }, on: [:create, :update]
     after_commit :remove_coupons, on: :update
-    before_destroy :not_used?
+    before_destroy :detach_from_open_carts, prepend: true
+    before_destroy :not_used?, prepend: true
 
     #
     # Validations
@@ -374,6 +375,14 @@ module Spree
     def apply_pending_rules_and_actions
       flush_pending_typed_association(:promotion_rules)
       flush_pending_typed_association(:promotion_actions)
+    end
+
+    # Runs before the promotion's actions are destroyed, since the carts'
+    # discounts are tied back to the promotion through them.
+    def detach_from_open_carts
+      Spree::Cart.where(id: order_promotions.where.not(cart_id: nil).select(:cart_id)).find_each do |cart|
+        Spree::Promotions::DetachFromOwner.call(owner: cart, promotion: self, clear_coupon_code: true)
+      end
     end
 
     def not_used?

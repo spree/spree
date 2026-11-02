@@ -59,8 +59,10 @@ module Spree
 
         # Orders. `restock_items` is hidden: it is deprecated and ignored, so
         # offering it would invite a model to set something that does nothing.
+        # `validated` is for callers that already ran their own veto; offered
+        # to a model it would be a way around orders.complete.validate.
         order_cancel_workflow: { permission: 'write_orders', except: %i[restock_items] },
-        order_complete_workflow: 'write_orders',
+        order_complete_workflow: { permission: 'write_orders', except: %i[validated] },
 
         # Fulfillment
         fulfillment_create_workflow: 'write_fulfillments',
@@ -140,6 +142,10 @@ module Spree
         email_template_discard_draft_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
         email_template_revert_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
         email_template_restore_revision_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
+        invoice_create_workflow:
+          'Records a legal document that can never be edited: a wrong invoice stays on the order ' \
+          'until a credit note corrects it. The PDF must also be a private upload, which ' \
+          'upload_file does not make. Agents can search, read and export invoices.',
         customer_anonymize_workflow:
           'Irreversible erasure of a person\'s data under GDPR Art. 17. A deletion no one can undo ' \
           'is not something to offer a model behind one confirmation prompt.',

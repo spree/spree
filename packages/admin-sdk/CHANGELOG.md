@@ -1,5 +1,13 @@
 # @spree/admin-sdk
 
+## 6.0.2
+
+### Patch Changes
+
+- [#15057](https://github.com/spree/spree/pull/15057) [`ab0dec3`](https://github.com/spree/spree/commit/ab0dec332d93bf69deaa2ff794f5cfd7c2c75e79) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API payments now return `can_void` and `can_capture`, which the payment method decides. The order page uses them to hide Void on captured payments that the gateway cannot void, such as Stripe. The dashboard no longer checks the payment status itself, so it needs a server that returns them.
+
+- [#15040](https://github.com/spree/spree/pull/15040) [`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The staff settings page shows each member's status (active, locked or deactivated) and when they were last active. A new "View details" action opens a sheet with when they joined, who invited them and their signed-in sessions, each with its browser, IP address and last use. The admin SDK types gain `status`, `last_active_at`, the `inviter` and `sessions` expands, and the `Session` and `AdminUserStatus` types; `@spree/dashboard-ui` adds `BrowserIcon`.
+
 ## 6.0.1
 
 ### Patch Changes

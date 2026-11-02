@@ -3332,6 +3332,7 @@
         "empty": "Cette commande ne contient aucun article.",
         "fully_fulfilled": "Cette commande est entièrement traitée et ne peut plus être modifiée.",
         "items_title": "Articles",
+        "saved_not_reloaded": "Enregistré, mais la commande n'a pas pu être rechargée. Actualisez la page pour voir les derniers totaux.",
         "subtitle": "Commande {{number}}",
         "title": "Modifier la commande",
         "totals_hint": "Les totaux sont recalculés par le serveur après l'enregistrement.",

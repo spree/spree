@@ -27,6 +27,11 @@ pnpm workspace + Turbo, Biome for lint and format (`pnpm lint`, `pnpm lint:fix`,
 - Shell components shared with the seller panel must not require providers the seller panel doesn't mount (it has no `StoreProvider`).
 - The order page's Documents card shows invoices (`Spree::Invoice`, never editable) above other order documents in one card, shared by both panels through `dashboard-core` (`docs/plans/6.1-invoices-and-receipts.md`, Decision 7).
 
+## Bundle size (`docs/plans/6.1-dashboard-code-splitting.md`)
+
+- Register at import time only from a module the packages' `sideEffects` lists name: the shells' bootstrap modules (admin `i18n-setup`, `api-client-setup`, `nav/*`, `search/*`; seller `i18n`, `nav/*`), a `tables/*` module, or a `register.ts(x)` module beside the editors it registers. Once the packages declare `sideEffects`, import-time registration anywhere else is dropped by the build.
+- Import TipTap, CodeMirror and Recharts only inside their `@spree/dashboard-ui` component (`RichTextEditor`, `CodeEditor`, the chart components), never from a page or plugin.
+
 ## Releases
 
 Changesets live in the root `.changeset/` (`pnpm changeset`). The API-facing packages version together with the Spree gem version; release with `pnpm version:packages`, never plain `changeset version`.

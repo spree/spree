@@ -8,6 +8,26 @@
 
 **Plans amended:** `6.1-b2b-order-documents.md` (superseded in part: summary note, dashboard card, constraint), `6.0-6.1-b2b-payment-terms.md` (constraint clarified).
 
+## 2026-10-06: Custom fields stay a merchant-facing feature, not a data modelling system
+
+**Context:** Custom fields were heading toward a general-purpose schema (record references, files, value lists, reusable content types) while basic gaps went unfixed: admin-only fields leaked through storefront search, a definition's type can change under existing values, shoppers cannot fill a field in at checkout, and core itself stores integration data in auto-created definitions. Revised 2026-11-02 after a review against the code and the plans written since, with 6.0.0 already released.
+
+**Decision:** Custom fields serve merchants who cannot change code: typed, labelled values on a record, shown on or captured from the storefront. Developers and extensions — core included — store their data in real columns, tables or `metadata`, never in custom fields; core's `gateway.processing_errors` and `external.url` move out in 6.1. No custom field type will be added for references, files, measurement units, money, general lists or reusable content types, and no custom-field facets are added; `cf_` filtering and sorting stay. A `choice` type is added for every resource (customers, orders and companies have no option types), but shopper-facing product value lists stay option types. Admin-only values stay off every storefront surface (done 2026-10-22), and emails carry storefront-visible fields only. A definition's `field_type` and `resource_type` are fixed once created: a 6.0.x patch ignores a change with a deprecation warning, 6.1 rejects it with 422. In 6.1: new definitions default to hidden from the storefront; order and customer fields can be `storefront_writable` — order fields held on the cart, copied to the order and to every seller split order, and shown read-only to sellers; customer fields written at registration and from the account; `date`, `date_time` and `choice` types; a `validations` JSON column (required, min/max, choices; no regular expressions) enforced in `Spree::CustomField` on new writes; values in emails and order/customer webhooks; label and text-value translations through the resource translations batch endpoint. `required` is enforced where a shopper writes — a checkout requirement for orders, a 422 at customer registration and account update — and stays advisory elsewhere (2026-08-06). Line-item and company shopper writes are deferred.
+
+**Consequences:** Every shopper-facing read filters `storefront_visible: true`. API writes resolve existing definitions and never auto-create them. Required checkout input is a checkout requirement, never only a completion hook. No update path (API, import, configurator) may change a definition's type. See `6.0-6.1-custom-fields-roadmap.md`.
+
+**Plans amended:** `5.4-metafield-translations.md` (6.1, superseded on mechanism), `5.5-6.0-resource-translations-api.md` (custom-field phase moves to 6.1), `5.4-search-provider.md` (faceting dropped, filterable-attribute constraint superseded), `6.0-extendable-validations.md` (validation designed here; checkout requirement, not hook), `6.0-seller-order-management.md` (sellers see shopper-writable order fields), `6.0-payment-gateways-monorepo.md` (Adyen references in metadata), `6.0-admin-spa.md` (6.1 kinds), `6.0-cli-configurator.md` (section order, no type updates). Amends decisions.md "`storefront_visible` boolean (default: true)" for custom field definitions only.
+
+## 2026-10-27: PayPal becomes a provider gem in a 6.0 patch release
+
+**Context:** `spree_paypal_checkout` 0.7.1 does not run on 6.0, so merchants taking PayPal on 5.x cannot upgrade. Its payment-session code predates the cart/order split, `settle_payment!` and money amounts, and several of its behaviours are wrong under 6.0: it stores the capture id as the payment's reference, maps the buyer's approval to an authorization, which in 6.0 would place an order with no money taken, and logs buyer details.
+
+**Decision:** Port the payment-session half to `spree/providers/paypal`, keeping the gem name and every stored class name, with no core behaviour changes (core gains only two upgrade-manifest entries), and ship it in the next 6.0 patch release. The first release covers PayPal's own buttons (PayPal, Pay Later, Venmo, guest card in PayPal's window), which the storefront renders from a list of allowed buttons so alternative payment methods never appear (amended 2026-10-28), and honors the store's capture setting through PayPal's `AUTHORIZE` intent. A payment's `response_code` is always the PayPal order id; an optional upgrade step rewrites payments taken before the upgrade to that shape. Webhooks register themselves, are always verified, and only report money that has moved: as soon as the buyer approves, the storefront calls the server, which takes the money, as in PayPal's own button guide, so the buyer's approval is not acted on by webhook (amended 2026-10-28). Like Stripe's gem, it has no circuit breaker.
+
+**Consequences:** A PayPal authorization can only be captured for 29 days (honored for 3), and this release does not reauthorize, the same as Stripe, whose card holds cannot be renewed. A later capture that PayPal leaves pending is reported as not taken, so dispatch waits until PayPal releases it (amended 2026-10-28). `spree_paypal_checkout_orders` must not be dropped before the payment upgrade step runs. A buyer who closes the tab right after approving gets no order and is not charged; a core `:approved` webhook outcome is the planned fix once payment methods that send the buyer to their bank are added. During a PayPal outage each checkout waits for the timeout before failing, as with Stripe; outage handling, if added, goes into core for every gateway. Card fields and Apple Pay / Google Pay through PayPal are deferred; whether saved PayPal accounts are needed straight after the first release is still open.
+
+**Plan:** `6.0-paypal-payment-provider.md`. **Plan amended:** `6.0-payment-gateways-monorepo.md` (its PayPal timing question is resolved).
+
 ## 2026-10-27: Stripe transfer reversals on refund move to open source
 
 **Context:** A refund on a seller's order wrote the reversal row, and the next payout to the seller's bank subtracted it, but the open-source Stripe provider never reversed the transfer. The seller's share stayed on their connected account while the marketplace had refunded the customer from its own balance, and nothing in the books said where that money now was. The 2026-07-15 decision kept the pullback in Enterprise.
@@ -6680,3 +6700,21 @@ in each gem's `post_install_message`, not in the CLI.
 the 5.x line's 1.8.2, the newest stable release on RubyGems. A gem a project
 already lists is reported as installed rather than ejecting the project to
 re-add it.
+
+## 2026-11-02 — Dashboard packages are tree-shakeable; registration at import time lives only in the bootstrap modules
+
+The dashboard and seller panel ship as one JavaScript file because the four
+dashboard packages declare no `sideEffects`, so a route that imports one
+button through the `@spree/dashboard-ui` barrel keeps the editors and charts
+reachable. `docs/plans/6.1-dashboard-code-splitting.md` declares `sideEffects`
+on `@spree/dashboard-ui`, `@spree/dashboard-core`, `@spree/dashboard` and
+`@spree/seller-dashboard`, listing only stylesheets and the shells' bootstrap
+modules (admin `i18n-setup`, `api-client-setup`, `nav/*`, `search/*`; seller
+`i18n`, `nav/*`), the `tables/*` modules list routes bare-import for their
+`defineTable` call, and the `register.ts(x)` slot modules next to the editors
+they register, and turns on TanStack Router's `autoCodeSplitting` in both Vite
+plugins. From now on a module that registers something at import time (nav,
+settings nav, search, slots, tables, translations) belongs in one of those
+places; anywhere else the build drops it once the flag lands. TipTap,
+CodeMirror and Recharts are imported only by their `dashboard-ui` component,
+which loads them on demand.

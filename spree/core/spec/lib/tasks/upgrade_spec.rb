@@ -75,6 +75,7 @@ describe 'spree:upgrade' do
       expected_tasks = manifests
         .select { |manifest| Spree::Upgrade.compare(manifest['to'], '6.0') <= 0 }
         .flat_map { |manifest| manifest['steps'] }
+        .select { |step| Spree::Upgrade.available?(step) }
         .filter_map do |step|
           next step['task'] if step['task']
 

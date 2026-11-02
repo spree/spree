@@ -3332,6 +3332,7 @@
         "empty": "Diese Bestellung enthält keine Artikel.",
         "fully_fulfilled": "Diese Bestellung ist vollständig abgewickelt und kann nicht mehr bearbeitet werden.",
         "items_title": "Artikel",
+        "saved_not_reloaded": "Gespeichert, aber die Bestellung konnte nicht neu geladen werden. Aktualisiere die Seite, um die aktuellen Summen zu sehen.",
         "subtitle": "Bestellung {{number}}",
         "title": "Bestellung bearbeiten",
         "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",

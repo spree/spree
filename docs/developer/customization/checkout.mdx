@@ -1,6 +1,6 @@
 ---
 title: Customizing Checkout
-description: Add your own checkout step or requirement, and reorder or remove the built-in ones.
+description: Add your own checkout step or requirement, reorder or remove the built-in ones, and carry your own records onto the order.
 ---
 
 Spree does not run your checkout — your storefront does. What Spree owns is the list
@@ -118,6 +118,63 @@ decision that only makes sense at the moment of completion.
 For anything a customer has to fix, a requirement is better: it is reported on every
 cart read, so the storefront can show it while they can still act, rather than failing
 at the last step with an error they have to interpret.
+
+## Carrying your own records onto the order
+
+A cart's `metadata` is copied onto the order for you. Records your extension keeps in
+its own tables against a cart or its line items are not. Register a cart copier to
+bring them across:
+
+```ruby config/initializers/engravings.rb
+Spree.cart_copiers << MyApp::CopyEngravings
+```
+
+```ruby app/services/my_app/copy_engravings.rb
+module MyApp
+  class CopyEngravings
+    def self.call(cart:, order:, line_item_map:)
+      MyApp::Engraving.where(line_item: line_item_map.keys).find_each do |engraving|
+        engraving.dup.update!(line_item: line_item_map.fetch(engraving.line_item))
+      end
+    end
+  end
+end
+```
+
+`line_item_map` pairs each cart line item with its copy on the order. Copiers run
+whenever a cart becomes an order: at checkout, and when a draft order is created from a
+cart (`Spree::Orders::CreateFromCart`, which quoting extensions use). They run inside
+that copy's transaction once the order's line items exist, so a copier that raises rolls
+the whole copy back, and the cart is left as it was.
+
+The copy commits before the payment is taken. If the payment fails before anything was
+captured, the order is deleted rather than rolled back, and the customer's next attempt
+runs your copier again on a new order. Once a payment has been captured the order is
+kept, and completing it resumes that order without copying again. Tie the copied records
+to the order's line items with a dependent or cascading delete, so they go with a deleted
+order.
+
+When a checkout spans several sellers, the order is divided after the copy. Line items
+keep their ids as they move to each seller's order, so key your records by line item
+rather than by order.
+
+### When a guest signs in
+
+A guest's cart is folded into the customer's cart when they sign in, and the guest cart
+is then deleted. That is a move, not a copy, so it has its own hook rather than a cart
+copier. A guest item the customer's cart did not have moves across with its id; one it
+already had is added to the matching item and deleted. `carts.merge.after_items_moved`
+runs before those deletions, inside the merge's transaction:
+
+```ruby config/initializers/engravings.rb
+Spree.hooks.register('carts.merge.after_items_moved') do |merge|
+  merge.line_item_map.each do |guest_line_item, line_item|
+    next if guest_line_item == line_item
+
+    MyApp::Engraving.where(line_item: guest_line_item).update_all(line_item_id: line_item.id)
+  end
+end
+```
 
 ## Related
 

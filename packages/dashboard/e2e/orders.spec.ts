@@ -343,6 +343,50 @@ test.describe('order editing', () => {
     await expect(page.getByText(/^negotiated$/i)).toBeVisible()
     await expect(page.getByRole('button', { name: /reset .* to catalog price/i })).toBeVisible()
   })
+
+  // The save replaces the lines when it finishes, so a variant picked during
+  // it would be dropped without a word: Mod+S does nothing while the product
+  // picker is open.
+  test('does not save from the keyboard while the product picker is open', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-order-picker-${Date.now()}@example.com`)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    const editUrl = `${page.url()}/edit`
+    await page.goto(editUrl)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // A dirty form is what the shortcut would otherwise save.
+    const quantity = page.locator('input[type="number"]').first()
+    await expect(quantity).toBeVisible({ timeout: 15_000 })
+    await quantity.fill('2')
+
+    await page.getByRole('button', { name: /^add product$/i }).click()
+    const picker = page.getByRole('dialog', { name: /add line item/i })
+    await expect(picker).toBeVisible()
+
+    const updates: string[] = []
+    page.on('request', (request) => {
+      if (request.method() === 'PATCH' && /\/orders\/or_[^/]+$/.test(request.url())) {
+        updates.push(request.url())
+      }
+    })
+    await page.keyboard.press('ControlOrMeta+s')
+
+    // Give a save that should not happen the time it would need to be sent.
+    await page.waitForTimeout(1_000)
+    expect(updates).toEqual([])
+    await expect(picker).toBeVisible()
+    await expect(page).toHaveURL(editUrl)
+  })
 })
 
 test.describe('order addresses', () => {

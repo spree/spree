@@ -19,6 +19,20 @@ module Spree
         end
       end
 
+      context 'with excluded_promotion_ids' do
+        subject { Cart.new(order, line_item, excluded_promotion_ids: [promotion.id]) }
+
+        let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let(:other_promotion) { create(:promotion, name: 'Other', store: order.store, kind: :automatic) }
+
+        before { Promotion::Actions::CreateItemAdjustments.create(promotion: other_promotion, calculator: calculator) }
+
+        it 'leaves the excluded promotion alone and still activates the others' do
+          expect { subject.activate }.to change { line_item.discounts.count }.by(1)
+          expect(line_item.discounts.map { |d| d.promotion_action.promotion }).to contain_exactly(other_promotion)
+        end
+      end
+
       context 'activates in LineItem level' do
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
         let(:adjustable) { line_item }

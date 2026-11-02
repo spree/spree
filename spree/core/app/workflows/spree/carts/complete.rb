@@ -292,6 +292,7 @@ module Spree
           copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
           copy_po_document!(cart, order)
           repoint_money_records!(cart, order)
+          Spree.cart_copiers.each { |copier| copier.call(cart: cart, order: order, line_item_map: line_item_map) }
 
           order.update_columns(
             item_total: cart.item_total,
@@ -560,7 +561,9 @@ module Spree
       # its children is the order this checkout carries on with. No child holds
       # the confirmation: the customer is confirmed from the group.
       def complete_orders
-        result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending)
+        # carts.complete.validate ran before the payment was taken; a veto now
+        # would leave the customer charged for an order that never places.
+        result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending, validated: true)
         failure(cart, code: 'completion_failed', message: result.error) if result.failure?
 
         return unless result.value.is_a?(Spree::OrderGroup)
