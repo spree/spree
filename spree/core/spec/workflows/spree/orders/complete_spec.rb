@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe Orders::Complete do
+    after { Spree.hooks.unregister('orders.complete.validate') }
+
     let(:store) { @default_store }
     let(:order) { Spree::Order.create(email: 'test@example.com') }
 
@@ -127,6 +129,78 @@ module Spree
       order.update_columns(status: 'canceled', canceled_at: Time.current)
 
       expect(described_class.call(order: order)).to be_failure
+    end
+
+    describe 'the validate hook' do
+      let(:order) { create(:order_with_line_items, store: store) }
+
+      it 'lets a handler refuse the placement' do
+        Spree.hooks.register('orders.complete.validate') { |workflow| workflow.reject!('quote changed') }
+
+        result = described_class.call(order: order, payment_pending: true)
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to eq('quote changed')
+        expect(order.reload).to be_draft
+        expect(order.completed_at).to be_nil
+      end
+
+      it 'is skipped when the caller already ran its own veto, as checkout does' do
+        Spree.hooks.register('orders.complete.validate') { |workflow| workflow.reject!('never') }
+
+        result = described_class.call(order: order, payment_pending: true, validated: true)
+
+        expect(result).to be_success
+        expect(order.reload).to be_placed
+      end
+
+      it 'runs under the order lock, before placement' do
+        locked = false
+        allow(order).to receive(:with_lock).and_wrap_original do |original, *args, &block|
+          original.call(*args) do
+            locked = true
+            block.call
+          end
+        end
+        seen = nil
+        Spree.hooks.register('orders.complete.validate') { |workflow| seen = [locked, workflow.order.placed?] }
+
+        described_class.call(order: order, payment_pending: true)
+
+        expect(seen).to eq([true, false])
+      end
+    end
+
+    # Two completions racing: the second waits on the lock while the first
+    # places the order, then must not place it, or announce it, again.
+    it 'neither places nor announces again an order another completion placed first' do
+      order = create(:order_with_line_items, store: store)
+      allow(order).to receive(:with_lock).and_wrap_original do |original, *args, &block|
+        Spree::Order.where(id: order.id).update_all(status: 'placed', completed_at: Time.current)
+        original.call(*args, &block)
+      end
+      handler_ran = false
+      Spree.hooks.register('orders.complete.validate') { handler_ran = true }
+
+      expect(order).not_to receive(:publish_event)
+      result = described_class.call(order: order, payment_pending: true)
+
+      expect(result).to be_success
+      expect(result.value).to eq(order)
+      expect(handler_ran).to be(false)
+    end
+
+    it 'does not place again an order another completion placed and someone canceled while it waited' do
+      order = create(:order_with_line_items, store: store)
+      allow(order).to receive(:with_lock).and_wrap_original do |original, *args, &block|
+        Spree::Order.where(id: order.id).update_all(status: 'canceled', completed_at: Time.current, canceled_at: Time.current)
+        original.call(*args, &block)
+      end
+
+      result = described_class.call(order: order, payment_pending: true)
+
+      expect(result).to be_success
+      expect(order.reload).to be_canceled
     end
 
     it 'sets completed_at and places the order' do
@@ -327,6 +401,16 @@ module Spree
         expect(Spree::OrderGroup.count).to eq(0)
       end
 
+      it 'validates the purchase once, not each order the division places' do
+        draft = draft_for(seller, other_seller)
+        validated = []
+        Spree.hooks.register('orders.complete.validate') { |workflow| validated << workflow.order.id }
+
+        described_class.call(order: draft, payment_pending: true)
+
+        expect(validated).to eq([draft.id])
+      end
+
       it 'divides an order holding two sellers goods into one order each' do
         draft = draft_for(seller, other_seller)
 
@@ -425,6 +509,24 @@ module Spree
         described_class.call(order: draft.reload, payment_pending: true)
 
         expect(announced).to eq(1)
+      end
+
+      # The run that placed it announced it, with its own notify_customer; the
+      # one that waited on the lock has nothing to add and no such flag.
+      it 'does not announce the group again from a completion that lost the race', :events do
+        draft = draft_for(seller, other_seller)
+        waiting = Spree::Order.find(draft.id)
+        described_class.call(order: draft, payment_pending: true, notify_customer: false)
+
+        announced = 0
+        allow_any_instance_of(Spree::OrderGroup).to receive(:publish_event) do |_, name, *|
+          announced += 1 if name == 'order_group.completed'
+        end
+
+        result = described_class.call(order: waiting, payment_pending: true)
+
+        expect(result.value).to be_a(Spree::OrderGroup)
+        expect(announced).to eq(0)
       end
 
       it 'divides once when the completion is replayed' do
