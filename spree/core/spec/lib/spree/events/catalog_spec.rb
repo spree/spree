@@ -90,7 +90,7 @@ RSpec.describe Spree::Events::Catalog do
 
     it 'marks the events carrying a customer credential' do
       expect(Spree::Events.catalog.credential_events.map(&:name)).
-        to contain_exactly('customer.password_reset_requested', 'data_request.confirmation_requested')
+        to contain_exactly('customer.password_reset_requested', 'data_request.confirmation_requested', 'order.lookup_requested')
     end
 
     it 'never forwards staff or seller password reset requests to webhooks' do
