@@ -1,4 +1,5 @@
 import * as p from '@clack/prompts'
+import { markCommandCancelled } from '@spree/telemetry'
 import pc from 'picocolors'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 
@@ -29,6 +30,7 @@ export async function runPrompts(
     })) as string)
 
   if (p.isCancel(directory)) {
+    markCommandCancelled()
     p.cancel('Setup cancelled.')
     process.exit(0)
   }
@@ -48,6 +50,7 @@ export async function runPrompts(
     })
 
     if (p.isCancel(storefrontResult)) {
+      markCommandCancelled()
       p.cancel('Setup cancelled.')
       process.exit(0)
     }
@@ -64,6 +67,7 @@ export async function runPrompts(
     })
 
     if (p.isCancel(sellerResult)) {
+      markCommandCancelled()
       p.cancel('Setup cancelled.')
       process.exit(0)
     }
@@ -99,6 +103,7 @@ export async function runPrompts(
     })
 
     if (p.isCancel(startResult)) {
+      markCommandCancelled()
       p.cancel('Setup cancelled.')
       process.exit(0)
     }

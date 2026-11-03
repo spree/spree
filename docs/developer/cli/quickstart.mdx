@@ -278,6 +278,16 @@ spree auth status
 spree auth logout --profile prod
 ```
 
+### `spree telemetry`
+
+Show or change whether the CLI reports which setup commands you run. See [Update Checks and Usage Data](/developer/deployment/usage-data#command-line-tools) for exactly what is sent.
+
+```bash
+spree telemetry status
+spree telemetry disable
+spree telemetry enable
+```
+
 ## Dev workflow commands
 
 These commands run inside the project's containers against the running stack. The one exception is `spree filters types --from`, which reads a saved file and needs no running stack.

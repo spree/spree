@@ -1,3 +1,4 @@
+import { trackCommand } from '@spree/telemetry'
 import { Command } from 'commander'
 import pc from 'picocolors'
 import { registerAddCommand } from './commands/add.js'
@@ -29,6 +30,7 @@ import { registerSeedCommand } from './commands/seed.js'
 import { registerShellCommand } from './commands/shell.js'
 import { registerStopCommand } from './commands/stop.js'
 import { registerTaskCommand } from './commands/task.js'
+import { registerTelemetryCommand } from './commands/telemetry.js'
 import { registerTestCommand } from './commands/test.js'
 import { registerUpgradeCommand } from './commands/upgrade.js'
 import { registerUserCommand } from './commands/user.js'
@@ -105,6 +107,15 @@ registerPluginCommand(program)
 registerApiCommand(program)
 registerAuthCommand(program)
 registerCompletionCommand(program)
+registerTelemetryCommand(program)
+
+// Reports the top-level command when the process exits. Only lifecycle
+// commands run from a terminal are reported; see telemetry.ts.
+program.hook('preAction', (_command, actionCommand) => {
+  let topLevel = actionCommand
+  while (topLevel.parent && topLevel.parent !== program) topLevel = topLevel.parent
+  trackCommand({ cli: '@spree/cli', cliVersion: VERSION, command: topLevel.name() })
+})
 
 async function main() {
   try {
