@@ -54,6 +54,7 @@ export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';
 export { OrderGroupSchema, type OrderGroup } from './OrderGroup';
+export { OrderLookupRequestedEventSchema, type OrderLookupRequestedEvent } from './OrderLookupRequestedEvent';
 export { PasswordResetRequestedEventSchema, type PasswordResetRequestedEvent } from './PasswordResetRequestedEvent';
 export { PaymentSchema, type Payment } from './Payment';
 export { PaymentMethodSchema, type PaymentMethod } from './PaymentMethod';

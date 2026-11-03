@@ -20,6 +20,7 @@ import type {
   Channel,
   Claim,
   ClaimFilters,
+  ClaimReason,
   ClaimSort,
   Collection,
   CollectionListParams,
@@ -36,7 +37,9 @@ import type {
   CreateCartParams,
   CreateClaimParams,
   CreateDataRequestParams,
+  CreateExchangeParams,
   CreateNewsletterSubscriberParams,
+  CreateOrderLookupParams,
   CreatePaymentParams,
   CreatePaymentSessionParams,
   CreatePaymentSetupSessionParams,
@@ -51,6 +54,9 @@ import type {
   DigitalLink,
   DigitalLinkFilters,
   DigitalLinkSort,
+  Exchange,
+  ExchangeFilters,
+  ExchangeSort,
   GiftCard,
   Locale,
   LoginCredentials,
@@ -75,6 +81,7 @@ import type {
   ResetPasswordParams,
   Return,
   ReturnFilters,
+  ReturnReason,
   ReturnSort,
   Seller,
   StockLocation,
@@ -449,6 +456,37 @@ export class StoreClient {
           params: params,
         },
       ),
+  }
+
+  /**
+   * Why goods come back — the store's active return reasons, offered when
+   * opening a return or an exchange.
+   */
+  readonly returnReasons = {
+    list: (options?: RequestOptions): Promise<PaginatedResponse<ReturnReason>> =>
+      this.request<PaginatedResponse<ReturnReason>>('GET', '/return_reasons', options),
+  }
+
+  /**
+   * What went wrong with a delivery — the store's active claim reasons,
+   * offered when filing a claim.
+   */
+  readonly claimReasons = {
+    list: (options?: RequestOptions): Promise<PaginatedResponse<ClaimReason>> =>
+      this.request<PaginatedResponse<ClaimReason>>('GET', '/claim_reasons', options),
+  }
+
+  /**
+   * "Find my order" for a guest who lost the confirmation email. On a match
+   * the order's own address receives a link; the answer is the same either
+   * way, so it never reveals which address placed an order.
+   */
+  readonly orderLookups = {
+    create: (
+      params: CreateOrderLookupParams,
+      options?: RequestOptions,
+    ): Promise<{ message: string }> =>
+      this.request<{ message: string }>('POST', '/order_lookups', { ...options, body: params }),
   }
 
   readonly policies = {
@@ -908,6 +946,63 @@ export class StoreClient {
        */
       labelPath: (orderId: string, id: string): string =>
         `/api/v3/store/orders/${orderId}/returns/${id}/label`,
+
+      /**
+       * Withdraws a return the customer opened, while the merchant has not
+       * acted on it yet (`cancelable` on the return). Answers 422 afterwards.
+       */
+      cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, options),
+    },
+
+    /**
+     * Exchanges the customer opened on this order: shipped units going back
+     * for another purchasable variant of the same product — a different size
+     * or colour. Approving, receiving and sending the replacement are the
+     * merchant's. Eligibility is the same store policy returns follow.
+     */
+    exchanges: {
+      list: (
+        orderId: string,
+        params?: ListParams<ExchangeFilters, ExchangeSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Exchange>> =>
+        this.request<PaginatedResponse<Exchange>>('GET', `/orders/${orderId}/exchanges`, {
+          ...options,
+          params: params ? transformListParams({ ...params }) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('GET', `/orders/${orderId}/exchanges/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      /**
+       * @param params.items the shipped units going back, each with the
+       *   variant of the same product coming out in its place
+       */
+      create: (
+        orderId: string,
+        params: CreateExchangeParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('POST', `/orders/${orderId}/exchanges`, {
+          ...options,
+          body: params,
+        }),
+
+      /**
+       * Withdraws an exchange the customer opened, while the merchant has not
+       * acted on it yet (`cancelable` on the exchange).
+       */
+      cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/cancel`, options),
     },
 
     /**

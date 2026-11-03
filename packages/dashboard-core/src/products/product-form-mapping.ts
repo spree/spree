@@ -55,6 +55,7 @@ export function variantToFormValues(
     preorder_ships_at: variant.preorder_ships_at ?? null,
     backorder_limit: variant.backorder_limit ?? null,
     tax_category_id: variant.tax_category_id ?? null,
+    returnable: variant.returnable ?? null,
     // Base prices only: this array is posted back as the variant's base
     // prices, so a price-list row taken in here returns as the shop price.
     prices: (variant.prices ?? []).flatMap(
@@ -149,6 +150,7 @@ export function productToFormValues(
       [],
     tags: product.tags ?? [],
     tax_category_id: product.tax_category_id ?? null,
+    returnable: product.returnable ?? true,
     product_type_id: product.product_type_id ?? null,
     delivery_profile_id: product.delivery_profile_id ?? null,
     meta_title: product.meta_title ?? '',
@@ -280,6 +282,7 @@ export function variantToWirePayload(v: VariantFormValues, index: number, formKe
   if (v.preorderable != null) payload.preorderable = v.preorderable
   if (v.preorder_ships_at !== undefined) payload.preorder_ships_at = v.preorder_ships_at
   if (v.backorder_limit !== undefined) payload.backorder_limit = v.backorder_limit
+  if (v.returnable !== undefined) payload.returnable = v.returnable
   // Always send `prices` when the form tracks it — including `[]`. The
   // backend's `Spree::Variant#prices=` treats an empty array as "clear all
   // base prices"; omitting it would otherwise leave the old amounts in

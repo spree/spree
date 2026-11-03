@@ -981,6 +981,13 @@
         "digital_asset_authorized_days": {
           "label": "Verfügbare Tage"
         }
+      },
+      "returns": {
+        "label": "Rücksendungen"
+      },
+      "returnable": {
+        "label": "Kunden können diesen Artikel zurücksenden",
+        "help": "Für Sale-Artikel ohne Rückgabe deaktivieren oder für Waren, die vom EU-Widerrufsrecht ausgenommen sind, etwa versiegelte Hygieneartikel oder personalisierte und verderbliche Waren. Bestellungen behalten die Einstellung, mit der sie aufgegeben wurden."
       }
     },
     "image_upload": {
@@ -1751,7 +1758,12 @@
           "packing_help": "Wie dieses Produkt als Großmenge das Lager verlässt. Frachtangebote beruhen auf diesen Zahlen.",
           "no_carton_types": "Legen Sie unter <settingsLink>Einstellungen → Verpackungsarten</settingsLink> eine Kartonart an, um zu erfassen, wie dieses Produkt verpackt ist.",
           "carton_placeholder": "Kein Karton",
-          "pending_save": "Änderungen hier werden mit dem Produkt gespeichert."
+          "pending_save": "Änderungen hier werden mit dem Produkt gespeichert.",
+          "returnable": {
+            "inherit": "Wie beim Produkt",
+            "true": "Rücksendbar",
+            "false": "Nicht rücksendbar"
+          }
         },
         "thumbnail_badge": "Vorschaubild",
         "title": "Varianten",

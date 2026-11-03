@@ -19,6 +19,7 @@ export const LineItemSchema = z.object({
   name: z.string(),
   slug: z.string(),
   options_text: z.string(),
+  returnable: z.boolean(),
   price: z.string(),
   total: z.string(),
   adjustment_total: z.string(),

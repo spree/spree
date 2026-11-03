@@ -56,6 +56,7 @@ import {
   SelectTrigger,
   SelectValue,
   StatusCard as SharedStatusCard,
+  Switch,
   Textarea,
   toastManager,
   useConfirm,
@@ -76,6 +77,7 @@ import {
   ReceiptTextIcon,
   SearchIcon,
   TrashIcon,
+  Undo2Icon,
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -1338,6 +1340,52 @@ export function CategorizationCard({ form }: FormCardProps) {
 // ---------------------------------------------------------------------------
 // Tax
 // ---------------------------------------------------------------------------
+
+/**
+ * Whether customers may send the product back through self-service returns.
+ * Off for final sale, or for goods the EU right of withdrawal exempts. Orders
+ * keep the answer they were placed with; a variant may say otherwise in its
+ * own sheet (docs/plans/6.1-returns-portal.md).
+ */
+export function ReturnsCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <Undo2Icon className="size-4" />
+          {t('admin.fields.returns.label')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Field>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col">
+              <FieldLabel htmlFor="product-returnable" className="cursor-pointer">
+                {t('admin.fields.returnable.label')}
+              </FieldLabel>
+              <span className="text-xs text-muted-foreground">
+                {t('admin.fields.returnable.help')}
+              </span>
+            </div>
+            <Controller
+              name="returnable"
+              control={form.control}
+              render={({ field }) => (
+                <Switch
+                  id="product-returnable"
+                  checked={field.value ?? true}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+          </div>
+        </Field>
+      </CardContent>
+    </Card>
+  )
+}
 
 export function TaxCard({ form }: FormCardProps) {
   const { t } = useTranslation()

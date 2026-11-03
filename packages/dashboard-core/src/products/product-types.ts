@@ -72,6 +72,8 @@ export interface PanelVariant {
   preorderable?: boolean
   preorder_ships_at?: string | null
   backorder_limit?: number | null
+  /** The variant's own answer; null follows the product. */
+  returnable?: boolean | null
   total_on_hand?: number | null
   available_stock?: number | null
   option_values?: Array<{ id: string; name: string; option_type_name: string }>
@@ -117,6 +119,7 @@ export interface PanelProduct {
     unpublished_at?: string | null
   }>
   tax_category_id?: string | null
+  returnable?: boolean
   /** Both panels: a seller picks a profile from the marketplace's list. */
   delivery_profile_id?: string | null
 }

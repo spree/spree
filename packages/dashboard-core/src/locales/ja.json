@@ -983,6 +983,13 @@
         "digital_asset_authorized_days": {
           "label": "ダウンロードできる日数"
         }
+      },
+      "returns": {
+        "label": "返品"
+      },
+      "returnable": {
+        "label": "お客様はこの商品を返品できます",
+        "help": "最終セール品や、封をした衛生用品、名入れ品、生鮮品などEUの撤回権の対象外となる商品ではオフにします。注文には、注文時の設定がそのまま残ります。"
       }
     },
     "image_upload": {
@@ -1753,7 +1760,12 @@
           "packing_help": "この商品をまとめて倉庫から出すときの形です。運賃の見積もりはこの数値で計算します。",
           "no_carton_types": "この商品のこん包を記録するには、<settingsLink>設定 → こん包タイプ</settingsLink>でカートンの種類を追加してください。",
           "carton_placeholder": "カートンなし",
-          "pending_save": "ここでの変更は商品と一緒に保存されます。"
+          "pending_save": "ここでの変更は商品と一緒に保存されます。",
+          "returnable": {
+            "inherit": "商品と同じ",
+            "true": "返品可",
+            "false": "返品不可"
+          }
         },
         "thumbnail_badge": "サムネイル",
         "title": "バリアント",

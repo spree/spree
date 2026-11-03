@@ -16,6 +16,7 @@ import {
   type ProductFormValues,
   productFormSchema,
   productToFormValues,
+  ReturnsCard,
   Slot,
   useAssignableVariants,
   useCommitRemovedProductMedia,
@@ -143,6 +144,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         // means "leave it".
         product_type_id: values.product_type_id ?? null,
         delivery_profile_id: values.delivery_profile_id ?? undefined,
+        returnable: values.returnable,
         // Variants are the whole intent: one the seller removed is absent
         // here, which tells the API to drop it. Media is not — a file left out
         // stays, and removed files go through the media DELETE after the save.
@@ -299,6 +301,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 />
               )}
               <CategorizationCard form={form} />
+              <ReturnsCard form={form} />
               <Slot name="seller.product.form_sidebar" context={{ product, mode }} />
             </>
           }
