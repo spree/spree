@@ -11,8 +11,8 @@ describe Spree::CustomFields::ShortText, type: :model do
   describe 'length rules' do
     it 'checks the character count against min and max' do
       expect(custom_field('abc')).to be_valid
-      expect(custom_field('a').tap(&:valid?).errors[:value]).to include(I18n.t('spree.errors.messages.custom_field_too_short', count: 2))
-      expect(custom_field('abcde').tap(&:valid?).errors[:value]).to include(I18n.t('spree.errors.messages.custom_field_too_long', count: 4))
+      expect(custom_field('a').tap(&:valid?).errors[:value]).to include(I18n.t('spree.errors.messages.custom_field_too_short', bound: 2))
+      expect(custom_field('abcde').tap(&:valid?).errors[:value]).to include(I18n.t('spree.errors.messages.custom_field_too_long', bound: 4))
     end
   end
 end

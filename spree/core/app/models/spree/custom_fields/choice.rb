@@ -45,7 +45,15 @@ module Spree
         custom_field_definition&.multiple_choices?
       end
 
+      # Parsed once per stored value; serializers and validations read it repeatedly.
       def stored_values
+        return @stored_values if defined?(@stored_values_for) && @stored_values_for == value
+
+        @stored_values_for = value
+        @stored_values = parse_stored_values
+      end
+
+      def parse_stored_values
         return unless value.to_s.start_with?('[')
 
         parsed = JSON.parse(value)

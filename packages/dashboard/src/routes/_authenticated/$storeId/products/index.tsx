@@ -12,6 +12,7 @@ import {
   TagCombobox,
   useCustomFieldDefinitions,
   usePermissions,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   BulkDialog,
@@ -62,6 +63,7 @@ import {
   useBulkRemoveProductTags,
   useCloneProduct,
 } from '../../../../hooks/use-products'
+import { formatCustomFieldValue } from '../../../../schemas/custom-field-definition'
 import '../../../../tables/products'
 import { toastManager } from '@spree/dashboard-ui'
 
@@ -330,6 +332,7 @@ function ProductsPage() {
   )
 
   const { data: definitionsResponse } = useCustomFieldDefinitions('product')
+  const { timezone } = useStore()
   // Searchable/sortable custom fields become full table columns: displayable
   // (opt-in via the column selector), sortable when the definition allows it,
   // and filterable with the operator set matching the field type.
@@ -351,12 +354,7 @@ function ProductsPage() {
             const value = product.custom_fields?.find(
               (field) => field.custom_field_definition_id === definition.id,
             )?.value
-            if (value == null || value === '') return '—'
-            // A choice shows its label; one since removed shows its stored value.
-            const labelFor = (choice: unknown) =>
-              definition.validations.choices.find((option) => option.value === choice)?.label ??
-              String(choice)
-            return Array.isArray(value) ? value.map(labelFor).join(', ') : labelFor(value)
+            return formatCustomFieldValue(value, definition, timezone)
           },
         }
         // Choices filter by picking from the definition's own list.
@@ -364,7 +362,7 @@ function ProductsPage() {
           ? { ...column, filterType: 'enum', filterOptions: definition.validations.choices }
           : { ...column, filterType: CUSTOM_FIELD_FILTER_TYPES[definition.field_type] ?? 'string' }
       })
-  }, [definitionsResponse])
+  }, [definitionsResponse, timezone])
 
   return (
     <>

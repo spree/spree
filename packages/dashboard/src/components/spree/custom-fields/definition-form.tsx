@@ -17,7 +17,12 @@ import {
   Switch,
 } from '@spree/dashboard-ui'
 import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
-import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
+import {
+  Controller,
+  type FieldError as FieldErrorType,
+  type UseFormReturn,
+  useFieldArray,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCustomFieldResourceTypes } from '../../../hooks/use-custom-field-resource-types'
 import {
@@ -255,76 +260,30 @@ export function DefinitionFormFields({
         <FieldError errors={[errors.field_type]} />
       </Field>
 
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <FieldLabel htmlFor="cfd-storefront-visible" className="cursor-pointer">
-            {t('admin.fields.custom_field_definition.storefront_visible.label')}
-          </FieldLabel>
-          <Controller
-            name="storefront_visible"
-            control={form.control}
-            render={({ field }) => (
-              <Switch
-                id="cfd-storefront-visible"
-                checked={!!field.value}
-                onCheckedChange={field.onChange}
-              />
-            )}
-          />
-        </div>
-      </Field>
-
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <FieldLabel htmlFor="cfd-searchable" className="cursor-pointer">
-              {t('admin.fields.custom_field_definition.searchable.label')}
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">
-              {t('admin.fields.custom_field_definition.searchable.help')}
-            </span>
-          </div>
-          <Controller
-            name="searchable"
-            control={form.control}
-            render={({ field }) => (
-              <Switch
-                id="cfd-searchable"
-                checked={!!field.value}
-                onCheckedChange={field.onChange}
-                disabled={!searchableSupported}
-              />
-            )}
-          />
-        </div>
-        <FieldError errors={[errors.searchable]} />
-      </Field>
-
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <FieldLabel htmlFor="cfd-sortable" className="cursor-pointer">
-              {t('admin.fields.custom_field_definition.sortable.label')}
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">
-              {t('admin.fields.custom_field_definition.sortable.help')}
-            </span>
-          </div>
-          <Controller
-            name="sortable"
-            control={form.control}
-            render={({ field }) => (
-              <Switch
-                id="cfd-sortable"
-                checked={!!field.value}
-                onCheckedChange={field.onChange}
-                disabled={!sortableSupported}
-              />
-            )}
-          />
-        </div>
-        <FieldError errors={[errors.sortable]} />
-      </Field>
+      <SwitchRow
+        form={form}
+        name="storefront_visible"
+        id="cfd-storefront-visible"
+        label={t('admin.fields.custom_field_definition.storefront_visible.label')}
+      />
+      <SwitchRow
+        form={form}
+        name="searchable"
+        id="cfd-searchable"
+        label={t('admin.fields.custom_field_definition.searchable.label')}
+        help={t('admin.fields.custom_field_definition.searchable.help')}
+        disabled={!searchableSupported}
+        error={errors.searchable}
+      />
+      <SwitchRow
+        form={form}
+        name="sortable"
+        id="cfd-sortable"
+        label={t('admin.fields.custom_field_definition.sortable.label')}
+        help={t('admin.fields.custom_field_definition.sortable.help')}
+        disabled={!sortableSupported}
+        error={errors.sortable}
+      />
 
       <ValidationRulesFields form={form} />
     </div>
@@ -352,23 +311,13 @@ function ValidationRulesFields({ form }: { form: UseFormReturn<CustomFieldDefini
         </p>
       )}
 
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <FieldLabel htmlFor="cfd-required" className="cursor-pointer">
-              {t(`${prefix}.required.label`)}
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">{t(`${prefix}.required.help`)}</span>
-          </div>
-          <Controller
-            name="validations.required"
-            control={form.control}
-            render={({ field }) => (
-              <Switch id="cfd-required" checked={!!field.value} onCheckedChange={field.onChange} />
-            )}
-          />
-        </div>
-      </Field>
+      <SwitchRow
+        form={form}
+        name="validations.required"
+        id="cfd-required"
+        label={t(`${prefix}.required.label`)}
+        help={t(`${prefix}.required.help`)}
+      />
 
       {boundKind && (
         <div className="grid grid-cols-2 gap-3">
@@ -455,34 +404,71 @@ function ValidationRulesFields({ form }: { form: UseFormReturn<CustomFieldDefini
             />
           </Field>
 
-          <Field>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex flex-col gap-1">
-                <FieldLabel htmlFor="cfd-multiple" className="cursor-pointer">
-                  {t(`${prefix}.multiple.label`)}
-                </FieldLabel>
-                <span className="text-xs text-muted-foreground">
-                  {t(`${prefix}.multiple.help`)}
-                </span>
-              </div>
-              <Controller
-                name="validations.multiple"
-                control={form.control}
-                render={({ field }) => (
-                  <Switch
-                    id="cfd-multiple"
-                    checked={!!field.value}
-                    onCheckedChange={(checked) => {
-                      field.onChange(checked)
-                      if (checked) form.setValue('sortable', false)
-                    }}
-                  />
-                )}
-              />
-            </div>
-          </Field>
+          <SwitchRow
+            form={form}
+            name="validations.multiple"
+            id="cfd-multiple"
+            label={t(`${prefix}.multiple.label`)}
+            help={t(`${prefix}.multiple.help`)}
+            onChange={(checked) => checked && form.setValue('sortable', false)}
+          />
         </>
       )}
     </div>
+  )
+}
+
+/** A labelled switch for one boolean of the definition. */
+function SwitchRow({
+  form,
+  name,
+  id,
+  label,
+  help,
+  disabled,
+  error,
+  onChange,
+}: {
+  form: UseFormReturn<CustomFieldDefinitionFormValues>
+  name:
+    | 'storefront_visible'
+    | 'searchable'
+    | 'sortable'
+    | 'validations.required'
+    | 'validations.multiple'
+  id: string
+  label: string
+  help?: string
+  disabled?: boolean
+  error?: FieldErrorType
+  onChange?: (checked: boolean) => void
+}) {
+  return (
+    <Field>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <FieldLabel htmlFor={id} className="cursor-pointer">
+            {label}
+          </FieldLabel>
+          {help && <span className="text-xs text-muted-foreground">{help}</span>}
+        </div>
+        <Controller
+          name={name}
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              id={id}
+              checked={!!field.value}
+              disabled={disabled}
+              onCheckedChange={(checked) => {
+                field.onChange(checked)
+                onChange?.(checked)
+              }}
+            />
+          )}
+        />
+      </div>
+      {error && <FieldError errors={[error]} />}
+    </Field>
   )
 }

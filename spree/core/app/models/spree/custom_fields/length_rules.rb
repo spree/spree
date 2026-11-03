@@ -18,14 +18,7 @@ module Spree
       private
 
       def value_must_follow_definition_rules
-        min, max = definition_rules.values_at('min', 'max')
-
-        if min && value.length < min
-          errors.add(:value, :too_short, count: min, message: I18n.t('spree.errors.messages.custom_field_too_short', count: min))
-        end
-        if max && value.length > max
-          errors.add(:value, :too_long, count: max, message: I18n.t('spree.errors.messages.custom_field_too_long', count: max))
-        end
+        add_bound_errors(value.length, below: :too_short, above: :too_long)
       end
     end
   end
