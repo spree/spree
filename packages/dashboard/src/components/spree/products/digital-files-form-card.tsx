@@ -1,3 +1,4 @@
+import { randomUUID } from '@spree/core'
 import { formatFileSize, type ProductFormValues, useFileUpload } from '@spree/dashboard-core'
 import {
   Button,
@@ -53,7 +54,7 @@ export function DigitalFilesFormCard({
     async (files: FileList | File[]) => {
       const fileArray = Array.from(files)
       for (const file of fileArray) {
-        const uploadId = crypto.randomUUID()
+        const uploadId = randomUUID()
         setPending((prev) => [...prev, { id: uploadId, name: file.name }])
         try {
           const { signedId } = await fileUpload.mutateAsync(file)
