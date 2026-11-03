@@ -99,7 +99,8 @@ module Spree
         return if order.market.nil?
 
         excluded = order.line_items.includes(variant: { product: :market_availability_entries }).find do |line_item|
-          !line_item.variant.product.available_in_market?(order.market)
+          product = line_item.variant&.product
+          product && !product.available_in_market?(order.market)
         end
         return unless excluded
 
