@@ -28,11 +28,11 @@ module Spree
           order.lock!
           # Re-read under the lock: a second confirm of the same set waited
           # here while the first applied it, and must now see it confirmed.
-          order_change.lock!
+          # Only the status, so the actions already loaded are kept.
+          order_change.status = Spree::OrderChange.lock.where(id: order_change.id).pick(:status)
           step :ensure_confirmable
           previous_total = order.total
           step :apply_actions
-          order.recalculate_totals! if order_change.moves_money?
           order.update_statuses!
           @balance_delta = order.total - previous_total
           order_change.update!(status: 'confirmed', confirmed_at: Time.current)

@@ -179,7 +179,12 @@ module Spree
         @additions ||= resolved_items.reject(&:remove?)
       end
 
+      # A saved line is re-priced only when the line itself allows it
+      # (Spree::LineItem#should_update_price?): never once its order is
+      # placed, and never a negotiated price.
       def apply_resolved_price(line_item)
+        return unless line_item.new_record? || line_item.should_update_price?
+
         resolution = resolved_prices[line_item.variant_id]
         return if resolution.blank?
 

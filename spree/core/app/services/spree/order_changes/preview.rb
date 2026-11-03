@@ -36,16 +36,11 @@ module Spree
 
       private
 
-      # Mirrors Confirm: the same appliers, and a re-sum only when the set can
-      # move money.
       def project(order_change, previous_total)
         applied = Spree::OrderChanges::ApplyActions.call(order_change: order_change)
         return applied if applied.failure?
 
-        projected_order = order_change.order
-        projected_order.recalculate_totals! if order_change.moves_money?
-
-        success(Spree::OrderChangePreview.from_order(projected_order, previous_total: previous_total))
+        success(Spree::OrderChangePreview.from_order(order_change.order, previous_total: previous_total))
       end
     end
   end

@@ -35,6 +35,7 @@ module Spree
     validates :line_item, presence: true, if: -> { kind.in?(%w[update_item remove_item add_fulfillment]) }
     validates :quantity, presence: true, if: -> { kind.in?(%w[add_item update_item receive_item add_fulfillment]) }
     validate :line_item_belongs_to_order
+    validate :stock_kind_has_post_sale_record
 
     private
 
@@ -44,6 +45,17 @@ module Spree
       return if line_item.order_id == order_change.order_id
 
       errors.add(:line_item, :invalid)
+    end
+
+    # Restocks and replacement shipments are what a return, exchange or claim
+    # does once it has checked what came back and what is owed; on their own
+    # they would move stock nobody accounted for.
+    def stock_kind_has_post_sale_record
+      return unless STOCK_KINDS.include?(kind)
+      return if order_change&.post_sale_record
+
+      errors.add(:kind, :requires_post_sale_record,
+                 message: I18n.t('spree.order_change_requires_post_sale_record'))
     end
   end
 end
