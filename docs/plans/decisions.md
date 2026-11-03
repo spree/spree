@@ -1,3 +1,13 @@
+## 2026-11-03: Market exclusions keep the cart line, bind staff orders and are open to sellers
+
+**Context:** Building `6.1-product-market-availability.md` raised four calls the plan left open: what a cart does with a line its new market excludes, whether staff orders are exempt, the API field names, and who may set an exclusion on a marketplace.
+
+**Decision:** A line the cart's market excludes stays in the cart, is reported as `not_available_in_market` in the checkout requirements as soon as the market changes, and blocks completion, the way Saleor reports checkout problems and Spree reports `not_orderable`. Staff orders are bound too: territory is a distribution right, so unlike catalogs there is no staff exemption (Shopify exempts draft orders; Saleor and Vendure enforce through the channel). The Admin and Seller APIs read and write `market_availability` (`all`, `all_except`, `only`; `all` is stored as NULL) and `market_ids`. Sellers manage exclusions on their own products.
+
+**Consequences:** Any new path that admits a line into a cart or an order resolves through `Spree::Products::ForContext` with the market, or it leaks an excluded product. A restricted mode needs at least one market. The visible-but-unpurchasable display mode stays deferred.
+
+**Plan amended:** `6.1-product-market-availability.md`.
+
 ## 2026-11-02: Payment method rules retarget to 6.1; multiple accounts of one provider are records scoped by rules
 
 **Context:** `6.1-payment-method-rules.md` (then `6.0-…`) was not built in 6.0. The 2026-07-23 entry below had parked "multiple provider credentials in one store" for grooming, with two candidate shapes. Reviewing it against what shipped since: an open-source platform's hosted payments product (October 2026) added multiple accounts with no data model at all — one provider instance registered per account, scoped by region — and the hosted leader's multi-entity model is one payments account per legal entity mapped to markets. In Spree, two `SpreeStripe::Gateway` records in one store already work at the data layer (own keys, own webhook endpoint and secret, own sessions and gateway customers); only the dashboard's "installed" filter, the storefront's single publishable key from an environment variable, and the marketplace payout provider's "first Stripe method" lookup stand in the way. The Company tree also shipped (2026-08-25), and the checkout seam moved to `Spree::Purchase::PaymentProcessing#payment_methods` on carts, which the cart payment-sessions controller bypasses.
