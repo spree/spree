@@ -119,7 +119,7 @@ module Spree
         @pending_market_ids = nil
         return if target_ids.nil?
 
-        current_ids = market_availability_entries.pluck(:market_id)
+        current_ids = market_availability_entries.map(&:market_id)
         removed_ids = current_ids - target_ids
         added_ids = target_ids - current_ids
         return if removed_ids.empty? && added_ids.empty?

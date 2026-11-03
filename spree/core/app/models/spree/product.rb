@@ -357,11 +357,7 @@ module Spree
     # regeneration). So incoming automatic ids are ignored, and the product's
     # existing automatic memberships are carried over untouched.
     def collection_ids=(ids)
-      decoded_ids = Array(ids).filter_map do |id|
-        id.to_s.include?('_') ? Spree::Collection.decode_prefixed_id(id) : id
-      end
-      manual_ids = Spree::Collection.for_store(assignable_store).manual.where(id: decoded_ids).ids
-      super(manual_ids | collections.automatic.ids)
+      super(assignable_ids(Spree::Collection.manual, ids) | collections.automatic.ids)
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id price]
