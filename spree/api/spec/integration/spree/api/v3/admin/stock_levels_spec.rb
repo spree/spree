@@ -59,6 +59,7 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
   path '/api/v3/admin/stock_levels/bulk_upsert' do
     post 'Bulk-upsert stock levels' do
       tags 'Stock'
+      agent_tool false, reason: 'set_stock calls this endpoint already, taking stock by SKU and location the way a merchant names them.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

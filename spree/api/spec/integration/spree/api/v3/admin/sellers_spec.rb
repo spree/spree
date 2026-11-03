@@ -862,6 +862,7 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
 
     patch 'Mark a payout paid' do
       tags 'Sellers'
+      agent_tool false, reason: 'Settles a payout against the payment provider, reconciling against provider state an agent cannot see.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

@@ -3916,6 +3916,7 @@ paths:
       summary: Reposition a category product
       tags:
       - Categories
+      operationId: categories_reposition_product
       security:
       - api_key: []
         bearer_auth: []
@@ -6081,6 +6082,9 @@ paths:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/customers/{id}/anonymize":
     post:
+      x-spree-agent: false
+      x-spree-agent-reason: Irreversible erasure of a person's data under GDPR Art.
+        17, which is not something to offer a model behind one confirmation prompt.
       summary: Erase a customer's personal data
       tags:
       - Customers
@@ -7746,6 +7750,7 @@ paths:
         label: Spree CLI
         source: spree api post /customers/{customer_id}/tax_identifiers/{id}/validate
           -d '{ ... }'
+      operationId: customer_tax_identifiers_validate
       security:
       - api_key: []
         bearer_auth: []
@@ -22208,6 +22213,7 @@ paths:
         label: Spree CLI
         source: spree api patch /orders/{order_id}/returns/{return_id}/labels/{id}/refund
           -d '{ ... }'
+      operationId: return_labels_refund
       security:
       - api_key: []
         bearer_auth: []
@@ -24590,6 +24596,9 @@ paths:
         required: true
   "/api/v3/admin/prices/bulk_destroy":
     delete:
+      x-spree-agent: false
+      x-spree-agent-reason: Deletes many prices in one call behind a single confirmation;
+        delete_resource removes them one at a time.
       summary: Bulk-delete prices
       tags:
       - Pricing
@@ -26325,6 +26334,10 @@ paths:
                 "$ref": "#/components/schemas/Product"
   "/api/v3/admin/products/bulk_status_update":
     post:
+      x-spree-agent: false
+      x-spree-agent-reason: Writes the status column for many products at once, skipping
+        the status workflows and their events; products_activate, products_archive and
+        products_draft run them.
       summary: Bulk-update product status
       tags:
       - Products
@@ -26884,6 +26897,9 @@ paths:
         required: true
   "/api/v3/admin/products/bulk_destroy":
     delete:
+      x-spree-agent: false
+      x-spree-agent-reason: Deletes many products in one call behind a single confirmation;
+        delete_resource removes them one at a time.
       summary: Bulk-delete products
       tags:
       - Products
@@ -42593,6 +42609,7 @@ paths:
       summary: Reposition a collection product
       tags:
       - Collections
+      operationId: collections_reposition_product
       security:
       - api_key: []
         bearer_auth: []
@@ -44977,6 +44994,7 @@ paths:
       summary: Re-check a company tax registration
       tags:
       - Companies
+      operationId: company_tax_identifiers_validate
       security:
       - api_key: []
         bearer_auth: []
@@ -50557,6 +50575,7 @@ paths:
       summary: Buy or record a shipping label
       tags:
       - Shipping Labels
+      operationId: shipping_labels_purchase
       security:
       - api_key: []
         bearer_auth: []
@@ -53000,6 +53019,7 @@ paths:
       summary: Book in a delivery
       tags:
       - Purchase Orders
+      operationId: purchase_orders_receive
       security:
       - api_key: []
         bearer_auth: []
@@ -53631,6 +53651,9 @@ paths:
         required: true
   "/api/v3/admin/reporting/query":
     post:
+      x-spree-agent: false
+      x-spree-agent-reason: query_report runs this query, with describe_reporting
+        to learn the vocabulary first.
       summary: Run a reporting query
       tags:
       - Reports
@@ -56575,6 +56598,9 @@ paths:
       schema:
         type: string
     patch:
+      x-spree-agent: false
+      x-spree-agent-reason: Settles a payout against the payment provider, reconciling
+        against provider state an agent cannot see.
       summary: Mark a payout paid
       tags:
       - Sellers
@@ -56893,6 +56919,9 @@ paths:
                 - meta
   "/api/v3/admin/stock_levels/bulk_upsert":
     post:
+      x-spree-agent: false
+      x-spree-agent-reason: set_stock calls this endpoint already, taking stock by
+        SKU and location the way a merchant names them.
       summary: Bulk-upsert stock levels
       tags:
       - Stock
@@ -58427,6 +58456,7 @@ paths:
       summary: Count a delivery in
       tags:
       - Stock Transfers
+      operationId: stock_transfers_receive
       security:
       - api_key: []
         bearer_auth: []

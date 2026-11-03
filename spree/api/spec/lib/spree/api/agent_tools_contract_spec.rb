@@ -1,41 +1,22 @@
 require 'spec_helper'
+require 'spree/api/testing_support/agent_tools_contract'
 
-# The Admin API's controllers are the reference wiring for what an agent may
-# do: they define which workflow writes a resource, which permission gates it,
-# and how a request becomes workflow keywords. These examples keep the agent
-# catalog honest against them, so a new admin endpoint cannot quietly arrive
-# without an agent deciding what to do about it.
+# The Admin API is the reference wiring for what an agent may do: its
+# operations are the action tools, and its controllers define the resources
+# the generic tools reach. These examples keep the agent catalog honest
+# against them, so a new admin endpoint cannot quietly arrive without an
+# agent deciding what to do about it.
 #
-# See docs/plans/6.0-mcp-server.md.
+# See docs/plans/6.0-mcp-server.md and docs/plans/6.0-agent-tools-from-openapi.md.
 RSpec.describe 'agent tool contract' do
-  # Every `Spree.<key>_workflow` an admin controller calls, found by reading
-  # the controller sources — the same way a reviewer would.
-  def workflows_invoked_by_admin_controllers
-    root = Spree::Api::Engine.root.join('app', 'controllers', 'spree', 'api', 'v3', 'admin')
-
-    Dir.glob(root.join('**', '*.rb')).flat_map do |path|
-      File.read(path).scan(/Spree\.([a-z_]+_workflow)\b/).flatten
-    end.uniq.map(&:to_sym).sort
-  end
-
-  # Whether an unmapped model reaches the store through a parent the map does
-  # hold, which is how Spree::AgentTools::WorkflowTool resolves it.
-  def mapped_parent?(model_name, mapped)
-    model_name.constantize.reflect_on_all_associations(:belongs_to).any? do |association|
-      !association.polymorphic? && mapped.include?(association.klass.name)
-    end
-  rescue StandardError
-    false
-  end
-
   # Resource keys whose controller guards against a caller granting authority
   # it does not hold, which the derivation deliberately makes read-only.
   def authority_keys
     Spree::Api::AgentResourceMap.controllers.filter_map do |controller|
       next unless controller.include?(Spree::Api::V3::Admin::RoleGrantGuard)
 
-      model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
-      model && model.model_name.element.pluralize
+      model = Spree::Api::AgentResourceMap.model_for(controller)
+      model && Spree::Api::AgentResourceMap.key_for(model)
     end
   end
 
@@ -43,169 +24,19 @@ RSpec.describe 'agent tool contract' do
   # scopes, which the derivation deliberately makes read-only.
   def contested_keys
     by_key = Spree::Api::AgentResourceMap.controllers.each_with_object(Hash.new { |h, k| h[k] = [] }) do |controller, result|
-      model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
+      model = Spree::Api::AgentResourceMap.model_for(controller)
       next if model.nil? || controller._scoped_resource.blank?
 
-      result[model.model_name.element.pluralize] << controller._scoped_resource
+      result[Spree::Api::AgentResourceMap.key_for(model)] << controller._scoped_resource
     end
 
     by_key.select { |_key, scopes| scopes.uniq.size > 1 }.keys
   end
 
-  let(:catalog) { Spree::AgentTools::DefaultCatalog }
-
-  describe 'the workflow allowlist' do
-    it 'accounts for every workflow an admin controller invokes' do
-      invoked = workflows_invoked_by_admin_controllers
-      accounted = catalog::WORKFLOWS.keys + catalog::EXCLUDED_WORKFLOWS.keys
-
-      unaccounted = invoked - accounted
-
-      expect(unaccounted).to be_empty, <<~MESSAGE
-        These workflows are called by an admin controller but are neither exposed
-        as agent tools nor excluded with a reason:
-
-          #{unaccounted.join("\n  ")}
-
-        Add each to Spree::AgentTools::DefaultCatalog::WORKFLOWS with the write
-        permission its controller declares, or to EXCLUDED_WORKFLOWS saying why
-        an agent must not run it.
-      MESSAGE
-    end
-
-    it 'exposes nothing an admin controller does not invoke' do
-      # A workflow no controller reaches has no reference wiring: nothing says
-      # how a request becomes its keywords, or which permission gates it.
-      stray = catalog::WORKFLOWS.keys - workflows_invoked_by_admin_controllers
-
-      expect(stray).to be_empty
-    end
-
-    it 'gives every exclusion a reason' do
-      expect(catalog::EXCLUDED_WORKFLOWS.values).to all(be_present)
-    end
-
-    it 'names a permission the catalog knows for every exposed workflow' do
-      unknown = catalog::WORKFLOWS.filter_map do |key, options|
-        permission = options.is_a?(Hash) ? options[:permission] : options
-        "#{key} => #{permission}" unless Spree.permissions.key?(permission)
-      end
-
-      expect(unknown).to be_empty
-    end
-
-    it 'gates every exposed workflow with a write permission' do
-      reads = catalog::WORKFLOWS.filter_map do |key, options|
-        permission = options.is_a?(Hash) ? options[:permission] : options
-        key unless permission.start_with?('write_')
-      end
-
-      expect(reads).to be_empty
-    end
-
-    it 'resolves every exposed workflow to a class' do
-      unresolved = catalog::WORKFLOWS.keys.reject { |key| Spree.public_send(key).is_a?(Class) }
-
-      expect(unresolved).to be_empty
-    end
-  end
-
-  describe 'schema derivation' do
-    it 'derives a schema for every exposed workflow' do
-      failures = catalog::WORKFLOWS.filter_map do |key, options|
-        options = { permission: options } unless options.is_a?(Hash)
-        Spree::AgentTools::WorkflowSchema.new(Spree.public_send(key), except: Array(options[:except])).parameters
-        nil
-      rescue StandardError => e
-        "#{key}: #{e.message}"
-      end
-
-      expect(failures).to be_empty, <<~MESSAGE
-        Every parameter of an exposed workflow needs a YARD `@param` with a type,
-        because the tool's schema is derived from it:
-
-          #{failures.join("\n  ")}
-      MESSAGE
-    end
-
-    # A prefixed id can only be turned into a record under the caller's store.
-    # The map answers that directly for a store-scoped model; a model scoped
-    # through its parent (a certificate through its company) is resolved
-    # through that parent. A model with neither has no tenancy answer at all,
-    # and must not be a parameter of an exposed workflow.
-    it 'can resolve every record parameter within a store' do
-      Spree::Api::AgentResourceMap.install
-      mapped = Spree::AgentTools::ResourceMap.all.map(&:model_name)
-
-      unresolvable = catalog::WORKFLOWS.flat_map do |key, options|
-        options = { permission: options } unless options.is_a?(Hash)
-        schema = Spree::AgentTools::WorkflowSchema.new(Spree.public_send(key), except: Array(options[:except]))
-
-        schema.parameters.filter_map do |parameter|
-          model_name = parameter[:model_name]
-          next if model_name.blank? || mapped.include?(model_name)
-          next if mapped_parent?(model_name, mapped)
-
-          "#{key}.#{parameter[:name]} => #{model_name}"
-        end
-      end
-
-      expect(unresolvable).to be_empty, <<~MESSAGE
-        A record parameter is filled from a prefixed id, which is only safe when
-        the record can be narrowed to the caller's store — through the resource
-        map, or through a parent the map holds. These can be narrowed by neither:
-
-          #{unresolvable.join("\n  ")}
-      MESSAGE
-    end
-
-    # Asserted against the naming convention rather than against the injected
-    # list, which would be circular: a parameter is only offered because it is
-    # not on that list, so comparing the two can never fail. A keyword that
-    # reads as "who did this" and is still offered is the bug worth catching.
-    it 'never offers a parameter that names who acted' do
-      # `<verb>ed_by` is the shape that names a person. A `cancel_by` is a
-      # date the merchant sets, not an actor, so the participle matters.
-      actor_shaped = /\A(\w+ed_by|created_by|canceler|approver|reviewer|refunder|requester)\z/
-
-      offered = catalog::WORKFLOWS.flat_map do |key, options|
-        options = { permission: options } unless options.is_a?(Hash)
-        schema = Spree::AgentTools::WorkflowSchema.new(Spree.public_send(key), except: Array(options[:except]))
-
-        schema.parameters.filter_map do |parameter|
-          "#{key}.#{parameter[:name]}" if parameter[:name].to_s.match?(actor_shaped)
-        end
-      end
-
-      expect(offered).to be_empty, <<~MESSAGE
-        These parameters name who performed the action, and the answer is the
-        authenticated principal — never something a caller may claim:
-
-          #{offered.join("\n  ")}
-
-        Declare the association with `acted_by` so it is injected, or add the
-        keyword to WorkflowSchema::UNCONVERTED_PRINCIPAL_PARAMETERS until it is.
-      MESSAGE
-    end
-
-    it 'injects every actor association the acted_by registry knows' do
-      declared = Spree::ActedBy.models.flat_map(&:acted_by_associations).map(&:to_sym)
-
-      expect(Spree::AgentTools::WorkflowSchema.principal_parameter_names).to include(*declared)
-    end
-
-    it 'gives every exposed workflow a unique tool name' do
-      names = catalog::WORKFLOWS.keys.map { |key| Spree::AgentTools::WorkflowTool.tool_name_for(Spree.public_send(key)) }
-
-      expect(names).to match_array(names.uniq)
-    end
-
-    it 'gives every tool a name the protocol accepts' do
-      invalid = catalog::WORKFLOWS.keys.map { |key| Spree::AgentTools::WorkflowTool.tool_name_for(Spree.public_send(key)) }.
-                reject { |name| name.match?(/\A[a-zA-Z0-9_-]{1,64}\z/) }
-
-      expect(invalid).to be_empty
-    end
+  # Every admin action is a tool built from its OpenAPI operation; this is
+  # the contract an extension includes for its own engine too.
+  describe 'the action tools' do
+    it_behaves_like 'an engine whose admin writes are agent tools', Spree::Api::Engine
   end
 
   describe 'the derived resource map' do
@@ -271,7 +102,7 @@ RSpec.describe 'agent tool contract' do
     # wins and the resource stays read-only.
     it 'resolves a resource served under two scopes to the narrower, read-only' do
       by_model = Spree::Api::AgentResourceMap.controllers.each_with_object(Hash.new { |h, k| h[k] = [] }) do |controller, result|
-        model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
+        model = Spree::Api::AgentResourceMap.model_for(controller)
         next if model.nil? || controller._scoped_resource.blank?
 
         result[model.name] << "read_#{controller._scoped_resource}"
@@ -345,7 +176,7 @@ RSpec.describe 'agent tool contract' do
       expect(guarded).not_to be_empty, 'expected the anti-amplification guard to be in use somewhere'
 
       writable = guarded.filter_map do |controller|
-        model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
+        model = Spree::Api::AgentResourceMap.model_for(controller)
         next if model.nil?
 
         entry = Spree::AgentTools::ResourceMap.all.find { |candidate| candidate.model_name == model.name }

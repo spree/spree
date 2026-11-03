@@ -111,6 +111,44 @@ class AgentTool
       def params
         declared_params
       end
+
+      # The declared params as JSON Schema, which is what an adapter hands a
+      # client. A tool built from an OpenAPI operation overrides this with the
+      # operation's own schema, nested properties included.
+      #
+      # @return [Hash]
+      def input_schema
+        properties = params.to_h do |name, options|
+          property = { 'type' => json_type(options[:type]) }
+          property['description'] = options[:description] if options[:description].present?
+          # An array must say what it holds: a client validating arguments
+          # against the schema refuses the call otherwise.
+          property['items'] = { 'type' => json_type(options[:items] || :string) } if property['type'] == 'array'
+
+          [name.to_s, property]
+        end
+
+        {
+          'type' => 'object',
+          'properties' => properties,
+          'required' => params.select { |_name, options| options[:required] }.keys.map(&:to_s)
+        }
+      end
+
+      private
+
+      # A tool declares Ruby-ish types; JSON Schema wants its own names, and
+      # anything unrecognised is a string, which every client can render.
+      def json_type(type)
+        case type&.to_sym
+        when :boolean then 'boolean'
+        when :integer then 'integer'
+        when :number, :float, :decimal then 'number'
+        when :object, :hash then 'object'
+        when :array then 'array'
+        else 'string'
+        end
+      end
     end
 
     # @return [Spree::AgentTools::Context] who is asking, and where

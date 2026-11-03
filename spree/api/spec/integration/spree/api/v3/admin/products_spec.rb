@@ -263,6 +263,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
   path '/api/v3/admin/products/bulk_status_update' do
     post 'Bulk-update product status' do
       tags 'Products'
+      agent_tool false, reason: 'Writes the status column for many products at once, skipping the status workflows ' \
+                                'and their events; products_activate, products_archive and products_draft run them.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -594,6 +596,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
   path '/api/v3/admin/products/bulk_destroy' do
     delete 'Bulk-delete products' do
       tags 'Products'
+      agent_tool false, reason: 'Deletes many products in one call behind a single confirmation; delete_resource removes them one at a time.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

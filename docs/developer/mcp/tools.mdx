@@ -4,9 +4,9 @@ sidebarTitle: Tools
 description: "Every tool the MCP server offers, what it is for and which permission it needs."
 ---
 
-58 tools ship with the server. An assistant is only ever shown the ones you approved, so a connection for products alone sees roughly a dozen.
+100 tools ship with the server: 17 general ones, and one for each action the Admin API offers — cancel an order, capture a payment, approve a seller. An assistant is only ever shown the ones you approved, so a connection for products alone sees a fraction of them.
 
-The catalog is deliberately not a mirror of the API's 500-odd operations — a tool list that size makes a model worse at choosing, not better. Tools cover the operations a merchant asks for by name; everything else is reached through the three generic ones under [store setup](#store-setup).
+The catalog is not a mirror of the API's 500-odd operations. Plain reads and writes of a record go through the generic tools under [creating, changing and deleting records](#creating-changing-and-deleting-records), and each [action](#actions) is a tool of its own, built from the Admin API operation it runs.
 
 <Note>
   The **Permission** column is what you have to approve for the tool to be offered. A dash means it has no permission of its own and is checked per record instead: `search_resources` is offered to everyone, but only finds what you approved.
@@ -33,68 +33,13 @@ The catalog is deliberately not a mirror of the API's 500-odd operations — a t
 
 | Tool | Permission | |
 | --- | --- | --- |
-| `products_activate` | `write_products` | write |
-| `products_draft` | `write_products` | write |
-| `products_archive` | `write_products` | write |
-| `products_approve` | `write_products` | write |
-| `products_reject` | `write_products` | write |
-| `variants_create` | `write_products` | write |
-| `variants_update` | `write_products` | write |
-| `catalogs_activate` | `write_products` | write |
-| `catalogs_deactivate` | `write_products` | write |
-| `price_lists_activate` | `write_products` | write |
-| `price_lists_deactivate` | `write_products` | write |
 | `curate_products` | — | write |
 
-### Orders and payments
-
-| Tool | Permission | |
-| --- | --- | --- |
-| `orders_cancel` | `write_orders` | write |
-| `orders_complete` | `write_orders` | write |
-| `payments_capture` | `write_payments` | write |
-| `payments_void` | `write_payments` | write |
-| `refunds_create` | `write_refunds` | write |
-
-### Fulfilment
-
-| Tool | Permission | |
-| --- | --- | --- |
-| `fulfillments_create` | `write_fulfillments` | write |
-| `fulfillments_mark_delivered` | `write_fulfillments` | write |
-| `deliveries_update_tracking` | `write_orders` | write |
-| `shipping_labels_purchase` | `write_orders` | write |
-| `shipping_labels_refund` | `write_orders` | write |
-
-### Stock and purchasing
+### Stock
 
 | Tool | Permission | |
 | --- | --- | --- |
 | `set_stock` | `write_stock` | write |
-| `stock_transfers_mark_draft` | `write_stock` | write |
-| `stock_transfers_mark_ready` | `write_stock` | write |
-| `stock_transfers_mark_in_transit` | `write_stock` | write |
-| `stock_transfers_receive` | `write_stock` | write |
-| `stock_transfers_cancel` | `write_stock` | write |
-| `stock_transfers_close` | `write_stock` | write |
-| `purchase_orders_mark_draft` | `write_purchasing` | write |
-| `purchase_orders_mark_ordered` | `write_purchasing` | write |
-| `purchase_orders_receive` | `write_purchasing` | write |
-| `purchase_orders_cancel` | `write_purchasing` | write |
-| `purchase_orders_close` | `write_purchasing` | write |
-
-### Sellers
-
-| Tool | Permission | |
-| --- | --- | --- |
-| `sellers_invite` | `write_sellers` | write |
-| `sellers_approve` | `write_sellers` | write |
-| `sellers_reject` | `write_sellers` | write |
-| `sellers_suspend` | `write_sellers` | write |
-| `sellers_reopen_onboarding` | `write_sellers` | write |
-| `seller_requirement_submissions_accept` | `write_sellers` | write |
-| `seller_requirement_submissions_reject` | `write_sellers` | write |
-| `seller_requirement_submissions_waive` | `write_sellers` | write |
 
 ### Files
 
@@ -120,7 +65,6 @@ creating one in the dashboard does.
 | `create_resource` | — | write |
 | `update_resource` | — | write |
 | `delete_resource` | — | write |
-| `tax_exemption_certificates_verify` | `write_customers` | write |
 
 The dash is the point: each call is gated on the resource being written, so a
 connection approved for products can create a product and is refused a market.
@@ -128,10 +72,185 @@ Call `describe_resource` for what a resource accepts.
 
 Some records exist only inside another: an order's items, discounts and fees.
 `describe_resource` names that record as the resource's `parent`, and each
-generic tool that reads or writes a record takes its id as `parent_id`. That is
-how an assistant changes a quantity, sets a negotiated unit price or adds a
-discount on a draft order.
+generic tool that reads or writes a record takes its id as `parent_id`. That is how an assistant changes a
+quantity, sets a negotiated unit price or adds a discount on a draft order.
 
+## Actions
+
+Every Admin API action that is not a plain create, update or delete is a tool, named after the record and the action. Its description, its arguments and the permission it needs are the operation's own, so the [Admin API reference](/api-reference/admin) is the full description of each one. Every action is a write, and asks your client to confirm before it runs.
+
+### Catalogs
+
+| Tool | Permission |
+| --- | --- |
+| `catalog_quantity_rules_upsert` | `write_products` |
+| `catalogs_activate` | `write_products` |
+| `catalogs_assign` | `write_products` |
+| `catalogs_deactivate` | `write_products` |
+| `catalogs_import_products` | `write_products` |
+
+### Categories
+
+| Tool | Permission |
+| --- | --- |
+| `categories_reposition` | `write_categories` |
+| `categories_reposition_product` | `write_products` |
+
+### Channels
+
+| Tool | Permission |
+| --- | --- |
+| `channels_add_products` | `write_settings` |
+| `channels_remove_products` | `write_settings` |
+
+### Collections
+
+| Tool | Permission |
+| --- | --- |
+| `collections_reposition_product` | `write_products` |
+
+### Companies
+
+| Tool | Permission |
+| --- | --- |
+| `company_tax_identifiers_validate` | `write_customers` |
+| `tax_exemption_certificates_revoke` | `write_customers` |
+| `tax_exemption_certificates_verify` | `write_customers` |
+
+### Customers
+
+| Tool | Permission |
+| --- | --- |
+| `customer_tax_identifiers_validate` | `write_customers` |
+| `customers_bulk_add_tags` | `write_customers` |
+| `customers_bulk_add_to_groups` | `write_customers` |
+| `customers_bulk_remove_from_groups` | `write_customers` |
+| `customers_bulk_remove_tags` | `write_customers` |
+
+### Deliveries
+
+| Tool | Permission |
+| --- | --- |
+| `deliveries_mark_delivered` | `write_orders` |
+
+### Fulfillments
+
+| Tool | Permission |
+| --- | --- |
+| `fulfillments_cancel` | `write_fulfillments` |
+| `fulfillments_fulfill` | `write_fulfillments` |
+| `fulfillments_mark_delivered` | `write_fulfillments` |
+| `fulfillments_split` | `write_fulfillments` |
+
+### Orders
+
+| Tool | Permission |
+| --- | --- |
+| `claims_approve` | `write_orders` |
+| `claims_cancel` | `write_orders` |
+| `claims_deny` | `write_orders` |
+| `claims_resolve` | `write_orders` |
+| `digital_links_reset` | `write_orders` |
+| `exchanges_approve` | `write_orders` |
+| `exchanges_cancel` | `write_orders` |
+| `exchanges_fulfill` | `write_orders` |
+| `exchanges_receive` | `write_orders` |
+| `orders_approve` | `write_orders` |
+| `orders_cancel` | `write_orders` |
+| `orders_complete` | `write_orders` |
+| `orders_resend_confirmation` | `write_orders` |
+| `orders_resend_digital_links` | `write_orders` |
+| `return_labels_refund` | `write_orders` |
+| `returns_approve` | `write_orders` |
+| `returns_cancel` | `write_orders` |
+| `returns_receive` | `write_orders` |
+| `returns_refund` | `write_orders` |
+
+### Payments
+
+| Tool | Permission |
+| --- | --- |
+| `payments_capture` | `write_payments` |
+| `payments_void` | `write_payments` |
+
+### Pricing
+
+| Tool | Permission |
+| --- | --- |
+| `price_lists_activate` | `write_products` |
+| `price_lists_deactivate` | `write_products` |
+| `prices_bulk_upsert` | `write_products` |
+
+### Product Types
+
+| Tool | Permission |
+| --- | --- |
+| `product_types_apply_to_products` | `write_product_types` |
+
+### Products
+
+| Tool | Permission |
+| --- | --- |
+| `products_activate` | `write_products` |
+| `products_approve` | `write_products` |
+| `products_archive` | `write_products` |
+| `products_bulk_add_tags` | `write_products` |
+| `products_bulk_add_to_categories` | `write_products` |
+| `products_bulk_add_to_channels` | `write_products` |
+| `products_bulk_add_to_collections` | `write_products` |
+| `products_bulk_remove_from_categories` | `write_products` |
+| `products_bulk_remove_from_channels` | `write_products` |
+| `products_bulk_remove_from_collections` | `write_products` |
+| `products_bulk_remove_tags` | `write_products` |
+| `products_bulk_status_update` | `write_products` |
+| `products_clone` | `write_products` |
+| `products_draft` | `write_products` |
+| `products_reject` | `write_products` |
+
+### Purchase Orders
+
+| Tool | Permission |
+| --- | --- |
+| `purchase_orders_cancel` | `write_purchasing` |
+| `purchase_orders_close` | `write_purchasing` |
+| `purchase_orders_mark_draft` | `write_purchasing` |
+| `purchase_orders_mark_ordered` | `write_purchasing` |
+| `purchase_orders_receive` | `write_purchasing` |
+
+### Sellers
+
+| Tool | Permission |
+| --- | --- |
+| `invitations_resend` | `write_sellers` |
+| `seller_requirement_submissions_accept` | `write_sellers` |
+| `seller_requirement_submissions_reject` | `write_sellers` |
+| `sellers_approve` | `write_sellers` |
+| `sellers_invite` | `write_sellers` |
+| `sellers_reject` | `write_sellers` |
+| `sellers_reopen_onboarding` | `write_sellers` |
+| `sellers_suspend` | `write_sellers` |
+
+### Shipping Labels
+
+| Tool | Permission |
+| --- | --- |
+| `shipping_labels_purchase` | `write_orders` |
+| `shipping_labels_refund` | `write_orders` |
+
+### Stock Transfers
+
+| Tool | Permission |
+| --- | --- |
+| `stock_transfers_cancel` | `write_stock` |
+| `stock_transfers_close` | `write_stock` |
+| `stock_transfers_mark_draft` | `write_stock` |
+| `stock_transfers_mark_in_transit` | `write_stock` |
+| `stock_transfers_mark_ready` | `write_stock` |
+| `stock_transfers_receive` | `write_stock` |
+
+<Note>
+  Tools named in Spree 6.0.0 that no longer appear here — `fulfillments_create`, `refunds_create`, `variants_create` and the like, which are now `create_resource` calls — still answer through 6.0.x, as do the 6.0.0 argument names. A call that uses one says what to send instead. `deliveries_update_tracking` no longer answers: in 6.0.0 it marked the delivery delivered and dropped its tracking fields.
+</Note>
 
 ## Resources
 
@@ -152,7 +271,7 @@ Some things are out of reach whatever you approve.
 - **Erasing a customer.** GDPR erasure is irreversible and is not something to put behind a single confirmation prompt. Do it in the dashboard.
 - **Codes that spend money.** A gift card or coupon export carries live codes, so no tool creates or reads one. Download it from the dashboard.
 
-25 further workflows are excluded for reasons a contract spec enforces, so one cannot be exposed by accident.
+An action an assistant must not run is marked in the API reference with the reason. A contract spec fails when an admin action has no documented operation or an opt-out gives no reason.
 
 ## Writing records
 
@@ -173,6 +292,6 @@ Two things worth knowing about the generic writes:
     What you approve, and what an assistant can never reach.
   </Card>
   <Card title="Custom tools" icon="puzzle-piece" href="/developer/mcp/custom-tools">
-    Add your own, or expose a workflow your extension ships.
+    How your extension's admin endpoints become tools, and adding one by hand.
   </Card>
 </CardGroup>

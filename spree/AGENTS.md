@@ -88,11 +88,11 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 
 **Every new back-office workflow or feature also ships in the MCP server** — anything a merchant can do in the admin dashboard or Admin API, an agent can do too. Tools live in `spree_core` (`Spree.admin_agent_tools`, `app/tools/spree/agent_tools/`), not in `spree_mcp`, so the dashboard assistant gets them as well (`docs/plans/6.0-mcp-server.md`).
 
-- A new workflow goes into `Spree::AgentTools::DefaultCatalog::WORKFLOWS`, with the same write scope as the admin controller that runs it. Hide parameters an agent must not set with `except:`.
-- Plain CRUD on a new resource goes through the generic `search_resources` / `get_resource` / `create_resource` / `update_resource` / `delete_resource` tools. These reach a resource only through its Admin API controller (`Spree::AgentTools::ResourceMap`), so a back-office resource needs one.
-- Anything that is neither a workflow nor CRUD (reports, imports, files) gets its own `Spree::AgentTool` subclass, registered in `DefaultCatalog::TOOLS`.
-- Leaving something out takes a stated reason in `EXCLUDED_WORKFLOWS`. Irreversible, platform-wide or wizard-only steps qualify; "not done yet" doesn't. `spree/api/spec/lib/spree/api/agent_tools_contract_spec.rb` fails on a workflow in neither list, but it only scans controllers under `app/controllers/spree/api/v3/admin` — a workflow run from a controller concern (returns, claims, exchanges…) needs the same decision by hand.
-- Tool descriptions are how an agent learns the feature: say what it does and when to use it. Update `docs/developer/mcp/tools.mdx` with the new tool.
+- Every Admin API action that isn't plain create, update or destroy is a tool on its own, built from its OpenAPI operation (`docs/plans/6.0-agent-tools-from-openapi.md`): name from the resource and action, description from the summary and description, arguments from the path and request body, permission from the controller's `scoped_resource`. So a new back-office action needs an endpoint and an rswag spec, nothing else. Don't add `expose_workflows` calls (deprecated) or `Spree::Dependencies` keys to reach agents.
+- Plain CRUD on a new resource goes through the generic `search_resources` / `get_resource` / `create_resource` / `update_resource` / `delete_resource` tools. These reach a resource only through its Admin API controller (`Spree::AgentTools::ResourceMap`), so a back-office resource needs one. A nested resource takes its parent's id as `parent_id`.
+- Anything that is not an Admin API operation (reports, imports, files) gets its own `Spree::AgentTool` subclass, registered in `DefaultCatalog::TOOLS`.
+- Leaving an action out takes `agent_tool false, reason: '…'` in its rswag spec. Irreversible, platform-wide or wizard-only steps qualify; "not done yet" doesn't. A custom GET is a tool only with `agent_tool true`. `spree/api/spec/lib/spree/api/agent_tools_contract_spec.rb` fails on an admin action with no operation, an opt-out with no reason, or two actions deriving one tool name; give one an `operationId`.
+- An operation's summary and description are how an agent learns the feature: say what it does and when to use it. Update `docs/developer/mcp/tools.mdx` with the new tool.
 
 ## Emails (Liquid + MJML)
 

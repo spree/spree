@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-# A workflow tool's arguments arrive as JSON, so every record it is meant to
-# act on comes in as a prefixed id. What the tool does between receiving those
-# strings and calling the workflow is the whole of its contract.
-RSpec.describe 'agent workflow tool arguments' do
+# A generic write's arguments arrive as JSON, so every record it is meant to
+# act on comes in as a prefixed id, and every attribute is checked against what
+# the endpoint permits before it is sent.
+RSpec.describe 'agent generic write arguments' do
   let(:store) { @default_store }
   let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_all']) }
   let(:context) { Spree::AgentTools::Context.new(store: store, api_key: api_key, request_headers: agent_headers_for_key(api_key)) }
@@ -83,31 +83,6 @@ RSpec.describe 'agent workflow tool arguments' do
     end
   end
 
-  # Nothing shipped reaches this, but an extension registering a workflow
-  # whose key does not name a Spree model would: `can?(:create, nil)` answers
-  # true, so the authorization check passes for exactly the tool nobody can
-  # vouch for, and the attribute filter keyed off the same lookup falls open
-  # with it.
-  describe 'a workflow naming a resource that does not exist' do
-    let(:tool_class) do
-      Spree::AgentTools::WorkflowTool.for(:product_create_workflow, permission: 'write_products')
-    end
-
-    let(:tool) do
-      instance = tool_class.new(context)
-      allow(instance).to receive(:created_model).and_return(nil)
-      allow(instance).to receive(:subject_model).and_return(nil)
-      instance
-    end
-
-    it 'refuses rather than authorizing against nothing' do
-      result = tool.call(attributes: { 'name' => 'Should not be created' })
-
-      expect(result[:error]).to include('does not exist').or include('not one an agent may write')
-      expect(Spree::Product.where(name: 'Should not be created')).to be_empty
-    end
-  end
-
   describe 'an actor the record cannot hold' do
     let(:supplier) { create(:supplier, store: store) }
     let(:stock_location) { store.stock_locations.first || create(:stock_location, store: store) }
@@ -146,80 +121,6 @@ RSpec.describe 'agent workflow tool arguments' do
 
       expect(result[:error]).to be_nil
       expect(store.purchase_orders.last.created_by).to eq(admin)
-    end
-  end
-  # A workflow with an endpoint runs through it: the controller's routing,
-  # authentication, authorization and serializer, rather than a second copy
-  # of each beside them.
-  describe 'running through the endpoint' do
-    it 'dispatches every workflow that has one' do
-      in_process = Spree::AgentTools::DefaultCatalog::WORKFLOWS.reject do |key, _options|
-        Spree::AgentTools::WorkflowEndpoints.find(key)
-      end
-
-      expect(in_process.keys).to be_empty
-    end
-
-    it 'fills a parent segment from the record the caller named' do
-      order = create(:order_with_line_items, store: store)
-      payment = create(:payment, order: order, amount: 10)
-
-      result = tool('payments_void').call(payment: payment.prefixed_id)
-
-      expect(result[:error]).to be_nil
-      expect(payment.reload.status).to eq('void')
-    end
-
-    it 'sends a keyword under the name the endpoint documents' do
-      order = create(:order_ready_to_ship, store: store)
-
-      result = tool('orders_cancel').call(order: order.prefixed_id, cancel_note: 'Duplicate order')
-
-      expect(result[:error]).to be_nil
-      expect(order.reload.status).to eq('canceled')
-    end
-
-    it 'does not reach a record in another store' do
-      theirs = create(:order_ready_to_ship, store: create(:store, code: "other-#{SecureRandom.hex(4)}"))
-
-      result = tool('orders_cancel').call(order: theirs.prefixed_id)
-
-      expect(result[:error]).to be_present
-      expect(theirs.reload.status).not_to eq('canceled')
-    end
-    # A keyword the endpoint carries under another name has to arrive, or the
-    # tool reports a change it did not make. Three shapes caught real drops
-    # while this was written: a record renamed by the action
-    # (`reason:` -> `cancel_reason_id`), an attributes hash that IS the body,
-    # and a keyword whose record fills a path segment of a different name.
-    it 'sends a record the action renamed' do
-      order = create(:order_ready_to_ship, store: store)
-      reason = store.order_cancellation_reasons.first || create(:order_cancellation_reason, store: store)
-
-      result = tool('orders_cancel').call(order: order.prefixed_id, reason: reason.prefixed_id)
-
-      expect(result[:error]).to be_nil
-      expect(order.reload.cancel_reason_id).to eq(reason.id)
-    end
-
-    it 'merges an attributes hash into the body' do
-      product = create(:product, store: store)
-      sku = "SKU-#{SecureRandom.hex(3)}"
-
-      result = tool('variants_create').call(product: product.prefixed_id, attributes: { 'sku' => sku })
-
-      expect(result[:error]).to be_nil
-      expect(Spree::Variant.where(sku: sku)).to exist
-    end
-
-    it 'fills a path segment from a keyword of a different name' do
-      order = create(:order_ready_to_ship, store: store)
-
-      result = tool('shipping_labels_purchase').call(owner: order.fulfillments.first.prefixed_id)
-
-      # The provider refuses in test, which is the endpoint answering — a
-      # segment left unfilled would have been a 404 instead.
-      expect(result[:error]).not_to match(/not found/i)
     end
   end
 end

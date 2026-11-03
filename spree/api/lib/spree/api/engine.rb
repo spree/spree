@@ -2,10 +2,11 @@ require 'rails/engine'
 
 require_relative 'dependencies'
 require_relative 'configuration'
+require_relative 'admin_document'
 require_relative 'agent_write_schemas'
 require_relative 'agent_resource_map'
 require_relative 'agent_membership_map'
-require_relative 'agent_workflow_endpoints'
+require_relative 'agent_operations'
 require_relative 'oauth'
 
 module Spree
@@ -63,6 +64,7 @@ module Spree
       # not they run an agent client. The first caller pays instead.
       config.to_prepare do
         Spree::Api::AgentResourceMap.stale!
+        Spree::Api::AgentOperations.stale!
       end
 
       # Add API event subscribers

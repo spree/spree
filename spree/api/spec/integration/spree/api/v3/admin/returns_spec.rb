@@ -304,6 +304,7 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
     patch 'Refund a return label' do
       tags 'Orders'
       admin_sdk_example 'order-returns/labels-refund'
+      operationId 'return_labels_refund'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Asks the carrier to refund a purchased return label the customer never used, such as when the return is canceled. An uploaded label has nothing to refund.'
