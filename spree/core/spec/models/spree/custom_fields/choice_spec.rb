@@ -17,6 +17,17 @@ describe Spree::CustomFields::Choice, type: :model do
       expect { product.set_custom_field(definition, 'z') }.to raise_error(ActiveRecord::RecordInvalid, /z/)
       expect { product.set_custom_field(definition, %w[a b]) }.to raise_error(ActiveRecord::RecordInvalid)
     end
+
+    it 'stores a list of one as the bare value' do
+      expect(product.set_custom_field(definition, %w[b]).value).to eq('b')
+    end
+
+    it 'reports a value that breaks the rules on the record that writes it' do
+      new_product = build(:product, custom_fields: [{ custom_field_definition_id: definition.id, value: 'z' }])
+
+      expect(new_product.save).to be(false)
+      expect(new_product.errors['custom_fields[0].value']).to be_present
+    end
   end
 
   context 'with several choices allowed' do
@@ -47,7 +58,12 @@ describe Spree::CustomFields::Choice, type: :model do
 
       expect(definition.update(validations: definition.validation_rules.except('multiple'))).to be(true)
       expect(custom_field.reload.serialize_value).to eq('a')
+      expect(custom_field.value).to eq('a')
       expect(custom_field).to be_valid
+    end
+
+    it 'stores the values stripped and without repeats' do
+      expect(product.set_custom_field(definition, [' a', 'a', 'c ']).value).to eq('["a","c"]')
     end
 
     it 'refuses to turn off several choices while a value holds several' do

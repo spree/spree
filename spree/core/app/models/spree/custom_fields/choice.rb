@@ -5,6 +5,7 @@ module Spree
     # is the choice's `value`, so relabelling a choice changes no data.
     class Choice < Spree::CustomField
       before_validation :wrap_single_value, if: :multiple_choices?
+      before_validation :unwrap_single_value, unless: :multiple_choices?
 
       def self.searchable?
         true
@@ -21,8 +22,9 @@ module Spree
       end
 
       # @param raw [String, Array<String>, nil]
+      # Choices are stored stripped, so values are too.
       def value=(raw)
-        super(raw.is_a?(Array) ? raw.map(&:to_s).to_json : raw)
+        super(raw.is_a?(Array) ? raw.map { |choice| choice.to_s.strip }.uniq.to_json : raw.try(:strip) || raw)
       end
 
       # @return [String, Array<String>] an array when the definition allows several values
@@ -72,6 +74,12 @@ module Spree
 
         parts = value.split(',').map(&:strip)
         self.value = (parts - custom_field_definition.choice_values).empty? ? parts : [value]
+      end
+
+      # A single choice is stored bare, so it sorts and compares by its value
+      # rather than as JSON text.
+      def unwrap_single_value
+        self.value = stored_values.first if stored_values&.one?
       end
 
       def value_must_follow_definition_rules
