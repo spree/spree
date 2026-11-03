@@ -168,7 +168,8 @@ RSpec.describe 'agent workflow tool arguments' do
     # An extension exposes its workflows on the same registry, so mapping is
     # driven by what is exposed rather than by core's catalog.
     it 'maps the workflows the admin registry exposes' do
-      registry = Spree::AgentTools::Registry.new(audience: :admin).expose_workflows(order_cancel_workflow: 'write_orders')
+      registry = Spree::AgentTools::Registry.new(audience: :admin)
+      registry.expose_workflows(order_cancel_workflow: 'write_orders')
       allow(Spree).to receive(:admin_agent_tools).and_return(registry)
       Spree::AgentTools::WorkflowEndpoints.reset!
 
@@ -178,7 +179,8 @@ RSpec.describe 'agent workflow tool arguments' do
     end
 
     it 'maps a workflow exposed after the endpoints were derived' do
-      registry = Spree::AgentTools::Registry.new(audience: :admin).expose_workflows(order_cancel_workflow: 'write_orders')
+      registry = Spree::AgentTools::Registry.new(audience: :admin)
+      registry.expose_workflows(order_cancel_workflow: 'write_orders')
       allow(Spree).to receive(:admin_agent_tools).and_return(registry)
       Spree::AgentTools::WorkflowEndpoints.reset!
       Spree::AgentTools::WorkflowEndpoints.all
