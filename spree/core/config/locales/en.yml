@@ -1617,6 +1617,8 @@ en:
     return: return
     return_errors:
       digital_content: Digital content cannot be returned once it has been delivered (%{items})
+      invalid_replacement: An exchange can only swap an item for another available variant of the same product
+      not_cancelable: This request can no longer be withdrawn, because the store has already acted on it
       not_returnable: These items were sold as non-returnable (%{items})
       not_shipped: These items have not shipped yet (%{items})
       order_canceled: This order was canceled

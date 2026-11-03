@@ -55,6 +55,10 @@ module Spree
                      :resend_confirmation_email, :resend_digital_links_email
     publishes_event :completed, deprecated_alias_of: 'order.placed'
     publishes_event :shipped, deprecated_alias_of: 'order.fulfilled'
+    # A guest asked for a link to this order ("find my order"). Carries the
+    # order token, a live credential, so it reaches only endpoints that name it.
+    publishes_event :lookup_requested,
+                    serializer: 'Spree::Api::V3::OrderLookupRequestedEventSerializer', credential: 'write_orders'
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::HasExternalReferences

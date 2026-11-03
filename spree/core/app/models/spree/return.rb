@@ -64,6 +64,22 @@ module Spree
       shipping_labels.active.last
     end
 
+    # Whether a prepaid label is waiting to be downloaded, read from the loaded
+    # rows so a list of returns does not query once per record.
+    #
+    # @return [Boolean]
+    def label_available?
+      shipping_labels.any? { |label| !label.refunded? }
+    end
+
+    # The inbound parcel's latest consignment, read from the loaded rows so a
+    # list of returns does not query once per field.
+    #
+    # @return [Spree::Delivery, nil]
+    def latest_delivery
+      deliveries.to_a.last
+    end
+
     # The provider that ships this return's label — the one that handled the
     # outbound parcel the returned items travelled in, since that is the
     # carrier account the merchant connected. Manual when nothing shipped

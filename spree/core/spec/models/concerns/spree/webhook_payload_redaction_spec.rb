@@ -42,6 +42,21 @@ describe Spree::WebhookPayloadRedaction do
       expect(described_class.merge(payload, secrets)).to eq(original)
     end
 
+    # The "find my order" event carries the guest order credential; the log
+    # must not hand it to anyone who may read deliveries.
+    it 'redacts the order token from find my order and re-attaches it at send time' do
+      original = {
+        'name' => 'order.lookup_requested',
+        'data' => { 'email' => 'guest@example.com', 'number' => 'R1001', 'order_token' => 'live-token' }
+      }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload['data']['order_token']).to eq(placeholder)
+      expect(secrets).to eq('data.order_token' => 'live-token')
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
     it 'redacts the data request confirmation_token' do
       original = {
         'name' => 'data_request.confirmation_requested',
