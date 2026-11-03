@@ -22,7 +22,8 @@ module Spree
           context.permitted?(entry.permission)
 
         path = entry.api_path(:show)
-        return { error: "#{entry.key} cannot be fetched one at a time." } if path.blank? || path.include?('/:') && path.count(':') > 1
+        return { error: "#{entry.key} cannot be fetched one at a time." } if path.blank?
+        return nested_resource_error(entry, 'fetched', :show) if entry.nested?(:show)
 
         requested, refusal = expansions(entry, expand)
         return refusal if refusal

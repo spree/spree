@@ -167,6 +167,39 @@ class AgentTool
 
     protected
 
+    # A resource that lives under a parent — a promotion's rules, an order's
+    # payments — has no path of its own to dispatch to, so every tool refuses
+    # it the same way: naming the parent and, where the parent carries the
+    # rows as an attribute, how to write and read them there. The old answer
+    # was the endpoint's 404 for a parent id nobody supplied.
+    #
+    # @param entry [Spree::AgentTools::ResourceMap::Entry]
+    # @param verb [String] 'searched', 'fetched', 'created'…
+    # @param action [Symbol] the operation whose path runs under the parent
+    # @return [Hash]
+    def nested_resource_error(entry, verb, action)
+      parent = entry.parent_key(action)
+      parent_entry = Spree::AgentTools::ResourceMap.find(parent)
+      attribute = parent_entry&.nested_typed_families&.key(entry.model_class)
+
+      owner = parent.singularize.tr('_', ' ')
+      sentences = ["#{entry.key} belong to #{owner.match?(/\A[aeiou]/) ? 'an' : 'a'} #{owner} and cannot be #{verb} on their own."]
+      # Each suggested call is one this caller may actually make; a hint
+      # that leads straight to a permission refusal is worse than none.
+      readable = parent_entry && context.permitted?(parent_entry.permission)
+      writable = parent_entry&.write_permission.present? && context.permitted?(parent_entry.write_permission)
+      if attribute && writable
+        sentences << "Write them in the #{attribute} attribute of #{parent} — describe_resource #{parent} shows the shape and the accepted types."
+      end
+      if attribute && readable && parent_entry.expandable_associations.include?(attribute)
+        sentences << "Read them with get_resource on #{parent} and expand: [\"#{attribute}\"]."
+      elsif readable && !attribute
+        sentences << "Start from #{parent}: get_resource with expand lists what it carries (describe_resource #{parent} names the options)."
+      end
+
+      { error: sentences.join(' '), parent: parent }
+    end
+
     # Refuses unless this admin may take `action` on `record`.
     #
     # Holding `write_products` says an admin may edit products; it does not

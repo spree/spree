@@ -277,5 +277,165 @@ RSpec.describe 'agent generic record writes' do
 
       expect(described[:expandable_associations]).to include('variants')
     end
+
+    # The base serializer explains `expand?` in a comment with `variants` as
+    # the example, which once put it on every resource's list.
+    it 'does not offer an association a serializer only mentions in a comment' do
+      described = tool('describe_resource').call(resource: 'promotions')[:resources].first
+
+      expect(described[:expandable_associations]).to include('rules', 'actions')
+      expect(described[:expandable_associations]).not_to include('variants')
+    end
+  end
+
+  # Rows selected by a `type` — a promotion's rules and actions, a price
+  # list's rules, a payment method's provider — take a short name from a
+  # registry. An agent that was never shown the registry guessed Ruby class
+  # names, and the write dropped every row while answering success.
+  describe 'typed rows' do
+    def described(resource)
+      tool('describe_resource').call(resource: resource)[:resources].first
+    end
+
+    it 'lists the kinds each nested row\'s type takes, with its schema and calculators' do
+      nested = described('promotions')[:nested_types]
+      rules = nested['rules'].index_by { |kind| kind[:type] }
+      actions = nested['actions'].index_by { |kind| kind[:type] }
+
+      expect(rules.keys).to include('item_total', 'product', 'first_order')
+      expect(rules['item_total'][:schema]['properties']).to include('amount_min')
+      expect(actions.keys).to include('create_item_adjustments', 'free_shipping')
+      expect(actions['create_item_adjustments'][:calculators].map { |calculator| calculator[:type] }).to include('percent_on_line_item')
+      expect(actions['free_shipping']).not_to have_key(:calculators)
+    end
+
+    it 'lists the kinds for every family written as nested rows' do
+      expect(described('price_lists')[:nested_types]['rules'].map { |kind| kind[:type] }).to include('volume_rule')
+      expect(described('delivery_methods')[:nested_types]['rules'].map { |kind| kind[:type] }).to include('weight_rule')
+    end
+
+    it 'lists the kinds a resource\'s own type takes' do
+      expect(described('payment_methods')[:types].map { |kind| kind[:type] }).to include('check')
+    end
+
+    # The whole catalogue of schemas at once is more than an index should
+    # cost a model's context; the listing names the kinds and no more.
+    it 'names the kinds without their schemas in the full listing' do
+      promotions = tool('describe_resource').call[:resources].find { |entry| entry[:resource] == 'promotions' }
+
+      expect(promotions[:nested_types]['rules']).to include('item_total')
+      expect(promotions[:nested_types]['actions']).to include('create_item_adjustments')
+    end
+
+    it 'creates a promotion with its rules and actions in one call' do
+      result = tool('create_resource').call(
+        resource: 'promotions',
+        attributes: {
+          'name' => 'Black Friday', 'kind' => 'coupon_code', 'code' => 'BLACKFRIDAY', 'usage_limit' => 500,
+          'rules' => [{ 'type' => 'item_total', 'preferences' => { 'amount_min' => '100' } }],
+          'actions' => [{ 'type' => 'create_item_adjustments',
+                          'calculator' => { 'type' => 'percent_on_line_item', 'preferences' => { 'percent' => '25' } } }]
+        }
+      )
+
+      expect(result[:error]).to be_nil
+
+      promotion = Spree::Promotion.for_store(store).find_by(name: 'Black Friday')
+      expect(promotion.rules.map { |rule| rule.class.api_type }).to eq(['item_total'])
+      expect(promotion.actions.first.calculator.class.api_type).to eq('percent_on_line_item')
+    end
+
+    # "Generate 500 codes" is `multi_codes` with a count and a prefix; the
+    # batch is minted by the same write, so the merchant has codes to hand
+    # out as soon as the promotion exists.
+    it 'creates a multi-code promotion and generates its coupon batch' do
+      product = create(:product, store: store)
+
+      result = tool('create_resource').call(
+        resource: 'promotions',
+        attributes: {
+          'name' => 'Black Friday codes', 'kind' => 'coupon_code',
+          'multi_codes' => true, 'number_of_codes' => 5, 'code_prefix' => 'BLACKFRIDAY',
+          'starts_at' => '2026-11-27T00:00:00Z', 'expires_at' => '2026-11-30T23:59:59Z',
+          'rules' => [{ 'type' => 'product', 'product_ids' => [product.prefixed_id], 'preferences' => { 'match_policy' => 'any' } },
+                      { 'type' => 'item_total', 'preferences' => { 'amount_min' => '100', 'operator_min' => 'gt' } }],
+          'actions' => [{ 'type' => 'create_item_adjustments',
+                          'calculator' => { 'type' => 'percent_on_line_item', 'preferences' => { 'percent' => '25' } } }]
+        }
+      )
+
+      expect(result[:error]).to be_nil
+
+      promotion = Spree::Promotion.for_store(store).find_by(name: 'Black Friday codes')
+      expect(promotion.rules.map { |rule| rule.class.api_type }).to contain_exactly('product', 'item_total')
+      expect(promotion.rules.find { |rule| rule.respond_to?(:products) }.products).to eq([product])
+      expect(promotion.coupon_codes.count).to eq(5)
+      expect(promotion.coupon_codes.pluck(:code)).to all(start_with('blackfriday'))
+    end
+
+    it 'refuses an unknown type with the accepted ones, and creates nothing' do
+      result = tool('create_resource').call(
+        resource: 'promotions',
+        attributes: { 'name' => 'Guessed', 'kind' => 'automatic',
+                      'rules' => [{ 'type' => 'Spree::Promotion::Rules::ItemTotal' }] }
+      )
+
+      expect(result[:error]).to include('/rules/0/type', 'item_total', 'first_order')
+      expect(Spree::Promotion.for_store(store).where(name: 'Guessed')).not_to exist
+    end
+
+    it 'reads a promotion\'s rules and actions through expand' do
+      promotion = create(:promotion_with_item_adjustment, store: store)
+      promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder')
+
+      record = tool('get_resource').call(resource: 'promotions', id: promotion.prefixed_id, expand: %w[rules actions])[:record]
+
+      expect(record['rules'].map { |rule| rule['type'] }).to eq(['first_order'])
+      expect(record['actions'].map { |action| action['type'] }).to eq(['create_item_adjustments'])
+    end
+  end
+
+  # A resource that only exists under a parent has no path a tool can fill
+  # in. Dispatching the template as it stood answered "Promotion not found",
+  # which a model reported as a fact about the store.
+  describe 'a resource reached only under a parent' do
+    it 'is not searched on its own, and says where its rows live' do
+      result = tool('search_resources').call(resource: 'promotion_rules')
+
+      expect(result[:error]).to include('belong to a promotion', 'rules attribute of promotions', 'expand: ["rules"]')
+      expect(result[:available]).to include('promotions')
+      expect(result[:available]).not_to include('promotion_rules')
+    end
+
+    it 'is not fetched on its own' do
+      result = tool('get_resource').call(resource: 'promotion_actions', id: 'pact_x')
+
+      expect(result[:error]).to include('belong to a promotion', 'actions attribute of promotions')
+    end
+
+    it 'is not written on its own' do
+      result = tool('create_resource').call(resource: 'promotion_rules', attributes: { 'type' => 'first_order' })
+
+      expect(result[:error]).to include('cannot be created on their own', 'promotions')
+    end
+
+    it 'names the parent even when the parent carries no attribute for it' do
+      result = tool('search_resources').call(resource: 'payments')
+
+      expect(result[:error]).to include('belong to an order', 'orders')
+    end
+
+    # A hint is only offered when the caller could follow it: a read-only key
+    # is told how to read the rows, not how to write them.
+    context 'with a read-only key' do
+      let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_promotions']) }
+
+      it 'suggests only the calls the caller may make' do
+        result = tool('search_resources').call(resource: 'promotion_rules')
+
+        expect(result[:error]).to include('belong to a promotion', 'expand: ["rules"]')
+        expect(result[:error]).not_to include('Write them')
+      end
+    end
   end
 end

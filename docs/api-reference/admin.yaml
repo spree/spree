@@ -29971,6 +29971,13 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: 'Comma-separated associations to expand: `rules`, `actions` (each
+          under the same shape the write accepts), `custom_fields`.'
+        schema:
+          type: string
       responses:
         '200':
           description: promotion found
@@ -69309,6 +69316,14 @@ components:
           type: array
           items:
             type: string
+        rules:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PromotionRule"
+        actions:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PromotionAction"
       required:
       - id
       - name
