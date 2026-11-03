@@ -3383,6 +3383,9 @@
           "price_reverting": "Reverting to catalog price",
           "removed": "Removing"
         },
+        "balance_change": "Balance change",
+        "balance_owed_hint": "The customer will owe more. Collect the balance from the order's payments after saving.",
+        "balance_refund_hint": "The customer will be owed money back. Refund it from the order's payments after saving.",
         "catalog_price_unknown": "catalog price",
         "columns": {
           "line_total": "Line total",
@@ -3397,7 +3400,10 @@
         "title": "Edit order",
         "totals_hint": "Totals are recalculated by the server after you save.",
         "totals_preview_confirm_hint": "Confirmed by the server when you save.",
+        "totals_preview_failed": "These changes cannot be applied: {{message}}",
         "totals_preview_hint": "Shipping, tax and promotions are recalculated by the server after you save.",
+        "totals_preview_loading": "Updating totals…",
+        "totals_preview_server_hint": "Calculated by the store, including shipping, tax and promotions. Nothing is saved until you click Save.",
         "totals_title": "Totals",
         "validation": {
           "below_fulfilled_one": "Can't go below {{count}} fulfilled unit",
@@ -4398,6 +4404,7 @@
             "product_submission": "Product submission",
             "promotion": "Promotion",
             "purchase_order": "Purchase order",
+            "order_change": "Order changes",
             "refund": "Refund",
             "return": "Return",
             "saved_report": "Saved report",

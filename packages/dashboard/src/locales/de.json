@@ -3383,6 +3383,9 @@
           "price_reverting": "Wird auf Katalogpreis zurückgesetzt",
           "removed": "Wird entfernt"
         },
+        "balance_change": "Saldoänderung",
+        "balance_owed_hint": "Der Kunde schuldet mehr. Ziehen Sie den Saldo nach dem Speichern über die Zahlungen der Bestellung ein.",
+        "balance_refund_hint": "Dem Kunden steht eine Rückerstattung zu. Erstatten Sie sie nach dem Speichern über die Zahlungen der Bestellung.",
         "catalog_price_unknown": "Katalogpreis",
         "columns": {
           "line_total": "Positionssumme",
@@ -3397,7 +3400,10 @@
         "title": "Bestellung bearbeiten",
         "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
         "totals_preview_confirm_hint": "Wird beim Speichern vom Server bestätigt.",
+        "totals_preview_failed": "Diese Änderungen können nicht übernommen werden: {{message}}",
         "totals_preview_hint": "Versand, Steuern und Aktionen werden nach dem Speichern vom Server neu berechnet.",
+        "totals_preview_loading": "Summen werden aktualisiert…",
+        "totals_preview_server_hint": "Vom Shop berechnet, inklusive Versand, Steuern und Aktionen. Erst beim Speichern wird etwas übernommen.",
         "totals_title": "Summen",
         "validation": {
           "below_fulfilled_one": "Darf {{count}} abgewickelte Einheit nicht unterschreiten",
@@ -4398,6 +4404,7 @@
             "product_submission": "Produkteinreichung",
             "promotion": "Aktion",
             "purchase_order": "Bestellung beim Lieferanten",
+            "order_change": "Bestelländerungen",
             "refund": "Erstattung",
             "return": "Rücksendung",
             "saved_report": "Gespeicherter Bericht",

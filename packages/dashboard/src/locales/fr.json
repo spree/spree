@@ -3384,6 +3384,9 @@
           "price_reverting": "Retour au prix catalogue",
           "removed": "À retirer"
         },
+        "balance_change": "Variation du solde",
+        "balance_owed_hint": "Le client devra davantage. Encaissez le solde depuis les paiements de la commande après l'enregistrement.",
+        "balance_refund_hint": "Le client devra être remboursé. Remboursez-le depuis les paiements de la commande après l'enregistrement.",
         "catalog_price_unknown": "prix catalogue",
         "columns": {
           "line_total": "Total de la ligne",
@@ -3398,7 +3401,10 @@
         "title": "Modifier la commande",
         "totals_hint": "Les totaux sont recalculés par le serveur après l'enregistrement.",
         "totals_preview_confirm_hint": "Confirmé par le serveur lors de l'enregistrement.",
+        "totals_preview_failed": "Ces modifications ne peuvent pas être appliquées : {{message}}",
         "totals_preview_hint": "Les frais de port, les taxes et les promotions sont recalculés par le serveur après l'enregistrement.",
+        "totals_preview_loading": "Mise à jour des totaux…",
+        "totals_preview_server_hint": "Calculé par la boutique, livraison, taxes et promotions comprises. Rien n'est enregistré avant que vous cliquiez sur Enregistrer.",
         "totals_title": "Totaux",
         "validation": {
           "below_fulfilled_one": "Impossible de descendre sous {{count}} unité traitée",
@@ -4400,6 +4406,7 @@
             "product_submission": "Soumission de produit",
             "promotion": "Promotion",
             "purchase_order": "Bon de commande",
+            "order_change": "Modifications de commandes",
             "refund": "Remboursement",
             "return": "Retour",
             "saved_report": "Rapport enregistré",

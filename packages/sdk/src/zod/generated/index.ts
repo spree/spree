@@ -53,6 +53,7 @@ export { NewsletterSubscriberRequestEventSchema, type NewsletterSubscriberReques
 export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';
+export { OrderChangeEventSchema, type OrderChangeEvent } from './OrderChangeEvent';
 export { OrderGroupSchema, type OrderGroup } from './OrderGroup';
 export { PasswordResetRequestedEventSchema, type PasswordResetRequestedEvent } from './PasswordResetRequestedEvent';
 export { PaymentSchema, type Payment } from './Payment';

@@ -3382,6 +3382,9 @@
           "price_reverting": "Hoàn nguyên về giá danh mục",
           "removed": "Đang xóa"
         },
+        "balance_change": "Thay đổi số dư",
+        "balance_owed_hint": "Khách hàng sẽ nợ thêm. Hãy thu số dư từ các khoản thanh toán của đơn hàng sau khi lưu.",
+        "balance_refund_hint": "Khách hàng sẽ được hoàn tiền. Hãy hoàn tiền từ các khoản thanh toán của đơn hàng sau khi lưu.",
         "catalog_price_unknown": "giá danh mục",
         "columns": {
           "line_total": "Tổng số dòng",
@@ -3396,7 +3399,10 @@
         "title": "Chỉnh sửa đơn hàng",
         "totals_hint": "Tổng số được máy chủ tính toán lại sau khi bạn lưu.",
         "totals_preview_confirm_hint": "Được máy chủ xác nhận khi bạn lưu.",
+        "totals_preview_failed": "Không thể áp dụng các thay đổi này: {{message}}",
         "totals_preview_hint": "Vận chuyển, thuế và khuyến mãi được máy chủ tính toán lại sau khi bạn lưu.",
+        "totals_preview_loading": "Đang cập nhật tổng tiền…",
+        "totals_preview_server_hint": "Do cửa hàng tính, bao gồm phí giao hàng, thuế và khuyến mãi. Không có gì được lưu cho đến khi bạn nhấn Lưu.",
         "totals_title": "Tổng số",
         "validation": {
           "below_fulfilled_one": "Không thể xuống dưới {{count}} đơn vị đã hoàn thành",
@@ -4397,6 +4403,7 @@
             "product_submission": "Gửi sản phẩm",
             "promotion": "Khuyến mãi",
             "purchase_order": "Đơn đặt hàng",
+            "order_change": "Thay đổi đơn hàng",
             "refund": "Hoàn tiền",
             "return": "Trở lại",
             "saved_report": "Báo cáo đã lưu",

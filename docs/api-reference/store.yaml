@@ -19579,6 +19579,50 @@ components:
       - option_type_label
       - image_url
       x-typelizer: true
+    OrderChangeEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        requested_at:
+          type: string
+          nullable: true
+        confirmed_at:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        order_id:
+          type: string
+        return_id:
+          type: string
+          nullable: true
+        exchange_id:
+          type: string
+          nullable: true
+        claim_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - status
+      - requested_at
+      - confirmed_at
+      - canceled_at
+      - created_at
+      - updated_at
+      - order_id
+      - return_id
+      - exchange_id
+      - claim_id
+      x-typelizer: true
     OrderGroup:
       type: object
       properties:

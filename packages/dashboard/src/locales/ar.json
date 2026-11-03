@@ -3407,6 +3407,9 @@
           "price_reverting": "سيعود إلى سعر الكتالوج",
           "removed": "قيد الإزالة"
         },
+        "balance_change": "تغيّر الرصيد",
+        "balance_owed_hint": "سيدين العميل بمبلغ إضافي. حصّل الرصيد من مدفوعات الطلب بعد الحفظ.",
+        "balance_refund_hint": "سيستحق العميل استرداد مبلغ. ردّه من مدفوعات الطلب بعد الحفظ.",
         "catalog_price_unknown": "سعر الكتالوج",
         "columns": {
           "line_total": "إجمالي السطر",
@@ -3421,7 +3424,10 @@
         "title": "تعديل الطلب",
         "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد الحفظ.",
         "totals_preview_confirm_hint": "يؤكده الخادم عند الحفظ.",
+        "totals_preview_failed": "لا يمكن تطبيق هذه التغييرات: {{message}}",
         "totals_preview_hint": "يُعيد الخادم حساب الشحن والضرائب والعروض بعد الحفظ.",
+        "totals_preview_loading": "جارٍ تحديث الإجماليات…",
+        "totals_preview_server_hint": "يحسبها المتجر، بما في ذلك الشحن والضرائب والعروض. لا يُحفظ شيء حتى تنقر على حفظ.",
         "totals_title": "الإجماليات",
         "validation": {
           "below_fulfilled_one": "لا يمكن النزول تحت {{count}} وحدة تم الوفاء بها",
@@ -4434,6 +4440,7 @@
             "product_submission": "تقديم منتج",
             "promotion": "ترقية",
             "purchase_order": "أمر شراء",
+            "order_change": "تعديلات الطلبات",
             "refund": "استرداد",
             "return": "يعود",
             "saved_report": "تقرير محفوظ",

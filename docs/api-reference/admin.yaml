@@ -19337,6 +19337,464 @@ paths:
       responses:
         '204':
           description: line item removed
+  "/api/v3/admin/orders/{order_id}/order_changes":
+    get:
+      summary: List order changes
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lists every change made to a placed order: admin edits, and the restocks and replacement shipments of its returns, exchanges and claims.
+
+        **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderChanges = await client.orders.orderChanges.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/order_changes
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[confirmed_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `confirmed_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `status` | One of `pending`, `requested`, `confirmed`, `canceled`, `declined` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `confirmed_at`, `created_at`, `id`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: OrderChange
+        sortable:
+        - confirmed_at
+        - created_at
+        - id
+        - status
+        - updated_at
+      responses:
+        '200':
+          description: order changes listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: ordchg_UkLWZg9DAJ
+                  status: requested
+                  metadata: {}
+                  requested_at: '2026-01-15T12:00:00.000Z'
+                  confirmed_at:
+                  canceled_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  order_id: or_UkLWZg9DAJ
+                  return_id:
+                  exchange_id:
+                  claim_id:
+                  requested_by_id:
+                  requested_by_type:
+                  actions:
+                  - id: ordchga_UkLWZg9DAJ
+                    kind: update_item
+                    quantity: 2
+                    metadata: {}
+                    created_at: '2026-01-15T12:00:00.000Z'
+                    updated_at: '2026-01-15T12:00:00.000Z'
+                    line_item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    fulfillment_id:
+                    delivery_method_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create an order change
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Changes the line items of a placed order in one transaction. With `confirm: true` the change is applied at once; otherwise it waits as `requested`. No money moves: the order shows any balance due or credit owed, settled from its payments. Edit a draft order through the order itself instead.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderChange = await client.orders.orderChanges.create('or_UkLWZg9DAJ', {
+            confirm: true,
+            actions: [
+              { kind: 'update_item', line_item_id: 'li_UkLWZg9DAJ', quantity: 2 },
+              { kind: 'add_item', variant_id: 'variant_UkLWZg9DAJ', quantity: 1 },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/order_changes -d '{"confirm":true,"actions":[{"kind":"update_item","line_item_id":"li_UkLWZg9DAJ","quantity":2},{"kind":"add_item","variant_id":"variant_UkLWZg9DAJ","quantity":1}]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: order change applied
+          content:
+            application/json:
+              example:
+                id: ordchg_UkLWZg9DAJ
+                status: confirmed
+                metadata: {}
+                requested_at: '2026-01-15T12:00:00.000Z'
+                confirmed_at: '2026-01-15T12:00:00.000Z'
+                canceled_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+                return_id:
+                exchange_id:
+                claim_id:
+                requested_by_id: adm_UkLWZg9DAJ
+                requested_by_type: admin_user
+                actions:
+                - id: ordchga_UkLWZg9DAJ
+                  kind: update_item
+                  quantity: 2
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  line_item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  fulfillment_id:
+                  delivery_method_id:
+              schema:
+                "$ref": "#/components/schemas/OrderChange"
+        '422':
+          description: the order is not placed
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Only a placed order can be changed this way. Edit a draft
+                    order directly.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderChangeCreateParams"
+        required: true
+  "/api/v3/admin/orders/{order_id}/order_changes/preview":
+    post:
+      summary: Preview an order change
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Answers what the order totals would be after a change, and how far the balance would move, without saving anything.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const preview = await client.orders.orderChanges.preview('or_UkLWZg9DAJ', {
+            actions: [{ kind: 'update_item', line_item_id: 'li_UkLWZg9DAJ', quantity: 3 }],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/order_changes/preview -d '{"actions":[{"kind":"update_item","line_item_id":"li_UkLWZg9DAJ","quantity":3}]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order change previewed
+          content:
+            application/json:
+              example:
+                currency: USD
+                item_total: '30.00'
+                discount_total: '0.00'
+                delivery_total: '100.00'
+                tax_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                fee_total: '0.00'
+                total: '130.00'
+                previous_total: '110.00'
+                outstanding_balance: '130.00'
+                balance_delta: '20.00'
+              schema:
+                "$ref": "#/components/schemas/OrderChangePreview"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderChangePreviewParams"
+        required: true
+  "/api/v3/admin/orders/{order_id}/order_changes/{id}/confirm":
+    patch:
+      summary: Confirm an order change
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Applies a requested order change in one transaction.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderChange = await client.orders.orderChanges.confirm('or_UkLWZg9DAJ', 'ordchg_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/order_changes/{id}/confirm -d '{
+          ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Order change prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order change confirmed
+          content:
+            application/json:
+              example:
+                id: ordchg_UkLWZg9DAJ
+                status: confirmed
+                metadata: {}
+                requested_at: '2026-01-15T12:00:00.000Z'
+                confirmed_at: '2026-01-15T12:00:00.000Z'
+                canceled_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+                return_id:
+                exchange_id:
+                claim_id:
+                requested_by_id:
+                requested_by_type:
+                actions:
+                - id: ordchga_UkLWZg9DAJ
+                  kind: update_item
+                  quantity: 2
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  line_item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  fulfillment_id:
+                  delivery_method_id:
+              schema:
+                "$ref": "#/components/schemas/OrderChange"
+  "/api/v3/admin/orders/{order_id}/order_changes/{id}/cancel":
+    patch:
+      summary: Cancel an order change
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Discards an order change that has not been applied. The change is kept as a record of what was proposed.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderChange = await client.orders.orderChanges.cancel('or_UkLWZg9DAJ', 'ordchg_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/order_changes/{id}/cancel -d '{
+          ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Order change prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order change canceled
+          content:
+            application/json:
+              example:
+                id: ordchg_UkLWZg9DAJ
+                status: canceled
+                metadata: {}
+                requested_at: '2026-01-15T12:00:00.000Z'
+                confirmed_at:
+                canceled_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+                return_id:
+                exchange_id:
+                claim_id:
+                requested_by_id:
+                requested_by_type:
+                actions:
+                - id: ordchga_UkLWZg9DAJ
+                  kind: update_item
+                  quantity: 2
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  line_item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  fulfillment_id:
+                  delivery_method_id:
+              schema:
+                "$ref": "#/components/schemas/OrderChange"
   "/api/v3/admin/orders/{order_id}/store_credits":
     post:
       summary: Apply customer's store credit to an order
@@ -39781,6 +40239,42 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
+                - name: order_change.canceled
+                  group: order_change
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_change.confirmed
+                  group: order_change
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_change.created
+                  group: order_change
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_change.deleted
+                  group: order_change
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_change.requested
+                  group: order_change
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_change.updated
+                  group: order_change
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
                 - name: order_group.completed
                   group: order_group
                   credential_permission:
@@ -40676,7 +41170,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 264
+                  count: 266
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -68204,6 +68698,372 @@ components:
       - updated_at
       - can_be_deleted
       x-typelizer: true
+    OrderChangeAction:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          anyOf:
+          - type: string
+            enum:
+            - add_item
+            - update_item
+            - remove_item
+            - receive_item
+            - add_fulfillment
+          - type: string
+          description: What the action does to the order. Extensions may register
+            further kinds.
+        quantity:
+          type: number
+          nullable: true
+        metadata:
+          type: object
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        line_item_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        fulfillment_id:
+          type: string
+          nullable: true
+        delivery_method_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - kind
+      - quantity
+      - metadata
+      - created_at
+      - updated_at
+      - line_item_id
+      - variant_id
+      - fulfillment_id
+      - delivery_method_id
+      x-typelizer: true
+    OrderChangePreview:
+      type: object
+      properties:
+        currency:
+          type: string
+          enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BYR
+          - BZD
+          - CAD
+          - CDF
+          - CHF
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EEK
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LTL
+          - LVL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MRU
+          - MTL
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SKK
+          - SLE
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - STN
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMM
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - UYI
+          - UYU
+          - UYW
+          - UZS
+          - VED
+          - VEF
+          - VES
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XCD
+          - XCG
+          - XOF
+          - XPF
+          - YER
+          - ZAR
+          - ZMK
+          - ZMW
+          - ZWD
+          - ZWG
+          - ZWL
+          - ZWN
+          - ZWR
+        item_total:
+          type: string
+          nullable: true
+        discount_total:
+          type: string
+          nullable: true
+        delivery_total:
+          type: string
+          nullable: true
+        tax_total:
+          type: string
+          nullable: true
+        included_tax_total:
+          type: string
+          nullable: true
+        additional_tax_total:
+          type: string
+          nullable: true
+        fee_total:
+          type: string
+          nullable: true
+        total:
+          type: string
+          nullable: true
+          description: The order total after the change.
+        previous_total:
+          type: string
+          nullable: true
+          description: The order total before the change.
+        outstanding_balance:
+          type: string
+          nullable: true
+          description: What the customer would still owe after the change. Negative
+            when they would be owed money back.
+        balance_delta:
+          type: string
+          nullable: true
+          description: 'How far the total moves: positive when the customer would
+            owe more, negative when they would be owed a refund.'
+      required:
+      - currency
+      - item_total
+      - discount_total
+      - delivery_total
+      - tax_total
+      - included_tax_total
+      - additional_tax_total
+      - fee_total
+      - total
+      - previous_total
+      - outstanding_balance
+      - balance_delta
+      x-typelizer: true
+    OrderChange:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - requested
+            - confirmed
+            - canceled
+            - declined
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        metadata:
+          type: object
+        requested_at:
+          type: string
+          nullable: true
+        confirmed_at:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        order_id:
+          type: string
+        return_id:
+          type: string
+          nullable: true
+        exchange_id:
+          type: string
+          nullable: true
+        claim_id:
+          type: string
+          nullable: true
+        requested_by_id:
+          type: string
+          nullable: true
+        requested_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        requested_by:
+          "$ref": "#/components/schemas/Actor"
+        actions:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OrderChangeAction"
+      required:
+      - id
+      - status
+      - metadata
+      - requested_at
+      - confirmed_at
+      - canceled_at
+      - created_at
+      - updated_at
+      - order_id
+      - return_id
+      - exchange_id
+      - claim_id
+      - requested_by_id
+      - requested_by_type
+      - actions
+      x-typelizer: true
     OrderGroup:
       type: object
       properties:
@@ -84018,6 +84878,87 @@ components:
         notify_customer:
           type: boolean
           description: Send the order cancellation email after canceling.
+    OrderChangeCreateParams:
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              kind:
+                anyOf:
+                - type: string
+                  enum:
+                  - add_item
+                  - update_item
+                  - remove_item
+                  - receive_item
+                  - add_fulfillment
+                - type: string
+                description: "`add_item` takes `variant_id` and `quantity`; `update_item`
+                  takes `line_item_id` and the new `quantity`; `remove_item` takes
+                  `line_item_id`. The values listed are the built-in ones; extensions
+                  may add more."
+                example: update_item
+              line_item_id:
+                type: string
+                description: A line item of this order.
+              variant_id:
+                type: string
+                description: A variant of this store, for `add_item`.
+              quantity:
+                type: integer
+                example: 2
+            required:
+            - kind
+          description: The changes, applied in order.
+        confirm:
+          type: boolean
+          description: Apply the change at once. Omitted or false, it waits as `requested`
+            for a confirm or cancel.
+        metadata:
+          type: object
+          additionalProperties: true
+      required:
+      - actions
+    OrderChangePreviewParams:
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              kind:
+                anyOf:
+                - type: string
+                  enum:
+                  - add_item
+                  - update_item
+                  - remove_item
+                  - receive_item
+                  - add_fulfillment
+                - type: string
+                description: "`add_item` takes `variant_id` and `quantity`; `update_item`
+                  takes `line_item_id` and the new `quantity`; `remove_item` takes
+                  `line_item_id`. The values listed are the built-in ones; extensions
+                  may add more."
+                example: update_item
+              line_item_id:
+                type: string
+                description: A line item of this order.
+              variant_id:
+                type: string
+                description: A variant of this store, for `add_item`.
+              quantity:
+                type: integer
+                example: 2
+            required:
+            - kind
+          description: The changes to preview. Nothing is saved.
+      required:
+      - actions
     OrderCompleteParams:
       type: object
       properties:
@@ -88660,6 +89601,21 @@ components:
         created_at: datetime
         id: id
         name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    OrderChange:
+      attributes:
+        confirmed_at: datetime
+        created_at: datetime
+        id: id
+        status:
+          enum:
+          - pending
+          - requested
+          - confirmed
+          - canceled
+          - declined
         updated_at: datetime
       associations: {}
       scopes: {}
