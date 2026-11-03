@@ -58,7 +58,7 @@ module Spree
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping
            requirement_submission export transfer payout payout_account_link bulk_product_result
            password_reset_acknowledgement balance payment_split price price_history file_upload digital_asset
-           file_upload_target store].freeze
+           file_upload_target store market].freeze
 
       INJECTION_POINTS_WITH_DEFAULTS = {
         **STORE_SERIALIZERS.to_h { |name| [:"#{name}_serializer", "Spree::Api::V3::#{name.to_s.camelize}Serializer"] },
