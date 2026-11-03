@@ -155,6 +155,18 @@ describe('readmeContent', () => {
     expect(content).toContain('pnpm run dev')
   })
 
+  it('explains how to deploy the storefront to Vercel', () => {
+    const content = readmeContent('my-store', true, 3000)
+    expect(content).toContain('### Deploy the storefront to Vercel')
+    expect(content).toContain('**Root Directory** to `apps/storefront`')
+    expect(content).toContain('SPREE_PUBLISHABLE_KEY')
+  })
+
+  it('leaves out the Vercel section without a storefront', () => {
+    const content = readmeContent('my-store', false, 3000)
+    expect(content).not.toContain('Vercel')
+  })
+
   it('includes eject instructions', () => {
     const content = readmeContent('my-store', true, 3000)
     expect(content).toContain('spree eject')

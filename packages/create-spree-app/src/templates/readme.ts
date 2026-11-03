@@ -65,6 +65,28 @@ ${storefrontPm(pm)} run dev
 \`\`\`
 
 Open http://localhost:${STOREFRONT_PORT}
+
+### Deploy the storefront to Vercel
+
+The storefront is a standalone Next.js app in \`apps/storefront/\` — the
+repository root holds the Spree project, not the storefront, so Vercel has to
+be told where it lives:
+
+1. Push this repository to GitHub, GitLab or Bitbucket
+2. Import it at [vercel.com/new](https://vercel.com/new)
+3. Set **Root Directory** to \`apps/storefront\` — Vercel then detects Next.js
+   and installs with the storefront's own lockfile
+4. Add the environment variables \`SPREE_API_URL\` (your deployed Spree API)
+   and \`SPREE_PUBLISHABLE_KEY\` — see \`apps/storefront/.env.example\` for the
+   optional ones
+5. Deploy
+
+\`apps/storefront/vercel.json\` skips storefront builds for commits that don't
+touch \`apps/storefront/\`, so changes to \`server/\` don't redeploy it. To
+deploy from the command line instead, run \`vercel\` from \`apps/storefront/\`.
+
+See the [storefront deployment docs](https://spreecommerce.org/docs/developer/storefront/nextjs/deployment)
+for Docker and other hosts.
 `
   }
 
