@@ -40,6 +40,7 @@ module Spree
           r << req('address', 'ship_address', I18n.t('spree.checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
           r << req('delivery', 'delivery_method', I18n.t('spree.checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r.concat(undeliverable_errors)
+          r.concat(market_exclusion_errors)
           r << req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
           r << req('address', 'po_number', I18n.t('spree.checkout_requirements.po_number_required')) if po_number_missing?
           r << order_minimum_requirement if below_order_minimum?
@@ -70,12 +71,39 @@ module Spree
       def assortment_errors
         return [] unless @cart.is_a?(Spree::Cart)
 
-        line_items = completion_line_items.reject { |line_item| discontinued?(line_item) }
+        line_items = completion_line_items.reject do |line_item|
+          discontinued?(line_item) || market_excluded_line_item_ids.include?(line_item.id)
+        end
         orderable_ids = @cart.orderable_variants.where(id: line_items.map(&:variant_id)).pluck(:id).to_set
 
         line_items.reject { |line_item| orderable_ids.include?(line_item.variant_id) }.map do |line_item|
           req('cart', 'line_items', I18n.t('spree.cart_line_item.not_orderable', li_name: line_item.name), code: 'not_orderable')
         end
+      end
+
+      # Advisory, so a buyer whose market changed with their address reads it
+      # while they can still switch back or remove the line; the line is kept
+      # rather than dropped, since switching back makes it sellable again.
+      # Staff orders are held to it too: an exclusion is a distribution right,
+      # not a commercial term (docs/plans/6.1-product-market-availability.md).
+      def market_exclusion_errors
+        market_excluded_line_items.map do |line_item|
+          req('cart', 'line_items',
+              I18n.t('spree.cart_line_item.not_available_in_market', li_name: line_item.name, market: @cart.market.name),
+              code: 'not_available_in_market')
+        end
+      end
+
+      def market_excluded_line_items
+        return [] if @cart.market.nil?
+
+        @market_excluded_line_items ||= @cart.line_items.joins(:variant).includes(variant: :product).where(
+          Spree::Variant.table_name => { product_id: Spree::Product.excluded_from_market(@cart.market).select(:id) }
+        ).to_a
+      end
+
+      def market_excluded_line_item_ids
+        market_excluded_line_items.map(&:id)
       end
 
       # Advisory rather than completion-only: a buyer has to be able to build

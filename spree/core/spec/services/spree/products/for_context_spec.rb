@@ -15,6 +15,26 @@ describe Spree::Products::ForContext do
     expect(resolve).to contain_exactly(listed, also_listed)
   end
 
+  # Market availability is intersected with publications, never a second
+  # source of listings (docs/plans/6.1-product-market-availability.md).
+  context 'with a market that excludes a listing' do
+    let(:europe) { create(:market, store: store) }
+
+    before { also_listed.update!(market_availability: 'all_except', market_ids: [europe.prefixed_id]) }
+
+    it 'leaves the excluded product out in that market' do
+      expect(resolve(market: europe)).to contain_exactly(listed)
+    end
+
+    it 'keeps it in any other market' do
+      expect(resolve(market: create(:market, store: store))).to contain_exactly(listed, also_listed)
+    end
+
+    it 'still narrows a passed base' do
+      expect(resolve(market: europe, base: store.products.where(id: also_listed.id))).to be_empty
+    end
+  end
+
   context 'with a company catalog' do
     let(:company) { create(:company, store: store) }
     let(:catalog) { create(:catalog, store: store) }

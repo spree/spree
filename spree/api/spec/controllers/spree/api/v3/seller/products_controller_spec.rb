@@ -430,6 +430,16 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(mine.reload.name).to eq('Renamed Lamp')
     end
 
+    it 'sets where their product may be sold' do
+      market = create(:market, store: store)
+
+      patch :update, params: { id: mine.prefixed_id, market_availability: 'only', market_ids: [market.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['market_availability']).to eq('only')
+      expect(json_response['market_ids']).to eq([market.prefixed_id])
+    end
+
     it "cannot edit another seller's product" do
       patch :update, params: { id: theirs.prefixed_id, name: 'Hijacked' }, as: :json
 

@@ -34,6 +34,7 @@ module Spree
       self.country_codes = Array(values).map { |country| country.respond_to?(:iso) ? country.iso : country.to_s }
     end
     has_many :orders, class_name: 'Spree::Order', dependent: :nullify
+    has_many :product_market_availabilities, class_name: 'Spree::ProductMarketAvailability', dependent: :destroy
 
     #
     # Preferences

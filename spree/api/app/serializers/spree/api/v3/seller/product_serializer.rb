@@ -11,18 +11,25 @@ module Spree
         # is the marketplace's own merchandising, so it is neither written nor
         # read here. The type and the delivery profile are: a seller picks
         # both from the marketplace's list
-        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13). So is
+        # market availability, from the marketplace's markets.
         class ProductSerializer < V3::ProductSerializer
           without_formatted_money(:seller)
 
           typelize status: [:string, enum: Spree::Product.statuses, enum_type_name: 'ProductStatus'], metadata: 'Record<string, unknown>',
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
+                   market_availability: [:string, enum: Spree::Product::MARKET_AVAILABILITY_MODES, enum_type_name: 'ProductMarketAvailability'],
+                   market_ids: [:string, multi: true],
                    submission: ['ProductSubmission', nullable: true]
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
 
           prefixed_id_attributes :product_type, :delivery_profile
+
+          # Read together: the mode, and the markets it excludes or keeps to.
+          attribute(:market_availability) { |product| product.market_availability || 'all' }
+          attribute(:market_ids) { |product| product.market_availability_market_ids.map { |id| Spree::Market.prefixed_id_for(id) } }
 
           many :variants,
                resource: proc { Spree.api.seller_variant_serializer },

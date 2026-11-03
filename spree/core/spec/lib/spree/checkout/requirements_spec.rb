@@ -290,6 +290,53 @@ RSpec.describe Spree::Checkout::Requirements do
     end
   end
 
+  describe 'market availability requirement' do
+    let(:europe) { create(:market, store: store, name: 'Europe') }
+    let(:australia) { create(:market, store: store, name: 'Australia') }
+    let(:excluded) { create(:product, store: store, name: 'Licensed Kettle') }
+    let(:cart) { create(:cart, store: store, market: australia) }
+
+    before do
+      excluded.update!(market_availability: 'all_except', market_ids: [europe.prefixed_id])
+      create(:line_item, cart: cart, order: nil, variant: excluded.default_variant)
+    end
+
+    # A market can change with the address after the line was added, so the
+    # line is kept and the buyer is told before payment, not only at the end.
+    it 'flags the line as soon as the market excludes it' do
+      cart.update_columns(market_id: europe.id)
+
+      expect(described_class.new(cart.reload).call).to include(
+        a_hash_including(step: 'cart', field: 'line_items', code: 'not_available_in_market',
+                         message: include('Licensed Kettle', 'Europe'))
+      )
+      expect(cart.line_items.count).to eq(1)
+    end
+
+    it 'reports it once at completion rather than also as not orderable' do
+      cart.update_columns(market_id: europe.id)
+
+      codes = described_class.new(cart.reload).call(completion: true).map { |requirement| requirement[:code] }
+
+      expect(codes.count('not_available_in_market')).to eq(1)
+      expect(codes).not_to include('not_orderable')
+    end
+
+    it 'clears once the market includes the product again' do
+      expect(described_class.new(cart.reload).call(completion: true)).not_to include(
+        a_hash_including(code: 'not_available_in_market')
+      )
+    end
+
+    # Territory is a distribution right, so staff's orders are bound too.
+    it "holds back staff's order in an excluded market" do
+      order.update_columns(market_id: europe.id)
+      create(:line_item, order: order, variant: excluded.default_variant)
+
+      expect(described_class.new(order.reload).call).to include(a_hash_including(code: 'not_available_in_market'))
+    end
+  end
+
   describe 'fully ready order' do
     let(:order) { create(:order_with_line_items, store: store, state: 'payment') }
 

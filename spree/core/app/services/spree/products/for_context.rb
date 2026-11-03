@@ -1,7 +1,8 @@
 module Spree
   module Products
     # Resolves which products a buyer may see: the channel's publications,
-    # narrowed by the catalogs that apply to them.
+    # kept to those the market may buy, narrowed by the catalogs that apply
+    # to them.
     #
     # Precedence, per docs/plans/6.0-b2b-companies-and-catalogs.md:
     # 1. A buyer resolving to a company node with effective catalogs sees the
@@ -17,14 +18,17 @@ module Spree
 
       # @param store [Spree::Store]
       # @param channel [Spree::Channel]
+      # @param market [Spree::Market, nil] the buyer's market; products it
+      #   excludes are left out (docs/plans/6.1-product-market-availability.md)
       # @param customer [Object, nil]
       # @param company [Spree::Company, nil] the purchase node; defaults to
       #   the customer's sole standing within the store
       # @param base [ActiveRecord::Relation, nil] the already-scoped listing
       #   to narrow; defaults to the channel's publications
       # @return [Spree::ServiceModule::Result] value is a Product relation
-      def call(store:, channel:, customer: nil, company: nil, base: nil)
+      def call(store:, channel:, market: nil, customer: nil, company: nil, base: nil)
         base ||= store.products.for_channel(channel)
+        base = base.available_in_market(market)
 
         # One resolution for every surface: visibility, pricing and quantity
         # terms have to answer from the same catalogs, and it reuses the

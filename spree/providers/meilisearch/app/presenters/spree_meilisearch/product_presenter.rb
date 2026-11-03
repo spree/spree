@@ -75,6 +75,8 @@ module SpreeMeilisearch
         preorder: product.preorder?,
         store_ids: Array(product.store_id).map(&:to_s),
         channel_ids: channel_ids_for_store,
+        market_availability: product.market_availability || 'all',
+        market_ids: product.market_availability_market_ids.map(&:to_s),
         discontinue_on: product.discontinue_on&.to_i || 0,
         category_ids: category_ids_with_ancestors,
         category_names: product.categories.map { |t| translated(t, :name, fallback_locale) },

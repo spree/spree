@@ -31,6 +31,7 @@ module Spree
           new_product.name = "COPY OF #{product.name}"
           new_product.categories = product.categories
           new_product.channels = product.channels
+          new_product.markets = product.markets
           new_product.created_at = nil
           new_product.deleted_at = nil
           new_product.updated_at = nil
