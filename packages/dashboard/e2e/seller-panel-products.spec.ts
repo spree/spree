@@ -148,6 +148,28 @@ test.describe('seller panel — products', () => {
     await expect(page.getByText(/something went wrong/i)).toHaveCount(0)
   })
 
+  // A distribution agreement is the seller's to honour, so they choose the
+  // markets a listing is kept out of (docs/plans/6.1-product-market-availability.md).
+  test('keeps a listing out of a market', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    const name = `E2E Kettle ${Date.now()}`
+    await listProduct(page, home, name)
+
+    await page.getByRole('combobox', { name: /^sold in$/i }).click()
+    await page.getByRole('option', { name: /^all markets except/i }).click()
+    await page.getByPlaceholder(/choose markets/i).fill('Europe')
+    await page.getByRole('option', { name: /^europe$/i }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(page.getByRole('combobox', { name: /^sold in$/i })).toHaveText(
+      /all markets except/i,
+      { timeout: 15_000 },
+    )
+    await expect(page.locator('[data-slot="combobox-chip"]', { hasText: 'Europe' })).toBeVisible()
+  })
+
   // Putting a product on sale is the marketplace's decision; the seller asks.
   test('submits a draft for review', async ({ page }) => {
     const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
