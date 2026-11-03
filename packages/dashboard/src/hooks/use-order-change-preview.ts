@@ -27,6 +27,10 @@ export function useOrderChangePreview(order: Order | undefined, items: OrderEdit
     // Keeps the last figures on screen while the next ones load, rather than
     // flashing back to the saved totals between keystrokes.
     placeholderData: keepPreviousData,
+    // The same staged edits give the same answer until the order itself is
+    // saved, which refreshes the page anyway.
+    staleTime: Number.POSITIVE_INFINITY,
+    refetchOnWindowFocus: false,
     retry: false,
   })
 

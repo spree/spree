@@ -32,7 +32,6 @@ module Spree
             end
 
             before_action :set_resource, only: [:show, :confirm, :cancel]
-            before_action :ensure_editable_kinds, only: [:create, :preview]
 
             # POST /api/v3/admin/orders/:order_id/order_changes
             def create
@@ -43,7 +42,7 @@ module Spree
                   order: @order,
                   actions: actions_param,
                   requested_by: current_actor,
-                  confirm: ActiveModel::Type::Boolean.new.cast(params[:confirm]) || false,
+                  confirm: params[:confirm].to_b,
                   metadata: permitted_params[:metadata].to_h
                 )
 
@@ -95,17 +94,6 @@ module Spree
             end
 
             private
-
-            # The kinds a caller may send: line-item edits, and any kind an
-            # extension registered. Receipts and replacement shipments belong to
-            # the return, exchange and claim workflows, which check what came
-            # back and what is owed before moving stock.
-            def ensure_editable_kinds
-              editable = Spree::OrderChangeAction::ITEM_KINDS + Spree::OrderChange.action_appliers.keys
-              return if Array(params[:actions]).all? { |action| editable.include?(action[:kind].to_s) }
-
-              render_service_error(:order_change_kind_not_allowed)
-            end
 
             # Every id resolves through this order or this store, so a payload
             # cannot name another order's line or another store's variant —

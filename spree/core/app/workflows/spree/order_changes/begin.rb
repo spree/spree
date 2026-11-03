@@ -39,7 +39,7 @@ module Spree
       end
 
       def ensure_none_open
-        failure(order, :order_change_in_progress) if order.order_changes.open.exists?
+        failure(order, :order_change_in_progress) if order.order_changes.with_status(Spree::OrderChange::OPEN_STATUSES).exists?
       end
 
       def create_order_change
