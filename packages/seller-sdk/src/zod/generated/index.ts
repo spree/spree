@@ -26,6 +26,7 @@ export { ImportMappingSchema, type ImportMapping } from './ImportMapping';
 export { ImportRowSchema, type ImportRow } from './ImportRow';
 export { InvitationSchema, type Invitation } from './Invitation';
 export { InvitationAcceptanceLinkSchema, type InvitationAcceptanceLink } from './InvitationAcceptanceLink';
+export { MarketSchema, type Market } from './Market';
 export { MediaSchema, type Media } from './Media';
 export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';

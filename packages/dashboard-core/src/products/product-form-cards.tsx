@@ -61,6 +61,7 @@ import {
   EyeIcon,
   FilmIcon,
   FolderTreeIcon,
+  GlobeIcon,
   ImageIcon,
   ImagePlusIcon,
   InfoIcon,
@@ -104,6 +105,7 @@ import {
   useFormCollections as useCollections,
   useFormDeleteProductMedia as useDeleteProductMedia,
   useFormDeliveryProfiles as useDeliveryProfiles,
+  useFormMarkets as useMarkets,
   useFormOptionTypesByIds as useOptionTypesByIds,
   useFormProductType as useProductType,
   useFormProductTypes as useProductTypes,
@@ -1199,6 +1201,134 @@ export function CategorizationCard({ form }: FormCardProps) {
             />
           </Field>
         )}
+      </CardContent>
+    </Card>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Market availability
+// ---------------------------------------------------------------------------
+
+const MARKET_AVAILABILITY_MODES = ['all', 'all_except', 'only'] as const
+
+/**
+ * Which markets may see and buy the product. Every market by default; the
+ * other two modes name markets to leave out or keep to. A market that
+ * excludes the product hides it everywhere, its own page included
+ * (docs/plans/6.1-product-market-availability.md).
+ *
+ * A section rather than a card, so the operator's dashboard can show it in
+ * one Availability card beside channel publishing. Renders nothing for a
+ * panel whose client registers no markets.
+ */
+export function MarketAvailabilitySection({ form }: FormCardProps) {
+  const { t } = useTranslation()
+  const client = getApiClient()
+  const { data: marketsData } = useMarkets()
+  const markets = useMemo(() => marketsData?.data ?? [], [marketsData])
+  const mode = useWatch({ control: form.control, name: 'market_availability' }) ?? 'all'
+  const { errors } = useFormState({ control: form.control, name: 'market_ids' })
+
+  const search = useCallback(
+    async (query: string) => ({
+      data: markets.filter((market) => market.name.toLowerCase().includes(query.toLowerCase())),
+    }),
+    [markets],
+  )
+  const hydrate = useCallback(
+    async (ids: string[]) => ({ data: markets.filter((market) => ids.includes(market.id)) }),
+    [markets],
+  )
+
+  if (!client.markets) return null
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Field>
+        <FieldLabel>{t('admin.fields.product.market_availability.label')}</FieldLabel>
+        <Controller
+          name="market_availability"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              value={field.value ?? 'all'}
+              onValueChange={(value) => {
+                field.onChange(value)
+                if (value === 'all') form.setValue('market_ids', [], { shouldDirty: true })
+              }}
+            >
+              <SelectTrigger
+                className="w-full"
+                aria-label={t('admin.fields.product.market_availability.label')}
+              >
+                <SelectValue>
+                  {(value) =>
+                    t(`admin.fields.product.market_availability.options.${value ?? 'all'}`)
+                  }
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {MARKET_AVAILABILITY_MODES.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {t(`admin.fields.product.market_availability.options.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-muted-foreground text-xs">
+          {t(`admin.fields.product.market_availability.help.${mode}`)}
+        </span>
+      </Field>
+
+      {mode !== 'all' && (
+        <Field>
+          <FieldLabel>{t('admin.fields.product.market_ids.label')}</FieldLabel>
+          <Controller
+            name="market_ids"
+            control={form.control}
+            rules={{
+              validate: (value) =>
+                (value?.length ?? 0) > 0 || t('admin.fields.product.market_ids.required'),
+            }}
+            render={({ field }) => (
+              <ResourceMultiAutocomplete
+                queryKey="product-market-availability"
+                search={search}
+                hydrate={hydrate}
+                initialItems={markets}
+                getOptionLabel={(market) => market.name}
+                placeholder={t('admin.fields.product.market_ids.placeholder')}
+                value={field.value ?? []}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <FieldError errors={[errors.market_ids]} />
+        </Field>
+      )}
+    </div>
+  )
+}
+
+/** The Markets section on a card of its own, for a panel with no channel publishing. */
+export function MarketAvailabilityCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
+  const client = getApiClient()
+  if (!client.markets) return null
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <GlobeIcon className="size-4" />
+          {t('admin.pages.products.market_availability.title')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <MarketAvailabilitySection form={form} />
       </CardContent>
     </Card>
   )

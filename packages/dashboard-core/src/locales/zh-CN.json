@@ -848,6 +848,24 @@
         "make_active_at": {
           "label": "激活日期"
         },
+        "market_availability": {
+          "help": {
+            "all": "所有市场的顾客都可以查看和购买此商品。",
+            "all_except": "对以下市场的顾客在所有位置隐藏，包括商品自身的页面。",
+            "only": "仅以下市场的顾客可以查看和购买此商品。"
+          },
+          "label": "销售范围",
+          "options": {
+            "all": "所有市场",
+            "all_except": "除以下市场外的所有市场…",
+            "only": "仅限以下市场…"
+          }
+        },
+        "market_ids": {
+          "label": "市场",
+          "placeholder": "选择市场",
+          "required": "请至少选择一个市场。"
+        },
         "name": {
           "label": "名称",
           "placeholder": "产品名称"
@@ -1227,6 +1245,9 @@
           "in_stock_short": "有库存",
           "on_backorder": "可延期交货",
           "out_of_stock": "缺货"
+        },
+        "market_availability": {
+          "title": "市场"
         },
         "media_empty": "暂无媒体。",
         "media_upload": "上传媒体",

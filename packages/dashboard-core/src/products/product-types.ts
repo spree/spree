@@ -115,6 +115,9 @@ export interface PanelProduct {
     unpublished_at?: string | null
   }>
   tax_category_id?: string | null
+  /** Both panels: a seller decides where their own products may be sold. */
+  market_availability?: 'all' | 'all_except' | 'only'
+  market_ids?: string[]
   /** Both panels: a seller picks a profile from the marketplace's list. */
   delivery_profile_id?: string | null
 }

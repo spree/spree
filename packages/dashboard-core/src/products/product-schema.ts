@@ -231,6 +231,11 @@ export const productFormSchema = z.object({
   digital_assets: z.array(digitalFileFormSchema).optional(),
 
   product_publications: z.array(productPublicationFormSchema).optional(),
+
+  // `all` sells everywhere; the other two name markets in `market_ids`
+  // (docs/plans/6.1-product-market-availability.md).
+  market_availability: z.enum(['all', 'all_except', 'only']).optional(),
+  market_ids: z.array(z.string()).optional(),
 })
 
 export type ProductFormValues = z.infer<typeof productFormSchema>
@@ -276,6 +281,8 @@ export function newProductFormDefaults(): ProductFormValues {
     media: [],
     digital_assets: [],
     product_publications: [],
+    market_availability: 'all',
+    market_ids: [],
   }
 }
 

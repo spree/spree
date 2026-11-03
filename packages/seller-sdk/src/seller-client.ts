@@ -31,6 +31,7 @@ import type {
   ImportSort,
   Invitation,
   InvitationAcceptanceLink,
+  Market,
   Order,
   PackageType,
   Payout,
@@ -1103,6 +1104,18 @@ export class SellerClient {
 
     get: (id: string, options?: RequestOptions): Promise<ProductType> =>
       this.request<ProductType>('GET', `/product_types/${id}`, options),
+  }
+
+  /**
+   * The marketplace's markets, for choosing where a product may be sold. Read
+   * only: send the chosen ids as a product's `market_ids`.
+   */
+  readonly markets = {
+    list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<Market>> =>
+      this.request<PaginatedResponse<Market>>('GET', '/markets', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
   }
 
   /**
