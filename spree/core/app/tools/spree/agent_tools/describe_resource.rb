@@ -87,6 +87,10 @@ module Spree
       def describe(entry, detailed:)
         {
           resource: entry.key,
+          # A resource reached through another record — an order's items, a
+          # product's variants when written — needs that record's id as
+          # parent_id on the calls whose route runs under it.
+          parent: %i[index create update].lazy.filter_map { |action| entry.parent_key(action) }.first,
           filterable_fields: entry.filterable_fields,
           # What a generic write accepts, so the model learns the schema here
           # rather than by sending an invalid write and reading the refusal —
