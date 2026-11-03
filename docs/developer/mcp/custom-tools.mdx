@@ -19,19 +19,42 @@ Every documented Admin API action is an agent tool: cancel, approve, send, captu
 
 So adding an endpoint and documenting it is the whole change. A call runs through the endpoint, with its authentication, scope check, record-level permissions and workflow, so an agent gets exactly what an API client gets. Write the summary and description for someone choosing the operation: they are what the model reads.
 
-Core reads its own `admin.yaml`. An extension generates the same document from its own rswag specs and ships it in its gem at `openapi/admin.yaml`, and Spree merges every engine's document into the one the tools read. Spree's own API reference and SDKs are built from core's document only; an extension that publishes docs or a typed client builds them from its own file.
+Core reads its own `admin.yaml`. Your application, and each extension, generates the same document from its own rswag specs at `openapi/admin.yaml`, and Spree merges every one into the document the tools read. Spree's own API reference and SDKs are built from core's document only; an app or extension that publishes docs or a typed client builds them from its own file.
 
-### Generating your extension's document
+### Documenting your application's endpoints
 
-With [`spree_dev_tools`](https://github.com/spree/spree_dev_tools), one generator sets all of this up:
+A new project from `create-spree-app` is set up already: `spec/swagger_helper.rb` and the contract spec come with it. In an older project, the generator adds them:
+
+```bash
+spree generate spree_dev_tools:openapi
+```
+
+It writes the swagger helper and the contract spec below. It also writes a skipped skeleton rswag spec for every admin action your controllers serve that is not documented yet, so what is left is each operation's description and the records its response is tested against. Run it again after adding endpoints; it only writes what is missing.
+
+Write each spec the way the example below does, then generate the document and commit it:
+
+```bash
+spree task openapi:generate
+```
+
+### Documenting your extension's endpoints
+
+An extension runs the same generator and task from its own directory, against its dummy app:
 
 ```bash
 bundle exec rails g spree_dev_tools:openapi
+bundle exec rake spree:openapi:generate
 ```
 
-It writes the swagger helper and the contract spec below. It also writes a skipped skeleton rswag spec for every admin action your controllers serve that is not documented yet, so what is left is each operation's description and the records its response is tested against. Without it, the setup by hand is below.
+The task comes with `spree/testing_support/extension_rake`, which your Rakefile already requires. A gemspec that ships `git ls-files` includes the committed `openapi/admin.yaml` already. One that lists its files needs `openapi/*.yaml` added:
 
-Add `rswag-specs` to your extension's development dependencies, then configure your integration specs with the helpers `spree_api` ships:
+```ruby my_extension.gemspec
+s.files = Dir['{app,config,db,lib}/**/*', 'openapi/*.yaml', 'LICENSE', 'README.md']
+```
+
+### Writing the specs
+
+Without the generator, the setup by hand is this. Configure your integration specs with the helpers `spree_api` ships (`rswag-specs` comes with `spree_dev_tools`):
 
 ```ruby spec/swagger_helper.rb
 require 'spec_helper'
@@ -41,7 +64,7 @@ require 'spree/api/testing_support/deterministic_openapi'
 
 RSpec.configure do |config|
   Spree::Api::TestingSupport::Openapi.configure(
-    config, engine: MyExtension::Engine, title: 'My Extension Admin API'
+    config, engine: Rails.application, title: 'My Store Admin API' # or MyExtension::Engine
   )
 end
 ```
@@ -73,18 +96,6 @@ end
 ```
 
 `admin_operation` sets what every admin operation repeats: the content types, the API key and bearer token headers, the scope note in the description, and a signed-in admin and secret key to call it with. A response block overrides either credential with its own `let`.
-
-Then generate the file. The task comes with `spree/testing_support/extension_rake`, which your Rakefile already requires:
-
-```bash
-bundle exec rake spree:openapi:generate
-```
-
-A gemspec that ships `git ls-files` includes the committed `openapi/admin.yaml` already. One that lists its files needs `openapi/*.yaml` added:
-
-```ruby my_extension.gemspec
-s.files = Dir['{app,config,db,lib}/**/*', 'openapi/*.yaml', 'LICENSE', 'README.md']
-```
 
 `request_body_for` documents the body from the controller's `request_params` declaration, so the tool's arguments, the API reference and the SDK types all come from the one declaration that also permits the request.
 
