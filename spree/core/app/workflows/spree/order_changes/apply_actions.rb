@@ -1,8 +1,8 @@
 module Spree
   module OrderChanges
-    # Writes a change set's actions to its order — the appliers Confirm runs
-    # for real and Preview runs inside a transaction it rolls back. Opens no
-    # transaction and recalculates nothing: both callers do that around it.
+    # Writes a change set's actions to its order and re-sums it — what Confirm
+    # runs for real and Preview runs inside a transaction it rolls back. Opens
+    # no transaction: both callers hold one around it.
     #
     # Core kinds apply grouped by kind, item edits first, so a batch of item
     # edits goes through Spree::Orders::UpsertItems once — one validate pass,
@@ -10,9 +10,6 @@ module Spree
     # a unit price: a negotiated line keeps its price through any edit.
     class ApplyActions < Spree::Workflow
       include Spree::Fulfillments::Replacements
-
-      # Replacement fulfillments created by this run.
-      attr_reader :fulfillments
 
       # @param order_change [Spree::OrderChange]
       # @return [Spree::ServiceModule::Result] value is the fulfillments created
@@ -29,8 +26,9 @@ module Spree
         step :apply_receive_actions
         step :apply_fulfillment_actions
         step :apply_registered_actions
+        order.recalculate_totals! if order_change.moves_money?
 
-        success(fulfillments)
+        success(@fulfillments)
       end
 
       private
@@ -74,8 +72,6 @@ module Spree
         return if actions.empty?
 
         record = order_change.post_sale_record
-        failure(order_change, :order_change_receipt_without_record) if record.nil?
-
         actions.each { |action| record.stock_location.restock(action.variant, action.quantity, record) }
       end
 
@@ -89,7 +85,7 @@ module Spree
           { variant: action.variant, quantity: action.quantity, line_item: action.line_item }
         end
 
-        @fulfillments = build_replacements(order_change.post_sale_record || order_change, items)
+        @fulfillments = build_replacements(order_change.post_sale_record, items)
       end
 
       def apply_registered_actions

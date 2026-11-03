@@ -24,46 +24,39 @@ module Spree
       # @return [Spree::ServiceModule::Result] value is the change set
       def call(order:, actions:, requested_by: nil, post_sale_record: nil, confirm: true, metadata: {})
         @fulfillments = []
-        failed = nil
+        @failure = nil
         order_change = nil
 
         # requires_new: a failure rolls back to here and leaves no open set
         # behind, whatever transaction the caller holds.
         ApplicationRecord.transaction(requires_new: true) do
-          begun, failed = run_workflow(Spree.order_change_begin_workflow,
-                                       order: order, requested_by: requested_by,
-                                       post_sale_record: post_sale_record, metadata: metadata)
-          raise ActiveRecord::Rollback if failed
-
-          order_change = begun.order_change
+          order_change = run_workflow(Spree.order_change_begin_workflow,
+                                      order: order, requested_by: requested_by,
+                                      post_sale_record: post_sale_record, metadata: metadata).order_change
           Array(actions).each do |attributes|
-            _added, failed = run_workflow(Spree.order_change_add_action_workflow,
-                                          order_change: order_change, **attributes.to_h.symbolize_keys)
-            raise ActiveRecord::Rollback if failed
+            run_workflow(Spree.order_change_add_action_workflow, order_change: order_change, **attributes.to_h.symbolize_keys)
           end
-
-          _requested, failed = run_workflow(Spree.order_change_request_workflow, order_change: order_change)
-          raise ActiveRecord::Rollback if failed
-
-          if confirm
-            confirmed, failed = run_workflow(Spree.order_change_confirm_workflow, order_change: order_change)
-            raise ActiveRecord::Rollback if failed
-
-            @fulfillments = confirmed.fulfillments
-          end
+          run_workflow(Spree.order_change_request_workflow, order_change: order_change)
+          @fulfillments = run_workflow(Spree.order_change_confirm_workflow, order_change: order_change).fulfillments if confirm
         end
 
-        failed || success(order_change)
+        @failure || success(order_change)
       end
 
       private
 
-      # @return [Array(Spree::Workflow, Spree::ServiceModule::Result | nil)]
-      #   the workflow that ran, and its result when it failed
+      # Runs one step of the change and hands back the workflow that ran, so
+      # its readers can be used. A failure is kept as the result and rolls
+      # the whole change back.
       def run_workflow(workflow, **arguments)
         instance = workflow.new
         result = instance.call(**arguments)
-        [instance, (result if result.failure?)]
+        if result.failure?
+          @failure = result
+          raise ActiveRecord::Rollback
+        end
+
+        instance
       end
     end
   end
