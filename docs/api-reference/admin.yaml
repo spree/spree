@@ -80184,7 +80184,8 @@ components:
         storefront_visible:
           type: boolean
           description: When false, the definition is admin-only and never exposed
-            in the Store API. Defaults to false.
+            in the Store API. Defaults to false on create; an update without it keeps
+            the stored value.
         searchable:
           type: boolean
           description: Include values in storefront product text search. Supported
@@ -80221,7 +80222,8 @@ components:
         storefront_visible:
           type: boolean
           description: When false, the definition is admin-only and never exposed
-            in the Store API. Defaults to false.
+            in the Store API. Defaults to false on create; an update without it keeps
+            the stored value.
         searchable:
           type: boolean
           description: Include values in storefront product text search. Supported

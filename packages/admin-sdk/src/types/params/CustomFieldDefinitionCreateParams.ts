@@ -20,7 +20,8 @@ export type CustomFieldDefinitionCreateParams = {
    */
   resource_type: string
   /**
-   * When false, the definition is admin-only and never exposed in the Store API. Defaults to false.
+   * When false, the definition is admin-only and never exposed in the Store API. Defaults to false
+   * on create; an update without it keeps the stored value.
    */
   storefront_visible?: boolean
   /**
