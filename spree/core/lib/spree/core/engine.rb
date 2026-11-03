@@ -147,12 +147,19 @@ module Spree
         app.config.spree.number_generators = Spree::NumberGenerators::Registry.new
       end
 
-      # The one eligibility rule core ships: a per-market return window,
-      # bypassed by staff. Registered before application initializers so a
-      # store can unregister it in its own initializer.
+      # The eligibility rules core ships: a per-market return window, no
+      # digital content, and only shipped units sold as returnable. All
+      # advisory for staff. Registered before application initializers so a
+      # store can unregister any of them in its own initializer.
       initializer 'spree.returns.register_eligibility_validator', before: :load_config_initializers do
-        Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
-        Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
+        %w[
+          Spree::Returns::EligibilityValidator
+          Spree::Returns::DigitalContentValidator
+          Spree::Returns::ReturnableValidator
+        ].each do |validator|
+          Spree.hooks.register('returns.create.validate', validator)
+          Spree.hooks.register('exchanges.create.validate', validator)
+        end
       end
 
       # Seed the reporting vocabulary before app initializers so applications

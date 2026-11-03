@@ -9,26 +9,32 @@ module Spree
     module ReturnableQuantity
       extend ActiveSupport::Concern
 
-      private
+      # Units already promised back, per fulfillment item — every return and
+      # exchange line that is not canceled, in two queries however many items
+      # are asked about.
+      #
+      # @param fulfillment_item_ids [Array<Integer>]
+      # @return [Hash{Integer => Integer}] fulfillment item id => units
+      def self.claimed_quantities(fulfillment_item_ids)
+        return {} if fulfillment_item_ids.empty?
 
-      # @param fulfillment_item [Spree::FulfillmentItem]
-      # @param requested [Hash{Integer => Integer}] units already asked for in
-      #   this request, keyed by fulfillment item id
-      # @return [Integer]
-      def returnable_quantity_for(fulfillment_item, requested: {})
         returned = Spree::ReturnLineItem.
                    joins(:return).
-                   where(fulfillment_item_id: fulfillment_item.id).
+                   where(fulfillment_item_id: fulfillment_item_ids).
                    where.not(Spree::Return.table_name => { status: 'canceled' }).
+                   group(:fulfillment_item_id).
                    sum(:quantity)
         exchanged = Spree::ExchangeLineItem.
                     joins(:exchange).
-                    where(fulfillment_item_id: fulfillment_item.id).
+                    where(fulfillment_item_id: fulfillment_item_ids).
                     where.not(Spree::Exchange.table_name => { status: 'canceled' }).
+                    group(:fulfillment_item_id).
                     sum(:quantity)
 
-        fulfillment_item.quantity.to_i - returned - exchanged - requested.fetch(fulfillment_item.id, 0)
+        returned.merge(exchanged) { |_id, returned_units, exchanged_units| returned_units + exchanged_units }
       end
+
+      private
 
       # Checks each item's quantity against what is still returnable and
       # fails with the item's name when it is not.
@@ -37,10 +43,11 @@ module Spree
       # @param action [String] 'returned' or 'exchanged', for the message
       def ensure_returnable_quantities(items, action:)
         requested = Hash.new(0)
+        claimed = Spree::Returns::ReturnableQuantity.claimed_quantities(items.map { |item| item[:fulfillment_item].id })
 
         items.each do |item|
           fulfillment_item = item[:fulfillment_item]
-          available = returnable_quantity_for(fulfillment_item, requested: requested)
+          available = fulfillment_item.quantity.to_i - claimed.fetch(fulfillment_item.id, 0) - requested[fulfillment_item.id]
           if item[:quantity] > available
             failure(order, "Only #{[available, 0].max} of #{fulfillment_item.variant.name} can be #{action}")
           end

@@ -1661,4 +1661,19 @@ describe Spree::Variant, type: :model do
       end
     end
   end
+
+  describe '#returnable?' do
+    let(:product) { create(:product, returnable: false) }
+    let(:variant) { create(:variant, product: product) }
+
+    it 'follows the product when the variant does not say' do
+      expect(variant.returnable?).to be(false)
+    end
+
+    it 'lets the variant override the product' do
+      variant.update!(returnable: true)
+
+      expect(variant.returnable?).to be(true)
+    end
+  end
 end

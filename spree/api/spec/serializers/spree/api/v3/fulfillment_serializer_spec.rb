@@ -35,6 +35,47 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
       expect(qty).to be_a(Integer)
     end
 
+    context 'on a shipped order' do
+      let(:order) { create(:shipped_order, store: store) }
+      let(:unit) { shipment.fulfillment_items.first }
+
+      before { Spree.hooks.register('returns.create.validate', 'Spree::Returns::ReturnableValidator') }
+
+      def first_item
+        described_class.new(shipment.reload, params: params.merge(returnability: true)).to_h['items'].first.deep_stringify_keys
+      end
+
+      # Only the Store order page asks for the customer's view.
+      it 'leaves returnability out unless asked' do
+        item = described_class.new(shipment, params: params).to_h['items'].first.deep_stringify_keys
+
+        expect(item.keys).to contain_exactly('item_id', 'variant_id', 'quantity')
+      end
+
+      it 'names each unit and what the customer may still send back' do
+        item = first_item
+
+        expect(item['returnable_quantity']).to eq(unit.quantity)
+        expect(item['non_returnable_reason']).to be_nil
+        expect(item['units']).to contain_exactly(
+          'fulfillment_item_id' => unit.prefixed_id, 'quantity' => unit.quantity,
+          'returnable_quantity' => unit.quantity, 'non_returnable_reason' => nil
+        )
+      end
+
+      it 'counts what already came back' do
+        Spree::Returns::Create.call(order: order, items: [{ fulfillment_item: unit, quantity: unit.quantity }])
+
+        expect(first_item).to include('returnable_quantity' => 0, 'non_returnable_reason' => 'already_returned')
+      end
+
+      it 'says when a line was sold as non-returnable' do
+        unit.line_item.update_columns(returnable: false)
+
+        expect(first_item).to include('returnable_quantity' => 0, 'non_returnable_reason' => 'not_returnable')
+      end
+    end
+
     context 'when a line item has been deleted' do
       before do
         # Delete the line item directly so the manifest still references it

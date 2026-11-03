@@ -51,6 +51,8 @@ module Spree
             body.attribute :meta_description, :string
             body.attribute :meta_keywords, :string
             body.attribute :metadata, :hash
+            body.attribute :returnable, :boolean,
+              description: 'Whether customers may send this product back through self-service returns. False for final sale, or goods exempt from the EU right of withdrawal. Variants may override it.'
             body.attribute :product_type_id, :id,
               nullable: true,
               description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."

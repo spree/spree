@@ -62,6 +62,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
           expect(data).not_to have_key('token')
           expect(data).not_to have_key('checkout_steps')
           expect(data).not_to have_key('state_lock_version')
+          # The order page is where a customer decides to send something back.
+          expect(data['returns_eligibility']).to include('eligible' => be_in([true, false]))
         end
       end
 

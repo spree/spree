@@ -14,7 +14,7 @@ module Spree
                  available_on: [:string, nullable: true],
                  preorder_ships_at: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
-                 preorder: :boolean,
+                 preorder: :boolean, returnable: :boolean,
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  tags: [:string, multi: true]
@@ -31,6 +31,11 @@ module Spree
         attribute :preorder, &:preorder?
 
         attribute :in_stock, &:in_stock?
+
+        # False for goods sold as non-returnable (final sale, or exempt from
+        # the EU right of withdrawal) — stated before purchase, as the law
+        # requires. Variants may say otherwise; read the variant's own flag.
+        attributes :returnable
 
         attribute :backorderable, &:backorderable?
 
