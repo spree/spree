@@ -23,7 +23,9 @@ module Spree
         # to pick — from the marketplace's list — because the type is what
         # hands their product its option types, and the profile is what
         # decides how their goods can be shipped at all
-        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+        # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13). So are
+        # the markets a product is kept out of: a distribution agreement is
+        # the seller's to honour (docs/plans/6.1-product-market-availability.md).
         #
         # Tags are the clearest case — they are tenanted to the store
         # (`acts_as_taggable_tenant :store_id`), so a seller typing one would
@@ -56,6 +58,10 @@ module Spree
               description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."
             body.attribute :delivery_profile_id, :id,
               description: "Which of the marketplace's delivery profiles the product ships under. A new product sent without one lands on the profile marked default."
+            body.attribute :market_availability, :string, choices: Spree::Product::MARKET_AVAILABILITY_MODES,
+              description: 'Which markets may see and buy the product: `all` (the default), `all_except` the markets in `market_ids`, or `only` those markets. A product a market excludes is hidden there everywhere, including its own URL.'
+            body.attribute :market_ids, :array, of: :id,
+              description: 'The markets `market_availability` names (`mkt_...`). Required unless the mode is `all`.'
             body.attribute :prices, :array, of: Spree::Api::V3::Seller::PriceRequestSchema,
               description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant."
             # `external_url` stays out for the same reason it does on the
@@ -296,7 +302,7 @@ module Spree
           end
 
           def collection_includes
-            [:default_variant, :primary_media]
+            [:default_variant, :primary_media, :market_availability_entries]
           end
 
           private

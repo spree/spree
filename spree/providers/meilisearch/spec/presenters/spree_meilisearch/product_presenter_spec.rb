@@ -21,6 +21,19 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
         expect(doc[:product_id]).to eq(product.prefixed_id)
       end
 
+      it 'indexes an unrestricted product as available in every market' do
+        expect(doc[:market_availability]).to eq('all')
+        expect(doc[:market_ids]).to eq([])
+      end
+
+      it 'indexes the mode and the markets it names' do
+        market = create(:market, store: store)
+        product.update!(market_availability: 'only', market_ids: [market.prefixed_id])
+
+        expect(doc[:market_availability]).to eq('only')
+        expect(doc[:market_ids]).to eq([market.id.to_s])
+      end
+
       it 'includes locale and currency' do
         expect(doc[:locale]).to be_present
         expect(doc[:currency]).to be_present
