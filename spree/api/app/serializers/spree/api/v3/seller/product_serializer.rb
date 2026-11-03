@@ -19,6 +19,8 @@ module Spree
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    total_on_hand: [:number, nullable: true],
+                   market_availability: [:string, enum: Spree::Product::MARKET_AVAILABILITY_MODES, enum_type_name: 'ProductMarketAvailability'],
+                   market_ids: [:string, multi: true],
                    submission: ['ProductSubmission', nullable: true]
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
@@ -31,6 +33,9 @@ module Spree
             total = product.total_on_hand
             total.to_i unless total.infinite?
           end
+
+          attribute :market_availability, &:market_availability_mode
+          attribute :market_ids, &:market_availability_prefixed_market_ids
 
           many :variants,
                resource: proc { Spree.api.seller_variant_serializer },
