@@ -63,6 +63,15 @@ module Spree
       OPEN_STATUSES.include?(status)
     end
 
+    # A receipt or a replacement shipment changes no amount on the order, and
+    # re-summing a placed order can call out to a tax provider, so a set of
+    # only those is applied without one.
+    #
+    # @return [Boolean]
+    def moves_money?
+      actions.any? { |action| Spree::OrderChangeAction::STOCK_KINDS.exclude?(action.kind) }
+    end
+
     # The return, exchange or claim this set belongs to, if any.
     #
     # @return [Spree::Return, Spree::Exchange, Spree::Claim, nil]

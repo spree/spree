@@ -256,8 +256,11 @@ return, exchange or claim that made it.
 To refuse some edits — after a cut-off time, or for products that cannot be
 added after placement — register a handler on the `order_changes.add_action.validate`
 hook. `order_changes.confirm.before_confirm` runs just before a change is
-saved, and `order_changes.confirm.after_confirm` runs after it, with the
-balance change available as `balance_delta` (see [Workflows](/developer/customization/workflows)).
+saved and can still refuse it (see [Workflows](/developer/customization/workflows)).
+To settle the balance automatically — charging or refunding at your payment
+provider — subscribe to the `order_change.confirmed` [event](/developer/core-concepts/events),
+which is sent once the change is saved, rather than doing it in a hook: a
+return or claim can apply its change inside a larger step that may still fail.
 
 ```ruby config/initializers/spree.rb
 Spree.hooks.register('order_changes.add_action.validate') do |workflow|

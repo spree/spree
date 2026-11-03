@@ -5620,7 +5620,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 235
+                  name: Credit Card 221
                   description:
                   type: bogus
                   session_required: true
@@ -5707,7 +5707,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 236
+                  name: Credit Card 222
                   description:
                   type: bogus
                   session_required: true
@@ -5775,7 +5775,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 238
+                  name: Credit Card 224
                   description:
                   type: bogus
                   session_required: true
@@ -5876,7 +5876,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 239
+                  name: Credit Card 225
                   description:
                   type: bogus
                   session_required: true
@@ -9690,7 +9690,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 241
+                  name: Credit Card 227
                   description:
                   type: bogus
                   session_required: true
@@ -9782,7 +9782,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 244
+                  name: Credit Card 230
                   description:
                   type: bogus
                   session_required: true
@@ -9863,7 +9863,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 246
+                  name: Credit Card 232
                   description:
                   type: bogus
                   session_required: true
@@ -19578,50 +19578,6 @@ components:
       - option_type_name
       - option_type_label
       - image_url
-      x-typelizer: true
-    OrderChangeEvent:
-      type: object
-      properties:
-        id:
-          type: string
-        status:
-          type: string
-        requested_at:
-          type: string
-          nullable: true
-        confirmed_at:
-          type: string
-          nullable: true
-        canceled_at:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        order_id:
-          type: string
-        return_id:
-          type: string
-          nullable: true
-        exchange_id:
-          type: string
-          nullable: true
-        claim_id:
-          type: string
-          nullable: true
-      required:
-      - id
-      - status
-      - requested_at
-      - confirmed_at
-      - canceled_at
-      - created_at
-      - updated_at
-      - order_id
-      - return_id
-      - exchange_id
-      - claim_id
       x-typelizer: true
     OrderGroup:
       type: object

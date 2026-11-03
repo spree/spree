@@ -103,7 +103,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at:
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -343,7 +343,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at:
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -781,7 +781,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at:
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -895,7 +895,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at:
+                  last_active_at: '2026-01-15T12:00:00Z'
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -2546,7 +2546,7 @@ paths:
                   created_by_type:
                   created_by_label:
                 - id: key_EfhxLZ9ck8
-                  name: API key 14
+                  name: API key 13
                   key_type: secret
                   token_prefix: sk_vihKVmP6r
                   scopes:
@@ -2869,7 +2869,7 @@ paths:
             application/json:
               example:
                 id: key_EfhxLZ9ck8
-                name: API key 20
+                name: API key 19
                 key_type: secret
                 token_prefix: sk_L5LVfygvH
                 scopes:
@@ -6624,7 +6624,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 29 Lovely Street
+                  address1: 27 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6815,7 +6815,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 31 Lovely Street
+                address1: 29 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Manhattan
@@ -15241,7 +15241,7 @@ paths:
               example:
                 data:
                 - id: opt_UkLWZg9DAJ
-                  name: foo-size-16
+                  name: foo-size-14
                   label: Size
                   position: 1
                   kind: dropdown
@@ -15437,7 +15437,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-20
+                name: foo-size-18
                 label: Size
                 position: 1
                 kind: dropdown
@@ -15511,7 +15511,7 @@ paths:
             application/json:
               example:
                 id: opt_UkLWZg9DAJ
-                name: foo-size-22
+                name: foo-size-20
                 label: Updated Label
                 position: 1
                 kind: dropdown
@@ -18899,8 +18899,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 849180
-                  slug: product-849180
+                  name: Product 779180
+                  slug: product-779180
                   options_text: 'Size: S'
                   price: '10.00'
                   total: '20.00'
@@ -18915,11 +18915,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-15
+                    name: size-13
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-25
+                    option_type_name: foo-size-23
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -19009,8 +19009,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 8699
-                slug: product-8699
+                name: Product 7999
+                slug: product-7999
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '59.97'
@@ -19025,11 +19025,11 @@ paths:
                 option_values:
                 - id: optval_gbHJdmfrXB
                   option_type_id: opt_gbHJdmfrXB
-                  name: size-17
+                  name: size-15
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-27
+                  option_type_name: foo-size-25
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -19133,8 +19133,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 872714
-                slug: product-872714
+                name: Product 802714
+                slug: product-802714
                 options_text: 'Size: S'
                 price: '10.00'
                 total: '20.00'
@@ -19149,11 +19149,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-18
+                  name: size-16
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-28
+                  option_type_name: foo-size-26
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -19238,8 +19238,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 889758
-                slug: product-889758
+                name: Product 819758
+                slug: product-819758
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '99.95'
@@ -19254,11 +19254,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-19
+                  name: size-17
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-29
+                  option_type_name: foo-size-27
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -24519,7 +24519,7 @@ paths:
             application/json:
               example:
                 id: pl_UkLWZg9DAJ
-                name: Price List 3
+                name: Price List 2
                 description:
                 status: inactive
                 position: 1
@@ -26311,7 +26311,7 @@ paths:
                 meta_title:
                 meta_description:
                 meta_keywords:
-                variant_count: 1
+                variant_count: 0
                 available_on:
                 preorder_ships_at:
                 purchasable: false
@@ -27448,6 +27448,11 @@ paths:
       security:
       - api_key: []
         bearer_auth: []
+      description: |-
+        Puts a product a seller submitted for review on sale, and closes the
+        submission. Only a product awaiting review can be approved.
+
+        **Required scope:** `write_products` (for API-key authentication).
       parameters:
       - name: x-spree-api-key
         in: header
@@ -27459,11 +27464,6 @@ paths:
         required: true
         schema:
           type: string
-      description: |-
-        Puts a product a seller submitted for review on sale, and closes the
-        submission. Only a product awaiting review can be approved.
-
-        **Required scope:** `write_products` (for API-key authentication).
       responses:
         '200':
           description: product approved
@@ -34343,7 +34343,7 @@ paths:
                     type: string
                   - key: contact_phone
                     type: string
-                  readable: true
+                  readable: false
                 - resource_type: policy
                   fields:
                   - key: name
@@ -37519,11 +37519,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-72
+                    name: size-70
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-82
+                    option_type_name: foo-size-80
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -37832,11 +37832,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-75
+                  name: size-73
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-85
+                  option_type_name: foo-size-83
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -37972,11 +37972,11 @@ paths:
                 option_values:
                 - id: optval_UkLWZg9DAJ
                   option_type_id: opt_UkLWZg9DAJ
-                  name: size-77
+                  name: size-75
                   label: S
                   position: 1
                   color_code:
-                  option_type_name: foo-size-87
+                  option_type_name: foo-size-85
                   option_type_label: Size
                   image_url:
                   metadata: {}
@@ -38389,11 +38389,11 @@ paths:
                   option_values:
                   - id: optval_UkLWZg9DAJ
                     option_type_id: opt_UkLWZg9DAJ
-                    name: size-79
+                    name: size-77
                     label: S
                     position: 1
                     color_code:
-                    option_type_name: foo-size-89
+                    option_type_name: foo-size-87
                     option_type_label: Size
                     image_url:
                     metadata: {}
@@ -41170,7 +41170,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 266
+                  count: 260
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -41813,12 +41813,12 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 22159
+                  name: Product 12159
                   thumbnail_url:
                   catalog_variants:
                   - id: variant_UkLWZg9DAJ
                     label:
-                    sku: SKU-2
+                    sku: SKU-1
                     currency: USD
                     source: automatic
                     break_count: 0
@@ -44420,7 +44420,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 25 Lovely Street
+                  address1: 23 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -44628,7 +44628,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 27 Lovely Street
+                address1: 25 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -47719,7 +47719,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: UPS Ground
-                  code: UPS_GROUND_12
+                  code: UPS_GROUND_11
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -47905,7 +47905,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: UPS Express
-                code: UPS_GROUND_13
+                code: UPS_GROUND_12
                 estimated_transit_business_days_min: 1
                 estimated_transit_business_days_max: 2
                 digital: false
@@ -49460,7 +49460,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 483397
+                  name: Product 413397
                   owner_type: product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -81352,20 +81352,6 @@ components:
       - zh-HK
       - zh-TW
       - zu
-    DimensionUnit:
-      type: string
-      enum:
-      - mm
-      - cm
-      - in
-      - ft
-    WeightUnit:
-      type: string
-      enum:
-      - g
-      - kg
-      - lb
-      - oz
     TimeZone:
       anyOf:
       - type: string
@@ -81510,6 +81496,20 @@ components:
       - type: string
       description: Common IANA time zones; any other IANA time zone identifier is
         accepted too.
+    DimensionUnit:
+      type: string
+      enum:
+      - mm
+      - cm
+      - in
+      - ft
+    WeightUnit:
+      type: string
+      enum:
+      - g
+      - kg
+      - lb
+      - oz
     AddressInputParams:
       type: object
       properties:
@@ -84893,8 +84893,6 @@ components:
                   - add_item
                   - update_item
                   - remove_item
-                  - receive_item
-                  - add_fulfillment
                 - type: string
                 description: "`add_item` takes `variant_id` and `quantity`; `update_item`
                   takes `line_item_id` and the new `quantity`; `remove_item` takes
@@ -84937,8 +84935,6 @@ components:
                   - add_item
                   - update_item
                   - remove_item
-                  - receive_item
-                  - add_fulfillment
                 - type: string
                 description: "`add_item` takes `variant_id` and `quantity`; `update_item`
                   takes `line_item_id` and the new `quantity`; `remove_item` takes
@@ -88168,6 +88164,7 @@ components:
           description: A `signed_id` from `files.upload()` for the logo in transactional
             emails, or null to remove it.
           nullable: true
+
     SupplierCreateParams:
       type: object
       properties:

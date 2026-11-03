@@ -5,8 +5,10 @@ module Spree
     # No money moves here. The order is re-summed and its payment status
     # re-derived — `balance_due` when the customer owes more, `credit_owed`
     # when they are owed some back — and the merchant settles it from the
-    # order's payments, as after any edit. An extension that wants to settle
-    # automatically reads `balance_delta` in an `after_confirm` handler.
+    # order's payments, as after any edit. `before_confirm` and
+    # `after_confirm` handlers read `balance_delta`, but both may run inside a
+    # caller's transaction: settling at a gateway belongs in a subscriber to
+    # `order_change.confirmed`, which is published after commit.
     #
     # With no gateway I/O of its own, Confirm is safe to run inside a
     # caller's transaction: the return, exchange and claim workflows do, so
@@ -22,13 +24,15 @@ module Spree
       def perform(order_change:)
         super
 
-        step :ensure_confirmable
-
         ApplicationRecord.transaction do
           order.lock!
+          # Re-read under the lock: a second confirm of the same set waited
+          # here while the first applied it, and must now see it confirmed.
+          order_change.lock!
+          step :ensure_confirmable
           previous_total = order.total
           step :apply_actions
-          order.recalculate_totals! if moves_money?
+          order.recalculate_totals! if order_change.moves_money?
           order.update_statuses!
           @balance_delta = order.total - previous_total
           order_change.update!(status: 'confirmed', confirmed_at: Time.current)
@@ -49,12 +53,6 @@ module Spree
       def ensure_confirmable
         failure(order_change, :order_change_not_requested) unless order_change.requested?
         failure(order_change, :order_change_order_canceled) if order.canceled?
-      end
-
-      # A receipt or a replacement shipment changes no amount on the order,
-      # and re-summing a placed order can call out to a tax provider.
-      def moves_money?
-        order_change.actions.any? { |action| Spree::OrderChangeAction::STOCK_KINDS.exclude?(action.kind) }
       end
 
       def apply_actions

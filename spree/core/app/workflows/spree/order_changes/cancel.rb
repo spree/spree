@@ -9,14 +9,17 @@ module Spree
       def perform(order_change:)
         super
 
-        failure(order_change, :order_change_not_open) unless order_change.open?
-
         ApplicationRecord.transaction do
+          # The same locks Confirm takes, so a cancel racing a confirm sees
+          # the set as it was left rather than overwriting a confirmed one.
+          order_change.order.lock!
+          order_change.lock!
+          failure(order_change, :order_change_not_open) unless order_change.open?
           order_change.update!(status: 'canceled', canceled_at: Time.current)
           run_hooks :after_cancel
         end
 
-        order_change.publish_event('order_change.canceled')
+        ActiveRecord.after_all_transactions_commit { order_change.publish_event('order_change.canceled') }
         success(order_change)
       end
     end

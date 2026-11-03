@@ -46,6 +46,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(response).to have_http_status(:not_found)
     end
 
+    # Replacements and restocks belong to exchanges, claims and returns,
+    # which check what came back and what is owed first.
+    it 'refuses the kinds returns, exchanges and claims make' do
+      post :preview, params: {
+        order_id: order.prefixed_id,
+        actions: [{ kind: 'add_fulfillment', line_item_id: line_item.prefixed_id, variant_id: line_item.variant.prefixed_id, quantity: 5 }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to include('Returns, exchanges and claims')
+    end
+
     it 'refuses an action missing what its kind needs' do
       post :preview, params: { order_id: order.prefixed_id, actions: [{ kind: 'update_item', quantity: 2 }] }, as: :json
 
