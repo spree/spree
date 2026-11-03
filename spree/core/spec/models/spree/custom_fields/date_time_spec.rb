@@ -25,6 +25,14 @@ describe Spree::CustomFields::DateTime, type: :model do
     expect(field.errors[:value]).to include(I18n.t('spree.errors.messages.custom_field_invalid_date_time'))
   end
 
+  it 'takes a bare-date max to the end of that day' do
+    custom_field_definition.update!(validations: { max: '2026-01-31' })
+
+    expect(custom_field_definition.validation_rules['max']).to eq('2026-01-31T23:59:59Z')
+    expect(custom_field('2026-01-31T15:00:00Z')).to be_valid
+    expect(custom_field('2026-02-01T00:00:00Z')).not_to be_valid
+  end
+
   it 'checks the instant against min and max' do
     custom_field_definition.update!(validations: { min: '2026-10-12T00:00:00Z' })
 

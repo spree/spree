@@ -15,7 +15,7 @@ module Spree
         %w[min max]
       end
 
-      def self.normalize_validation_bound(value, store: nil)
+      def self.normalize_validation_bound(value, store: nil, rule: nil)
         decimal = Spree::Money::Rounding.parse_decimal(value) unless [true, false].include?(value)
         return if decimal.nil? || !decimal.finite?
 

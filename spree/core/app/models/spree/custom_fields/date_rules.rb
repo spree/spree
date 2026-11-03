@@ -24,7 +24,7 @@ module Spree
           %w[min max]
         end
 
-        def normalize_validation_bound(value, store: nil)
+        def normalize_validation_bound(value, store: nil, rule: nil)
           canonical_value(value, store: store)
         end
 

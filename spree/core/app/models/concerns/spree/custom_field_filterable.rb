@@ -170,7 +170,7 @@ module Spree
 
         matches_any =
           if definition.multiple_choices?
-            values.map { |choice| column.matches("%#{sanitize_sql_like(choice.to_json)}%", nil, true).or(column.eq(choice)) }.reduce(:or)
+            values.map { |choice| column.matches("%#{sanitize_sql_like(choice.to_json)}%", '\\', true).or(column.eq(choice)) }.reduce(:or)
           else
             column.in(values)
           end

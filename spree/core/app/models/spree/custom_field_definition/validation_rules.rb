@@ -63,7 +63,7 @@ module Spree
         BOUND_RULES.each do |rule|
           next unless rules.key?(rule) && field_type_class
 
-          bound = field_type_class.normalize_validation_bound(rules[rule], store: store)
+          bound = field_type_class.normalize_validation_bound(rules[rule], store: store, rule: rule)
           rules[rule] = bound unless bound.nil?
         end
         rules['choices'] = rules['choices'].map { |choice| normalize_choice(choice) } if rules['choices'].is_a?(Array)
@@ -102,7 +102,7 @@ module Spree
 
       def validate_bound_rules(rules)
         bounds = rules.slice(*BOUND_RULES)
-        invalid = bounds.select { |_rule, bound| field_type_class.normalize_validation_bound(bound, store: store) != bound }
+        invalid = bounds.select { |rule, bound| field_type_class.normalize_validation_bound(bound, store: store, rule: rule) != bound }
         invalid.each_key { |rule| add_validations_error(:validation_invalid_bound, rule: rule) }
         return if invalid.any? || bounds.size < 2
 
@@ -128,7 +128,8 @@ module Spree
       def multiple_must_stay_while_values_hold_several
         return unless will_save_change_to_validations? && !multiple_choices?
         return unless (validations_in_database || {})['multiple'] == true
-        return unless custom_fields.where(Spree::CustomField.arel_table[:value].matches('[%')).exists?
+        # A JSON list of two or more strings has `","` between them.
+        return unless custom_fields.where(Spree::CustomField.arel_table[:value].matches('%","%')).exists?
 
         add_validations_error(:validation_multiple_in_use)
       end

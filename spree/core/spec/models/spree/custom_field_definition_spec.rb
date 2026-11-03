@@ -203,6 +203,7 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
     it 'rejects a bound the type cannot read, and min above max' do
       expect(build(:custom_field_definition, :date_field, validations: { min: 'soon' })).not_to be_valid
       expect(build(:custom_field_definition, :short_text_field, validations: { min: -1 })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { max: '010' }).tap(&:valid?).validation_rules['max']).to eq(10)
       expect(build(:custom_field_definition, :short_text_field, validations: { min: 5, max: 2 })).not_to be_valid
       expect(build(:custom_field_definition, :short_text_field, validations: { min: 2, max: 5, required: true })).to be_valid
     end
