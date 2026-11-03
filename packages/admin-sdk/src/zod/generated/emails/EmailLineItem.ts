@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { EmailGiftCardRecipientSchema } from './EmailGiftCardRecipient';
 import { EmailOptionValueSchema } from './EmailOptionValue';
 
 export const EmailLineItemSchema = z.object({
@@ -13,6 +14,7 @@ export const EmailLineItemSchema = z.object({
   name: z.string(),
   slug: z.string(),
   options_text: z.string(),
+  gift_card: z.boolean(),
   price: z.string().nullable(),
   total: z.string().nullable(),
   adjustment_total: z.string().nullable(),
@@ -23,6 +25,7 @@ export const EmailLineItemSchema = z.object({
   discounted_amount: z.string().nullable(),
   compare_at_amount: z.string().nullable(),
   option_values: z.array(EmailOptionValueSchema),
+  recipient: EmailGiftCardRecipientSchema.nullable(),
   url: z.string().nullable(),
   image_url: z.string().nullable(),
   sku: z.string().nullable(),

@@ -15,9 +15,12 @@ module Spree
                  original_price: ['Price', nullable: true],
                  minimum_order_quantity: :number, order_multiple: :number,
                  purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS, enum_type_name: 'PurchaseUnit'], units_per_carton: ['number | null'],
-                 seller_id: [:string, nullable: true]
+                 seller_id: [:string, nullable: true],
+                 gift_card: [:boolean, comment: "True when the variant is a gift card denomination; its price is the card's face value."]
 
         prefixed_id_attributes :product
+
+        attribute :gift_card, &:gift_card?
 
         attributes :sku, :options_text, :track_inventory, :media_count
 

@@ -60,6 +60,8 @@ export const storeSettingsFormSchema = z.object({
     .number()
     .int()
     .min(1, { error: requiredMessage('store.digital_asset_authorized_days') }),
+  // Null means a bought gift card never expires; the input sends null when emptied.
+  gift_card_default_validity_days: z.union([z.null(), z.coerce.number().int().min(1)]),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>

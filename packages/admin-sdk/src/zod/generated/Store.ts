@@ -57,6 +57,7 @@ export const StoreSchema = z.object({
   digital_asset_authorized_clicks: z.number(),
   limit_digital_download_days: z.boolean(),
   digital_asset_authorized_days: z.number(),
+  gift_card_default_validity_days: z.number().nullable(),
   send_consumer_transactional_emails: z.boolean(),
   email_accent_color: z.string().nullable(),
   email_background_color: z.string().nullable(),

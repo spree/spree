@@ -17,9 +17,10 @@ module Spree
                  preorder: :boolean,
                  price: 'Price',
                  original_price: ['Price', nullable: true],
-                 tags: [:string, multi: true]
+                 tags: [:string, multi: true],
+                 gift_card: [:boolean, comment: 'True when the product is a gift card: each variant is a denomination, and buying one issues a card per unit when the order is paid.']
 
-        attributes :name, :slug,
+        attributes :name, :slug, :gift_card,
                    :meta_title, :meta_description, :meta_keywords,
                    :variant_count,
                    available_on: :iso8601, preorder_ships_at: :iso8601

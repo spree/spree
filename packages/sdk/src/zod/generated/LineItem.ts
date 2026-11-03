@@ -2,6 +2,8 @@
 import { z } from 'zod';
 import { CustomFieldSchema } from './CustomField';
 import { DigitalLinkSchema } from './DigitalLink';
+import { GiftCardSchema } from './GiftCard';
+import { GiftCardRecipientSchema } from './GiftCardRecipient';
 import { OptionValueSchema } from './OptionValue';
 import { SellerSchema } from './Seller';
 import { TaxLineSchema } from './TaxLine';
@@ -17,6 +19,7 @@ export const LineItemSchema = z.object({
   name: z.string(),
   slug: z.string(),
   options_text: z.string(),
+  gift_card: z.boolean(),
   price: z.string().nullable(),
   display_price: z.string().nullable(),
   total: z.string().nullable(),
@@ -40,6 +43,8 @@ export const LineItemSchema = z.object({
   option_values: z.array(OptionValueSchema),
   digital_links: z.array(DigitalLinkSchema).optional(),
   tax_lines: z.array(TaxLineSchema).optional(),
+  recipient: GiftCardRecipientSchema.nullable(),
+  gift_cards: z.array(GiftCardSchema).optional(),
   custom_fields: z.array(CustomFieldSchema).optional(),
 });
 

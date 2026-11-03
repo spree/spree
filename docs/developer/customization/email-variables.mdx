@@ -17,6 +17,7 @@ These are the emails your customers receive. Every one of their templates receiv
 | `spree/fulfillment_mailer/fulfilled_email` | `fulfillment`, `order`, `resend` |
 | `spree/return_mailer/refunded_email` | `return`, `order`, `resend` |
 | `spree/digital_asset_mailer/files_ready_email` | `order`, `downloads`, `resend` |
+| `spree/gift_card_mailer/issued_email` | `gift_card`, `recipient_name`, `message`, `sender_name` |
 | `spree/customer_mailer/password_reset_email` | `customer`, `reset_url` |
 | `spree/customer_mailer/data_export_email` | `download_url`, `expires_at` |
 | `spree/customer_mailer/data_request_confirmation_email` | `kind`, `confirmation_url`, `expires_at` |
@@ -37,6 +38,9 @@ These are the emails your customers receive. Every one of their templates receiv
 | `download_url` | The signed link to the customer's data export. |
 | `expires_at` | When the data export or confirmation link stops working. |
 | `downloads` | Each file bought: `filename`, `url` (carrying its token) and `expires_at`. |
+| `recipient_name` | Who a bought gift card is for, as the buyer typed it. Empty when the buyer named no one. |
+| `message` | The buyer's message to the gift card recipient. Empty when they wrote none. |
+| `sender_name` | Who bought the gift card: the customer's name, else the billing name, else the order email. |
 
 ## Objects
 
@@ -52,7 +56,9 @@ Each object's fields, and the fields of the objects nested in it. Format an amou
 - `order`: `id`, `market_id`, `withdrawal_period_ends_at`, `within_withdrawal_period`, `shipping_eq_billing_address`, `cart_id`, `channel_id`, `company_id`, `company_name`, `po_document_filename`, `po_document_byte_size`, `number`, `email`, `customer_note`, `po_number`, `currency`, `locale`, `total_quantity`, `coupon_code`, `fulfillment_status`, `payment_status`, `completed_at`, `item_total`, `discount_total`, `tax_total`, `included_tax_total`, `additional_tax_total`, `delivery_total`, `fee_total`, `gift_card_total`, `store_credit_total`, `total`, `amount_due`, `covered_by_store_credit`, `adjustment_total`, `customer_name`, `total_minus_store_credits`
 - `order.discounts`: `id`, `promotion_id`, `name`, `description`, `code`, `amount`
 - `order.fees`: `id`, `label`, `kind`, `line_item_id`, `fulfillment_id`, `amount`
-- `order.items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `total`, `adjustment_total`, `additional_tax_total`, `included_tax_total`, `discount_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `amount`
+- `order.items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `gift_card`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `total`, `adjustment_total`, `additional_tax_total`, `included_tax_total`, `discount_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `amount`
+- `order.items.recipient`: `email`, `name`, `message`, `send_at`
+- `order.items.gift_cards`: the cards a paid order issued for the line, with the same fields as `gift_card` and the code masked
 - `order.items.option_values`: `id`, `option_type_id`, `name`, `label`, `position`, `color_code`, `option_type_name`, `option_type_label`, `image_url`
 - `order.fulfillments`: `id`, `number`, `tracking`, `tracking_url`, `pickup_point_data`, `selected_delivery_rate_id`, `unpriced`, `cost`, `total`, `discount_total`, `additional_tax_total`, `included_tax_total`, `tax_total`, `status`, `fulfillment_type`, `fulfilled_at`, `delivered_at`, `items`
 - `order.fulfillments.deliveries`: `id`, `tracking_number`, `carrier`, `carrier_name`, `service`, `status`, `tracking_url`, `estimated_delivery_at`, `delivered_at`
@@ -69,6 +75,10 @@ Each object's fields, and the fields of the objects nested in it. Format an amou
 - `order.manual_discounts`: `label`, `amount`
 - `order.fee_lines`: `label`, `amount`
 - `order.delivery_lines`: `label`, `amount`
+
+### `gift_card`
+
+- `gift_card`: `id`, `code`, `status`, `currency`, `amount`, `amount_used`, `amount_authorized`, `amount_remaining`, `expires_at`, `redeemed_at`, `expired`, `active`. In the gift card email the `code` is in full; everywhere else it is masked.
 
 ### `order_group`
 

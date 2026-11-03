@@ -15,6 +15,7 @@ import type {
   Fulfillment,
   GiftCard,
   GiftCardBatch,
+  GiftCardIssuedEvent,
   Import,
   ImportRow,
   Invitation,
@@ -137,6 +138,7 @@ export interface WebhookEventMap {
   'gift_card.canceled': GiftCard
   'gift_card.created': GiftCard
   'gift_card.deleted': GiftCard
+  'gift_card.issued': GiftCardIssuedEvent
   'gift_card.partially_redeemed': GiftCard
   'gift_card.redeemed': GiftCard
   'gift_card.updated': GiftCard

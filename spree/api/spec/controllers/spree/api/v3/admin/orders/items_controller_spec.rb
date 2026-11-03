@@ -282,5 +282,15 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       subject
       expect(response).to have_http_status(:no_content)
     end
+
+    it 'refuses to remove a line that issued gift cards' do
+      line_item.variant.product.update_column(:gift_card, true)
+      create(:gift_card, line_item: line_item, store: order.store)
+
+      subject
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(line_item.reload).to be_present
+    end
   end
 end

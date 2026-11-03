@@ -1,0 +1,30 @@
+---
+subject: "{{ 'gift_card_mailer.issued_email.subject' | t: store: store.name }}"
+---
+{%- assign amount = gift_card.amount | money -%}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'gift_card_mailer.issued_email.heading' | t: amount: amount }}</mj-text>
+    {% if recipient_name %}
+      <mj-text mj-class="greeting">{{ 'gift_card_mailer.issued_email.greeting' | t: name: recipient_name }}</mj-text>
+    {% endif %}
+    <mj-text mj-class="lead">{{ 'gift_card_mailer.issued_email.instructions' | t: sender: sender_name, store: store.name }}</mj-text>
+    {% if message %}
+      <mj-text mj-class="body" padding="16px 0 0"><em>{{ message }}</em></mj-text>
+    {% endif %}
+  </mj-column>
+</mj-section>
+<mj-section padding="32px 0 0">
+  <mj-column>
+    <mj-text mj-class="body">{{ 'gift_card_mailer.issued_email.code_label' | t }}</mj-text>
+    <mj-text mj-class="heading" padding="8px 0 0">{{ gift_card.code }}</mj-text>
+    {% if gift_card.expires_at %}
+      {% assign expires_on = gift_card.expires_at | date: 'long' %}
+      <mj-text mj-class="note" padding="8px 0 0">{{ 'gift_card_mailer.issued_email.expires_on' | t: date: expires_on }}</mj-text>
+    {% endif %}
+    {% if store.url %}
+      <mj-button href="{{ store.url }}">{{ 'gift_card_mailer.issued_email.action' | t }}</mj-button>
+    {% endif %}
+    <mj-text mj-class="note" padding="16px 0 0">{{ 'gift_card_mailer.issued_email.how_to_redeem' | t }}</mj-text>
+  </mj-column>
+</mj-section>

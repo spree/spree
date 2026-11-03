@@ -92,6 +92,8 @@ export interface PanelProduct {
   meta_description?: string | null
   meta_keywords?: string | null
   product_type_id?: string | null
+  /** Operator-only; absent on a seller's serializer. */
+  gift_card?: boolean
   variant_count?: number
   /**
    * Either shape: the operator's serializer expands the records, a seller's

@@ -67,6 +67,7 @@ export { FulfillmentSchema, type Fulfillment } from './Fulfillment';
 export { FulfillmentItemSchema, type FulfillmentItem } from './FulfillmentItem';
 export { GiftCardSchema, type GiftCard } from './GiftCard';
 export { GiftCardBatchSchema, type GiftCardBatch } from './GiftCardBatch';
+export { GiftCardRecipientSchema, type GiftCardRecipient } from './GiftCardRecipient';
 export { ImportSchema, type Import } from './Import';
 export { ImportMappingSchema, type ImportMapping } from './ImportMapping';
 export { ImportRowSchema, type ImportRow } from './ImportRow';

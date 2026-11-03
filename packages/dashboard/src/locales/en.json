@@ -3362,6 +3362,16 @@
           "customer_help": "Clear the customer to make this a guest order.",
           "confirm_detach": "This order will no longer appear in the customer's order history or account. Remove the customer?",
           "detach": "Remove customer"
+        },
+        "issued_gift_cards": {
+          "title": "Issued gift cards",
+          "never_expires": "Never",
+          "columns": {
+            "code": "Code",
+            "amount": "Amount",
+            "sent_to": "Sent to",
+            "expires": "Expires"
+          }
         }
       },
       "edit": {
@@ -4290,7 +4300,8 @@
           "tab_downloads": "Digital downloads",
           "downloads_help": "How long a download link works and how many times it can be used. Individual files can override these numbers.",
           "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
-          "tab_default_package": "Default package"
+          "tab_default_package": "Default package",
+          "tab_gift_cards": "Gift cards"
         },
         "tax_categories": {
           "add_sheet_title": "Add tax category",
