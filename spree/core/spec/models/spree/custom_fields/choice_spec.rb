@@ -35,6 +35,19 @@ describe Spree::CustomFields::Choice, type: :model do
       expect(product.set_custom_field(definition, 'a, c').serialize_value).to eq(%w[a c])
     end
 
+    it 'clears the field when given an empty list' do
+      product.set_custom_field(definition, %w[a])
+
+      expect(product.set_custom_field(definition, [])).to be_nil
+      expect(product.custom_fields.count).to eq(0)
+    end
+
+    it 'turns off several choices when every value holds one' do
+      product.set_custom_field(definition, %w[a])
+
+      expect(definition.update(validations: definition.validation_rules.except('multiple'))).to be(true)
+    end
+
     it 'refuses to turn off several choices while a value holds several' do
       product.set_custom_field(definition, %w[a c])
 

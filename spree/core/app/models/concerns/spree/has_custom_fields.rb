@@ -129,7 +129,8 @@ module Spree
       def set_custom_field(definition_or_key, value)
         definition_id = resolve_custom_field_definition_id(definition_or_key)
         custom_field = custom_fields.find_or_initialize_by(custom_field_definition_id: definition_id)
-        if value_blank?(value)
+        # An empty list is a value for JSON, but no choice at all for a choice field.
+        if value_blank?(value) || (value == [] && custom_field.is_a?(Spree::CustomFields::Choice))
           custom_field.destroy if custom_field.persisted?
           return nil
         end
