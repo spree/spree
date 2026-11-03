@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const registration = await client.customers.taxIdentifiers.validate(
-  'cus_UkLWZg9DAJ',
+  'cust_UkLWZg9DAJ',
   'txi_UkLWZg9DAJ',
 )
 

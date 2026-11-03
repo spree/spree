@@ -356,8 +356,10 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Emails the customer their download links for the digital products on
-        this order again. Use it when the original email was lost; to restore
-        used-up downloads or an expired link, reset the digital link instead.
+        this order again. Nothing is sent when the order has no digital links or
+        the store does not send transactional emails. Use it when the original
+        email was lost; to restore used-up downloads or an expired link, reset
+        the digital link instead.
       DESC
       admin_scope :write, :orders
 

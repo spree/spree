@@ -162,6 +162,15 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
           expect(JSON.parse(response.body)['added_count']).to eq(1)
         end
       end
+
+      response '422', 'the catalog has no price list' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
     end
   end
 

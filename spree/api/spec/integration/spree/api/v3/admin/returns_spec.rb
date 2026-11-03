@@ -162,6 +162,15 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
           expect(JSON.parse(response.body)['status']).to eq('approved')
         end
       end
+
+      response '422', 'the return is not requested' do
+        let!(:record) { create(:approved_return, order: create(:shipped_order, store: store)) }
+        let(:id) { record.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
     end
   end
 

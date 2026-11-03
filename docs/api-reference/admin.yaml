@@ -7739,7 +7739,7 @@ paths:
           })
 
           const registration = await client.customers.taxIdentifiers.validate(
-            'cus_UkLWZg9DAJ',
+            'cust_UkLWZg9DAJ',
             'txi_UkLWZg9DAJ',
           )
       - lang: bash
@@ -17380,6 +17380,16 @@ paths:
                 created_by_type: admin_user
               schema:
                 "$ref": "#/components/schemas/Exchange"
+        '422':
+          description: the exchange is not requested
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Not requested
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/orders/{order_id}/exchanges/{id}/receive":
     patch:
       summary: Receive an exchange
@@ -21019,8 +21029,10 @@ paths:
         bearer_auth: []
       description: |-
         Emails the customer their download links for the digital products on
-        this order again. Use it when the original email was lost; to restore
-        used-up downloads or an expired link, reset the digital link instead.
+        this order again. Nothing is sent when the order has no digital links or
+        the store does not send transactional emails. Use it when the original
+        email was lost; to restore used-up downloads or an expired link, reset
+        the digital link instead.
 
 
         **Required scope:** `write_orders` (for API-key authentication).
@@ -21095,8 +21107,8 @@ paths:
                   - US
                   supported_locales:
                   - en
-                  created_at: '2026-11-03T12:35:09.470Z'
-                  updated_at: '2026-11-03T12:35:09.470Z'
+                  created_at: '2026-11-03T16:44:09.130Z'
+                  updated_at: '2026-11-03T16:44:09.130Z'
                   tax_provider:
                 external_references: {}
                 status: placed
@@ -21741,6 +21753,16 @@ paths:
                 deliveries: []
               schema:
                 "$ref": "#/components/schemas/Return"
+        '422':
+          description: the return is not requested
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Not requested
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/orders/{order_id}/returns/{id}/receive":
     patch:
       summary: Receive a return
@@ -40472,6 +40494,16 @@ paths:
                     type: integer
                 required:
                 - added_count
+        '422':
+          description: the catalog has no price list
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: This catalog has no price list to import products from.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/catalogs/{catalog_id}/products":
     get:
       summary: List catalog products
