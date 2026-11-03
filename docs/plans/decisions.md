@@ -1,3 +1,11 @@
+## 2026-11-03: Store defaults leave the Ruby seeds in 6.1, not 6.0
+
+**Context:** The configurator work (`6.0-cli-configurator.md`, spree/spree#14655) moves the defaults every new store starts with out of `db:seed` and into configurator files deployed through the Admin API. Spree 6.0.0 shipped before it merged, with the seeds still creating those defaults.
+
+**Decision:** The change targets 6.1 and is described in a new 6.0 → 6.1 upgrade guide. For one release the removed Ruby stays loadable with a deprecation warning and no effect: the store-default seed services, `Spree::Stores::ProvisionDefaults`, `spree:install --sample` and the application template's `LOAD_SAMPLE_DATA`. They are deleted in 6.2. The upgrade step that gives existing stores the built-in reports joins the 6.0 → 6.1 upgrade list rather than the released 5.6 → 6.0 one.
+
+**Consequences:** A script that runs `db:seed` and expects the defaults must run `spree config provision` on 6.1. The deprecated names do not create records, so nothing has two sources of store defaults.
+
 ## 2026-11-02: Payment method rules retarget to 6.1; multiple accounts of one provider are records scoped by rules
 
 **Context:** `6.1-payment-method-rules.md` (then `6.0-…`) was not built in 6.0. The 2026-07-23 entry below had parked "multiple provider credentials in one store" for grooming, with two candidate shapes. Reviewing it against what shipped since: an open-source platform's hosted payments product (October 2026) added multiple accounts with no data model at all — one provider instance registered per account, scoped by region — and the hosted leader's multi-entity model is one payments account per legal entity mapped to markets. In Spree, two `SpreeStripe::Gateway` records in one store already work at the data layer (own keys, own webhook endpoint and secret, own sessions and gateway customers); only the dashboard's "installed" filter, the storefront's single publishable key from an environment variable, and the marketplace payout provider's "first Stripe method" lookup stand in the way. The Company tree also shipped (2026-08-25), and the checkout seam moved to `Spree::Purchase::PaymentProcessing#payment_methods` on carts, which the cart payment-sessions controller bypasses.

@@ -6,6 +6,7 @@ module Spree
   class InstallGenerator < Rails::Generators::Base
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
+    class_option :sample, type: :boolean, default: false, banner: 'deprecated and ignored: load sample data after setup with bin/rails spree:load_sample_data'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_user_class, type: :string
@@ -22,6 +23,13 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_seed_data = false unless @run_migrations
+    end
+
+    def warn_about_sample_option
+      return unless options[:sample]
+
+      say_status :deprecated, '--sample is ignored and will be removed in Spree 6.2: sample data needs a store that finished setup. ' \
+                              'Load it afterwards with bin/rails spree:load_sample_data', :yellow
     end
 
     def add_files
