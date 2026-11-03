@@ -8,7 +8,7 @@ export type OrderChangePreviewParams = {
      * `quantity`; `remove_item` takes `line_item_id`. The values listed are the built-in ones;
      * extensions may add more.
      */
-    kind: 'add_item' | 'update_item' | 'remove_item' | 'receive_item' | 'add_fulfillment' | (string & {})
+    kind: 'add_item' | 'update_item' | 'remove_item' | (string & {})
     /** A line item of this order. */
     line_item_id?: string
     /** A variant of this store, for `add_item`. */
