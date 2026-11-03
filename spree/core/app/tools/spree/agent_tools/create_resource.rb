@@ -27,7 +27,9 @@ module Spree
 
         response = dispatch.call(method: :post, path: path, body: body)
 
-        result_for(response, entry, summary: summary(resource: resource, attributes: attributes, parent_id: parent_id))
+        # A top-level resource ignores parent_id, so the summary does too.
+        parent = parent_id if entry.parent_param(:create)
+        result_for(response, entry, summary: summary(resource: resource, attributes: attributes, parent_id: parent))
       end
 
       def summary(arguments)

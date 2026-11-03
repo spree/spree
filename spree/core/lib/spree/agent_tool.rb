@@ -185,6 +185,9 @@ class AgentTool
     # @param action [Symbol] the operation whose path runs under the parent
     # @return [Hash]
     def nested_resource_error(entry, verb, action)
+      # A top-level path left unfilled is missing its own id, not a parent.
+      return { error: "Pass the id of the #{entry.key.singularize.tr('_', ' ')} to use." } unless entry.nested?(action)
+
       parent = entry.parent_key(action)
       parent_entry = Spree::AgentTools::ResourceMap.find(parent)
       attribute = parent_entry&.nested_typed_families&.key(entry.model_class)

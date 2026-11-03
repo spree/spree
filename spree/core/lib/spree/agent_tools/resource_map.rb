@@ -126,7 +126,7 @@ module Spree
           path = api_path(action)
           return if path.blank?
 
-          path = path.sub(':id', ERB::Util.url_encode(id.to_s)) if id
+          path = path.sub(':id', ERB::Util.url_encode(id.to_s)) if id.present?
           parent = parent_param(action)
           if parent
             return if parent_id.blank?

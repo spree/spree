@@ -80,14 +80,17 @@ module Spree
       point = point.to_sym
       raise ArgumentError, "#{point} is already a dependency" if injection_point?(point)
       # `cart_add_item_workflow_class` would shadow the resolving reader core
-      # defines for `cart_add_item_workflow`.
-      if respond_to?(point, true) || respond_to?("#{point}_class", true)
+      # defines for `cart_add_item_workflow`, and a key `Spree` already
+      # answers itself (`search_provider`) would never be read.
+      if [self, Spree].any? { |owner| owner.respond_to?(point, true) || owner.respond_to?("#{point}_class", true) }
         raise ArgumentError, "#{point} would replace an existing method"
       end
 
+      # Evaluated first, so a default that raises leaves nothing registered.
+      value = default.respond_to?(:call) ? default.call : default
       registered_points[point] = default
       Spree::DependenciesHelper.define_injection_point(singleton_class, point)
-      instance_variable_set("@#{point}", default.respond_to?(:call) ? default.call : default)
+      instance_variable_set("@#{point}", value)
       point
     end
 
