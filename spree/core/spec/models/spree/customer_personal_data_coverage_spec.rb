@@ -38,7 +38,8 @@ RSpec.describe 'personal data coverage' do
     'spree_consent_records' => 'anonymize_consent_records',
     'spree_newsletter_subscribers' => 'remove_newsletter_subscriptions',
     'spree_data_requests' => 'anonymize_data_requests — the record survives, the address on it does not',
-    'spree_carts' => 'anonymize_purchases — carts are their own table since the Cart/Order split'
+    'spree_carts' => 'anonymize_purchases — carts are their own table since the Cart/Order split',
+    'spree_gift_card_recipients' => 'anonymize_purchases — the people a buyer named on gift card lines'
   }.freeze
 
   # Tables holding personal data that is deliberately NOT erased by a customer
@@ -100,7 +101,8 @@ RSpec.describe 'personal data coverage' do
     'spree_consent_records' => %i[consent_records],
     'spree_newsletter_subscribers' => %i[marketing_consent],
     'spree_data_requests' => %i[],
-    'spree_refresh_tokens' => %i[]
+    'spree_refresh_tokens' => %i[],
+    'spree_gift_card_recipients' => %i[orders draft_orders carts]
   }.freeze
 
   it 'discloses every table that erasure scrubs' do
