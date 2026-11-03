@@ -22,9 +22,14 @@ module Spree
 
       # A bare-date `max` takes in the whole of that day, as a bare-date filter does.
       def self.normalize_validation_bound(value, store: nil, rule: nil)
-        return super unless rule == 'max' && value.is_a?(String) && value.strip.match?(/\A\d{4}-\d{2}-\d{2}\z/)
+        day = if value.is_a?(String) && value.strip.match?(/\A\d{4}-\d{2}-\d{2}\z/)
+                ::Date.iso8601(value.strip)
+              elsif value.instance_of?(::Date)
+                value
+              end
+        return super unless rule == 'max' && day
 
-        next_day = canonical_value(::Date.iso8601(value.strip) + 1, store: store)
+        next_day = canonical_value(day + 1, store: store)
         next_day && (Time.iso8601(next_day) - 1).utc.iso8601
       rescue ArgumentError
         nil

@@ -244,6 +244,12 @@ module Spree
             # `details`, instead of leaking ArgumentError as a 400/500.
             errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
             raise ActiveRecord::RecordInvalid, self
+          rescue ActiveRecord::RecordInvalid => e
+            # A value that breaks its definition's rules is reported on this
+            # record, since `save` swallows the custom field's own error when
+            # it is raised from the after_save replay.
+            e.record.errors.each { |error| errors.add("custom_fields[#{index}].#{error.attribute}", error.message) }
+            raise ActiveRecord::RecordInvalid, self
           end
         end
       end
