@@ -245,8 +245,10 @@ module Spree
           # A provider that already quoted this line is proof the currency is
           # sellable, even when the local catalog holds no price for it — an
           # external system can be the only source for a currency. A
-          # negotiated price is a quote too, made by the merchant.
-          if !item.manual_price? && resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
+          # negotiated price is a quote too, made by the merchant, and so is
+          # the price a saved line keeps.
+          if !item.manual_price? && !keeps_saved_price?(item) &&
+             resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
             message = I18n.t('spree.cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
             failure(item.variant, message) unless partial_success?
 
