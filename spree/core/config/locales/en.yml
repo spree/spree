@@ -1066,6 +1066,7 @@ en:
     or: or
     order: Order
     order_canceled: Order canceled
+    order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_change_empty: Add at least one change before submitting it.
     order_change_in_progress: Another change to this order is in progress. Confirm or cancel it first.
     order_change_not_open: This change has already been confirmed or canceled.
@@ -1074,7 +1075,6 @@ en:
     order_change_order_canceled: A canceled order cannot be changed.
     order_change_order_not_placed: Only a placed order can be changed this way. Edit a draft order directly.
     order_change_receipt_without_record: Receiving items needs the return or exchange they came back on.
-    order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_routing:
       strategies:
         legacy: Legacy
