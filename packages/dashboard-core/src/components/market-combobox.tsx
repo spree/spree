@@ -28,6 +28,7 @@ export function MarketMultiCombobox({
   value,
   onValueChange,
   placeholder,
+  ariaLabel,
   emptyText,
   disabled = false,
 }: {
@@ -36,6 +37,7 @@ export function MarketMultiCombobox({
   value: string[]
   onValueChange: (ids: string[]) => void
   placeholder?: string
+  ariaLabel?: string
   emptyText?: string
   disabled?: boolean
 }) {
@@ -72,6 +74,7 @@ export function MarketMultiCombobox({
         </ComboboxValue>
         <ComboboxChipsInput
           placeholder={placeholder ?? t('admin.components.market_combobox.search_placeholder')}
+          aria-label={ariaLabel}
           value={inputValue}
           onChange={(e) => setInputValue((e.target as HTMLInputElement).value)}
         />

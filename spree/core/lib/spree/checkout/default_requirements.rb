@@ -96,16 +96,18 @@ module Spree
 
       # Variants and products come from the cart's own (lazily preloaded)
       # lines, so a list of carts pays no query per cart; only restricted
-      # products read their markets. A discontinued line has its own requirement.
+      # products read their markets. A discontinued line has its own
+      # requirement; only excluded lines pay for that check.
       def market_excluded_line_items
         return [] if @cart.market.nil?
 
         @market_excluded_line_items ||= begin
           restricted = @cart.line_items.filter_map { |line_item| line_item.variant&.product }.select(&:market_availability).uniq
           ActiveRecord::Associations::Preloader.new(records: restricted, associations: :market_availability_entries).call
-          @cart.line_items.reject do |line_item|
-            discontinued?(line_item) || line_item.variant.product.available_in_market?(@cart.market)
+          excluded = @cart.line_items.select do |line_item|
+            line_item.variant && !line_item.variant.product.available_in_market?(@cart.market)
           end
+          excluded.reject { |line_item| discontinued?(line_item) }
         end
       end
 
