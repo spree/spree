@@ -3291,6 +3291,16 @@
           "customer_help": "顧客を外すと、ゲストの注文になります。",
           "confirm_detach": "この注文は顧客の注文履歴やアカウントに表示されなくなります。顧客を外しますか？",
           "detach": "顧客を外す"
+        },
+        "issued_gift_cards": {
+          "title": "発行済みギフトカード",
+          "never_expires": "無期限",
+          "columns": {
+            "code": "コード",
+            "amount": "金額",
+            "sent_to": "送信先",
+            "expires": "有効期限"
+          }
         }
       },
       "edit": {
@@ -4212,7 +4222,8 @@
           "tab_downloads": "デジタルダウンロード",
           "downloads_help": "ダウンロードのリンクが使える期間と回数です。ファイルごとに上書きできます。",
           "default_package_description": "いつも出荷に使う箱です。運送会社の料金プロバイダーは、すべての荷物にこの重さを加え、寸法を容積重量の料金計算に使います。",
-          "tab_default_package": "既定のこん包"
+          "tab_default_package": "既定のこん包",
+          "tab_gift_cards": "ギフトカード"
         },
         "tax_categories": {
           "add_sheet_title": "税区分を追加",

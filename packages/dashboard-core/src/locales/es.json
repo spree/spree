@@ -873,6 +873,11 @@
         "discontinue_on": {
           "label": "Descontinuar el"
         },
+        "gift_card": {
+          "label": "Tarjeta regalo",
+          "switch": "Este producto es una tarjeta regalo",
+          "help": "Cada variante es una denominación con un precio igual a su valor nominal. Un pedido pagado envía por correo una tarjeta por unidad al destinatario. No se aplican stock, impuestos, promociones ni envío."
+        },
         "make_active_at": {
           "label": "Activar el"
         },
@@ -990,6 +995,11 @@
         },
         "digital_asset_authorized_days": {
           "label": "Días disponibles"
+        },
+        "gift_card_default_validity_days": {
+          "label": "Validez de las tarjetas regalo (días)",
+          "placeholder": "No caduca",
+          "help": "Cuánto tiempo se puede usar una tarjeta regalo comprada en la tienda. Déjalo vacío para que las tarjetas no caduquen."
         }
       }
     },

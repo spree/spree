@@ -51,6 +51,7 @@ import {
   SelectTrigger,
   SelectValue,
   StatusCard as SharedStatusCard,
+  Switch,
   Textarea,
   toastManager,
   useConfirm,
@@ -61,6 +62,7 @@ import {
   EyeIcon,
   FilmIcon,
   FolderTreeIcon,
+  GiftIcon,
   ImageIcon,
   ImagePlusIcon,
   InfoIcon,
@@ -822,6 +824,10 @@ export function InventoryCard({
   actions,
 }: FormCardProps & { stockLocationHref?: (id: string) => string; actions?: React.ReactNode }) {
   const { t } = useTranslation()
+  // A gift card is prepaid money, never stock.
+  const giftCard = useWatch({ control: form.control, name: 'gift_card' })
+  if (giftCard) return null
+
   return (
     <Card>
       <CardHeader>
@@ -983,6 +989,8 @@ export function CategorizationCard({ form }: FormCardProps) {
   const productTypes = productTypesData?.data ?? []
   const { data: deliveryProfilesData } = useDeliveryProfiles()
   const deliveryProfiles = useMemo(() => deliveryProfilesData?.data ?? [], [deliveryProfilesData])
+  // A gift card is always delivered digitally; the API assigns the profile.
+  const giftCard = useWatch({ control: form.control, name: 'gift_card' })
   // A product with no profile of its own ships on the store default, so the
   // select shows that rather than an empty trigger the merchant has to guess at.
   const defaultDeliveryProfileId = deliveryProfiles.find((profile) => profile.default)?.id
@@ -1110,7 +1118,7 @@ export function CategorizationCard({ form }: FormCardProps) {
             that goes nowhere. Gated on the registration, not on the rows
             having arrived: keyed on the list, the field would vanish and
             reappear as the fetch settles. */}
-        {client.deliveryProfiles && (
+        {client.deliveryProfiles && !giftCard && (
           <Field>
             <FieldLabel>{t('admin.fields.product.delivery_profile_id.label')}</FieldLabel>
             <Controller
@@ -1208,6 +1216,49 @@ export function CategorizationCard({ form }: FormCardProps) {
 // Tax
 // ---------------------------------------------------------------------------
 
+/**
+ * Sells the product as a gift card: each variant is a denomination priced at
+ * its face value. The API switches off stock, tax and promotions and moves
+ * the product to digital delivery; the inventory and tax cards hide while it
+ * is on. Operator-only, so the seller panel never renders it.
+ */
+export function GiftCardCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <GiftIcon className="size-4" />
+          {t('admin.fields.product.gift_card.label')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Field>
+          <div className="flex items-center justify-between gap-4">
+            <FieldLabel htmlFor="product-gift-card">
+              {t('admin.fields.product.gift_card.switch')}
+            </FieldLabel>
+            <Controller
+              name="gift_card"
+              control={form.control}
+              render={({ field }) => (
+                <Switch
+                  id="product-gift-card"
+                  checked={!!field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+          </div>
+          <span className="text-muted-foreground text-xs">
+            {t('admin.fields.product.gift_card.help')}
+          </span>
+        </Field>
+      </CardContent>
+    </Card>
+  )
+}
+
 export function TaxCard({ form }: FormCardProps) {
   const { t } = useTranslation()
   const { data: taxCategoriesResponse } = useTaxCategories()
@@ -1223,6 +1274,9 @@ export function TaxCard({ form }: FormCardProps) {
     [variants],
   )
 
+  // Selling a gift card is a prepayment: the tax is due on what it buys.
+  const giftCard = useWatch({ control: form.control, name: 'gift_card' })
+
   const clearVariantTaxOverride = (variantIndex: number) => {
     form.setValue(`variants.${variantIndex}.tax_category_id`, null, { shouldDirty: true })
   }
@@ -1233,6 +1287,8 @@ export function TaxCard({ form }: FormCardProps) {
     }
     return variant.sku?.trim() || t('admin.products.variants.default_variant')
   }
+
+  if (giftCard) return null
 
   return (
     <Card>

@@ -402,6 +402,41 @@ curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_abc123/gift_cards'
 
 </CodeGroup>
 
+### Selling Gift Cards
+
+A product with `gift_card: true` sells gift cards: each variant is a denomination, and its price is the card's face value. The flag is the single switch for everything that does not apply to prepaid money. The product skips inventory tracking, tax, promotions and price lists, moves to the store's digital delivery profile, and cannot belong to a seller. A purchase containing one cannot be paid with a gift card or store credit.
+
+A shopper names who a card is for when adding it to the cart. The `recipient` is optional; without it the code goes to the order's email. Two adds of the same denomination for different recipients make two lines.
+
+<CodeGroup>
+
+```typescript SDK
+await client.carts.items.create(cart.id, {
+  variant_id: 'variant_abc123',
+  quantity: 1,
+  recipient: {
+    email: 'friend@example.com',
+    name: 'Alex',
+    message: 'Happy birthday!',
+    send_at: '2026-12-24T09:00:00Z', // optional, at most 90 days ahead
+  },
+}, { spreeToken })
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_abc123/items' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -H 'X-Spree-Token: abc123' \
+  -H 'Content-Type: application/json' \
+  -d '{ "variant_id": "variant_abc123", "recipient": { "email": "friend@example.com" } }'
+```
+
+</CodeGroup>
+
+Cards are issued by `Spree::GiftCards::IssueFromOrder` when the order is paid in full (`order.paid`), never at checkout, so an order with a pending offline payment has no spendable code yet. It creates one card per unit, records the line item on each card, and is safe to run again. The store preference `gift_card_default_validity_days` sets when bought cards expire; empty means never. Each card publishes `gift_card.issued`, which `spree_emails` uses to email the code to the recipient (at `send_at` when one was chosen). The buyer's order shows the cards masked under each line's `gift_cards`.
+
+Canceling the order with a refund, or refunding a return that holds a gift card line, cancels the cards nobody has spent from. A line that issued cards cannot be removed from the order. A card already partly or fully spent is left alone.
+
 ### Gift Card Events
 
 The gift card system publishes lifecycle events:
@@ -409,6 +444,7 @@ The gift card system publishes lifecycle events:
 | Event | Description |
 |-------|-------------|
 | `gift_card.created` | Gift card was created |
+| `gift_card.issued` | A paid order issued the card from a gift card product. The payload carries the recipient and a masked code |
 | `gift_card.redeemed` | Gift card was fully redeemed |
 | `gift_card.partially_redeemed` | Gift card was partially redeemed |
 

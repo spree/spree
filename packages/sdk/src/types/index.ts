@@ -57,6 +57,7 @@ export type {
   Fulfillment,
   GiftCard,
   GiftCardBatch,
+  GiftCardRecipient,
   Invitation,
   LineItem,
   Locale,

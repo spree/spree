@@ -11747,6 +11747,7 @@ paths:
           | `expires_at` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `gift_card_batch_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `line_item_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `state` | One of `active`, `partially_redeemed`, `redeemed`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `status` | One of `active`, `partially_redeemed`, `redeemed`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
@@ -11790,7 +11791,7 @@ paths:
 
           </Accordion>
 
-          **Sort by:** `code`, `created_at`, `created_by_id`, `currency`, `customer_id`, `expires_at`, `gift_card_batch_id`, `id`, `state`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `code`, `created_at`, `created_by_id`, `currency`, `customer_id`, `expires_at`, `gift_card_batch_id`, `id`, `line_item_id`, `state`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: GiftCard
         sortable:
@@ -11802,6 +11803,7 @@ paths:
         - expires_at
         - gift_card_batch_id
         - id
+        - line_item_id
         - state
         - status
         - updated_at
@@ -11828,6 +11830,8 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   customer_id:
                   created_by_id:
+                  line_item_id:
+                  issuing_order_id:
                 - id: gc_gbHJdmfrXB
                   code: 3BECEA5A776AD146
                   status: active
@@ -11844,6 +11848,8 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   customer_id:
                   created_by_id:
+                  line_item_id:
+                  issuing_order_id:
                 meta:
                   page: 1
                   limit: 25
@@ -11944,6 +11950,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 customer_id:
                 created_by_id: adm_UkLWZg9DAJ
+                line_item_id:
+                issuing_order_id:
               schema:
                 "$ref": "#/components/schemas/GiftCard"
         '422':
@@ -12044,6 +12052,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 customer_id:
                 created_by_id:
+                line_item_id:
+                issuing_order_id:
               schema:
                 "$ref": "#/components/schemas/GiftCard"
         '404':
@@ -12119,6 +12129,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 customer_id:
                 created_by_id:
+                line_item_id:
+                issuing_order_id:
               schema:
                 "$ref": "#/components/schemas/GiftCard"
       requestBody:
@@ -18367,6 +18379,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 customer_id:
                 created_by_id:
+                line_item_id:
+                issuing_order_id:
       requestBody:
         content:
           application/json:
@@ -18583,9 +18597,10 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 779180
-                  slug: product-779180
+                  name: Product 799180
+                  slug: product-799180
                   options_text: 'Size: S'
+                  gift_card: false
                   price: '10.00'
                   total: '20.00'
                   adjustment_total: '0.00'
@@ -18610,6 +18625,8 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                   digital_links: []
+                  recipient:
+                  gift_cards: []
                   external_references: {}
                   metadata: {}
                   price_source:
@@ -18692,9 +18709,10 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 7999
-                slug: product-7999
+                name: Product 8199
+                slug: product-8199
                 options_text: 'Size: S'
+                gift_card: false
                 price: '19.99'
                 total: '59.97'
                 adjustment_total: '0.00'
@@ -18719,6 +18737,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
+                recipient:
+                gift_cards: []
                 external_references: {}
                 metadata: {}
                 price_source:
@@ -18815,9 +18835,10 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 802714
-                slug: product-802714
+                name: Product 822714
+                slug: product-822714
                 options_text: 'Size: S'
+                gift_card: false
                 price: '10.00'
                 total: '20.00'
                 adjustment_total: '0.00'
@@ -18842,6 +18863,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
+                recipient:
+                gift_cards: []
                 external_references: {}
                 metadata: {}
                 price_source:
@@ -18919,9 +18942,10 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 819758
-                slug: product-819758
+                name: Product 839758
+                slug: product-839758
                 options_text: 'Size: S'
+                gift_card: false
                 price: '19.99'
                 total: '99.95'
                 adjustment_total: '0.00'
@@ -18946,6 +18970,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                 digital_links: []
+                recipient:
+                gift_cards: []
                 external_references: {}
                 metadata: {}
                 price_source:
@@ -25033,8 +25059,9 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1296550
-                  slug: product-1296550
+                  name: Product 1316550
+                  slug: product-1316550
+                  gift_card: false
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -25191,10 +25218,11 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: New Product
                 slug: new-product
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
-                variant_count: 0
+                variant_count: 1
                 available_on:
                 preorder_ships_at:
                 purchasable: false
@@ -25312,8 +25340,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1332061
-                slug: product-1332061
+                name: Product 1352061
+                slug: product-1352061
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -25423,7 +25452,8 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-1355339
+                slug: product-1375339
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26231,8 +26261,9 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1538682
-                slug: product-1538682
+                name: Product 1558682
+                slug: product-1558682
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26353,8 +26384,9 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1564387
-                slug: product-1564387
+                name: Product 1584387
+                slug: product-1584387
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -31064,6 +31096,7 @@ paths:
                 digital_asset_authorized_clicks: 5
                 limit_digital_download_days: true
                 digital_asset_authorized_days: 7
+                gift_card_default_validity_days:
                 send_consumer_transactional_emails: true
                 email_accent_color:
                 email_background_color:
@@ -31436,6 +31469,7 @@ paths:
                 digital_asset_authorized_clicks: 5
                 limit_digital_download_days: true
                 digital_asset_authorized_days: 7
+                gift_card_default_validity_days:
                 send_consumer_transactional_emails: true
                 email_accent_color:
                 email_background_color:
@@ -35658,7 +35692,8 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-285
+                  gift_card: false
+                  sku: SKU-287
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -35713,11 +35748,12 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2146804
+                  product_name: Product 2166804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-286
+                  gift_card: false
+                  sku: SKU-288
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -35863,6 +35899,7 @@ paths:
               example:
                 id: variant_EfhxLZ9ck8
                 product_id: prod_UkLWZg9DAJ
+                gift_card: false
                 sku: NEW-SKU-001
                 options_text: 'Size: XL'
                 track_inventory: true
@@ -36030,7 +36067,8 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-292
+                gift_card: false
+                sku: SKU-294
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -36170,6 +36208,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
+                gift_card: false
                 sku: UPDATED-SKU
                 options_text: 'Size: S'
                 track_inventory: true
@@ -36528,7 +36567,8 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-299
+                  gift_card: false
+                  sku: SKU-301
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -36583,11 +36623,12 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2213647
+                  product_name: Product 2233647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-300
+                  gift_card: false
+                  sku: SKU-302
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -38173,6 +38214,12 @@ paths:
                   deprecated: false
                   replaced_by:
                 - name: gift_card.deleted
+                  group: gift_card
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card.issued
                   group: gift_card
                   credential_permission:
                   credential: false
@@ -64002,6 +64049,37 @@ components:
       - expires_at
       - created_by_id
       x-typelizer: true
+    GiftCardRecipient:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        send_at:
+          type: string
+          nullable: true
+          description: When the gift card email is sent; null sends it as soon as
+            the order is paid.
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - email
+      - name
+      - message
+      - send_at
+      - created_at
+      - updated_at
+      x-typelizer: true
     GiftCard:
       type: object
       properties:
@@ -64234,6 +64312,15 @@ components:
         created_by_id:
           type: string
           nullable: true
+        line_item_id:
+          type: string
+          nullable: true
+          description: The line a shopper bought the card on; null for a card issued
+            by staff.
+        issuing_order_id:
+          type: string
+          nullable: true
+          description: The order that bought the card.
         customer:
           "$ref": "#/components/schemas/Customer"
         created_by:
@@ -64261,6 +64348,8 @@ components:
       - updated_at
       - customer_id
       - created_by_id
+      - line_item_id
+      - issuing_order_id
       x-typelizer: true
     ImportMapping:
       type: object
@@ -64723,6 +64812,10 @@ components:
           type: string
         options_text:
           type: string
+        gift_card:
+          type: boolean
+          description: True when the line buys a gift card, issued when the order
+            is paid.
         price:
           type: string
           description: The price of one unit.
@@ -64770,6 +64863,14 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        recipient:
+          allOf:
+          - "$ref": "#/components/schemas/GiftCardRecipient"
+          nullable: true
+        gift_cards:
+          type: array
+          items:
+            "$ref": "#/components/schemas/GiftCard"
         custom_fields:
           type: array
           items:
@@ -64821,6 +64922,7 @@ components:
       - name
       - slug
       - options_text
+      - gift_card
       - price
       - total
       - adjustment_total
@@ -64833,6 +64935,7 @@ components:
       - thumbnail_url
       - option_values
       - digital_links
+      - recipient
       - external_references
       - metadata
       - price_source
@@ -68824,6 +68927,10 @@ components:
           type: string
         slug:
           type: string
+        gift_card:
+          type: boolean
+          description: 'True when the product is a gift card: each variant is a denomination,
+            and buying one issues a card per unit when the order is paid.'
         meta_title:
           type: string
           nullable: true
@@ -68977,6 +69084,7 @@ components:
       - id
       - name
       - slug
+      - gift_card
       - meta_title
       - meta_description
       - meta_keywords
@@ -74266,6 +74374,9 @@ components:
           type: boolean
         digital_asset_authorized_days:
           type: number
+        gift_card_default_validity_days:
+          type: number
+          nullable: true
         send_consumer_transactional_emails:
           type: boolean
         email_accent_color:
@@ -74968,6 +75079,7 @@ components:
       - digital_asset_authorized_clicks
       - limit_digital_download_days
       - digital_asset_authorized_days
+      - gift_card_default_validity_days
       - send_consumer_transactional_emails
       - email_accent_color
       - email_background_color
@@ -76422,6 +76534,10 @@ components:
           type: string
         product_id:
           type: string
+        gift_card:
+          type: boolean
+          description: True when the variant is a gift card denomination; its price
+            is the card's face value.
         sku:
           type: string
           nullable: true
@@ -77010,6 +77126,7 @@ components:
       required:
       - id
       - product_id
+      - gift_card
       - sku
       - options_text
       - track_inventory
@@ -83210,6 +83327,12 @@ components:
           nullable: true
         promotionable:
           type: boolean
+        gift_card:
+          type: boolean
+          description: Sell this product as a gift card. Each variant is a denomination
+            priced at its face value; a paid order issues one card per unit and emails
+            it to the recipient. Turning it on stops inventory tracking, tax and promotions
+            and moves the product to digital delivery. Not available to sellers.
         tags:
           type: array
           items:
@@ -83512,6 +83635,12 @@ components:
           nullable: true
         promotionable:
           type: boolean
+        gift_card:
+          type: boolean
+          description: Sell this product as a gift card. Each variant is a denomination
+            priced at its face value; a paid order issues one card per unit and emails
+            it to the recipient. Turning it on stops inventory tracking, tax and promotions
+            and moves the product to digital delivery. Not available to sellers.
         tags:
           type: array
           items:
@@ -85363,6 +85492,11 @@ components:
           type: integer
           description: How many days a download link stays valid, unless the file
             sets its own.
+        gift_card_default_validity_days:
+          type: integer
+          description: How many days a gift card bought on the storefront stays spendable.
+            Null means it never expires.
+          nullable: true
         mail_from_address:
           type: string
           description: Sender address of every transactional email.
@@ -86583,6 +86717,7 @@ components:
         expires_at: date
         gift_card_batch_id: id
         id: id
+        line_item_id: id
         state:
           enum:
           - active

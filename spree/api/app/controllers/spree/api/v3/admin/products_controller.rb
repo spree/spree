@@ -28,6 +28,8 @@ module Spree
               nullable: true,
               description: 'The delivery profile deciding how this product ships (`fp_...`); null falls back to the store default.'
             body.attribute :promotionable, :boolean
+            body.attribute :gift_card, :boolean,
+              description: 'Sell this product as a gift card. Each variant is a denomination priced at its face value; a paid order issues one card per unit and emails it to the recipient. Turning it on stops inventory tracking, tax and promotions and moves the product to digital delivery. Not available to sellers.'
             body.attribute :tags, :array, of: :string, example: %w[eco sale]
             body.attribute :category_ids, :array, of: :id
             # Reachable with `write_products` rather than `write_collections`:

@@ -3283,6 +3283,16 @@
           "customer_help": "清除客户即可将此订单改为访客订单。",
           "confirm_detach": "此订单将不再显示在客户的订单历史和账户中。要移除客户吗？",
           "detach": "移除客户"
+        },
+        "issued_gift_cards": {
+          "title": "已发放的礼品卡",
+          "never_expires": "永不",
+          "columns": {
+            "code": "卡号",
+            "amount": "金额",
+            "sent_to": "发送至",
+            "expires": "到期"
+          }
         }
       },
       "edit": {
@@ -4201,7 +4211,8 @@
           "tab_downloads": "数字下载",
           "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。",
           "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
-          "tab_default_package": "默认包裹"
+          "tab_default_package": "默认包裹",
+          "tab_gift_cards": "礼品卡"
         },
         "tax_categories": {
           "add_sheet_title": "添加税收类别",

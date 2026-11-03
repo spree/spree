@@ -846,6 +846,11 @@
         "discontinue_on": {
           "label": "Wycofaj z dniem"
         },
+        "gift_card": {
+          "label": "Karta podarunkowa",
+          "switch": "Ten produkt jest kartą podarunkową",
+          "help": "Każdy wariant to nominał, którego cena równa się wartości karty. Opłacone zamówienie wysyła e-mailem jedną kartę na każdą sztukę do odbiorcy. Stany magazynowe, podatki, promocje i wysyłka nie mają zastosowania."
+        },
         "make_active_at": {
           "label": "Aktywuj o"
         },
@@ -963,6 +968,11 @@
         },
         "digital_asset_authorized_days": {
           "label": "Dostępne dni"
+        },
+        "gift_card_default_validity_days": {
+          "label": "Ważność kart podarunkowych (dni)",
+          "placeholder": "Nie wygasa",
+          "help": "Jak długo karta podarunkowa kupiona w sklepie pozostaje ważna. Pozostaw puste, aby karty nigdy nie wygasały."
         }
       }
     },

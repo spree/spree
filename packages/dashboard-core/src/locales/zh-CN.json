@@ -845,6 +845,11 @@
         "discontinue_on": {
           "label": "下架日期"
         },
+        "gift_card": {
+          "label": "礼品卡",
+          "switch": "此商品是礼品卡",
+          "help": "每个规格都是一个面额，价格即卡面价值。订单付款后，每件商品会通过电子邮件向收件人发送一张卡。库存、税费、促销和配送均不适用。"
+        },
         "make_active_at": {
           "label": "激活日期"
         },
@@ -962,6 +967,11 @@
         },
         "digital_asset_authorized_days": {
           "label": "可用天数"
+        },
+        "gift_card_default_validity_days": {
+          "label": "礼品卡有效期（天）",
+          "placeholder": "永不过期",
+          "help": "在店铺购买的礼品卡可使用多长时间。留空则礼品卡永不过期。"
         }
       }
     },
