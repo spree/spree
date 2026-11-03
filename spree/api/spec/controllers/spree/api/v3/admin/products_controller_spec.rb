@@ -1540,6 +1540,40 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  # One product's status, moved through its workflow so its event fires.
+  describe 'moving one product\'s status' do
+    before { request.headers.merge!(headers) }
+
+    it 'activates a draft and publishes the event' do
+      draft = create(:product, store: store, status: 'draft')
+      expect_any_instance_of(Spree::Product).to receive(:publish_event).with('product.activated')
+
+      patch :activate, params: { id: draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft.reload).to be_active
+    end
+
+    # A retried request must not tell every webhook subscriber twice.
+    it 'answers a product already in that status without publishing again' do
+      active = create(:product, store: store, status: 'active')
+      expect_any_instance_of(Spree::Product).not_to receive(:publish_event)
+
+      patch :activate, params: { id: active.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'refuses a product awaiting review' do
+      submitted = create(:product, store: store, status: 'proposed')
+
+      patch :archive, params: { id: submitted.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(submitted.reload.status).to eq('proposed')
+    end
+  end
+
   # `proposed` and `rejected` are review outcomes, reached through the
   # approve/reject workflows. A status naming one in an ordinary update is
   # dropped rather than written, so a product cannot be pushed into or out of

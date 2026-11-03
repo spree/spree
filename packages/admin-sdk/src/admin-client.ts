@@ -1378,6 +1378,22 @@ export class AdminClient {
       this.request<Product>('PATCH', `/products/${id}/reject`, { ...options, body: params }),
 
     /**
+     * Put one product on sale, running its status workflow so the
+     * `product.activated` event fires. Refuses a product awaiting review,
+     * which is approved or rejected instead.
+     */
+    activate: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/activate`, options),
+
+    /** Archive one product, taking it off sale. Refuses a product awaiting review. */
+    archive: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/archive`, options),
+
+    /** Take one product off sale, back to a draft. Refuses a product awaiting review. */
+    draft: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/draft`, options),
+
+    /**
      * Bulk-set `status` on a list of products. The server validates `status`
      * against the product status enum and reindexes affected products.
      */
