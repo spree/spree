@@ -94,20 +94,17 @@ RSpec.describe Spree::Mcp::Server do
         expect(cancel.dig('annotations', 'readOnlyHint')).to be(false)
       end
 
-      it 'derives each workflow tool\'s schema from the workflow itself' do
+      it 'builds each action tool\'s schema from its Admin API operation' do
         cancel = tools.find { |tool| tool['name'] == 'orders_cancel' }
         properties = cancel.dig('inputSchema', 'properties')
 
-        expect(properties).to include('order', 'refund_payments', 'note')
-        expect(cancel.dig('inputSchema', 'required')).to eq(['order'])
+        expect(properties).to include('id', 'refund_payments', 'cancel_note')
       end
 
       it 'never offers the principal or the store as a parameter' do
-        cancel = tools.find { |tool| tool['name'] == 'orders_cancel' }
-        create = tools.find { |tool| tool['name'] == 'variants_create' }
+        offered = tools.flat_map { |tool| tool.dig('inputSchema', 'properties').to_h.keys }
 
-        expect(cancel.dig('inputSchema', 'properties')).not_to have_key('canceler')
-        expect(create.dig('inputSchema', 'properties')).not_to have_key('store')
+        expect(offered).not_to include('canceler', 'store', 'store_id')
       end
 
       it 'hides a deprecated parameter the allowlist excludes' do

@@ -11,8 +11,8 @@ module Spree
     # fill a form in correctly. Reading it means the generic write tools offer
     # exactly the documented endpoint and nothing else.
     #
-    # Loaded once, lazily: the document is well over a megabyte, and an
-    # installation with no agent client should never pay for parsing it.
+    # Read from {AdminDocument}, so an extension's documented resources
+    # count the same as core's.
     module AgentWriteSchemas
       # A collection endpoint under the admin namespace: `/api/v3/admin/markets`
       # but not `/api/v3/admin/markets/{id}` or a nested child.
@@ -33,29 +33,25 @@ module Spree
           self.for(key).keys
         end
 
-        # Where the generated document lives: `docs/` in a source checkout,
-        # or the copy the release packs into the gem. Resolved lazily: the
-        # engine class does not exist yet while this file loads.
+        # Core's generated document, which the merged one starts from.
         #
         # @return [Pathname]
         def spec_path
-          source = Spree::Api::Engine.root.join('..', '..', 'docs', 'api-reference', 'admin.yaml')
-          source.exist? ? source : Spree::Api::Engine.root.join('openapi', 'admin.yaml')
+          AdminDocument.core_path
         end
 
-        # The parsed document, for a reader that needs more of it than the
-        # write bodies — the workflow endpoint map wants the member actions'
-        # bodies too, and parsing a megabyte of YAML twice is wasteful.
+        # The merged document — core's and every extension's — so an
+        # extension's resources are generically writable the same way core's
+        # are.
         #
         # @return [Hash]
         def document
-          @document ||= begin
-            path = spec_path
-            File.exist?(path) ? (YAML.unsafe_load_file(path) || {}) : {}
-          rescue StandardError => e
-            Rails.logger.warn("[Spree] could not read the admin API document: #{e.class}: #{e.message}")
-            {}
-          end
+          AdminDocument.document
+        end
+
+        # @return [void]
+        def reset!
+          @schemas = nil
         end
 
         private
@@ -64,17 +60,8 @@ module Spree
           @schemas ||= load_schemas
         end
 
-        # A missing or unparseable document is not a boot failure: the generic
-        # write tools simply offer nothing, which is the safe direction.
         def load_schemas
-          path = spec_path
-          return {} unless File.exist?(path)
-
-          document = YAML.unsafe_load_file(path)
           extract(document)
-        rescue StandardError => e
-          Rails.logger.warn("[Spree] could not read admin API write schemas: #{e.class}: #{e.message}")
-          {}
         end
 
         def extract(document)
@@ -98,32 +85,9 @@ module Spree
 
         public
 
-        # A request body is declared once per endpoint and published as a
-        # component, so the operation carries a `$ref` to it rather than the
-        # properties themselves. A body that builds on a shared shape is an
-        # `allOf` of that shape and its own fields, read as one object.
-        # Followed a few hops, which is as deep as the generated document
-        # nests them.
-        #
-        # @param schema [Hash, nil] a schema that may be a reference
-        # @return [Hash, nil] the schema it names
+        # @see AdminDocument.resolve_schema
         def resolve_schema(schema, depth = 0)
-          return unless schema.is_a?(Hash)
-          return if depth > 3
-          return merge_all_of(schema['allOf'], depth) if schema.key?('allOf')
-          return schema unless schema.key?('$ref')
-
-          name = schema['$ref'].to_s.split('/').last
-          resolve_schema(document.dig('components', 'schemas', name), depth + 1)
-        end
-
-        private
-
-        def merge_all_of(parts, depth)
-          parts.filter_map { |part| resolve_schema(part, depth + 1) }.each_with_object({}) do |part, merged|
-            merged['properties'] = (merged['properties'] || {}).merge(part['properties'] || {})
-            merged['required'] = (merged['required'] || []) | Array(part['required'])
-          end
+          AdminDocument.resolve_schema(schema, depth)
         end
       end
     end

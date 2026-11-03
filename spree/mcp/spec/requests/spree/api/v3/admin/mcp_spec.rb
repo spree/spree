@@ -362,13 +362,31 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(order.canceler).to eq(admin)
     end
 
-    it 'carries the workflow\'s own refusal back as a tool error' do
+    # Through 6.0.x a client that learned a 6.0.0 name keeps working, while
+    # a new listing shows only the current ones.
+    it 'still answers a 6.0.0 tool name it no longer lists' do
+      product = create(:product, store: store)
+      sku = "SKU-#{SecureRandom.hex(3)}"
+
+      listed = post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{token}" }).
+               dig('result', 'tools').map { |tool| tool['name'] }
+      body = post_rpc('tools/call',
+                      { name: 'variants_create',
+                        arguments: { 'product' => product.prefixed_id, 'attributes' => { 'sku' => sku } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(listed).not_to include('variants_create')
+      expect(body.dig('result', 'isError')).to be(false)
+      expect(Spree::Variant.where(sku: sku)).to exist
+    end
+
+    it 'carries the endpoint\'s own refusal back as a tool error' do
       body = post_rpc('tools/call',
                       { name: 'orders_cancel', arguments: { 'order' => 'order_nope' } },
                       headers: { 'Authorization' => "Bearer #{token}" })
 
       expect(body.dig('result', 'isError')).to be(true)
-      expect(body.dig('result', 'content').first['text']).to include('order')
+      expect(body.dig('result', 'content').first['text']).to include('Order not found')
     end
   end
 

@@ -86,6 +86,7 @@ RSpec.describe 'Admin Customer Tax Identifiers API', type: :request, swagger_doc
     post 'Re-check a customer tax registration' do
       tags 'Customers'
       admin_sdk_example 'customer-tax-identifiers/validate'
+      operationId 'customer_tax_identifiers_validate'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC

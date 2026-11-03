@@ -318,6 +318,7 @@ RSpec.configure do |config|
   config.openapi_format = :yaml
 
   config.extend Spree::Api::TestingSupport::AdminOperation, type: :request
+  config.extend Spree::Api::TestingSupport::AgentTools, type: :request
 
   # Auto-generate examples from actual test responses
   # This captures real response data and embeds it in the OpenAPI spec
