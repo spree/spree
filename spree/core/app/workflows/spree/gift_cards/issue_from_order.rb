@@ -35,7 +35,7 @@ module Spree
         @gift_cards = []
         # Most orders buy no gift card, and both events reach every order.
         halt!([]) unless order.completed? && gift_card_lines.exists?
-        halt!([]) unless (paid && order.order_group_id.present?) || order.payment_status == 'paid' || order.settled_in_full?
+        halt!([]) unless paid_in_full?
 
         ApplicationRecord.transaction do
           order.lock!
@@ -49,10 +49,18 @@ module Spree
 
       private
 
-      # Checked again under the lock, which reloaded the row: a cancellation
-      # committed after the first look must not be followed by cards.
+      def paid_in_full?
+        (paid && order.order_group_id.present?) || order.payment_status == 'paid' || order.settled_in_full?
+      end
+
+      # Checked again under the order's lock and its payments' (the lock a
+      # refund takes), so a cancellation or refund committed after the first
+      # look is never followed by cards.
       def issue_gift_cards
         return if order.canceled?
+
+        order.payments.completed.lock.load
+        return unless paid_in_full?
 
         gift_card_lines.includes(:gift_cards, :gift_card_recipient).each do |line_item|
           # A card staff gave away at no charge has no value to issue.
