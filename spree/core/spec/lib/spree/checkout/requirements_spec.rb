@@ -191,6 +191,18 @@ RSpec.describe Spree::Checkout::Requirements do
     end
   end
 
+  describe 'gift card paid with a balance' do
+    before do
+      create(:line_item, order: order, product: create(:gift_card_product, store: store))
+      order.update_columns(gift_card_id: create(:gift_card, store: store).id)
+      order.reload
+    end
+
+    it 'refuses a cart that buys a gift card with one' do
+      expect(subject).to include(a_hash_including(step: 'payment', code: 'gift_card_paid_with_balance'))
+    end
+  end
+
   describe 'po_number requirement' do
     let(:customer) { create(:user) }
     let(:company) { create(:company, store: store, po_number_required: true) }

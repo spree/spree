@@ -38,6 +38,11 @@ module Spree
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, deprecated: true
     has_many :shipments, through: :fulfillment_items, source: :fulfillment, deprecated: true
     has_many :digital_links, dependent: :destroy
+    has_one :gift_card_recipient, class_name: 'Spree::GiftCardRecipient', inverse_of: :line_item, dependent: :destroy
+    # The cards a paid order issued for this line, one per unit. A line that
+    # issued cards is not removed, since that would orphan spendable cards;
+    # the order is canceled or the line returned instead.
+    has_many :gift_cards, class_name: 'Spree::GiftCard', inverse_of: :line_item, dependent: :restrict_with_error
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :line_item, dependent: :destroy
 
     # Set by Spree::Carts::PriceItems when a workflow has already resolved
@@ -52,6 +57,9 @@ module Spree
     before_validation :copy_seller
 
     validate :exactly_one_owner
+    # Cards already issued are spendable, so the line cannot shrink below
+    # them; the order is canceled or the line returned instead.
+    validate :quantity_covers_issued_gift_cards, if: -> { persisted? && quantity_changed? && order_id.present? }
 
     DB_INTEGER_MAX = (2**31) - 1
 
@@ -90,6 +98,51 @@ module Spree
 
     delegate :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, :option_values, to: :variant
     delegate :name, :description, :brand, :category, to: :product
+    delegate :gift_card?, to: :variant
+
+    # Sets who a gift card line is for, replacing any recipient it had.
+    # Refused on any other line.
+    #
+    # @param attributes [Hash] email, name, message, send_at
+    # @return [Spree::GiftCardRecipient] carrying errors when refused
+    def assign_gift_card_recipient(attributes)
+      recipient = stage_gift_card_recipient(attributes)
+      recipient.save
+      recipient
+    end
+
+    # The recipient with the change applied but not saved, for a caller that
+    # has other checks to pass before writing it.
+    #
+    # @param attributes [Hash] email, name, message, send_at
+    # @return [Spree::GiftCardRecipient]
+    def stage_gift_card_recipient(attributes)
+      recipient = gift_card_recipient || build_gift_card_recipient
+      recipient.assign_attributes(Spree::GiftCardRecipient.permitted(attributes))
+      recipient
+    end
+
+    # Whether two gift card lines are for the same person, which is when a
+    # merge or an add may fold them into one.
+    #
+    # @param other [Spree::LineItem]
+    # @return [Boolean]
+    def same_gift_card_recipient?(other)
+      mine = gift_card_recipient
+      theirs = other.gift_card_recipient
+      return mine.nil? && theirs.nil? if mine.nil? || theirs.nil?
+
+      mine.same_as?(theirs.attributes)
+    end
+
+    # Whether promotions may discount this line. A product switched off for
+    # promotions (every gift card is) takes no discount and counts toward
+    # none.
+    #
+    # @return [Boolean]
+    def promotionable?
+      variant&.product.nil? || variant.product.promotionable?
+    end
 
     # Returns the thumbnail image for this line item
     # Prefers variant primary media, falls back to product primary media
@@ -488,6 +541,11 @@ module Spree
       unless currency == owner.currency
         errors.add(:currency, :must_match_order_currency)
       end
+    end
+
+    def quantity_covers_issued_gift_cards
+      issued = gift_cards.count
+      errors.add(:quantity, :below_issued_gift_cards, count: issued) if issued > quantity
     end
 
     def exactly_one_owner

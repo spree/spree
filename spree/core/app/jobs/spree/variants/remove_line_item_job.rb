@@ -21,7 +21,7 @@ module Spree
 
         result = workflow.call(
           **(cart_owned ? { cart: owner } : { order: owner }),
-          items: [{ variant_id: line_item.variant_id, quantity: 0 }]
+          items: [{ variant_id: line_item.variant_id, line_item_id: line_item.id, quantity: 0 }]
         )
 
         # A cart-side veto surfaces as a warning rather than a failed result,

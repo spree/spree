@@ -187,6 +187,9 @@ module Spree
     preference :digital_asset_authorized_clicks, :integer, default: 5
     preference :digital_asset_authorized_days, :integer, default: 7
     preference :digital_asset_link_expire_time, :integer, default: 300
+    # How long a gift card bought on the storefront stays spendable, in days.
+    # Nil means it never expires, which is the law in several markets.
+    preference :gift_card_default_validity_days, :integer, default: nil, nullable: true
     # Class name of the Spree::OrderRouting::Strategy::Base subclass that
     # decides which StockLocation fulfills which items.
     preference :order_routing_strategy, :string, default: 'Spree::OrderRouting::Strategy::Rules',
@@ -214,7 +217,7 @@ module Spree
                         :review_seller_digital_asset_changes, :send_seller_transactional_emails, :default_commission_tax_rate, :document_number_format,
                         :order_number_prefix, :order_number_suffix, :order_number_sequence_start,
                         :limit_digital_download_count, :digital_asset_authorized_clicks,
-                        :limit_digital_download_days, :digital_asset_authorized_days,
+                        :limit_digital_download_days, :digital_asset_authorized_days, :gift_card_default_validity_days,
                         :send_consumer_transactional_emails, :email_accent_color, :email_background_color,
                         :email_card_color, :email_text_color, :email_heading_color, :email_font
 
@@ -382,6 +385,7 @@ module Spree
     end
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_gift_card_default_validity_days, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
     # Sized for starting a transfer, not for keeping the file reachable — the
     # signed URL it governs is a bearer credential.
     validates :preferred_digital_asset_link_expire_time,

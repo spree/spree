@@ -32,6 +32,20 @@ module Spree
       end
     end
 
+    describe 'gift card recipients' do
+      it 'travel with their line onto the order' do
+        line_item = ready_cart.line_items.first
+        line_item.product.update_column(:gift_card, true)
+        line_item.reload.assign_gift_card_recipient(email: 'friend@example.com', message: 'Enjoy', send_at: 2.days.from_now)
+
+        order = described_class.call(cart: ready_cart).value
+
+        recipient = order.line_items.find_by(variant_id: line_item.variant_id).gift_card_recipient
+        expect(recipient).to have_attributes(email: 'friend@example.com', message: 'Enjoy', store_id: store.id)
+        expect(recipient.send_at).to be_within(1.second).of(line_item.gift_card_recipient.send_at)
+      end
+    end
+
     describe 'the three-phase pipeline' do
       subject { described_class.call(cart: ready_cart) }
 

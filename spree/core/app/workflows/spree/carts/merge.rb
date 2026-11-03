@@ -86,12 +86,16 @@ module Spree
       # variant-only fallback when a custom comparer raises.
       def matching_line_item(other_line_item)
         cart.line_items.detect do |line_item|
-          line_item.variant_id == other_line_item.variant_id &&
+          next false unless line_item.variant_id == other_line_item.variant_id
+          next false if line_item.gift_card? && !line_item.same_gift_card_recipient?(other_line_item)
+
+          begin
             Spree::Dependencies.cart_compare_line_items_service.constantize.call(
               order: cart, line_item: line_item, options: {}
             ).value
-        rescue StandardError
-          line_item.variant_id == other_line_item.variant_id
+          rescue StandardError
+            true
+          end
         end
       end
 

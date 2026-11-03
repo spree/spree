@@ -111,6 +111,17 @@ module Spree
         raise NotImplementedError, "Please implement 'estimate' in your tax provider: #{self.class.name}"
       end
 
+      # Whether an item is a supply tax applies to. A gift card line is not:
+      # selling one is a prepayment, and the tax is due on what the card later
+      # buys. A provider asks this before taxing an item, so the rule lives in
+      # one place.
+      #
+      # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee]
+      # @return [Boolean]
+      def taxable_item?(item)
+        !(item.is_a?(Spree::LineItem) && item.gift_card?)
+      end
+
       # Finalizes tax with the provider when the order is placed. No-op for a
       # provider without a remote ledger — the rows are already the record.
       #

@@ -62,4 +62,11 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
       end
     end
   end
+
+  it 'does not count gift cards toward the threshold' do
+    rule.preferred_amount_min = 50
+    allow(order).to receive_messages(item_total: 80, non_promotionable_amount: 50)
+
+    expect(rule).not_to be_eligible(order)
+  end
 end

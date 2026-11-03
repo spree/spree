@@ -72,6 +72,7 @@ module Spree
         # A gift card and a store credit are two ways of paying from a
         # balance; mixing them on one order is not supported.
         failure(order, :gift_card_using_store_credit_error) if order.using_store_credit?
+        failure(order, :balance_buying_gift_card_error) if order.buys_gift_card?
         failure(order, :gift_card_mismatched_currency) if gift_card.currency != order.currency
 
         # The store controllers check these before they get here, but this

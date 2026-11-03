@@ -28,7 +28,8 @@ module Spree
 
       # @param cart [Spree::Cart, Spree::Order]
       # @param items [Array<Hash>] :variant_id (prefixed or raw), :quantity,
-      #   :metadata, :price. Quantity defaults to 1; zero or less removes.
+      #   :metadata, :price, and :line_item_id to name the line rather than
+      #   look it up by variant. Quantity defaults to 1; zero or less removes.
       #   :price is tri-state — absent leaves pricing to the resolver, an
       #   amount negotiates the line (+price_source: 'manual'+), an explicit
       #   nil reverts a negotiated line to catalog pricing. Admin surface
@@ -102,6 +103,7 @@ module Spree
             variant: variant,
             quantity: quantity,
             metadata: item_params[:metadata].to_h,
+            line_item_id: item_params[:line_item_id],
             price_provided: item_params.key?(:price),
             price: parse_manual_price(item_params[:price])
           )
@@ -221,10 +223,19 @@ module Spree
         resolved_items.each_with_index do |item, index|
           next unless validated?(item, index)
 
-          line_item = Spree.line_item_by_variant_finder.new.execute(owner: cart, variant: item.variant)
+          line_item = if item.line_item_id
+                        cart.line_items.find_by(id: item.line_item_id, variant_id: item.variant.id)
+                      else
+                        Spree.line_item_by_variant_finder.new.execute(owner: cart, variant: item.variant)
+                      end
 
           if item.remove?
-            line_item&.destroy!
+            # A line that issued gift cards refuses to go (see LineItem).
+            if line_item && !line_item.destroy
+              failure(line_item) unless partial_success?
+
+              warn(index, item, :not_removable, line_item.errors.full_messages.to_sentence)
+            end
             next
           end
 
