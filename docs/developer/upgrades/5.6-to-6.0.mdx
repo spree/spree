@@ -47,6 +47,32 @@ Before running `bundle update`, update your `Gemfile`: the Rails admin (`spree_a
 gem 'spree_dashboard'
 ```
 
+### Check the ports your compose files publish
+
+`spree upgrade` updates gems, packages and the database. It does **not** rewrite `docker-compose.yml` or `docker-compose.dev.yml`, so a project keeps the port bindings it was created with — and the compose files that shipped with spree-starter 5.4.0 through 5.5.1 published Meilisearch, and in the dev compose also Postgres, on every interface:
+
+```yaml
+  postgres:
+    ports:
+      - "${SPREE_DB_PORT:-5433}:5432"   # dev compose: passwordless (trust auth) Postgres
+  meilisearch:
+    ports:
+      - "7700:7700"                     # both composes: Meilisearch with no master key
+```
+
+On a Linux host that is a real exposure, not a theoretical one: Docker's `iptables` rules publish these ports straight past `ufw` or `firewalld`, so `ufw default deny incoming` does nothing for them, and scanners find an open Postgres within minutes. Projects created from 4.x templates published `5432:5432` and `6379:6379` the same way. Bind them to loopback (what spree-starter has done since 5.5.2), or drop the `ports:` entries entirely — the app reaches both services over the compose network:
+
+```yaml
+  postgres:
+    ports:
+      - "127.0.0.1:${SPREE_DB_PORT:-5433}:5432"
+  meilisearch:
+    ports:
+      - "127.0.0.1:${SPREE_MEILISEARCH_PORT:-7700}:7700"
+```
+
+The quick-start compose publishes the app itself as `"${SPREE_PORT:-3000}:3000"`, which is intended — but on an internet-facing host put a proxy in front and don't publish `web` at all. [Published ports and firewalls](/developer/deployment/docker#published-ports-and-firewalls) covers the setup; the EC2 guide shows it with Caddy.
+
 ### The TypeScript packages share the Spree version
 
 From 6.0, the packages that talk to the Spree API are released with Spree and carry its version: `@spree/sdk@6.0.0` is the Store API client for Spree 6.0.0. The same applies to `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core`, `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui` and `@spree/seller-dashboard`. `@spree/cli` and `create-spree-app` keep their own versions.
