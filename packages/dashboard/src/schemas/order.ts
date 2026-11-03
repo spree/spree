@@ -1,4 +1,4 @@
-import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
+import type { LineItem, OrderChangeCreateParams, OrderUpdateParams } from '@spree/admin-sdk'
 import { FEE_KINDS, isDecimalString, multiplyMoney, subsetOf, sumMoney } from '@spree/core'
 import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
@@ -76,6 +76,8 @@ export const MANUAL_FEE_KINDS = subsetOf(FEE_KINDS, [
 export const orderEditItemSchema = z
   .object({
     variant_id: z.string(),
+    /** The saved line this row edits; null for a staged addition. */
+    line_item_id: z.string().nullable(),
     quantity: z
       .number()
       .int()
@@ -153,6 +155,7 @@ export type OrderEditFormValues = z.infer<typeof orderEditFormSchema>
 export function lineItemToEditRow(item: LineItem, fulfilledQuantity = 0): OrderEditItemValues {
   return {
     variant_id: item.variant_id,
+    line_item_id: item.id,
     quantity: item.quantity,
     removed: false,
     added: false,
@@ -231,6 +234,36 @@ export function buildOrderItemsPayload(items: OrderEditItemValues[]): OrderItems
   }
 
   return payload
+}
+
+export type OrderChangeActions = OrderChangeCreateParams['actions']
+
+/**
+ * Reduces staged rows to the actions of an order change, for a placed order:
+ * a removal names the saved line, an addition the variant, a quantity edit
+ * the line and its new quantity. Untouched rows, and rows staged then
+ * unstaged, contribute nothing. Prices are not editable after placement, so
+ * no action carries one.
+ */
+export function buildOrderChangeActions(items: OrderEditItemValues[]): OrderChangeActions {
+  const actions: OrderChangeActions = []
+
+  for (const item of items) {
+    if (item.added) {
+      if (!item.removed)
+        actions.push({ kind: 'add_item', variant_id: item.variant_id, quantity: item.quantity })
+    } else if (item.line_item_id && item.removed) {
+      actions.push({ kind: 'remove_item', line_item_id: item.line_item_id })
+    } else if (item.line_item_id && item.quantity !== item.saved_quantity) {
+      actions.push({
+        kind: 'update_item',
+        line_item_id: item.line_item_id,
+        quantity: item.quantity,
+      })
+    }
+  }
+
+  return actions
 }
 
 /** What a purchase order plausibly arrives as — mirrors the server allowlist. */

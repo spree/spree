@@ -24,6 +24,7 @@ import {
   NewsletterSubscriberSchema,
   NewsletterSubscriberRequestEventSchema,
   OrderSchema,
+  OrderChangeEventSchema,
   OrderGroupSchema,
   PasswordResetRequestedEventSchema,
   PaymentSchema,
@@ -174,6 +175,12 @@ type WebhookEventName =
   | 'order.resend_digital_links_email'
   | 'order.shipped'
   | 'order.updated'
+  | 'order_change.canceled'
+  | 'order_change.confirmed'
+  | 'order_change.created'
+  | 'order_change.deleted'
+  | 'order_change.requested'
+  | 'order_change.updated'
   | 'order_group.completed'
   | 'order_group.created'
   | 'order_group.deleted'
@@ -437,6 +444,12 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'order.resend_digital_links_email': OrderSchema,
   'order.shipped': OrderSchema,
   'order.updated': OrderSchema,
+  'order_change.canceled': OrderChangeEventSchema,
+  'order_change.confirmed': OrderChangeEventSchema,
+  'order_change.created': OrderChangeEventSchema,
+  'order_change.deleted': OrderChangeEventSchema,
+  'order_change.requested': OrderChangeEventSchema,
+  'order_change.updated': OrderChangeEventSchema,
   'order_group.completed': OrderGroupSchema,
   'order_group.created': OrderGroupSchema,
   'order_group.deleted': OrderGroupSchema,
