@@ -1,0 +1,69 @@
+{
+  "name": "@spree/config",
+  "version": "6.0.2",
+  "description": "Declarative store configuration for Spree Commerce: plan and deploy a spree.config.yml through the Admin API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./schemas/spree-config.json": "./schemas/spree-config.json"
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "templates",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && pnpm generate && tsup && node scripts/emit-schema.mjs",
+    "dev": "pnpm generate && tsup --watch",
+    "test": "pnpm generate && vitest run",
+    "typecheck": "pnpm generate && tsc --noEmit",
+    "lint": "biome check src tests",
+    "lint:fix": "biome check --fix src tests",
+    "format": "biome format --write src tests",
+    "clean": "rm -rf dist",
+    "generate": "node scripts/extract-writable.mjs && node scripts/embed-templates.mjs"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "configuration",
+    "yaml"
+  ],
+  "author": "Vendo Connect Inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/config"
+  },
+  "homepage": "https://spreecommerce.org/docs/developer/cli/configurator",
+  "bugs": {
+    "url": "https://github.com/spree/spree/issues"
+  },
+  "dependencies": {
+    "@spree/admin-sdk": "workspace:^",
+    "picocolors": "catalog:",
+    "yaml": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

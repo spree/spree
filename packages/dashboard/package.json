@@ -63,6 +63,7 @@
     "@dnd-kit/sortable": "catalog:",
     "@dnd-kit/utilities": "catalog:",
     "@hookform/resolvers": "catalog:",
+    "@spree/config": "workspace:^",
     "@spree/core": "workspace:^",
     "@tanstack/router-plugin": "catalog:",
     "@tanstack/virtual-file-routes": "catalog:",

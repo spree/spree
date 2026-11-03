@@ -5,7 +5,6 @@ require 'shellwords'
 # Spree::Customer / Spree::AdminUser auth models (has_secure_password). The admin
 # UI is the React dashboard (@spree/dashboard) talking to the Admin API.
 
-LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
 USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
 # Monorepo root (the dir that contains the `spree` gem dir) for USE_LOCAL_SPREE
 # (dev only). A path source rooted at `<root>/spree` exposes every nested
@@ -57,16 +56,11 @@ def seed_database
   end
 end
 
-def load_sample_data
-  if LOAD_SAMPLE_DATA
-    if ADMIN_EMAIL.present? && ADMIN_PASSWORD.present?
-      say 'Loading sample data...', :blue
-      rails_command 'spree:load_sample_data'
-    else
-      # Sample-data imports need an admin as their owner, and none was seeded.
-      say 'Skipping sample data — it needs an admin account. Load it after first-run setup with: bin/rails spree:load_sample_data', :yellow
-    end
-  end
+def warn_about_load_sample_data
+  return unless ENV['LOAD_SAMPLE_DATA'] == 'true'
+
+  say 'LOAD_SAMPLE_DATA is ignored and will be removed in Spree 6.2: sample data needs a store that finished setup. ' \
+      'Load it afterwards with: bin/rails spree:load_sample_data', :yellow
 end
 
 def show_success_message
@@ -94,7 +88,7 @@ def show_success_message
   say
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
-  say "  bin/rails spree:load_sample_data # Load more sample data"
+  say "  bin/rails spree:load_sample_data # Load sample data (after setup)"
   say
 end
 
@@ -104,6 +98,6 @@ add_gems
 after_bundle do
   install_spree
   seed_database
-  load_sample_data
+  warn_about_load_sample_data
   show_success_message
 end

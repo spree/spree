@@ -169,7 +169,7 @@ jobs:
       # `pnpm publish` does in release.yml.
       - name: Pack packages
         run: |
-          for pkg in core admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli; do
+          for pkg in core admin-sdk seller-sdk config dashboard-ui dashboard-core dashboard seller-dashboard cli; do
             pnpm --dir "packages/$pkg" pack --pack-destination "$RUNNER_TEMP/tarballs"
           done
 
@@ -256,8 +256,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # @spree/config deploys the store defaults before sample data loads.
       - name: Build SDK dependencies
-        run: pnpm turbo build --filter=@spree/sdk-core
+        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/config
 
       - name: Setup test app
         working-directory: spree/api
