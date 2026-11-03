@@ -467,7 +467,7 @@ module SpreeMeilisearch
 
     # Bounds normalized the way values are indexed, so they compare as strings.
     def date_filter_condition(definition, predicate, value)
-      conditions = definition.field_type_class.filter_conditions(predicate, value, store: definition.store)
+      conditions = definition.field_type_class&.filter_conditions(predicate, value, store: definition.store)
       conditions&.map do |operator, bound|
         "#{definition.filter_key} #{CUSTOM_FIELD_RANGE_OPERATORS.fetch(operator, '=')} #{format_custom_field_filter_value(bound, false)}"
       end&.join(' AND ')

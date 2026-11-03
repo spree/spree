@@ -48,8 +48,9 @@ module Spree
     #
     # @param value [Object] the bound as sent
     # @param store [Spree::Store, nil] the definition's store, for its time zone
+    # @param rule [String, nil] `min` or `max`
     # @return [Object, nil] nil when the bound is not valid for this type
-    def self.normalize_validation_bound(_value, store: nil)
+    def self.normalize_validation_bound(_value, store: nil, rule: nil)
       nil
     end
 
@@ -67,9 +68,16 @@ module Spree
       return unless attributes.is_a?(Hash)
 
       attributes = attributes.with_indifferent_access
-      definition = attributes[:custom_field_definition] ||
-                   attributes[:custom_field_definition_id].presence&.then { |id| Spree::CustomFieldDefinition.find_by_param(id) }
-      definition.try(:field_type_class)
+      return attributes[:custom_field_definition].try(:field_type_class) if attributes[:custom_field_definition]
+
+      id = attributes[:custom_field_definition_id].to_s
+      return if id.blank?
+
+      # Only the type is read, to pick the class. Whether this record may use
+      # the definition is custom_field_definition_must_belong_to_the_resource_store's call.
+      id = Spree::CustomFieldDefinition.decode_prefixed_id(id) if Spree::PrefixedId.prefixed_id?(id)
+      class_name = Spree::CustomFieldDefinition.where(id: id).pick(:field_type)
+      Spree::CustomFieldDefinition.available_types.find { |type| type.name == class_name }
     end
     private_class_method :custom_field_class_from_definition
 
