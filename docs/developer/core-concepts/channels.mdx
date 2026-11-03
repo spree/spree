@@ -101,6 +101,8 @@ A product is visible on a channel only when it has a publication record joining 
 | `unpublished_at` is in the past | Hidden — was visible, now sunset |
 | Within the window | Live |
 
+A product can also be kept out of some markets. A customer sees it only when it is published on their channel and their market may buy it; see [Product availability by market](/developer/core-concepts/markets#product-availability-by-market).
+
 Product status (`draft` / `active` / `archived`) is the **outer gate**: a Draft or Archived product is hidden on every channel regardless of its publication window. The dashboard's Publishing card renders this as a "Not available" badge on every channel row when status isn't `active`.
 
 ### Order attribution

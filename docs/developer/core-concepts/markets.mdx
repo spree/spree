@@ -248,6 +248,49 @@ For example, you could price a product at $29.99 in North America and €24.99 i
 
 See [Pricing — Price Rules](/developer/core-concepts/pricing#price-rules) for details on configuring market-specific price lists.
 
+## Product Availability by Market
+
+Some products may not be sold in every market: an exclusive distributor holds the rights in one territory, a licence covers only some countries, or a regulation forbids the product somewhere. Each product says which markets may see and buy it:
+
+| `market_availability` | Who can see and buy the product |
+|---|---|
+| `all` (default) | Customers in every market |
+| `all_except` | Customers in every market except the ones in `market_ids` |
+| `only` | Only customers in the markets in `market_ids` |
+
+A market added later needs nothing: `all_except` already includes it, and `only` already leaves it out.
+
+A market that excludes a product hides it completely. Listings, search, collections, product feeds and the product's own URL all leave it out, and a cart in that market cannot add it. Availability works together with [channel publishing](/developer/core-concepts/channels#product-visibility): a customer sees a product only when it is published on their channel **and** their market may buy it.
+
+If a cart's market changes after a product was added, for example because the customer entered an address in another country, the line stays in the cart. The cart's requirements report it with the code `not_available_in_market`, and checkout cannot complete until the customer removes it or changes the market back. Orders placed by staff follow the same rule. Orders that were already placed are not changed.
+
+In the dashboard, set it in the **Publishing** card on the product page, below the sales channels. Through the API, write both fields together:
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.update('prod_xxx', {
+  market_availability: 'all_except',
+  market_ids: ['mkt_europe'],
+})
+```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "market_availability": "all_except",
+    "market_ids": ["mkt_europe"]
+  }'
+```
+
+</CodeGroup>
+
+`all_except` and `only` need at least one market, and switching between them has to send `market_ids` again, since the same markets mean the opposite under the other mode. Setting the mode back to `all` clears the list. On a marketplace, sellers set the same two fields on their own products through the Seller API, choosing from `GET /api/v3/seller/markets`.
+
+With Meilisearch as the search provider, run the `spree:search:reindex` task once after upgrading, so products indexed before market availability existed carry their restrictions in the index too.
+
 ## Setting Up Markets
 
 Markets are managed in the admin dashboard under **Settings → Markets**. When you run `rails db:seed`, Spree automatically creates a default market for each store.
