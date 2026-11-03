@@ -1414,6 +1414,7 @@ export function MarketAvailabilitySection({ form }: FormCardProps) {
                 value={field.value ?? []}
                 onValueChange={field.onChange}
                 placeholder={t('admin.fields.product.market_ids.placeholder')}
+                ariaLabel={t('admin.fields.product.market_ids.label')}
               />
             )}
           />

@@ -131,6 +131,27 @@ module Spree
       expect(described_class.call(order: order)).to be_failure
     end
 
+    describe 'market availability' do
+      let(:draft) { create(:order_with_line_items, store: store, line_items_count: 1) }
+      let(:market) { create(:market, store: store, name: 'Europe') }
+
+      before { draft.update_columns(market_id: market.id) }
+
+      it 'refuses to place a staff draft holding a product its market excludes' do
+        draft.line_items.first.product.update!(market_availability: 'all_except', market_ids: [market.id])
+
+        result = described_class.call(order: draft, payment_pending: true)
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include('is not available in Europe')
+        expect(draft.reload).to be_draft
+      end
+
+      it 'places it when every product is sold in its market' do
+        expect(described_class.call(order: draft, payment_pending: true)).to be_success
+      end
+    end
+
     describe 'the validate hook' do
       let(:order) { create(:order_with_line_items, store: store) }
 

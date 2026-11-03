@@ -88,7 +88,22 @@ module Spree
       # it waits for the outcome. Rejecting rolls the lock back before any
       # payment is processed.
       def validate_order
+        ensure_available_in_market
         run_hooks :validate
+      end
+
+      # Checkout's requirements already refused these; a staff draft reaches
+      # here without them, and an exclusion binds staff too
+      # (docs/plans/6.1-product-market-availability.md).
+      def ensure_available_in_market
+        return if order.market.nil?
+
+        excluded = order.line_items.includes(variant: { product: :market_availability_entries }).find do |line_item|
+          !line_item.variant.product.available_in_market?(order.market)
+        end
+        return unless excluded
+
+        failure(order, I18n.t('spree.cart_line_item.not_available_in_market', li_name: excluded.name, market: order.market.name))
       end
 
       def process_payments
