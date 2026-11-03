@@ -863,8 +863,7 @@
         },
         "market_ids": {
           "label": "الأسواق",
-          "placeholder": "اختر الأسواق",
-          "required": "اختر سوقًا واحدًا على الأقل."
+          "placeholder": "اختر الأسواق"
         },
         "name": {
           "label": "الاسم",

@@ -865,8 +865,7 @@
         },
         "market_ids": {
           "label": "マーケット",
-          "placeholder": "マーケットを選択",
-          "required": "マーケットを1つ以上選択してください。"
+          "placeholder": "マーケットを選択"
         },
         "name": {
           "label": "名前",

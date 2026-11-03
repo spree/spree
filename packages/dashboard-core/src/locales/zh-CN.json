@@ -863,8 +863,7 @@
         },
         "market_ids": {
           "label": "市场",
-          "placeholder": "选择市场",
-          "required": "请至少选择一个市场。"
+          "placeholder": "选择市场"
         },
         "name": {
           "label": "名称",

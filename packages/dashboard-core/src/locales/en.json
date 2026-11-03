@@ -865,8 +865,7 @@
         },
         "market_ids": {
           "label": "Markets",
-          "placeholder": "Choose markets",
-          "required": "Choose at least one market."
+          "placeholder": "Choose markets"
         },
         "name": {
           "label": "Name",

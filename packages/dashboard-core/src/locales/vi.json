@@ -865,8 +865,7 @@
         },
         "market_ids": {
           "label": "Thị trường",
-          "placeholder": "Chọn thị trường",
-          "required": "Chọn ít nhất một thị trường."
+          "placeholder": "Chọn thị trường"
         },
         "name": {
           "label": "Tên",

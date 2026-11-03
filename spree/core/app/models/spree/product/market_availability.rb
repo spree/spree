@@ -100,7 +100,7 @@ module Spree
       def restricted_market_availability_names_a_market
         return if market_availability.nil? || market_ids.any?
 
-        errors.add(:market_ids, :blank)
+        errors.add(:market_ids, :market_required)
       end
 
       def forget_market_availability_markets

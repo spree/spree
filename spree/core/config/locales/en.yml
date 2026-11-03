@@ -148,6 +148,7 @@ en:
         discontinue_on: Discontinue On
         less_than: Less than
         make_active_at: Make Active At
+        market_ids: Markets
         master_price: Master Price
         more_than: More than
         name: Name
@@ -402,6 +403,8 @@ en:
               status_decided_by_review: A product in review changes status by being approved or sent back, not by editing it.
             discontinue_on:
               invalid_date_range: must be later than available date
+            market_ids:
+              market_required: must name at least one market when the product is not sold in all markets
         spree/product_publication:
           attributes:
             unpublished_at:

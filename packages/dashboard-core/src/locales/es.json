@@ -894,8 +894,7 @@
         },
         "market_ids": {
           "label": "Mercados",
-          "placeholder": "Elegir mercados",
-          "required": "Elige al menos un mercado."
+          "placeholder": "Elegir mercados"
         },
         "name": {
           "label": "Nombre",

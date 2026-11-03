@@ -1289,10 +1289,6 @@ export function MarketAvailabilitySection({ form }: FormCardProps) {
           <Controller
             name="market_ids"
             control={form.control}
-            rules={{
-              validate: (value) =>
-                (value?.length ?? 0) > 0 || t('admin.fields.product.market_ids.required'),
-            }}
             render={({ field }) => (
               <ResourceMultiAutocomplete
                 queryKey="product-market-availability"
