@@ -1,3 +1,11 @@
+## 2026-11-03: Custom fields 6.1 ships without the 6.0.x type patch, in several pull requests
+
+**Context:** The custom fields roadmap planned a 6.0.x patch that would ignore a definition type change with a deprecation warning, ahead of the 6.1 rejection. The 6.1 work is ready to start before `main` moves to 6.1, and the whole 6.1 scope touches every API and both dashboards.
+
+**Decision:** No 6.0.x patch. The first 6.1 pull request merges once `main` targets 6.1 and rejects a type change with 422 directly. 6.1 ships in several pull requests: the first covers fixed definition types, the hidden-by-default storefront visibility, the `date`, `date_time` and `choice` types, and validation rules. Shopper writes, emails and webhooks, translations and cleanup follow. Media external URLs move from the `external.url` custom field to an `external_url` column, not to metadata.
+
+**Consequences:** On 6.0.x, a definition's type can still be changed through the Admin API; the dashboard has never offered it. Amends the 2026-10-06 entry's 6.0.x rollout. See `6.0-6.1-custom-fields-roadmap.md`.
+
 ## 2026-11-02: Payment method rules retarget to 6.1; multiple accounts of one provider are records scoped by rules
 
 **Context:** `6.1-payment-method-rules.md` (then `6.0-…`) was not built in 6.0. The 2026-07-23 entry below had parked "multiple provider credentials in one store" for grooming, with two candidate shapes. Reviewing it against what shipped since: an open-source platform's hosted payments product (October 2026) added multiple accounts with no data model at all — one provider instance registered per account, scoped by region — and the hosted leader's multi-entity model is one payments account per legal entity mapped to markets. In Spree, two `SpreeStripe::Gateway` records in one store already work at the data layer (own keys, own webhook endpoint and secret, own sessions and gateway customers); only the dashboard's "installed" filter, the storefront's single publishable key from an environment variable, and the marketplace payout provider's "first Stripe method" lookup stand in the way. The Company tree also shipped (2026-08-25), and the checkout seam moved to `Spree::Purchase::PaymentProcessing#payment_methods` on carts, which the cart payment-sessions controller bypasses.
