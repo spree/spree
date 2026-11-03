@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'spree/api/testing_support/openapi'
 
 module CodeSamplesHelper
+  include Spree::Api::TestingSupport::AdminScope
+
   SDK_CLIENT_INIT = <<~JS.strip
     import { createClient } from '@spree/sdk'
 
@@ -404,23 +407,6 @@ module CodeSamplesHelper
     body.rstrip.strip_heredoc.strip
   end
 
-  # Appends a `**Required scope:**` line to the operation description.
-  # Use in admin integration specs to surface scope requirements in the
-  # rendered Mintlify docs without inventing a custom OpenAPI extension.
-  #
-  #   admin_scope :read, :orders
-  #   admin_scope :write, :customers
-  def admin_scope(action, resource)
-    admin_scope_note("`#{action}_#{resource}`")
-  end
-
-  # Free-form variant for endpoints whose required scope is resolved at
-  # request time (e.g. exports — gated by the exported resource's scope).
-  def admin_scope_note(text)
-    line = "**Required scope:** #{text} (for API-key authentication)."
-    existing = metadata[:operation][:description].to_s
-    metadata[:operation][:description] = existing.empty? ? line : "#{existing}\n\n#{line}"
-  end
 end
 
 RSpec.configure do |config|

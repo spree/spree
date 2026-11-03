@@ -26211,7 +26211,6 @@ paths:
         Puts a product a seller submitted for review on sale, and closes the
         submission. Only a product awaiting review can be approved.
 
-
         **Required scope:** `write_products` (for API-key authentication).
       parameters:
       - name: x-spree-api-key

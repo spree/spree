@@ -1,5 +1,13 @@
 require 'spree/testing_support/common_rake'
 
+# `rake spree:openapi:generate` writes the extension's openapi/admin.yaml from
+# its rswag specs.
+begin
+  require 'spree/api/testing_support/openapi_tasks'
+rescue LoadError
+  # An extension without spree_api has no admin operations to document.
+end
+
 desc 'Generates a dummy app for testing an extension'
 namespace :extension do
   task :test_app, [:options] do |_t, args|
