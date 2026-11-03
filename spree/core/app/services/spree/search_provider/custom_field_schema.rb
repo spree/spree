@@ -8,15 +8,14 @@ module Spree
       # sets the admin dashboard's filter panel offers for string/number columns
       # (see packages/dashboard-core/src/components/table-toolbar.tsx).
       TEXT_FILTER_PREDICATES = %w[i_cont cont eq not_eq start end present blank].freeze
-      NUMBER_FILTER_PREDICATES = %w[eq gt gteq lt lteq present blank].freeze
-      # Dates compare as ISO 8601 text, so they take the range predicates too.
-      DATE_FILTER_PREDICATES = NUMBER_FILTER_PREDICATES
+      # Numbers, and dates, which compare as ISO 8601 text.
+      RANGE_FILTER_PREDICATES = %w[eq gt gteq lt lteq present blank].freeze
       # A field allowing several choices matches when any of its values does.
       CHOICE_FILTER_PREDICATES = %w[eq not_eq in not_in present blank].freeze
 
       # Longest first so a key ending in +_i_cont+ isn't mis-split as the
       # shorter +_cont+ against a definition keyed +..._i+.
-      ORDERED_FILTER_PREDICATES = (TEXT_FILTER_PREDICATES | NUMBER_FILTER_PREDICATES | CHOICE_FILTER_PREDICATES).
+      ORDERED_FILTER_PREDICATES = (TEXT_FILTER_PREDICATES | RANGE_FILTER_PREDICATES | CHOICE_FILTER_PREDICATES).
                                   sort_by { |predicate| -predicate.length }.freeze
 
       attr_reader :store, :audience
@@ -127,8 +126,7 @@ module Spree
       # @return [Array<String>]
       def filter_predicates_for(field_type)
         case field_type
-        when 'number' then NUMBER_FILTER_PREDICATES
-        when 'date', 'date_time' then DATE_FILTER_PREDICATES
+        when 'number', 'date', 'date_time' then RANGE_FILTER_PREDICATES
         when 'choice' then CHOICE_FILTER_PREDICATES
         else TEXT_FILTER_PREDICATES
         end

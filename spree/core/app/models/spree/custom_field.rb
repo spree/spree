@@ -175,6 +175,18 @@ module Spree
       custom_field_definition.validation_rules
     end
 
+    # Adds the `min` / `max` errors, comparing +comparable+ against each bound
+    # as +bound+ reads it.
+    def add_bound_errors(comparable, below:, above:, bound: :itself.to_proc)
+      min, max = definition_rules.values_at('min', 'max')
+      add_value_error(below, min) if min && comparable < bound.call(min)
+      add_value_error(above, max) if max && comparable > bound.call(max)
+    end
+
+    def add_value_error(type, bound)
+      errors.add(:value, type, bound: bound, message: I18n.t("spree.errors.messages.custom_field_#{type}", bound: bound))
+    end
+
     def set_type_from_custom_field_definition
       return if custom_field_definition.blank?
 

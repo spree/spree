@@ -871,18 +871,18 @@ en:
         channel_store_mismatch: must belong to the same store
         commission_rate_needs_an_amount: needs a flat fee amount in at least one currency
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
-        custom_field_after_max: must be on or before %{max}
-        custom_field_before_min: must be on or after %{min}
+        custom_field_after_max: must be on or before %{bound}
+        custom_field_before_min: must be on or after %{bound}
         custom_field_choice_not_offered: includes %{value}, which is not one of this field's choices
         custom_field_definition_mismatch: must match custom field definition
-        custom_field_greater_than_max: must be less than or equal to %{max}
+        custom_field_greater_than_max: must be less than or equal to %{bound}
         custom_field_invalid_date: must be a date in the YYYY-MM-DD format
         custom_field_invalid_date_time: must be a date and time in the ISO 8601 format
-        custom_field_less_than_min: must be greater than or equal to %{min}
+        custom_field_less_than_min: must be greater than or equal to %{bound}
         custom_field_single_choice_only: allows only one choice
         custom_field_sortable_single_choice_only: is not supported for a choice field that allows several values
-        custom_field_too_long: is too long (maximum is %{count} characters)
-        custom_field_too_short: is too short (minimum is %{count} characters)
+        custom_field_too_long: is too long (maximum is %{bound} characters)
+        custom_field_too_short: is too short (minimum is %{bound} characters)
         custom_field_type_cannot_change: cannot be changed once the custom field definition is created — create a new definition instead
         custom_field_validation_choices_invalid: must be a list of choices, each with a value and a label
         custom_field_validation_choices_not_unique: must not repeat a choice value

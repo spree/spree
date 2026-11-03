@@ -4,7 +4,7 @@ import type {
   CustomFieldDefinitionUpdateParams,
   CustomFieldValidationsParams,
 } from '@spree/admin-sdk'
-import { i18n } from '@spree/dashboard-core'
+import { formatStoreDate, formatStoreDateTime, i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -222,12 +222,56 @@ function validationsToParams(
   return Object.keys(rules).length > 0 ? rules : null
 }
 
-function isBlank(value: unknown) {
+/** No value to store: the API removes the field rather than saving it. */
+export function isBlank(value: unknown) {
   return (
     value == null ||
     (typeof value === 'string' && value.trim() === '') ||
     (Array.isArray(value) && value.length === 0)
   )
+}
+
+/** A choice's label; a value whose choice was since removed shows raw, as the server keeps it. */
+export function choiceLabel(definition: CustomFieldDefinition, choice: unknown): string {
+  return (
+    definition.validations?.choices.find((option) => option.value === String(choice))?.label ??
+    String(choice)
+  )
+}
+
+/** A stored value as read-only text, in the store's time zone. */
+export function formatCustomFieldValue(
+  value: unknown,
+  definition: CustomFieldDefinition,
+  timezone: string,
+): string {
+  const empty = i18n.t('admin.common.empty_value')
+  if (isBlank(value)) return empty
+
+  switch (definition.field_type) {
+    case 'boolean':
+      return i18n.t(value ? 'admin.common.yes' : 'admin.common.no')
+    case 'rich_text': {
+      // Plain-text preview of HTML. DOMParser handles nested/malformed tags
+      // correctly — a single-pass regex strip can leak tags via patterns like
+      // `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
+      const text = new DOMParser().parseFromString(String(value), 'text/html').body.textContent
+      return text?.trim() || empty
+    }
+    case 'json':
+      return typeof value === 'string' ? value : JSON.stringify(value)
+    case 'date':
+      // A calendar day: format it as written, never shifted into a zone.
+      return formatStoreDate(`${value}T00:00:00Z`, 'UTC')
+    case 'date_time':
+      return formatStoreDateTime(String(value), timezone)
+    case 'choice':
+      return (Array.isArray(value) ? value : [value])
+        .map((choice) => choiceLabel(definition, choice))
+        .join(', ')
+    default:
+      return String(value)
+  }
 }
 
 /**

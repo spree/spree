@@ -16,13 +16,11 @@ module Spree
       end
 
       def self.normalize_validation_bound(value, store: nil)
-        return if [true, false].include?(value)
-
-        decimal = BigDecimal(value.to_s)
-        return unless decimal.finite?
+        decimal = Spree::Money::Rounding.parse_decimal(value) unless [true, false].include?(value)
+        return if decimal.nil? || !decimal.finite?
 
         decimal.frac.zero? ? decimal.to_i : decimal.to_f
-      rescue ArgumentError, TypeError
+      rescue Spree::Money::InvalidFormat
         nil
       end
 
@@ -40,13 +38,7 @@ module Spree
         number = BigDecimal(value.to_s, exception: false)
         return if number.nil?
 
-        min, max = definition_rules.values_at('min', 'max')
-        if min && number < BigDecimal(min.to_s)
-          errors.add(:value, :less_than_min, min: min, message: I18n.t('spree.errors.messages.custom_field_less_than_min', min: min))
-        end
-        if max && number > BigDecimal(max.to_s)
-          errors.add(:value, :greater_than_max, max: max, message: I18n.t('spree.errors.messages.custom_field_greater_than_max', max: max))
-        end
+        add_bound_errors(number, below: :less_than_min, above: :greater_than_max, bound: ->(bound) { BigDecimal(bound.to_s) })
       end
     end
   end
