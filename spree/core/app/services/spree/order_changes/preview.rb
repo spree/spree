@@ -26,6 +26,9 @@ module Spree
         end
 
         outcome
+      rescue ActiveRecord::RecordNotUnique
+        # A set opened and left requested while this preview ran.
+        failure(order, :order_change_in_progress)
       end
 
       private
