@@ -189,6 +189,10 @@ export function useOrderItemsEditor(order: Order | undefined) {
         // sent as the saved values, so the form is pristine and the next
         // read of the order re-hydrates it with the server's totals.
         toastManager.add({ type: 'warning', title: t('admin.orders.edit.saved_not_reloaded') })
+        // Lines added by this save have no id on the form, and an order
+        // change can only edit a line by its id: fetch them so the next edit
+        // reaches them.
+        queryClient.invalidateQueries({ queryKey: orderKey })
         form.reset({
           items: values.items
             .filter((item) => !item.removed)
