@@ -14,6 +14,9 @@ module Spree
     include Spree::Metadata
 
     ITEM_KINDS = %w[add_item update_item remove_item].freeze
+    # Kinds that move goods but not money: a set of only these leaves the
+    # order total alone, so confirming it skips the re-sum.
+    STOCK_KINDS = %w[receive_item add_fulfillment].freeze
 
     # Configuration, not a frozen constant: Spree::OrderChange.register_action_kind
     # appends here alongside registering the applier.

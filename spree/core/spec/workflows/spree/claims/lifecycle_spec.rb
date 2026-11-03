@@ -98,6 +98,7 @@ RSpec.describe 'Spree::Claims workflows' do
       result = Spree::Claims::Resolve.call(claim: replacing, resolution: 'replacement', refund_method: 'crypto')
 
       expect(result).to be_success
+      expect(replacing.order_changes.sole).to be_confirmed
     end
 
     # Unallocated, the replacement is indistinguishable from a fulfillment made

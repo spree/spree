@@ -8,7 +8,7 @@ module Spree
     class Resolve < Spree::Workflow
       include Spree::Refunds::OrderPayments
       include Spree::Refunds::TaxCredit
-      include Spree::Fulfillments::Replacements
+      include Spree::OrderChanges::Replacements
 
       hooks :validate, :before_settle, :after_resolve
 
@@ -128,7 +128,7 @@ module Spree
 
         failure(claim, :nothing_to_replace) if items.empty?
 
-        @fulfillments = build_replacements(claim, items)
+        @fulfillments = ship_replacements(claim, items, requested_by: resolver)
       end
 
       def issue_store_credit
