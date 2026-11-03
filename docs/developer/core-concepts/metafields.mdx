@@ -126,6 +126,8 @@ Definitions can also be managed in the dashboard under **Settings → Custom Fie
 | `choices` | `choice` (required) | The options in display order, each a `value` and a `label` |
 | `multiple` | `choice` | Several values may be chosen; the value is a list |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.customFieldDefinitions.create({
   resource_type: 'product',
@@ -142,6 +144,25 @@ await adminClient.customFieldDefinitions.create({
   },
 })
 ```
+
+```bash CLI
+spree api post /custom_field_definitions -d '{
+  "resource_type": "product",
+  "namespace": "warehouse",
+  "key": "zone",
+  "label": "Warehouse zone",
+  "field_type": "choice",
+  "validations": {
+    "required": true,
+    "choices": [
+      { "value": "a", "label": "Zone A" },
+      { "value": "b", "label": "Zone B" }
+    ]
+  }
+}'
+```
+
+</CodeGroup>
 
 A value that breaks a rule is refused with `422`, the error naming the field. Rules are checked on new writes only: a value saved before a rule changed stays readable, and is checked again when it is next written. Sending `validations` replaces every rule; send `null` to remove them all.
 

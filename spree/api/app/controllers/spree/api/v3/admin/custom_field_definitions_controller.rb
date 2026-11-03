@@ -23,7 +23,7 @@ module Spree
               example: 'product',
               description: 'Shorthand of the resource the field attaches to, from the resource types endpoint. Fixed once the definition is created.'
             body.attribute :storefront_visible, :boolean,
-              description: 'When false, the definition is admin-only and never exposed in the Store API. Defaults to false.'
+              description: 'When false, the definition is admin-only and never exposed in the Store API. Defaults to false on create; an update without it keeps the stored value.'
             body.attribute :searchable, :boolean,
               description: 'Include values in storefront product text search. Supported for `short_text`, `long_text`, `number`, `date`, `date_time` and `choice` fields; other types are refused.'
             body.attribute :sortable, :boolean,

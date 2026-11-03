@@ -67,13 +67,14 @@ module Spree
       end
 
       # Text such as a CSV cell lists the values the way {#text_value} joins
-      # them; it is split only when every part is a choice, since a choice's
-      # own value may contain a comma.
+      # them; it is split only when it is not itself a choice and every part
+      # is one, since a choice's own value may contain a comma.
       def wrap_single_value
         return if value.blank? || stored_values
 
+        offered = custom_field_definition.choice_values
         parts = value.split(',').map(&:strip)
-        self.value = (parts - custom_field_definition.choice_values).empty? ? parts : [value]
+        self.value = !offered.include?(value) && (parts - offered).empty? ? parts : [value]
       end
 
       # A single choice is stored bare, so it sorts and compares by its value

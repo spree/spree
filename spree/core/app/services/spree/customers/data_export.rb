@@ -303,7 +303,7 @@ module Spree
         return [] unless customer.respond_to?(:custom_fields)
 
         customer.custom_fields.includes(:custom_field_definition).map do |field|
-          { key: field.key, value: field.text_value }
+          { key: field.key, value: field.serialize_value }
         end
       end
 
