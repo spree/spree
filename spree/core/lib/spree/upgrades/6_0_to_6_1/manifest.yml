@@ -1,0 +1,22 @@
+# Spree 6.0 → 6.1 upgrade manifest.
+#
+# Lists ONLY the version-specific steps that perform data backfills; see the
+# 5.6 → 6.0 manifest for what stays out of this file and how steps are run.
+# Behaviour changes are described in docs/developer/upgrades/6.0-to-6.1.mdx.
+# Every step must be idempotent; re-running the full manifest is safe.
+---
+from: "6.0"
+to: "6.1"
+docs: "https://spreecommerce.org/docs/developer/upgrades/6.0-to-6.1"
+
+steps:
+  - id: create_built_in_reports
+    name: "Add the built-in saved reports to every store"
+    task: "spree:upgrade:create_built_in_reports"
+    notes: |
+      Stores now get the built-in saved reports when they are created, rather
+      than from db:seed. This gives them to a store that never got them: one
+      upgraded from 5.6, or one whose seeds ran before the reports existed.
+
+      Idempotent — a store that already has any built-in report is skipped,
+      so one the merchant deleted is not brought back.

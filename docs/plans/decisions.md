@@ -1,22 +1,10 @@
-## 2026-11-25: A new payment session replaces the open ones only after the provider creates it
+## 2026-11-03: Store defaults leave the Ruby seeds in 6.1, not 6.0
 
-**Context:** The 2026-10-04 entry canceled a cart's open sessions before asking the provider for the new one. Any request the provider then refused still cost the buyer their session. That includes a Stripe payment method that isn't the cart customer's, an amount it refuses, or an outage. The storefront was left with nothing to pay (SANDBOX-V2-24). A Stripe refusal of the client's payment method also surfaced as a reported `GatewayError` even though the client caused it.
+**Context:** The configurator work (`6.0-cli-configurator.md`, spree/spree#14655) moves the defaults every new store starts with out of `db:seed` and into configurator files deployed through the Admin API. Spree 6.0.0 shipped before it merged, with the seeds still creating those defaults.
 
-**Decision:** Stripe, Adyen and PayPal check for a completed session (and Stripe for an intent already under way) before anything is created. They create the new intent, session or order, then cancel the open ones. If Stripe has accepted an open intent since it was read, the cancel fails, the new intent is canceled and the request fails with `payment_in_progress`, as before. When Stripe refuses the payment method the client named (`InvalidRequestError` on `payment_method`), create and update answer with the session's validation error (422), not a `GatewayError`. Ownership is left to Stripe: express checkout sends a fresh, unattached payment method, so Spree can't require a saved card.
+**Decision:** The change targets 6.1 and is described in a new 6.0 → 6.1 upgrade guide. For one release the removed Ruby stays loadable with a deprecation warning and no effect: the store-default seed services, `Spree::Stores::ProvisionDefaults`, `spree:install --sample` and the application template's `LOAD_SAMPLE_DATA`. They are deleted in 6.2. The upgrade step that gives existing stores the built-in reports joins the 6.0 → 6.1 upgrade list rather than the released 5.6 → 6.0 one.
 
-**Consequences:** A refused request leaves the buyer's open session payable. For a moment two intents exist, but the new one's client secret is handed out only after the old ones are canceled.
-
-## 2026-11-23: No storefront record in core; a publishable key can be bound to several channels
-
-**Context:** A store knows its storefront through one `storefront_url` preference and its publishable keys. A hosted product needs somewhere to keep a storefront's repository, domains and deployments, and the Next.js storefront serves two channels from one deployment with one key, which the 5.6 single-channel binding can only express as an unbound key that reaches every channel. A `Spree::Storefront` record with its own keys, identity overrides and a link to its manager was drafted over 2026-11-21 to 2026-11-23, then compared with three other open-source commerce platforms: none has a storefront record in core, one binds its publishable keys to sales channels many-to-many, and all three keep hosting in a cloud console separate from the store's admin.
-
-**Decision:** Core gets no storefront record. A storefront is whoever holds a publishable key, and the store keeps one `storefront_url`. `spree_api_key_channels` replaces `ApiKey#channel_id`: no rows is every channel, one row is the old binding, several rows bind one key to a chosen set; channels can be added to a key and never removed. Hosting details live in a hosted product's own app, which works only through the stock Admin API and webhooks, because on Spree Cloud a merchant may run their own image and nothing underneath can be patched.
-
-Rejected: the storefront record, which only earns its place when a store has several storefronts on different domains. Also rejected: per-storefront name and SEO overrides, which no compared platform has and which would need their own translations. Also rejected: keeping the single binding and using one key per channel.
-
-**Consequences:** A multi-channel key without a channel header resolves to the store's default channel if bound to it, otherwise the request is a 422. `channel_id` on keys is deprecated in 6.1 and removed in 6.2. If a store needs a second storefront on its own domain, the first answer to consider is a storefront URL on the channel, not a new model.
-
-**Plan:** `6.1-storefront-connection.md`. **Plans amended:** `5.6-store-channel-context-and-key-binding.md` (the single binding becomes a set).
+**Consequences:** A script that runs `db:seed` and expects the defaults must run `spree config provision` on 6.1. The deprecated names do not create records, so nothing has two sources of store defaults.
 
 ## 2026-11-02: Payment method rules retarget to 6.1; multiple accounts of one provider are records scoped by rules
 
