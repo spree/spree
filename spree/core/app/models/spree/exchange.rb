@@ -60,6 +60,13 @@ module Spree
       exchange_line_items
     end
 
+    # Webhook payloads carry the order, the reason and the lines, so a
+    # storefront that sends its own emails can acknowledge a request without
+    # a second call (docs/plans/6.1-returns-portal.md).
+    def event_serializer_params
+      super.merge(expand: %w[order reason exchange_line_items.original_variant exchange_line_items.new_variant])
+    end
+
     private
 
     # The replacement is a sale of its own, taxed as the order would be today

@@ -22,6 +22,7 @@ export { EmailOrderGroupSchema, type EmailOrderGroup } from './EmailOrderGroup';
 export { EmailParcelItemSchema, type EmailParcelItem } from './EmailParcelItem';
 export { EmailPaymentSchema, type EmailPayment } from './EmailPayment';
 export { EmailPaymentMethodSchema, type EmailPaymentMethod } from './EmailPaymentMethod';
+export { EmailReplacementItemSchema, type EmailReplacementItem } from './EmailReplacementItem';
 export { EmailReturnSchema, type EmailReturn } from './EmailReturn';
 export { EmailStockLocationSchema, type EmailStockLocation } from './EmailStockLocation';
 export { EmailStoreSchema, type EmailStore } from './EmailStore';

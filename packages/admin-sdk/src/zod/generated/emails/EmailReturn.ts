@@ -8,7 +8,6 @@ export const EmailReturnSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
-  memo: z.string().nullable(),
   cancelable: z.boolean(),
   label_available: z.boolean(),
   tracking: z.string().nullable(),
@@ -25,6 +24,7 @@ export const EmailReturnSchema = z.object({
   returned_items: z.array(EmailLineItemSchema),
   items: z.array(EmailParcelItemSchema),
   stock_location: EmailStockLocationSchema,
+  memo: z.string().nullable(),
   reason_name: z.string().nullable(),
 });
 

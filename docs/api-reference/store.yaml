@@ -3560,11 +3560,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
-                returns_eligibility:
-                  eligible: true
-                  errors: []
-                  return_window_ends_at: '2026-02-14T12:00:00Z'
-                  withdrawal_period_ends_at:
                 shipping_eq_billing_address: false
                 cart_id: cart_UkLWZg9DAJ
                 channel_id: ch_UkLWZg9DAJ
@@ -3697,13 +3692,6 @@ paths:
                   - item_id: li_gbHJdmfrXB
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
-                    returnable_quantity: 1
-                    non_returnable_reason:
-                    units:
-                    - fulfillment_item_id: fi_gbHJdmfrXB
-                      quantity: 1
-                      returnable_quantity: 1
-                      non_returnable_reason:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
@@ -4412,13 +4400,6 @@ paths:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
-                    returnable_quantity: 0
-                    non_returnable_reason: order_not_completed
-                    units:
-                    - fulfillment_item_id: fi_UkLWZg9DAJ
-                      quantity: 1
-                      returnable_quantity: 0
-                      non_returnable_reason: order_not_completed
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
@@ -6668,7 +6649,6 @@ paths:
                 - id: exch_UkLWZg9DAJ
                   number: EX1001
                   status: requested
-                  memo: Wrong size
                   cancelable: true
                   order_id: or_UkLWZg9DAJ
                   reason_id:
@@ -6738,7 +6718,6 @@ paths:
                 id: exch_gbHJdmfrXB
                 number: EX1002
                 status: requested
-                memo: Too small
                 cancelable: true
                 order_id: or_gbHJdmfrXB
                 reason_id:
@@ -6822,7 +6801,6 @@ paths:
                 id: exch_UkLWZg9DAJ
                 number: EX1001
                 status: canceled
-                memo: Wrong size
                 cancelable: false
                 order_id: or_UkLWZg9DAJ
                 reason_id:
@@ -7397,7 +7375,6 @@ paths:
                 - id: ret_UkLWZg9DAJ
                   number: RET1001
                   status: requested
-                  memo: Item did not fit
                   cancelable: true
                   label_available: false
                   tracking:
@@ -7471,7 +7448,6 @@ paths:
                 id: ret_gbHJdmfrXB
                 number: RET1002
                 status: requested
-                memo: Wrong size
                 cancelable: true
                 label_available: false
                 tracking:
@@ -7545,7 +7521,6 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: canceled
-                memo: Item did not fit
                 cancelable: false
                 label_available: false
                 tracking:
@@ -8546,11 +8521,6 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: true
-                  returns_eligibility:
-                    eligible: true
-                    errors: []
-                    return_window_ends_at: '2026-02-14T12:00:00Z'
-                    withdrawal_period_ends_at:
                   shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
@@ -8658,13 +8628,6 @@ paths:
                     - item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
                       quantity: 1
-                      returnable_quantity: 1
-                      non_returnable_reason:
-                      units:
-                      - fulfillment_item_id: fi_UkLWZg9DAJ
-                        quantity: 1
-                        returnable_quantity: 1
-                        non_returnable_reason:
                     deliveries:
                     - id: dlv_UkLWZg9DAJ
                       tracking_number: U10000
@@ -8888,11 +8851,6 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
-                returns_eligibility:
-                  eligible: true
-                  errors: []
-                  return_window_ends_at: '2026-02-14T12:00:00Z'
-                  withdrawal_period_ends_at:
                 shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
@@ -9000,13 +8958,6 @@ paths:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
-                    returnable_quantity: 1
-                    non_returnable_reason:
-                    units:
-                    - fulfillment_item_id: fi_UkLWZg9DAJ
-                      quantity: 1
-                      returnable_quantity: 1
-                      non_returnable_reason:
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -13414,11 +13365,6 @@ paths:
                   market_id: mkt_UkLWZg9DAJ
                   withdrawal_period_ends_at:
                   within_withdrawal_period: true
-                  returns_eligibility:
-                    eligible: true
-                    errors: []
-                    return_window_ends_at: '2026-02-14T12:00:00Z'
-                    withdrawal_period_ends_at:
                   shipping_eq_billing_address: false
                   cart_id:
                   channel_id: ch_UkLWZg9DAJ
@@ -13525,13 +13471,6 @@ paths:
                     - item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
                       quantity: 1
-                      returnable_quantity: 1
-                      non_returnable_reason:
-                      units:
-                      - fulfillment_item_id: fi_UkLWZg9DAJ
-                        quantity: 1
-                        returnable_quantity: 1
-                        non_returnable_reason:
                     deliveries:
                     - id: dlv_UkLWZg9DAJ
                       tracking_number: U10000
@@ -17477,9 +17416,6 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
-        memo:
-          type: string
-          nullable: true
         cancelable:
           type: boolean
         order_id:
@@ -17521,7 +17457,6 @@ components:
       - id
       - number
       - status
-      - memo
       - cancelable
       - order_id
       - reason_id
@@ -21202,7 +21137,6 @@ components:
       - market_id
       - withdrawal_period_ends_at
       - within_withdrawal_period
-      - returns_eligibility
       - shipping_eq_billing_address
       - cart_id
       - channel_id
@@ -22899,9 +22833,6 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
-        memo:
-          type: string
-          nullable: true
         cancelable:
           type: boolean
         label_available:
@@ -22964,7 +22895,6 @@ components:
       - id
       - number
       - status
-      - memo
       - cancelable
       - label_available
       - tracking

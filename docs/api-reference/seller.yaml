@@ -17188,8 +17188,6 @@ paths:
                 - id: exch_UkLWZg9DAJ
                   number: EX1001
                   status: requested
-                  memo:
-                  cancelable: true
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   price_difference: '9.99'
@@ -17197,6 +17195,7 @@ paths:
                   received_at:
                   fulfilled_at:
                   canceled_at:
+                  memo:
                   stock_location_id: sloc_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -17262,8 +17261,6 @@ paths:
                 id: exch_UkLWZg9DAJ
                 number: EX1001
                 status: requested
-                memo:
-                cancelable: true
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
@@ -17271,6 +17268,7 @@ paths:
                 received_at:
                 fulfilled_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Exchange"
@@ -17330,8 +17328,6 @@ paths:
                 id: exch_UkLWZg9DAJ
                 number: EX1001
                 status: requested
-                memo:
-                cancelable: true
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
@@ -17339,6 +17335,7 @@ paths:
                 received_at:
                 fulfilled_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Exchange"
@@ -17390,8 +17387,6 @@ paths:
                 id: exch_UkLWZg9DAJ
                 number: EX1001
                 status: approved
-                memo:
-                cancelable: false
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
@@ -17399,6 +17394,7 @@ paths:
                 received_at:
                 fulfilled_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Exchange"
@@ -17453,8 +17449,6 @@ paths:
                 id: exch_UkLWZg9DAJ
                 number: EX1001
                 status: received
-                memo:
-                cancelable: false
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
@@ -17462,6 +17456,7 @@ paths:
                 received_at: '2026-01-15T12:00:00Z'
                 fulfilled_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Exchange"
@@ -17519,8 +17514,6 @@ paths:
                 id: exch_UkLWZg9DAJ
                 number: EX1001
                 status: fulfilled
-                memo:
-                cancelable: false
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
@@ -17528,6 +17521,7 @@ paths:
                 received_at: '2026-01-15T12:00:00Z'
                 fulfilled_at: '2026-01-15T12:00:00Z'
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Exchange"
@@ -17585,8 +17579,6 @@ paths:
                 id: exch_UkLWZg9DAJ
                 number: EX1001
                 status: canceled
-                memo: Customer kept the original
-                cancelable: false
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 price_difference: '9.99'
@@ -17594,6 +17586,7 @@ paths:
                 received_at:
                 fulfilled_at:
                 canceled_at: '2026-01-15T12:00:00Z'
+                memo: Customer kept the original
                 stock_location_id: sloc_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Exchange"
@@ -23077,8 +23070,6 @@ paths:
                 - id: ret_UkLWZg9DAJ
                   number: RET1001
                   status: requested
-                  memo:
-                  cancelable: true
                   label_available: false
                   tracking:
                   tracking_url:
@@ -23090,6 +23081,7 @@ paths:
                   received_at:
                   refunded_at:
                   canceled_at:
+                  memo:
                   stock_location_id: sloc_UkLWZg9DAJ
                   refunded_total: '0.00'
                   refundable_total: '10.00'
@@ -23156,8 +23148,6 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: requested
-                memo:
-                cancelable: true
                 label_available: false
                 tracking:
                 tracking_url:
@@ -23169,6 +23159,7 @@ paths:
                 received_at:
                 refunded_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
@@ -23238,8 +23229,6 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: requested
-                memo:
-                cancelable: true
                 label_available: false
                 tracking:
                 tracking_url:
@@ -23251,6 +23240,7 @@ paths:
                 received_at:
                 refunded_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
@@ -23303,8 +23293,6 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: approved
-                memo:
-                cancelable: false
                 label_available: false
                 tracking:
                 tracking_url:
@@ -23316,6 +23304,7 @@ paths:
                 received_at:
                 refunded_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
@@ -23373,8 +23362,6 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: received
-                memo:
-                cancelable: false
                 label_available: false
                 tracking:
                 tracking_url:
@@ -23386,6 +23373,7 @@ paths:
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at:
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
@@ -23451,8 +23439,6 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: refunded
-                memo:
-                cancelable: false
                 label_available: false
                 tracking:
                 tracking_url:
@@ -23464,6 +23450,7 @@ paths:
                 received_at: '2026-01-15T12:00:00Z'
                 refunded_at: '2026-01-15T12:00:00Z'
                 canceled_at:
+                memo:
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '10.00'
                 refundable_total: '0.00'
@@ -23531,8 +23518,6 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: canceled
-                memo: Customer decided to keep the goods
-                cancelable: false
                 label_available: false
                 tracking:
                 tracking_url:
@@ -23544,6 +23529,7 @@ paths:
                 received_at:
                 refunded_at:
                 canceled_at: '2026-01-15T12:00:00Z'
+                memo: Customer decided to keep the goods
                 stock_location_id: sloc_UkLWZg9DAJ
                 refunded_total: '0.00'
                 refundable_total: '10.00'
@@ -26253,11 +26239,6 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
-        memo:
-          type: string
-          nullable: true
-        cancelable:
-          type: boolean
         order_id:
           type: string
           nullable: true
@@ -26280,12 +26261,13 @@ components:
           nullable: true
         reason:
           "$ref": "#/components/schemas/Reason"
-        order:
-          "$ref": "#/components/schemas/Order"
         exchange_line_items:
           type: array
           items:
             "$ref": "#/components/schemas/ExchangeLineItem"
+        memo:
+          type: string
+          nullable: true
         stock_location_id:
           type: string
           nullable: true
@@ -26293,8 +26275,6 @@ components:
       - id
       - number
       - status
-      - memo
-      - cancelable
       - order_id
       - reason_id
       - price_difference
@@ -26302,6 +26282,7 @@ components:
       - received_at
       - fulfilled_at
       - canceled_at
+      - memo
       - stock_location_id
       x-typelizer: true
     Export:
@@ -29389,11 +29370,6 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
-        memo:
-          type: string
-          nullable: true
-        cancelable:
-          type: boolean
         label_available:
           type: boolean
         tracking:
@@ -29426,8 +29402,6 @@ components:
           nullable: true
         reason:
           "$ref": "#/components/schemas/Reason"
-        order:
-          "$ref": "#/components/schemas/Order"
         return_line_items:
           type: array
           items:
@@ -29436,6 +29410,9 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CustomField"
+        memo:
+          type: string
+          nullable: true
         stock_location_id:
           type: string
           nullable: true
@@ -29447,8 +29424,6 @@ components:
       - id
       - number
       - status
-      - memo
-      - cancelable
       - label_available
       - tracking
       - tracking_url
@@ -29460,6 +29435,7 @@ components:
       - received_at
       - refunded_at
       - canceled_at
+      - memo
       - stock_location_id
       - refunded_total
       - refundable_total
