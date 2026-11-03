@@ -27,6 +27,12 @@ RSpec.describe Spree::CustomField, type: :model do
       expect(custom_field).to be_a(Spree::CustomFields::Number)
     end
 
+    it 'builds the typed class from a prefixed definition id' do
+      custom_field = product.custom_fields.build(custom_field_definition_id: definition.prefixed_id)
+
+      expect(custom_field).to be_a(Spree::CustomFields::Number)
+    end
+
     it 'applies the type validations on the first write' do
       expect { product.set_custom_field(definition, 'abc') }.to raise_error(ActiveRecord::RecordInvalid)
     end

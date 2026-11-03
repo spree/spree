@@ -148,6 +148,16 @@ RSpec.describe Spree::CustomFieldFilterable do
       expect(filter({ 'cf_custom_launch_lteq' => '2026-10-12T10:00:00+02:00' }).first).to contain_exactly(product_1)
     end
 
+    it 'reads a bound with a space between date and time, as the dashboard sends it' do
+      expect(filter({ 'cf_custom_launch_lteq' => '2026-10-12 23:59:59.999999' }).first).to contain_exactly(product_1)
+    end
+
+    it 'compares a bare date against the whole day of a date-time field' do
+      expect(filter({ 'cf_custom_launch_eq' => '2026-10-12' }).first).to contain_exactly(product_1)
+      expect(filter({ 'cf_custom_launch_gt' => '2026-10-12' }).first).to contain_exactly(product_2)
+      expect(filter({ 'cf_custom_launch_lteq' => '2026-10-12' }).first).to contain_exactly(product_1)
+    end
+
     it 'drops a date filter it cannot read' do
       expect(filter({ 'cf_custom_launch_gt' => 'soon' }).first).to match_array([product_1, product_2, product_3])
     end
@@ -156,12 +166,21 @@ RSpec.describe Spree::CustomFieldFilterable do
       expect(filter({ 'cf_custom_zone_eq' => 'a' }).first).to contain_exactly(product_1)
       expect(filter({ 'cf_custom_zone_not_eq' => 'a' }).first).to contain_exactly(product_2)
       expect(filter({ 'cf_custom_zone_in' => %w[a b] }).first).to contain_exactly(product_1, product_2)
+      expect(filter({ 'cf_custom_zone_not_in' => %w[a] }).first).to contain_exactly(product_2)
     end
 
     it 'matches a multiple choice when any of its values matches' do
       expect(filter({ 'cf_custom_zones_eq' => 'b' }).first).to contain_exactly(product_1)
       expect(filter({ 'cf_custom_zones_in' => %w[b c] }).first).to contain_exactly(product_1, product_2)
       expect(filter({ 'cf_custom_zones_not_eq' => 'a' }).first).to contain_exactly(product_2)
+      expect(filter({ 'cf_custom_zones_not_in' => %w[a] }).first).to contain_exactly(product_2)
+    end
+
+    it 'matches a value written before the field allowed several choices' do
+      product_3.set_custom_field(zone, 'c')
+      zone.update!(validations: zone.validation_rules.merge('multiple' => true))
+
+      expect(filter({ 'cf_custom_zone_eq' => 'c' }).first).to contain_exactly(product_3)
     end
   end
 end

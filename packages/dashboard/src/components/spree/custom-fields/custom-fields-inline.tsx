@@ -415,9 +415,13 @@ export function useCustomFieldsDraft(
         return true
       }
 
-      // The rules the server checks, plus `required`, which it leaves to us.
+      // The rules the server checks on the values being written, plus
+      // `required`, which it leaves to us. A value saved before a rule changed
+      // stays as it is until it is edited, as on the server.
       const invalid = definitions.filter((def) =>
-        customFieldValueError(def, values[def.id], { checkRequired: true }),
+        changedDefinitions.includes(def)
+          ? customFieldValueError(def, values[def.id], { checkRequired: true })
+          : def.validations?.required && isBlankValue(values[def.id]),
       )
       if (invalid.length > 0) {
         setShowRequiredErrors(true)

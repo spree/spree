@@ -9,7 +9,7 @@ module Spree
       # @return [String, nil] `YYYY-MM-DD`, or nil when the input is not a date
       def self.canonical_value(input, store: nil)
         date = case input
-               when String then ::Date.iso8601(input.strip)
+               when String then ::Date.iso8601(iso8601_input(input))
                when ::Date, ::Time then input.to_date
                end
         date&.iso8601

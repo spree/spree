@@ -889,6 +889,7 @@ en:
         custom_field_validation_choices_required: must list at least one choice
         custom_field_validation_invalid_bound: "%{rule} is not a valid bound for this field type"
         custom_field_validation_min_above_max: min must not be greater than max
+        custom_field_validation_multiple_in_use: multiple cannot be turned off while values hold several choices
         custom_field_validation_not_a_boolean: "%{rule} must be true or false"
         custom_field_validation_unknown_rule: "%{rules} does not apply to this field type"
         custom_field_validations_not_an_object: must be an object of rules
