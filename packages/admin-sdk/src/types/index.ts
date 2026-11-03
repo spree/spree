@@ -96,6 +96,7 @@ export type { default as EmailCustomerGroup } from './generated/emails/EmailCust
 export type { default as EmailDelivery } from './generated/emails/EmailDelivery'
 export type { default as EmailDeliveryMethod } from './generated/emails/EmailDeliveryMethod'
 export type { default as EmailDeliveryRate } from './generated/emails/EmailDeliveryRate'
+export type { default as EmailExchange } from './generated/emails/EmailExchange'
 export type { default as EmailFee } from './generated/emails/EmailFee'
 export type { default as EmailFreightSummary } from './generated/emails/EmailFreightSummary'
 export type { default as EmailFulfillment } from './generated/emails/EmailFulfillment'

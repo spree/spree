@@ -50,6 +50,11 @@ export type DeliveryMethodFields = Filter.BooleanFilters<'available_to_sellers' 
 export type DigitalLinkFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
 
+export type ExchangeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'number'>
+  & Filter.EnumFilters<'status', 'requested' | 'approved' | 'received' | 'fulfilled' | 'canceled'>
+
 export type GiftCardFields = Filter.TextFilters<'code'>
   & Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
   & Filter.IdFilters<'created_by_id' | 'customer_id' | 'gift_card_batch_id' | 'id'>
@@ -315,6 +320,29 @@ export type DigitalLinkFilters = DigitalLinkFields
   & DigitalLinkFilterExtensions
 
 export type DigitalLinkSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof DigitalLinkSortExtensions & string)>
+
+/**
+ * Filters your app adds to Exchange lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/sdk' {
+ *       interface ExchangeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface ExchangeFilterExtensions {}
+
+/** Sort fields your app adds to Exchange lists, as keys: `{ erp_id: true }`. */
+export interface ExchangeSortExtensions {}
+
+export type ExchangeFilters = ExchangeFields
+  & {
+    search?: string
+  }
+  & Filter.OrFilters
+  & ExchangeFilterExtensions
+
+export type ExchangeSort = Filter.SortKey<'created_at' | 'id' | 'number' | 'status' | 'updated_at' | (keyof ExchangeSortExtensions & string)>
 
 /**
  * Filters your app adds to GiftCard lists. Generate them with `spree filters types`,

@@ -7,6 +7,8 @@ export const ExchangeSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
+  memo: z.string().nullable(),
+  cancelable: z.boolean(),
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   price_difference: z.string(),
@@ -16,7 +18,6 @@ export const ExchangeSchema = z.object({
   canceled_at: z.string().nullable(),
   reason: ReasonSchema.optional(),
   exchange_line_items: z.array(ExchangeLineItemSchema).optional(),
-  memo: z.string().nullable(),
   stock_location_id: z.string().nullable(),
 });
 

@@ -24,6 +24,7 @@ import type {
   NewsletterSubscriberRequestEvent,
   Order,
   OrderGroup,
+  OrderLookupRequestedEvent,
   PasswordResetRequestedEvent,
   Payment,
   PaymentSession,
@@ -179,6 +180,8 @@ export interface WebhookEventMap {
   'order.deleted': Order
   'order.delivered': Order
   'order.fulfilled': Order
+  /** Carries a live credential: delivered only to endpoints that name this event. */
+  'order.lookup_requested': OrderLookupRequestedEvent
   'order.paid': Order
   'order.placed': Order
   'order.resend_confirmation_email': Order

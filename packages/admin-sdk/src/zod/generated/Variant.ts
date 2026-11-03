@@ -22,6 +22,7 @@ export const VariantSchema = z.object({
   in_stock: z.boolean(),
   backorderable: z.boolean(),
   preorder: z.boolean(),
+  returnable: z.boolean().nullable(),
   weight: z.number().nullable(),
   height: z.number().nullable(),
   width: z.number().nullable(),
@@ -80,6 +81,7 @@ export const VariantSchema = z.object({
   in_stock: z.ZodType<Variant['in_stock']>;
   backorderable: z.ZodType<Variant['backorderable']>;
   preorder: z.ZodType<Variant['preorder']>;
+  returnable: z.ZodType<Variant['returnable']>;
   weight: z.ZodType<Variant['weight']>;
   height: z.ZodType<Variant['height']>;
   width: z.ZodType<Variant['width']>;

@@ -15,6 +15,11 @@ export const ReturnSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
+  memo: z.string().nullable(),
+  cancelable: z.boolean(),
+  label_available: z.boolean(),
+  tracking: z.string().nullable(),
+  tracking_url: z.string().nullable(),
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   refund_total: z.string(),
@@ -27,7 +32,6 @@ export const ReturnSchema = z.object({
   return_line_items: z.array(ReturnLineItemSchema).optional(),
   custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
-  memo: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
   updated_at: z.string(),
@@ -47,6 +51,11 @@ export const ReturnSchema = z.object({
   id: z.ZodType<Return['id']>;
   number: z.ZodType<Return['number']>;
   status: z.ZodType<Return['status']>;
+  memo: z.ZodType<Return['memo']>;
+  cancelable: z.ZodType<Return['cancelable']>;
+  label_available: z.ZodType<Return['label_available']>;
+  tracking: z.ZodType<Return['tracking']>;
+  tracking_url: z.ZodType<Return['tracking_url']>;
   order_id: z.ZodType<Return['order_id']>;
   reason_id: z.ZodType<Return['reason_id']>;
   refund_total: z.ZodType<Return['refund_total']>;
@@ -59,7 +68,6 @@ export const ReturnSchema = z.object({
   return_line_items: z.ZodOptional<z.ZodType<Exclude<Return['return_line_items'], undefined>>>;
   custom_fields: z.ZodOptional<z.ZodType<Exclude<Return['custom_fields'], undefined>>>;
   external_references: z.ZodType<Return['external_references']>;
-  memo: z.ZodType<Return['memo']>;
   metadata: z.ZodType<Return['metadata']>;
   created_at: z.ZodType<Return['created_at']>;
   updated_at: z.ZodType<Return['updated_at']>;

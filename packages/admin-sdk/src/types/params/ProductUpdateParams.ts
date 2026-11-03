@@ -37,6 +37,11 @@ export type ProductUpdateParams = {
    */
   delivery_profile_id?: string | null
   promotionable?: boolean
+  /**
+   * Whether customers may send this product back through self-service returns. False for final
+   * sale, or goods exempt from the EU right of withdrawal. Variants may override it.
+   */
+  returnable?: boolean
   tags?: string[]
   category_ids?: string[]
   /**

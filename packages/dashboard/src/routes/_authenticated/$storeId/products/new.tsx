@@ -16,6 +16,7 @@ import {
   type ProductFormValues,
   prepareVariantsTaxForProductSave,
   productFormSchema,
+  ReturnsCard,
   SEOCard,
   Slot,
   StatusCard,
@@ -156,6 +157,7 @@ function NewProductPage() {
         v.preorderable === true ||
         v.preorder_ships_at != null ||
         v.backorder_limit != null ||
+        v.returnable != null ||
         (v.stock_levels?.length ?? 0) > 0
       if (hasVariantOnlyData) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -237,6 +239,7 @@ function NewProductPage() {
               <PublishingCard form={form} seedDefaultChannel />
               <CategorizationCard form={form} />
               <TaxCard form={form} />
+              <ReturnsCard form={form} />
               <SEOCard form={form} />
               <Slot name="product.form_sidebar" context={{ product: undefined, mode: 'new' }} />
             </>

@@ -7,6 +7,8 @@ export const ExchangeSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
+  memo: z.string().nullable(),
+  cancelable: z.boolean(),
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   price_difference: z.string().nullable(),

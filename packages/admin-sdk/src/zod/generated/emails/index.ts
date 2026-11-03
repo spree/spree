@@ -7,6 +7,7 @@ export { EmailCustomerGroupSchema, type EmailCustomerGroup } from './EmailCustom
 export { EmailDeliverySchema, type EmailDelivery } from './EmailDelivery';
 export { EmailDeliveryMethodSchema, type EmailDeliveryMethod } from './EmailDeliveryMethod';
 export { EmailDeliveryRateSchema, type EmailDeliveryRate } from './EmailDeliveryRate';
+export { EmailExchangeSchema, type EmailExchange } from './EmailExchange';
 export { EmailFeeSchema, type EmailFee } from './EmailFee';
 export { EmailFreightSummarySchema, type EmailFreightSummary } from './EmailFreightSummary';
 export { EmailFulfillmentSchema, type EmailFulfillment } from './EmailFulfillment';
