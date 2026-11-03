@@ -132,8 +132,92 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
 
   describe '.searchable_field_type_tokens / .sortable_field_type_tokens' do
     it 'derives tokens from custom_field type class capabilities' do
-      expect(described_class.searchable_field_type_tokens).to match_array(%w[short_text long_text number])
-      expect(described_class.sortable_field_type_tokens).to match_array(%w[short_text number])
+      expect(described_class.searchable_field_type_tokens).to match_array(%w[short_text long_text number date date_time choice])
+      expect(described_class.sortable_field_type_tokens).to match_array(%w[short_text number date date_time choice])
+    end
+
+    it 'refuses sortable on a choice field that allows several values' do
+      definition = build(:custom_field_definition, :multiple_choice_field, sortable: true)
+
+      expect(definition).not_to be_valid
+      expect(definition.errors[:sortable]).to be_present
+      expect(build(:custom_field_definition, :choice_field, sortable: true)).to be_valid
+    end
+  end
+
+  describe 'storefront_visible default' do
+    it 'is hidden from the storefront unless the merchant asks' do
+      expect(described_class.new.storefront_visible).to be(false)
+    end
+  end
+
+  describe 'fixed types' do
+    let(:definition) { create(:custom_field_definition, :number_field) }
+
+    it 'rejects a field_type change on a saved definition' do
+      definition.field_type = 'short_text'
+
+      expect(definition).not_to be_valid
+      expect(definition.errors[:field_type]).to include(I18n.t('spree.errors.messages.custom_field_type_cannot_change'))
+    end
+
+    it 'rejects a resource_type change on a saved definition' do
+      definition.resource_type = 'order'
+
+      expect(definition).not_to be_valid
+      expect(definition.errors[:resource_type]).to be_present
+    end
+
+    it 'accepts the same types named by their API tokens' do
+      definition.field_type = 'number'
+      definition.resource_type = 'product'
+
+      expect(definition).to be_valid
+    end
+  end
+
+  describe 'validations' do
+    it 'stores bounds in the canonical form of the type' do
+      number = create(:custom_field_definition, :number_field, validations: { 'min' => '1', 'max' => '2.5' })
+      date_time = create(:custom_field_definition, :date_time_field, validations: { min: '2026-01-01T10:00:00+02:00' })
+
+      expect(number.validation_rules).to eq('min' => 1, 'max' => 2.5)
+      expect(date_time.validation_rules).to eq('min' => '2026-01-01T08:00:00Z')
+    end
+
+    it 'treats empty rules as none' do
+      definition = create(:custom_field_definition, validations: {})
+
+      expect(definition.validations).to be_nil
+      expect(definition.validation_rules).to eq({})
+      expect(definition).not_to be_required
+    end
+
+    it 'rejects rules that do not apply to the field type' do
+      definition = build(:custom_field_definition, :boolean_field, validations: { min: 1 })
+
+      expect(definition).not_to be_valid
+      expect(definition.errors[:validations].first).to include('min')
+    end
+
+    it 'rejects a bound the type cannot read, and min above max' do
+      expect(build(:custom_field_definition, :date_field, validations: { min: 'soon' })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { min: -1 })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { min: 5, max: 2 })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { min: 2, max: 5, required: true })).to be_valid
+    end
+
+    it 'rejects a non-boolean required or multiple' do
+      expect(build(:custom_field_definition, validations: { required: 'yes' })).not_to be_valid
+    end
+
+    it 'requires choices on a choice field, unique by value, labelled by value when unlabelled' do
+      expect(build(:custom_field_definition, :choice_field, validations: nil)).not_to be_valid
+      expect(build(:custom_field_definition, :choice_field, validations: { choices: [{ value: 'a' }, { value: 'a' }] })).not_to be_valid
+      expect(build(:custom_field_definition, :choice_field, validations: { choices: ['a'] })).not_to be_valid
+
+      definition = create(:custom_field_definition, :choice_field, validations: { choices: [{ value: ' a ' }] })
+      expect(definition.choices).to eq([{ 'value' => 'a', 'label' => 'a' }])
     end
   end
 

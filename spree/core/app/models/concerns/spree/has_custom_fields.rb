@@ -134,16 +134,6 @@ module Spree
           return nil
         end
 
-        # JSON custom fields store canonical JSON in the underlying text column.
-        # Coerce Hash/Array values BEFORE assignment, since the STI subclass
-        # (`Spree::CustomFields::Json`) isn't switched on until before_validation,
-        # so its custom `value=` writer doesn't run yet on a fresh
-        # `find_or_initialize_by` record.
-        if (value.is_a?(Hash) || value.is_a?(Array)) &&
-           custom_field.custom_field_definition&.field_type == 'json'
-          value = value.to_json
-        end
-
         custom_field.value = value
         custom_field.save!
         custom_field

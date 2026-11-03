@@ -573,7 +573,15 @@
         "empty_title": "尚无自定义字段",
         "errors": {
           "failed_to_save": "保存自定义字段失败",
-          "failed_to_load": "无法加载自定义字段。请刷新页面重试。"
+          "failed_to_load": "无法加载自定义字段。请刷新页面重试。",
+          "required": "请输入值",
+          "too_short": "至少使用 {{count}} 个字符",
+          "too_long": "最多使用 {{count}} 个字符",
+          "less_than_min": "必须至少为 {{min}}",
+          "greater_than_max": "必须最多为 {{max}}",
+          "before_min": "必须在 {{min}} 当天或之后",
+          "after_max": "必须在 {{max}} 当天或之前",
+          "choice_not_offered": "{{value}} 不是可选项之一"
         },
         "manage_in_settings": "在设置中管理",
         "new_definition_description": "定义自定义字段，以在您的{{resource}}上存储有类型的结构化信息。",
@@ -582,7 +590,11 @@
         "section_title": "自定义字段",
         "set_up": "设置自定义字段",
         "values_save_partial_failed": "部分自定义字段无法保存：{{fields}}",
-        "values_saved": "自定义字段已保存"
+        "values_saved": "自定义字段已保存",
+        "required_field_hint": "必填",
+        "values_invalid": "保存前请修正以下自定义字段：{{fields}}",
+        "choose": "选择…",
+        "no_choices": "没有匹配的选项"
       }
     },
     "custom_field_definitions": {
@@ -1378,7 +1390,10 @@
             "long_text": "长文本",
             "number": "数字",
             "rich_text": "富文本",
-            "short_text": "短文本"
+            "short_text": "短文本",
+            "date": "日期",
+            "date_time": "日期和时间",
+            "choice": "选项"
           },
           "read_only_help": "一旦存在值，类型便无法更改——更改类型会导致已存储的值被错误解析。"
         },
@@ -1423,16 +1438,50 @@
           "api_only_group": "仅通过 API"
         },
         "searchable": {
-          "help": "将值纳入店面商品全文搜索（仅短文本、长文本和数字）。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。",
+          "help": "将值纳入店面商品全文搜索。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。",
           "label": "可搜索"
         },
         "sortable": {
-          "help": "允许店面商品列表按此字段排序（仅短文本和数字）。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。",
+          "help": "允许店面商品列表按此字段排序。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。",
           "label": "可排序"
         },
         "storefront_visible": {
           "column_label": "网店",
           "label": "在网店中显示"
+        },
+        "validations": {
+          "title": "验证",
+          "help": "保存值时检查。现有值在编辑前保持不变。",
+          "required": {
+            "label": "必填",
+            "help": "标记该字段，并阻止此后台将其保存为空。"
+          },
+          "min": {
+            "length": "最少字符数",
+            "number": "最小值",
+            "date": "最早日期",
+            "date_time": "最早日期和时间"
+          },
+          "max": {
+            "length": "最多字符数",
+            "number": "最大值",
+            "date": "最晚日期",
+            "date_time": "最晚日期和时间"
+          },
+          "choices": {
+            "label": "选项",
+            "value": "值",
+            "choice_label": "显示标签",
+            "add": "添加选项",
+            "remove": "删除选项",
+            "required": "请至少添加一个选项",
+            "value_required": "请输入值",
+            "duplicate": "每个值必须不同"
+          },
+          "multiple": {
+            "label": "允许多选",
+            "help": "值将变为列表。多选字段不能用于排序。"
+          }
         }
       },
       "customer": {

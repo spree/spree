@@ -12,6 +12,18 @@ describe Spree::CustomFields::Number, type: :model do
     end
   end
 
+  describe 'range rules' do
+    it 'checks the value against min and max' do
+      custom_field_definition.update!(validations: { min: 0, max: 100.5 })
+
+      expect(custom_field).to be_invalid
+      custom_field.value = '100.5'
+      expect(custom_field).to be_valid
+      custom_field.value = '-1'
+      expect(custom_field).to be_invalid
+    end
+  end
+
   describe '#serialize_value' do
     it 'returns the number' do
       expect(custom_field.valid?).to be true

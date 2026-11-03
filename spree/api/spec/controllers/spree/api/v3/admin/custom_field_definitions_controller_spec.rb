@@ -126,6 +126,35 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       end
     end
 
+    it 'defaults to hidden from the storefront' do
+      post :create, params: create_params.except(:storefront_visible), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['storefront_visible']).to eq(false)
+    end
+
+    it 'creates a choice field with its rules' do
+      post :create,
+           params: create_params.merge(
+             key: 'zone', field_type: 'choice',
+             validations: { required: true, multiple: true, choices: [{ value: 'a', label: 'Zone A' }, { value: 'b' }] }
+           ),
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['validations']).to eq(
+        'required' => true, 'min' => nil, 'max' => nil, 'multiple' => true,
+        'choices' => [{ 'value' => 'a', 'label' => 'Zone A' }, { 'value' => 'b', 'label' => 'b' }]
+      )
+    end
+
+    it 'returns 422 naming a rule the field type does not take' do
+      post :create, params: create_params.merge(field_type: 'boolean', validations: { max: 3 }), as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'details', 'validations')).to be_present
+    end
+
     context 'when label is omitted' do
       it 'derives the name from the titleized key' do
         post :create, params: create_params.except(:label), as: :json
@@ -173,6 +202,32 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       expect(json_response['label']).to eq('Fabric Composition')
       expect(json_response['storefront_visible']).to eq(false)
       expect(product_definition.reload.storefront_visible).to be(false)
+    end
+
+    it 'replaces the rules, and null removes them' do
+      patch :update, params: { id: product_definition.prefixed_id, validations: { min: 2, max: 40 } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['validations']).to include('min' => 2, 'max' => 40)
+
+      patch :update, params: { id: product_definition.prefixed_id, validations: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(product_definition.reload.validations).to be_nil
+    end
+
+    it 'returns 422 when the request tries to change the field type or resource type' do
+      patch :update, params: { id: product_definition.prefixed_id, field_type: 'number', resource_type: 'order' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'details').keys).to include('field_type', 'resource_type')
+      expect(product_definition.reload.field_type).to eq('short_text')
+    end
+
+    it 'accepts an update that repeats the stored types' do
+      patch :update, params: { id: product_definition.prefixed_id, field_type: 'short_text', label: 'Fabric' }, as: :json
+
+      expect(response).to have_http_status(:ok)
     end
   end
 

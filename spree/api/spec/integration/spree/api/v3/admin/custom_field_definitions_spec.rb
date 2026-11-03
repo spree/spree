@@ -82,6 +82,30 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           expect(data['storefront_visible']).to eq(true)
         end
       end
+
+      response '201', 'choice definition created with validation rules' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) do
+          {
+            namespace: 'warehouse',
+            key: 'zone',
+            label: 'Warehouse zone',
+            field_type: 'choice',
+            resource_type: 'product',
+            validations: {
+              required: true,
+              choices: [{ value: 'a', label: 'Zone A' }, { value: 'b', label: 'Zone B' }]
+            }
+          }
+        end
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['storefront_visible']).to eq(false)
+          expect(data['validations']['required']).to eq(true)
+          expect(data['validations']['choices'].map { |choice| choice['value'] }).to eq(%w[a b])
+        end
+      end
     end
   end
 
@@ -138,6 +162,13 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           expect(data['label']).to eq('Fabric Composition')
           expect(data['storefront_visible']).to eq(false)
         end
+      end
+
+      response '422', 'field type cannot change' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { field_type: 'number' } }
+
+        run_test!
       end
     end
 
