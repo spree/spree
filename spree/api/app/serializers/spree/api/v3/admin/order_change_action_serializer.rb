@@ -2,7 +2,6 @@ module Spree
   module Api
     module V3
       module Admin
-        # One proposed mutation inside an order change.
         class OrderChangeActionSerializer < V3::BaseSerializer
           typelize kind: [:string, enum: Spree::OrderChangeAction.kinds, enum_type_name: 'OrderChangeActionKind',
                                    comment: 'What the action does to the order. Extensions may register further kinds.'],

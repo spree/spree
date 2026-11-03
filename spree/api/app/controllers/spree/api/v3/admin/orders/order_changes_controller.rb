@@ -32,6 +32,7 @@ module Spree
             end
 
             before_action :set_resource, only: [:show, :confirm, :cancel]
+            before_action :ensure_actions_are_objects, only: [:create, :preview]
 
             # POST /api/v3/admin/orders/:order_id/order_changes
             def create
@@ -94,6 +95,12 @@ module Spree
             end
 
             private
+
+            def ensure_actions_are_objects
+              return if Array(params[:actions]).all?(ActionController::Parameters)
+
+              render_service_error(:order_change_actions_malformed)
+            end
 
             # Every id resolves through this order or this store, so a payload
             # cannot name another order's line or another store's variant —

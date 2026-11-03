@@ -10,10 +10,9 @@ module Spree
         super
 
         ApplicationRecord.transaction do
-          # The same locks Confirm takes, so a cancel racing a confirm sees
-          # the set as it was left rather than overwriting a confirmed one.
-          order_change.order.lock!
-          order_change.status = Spree::OrderChange.lock.where(id: order_change.id).pick(:status)
+          # A cancel racing a confirm sees the set as that left it, rather
+          # than overwriting a confirmed one.
+          order_change.lock_for_transition!
           failure(order_change, :order_change_not_open) unless order_change.open?
           order_change.update!(status: 'canceled', canceled_at: Time.current)
           run_hooks :after_cancel

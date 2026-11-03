@@ -58,6 +58,12 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(json_response['error']['message']).to match(/returns, exchanges and claims/i)
     end
 
+    it 'refuses actions that are not objects' do
+      post :preview, params: { order_id: order.prefixed_id, actions: ['x'] }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'refuses an action missing what its kind needs' do
       post :preview, params: { order_id: order.prefixed_id, actions: [{ kind: 'update_item', quantity: 2 }] }, as: :json
 

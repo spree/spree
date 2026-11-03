@@ -1,8 +1,6 @@
 module Spree
   module Api
     module V3
-      # Payload of the order_change.* events. What the change did stays behind
-      # the Admin API: an integration reads its actions there.
       class OrderChangeEventSerializer < BaseSerializer
         typelize status: :string,
                  order_id: :string,
