@@ -417,14 +417,14 @@ module Spree
       reprice(persist: true)
     end
 
-    # Whether this line may come back through self-service returns: on an
-    # order, the answer frozen when it was placed; on a cart, the variant's
-    # current one, so a shopper is never told a line is returnable after the
+    # Whether this line may come back through self-service returns: on a
+    # placed order, the answer frozen when it was placed; on a cart or a draft,
+    # the variant's current one, so a shopper is never told a line is returnable after the
     # merchant marked it final sale.
     #
     # @return [Boolean]
     def returnable_now?
-      return returnable if order.present?
+      return returnable if order.present? && !order.draft?
 
       variant.present? ? variant.returnable? : returnable
     end

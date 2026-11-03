@@ -117,7 +117,9 @@ module Spree
         end
       rescue StandardError => e
         Rails.error.report(e, handled: true, context: { order_id: order.id }, source: 'spree.returns.eligibility')
-        []
+        # For the order as a whole the preview stays quiet; for a unit, a rule
+        # that could not answer must not read as "returnable".
+        items.empty? ? [] : [{ code: 'unavailable', message: I18n.t('spree.return_errors.unavailable') }]
       end
 
       def claimed_quantities

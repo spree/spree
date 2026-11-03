@@ -49,7 +49,7 @@ Each step is its own API call, because each one needs information the last one d
 
 ## Customer self-service
 
-Customers return or exchange what they bought from their order page, and report a damaged or missing item as a claim. Opening a request and withdrawing it before the store acts are the customer's. Approving, receiving and refunding stay with the merchant. The [Next.js storefront](https://github.com/spree/storefront) ships this as a returns portal on the order page; any storefront can build the same flow on the Store API.
+Customers return or exchange what they bought from their order page, and report a damaged or missing item as a claim. Opening a request and withdrawing it before the store acts are the customer's. Approving, receiving and refunding stay with the merchant. Any storefront can build a returns portal on the order page with the Store API below; the [Next.js storefront](https://github.com/spree/storefront) is adding one.
 
 ### Showing what can come back
 
@@ -65,8 +65,10 @@ Both answers come from the same return rules that decide the create call, includ
 ```typescript Store SDK
 const order = await client.orders.get('or_xxx')
 
-if (order.returns_eligibility.eligible) {
-  const units = order.fulfillments.flatMap((f) => f.items.flatMap((row) => row.units))
+// A checkout split across sellers answers with its group; returns are opened
+// per seller order, so read them from each order in the group.
+if (!('orders' in order) && order.returns_eligibility?.eligible) {
+  const units = order.fulfillments.flatMap((f) => f.items.flatMap((row) => row.units ?? []))
   const returnable = units.filter((unit) => unit.returnable_quantity > 0)
 }
 

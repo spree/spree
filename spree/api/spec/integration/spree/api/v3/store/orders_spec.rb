@@ -3,6 +3,15 @@
 require 'swagger_helper'
 
 RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+  # The return rules core registers at boot, which an earlier spec clearing
+  # the hook registry may have removed: the example then shows what a real
+  # store answers for units that have not shipped.
+  before do
+    %w[Spree::Returns::EligibilityValidator Spree::Returns::DigitalContentValidator Spree::Returns::ReturnableValidator].each do |validator|
+      Spree.hooks.register('returns.create.validate', validator)
+    end
+  end
+
   include_context 'API v3 Store'
 
   let(:user) { create(:user_with_addresses) }

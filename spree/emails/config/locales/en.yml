@@ -141,7 +141,7 @@ en:
         items: Items you are returning
         message: Your return request %{number} for order %{order_number} has reached us. This email is your confirmation.
         next_steps: What happens next
-        next_steps_message: We will review your request and email you where to send the items. Your refund goes back to the payment method you used, within 14 days of us receiving the items or proof that you sent them.
+        next_steps_message: We will review your request and email you where to send the items. Your refund is made within 14 days of us receiving the items or proof that you sent them, to the payment method you used unless we agree otherwise.
         note: 'Your note: %{note}'
         order_placed: Order %{number}, placed on %{date}
         policy: Read our return policy
