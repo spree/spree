@@ -23,6 +23,14 @@ export type ProductUpdateParams = {
    */
   delivery_profile_id?: string
   /**
+   * Which markets may see and buy the product: `all` (the default), `all_except` the markets in
+   * `market_ids`, or `only` those markets. A product a market excludes is hidden there everywhere,
+   * including its own URL.
+   */
+  market_availability?: 'all' | 'all_except' | 'only'
+  /** The markets `market_availability` names (`mkt_...`). Required unless the mode is `all`. */
+  market_ids?: string[]
+  /**
    * Shorthand for a simple (no-options) product: per-currency prices that forward to the product's
    * sole variant.
    */

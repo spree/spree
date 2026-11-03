@@ -32,6 +32,7 @@ import type {
   ImportSort,
   Invitation,
   InvitationAcceptanceLink,
+  Market,
   OptionType,
   Order,
   PackageType,
@@ -1142,6 +1143,18 @@ export class SellerClient {
       this.request<OptionType>('GET', `/option_types/${id}`, {
         ...options,
         params: params?.expand?.length ? { expand: params.expand.join(',') } : undefined,
+      }),
+  }
+
+  /**
+   * The marketplace's markets, for choosing where a product may be sold. Read
+   * only: send the chosen ids as a product's `market_ids`.
+   */
+  readonly markets = {
+    list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<Market>> =>
+      this.request<PaginatedResponse<Market>>('GET', '/markets', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
       }),
   }
 

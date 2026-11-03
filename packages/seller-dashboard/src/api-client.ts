@@ -145,6 +145,9 @@ export function createSellerApiClient({
           runtimeListParams({ ...params, expand: ['option_values'] }),
         ),
     },
+    markets: {
+      list: (params) => sellerClient().markets.list(runtimeListParams(params)),
+    },
     // What this seller packs into: their own boxes and cartons, plus the
     // marketplace's shared packaging, which the API lists read-only. Backs
     // both the packaging settings page and the variant editor's carton

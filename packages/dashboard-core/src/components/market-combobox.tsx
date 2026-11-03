@@ -1,4 +1,3 @@
-import type { Market } from '@spree/admin-sdk'
 import {
   Combobox,
   ComboboxChip,
@@ -13,6 +12,9 @@ import {
 } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+/** All the picker reads, so either panel's market records fit. */
+type Market = { id: string; name: string }
 
 /**
  * Searchable multi-select market picker. Value is an array of prefixed

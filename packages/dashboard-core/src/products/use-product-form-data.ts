@@ -47,6 +47,18 @@ export function useFormOptionTypes(enabled = true) {
   })
 }
 
+export function useFormMarkets(enabled = true) {
+  const client = getApiClient()
+
+  return useQuery({
+    queryKey: useResourceKey('markets', 'panel-form'),
+    queryFn: async (): Promise<{ data: PanelNamedRecord[] }> =>
+      (await client.markets?.list({ limit: 100 })) ?? { data: [] },
+    enabled: enabled && Boolean(client.markets),
+    staleTime: FIVE_MINUTES,
+  })
+}
+
 export function useFormCategories(enabled = true) {
   const client = getApiClient()
 
