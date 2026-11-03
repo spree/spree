@@ -1,3 +1,15 @@
+## 2026-11-03: A bought gift card is optional-recipient, refunded like Shopify, and kept out of promotions line by line
+
+**Context:** Phase 2 of the loyalty plan makes a gift card a product a shopper can buy. Three questions the plan left open were settled against Shopify, Medusa, Saleor and Vendure, and reading the promotion engine showed the plan's promotions rule rested on a check that does not exist.
+
+**Decision:** The recipient on a gift card line is optional; without one the code is emailed to the order's email, as on Shopify and Vendure. Gift card lines for the same variant merge only when the recipient is identical, so two recipients make two lines. Cancelling an order with a refund, or refunding a return that holds a gift card line, cancels that line's unused cards (a cancellation that keeps the money leaves them alone); a card already partly or fully spent is left alone and the refund goes through, as on Shopify. Non-promotionable products are now excluded from discounts per line: no line discount, no share of an order discount, and no weight in the amount promotions measure or in the item total rule. Before this, `promotionable` only decided whether a whole order qualified.
+
+Cards are issued on `order.placed` as well as `order.paid`, whichever finds the order paid in full, because a payment captured during checkout announces no `order.paid`. The gift card flag cannot change once the product has been ordered. Whether an item carries tax is answered by `Spree::TaxProvider::Base#taxable_item?`.
+
+**Consequences:** A buyer can be refunded for value a recipient has already spent; the merchant decides. Every product with `promotionable: false`, not only gift cards, stops taking discounts it was taking before — the behaviour the flag always described. The buyer sees the cards their order issued masked on the order, never the code.
+
+**Plans amended:** `6.0-6.1-loyalty-gift-cards-store-credits.md` (Key Decisions, Cancellation and refunds, Store API and storefront).
+
 ## 2026-10-06: Custom fields stay a merchant-facing feature, not a data modelling system
 
 **Context:** Custom fields were heading toward a general-purpose schema (record references, files, value lists, reusable content types) while basic gaps went unfixed: admin-only fields leaked through storefront search, a definition's type can change under existing values, shoppers cannot fill a field in at checkout, and core itself stores integration data in auto-created definitions. Revised 2026-11-02 after a review against the code and the plans written since, with 6.0.0 already released.
