@@ -41,7 +41,7 @@ module Spree
            store setup_task update_status diagnostics api_key oauth_application oauth_access_token oauth_consent_request oauth_redirect
            oauth_protected_resource allowed_origin webhook_endpoint webhook_event webhook_delivery invitation
            invitation_acceptance_link role permission export saved_report import import_row import_mapping promotion
-           maintenance_task_run
+           maintenance_task_run order_change order_change_action order_change_preview
            promotion_action promotion_rule coupon_code price_adjustment_tier price_list price_rule
            resource_translations translatable_resource translation_coverage
            resource_type_definition payment_method_type integration_type_definition calculator_type

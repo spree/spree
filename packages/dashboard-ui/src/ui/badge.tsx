@@ -84,6 +84,7 @@ const statusToneMap: Record<string, StatusTone> = {
   authorized: 'info',
   complete: 'success',
   completed: 'success',
+  confirmed: 'success',
   placed: 'success',
   paid: 'success',
   fulfilled: 'success',
@@ -155,6 +156,7 @@ const statusToneMap: Record<string, StatusTone> = {
   refunded: 'success',
   resolved: 'success',
   denied: 'destructive',
+  declined: 'destructive',
   // Inventory operations. `received` is deliberately absent: on a return it
   // means the merchant still owes a refund, on a transfer or purchase order it
   // means the job is done — one code, two tones, so those two callers pass

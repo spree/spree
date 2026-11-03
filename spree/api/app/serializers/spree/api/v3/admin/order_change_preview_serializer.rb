@@ -1,0 +1,28 @@
+module Spree
+  module Api
+    module V3
+      module Admin
+        # What an order would look like after a change, computed and thrown
+        # away — nothing is saved.
+        class OrderChangePreviewSerializer < V3::BaseSerializer
+          # A value object, not a record — it has no id of its own.
+          _attributes.delete(:id)
+
+          typelize currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode']
+
+          attributes :currency
+
+          money_attributes :item_total, :discount_total, :delivery_total, :tax_total, :included_tax_total,
+                           :additional_tax_total, :fee_total, :total,
+                           :previous_total, :outstanding_balance, :balance_delta,
+                           descriptions: {
+                             total: 'The order total after the change.',
+                             previous_total: 'The order total before the change.',
+                             outstanding_balance: 'What the customer would still owe after the change. Negative when they would be owed money back.',
+                             balance_delta: 'How far the total moves: positive when the customer would owe more, negative when they would be owed a refund.'
+                           }
+        end
+      end
+    end
+  end
+end
