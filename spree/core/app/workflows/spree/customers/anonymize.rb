@@ -266,6 +266,13 @@ module Spree
 
         owned_purchases(Spree::OrderGroup).
           update_all(email: customer.email, metadata: {}, updated_at: Time.current)
+
+        # Someone the buyer named as a gift card recipient goes with the
+        # purchase. The card, a bearer instrument already delivered, stays.
+        bought_lines = Spree::LineItem.where(order_id: owned_purchases(Spree::Order).select(:id)).
+                       or(Spree::LineItem.where(cart_id: owned_purchases(Spree::Cart).select(:id)))
+        Spree::GiftCardRecipient.where(line_item_id: bought_lines.select(:id)).
+          update_all(email: customer.email, name: nil, message: nil, updated_at: Time.current)
       end
 
       # Everything this person bought, however they were signed in at the time.
