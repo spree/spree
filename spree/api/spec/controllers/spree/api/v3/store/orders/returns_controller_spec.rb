@@ -26,13 +26,16 @@ RSpec.describe Spree::Api::V3::Store::Orders::ReturnsController, type: :controll
       expect(json_response['number']).to start_with('RET')
     end
 
+    # The memo also holds staff notes, such as a cancellation reason.
     it 'does not expose staff-only fields to the customer' do
       post :create, params: {
         order_id: order.to_param,
+        memo: 'Too small',
         items: [{ fulfillment_item_id: fulfillment_item.prefixed_id, quantity: 1 }]
       }, as: :json
 
       expect(json_response).not_to have_key('memo')
+      expect(json_response).not_to have_key('metadata')
       expect(json_response).not_to have_key('created_at')
       expect(json_response).not_to have_key('created_by_id')
     end
@@ -81,6 +84,21 @@ RSpec.describe Spree::Api::V3::Store::Orders::ReturnsController, type: :controll
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(return_record.prefixed_id)
+    end
+  end
+
+  describe 'retired reasons' do
+    it 'refuses a reason the store has retired' do
+      retired = create(:return_reason, store: store, active: false)
+
+      post :create, params: {
+        order_id: order.to_param,
+        reason_id: retired.prefixed_id,
+        items: [{ fulfillment_item_id: fulfillment_item.prefixed_id, quantity: 1 }]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(order.reload.returns).to be_empty
     end
   end
 

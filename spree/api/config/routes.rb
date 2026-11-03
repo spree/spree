@@ -70,15 +70,30 @@ Spree::Core::Engine.add_routes do
 
         # Orders (single order lookup, guest-accessible via order token)
         resources :orders, only: [:show] do
-          # Customer self-service returns — opening and viewing only; the
+          # Customer self-service returns and exchanges — opening, viewing
+          # and withdrawing a request the merchant has not acted on yet; the
           # merchant approves, receives and refunds through the Admin API.
           resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
-            get :label, on: :member
+            member do
+              get :label
+              patch :cancel
+            end
+          end
+          resources :exchanges, only: [:index, :show, :create], controller: 'orders/exchanges' do
+            patch :cancel, on: :member
           end
           resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
           # Read-only — the registration frozen onto the order at completion.
           resource :tax_identifier, only: [:show], controller: 'orders/tax_identifiers'
         end
+
+        # "Find my order": always 202, emails the order's own address on a match.
+        resources :order_lookups, only: [:create]
+
+        # The reasons a customer picks from when sending something back or
+        # reporting a problem. Read-only; the merchant owns the vocabulary.
+        resources :return_reasons, only: [:index]
+        resources :claim_reasons, only: [:index]
 
         # Policies (return policy, privacy policy, terms of service, etc.)
         resources :policies, only: [:index, :show]

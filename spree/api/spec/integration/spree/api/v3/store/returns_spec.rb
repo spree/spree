@@ -73,4 +73,50 @@ RSpec.describe 'Order Returns API', type: :request, swagger_doc: 'api-reference/
       end
     end
   end
+
+  path '/api/v3/store/orders/{order_id}/returns/{id}/cancel' do
+    parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Return prefixed ID'
+
+    patch 'Withdraw a return request' do
+      tags 'Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Withdraws a return the customer opened, while the merchant has not acted on it yet (`cancelable` on the return). Accessible via JWT or the order token header for guests.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: false,
+                description: 'Bearer token for authenticated customers'
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false,
+                description: 'Order token for guest access'
+
+      let(:'x-spree-api-key') { api_key.token }
+      let(:'Authorization') { "Bearer #{jwt_token}" }
+      let(:order_id) { order.prefixed_id }
+
+      response '200', 'return withdrawn' do
+        let(:id) { return_record.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Return'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)).to include('status' => 'canceled', 'cancelable' => false)
+        end
+      end
+
+      response '422', 'the merchant has already acted on it' do
+        let(:id) do
+          return_record.update_columns(status: 'approved', approved_at: Time.current)
+          return_record.prefixed_id
+        end
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(response.body).to include('can no longer be withdrawn')
+          expect(return_record.reload.status).to eq('approved')
+        end
+      end
+    end
+  end
 end
