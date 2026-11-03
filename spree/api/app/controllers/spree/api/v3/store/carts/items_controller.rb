@@ -69,7 +69,7 @@ module Spree
 
                 # Checked now and written last, so a refused request never
                 # leaves a new recipient behind.
-                recipient = @line_item.stage_gift_card_recipient(permitted_params[:recipient].to_h) if permitted_params[:recipient].present?
+                recipient = permitted_params[:recipient].present? ? @line_item.stage_gift_card_recipient(permitted_params[:recipient].to_h) : nil
                 return render_validation_error(recipient.errors) if recipient&.invalid?
 
                 if permitted_params[:quantity].present?
