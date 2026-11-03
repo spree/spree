@@ -65,6 +65,22 @@ module Spree
         end
       end
 
+      # The resolver may now answer differently from the price the line was
+      # sold at; after placement only the quantity moves.
+      context 'raising the quantity of a line on a placed order' do
+        let(:order) { create(:completed_order_with_totals, store: store) }
+        let(:line_item) { order.line_items.first }
+        let(:items) { [{ variant_id: line_item.variant.prefixed_id, quantity: 3 }] }
+
+        before { line_item.update_columns(price: 4.5) }
+
+        it 'keeps the price the line was sold at' do
+          expect(subject).to be_success
+          expect(line_item.reload.quantity).to eq(3)
+          expect(line_item.price).to eq(4.5)
+        end
+      end
+
       context 'mix of new and existing line items' do
         let!(:existing_line_item) { create(:line_item, order: order, variant: variant, quantity: 5) }
 
