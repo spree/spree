@@ -24,7 +24,7 @@ module Spree
         end
 
         def order_total(order)
-          order.item_total + order.delivery_total - order.fulfillment_discount
+          order.item_total - order.non_promotionable_amount + order.delivery_total - order.fulfillment_discount
         end
       end
     end

@@ -26,7 +26,7 @@ module Spree
             workflow = Spree.cart_upsert_items_workflow.new
             result = workflow.call(
               cart: cart,
-              items: removals.map { |line_item| { variant_id: line_item.variant_id, quantity: 0 } }
+              items: removals.map { |line_item| { variant_id: line_item.variant_id, line_item_id: line_item.id, quantity: 0 } }
             )
 
             # Nothing was removed — reporting the candidates as removed would

@@ -20,7 +20,7 @@ module Spree
         workflow = (cart_owned ? Spree.cart_upsert_items_workflow : Spree.order_upsert_items_workflow).new
         result = workflow.call(
           **(cart_owned ? { cart: owner } : { order: owner }),
-          items: [{ variant_id: line_item.variant_id, quantity: quantity }]
+          items: [{ variant_id: line_item.variant_id, line_item_id: line_item.id, quantity: quantity }]
         )
 
         return failure(line_item, result.error) if result.failure?

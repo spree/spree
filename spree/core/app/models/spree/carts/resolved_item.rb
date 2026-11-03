@@ -11,6 +11,9 @@ module Spree
       # the resolver, an amount negotiates the line (price_source 'manual'),
       # an explicit nil reverts a negotiated line to catalog pricing.
       attribute :price_provided, :boolean, default: false
+      # Set when the caller names the line itself rather than its variant —
+      # a gift card variant can sit on several lines, one per recipient.
+      attribute :line_item_id, :integer
       attr_accessor :variant, :metadata, :price
 
       def metadata

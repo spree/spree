@@ -239,6 +239,7 @@ module Spree
         # Engines a market can select. Concatenated, not assigned: provider gems
         # and host apps append theirs from initializer files, which run first.
         Rails.application.config.spree.tax_providers.concat [Spree::TaxProvider::Internal]
+        Rails.application.config.spree.cart_copiers.concat [Spree::GiftCardRecipients::CopyFromCart]
 
         # Pricing and inventory sources. Internal is Spree's own catalog and
         # stock records; connector gems append theirs so a merchant picks from
@@ -561,6 +562,7 @@ module Spree
         Spree.subscribers.concat [
           Spree::OrderPlacedSubscriber,
           Spree::OrderCommissionSubscriber,
+          Spree::GiftCardIssuanceSubscriber,
           Spree::OrderStatusSubscriber,
           Spree::PaymentSplitSubscriber,
           Spree::SellerTransferSubscriber,
