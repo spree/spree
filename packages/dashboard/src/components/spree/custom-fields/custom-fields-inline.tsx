@@ -30,11 +30,13 @@ import type { CustomFieldFormValues } from '@spree/dashboard-core'
 import {
   customFieldComponents,
   mapSpreeErrorsToForm,
+  StoreDatePicker,
   useCreateCustomField,
   useCreateCustomFieldDefinition,
   useCustomFieldDefinitions,
   useCustomFields,
   usePermissions,
+  useStore,
   useUpdateCustomField,
 } from '@spree/dashboard-core'
 import {
@@ -44,6 +46,15 @@ import {
   CardHeader,
   CardTitle,
   CollapsibleCard,
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -51,9 +62,15 @@ import {
   EmptyMedia,
   EmptyTitle,
   Field,
+  FieldError,
   FieldLabel,
   Input,
   RichTextEditor,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -64,6 +81,7 @@ import {
   Switch,
   Textarea,
   toastManager,
+  useComboboxAnchor,
 } from '@spree/dashboard-ui'
 import {
   Loader2Icon,
@@ -73,6 +91,8 @@ import {
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
+import { parseISO } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import type { TFunction } from 'i18next'
 import {
   createContext,
@@ -90,6 +110,7 @@ import {
   type CustomFieldDefinitionFormValues,
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
+  customFieldValueError,
 } from '../../../schemas/custom-field-definition'
 import { DefinitionFormFields } from './definition-form'
 
@@ -128,6 +149,8 @@ interface CustomFieldsMeta {
   canEdit?: boolean
   /** The values did not load, so blank inputs would misstate what is saved. */
   loadFailed?: boolean
+  /** A save was refused for invalid values, so blank required fields say so too. */
+  showRequiredErrors?: boolean
 }
 
 /**
@@ -297,6 +320,8 @@ export interface CustomFieldsDraft {
   values: Record<string, unknown>
   setValue: (definitionId: string, value: unknown) => void
   isDirty: boolean
+  /** A save was refused for values that break their definition's rules. */
+  showRequiredErrors: boolean
   /** Drops the unsaved edits. */
   reset: () => void
   /**
@@ -347,12 +372,14 @@ export function useCustomFieldsDraft(
   }, [savedValues])
 
   const [drafts, setDrafts] = useState<Record<string, unknown>>({})
+  const [showRequiredErrors, setShowRequiredErrors] = useState(false)
 
   // A different owner (a sheet reused for the next row) starts clean.
   const [draftOwnerId, setDraftOwnerId] = useState(ownerId)
   if (draftOwnerId !== ownerId) {
     setDraftOwnerId(ownerId)
     setDrafts({})
+    setShowRequiredErrors(false)
   }
 
   const values = useMemo(() => {
@@ -377,13 +404,31 @@ export function useCustomFieldsDraft(
     setDrafts((prev) => ({ ...prev, [definitionId]: value }))
   }, [])
 
-  const reset = useCallback(() => setDrafts({}), [])
+  const reset = useCallback(() => {
+    setDrafts({})
+    setShowRequiredErrors(false)
+  }, [])
 
   const save = useCallback(
     async ({ announce = false }: { announce?: boolean } = {}) => {
       if (!ownerId || loadFailed || changedDefinitions.length === 0) {
         setDrafts({})
         return true
+      }
+
+      // The rules the server checks, plus `required`, which it leaves to us.
+      const invalid = definitions.filter((def) =>
+        customFieldValueError(def, values[def.id], { checkRequired: true }),
+      )
+      if (invalid.length > 0) {
+        setShowRequiredErrors(true)
+        toastManager.add({
+          type: 'error',
+          title: t('admin.components.custom_fields.values_invalid', {
+            fields: invalid.map((def) => def.label || def.key).join(', '),
+          }),
+        })
+        return false
       }
 
       const tasks = changedDefinitions.map((def) => {
@@ -404,6 +449,7 @@ export function useCustomFieldsDraft(
         const failed = changedDefinitions.filter((_, i) => results[i].status === 'rejected')
         if (failed.length === 0) {
           setDrafts({})
+          setShowRequiredErrors(false)
           if (announce) {
             toastManager.add({
               type: 'success',
@@ -434,6 +480,8 @@ export function useCustomFieldsDraft(
       ownerId,
       loadFailed,
       changedDefinitions,
+      definitions,
+      values,
       drafts,
       savedByDefinitionId,
       create,
@@ -454,6 +502,7 @@ export function useCustomFieldsDraft(
       values,
       setValue,
       isDirty: changedDefinitions.length > 0,
+      showRequiredErrors,
       reset,
       save,
     }),
@@ -469,6 +518,7 @@ export function useCustomFieldsDraft(
       values,
       setValue,
       changedDefinitions,
+      showRequiredErrors,
       reset,
       save,
     ],
@@ -500,6 +550,7 @@ export function DraftCustomFieldsProvider({ draft, resourceLabel, children }: Dr
         resourceLabel,
         canEdit: draft.canEdit,
         loadFailed: draft.loadFailed,
+        showRequiredErrors: draft.showRequiredErrors,
       },
       mode: { kind: 'form' },
     }),
@@ -571,6 +622,7 @@ export function EditableApiCustomFieldsProvider({
         resourceLabel,
         canEdit: draft.canEdit,
         loadFailed: draft.loadFailed,
+        showRequiredErrors: draft.showRequiredErrors,
       },
       mode: { kind: 'editable', isEditing, saving, startEdit, cancel, save },
     }),
@@ -665,7 +717,7 @@ export function CustomFieldsInlineCard({
 
   const requiredMissing = definitions.some(
     (definition) =>
-      requiredDefinitionIds?.includes(definition.id) && isBlankValue(values[definition.id]),
+      isRequired(definition, requiredDefinitionIds) && isBlankValue(values[definition.id]),
   )
 
   // Opens once rather than tracking the flags, so the card does not fold away
@@ -735,6 +787,11 @@ export function CustomFieldsInlineCard({
       {createSheet}
     </Card>
   )
+}
+
+// Marked when the definition requires a value or the product type asks for one.
+function isRequired(definition: CustomFieldDefinition, requiredDefinitionIds?: string[]) {
+  return !!definition.validations?.required || !!requiredDefinitionIds?.includes(definition.id)
 }
 
 function isBlankValue(value: unknown) {
@@ -833,7 +890,7 @@ function FieldsEditor({ onSetUp }: { onSetUp: () => void }) {
   const {
     state: { values },
     actions: { setValue },
-    meta: { definitions, requiredDefinitionIds },
+    meta: { definitions, requiredDefinitionIds, showRequiredErrors },
     mode,
   } = useCustomFieldsContext()
 
@@ -843,7 +900,9 @@ function FieldsEditor({ onSetUp }: { onSetUp: () => void }) {
         <CustomFieldRow
           key={def.id}
           definition={def}
-          required={requiredDefinitionIds?.includes(def.id)}
+          required={isRequired(def, requiredDefinitionIds)}
+          requiredByType={!def.validations?.required && requiredDefinitionIds?.includes(def.id)}
+          error={customFieldValueError(def, values[def.id], { checkRequired: showRequiredErrors })}
           value={values[def.id]}
           onChange={(next) => setValue(def.id, next)}
         />
@@ -888,6 +947,7 @@ function CustomFieldDisplayRow({
   value: unknown
 }) {
   const { t } = useTranslation()
+  const { timezone } = useStore()
   const friendlyLabel = definition.label || definition.key
   const technicalKey = `${definition.namespace}.${definition.key}`
 
@@ -897,16 +957,22 @@ function CustomFieldDisplayRow({
         {friendlyLabel}
       </dt>
       <dd className="break-words text-foreground/90">
-        {formatDisplayValue(value, definition.field_type, t)}
+        {formatDisplayValue(value, definition, t, timezone)}
       </dd>
     </>
   )
 }
 
 // Compact, read-only rendering of a stored value for the display grid.
-function formatDisplayValue(value: unknown, fieldType: string, t: TFunction): string {
+function formatDisplayValue(
+  value: unknown,
+  definition: CustomFieldDefinition,
+  t: TFunction,
+  timezone: string,
+): string {
+  const fieldType = definition.field_type
   const empty = t('admin.common.empty_value')
-  if (value === null || value === undefined || value === '') return empty
+  if (isBlankValue(value)) return empty
   if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')
   if (fieldType === 'rich_text' && typeof value === 'string') {
     // Plain-text preview of HTML. DOMParser handles nested/malformed tags
@@ -916,7 +982,24 @@ function formatDisplayValue(value: unknown, fieldType: string, t: TFunction): st
     return text.trim() || empty
   }
   if (fieldType === 'json') return typeof value === 'string' ? value : JSON.stringify(value)
+  if (fieldType === 'date' && typeof value === 'string') {
+    // A calendar day: format it as written, never shifted into a zone.
+    return formatInTimeZone(parseISO(`${value}T00:00:00Z`), 'UTC', 'PP')
+  }
+  if (fieldType === 'date_time' && typeof value === 'string') {
+    return formatInTimeZone(parseISO(value), timezone, 'PPp')
+  }
+  if (fieldType === 'choice') return choiceLabels(definition, value).join(', ')
   return String(value)
+}
+
+// A value whose choice was since removed shows raw, as the server keeps it.
+function choiceLabels(definition: CustomFieldDefinition, value: unknown): string[] {
+  const chosen = Array.isArray(value) ? value.map(String) : [String(value)]
+  return chosen.map(
+    (choice) =>
+      definition.validations?.choices.find((option) => option.value === choice)?.label ?? choice,
+  )
 }
 
 // ---------------------------------------------------------------------------
@@ -1040,30 +1123,43 @@ function CreateDefinitionSheet({
 interface CustomFieldRowProps {
   definition: CustomFieldDefinition
   /**
-   * The product type marks this field required. Advisory: it renders a marker,
-   * and nothing rejects a blank value — see Spree::Product.
+   * The definition or the product type requires a value. The API accepts a
+   * blank one either way; the marker, and the check on the card's own Save,
+   * are the dashboard's side of it.
    */
   required?: boolean
+  /** Only the product type asks for it, as a recommendation. */
+  requiredByType?: boolean
+  /** The value breaks one of the definition's rules. */
+  error?: string | null
   value: unknown
   onChange: (value: unknown) => void
 }
 
-// The product type's `required` flag is guidance, not a rule the API enforces
-// (Shopify behaves the same way), so this marks the field without blocking any
-// save.
-function RequiredMarker() {
+function RequiredMarker({ byType }: { byType?: boolean }) {
   const { t } = useTranslation()
   return (
     <span
       className="ml-0.5 text-muted-foreground"
-      title={t('admin.components.custom_fields.required_hint')}
+      title={t(
+        byType
+          ? 'admin.components.custom_fields.required_hint'
+          : 'admin.components.custom_fields.required_field_hint',
+      )}
     >
       *
     </span>
   )
 }
 
-function CustomFieldRow({ definition, required, value, onChange }: CustomFieldRowProps) {
+function CustomFieldRow({
+  definition,
+  required,
+  requiredByType,
+  error,
+  value,
+  onChange,
+}: CustomFieldRowProps) {
   const inputId = `custom-field-${definition.id}`
   const friendlyLabel = definition.label || definition.key
   // The `namespace.key` identifier matters to developers / API consumers but
@@ -1089,11 +1185,14 @@ function CustomFieldRow({ definition, required, value, onChange }: CustomFieldRo
     <CustomFieldWidget
       id={inputId}
       ariaLabel={friendlyLabel}
-      fieldType={definition.field_type}
+      definition={definition}
+      invalid={!!error}
       value={value}
       onChange={onChange}
     />
   )
+  const marker = required && <RequiredMarker byType={requiredByType} />
+  const errorMessage = error && <FieldError>{error}</FieldError>
 
   // Booleans read as a horizontal label-left / switch-right row (matching the
   // definition form and Shopify/Saleor). The vertical `Field` layout forces
@@ -1105,10 +1204,11 @@ function CustomFieldRow({ definition, required, value, onChange }: CustomFieldRo
         <div className="flex items-center justify-between gap-4">
           <FieldLabel htmlFor={inputId} title={technicalKey} className="cursor-pointer">
             {friendlyLabel}
-            {required && <RequiredMarker />}
+            {marker}
           </FieldLabel>
           {widget}
         </div>
+        {errorMessage}
       </Field>
     )
   }
@@ -1117,9 +1217,10 @@ function CustomFieldRow({ definition, required, value, onChange }: CustomFieldRo
     <Field>
       <FieldLabel htmlFor={inputId} title={technicalKey}>
         {friendlyLabel}
-        {required && <RequiredMarker />}
+        {marker}
       </FieldLabel>
       {widget}
+      {errorMessage}
     </Field>
   )
 }
@@ -1127,13 +1228,21 @@ function CustomFieldRow({ definition, required, value, onChange }: CustomFieldRo
 interface CustomFieldWidgetProps {
   id: string
   ariaLabel: string
-  fieldType: string
+  definition: CustomFieldDefinition
+  invalid?: boolean
   value: unknown
   onChange: (value: unknown) => void
 }
 
-function CustomFieldWidget({ id, ariaLabel, fieldType, value, onChange }: CustomFieldWidgetProps) {
-  switch (fieldType) {
+function CustomFieldWidget({
+  id,
+  ariaLabel,
+  definition,
+  invalid,
+  value,
+  onChange,
+}: CustomFieldWidgetProps) {
+  switch (definition.field_type) {
     case 'short_text':
       return (
         <Input
@@ -1225,7 +1334,131 @@ function CustomFieldWidget({ id, ariaLabel, fieldType, value, onChange }: Custom
           }}
         />
       )
+    case 'date':
+    case 'date_time':
+      // Inline: the card also renders inside sheets, where a popover can fail to open.
+      return (
+        <StoreDatePicker
+          id={id}
+          inline
+          includeTime={definition.field_type === 'date_time'}
+          value={(value as string | null | undefined) ?? null}
+          onChange={onChange}
+        />
+      )
+    case 'choice':
+      return definition.validations?.multiple ? (
+        <MultipleChoiceWidget
+          id={id}
+          definition={definition}
+          value={
+            Array.isArray(value) ? value.map(String) : isBlankValue(value) ? [] : [String(value)]
+          }
+          onChange={(next) => onChange(next.length > 0 ? next : null)}
+        />
+      ) : (
+        <SingleChoiceWidget
+          id={id}
+          ariaLabel={ariaLabel}
+          definition={definition}
+          invalid={invalid}
+          value={isBlankValue(value) ? '' : String(value)}
+          onChange={(next) => onChange(next || null)}
+        />
+      )
     default:
       return null
   }
+}
+
+function SingleChoiceWidget({
+  id,
+  ariaLabel,
+  definition,
+  invalid,
+  value,
+  onChange,
+}: {
+  id: string
+  ariaLabel: string
+  definition: CustomFieldDefinition
+  invalid?: boolean
+  value: string
+  onChange: (value: string) => void
+}) {
+  const { t } = useTranslation()
+  // A stored value whose choice was removed stays listed, shown raw, until changed.
+  const items = [
+    { value: '', label: t('admin.common.none') },
+    ...choiceItems(definition, value ? [value] : []),
+  ]
+
+  return (
+    <Select items={items} value={value} onValueChange={(next) => onChange(String(next ?? ''))}>
+      <SelectTrigger id={id} aria-label={ariaLabel} aria-invalid={invalid || undefined}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((item) => (
+          <SelectItem key={item.value} value={item.value}>
+            {item.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+function MultipleChoiceWidget({
+  id,
+  definition,
+  value,
+  onChange,
+}: {
+  id: string
+  definition: CustomFieldDefinition
+  value: string[]
+  onChange: (value: string[]) => void
+}) {
+  const { t } = useTranslation()
+  const anchorRef = useComboboxAnchor()
+  const items = choiceItems(definition, value).map((item) => item.value)
+  const labelFor = (choice: string) => choiceLabels(definition, choice)[0]
+
+  return (
+    <Combobox
+      multiple
+      items={items}
+      value={value}
+      onValueChange={(next: string[]) => onChange(next)}
+      itemToStringLabel={(choice: string | null) => (choice ? labelFor(choice) : '')}
+      itemToStringValue={(choice: string | null) => choice ?? ''}
+    >
+      <ComboboxChips ref={anchorRef}>
+        <ComboboxValue>
+          {(selected: string[]) =>
+            selected.map((choice) => <ComboboxChip key={choice}>{labelFor(choice)}</ComboboxChip>)
+          }
+        </ComboboxValue>
+        <ComboboxChipsInput id={id} placeholder={t('admin.components.custom_fields.choose')} />
+      </ComboboxChips>
+      <ComboboxContent anchor={anchorRef}>
+        <ComboboxEmpty>{t('admin.components.custom_fields.no_choices')}</ComboboxEmpty>
+        <ComboboxList>
+          {(choice: string) => (
+            <ComboboxItem key={choice} value={choice}>
+              {labelFor(choice)}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+
+/** The definition's choices, plus any stored value no longer among them. */
+function choiceItems(definition: CustomFieldDefinition, selected: string[]) {
+  const choices = definition.validations?.choices ?? []
+  const removed = selected.filter((choice) => !choices.some((option) => option.value === choice))
+  return [...choices, ...removed.map((choice) => ({ value: choice, label: choice }))]
 }

@@ -11,7 +11,10 @@ module Spree
       'rich_text'  => 'Spree::CustomFields::RichText',
       'number'     => 'Spree::CustomFields::Number',
       'boolean'    => 'Spree::CustomFields::Boolean',
-      'json'       => 'Spree::CustomFields::Json'
+      'json'       => 'Spree::CustomFields::Json',
+      'date'       => 'Spree::CustomFields::Date',
+      'date_time'  => 'Spree::CustomFields::DateTime',
+      'choice'     => 'Spree::CustomFields::Choice'
     }.freeze
     TYPE_CLASS_TO_TOKEN = TYPE_TOKENS.invert.freeze
 
@@ -31,6 +34,44 @@ module Spree
     def self.sortable?
       false
     end
+
+    # Rules a definition of this type may set in `validations`, besides
+    # `required`, which every type takes.
+    #
+    # @return [Array<String>]
+    def self.supported_validation_rules
+      []
+    end
+
+    # The canonical form of a `min` / `max` rule, the one values are compared
+    # against.
+    #
+    # @param value [Object] the bound as sent
+    # @param store [Spree::Store, nil] the definition's store, for its time zone
+    # @return [Object, nil] nil when the bound is not valid for this type
+    def self.normalize_validation_bound(_value, store: nil)
+      nil
+    end
+
+    # Rows are mostly built from a definition rather than a `type`
+    # (`find_or_initialize_by(custom_field_definition_id:)`, nested
+    # attributes), so the definition picks the typed subclass. Without it a new
+    # row would skip its type's parsing and validations until it was reloaded.
+    def self.subclass_from_attributes(attributes)
+      super || (custom_field_class_from_definition(attributes) if base_class?)
+    end
+    private_class_method :subclass_from_attributes
+
+    def self.custom_field_class_from_definition(attributes)
+      attributes = attributes.to_h if attributes.respond_to?(:permitted?)
+      return unless attributes.is_a?(Hash)
+
+      attributes = attributes.with_indifferent_access
+      definition = attributes[:custom_field_definition] ||
+                   attributes[:custom_field_definition_id].presence&.then { |id| Spree::CustomFieldDefinition.find_by(id: id) }
+      definition.try(:field_type_class)
+    end
+    private_class_method :custom_field_class_from_definition
 
     has_prefix_id :cf
 
@@ -68,6 +109,9 @@ module Spree
     validate :type_must_match_custom_field_definition
     validate :resource_type_must_match_custom_field_definition
     validate :custom_field_definition_must_belong_to_the_resource_store
+    # New writes only: a value that met the rules when it was saved stays
+    # readable after a rule changes, and is checked again when rewritten.
+    validate :value_must_follow_definition_rules, if: -> { custom_field_definition && value.present? && (new_record? || will_save_change_to_value?) }
 
     #
     # Scopes
@@ -83,8 +127,14 @@ module Spree
       value
     end
 
-    def csv_value
+    # The value as plain text, for exports and feeds that cannot carry
+    # structure.
+    def text_value
       value.to_s
+    end
+
+    def csv_value
+      text_value
     end
 
     #
@@ -116,6 +166,14 @@ module Spree
     end
 
     private
+
+    # Types that take `min` / `max` or `choices` check the value here.
+    def value_must_follow_definition_rules; end
+
+    # @return [Hash{String => Object}]
+    def definition_rules
+      custom_field_definition.validation_rules
+    end
 
     def set_type_from_custom_field_definition
       return if custom_field_definition.blank?

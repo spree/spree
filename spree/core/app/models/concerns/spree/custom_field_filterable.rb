@@ -73,7 +73,7 @@ module Spree
         when 'blank'
           custom_field_exists(definition).not
         else
-          value_condition = custom_field_value_condition(definition.field_type, predicate, value)
+          value_condition = custom_field_value_condition(definition, predicate, value)
           value_condition && custom_field_exists(definition, value_condition)
         end
       end
@@ -128,21 +128,54 @@ module Spree
         @custom_field_filter_table ||= Spree::CustomField.arel_table.alias('filter_cf')
       end
 
-      def custom_field_value_condition(field_type, predicate, value)
+      def custom_field_value_condition(definition, predicate, value)
         column = custom_field_filter_table[:value]
 
-        if field_type == 'number'
-          operator = NUMERIC_OPERATORS[predicate]
-          return nil unless operator
+        case definition.field_type
+        when 'number' then numeric_custom_field_condition(column, predicate, value)
+        when 'date', 'date_time' then date_custom_field_condition(definition, column, predicate, value)
+        when 'choice' then choice_custom_field_condition(definition, column, predicate, value)
+        else text_custom_field_condition(column, predicate, value)
+        end
+      end
 
-          numeric = begin
-            BigDecimal(value.to_s)
-          rescue ArgumentError, TypeError
-            return nil
-          end
+      def numeric_custom_field_condition(column, predicate, value)
+        operator = NUMERIC_OPERATORS[predicate]
+        return nil unless operator
 
-          custom_field_value_expression(column, field_type).public_send(operator, numeric)
-        elsif (pattern = LIKE_PATTERNS[predicate])
+        numeric = begin
+          BigDecimal(value.to_s)
+        rescue ArgumentError, TypeError
+          return nil
+        end
+
+        custom_field_value_expression(column, 'number').public_send(operator, numeric)
+      end
+
+      # The filter value is normalized the way stored values are, because the
+      # text comparison is only correct between strings of the same shape.
+      def date_custom_field_condition(definition, column, predicate, value)
+        operator = NUMERIC_OPERATORS[predicate]
+        bound = operator && definition.field_type_class&.canonical_value(value, store: definition.store)
+        bound && column.public_send(operator, bound)
+      end
+
+      # A field allowing several choices stores a JSON array, matched by the
+      # JSON-encoded value it would contain.
+      def choice_custom_field_condition(definition, column, predicate, value)
+        values = (predicate == 'in' ? Array(value) : [value]).map(&:to_s).compact_blank
+        return nil if values.empty?
+
+        unless definition.multiple_choices?
+          return predicate == 'not_eq' ? column.not_eq(values.first) : column.in(values)
+        end
+
+        contains = values.map { |choice| column.matches("%#{sanitize_sql_like(choice.to_json)}%", nil, true) }
+        predicate == 'not_eq' ? contains.first.not : contains.reduce(:or)
+      end
+
+      def text_custom_field_condition(column, predicate, value)
+        if (pattern = LIKE_PATTERNS[predicate])
           escaped = sanitize_sql_like(value.to_s)
           # LIKE is already case-insensitive under MySQL's default collation
           # and for ASCII on SQLite, but not on PostgreSQL — lower both sides

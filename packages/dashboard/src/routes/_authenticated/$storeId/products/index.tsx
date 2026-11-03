@@ -72,9 +72,11 @@ const productsSearchSchema = resourceSearchSchema.extend(importWizardSearchSchem
 // Custom field type → filter operator set. Anything unmapped filters as text.
 // Narrowed to the variants that need no companion field (`enum` needs
 // `filterOptions`, `tags` needs `taggableType`, and so on).
-const CUSTOM_FIELD_FILTER_TYPES: Record<string, 'string' | 'number' | 'boolean'> = {
+const CUSTOM_FIELD_FILTER_TYPES: Record<string, 'string' | 'number' | 'boolean' | 'date'> = {
   number: 'number',
   boolean: 'boolean',
+  date: 'date',
+  date_time: 'date',
 }
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/')({
@@ -337,21 +339,31 @@ function ProductsPage() {
       .filter(
         (definition) => (definition.searchable || definition.sortable) && definition.filter_key,
       )
-      .map((definition) => ({
-        key: definition.filter_key,
-        label: definition.label,
-        default: false,
-        sortable: definition.sortable,
-        filterable: true,
-        filterType: CUSTOM_FIELD_FILTER_TYPES[definition.field_type] ?? 'string',
-        expand: 'custom_fields',
-        render: (product: Product) => {
-          const value = product.custom_fields?.find(
-            (field) => field.custom_field_definition_id === definition.id,
-          )?.value
-          return value == null || value === '' ? '—' : String(value)
-        },
-      }))
+      .map((definition): ColumnDef<Product> => {
+        const column = {
+          key: definition.filter_key,
+          label: definition.label,
+          default: false,
+          sortable: definition.sortable,
+          filterable: true,
+          expand: 'custom_fields',
+          render: (product: Product) => {
+            const value = product.custom_fields?.find(
+              (field) => field.custom_field_definition_id === definition.id,
+            )?.value
+            if (value == null || value === '') return '—'
+            // A choice shows its label; one since removed shows its stored value.
+            const labelFor = (choice: unknown) =>
+              definition.validations.choices.find((option) => option.value === choice)?.label ??
+              String(choice)
+            return Array.isArray(value) ? value.map(labelFor).join(', ') : labelFor(value)
+          },
+        }
+        // Choices filter by picking from the definition's own list.
+        return definition.field_type === 'choice'
+          ? { ...column, filterType: 'enum', filterOptions: definition.validations.choices }
+          : { ...column, filterType: CUSTOM_FIELD_FILTER_TYPES[definition.field_type] ?? 'string' }
+      })
   }, [definitionsResponse])
 
   return (

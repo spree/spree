@@ -157,6 +157,71 @@ test.describe('custom field definitions', () => {
     await expect(customFields.getByText('Gold')).toBeVisible({ timeout: 15_000 })
   })
 
+  test('a choice field and a length rule are offered on a customer and checked before saving', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const tier = `E2E Tier Choice ${suffix}`
+    const code = `E2E Code ${suffix}`
+
+    await page.getByRole('button', { name: CTA }).click()
+    await page.locator('#cfd-resource-type').click()
+    await page.getByRole('option', { name: /^customers$/i }).click()
+    await page.getByLabel(/^label$/i).fill(tier)
+    await page.getByLabel(/^key$/i).fill(`tier_choice_${suffix}`)
+    await page.locator('#cfd-field-type').click()
+    await page.getByRole('option', { name: /^choice$/i }).click()
+    await page.getByRole('button', { name: /create custom field/i }).click()
+    await expect(page.getByText(/add at least one choice/i)).toBeVisible()
+
+    await page.getByRole('button', { name: /^add choice$/i }).click()
+    await page.getByLabel(/^value$/i).fill('gold')
+    await page.getByLabel(/^display label$/i).fill('Gold tier')
+    await page.getByRole('button', { name: /create custom field/i }).click()
+    await expect(rowButton(page, tier)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: CTA }).click()
+    await page.locator('#cfd-resource-type').click()
+    await page.getByRole('option', { name: /^customers$/i }).click()
+    await page.getByLabel(/^label$/i).fill(code)
+    await page.getByLabel(/^key$/i).fill(`code_${suffix}`)
+    await page.getByLabel(/^maximum characters$/i).fill('3')
+    await page.getByRole('button', { name: /create custom field/i }).click()
+    await expect(rowButton(page, code)).toBeVisible({ timeout: 15_000 })
+
+    const email = `e2e-cf-rules-${suffix}@example.com`
+    await page.goto(`/${creds.store_id}/customers`)
+    await page.getByRole('button', { name: /new customer/i }).click()
+    await page.locator('#email').fill(email)
+    await page.getByRole('button', { name: /^create customer$/i }).click()
+    await expect(page.getByRole('heading', { name: email })).toBeVisible({ timeout: 15_000 })
+
+    const customFields = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^custom fields$/i }) })
+    await customFields.getByRole('button', { name: /^edit$/i }).click()
+    await customFields.getByLabel(new RegExp(`^${tier}$`, 'i')).click()
+    await page.getByRole('option', { name: /^gold tier$/i }).click()
+
+    const codeInput = customFields.getByLabel(new RegExp(`^${code}$`, 'i'))
+    await codeInput.fill('ABCD')
+    await expect(customFields.getByText(/use at most 3 characters/i)).toBeVisible()
+    await customFields.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/fix these custom fields before saving/i)).toBeVisible()
+
+    await codeInput.fill('ABC')
+    await customFields.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/custom fields saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await expandCustomFieldsCard(page)
+    await expect(customFields.getByText('Gold tier')).toBeVisible({ timeout: 15_000 })
+    await expect(customFields.getByText('ABC', { exact: true })).toBeVisible()
+  })
+
   // Types no dashboard screen edits stay definable for integrations, but the
   // picker says so instead of implying a merchant can fill them in.
   test('lists types without an edit screen apart, under their own heading', async ({ page }) => {
