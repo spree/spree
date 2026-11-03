@@ -37,7 +37,7 @@ Changesets live in the root `.changeset/` (`pnpm changeset`). The API-facing pac
 
 ## End-to-end tests (Playwright)
 
-Specs live in `packages/dashboard/e2e/` — `<resource>.spec.ts` for the admin, `seller-<area>.spec.ts` for the seller panel — and run with `pnpm wt:e2e`. The setup boots its own Rails and Vite and seeds the database. CI shards the suite, so every spec creates its own records and depends on no other file.
+Specs live in `packages/dashboard/e2e/` — `<resource>.spec.ts` for the admin, `seller-<area>.spec.ts` for the seller panel — and run with `pnpm wt:e2e`. The setup boots its own Rails and Vite, seeds the database and deploys its fixtures through `@spree/config`, which it builds first. CI shards the suite, so every spec creates its own records and depends on no other file.
 
 - Write them like Capybara: drive the UI by label and role, assert on what is visible. Don't wait on API responses unless there is no visible result to wait for.
 - Suffix record names with `Date.now()`. Scope duplicate button names to their dialog.
