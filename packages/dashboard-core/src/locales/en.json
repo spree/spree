@@ -868,6 +868,23 @@
         "make_active_at": {
           "label": "Make active at"
         },
+        "market_availability": {
+          "help": {
+            "all": "Customers in every market can see and buy this product.",
+            "all_except": "Hidden from customers in the markets below, everywhere — including its own page.",
+            "only": "Only customers in the markets below can see and buy this product."
+          },
+          "label": "Sold in",
+          "options": {
+            "all": "All markets",
+            "all_except": "All markets except…",
+            "only": "Only in…"
+          }
+        },
+        "market_ids": {
+          "label": "Markets",
+          "placeholder": "Choose markets"
+        },
         "name": {
           "label": "Name",
           "placeholder": "Product name"
@@ -1267,6 +1284,9 @@
           "in_stock_short": "In stock",
           "on_backorder": "On backorder",
           "out_of_stock": "Out of stock"
+        },
+        "market_availability": {
+          "title": "Markets"
         },
         "media_empty": "No media yet.",
         "media_upload": "Upload media",

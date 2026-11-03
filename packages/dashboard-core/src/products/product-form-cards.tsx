@@ -13,10 +13,11 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { type CurrencyCode, randomUUID } from '@spree/core'
+import { type CurrencyCode, PRODUCT_MARKET_AVAILABILITIES, randomUUID } from '@spree/core'
 import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
 import {
   getApiClient,
+  MarketMultiCombobox,
   MediaPickerDialog,
   mediaPickerListParams,
   parseVideoUrl,
@@ -66,6 +67,7 @@ import {
   EyeIcon,
   FilmIcon,
   FolderTreeIcon,
+  GlobeIcon,
   ImageIcon,
   ImagePlusIcon,
   InfoIcon,
@@ -108,6 +110,7 @@ import {
   useFormCategories as useCategories,
   useFormCollections as useCollections,
   useFormDeliveryProfiles as useDeliveryProfiles,
+  useFormMarkets as useMarkets,
   useFormOptionTypesByIds as useOptionTypesByIds,
   useFormProductType as useProductType,
   useFormProductTypes as useProductTypes,
@@ -1330,6 +1333,113 @@ export function CategorizationCard({ form }: FormCardProps) {
             />
           </Field>
         )}
+      </CardContent>
+    </Card>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Market availability
+// ---------------------------------------------------------------------------
+
+/**
+ * Which markets may see and buy the product. Every market by default; the
+ * other two modes name markets to leave out or keep to. A market that
+ * excludes the product hides it everywhere, its own page included
+ * (docs/plans/6.1-product-market-availability.md).
+ *
+ * A section rather than a card, so the operator's dashboard can show it in
+ * one Availability card beside channel publishing. Renders nothing for a
+ * panel whose client registers no markets.
+ */
+export function MarketAvailabilitySection({ form }: FormCardProps) {
+  const { t } = useTranslation()
+  const client = getApiClient()
+  const { data: marketsData } = useMarkets()
+  const markets = useMemo(() => marketsData?.data ?? [], [marketsData])
+  const mode = useWatch({ control: form.control, name: 'market_availability' }) ?? 'all'
+  const { errors } = useFormState({ control: form.control, name: 'market_ids' })
+
+  if (!client.markets) return null
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Field>
+        <FieldLabel>{t('admin.fields.product.market_availability.label')}</FieldLabel>
+        <Controller
+          name="market_availability"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              value={mode}
+              onValueChange={(value) => {
+                // The markets mean the opposite under the other mode, so they
+                // are never carried across a change.
+                if (value !== mode) form.setValue('market_ids', [], { shouldDirty: true })
+                field.onChange(value)
+              }}
+            >
+              <SelectTrigger
+                className="w-full"
+                aria-label={t('admin.fields.product.market_availability.label')}
+              >
+                <SelectValue>
+                  {t(`admin.fields.product.market_availability.options.${mode}`)}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {PRODUCT_MARKET_AVAILABILITIES.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {t(`admin.fields.product.market_availability.options.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-muted-foreground text-xs">
+          {t(`admin.fields.product.market_availability.help.${mode}`)}
+        </span>
+      </Field>
+
+      {mode !== 'all' && (
+        <Field>
+          <FieldLabel>{t('admin.fields.product.market_ids.label')}</FieldLabel>
+          <Controller
+            name="market_ids"
+            control={form.control}
+            render={({ field }) => (
+              <MarketMultiCombobox
+                markets={markets}
+                value={field.value ?? []}
+                onValueChange={field.onChange}
+                placeholder={t('admin.fields.product.market_ids.placeholder')}
+              />
+            )}
+          />
+          <FieldError errors={[errors.market_ids]} />
+        </Field>
+      )}
+    </div>
+  )
+}
+
+/** The Markets section on a card of its own, for a panel with no channel publishing. */
+export function MarketAvailabilityCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
+  const client = getApiClient()
+  if (!client.markets) return null
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <GlobeIcon className="size-4" />
+          {t('admin.pages.products.market_availability.title')}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <MarketAvailabilitySection form={form} />
       </CardContent>
     </Card>
   )

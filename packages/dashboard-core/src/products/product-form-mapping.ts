@@ -168,6 +168,8 @@ export function productToFormValues(
       published_at: l.published_at ?? null,
       unpublished_at: l.unpublished_at ?? null,
     })),
+    market_availability: product.market_availability ?? 'all',
+    market_ids: product.market_ids ?? [],
   }
 }
 

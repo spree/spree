@@ -869,6 +869,23 @@
         "make_active_at": {
           "label": "Aktywuj o"
         },
+        "market_availability": {
+          "help": {
+            "all": "Klienci na wszystkich rynkach mogą zobaczyć i kupić ten produkt.",
+            "all_except": "Ukryty wszędzie dla klientów z poniższych rynków, także na własnej stronie produktu.",
+            "only": "Tylko klienci z poniższych rynków mogą zobaczyć i kupić ten produkt."
+          },
+          "label": "Sprzedawany w",
+          "options": {
+            "all": "Wszystkie rynki",
+            "all_except": "Wszystkie rynki oprócz…",
+            "only": "Tylko w…"
+          }
+        },
+        "market_ids": {
+          "label": "Rynki",
+          "placeholder": "Wybierz rynki"
+        },
         "name": {
           "label": "Nazwa",
           "placeholder": "Nazwa produktu"
@@ -1268,6 +1285,9 @@
           "in_stock_short": "W magazynie",
           "on_backorder": "Na zamówienie",
           "out_of_stock": "Brak w magazynie"
+        },
+        "market_availability": {
+          "title": "Rynki"
         },
         "media_empty": "Brak multimediów.",
         "media_upload": "Prześlij multimedia",

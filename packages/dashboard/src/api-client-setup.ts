@@ -75,6 +75,9 @@ setApiClient({
   deliveryProfiles: {
     list: (params) => adminClient.deliveryProfiles.list(runtimeListParams(params)),
   },
+  markets: {
+    list: (params) => adminClient.markets.list(runtimeListParams(params)),
+  },
   // Writes as well as reads: the packaging settings page is shared with the
   // seller panel, and its create/edit/delete go through this registration.
   packageTypes: {
