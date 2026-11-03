@@ -167,8 +167,9 @@ module Spree
         values = (%w[in not_in].include?(predicate) ? Array(value) : [value]).map(&:to_s).compact_blank
         return nil if values.empty?
 
+        is_list = column.matches('[%', nil, true)
         matches_any = values.map do |choice|
-          column.eq(choice).or(column.matches("%#{sanitize_sql_like(choice.to_json)}%", '\\', true))
+          column.eq(choice).or(is_list.and(column.matches("%#{sanitize_sql_like(choice.to_json)}%", '\\', true)))
         end.reduce(:or)
         %w[not_eq not_in].include?(predicate) ? matches_any.not : matches_any
       end

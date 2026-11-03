@@ -18,6 +18,7 @@ module Spree
         validate :validations_must_apply_to_field_type
         validate :sortable_must_be_single_choice
         validate :multiple_must_stay_while_values_hold_several, on: :update
+        after_update :unwrap_single_choice_lists, if: :multiple_choices_turned_off?
       end
 
       # Accepts permitted request params as well as a plain hash.
@@ -133,6 +134,18 @@ module Spree
         return unless custom_fields.where(Spree::CustomField.arel_table[:value].matches('%","%')).exists?
 
         add_validations_error(:validation_multiple_in_use)
+      end
+
+      def multiple_choices_turned_off?
+        saved_change_to_validations? && !multiple_choices? && (validations_before_last_save || {})['multiple'] == true
+      end
+
+      # Lists of one become bare values, so a single choice sorts by its value.
+      def unwrap_single_choice_lists
+        custom_fields.where(Spree::CustomField.arel_table[:value].matches('[%')).find_each do |custom_field|
+          values = custom_field.chosen_values
+          custom_field.update_column(:value, values.first) if values.one?
+        end
       end
 
       def add_validations_error(type, **options)
