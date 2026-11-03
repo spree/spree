@@ -232,6 +232,9 @@ export function DefinitionFormFields({
                 if (!fieldTypeSupportsSortable(next)) {
                   form.setValue('sortable', false)
                 }
+                if (next !== 'choice') {
+                  form.setValue('validations.multiple', false)
+                }
                 // A bound means something different for each type.
                 form.setValue('validations.min', '')
                 form.setValue('validations.max', '')
