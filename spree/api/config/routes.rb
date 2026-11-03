@@ -1003,6 +1003,7 @@ Spree::Core::Engine.add_routes do
         # reason, the operator decides what the reasons are.
         resources :return_reasons, only: [:index]
         resources :claim_reasons, only: [:index]
+        resources :markets, only: [:index]
         resources :order_cancellation_reasons, only: [:index]
 
         # Registry data — which carriers a tracking number can be pinned to.
