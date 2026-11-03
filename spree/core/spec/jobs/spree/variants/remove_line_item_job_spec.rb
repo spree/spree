@@ -30,6 +30,13 @@ module Spree
         }.to change { cart.reload.line_items.count }.by(-1)
       end
 
+      it 'skips a cart that completed after the job was enqueued' do
+        cart.update_columns(completed_at: Time.current)
+
+        expect(Spree::Carts::UpsertItems).not_to receive(:new)
+        expect { described_class.perform_now(line_item: cart_line_item.reload) }.not_to raise_error
+      end
+
       it 'routes through the cart workflow' do
         expect(Spree::Carts::UpsertItems).to receive(:new).and_call_original
 
