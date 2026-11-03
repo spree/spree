@@ -21,6 +21,12 @@ module Spree
   #     end
   #   end
 class AgentTool
+    # The parameter every generic resource tool takes for a resource that
+    # lives under another record, such as an order's items.
+    PARENT_ID_DESCRIPTION = 'For a resource reached through another record (describe_resource names ' \
+                            'it as parent, e.g. an order for its items, discounts and fees): that ' \
+                            'record\'s id as shown in search results'.freeze
+
     # Declarations live in class attributes rather than plain class-level
     # instance variables so a subclass inherits them. Subclassing a tool to
     # tweak it is the documented extension path, and with bare ivars the
@@ -178,12 +184,19 @@ class AgentTool
     # @param action [Symbol] the operation whose path runs under the parent
     # @return [Hash]
     def nested_resource_error(entry, verb, action)
+      # A top-level path left unfilled is missing its own id, not a parent.
+      return { error: "Pass the id of the #{entry.key.singularize.tr('_', ' ')} to use." } unless entry.nested?(action)
+
       parent = entry.parent_key(action)
       parent_entry = Spree::AgentTools::ResourceMap.find(parent)
       attribute = parent_entry&.nested_typed_families&.key(entry.model_class)
 
       owner = parent.singularize.tr('_', ' ')
       sentences = ["#{entry.key} belong to #{owner.match?(/\A[aeiou]/) ? 'an' : 'a'} #{owner} and cannot be #{verb} on their own."]
+      # Offered only where one parent id fills the path; a resource nested
+      # twice has no generic route.
+      reachable = entry.path_for(action, id: 'id', parent_id: 'parent').present?
+      sentences << "Pass the #{owner}'s id as parent_id to reach them under it." if reachable
       # Each suggested call is one this caller may actually make; a hint
       # that leads straight to a permission refusal is worse than none.
       readable = parent_entry && context.permitted?(parent_entry.permission)
