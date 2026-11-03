@@ -27,6 +27,7 @@ Feature plans live in `docs/plans/`, written from `docs/plans/_template.md` — 
 | `packages/core` | `@spree/core` — universal TypeScript with no HTTP: code lists, enums, money helpers, filter vocabulary |
 | `packages/sdk-core` | Private shared HTTP, retry and error layer for the SDKs |
 | `packages/cli`, `packages/create-spree-app` | `@spree/cli` and project scaffolding |
+| `packages/config` | `@spree/config` — the configurator engine: plans and deploys a `spree.config.yml` (and Spree's store defaults) through the Admin API |
 | `packages/docs` | `@spree/docs` — offline docs package for AI agents |
 | `docs/` | Mintlify site deployed to spreecommerce.org/docs |
 | `server/`, `storefront/` | Gitignored per-worktree clones of `spree/spree-starter` and `spree/storefront` |
