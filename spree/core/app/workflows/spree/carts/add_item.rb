@@ -33,7 +33,7 @@ module Spree
         step :guard_completion_claim
 
         step :parse_manual_price unless price.nil?
-        step :validate_recipient if recipient.present?
+        step :validate_recipient unless recipient.nil?
 
         # Core behaviour rather than a hook: an agreement's quantity terms are
         # part of what the merchant sold, not an extension's opinion. Before
@@ -214,7 +214,7 @@ module Spree
         apply_manual_price
         failure(@line_item) unless @line_item.save
 
-        step :save_recipient if @line_item_created && recipient.present?
+        step :save_recipient if @line_item_created && !recipient.nil?
 
         @line_item.reload
 

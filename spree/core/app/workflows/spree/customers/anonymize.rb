@@ -251,6 +251,11 @@ module Spree
       # deleted, but scrubbing it keeps one rule for every purchase-shaped row
       # and leaves nothing for a later feature to resurrect.
       def anonymize_purchases
+        # Read before the rewrite below: a guest purchase matches only by the
+        # email it is about to lose.
+        bought_line_ids = Spree::LineItem.where(order_id: owned_purchases(Spree::Order).select(:id)).
+                          or(Spree::LineItem.where(cart_id: owned_purchases(Spree::Cart).select(:id))).pluck(:id)
+
         scrubbed = {
           email: customer.email,
           customer_note: nil,
@@ -269,9 +274,7 @@ module Spree
 
         # Someone the buyer named as a gift card recipient goes with the
         # purchase. The card, a bearer instrument already delivered, stays.
-        bought_lines = Spree::LineItem.where(order_id: owned_purchases(Spree::Order).select(:id)).
-                       or(Spree::LineItem.where(cart_id: owned_purchases(Spree::Cart).select(:id)))
-        Spree::GiftCardRecipient.where(line_item_id: bought_lines.select(:id)).
+        Spree::GiftCardRecipient.where(line_item_id: bought_line_ids).
           update_all(email: customer.email, name: nil, message: nil, updated_at: Time.current)
       end
 

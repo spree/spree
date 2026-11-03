@@ -81,6 +81,14 @@ describe Spree::Product, type: :model do
       expect(product.errors.details[:gift_card]).to include(error: :already_sold)
     end
 
+    it 'cannot carry a listing that belongs to a seller' do
+      product = create(:gift_card_product, store: store)
+      variant = build(:variant, product: product, seller: create(:seller, store: store))
+
+      expect(variant).not_to be_valid
+      expect(variant.errors.details[:seller]).to include(error: :gift_card_not_allowed)
+    end
+
     it 'cannot belong to a seller' do
       product = build(:product, store: store, gift_card: true, seller: create(:seller, store: store))
 

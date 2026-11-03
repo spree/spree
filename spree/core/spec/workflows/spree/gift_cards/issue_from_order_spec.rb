@@ -8,6 +8,8 @@ RSpec.describe Spree::GiftCards::IssueFromOrder do
   let(:product) { create(:gift_card_product, store: store) }
   let!(:line_item) { create(:line_item, order: order, product: product, quantity: 2, price: 50) }
 
+  before { order.update_columns(payment_status: 'paid') }
+
   it 'issues one card per unit, worth the denomination' do
     expect { subject }.to change(Spree::GiftCard, :count).by(2)
 
@@ -71,6 +73,10 @@ RSpec.describe Spree::GiftCards::IssueFromOrder do
 
     it 'issues nothing while money is still owed' do
       expect { subject }.not_to change(Spree::GiftCard, :count)
+    end
+
+    it 'does not take an order.paid on trust once the money has gone back' do
+      expect { described_class.call(order: order, paid: true) }.not_to change(Spree::GiftCard, :count)
     end
 
     it 'issues once completed payments cover the total' do

@@ -79,6 +79,7 @@ module Spree
         rates = rates_for(order)
         items.each do |item|
           next unless item.credited_quantity.to_i.positive?
+          next unless taxable_item?(item)
 
           tax_item(order, item, rates, exemptions, tax_inclusive, exemption_subject: item.line_item || item)
         end

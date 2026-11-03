@@ -3393,8 +3393,8 @@
           "columns": {
             "code": "Code",
             "amount": "Betrag",
-            "sent_to": "Gesendet an",
-            "expires": "Läuft ab"
+            "expires": "Läuft ab",
+            "recipient": "Empfänger"
           }
         }
       },

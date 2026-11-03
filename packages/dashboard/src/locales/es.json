@@ -3105,8 +3105,8 @@
           "columns": {
             "code": "Código",
             "amount": "Importe",
-            "sent_to": "Enviada a",
-            "expires": "Caduca"
+            "expires": "Caduca",
+            "recipient": "Destinatario"
           }
         }
       },

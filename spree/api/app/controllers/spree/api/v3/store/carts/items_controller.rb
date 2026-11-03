@@ -84,7 +84,9 @@ module Spree
                   )
 
                   if result.success?
-                    recipient&.save!
+                    # A validate handler can turn the change down as a warning;
+                    # the recipient goes with the change, or not at all.
+                    recipient&.save! if Array(@cart.warnings).none? { |warning| warning.with_indifferent_access[:item_index].to_i.zero? }
                     sweep_unavailable_coupon_code!
                     render_cart
                   else
