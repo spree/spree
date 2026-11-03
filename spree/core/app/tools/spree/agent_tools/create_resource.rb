@@ -27,9 +27,7 @@ module Spree
 
         response = dispatch.call(method: :post, path: path, body: body)
 
-        # A top-level resource ignores parent_id, so the summary does too.
-        parent = parent_id if entry.parent_param(:create)
-        result_for(response, entry, summary: summary(resource: resource, attributes: attributes, parent_id: parent))
+        result_for(response, entry, summary: summary(resource: resource, attributes: attributes, parent_id: parent_id))
       end
 
       def summary(arguments)
@@ -37,7 +35,9 @@ module Spree
 
         line = "Create #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{named}".strip
 
-        arguments[:parent_id].present? ? "#{line} under #{arguments[:parent_id]}" : line
+        # A top-level resource ignores parent_id, so the approval card does too.
+        nested = arguments[:parent_id].present? && ResourceMap.find(arguments[:resource])&.parent_param(:create)
+        nested ? "#{line} under #{arguments[:parent_id]}" : line
       end
     end
   end

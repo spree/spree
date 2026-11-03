@@ -435,6 +435,15 @@ RSpec.describe 'agent generic record writes' do
   # A resource that only exists under a parent has no path a tool can fill
   # in. Dispatching the template as it stood answered "Promotion not found",
   # which a model reported as a fact about the store.
+  describe 'the summary of a create' do
+    it 'names the parent only for a resource nested under one' do
+      create = tool('create_resource')
+
+      expect(create.summary(resource: 'products', attributes: { name: 'Mug' }, parent_id: 'or_1')).to eq('Create product Mug')
+      expect(create.summary(resource: 'line_items', attributes: {}, parent_id: 'or_1')).to eq('Create line item under or_1')
+    end
+  end
+
   describe 'a top-level record with no id' do
     it 'asks for the id rather than failing' do
       result = tool('get_resource').call(resource: 'products', id: '')
