@@ -1,3 +1,11 @@
+## 2026-11-03: Store defaults leave the Ruby seeds in 6.1, not 6.0
+
+**Context:** The configurator work (`6.0-cli-configurator.md`, spree/spree#14655) moves the defaults every new store starts with out of `db:seed` and into configurator files deployed through the Admin API. Spree 6.0.0 shipped before it merged, with the seeds still creating those defaults.
+
+**Decision:** The change targets 6.1 and is described in a new 6.0 → 6.1 upgrade guide. For one release the removed Ruby stays loadable with a deprecation warning and no effect: the store-default seed services, `Spree::Stores::ProvisionDefaults`, `spree:install --sample` and the application template's `LOAD_SAMPLE_DATA`. They are deleted in 6.2. The upgrade step that gives existing stores the built-in reports joins the 6.0 → 6.1 upgrade list rather than the released 5.6 → 6.0 one.
+
+**Consequences:** A script that runs `db:seed` and expects the defaults must run `spree config provision` on 6.1. The deprecated names do not create records, so nothing has two sources of store defaults.
+
 ## 2026-10-06: Custom fields stay a merchant-facing feature, not a data modelling system
 
 **Context:** Custom fields were heading toward a general-purpose schema (record references, files, value lists, reusable content types) while basic gaps went unfixed: admin-only fields leaked through storefront search, a definition's type can change under existing values, shoppers cannot fill a field in at checkout, and core itself stores integration data in auto-created definitions. Revised 2026-11-02 after a review against the code and the plans written since, with 6.0.0 already released.
