@@ -7,6 +7,18 @@ module Spree
 
       attr_reader :order_change
 
+      # Why +order+ cannot take a new change set, if it cannot. Preview asks
+      # too, so it is refused exactly when Begin would be.
+      #
+      # @param order [Spree::Order]
+      # @return [Symbol, nil] the error code
+      def self.refusal_for(order)
+        return :order_change_order_not_placed unless order.completed?
+        return :order_change_order_canceled if order.canceled?
+
+        :order_change_in_progress if order.order_changes.with_status(Spree::OrderChange::OPEN_STATUSES).exists?
+      end
+
       # @param order [Spree::Order] must be placed and not canceled
       # @param requested_by [Object, nil] staff actor; nil for a customer
       # @param post_sale_record [Spree::Return, Spree::Exchange, Spree::Claim, nil]
@@ -15,13 +27,11 @@ module Spree
       def perform(order:, requested_by: nil, post_sale_record: nil, metadata: {})
         super
 
-        step :ensure_changeable
-
         ApplicationRecord.transaction do
           # Serializes openers, which is the whole guard on MySQL (no partial
           # unique index there).
           order.lock!
-          step :ensure_none_open
+          step :ensure_changeable
           step :create_order_change
           run_hooks :after_begin
         end
@@ -34,12 +44,8 @@ module Spree
       private
 
       def ensure_changeable
-        failure(order, :order_change_order_not_placed) unless order.completed?
-        failure(order, :order_change_order_canceled) if order.canceled?
-      end
-
-      def ensure_none_open
-        failure(order, :order_change_in_progress) if order.order_changes.with_status(Spree::OrderChange::OPEN_STATUSES).exists?
+        refusal = self.class.refusal_for(order)
+        failure(order, refusal) if refusal
       end
 
       def create_order_change
