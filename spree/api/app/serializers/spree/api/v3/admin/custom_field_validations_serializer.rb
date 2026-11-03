@@ -2,11 +2,7 @@ module Spree
   module Api
     module V3
       module Admin
-        # The rules a custom field definition places on its values. Every key
-        # is present; a rule the definition does not set is null, false or an
-        # empty list.
         class CustomFieldValidationsSerializer < BaseSerializer
-          # A value object read off the definition — it has no id of its own.
           _attributes.delete(:id)
 
           typelize required: :boolean,

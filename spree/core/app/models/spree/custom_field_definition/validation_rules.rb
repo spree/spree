@@ -106,7 +106,8 @@ module Spree
         invalid.each_key { |rule| add_validations_error(:validation_invalid_bound, rule: rule) }
         return if invalid.any? || bounds.size < 2
 
-        add_validations_error(:validation_min_above_max) if bounds['min'] > bounds['max']
+        min, max = bounds.values_at('min', 'max').map { |bound| field_type_class.comparable_bound(bound) }
+        add_validations_error(:validation_min_above_max) if min > max
       end
 
       def validate_choices_rule(rules)

@@ -26,8 +26,10 @@ module Spree
       end
 
       # @return [String, Array<String>] an array when the definition allows several values
+      # A one-item list written while the field allowed several reads as that
+      # one value once it no longer does.
       def serialize_value
-        multiple_choices? ? chosen_values : value
+        multiple_choices? ? chosen_values : chosen_values.first
       end
 
       def text_value
@@ -73,7 +75,7 @@ module Spree
       end
 
       def value_must_follow_definition_rules
-        if stored_values && !multiple_choices?
+        if chosen_values.size > 1 && !multiple_choices?
           return errors.add(:value, :single_choice_only, message: I18n.t('spree.errors.messages.custom_field_single_choice_only'))
         end
         return errors.add(:value, :blank) if chosen_values.empty?

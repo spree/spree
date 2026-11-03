@@ -46,6 +46,12 @@ module Spree
         end
       end
 
+      # A date or time object is written in canonical form before the text
+      # column casts it with `to_s`, which no ISO 8601 parser reads back.
+      def value=(raw)
+        super(raw.is_a?(String) || raw.nil? ? raw : (self.class.canonical_value(raw, store: date_store) || raw))
+      end
+
       private
 
       def date_store

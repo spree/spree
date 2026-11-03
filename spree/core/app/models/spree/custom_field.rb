@@ -54,6 +54,11 @@ module Spree
       nil
     end
 
+    # A normalized bound in a form that compares with another.
+    def self.comparable_bound(bound)
+      bound
+    end
+
     # Rows are mostly built from a definition rather than a `type`
     # (`find_or_initialize_by(custom_field_definition_id:)`, nested
     # attributes), so the definition picks the typed subclass. Without it a new

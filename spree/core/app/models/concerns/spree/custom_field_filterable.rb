@@ -161,19 +161,15 @@ module Spree
         conditions&.map { |operator, bound| column.public_send(NUMERIC_OPERATORS[operator], bound) }&.reduce(:and)
       end
 
-      # A field allowing several choices stores a JSON array, matched by the
-      # JSON-encoded value it would contain — or by the bare value, written
-      # before the field allowed several.
-      def choice_custom_field_condition(definition, column, predicate, value)
+      # A value is stored bare, or as a JSON list while the field allows (or
+      # once allowed) several choices, so each choice matches either shape.
+      def choice_custom_field_condition(_definition, column, predicate, value)
         values = (%w[in not_in].include?(predicate) ? Array(value) : [value]).map(&:to_s).compact_blank
         return nil if values.empty?
 
-        matches_any =
-          if definition.multiple_choices?
-            values.map { |choice| column.matches("%#{sanitize_sql_like(choice.to_json)}%", '\\', true).or(column.eq(choice)) }.reduce(:or)
-          else
-            column.in(values)
-          end
+        matches_any = values.map do |choice|
+          column.eq(choice).or(column.matches("%#{sanitize_sql_like(choice.to_json)}%", '\\', true))
+        end.reduce(:or)
         %w[not_eq not_in].include?(predicate) ? matches_any.not : matches_any
       end
 
