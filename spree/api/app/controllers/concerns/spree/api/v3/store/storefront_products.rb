@@ -3,7 +3,7 @@ module Spree
     module V3
       module Store
         # The products a storefront buyer may see: available now (or on
-        # pre-order) in the current currency, narrowed to the catalogs their
+        # pre-order) in the current currency and market, narrowed to the catalogs their
         # company, customer group or channel resolve to. The product listing
         # and wishlist items read through it, so an id cannot reach what the
         # listing would never show. Carts narrow through
@@ -22,6 +22,7 @@ module Spree
               channel: current_channel,
               customer: current_user,
               base: base.available(Time.current, Spree::Current.currency, include_preorderable: true)
+                        .available_in_market(Spree::Current.market)
             ).value
           end
 

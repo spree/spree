@@ -31,6 +31,9 @@ module Spree
           new_product.name = "COPY OF #{product.name}"
           new_product.categories = product.categories
           new_product.channels = product.channels
+          product.market_availability_entries.each do |entry|
+            new_product.market_availability_entries.build(market_id: entry.market_id)
+          end
           new_product.created_at = nil
           new_product.deleted_at = nil
           new_product.updated_at = nil
