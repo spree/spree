@@ -397,24 +397,20 @@ module Spree
             @resource = find_resource
             authorize!(:update, @resource)
 
-            # Under the row lock, so two requests for the same move cannot both
-            # see the old status and both publish the event.
-            result = @resource.with_lock do
-              next :unchanged if @resource.status == status
-              next :in_review if @resource.in_review?
+            return render json: serialize_resource(@resource) if @resource.status == status
 
-              workflow.call(product: @resource)
-            end
-
-            return render json: serialize_resource(@resource) if result == :unchanged
-
-            if result == :in_review
+            if @resource.in_review?
               return render_error(
                 code: 'product_in_review',
                 message: I18n.t('spree.errors.messages.product_in_review'),
                 status: :unprocessable_content
               )
             end
+
+            # Not under a row lock taken here: that would wrap the workflow in
+            # a transaction, and it publishes its event once its own
+            # transaction is done, which an outer one would no longer be.
+            result = workflow.call(product: @resource)
 
             if result.success?
               render json: serialize_resource(@resource.reload)
