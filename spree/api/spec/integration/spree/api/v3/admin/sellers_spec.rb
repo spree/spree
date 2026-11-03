@@ -265,6 +265,53 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/sellers/{seller_id}/invitations/{id}/resend' do
+    parameter name: :seller_id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Invitation prefixed ID'
+
+    patch 'Resend a seller invitation' do
+      tags 'Sellers'
+      admin_sdk_example 'sellers/invitations-resend'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Sends a pending invitation to the seller's team again, with a fresh
+        acceptance link. Use it when the email never arrived; an invitation that
+        has expired is refused, so invite the person again instead.
+      DESC
+      admin_scope :write, :sellers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      let(:invitation) do
+        create(:invitation, resource: seller, role: seller.default_user_role, inviter: admin_user)
+      end
+      let(:seller_id) { seller.prefixed_id }
+      let(:id) { invitation.prefixed_id }
+
+      response '200', 'invitation resent' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema '$ref' => '#/components/schemas/Invitation'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['id']).to eq(invitation.prefixed_id)
+        end
+      end
+
+      response '422', 'the invitation has expired' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        before { invitation.update_column(:expires_at, 1.day.ago) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/sellers/{id}/approve' do
     parameter name: :id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
 

@@ -225,6 +225,41 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/products/{id}/clone' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    post 'Clone a product' do
+      tags 'Products'
+      admin_sdk_example 'products/clone'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Creates a draft copy of a product, named "COPY OF …", with its variants,
+        prices, stock locations, images, categories, channels and tags; stock on
+        hand starts at zero. Use it to start a similar product from an existing
+        one instead of building it from scratch.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '201', 'product cloned' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['id']).not_to eq(product.prefixed_id)
+          expect(data['name']).to eq("COPY OF #{product.name}")
+          expect(data['status']).to eq('draft')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/products/bulk_status_update' do
     post 'Bulk-update product status' do
       tags 'Products'

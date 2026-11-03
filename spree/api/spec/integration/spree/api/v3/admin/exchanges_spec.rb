@@ -134,6 +134,32 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
     end
   end
 
+  path '/api/v3/admin/orders/{order_id}/exchanges/{id}/approve' do
+    patch 'Approve an exchange' do
+      tags 'Orders'
+      admin_sdk_example 'order-exchanges/approve'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Accepts a requested exchange so the customer can send the goods back for their replacement. Only a requested exchange can be approved; receive it once the goods arrive.'
+      admin_scope :write, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Exchange prefixed ID'
+
+      response '200', 'exchange approved' do
+        let(:id) { record.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Exchange'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('approved')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/orders/{order_id}/exchanges/{id}/receive' do
     patch 'Receive an exchange' do
       tags 'Orders'
