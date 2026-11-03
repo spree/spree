@@ -16,9 +16,11 @@ module Spree
           run_hooks :after_request
         end
 
-        # After the outermost commit: Spree::OrderChanges::Apply runs this
-        # inside a transaction that a failed confirm still rolls back.
-        ActiveRecord.after_all_transactions_commit { order_change.publish_event('order_change.requested') }
+        # Sent after the outermost commit — Spree::OrderChanges::Apply runs
+        # this inside a transaction a failed confirm still rolls back — but
+        # describing the set as it is now, before that confirm moves it on.
+        payload = order_change.event_payload_for('order_change.requested') if Spree::Events.enabled?
+        ActiveRecord.after_all_transactions_commit { order_change.publish_event('order_change.requested', payload) }
         success(order_change)
       end
     end
