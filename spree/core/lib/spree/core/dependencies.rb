@@ -60,6 +60,7 @@ module Spree
         gift_card_redeem_workflow: 'Spree::GiftCards::Redeem',
         gift_card_cancel_workflow: 'Spree::GiftCards::Cancel',
         gift_card_destroy_workflow: 'Spree::GiftCards::Destroy',
+        gift_card_issue_from_order_workflow: 'Spree::GiftCards::IssueFromOrder',
 
         # order
         order_approve_service: 'Spree::Orders::Approve',

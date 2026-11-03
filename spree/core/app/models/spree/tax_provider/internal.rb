@@ -39,6 +39,8 @@ module Spree
         return if items.empty?
 
         rates = rates_for(owner)
+        # taxable_item? reads every line's product.
+        ActiveRecord::Associations::Preloader.new(records: items.grep(Spree::LineItem), associations: { variant: :product }).call
 
         items.group_by(&:class).each do |klass, group|
           # Replace-all set semantics per estimate: stale lines die with the
@@ -46,7 +48,10 @@ module Spree
           Spree::TaxLine.where(Spree::TaxLine.adjustable_key_for(klass) => group.map(&:id)).delete_all
         end
 
-        items.each { |item| tax_item(owner, item, rates, exemptions, tax_inclusive) }
+        # An item that carries no tax still goes through, matched against no
+        # rate, so its old rows are cleared above and its whole price is
+        # recorded as pre-tax.
+        items.each { |item| tax_item(owner, item, taxable_item?(item) ? rates : [], exemptions, tax_inclusive) }
       end
 
       # Gives back each credited unit's share of the TaxLines the sale actually

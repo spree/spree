@@ -812,6 +812,20 @@ module Spree
       end
     end
 
+    # Whether completed payments, less what was refunded from them, cover the
+    # total. Read from the payment rows rather than +payment_total+, which the
+    # status subscriber writes only once the payment event is dispatched, so
+    # it lags a payment that settled moments ago.
+    #
+    # @return [Boolean]
+    def settled_in_full?
+      return false unless total.to_d.positive?
+
+      completed = payments.completed
+      settled = completed.sum(:amount) - Spree::Refund.completed_or_unset.where(payment_id: completed.select(:id)).sum(:amount)
+      settled >= total.to_d
+    end
+
     def full_name
       @full_name ||= if customer.present? && customer.name.present?
                        customer.full_name

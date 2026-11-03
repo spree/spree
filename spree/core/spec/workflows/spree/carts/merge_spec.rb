@@ -33,6 +33,16 @@ RSpec.describe Spree::Carts::Merge do
       expect(cart.reload.line_items.map(&:variant)).to match_array([variant, other_variant])
     end
 
+    it 'keeps gift cards for different recipients on their own lines' do
+      gift_card_variant = create(:gift_card_product, store: store).default_variant
+      cart.line_items.create!(variant: gift_card_variant, quantity: 1, currency: cart.currency).assign_gift_card_recipient(email: 'bob@example.com')
+      other_cart.line_items.create!(variant: gift_card_variant, quantity: 1, currency: other_cart.currency).assign_gift_card_recipient(email: 'alice@example.com')
+
+      described_class.call(cart: cart, other_cart: other_cart)
+
+      expect(cart.reload.line_items.map { |line_item| line_item.gift_card_recipient.email }).to contain_exactly('bob@example.com', 'alice@example.com')
+    end
+
     it 'returns the cart untouched when there is nothing to merge' do
       expect(described_class.call(cart: cart, other_cart: nil)).to be_success
       expect(described_class.call(cart: cart, other_cart: cart)).to be_success
