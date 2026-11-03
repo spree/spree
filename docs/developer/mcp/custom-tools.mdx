@@ -54,21 +54,6 @@ s.files = Dir['{app,config,db,lib}/**/*', 'openapi/*.yaml', 'LICENSE', 'README.m
 
 ### Writing the specs
 
-Without the generator, the setup by hand is this. Configure your integration specs with the helpers `spree_api` ships (`rswag-specs` comes with `spree_dev_tools`):
-
-```ruby spec/swagger_helper.rb
-require 'spec_helper'
-require 'rswag/specs'
-require 'spree/api/testing_support/openapi'
-require 'spree/api/testing_support/deterministic_openapi'
-
-RSpec.configure do |config|
-  Spree::Api::TestingSupport::Openapi.configure(
-    config, engine: Rails.application, title: 'My Store Admin API' # or MyExtension::Engine
-  )
-end
-```
-
 Document each admin endpoint the way core does:
 
 ```ruby spec/integration/admin/supplier_syncs_spec.rb
@@ -119,15 +104,7 @@ end
 
 ### The contract spec
 
-Include the shared example so a new admin action cannot land undocumented, an opt-out cannot land without its reason, and two actions cannot claim one tool name:
-
-```ruby spec/agent_tools_spec.rb
-require 'spree/api/testing_support/agent_tools_contract'
-
-RSpec.describe 'agent tools' do
-  it_behaves_like 'an engine whose admin writes are agent tools', MyExtension::Engine
-end
-```
+`spec/agent_tools_spec.rb`, which the generator writes, fails when a new admin action lands undocumented, an opt-out lands without its reason, or two actions claim one tool name. Keep it in your suite.
 
 ## Something that is not an endpoint
 
