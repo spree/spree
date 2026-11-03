@@ -6,10 +6,15 @@ require 'tempfile'
 module Spree
   module Images
     class SaveFromUrlJob < ::Spree::BaseJob
+      # The URL served a file the media refuses (not a web image, say).
+      # Fetching it again returns the same file, so it is not retried.
+      class UnsupportedFile < StandardError; end
+
       queue_as Spree.queues.images
       retry_on ActiveRecord::RecordInvalid, wait: :polynomially_longer, attempts: Spree::Config.images_save_from_url_job_attempts.to_i
       discard_on URI::InvalidURIError
       discard_on SsrfFilter::Error
+      discard_on UnsupportedFile
 
       # The system a bare external id is filed under when the caller names
       # none. A DAM or PIM feeding media through this job should pass
@@ -106,13 +111,27 @@ module Spree
           tempfile.write(body)
           tempfile.rewind
 
-          image.attachment.attach(io: tempfile, filename: filename)
-          image.external_url = external_url
-          image.save!
+          # Assigned rather than attached: `attach` saves a persisted image on
+          # the spot, outside the transaction below. The URL is recorded only on
+          # a saved image: its custom field needs a row to belong to, and a URL
+          # recorded beside a refused file would stop the next run fetching it.
+          image.attachment = { io: tempfile, filename: filename }
+
+          Spree::Media.transaction do
+            save_image!(image)
+            image.external_url = external_url
+          end
         ensure
           tempfile.close
           tempfile.unlink
         end
+      end
+
+      def save_image!(image)
+        return if image.save
+        raise UnsupportedFile, image.errors.full_messages.to_sentence if image.errors.include?(:attachment)
+
+        raise ActiveRecord::RecordInvalid, image
       end
 
       # Reads the body as it arrives and stops at the limit, so an oversized
