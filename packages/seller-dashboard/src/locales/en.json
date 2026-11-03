@@ -141,6 +141,7 @@
             "received_quantity": "Received",
             "resellable": "Resellable",
             "actions": {
+              "create": "New return",
               "receive": "Receive items",
               "refund": "Refund",
               "complete": "Complete return"
