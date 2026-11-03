@@ -165,6 +165,40 @@ RSpec.describe 'Spree::Products status workflows' do
       described_class.call(product: product)
     end
 
+    # A repeated or concurrent request finds the move made and changes
+    # nothing, so subscribers hear of one activation once.
+    context 'when the product is already active' do
+      let(:product) { create(:product, status: 'active', store: store) }
+
+      it 'succeeds without publishing again', events: true do
+        allow(product).to receive(:publish_event)
+
+        expect(described_class.call(product: product)).to be_success
+        expect(product).not_to have_received(:publish_event).with('product.activated')
+      end
+
+      it 'runs no hook' do
+        Spree.hooks.clear!
+        seen = []
+        Spree.hooks.register('products.activate.after_activate') { |workflow| seen << workflow.product }
+
+        described_class.call(product: product)
+
+        expect(seen).to be_empty
+      ensure
+        Spree.hooks.clear!
+      end
+
+      # Read by query, so a caller's in-memory record is not reloaded.
+      it 'keeps unsaved edits on the record' do
+        product.name = 'Renamed, not saved'
+
+        described_class.call(product: product)
+
+        expect(product.name).to eq('Renamed, not saved')
+      end
+    end
+
     context 'hooks' do
       before { Spree.hooks.clear! }
       after { Spree.hooks.clear! }
@@ -202,6 +236,14 @@ RSpec.describe 'Spree::Products status workflows' do
 
       described_class.call(product: product)
     end
+
+    it 'publishes nothing for a product already archived', events: true do
+      archived = create(:product, status: 'archived', store: store)
+      allow(archived).to receive(:publish_event)
+
+      expect(described_class.call(product: archived)).to be_success
+      expect(archived).not_to have_received(:publish_event).with('product.archived')
+    end
   end
 
   describe Spree::Products::Draft do
@@ -209,6 +251,14 @@ RSpec.describe 'Spree::Products status workflows' do
 
     it 'returns the product to draft' do
       expect { described_class.call(product: product) }.to change { product.reload.status }.from('active').to('draft')
+    end
+
+    it 'publishes nothing for a product already in draft', events: true do
+      draft = create(:product, status: 'draft', store: store)
+      allow(draft).to receive(:publish_event)
+
+      expect(described_class.call(product: draft)).to be_success
+      expect(draft).not_to have_received(:publish_event).with('product.drafted')
     end
   end
 end

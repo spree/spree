@@ -3,6 +3,8 @@ module Spree
     # Takes a product off sale for good. Replaces the `archive` state machine
     # event.
     class Archive < Spree::Workflow
+      include StatusTransition
+
       hooks :validate, :after_archive
 
       # @param product [Spree::Product]
@@ -12,13 +14,16 @@ module Spree
 
         run_hooks :validate
 
-        ApplicationRecord.transaction do
+        moved = ApplicationRecord.transaction do
+          next false if already_in?('archived')
+
           step :mark_archived
           step :withdraw_submission
           run_hooks :after_archive
+          true
         end
 
-        product.publish_event('product.archived')
+        product.publish_event('product.archived') if moved
         success(product)
       end
 
