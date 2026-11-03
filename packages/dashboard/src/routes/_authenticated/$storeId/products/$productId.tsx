@@ -175,7 +175,7 @@ function ProductForm({ product }: { product: Product }) {
   }, [mediaItems, form])
 
   const onSubmit = async (submitted: ProductFormValues) => {
-    if (!customFieldsAllowSubmit(form)) return
+    if (!(await customFieldsAllowSubmit(form))) return
     // Media and variant rows get their extension fields back from live form
     // state, which the parse behind `submitted` stripped.
     const data = withExtensionRowValues('product', submitted, form.getValues())
