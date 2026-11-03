@@ -3290,8 +3290,8 @@
           "columns": {
             "code": "卡号",
             "amount": "金额",
-            "sent_to": "发送至",
-            "expires": "到期"
+            "expires": "到期",
+            "recipient": "收件人"
           }
         }
       },

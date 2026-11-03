@@ -258,6 +258,14 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
         expect([recipient.email, recipient.name]).to eq(['jo@example.com', 'Jo'])
       end
 
+      it 'clears what the new recipient leaves out' do
+        for_sam.assign_gift_card_recipient(email: 'sam@example.com', message: 'For Sam only')
+
+        patch :update, params: { cart_id: order.prefixed_id, id: for_sam.prefixed_id, recipient: { email: 'jo@example.com' } }
+
+        expect(for_sam.reload.gift_card_recipient.message).to be_nil
+      end
+
       it 'keeps the recipient when the quantity is refused' do
         patch :update, params: { cart_id: order.prefixed_id, id: for_sam.prefixed_id, quantity: 0, recipient: { email: 'jo@example.com' } }
 

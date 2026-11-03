@@ -112,13 +112,15 @@ module Spree
     end
 
     # The recipient with the change applied but not saved, for a caller that
-    # has other checks to pass before writing it.
+    # has other checks to pass before writing it. A replacement: a field the
+    # caller leaves out is cleared, so a new recipient never inherits the old
+    # one's message or send date.
     #
     # @param attributes [Hash] email, name, message, send_at
     # @return [Spree::GiftCardRecipient]
     def stage_gift_card_recipient(attributes)
       recipient = gift_card_recipient || build_gift_card_recipient
-      recipient.assign_attributes(Spree::GiftCardRecipient.permitted(attributes))
+      recipient.assign_attributes(Spree::GiftCardRecipient::ATTRIBUTES.index_with(nil).merge(Spree::GiftCardRecipient.permitted(attributes)))
       recipient
     end
 

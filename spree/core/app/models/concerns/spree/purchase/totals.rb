@@ -47,6 +47,10 @@ module Spree
         return BigDecimal('0') if excluded_gift_promo_actions.empty?
 
         line_items.sum(BigDecimal('0')) do |line_item|
+          # A non-promotionable line is already out of what promotions
+          # measure; taking its gift out again would count it twice.
+          next BigDecimal('0') unless line_item.promotionable?
+
           gifted_quantity = excluded_gift_promo_actions.sum { |action| action.gifted_quantity_of(line_item) }
           Spree::Money::Rounding.to_currency(line_item.price * [gifted_quantity, line_item.quantity].min, line_item.currency)
         end

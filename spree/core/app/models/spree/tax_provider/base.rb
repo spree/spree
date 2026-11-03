@@ -116,10 +116,10 @@ module Spree
       # buys. A provider asks this before taxing an item, so the rule lives in
       # one place.
       #
-      # @param item [Spree::LineItem, Spree::Fulfillment, Spree::Fee]
+      # @param item [Spree::LineItem, Spree::ExchangeLineItem, Spree::Fulfillment, Spree::Fee]
       # @return [Boolean]
       def taxable_item?(item)
-        !(item.is_a?(Spree::LineItem) && item.gift_card?)
+        !(item.respond_to?(:variant) && item.variant&.gift_card?)
       end
 
       # Finalizes tax with the provider when the order is placed. No-op for a

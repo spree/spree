@@ -470,6 +470,8 @@ en:
               must_be_a_carton: must be a package type of kind carton
             order_multiple:
               incompatible_with_carton: must divide into or be a multiple of %{units_per_carton} units per carton
+            seller:
+              gift_card_not_allowed: can't be set on a gift card, which only the store sells
             units_per_carton:
               required_for_carton_purchase_unit: is required when the purchase unit is cartons
         spree/webhook_endpoint:

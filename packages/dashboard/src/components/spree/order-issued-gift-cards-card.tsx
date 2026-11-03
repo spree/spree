@@ -21,7 +21,7 @@ import { translatedLabel } from '../../lib/translated-label'
 
 interface IssuedRow {
   giftCard: GiftCard
-  sentTo: string
+  recipient: string
 }
 
 /**
@@ -36,7 +36,7 @@ export function OrderIssuedGiftCardsCard({ order }: { order: Order }) {
   const rows: IssuedRow[] = (order.items ?? []).flatMap((item) =>
     (item.gift_cards ?? []).map((giftCard) => ({
       giftCard,
-      sentTo: item.recipient?.email ?? order.email ?? '',
+      recipient: item.recipient?.email ?? order.email ?? '',
     })),
   )
 
@@ -57,13 +57,15 @@ export function OrderIssuedGiftCardsCard({ order }: { order: Order }) {
               <TableRow>
                 <TableHead>{t('admin.orders.detail.issued_gift_cards.columns.code')}</TableHead>
                 <TableHead>{t('admin.orders.detail.issued_gift_cards.columns.amount')}</TableHead>
-                <TableHead>{t('admin.orders.detail.issued_gift_cards.columns.sent_to')}</TableHead>
+                <TableHead>
+                  {t('admin.orders.detail.issued_gift_cards.columns.recipient')}
+                </TableHead>
                 <TableHead>{t('admin.orders.detail.issued_gift_cards.columns.expires')}</TableHead>
                 <TableHead>{t('admin.fields.status.label')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map(({ giftCard, sentTo }) => (
+              {rows.map(({ giftCard, recipient }) => (
                 <TableRow key={giftCard.id}>
                   <TableCell className="font-mono">
                     <Link
@@ -78,7 +80,7 @@ export function OrderIssuedGiftCardsCard({ order }: { order: Order }) {
                   <TableCell className="tabular-nums">
                     <Money amount={giftCard.amount} currency={giftCard.currency} />
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{sentTo}</TableCell>
+                  <TableCell className="text-muted-foreground">{recipient}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {/* A calendar date with no time or zone, so it is shown as written. */}
                     {giftCard.expires_at

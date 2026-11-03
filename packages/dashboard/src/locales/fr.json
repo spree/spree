@@ -3298,8 +3298,8 @@
           "columns": {
             "code": "Code",
             "amount": "Montant",
-            "sent_to": "Envoyée à",
-            "expires": "Expire"
+            "expires": "Expire",
+            "recipient": "Destinataire"
           }
         }
       },

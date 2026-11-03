@@ -3298,8 +3298,8 @@
           "columns": {
             "code": "コード",
             "amount": "金額",
-            "sent_to": "送信先",
-            "expires": "有効期限"
+            "expires": "有効期限",
+            "recipient": "受取人"
           }
         }
       },
