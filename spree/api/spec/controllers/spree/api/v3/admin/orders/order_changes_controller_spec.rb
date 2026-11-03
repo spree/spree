@@ -55,7 +55,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['message']).to include('Returns, exchanges and claims')
+      expect(json_response['error']['message']).to match(/returns, exchanges and claims/i)
     end
 
     it 'refuses an action missing what its kind needs' do

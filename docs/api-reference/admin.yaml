@@ -19424,7 +19424,6 @@ paths:
                 data:
                 - id: ordchg_UkLWZg9DAJ
                   status: requested
-                  metadata: {}
                   requested_at: '2026-01-15T12:00:00.000Z'
                   confirmed_at:
                   canceled_at:
@@ -19434,6 +19433,7 @@ paths:
                   return_id:
                   exchange_id:
                   claim_id:
+                  metadata: {}
                   requested_by_id:
                   requested_by_type:
                   actions:
@@ -19514,7 +19514,6 @@ paths:
               example:
                 id: ordchg_UkLWZg9DAJ
                 status: confirmed
-                metadata: {}
                 requested_at: '2026-01-15T12:00:00.000Z'
                 confirmed_at: '2026-01-15T12:00:00.000Z'
                 canceled_at:
@@ -19524,6 +19523,7 @@ paths:
                 return_id:
                 exchange_id:
                 claim_id:
+                metadata: {}
                 requested_by_id: adm_UkLWZg9DAJ
                 requested_by_type: admin_user
                 actions:
@@ -19687,7 +19687,6 @@ paths:
               example:
                 id: ordchg_UkLWZg9DAJ
                 status: confirmed
-                metadata: {}
                 requested_at: '2026-01-15T12:00:00.000Z'
                 confirmed_at: '2026-01-15T12:00:00.000Z'
                 canceled_at:
@@ -19697,6 +19696,7 @@ paths:
                 return_id:
                 exchange_id:
                 claim_id:
+                metadata: {}
                 requested_by_id:
                 requested_by_type:
                 actions:
@@ -19771,7 +19771,6 @@ paths:
               example:
                 id: ordchg_UkLWZg9DAJ
                 status: canceled
-                metadata: {}
                 requested_at: '2026-01-15T12:00:00.000Z'
                 confirmed_at:
                 canceled_at: '2026-01-15T12:00:00.000Z'
@@ -19781,6 +19780,7 @@ paths:
                 return_id:
                 exchange_id:
                 claim_id:
+                metadata: {}
                 requested_by_id:
                 requested_by_type:
                 actions:
@@ -68623,8 +68623,6 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
-        metadata:
-          type: object
         requested_at:
           type: string
           nullable: true
@@ -68649,6 +68647,8 @@ components:
         claim_id:
           type: string
           nullable: true
+        metadata:
+          type: object
         requested_by_id:
           type: string
           nullable: true
@@ -68671,7 +68671,6 @@ components:
       required:
       - id
       - status
-      - metadata
       - requested_at
       - confirmed_at
       - canceled_at
@@ -68681,6 +68680,7 @@ components:
       - return_id
       - exchange_id
       - claim_id
+      - metadata
       - requested_by_id
       - requested_by_type
       - actions

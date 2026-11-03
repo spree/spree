@@ -6,7 +6,6 @@ import { OrderChangeActionSchema } from './OrderChangeAction';
 export const OrderChangeSchema = z.object({
   id: z.string(),
   status: z.string(),
-  metadata: z.record(z.string(), z.unknown()),
   requested_at: z.string().nullable(),
   confirmed_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
@@ -16,6 +15,7 @@ export const OrderChangeSchema = z.object({
   return_id: z.string().nullable(),
   exchange_id: z.string().nullable(),
   claim_id: z.string().nullable(),
+  metadata: z.record(z.string(), z.unknown()),
   requested_by_id: z.string().nullable(),
   requested_by_type: z.string().nullable(),
   requested_by: ActorSchema.optional(),

@@ -35,8 +35,6 @@ module Spree
     has_many :actions, -> { order(:position, :id) }, class_name: 'Spree::OrderChangeAction',
                                                      dependent: :destroy, inverse_of: :order_change
 
-    scope :open, -> { where(status: OPEN_STATUSES) }
-
     self.whitelisted_ransackable_attributes = %w[status created_at confirmed_at]
 
     # Applier classes for kinds an extension registered, by kind. Core kinds

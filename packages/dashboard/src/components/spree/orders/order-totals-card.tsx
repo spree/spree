@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, cn, Separator } from '@spree/
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type OrderEditItemValues, projectedSubtotal } from '../../../schemas/order'
+import { MoneyChange } from './money-change'
 
 function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bold?: boolean }) {
   return (
@@ -15,7 +16,7 @@ function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bol
   )
 }
 
-/** The saved amount, struck through beside what it becomes when the two differ. */
+/** The saved amount, and what it becomes when an edit moves it. */
 function Amount({
   before,
   after,
@@ -29,16 +30,30 @@ function Amount({
     return <Money amount={before} currency={currency} />
   }
 
-  return (
-    <span className="flex items-center justify-end gap-2">
-      <span className="font-normal text-muted-foreground line-through">
-        <Money amount={before} currency={currency} />
-      </span>
-      <span className="font-medium">
-        <Money amount={after} currency={currency} />
-      </span>
-    </span>
-  )
+  return <MoneyChange before={before} after={after} currency={currency} />
+}
+
+/** The note under the totals: what the figures above can be trusted for. */
+function totalsHint({
+  previewError,
+  previewPending,
+  serverPreview,
+  subtotalChanged,
+  totalProjectable,
+}: {
+  previewError?: Error | null
+  previewPending: boolean
+  serverPreview: boolean
+  subtotalChanged: boolean
+  totalProjectable: boolean
+}): [string, Record<string, string>?] {
+  if (previewError)
+    return ['admin.orders.edit.totals_preview_failed', { message: previewError.message }]
+  if (previewPending) return ['admin.orders.edit.totals_preview_loading']
+  if (serverPreview) return ['admin.orders.edit.totals_preview_server_hint']
+  if (!subtotalChanged) return ['admin.orders.edit.totals_hint']
+  if (totalProjectable) return ['admin.orders.edit.totals_preview_confirm_hint']
+  return ['admin.orders.edit.totals_preview_hint']
 }
 
 /**
@@ -84,17 +99,15 @@ export function OrderTotalsCard({
   const shows = (saved: string | null | undefined, next: string | null | undefined) =>
     isPositiveMoney(saved) || isPositiveMoney(next)
 
-  const hint = previewError
-    ? t('admin.orders.edit.totals_preview_failed', { message: previewError.message })
-    : previewPending
-      ? t('admin.orders.edit.totals_preview_loading')
-      : preview
-        ? t('admin.orders.edit.totals_preview_server_hint')
-        : !subtotalChanged
-          ? t('admin.orders.edit.totals_hint')
-          : totalProjectable
-            ? t('admin.orders.edit.totals_preview_confirm_hint')
-            : t('admin.orders.edit.totals_preview_hint')
+  const [hintKey, hintValues] = totalsHint({
+    previewError,
+    previewPending,
+    serverPreview: Boolean(preview),
+    subtotalChanged,
+    totalProjectable,
+  })
+  // How far the customer's balance moves; shown only when it moves at all.
+  const balanceDelta = preview && !isZeroMoney(preview.balance_delta) ? preview.balance_delta : null
 
   return (
     <Card className="gap-0 py-0">
@@ -170,13 +183,13 @@ export function OrderTotalsCard({
           bold
         />
 
-        {preview && !isZeroMoney(preview.balance_delta) && (
+        {balanceDelta && (
           <TotalRow
             label={t('admin.orders.edit.balance_change')}
             value={
               <span data-testid="order-balance-change">
-                {isPositiveMoney(preview.balance_delta) && '+'}
-                <Money amount={preview.balance_delta} currency={currency} />
+                {isPositiveMoney(balanceDelta) && '+'}
+                <Money amount={balanceDelta} currency={currency} />
               </span>
             }
           />
@@ -186,9 +199,9 @@ export function OrderTotalsCard({
       <Separator />
 
       <CardContent className="space-y-2 px-5 py-4">
-        {preview && !isZeroMoney(preview.balance_delta) && (
+        {balanceDelta && (
           <p className="text-xs font-medium">
-            {isPositiveMoney(preview.balance_delta)
+            {isPositiveMoney(balanceDelta)
               ? t('admin.orders.edit.balance_owed_hint')
               : t('admin.orders.edit.balance_refund_hint')}
           </p>
@@ -197,7 +210,7 @@ export function OrderTotalsCard({
           className={cn('text-xs text-muted-foreground', previewError && 'text-destructive')}
           role={previewError ? 'alert' : undefined}
         >
-          {hint}
+          {t(hintKey, hintValues)}
         </p>
       </CardContent>
     </Card>

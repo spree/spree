@@ -23,16 +23,6 @@ module Spree
       def partial_success?
         false
       end
-
-      # A placed order's lines keep the price they were sold at, as
-      # Spree::LineItem#should_update_price? promises: a quantity edit after
-      # placement changes the quantity, never the unit price. Only a line the
-      # edit adds is priced.
-      def apply_resolved_price(line_item)
-        return if cart.completed? && line_item.persisted?
-
-        super
-      end
     end
   end
 end

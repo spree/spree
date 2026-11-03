@@ -13,7 +13,7 @@ module Spree
           # The same locks Confirm takes, so a cancel racing a confirm sees
           # the set as it was left rather than overwriting a confirmed one.
           order_change.order.lock!
-          order_change.lock!
+          order_change.status = Spree::OrderChange.lock.where(id: order_change.id).pick(:status)
           failure(order_change, :order_change_not_open) unless order_change.open?
           order_change.update!(status: 'canceled', canceled_at: Time.current)
           run_hooks :after_cancel
