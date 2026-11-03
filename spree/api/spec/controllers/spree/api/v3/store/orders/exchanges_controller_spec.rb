@@ -46,6 +46,14 @@ RSpec.describe Spree::Api::V3::Store::Orders::ExchangesController, type: :contro
     expect(response).to have_http_status(:unprocessable_content)
   end
 
+  it 'refuses a replacement sold by another seller' do
+    replacement.update_columns(seller_id: create(:seller, store: store).id)
+
+    open_exchange
+
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
   it 'refuses a unit sold as non-returnable' do
     unit.line_item.update_columns(returnable: false)
 

@@ -80,11 +80,13 @@ module Spree
 
             # Looked up through the unit's own product, so a variant of another
             # product — or another store's — is refused without saying which.
-            # It must also be on sale, in stock and priced in the order's
-            # currency, as it would be in a cart.
+            # It must also be sold by the same seller as the unit coming back,
+            # on sale, in stock and priced in the order's currency, as it would
+            # be in a cart.
             def replacement_for(unit, variant_id)
               variant = unit.variant.product&.variants&.find_by_prefix_id(variant_id)
               return unless variant&.available? && variant.purchasable?
+              return unless variant.resolved_seller_id == unit.line_item&.seller_id
 
               variant if variant.price_in(@parent.currency)&.amount.present?
             end

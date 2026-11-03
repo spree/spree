@@ -34,7 +34,7 @@ module Spree
       end
 
       def allowed_statuses
-        only_from.present? ? cancellable_statuses & Array(only_from) : cancellable_statuses
+        only_from.nil? ? cancellable_statuses : cancellable_statuses & Array(only_from)
       end
 
       # Checked again under the row lock: a merchant approving the record

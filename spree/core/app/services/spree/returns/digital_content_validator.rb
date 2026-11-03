@@ -9,7 +9,7 @@ module Spree
       def call(workflow)
         return if workflow.created_by.present?
 
-        digital = units_of(workflow).select { |unit| unit.fulfillment&.digital? }
+        digital = units_of(workflow).select { |unit| unit.fulfillment&.digital? || unit.variant&.digital? }
         refuse(workflow, :digital_content, digital) if digital.any?
       end
     end

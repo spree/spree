@@ -463,8 +463,14 @@ export class StoreClient {
    * opening a return or an exchange.
    */
   readonly returnReasons = {
-    list: (options?: RequestOptions): Promise<PaginatedResponse<ReturnReason>> =>
-      this.request<PaginatedResponse<ReturnReason>>('GET', '/return_reasons', options),
+    list: (
+      params?: ListParams,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ReturnReason>> =>
+      this.request<PaginatedResponse<ReturnReason>>('GET', '/return_reasons', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
   }
 
   /**
@@ -472,8 +478,14 @@ export class StoreClient {
    * offered when filing a claim.
    */
   readonly claimReasons = {
-    list: (options?: RequestOptions): Promise<PaginatedResponse<ClaimReason>> =>
-      this.request<PaginatedResponse<ClaimReason>>('GET', '/claim_reasons', options),
+    list: (
+      params?: ListParams,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ClaimReason>> =>
+      this.request<PaginatedResponse<ClaimReason>>('GET', '/claim_reasons', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
   }
 
   /**

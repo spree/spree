@@ -9,7 +9,7 @@ class Spree::ReturnPreview < ActionMailer::Preview
   end
 
   def approved_email
-    Spree::ReturnMailer.approved_email(localized(Spree::Return.where(status: %w[approved received refunded]).last))
+    Spree::ReturnMailer.approved_email(localized(Spree::Return.where(status: %w[approved received refunded]).last || Spree::Return.last))
   end
 
   def refunded_email

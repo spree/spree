@@ -590,6 +590,10 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(approved.reload).to be_approved
     end
 
+    it 'allows nothing when the caller narrows to no status at all' do
+      expect(Spree::Returns::Cancel.call(return_record: create_return.value, only_from: [])).to be_failure
+    end
+
     # A merchant approving between the check and the write must win.
     it 're-checks the status under the row lock' do
       return_record = create_return.value
