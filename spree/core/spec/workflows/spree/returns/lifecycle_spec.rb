@@ -142,6 +142,26 @@ RSpec.describe 'Spree::Returns workflows' do
         to change { stock_level.reload.count_on_hand }.by(line.quantity)
     end
 
+    it 'records the restock as a confirmed change to the order' do
+      Spree::Returns::Receive.call(return_record: return_record)
+
+      order_change = return_record.order_changes.sole
+      expect(order_change).to be_confirmed
+      expect(order_change.actions.map(&:kind)).to eq(['receive_item'])
+      expect(order_change.actions.first.quantity).to eq(line.quantity)
+    end
+
+    # The restock rides an order change, and an order has one open at a time.
+    it 'refuses while another change to the order is open' do
+      Spree::OrderChanges::Begin.call(order: return_record.order)
+
+      result = Spree::Returns::Receive.call(return_record: return_record)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:order_change_in_progress)
+      expect(return_record.reload).to be_approved
+    end
+
     # The whole reason receiving is a workflow and not a state transition.
     it 'records a partial, non-resellable receipt without restocking' do
       variant = line.variant

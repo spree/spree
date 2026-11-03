@@ -128,6 +128,7 @@ RSpec.describe 'Spree::Exchanges workflows' do
 
       expect(result).to be_success
       expect(result.value).to be_fulfilled
+      expect(exchange.order_changes.sole.actions.map(&:kind)).to all(eq('add_fulfillment'))
     end
 
     # An unallocated replacement looks exactly like a fulfillment created before
