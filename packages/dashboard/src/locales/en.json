@@ -3369,8 +3369,8 @@
           "columns": {
             "code": "Code",
             "amount": "Amount",
-            "sent_to": "Sent to",
-            "expires": "Expires"
+            "expires": "Expires",
+            "recipient": "Recipient"
           }
         }
       },

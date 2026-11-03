@@ -3399,8 +3399,8 @@
           "columns": {
             "code": "Kod",
             "amount": "Kwota",
-            "sent_to": "Wysłano do",
-            "expires": "Wygasa"
+            "expires": "Wygasa",
+            "recipient": "Odbiorca"
           }
         }
       },

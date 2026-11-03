@@ -121,7 +121,7 @@ FactoryBot.define do
       # A gift card denomination: its price is the card's face value.
       factory :gift_card_product do
         gift_card { true }
-        price { 50.00 }
+        price { BigDecimal('50.00') }
         delivery_profile do
           Spree::DeliveryProfiles::Digital.find_by(store: store) ||
             create(:digital_delivery_profile, store: store)

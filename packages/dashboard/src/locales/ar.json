@@ -3393,8 +3393,8 @@
           "columns": {
             "code": "الرمز",
             "amount": "المبلغ",
-            "sent_to": "أُرسلت إلى",
-            "expires": "تنتهي"
+            "expires": "تنتهي",
+            "recipient": "المستلم"
           }
         }
       },

@@ -22,9 +22,11 @@ module Spree
       attr_reader :gift_cards
 
       # @param order [Spree::Order]
-      # @param paid [Boolean] true when the caller already knows the order is
-      #   paid in full (an `order.paid` event), which is the only answer for a
-      #   marketplace order whose payments belong to its group
+      # @param paid [Boolean] true when the caller was told the order is paid
+      #   (an `order.paid` event). Trusted only for a marketplace order, whose
+      #   payments belong to its group; any other order is checked against
+      #   its own payments, since a refund can land before the event is
+      #   handled.
       # @return [Spree::ServiceModule::Result] value is the cards issued by
       #   this run, empty when there was nothing to issue
       def perform(order:, paid: false)
@@ -33,7 +35,7 @@ module Spree
         @gift_cards = []
         # Most orders buy no gift card, and both events reach every order.
         halt!([]) unless order.completed? && gift_card_lines.exists?
-        halt!([]) unless paid || order.payment_status == 'paid' || order.settled_in_full?
+        halt!([]) unless (paid && order.order_group_id.present?) || order.payment_status == 'paid' || order.settled_in_full?
 
         ApplicationRecord.transaction do
           order.lock!

@@ -1028,19 +1028,25 @@ module Spree
       self.delivery_profile = gift_card_delivery_profile if store && !delivery_profile&.digital?
     end
 
+    # Under the store's lock, so two first gift card products in a store
+    # cannot both seed a digital profile.
     def gift_card_delivery_profile
-      Spree::DeliveryProfiles::Digital.find_by(store: store) || begin
-        Spree::Seeds::DigitalDelivery.call(store: store)
-        Spree::DeliveryProfiles::Digital.find_by(store: store)
+      Spree::DeliveryProfiles::Digital.find_by(store: store) || store.with_lock do
+        Spree::DeliveryProfiles::Digital.find_by(store: store) || begin
+          Spree::Seeds::DigitalDelivery.call(store: store)
+          Spree::DeliveryProfiles::Digital.find_by(store: store)
+        end
       end
     end
 
     def stop_tracking_gift_card_inventory
-      variants.select(&:track_inventory?).each { |variant| variant.update!(track_inventory: false) }
+      variants.select { |variant| variant.track_inventory? || variant[:delivery_profile_id] }.
+        each { |variant| variant.update!(track_inventory: false, delivery_profile_id: nil) }
     end
 
+    # Neither the product nor any of its listings may be a seller's.
     def gift_card_must_belong_to_operator
-      errors.add(:gift_card, :seller_not_allowed) if seller_id.present?
+      errors.add(:gift_card, :seller_not_allowed) if seller_id.present? || (persisted? && variants.where.not(seller_id: nil).exists?)
     end
 
     def gift_card_fixed_once_sold

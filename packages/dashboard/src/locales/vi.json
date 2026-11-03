@@ -3368,8 +3368,8 @@
           "columns": {
             "code": "Mã",
             "amount": "Số tiền",
-            "sent_to": "Gửi đến",
-            "expires": "Hết hạn"
+            "expires": "Hết hạn",
+            "recipient": "Người nhận"
           }
         }
       },
