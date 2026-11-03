@@ -54,26 +54,18 @@ module Spree
 
       def normalize_date_value
         canonical = self.class.canonical_value(value, store: date_store)
+        @unreadable_value = value.present? && canonical.nil?
         self.value = canonical if canonical
       end
 
       def value_must_be_canonical
-        return if value.blank? || self.class.canonical_value(value, store: date_store) == value
+        return unless @unreadable_value
 
         errors.add(:value, invalid_value_error, message: I18n.t("spree.errors.messages.custom_field_#{invalid_value_error}"))
       end
 
       def value_must_follow_definition_rules
-        return unless self.class.canonical_value(value, store: date_store) == value
-
-        min, max = definition_rules.values_at('min', 'max')
-
-        if min && value < min
-          errors.add(:value, :before_min, min: min, message: I18n.t('spree.errors.messages.custom_field_before_min', min: min))
-        end
-        if max && value > max
-          errors.add(:value, :after_max, max: max, message: I18n.t('spree.errors.messages.custom_field_after_max', max: max))
-        end
+        add_bound_errors(value, below: :before_min, above: :after_max) unless @unreadable_value
       end
     end
   end

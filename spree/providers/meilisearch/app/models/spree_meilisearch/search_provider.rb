@@ -434,29 +434,31 @@ module SpreeMeilisearch
       return nil unless parsed
 
       definition = parsed[:definition]
+      predicate = parsed[:predicate]
       attribute = definition.filter_key
       numeric = definition.field_type == 'number'
+      if %w[date date_time].include?(definition.field_type) && %w[present blank].exclude?(predicate)
+        return date_filter_condition(definition, predicate, value)
+      end
 
-      case parsed[:predicate]
+      case predicate
       when 'present'
         "#{attribute} EXISTS"
       when 'blank'
         "#{attribute} NOT EXISTS"
-      when *(%w[date date_time].include?(definition.field_type) ? %w[eq gt gteq lt lteq] : [])
-        date_filter_condition(definition, parsed[:predicate], value)
       when 'eq', 'not_eq'
-        operator = parsed[:predicate] == 'eq' ? '=' : '!='
+        operator = predicate == 'eq' ? '=' : '!='
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{operator} #{formatted}"
       when 'in', 'not_in'
         formatted = Array(value).map(&:to_s).compact_blank.map { |choice| format_custom_field_filter_value(choice, false) }
-        operator = parsed[:predicate] == 'in' ? 'IN' : 'NOT IN'
+        operator = predicate == 'in' ? 'IN' : 'NOT IN'
         formatted.any? ? "#{attribute} #{operator} [#{formatted.join(', ')}]" : nil
       when *CUSTOM_FIELD_RANGE_OPERATORS.keys
         return nil unless numeric
 
         formatted = format_custom_field_filter_value(value, numeric)
-        formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
+        formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[predicate]} #{formatted}"
       end
     end
 

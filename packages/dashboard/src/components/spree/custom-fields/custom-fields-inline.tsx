@@ -91,8 +91,6 @@ import {
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
-import { parseISO } from 'date-fns'
-import { formatInTimeZone } from 'date-fns-tz'
 import {
   createContext,
   type ReactNode,
@@ -107,9 +105,12 @@ import { useTranslation } from 'react-i18next'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,
+  choiceLabel,
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
   customFieldValueError,
+  formatCustomFieldValue,
+  isBlank,
 } from '../../../schemas/custom-field-definition'
 import { DefinitionFormFields } from './definition-form'
 
@@ -421,7 +422,7 @@ export function useCustomFieldsDraft(
       const invalid = definitions.filter((def) =>
         changedDefinitions.includes(def)
           ? customFieldValueError(def, values[def.id], { checkRequired: true })
-          : def.validations?.required && isBlankValue(values[def.id]),
+          : def.validations?.required && isBlank(values[def.id]),
       )
       if (invalid.length > 0) {
         setShowRequiredErrors(true)
@@ -719,8 +720,7 @@ export function CustomFieldsInlineCard({
   const openCreate = useCallback(() => setCreateOpen(true), [])
 
   const requiredMissing = definitions.some(
-    (definition) =>
-      isRequired(definition, requiredDefinitionIds) && isBlankValue(values[definition.id]),
+    (definition) => isRequired(definition, requiredDefinitionIds) && isBlank(values[definition.id]),
   )
 
   // Opens once rather than tracking the flags, so the card does not fold away
@@ -765,7 +765,7 @@ export function CustomFieldsInlineCard({
         <CollapsibleCard
           title={title}
           icon={icon}
-          count={definitions.filter((definition) => !isBlankValue(values[definition.id])).length}
+          count={definitions.filter((definition) => !isBlank(values[definition.id])).length}
           actions={actions}
           open={open}
           onOpenChange={setOpen}
@@ -795,15 +795,6 @@ export function CustomFieldsInlineCard({
 // Marked when the definition requires a value or the product type asks for one.
 function isRequired(definition: CustomFieldDefinition, requiredDefinitionIds?: string[]) {
   return !!definition.validations?.required || !!requiredDefinitionIds?.includes(definition.id)
-}
-
-function isBlankValue(value: unknown) {
-  return (
-    value === null ||
-    value === undefined ||
-    (typeof value === 'string' && value.trim() === '') ||
-    (Array.isArray(value) && value.length === 0)
-  )
 }
 
 // Edit / Cancel+Save buttons — only rendered in editable mode. Reads the mode
@@ -903,8 +894,7 @@ function FieldsEditor({ onSetUp }: { onSetUp: () => void }) {
         <CustomFieldRow
           key={def.id}
           definition={def}
-          required={isRequired(def, requiredDefinitionIds)}
-          requiredByType={!def.validations?.required && requiredDefinitionIds?.includes(def.id)}
+          requiredByType={requiredDefinitionIds?.includes(def.id)}
           error={customFieldValueError(def, values[def.id], { checkRequired: showRequiredErrors })}
           value={values[def.id]}
           onChange={(next) => setValue(def.id, next)}
@@ -949,7 +939,6 @@ function CustomFieldDisplayRow({
   definition: CustomFieldDefinition
   value: unknown
 }) {
-  const { t } = useTranslation()
   const { timezone } = useStore()
   const friendlyLabel = definition.label || definition.key
   const technicalKey = `${definition.namespace}.${definition.key}`
@@ -960,48 +949,9 @@ function CustomFieldDisplayRow({
         {friendlyLabel}
       </dt>
       <dd className="break-words text-foreground/90">
-        {formatDisplayValue(value, definition, t, timezone)}
+        {formatCustomFieldValue(value, definition, timezone)}
       </dd>
     </>
-  )
-}
-
-// Compact, read-only rendering of a stored value for the display grid.
-function formatDisplayValue(
-  value: unknown,
-  definition: CustomFieldDefinition,
-  t: (key: string) => string,
-  timezone: string,
-): string {
-  const fieldType = definition.field_type
-  const empty = t('admin.common.empty_value')
-  if (isBlankValue(value)) return empty
-  if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')
-  if (fieldType === 'rich_text' && typeof value === 'string') {
-    // Plain-text preview of HTML. DOMParser handles nested/malformed tags
-    // correctly — a single-pass regex strip can leak tags via patterns like
-    // `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
-    const text = new DOMParser().parseFromString(value, 'text/html').body.textContent ?? ''
-    return text.trim() || empty
-  }
-  if (fieldType === 'json') return typeof value === 'string' ? value : JSON.stringify(value)
-  if (fieldType === 'date' && typeof value === 'string') {
-    // A calendar day: format it as written, never shifted into a zone.
-    return formatInTimeZone(parseISO(`${value}T00:00:00Z`), 'UTC', 'PP')
-  }
-  if (fieldType === 'date_time' && typeof value === 'string') {
-    return formatInTimeZone(parseISO(value), timezone, 'PPp')
-  }
-  if (fieldType === 'choice') return choiceLabels(definition, value).join(', ')
-  return String(value)
-}
-
-// A value whose choice was since removed shows raw, as the server keeps it.
-function choiceLabels(definition: CustomFieldDefinition, value: unknown): string[] {
-  const chosen = Array.isArray(value) ? value.map(String) : [String(value)]
-  return chosen.map(
-    (choice) =>
-      definition.validations?.choices.find((option) => option.value === choice)?.label ?? choice,
   )
 }
 
@@ -1126,12 +1076,10 @@ function CreateDefinitionSheet({
 interface CustomFieldRowProps {
   definition: CustomFieldDefinition
   /**
-   * The definition or the product type requires a value. The API accepts a
-   * blank one either way; the marker, and the check on the card's own Save,
-   * are the dashboard's side of it.
+   * The product type asks for a value, as a recommendation. The definition's
+   * own `required` rule marks it too. The API accepts a blank one either way;
+   * the marker, and the check on the card's own Save, are the dashboard's side.
    */
-  required?: boolean
-  /** Only the product type asks for it, as a recommendation. */
   requiredByType?: boolean
   /** The value breaks one of the definition's rules. */
   error?: string | null
@@ -1157,7 +1105,6 @@ function RequiredMarker({ byType }: { byType?: boolean }) {
 
 function CustomFieldRow({
   definition,
-  required,
   requiredByType,
   error,
   value,
@@ -1194,7 +1141,9 @@ function CustomFieldRow({
       onChange={onChange}
     />
   )
-  const marker = required && <RequiredMarker byType={requiredByType} />
+  const marker = (definition.validations?.required || requiredByType) && (
+    <RequiredMarker byType={!definition.validations?.required} />
+  )
   const errorMessage = error && <FieldError>{error}</FieldError>
 
   // Booleans read as a horizontal label-left / switch-right row (matching the
@@ -1354,9 +1303,7 @@ function CustomFieldWidget({
         <MultipleChoiceWidget
           id={id}
           definition={definition}
-          value={
-            Array.isArray(value) ? value.map(String) : isBlankValue(value) ? [] : [String(value)]
-          }
+          value={Array.isArray(value) ? value.map(String) : isBlank(value) ? [] : [String(value)]}
           onChange={(next) => onChange(next.length > 0 ? next : null)}
         />
       ) : (
@@ -1365,7 +1312,7 @@ function CustomFieldWidget({
           ariaLabel={ariaLabel}
           definition={definition}
           invalid={invalid}
-          value={isBlankValue(value) ? '' : String(value)}
+          value={isBlank(value) ? '' : String(value)}
           onChange={(next) => onChange(next || null)}
         />
       )
@@ -1426,7 +1373,7 @@ function MultipleChoiceWidget({
   const { t } = useTranslation()
   const anchorRef = useComboboxAnchor()
   const items = choiceItems(definition, value).map((item) => item.value)
-  const labelFor = (choice: string) => choiceLabels(definition, choice)[0]
+  const labelFor = (choice: string) => choiceLabel(definition, choice)
 
   return (
     <Combobox

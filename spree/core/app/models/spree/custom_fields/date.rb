@@ -19,6 +19,9 @@ module Spree
 
       private
 
+      # A date reads the same in every time zone.
+      def date_store; end
+
       def invalid_value_error
         :invalid_date
       end
