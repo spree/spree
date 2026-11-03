@@ -234,6 +234,26 @@ export type MediaType = (typeof MEDIA_TYPES)[number]
 export const OPTION_TYPE_KINDS = ['dropdown', 'color_swatch', 'buttons'] as const
 export type OptionTypeKind = (typeof OPTION_TYPE_KINDS)[number]
 
+/** The built-in values of `OrderChangeActionKind`. Extensions may add more. */
+export const ORDER_CHANGE_ACTION_KINDS = [
+  'add_item',
+  'update_item',
+  'remove_item',
+  'receive_item',
+  'add_fulfillment',
+] as const
+export type OrderChangeActionKind = (typeof ORDER_CHANGE_ACTION_KINDS)[number] | (string & {})
+
+/** The built-in values of `OrderChangeStatus`. Extensions may add more. */
+export const ORDER_CHANGE_STATUSES = [
+  'pending',
+  'requested',
+  'confirmed',
+  'canceled',
+  'declined',
+] as const
+export type OrderChangeStatus = (typeof ORDER_CHANGE_STATUSES)[number] | (string & {})
+
 /** Every value of `OrderFulfillmentStatus`. */
 export const ORDER_FULFILLMENT_STATUSES = [
   'backorder',
@@ -692,6 +712,7 @@ export type BuiltInStatus =
   | (typeof IMPORT_STATUSES)[number]
   | (typeof INVITATION_STATUSES)[number]
   | (typeof MAINTENANCE_TASK_RUN_STATUSES)[number]
+  | (typeof ORDER_CHANGE_STATUSES)[number]
   | (typeof ORDER_FULFILLMENT_STATUSES)[number]
   | (typeof ORDER_PAYMENT_STATUSES)[number]
   | (typeof ORDER_STATUSES)[number]

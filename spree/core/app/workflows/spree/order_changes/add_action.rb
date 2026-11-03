@@ -41,7 +41,8 @@ module Spree
           quantity: quantity,
           fulfillment: fulfillment,
           delivery_method: delivery_method,
-          position: order_change.actions.size,
+          # Loaded once and then kept, so adding many actions counts none of them twice.
+          position: order_change.actions.load.size,
           metadata: metadata.to_h
         )
       end

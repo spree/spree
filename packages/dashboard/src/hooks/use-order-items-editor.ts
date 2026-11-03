@@ -7,13 +7,18 @@ import { useEffect, useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
+  buildOrderChangeActions,
   buildOrderItemsPayload,
+  type OrderChangeActions,
   type OrderEditFormValues,
   type OrderItemsPayload,
   orderEditFormSchema,
   orderToEditForm,
 } from '../schemas/order'
 import { useOrderMutation } from './use-order'
+
+/** A draft's lines are written directly; a placed order's go through an order change. */
+type SaveRequest = { items: OrderItemsPayload } | { actions: OrderChangeActions }
 
 function editFormFor(order: Order): OrderEditFormValues {
   return orderToEditForm(order.items ?? [], order.fulfillments ?? [])
@@ -22,8 +27,9 @@ function editFormFor(order: Order): OrderEditFormValues {
 /**
  * Staged line-item editing for one order: the form behind the items table,
  * the picker hand-off and the save. Quantity changes, removals, added variants
- * and (on drafts) negotiated prices live in form state until `save`, which is
- * a single `PATCH /orders/:id` the server runs in one transaction.
+ * and (on drafts) negotiated prices live in form state until `save`, which the
+ * server applies in one transaction: a `PATCH /orders/:id` for a draft, an
+ * order change confirmed on the spot for a placed order.
  *
  * The order edit page is built on it, and so can any page that edits an
  * order's lines in its own layout — render `OrderEditItemsTable` with `form`
@@ -84,8 +90,13 @@ export function useOrderItemsEditor(order: Order | undefined) {
 
   const queryClient = useQueryClient()
   const orderKey = useResourceKey('orders', order?.id ?? '')
-  const saveMutation = useOrderMutation(order?.id ?? '', (payload: OrderItemsPayload) =>
-    adminClient.orders.update(order?.id ?? '', { items: payload }),
+  const saveMutation = useOrderMutation(order?.id ?? '', (request: SaveRequest) =>
+    'actions' in request
+      ? adminClient.orders.orderChanges.create(order?.id ?? '', {
+          actions: request.actions,
+          confirm: true,
+        })
+      : adminClient.orders.update(order?.id ?? '', { items: request.items }),
   )
 
   /**
@@ -98,8 +109,11 @@ export function useOrderItemsEditor(order: Order | undefined) {
    */
   async function save(values: OrderEditFormValues): Promise<boolean> {
     // Rows the merchant staged and then unstaged net out to nothing, so the
-    // payload can legitimately be empty even on a dirty form.
-    const payload = buildOrderItemsPayload(values.items)
+    // request can legitimately be empty even on a dirty form.
+    const request: SaveRequest = order?.completed_at
+      ? { actions: buildOrderChangeActions(values.items) }
+      : { items: buildOrderItemsPayload(values.items) }
+    const empty = ('actions' in request ? request.actions : request.items).length === 0
     const startedAt = Date.now()
     // The order these rows belong to. If the page moves to another order
     // while the save is in flight, nothing below may touch the form.
@@ -110,12 +124,12 @@ export function useOrderItemsEditor(order: Order | undefined) {
     // the other is still in flight.
     if (savingRef.current) return false
 
-    if (payload.length > 0 && !savingOrderId) {
+    if (!empty && !savingOrderId) {
       toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
       return false
     }
 
-    if (payload.length === 0) {
+    if (empty) {
       if (!stillShown()) return false
       // Nothing was sent, so every remaining row is as the server has it:
       // re-baseline them as they are, server totals included. Leaving the
@@ -132,12 +146,18 @@ export function useOrderItemsEditor(order: Order | undefined) {
     setIsSaving(true)
     let patched = false
     try {
-      await saveMutation.mutateAsync(payload)
+      await saveMutation.mutateAsync(request)
       patched = true
     } catch (err) {
       if (!stillShown()) return false
       if (mapSpreeErrorsToForm(err, form.setError)) return false
-      toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
+      // The server's reason — an addition out of stock, another change to
+      // the order still open — is what tells the merchant what to do next.
+      toastManager.add({
+        type: 'error',
+        title: t('admin.errors.failed_to_save'),
+        description: err instanceof Error ? err.message : undefined,
+      })
       return false
     } finally {
       // A failed save unlocks here; one that went through stays locked until
@@ -222,6 +242,7 @@ export function useOrderItemsEditor(order: Order | undefined) {
 
     append({
       variant_id: variant.id,
+      line_item_id: null,
       quantity,
       removed: false,
       added: true,

@@ -104,6 +104,8 @@ import type {
   OptionTypeSort,
   OrderCancellationReasonFilters,
   OrderCancellationReasonSort,
+  OrderChangeFilters,
+  OrderChangeSort,
   OrderFilters,
   OrderGroupFilters,
   OrderGroupSort,
@@ -516,6 +518,8 @@ import type {
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
   OrderCancelParams,
+  OrderChangeCreateParams,
+  OrderChangePreviewParams,
   OrderCompleteParams,
   OrderCreateParams,
   OrderRoutingRuleCreateParams,
@@ -697,6 +701,8 @@ import type {
   OptionType,
   Order,
   OrderCancellationReason,
+  OrderChange,
+  OrderChangePreview,
   OrderGroup,
   OrderRoutingRule,
   PackageType,
@@ -2459,6 +2465,62 @@ export class AdminClient {
         options?: RequestOptions,
       ): Promise<Refund> =>
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),
+    },
+
+    /**
+     * Changes to a placed order — admin edits, and the restocks and
+     * replacement shipments of its returns, exchanges and claims. Preview a
+     * change, then create it with `confirm: true` to apply it in one call.
+     * Draft orders are edited through `orders.update` instead.
+     */
+    orderChanges: {
+      list: (
+        orderId: string,
+        params?: ListParams<OrderChangeFilters, OrderChangeSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OrderChange>> =>
+        this.request<PaginatedResponse<OrderChange>>('GET', `/orders/${orderId}/order_changes`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<OrderChange> =>
+        this.request<OrderChange>('GET', `/orders/${orderId}/order_changes/${id}`, options),
+
+      create: (
+        orderId: string,
+        params: OrderChangeCreateParams,
+        options?: RequestOptions,
+      ): Promise<OrderChange> =>
+        this.request<OrderChange>('POST', `/orders/${orderId}/order_changes`, {
+          ...options,
+          body: params,
+        }),
+
+      /** The totals the order would have after the change. Nothing is saved. */
+      preview: (
+        orderId: string,
+        params: OrderChangePreviewParams,
+        options?: RequestOptions,
+      ): Promise<OrderChangePreview> =>
+        this.request<OrderChangePreview>('POST', `/orders/${orderId}/order_changes/preview`, {
+          ...options,
+          body: params,
+        }),
+
+      confirm: (orderId: string, id: string, options?: RequestOptions): Promise<OrderChange> =>
+        this.request<OrderChange>(
+          'PATCH',
+          `/orders/${orderId}/order_changes/${id}/confirm`,
+          options,
+        ),
+
+      cancel: (orderId: string, id: string, options?: RequestOptions): Promise<OrderChange> =>
+        this.request<OrderChange>(
+          'PATCH',
+          `/orders/${orderId}/order_changes/${id}/cancel`,
+          options,
+        ),
     },
 
     taxLines: {

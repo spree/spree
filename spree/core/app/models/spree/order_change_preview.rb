@@ -13,6 +13,8 @@ module Spree
     attribute :discount_total, :decimal
     attribute :delivery_total, :decimal
     attribute :tax_total, :decimal
+    attribute :included_tax_total, :decimal
+    attribute :additional_tax_total, :decimal
     attribute :fee_total, :decimal
     attribute :total, :decimal
     attribute :previous_total, :decimal
@@ -28,6 +30,8 @@ module Spree
         discount_total: order.discount_total,
         delivery_total: order.delivery_total,
         tax_total: order.tax_total,
+        included_tax_total: order.included_tax_total,
+        additional_tax_total: order.additional_tax_total,
         fee_total: order.fee_total,
         total: order.total,
         previous_total: previous_total,
