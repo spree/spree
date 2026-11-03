@@ -331,6 +331,10 @@ export type PickupStockPolicy = (typeof PICKUP_STOCK_POLICIES)[number]
 export const PRICE_LIST_STATUSES = ['draft', 'active', 'inactive', 'scheduled'] as const
 export type PriceListStatus = (typeof PRICE_LIST_STATUSES)[number] | (string & {})
 
+/** Every value of `ProductMarketAvailability`. */
+export const PRODUCT_MARKET_AVAILABILITIES = ['all', 'all_except', 'only'] as const
+export type ProductMarketAvailability = (typeof PRODUCT_MARKET_AVAILABILITIES)[number]
+
 /** The built-in values of `ProductStatus`. Extensions may add more. */
 export const PRODUCT_STATUSES = ['draft', 'active', 'archived', 'proposed', 'rejected'] as const
 export type ProductStatus = (typeof PRODUCT_STATUSES)[number] | (string & {})

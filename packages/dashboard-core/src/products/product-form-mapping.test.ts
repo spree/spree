@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import {
   prepareVariantsTaxForProductSave,
+  productToFormValues,
   variantHasTaxCategoryOverride,
   variantToFormValues,
   variantToWirePayload,
 } from './product-form-mapping'
 import type { VariantFormValues } from './product-schema'
-import type { PanelVariant } from './product-types'
+import type { PanelProduct, PanelVariant } from './product-types'
 
 // variantToFormValues reads a handful of fields; cast a minimal fixture rather
 // than fabricating the whole serialized variant it ignores.
@@ -127,5 +128,26 @@ describe('variant tax category overrides', () => {
     expect(prepared[0].tax_category_id).toBeNull()
     expect(prepared[1].tax_category_id).toBe('taxcat_override')
     expect(variantToWirePayload(prepared[0], 0).tax_category_id).toBeNull()
+  })
+})
+
+describe('productToFormValues market availability', () => {
+  const product = (fields: Partial<PanelProduct>) =>
+    ({ id: 'prod_1', name: 'Kettle', ...fields }) as unknown as PanelProduct
+
+  it('reads a product with no restriction as sold in every market', () => {
+    const values = productToFormValues(product({}))
+
+    expect(values.market_availability).toBe('all')
+    expect(values.market_ids).toEqual([])
+  })
+
+  it('reads back the mode and the markets it names', () => {
+    const values = productToFormValues(
+      product({ market_availability: 'all_except', market_ids: ['mkt_1'] }),
+    )
+
+    expect(values.market_availability).toBe('all_except')
+    expect(values.market_ids).toEqual(['mkt_1'])
   })
 })

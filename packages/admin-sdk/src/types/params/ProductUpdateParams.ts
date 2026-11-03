@@ -65,6 +65,14 @@ export type ProductUpdateParams = {
    * list does not duplicate it; removal uses the nested digital assets endpoint.
    */
   digital_assets?: ProductDigitalAssetParams[]
+  /**
+   * Which markets may see and buy the product: `all` (the default), `all_except` the markets in
+   * `market_ids`, or `only` those markets. A product a market excludes is hidden there everywhere,
+   * including its own URL.
+   */
+  market_availability?: 'all' | 'all_except' | 'only'
+  /** The markets `market_availability` names (`mkt_...`). Required unless the mode is `all`. */
+  market_ids?: string[]
   product_publications?: ProductPublicationParams[]
   /**
    * Every purchasable attribute (sku, prices, stock, weight, dimensions) lives on variants. An
