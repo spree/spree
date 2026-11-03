@@ -224,4 +224,12 @@ RSpec.describe Spree::OrderEmailSubscriber do
       end
     end
   end
+
+  describe 'order.lookup_requested event' do
+    it 'emails the link to the order' do
+      expect(Spree::OrderMailer).to receive(:lookup_email).with(order.id).and_return(double(deliver_later: true))
+
+      subscriber.send(:send_lookup_email, mock_event(order))
+    end
+  end
 end

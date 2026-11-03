@@ -42,6 +42,18 @@ en:
         dear_customer: Dear %{name},
         instructions: The files from your order %{number} are ready to download.
         subject: Your files are ready
+    exchange_mailer:
+      approved_email:
+        heading: Your exchange is approved
+        message: We have approved exchange %{number}. Pack the items and send them to the address below.
+        subject: Exchange %{number} approved
+      requested_email:
+        coming_out: What we will send you
+        going_back: Items you are sending back
+        heading: We have received your exchange request
+        message: Your exchange request %{number} for order %{order_number} has reached us. This email is your confirmation.
+        next_steps_message: We will review your request and email you where to send the items. Your replacements ship once the items arrive.
+        subject: Exchange request %{number} received
     fulfillment_mailer:
       fulfilled_email:
         dear_customer: Dear %{name},
@@ -88,6 +100,11 @@ en:
         instructions: Please review and retain the following order information for your records.
         order_summary: Order %{number} Summary
         subject: Order Confirmation
+      lookup_email:
+        message: You asked for a link to your order at %{store_name}. Use it to follow your order and to return or exchange items.
+        not_you: If you did not ask for this link, you can ignore this email. Nobody can see your order without it.
+        subject: 'Your order #%{number}'
+        view_order: View your order
       payment_link_email:
         message: Please click the button below to pay for your order.
         message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
@@ -102,6 +119,14 @@ en:
       subtotal: 'Subtotal:'
       total: 'Order Total:'
     return_mailer:
+      approved_email:
+        deadline: Please send the items within 14 days.
+        download_label: Download your return label
+        heading: Your return is approved
+        label_ready: A prepaid return label is ready for you.
+        message: We have approved return %{number}. Pack the items and send them to the address below.
+        send_to: Send the items to
+        subject: Return %{number} approved
       refunded_email:
         dear_customer: Dear %{name},
         instructions: Your return for order %{number} has been refunded.
@@ -109,6 +134,20 @@ en:
         returned_items: Returned Items
         subject: Return Refunded
         total_refunded: 'Total refunded: %{total}'
+      requested_email:
+        details: Your request
+        from: 'Sent from: %{name}, %{address}, %{city}'
+        heading: We have received your return request
+        items: Items you are returning
+        message: Your return request %{number} for order %{order_number} has reached us. This email is your confirmation.
+        next_steps: What happens next
+        next_steps_message: We will review your request and email you where to send the items. Your refund goes back to the payment method you used, within 14 days of us receiving the items or proof that you sent them.
+        note: 'Your note: %{note}'
+        order_placed: Order %{number}, placed on %{date}
+        policy: Read our return policy
+        reason: 'Reason: %{reason}'
+        subject: Return request %{number} received
+        view_request: View your request
     seller_mailer:
       approved_email:
         action: Go to your dashboard

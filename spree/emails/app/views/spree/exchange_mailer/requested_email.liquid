@@ -1,0 +1,41 @@
+---
+subject: "{{ store.name }} {{ 'exchange_mailer.requested_email.subject' | t: number: exchange.number }}"
+---
+{%- assign items_heading = 'exchange_mailer.requested_email.going_back' | t -%}
+{%- assign placed_on = order.completed_at | date: 'long' -%}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'exchange_mailer.requested_email.heading' | t }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'return_mailer.refunded_email.dear_customer' | t: name: order.customer_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'exchange_mailer.requested_email.message' | t: number: exchange.number, order_number: order.number }}</mj-text>
+    <mj-button href="{{ order_url }}">{{ 'return_mailer.requested_email.view_request' | t }}</mj-button>
+  </mj-column>
+</mj-section>
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'return_mailer.requested_email.details' | t }}</mj-text>
+    <mj-text mj-class="body" padding="0 0 4px">{{ 'return_mailer.requested_email.order_placed' | t: number: order.number, date: placed_on }}</mj-text>
+    {%- if exchange.reason_name != blank -%}
+      <mj-text mj-class="body" padding="0 0 4px">{{ 'return_mailer.requested_email.reason' | t: reason: exchange.reason_name }}</mj-text>
+    {%- endif -%}
+    {%- if exchange.memo != blank -%}
+      <mj-text mj-class="body" padding="0 0 4px">{{ 'return_mailer.requested_email.note' | t: note: exchange.memo }}</mj-text>
+    {%- endif -%}
+  </mj-column>
+</mj-section>
+{% render 'spree/shared/order_summary', heading: items_heading, purchase: order, items: exchange.items, totals: false %}
+<mj-section padding="32px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'exchange_mailer.requested_email.coming_out' | t }}</mj-text>
+    {%- for replacement in exchange.replacements -%}
+      <mj-text mj-class="body" padding="0 0 4px">{{ replacement.quantity }} x {{ replacement.name }}{% if replacement.options_text != blank %} ({{ replacement.options_text }}){% endif %}</mj-text>
+    {%- endfor -%}
+  </mj-column>
+</mj-section>
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'return_mailer.requested_email.next_steps' | t }}</mj-text>
+    <mj-text mj-class="body" padding="0 0 8px">{{ 'exchange_mailer.requested_email.next_steps_message' | t }}</mj-text>
+    <mj-text mj-class="note"><a href="{{ policy_url }}">{{ 'return_mailer.requested_email.policy' | t }}</a></mj-text>
+  </mj-column>
+</mj-section>
