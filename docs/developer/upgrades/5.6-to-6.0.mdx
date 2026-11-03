@@ -885,7 +885,7 @@ buckets, and only the last needs this hook:
 
 | What you were adding | Where it goes in 6.0 |
 | --- | --- |
-| A merchant-managed field (text, number, dropdown) | [Custom Fields](/developer/core-concepts/metafields) — no code, and filterable/sortable |
+| A merchant-managed field (text, number, and from 6.1 a date or a `choice` from a fixed list) | [Custom Fields](/developer/core-concepts/metafields) — no code, and filterable/sortable. A product value shoppers browse or filter by is an option type. |
 | Config for an STI type you register (promotion rule, delivery method rule, …) | `additional_permitted_attributes` on that subclass, as before — unchanged |
 | A real database column your extension added to a core model | `additional_permitted_attributes` on the model |
 

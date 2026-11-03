@@ -54,6 +54,15 @@ Because the definition carries the type and the label, the dashboard can build a
 | `number` | A quantity or measure | `3.5`, `120` |
 | `boolean` | A yes or no | Requires a signature |
 | `json` | Structured data | A sizing chart |
+| `date` | A calendar day, stored as `YYYY-MM-DD` | `2026-10-12` |
+| `date_time` | A moment, stored in UTC | `2026-10-12T08:00:00Z` |
+| `choice` | One value from a fixed list, or several | `zone_a`, `["zone_a", "zone_b"]` |
+
+A `date_time` written without an offset is read in the store's time zone. Dates are parsed as ISO 8601 only, never by locale.
+
+A `choice` field stores the choice's `value`, not its label, so relabelling a choice changes no data. For product attributes that shoppers browse or filter by, such as material or color, use [option types](/developer/core-concepts/products) instead: they carry translations, ordering and storefront filters.
+
+A definition's `field_type` and `resource_type` are fixed once it is created. An update that sends a different one is refused with `422`; create a new definition and move the values instead.
 
 ## Who can see it
 
@@ -63,6 +72,8 @@ Because the definition carries the type and the label, the dashboard can build a
 |---|:---:|:---:|---|
 | `true` | Yes | Yes | Anything a shopper should see — materials, specs |
 | `false` | No | Yes | Internal notes, supplier codes, sync IDs |
+
+New definitions are admin-only: `storefront_visible` defaults to `false`, so send `true` for a field shoppers should see.
 
 <Warning>
 `storefront_visible: false` genuinely withholds the field from the Store API — it is not hidden in the response, it is absent. Treat it as the boundary between what a customer may read and what only staff may.
@@ -101,6 +112,38 @@ spree api post /custom_field_definitions -d '{
 `namespace` keeps groups of fields apart, so an integration's `product_id` never collides with yours. Together they form the key you'll see in responses: `properties.material`. Both are normalized to snake_case.
 
 Definitions can also be managed in the dashboard under **Settings → Custom Fields**, which is where merchants usually add them.
+
+## Validation rules
+
+`validations` sets rules a value must meet when it is written:
+
+| Rule | Field types | Meaning |
+|---|---|---|
+| `required` | All | The value cannot be blank. The dashboard marks the field and checks it before saving; the API still accepts a blank value. |
+| `min`, `max` | `short_text`, `long_text` | Number of characters, inclusive |
+| `min`, `max` | `number` | Value, inclusive |
+| `min`, `max` | `date`, `date_time` | Earliest and latest ISO 8601 date or date-time, inclusive |
+| `choices` | `choice` (required) | The options in display order, each a `value` and a `label` |
+| `multiple` | `choice` | Several values may be chosen; the value is a list |
+
+```typescript Admin SDK
+await adminClient.customFieldDefinitions.create({
+  resource_type: 'product',
+  namespace: 'warehouse',
+  key: 'zone',
+  label: 'Warehouse zone',
+  field_type: 'choice',
+  validations: {
+    required: true,
+    choices: [
+      { value: 'a', label: 'Zone A' },
+      { value: 'b', label: 'Zone B' },
+    ],
+  },
+})
+```
+
+A value that breaks a rule is refused with `422`, the error naming the field. Rules are checked on new writes only: a value saved before a rule changed stays readable, and is checked again when it is next written. Sending `validations` replaces every rule; send `null` to remove them all.
 
 ## Setting and reading values
 
@@ -202,8 +245,8 @@ A custom field can take part in product listings — but only if you ask, becaus
 
 | Flag | What it enables | Works with |
 |---|---|---|
-| `searchable` | The value is matched by product text search | `short_text`, `long_text`, `number` |
-| `sortable` | Listings can be ordered by it | `short_text`, `number` |
+| `searchable` | The value is matched by product text search | `short_text`, `long_text`, `number`, `date`, `date_time`, `choice` |
+| `sortable` | Listings can be ordered by it | `short_text`, `number`, `date`, `date_time`, and `choice` fields that allow one value |
 
 Setting either flag also makes the field **filterable**. Filter and sort with the field's `cf_` key, on both APIs:
 
@@ -217,6 +260,10 @@ GET /api/v3/admin/products?q[cf_properties_weight_gteq]=3.5
 |---|---|
 | `short_text`, `long_text` | `i_cont`, `cont`, `eq`, `not_eq`, `start`, `end`, `present`, `blank` |
 | `number` | `eq`, `gt`, `gteq`, `lt`, `lteq`, `present`, `blank` |
+| `date`, `date_time` | `eq`, `gt`, `gteq`, `lt`, `lteq`, `present`, `blank` |
+| `choice` | `eq`, `not_eq`, `in`, `present`, `blank` |
+
+A `choice` field that allows several values matches when any of its values does.
 
 Use `i_cont` for case-insensitive matching. A comparison that doesn't suit the field's type is ignored rather than rejected, so a stale filter in a saved view can't break a page.
 
