@@ -43,6 +43,10 @@ module Spree
 
         one :reason, resource: proc { Spree.api.return_reason_serializer }, if: proc { expand?('reason') }
 
+        # The order it belongs to — always present on webhook payloads, so a
+        # storefront sending its own emails can address the customer.
+        one :order, resource: proc { Spree.api.order_serializer }, if: proc { expand?('order') }
+
         many :exchange_line_items,
              resource: proc { Spree.api.exchange_line_item_serializer },
              if: proc { expand?('exchange_line_items') }

@@ -15,7 +15,7 @@ export const OrderSchema = z.object({
   market_id: z.string().nullable(),
   withdrawal_period_ends_at: z.string().nullable(),
   within_withdrawal_period: z.boolean(),
-  returns_eligibility: z.object({ eligible: z.boolean(), errors: z.array(z.object({ code: z.string(), message: z.string() })), return_window_ends_at: z.string().nullable(), withdrawal_period_ends_at: z.string().nullable() }),
+  returns_eligibility: z.object({ eligible: z.boolean(), errors: z.array(z.object({ code: z.string(), message: z.string() })), return_window_ends_at: z.string().nullable(), withdrawal_period_ends_at: z.string().nullable() }).optional(),
   shipping_eq_billing_address: z.boolean(),
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),

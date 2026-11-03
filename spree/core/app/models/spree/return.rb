@@ -204,6 +204,13 @@ module Spree
       return_line_items
     end
 
+    # Webhook payloads carry the order, the reason and the lines, so a
+    # storefront that sends its own emails can acknowledge a request without
+    # a second call (docs/plans/6.1-returns-portal.md).
+    def event_serializer_params
+      super.merge(expand: %w[order reason return_line_items.variant])
+    end
+
     private
 
     def ledger_total(association_name)
