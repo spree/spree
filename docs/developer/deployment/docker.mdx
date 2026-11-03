@@ -38,9 +38,10 @@ services:
     image: postgres:18-alpine
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-    # No ports: — Postgres is reachable only from the compose network. Trust
-    # auth is safe for exactly as long as this stays true; see "Published
-    # ports and firewalls" below before adding a ports: entry.
+    # No ports: — Postgres is reachable only from the compose network (on
+    # Docker Engine 28.0.1+; older engines can leak unpublished ports to the
+    # LAN). Trust auth is safe for exactly as long as this stays true; see
+    # "Published ports and firewalls" below before adding a ports: entry.
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
@@ -139,7 +140,7 @@ What this means for a production host:
 - **To filter published ports on the host anyway**, put the rules in Docker's `DOCKER-USER` chain, which Docker evaluates before its own forwarding rules. Setting `"iptables": false` in the daemon config is not a practical alternative — containers lose outbound NAT.
 - **Run Docker Engine 28.0.1 or newer.** Older engines let hosts on the same LAN reach container ports that were never published by routing straight to the container's IP. `curl -fsSL https://get.docker.com | sh` installs a current engine; a distribution's `docker.io` package may not.
 
-Check what a host actually exposes with `docker compose ps` (the PORTS column shows `0.0.0.0:` for an all-interfaces publish and `127.0.0.1:` for loopback) or `ss -tlnp` on the host.
+Check what a host actually exposes with `docker ps` — every container on the host, where `docker compose ps` covers one project. The PORTS column shows `0.0.0.0:` for an all-interfaces publish and `127.0.0.1:` for loopback. `ss -tlnp` on the host is a second opinion, but it lists only host sockets, so it misses NAT-only publishes when `userland-proxy` is turned off.
 
 ### Required Environment Variables
 

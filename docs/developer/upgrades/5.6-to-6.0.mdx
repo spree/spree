@@ -69,7 +69,12 @@ On a Linux host that is a real exposure, not a theoretical one: Docker's `iptabl
   meilisearch:
     ports:
       - "127.0.0.1:${SPREE_MEILISEARCH_PORT:-7700}:7700"
+  redis:                                  # only if the project still runs one
+    ports:
+      - "127.0.0.1:6379:6379"
 ```
+
+Either fix isolates the container only on Docker Engine 28.0.1 or newer. Older engines can leak container ports, published on loopback or not published at all, to hosts on the same LAN, so update the engine as part of the same change.
 
 The quick-start compose publishes the app itself as `"${SPREE_PORT:-3000}:3000"`, which is intended — but on an internet-facing host put a proxy in front and don't publish `web` at all. [Published ports and firewalls](/developer/deployment/docker#published-ports-and-firewalls) covers the setup; the EC2 guide shows it with Caddy.
 

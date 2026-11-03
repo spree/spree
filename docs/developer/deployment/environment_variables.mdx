@@ -166,7 +166,7 @@ Optional. When configured, Spree uses [Meilisearch](/integrations/search/meilise
 | Variable | Default | Description |
 | --- | --- | --- |
 | `MEILISEARCH_URL` | `http://localhost:7700` | Meilisearch server URL |
-| `MEILISEARCH_API_KEY` | — | Meilisearch master key. Not needed for local development — only required when Meilisearch is started with `MEILI_MASTER_KEY`. In production always start Meilisearch with a master key and set this to match: without one, anyone who can reach port 7700 can read, rewrite or delete the index. Keep the port unpublished or bound to `127.0.0.1` either way — on Linux a `ports:` entry bypasses `ufw`/`firewalld` ([why](/developer/deployment/docker#published-ports-and-firewalls)). |
+| `MEILISEARCH_API_KEY` | — | Meilisearch master key. Not needed for local development — only required when Meilisearch is started with `MEILI_MASTER_KEY`. In production always start Meilisearch with a master key and set this to match: without one, anyone who can reach port 7700 can read, rewrite or delete the index. The master key is the control to rely on; keeping the port unpublished or bound to `127.0.0.1` is defence in depth, not a substitute — on Linux a `ports:` entry bypasses `ufw`/`firewalld`, and Docker engines older than 28.0.1 can leak even unpublished ports to the LAN ([why](/developer/deployment/docker#published-ports-and-firewalls)). |
 
 After setting these, add the `spree_meilisearch` gem, enable the provider and reindex:
 
