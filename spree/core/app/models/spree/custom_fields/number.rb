@@ -19,9 +19,13 @@ module Spree
         decimal = Spree::Money::Rounding.parse_decimal(value) unless [true, false].include?(value)
         return if decimal.nil? || !decimal.finite?
 
-        decimal.frac.zero? ? decimal.to_i : decimal.to_f
+        decimal.frac.zero? ? decimal.to_i : decimal.to_s('F')
       rescue Spree::Money::InvalidFormat
         nil
+      end
+
+      def self.comparable_bound(bound)
+        BigDecimal(bound.to_s)
       end
 
       def serialize_value
@@ -38,7 +42,7 @@ module Spree
         number = BigDecimal(value.to_s, exception: false)
         return if number.nil?
 
-        add_bound_errors(number, below: :less_than_min, above: :greater_than_max, bound: ->(bound) { BigDecimal(bound.to_s) })
+        add_bound_errors(number, below: :less_than_min, above: :greater_than_max, bound: self.class.method(:comparable_bound))
       end
     end
   end

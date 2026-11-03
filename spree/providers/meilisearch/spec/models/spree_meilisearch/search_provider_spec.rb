@@ -587,7 +587,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
       expect(provider.send(:build_filter_condition, 'cf_custom_zones_in', %w[a b])).to eq("cf_custom_zones IN ['a', 'b']")
       expect(provider.send(:build_filter_condition, 'cf_custom_zones_eq', 'a')).to eq("cf_custom_zones = 'a'")
-      expect(provider.send(:build_filter_condition, 'cf_custom_zones_not_in', %w[a])).to eq("cf_custom_zones NOT IN ['a']")
+      expect(provider.send(:build_filter_condition, 'cf_custom_zones_not_in', %w[a])).to eq("cf_custom_zones EXISTS AND cf_custom_zones NOT IN ['a']")
     end
 
     it 'ignores substring predicates Meilisearch cannot filter on' do
