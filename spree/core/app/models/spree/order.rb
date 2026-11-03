@@ -219,6 +219,7 @@ module Spree
       has_many :returns, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Return'
       has_many :exchanges, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Exchange'
       has_many :claims, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Claim'
+      has_many :order_changes, -> { order(:created_at, :id) }, inverse_of: :order, class_name: 'Spree::OrderChange'
     end
     has_many :fulfillment_items, inverse_of: :order, class_name: 'Spree::FulfillmentItem'
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :order, deprecated: true

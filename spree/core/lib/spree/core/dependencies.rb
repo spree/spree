@@ -146,6 +146,15 @@ module Spree
         claim_deny_workflow: 'Spree::Claims::Deny',
         claim_cancel_workflow: 'Spree::Claims::Cancel',
 
+        # order changes
+        order_change_begin_workflow: 'Spree::OrderChanges::Begin',
+        order_change_add_action_workflow: 'Spree::OrderChanges::AddAction',
+        order_change_request_workflow: 'Spree::OrderChanges::Request',
+        order_change_confirm_workflow: 'Spree::OrderChanges::Confirm',
+        order_change_cancel_workflow: 'Spree::OrderChanges::Cancel',
+        order_change_apply_service: 'Spree::OrderChanges::Apply',
+        order_change_preview_service: 'Spree::OrderChanges::Preview',
+
         # sellers
         seller_create_workflow: 'Spree::Sellers::Create',
         seller_invite_workflow: 'Spree::Sellers::Invite',
