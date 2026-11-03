@@ -24,4 +24,18 @@ RSpec.describe Spree::Orders::LookupJob, events: true do
 
     expect(Spree::Events).not_to have_received(:publish).with('order.lookup_requested', anything, anything)
   end
+
+  it "publishes inside the order's store" do
+    other_store = create(:store)
+    other_order = create(:completed_order_with_totals, store: other_store).tap { |o| o.update_columns(email: 'guest@example.com') }
+    seen_store = nil
+    allow(Spree::Events).to receive(:publish).and_wrap_original do |original, *args, **kwargs|
+      seen_store = Spree::Current.store if args.first == 'order.lookup_requested'
+      original.call(*args, **kwargs)
+    end
+
+    described_class.perform_now(other_store.id, other_order.number, 'guest@example.com')
+
+    expect(seen_store).to eq(other_store)
+  end
 end

@@ -16,12 +16,16 @@ module Spree
         store = Spree::Store.find_by(id: store_id)
         return if store.nil? || number.blank? || email.blank?
 
-        # As typed, or upcased for a hand-typed `r123`: a store may configure
-        # a lowercase number prefix, so the stored casing cannot be assumed.
-        order = store.orders.complete.find_by(number: [number.strip, number.strip.upcase].uniq)
-        return unless order&.email.to_s.casecmp?(email.to_s.strip)
+        # Inside the order's store, so the event reaches that store's webhook
+        # endpoints and no one else's.
+        Spree::Current.with_store(store) do
+          # As typed, or upcased for a hand-typed `r123`: a store may configure
+          # a lowercase number prefix, so the stored casing cannot be assumed.
+          order = store.orders.complete.find_by(number: [number.strip, number.strip.upcase].uniq)
+          next unless order&.email.to_s.casecmp?(email.to_s.strip)
 
-        order.publish_event('order.lookup_requested')
+          order.publish_event('order.lookup_requested')
+        end
       end
     end
   end

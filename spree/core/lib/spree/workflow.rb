@@ -141,13 +141,15 @@ module Spree
       #   in a real run
       def check_hook(name, **arguments)
         workflow = new
-        Spree::Workflow.instance_method(:perform).bind_call(workflow, **arguments)
-        workflow.send(:run_hooks, name)
-        ActiveModel::Errors.new(workflow)
-      rescue FailureSignal
-        # A bare `reject!` still rejected, so it must not read as a pass.
-        workflow.errors.add(:base, :invalid) if workflow.errors.empty?
-        workflow.errors
+        begin
+          Spree::Workflow.instance_method(:perform).bind_call(workflow, **arguments)
+          workflow.send(:run_hooks, name)
+          ActiveModel::Errors.new(workflow)
+        rescue FailureSignal
+          # A bare `reject!` still rejected, so it must not read as a pass.
+          workflow.errors.add(:base, :invalid) if workflow.errors.empty?
+          workflow.errors
+        end
       end
 
       # Public readers for #perform's parameters, memoized per class. An
