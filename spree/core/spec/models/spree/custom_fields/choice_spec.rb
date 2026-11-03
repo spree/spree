@@ -42,10 +42,12 @@ describe Spree::CustomFields::Choice, type: :model do
       expect(product.custom_fields.count).to eq(0)
     end
 
-    it 'turns off several choices when every value holds one' do
-      product.set_custom_field(definition, %w[a])
+    it 'turns off several choices when every value holds one, which then reads as that value' do
+      custom_field = product.set_custom_field(definition, %w[a])
 
       expect(definition.update(validations: definition.validation_rules.except('multiple'))).to be(true)
+      expect(custom_field.reload.serialize_value).to eq('a')
+      expect(custom_field).to be_valid
     end
 
     it 'refuses to turn off several choices while a value holds several' do

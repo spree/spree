@@ -452,8 +452,10 @@ module SpreeMeilisearch
         formatted && "#{attribute} #{operator} #{formatted}"
       when 'in', 'not_in'
         formatted = Array(value).map(&:to_s).compact_blank.map { |choice| format_custom_field_filter_value(choice, false) }
-        operator = predicate == 'in' ? 'IN' : 'NOT IN'
-        formatted.any? ? "#{attribute} #{operator} [#{formatted.join(', ')}]" : nil
+        return nil if formatted.empty?
+
+        # As in the database provider, `not_in` matches only products that have a value.
+        predicate == 'in' ? "#{attribute} IN [#{formatted.join(', ')}]" : "#{attribute} EXISTS AND #{attribute} NOT IN [#{formatted.join(', ')}]"
       when *CUSTOM_FIELD_RANGE_OPERATORS.keys
         return nil unless numeric
 

@@ -2,8 +2,6 @@ module Spree
   module Api
     module V3
       module Admin
-        # One option of a `choice` custom field: the stored `value` and the
-        # `label` shown for it.
         class CustomFieldChoiceSerializer < BaseSerializer
           _attributes.delete(:id)
 

@@ -181,7 +181,7 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
       number = create(:custom_field_definition, :number_field, validations: { 'min' => '1', 'max' => '2.5' })
       date_time = create(:custom_field_definition, :date_time_field, validations: { min: '2026-01-01T10:00:00+02:00' })
 
-      expect(number.validation_rules).to eq('min' => 1, 'max' => 2.5)
+      expect(number.validation_rules).to eq('min' => 1, 'max' => '2.5')
       expect(date_time.validation_rules).to eq('min' => '2026-01-01T08:00:00Z')
     end
 

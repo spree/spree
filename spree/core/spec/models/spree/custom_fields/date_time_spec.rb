@@ -12,6 +12,10 @@ describe Spree::CustomFields::DateTime, type: :model do
     expect(custom_field('2026-10-12T10:00:00+02:00').tap(&:valid?).value).to eq('2026-10-12T08:00:00Z')
   end
 
+  it 'accepts a time object' do
+    expect(custom_field(Time.utc(2026, 10, 12, 8)).tap(&:valid?).value).to eq('2026-10-12T08:00:00Z')
+  end
+
   it "reads a value without an offset in the store's time zone" do
     allow(custom_field_definition.store).to receive(:preferred_timezone).and_return('America/New_York')
 
