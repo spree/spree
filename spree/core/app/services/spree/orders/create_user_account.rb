@@ -13,7 +13,7 @@ module Spree
         Spree.customer_create_workflow.call(
           store: order.store,
           order: order,
-          accepts_email_marketing: accepts_email_marketing.to_b
+          accepts_email_marketing: Spree::Boolean.cast(accepts_email_marketing)
         )
       end
     end

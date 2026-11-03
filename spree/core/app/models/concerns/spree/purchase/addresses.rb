@@ -338,7 +338,7 @@ module Spree
       end
 
       def quick_checkout_address?(quick_checkout_param)
-        quick_checkout_param.present? ? quick_checkout_param.to_b : false
+        quick_checkout_param.present? ? Spree::Boolean.cast(quick_checkout_param) : false
       end
 
       def should_assign_user_default_address?(address)

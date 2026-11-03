@@ -53,7 +53,6 @@ module Spree
 
       attr_accessor :use_billing
 
-      has_person_name
       normalizes :email, :first_name, :last_name, with: ->(value) { value&.to_s&.squish&.presence }
       acts_as_taggable_on :tags
 
@@ -178,11 +177,11 @@ module Spree
         conditions << search_condition(self, :first_name, query)
         conditions << search_condition(self, :last_name, query)
 
-        full_name = NameOfPerson::PersonName.full(query.to_s.strip)
+        first, last = query.to_s.squish.split(' ', 2)
 
-        if full_name.first.present? && full_name.last.present?
-          conditions << search_condition(self, :first_name, full_name.first)
-          conditions << search_condition(self, :last_name, full_name.last)
+        if first.present? && last.present?
+          conditions << search_condition(self, :first_name, first)
+          conditions << search_condition(self, :last_name, last)
         end
 
         where(conditions.reduce(:or))
@@ -374,7 +373,7 @@ module Spree
     # Returns the full name of the user
     # @return [String]
     def full_name
-      name&.full
+      [first_name, last_name].compact_blank.join(' ').presence
     end
 
     def event_serializer_class

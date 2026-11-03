@@ -152,7 +152,7 @@ module Spree
 
             # Forcing past a stock or payment guard is the operator's call.
             def fulfill_workflow_options
-              { force: fulfill_params[:force].to_b }
+              { force: Spree::Boolean.cast(fulfill_params[:force]) }
             end
 
             # The whole catalogue, and any warehouse this staff member may

@@ -84,7 +84,7 @@ module Spree
             end
 
             def active_param
-              params[:active].nil? ? true : params[:active].to_b
+              params[:active].nil? ? true : Spree::Boolean.cast(params[:active])
             end
 
             # This controller assigns each field by hand rather than mass-assigning,

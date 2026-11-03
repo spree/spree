@@ -84,7 +84,7 @@ module Spree
               {
                 exchange_line_item: @resource.exchange_line_items.find_by_prefix_id!(item[:exchange_line_item_id]),
                 quantity: item[:quantity].to_i,
-                resellable: item.key?(:resellable) ? item[:resellable].to_b : true
+                resellable: item.key?(:resellable) ? Spree::Boolean.cast(item[:resellable]) : true
               }
             end
           end

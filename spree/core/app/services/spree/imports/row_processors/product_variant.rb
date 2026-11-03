@@ -69,7 +69,7 @@ module Spree
           if attributes['inventory_count'].present?
             variant.set_stock(
               attributes['inventory_count'].to_i,
-              attributes['inventory_backorderable']&.to_b,
+              attributes['inventory_backorderable']&.then { |value| Spree::Boolean.cast(value) },
               stock_location
             )
           end

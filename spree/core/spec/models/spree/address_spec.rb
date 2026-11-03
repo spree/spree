@@ -325,6 +325,15 @@ describe Spree::Address, type: :model do
         expect(user.reload.last_name).to eq 'Doe'
       end
     end
+
+    context 'when the user has a last name but no first name' do
+      it 'fills in the name from the address' do
+        user = create(:user, first_name: nil, last_name: 'Smith')
+        create(:address, customer: user, first_name: 'Alice', last_name: 'Smith')
+
+        expect(user.reload.first_name).to eq 'Alice'
+      end
+    end
   end
 
   context '#full_name' do

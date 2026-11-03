@@ -101,7 +101,7 @@ module Spree
           def mark_in_transit
             result = Spree.stock_transfer_mark_in_transit_workflow.call(
               stock_transfer: @resource,
-              force: params[:force].to_b
+              force: Spree::Boolean.cast(params[:force])
             )
             return render_result_error(result) unless result.success?
 
