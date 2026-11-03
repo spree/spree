@@ -92,7 +92,7 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
   }, [category, form])
 
   const onSubmit = async (values: CategoryFormValues) => {
-    if (!customFieldsAllowSubmit(form)) return
+    if (!(await customFieldsAllowSubmit(form))) return
     // Read before any reset — extension values live in raw form state (the
     // Zod parse behind `values` strips keys the schema doesn't know).
     const extensionValues = extensionSubmitValues('category', form)

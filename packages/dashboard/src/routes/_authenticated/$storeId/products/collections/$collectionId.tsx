@@ -98,7 +98,7 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
   }, [collection, form])
 
   const onSubmit = async (values: CollectionFormValues) => {
-    if (!customFieldsAllowSubmit(form)) return
+    if (!(await customFieldsAllowSubmit(form))) return
     // Read before any reset — extension values live in raw form state (the
     // Zod parse behind `values` strips keys the schema doesn't know).
     const extensionValues = extensionSubmitValues('collection', form)

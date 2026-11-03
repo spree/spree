@@ -62,7 +62,7 @@ function NewProductPage() {
   })
 
   const onSubmit = async (submitted: ProductFormValues) => {
-    if (!customFieldsAllowSubmit(form)) return
+    if (!(await customFieldsAllowSubmit(form))) return
     // Before the placeholder variant is filtered out below, so row `i` of the
     // parse still lines up with row `i` of the form.
     const data = withExtensionRowValues('product', submitted, form.getValues())

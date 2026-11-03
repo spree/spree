@@ -242,7 +242,7 @@ function valuesByDefinitionId(fields: (Partial<CustomFieldFormValues> | undefine
 }
 
 // Each form-backed provider registers its check against the host form here.
-const formSubmitChecks = new WeakMap<object, () => boolean>()
+const formSubmitChecks = new WeakMap<object, () => Promise<boolean>>()
 
 /**
  * Call first in the submit handler of a page that renders
@@ -250,8 +250,18 @@ const formSubmitChecks = new WeakMap<object, () => boolean>()
  * custom field breaks its definition's rules or a required one is blank: the
  * page's Zod resolver cannot see the definitions, so it never checks them.
  */
-export function customFieldsAllowSubmit<T extends CustomFieldsFormShape>(form: UseFormReturn<T>) {
-  return formSubmitChecks.get(form.control)?.() ?? true
+export async function customFieldsAllowSubmit<T extends CustomFieldsFormShape>(
+  form: UseFormReturn<T>,
+) {
+  return (await formSubmitChecks.get(form.control)?.()) ?? true
+}
+
+// When a schema is supplied (the product's type), it decides both which
+// definitions appear and in what order.
+function schemaDefinitions(definitions: CustomFieldDefinition[], definitionIds?: string[]) {
+  if (!definitionIds) return definitions
+
+  return definitionIds.flatMap((id) => definitions.filter((def) => def.id === id))
 }
 
 // ---------------------------------------------------------------------------
@@ -298,18 +308,19 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
   // shared shape so the field-path operations type-check uniformly regardless
   // of the concrete form `T`. Memoized on `form` so it's a stable dependency.
   const cfForm = useMemo(() => form as unknown as UseFormReturn<CustomFieldsFormShape>, [form])
-  const { data: definitionsResponse, isLoading } = useCustomFieldDefinitions(resourceType)
+  const {
+    data: definitionsResponse,
+    isLoading,
+    refetch: refetchDefinitions,
+  } = useCustomFieldDefinitions(resourceType)
   // Memoize against the fetched array's identity. Without this the `?? []`
   // fallback returns a fresh array on every render, which propagates into the
   // context value and triggers every consumer to re-render unnecessarily.
   const allDefinitions = useMemo(() => definitionsResponse?.data ?? [], [definitionsResponse?.data])
-  // When a schema is supplied (the product's type), it decides both which
-  // definitions appear and in what order.
-  const definitions = useMemo(() => {
-    if (!definitionIds) return allDefinitions
-
-    return definitionIds.flatMap((id) => allDefinitions.filter((def) => def.id === id))
-  }, [allDefinitions, definitionIds])
+  const definitions = useMemo(
+    () => schemaDefinitions(allDefinitions, definitionIds),
+    [allDefinitions, definitionIds],
+  )
 
   const watchedCustomFields = cfForm.watch('custom_fields')
   const values = useMemo(() => valuesByDefinitionId(watchedCustomFields), [watchedCustomFields])
@@ -318,13 +329,16 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
 
   const { t } = useTranslation()
   useEffect(() => {
-    const check = () => {
-      // Without the definitions there is nothing to check against yet.
-      if (isLoading) return false
+    const check = async () => {
+      // A save made before the definitions arrive waits for them, rather than
+      // checking against none.
+      const checked = isLoading
+        ? schemaDefinitions((await refetchDefinitions()).data?.data ?? [], definitionIds)
+        : definitions
       const current = valuesByDefinitionId(cfForm.getValues('custom_fields'))
       const saved = valuesByDefinitionId(cfForm.formState.defaultValues?.custom_fields)
       return !rejectInvalidValues(
-        definitions,
+        checked,
         current,
         (def) => !valuesEqual(current[def.id], saved[def.id]),
         t,
@@ -334,7 +348,7 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
     return () => {
       formSubmitChecks.delete(cfForm.control)
     }
-  }, [cfForm, definitions, isLoading, t])
+  }, [cfForm, definitions, definitionIds, isLoading, refetchDefinitions, t])
 
   const setValue = useCallback(
     (definitionId: string, value: unknown) => {
