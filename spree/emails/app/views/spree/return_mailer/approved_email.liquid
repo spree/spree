@@ -1,0 +1,27 @@
+---
+subject: "{{ store.name }} {{ 'return_mailer.approved_email.subject' | t: number: return.number }}"
+---
+{%- assign items_heading = 'return_mailer.requested_email.items' | t -%}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'return_mailer.approved_email.heading' | t }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'return_mailer.refunded_email.dear_customer' | t: name: order.customer_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'return_mailer.approved_email.message' | t: number: return.number }}</mj-text>
+    {%- if return.label_available -%}
+      <mj-text mj-class="body">{{ 'return_mailer.approved_email.label_ready' | t }}</mj-text>
+      <mj-button href="{{ order_url }}">{{ 'return_mailer.approved_email.download_label' | t }}</mj-button>
+    {%- else -%}
+      <mj-button href="{{ order_url }}">{{ 'return_mailer.requested_email.view_request' | t }}</mj-button>
+    {%- endif -%}
+  </mj-column>
+</mj-section>
+{%- if return.stock_location -%}
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'return_mailer.approved_email.send_to' | t }}</mj-text>
+    <mj-text mj-class="body" padding="0">{{ return.stock_location.name }}<br />{{ return.stock_location.address1 }}<br />{{ return.stock_location.zipcode }} {{ return.stock_location.city }}<br />{{ return.stock_location.country_name }}</mj-text>
+    <mj-text mj-class="note" padding="16px 0 0">{{ 'return_mailer.approved_email.deadline' | t }}</mj-text>
+  </mj-column>
+</mj-section>
+{%- endif -%}
+{% render 'spree/shared/order_summary', heading: items_heading, purchase: order, items: return.items, totals: false %}

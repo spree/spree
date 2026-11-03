@@ -8,11 +8,12 @@ describe 'editable email samples' do
   before do
     order = create(:shipped_order, store: store)
     create(:received_return, store: store, order: order)
+    create(:exchange, store: store, order: order)
     create(:order_group, :with_parcels, store: store, sellers_count: 2)
   end
 
   it 'registers every customer email, the layout and the shared partials' do
-    expect(Spree.editable_email_templates.emails.size).to eq(12)
+    expect(Spree.editable_email_templates.emails.size).to eq(17)
     expect(Spree.editable_email_templates['layouts/spree/base_mailer']).to be_present
     expect(Spree.editable_email_templates['spree/order_mailer/store_owner_notification_email']).to be_nil
   end
