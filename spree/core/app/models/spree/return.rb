@@ -39,6 +39,8 @@ module Spree
     has_many :return_line_items, class_name: 'Spree::ReturnLineItem',
                                  dependent: :destroy, inverse_of: :return
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
+    # The change sets that restocked or shipped for it (docs/plans/6.1-order-change-substrate.md).
+    has_many :order_changes, class_name: 'Spree::OrderChange', inverse_of: :return, dependent: :nullify
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator, dependent: :nullify
     # The return label and the inbound parcel's journey
     # (docs/plans/6.0-shipping-labels-and-deliveries.md). A delivery reporting
