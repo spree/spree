@@ -319,6 +319,8 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
   const { t } = useTranslation()
   useEffect(() => {
     const check = () => {
+      // Without the definitions there is nothing to check against yet.
+      if (isLoading) return false
       const current = valuesByDefinitionId(cfForm.getValues('custom_fields'))
       const saved = valuesByDefinitionId(cfForm.formState.defaultValues?.custom_fields)
       return !rejectInvalidValues(
@@ -332,7 +334,7 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
     return () => {
       formSubmitChecks.delete(cfForm.control)
     }
-  }, [cfForm, definitions, t])
+  }, [cfForm, definitions, isLoading, t])
 
   const setValue = useCallback(
     (definitionId: string, value: unknown) => {
