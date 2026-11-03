@@ -160,9 +160,11 @@ module Spree
       # One provider round per batch rather than one per line: a fifty-line
       # cart restore must not become fifty calls to an ERP. Lines arriving
       # with a negotiated price are not asked about — the caller already
-      # answered; reverts still are, they need the catalog answer back.
+      # answered; reverts still are, they need the catalog answer back. Nor
+      # are saved lines that may not be re-priced (a placed order's), whose
+      # answer apply_resolved_price would only throw away.
       def resolve_prices
-        priceable = additions.reject(&:manual_price?)
+        priceable = additions.reject { |item| item.manual_price? || keeps_saved_price?(item) }
         return if priceable.empty?
 
         probes = priceable.map do |item|
@@ -177,6 +179,13 @@ module Spree
 
       def additions
         @additions ||= resolved_items.reject(&:remove?)
+      end
+
+      def keeps_saved_price?(item)
+        return false if item.price_provided
+
+        line_item = cart.line_items.detect { |line| line.variant_id == item.variant.id }
+        line_item.present? && !line_item.should_update_price?
       end
 
       # A saved line is re-priced only when the line itself allows it

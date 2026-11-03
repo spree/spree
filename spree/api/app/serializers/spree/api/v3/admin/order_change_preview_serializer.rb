@@ -2,10 +2,7 @@ module Spree
   module Api
     module V3
       module Admin
-        # What an order would look like after a change, computed and thrown
-        # away — nothing is saved.
         class OrderChangePreviewSerializer < V3::BaseSerializer
-          # A value object, not a record — it has no id of its own.
           _attributes.delete(:id)
 
           typelize currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode']

@@ -2,10 +2,6 @@ module Spree
   module Api
     module V3
       module Admin
-        # A set of changes to a placed order — an admin edit, or the restock
-        # or replacement shipment a return, exchange or claim carried out.
-        # Admin-only: it is the merchant's audit record, never shown to the
-        # customer. Extends the event payload with who asked and what changed.
         class OrderChangeSerializer < V3::OrderChangeEventSerializer
           typelize status: [:string, enum: Spree::OrderChange.statuses, enum_type_name: 'OrderChangeStatus'],
                    requested_by_id: [:string, nullable: true],
