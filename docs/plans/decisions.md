@@ -6708,3 +6708,14 @@ settings nav, search, slots, tables, translations) belongs in one of those
 places; anywhere else the build drops it once the flag lands. TipTap,
 CodeMirror and Recharts are imported only by their `dashboard-ui` component,
 which loads them on demand.
+
+## 2026-11-03 — Agent tools come from the Admin API document, and extensions ship theirs
+
+**Context:** An extension's workflow reached agents only through `expose_workflows` under a `Spree::Dependencies` key, with its schema read from `perform`'s YARD block and its endpoint found by scanning controller source for `Spree.<key>`. Building Enterprise quotes on it showed three silent failures: empty request bodies, workflows running in process when called another way, and parameter names bridged by guessing. spree/spree#15083 patched them and was closed: the 2026-10-10 MCP decision had already keyed the catalog on operations, and the patches deepened the dependency-key path instead.
+
+**Decision:** Every non-CRUD write operation in the Admin API's OpenAPI document is an agent tool, opt-out with a stated reason; custom GET operations opt in. Name, description, path parameters and body schema come from the operation, and permission from the routed controller's write scope. Each extension generates `openapi/admin.yaml` from its own rswag specs and ships it in its gem; Spree merges every engine's document. CRUD stays with the generic tools, which take `parent_id` for nested resources. `expose_workflows` becomes a deprecated no-op, removed in 7.0, and the agent layer stops reading `Spree::Dependencies`.
+
+**Consequences:** A full-access key sees about a hundred tools. Extensions adding admin endpoints must write rswag specs for them. Tool names that changed are resolvable aliases until 7.0. Product activate, archive and draft get member endpoints. `WorkflowTool`, `WorkflowSchema`, the controller source scanner and the catalog allowlists are deleted.
+
+**Plan:** `6.1-agent-tools-from-openapi.md`. **Plans amended:** `6.0-mcp-server.md` (allowlist keyed by dependency key superseded; "never one tool per endpoint" narrowed to CRUD and reads).
+

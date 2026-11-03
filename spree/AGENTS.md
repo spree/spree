@@ -88,6 +88,7 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 
 **Every new back-office workflow or feature also ships in the MCP server** — anything a merchant can do in the admin dashboard or Admin API, an agent can do too. Tools live in `spree_core` (`Spree.admin_agent_tools`, `app/tools/spree/agent_tools/`), not in `spree_mcp`, so the dashboard assistant gets them as well (`docs/plans/6.0-mcp-server.md`).
 
+- `docs/plans/6.1-agent-tools-from-openapi.md` replaces the workflow list below with tools derived from `admin.yaml`. Until it lands, don't add `Spree::Dependencies` keys or `expose_workflows` calls for extensions, and give every admin write operation a summary and description written for someone choosing it.
 - A new workflow goes into `Spree::AgentTools::DefaultCatalog::WORKFLOWS`, with the same write scope as the admin controller that runs it. Hide parameters an agent must not set with `except:`.
 - Plain CRUD on a new resource goes through the generic `search_resources` / `get_resource` / `create_resource` / `update_resource` / `delete_resource` tools. These reach a resource only through its Admin API controller (`Spree::AgentTools::ResourceMap`), so a back-office resource needs one.
 - Anything that is neither a workflow nor CRUD (reports, imports, files) gets its own `Spree::AgentTool` subclass, registered in `DefaultCatalog::TOOLS`.
