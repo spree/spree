@@ -27,6 +27,23 @@ module Spree
         def normalize_validation_bound(value, store: nil)
           canonical_value(value, store: store)
         end
+
+        # A `cf_` filter as `[operator, canonical bound]` pairs, all of which
+        # must hold.
+        #
+        # @param predicate [String] eq, gt, gteq, lt or lteq
+        # @return [Array<Array(String, String)>, nil] nil when the value cannot be read
+        def filter_conditions(predicate, input, store: nil)
+          bound = canonical_value(input, store: store)
+          bound && [[predicate, bound]]
+        end
+
+        private
+
+        # Accepts a space between date and time, as filter inputs send it.
+        def iso8601_input(input)
+          input.strip.sub(/\A(\d{4}-\d{2}-\d{2}) (?=\d)/, '\\1T')
+        end
       end
 
       private

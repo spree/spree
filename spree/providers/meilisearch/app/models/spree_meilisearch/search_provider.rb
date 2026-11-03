@@ -439,30 +439,36 @@ module SpreeMeilisearch
       definition = parsed[:definition]
       attribute = definition.filter_key
       numeric = definition.field_type == 'number'
-      date = %w[date date_time].include?(definition.field_type)
-      if date && %w[present blank].exclude?(parsed[:predicate])
-        value = definition.field_type_class.canonical_value(value, store: definition.store)
-        return nil if value.nil?
-      end
 
       case parsed[:predicate]
       when 'present'
         "#{attribute} EXISTS"
       when 'blank'
         "#{attribute} NOT EXISTS"
+      when *(%w[date date_time].include?(definition.field_type) ? %w[eq gt gteq lt lteq] : [])
+        date_filter_condition(definition, parsed[:predicate], value)
       when 'eq', 'not_eq'
         operator = parsed[:predicate] == 'eq' ? '=' : '!='
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{operator} #{formatted}"
-      when 'in'
+      when 'in', 'not_in'
         formatted = Array(value).map(&:to_s).compact_blank.map { |choice| format_custom_field_filter_value(choice, false) }
-        formatted.any? ? "#{attribute} IN [#{formatted.join(', ')}]" : nil
+        operator = parsed[:predicate] == 'in' ? 'IN' : 'NOT IN'
+        formatted.any? ? "#{attribute} #{operator} [#{formatted.join(', ')}]" : nil
       when *CUSTOM_FIELD_RANGE_OPERATORS.keys
-        return nil unless numeric || date
+        return nil unless numeric
 
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
       end
+    end
+
+    # Bounds normalized the way values are indexed, so they compare as strings.
+    def date_filter_condition(definition, predicate, value)
+      conditions = definition.field_type_class.filter_conditions(predicate, value, store: definition.store)
+      conditions&.map do |operator, bound|
+        "#{definition.filter_key} #{CUSTOM_FIELD_RANGE_OPERATORS.fetch(operator, '=')} #{format_custom_field_filter_value(bound, false)}"
+      end&.join(' AND ')
     end
 
     # The bound as a plain decimal, or nil for anything else, so a malformed

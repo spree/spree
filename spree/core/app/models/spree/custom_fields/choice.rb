@@ -54,8 +54,14 @@ module Spree
         nil
       end
 
+      # Text such as a CSV cell lists the values the way {#text_value} joins
+      # them; it is split only when every part is a choice, since a choice's
+      # own value may contain a comma.
       def wrap_single_value
-        self.value = [value] if value.present? && stored_values.nil?
+        return if value.blank? || stored_values
+
+        parts = value.split(',').map(&:strip)
+        self.value = (parts - custom_field_definition.choice_values).empty? ? parts : [value]
       end
 
       def value_must_follow_definition_rules

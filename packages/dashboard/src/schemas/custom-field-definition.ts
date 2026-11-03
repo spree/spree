@@ -251,7 +251,8 @@ export function customFieldValueError(
   const { min, max } = rules
   switch (fieldTypeBoundKind(definition.field_type)) {
     case 'length': {
-      const length = String(value).trim().length
+      // By characters, as the server counts them, not UTF-16 code units.
+      const length = [...String(value).trim()].length
       if (min != null && length < Number(min)) return message('too_short', { count: Number(min) })
       if (max != null && length > Number(max)) return message('too_long', { count: Number(max) })
       return null
