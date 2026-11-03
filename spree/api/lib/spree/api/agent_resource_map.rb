@@ -142,6 +142,15 @@ module Spree
             transform_values { |pairs| pairs.map(&:last).min_by { |path| [path.count(':'), path.length] } }
         end
 
+        # The controller served at the shallowest path, which is where a tool
+        # dispatches: for a record it is the show path, else the collection.
+        def shallowest_candidate(candidates)
+          candidates.min_by do |entry|
+            path = Array(entry[:api_paths]).to_h.values_at(:show, :index).compact.first.to_s
+            [path.empty? ? Float::INFINITY : path.count(':'), path.length]
+          end
+        end
+
         def api_paths_for(controller)
           candidates = Spree::Core::Engine.routes.routes.filter_map do |route|
             next unless route.defaults[:controller] == controller.controller_path
@@ -246,6 +255,11 @@ module Spree
             # withdrawn, and only when the controllers disagree about the
             # scope guarding it.
             narrowest.merge(
+              # The serializer of the controller the tools actually reach:
+              # the one whose path won below. `narrowest` is chosen on
+              # permission, which left `products` described by the catalog
+              # membership serializer and `expand: ["variants"]` refused.
+              serializer_name: shallowest_candidate(candidates)[:serializer_name],
               create_workflow_key: candidates.filter_map { |entry| entry[:create_workflow_key] }.first,
               update_workflow_key: candidates.filter_map { |entry| entry[:update_workflow_key] }.first,
               write_permission: contested ? nil : narrowest[:write_permission],

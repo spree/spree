@@ -85,7 +85,7 @@ module Spree
         path = entry.path_for(action, id: id, parent_id: parent_id)
         return [path, nil] if path
 
-        [nil, { error: missing_parent(entry, action) }]
+        [nil, nested_resource_error(entry, verb_for(action), action)]
       end
 
       def result_for(response, entry, summary:)
@@ -101,9 +101,11 @@ module Spree
       end
 
       def not_writable(entry, action)
-        verb = { create: 'created', update: 'updated', destroy: 'deleted' }.fetch(action, 'changed')
+        "#{entry.key} cannot be #{verb_for(action)} this way — call describe_resource to see what can."
+      end
 
-        "#{entry.key} cannot be #{verb} this way — call describe_resource to see what can."
+      def verb_for(action)
+        { create: 'created', update: 'updated', destroy: 'deleted' }.fetch(action, 'changed')
       end
     end
   end

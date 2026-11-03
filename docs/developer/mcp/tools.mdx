@@ -161,6 +161,10 @@ Two things worth knowing about the generic writes:
 
 **A list replaces rather than appends.** Sending one variant leaves a product with one variant. Send every row you want to keep.
 
+**Rows selected by a `type` take a short name, never a class name.** A promotion's rules and actions, a price list's rules and a payment method's provider are chosen by `type`: `item_total`, `create_item_adjustments`, `check`. `describe_resource` on one resource lists the kinds under `types` and `nested_types`, each with the schema its `preferences` follow and, for an action that prices a discount, the calculators it takes. A kind the store does not offer is refused with the accepted ones named, so nothing is saved with a rule or an action missing.
+
+**Rows that live under a parent are reached through it.** Promotion rules, promotion actions and an order's payments have no search of their own: pass the parent's id as `parent_id`, or read them with `get_resource` on the parent, naming the list in `expand`. Where the parent accepts the rows as a list attribute, as a promotion does its `rules` and `actions`, that attribute is also how they are written.
+
 ## See also
 
 <CardGroup cols={2}>

@@ -13,7 +13,9 @@ module Spree
         #
         # Gift card codes are bearer credentials that ride along on every
         # order, so serializers show them in full only to a caller who may read
-        # gift cards and masked to everyone else.
+        # gift cards and masked to everyone else. Customer records embedded in
+        # a rule (a promotion's or a price list's customer rule) are shown only
+        # to a caller who may read customers; the rule keeps its `customer_ids`.
         module EmbedPermissions
           extend ActiveSupport::Concern
 
@@ -44,7 +46,8 @@ module Spree
           end
 
           def serializer_params
-            super.merge(gift_card_codes: holds_permission?('read_gift_cards'))
+            super.merge(gift_card_codes: holds_permission?('read_gift_cards'),
+                        customer_records: holds_permission?('read_customers'))
           end
 
           private

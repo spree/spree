@@ -31,7 +31,7 @@ module Spree
       def call(resource:, filters: nil, sort: nil, limit: nil, parent_id: nil)
         entry = ResourceMap.find(resource)
         return unknown_resource(resource) if entry.nil?
-        return not_searchable(entry) unless entry.dispatchable?
+        return not_searchable(entry) if entry.api_path(:index).blank?
         return forbidden(entry) unless context.permitted?(entry.permission)
 
         applied = sanitize_filters(filters)
@@ -44,7 +44,7 @@ module Spree
         return invalid_filters(entry, unrecognised) if unrecognised.any?
 
         path = entry.path_for(:index, parent_id: parent_id)
-        return { error: missing_parent(entry, :index) } if path.nil?
+        return not_searchable(entry) if path.nil?
 
         response = dispatch.call(method: :get, path: path, params: query_for(applied, sort, limit))
         return { error: response.error_message } unless response.success?
@@ -145,10 +145,9 @@ module Spree
       # resolves its scope per request. Named rather than guessed at, because
       # a tool cannot invent the parent id such a path needs.
       def not_searchable(entry)
-        {
-          error: "#{entry.key} cannot be searched on its own.",
-          available: ResourceMap.available_for(context).select(&:dispatchable?).map(&:key).sort
-        }
+        refusal = entry.nested?(:index) ? nested_resource_error(entry, 'searched', :index) : { error: "#{entry.key} cannot be searched on its own." }
+
+        refusal.merge(available: ResourceMap.available_for(context).select(&:dispatchable?).map(&:key).sort)
       end
     end
   end

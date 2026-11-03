@@ -25,7 +25,7 @@ module Spree
         return { error: "#{entry.key} cannot be fetched one at a time." } if entry.api_path(:show).blank?
 
         path = entry.path_for(:show, id: id, parent_id: parent_id)
-        return { error: missing_parent(entry, :show) } if path.nil?
+        return nested_resource_error(entry, 'fetched', :show) if path.nil?
 
         requested, refusal = expansions(entry, expand)
         return refusal if refusal

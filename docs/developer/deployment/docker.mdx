@@ -39,7 +39,7 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: pg_isready -h 127.0.0.1 -U postgres
       interval: 5s
@@ -84,6 +84,10 @@ docker compose up -d
 ```
 
 The database is created and migrated on first boot. The app is available at [http://localhost:3000](http://localhost:3000).
+
+<Note>
+  PostgreSQL 18 images keep data in a version-specific directory under `/var/lib/postgresql`, so the volume above must be empty on first boot. If you already have a volume with PostgreSQL 17 (or older) data, migrate it first — dump and restore into a fresh PostgreSQL 18 volume, or use `pg_upgrade`.
+</Note>
 
 ### Scaling out the worker
 
