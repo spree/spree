@@ -76,11 +76,7 @@ RSpec.describe 'agent tool contract' do
     it 'exposes nothing an admin controller does not invoke' do
       # A workflow no controller reaches has no reference wiring: nothing says
       # how a request becomes its keywords, or which permission gates it.
-      stray = catalog::WORKFLOWS.keys - workflows_invoked_by_admin_controllers -
-              # The products status workflows are reached through the products
-              # controller's own status actions, which call them by a
-              # dynamically built key rather than a literal.
-              %i[product_activate_workflow product_draft_workflow product_archive_workflow]
+      stray = catalog::WORKFLOWS.keys - workflows_invoked_by_admin_controllers
 
       expect(stray).to be_empty
     end

@@ -157,12 +157,7 @@ RSpec.describe 'agent workflow tool arguments' do
         Spree::AgentTools::WorkflowEndpoints.find(key)
       end
 
-      # Only the product status moves, which the Admin API does not expose:
-      # `PATCH` writes the column and the bulk action uses `update_all`, so
-      # neither publishes the event nor withdraws an open submission.
-      expect(in_process.keys).to contain_exactly(
-        :product_activate_workflow, :product_draft_workflow, :product_archive_workflow
-      )
+      expect(in_process.keys).to be_empty
     end
 
     it 'fills a parent segment from the record the caller named' do

@@ -27180,6 +27180,380 @@ paths:
             schema:
               "$ref": "#/components/schemas/ProductRejectParams"
         required: true
+  "/api/v3/admin/products/{id}/activate":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+    patch:
+      summary: Activate a product
+      tags:
+      - Products
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const product = await client.products.activate('prod_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{id}/activate -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Puts one product on sale. Runs the activation workflow, so its hooks and the `product.activated` event fire, which `bulk_status_update` does not. A product awaiting review is refused: approve or reject it instead.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product active
+          content:
+            application/json:
+              example:
+                id: prod_gbHJdmfrXB
+                name: Product 1604119
+                slug: product-1604119
+                meta_title:
+                meta_description:
+                meta_keywords:
+                variant_count: 1
+                available_on:
+                preorder_ships_at:
+                purchasable: true
+                preorder: false
+                in_stock: false
+                backorderable: true
+                available: true
+                description: Tempora doloribus sit consectetur cumque omnis. Quod
+                  fugit dicta ullam omnis. Hic dolorem asperiores nemo est sed nihil
+                  quia deleniti. Saepe aperiam eos nulla quia porro minima officiis
+                  cum. Eius dignissimos laudantium sequi incidunt. Sed nihil voluptate
+                  aliquid nisi. Veritatis tenetur quos aspernatur modi perspiciatis
+                  quaerat. Voluptas harum neque labore fuga reprehenderit unde quasi.
+                  Omnis quam autem in ipsam aspernatur architecto alias recusandae.
+                  Repudiandae ratione vel expedita corporis et pariatur rem sapiente.
+                  Velit laboriosam nulla quibusdam fugit minus itaque ut repellat.
+                  Incidunt est fugiat totam ipsa quod deserunt. Natus sequi numquam
+                  laudantium non similique saepe ipsam quos. Ad impedit necessitatibus
+                  quo nesciunt blanditiis id similique recusandae. Ut occaecati debitis
+                  aliquam accusantium sed distinctio neque. Labore quos quam optio
+                  aperiam dolores aspernatur vitae odio. Eius nam adipisci corrupti
+                  incidunt quod sapiente tempora dicta.
+                description_html: |-
+                  Tempora doloribus sit consectetur cumque omnis. Quod fugit dicta ullam omnis. Hic dolorem asperiores nemo est sed nihil quia deleniti.
+                  Saepe aperiam eos nulla quia porro minima officiis cum. Eius dignissimos laudantium sequi incidunt. Sed nihil voluptate aliquid nisi.
+                  Veritatis tenetur quos aspernatur modi perspiciatis quaerat. Voluptas harum neque labore fuga reprehenderit unde quasi. Omnis quam autem in ipsam aspernatur architecto alias recusandae. Repudiandae ratione vel expedita corporis et pariatur rem sapiente.
+                  Velit laboriosam nulla quibusdam fugit minus itaque ut repellat. Incidunt est fugiat totam ipsa quod deserunt. Natus sequi numquam laudantium non similique saepe ipsam quos. Ad impedit necessitatibus quo nesciunt blanditiis id similique recusandae.
+                  Ut occaecati debitis aliquam accusantium sed distinctio neque. Labore quos quam optio aperiam dolores aspernatur vitae odio. Eius nam adipisci corrupti incidunt quod sapiente tempora dicta.
+                default_variant_id: variant_gbHJdmfrXB
+                buy_box_variant_id: variant_gbHJdmfrXB
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_gbHJdmfrXB
+                  currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
+                  price_list_id:
+                  min_quantity: 1
+                  variant_id: variant_gbHJdmfrXB
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                original_price:
+                seller_id:
+                external_references: {}
+                status: active
+                metadata: {}
+                deleted_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                delivery_profile_id: fp_UkLWZg9DAJ
+                seller_name:
+                product_type_id:
+                tax_category_id: taxcat_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Product"
+        '422':
+          description: the product is awaiting review
+          content:
+            application/json:
+              example:
+                error:
+                  code: product_in_review
+                  message: A product awaiting review is approved or rejected, not
+                    moved to another status
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/products/{id}/archive":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+    patch:
+      summary: Archive a product
+      tags:
+      - Products
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const product = await client.products.archive('prod_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{id}/archive -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Takes one product off sale and archives it; activating it puts it back on sale. Runs the archive workflow, so its hooks and its event fire. A product awaiting review is refused: approve or reject it instead.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product archived
+          content:
+            application/json:
+              example:
+                id: prod_gbHJdmfrXB
+                name: Product 1644768
+                slug: product-1644768
+                meta_title:
+                meta_description:
+                meta_keywords:
+                variant_count: 1
+                available_on:
+                preorder_ships_at:
+                purchasable: true
+                preorder: false
+                in_stock: false
+                backorderable: true
+                available: false
+                description: In exercitationem nobis illo accusamus non quibusdam.
+                  Minus corporis commodi magni maxime cumque beatae. Exercitationem
+                  provident tempore est corrupti eius at dolor. Rerum delectus id
+                  aspernatur consequuntur quod enim. Quis omnis amet inventore alias
+                  minima praesentium. Quaerat reprehenderit deleniti atque inventore.
+                  Nemo quas nam qui architecto eligendi vel pariatur. Veritatis accusantium
+                  molestias deleniti omnis autem modi. Officiis optio quidem iste
+                  nihil delectus commodi. Aperiam amet omnis eum praesentium natus
+                  recusandae suscipit.
+                description_html: |-
+                  In exercitationem nobis illo accusamus non quibusdam. Minus corporis commodi magni maxime cumque beatae. Exercitationem provident tempore est corrupti eius at dolor. Rerum delectus id aspernatur consequuntur quod enim.
+                  Quis omnis amet inventore alias minima praesentium. Quaerat reprehenderit deleniti atque inventore. Nemo quas nam qui architecto eligendi vel pariatur.
+                  Veritatis accusantium molestias deleniti omnis autem modi. Officiis optio quidem iste nihil delectus commodi. Aperiam amet omnis eum praesentium natus recusandae suscipit.
+                default_variant_id: variant_gbHJdmfrXB
+                buy_box_variant_id: variant_gbHJdmfrXB
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_gbHJdmfrXB
+                  currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
+                  price_list_id:
+                  min_quantity: 1
+                  variant_id: variant_gbHJdmfrXB
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                original_price:
+                seller_id:
+                external_references: {}
+                status: archived
+                metadata: {}
+                deleted_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                delivery_profile_id: fp_UkLWZg9DAJ
+                seller_name:
+                product_type_id:
+                tax_category_id: taxcat_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Product"
+        '422':
+          description: the product is awaiting review
+          content:
+            application/json:
+              example:
+                error:
+                  code: product_in_review
+                  message: A product awaiting review is approved or rejected, not
+                    moved to another status
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/products/{id}/draft":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+    patch:
+      summary: Move a product back to draft
+      tags:
+      - Products
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const product = await client.products.draft('prod_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{id}/draft -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Takes one product off sale, back to a draft. Runs the draft workflow, so its hooks and its event fire. A product awaiting review is refused: approve or reject it instead.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product draft
+          content:
+            application/json:
+              example:
+                id: prod_gbHJdmfrXB
+                name: Product 1682527
+                slug: product-1682527
+                meta_title:
+                meta_description:
+                meta_keywords:
+                variant_count: 1
+                available_on:
+                preorder_ships_at:
+                purchasable: true
+                preorder: false
+                in_stock: false
+                backorderable: true
+                available: false
+                description: Temporibus fugiat ducimus quae voluptas error. Iure repellat
+                  labore aperiam harum magni. Fuga ullam possimus ad repudiandae atque.
+                  Excepturi quidem est expedita molestiae delectus. Optio tempora
+                  sed minus voluptatum doloremque. Laborum esse voluptate nostrum
+                  nesciunt. Ipsum ducimus a dolor nostrum quis corrupti quae illum.
+                  Fuga provident deleniti minima ea vel. Cupiditate architecto omnis
+                  reprehenderit iusto suscipit corrupti quia cumque. Voluptatem nisi
+                  dignissimos aut nostrum distinctio quo explicabo fugiat. Unde minima
+                  ratione enim minus officia rerum odio reiciendis. Fugiat perferendis
+                  nulla voluptates voluptatum alias. Voluptatem cumque voluptatibus
+                  in sint assumenda ad neque. Inventore error consequuntur exercitationem
+                  officia consequatur earum iure autem. Odit iure porro reiciendis
+                  placeat. Animi minus vel asperiores maiores error tempora. Dolorum
+                  esse sapiente voluptatem iste culpa suscipit. Nulla sapiente sit
+                  deserunt iste totam dolores. Tempora magni eveniet natus nemo optio.
+                  Aliquid quis ullam illo minus. Atque distinctio sapiente voluptatibus
+                  adipisci consectetur repellendus culpa dolor. Dolor pariatur tempora
+                  ab repellat unde aliquam sequi. Necessitatibus aliquid fugit molestias
+                  facilis ratione.
+                description_html: |-
+                  Temporibus fugiat ducimus quae voluptas error. Iure repellat labore aperiam harum magni. Fuga ullam possimus ad repudiandae atque. Excepturi quidem est expedita molestiae delectus. Optio tempora sed minus voluptatum doloremque.
+                  Laborum esse voluptate nostrum nesciunt. Ipsum ducimus a dolor nostrum quis corrupti quae illum. Fuga provident deleniti minima ea vel. Cupiditate architecto omnis reprehenderit iusto suscipit corrupti quia cumque. Voluptatem nisi dignissimos aut nostrum distinctio quo explicabo fugiat.
+                  Unde minima ratione enim minus officia rerum odio reiciendis. Fugiat perferendis nulla voluptates voluptatum alias. Voluptatem cumque voluptatibus in sint assumenda ad neque. Inventore error consequuntur exercitationem officia consequatur earum iure autem.
+                  Odit iure porro reiciendis placeat. Animi minus vel asperiores maiores error tempora. Dolorum esse sapiente voluptatem iste culpa suscipit. Nulla sapiente sit deserunt iste totam dolores.
+                  Tempora magni eveniet natus nemo optio. Aliquid quis ullam illo minus. Atque distinctio sapiente voluptatibus adipisci consectetur repellendus culpa dolor. Dolor pariatur tempora ab repellat unde aliquam sequi. Necessitatibus aliquid fugit molestias facilis ratione.
+                default_variant_id: variant_gbHJdmfrXB
+                buy_box_variant_id: variant_gbHJdmfrXB
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_gbHJdmfrXB
+                  currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
+                  price_list_id:
+                  min_quantity: 1
+                  variant_id: variant_gbHJdmfrXB
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                original_price:
+                seller_id:
+                external_references: {}
+                status: draft
+                metadata: {}
+                deleted_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                delivery_profile_id: fp_UkLWZg9DAJ
+                seller_name:
+                product_type_id:
+                tax_category_id: taxcat_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Product"
+        '422':
+          description: the product is awaiting review
+          content:
+            application/json:
+              example:
+                error:
+                  code: product_in_review
+                  message: A product awaiting review is approved or rejected, not
+                    moved to another status
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/translations":
     get:
       summary: Translation coverage for a resource type

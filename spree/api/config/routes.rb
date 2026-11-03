@@ -366,6 +366,11 @@ Spree::Core::Engine.add_routes do
             # (docs/plans/6.0-seller-product-submission.md).
             patch :approve
             patch :reject
+            # One product's status, through the workflow that publishes its
+            # event; bulk_status_update writes the column for many at once.
+            patch :activate
+            patch :archive
+            patch :draft
           end
           collection do
             post :bulk_status_update
