@@ -35,13 +35,14 @@ Click **Add custom field**.
 - **Key** - A short lower-case identifier, such as `warranty`. The namespace and key together make the full name shown in the list, `custom.warranty`.
 - **Applies to** - Which kind of record the field belongs to.
 - **Type** - What kind of value it holds. See below.
-- **Visible on storefront** - Whether shoppers see the value.
-- **Searchable** - Include values in storefront product text search. Short text, long text and number only.
-- **Sortable** - Allow storefront listings to sort by this field. Short text and number only.
+- **Visible on storefront** - Whether shoppers see the value. Off unless you turn it on.
+- **Searchable** - Include values in storefront product text search. Not available for rich text, boolean and JSON fields.
+- **Sortable** - Allow storefront listings to sort by this field. Available for short text, number, date, date and time, and choice fields that allow one value.
+- **Validation** - Rules a value must meet. See below.
 
 Click **Create custom field**.
 
-<Warning>Neither **Applies to** nor **Type** can be changed once values exist for a field. Changing the type would leave stored values misinterpreted, so decide both before your team starts filling it in.</Warning>
+<Warning>Neither **Applies to** nor **Type** can be changed once the field is created. Changing the type would leave stored values misinterpreted, so decide both before your team starts filling it in. To change either, create a new field.</Warning>
 
 <Warning>**Searchable** and **Sortable** need a follow-up step. After enabling either one with Meilisearch, somebody has to run a reindex so existing products pick it up. Ask whoever maintains your store to do this, because the switch alone does not update what is already there.</Warning>
 
@@ -55,8 +56,24 @@ Click **Create custom field**.
 | **Number** | Any numeric value, such as a rating or a capacity |
 | **Boolean** | True or false, such as whether an item is fragile |
 | **JSON** | Structured data holding several related values at once |
+| **Date** | A calendar day, such as a launch date |
+| **Date and time** | A moment, such as a pickup time, in your store's time zone |
+| **Choice** | One value from a list you set, such as a warehouse zone, or several when you allow it |
+
+For product details shoppers browse or filter by, such as color or material, use [option types](/user/products/options) rather than a choice field.
 
 Pick the narrowest type that fits. A number stored as short text still sorts, but alphabetically rather than numerically, so 10 comes before 9. Switching the type later means starting the field again.
+
+### Setting validation rules
+
+The **Validation** section offers the rules that suit the type you picked:
+
+- **Required** - Marks the field with an asterisk, and stops the dashboard saving it blank.
+- **Minimum and maximum** - The number of characters for text, the lowest and highest value for a number, or the earliest and latest date.
+- **Choices** - For a choice field, the options your team picks from. Each has a **Value**, which is what is stored, and a **Display label**, which is what people see. Renaming a display label changes nothing that is already saved.
+- **Allow several choices** - Lets a choice field hold more than one value. Such a field cannot be sortable.
+
+Rules apply when a value is saved. Values saved before you changed a rule stay as they are until someone edits them.
 
 ### What can carry a custom field
 
@@ -118,7 +135,7 @@ The import template generated for your store already ends with one column per cu
 
 Open the row menu and choose **Edit**. You can change the **Label**, the **Key** and the storefront switches at any time.
 
-**Applies to** and **Type** are fixed once values exist.
+**Applies to** and **Type** are fixed once the field is created. You can change the validation rules at any time.
 
 ## How to Delete a Custom Field
 
