@@ -449,6 +449,49 @@ RSpec.describe Spree::Workflow do
         expect(workflow.call(subject: 1)).to be_failure
       end
     end
+
+    describe '.check_hook' do
+      let(:workflow) do
+        build_workflow do
+          hooks :validate
+
+          def perform(subject:)
+            super
+            run_hooks :validate
+            step :write
+            success(subject)
+          end
+
+          private
+
+          def write = raise('should not be reached')
+        end
+      end
+
+      it 'answers what a handler rejected, running nothing else' do
+        Spree.hooks.register('testing.sample_workflow.validate') do |flow|
+          flow.errors.add(:base, :too_late, message: "#{flow.subject} is too late")
+          flow.reject!
+        end
+
+        errors = workflow.check_hook(:validate, subject: 'Order R1')
+
+        expect(errors.details[:base].first[:error]).to eq(:too_late)
+        expect(errors.full_messages).to eq(['Order R1 is too late'])
+      end
+
+      it 'is empty when every handler lets it through' do
+        Spree.hooks.register('testing.sample_workflow.validate') { |_flow| nil }
+
+        expect(workflow.check_hook(:validate, subject: 1)).to be_empty
+      end
+
+      it 'ignores errors a handler collected without rejecting, as a real run does' do
+        Spree.hooks.register('testing.sample_workflow.validate') { |flow| flow.errors.add(:base, 'just a note') }
+
+        expect(workflow.check_hook(:validate, subject: 1)).to be_empty
+      end
+    end
   end
 
   describe 'with: collaborators' do

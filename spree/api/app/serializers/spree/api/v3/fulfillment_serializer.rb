@@ -7,7 +7,9 @@ module Spree
                  fulfillment_type: [:string, enum: %w[shipping digital pickup pickup_point], enum_type_name: 'FulfillmentType'],
                  tracking: [:string, nullable: true], tracking_url: [:string, nullable: true],
                  fulfilled_at: [:string, nullable: true], delivered_at: [:string, nullable: true], unpriced: :boolean,
-                 items: 'Array<{ item_id: string; variant_id: string; quantity: number }>',
+                 items: 'Array<{ item_id: string; variant_id: string; quantity: number; returnable_quantity?: number; ' \
+                        'non_returnable_reason?: string | null; units?: Array<{ fulfillment_item_id: string; quantity: number; ' \
+                        'returnable_quantity: number; non_returnable_reason: string | null }> }>',
                  pickup_point_data: ['Record<string, unknown>', nullable: true],
                  selected_delivery_rate_id: [:string, nullable: true]
 
@@ -38,17 +40,20 @@ module Spree
 
         attributes fulfilled_at: :iso8601, delivered_at: :iso8601
 
-        # Which items (and how many) are in this fulfillment.
-        # A line item can be split across fulfillments with different quantities.
+        # Which items (and how many) are in this fulfillment, one row per line
+        # item. A line item can be split across fulfillments with different
+        # quantities, and within one fulfillment across several units.
+        #
+        # With the `returnability` param (the Store order page asks for it),
+        # each row also says what the customer may still send back:
+        # `returnable_quantity`, `non_returnable_reason` when that is nothing,
+        # and its shipped `units`, whose `fulfillment_item_id` is what opening a
+        # return takes. It is the customer's view — every rule is advisory for
+        # staff — so nothing else asks for it.
         attribute :items do |fulfillment|
-          fulfillment.manifest.filter_map do |item|
-            next unless item.line_item
-
-            {
-              item_id: item.line_item.prefixed_id,
-              variant_id: item.variant.prefixed_id,
-              quantity: item.quantity
-            }
+          fulfillment.manifest.map do |item|
+            row = { item_id: item.line_item.prefixed_id, variant_id: item.variant.prefixed_id, quantity: item.quantity }
+            params[:returnability] ? row.merge(fulfillment.returnability(item.units)) : row
           end
         end
 

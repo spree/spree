@@ -7,6 +7,7 @@ module Spree
 
           without_formatted_money
 
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
           typelize cost: [:string, nullable: false],

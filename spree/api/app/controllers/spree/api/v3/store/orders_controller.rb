@@ -71,6 +71,12 @@ module Spree
           def serializer_class
             purchase_serializer_for(@order)
           end
+
+          # The order page is where a customer decides to send something back,
+          # so it alone pays for working out what may still come back.
+          def serializer_params
+            super.merge(returnability: true)
+          end
         end
       end
     end

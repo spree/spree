@@ -15,6 +15,8 @@ module Spree
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES, enum_type_name: 'OrderPaymentStatus'],
                  completed_at: [:string, nullable: true],
                  withdrawal_period_ends_at: [:string, nullable: true], within_withdrawal_period: :boolean,
+                 returns_eligibility: ['{ eligible: boolean; errors: Array<{ code: string; message: string }>; ' \
+                                       'return_window_ends_at: string | null; withdrawal_period_ends_at: string | null }', optional: true],
                  shipping_eq_billing_address: :boolean,
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
@@ -29,6 +31,14 @@ module Spree
         end
 
         attribute :within_withdrawal_period, &:within_withdrawal_period?
+
+        # Whether the customer may open a return now, as the store's return
+        # validators would answer the create call — so a storefront shows or
+        # hides its returns entry point without restating the rules. Only with
+        # the `returnability` param, which the Store order page sets.
+        attribute :returns_eligibility, if: proc { params[:returnability] } do |order|
+          order.returns_eligibility.to_h
+        end
         attribute :shipping_eq_billing_address, &:shipping_eq_billing_address?
 
         # The checkout handle this order was born from (nil for admin drafts).

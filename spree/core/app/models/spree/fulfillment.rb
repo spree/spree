@@ -470,7 +470,18 @@ module Spree
       fulfillment_items.includes(:line_item).map(&:line_item).uniq
     end
 
-    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states, :units)
+
+    # What the customer may still send back of these units, as the Store API
+    # serves one manifest row. A cart's units have no order to judge them by.
+    #
+    # @param units [Array<Spree::FulfillmentItem>]
+    # @return [Hash]
+    def returnability(units)
+      return Spree::Returns::Eligibility.closed(units) if order.nil?
+
+      order.returns_eligibility.for_units(units)
+    end
 
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
@@ -488,7 +499,7 @@ module Spree
           units.group_by(&:status).each { |status, iu| states[status] = iu.sum(&:quantity) }
 
           variant = units.first.variant
-          ManifestItem.new(line_item, variant, units.sum(&:quantity), states)
+          ManifestItem.new(line_item, variant, units.sum(&:quantity), states, units)
         end
       end
     end

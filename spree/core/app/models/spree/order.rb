@@ -474,6 +474,36 @@ module Spree
       refunds_total < total_minus_store_credits - additional_tax_total.abs
     end
 
+    # The store's own return window for this order in days — merchant policy,
+    # counted from completion, set per market because consumer law is
+    # regional. Nil means no limit.
+    #
+    # @return [Integer, nil]
+    def return_window_days
+      (market || Spree::Market.new).preferred_return_window_days
+    end
+
+    # When the store's return window closes for customers. Staff may still
+    # open a return afterwards; see Spree::Returns::EligibilityValidator.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil] nil when the order is not
+    #   complete or the window has no limit
+    def return_window_ends_at
+      days = return_window_days
+      return nil if completed_at.nil? || days.nil?
+
+      completed_at + days.days
+    end
+
+    # What a customer would be told if they asked to return something now.
+    # Memoized per instance: the order and each of its fulfillments read it
+    # during one serialization.
+    #
+    # @return [Spree::Returns::Eligibility]
+    def returns_eligibility
+      @returns_eligibility ||= Spree::Returns::Eligibility.new(self)
+    end
+
     # When the buyer's statutory right of withdrawal expires — the EU
     # cooling-off period (Consumer Rights Directive 2011/83/EU Art. 9).
     #

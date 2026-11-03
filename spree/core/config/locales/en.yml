@@ -1615,6 +1615,11 @@ en:
     response_code: Response Code
     return: return
     return_errors:
+      digital_content: Digital content cannot be returned once it has been delivered (%{items})
+      not_returnable: These items were sold as non-returnable (%{items})
+      not_shipped: These items have not shipped yet (%{items})
+      order_canceled: This order was canceled
+      order_not_completed: This order has not been placed yet
       outside_window: This order is outside the %{days}-day return window
     returned: Returned
     returns_policy: Returns Policy

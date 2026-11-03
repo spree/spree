@@ -24,6 +24,7 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
+                   returnable: [:boolean, nullable: true],
                    purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS, enum_type_name: 'PurchaseUnit'],
                    carton_package_type_id: [:string, nullable: true],
                    carton_weight: [:string, nullable: true],
@@ -37,7 +38,7 @@ module Spree
           attributes :metadata, :position, :cost_currency,
                      :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
-                     :minimum_order_quantity, :order_multiple, :purchase_unit,
+                     :minimum_order_quantity, :order_multiple, :purchase_unit, :returnable,
                      :carton_weight, :cartons_per_pallet,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
