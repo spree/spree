@@ -31,6 +31,17 @@ describe Spree::CustomFields::Choice, type: :model do
       expect(custom_field.csv_value).to eq('a, c')
     end
 
+    it 'reads a CSV cell listing several choices back as a list' do
+      expect(product.set_custom_field(definition, 'a, c').serialize_value).to eq(%w[a c])
+    end
+
+    it 'refuses to turn off several choices while a value holds several' do
+      product.set_custom_field(definition, %w[a c])
+
+      expect(definition.update(validations: definition.validation_rules.except('multiple'))).to be(false)
+      expect(definition.errors[:validations]).to be_present
+    end
+
     it 'accepts a single value as a list of one' do
       expect(product.set_custom_field(definition, 'a').serialize_value).to eq(['a'])
     end

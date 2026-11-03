@@ -11,11 +11,30 @@ module Spree
       def self.canonical_value(input, store: nil)
         zone = (store && Time.find_zone(store.preferred_timezone)) || Time.zone
         time = case input
-               when String then zone.iso8601(input.strip)
+               when String then zone.iso8601(iso8601_input(input))
                when ::Time, ::DateTime then input
                when ::Date then zone.local(input.year, input.month, input.day)
                end
         time&.to_time&.utc&.iso8601
+      rescue ArgumentError
+        nil
+      end
+
+      # A bare date compares against the whole day in the store's time zone, so
+      # "on 2026-10-12" matches every instant of that day, and "after" starts
+      # at the next one.
+      def self.filter_conditions(predicate, input, store: nil)
+        return super unless input.is_a?(String) && input.strip.match?(/\A\d{4}-\d{2}-\d{2}\z/)
+
+        day = ::Date.iso8601(input.strip)
+        from, to = [day, day + 1].map { |date| canonical_value(date, store: store) }
+        case predicate
+        when 'eq' then [['gteq', from], ['lt', to]]
+        when 'gt' then [['gteq', to]]
+        when 'gteq' then [['gteq', from]]
+        when 'lt' then [['lt', from]]
+        when 'lteq' then [['lt', to]]
+        end
       rescue ArgumentError
         nil
       end

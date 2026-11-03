@@ -17,6 +17,7 @@ module Spree
         before_validation :normalize_validations
         validate :validations_must_apply_to_field_type
         validate :sortable_must_be_single_choice
+        validate :multiple_must_stay_while_values_hold_several, on: :update
       end
 
       # Accepts permitted request params as well as a plain hash.
@@ -121,6 +122,15 @@ module Spree
         return unless sortable? && multiple_choices?
 
         errors.add(:sortable, :single_choice_only, message: I18n.t('spree.errors.messages.custom_field_sortable_single_choice_only'))
+      end
+
+      # A stored list has no single value to fall back to.
+      def multiple_must_stay_while_values_hold_several
+        return unless will_save_change_to_validations? && !multiple_choices?
+        return unless (validations_in_database || {})['multiple'] == true
+        return unless custom_fields.where(Spree::CustomField.arel_table[:value].matches('[%')).exists?
+
+        add_validations_error(:validation_multiple_in_use)
       end
 
       def add_validations_error(type, **options)

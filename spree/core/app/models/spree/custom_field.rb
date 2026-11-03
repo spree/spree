@@ -68,7 +68,7 @@ module Spree
 
       attributes = attributes.with_indifferent_access
       definition = attributes[:custom_field_definition] ||
-                   attributes[:custom_field_definition_id].presence&.then { |id| Spree::CustomFieldDefinition.find_by(id: id) }
+                   attributes[:custom_field_definition_id].presence&.then { |id| Spree::CustomFieldDefinition.find_by_param(id) }
       definition.try(:field_type_class)
     end
     private_class_method :custom_field_class_from_definition

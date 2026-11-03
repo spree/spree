@@ -12,7 +12,7 @@ module Spree
       # Dates compare as ISO 8601 text, so they take the range predicates too.
       DATE_FILTER_PREDICATES = NUMBER_FILTER_PREDICATES
       # A field allowing several choices matches when any of its values does.
-      CHOICE_FILTER_PREDICATES = %w[eq not_eq in present blank].freeze
+      CHOICE_FILTER_PREDICATES = %w[eq not_eq in not_in present blank].freeze
 
       # Longest first so a key ending in +_i_cont+ isn't mis-split as the
       # shorter +_cont+ against a definition keyed +..._i+.

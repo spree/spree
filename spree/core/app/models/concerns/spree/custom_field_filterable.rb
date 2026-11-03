@@ -155,23 +155,26 @@ module Spree
       # The filter value is normalized the way stored values are, because the
       # text comparison is only correct between strings of the same shape.
       def date_custom_field_condition(definition, column, predicate, value)
-        operator = NUMERIC_OPERATORS[predicate]
-        bound = operator && definition.field_type_class&.canonical_value(value, store: definition.store)
-        bound && column.public_send(operator, bound)
+        return unless NUMERIC_OPERATORS.key?(predicate)
+
+        conditions = definition.field_type_class&.filter_conditions(predicate, value, store: definition.store)
+        conditions&.map { |operator, bound| column.public_send(NUMERIC_OPERATORS[operator], bound) }&.reduce(:and)
       end
 
       # A field allowing several choices stores a JSON array, matched by the
-      # JSON-encoded value it would contain.
+      # JSON-encoded value it would contain — or by the bare value, written
+      # before the field allowed several.
       def choice_custom_field_condition(definition, column, predicate, value)
-        values = (predicate == 'in' ? Array(value) : [value]).map(&:to_s).compact_blank
+        values = (%w[in not_in].include?(predicate) ? Array(value) : [value]).map(&:to_s).compact_blank
         return nil if values.empty?
 
-        unless definition.multiple_choices?
-          return predicate == 'not_eq' ? column.not_eq(values.first) : column.in(values)
-        end
-
-        contains = values.map { |choice| column.matches("%#{sanitize_sql_like(choice.to_json)}%", nil, true) }
-        predicate == 'not_eq' ? contains.first.not : contains.reduce(:or)
+        matches_any =
+          if definition.multiple_choices?
+            values.map { |choice| column.matches("%#{sanitize_sql_like(choice.to_json)}%", nil, true).or(column.eq(choice)) }.reduce(:or)
+          else
+            column.in(values)
+          end
+        %w[not_eq not_in].include?(predicate) ? matches_any.not : matches_any
       end
 
       def text_custom_field_condition(column, predicate, value)
