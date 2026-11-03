@@ -27,13 +27,15 @@ module Spree
 
         response = dispatch.call(method: :post, path: path, body: body)
 
-        result_for(response, entry, summary: summary(resource: resource, attributes: attributes))
+        result_for(response, entry, summary: summary(resource: resource, attributes: attributes, parent_id: parent_id))
       end
 
       def summary(arguments)
         named = arguments[:attributes].to_h.values_at('name', :name, 'number', :number).compact.first
 
-        "Create #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{named}".strip
+        line = "Create #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{named}".strip
+
+        arguments[:parent_id].present? ? "#{line} under #{arguments[:parent_id]}" : line
       end
     end
   end

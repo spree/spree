@@ -177,6 +177,19 @@ RSpec.describe 'agent workflow tool arguments' do
       Spree::AgentTools::WorkflowEndpoints.reset!
     end
 
+    it 'maps a workflow exposed after the endpoints were derived' do
+      registry = Spree::AgentTools::Registry.new(audience: :admin).expose_workflows(order_cancel_workflow: 'write_orders')
+      allow(Spree).to receive(:admin_agent_tools).and_return(registry)
+      Spree::AgentTools::WorkflowEndpoints.reset!
+      Spree::AgentTools::WorkflowEndpoints.all
+
+      registry.expose_workflows(order_complete_workflow: 'write_orders')
+
+      expect(Spree::AgentTools::WorkflowEndpoints.all.keys).to include(:order_complete_workflow)
+    ensure
+      Spree::AgentTools::WorkflowEndpoints.reset!
+    end
+
     # An extension's endpoints are not in core's document; the controller's
     # own request_params declaration has to stand in, or the tool would send
     # an empty body and lose every argument.

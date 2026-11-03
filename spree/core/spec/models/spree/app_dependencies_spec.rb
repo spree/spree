@@ -66,6 +66,11 @@ describe Spree::Core::Dependencies, type: :model do
       expect { deps.register(:cart_add_item_workflow, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
     end
 
+    it 'refuses a key that would shadow an existing method' do
+      expect { deps.register(:cart_add_item_workflow_class, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
+      expect(deps.cart_add_item_workflow_class).to eq(Spree::Carts::AddItem)
+    end
+
     it 'keeps the key on the instance it was registered on' do
       deps.register(:extension_thing_workflow, 'MyCustomAddItemService')
 

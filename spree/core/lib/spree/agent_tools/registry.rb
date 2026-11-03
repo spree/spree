@@ -84,6 +84,9 @@ module Spree
             summary: options[:summary]
           }
         end
+        # Endpoints are derived from this list on first use, so one exposed
+        # later would otherwise run in process instead of through its endpoint.
+        Spree::AgentTools::WorkflowEndpoints.reset!
         self
       end
 

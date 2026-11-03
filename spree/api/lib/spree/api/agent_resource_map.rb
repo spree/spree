@@ -175,9 +175,12 @@ module Spree
           update_workflow = workflow_key(instance, :update_workflow)
           writable = AgentWriteSchemas.attribute_names(key)
           # Core's resources write only what the document describes. An
-          # extension's are not in it, so its controller's declaration counts.
+          # extension's are not in it, so its controller's declaration counts:
+          # both actions', so a field only an update accepts is not refused
+          # before the request. The endpoint still drops what an action does
+          # not permit.
           if writable.empty? && extension_controller?(controller)
-            writable = AgentWriteSchemas.declared_attribute_names(controller, :create).presence ||
+            writable = AgentWriteSchemas.declared_attribute_names(controller, :create) |
                        AgentWriteSchemas.declared_attribute_names(controller, :update)
           end
 

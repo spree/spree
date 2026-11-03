@@ -79,6 +79,11 @@ module Spree
     def register(point, default)
       point = point.to_sym
       raise ArgumentError, "#{point} is already a dependency" if injection_point?(point)
+      # `cart_add_item_workflow_class` would shadow the resolving reader core
+      # defines for `cart_add_item_workflow`.
+      if respond_to?(point, true) || respond_to?("#{point}_class", true)
+        raise ArgumentError, "#{point} would replace an existing method"
+      end
 
       registered_points[point] = default
       Spree::DependenciesHelper.define_injection_point(singleton_class, point)

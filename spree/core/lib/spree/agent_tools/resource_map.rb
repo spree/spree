@@ -79,6 +79,12 @@ module Spree
         # The operation's path with its segments filled, or nil when a nested
         # resource was not given the record it lives under.
         #
+        # Each value is percent-encoded so it stays one segment: a `?` or `/`
+        # in an id would otherwise send the call to a different route than
+        # the one the tool checked and the approver was shown. A path with a
+        # segment left unfilled — a resource nested two levels deep — is nil
+        # too, rather than dispatched with a placeholder in it.
+        #
         # @param action [Symbol]
         # @param id [String, nil]
         # @param parent_id [String, nil]
@@ -87,12 +93,14 @@ module Spree
           path = api_path(action)
           return if path.blank?
 
-          path = path.sub(':id', id.to_s) if id
+          path = path.sub(':id', ERB::Util.url_encode(id.to_s)) if id
           parent = parent_param(action)
-          return path if parent.nil?
-          return if parent_id.blank?
+          if parent
+            return if parent_id.blank?
 
-          path.sub(":#{parent}", parent_id.to_s)
+            path = path.sub(":#{parent}", ERB::Util.url_encode(parent_id.to_s))
+          end
+          path unless path.match?(/:[a-z_]+/)
         end
 
         # The associations the show operation will include when asked, read
