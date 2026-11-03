@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'swagger_helper'
+require 'spree/testing_support/label_provider'
 
 RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
@@ -138,6 +139,41 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/orders/{order_id}/returns/{id}/approve' do
+    patch 'Approve a return' do
+      tags 'Orders'
+      admin_sdk_example 'order-returns/approve'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Accepts a requested return so the customer can send the goods back. Only a requested return can be approved; receive it once the goods arrive.'
+      admin_scope :write, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Return prefixed ID'
+
+      response '200', 'return approved' do
+        let(:id) { record.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Return'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('approved')
+        end
+      end
+
+      response '422', 'the return is not requested' do
+        let!(:record) { create(:approved_return, order: create(:shipped_order, store: store)) }
+        let(:id) { record.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/orders/{order_id}/returns/{id}/receive' do
     patch 'Receive a return' do
       tags 'Orders'
@@ -260,6 +296,52 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
         run_test! do |response|
           expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to include(label.prefixed_id)
         end
+      end
+    end
+  end
+
+  path '/api/v3/admin/orders/{order_id}/returns/{return_id}/labels/{id}/refund' do
+    patch 'Refund a return label' do
+      tags 'Orders'
+      admin_sdk_example 'order-returns/labels-refund'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Asks the carrier to refund a purchased return label the customer never used, such as when the return is canceled. An uploaded label has nothing to refund.'
+      admin_scope :write, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      parameter name: :return_id, in: :path, type: :string, required: true, description: 'Return prefixed ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Shipping label prefixed ID'
+
+      let(:order_id) { record.order.prefixed_id }
+      let(:return_id) { record.prefixed_id }
+      let(:id) { label.prefixed_id }
+
+      response '200', 'refund filed' do
+        let!(:label) { create(:shipping_label, owner: record, store: store) }
+
+        # The carrier is the return's provider; the test double settles the
+        # refund at once instead of calling a real carrier account.
+        before do
+          allow_any_instance_of(Spree::Return).to receive(:provider).
+            and_return(Spree::TestingSupport::LabelProvider.new)
+        end
+
+        schema '$ref' => '#/components/schemas/ShippingLabel'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('refunded')
+        end
+      end
+
+      response '422', 'uploaded labels cannot be refunded' do
+        let!(:label) { create(:shipping_label, :uploaded, owner: record, store: store) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
       end
     end
   end

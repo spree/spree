@@ -7701,6 +7701,93 @@ paths:
             schema:
               "$ref": "#/components/schemas/TaxIdentifierUpdateParams"
         required: true
+  "/api/v3/admin/customers/{customer_id}/tax_identifiers/{id}/validate":
+    parameters:
+    - name: x-spree-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: customer_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Re-check a customer tax registration
+      tags:
+      - Customers
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const registration = await client.customers.taxIdentifiers.validate(
+            'cust_UkLWZg9DAJ',
+            'txi_UkLWZg9DAJ',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/{customer_id}/tax_identifiers/{id}/validate
+          -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Asks the registry again. Manual because a registry answers only "valid now" — a number verified
+        last year may have been deregistered since — and because a check that came back unavailable
+        cannot otherwise be retried without editing the number.
+
+
+        **Required scope:** `write_customers` (for API-key authentication).
+      responses:
+        '202':
+          description: registry check queued
+          content:
+            application/json:
+              example:
+                id: txi_UkLWZg9DAJ
+                kind: eu_vat
+                value: DE100000032
+                validation_status: pending
+                validation_evidence:
+                source:
+                validated_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                validatable: true
+                customer_id: cust_UkLWZg9DAJ
+                cart_id:
+                order_id:
+              schema:
+                "$ref": "#/components/schemas/TaxIdentifier"
+        '422':
+          description: no validator installed for this kind
+          content:
+            application/json:
+              example:
+                error:
+                  code: tax_id_not_validatable
+                  message: No registry validator is installed for tax identifier kind
+                    'eu_vat'
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/customers":
     get:
       summary: List customers
@@ -15999,6 +16086,81 @@ paths:
             schema:
               "$ref": "#/components/schemas/ClaimUpdateParams"
         required: true
+  "/api/v3/admin/orders/{order_id}/claims/{id}/approve":
+    patch:
+      summary: Approve a claim
+      tags:
+      - Orders
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const claim = await client.orders.claims.approve('or_UkLWZg9DAJ', 'claim_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/claims/{id}/approve -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Accepts an open claim, the step before resolving it with a refund, a replacement or both. Only an open claim can be approved; deny it to turn it down.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Claim prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: claim approved
+          content:
+            application/json:
+              example:
+                id: claim_UkLWZg9DAJ
+                number: CLM1001
+                status: approved
+                resolution:
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.00'
+                approved_at: '2026-01-15T12:00:00Z'
+                resolved_at:
+                denied_at:
+                canceled_at:
+                memo: Arrived with a cracked screen
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                created_by_id: adm_UkLWZg9DAJ
+                created_by_type: admin_user
+              schema:
+                "$ref": "#/components/schemas/Claim"
   "/api/v3/admin/orders/{order_id}/claims/{id}/resolve":
     patch:
       summary: Resolve a claim
@@ -16585,6 +16747,74 @@ paths:
                   message: Digital link not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/digital_links/{id}/reset":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Digital link ID
+      schema:
+        type: string
+    patch:
+      summary: Reset a digital link
+      tags:
+      - Orders
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const digitalLink = await client.digitalLinks.reset('dl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /digital_links/{id}/reset -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Gives the customer their full download allowance back and restarts the
+        link's expiry clock. Use it when a download failed, or the file was
+        replaced after the customer had used up their attempts.
+
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: digital link reset
+          content:
+            application/json:
+              example:
+                id: dl_UkLWZg9DAJ
+                access_counter: 0
+                filename: thinking-cat.jpg
+                content_type: image/jpeg
+                download_url: "/api/v3/store/digital_links/tPqch4JvZidezkNn2YoqxDLc"
+                expires_at: '2026-01-22T12:00:00Z'
+                authorizable: true
+                expired: false
+                access_limit_exceeded: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/DigitalLink"
   "/api/v3/admin/exchanges":
     get:
       summary: List exchanges
@@ -17074,6 +17304,92 @@ paths:
             schema:
               "$ref": "#/components/schemas/ExchangeUpdateParams"
         required: true
+  "/api/v3/admin/orders/{order_id}/exchanges/{id}/approve":
+    patch:
+      summary: Approve an exchange
+      tags:
+      - Orders
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const exchange = await client.orders.exchanges.approve('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/exchanges/{id}/approve -d '{ ...
+          }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Accepts a requested exchange so the customer can send the goods back for their replacement. Only a requested exchange can be approved; receive it once the goods arrive.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Exchange prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: exchange approved
+          content:
+            application/json:
+              example:
+                id: exch_UkLWZg9DAJ
+                number: EX1001
+                status: approved
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                price_difference: '9.99'
+                approved_at: '2026-01-15T12:00:00Z'
+                received_at:
+                fulfilled_at:
+                canceled_at:
+                memo: Wrong size
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                stock_location_id: sloc_UkLWZg9DAJ
+                created_by_id: adm_UkLWZg9DAJ
+                created_by_type: admin_user
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+        '422':
+          description: the exchange is not requested
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Not requested
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/orders/{order_id}/exchanges/{id}/receive":
     patch:
       summary: Receive an exchange
@@ -20688,6 +21004,147 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+  "/api/v3/admin/orders/{id}/resend_digital_links":
+    post:
+      summary: Resend digital download links
+      tags:
+      - Orders
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.orders.resendDigitalLinks('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{id}/resend_digital_links -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Emails the customer their download links for the digital products on
+        this order again. Nothing is sent when the order has no digital links or
+        the store does not send transactional emails. Use it when the original
+        email was lost; to restore used-up downloads or an expired link, reset
+        the digital link instead.
+
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: digital links resent
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: true
+                shipping_eq_billing_address: false
+                cart_id:
+                channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
+                po_document_filename:
+                po_document_byte_size:
+                number: R1001
+                email: ivana@schmidtfeest.com
+                customer_note:
+                po_number:
+                currency: USD
+                locale: en
+                total_quantity: 1
+                coupon_code:
+                fulfillment_status:
+                payment_status:
+                completed_at: '2026-01-15T12:00:00.000Z'
+                item_total: '10.00'
+                discount_total: '0.00'
+                tax_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                delivery_total: '100.00'
+                fee_total: '0.00'
+                gift_card_total: '0.00'
+                store_credit_total: '0.00'
+                total: '110.00'
+                amount_due: '110.00'
+                covered_by_store_credit: false
+                adjustment_total: '0.00'
+                gift_card:
+                market:
+                  id: mkt_UkLWZg9DAJ
+                  name: United States
+                  currency: USD
+                  default_locale: en
+                  tax_inclusive: false
+                  default: true
+                  country_codes:
+                  - US
+                  supported_locales:
+                  - en
+                  created_at: '2026-11-03T16:44:09.130Z'
+                  updated_at: '2026-11-03T16:44:09.130Z'
+                  tax_provider:
+                external_references: {}
+                status: placed
+                last_ip_address:
+                considered_risky: false
+                confirmation_delivered: false
+                store_owner_notification_delivered:
+                metadata: {}
+                cancel_note:
+                canceled_at:
+                approved_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                commission_amount_total: '0.00'
+                commission_tax_total: '0.00'
+                commission_total: '0.00'
+                preferred_stock_location_id:
+                po_document_url:
+                seller_id:
+                order_group_id:
+                tags: []
+                internal_note:
+                internal_note_html:
+                approver_id:
+                approver_type:
+                canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
+                cancel_reason_id:
+                cancel_reason_name:
+                customer_id: cust_UkLWZg9DAJ
+                freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
   "/api/v3/admin/returns":
     get:
       summary: List returns
@@ -21213,6 +21670,99 @@ paths:
             schema:
               "$ref": "#/components/schemas/ReturnUpdateParams"
         required: true
+  "/api/v3/admin/orders/{order_id}/returns/{id}/approve":
+    patch:
+      summary: Approve a return
+      tags:
+      - Orders
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const orderReturn = await client.orders.returns.approve('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/returns/{id}/approve -d '{ ...
+          }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Accepts a requested return so the customer can send the goods back. Only a requested return can be approved; receive it once the goods arrive.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Return prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return approved
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: approved
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.00'
+                refund_tax_total: '0.00'
+                approved_at: '2026-01-15T12:00:00Z'
+                received_at:
+                refunded_at:
+                canceled_at:
+                external_references: {}
+                memo: Item did not fit
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                stock_location_id: sloc_UkLWZg9DAJ
+                created_by_id: adm_UkLWZg9DAJ
+                created_by_type: admin_user
+                refunded_total: '0.00'
+                refundable_total: '10.00'
+                documents: []
+                labels: []
+                deliveries: []
+              schema:
+                "$ref": "#/components/schemas/Return"
+        '422':
+          description: the return is not requested
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Not requested
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/orders/{order_id}/returns/{id}/receive":
     patch:
       summary: Receive a return
@@ -21633,6 +22183,106 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/orders/{order_id}/returns/{return_id}/labels/{id}/refund":
+    patch:
+      summary: Refund a return label
+      tags:
+      - Orders
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const label = await client.orders.returns.labels.refund(
+            'or_UkLWZg9DAJ',
+            'ret_UkLWZg9DAJ',
+            'lbl_UkLWZg9DAJ',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/returns/{return_id}/labels/{id}/refund
+          -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Asks the carrier to refund a purchased return label the customer never used, such as when the return is canceled. An uploaded label has nothing to refund.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: return_id
+        in: path
+        required: true
+        description: Return prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipping label prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refund filed
+          content:
+            application/json:
+              example:
+                id: lbl_UkLWZg9DAJ
+                source: purchased
+                status: refunded
+                carrier: ups
+                carrier_name: UPS
+                service: Ground
+                tracking_number: 1Z879E930346830007
+                currency: USD
+                format: pdf
+                external_id: shp_4
+                metadata: {}
+                refunded_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                owner_id: ret_UkLWZg9DAJ
+                owner_type: return
+                cost: '7.25'
+                integration_id:
+                file_pending: false
+                download_url:
+              schema:
+                "$ref": "#/components/schemas/ShippingLabel"
+        '422':
+          description: uploaded labels cannot be refunded
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: An uploaded label was not bought through Spree and cannot
+                    be refunded — delete it instead
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/payment_methods/{payment_method_id}/custom_fields":
     get:
       summary: List payment method custom fields
@@ -25560,6 +26210,119 @@ paths:
                       specific: false
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/products/{id}/clone":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+    post:
+      summary: Clone a product
+      tags:
+      - Products
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const copy = await client.products.clone('prod_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/{id}/clone -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Creates a draft copy of a product, named "COPY OF …", with its variants,
+        prices, stock locations, images, categories, channels and tags; stock on
+        hand starts at zero. Use it to start a similar product from an existing
+        one instead of building it from scratch.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: product cloned
+          content:
+            application/json:
+              example:
+                id: prod_gbHJdmfrXB
+                name: COPY OF Product 1462357
+                slug: copy-of-product-1462357
+                meta_title:
+                meta_description:
+                meta_keywords:
+                variant_count: 1
+                available_on:
+                preorder_ships_at:
+                purchasable: true
+                preorder: false
+                in_stock: false
+                backorderable: true
+                available: false
+                description: Dolore facere hic laboriosam sapiente nobis. Doloribus
+                  deleniti quasi esse aliquid voluptatem. Rem voluptate omnis suscipit
+                  adipisci laudantium. Deleniti error dolorum ratione dolor assumenda
+                  iusto. Laborum non rem sapiente temporibus quam inventore. Voluptatum
+                  magnam hic molestias laudantium necessitatibus. Totam ducimus provident
+                  aliquam repellendus nam maxime error natus. Ex aspernatur nostrum
+                  deserunt maxime quis occaecati expedita dolore. Debitis est laboriosam
+                  modi aspernatur cumque. Sapiente ab corrupti quos doloremque eius.
+                  Laborum officiis culpa voluptate fuga sed. Nemo possimus vel architecto
+                  quo modi. Velit aut non iusto exercitationem nostrum nemo. Velit
+                  illo nisi quaerat perspiciatis facilis temporibus quae esse.
+                description_html: |-
+                  Dolore facere hic laboriosam sapiente nobis. Doloribus deleniti quasi esse aliquid voluptatem. Rem voluptate omnis suscipit adipisci laudantium.
+                  Deleniti error dolorum ratione dolor assumenda iusto. Laborum non rem sapiente temporibus quam inventore. Voluptatum magnam hic molestias laudantium necessitatibus. Totam ducimus provident aliquam repellendus nam maxime error natus.
+                  Ex aspernatur nostrum deserunt maxime quis occaecati expedita dolore. Debitis est laboriosam modi aspernatur cumque. Sapiente ab corrupti quos doloremque eius.
+                  Laborum officiis culpa voluptate fuga sed. Nemo possimus vel architecto quo modi. Velit aut non iusto exercitationem nostrum nemo. Velit illo nisi quaerat perspiciatis facilis temporibus quae esse.
+                default_variant_id: variant_gbHJdmfrXB
+                buy_box_variant_id: variant_gbHJdmfrXB
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_gbHJdmfrXB
+                  currency: USD
+                  amount: '19.99'
+                  compare_at_amount:
+                  price_list_id:
+                  min_quantity: 1
+                  variant_id: variant_gbHJdmfrXB
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                original_price:
+                seller_id:
+                external_references: {}
+                status: draft
+                metadata: {}
+                deleted_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                delivery_profile_id: fp_UkLWZg9DAJ
+                seller_name:
+                product_type_id:
+                tax_category_id: taxcat_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Product"
   "/api/v3/admin/products/bulk_status_update":
     post:
       summary: Bulk-update product status
@@ -39670,6 +40433,77 @@ paths:
             schema:
               "$ref": "#/components/schemas/CatalogAssignParams"
         required: true
+  "/api/v3/admin/catalogs/{id}/import_products":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Import price list products into a catalog
+      tags:
+      - Catalogs
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { added_count } = await client.catalogs.importProducts('cat_86Rf07xd4z')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /catalogs/{id}/import_products -d '{ ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds every product on the catalog's price list to its assortment. Products
+        already in it stay, even ones the list does not price. Refused for a
+        catalog without a price list; the count reports what was added.
+
+
+        **Required scope:** `write_products` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: products imported
+          content:
+            application/json:
+              example:
+                added_count: 1
+              schema:
+                type: object
+                properties:
+                  added_count:
+                    type: integer
+                required:
+                - added_count
+        '422':
+          description: the catalog has no price list
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: This catalog has no price list to import products from.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/catalogs/{catalog_id}/products":
     get:
       summary: List catalog products
@@ -54339,6 +55173,93 @@ paths:
             schema:
               "$ref": "#/components/schemas/SellerInviteParams"
         required: true
+  "/api/v3/admin/sellers/{seller_id}/invitations/{id}/resend":
+    parameters:
+    - name: seller_id
+      in: path
+      required: true
+      description: Seller prefixed ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Invitation prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Resend a seller invitation
+      tags:
+      - Sellers
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const invitation = await client.sellers.invitations.resend('seller_UkLWZg9DAJ', 'inv_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /sellers/{seller_id}/invitations/{id}/resend -d '{
+          ... }'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Sends a pending invitation to the seller's team again, with a fresh
+        acceptance link. Use it when the email never arrived; an invitation that
+        has expired is refused, so invite the person again instead.
+
+
+        **Required scope:** `write_sellers` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: invitation resent
+          content:
+            application/json:
+              example:
+                id: inv_UkLWZg9DAJ
+                email: gaye@rutherfordmosciski.co.uk
+                status: pending
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expires_at: '2026-01-29T12:00:00.000Z'
+                role_id: role_UkLWZg9DAJ
+                role_name: admin
+                inviter_email: carman@schambergernicolas.ca
+                invitee_exists: false
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
+              schema:
+                "$ref": "#/components/schemas/Invitation"
+        '422':
+          description: the invitation has expired
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This invitation has expired. Invite them again to send
+                    a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/sellers/{id}/approve":
     parameters:
     - name: id
