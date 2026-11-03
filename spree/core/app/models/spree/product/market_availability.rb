@@ -88,13 +88,11 @@ module Spree
         market_availability == 'only' ? listed : !listed
       end
 
-      # @return [Array<Integer>] the named markets' ids, read from loaded rows when preloaded
+      # Read through the association so a listing preloads it once for every row.
+      #
+      # @return [Array<Integer>] the named markets' ids
       def market_availability_market_ids
-        if association(:market_availability_entries).loaded?
-          market_availability_entries.map(&:market_id)
-        else
-          market_availability_entries.pluck(:market_id)
-        end
+        market_availability_entries.map(&:market_id)
       end
 
       private

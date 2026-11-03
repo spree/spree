@@ -94,12 +94,14 @@ module Spree
         end
       end
 
+      # Read from the lines the cart already holds, so a list of carts pays no
+      # query per cart; only a restricted product reads its markets.
       def market_excluded_line_items
         return [] if @cart.market.nil?
 
-        @market_excluded_line_items ||= @cart.line_items.joins(:variant).includes(variant: :product).where(
-          Spree::Variant.table_name => { product_id: Spree::Product.excluded_from_market(@cart.market).select(:id) }
-        ).to_a
+        @market_excluded_line_items ||= @cart.line_items.reject do |line_item|
+          line_item.variant.nil? || line_item.variant.product.available_in_market?(@cart.market)
+        end
       end
 
       def market_excluded_line_item_ids

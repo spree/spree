@@ -14,7 +14,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.market_serializer
+            Spree.api.seller_market_serializer
           end
 
           def scope
