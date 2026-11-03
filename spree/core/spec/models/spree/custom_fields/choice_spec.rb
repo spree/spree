@@ -46,6 +46,12 @@ describe Spree::CustomFields::Choice, type: :model do
       expect(product.set_custom_field(definition, 'a, c').serialize_value).to eq(%w[a c])
     end
 
+    it 'keeps a value that is itself a choice whole, even when it holds a comma' do
+      definition.update!(validations: definition.validations.merge('choices' => definition.choices + [{ 'value' => 'a,c', 'label' => 'A and C' }]))
+
+      expect(product.set_custom_field(definition, 'a,c').serialize_value).to eq(['a,c'])
+    end
+
     it 'clears the field when given an empty list' do
       product.set_custom_field(definition, %w[a])
 
