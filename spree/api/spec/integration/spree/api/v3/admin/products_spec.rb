@@ -731,6 +731,17 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
           expect(JSON.parse(response.body)['status']).to eq('archived')
         end
       end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
+        end
+      end
     end
   end
 
@@ -758,6 +769,17 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
         run_test! do |response|
           expect(JSON.parse(response.body)['status']).to eq('draft')
+        end
+      end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
         end
       end
     end

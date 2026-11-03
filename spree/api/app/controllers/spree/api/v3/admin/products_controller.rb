@@ -396,17 +396,25 @@ module Spree
           def run_status_workflow(workflow, status)
             @resource = find_resource
             authorize!(:update, @resource)
-            return render json: serialize_resource(@resource) if @resource.status == status
 
-            if @resource.in_review?
+            # Under the row lock, so two requests for the same move cannot both
+            # see the old status and both publish the event.
+            result = @resource.with_lock do
+              next :unchanged if @resource.status == status
+              next :in_review if @resource.in_review?
+
+              workflow.call(product: @resource)
+            end
+
+            return render json: serialize_resource(@resource) if result == :unchanged
+
+            if result == :in_review
               return render_error(
                 code: 'product_in_review',
                 message: I18n.t('spree.errors.messages.product_in_review'),
                 status: :unprocessable_content
               )
             end
-
-            result = workflow.call(product: @resource)
 
             if result.success?
               render json: serialize_resource(@resource.reload)

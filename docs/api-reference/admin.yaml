@@ -26597,8 +26597,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1704768
-                slug: product-1704768
+                name: Product 1644768
+                slug: product-1644768
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26651,6 +26651,17 @@ paths:
                 tax_category_id: taxcat_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
+        '422':
+          description: the product is awaiting review
+          content:
+            application/json:
+              example:
+                error:
+                  code: product_in_review
+                  message: A product awaiting review is approved or rejected, not
+                    moved to another status
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/products/{id}/draft":
     parameters:
     - name: id
@@ -26704,8 +26715,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1662527
-                slug: product-1662527
+                name: Product 1682527
+                slug: product-1682527
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -26770,6 +26781,17 @@ paths:
                 tax_category_id: taxcat_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
+        '422':
+          description: the product is awaiting review
+          content:
+            application/json:
+              example:
+                error:
+                  code: product_in_review
+                  message: A product awaiting review is approved or rejected, not
+                    moved to another status
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/translations":
     get:
       summary: Translation coverage for a resource type
