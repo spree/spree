@@ -5,7 +5,7 @@ name: CI
 # files it covers changed; a suite that was not needed counts as passing.
 on:
   push:
-    branches: [main, '6-0-dev', '*-stable']
+    branches: [main, '*-stable']
   pull_request:
   merge_group:
 

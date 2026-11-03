@@ -340,7 +340,7 @@ See `packages/dashboard/README.md` for the full architecture (auth, permissions,
 
 ### Working on the storefront
 
-The [Next.js storefront](https://github.com/spree/storefront) is a separate repository. `pnpm storefront:dev` clones it into `storefront/` (gitignored) on first run, on its **`6-0-dev`** branch — `main` targets the released Store API and won't work against this monorepo's backend. Unlike `server/`, the clone keeps its `.git`: commit and push storefront changes from inside `storefront/`.
+The [Next.js storefront](https://github.com/spree/storefront) is a separate repository. `pnpm storefront:dev` clones it into `storefront/` (gitignored) on first run, on its `main` branch. Unlike `server/`, the clone keeps its `.git`: commit and push storefront changes from inside `storefront/`.
 
 ```bash
 # Terminal 1: backend
