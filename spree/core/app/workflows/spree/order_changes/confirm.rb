@@ -28,7 +28,7 @@ module Spree
           order.lock!
           previous_total = order.total
           step :apply_actions
-          order.recalculate_totals!
+          order.recalculate_totals! if moves_money?
           order.update_statuses!
           @balance_delta = order.total - previous_total
           order_change.update!(status: 'confirmed', confirmed_at: Time.current)
@@ -49,6 +49,12 @@ module Spree
       def ensure_confirmable
         failure(order_change, :order_change_not_requested) unless order_change.requested?
         failure(order_change, :order_change_order_canceled) if order.canceled?
+      end
+
+      # A receipt or a replacement shipment changes no amount on the order,
+      # and re-summing a placed order can call out to a tax provider.
+      def moves_money?
+        order_change.actions.any? { |action| Spree::OrderChangeAction::STOCK_KINDS.exclude?(action.kind) }
       end
 
       def apply_actions

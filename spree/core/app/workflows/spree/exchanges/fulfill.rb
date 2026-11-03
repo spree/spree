@@ -14,7 +14,7 @@ module Spree
     class Fulfill < Spree::Workflow
       include Spree::Refunds::OrderPayments
       include Spree::Refunds::TaxCredit
-      include Spree::Fulfillments::Replacements
+      include Spree::OrderChanges::Replacements
 
       hooks :validate, :before_settle, :after_fulfill
 
@@ -115,7 +115,7 @@ module Spree
 
         failure(exchange, :nothing_to_fulfill) if items.empty?
 
-        @fulfillments = build_replacements(exchange, items)
+        @fulfillments = ship_replacements(exchange, items, requested_by: refunder)
       end
 
       def issue_store_credit

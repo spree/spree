@@ -74,14 +74,21 @@ module Spree
       end
 
       # Only resellable goods go back into sellable stock — a damaged item
-      # is received but never restocked.
+      # is received but never restocked. The restock is an order change, so
+      # it leaves the same record as every other post-placement mutation.
       def restock_resellable_items
-        @normalized_items.each do |item|
-          next unless item[:resellable]
-          next unless item[:quantity].positive?
+        actions = @normalized_items.filter_map do |item|
+          next unless item[:resellable] && item[:quantity].positive?
 
-          post_sale_record.stock_location.restock(restock_variant(item[:line]), item[:quantity], post_sale_record)
+          { kind: 'receive_item', variant: restock_variant(item[:line]),
+            line_item: item[:line].line_item, quantity: item[:quantity] }
         end
+        return if actions.empty?
+
+        Spree.order_change_apply_service.call(
+          order: post_sale_record.order, actions: actions,
+          post_sale_record: post_sale_record, requested_by: received_by
+        )
       end
 
       def mark_received
