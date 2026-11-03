@@ -85,6 +85,10 @@ docker compose up -d
 
 The database is created and migrated on first boot. The app is available at [http://localhost:3000](http://localhost:3000).
 
+<Note>
+  PostgreSQL 18 images keep data in a version-specific directory under `/var/lib/postgresql`, so the volume above must be empty on first boot. If you already have a volume with PostgreSQL 17 (or older) data, migrate it first — dump and restore into a fresh PostgreSQL 18 volume, or use `pg_upgrade`.
+</Note>
+
 ### Scaling out the worker
 
 Background jobs run inside the web container by default. When job load deserves its own process, split it out — same image, no rebuild: set `SOLID_QUEUE_IN_PUMA: "false"` on `web` and add a worker service:
