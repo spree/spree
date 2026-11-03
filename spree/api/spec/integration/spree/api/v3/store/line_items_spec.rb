@@ -48,6 +48,26 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
         end
       end
 
+      response '201', 'gift card added for a recipient' do
+        let(:gift_card_variant) { create(:gift_card_product, store: store).default_variant }
+
+        before { line_item.destroy! }
+
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:body) do
+          { variant_id: gift_card_variant.prefixed_id, quantity: 1,
+            recipient: { email: 'friend@example.com', name: 'Alex', message: 'Happy birthday!' } }
+        end
+
+        schema '$ref' => '#/components/schemas/Cart'
+
+        run_test! do |response|
+          item = JSON.parse(response.body)['items'].find { |line| line['variant_id'] == gift_card_variant.prefixed_id }
+          expect(item['recipient']).to include('email' => 'friend@example.com', 'name' => 'Alex')
+        end
+      end
+
       response '201', 'item added with metadata' do
         let(:new_product) { create(:product) }
         let(:new_variant) { new_product.default_variant }

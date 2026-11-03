@@ -3386,6 +3386,16 @@
           "confirm_change_to_guest": "Diese Bestellung wird zur Gastbestellung und verschwindet aus dem Bestellverlauf des Kunden.",
           "confirm_change_releases_balance": "Guthaben und Geschenkkarten des bisherigen Kunden werden entfernt und ihm zurückgegeben, daher steigt der offene Betrag wieder.",
           "change": "Kunde ändern"
+        },
+        "issued_gift_cards": {
+          "title": "Ausgestellte Geschenkkarten",
+          "never_expires": "Nie",
+          "columns": {
+            "code": "Code",
+            "amount": "Betrag",
+            "sent_to": "Gesendet an",
+            "expires": "Läuft ab"
+          }
         }
       },
       "edit": {
@@ -4314,7 +4324,8 @@
           "tab_downloads": "Digitale Downloads",
           "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben.",
           "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
-          "tab_default_package": "Standardpaket"
+          "tab_default_package": "Standardpaket",
+          "tab_gift_cards": "Geschenkkarten"
         },
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",

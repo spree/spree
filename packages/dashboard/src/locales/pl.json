@@ -3416,6 +3416,16 @@
           "confirm_change_to_guest": "To zamówienie stanie się zamówieniem gościa i zniknie z historii zamówień klienta.",
           "confirm_change_releases_balance": "Środki w sklepie i karty podarunkowe użyte przez poprzedniego klienta zostaną usunięte i zwrócone mu, więc kwota do zapłaty znowu wzrośnie.",
           "change": "Zmień klienta"
+        },
+        "issued_gift_cards": {
+          "title": "Wystawione karty podarunkowe",
+          "never_expires": "Nigdy",
+          "columns": {
+            "code": "Kod",
+            "amount": "Kwota",
+            "sent_to": "Wysłano do",
+            "expires": "Wygasa"
+          }
         }
       },
       "edit": {
@@ -4364,7 +4374,8 @@
           "tab_downloads": "Pobrania cyfrowe",
           "downloads_help": "Jak długo działa link do pobrania i ile razy można go użyć. Poszczególne pliki mogą nadpisać te wartości.",
           "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
-          "tab_default_package": "Domyślna paczka"
+          "tab_default_package": "Domyślna paczka",
+          "tab_gift_cards": "Karty podarunkowe"
         },
         "tax_categories": {
           "add_sheet_title": "Dodaj kategorię podatkową",

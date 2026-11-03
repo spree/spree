@@ -596,7 +596,9 @@ Events: `promotion.created`, `promotion.updated`, `promotion.deleted`
 
 ## Gift Card Events
 
-Events: `gift_card.created`, `gift_card.updated`, `gift_card.deleted`, `gift_card.partially_redeemed`, `gift_card.redeemed`, `gift_card.canceled`
+Events: `gift_card.created`, `gift_card.updated`, `gift_card.deleted`, `gift_card.issued`, `gift_card.partially_redeemed`, `gift_card.redeemed`, `gift_card.canceled`
+
+`gift_card.issued` fires once for every card a paid order issues from a gift card product. Its payload adds `line_item_id`, `order_id` and the `recipient` the buyer named (null when the card goes to the order email), and its `code` is always masked. Read the card through the Admin API if your integration delivers it.
 
 ```json
 {

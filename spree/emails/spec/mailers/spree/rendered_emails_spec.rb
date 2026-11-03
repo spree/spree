@@ -36,6 +36,12 @@ describe 'rendered emails', type: :mailer do
     end
   end
 
+  let(:bought_gift_card) do
+    line_item = create(:line_item, order: order, product: create(:gift_card_product, store: store))
+    line_item.assign_gift_card_recipient(email: 'friend@example.com', name: payload, message: payload)
+    create(:gift_card, line_item: line_item, store: store, amount: 50)
+  end
+
   let(:emails) do
     {
       'order confirmation' => Spree::OrderMailer.confirm_email(order),
@@ -47,6 +53,7 @@ describe 'rendered emails', type: :mailer do
       'fulfillment' => Spree::FulfillmentMailer.fulfilled_email(create(:shipped_order, store: store).fulfillments.first),
       'delivery' => Spree::FulfillmentMailer.delivered_email(create(:shipped_order, store: store).fulfillments.first),
       'files ready' => Spree::DigitalAssetMailer.files_ready_email(order_with_downloads),
+      'gift card' => Spree::GiftCardMailer.issued_email(bought_gift_card),
       'refund' => Spree::ReturnMailer.refunded_email(create(:received_return, store: store)),
       'password reset' => Spree::CustomerMailer.password_reset_email(create(:user, first_name: payload), 'token', store),
       'data export' => Spree::CustomerMailer.data_export_email(create(:data_request, store: store)),

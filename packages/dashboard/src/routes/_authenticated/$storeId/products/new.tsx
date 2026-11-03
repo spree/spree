@@ -6,6 +6,7 @@ import {
   extensionRowValues,
   extensionSubmitValues,
   GeneralCard,
+  GiftCardCard,
   InventoryCard,
   isPlaceholderDefaultVariant,
   MediaCard,
@@ -247,6 +248,7 @@ function NewProductPage() {
               <StatusCard form={form} />
               <PublishingCard form={form} seedDefaultChannel />
               <CategorizationCard form={form} />
+              <GiftCardCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} />
               <Slot name="product.form_sidebar" context={{ product: undefined, mode: 'new' }} />

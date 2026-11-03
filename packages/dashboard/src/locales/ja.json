@@ -3385,6 +3385,16 @@
           "confirm_change_to_guest": "この注文はゲストの注文になり、顧客の注文履歴から外れます。",
           "confirm_change_releases_balance": "以前の顧客が適用したストアクレジットとギフトカードは注文から外され、その顧客に戻されます。そのため未払い額は再び増えます。",
           "change": "顧客を変更"
+        },
+        "issued_gift_cards": {
+          "title": "発行済みギフトカード",
+          "never_expires": "無期限",
+          "columns": {
+            "code": "コード",
+            "amount": "金額",
+            "sent_to": "送信先",
+            "expires": "有効期限"
+          }
         }
       },
       "edit": {
@@ -4313,7 +4323,8 @@
           "tab_downloads": "デジタルダウンロード",
           "downloads_help": "ダウンロードのリンクが使える期間と回数です。ファイルごとに上書きできます。",
           "default_package_description": "いつも出荷に使う箱です。運送会社の料金プロバイダーは、すべての荷物にこの重さを加え、寸法を容積重量の料金計算に使います。",
-          "tab_default_package": "既定のこん包"
+          "tab_default_package": "既定のこん包",
+          "tab_gift_cards": "ギフトカード"
         },
         "tax_categories": {
           "add_sheet_title": "税区分を追加",

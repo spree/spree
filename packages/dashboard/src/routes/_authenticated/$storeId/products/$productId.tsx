@@ -6,6 +6,7 @@ import {
   extensionFormValues,
   extensionSubmitValues,
   GeneralCard,
+  GiftCardCard,
   InventoryCard,
   MediaCard,
   mapSpreeErrorsToForm,
@@ -364,6 +365,7 @@ function ProductForm({ product }: { product: Product }) {
               />
               <PublishingCard form={form} />
               <CategorizationCard form={form} />
+              <GiftCardCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} product={product} />
               <Slot name="product.form_sidebar" context={{ product, mode: 'edit' }} />

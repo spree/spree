@@ -24,7 +24,7 @@ export const ReturnSchema = z.object({
   refunded_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
   reason: ReturnReasonSchema.optional(),
-  return_line_items: z.array(ReturnLineItemSchema).optional(),
+  get return_line_items() { return z.array(ReturnLineItemSchema).optional(); },
   custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   memo: z.string().nullable(),

@@ -12,7 +12,7 @@ module Spree
            fulfillment delivery address address_owner customer data_request customer_group country channel product_publication
            market state wishlist wishlist_item payment_method delivery_method delivery_rate freight_summary
            stock_location category collection applied_promotion discount tax_line delivery_zone delivery_zone_member
-           fee digital_link gift_card currency locale policy custom_field tax_category tax_identifier
+           fee digital_link gift_card gift_card_recipient currency locale policy custom_field tax_category tax_identifier
            product_filters product_filter_price_range product_filter_availability product_filter_availability_option
            product_filter_option product_filter_option_value product_filter_category product_filter_category_option
            product_filter_sort_option media_event return return_line_item exchange exchange_line_item claim
@@ -27,7 +27,7 @@ module Spree
            product_type_custom_field_definition variant price price_history custom_field custom_field_definition
            category collection collection_rule line_item option_type option_value media stock_level stock_movement
            stock_transfer stock_transfer_item supplier purchase_order purchase_order_item stock_receipt
-           stock_receipt_item fulfillment fulfillment_item delivery shipping_label gift_card gift_card_batch payment
+           stock_receipt_item fulfillment fulfillment_item delivery shipping_label gift_card gift_card_batch gift_card_recipient payment
            refund return_reason claim_reason refund_reason order_cancellation_reason return return_line_item
            exchange exchange_line_item claim claim_line_item package_type policy tax_category tax_rate
            tax_identifier company company_membership company_invitation catalog catalog_price catalog_price_tier

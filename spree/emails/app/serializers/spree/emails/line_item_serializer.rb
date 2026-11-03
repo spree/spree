@@ -8,9 +8,14 @@ module Spree
       without_display_money
 
       many :option_values, resource: Spree::Emails::OptionValueSerializer
+      one :gift_card_recipient, key: :recipient, resource: Spree::Emails::GiftCardRecipientSerializer,
+                                source: proc { gift_card_recipient if gift_card? }
+      many :gift_cards, resource: Spree::Emails::GiftCardSerializer, params: { hide_credentials: true },
+                        source: proc { gift_card? ? gift_cards : [] },
+                        if: proc { |line_item| line_item.order_id.present? }
 
-      typelize sku: [:string, nullable: true], amount: :string,
-               url: [:string, nullable: true], image_url: [:string, nullable: true]
+      typelize sku: [:string, { nullable: true }], amount: :string,
+               url: [:string, { nullable: true }], image_url: [:string, { nullable: true }]
 
       attributes :sku
 
