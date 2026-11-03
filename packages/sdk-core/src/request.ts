@@ -1,3 +1,4 @@
+import { randomUUID } from '@spree/core'
 import type { ErrorResponse, LocaleDefaults, ValidationErrorDetail } from './types'
 
 export interface RetryConfig {
@@ -68,7 +69,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 function generateIdempotencyKey(): string {
-  return `spree-sdk-retry-${crypto.randomUUID()}`
+  return `spree-sdk-retry-${randomUUID()}`
 }
 
 function shouldRetryOnStatus(

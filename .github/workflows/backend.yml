@@ -1,19 +1,11 @@
-name: Tests
+name: Backend
 
+# Called by ci.yml, which runs this suite only when relevant files changed.
 on:
-  push:
-    branches: [main, '6-0-dev', '*-stable']
-    paths:
-      - 'spree/**'
-      - '.github/workflows/tests.yml'
-  pull_request:
-    paths:
-      - 'spree/**'
-      - '.github/workflows/tests.yml'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: false
 
 permissions:
   contents: read
@@ -118,7 +110,7 @@ jobs:
           done
 
   test-postgres:
-    name: "PostgreSQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
+    name: "Test ${{ matrix.project }} (PostgreSQL, ${{ matrix.shard }}/${{ matrix.total_shards }})"
     needs: build-postgres
     runs-on: ubuntu-latest
     strategy:
@@ -142,12 +134,10 @@ jobs:
           # they saved. This is also the only job with the Meilisearch service,
           # so spree_meilisearch's integration spec runs here.
           - { project: providers, dirs: "providers/easypost providers/meilisearch providers/paypal providers/stripe", shard: 1, total_shards: 1, procs: 2 }
-          # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
-          - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
-          # mcp: 1 runner × 2 procs (tiny suite — optional MCP server gem)
-          - { project: mcp, shard: 1, total_shards: 1, procs: 2 }
-          # opentelemetry: 1 runner × 2 procs (tiny suite — optional tracing gem)
-          - { project: opentelemetry, shard: 1, total_shards: 1, procs: 2 }
+          # optional-gems: 1 runner × 2 procs — dashboard, mcp and opentelemetry
+          # share a lane. Each suite runs in seconds, far less than a runner's
+          # setup, so a runner each only added queue time.
+          - { project: optional-gems, dirs: "dashboard mcp opentelemetry", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
       postgres:
         image: postgres:16
@@ -255,11 +245,14 @@ jobs:
           SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
+          # Run every suite in a shared lane even when an earlier one fails.
+          status=0
           for suite_dir in $SUITE_DIRS; do
             suite_name=$(basename "$suite_dir")
             RSPEC_OPTS="--order random --format progress -r rspec_junit_formatter --format RspecJunitFormatter -o ${{ github.workspace }}/tmp/test-results/rspec/${suite_name}-${{ matrix.shard }}-\$TEST_ENV_NUMBER.xml" \
-              bash -c "cd '$suite_dir' && bundle exec rake parallel_shard"
+              bash -c "cd '$suite_dir' && bundle exec rake parallel_shard" || status=1
           done
+          exit "$status"
 
       - name: Upload coverage to Codecov
         if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
@@ -267,7 +260,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ${{ github.workspace }}/coverage
-          flags: ${{ matrix.project }}
+          flags: ${{ matrix.flags || matrix.project }}
           name: ${{ matrix.project }}-shard-${{ matrix.shard }}
           fail_ci_if_error: false
 
@@ -288,7 +281,7 @@ jobs:
           if-no-files-found: ignore
 
   test-mysql:
-    name: "MySQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
+    name: "Test ${{ matrix.project }} (MySQL, ${{ matrix.shard }}/${{ matrix.total_shards }})"
     needs: build-mysql
     runs-on: ubuntu-latest
     strategy:
@@ -308,12 +301,10 @@ jobs:
           # No Meilisearch service here, so spree_meilisearch's integration spec
           # skips itself; its unit specs still run against MySQL.
           - { project: providers, dirs: "providers/easypost providers/meilisearch providers/paypal providers/stripe", shard: 1, total_shards: 1, procs: 2 }
-          # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
-          - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
-          # mcp: 1 runner × 2 procs (tiny suite — optional MCP server gem)
-          - { project: mcp, shard: 1, total_shards: 1, procs: 2 }
-          # opentelemetry: 1 runner × 2 procs (tiny suite — optional tracing gem)
-          - { project: opentelemetry, shard: 1, total_shards: 1, procs: 2 }
+          # optional-gems: 1 runner × 2 procs — dashboard, mcp and opentelemetry
+          # share a lane. Each suite runs in seconds, far less than a runner's
+          # setup, so a runner each only added queue time.
+          - { project: optional-gems, dirs: "dashboard mcp opentelemetry", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
       mysql:
         image: mysql:8.0
@@ -404,11 +395,14 @@ jobs:
           SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
+          # Run every suite in a shared lane even when an earlier one fails.
+          status=0
           for suite_dir in $SUITE_DIRS; do
             suite_name=$(basename "$suite_dir")
             RSPEC_OPTS="--order random --format progress -r rspec_junit_formatter --format RspecJunitFormatter -o ${{ github.workspace }}/tmp/test-results/rspec/${suite_name}-${{ matrix.shard }}-\$TEST_ENV_NUMBER.xml" \
-              bash -c "cd '$suite_dir' && bundle exec rake parallel_shard"
+              bash -c "cd '$suite_dir' && bundle exec rake parallel_shard" || status=1
           done
+          exit "$status"
 
       - name: Upload test results
         if: always()
@@ -427,7 +421,7 @@ jobs:
           if-no-files-found: ignore
 
   brakeman:
-    name: Brakeman
+    name: "Security scan (Brakeman)"
     needs: build-postgres
     runs-on: ubuntu-latest
     env:
@@ -474,3 +468,4 @@ jobs:
           name: brakeman-reports
           path: spree/brakeman-*.*
           if-no-files-found: ignore
+
