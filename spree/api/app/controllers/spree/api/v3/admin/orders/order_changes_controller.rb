@@ -66,7 +66,7 @@ module Spree
 
             # PATCH /api/v3/admin/orders/:order_id/order_changes/:id/confirm
             def confirm
-              with_order_lock { render_result(Spree.order_change_confirm_workflow.call(order_change: @resource)) }
+              render_result(Spree.order_change_confirm_workflow.call(order_change: @resource))
             end
 
             # PATCH /api/v3/admin/orders/:order_id/order_changes/:id/cancel

@@ -10,9 +10,10 @@ module Spree
     # caller's transaction: settling at a gateway belongs in a subscriber to
     # `order_change.confirmed`, which is published after commit.
     #
-    # With no gateway I/O of its own, Confirm is safe to run inside a
-    # caller's transaction: the return, exchange and claim workflows do, so
-    # their status change and the stock it moves commit together.
+    # Confirm moves no money at a gateway, so it runs inside a caller's
+    # transaction: the return, exchange and claim workflows do, so their status
+    # change and the stock it moves commit together. Item edits still ask an
+    # external inventory, pricing or tax provider, as any order edit does.
     class Confirm < Spree::Workflow
       hooks :before_confirm, :after_confirm
 
@@ -24,7 +25,10 @@ module Spree
       def perform(order_change:)
         super
 
-        ApplicationRecord.transaction do
+        # requires_new: a failure partway through applying rolls back to here
+        # even inside a caller's transaction, instead of leaving half an edit
+        # for the caller to commit.
+        ApplicationRecord.transaction(requires_new: true) do
           order.lock!
           # Re-read under the lock: a second confirm of the same set waited
           # here while the first applied it, and must now see it confirmed.

@@ -48,6 +48,10 @@ module Spree
         actions = actions_of(*Spree::OrderChangeAction::ITEM_KINDS)
         return if actions.empty?
 
+        # A line edited or removed some other way since the set was requested:
+        # applying by its variant would quietly re-add what was taken away.
+        failure(order_change, :order_change_line_item_gone) if actions.any? { |action| action.line_item_id && action.line_item.nil? }
+
         quantities = order.line_items.to_h { |line_item| [line_item.variant_id, line_item.quantity] }
         targets = {}
         actions.each do |action|

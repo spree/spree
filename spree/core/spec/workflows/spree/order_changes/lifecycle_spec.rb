@@ -204,6 +204,30 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(line_item.reload.quantity).to eq(3)
     end
 
+    it 'refuses a line that was removed some other way since the set was requested' do
+      change = requested_change(kind: 'update_item', line_item: line_item, quantity: 4)
+      line_item.destroy!
+
+      result = Spree::OrderChanges::Confirm.call(order_change: change)
+
+      expect(result.error.value).to eq(:order_change_line_item_gone)
+      expect(order.reload.line_items.map(&:variant_id)).not_to include(line_item.variant_id)
+    end
+
+    # The API confirms inside its own order lock; a half-applied edit must not
+    # be left behind for that transaction to commit.
+    it 'leaves nothing applied when it fails inside a caller transaction' do
+      variant = create(:variant)
+      variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      change = requested_change({ kind: 'update_item', line_item: line_item, quantity: 4 },
+                                { kind: 'add_item', variant: variant, quantity: 1 })
+
+      ApplicationRecord.transaction { Spree::OrderChanges::Confirm.call(order_change: change) }
+
+      expect(line_item.reload.quantity).to eq(1)
+      expect(change.reload).to be_requested
+    end
+
     it 'refuses a set that was not submitted' do
       result = Spree::OrderChanges::Confirm.call(order_change: begin_change)
 
@@ -282,6 +306,16 @@ RSpec.describe 'Spree::OrderChanges workflows' do
 
       expect(result).to be_failure
       expect(result.error.to_s).to include('Locked')
+    end
+
+    it 'fires no lifecycle hooks' do
+      fired = []
+      Spree.hooks.register('order_changes.begin.after_begin') { fired << :begin }
+      Spree.hooks.register('order_changes.request.after_request') { fired << :request }
+
+      Spree::OrderChanges::Preview.call(order: order, actions: [{ kind: 'remove_item', line_item: line_item }])
+
+      expect(fired).to be_empty
     end
 
     it 'is refused while another change is open' do
