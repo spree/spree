@@ -582,7 +582,15 @@
         "empty_title": "Noch keine benutzerdefinierten Felder",
         "errors": {
           "failed_to_save": "Benutzerdefiniertes Feld konnte nicht gespeichert werden",
-          "failed_to_load": "Benutzerdefinierte Felder konnten nicht geladen werden. Lade die Seite neu, um es erneut zu versuchen."
+          "failed_to_load": "Benutzerdefinierte Felder konnten nicht geladen werden. Lade die Seite neu, um es erneut zu versuchen.",
+          "required": "Einen Wert eingeben",
+          "too_short": "Mindestens {{count}} Zeichen verwenden",
+          "too_long": "Höchstens {{count}} Zeichen verwenden",
+          "less_than_min": "Muss mindestens {{min}} sein",
+          "greater_than_max": "Darf höchstens {{max}} sein",
+          "before_min": "Muss am oder nach dem {{min}} liegen",
+          "after_max": "Muss am oder vor dem {{max}} liegen",
+          "choice_not_offered": "{{value}} ist keine der Optionen"
         },
         "manage_in_settings": "In den Einstellungen verwalten",
         "new_definition_description": "Definieren Sie ein benutzerdefiniertes Feld, um typisierte, strukturierte Informationen zu Ihren {{resource}} zu speichern.",
@@ -591,7 +599,11 @@
         "section_title": "Benutzerdefinierte Felder",
         "set_up": "Benutzerdefinierte Felder einrichten",
         "values_save_partial_failed": "Einige benutzerdefinierte Felder konnten nicht gespeichert werden: {{fields}}",
-        "values_saved": "Benutzerdefinierte Felder gespeichert"
+        "values_saved": "Benutzerdefinierte Felder gespeichert",
+        "required_field_hint": "Pflichtfeld",
+        "values_invalid": "Diese benutzerdefinierten Felder vor dem Speichern korrigieren: {{fields}}",
+        "choose": "Auswählen…",
+        "no_choices": "Keine passenden Optionen"
       }
     },
     "custom_field_definitions": {
@@ -1450,7 +1462,10 @@
             "long_text": "Langer Text",
             "number": "Zahl",
             "rich_text": "Formatierter Text",
-            "short_text": "Kurzer Text"
+            "short_text": "Kurzer Text",
+            "date": "Datum",
+            "date_time": "Datum und Uhrzeit",
+            "choice": "Auswahl"
           },
           "read_only_help": "Der Typ kann nicht mehr geändert werden, sobald Werte vorhanden sind — andernfalls würden gespeicherte Werte falsch interpretiert."
         },
@@ -1495,16 +1510,50 @@
           "api_only_group": "Nur über die API"
         },
         "searchable": {
-          "help": "Werte in die Storefront-Produktsuche aufnehmen (nur Kurztext, Langtext und Zahl). Nach dem Aktivieren mit Meilisearch rake spree:search:reindex ausführen, damit bestehende Produkte aktualisiert werden.",
+          "help": "Werte in die Storefront-Produktsuche aufnehmen. Nach dem Aktivieren mit Meilisearch rake spree:search:reindex ausführen, damit bestehende Produkte aktualisiert werden.",
           "label": "Durchsuchbar"
         },
         "sortable": {
-          "help": "Storefront-Produktlisten nach diesem Feld sortieren lassen (nur Kurztext und Zahl). Nach dem Aktivieren mit Meilisearch rake spree:search:reindex ausführen, damit bestehende Produkte aktualisiert werden.",
+          "help": "Storefront-Produktlisten nach diesem Feld sortieren lassen. Nach dem Aktivieren mit Meilisearch rake spree:search:reindex ausführen, damit bestehende Produkte aktualisiert werden.",
           "label": "Sortierbar"
         },
         "storefront_visible": {
           "column_label": "Storefront",
           "label": "Im Storefront sichtbar"
+        },
+        "validations": {
+          "title": "Validierung",
+          "help": "Wird beim Speichern eines Werts geprüft. Bestehende Werte bleiben unverändert, bis sie bearbeitet werden.",
+          "required": {
+            "label": "Pflichtfeld",
+            "help": "Markiert das Feld und verhindert, dass dieses Dashboard es leer speichert."
+          },
+          "min": {
+            "length": "Mindestanzahl Zeichen",
+            "number": "Minimum",
+            "date": "Frühestes Datum",
+            "date_time": "Frühestes Datum und Uhrzeit"
+          },
+          "max": {
+            "length": "Höchstanzahl Zeichen",
+            "number": "Maximum",
+            "date": "Spätestes Datum",
+            "date_time": "Spätestes Datum und Uhrzeit"
+          },
+          "choices": {
+            "label": "Optionen",
+            "value": "Wert",
+            "choice_label": "Anzeigename",
+            "add": "Option hinzufügen",
+            "remove": "Option entfernen",
+            "required": "Mindestens eine Option hinzufügen",
+            "value_required": "Einen Wert eingeben",
+            "duplicate": "Jeder Wert muss eindeutig sein"
+          },
+          "multiple": {
+            "label": "Mehrere Optionen erlauben",
+            "help": "Der Wert wird zu einer Liste. Ein Feld mit mehreren Optionen kann nicht sortierbar sein."
+          }
         }
       },
       "customer": {

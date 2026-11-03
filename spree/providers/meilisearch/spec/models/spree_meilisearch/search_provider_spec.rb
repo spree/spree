@@ -573,6 +573,21 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       expect(provider.send(:build_filter_condition, 'cf_custom_label_blank', '1')).to eq('cf_custom_label NOT EXISTS')
     end
 
+    it 'compares dates as normalized ISO 8601 strings' do
+      create(:custom_field_definition, :date_time_field, :sortable, namespace: 'custom', key: 'launch')
+
+      expect(provider.send(:build_filter_condition, 'cf_custom_launch_gteq', '2026-10-12T10:00:00+02:00')).to eq("cf_custom_launch >= '2026-10-12T08:00:00Z'")
+      expect(provider.send(:build_filter_condition, 'cf_custom_launch_lt', 'soon')).to be_nil
+      expect(provider.send(:build_filter_condition, 'cf_custom_launch_present', '1')).to eq('cf_custom_launch EXISTS')
+    end
+
+    it 'builds IN conditions for choices' do
+      create(:custom_field_definition, :multiple_choice_field, :searchable, namespace: 'custom', key: 'zones')
+
+      expect(provider.send(:build_filter_condition, 'cf_custom_zones_in', %w[a b])).to eq("cf_custom_zones IN ['a', 'b']")
+      expect(provider.send(:build_filter_condition, 'cf_custom_zones_eq', 'a')).to eq("cf_custom_zones = 'a'")
+    end
+
     it 'ignores substring predicates Meilisearch cannot filter on' do
       expect(provider.send(:build_filter_condition, 'cf_custom_label_cont', 'wool')).to be_nil
     end

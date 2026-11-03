@@ -285,6 +285,17 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
         expect(doc).not_to have_key('cf_custom_internal_note')
       end
 
+      it 'indexes dates as ISO 8601 strings and several choices as a list' do
+        launch = create(:custom_field_definition, :date_field, :sortable, namespace: 'custom', key: 'launch')
+        zones = create(:custom_field_definition, :multiple_choice_field, :searchable, namespace: 'custom', key: 'zones')
+        product.set_custom_field(launch, '2026-10-12')
+        product.set_custom_field(zones, %w[a c])
+
+        doc = described_class.new(product.reload, store).call.first
+        expect(doc['cf_custom_launch']).to eq('2026-10-12')
+        expect(doc['cf_custom_zones']).to eq(%w[a c])
+      end
+
       it 'uses the same cf_* attributes on every market/locale document' do
         create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en')
         create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de')

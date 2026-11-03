@@ -427,16 +427,23 @@ module SpreeMeilisearch
       end
     end
 
-    # Meilisearch has stable filter operators for equality, ranges, and
+    # Meilisearch has stable filter operators for equality, ranges, IN and
     # EXISTS — but no string contains/starts/ends (CONTAINS is still
     # experimental), so those predicates are ignored here. The Database
-    # provider supports the full predicate set.
+    # provider supports the full predicate set. Dates are indexed as ISO 8601
+    # strings, which Meilisearch's range operators compare lexicographically.
     def custom_field_filter_condition(key, value)
       parsed = custom_field_schema.parse_filter(key)
       return nil unless parsed
 
-      attribute = parsed[:definition].filter_key
-      numeric = parsed[:definition].field_type == 'number'
+      definition = parsed[:definition]
+      attribute = definition.filter_key
+      numeric = definition.field_type == 'number'
+      date = %w[date date_time].include?(definition.field_type)
+      if date && %w[present blank].exclude?(parsed[:predicate])
+        value = definition.field_type_class.canonical_value(value, store: definition.store)
+        return nil if value.nil?
+      end
 
       case parsed[:predicate]
       when 'present'
@@ -447,8 +454,11 @@ module SpreeMeilisearch
         operator = parsed[:predicate] == 'eq' ? '=' : '!='
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{operator} #{formatted}"
+      when 'in'
+        formatted = Array(value).map(&:to_s).compact_blank.map { |choice| format_custom_field_filter_value(choice, false) }
+        formatted.any? ? "#{attribute} IN [#{formatted.join(', ')}]" : nil
       when *CUSTOM_FIELD_RANGE_OPERATORS.keys
-        return nil unless numeric
+        return nil unless numeric || date
 
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"

@@ -13,7 +13,8 @@ module Spree
                    storefront_visible: :boolean,
                    searchable: :boolean,
                    sortable: :boolean,
-                   filter_key: :string
+                   filter_key: :string,
+                   validations: :CustomFieldValidations
 
           attributes :namespace, :key, :label, :field_type, :storefront_visible,
                      :searchable, :sortable, :filter_key,
@@ -22,6 +23,8 @@ module Spree
           attribute :resource_type do |definition|
             Spree::Base.polymorphic_api_type(definition.resource_type)
           end
+
+          one :validations, source: proc { self }, resource: proc { Spree.api.admin_custom_field_validations_serializer }
         end
       end
     end

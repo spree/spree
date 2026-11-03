@@ -502,7 +502,10 @@ module Spree
           Spree::CustomFields::RichText,
           Spree::CustomFields::Number,
           Spree::CustomFields::Boolean,
-          Spree::CustomFields::Json
+          Spree::CustomFields::Json,
+          Spree::CustomFields::Date,
+          Spree::CustomFields::DateTime,
+          Spree::CustomFields::Choice
         ]
 
         Rails.application.config.spree.custom_fields.enabled_resources = [

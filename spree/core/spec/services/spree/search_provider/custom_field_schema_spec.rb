@@ -73,6 +73,16 @@ RSpec.describe Spree::SearchProvider::CustomFieldSchema do
       expect(schema.parse_filter('cf_custom_label_gteq')).to be_nil
     end
 
+    it 'offers range predicates for dates and set predicates for choices' do
+      date = create(:custom_field_definition, :date_field, :sortable, namespace: 'custom', key: 'launch')
+      choice = create(:custom_field_definition, :choice_field, :searchable, namespace: 'custom', key: 'zone')
+
+      expect(schema.parse_filter('cf_custom_launch_gteq')).to eq(definition: date, predicate: 'gteq')
+      expect(schema.parse_filter('cf_custom_launch_cont')).to be_nil
+      expect(schema.parse_filter('cf_custom_zone_in')).to eq(definition: choice, predicate: 'in')
+      expect(schema.parse_filter('cf_custom_zone_gt')).to be_nil
+    end
+
     it 'returns nil for unknown, bare, and non-cf keys' do
       expect(schema.parse_filter('cf_custom_unknown_eq')).to be_nil
       expect(schema.parse_filter('cf_custom_label')).to be_nil
@@ -132,6 +142,16 @@ RSpec.describe Spree::SearchProvider::CustomFieldSchema do
       expect(schema.sort_options).to include(
         { id: 'cf_custom_weight', label: "Weight (#{I18n.t('spree.sort_low_to_high')})" },
         { id: '-cf_custom_weight', label: "Weight (#{I18n.t('spree.sort_high_to_low')})" }
+      )
+    end
+
+    it 'returns oldest-newest labels for date fields' do
+      create(:custom_field_definition, :date_field, :sortable,
+             namespace: 'custom', key: 'launch', label: 'Launch')
+
+      expect(schema.sort_options).to include(
+        { id: 'cf_custom_launch', label: "Launch (#{I18n.t('spree.sort_oldest_first')})" },
+        { id: '-cf_custom_launch', label: "Launch (#{I18n.t('spree.sort_newest_first')})" }
       )
     end
 

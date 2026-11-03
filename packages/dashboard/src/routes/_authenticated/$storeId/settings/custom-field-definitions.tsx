@@ -36,6 +36,7 @@ import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,
   customFieldDefinitionSchema,
+  customFieldDefinitionToFormValues,
   customFieldDefinitionValuesToCreateParams,
   customFieldDefinitionValuesToUpdateParams,
 } from '../../../../schemas/custom-field-definition'
@@ -229,16 +230,7 @@ function EditSheet({
 
   useEffect(() => {
     if (definition) {
-      form.reset({
-        label: definition.label,
-        namespace: definition.namespace,
-        key: definition.key,
-        field_type: definition.field_type,
-        resource_type: definition.resource_type,
-        storefront_visible: definition.storefront_visible,
-        searchable: definition.searchable,
-        sortable: definition.sortable,
-      })
+      form.reset(customFieldDefinitionToFormValues(definition))
     }
   }, [definition, form])
 
