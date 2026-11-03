@@ -14,12 +14,17 @@ module Spree
       # Replacement fulfillments created by this run.
       attr_reader :fulfillments
 
-      # @param order_change [Spree::OrderChange] its actions may be unsaved
+      # @param order_change [Spree::OrderChange]
       # @return [Spree::ServiceModule::Result] value is the fulfillments created
       def perform(order_change:)
         super
 
         @fulfillments = []
+        # Confirm re-reads the set under its lock, so its actions arrive
+        # unloaded; one query per association rather than one per action.
+        ActiveRecord::Associations::Preloader.new(
+          records: order_change.actions.to_a, associations: [:line_item, :variant, :fulfillment, :delivery_method]
+        ).call
         step :apply_item_actions
         step :apply_receive_actions
         step :apply_fulfillment_actions

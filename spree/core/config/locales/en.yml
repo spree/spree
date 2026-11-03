@@ -1069,6 +1069,7 @@ en:
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_change_empty: Add at least one change before submitting it.
     order_change_in_progress: Another change to this order is in progress. Confirm or cancel it first.
+    order_change_kind_not_allowed: Only add_item, update_item and remove_item changes can be made here. Returns, exchanges and claims make their own.
     order_change_not_open: This change has already been confirmed or canceled.
     order_change_not_pending: This change has already been submitted and can no longer be edited.
     order_change_not_requested: Only a submitted change can be confirmed.

@@ -7,7 +7,7 @@ module Spree
         class OrderChangeActionRequestSchema < Spree::Api::V3::RequestSchema
           attribute :kind, :string,
             required: true,
-            choices: Spree::OrderChangeAction.kinds,
+            choices: Spree::OrderChangeAction::ITEM_KINDS,
             open: true,
             example: 'update_item',
             description: '`add_item` takes `variant_id` and `quantity`; `update_item` takes `line_item_id` and the new `quantity`; `remove_item` takes `line_item_id`.'

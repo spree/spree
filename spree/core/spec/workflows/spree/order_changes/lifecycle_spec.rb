@@ -191,6 +191,19 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(change.reload).to be_requested
     end
 
+    # A double-clicked confirm: the second request loaded the set before the
+    # first applied it.
+    it 'applies a set once when it is confirmed twice' do
+      change = requested_change(kind: 'add_item', variant: line_item.variant, quantity: 2)
+      stale = Spree::OrderChange.find(change.id)
+
+      Spree::OrderChanges::Confirm.call(order_change: change)
+      result = Spree::OrderChanges::Confirm.call(order_change: stale)
+
+      expect(result.error.value).to eq(:order_change_not_requested)
+      expect(line_item.reload.quantity).to eq(3)
+    end
+
     it 'refuses a set that was not submitted' do
       result = Spree::OrderChanges::Confirm.call(order_change: begin_change)
 
@@ -225,6 +238,15 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(change.reload).to be_canceled
     end
 
+    it 'never overwrites a set confirmed since it was loaded' do
+      change = requested_change(kind: 'remove_item', line_item: line_item)
+      stale = Spree::OrderChange.find(change.id)
+      Spree::OrderChanges::Confirm.call(order_change: change)
+
+      expect(Spree::OrderChanges::Cancel.call(order_change: stale)).to be_failure
+      expect(change.reload).to be_confirmed
+    end
+
     it 'refuses a confirmed set' do
       change = requested_change(kind: 'remove_item', line_item: line_item)
       Spree::OrderChanges::Confirm.call(order_change: change)
@@ -235,11 +257,11 @@ RSpec.describe 'Spree::OrderChanges workflows' do
 
   describe Spree::OrderChanges::Preview do
     it 'reports the totals the change would produce without keeping any of it' do
-      change = order.order_changes.new
-      change.actions.build(kind: 'update_item', line_item: line_item, variant: line_item.variant, quantity: 3)
       previous_total = order.total
 
-      result = Spree::OrderChanges::Preview.call(order_change: change)
+      result = Spree::OrderChanges::Preview.call(
+        order: order, actions: [{ kind: 'update_item', line_item: line_item, quantity: 3 }]
+      )
 
       expect(result).to be_success
       preview = result.value
@@ -251,14 +273,30 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(Spree::OrderChange.count).to eq(0)
     end
 
+    # A preview Save would refuse is worse than none: it shows a clean new
+    # total for an edit the merchant then cannot make.
+    it 'is refused for the same reasons Save is' do
+      Spree.hooks.register('order_changes.add_action.validate') { |workflow| workflow.reject!('Locked') }
+
+      result = Spree::OrderChanges::Preview.call(order: order, actions: [{ kind: 'remove_item', line_item: line_item }])
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to include('Locked')
+    end
+
+    it 'is refused while another change is open' do
+      begin_change
+
+      result = Spree::OrderChanges::Preview.call(order: order, actions: [{ kind: 'remove_item', line_item: line_item }])
+
+      expect(result.error.value).to eq(:order_change_in_progress)
+    end
+
     it 'leaves the caller order instance untouched' do
-      change = order.order_changes.new
-      change.actions.build(kind: 'remove_item', line_item: line_item, variant: line_item.variant)
+      Spree::OrderChanges::Preview.call(order: order, actions: [{ kind: 'remove_item', line_item: line_item }])
 
-      Spree::OrderChanges::Preview.call(order_change: change)
-
-      expect(change.order).to equal(order)
       expect(order.line_items).to include(line_item)
+      expect(order.order_changes).to be_empty
     end
   end
 
