@@ -34,7 +34,10 @@ import {
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import {
+  CustomFieldsInlineCard,
+  customFieldsAllowSubmit,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { DigitalFilesFormCard } from '../../../../components/spree/products/digital-files-form-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
@@ -59,6 +62,7 @@ function NewProductPage() {
   })
 
   const onSubmit = async (submitted: ProductFormValues) => {
+    if (!customFieldsAllowSubmit(form)) return
     // Before the placeholder variant is filtered out below, so row `i` of the
     // parse still lines up with row `i` of the form.
     const data = withExtensionRowValues('product', submitted, form.getValues())

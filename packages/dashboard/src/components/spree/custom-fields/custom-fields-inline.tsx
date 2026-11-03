@@ -207,6 +207,53 @@ function valuesEqual(a: unknown, b: unknown): boolean {
   }
 }
 
+// The rules the server checks on the values being written, plus `required`,
+// which it leaves to us. A value saved before a rule changed stays as it is
+// until it is edited, as on the server. Returns whether any value was refused,
+// after naming the fields in a toast.
+function rejectInvalidValues(
+  definitions: CustomFieldDefinition[],
+  values: Record<string, unknown>,
+  isChanged: (definition: CustomFieldDefinition) => boolean,
+  t: ReturnType<typeof useTranslation>['t'],
+): boolean {
+  const invalid = definitions.filter((def) =>
+    isChanged(def)
+      ? customFieldValueError(def, values[def.id], { checkRequired: true })
+      : def.validations?.required && isBlank(values[def.id]),
+  )
+  if (invalid.length === 0) return false
+
+  toastManager.add({
+    type: 'error',
+    title: t('admin.components.custom_fields.values_invalid', {
+      fields: invalid.map((def) => def.label || def.key).join(', '),
+    }),
+  })
+  return true
+}
+
+function valuesByDefinitionId(fields: (Partial<CustomFieldFormValues> | undefined)[] | undefined) {
+  const out: Record<string, unknown> = {}
+  fields?.forEach((cf) => {
+    if (cf?.custom_field_definition_id) out[cf.custom_field_definition_id] = cf.value
+  })
+  return out
+}
+
+// Each form-backed provider registers its check against the host form here.
+const formSubmitChecks = new WeakMap<object, () => boolean>()
+
+/**
+ * Call first in the submit handler of a page that renders
+ * `FormBackedCustomFieldsProvider`. Returns `false`, after saying why, when a
+ * custom field breaks its definition's rules or a required one is blank: the
+ * page's Zod resolver cannot see the definitions, so it never checks them.
+ */
+export function customFieldsAllowSubmit<T extends CustomFieldsFormShape>(form: UseFormReturn<T>) {
+  return formSubmitChecks.get(form.control)?.() ?? true
+}
+
 // ---------------------------------------------------------------------------
 // Provider A: form-backed (mode `form`).
 // Reads from / writes to `form.values.custom_fields[]` via `setValue`. Nothing
@@ -264,14 +311,28 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
     return definitionIds.flatMap((id) => allDefinitions.filter((def) => def.id === id))
   }, [allDefinitions, definitionIds])
 
-  const watchedCustomFields = cfForm.watch('custom_fields') ?? []
-  const values = useMemo<Record<string, unknown>>(() => {
-    const out: Record<string, unknown> = {}
-    watchedCustomFields.forEach((cf) => {
-      if (cf.custom_field_definition_id) out[cf.custom_field_definition_id] = cf.value
-    })
-    return out
-  }, [watchedCustomFields])
+  const watchedCustomFields = cfForm.watch('custom_fields')
+  const values = useMemo(() => valuesByDefinitionId(watchedCustomFields), [watchedCustomFields])
+  // Blank required fields say so once the page has tried to save.
+  const showRequiredErrors = cfForm.formState.submitCount > 0
+
+  const { t } = useTranslation()
+  useEffect(() => {
+    const check = () => {
+      const current = valuesByDefinitionId(cfForm.getValues('custom_fields'))
+      const saved = valuesByDefinitionId(cfForm.formState.defaultValues?.custom_fields)
+      return !rejectInvalidValues(
+        definitions,
+        current,
+        (def) => !valuesEqual(current[def.id], saved[def.id]),
+        t,
+      )
+    }
+    formSubmitChecks.set(cfForm.control, check)
+    return () => {
+      formSubmitChecks.delete(cfForm.control)
+    }
+  }, [cfForm, definitions, t])
 
   const setValue = useCallback(
     (definitionId: string, value: unknown) => {
@@ -292,10 +353,26 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
     () => ({
       state: { values },
       actions: { setValue },
-      meta: { definitions, isLoading, resourceType, resourceLabel, requiredDefinitionIds },
+      meta: {
+        definitions,
+        isLoading,
+        resourceType,
+        resourceLabel,
+        requiredDefinitionIds,
+        showRequiredErrors,
+      },
       mode: { kind: 'form' },
     }),
-    [values, setValue, definitions, isLoading, resourceType, resourceLabel, requiredDefinitionIds],
+    [
+      values,
+      setValue,
+      definitions,
+      isLoading,
+      resourceType,
+      resourceLabel,
+      requiredDefinitionIds,
+      showRequiredErrors,
+    ],
   )
 
   return <CustomFieldsContext value={ctx}>{children}</CustomFieldsContext>
@@ -416,22 +493,8 @@ export function useCustomFieldsDraft(
         return true
       }
 
-      // The rules the server checks on the values being written, plus
-      // `required`, which it leaves to us. A value saved before a rule changed
-      // stays as it is until it is edited, as on the server.
-      const invalid = definitions.filter((def) =>
-        changedDefinitions.includes(def)
-          ? customFieldValueError(def, values[def.id], { checkRequired: true })
-          : def.validations?.required && isBlank(values[def.id]),
-      )
-      if (invalid.length > 0) {
+      if (rejectInvalidValues(definitions, values, (def) => changedDefinitions.includes(def), t)) {
         setShowRequiredErrors(true)
-        toastManager.add({
-          type: 'error',
-          title: t('admin.components.custom_fields.values_invalid', {
-            fields: invalid.map((def) => def.label || def.key).join(', '),
-          }),
-        })
         return false
       }
 

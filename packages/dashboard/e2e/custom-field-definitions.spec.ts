@@ -127,6 +127,47 @@ test.describe('custom field definitions', () => {
       timeout: 15_000,
     })
   })
+  test('a required category field stops the category from saving while it is blank', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const label = `E2E Required Aisle ${suffix}`
+    await page.getByRole('button', { name: CTA }).click()
+    await page.locator('#cfd-resource-type').click()
+    await page.getByRole('option', { name: /^categories$/i }).click()
+    await page.getByLabel(/^label$/i).fill(label)
+    await page.getByLabel(/^key$/i).fill(`required_aisle_${suffix}`)
+    await page.getByRole('switch', { name: /^required$/i }).click()
+    await page.getByRole('button', { name: /create custom field/i }).click()
+    await expect(rowButton(page, label)).toBeVisible({ timeout: 15_000 })
+
+    const name = `E2E Required CF Category ${suffix}`
+    await page.goto(`/${creds.store_id}/products/categories/new`)
+    await page.locator('#category-name').fill(name)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(/\/products\/categories\/(?!new(?:\?|$))/, { timeout: 15_000 })
+
+    await page.locator('#category-name').fill(`${name} (renamed)`)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/fix these custom fields before saving/i)).toBeVisible()
+
+    const customFields = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^custom fields$/i }) })
+    await expect(customFields.getByText(/^enter a value$/i)).toBeVisible()
+    await customFields.getByLabel(new RegExp(`^${label}`, 'i')).fill('Aisle 9')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(customFields.getByLabel(new RegExp(`^${label}`, 'i'))).toHaveValue('Aisle 9', {
+      timeout: 15_000,
+    })
+  })
+
   test('a definition for customers is offered on a customer and keeps its value', async ({
     page,
   }) => {

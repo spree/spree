@@ -41,7 +41,10 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import {
+  CustomFieldsInlineCard,
+  customFieldsAllowSubmit,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 import '../../../../components/spree/custom-fields/register'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
@@ -173,6 +176,7 @@ function ProductForm({ product }: { product: Product }) {
   }, [mediaItems, form])
 
   const onSubmit = async (submitted: ProductFormValues) => {
+    if (!customFieldsAllowSubmit(form)) return
     // Media and variant rows get their extension fields back from live form
     // state, which the parse behind `submitted` stripped.
     const data = withExtensionRowValues('product', submitted, form.getValues())
