@@ -4,8 +4,10 @@ require 'spree/testing_support/common_rake'
 # its rswag specs.
 begin
   require 'spree/api/testing_support/openapi_tasks'
-rescue LoadError
-  # An extension without spree_api has no admin operations to document.
+rescue LoadError => e
+  # An extension without spree_api has no admin operations to document; any
+  # other missing file is a real error and is raised.
+  raise unless e.path.to_s.end_with?('spree/api/testing_support/openapi_tasks')
 end
 
 desc 'Generates a dummy app for testing an extension'

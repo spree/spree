@@ -1,3 +1,6 @@
+require 'spree/api/testing_support/v3/base'
+require 'spree/api/testing_support/deterministic_openapi'
+
 module Spree
   module Api
     module TestingSupport
@@ -38,6 +41,7 @@ module Spree
         # @param shape [Spree::Api::V3::RequestSchema] a named shape
         def query_parameters_for(shape)
           register_request_schema(shape.name, shape.json_schema)
+          shape.shapes.each { |nested| register_request_schema(nested.name, nested.json_schema) }
           shape.code_lists.each { |list_name, definition| register_request_schema(list_name, definition) }
 
           shape.json_schema[:properties].each do |name, property|
@@ -54,7 +58,9 @@ module Spree
         end
 
         def register_request_schema(name, definition)
-          spec = RSpec.configuration.openapi_specs.fetch(metadata[:openapi_spec] || metadata[:swagger_doc])
+          # rswag routes an operation with no document named to the first one.
+          specs = RSpec.configuration.openapi_specs
+          spec = specs.fetch(metadata[:openapi_spec] || metadata[:swagger_doc] || specs.keys.first)
           schemas = (spec[:components] ||= {})[:schemas] ||= {}
           definition = definition.deep_stringify_keys
 
@@ -107,7 +113,9 @@ module Spree
       #
       # Pass the description here, or call it after `description`: the scope
       # note is appended to whatever the description is at that point. A
-      # response block overrides either credential with its own `let`.
+      # response block overrides either credential with its own `let`. The
+      # credentials come from the 'API v3 Admin' shared context, which
+      # Openapi.configure includes in every request spec.
       module AdminOperation
         BODY_VERBS = %i[post patch put].freeze
 
@@ -160,6 +168,8 @@ module Spree
             config.openapi_specs = { 'openapi/admin.yaml' => admin_document(title, description) }
             config.openapi_format = :yaml
             HELPERS.each { |helper| config.extend helper, type: :request }
+            # The admin and secret key admin_operation authenticates with.
+            config.include_context 'API v3 Admin', type: :request
           end
 
           # The skeleton of an extension's admin document: the same security
