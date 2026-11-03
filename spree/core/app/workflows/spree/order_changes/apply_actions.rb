@@ -55,7 +55,7 @@ module Spree
         quantities = order.line_items.to_h { |line_item| [line_item.variant_id, line_item.quantity] }
         targets = {}
         actions.each do |action|
-          variant_id = action.line_item&.variant_id || action.variant_id
+          variant_id = action.kind == 'add_item' ? action.variant_id : action.line_item.variant_id
           current = targets.fetch(variant_id) { quantities.fetch(variant_id, 0) }
           targets[variant_id] =
             case action.kind

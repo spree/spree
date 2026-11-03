@@ -61,6 +61,17 @@ module Spree
       OPEN_STATUSES.include?(status)
     end
 
+    # Takes the order's row lock, then re-reads this set's status under its
+    # own, so a confirm or cancel that waited for another sees what that one
+    # left. Only the status is re-read: actions already loaded are kept.
+    # Call inside a transaction.
+    #
+    # @return [String] the current status
+    def lock_for_transition!
+      order.lock!
+      self.status = self.class.lock.where(id: id).pick(:status)
+    end
+
     # A receipt or a replacement shipment changes no amount on the order, and
     # re-summing a placed order can call out to a tax provider, so a set of
     # only those is applied without one.

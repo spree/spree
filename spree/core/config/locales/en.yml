@@ -1067,6 +1067,7 @@ en:
     order: Order
     order_canceled: Order canceled
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
+    order_change_actions_malformed: Each action must be an object with a kind.
     order_change_empty: Add at least one change before submitting it.
     order_change_in_progress: Another change to this order is in progress. Confirm or cancel it first.
     order_change_line_item_gone: A line this change edits is no longer on the order. Cancel the change and make it again.

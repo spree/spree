@@ -29,11 +29,9 @@ module Spree
         # even inside a caller's transaction, instead of leaving half an edit
         # for the caller to commit.
         ApplicationRecord.transaction(requires_new: true) do
-          order.lock!
-          # Re-read under the lock: a second confirm of the same set waited
-          # here while the first applied it, and must now see it confirmed.
-          # Only the status, so the actions already loaded are kept.
-          order_change.status = Spree::OrderChange.lock.where(id: order_change.id).pick(:status)
+          # A second confirm of the same set waited here while the first
+          # applied it, and must now see it confirmed.
+          order_change.lock_for_transition!
           step :ensure_confirmable
           previous_total = order.total
           step :apply_actions
