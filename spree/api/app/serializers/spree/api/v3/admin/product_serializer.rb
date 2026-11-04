@@ -17,6 +17,7 @@ module Spree
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    seller_name: [:string, nullable: true],
+                   total_on_hand: [:number, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
@@ -48,6 +49,16 @@ module Spree
               if: proc { expand?('seller') }
 
           prefixed_id_attributes :product_type, :tax_category
+
+          # Units purchasable now across every variant, counted the way each
+          # variant's own `total_on_hand` is. Null when any variant is not
+          # tracked: its stock is unlimited, so the product's is too.
+          attribute :total_on_hand do |product|
+            variants = product.variants.to_a
+            next if variants.empty? || variants.any? { |variant| !variant.should_track_inventory? }
+
+            variants.sum { |variant| variant.total_on_hand.to_i }
+          end
 
           attribute :price do |product|
             price = price_for(product.default_variant)

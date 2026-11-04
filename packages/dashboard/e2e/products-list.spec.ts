@@ -5,6 +5,7 @@ import {
   adminRequest,
   deleteSeededRecords,
   type E2ELoginSession,
+  FIXTURE_PROMO_PRODUCT,
   FIXTURE_PROMO_TAXON,
   gotoIndex,
   login,
@@ -76,6 +77,17 @@ test.describe('products list', () => {
     await searchList(page, SEARCH, cheap.sku)
     await expect(row(page, cheap.name)).toBeVisible({ timeout: 15_000 })
     await expect(row(page, pricey.name)).toBeHidden()
+  })
+
+  test('shows how many units are in stock', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(PRODUCTS_PATH(creds.store_id))
+    await searchList(page, SEARCH, FIXTURE_PROMO_PRODUCT)
+
+    // Seeded with stock; other specs place orders against it, so the exact
+    // figure moves — what matters is that a number is shown.
+    const row = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    await expect(row.getByText(/^\d+ in stock$/i)).toBeVisible({ timeout: 15_000 })
   })
 
   test('filters by status', async ({ page }) => {
