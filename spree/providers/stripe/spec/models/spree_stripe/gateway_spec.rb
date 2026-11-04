@@ -1293,6 +1293,7 @@ RSpec.describe SpreeStripe::Gateway do
       legacy = described_class.find(gateway.id)
 
       expect(legacy.preferred_publishable_key).to eq('pk_test_legacy')
+      expect(legacy.serialized_preferences.with_indifferent_access[:publishable_key]).to eq('pk_test_legacy')
 
       legacy.save!
       legacy.reload
