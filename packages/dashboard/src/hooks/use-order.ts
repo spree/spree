@@ -4,6 +4,7 @@ import {
   useResourceKeyBuilder,
   useResourceMutation,
 } from '@spree/dashboard-core'
+import { toastManager } from '@spree/dashboard-ui'
 import { type QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
@@ -150,7 +151,9 @@ export function useOrderCommissionLines(orderId: string, options?: { enabled?: b
 /**
  * Mutation for typed adjustment rows: invalidates the order detail AND the
  * nested tax_lines/discounts/fees lists (totals change server-side on every
- * row mutation).
+ * row mutation). A refusal is toasted with the server's reason — on a placed
+ * order a discount can wait on another open change, and the dialogs have no
+ * inline error surface.
  */
 export function useOrderAdjustmentLinesMutation<TParams>(
   orderId: string,
@@ -161,5 +164,11 @@ export function useOrderAdjustmentLinesMutation<TParams>(
   return useMutation({
     mutationFn,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) }),
+    onError: (error) =>
+      toastManager.add({
+        type: 'error',
+        title: i18n.t('admin.errors.failed_to_save'),
+        description: error.message,
+      }),
   })
 }
