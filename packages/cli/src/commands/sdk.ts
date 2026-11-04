@@ -62,17 +62,35 @@ export function registerSdkCommand(program: Command): void {
         return
       }
 
-      const pkg = options.package ?? packageName()
-      for (const file of specs) {
-        const api = apiOf(file)
-        if (!api) {
-          p.log.error(
-            `Cannot tell which API ${file} documents. Name it store.yaml, admin.yaml or seller.yaml.`,
-          )
-          process.exitCode = 1
-          return
-        }
+      // Checked before anything is written, so a bad list leaves the
+      // existing types as they were.
+      const documents = specs.map((file) => ({ file, api: apiOf(file) }))
+      const unnamed = documents.find(({ api }) => !api)
+      if (unnamed) {
+        p.log.error(
+          `Cannot tell which API ${unnamed.file} documents. Name it store.yaml, admin.yaml or seller.yaml.`,
+        )
+        process.exitCode = 1
+        return
+      }
+      if (new Set(documents.map(({ api }) => api)).size < documents.length) {
+        p.log.error('More than one document names the same API. Pass one document per API.')
+        process.exitCode = 1
+        return
+      }
 
+      // A default run covers every API, so the types of a document that was
+      // removed go too. With --spec only the documents named are touched.
+      if (!options.spec) {
+        for (const api of APIS) {
+          if (!documents.some((document) => document.api === api)) {
+            removeTypes(resolve(options.out, api))
+          }
+        }
+      }
+
+      const pkg = options.package ?? packageName()
+      for (const { file, api } of documents as { file: string; api: Api }[]) {
         const { params, filters } = writeTypes(
           parse(readFileSync(resolve(file), 'utf8')),
           api,
@@ -115,6 +133,15 @@ export function writeTypes(
     rmSync(filtersFile, { force: true })
   }
   return { params: params.size - 1, filters }
+}
+
+/**
+ * Removes what this command writes for one API, leaving the response types
+ * (`generated/`, `spree.ts`) that `rake spree:sdk:serializer_types` writes.
+ */
+function removeTypes(out: string): void {
+  rmSync(join(out, 'params'), { recursive: true, force: true })
+  rmSync(join(out, 'filters.ts'), { force: true })
 }
 
 export function apiOf(file: string): Api | undefined {

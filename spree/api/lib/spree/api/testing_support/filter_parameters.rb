@@ -1,3 +1,5 @@
+require 'spree/api/openapi/filter_documentation'
+
 module Spree
   module Api
     module TestingSupport

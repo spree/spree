@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Command } from 'commander'
@@ -137,6 +137,47 @@ describe('spree sdk types', () => {
 
     expect(existsSync(join(dir, 'src/types/admin/params/SendQuoteParams.ts'))).toBe(false)
     expect(existsSync(join(dir, 'src/types/admin/filters.ts'))).toBe(false)
+  })
+
+  it("removes a default document's types once the document is gone, leaving the response types", async () => {
+    writeFileSync('openapi/store.yaml', stringify(storeSpec))
+    await run([])
+    mkdirSync(join(dir, 'src/types/store/generated'), { recursive: true })
+    writeFileSync(join(dir, 'src/types/store/spree.ts'), '')
+    rmSync('openapi/store.yaml')
+
+    await run([])
+
+    expect(existsSync(join(dir, 'src/types/store/params'))).toBe(false)
+    expect(existsSync(join(dir, 'src/types/store/spree.ts'))).toBe(true)
+    expect(existsSync(join(dir, 'src/types/admin/params/SendQuoteParams.ts'))).toBe(true)
+  })
+
+  it('refuses two documents for one API before writing anything', async () => {
+    mkdirSync('other')
+    writeFileSync('other/admin.yaml', stringify(adminSpec))
+
+    await run(['--spec', 'openapi/admin.yaml', 'other/admin.yaml'])
+
+    expect(process.exitCode).toBe(1)
+    expect(existsSync(join(dir, 'src/types/admin'))).toBe(false)
+  })
+
+  it('refuses a request type name that is not an identifier', async () => {
+    const schemas = { '../../escapeParams': { type: 'object', properties: {} } }
+    writeFileSync('openapi/admin.yaml', stringify({ paths: {}, components: { schemas } }))
+
+    await expect(run([])).rejects.toThrow(/not a request type name/)
+    expect(existsSync(join(dir, 'escapeParams.ts'))).toBe(false)
+  })
+
+  it('says so when openapi/ has no documents', async () => {
+    rmSync('openapi/admin.yaml')
+
+    await run([])
+
+    expect(process.exitCode).toBe(1)
+    expect(existsSync(join(dir, 'src/types'))).toBe(false)
   })
 
   it('says so when there is no document to read', async () => {

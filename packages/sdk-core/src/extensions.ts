@@ -24,10 +24,19 @@ export interface Extension<Api extends ExtensionApi, Name extends string, Namesp
   readonly build: (context: ExtensionContext) => Namespace
 }
 
-/** A client with one more extension's namespace. */
-export type Extended<Client, Name extends string, Namespace> = Client & {
-  readonly [K in Name]: Namespace
-}
+type IsUnion<T, U = T> = T extends unknown ? ([U] extends [T] ? false : true) : never
+
+/**
+ * A client with one more extension's namespace. `extend` adds one property,
+ * so a name typed as `string` or as a union adds nothing to the type rather
+ * than every name it could be.
+ */
+export type Extended<Client, Name extends string, Namespace> = Client &
+  (string extends Name
+    ? unknown
+    : true extends IsUnion<Name>
+      ? unknown
+      : { readonly [K in Name]: Namespace })
 
 /**
  * @param api the API the extension's paths belong to
@@ -69,6 +78,11 @@ export function extendClient<
     throw new TypeError(
       `The "${name}" extension is for the ${extension.api} API, not the ${api} API`,
     )
+  }
+  // A `then` property would make the client a thenable, so awaiting it
+  // would call the extension instead of returning the client.
+  if (name === 'then') {
+    throw new TypeError(`An extension cannot be named "then"`)
   }
   if (name in client) {
     throw new TypeError(

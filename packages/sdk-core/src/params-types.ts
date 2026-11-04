@@ -182,6 +182,11 @@ export function renderParamsTypes(
   const files = new Map<string, string>()
 
   for (const name of names) {
+    // Each name becomes a file name and a type name, so anything but an
+    // identifier would write outside the output folder or break the file.
+    if (!/^[A-Za-z_$][\w$]*$/.test(name)) {
+      throw new Error(`${name} is not a request type name an API reference can declare`)
+    }
     const schema = schemas[name]
     const out = [header]
     const imports = [...references(schema)].filter((reference) => reference !== name).sort()

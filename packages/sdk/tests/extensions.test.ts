@@ -59,6 +59,16 @@ describe('client.extend', () => {
     expect(calls[0].headers.get('x-spree-locale')).toBe('fr')
   })
 
+  it('applies defaults set on the extended client to the original', async () => {
+    const { client, calls } = recordingClient()
+    const extended = client.extend(quotes)
+
+    extended.setLocale('de')
+    await client.request('GET', '/store')
+
+    expect(calls[0].headers.get('x-spree-locale')).toBe('de')
+  })
+
   it('chains extensions', () => {
     const { client } = recordingClient()
     const wishlists = defineStoreExtension('savedLists', () => ({ count: () => 0 }))
@@ -87,6 +97,23 @@ describe('client.extend', () => {
 
     // @ts-expect-error an admin extension does not fit the Store client
     expect(() => client.extend(adminOnly)).toThrow(/admin API, not the store API/)
+  })
+
+  it('refuses a namespace named then, which would make the client awaitable', () => {
+    const { client } = recordingClient()
+
+    expect(() => client.extend(defineStoreExtension('then', () => ({})))).toThrow(
+      /cannot be named "then"/,
+    )
+  })
+
+  it('adds nothing to the type for a name that is not a single literal', () => {
+    const { client } = recordingClient()
+    const name = 'quotes' as string
+    const extended = client.extend(defineStoreExtension(name, () => ({ count: () => 0 })))
+
+    // @ts-expect-error a widened name could be any property, so none is typed
+    expect(() => extended.anything.count()).toThrow(TypeError)
   })
 
   it('refuses anything that is not an extension', () => {

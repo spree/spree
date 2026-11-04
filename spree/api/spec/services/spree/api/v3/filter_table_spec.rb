@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::FilterTable do
         endpoint.to_h
         # Every search needs a description in the reference.
         Spree::Api::OpenAPI::FilterDocumentation.new(
-          endpoint, querying_path: '/', search: FilterParametersHelper::SEARCH_DESCRIPTIONS[endpoint.table.name]
+          endpoint, querying_path: '/', search: Spree::Api::TestingSupport::FilterParameters::SEARCH_DESCRIPTIONS[endpoint.table.name]
         ).parameters
         endpoint.tables.each do |name, table|
           table.to_h

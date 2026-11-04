@@ -243,17 +243,21 @@ export function renderFilterTypes(
     if (typeName === name) {
       out.push(
         '/**',
-        ` * Filters your app adds to ${name} lists. Generate them with \`spree filters types\`,`,
+        // `spree filters types` augments the SDKs only, so an extension's
+        // lists take an app's filters by hand.
+        extension
+          ? ` * Filters your app adds to ${name} lists. Declare them by hand${augmented ? ' in a file that has an `export`:' : ', in a module augmentation of this package.'}`
+          : ` * Filters your app adds to ${name} lists. Generate them with \`spree filters types\`,`,
         ...(augmented
           ? [
-              ' * or declare them by hand in a file that has an `export`:',
+              ...(extension ? [] : [' * or declare them by hand in a file that has an `export`:']),
               ' *',
               ' *     export {}',
               ` *     declare module '${augmented}' {`,
               ` *       interface ${name}FilterExtensions { erp_id_eq?: string }`,
               ' *     }',
             ]
-          : [' * or declare them by hand in a module augmentation of this package.']),
+          : []),
         ' */',
         `export interface ${name}FilterExtensions {}`,
         '',
