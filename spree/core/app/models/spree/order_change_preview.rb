@@ -2,8 +2,8 @@ module Spree
   # What an order would look like with a change set applied — computed by
   # Spree::OrderChanges::Preview and never persisted.
   #
-  # `balance_delta` is the move in the order total: positive when the
-  # customer would owe more, negative when they would be owed money back.
+  # `balance_delta` is the move in the order total; `outstanding_balance`,
+  # not the delta, says whether the customer owes money or is owed some.
   class OrderChangePreview
     include ActiveModel::Model
     include ActiveModel::Attributes

@@ -77,6 +77,10 @@ module Spree
           failure(claim)
         end
         failure(claim, :not_approved) unless claim.approved?
+        # Asked before settle_tax writes the credit rows, which run outside
+        # the transaction a refused replacement would roll back.
+        refusal = Spree::OrderChanges::Begin.refusal_for(claim.order) if replacing?
+        failure(claim, refusal) if refusal
       end
 
       # Rewrites the credit rows for the money actually going back — each line's
