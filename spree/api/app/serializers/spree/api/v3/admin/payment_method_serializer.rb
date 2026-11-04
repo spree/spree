@@ -26,6 +26,10 @@ module Spree
           attribute(:docs_url) { |payment_method| payment_method.class.docs_url }
           attribute(:third_party) { |payment_method| payment_method.class.third_party? }
 
+          # Embedded so a list of methods can be summarized by their
+          # eligibility without a request per method. Written back as `rules`.
+          many :payment_method_rules, key: :rules, resource: proc { Spree.api.admin_payment_method_rule_serializer }
+
           expandable_custom_fields admin: true
         end
       end

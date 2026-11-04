@@ -155,6 +155,7 @@ export type { default as PasswordResetAcknowledgement } from './generated/Passwo
 export type { default as Payment } from './generated/Payment'
 export type { default as PaymentMethod } from './generated/PaymentMethod'
 export type { default as PaymentMethodType } from './generated/PaymentMethodType'
+export type { default as PaymentMethodRule } from './generated/PaymentMethodRule'
 export type { default as PaymentSource } from './generated/PaymentSource'
 export type { default as PaymentSplit } from './generated/PaymentSplit'
 export type { default as Permission } from './generated/Permission'

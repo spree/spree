@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { CustomFieldSchema } from './CustomField';
+import { PaymentMethodRuleSchema } from './PaymentMethodRule';
 
 export const PaymentMethodSchema = z.object({
   id: z.string(),
@@ -9,6 +10,7 @@ export const PaymentMethodSchema = z.object({
   type: z.string(),
   session_required: z.boolean(),
   source_required: z.boolean(),
+  public_preferences: z.record(z.string(), z.unknown()),
   custom_fields: z.array(CustomFieldSchema).optional(),
   metadata: z.record(z.string(), z.unknown()),
   active: z.boolean(),
@@ -22,6 +24,7 @@ export const PaymentMethodSchema = z.object({
   logo_url: z.string().nullable(),
   docs_url: z.string().nullable(),
   third_party: z.boolean(),
+  rules: z.array(PaymentMethodRuleSchema),
 });
 
 export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;

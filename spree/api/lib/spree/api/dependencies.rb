@@ -22,7 +22,7 @@ module Spree
 
       ADMIN_SERIALIZERS =
         %i[country state locale applied_promotion discount tax_line cart delivery_zone delivery_profile
-           delivery_origin_group integration delivery_method_rule delivery_zone_member fee consent_record customer
+           delivery_origin_group integration delivery_method_rule payment_method_rule delivery_zone_member fee consent_record customer
            data_request newsletter_subscriber order order_group product product_type
            product_type_custom_field_definition variant price price_history custom_field custom_field_definition
            category collection collection_rule line_item option_type option_value media stock_level stock_movement
