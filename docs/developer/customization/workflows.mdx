@@ -267,7 +267,7 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `orders.cancel` | `before_cancel` | validate | Before the cancellation is recorded |
 | `orders.cancel` | `after_cancel` | lifecycle | With the cancellation, in transaction |
 | `order_changes.begin` | `after_begin` | lifecycle | After a change set is opened on a placed order (in transaction) |
-| `order_changes.add_action` | `validate` | validate | Before an action joins a change set — also runs for every preview, so a refused edit is refused before Save. `workflow.kind`, `workflow.line_item`, `workflow.variant` and `workflow.quantity` describe it |
+| `order_changes.add_action` | `validate` | validate | Before an action joins a change set — also runs for every preview, so a refused edit is refused before Save. `workflow.kind`, `workflow.line_item`, `workflow.variant` and `workflow.quantity` describe it — for a discount, `workflow.discount`, `workflow.label`, `workflow.value`, `workflow.value_type` and `workflow.amount` |
 | `order_changes.request` | `after_request` | lifecycle | After the set is submitted and its actions are frozen (in transaction) |
 | `order_changes.confirm` | `before_confirm` | lifecycle | Once the actions are applied and the set marked confirmed, before the transaction commits; `reject!` rolls the whole change back. `workflow.balance_delta` is how far the total moved |
 | `order_changes.confirm` | `after_confirm` | lifecycle | After the change has committed. Settle money in a subscriber to the `order_change.confirmed` event instead: a return or claim can confirm inside a larger step that may still fail |
