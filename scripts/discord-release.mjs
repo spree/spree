@@ -134,7 +134,7 @@ export function buildEmbed(release) {
 
   let budget = MAX_EMBED - size(embed) - required.reduce((n, f) => n + size(f), 0)
   for (const field of titled.slice(0, MAX_FIELDS - required.length)) {
-    if (size(field) > budget) break
+    if (size(field) > budget) continue
     embed.fields.push(field)
     budget -= size(field)
   }
@@ -152,7 +152,8 @@ function parseSections(lines) {
   let inFence = false
   for (const line of lines) {
     if (line.startsWith('```')) inFence = !inFence
-    const m = !inFence && line.match(/^#{1,3} (.+)/)
+    if (inFence || line.startsWith('```')) continue
+    const m = line.match(/^#{1,3} (.+)/)
     if (m) {
       current = { heading: m[1].trim(), body: [] }
       sections.push(current)
