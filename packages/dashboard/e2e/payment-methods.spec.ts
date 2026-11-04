@@ -148,6 +148,31 @@ test.describe('payment methods', () => {
     })
     await expect(page.getByRole('switch', { name: /turn company on or off/i })).toBeChecked()
 
+    // Adding a condition is the only change, and it is still saved.
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Market' }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+    await page.reload()
+    await rowButton(page, name).click()
+    await expect(page.getByRole('switch', { name: /turn market on or off/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    // Removing it again is the only change, and it is still saved.
+    await page
+      .getByText('Market', { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"border")][1]')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+    await page.reload()
+    await rowButton(page, name).click()
+    await expect(page.getByRole('switch', { name: /turn company on or off/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('switch', { name: /turn market on or off/i })).toHaveCount(0)
+
     // Switching a condition off keeps it, but stops it applying.
     await page.getByRole('switch', { name: /turn company on or off/i }).click()
     // Removing one drops it.

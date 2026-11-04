@@ -151,7 +151,7 @@ module Spree
       def payment_rule_errors
         return [] if keyed_in_by_staff?
 
-        excluded = @cart.payments.where(status: 'checkout').includes(payment_method: :payment_method_rules).filter_map(&:payment_method).
+        excluded = @cart.payments.checkout.includes(payment_method: :payment_method_rules).filter_map(&:payment_method).
                    uniq.reject { |method| method.rules_pass?(@cart) }
         return [] if excluded.empty?
 

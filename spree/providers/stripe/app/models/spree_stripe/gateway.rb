@@ -28,7 +28,8 @@ module SpreeStripe
     # Stripe Connect pays sellers from the account that took the charge, and a
     # seller's connected account belongs to one platform account — so while
     # the store pays sellers through Connect, it runs one Stripe account.
-    validate :single_account_while_paying_sellers, if: -> { active? && (new_record? || will_save_change_to_active?) }
+    validate :single_account_while_paying_sellers,
+             if: -> { active? && (new_record? || will_save_change_to_active? || will_save_change_to_store_id?) }
 
     before_save :move_publishable_key_out_of_secrets
 
