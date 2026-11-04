@@ -512,9 +512,7 @@ Spree::Core::Engine.add_routes do
           get :types, on: :collection
           resources :rules, controller: 'payment_methods/rules', only: [:index, :show, :create, :update, :destroy]
         end
-        resources :payment_method_rules, only: [] do
-          get :types, on: :collection
-        end
+        get 'payment_method_rules/types', to: 'payment_methods/rules#types'
 
         resources :integrations do
           get :types, on: :collection

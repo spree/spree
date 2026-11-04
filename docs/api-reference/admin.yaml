@@ -23108,8 +23108,8 @@ paths:
             application/json:
               example:
                 error:
-                  code: validation_error
-                  message: is not a registered payment method rule
+                  code: unknown_payment_method_rule_type
+                  message: Unknown type
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -23287,7 +23287,7 @@ paths:
               example:
                 data:
                 - type: channel_rule
-                  name: Channel
+                  label: Channel
                   description: Offers the payment method only on the selected channels
                   schema:
                     type: object
@@ -23301,8 +23301,43 @@ paths:
                           x-spree-prefix: ch
                         default: []
                     additionalProperties: false
+                - type: company_rule
+                  label: Company
+                  description: Offers the payment method only to orders placed for
+                    a company, or for the selected companies and their divisions
+                  schema:
+                    type: object
+                    properties:
+                      company_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^comp_[A-Za-z0-9]+$"
+                          x-spree-prefix: comp
+                        default: []
+                      company_orders_only:
+                        type: boolean
+                        default: true
+                    additionalProperties: false
+                - type: customer_group_rule
+                  label: Customer group
+                  description: Offers the payment method only to customers in the
+                    selected groups
+                  schema:
+                    type: object
+                    properties:
+                      customer_group_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^cg_[A-Za-z0-9]+$"
+                          x-spree-prefix: cg
+                        default: []
+                    additionalProperties: false
                 - type: market_rule
-                  name: Market
+                  label: Market
                   description: Offers the payment method only in the selected markets
                   schema:
                     type: object
@@ -23317,7 +23352,7 @@ paths:
                         default: []
                     additionalProperties: false
                 - type: order_total_rule
-                  name: Order total
+                  label: Order total
                   description: Limits the payment method to orders within a total
                     range, set per currency
                   schema:
@@ -23345,41 +23380,6 @@ paths:
                           format: money
                           pattern: "^-?\\d+(\\.\\d+)?$"
                         default: {}
-                    additionalProperties: false
-                - type: customer_group_rule
-                  name: Customer group
-                  description: Offers the payment method only to customers in the
-                    selected groups
-                  schema:
-                    type: object
-                    properties:
-                      customer_group_ids:
-                        type: array
-                        items:
-                          type: string
-                          format: prefixed-id
-                          pattern: "^cg_[A-Za-z0-9]+$"
-                          x-spree-prefix: cg
-                        default: []
-                    additionalProperties: false
-                - type: company_rule
-                  name: Company
-                  description: Offers the payment method only to orders placed for
-                    a company, or for the selected companies and their divisions
-                  schema:
-                    type: object
-                    properties:
-                      company_ids:
-                        type: array
-                        items:
-                          type: string
-                          format: prefixed-id
-                          pattern: "^comp_[A-Za-z0-9]+$"
-                          x-spree-prefix: comp
-                        default: []
-                      company_orders_only:
-                        type: boolean
-                        default: true
                     additionalProperties: false
   "/api/v3/admin/orders/{order_id}/payments":
     get:

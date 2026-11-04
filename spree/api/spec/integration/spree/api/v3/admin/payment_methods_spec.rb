@@ -336,7 +336,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.map { |type| type['type'] }).to include('channel_rule', 'market_rule', 'order_total_rule')
-          expect(data.first).to include('name', 'description', 'schema')
+          expect(data.first).to include('label', 'description', 'schema')
         end
       end
     end

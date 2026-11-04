@@ -34,9 +34,9 @@ module Spree
                 payment_method = current_store.payment_methods.active.storefront_visible.
                                  find_by_prefix_id!(permitted_params[:payment_method_id])
 
-                # The methods the cart offers, so a rule that excludes a
-                # method cannot be sidestepped by naming its id.
-                unless @cart.payment_methods.include?(payment_method)
+                # Rules apply here too, so a method they exclude cannot be
+                # reached by naming its id.
+                unless payment_method.eligible_for_order?(@cart)
                   return render_error(
                     code: 'payment_method_unavailable',
                     message: I18n.t('spree.api.v3.payments.method_unavailable'),
