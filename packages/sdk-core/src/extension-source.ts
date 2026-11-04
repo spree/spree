@@ -188,7 +188,7 @@ function defaultName(verb: Verb, statics: string[], member: boolean, isList: boo
   // `/quotes`, `/quotes/{id}`, `/quote_settings`: the SDKs' CRUD names.
   if (statics.length === 0) return crud
   // `/quotes/{id}/send`, `/quotes/statuses`: the action.
-  if (statics.length === 1 && !member) return camel(statics[0])
+  if (statics.length === 1 && !member && !isList) return camel(statics[0])
   // Deeper: the verb and the nested resource (`GET /orders/{id}/items` → `listItems`).
   return `${crud}${pascal(statics.join('_'))}`
 }

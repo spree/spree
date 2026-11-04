@@ -107,7 +107,10 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
       expect(result[:admin_controller]).to include('body.attribute :name, :string')
       expect(result[:admin_controller]).to include('body.attribute :active, :boolean')
       expect(result[:admin_controller]).to include('body.attribute :price, :decimal')
-      expect(result[:admin_controller]).to include('body.attribute :launched_on, :date')
+      expect(result[:admin_controller]).to include('body.attribute :launched_on, :date, required: true, on: :create')
+      # The model validates the presence of every attribute but booleans.
+      expect(result[:admin_controller]).to include('body.attribute :name, :string, required: true, on: :create')
+      expect(result[:admin_controller]).to include("body.attribute :active, :boolean\n")
       expect(result[:admin_controller]).not_to include('resource_permitted_attributes')
       expect(result[:admin_controller]).not_to include('permitted_params')
     end
@@ -134,6 +137,13 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
       expect(spec).to include('filter_parameters_for')
       expect(spec.scan('request_body_for').size).to eq(2)
       expect(spec).to include('attributes_for(:brand).slice(:name)')
+    end
+
+    it 'sends decimal attributes as decimal strings' do
+      described_class.start(['Brand', 'name:string', 'price:decimal', '--skip-routes', '--force', '--migration'], destination_root: destination)
+      spec = File.read(File.join(destination, 'spec/integration/admin/brands_spec.rb'))
+
+      expect(spec.scan("attributes_for(:brand).slice(:name, :price).merge(price: '1.00')").size).to eq(2)
     end
 
     it 'is skipped with the other specs' do

@@ -29,7 +29,7 @@ RSpec.describe '<%= plural_name.humanize %> Admin API', type: :request, swagger_
       request_body_for
 
       response '201', '<%= singular_name.humanize(capitalize: false) %> created' do
-        let(:body) { attributes_for(:<%= singular_name %>).slice(<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>) }
+        let(:body) { attributes_for(:<%= singular_name %>).slice(<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>)<%= decimal_attribute_names.map { |a| ".merge(#{a}: '1.00')" }.join %> }
 
         run_test!
       end
@@ -56,7 +56,7 @@ RSpec.describe '<%= plural_name.humanize %> Admin API', type: :request, swagger_
       request_body_for
 
       response '200', '<%= singular_name.humanize(capitalize: false) %> updated' do
-        let(:body) { attributes_for(:<%= singular_name %>).slice(<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>) }
+        let(:body) { attributes_for(:<%= singular_name %>).slice(<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>)<%= decimal_attribute_names.map { |a| ".merge(#{a}: '1.00')" }.join %> }
 
         run_test!
       end

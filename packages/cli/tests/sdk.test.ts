@@ -220,6 +220,23 @@ describe('spree sdk generate', () => {
     expect(read('admin/client.ts')).toBe('// edited')
   })
 
+  it('names a nested list and create apart from a member action', () => {
+    const nested = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, unknown>
+    }
+    nested.paths['/api/v3/admin/quotes/{id}/notes'] = {
+      get: { summary: 'List notes', parameters: [{ name: 'page', in: 'query' }] },
+      post: { summary: 'Add a note' },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(nested))
+
+    generate(join(dir, 'ext'), out())
+
+    const client = read('admin/client.ts')
+    expect(client).toContain('listNotes: (id: string, params?: ListParams')
+    expect(client).toContain('notes: (id: string, options?: RequestOptions)')
+  })
+
   it('refuses two operations that would make one method', () => {
     const clash = structuredClone(adminSpec) as typeof adminSpec & {
       paths: Record<string, unknown>

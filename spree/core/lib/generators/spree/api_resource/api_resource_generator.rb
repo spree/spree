@@ -354,10 +354,19 @@ module Spree
         writable_attributes.map(&:name)
       end
 
-      # @return [Array<Array(String, Symbol)>] each writable attribute and its
-      #   `request_params` type
+      # @return [Array<Array(String, Symbol, Boolean)>] each writable attribute,
+      #   its `request_params` type, and whether creating needs it — the model
+      #   template validates the presence of every one but booleans
       def request_param_attributes
-        writable_attributes.map { |a| [a.name, REQUEST_PARAM_TYPES.fetch(a.type, :string)] }
+        writable_attributes.map { |a| [a.name, REQUEST_PARAM_TYPES.fetch(a.type, :string), a.type != :boolean] }
+      end
+
+      # Decimal attributes travel as decimal strings (`'1.00'`), never JSON
+      # numbers; a money attribute sent as a number is refused.
+      #
+      # @return [Array<String>]
+      def decimal_attribute_names
+        writable_attributes.select { |a| a.type == :decimal }.map(&:name)
       end
 
       def writable_attributes

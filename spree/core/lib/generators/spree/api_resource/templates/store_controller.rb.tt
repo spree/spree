@@ -8,8 +8,8 @@ module Spree
           # the integration spec documents it (`request_body_for`), which is
           # where the SDK request types come from.
           request_params :<%= singular_name %> do |body|
-<% request_param_attributes.each do |name, type| -%>
-            body.attribute :<%= name %>, :<%= type %>
+<% request_param_attributes.each do |name, type, required| -%>
+            body.attribute :<%= name %>, :<%= type %><%= ', required: true, on: :create' if required %>
 <% end -%>
           end
 
