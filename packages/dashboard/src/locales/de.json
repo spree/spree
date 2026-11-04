@@ -595,6 +595,7 @@
         "values_saved": "Benutzerdefinierte Felder gespeichert",
         "required_field_hint": "Pflichtfeld",
         "values_invalid": "Diese benutzerdefinierten Felder vor dem Speichern korrigieren: {{fields}}",
+        "definitions_check_failed": "Die benutzerdefinierten Felder konnten nicht geprüft werden. Bitte erneut speichern.",
         "choose": "Auswählen…",
         "no_choices": "Keine passenden Optionen"
       }

@@ -595,6 +595,7 @@
         "values_saved": "Champs personnalisés enregistrés",
         "required_field_hint": "Obligatoire",
         "values_invalid": "Corrigez ces champs personnalisés avant d'enregistrer : {{fields}}",
+        "definitions_check_failed": "Impossible de vérifier les champs personnalisés. Réessayez d’enregistrer.",
         "choose": "Choisir…",
         "no_choices": "Aucun choix correspondant"
       }

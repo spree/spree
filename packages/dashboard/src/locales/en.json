@@ -595,6 +595,7 @@
         "values_saved": "Custom fields saved",
         "required_field_hint": "Required",
         "values_invalid": "Fix these custom fields before saving: {{fields}}",
+        "definitions_check_failed": "Custom fields could not be checked. Try saving again.",
         "choose": "Choose…",
         "no_choices": "No matching choices"
       }

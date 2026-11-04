@@ -330,11 +330,17 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
   const { t } = useTranslation()
   useEffect(() => {
     const check = async () => {
-      // A save made before the definitions arrive waits for them, rather than
-      // checking against none.
-      const checked = isLoading
-        ? schemaDefinitions((await refetchDefinitions()).data?.data ?? [], definitionIds)
-        : definitions
+      // Read the definitions again so a field made required since the page
+      // loaded is checked too. The server leaves `required` to this check.
+      const { data: fresh } = await refetchDefinitions()
+      if (!fresh && isLoading) {
+        toastManager.add({
+          type: 'error',
+          title: t('admin.components.custom_fields.definitions_check_failed'),
+        })
+        return false
+      }
+      const checked = fresh ? schemaDefinitions(fresh.data, definitionIds) : definitions
       const current = valuesByDefinitionId(cfForm.getValues('custom_fields'))
       const saved = valuesByDefinitionId(cfForm.formState.defaultValues?.custom_fields)
       return !rejectInvalidValues(
