@@ -216,13 +216,16 @@ export function thanks(contributors, ids) {
 // The first sentence of a bullet, without its pull request links and author.
 function summary(bullet) {
   const text = bullet
-    .replace(/,?\s*\[#\d+\]\([^)]*\)/g, '')
-    .replace(/\s+by \[?@[\w-]+\]?(\([^)]*\))?/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/,? ?\[#\d+\]\([^)\s]{0,300}\)/g, '')
+    .replace(/ by \[?@[\w-]+\]?(\([^)\s]{0,300}\))?/g, '')
+    .replace(/\[([^\]]{0,300})\]\([^)\s]{0,300}\)/g, '$1')
     .trim()
   const sentence = text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text
   const short = sentence.replace(/[.]$/, '')
   if (short.length <= MAX_SUMMARY) return short
-  return `${short.slice(0, short.lastIndexOf(' ', MAX_SUMMARY - 1))}…`
+  const cut = short.lastIndexOf(' ', MAX_SUMMARY - 1)
+  return `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 1)}…`
 }
 
 function list(items) {
