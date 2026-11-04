@@ -117,6 +117,14 @@ describe Spree::PaymentMethodRule, type: :model do
       expect(rule.eligible?(cart.reload)).to be(true)
     end
 
+    it 'reads the company a sole membership resolves to' do
+      cart.update!(customer: create(:customer))
+      create(:company_membership, company: division, customer: cart.customer)
+      rule = described_class.new(payment_method: payment_method, preferred_company_ids: [company.id])
+
+      expect(rule.eligible?(cart.reload)).to be(true)
+    end
+
     it 'matches a listed company or any company above the purchase' do
       rule = described_class.new(payment_method: payment_method, preferred_company_ids: [company.id])
       cart.update_columns(company_id: division.id)

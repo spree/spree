@@ -34,11 +34,12 @@ module SpreeStripe
     before_save :move_publishable_key_out_of_secrets
 
     # Stores before 6.1 kept the publishable key with the secrets. Read from
-    # there until the next save moves it across.
-    #
-    # @return [String, nil]
-    def preferred_publishable_key
-      stored_preference(:publishable_key) { nil }.presence || legacy_publishable_key
+    # there until the next save moves it across — through the stored value, so
+    # the admin form shows it as well as the reader.
+    def stored_preference(name)
+      return super unless name.to_sym == :publishable_key
+
+      super(name) { nil }.presence || legacy_publishable_key || yield
     end
 
     def self.logo_url
@@ -341,7 +342,7 @@ module SpreeStripe
       legacy = legacy_publishable_key
       return if legacy.nil?
 
-      self.preferred_publishable_key = legacy if stored_preference(:publishable_key) { nil }.blank?
+      self.preferred_publishable_key = legacy if (preferences || {}).with_indifferent_access[:publishable_key].blank?
       self.secret_preferences = secret_preferences.except('publishable_key')
     end
 
