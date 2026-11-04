@@ -18,6 +18,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { PaymentMethodConditions } from './payment-method-conditions'
 import {
   type PaymentMethodEditorContext,
   type PaymentMethodFormMode,
@@ -31,6 +32,7 @@ interface ProviderOption {
   type: string
   label: string
   schema: PreferenceSchema
+  installed_count?: number
 }
 
 interface PaymentMethodFormProps {
@@ -130,9 +132,14 @@ export function PaymentMethodForm({
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {providerTypes.map((t) => (
-                    <SelectItem key={t.type} value={t.type}>
-                      {t.label}
+                  {providerTypes.map((entry) => (
+                    <SelectItem key={entry.type} value={entry.type}>
+                      {entry.installed_count
+                        ? t('admin.payment_methods.provider_installed', {
+                            provider: entry.label,
+                            count: entry.installed_count,
+                          })
+                        : entry.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -170,6 +177,8 @@ export function PaymentMethodForm({
       ) : null}
 
       {providerType && <Slot name={paymentMethodActionsSlot(providerType)} context={slotContext} />}
+
+      {providerType && <PaymentMethodConditions form={form} />}
     </div>
   )
 }

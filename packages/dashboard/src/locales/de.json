@@ -4532,6 +4532,17 @@
       "columns": {
         "storefront": "Onlineshop"
       },
+      "conditions": {
+        "active": "{{name}} ein- oder ausschalten",
+        "add": "Bedingung hinzufügen",
+        "description": "Diese Zahlungsart wird im Shop-Checkout nur angeboten, wenn alle aktiven Bedingungen erfüllt sind. Zahlungen im Dashboard ignorieren sie.",
+        "empty": "Keine Bedingungen – diese Zahlungsart wird bei jedem Checkout angeboten.",
+        "fields": {
+          "max_totals": "Höchstbestellwert",
+          "min_totals": "Mindestbestellwert"
+        },
+        "title": "Checkout-Bedingungen"
+      },
       "create_description": "Wählen Sie einen Anbieter und konfigurieren Sie dessen Zugangsdaten.",
       "create_label": "Zahlungsmethode erstellen",
       "delete_confirm": {
@@ -4546,6 +4557,7 @@
         "updated": "Zahlungsmethode aktualisiert"
       },
       "provider_description": "Anbieter: {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} installiert",
       "search_placeholder": "Nach Name suchen…",
       "status": {
         "disabled": "Deaktiviert"

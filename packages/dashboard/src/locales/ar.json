@@ -4564,6 +4564,17 @@
       "columns": {
         "storefront": "Storefront"
       },
+      "conditions": {
+        "active": "تشغيل {{name}} أو إيقافه",
+        "add": "إضافة شرط",
+        "description": "لا تُعرض طريقة الدفع هذه عند الدفع في المتجر إلا إذا تحققت كل الشروط المفعّلة. المدفوعات المسجّلة من لوحة التحكم تتجاهلها.",
+        "empty": "لا توجد شروط — تُعرض طريقة الدفع هذه في كل عملية دفع.",
+        "fields": {
+          "max_totals": "الحد الأقصى لإجمالي الطلب",
+          "min_totals": "الحد الأدنى لإجمالي الطلب"
+        },
+        "title": "شروط الدفع"
+      },
       "create_description": "اختر موفرًا وقم بتكوين بيانات الاعتماد الخاصة به.",
       "create_label": "إنشاء طريقة الدفع",
       "delete_confirm": {
@@ -4578,6 +4589,7 @@
         "updated": "تم تحديث طريقة الدفع"
       },
       "provider_description": "Provider: {{provider}}",
+      "provider_installed": "{{provider}} · مثبّت {{count}}",
       "search_placeholder": "البحث بالاسم…",
       "status": {
         "disabled": "عاجز"

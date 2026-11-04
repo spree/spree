@@ -1937,6 +1937,28 @@
           "description": "Thực hiện từ vị trí được ghim trên đơn hàng, khi vị trí được đặt"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "Chỉ hiển thị phương thức thanh toán này trên các kênh bán hàng đã chọn",
+          "name": "Kênh"
+        },
+        "company_rule": {
+          "description": "Chỉ hiển thị phương thức thanh toán này cho đơn hàng đặt cho một công ty, hoặc cho các công ty đã chọn và các bộ phận của họ",
+          "name": "Công ty"
+        },
+        "customer_group_rule": {
+          "description": "Chỉ hiển thị phương thức thanh toán này cho khách hàng thuộc các nhóm đã chọn",
+          "name": "Nhóm khách hàng"
+        },
+        "market_rule": {
+          "description": "Chỉ hiển thị phương thức thanh toán này ở các thị trường đã chọn — đây cũng là cách cửa hàng dùng tài khoản thứ hai của cùng một nhà cung cấp",
+          "name": "Thị trường"
+        },
+        "order_total_rule": {
+          "description": "Chỉ hiển thị phương thức thanh toán này khi tổng đơn hàng nằm trong khoảng được đặt theo từng loại tiền",
+          "name": "Tổng đơn hàng"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "Kênh",

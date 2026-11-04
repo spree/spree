@@ -1937,6 +1937,28 @@
           "description": "注文にロケーションが指定されていれば、そこから出荷します"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "選択した販売チャネルでのみこの支払い方法を表示します",
+          "name": "チャネル"
+        },
+        "company_rule": {
+          "description": "会社として行う注文、または選択した会社とその部門の注文にのみこの支払い方法を表示します",
+          "name": "会社"
+        },
+        "customer_group_rule": {
+          "description": "選択したグループの顧客にのみこの支払い方法を表示します",
+          "name": "顧客グループ"
+        },
+        "market_rule": {
+          "description": "選択したマーケットでのみこの支払い方法を表示します。同じプロバイダーの2つ目のアカウントもこの方法で使い分けます",
+          "name": "マーケット"
+        },
+        "order_total_rule": {
+          "description": "注文合計が通貨ごとに設定した範囲内の場合にのみこの支払い方法を表示します",
+          "name": "注文合計"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "チャネル",

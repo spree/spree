@@ -99,11 +99,13 @@ function IntegrationsPage() {
         : [],
     [canReadPayments, paymentMethodsResponse],
   )
-  // Only the providers still to set up: not installed on this store yet.
+  // A provider card for those not set up yet; an installed provider shows
+  // its records instead. Another account of an installed provider is added
+  // from the Payment methods page.
   const availablePaymentTypes = useMemo(
     () =>
       filterPaymentMethodProviderTypes(paymentTypesResponse?.data ?? []).filter(
-        (type) => type.third_party && !type.superseded,
+        (type) => type.third_party && !type.superseded && type.installed_count === 0,
       ),
     [paymentTypesResponse],
   )

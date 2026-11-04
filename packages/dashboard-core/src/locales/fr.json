@@ -1935,6 +1935,28 @@
           "description": "Expédier depuis le lieu épinglé sur la commande, s'il est défini"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "Proposer ce moyen de paiement uniquement sur les canaux de vente sélectionnés",
+          "name": "Canal"
+        },
+        "company_rule": {
+          "description": "Proposer ce moyen de paiement uniquement aux commandes passées pour une entreprise, ou pour les entreprises sélectionnées et leurs divisions",
+          "name": "Entreprise"
+        },
+        "customer_group_rule": {
+          "description": "Proposer ce moyen de paiement uniquement aux clients des groupes sélectionnés",
+          "name": "Groupe de clients"
+        },
+        "market_rule": {
+          "description": "Proposer ce moyen de paiement uniquement dans les marchés sélectionnés — c’est aussi ainsi qu’une boutique utilise un second compte d’un même fournisseur",
+          "name": "Marché"
+        },
+        "order_total_rule": {
+          "description": "Proposer ce moyen de paiement uniquement si le total de la commande est dans une plage, définie par devise",
+          "name": "Total de la commande"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "Canal de vente",

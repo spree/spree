@@ -17,6 +17,7 @@ export type TypeFamily =
   | 'price_rule'
   | 'commission_rule'
   | 'delivery_method_rule'
+  | 'payment_method_rule'
   | 'seller_requirement'
   | 'integration'
   | 'permission'
