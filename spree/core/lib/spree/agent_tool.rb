@@ -37,7 +37,6 @@ class AgentTool
     class_attribute :declared_description, instance_accessor: false
     class_attribute :declared_permission, instance_accessor: false
     class_attribute :declared_mutating, instance_accessor: false, default: false
-    class_attribute :declared_additive, instance_accessor: false, default: false
     class_attribute :declared_audience, instance_accessor: false, default: :admin
     class_attribute :declared_params, instance_accessor: false, default: {}.freeze
 
@@ -97,15 +96,19 @@ class AgentTool
       # Every other mutating tool counts as destructive, so a tool that
       # forgets to say is warned about more, never less.
       #
+      # Unlike the declarations above, this one is not inherited: a subclass
+      # that overrides `call` may well change existing data, so it is
+      # destructive until it says otherwise itself.
+      #
       # @return [void]
       def additive!
-        self.declared_additive = true
+        @additive = true
       end
 
       # @return [Boolean] whether the tool may overwrite, remove or change
       #   the state of existing data
       def destructive?
-        mutating? && declared_additive != true
+        mutating? && @additive != true
       end
 
       # @param name [Symbol]

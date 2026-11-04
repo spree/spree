@@ -26,5 +26,9 @@ RSpec.describe Spree::AgentTool do
     it 'is inherited, so a subclass of a destructive tool stays destructive' do
       expect(Class.new(write)).to be_destructive
     end
+
+    it 'makes a subclass of an additive tool declare additive itself' do
+      expect(Class.new(additive_write)).to be_destructive
+    end
   end
 end
