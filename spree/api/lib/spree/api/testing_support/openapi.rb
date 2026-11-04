@@ -165,6 +165,14 @@ module Spree
       # and in its Rakefile, `require 'spree/api/testing_support/openapi_tasks'`
       # for `rake spree:openapi:generate`.
       module Openapi
+        class << self
+          # The engine (or app) whose document is being written, so its filter
+          # documentation publishes only that engine's own tables.
+          #
+          # @return [Class<Rails::Engine>, nil]
+          attr_accessor :engine
+        end
+
         HELPERS = [RequestBody, FilterParameters, AdminScope, AdminOperation, AgentTools].freeze
 
         class << self
@@ -176,6 +184,7 @@ module Spree
           #   for an extension with Store API endpoints
           # @return [void]
           def configure(config, engine:, title:, description: nil, store_title: nil)
+            self.engine = engine
             config.openapi_root = engine.root.to_s
             # Admin first: rswag writes an operation that names no document there.
             config.openapi_specs = { 'openapi/admin.yaml' => admin_document(title, description) }

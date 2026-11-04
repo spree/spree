@@ -75,7 +75,14 @@ module Spree
           existing.insert(index, *parameters)
         end
 
+        # An extension's document publishes only the tables of its own models.
+        # Core's are in core's document, which the extension's is merged into
+        # (Spree::Api::AdminDocument), and the extension's app may change them
+        # (another gem adding a scope), so a copy here would disagree with it.
         def register_filter_tables(tables)
+          owner = Spree::Api::TestingSupport::Openapi.engine if defined?(Spree::Api::TestingSupport::Openapi)
+          tables = tables.select { |_name, table| defined_under?(table.model, owner.root) } if owner
+
           spec = RSpec.configuration.openapi_specs.fetch(spec_name)
           components = spec[:components] ||= {}
           registered = components[FILTER_TABLES_KEY] || {}
@@ -92,6 +99,10 @@ module Spree
           # Sorted so the written spec does not depend on the order specs ran in.
           components[FILTER_TABLES_KEY] = registered.sort.to_h
           components[FILTER_PREDICATES_KEY] = Spree::Api::V3::FilterPredicates::BY_KIND
+        end
+
+        def defined_under?(model, root)
+          Object.const_source_location(model.name)&.first.to_s.start_with?("#{root}/")
         end
       end
     end
