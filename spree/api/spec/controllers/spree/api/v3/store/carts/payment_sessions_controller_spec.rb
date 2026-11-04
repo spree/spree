@@ -48,6 +48,15 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
       expect(json_response['error']['code']).to eq('payment_method_unavailable')
     end
 
+    it 'rejects a payment method a rule excludes from the cart' do
+      create(:company_payment_method_rule, payment_method: payment_method)
+
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('payment_method_unavailable')
+    end
+
     it 'passes external_data to the gateway' do
       post :create, params: {
         cart_id: order.prefixed_id,

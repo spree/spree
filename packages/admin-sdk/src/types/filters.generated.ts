@@ -283,6 +283,9 @@ export type PaymentMethodFields = Filter.BooleanFilters<'active' | 'storefront_v
   & Filter.TextFilters<'name'>
   & Filter.RangeFilters<'position', number>
 
+export type PaymentMethodRuleFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+
 export type PolicyFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'owner_id' | 'owner_type'>
   & Filter.TextFilters<'name'>
@@ -1729,6 +1732,26 @@ export type PaymentMethodFilters = PaymentMethodFields
   & PaymentMethodFilterExtensions
 
 export type PaymentMethodSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'position' | 'storefront_visible' | 'type' | 'updated_at' | (keyof PaymentMethodSortExtensions & string)>
+
+/**
+ * Filters your app adds to PaymentMethodRule lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface PaymentMethodRuleFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface PaymentMethodRuleFilterExtensions {}
+
+/** Sort fields your app adds to PaymentMethodRule lists, as keys: `{ erp_id: true }`. */
+export interface PaymentMethodRuleSortExtensions {}
+
+export type PaymentMethodRuleFilters = PaymentMethodRuleFields
+  & Filter.OrFilters
+  & PaymentMethodRuleFilterExtensions
+
+export type PaymentMethodRuleSort = Filter.SortKey<'created_at' | 'id' | 'updated_at' | (keyof PaymentMethodRuleSortExtensions & string)>
 
 /**
  * Filters your app adds to Policy lists. Generate them with `spree filters types`,

@@ -459,6 +459,8 @@ import type {
   DeliveryMethodCreateParams,
   DeliveryMethodRuleCreateParams,
   DeliveryMethodRuleUpdateParams,
+  PaymentMethodRuleCreateParams,
+  PaymentMethodRuleUpdateParams,
   DeliveryMethodUpdateParams,
   DeliveryOriginGroupParams,
   DeliveryProfileCreateParams,
@@ -660,6 +662,7 @@ import type {
   Delivery,
   DeliveryMethod,
   DeliveryMethodRule,
+  PaymentMethodRule,
   DeliveryOriginGroup,
   DeliveryProfile,
   DeliveryRateProviderOption,
@@ -2950,6 +2953,53 @@ export class AdminClient {
 
     types: (options?: RequestOptions): Promise<{ data: PaymentMethodType[] }> =>
       this.request<{ data: PaymentMethodType[] }>('GET', '/payment_methods/types', options),
+
+    /** Conditions that decide whether a payment method is offered at storefront checkout. */
+    rules: {
+      list: (
+        paymentMethodId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<PaymentMethodRule>> =>
+        this.request<PaginatedResponse<PaymentMethodRule>>(
+          'GET',
+          `/payment_methods/${paymentMethodId}/rules`,
+          options,
+        ),
+
+      create: (
+        paymentMethodId: string,
+        params: PaymentMethodRuleCreateParams,
+        options?: RequestOptions,
+      ): Promise<PaymentMethodRule> =>
+        this.request<PaymentMethodRule>('POST', `/payment_methods/${paymentMethodId}/rules`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        paymentMethodId: string,
+        id: string,
+        params: PaymentMethodRuleUpdateParams,
+        options?: RequestOptions,
+      ): Promise<PaymentMethodRule> =>
+        this.request<PaymentMethodRule>('PATCH', `/payment_methods/${paymentMethodId}/rules/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (paymentMethodId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/payment_methods/${paymentMethodId}/rules/${id}`, options),
+    },
+
+    /** Registered rule kinds with preference schemas for building pickers. */
+    ruleTypes: (
+      options?: RequestOptions,
+    ): Promise<{
+      data: Array<{ type: string; name: string; description: string; schema: PreferenceSchema }>
+    }> =>
+      this.request<{
+        data: Array<{ type: string; name: string; description: string; schema: PreferenceSchema }>
+      }>('GET', '/payment_method_rules/types', options),
   }
 
   // ============================================

@@ -318,7 +318,9 @@ export interface PaymentMethodType extends ResourceTypeDefinition {
   docs_url: string | null
   /** Backed by an external payment provider rather than handled by the store itself. */
   third_party: boolean
-  /** The store already has a payment method of this type; leave it out of a create picker. */
+  /** How many payment methods of this provider the store has. A store may run several, one per provider account. */
+  installed_count: number
+  /** @deprecated Use `installed_count`. Removed in 6.2. */
   installed: boolean
 }
 
