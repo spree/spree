@@ -19,6 +19,14 @@ module Typelizer
   # the standard can add a country, a currency or a unit, and markets only
   # accept the locales `Spree::Locales::ALL` lists.
   module OpenEnums
+    class << self
+      # Where a named list's type is imported from. Spree's own SDKs re-export
+      # it from `@spree/sdk-core`; an extension's package (Spree::Api::SdkTypes)
+      # sets this to nil and defines its lists itself, open unless closed.
+      attr_accessor :source
+    end
+    self.source = '@spree/sdk-core'
+
     CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode WeightUnit DimensionUnit].freeze
 
     CLOSED_LIST_NAMES = %w[
@@ -61,7 +69,11 @@ module Typelizer
 
     module Property
       def enum_definition(...)
-        super && "type { #{enum_type_name} } from '@spree/sdk-core'"
+        definition = super
+        return definition unless definition
+        return "type { #{enum_type_name} } from '#{OpenEnums.source}'" if OpenEnums.source
+
+        OpenEnums.closed?(enum_type_name) ? definition : "#{definition} | (string & {})"
       end
 
       # Typelizer skips rewriting a file whose digest is unchanged, and the

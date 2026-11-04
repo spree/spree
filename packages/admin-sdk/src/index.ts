@@ -3,7 +3,11 @@
 export type {
   AuthProvider,
   AuthProvidersResponse,
+  Extended,
+  Extension,
+  ExtensionContext,
   FileUploadCreateParams,
+  RequestFn,
   RequestOptions,
   RetryConfig,
   UploadFileOptions,
@@ -50,14 +54,13 @@ export type {
 export { AdminClient } from './admin-client'
 export type { AdminClientConfig, Client } from './client'
 export { createAdminClient } from './client'
-
+export type { AdminExtension } from './extensions'
+export { defineAdminExtension } from './extensions'
 // Narrows what completing an order answered with.
 export { isOrderGroup } from './order-group'
-
 // Param types (request bodies)
 export type * from './params'
 // Runtime helpers exported from params.ts alongside their related types.
 export { isMaskedSecret, PREFERENCE_MASK_TOKEN } from './params'
-
 // All entity types
 export * from './types'

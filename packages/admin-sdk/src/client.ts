@@ -1,6 +1,13 @@
 import type { InternalRequestOptions, RequestConfig, RequestFn, RetryConfig } from '@spree/sdk-core'
-import { createRequestFn, resolveRetryConfig, SpreeError } from '@spree/sdk-core'
+import {
+  createRequestFn,
+  type Extended,
+  extendClient,
+  resolveRetryConfig,
+  SpreeError,
+} from '@spree/sdk-core'
 import { AdminClient } from './admin-client'
+import type { AdminExtension } from './extensions'
 
 export interface AdminClientConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com'). Use '' for relative URLs (Vite proxy). */
@@ -34,6 +41,20 @@ export interface Client extends AdminClient {
    * Return `false` to let the error propagate.
    */
   onUnauthorized(handler: () => Promise<boolean>): void
+  /**
+   * Returns a client with a package's namespace added, built on this one
+   * (see `defineAdminExtension`). This client is left as it was; both share
+   * its settings, so a token or locale set on either applies to the other.
+   *
+   * @example
+   * ```ts
+   * const client = base.extend(quotes)
+   * await client.quotes.get('quote_1')
+   * ```
+   */
+  extend<Name extends string, Namespace>(
+    extension: AdminExtension<Name, Namespace>,
+  ): Extended<this, Name, Namespace>
 }
 
 export function createAdminClient(config: AdminClientConfig): Client {
@@ -118,6 +139,13 @@ export function createAdminClient(config: AdminClientConfig): Client {
   client.onUnauthorized = (handler: () => Promise<boolean>) => {
     unauthorizedHandler = handler
   }
+
+  client.extend = function <Name extends string, Namespace>(
+    this: Client,
+    extension: AdminExtension<Name, Namespace>,
+  ) {
+    return extendClient(this, 'admin', dynamicRequestFn, extension)
+  } as Client['extend']
 
   return client
 }

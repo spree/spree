@@ -335,6 +335,13 @@ Only declare attributes a seller may safely set on their own records.
 Two endpoints deliberately ignore this hook because their parameters are
 authorization data rather than resource data: API keys and invitations.
 
-## Consuming Custom Endpoints with the SDK
+## From an endpoint to agent tools and an SDK client
 
-See the [SDK tutorial](/developer/tutorial/storefront) for how to call custom endpoints from TypeScript and extend the generated types.
+An endpoint you add reaches the Admin MCP and a typed SDK client through one path: document it, and generate the rest from the document.
+
+1. **Scaffold it.** `spree generate api_resource Brand name:string` writes the model, the controllers with their `request_params`, the serializers, the routes, the permission and the specs, including an Admin integration spec that documents the endpoints.
+2. **Document it.** The integration specs are [rswag](https://github.com/rswag/rswag) specs using Spree's helpers: `admin_operation` for authentication and the permission, `request_body_for` for the body `request_params` declares, `filter_parameters_for` for list filters. `spree task openapi:generate` (`bundle exec rake spree:openapi:generate` in an extension) writes them into `openapi/admin.yaml`, and `openapi/store.yaml` for Store API endpoints. See [documenting your endpoints](/developer/mcp/custom-tools#your-admin-endpoints-are-already-tools).
+3. **Agent tools follow.** Every documented admin action other than create, read, update and delete is an [agent tool](/developer/mcp/custom-tools) in the Admin MCP and the dashboard assistant, with nothing to register. `spec/agent_tools_spec.rb` fails when an action is added undocumented.
+4. **Generate the client.** In an npm package for the extension, `spree sdk generate` writes one SDK extension per resource, with a method per documented operation, and the request, filter and response types. An app adds them to its client with `extendAdminClient(createAdminClient(…))` or `extendStoreClient(createClient(…))`. See [shipping a client for an extension](/developer/sdk/extending#shipping-a-client-for-an-extension).
+
+For a single endpoint an app calls itself, `client.request` is enough; see the [SDK tutorial](/developer/tutorial/storefront).

@@ -31,3 +31,71 @@ const nike = await client.request<Brand>('GET', '/brands/nike')
 `client.request` uses the same auth headers, retry logic, and locale/currency defaults as `client.products.list()` or any other built-in resource.
 
 For a complete walkthrough — creating the API endpoints on the backend, defining TypeScript types, filtering, and expanding associations — see the [API](/developer/tutorial/model-and-api) and [SDK](/developer/tutorial/storefront) tutorials.
+
+## Shipping a client for an extension
+
+An extension that adds Store API endpoints ships a typed client for them as an npm package. The package is generated from the extension: `spree sdk generate` writes one SDK extension per resource, with a method per documented endpoint, and the types they take and return. An app adds them to its client with `extend`:
+
+```typescript
+import { createClient } from '@spree/sdk'
+import { extendStoreClient } from 'my-quotes-extension'
+
+const client = extendStoreClient(createClient({ baseUrl, publishableKey }))
+
+const quote = await client.quotes.accept('quote_1') // typed as Quote
+client.products.list()                            // the built-in resources are unchanged
+```
+
+- The extension's calls use the client's own request function: paths are relative to `/api/v3/store`, with the same auth, headers, retries and defaults as the built-in resources.
+- `extend` returns a new client and leaves the original as it was. Both share their settings, so a token or locale set on either one applies to the other. `extendStoreClient` adds every namespace the package has; `client.extend(quotes)` adds one.
+- An extension adds a new namespace only. `extend` throws a `TypeError` for a name the client already has (`products`, or the same extension twice) and for an extension of another API.
+- The package lists `@spree/sdk` as a peer dependency, so the app's own client is the one extended.
+
+### Generating the client
+
+The extension documents its endpoints with rswag specs (see [documenting your extension's endpoints](/developer/mcp/custom-tools#documenting-your-extensions-endpoints)); its serializers describe what they return. In the package, name the extension in `package.json`:
+
+```json package.json
+{
+  "name": "my-quotes-extension",
+  "peerDependencies": { "@spree/sdk": "^6.0.3" },
+  "spree": { "extension": "../my_extension" }
+}
+```
+
+and run, from the package:
+
+```bash
+spree sdk generate           # after changing an endpoint or a serializer
+spree sdk generate --check   # in CI: fails when the generated files are out of date
+```
+
+It runs the extension's `rake spree:openapi:generate` and `rake spree:sdk:serializer_types` (build its test app first, with `bundle exec rake test_app`), then writes `src/generated/<api>/`:
+
+| File | From |
+| --- | --- |
+| `client.ts` | one extension per resource: `list`, `get`, `create`, `update`, `delete` and each action, camel-cased (`PATCH /quotes/{id}/accept` → `quotes.accept()`), documented with the operation's summary and description |
+| `params/` | the request bodies (`request_body_for`) |
+| `filters.ts` | the list filters (`filter_parameters_for`) |
+| `types/`, `spree.ts` | the response types, from the serializers |
+
+`spree.ts` re-exports the SDK's types beside the package's own, so a `Quote` that nests an order uses the SDK's `Order` rather than a copy. Give the extension's serializers names the SDK does not use: an `OrderSerializer` would clash with the SDK's `Order`, and two serializers of one API ending in the same name are refused. A response with no schema in the document is typed by its resource's name (`quotes` → `Quote`). Two operations that would make one method are refused; give one an `operationId` to name it. Pass `--no-backend` to generate from the committed documents and types without running the rake tasks.
+
+Re-export what the package offers from its own entry point, and wrap or rename methods there if you want a different shape:
+
+```typescript src/index.ts
+export * from './generated/store/client'
+export type * from './generated/store/spree'
+```
+
+### Defining one by hand
+
+For a single endpoint, or one the document does not describe, define the extension yourself. `build` gets the client's `request`, plus `listParams` and `readParams` to build list and read queries the way the built-in methods do:
+
+```typescript
+import { defineStoreExtension } from '@spree/sdk'
+
+export const quotes = defineStoreExtension('quotes', ({ request }) => ({
+  get: (id: string) => request<Quote>('GET', `/quotes/${id}`),
+}))
+```
