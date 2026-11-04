@@ -8,9 +8,9 @@ module Spree
 
       def eligible?(purchase)
         return true if preferred_customer_group_ids.empty?
-        return false if purchase.customer_id.blank?
+        return false if purchase.customer.nil?
 
-        Spree::CustomerGroupUser.where(customer_id: purchase.customer_id, customer_group_id: preferred_customer_group_ids).exists?
+        Spree::CustomerGroupUser.where(customer: purchase.customer, customer_group_id: preferred_customer_group_ids).exists?
       end
     end
   end
