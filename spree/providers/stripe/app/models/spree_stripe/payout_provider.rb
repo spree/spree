@@ -61,12 +61,16 @@ module SpreeStripe
       true
     end
 
+    # Exactly one active Stripe account: a seller's connected account belongs
+    # to one platform account, so with two the marketplace could not say which
+    # one pays them.
     def self.available_for_store?(store)
-      gateway_for(store).present?
+      store.payment_methods.active.count { |method| method.is_a?(SpreeStripe::Gateway) } == 1
     end
 
-    # The store's Stripe gateway — the account that charges customers, and so
-    # the account that pays sellers.
+    # The store's Stripe gateway, for what happens before there is an order —
+    # opening a connected account, onboarding, balances and payouts. Transfers
+    # use the gateway that took the order's charge instead.
     #
     # @return [SpreeStripe::Gateway, nil]
     def self.gateway_for(store)
@@ -159,8 +163,9 @@ module SpreeStripe
       return complete_without_sending(seller_transfer) if minor_units(seller_transfer).zero?
 
       seller = seller_transfer.seller
-      gateway = gateway_for(seller.store)
-      source_charge = source_charge_for(seller_transfer, gateway)
+      funding_payment = funding_payment_for(seller_transfer.order)
+      gateway = gateway_for_order(seller_transfer.order, funding_payment)
+      source_charge = funding_payment&.metadata&.dig('stripe_charge_id')
 
       transfer = Stripe::Transfer.create(
         {
@@ -295,7 +300,7 @@ module SpreeStripe
         raise Spree::Core::AmbiguousGatewayError, 'The earning has no Stripe transfer to reverse'
       end
 
-      api_options = gateway_for(seller_transfer.seller.store).api_options
+      api_options = gateway_for_order(seller_transfer.order).api_options
       reversal = made_reversal(earning, seller_transfer, api_options) || Stripe::Transfer.create_reversal(
         earning.reference,
         {
@@ -378,6 +383,14 @@ module SpreeStripe
         raise(Spree::Core::GatewayError, 'No active Stripe payment method on this store')
     end
 
+    # The account that took the order's charge: a transfer drawing on a charge
+    # must be made by the account holding it. An order Stripe did not charge
+    # (paid with store credit) is funded from the platform balance of the
+    # store's one Connect account.
+    def gateway_for_order(order, funding_payment = funding_payment_for(order))
+      funding_payment&.payment_method || gateway_for(order.store)
+    end
+
     def minor_units(record)
       SpreeStripe::Units.to_stripe(record.amount.abs, record.currency, payout: true)
     end
@@ -388,18 +401,14 @@ module SpreeStripe
       seller_transfer.order.order_group&.number || seller_transfer.order.number
     end
 
-    # The charge that paid for this order, so Stripe can fund the transfer from
-    # it. Nil when the order was not paid by card — a store-credit sale has no
-    # charge to draw on, and Stripe then funds from the platform balance.
-    # Stripe funds a transfer from a *charge*, and `response_code` holds the
-    # payment intent rather than the charge it produced — sending that would
-    # fail every card-funded transfer on an id Stripe cannot use. The charge
-    # is recorded on the payment when its session completes.
-    def source_charge_for(seller_transfer, gateway)
-      payment = seller_transfer.order.settlement_payments.valid.completed.
-                find { |candidate| candidate.payment_method_id == gateway.id }
-
-      payment&.metadata&.dig('stripe_charge_id')
+    # The Stripe payment that paid for this order, whose charge funds the
+    # transfer. Nil when the order was not paid by card — a store-credit sale
+    # has no charge to draw on, and Stripe then funds from the platform
+    # balance. Stripe funds a transfer from a *charge*, and `response_code`
+    # holds the payment intent rather than the charge it produced — so the
+    # charge id recorded on the payment when its session completes is used.
+    def funding_payment_for(order)
+      order.settlement_payments.valid.completed.find { |candidate| candidate.payment_method.is_a?(SpreeStripe::Gateway) }
     end
   end
 end

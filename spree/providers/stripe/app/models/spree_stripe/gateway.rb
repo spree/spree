@@ -10,7 +10,9 @@ module SpreeStripe
     include SpreeStripe::Gateway::Webhooks
     include SpreeStripe::Gateway::Connect
 
-    preference :publishable_key, :password
+    # Public by design — Stripe.js is initialised with it in the browser — so
+    # it travels with the method to the storefront and is never masked.
+    preference :publishable_key, :string
     preference :secret_key, :password
 
     # Written by CreateGatewayWebhooks, never by an operator.
@@ -23,6 +25,20 @@ module SpreeStripe
 
     validates :preferred_secret_key, :preferred_publishable_key, presence: true
     validate :validate_secret_key, unless: -> { Rails.env.test? }, if: -> { preferred_secret_key.present? }
+    # Stripe Connect pays sellers from the account that took the charge, and a
+    # seller's connected account belongs to one platform account — so while
+    # the store pays sellers through Connect, it runs one Stripe account.
+    validate :single_account_while_paying_sellers, if: :active?
+
+    before_save :move_publishable_key_out_of_secrets
+
+    # Stores before 6.1 kept the publishable key with the secrets. Read from
+    # there until the next save moves it across.
+    #
+    # @return [String, nil]
+    def preferred_publishable_key
+      stored_preference(:publishable_key) { nil }.presence || legacy_publishable_key
+    end
 
     def self.logo_url
       'https://spreecommerce.org/docs/images/integrations/logos/stripe.png'
@@ -310,6 +326,32 @@ module SpreeStripe
 
         success(response.id, response)
       end
+    end
+
+    def public_preference_keys
+      [:publishable_key]
+    end
+
+    def legacy_publishable_key
+      (secret_preferences || {})['publishable_key'].presence
+    end
+
+    def move_publishable_key_out_of_secrets
+      legacy = legacy_publishable_key
+      return if legacy.nil?
+
+      self.preferred_publishable_key = legacy if stored_preference(:publishable_key) { nil }.blank?
+      self.secret_preferences = secret_preferences.except('publishable_key')
+    end
+
+    def single_account_while_paying_sellers
+      return if store.nil? || store.payout_provider_class != SpreeStripe::PayoutProvider
+
+      other = store.payment_methods.active.where.not(id: id).find { |method| method.is_a?(SpreeStripe::Gateway) }
+      return if other.nil?
+
+      errors.add(:base, :single_account_while_paying_sellers,
+                 message: I18n.t('spree.stripe.errors.single_account_while_paying_sellers', name: other.name))
     end
 
     def validate_secret_key

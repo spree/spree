@@ -110,6 +110,10 @@ module Spree
     # ledger and no indication anywhere that their choice was ignored.
     validates :preferred_payout_provider,
               inclusion: { in: ->(_store) { Spree.payout_providers.map(&:to_s) } }, allow_blank: true
+    # A provider that cannot serve this store today (Stripe Connect with two
+    # Stripe accounts active) is refused when chosen, not discovered when the
+    # first seller is paid.
+    validate :payout_provider_must_be_available, if: :preferred_payout_provider_changed?
     # How often sellers are settled, unless one carries its own schedule.
     # Monthly by default because it is the interval that needs least of an
     # operator paying by hand, which is what the built-in provider expects.
@@ -752,6 +756,14 @@ module Spree
     end
 
     private
+
+    def payout_provider_must_be_available
+      provider = Spree::ApiTyped.registered_class(Spree.payout_providers, preferred_payout_provider)
+      return if provider.nil? || provider.available_for_store?(self)
+
+      errors.add(:preferred_payout_provider, :unavailable,
+                 message: I18n.t('spree.errors.messages.payout_provider_unavailable', provider: provider.display_name))
+    end
 
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.
