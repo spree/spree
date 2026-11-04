@@ -1,6 +1,7 @@
 // Posts a GitHub release of spree/spree to Discord as a digest embed: the
-// intro paragraph, the upgrade command, feature titles, counts for the other
-// sections and any upgrade notes, with a link to the full notes. Run by
+// intro paragraph, the upgrade command, feature titles, a one-line summary of
+// each other change, upgrade notes and contributors, with a link to the full
+// notes. Run by
 // discord-release.yml:
 //
 //   node scripts/discord-release.mjs <tag>             post to $DISCORD_WEBHOOK_URL
@@ -9,10 +10,14 @@
 // Only `v*` tags are posted; @spree/cli and create-spree-app releases are not.
 // Reads the release from the GitHub API with $GITHUB_TOKEN (optional locally),
 // or from the JSON file at $RELEASE_FILE.
+//
+// Contributors listed in .github/discord-contributors.json (GitHub login →
+// Discord user id) are pinged in the message; Discord can't notify by name.
 
 const REPO = process.env.GITHUB_REPOSITORY || 'spree/spree'
 const COLOR = 0x2ecc71
 const MAX_TITLES = 8
+const MAX_SUMMARY = 120
 // Discord rejects an embed past 6000 characters or 25 fields.
 const MAX_EMBED = 6000
 const MAX_FIELDS = 25
@@ -34,7 +39,7 @@ if (release.draft || release.prerelease) {
   process.exit(0)
 }
 
-const payload = { embeds: [buildEmbed(release)], allowed_mentions: { parse: [] } }
+const payload = { ...thanks(contributorsOf(release), await discordIds()), embeds: [buildEmbed(release)] }
 
 if (dryRun) {
   console.log(JSON.stringify(payload, null, 2))
@@ -82,7 +87,6 @@ export function buildEmbed(release) {
 
   const titled = []
   const upgrades = []
-  const counts = []
   const highlights = []
 
   for (const { heading, body } of sections) {
@@ -97,23 +101,27 @@ export function buildEmbed(release) {
 
     const titles = bullets.map((b) => b.match(/^\*\*(.+?)\.?\*\*/)?.[1]).filter(Boolean)
     if (titles.length) {
-      titled.push({ name: clip(`${heading} (${bullets.length})`, 256), value: list(titles) })
+      const name = clip(`${heading} (${bullets.length})`, 256)
+      titled.push({ name, value: list(titles), brief: name })
     } else if (/^\p{Extended_Pictographic}/u.test(heading)) {
-      counts.push(`${heading}: **${bullets.length}**`)
+      const name = clip(`${heading} (${bullets.length})`, 256)
+      titled.push({ name, value: list(bullets.map(summary)), brief: name })
     } else {
       // Major releases describe areas under plain headings; name the areas.
       highlights.push(heading)
     }
   }
 
-  if (highlights.length) titled.unshift({ name: '✨ Highlights', value: list(highlights) })
+  if (highlights.length) titled.unshift({ name: '✨ Highlights', value: list(highlights), brief: '✨ Highlights' })
 
-  // Upgrade notes, counts and contributors always fit; titled sections fill what is left.
+  // Upgrade notes and contributors always fit; the other sections fill what is left.
   const required = upgrades.slice(0, 3)
-  if (counts.length) required.push({ name: '\u200b', value: clip(counts.join(' · '), 1024) })
-  const contributors = new Set([...(release.body || '').matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1]))
-  if (contributors.size) {
-    required.push({ name: '🙌 Community', value: `${contributors.size} contributor${contributors.size > 1 ? 's' : ''}` })
+  const contributors = contributorsOf(release)
+  if (contributors.length) {
+    required.push({
+      name: `🙌 Thanks to ${contributors.length} community contributor${contributors.length > 1 ? 's' : ''}`,
+      value: joinFitting(contributors.map((c) => `[@${c}](https://github.com/${c})`), 1000, ', '),
+    })
   }
 
   const description = [
@@ -132,14 +140,23 @@ export function buildEmbed(release) {
     timestamp: release.published_at,
   }
 
-  let budget = MAX_EMBED - size(embed) - required.reduce((n, f) => n + size(f), 0)
-  for (const field of titled) {
-    if (embed.fields.length >= MAX_FIELDS - required.length) break
-    if (size(field) > budget) continue
-    embed.fields.push(field)
-    budget -= size(field)
+  // Space is held back so a section that doesn't fit is still named in one line.
+  const reserve = 300
+  let budget = MAX_EMBED - size(embed) - required.reduce((n, f) => n + size(f), 0) - reserve
+  const left = []
+  for (const { brief, ...field } of titled) {
+    if (embed.fields.length < MAX_FIELDS - required.length - 1 && size(field) <= budget) {
+      embed.fields.push(field)
+      budget -= size(field)
+    } else {
+      left.push(brief)
+    }
   }
   embed.fields.push(...required)
+  const room = MAX_EMBED - size(embed) - embed.fields.reduce((n, f) => n + size(f), 0) - 20
+  if (left.length && room > 20) {
+    embed.fields.splice(embed.fields.length - required.length, 0, { name: 'Also in this release', value: joinFitting(left, Math.min(reserve - 25, room)) })
+  }
 
   const image = (release.body || '').match(/<img[^>]+src="([^"]+)"/)?.[1]
   if (image) embed.image = { url: image }
@@ -182,6 +199,80 @@ function title(release, lines) {
   if (release.name && release.name !== release.tag_name) return release.name
   const h1 = lines.find((l) => /^# Spree/.test(l))
   return h1 ? h1.slice(2) : `Spree ${release.tag_name.slice(1)}`
+}
+
+// Only change lines in the sections the post shows credit an author, so
+// "configured by @someone" in prose, a code block or Installation doesn't.
+function contributorsOf(release) {
+  const lines = (release.body || '').replace(/\r/g, '').split('\n').map((l) => l.trim())
+  const bullets = parseSections(lines)
+    .filter(({ heading }) => !SKIP.test(heading))
+    .flatMap(({ body }) => body.filter((l) => /^[-*] /.test(l)))
+  const logins = new Map()
+  for (const [, login] of bullets.flatMap((l) => [...l.matchAll(/\bby \[?@([\w-]+)/g)])) {
+    if (!logins.has(login.toLowerCase())) logins.set(login.toLowerCase(), login)
+  }
+  return [...logins.values()]
+}
+
+async function discordIds() {
+  const { readFile } = await import('node:fs/promises')
+  const file = new URL('../.github/discord-contributors.json', import.meta.url)
+  try {
+    const ids = JSON.parse(await readFile(file, 'utf8'))
+    return ids && typeof ids === 'object' && !Array.isArray(ids) ? ids : {}
+  } catch (error) {
+    if (error.code === 'ENOENT') return {}
+    throw error
+  }
+}
+
+// Pings only the mapped contributors; nothing else in the notes can mention anyone.
+// Ids must be strings: a JSON number this long loses precision and would ping someone else.
+export function thanks(contributors, ids) {
+  const byLogin = new Map(Object.entries(ids).map(([login, id]) => [login.toLowerCase(), id]))
+  const users = [...new Set(contributors.map((c) => byLogin.get(c.toLowerCase())))]
+    .filter((id) => typeof id === 'string' && /^\d{17,20}$/.test(id))
+    .slice(0, 80)
+  if (!users.length) return { allowed_mentions: { parse: [] } }
+  return {
+    content: `🙌 Thanks ${users.map((id) => `<@${id}>`).join(' ')} for contributing to this release!`,
+    allowed_mentions: { parse: [], users },
+  }
+}
+
+// The first sentence of a bullet, without its pull request links and author.
+function summary(bullet) {
+  const text = bullet
+    .replace(/\s+/g, ' ')
+    .replace(/,? ?\[#\d+\]\([^)\s]{0,300}\)/g, '')
+    .replace(/ by \[?@[\w-]+\]?(\([^)\s]{0,300}\))?/g, '')
+    .replace(/\[([^\]]{0,300})\]\([^)\s]{0,300}\)/g, '$1')
+    .replace(/ in$/, '')
+    .trim()
+  // A sentence ends before a capital letter, code or emphasis, never after e.g., i.e. or vs.
+  const sentence = text.match(/^.+?(?<!\b(?:e\.g|i\.e|vs|etc))[.!?](?= +[\p{Lu}`*_]| *$)/u)?.[0] ?? text
+  let short = sentence.replace(/[.]$/, '')
+  const open = (text) => (text.match(/`/g) || []).length % 2
+  if (short.length > MAX_SUMMARY) {
+    const cut = short.lastIndexOf(' ', MAX_SUMMARY - 3)
+    short = `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 3)}…`
+  }
+  // Never leave a code span open.
+  if (open(short)) short = `${short.replace(/…$/, '').slice(0, MAX_SUMMARY - 2).trimEnd()}\`…`
+  return short
+}
+
+// Whole items only, ending with "and N more" when they don't all fit in max characters.
+function joinFitting(items, max, separator = ' · ') {
+  const shown = []
+  for (const item of items) {
+    const rest = items.length - shown.length - 1
+    if ([...shown, item].join(separator).length + (rest ? ` and ${rest} more`.length : 0) > max) break
+    shown.push(item)
+  }
+  const more = items.length - shown.length
+  return shown.join(separator) + (more ? `${shown.length ? ' and' : ''} ${more} more` : '')
 }
 
 function list(items) {
