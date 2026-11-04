@@ -1254,4 +1254,58 @@ RSpec.describe SpreeStripe::Gateway do
       expect(keys).to contain_exactly(:publishable_key, :secret_key)
     end
   end
+
+  describe 'the publishable key' do
+    it 'is public, so the storefront can load Stripe.js with this account' do
+      expect(gateway.public_preferences).to eq(publishable_key: gateway.preferred_publishable_key)
+      expect(gateway.serialized_preferences.with_indifferent_access[:publishable_key]).to eq(gateway.preferred_publishable_key)
+    end
+
+    # Before 6.1 the key was stored with the secrets.
+    it 'is read from the secrets until the next save moves it across' do
+      gateway.update_columns(preferences: gateway.preferences.except('publishable_key'),
+                             secret_preferences: { 'secret_key' => 'sk_test_1', 'publishable_key' => 'pk_test_legacy' })
+      legacy = described_class.find(gateway.id)
+
+      expect(legacy.preferred_publishable_key).to eq('pk_test_legacy')
+
+      legacy.save!
+      legacy.reload
+      expect(legacy.preferences['publishable_key']).to eq('pk_test_legacy')
+      expect(legacy.secret_preferences).not_to have_key('publishable_key')
+      expect(legacy.preferred_secret_key).to eq('sk_test_1')
+    end
+  end
+
+  describe 'running two accounts' do
+    let!(:gateway) { create(:stripe_gateway, store: store, name: 'Stripe US') }
+
+    it 'allows a second active account while sellers are not paid through Connect' do
+      expect(build(:stripe_gateway, store: store, name: 'Stripe EU')).to be_valid
+    end
+
+    context 'while sellers are paid through Stripe Connect' do
+      let(:connect_store) { create(:store) }
+      let!(:gateway) { create(:stripe_gateway, store: connect_store, name: 'Stripe US') }
+
+      before { connect_store.update!(preferred_payout_provider: 'SpreeStripe::PayoutProvider') }
+
+      it 'refuses to activate a second account, naming the active one' do
+        second = build(:stripe_gateway, store: connect_store, name: 'Stripe EU')
+
+        expect(second).not_to be_valid
+        expect(second.errors.full_messages.join).to include('Stripe US')
+        expect(build(:stripe_gateway, store: connect_store, name: 'Stripe EU', active: false)).to be_valid
+      end
+
+      it 'stops the store switching to Connect while two accounts are active' do
+        connect_store.update!(preferred_payout_provider: nil)
+        create(:stripe_gateway, store: connect_store, name: 'Stripe EU')
+
+        connect_store.preferred_payout_provider = 'SpreeStripe::PayoutProvider'
+        expect(connect_store).not_to be_valid
+        expect(connect_store.errors[:preferred_payout_provider]).to be_present
+      end
+    end
+  end
 end

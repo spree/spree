@@ -41,6 +41,21 @@ RSpec.describe SpreeStripe::PayoutProvider do
 
       before { payment }
 
+      # A transfer must be made by the account holding the charge it draws on.
+      it 'is made by the account that took the charge, not the store\'s first' do
+        first_account = create(:stripe_gateway, store: store, name: 'Stripe EU', position: 0,
+                                                preferences: { publishable_key: 'pk_test_eu', secret_key: 'sk_test_eu' })
+        gateway.update_columns(position: 1)
+
+        expect(Stripe::Transfer).to receive(:create) do |_payload, options|
+          expect(options).to include(api_key: gateway.preferred_secret_key)
+          expect(options).not_to include(api_key: first_account.preferred_secret_key)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+
       it 'draws on the charge and leaves its group alone' do
         expect(Stripe::Transfer).to receive(:create) do |payload, _options|
           expect(payload[:source_transaction]).to eq('ch_1')
@@ -596,6 +611,12 @@ RSpec.describe SpreeStripe::PayoutProvider do
 
     it 'is true when the store charges through Stripe' do
       expect(described_class.available_for_store?(store)).to be(true)
+    end
+
+    it 'is false while two Stripe accounts are active' do
+      create(:stripe_gateway, store: store, name: 'Stripe EU')
+
+      expect(described_class.available_for_store?(store)).to be(false)
     end
   end
 end
