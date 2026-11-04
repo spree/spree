@@ -10,13 +10,14 @@ module Spree
                    description: [:string, nullable: true],
                    required: :boolean, position: :number, status: [:string, enum: Spree::SellerRequirementStatus::STATUSES, enum_type_name: 'SellerRequirementState'],
                    blocking: :boolean, action_url: [:string, nullable: true],
-                   blocker: ['{ state: string; message: string | null } | null'],
                    accepts_submissions: :boolean, requires_file: :boolean,
                    accepted_content_types: [:string, multi: true],
                    required_policy_name: [:string, nullable: true],
                    terms_html: [:string, nullable: true]
 
-          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
+          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url
+          typelize({ state: :string, message: [:string, { nullable: true }] }, nullable: true)
+          attribute :blocker, &:blocker
 
           attribute :blocking, &:blocking?
 

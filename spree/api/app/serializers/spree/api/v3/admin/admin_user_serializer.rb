@@ -9,8 +9,6 @@ module Spree
                    full_name: [:string, nullable: true],
                    selected_locale: [:string, nullable: true],
                    avatar_url: [:string, nullable: true],
-                   roles: 'Array<{ id: string; name: string }>',
-                   stores: 'Array<{ id: string; name: string; code: string }>',
                    status: [:string, enum: Spree::AdminUserMethods::STATUSES, enum_type_name: 'AdminUserStatus'],
                    last_active_at: [:string, nullable: true],
                    inviter: ['Actor', nullable: true]
@@ -45,6 +43,7 @@ module Spree
           # we fall back to `Spree::Current.store` if not.
           # Filtered in Ruby rather than with `for_resource`, so the staff
           # index's preloaded roles are used instead of a query per user.
+          typelize({ id: :string, name: :string }, multi: true)
           attribute :roles do |user, params|
             store = params&.dig(:store) || Spree::Current.store
             roles = user.spree_roles.to_a
@@ -57,6 +56,7 @@ module Spree
           # store switcher can offer all accessible stores. Read off the same
           # preloaded roles, and deduped/sorted in Ruby, so the staff index
           # spends no extra query per user.
+          typelize({ id: :string, name: :string, code: :string }, multi: true)
           attribute :stores do |user|
             stores = user.spree_roles.filter_map { |role| role.resource if role.resource.is_a?(Spree::Store) }
 

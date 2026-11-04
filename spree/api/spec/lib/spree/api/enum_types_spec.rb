@@ -43,7 +43,7 @@ RSpec.describe Spree::Api::EnumTypes do
 
   it 'finds two attributes of one serializer that disagree, which Typelizer would collapse into one' do
     nested = property('ProductStatus', %w[draft])
-    parent = Typelizer::Property.new(name: :product, type: :object, nested_properties: [nested])
+    parent = Typelizer::Property.new(name: :product, type: Typelizer::Shape.new(properties: [nested]))
 
     expect(described_class.named_properties([property('ProductStatus', %w[draft active]), parent]).size).to eq(2)
   end

@@ -26665,6 +26665,14 @@ components:
           type: boolean
         seller:
           type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+          required:
+          - id
+          - name
       required:
       - id
       - email
@@ -29182,6 +29190,15 @@ components:
           nullable: true
         blocker:
           type: object
+          properties:
+            state:
+              type: string
+            message:
+              type: string
+              nullable: true
+          required:
+          - state
+          - message
           nullable: true
         blocking:
           type: boolean
