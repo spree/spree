@@ -165,7 +165,7 @@ const { data: ruleTypes } = await adminClient.paymentMethods.ruleTypes()
 
 ```bash
 curl -X POST 'https://api.mystore.com/api/v3/admin/payment_methods/pm_xyz789/rules' \
-  -H 'Authorization: Bearer sk_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "type": "channel_rule", "preferences": { "channel_ids": ["ch_wholesale"] } }'
 ```
