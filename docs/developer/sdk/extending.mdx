@@ -77,4 +77,17 @@ This writes `src/types/<api>/params/` and `src/types/<api>/filters.ts`, which th
 import type { QuoteCreateParams } from './types/store/params'
 ```
 
-Response types come from the extension's serializers, generated with [Typelizer](https://github.com/skryukov/typelizer) the way Spree generates its own.
+Response types come from the extension's serializers, with [Typelizer](https://github.com/skryukov/typelizer), as Spree's own do. Add the task to the extension's Rakefile:
+
+```ruby Rakefile
+require 'spree/api/sdk_types_task'
+Spree::Api::SdkTypesTask.new(engine: 'MyExtension::Engine', out: '../my-extension-sdk/src/types')
+```
+
+and run it against the extension's test app:
+
+```bash
+bundle exec rake spree:sdk:serializer_types
+```
+
+It writes `src/types/<api>/generated/` for the serializers under the engine's `app/serializers`, by namespace (`Admin::` for the Admin API, `Seller::` for the Seller API, the rest Store), and a `src/types/<api>/spree.ts` they import from. That file re-exports the SDK's types beside the package's own, so a `Quote` that nests an order uses the SDK's `Order` rather than a copy. A named value list (`enum_type_name:`) is defined in the package and stays open to values a store adds.
