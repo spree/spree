@@ -990,7 +990,7 @@
       },
       "returnable": {
         "label": "Klienci mogą zwrócić ten produkt",
-        "help": "Wyłącz dla produktów z wyprzedaży bez zwrotu lub towarów wyłączonych z unijnego prawa odstąpienia od umowy, np. zapieczętowanych produktów higienicznych albo produktów personalizowanych i łatwo psujących się. Zamówienia zachowują ustawienie z chwili złożenia."
+        "help": "Wyłącz dla produktów z wyprzedaży bez zwrotu lub towarów wyłączonych z unijnego prawa odstąpienia od umowy, np. produktów personalizowanych albo łatwo psujących się. Zapieczętowane produkty higieniczne są wyłączone dopiero po otwarciu opakowania, więc zostaw opcję włączoną i odrzucaj otwarte produkty przy odbiorze. Zamówienia zachowują ustawienie z chwili złożenia."
       }
     },
     "image_upload": {
