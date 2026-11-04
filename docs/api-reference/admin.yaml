@@ -26311,6 +26311,7 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: COPY OF Product 1462357
                 slug: copy-of-product-1462357
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -27290,6 +27291,7 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: Product 1604119
                 slug: product-1604119
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -27417,6 +27419,7 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: Product 1644768
                 slug: product-1644768
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -27536,6 +27539,7 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: Product 1682527
                 slug: product-1682527
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
