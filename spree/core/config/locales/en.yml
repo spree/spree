@@ -718,6 +718,7 @@ en:
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
       order_minimum_not_met: Orders must come to at least %{minimum}. Add %{shortfall} more to check out.
+      payment_method_unavailable: "%{name} is no longer available for this order. Choose another payment method"
       payment_required: Add a payment method
       po_number_required: A purchase order number is required for this account
       ship_address_required: Shipping address is required

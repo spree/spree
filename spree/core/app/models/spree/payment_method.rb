@@ -342,7 +342,15 @@ module Spree
     # @param purchase [Spree::Cart, Spree::Order]
     # @return [Boolean]
     def eligible_for_order?(purchase)
-      available_for_order?(purchase) && payment_method_rules.select(&:active).all? { |rule| rule.eligible?(purchase) }
+      available_for_order?(purchase) && rules_pass?(purchase)
+    end
+
+    # Whether every active rule passes, without the gateway's own hook.
+    #
+    # @param purchase [Spree::Cart, Spree::Order]
+    # @return [Boolean]
+    def rules_pass?(purchase)
+      payment_method_rules.select(&:active).all? { |rule| rule.eligible?(purchase) }
     end
 
     # Flat-payload writer for `rules`, so one PATCH saves the method and its

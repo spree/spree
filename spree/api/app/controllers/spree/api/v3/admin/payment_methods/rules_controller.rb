@@ -71,8 +71,11 @@ module Spree
 
             private
 
+            # Reading rules needs only read access to the method, which already
+            # embeds them; changing them needs update access.
             def parent
-              @parent ||= current_store.payment_methods.accessible_by(current_ability, :update).find_by_prefix_id!(params[:payment_method_id])
+              action = action_name.in?(%w[index show]) ? :show : :update
+              @parent ||= current_store.payment_methods.accessible_by(current_ability, action).find_by_prefix_id!(params[:payment_method_id])
             end
 
             def active_param
