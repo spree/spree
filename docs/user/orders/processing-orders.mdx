@@ -124,11 +124,17 @@ The editor lists one row per product, with its **Unit price**, **Quantity** and 
 - **Remove** takes a line off.
 - Change a line's **Quantity** to match what the customer now wants.
 
-**Save** stays disabled until you change something. Totals are recalculated once you save, rather than as you type.
+**Save** stays disabled until you change something.
+
+On a placed order, the **Totals** card works out the new figures as you edit, with shipping, tax and promotions included, and nothing is saved until you click **Save**. When the edit changes what the customer has to pay, a **Balance change** row shows by how much, and a note under it says whether the customer will owe more or be owed money back.
+
+If the store cannot take the edit, for example because an added product has sold out, the card says why before you save.
+
+Each saved edit is kept on the order as a record of what changed and who changed it. Only one change can be in progress on an order at a time. If one was started elsewhere, for example through the API, and not finished, saving shows **Another change to this order is in progress** until that change is confirmed or canceled.
 
 <Note>Unit prices cannot be changed on a placed order. Setting a price per line is part of building a [<u>draft order</u>](/user/orders/draft-orders), where a price can be agreed with a business buyer before the order is placed. To take money off an order that is already placed, add a discount instead.</Note>
 
-<Warning>Editing an order does not change a payment already taken. Compare the new **Total** with the **Payment total** in the Summary afterwards, and settle any difference with the customer.</Warning>
+<Warning>Editing an order does not change a payment already taken. When the **Balance change** row shows the customer owes more, collect it from the order's payments after saving; when they are owed money back, refund it.</Warning>
 
 ### How to Update an Address
 
