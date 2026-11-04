@@ -620,7 +620,7 @@ module Spree
     def core_dependency?(name)
       return false unless defined?(Spree::Dependencies)
 
-      Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
+      Spree::Dependencies.injection_point?(name) ||
         Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name) ||
         Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name) ||
         Spree::Dependencies.class::RENAMED_SERVICE_KEYS.key?(name)
