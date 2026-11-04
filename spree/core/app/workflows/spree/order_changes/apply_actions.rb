@@ -66,7 +66,21 @@ module Spree
         end
 
         items = targets.map { |variant_id, quantity| { variant_id: variant_id, quantity: quantity } }
-        Spree::Orders::UpsertItems.call(order: order, items: items)
+        result = Spree::Orders::UpsertItems.call(order: order, items: items)
+        link_added_lines(actions) if result.success?
+        result
+      end
+
+      # Records the line each add landed on, so the set says which line it
+      # created or topped up and a client can edit that line by its id.
+      def link_added_lines(actions)
+        lines = order.line_items.reload.index_by(&:variant_id)
+        actions.each do |action|
+          next unless action.kind == 'add_item' && action.line_item_id.nil?
+
+          line_item = lines[action.variant_id]
+          action.update!(line_item: line_item) if line_item
+        end
       end
 
       # Puts resellable goods back on the shelf at the location the return or
