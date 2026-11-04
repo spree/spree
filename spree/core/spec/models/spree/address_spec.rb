@@ -722,6 +722,21 @@ describe Spree::Address, type: :model do
     it 'is nil when nothing is stored and no company owns the address' do
       expect(create(:address, company: nil).company).to be_nil
     end
+
+    # Stands in for a reader an app layers on the column, such as `encrypts :company, ignore_case: true`.
+    it 'reads through the attribute reader rather than the raw column' do
+      address = create(:address, company: 'acme logistics')
+      allow_any_instance_of(Spree::Address.send(:generated_attribute_methods)).to receive(:company).and_return('Acme Logistics')
+
+      expect(address.company).to eq('Acme Logistics')
+    end
+
+    it 'does not load a customer owner to find no company' do
+      address = Spree::Address.find(create(:address, user: create(:user), company: nil).id)
+
+      expect(address.company).to be_nil
+      expect(address.association(:owner)).not_to be_loaded
+    end
   end
 
   describe '#to_s' do
