@@ -50,11 +50,9 @@ module Spree
 
           prefixed_id_attributes :product_type, :tax_category
 
-          # Units purchasable now across every variant. Null when any variant
-          # is not tracked: its stock is unlimited, so the product's is too.
-          # Loading the variants first makes the total net of checkout holds.
+          # Null when any variant is not tracked: its stock is unlimited, which
+          # is not a number to send.
           attribute :total_on_hand do |product|
-            product.variants.load
             total = product.total_on_hand
             total.to_i unless total.infinite?
           end

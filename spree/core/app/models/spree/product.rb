@@ -746,15 +746,19 @@ module Spree
       variants.active(current_currency).joins(:option_value_variants)
     end
 
+    # Units purchasable now across every variant: on hand, less what orders
+    # have taken and what checkouts are holding, at active locations, floored
+    # at zero per variant. Infinite when any variant does not track inventory.
     def total_on_hand
       @total_on_hand ||= if any_variants_not_track_inventory?
                            BigDecimal::INFINITY
+                         elsif variants.loaded?
+                           variants.sum(&:total_on_hand)
                          else
-                           if variants.loaded?
-                             variants.sum(&:total_on_hand)
-                           else
-                             stock_levels.loaded? ? stock_levels.sum(&:available_count) : stock_levels.sum('count_on_hand - allocated_count')
-                           end
+                           # The same figure in one query: the per-variant floor
+                           # needs the sums grouped before they are added up.
+                           stock_levels.with_active_stock_location.group(:variant_id).
+                             sum(Spree::StockLevel.purchasable_arel).values.sum { |count| [count, 0].max }
                          end
     end
 
