@@ -71,7 +71,13 @@ defineTable('products', {
             </span>
           ) : (
             <span className="text-sm text-muted-foreground">
-              {i18n.t('admin.pages.products.inventory.in_stock', { count: product.total_on_hand })}
+              {/* No total when a variant is untracked (unlimited stock), or from a
+                  server too old to send one. */}
+              {typeof product.total_on_hand !== 'number'
+                ? i18n.t('admin.pages.products.inventory.in_stock_short')
+                : i18n.t('admin.pages.products.inventory.in_stock', {
+                    count: product.total_on_hand,
+                  })}
             </span>
           )
 

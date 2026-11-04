@@ -78,6 +78,35 @@ test.describe('products list', () => {
     await expect(row(page, pricey.name)).toBeHidden()
   })
 
+  test('shows how many units are in stock', async ({ page }) => {
+    const session = await login(page)
+    const locations = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      session,
+      'get',
+      '/stock_locations',
+    )
+    const name = `Stocked ${Date.now()}`
+    await seedRecord(page, session, '/products', {
+      name,
+      status: 'active',
+      prices: [{ amount: '10.00', currency: 'USD' }],
+      variants: [
+        {
+          options: [],
+          track_inventory: true,
+          stock_levels: [
+            { stock_location_id: locations.data[0].id, count_on_hand: 7, backorderable: false },
+          ],
+        },
+      ],
+    })
+
+    await gotoIndex(page, PRODUCTS_PATH(session.store_id), CTA)
+    await searchList(page, SEARCH, name)
+    await expect(row(page, name).getByText(/^7 in stock$/i)).toBeVisible({ timeout: 15_000 })
+  })
+
   test('filters by status', async ({ page }) => {
     const session = await login(page)
     const { stamp, cheap, draft } = await seedProducts(page, session)

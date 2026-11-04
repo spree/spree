@@ -25737,6 +25737,7 @@ paths:
                   seller_name:
                   product_type_id:
                   tax_category_id: taxcat_UkLWZg9DAJ
+                  total_on_hand: 0
                 meta:
                   page: 1
                   limit: 25
@@ -25880,6 +25881,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id:
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -26014,6 +26016,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -26134,6 +26137,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -26330,6 +26334,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
   "/api/v3/admin/products/bulk_status_update":
@@ -27061,6 +27066,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -27188,6 +27194,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -27309,6 +27316,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -27427,6 +27435,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -27557,6 +27566,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -70279,6 +70289,9 @@ components:
         tax_category_id:
           type: string
           nullable: true
+        total_on_hand:
+          type: number
+          nullable: true
         digital_assets:
           type: array
           items:
@@ -70331,6 +70344,7 @@ components:
       - seller_name
       - product_type_id
       - tax_category_id
+      - total_on_hand
       x-typelizer: true
     ProductSubmission:
       type: object

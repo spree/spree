@@ -692,6 +692,56 @@ describe Spree::Product, type: :model do
       product.stock_levels.first.set_count_on_hand 5
       expect(product.reload.total_on_hand).to be(5)
     end
+
+    # Loaded or not, the total is what a shopper can buy: units held in
+    # another checkout are not on offer.
+    context 'with units held in a checkout' do
+      before do
+        stub_store_preferences(stock_reservations_enabled: true)
+        stock_level = product.stock_levels.first
+        stock_level.set_count_on_hand 5
+        order = create(:order)
+        create(:stock_reservation, stock_level: stock_level, order: order, quantity: 2,
+                                   line_item: create(:line_item, order: order, variant: stock_level.variant))
+      end
+
+      it 'subtracts them when the variants are loaded' do
+        product.variants.reload
+        expect(product.total_on_hand).to be(3)
+      end
+
+      it 'subtracts them when the variants are not loaded' do
+        expect(product.reload.total_on_hand).to be(3)
+      end
+    end
+
+    # A store that stops reserving stock may still have holds on the counter;
+    # neither path counts them then.
+    context 'with holds left over after the store stopped reserving stock' do
+      before do
+        stub_store_preferences(stock_reservations_enabled: true)
+        stock_level = product.stock_levels.first
+        stock_level.set_count_on_hand 5
+        order = create(:order)
+        create(:stock_reservation, stock_level: stock_level, order: order, quantity: 2,
+                                   line_item: create(:line_item, order: order, variant: stock_level.variant))
+        stub_store_preferences(stock_reservations_enabled: false)
+      end
+
+      it 'ignores them, loaded or not' do
+        expect(described_class.find(product.id).total_on_hand).to be(5)
+        expect(described_class.find(product.id).tap { |fresh| fresh.variants.load }.total_on_hand).to be(5)
+      end
+    end
+
+    it 'leaves out stock at an inactive location, loaded or not' do
+      product.stock_levels.first.set_count_on_hand 5
+      closed = create(:stock_location, store: product.store, active: false)
+      closed.stock_level_or_create(product.default_variant).update!(count_on_hand: 9)
+
+      expect(described_class.find(product.id).total_on_hand).to be(5)
+      expect(described_class.find(product.id).tap { |fresh| fresh.variants.load }.total_on_hand).to be(5)
+    end
   end
 
   # Regression spec for https://github.com/spree/spree/issues/5588

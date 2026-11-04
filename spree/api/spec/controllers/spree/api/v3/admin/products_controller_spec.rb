@@ -41,6 +41,50 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe 'stock total' do
+    let(:location) { Spree::StockLocation.find_by(store: store) || create(:stock_location, store: store) }
+
+    before { request.headers.merge!(headers) }
+
+    def stocked_product(name, *counts)
+      create(:product, store: store, name: name).tap do |stocked|
+        create(:variant, product: stocked) while stocked.reload.variants.size < counts.size
+        stocked.variants.each { |variant| variant.stock_levels.update_all(count_on_hand: 0) }
+        stocked.variants.zip(counts).each do |variant, count|
+          location.stock_level_or_create(variant).update!(count_on_hand: count)
+        end
+      end
+    end
+
+    def row_for(name)
+      json_response['data'].find { |row| row['name'] == name }
+    end
+
+    it 'sums what every variant has on hand' do
+      stocked_product('Two Variants', 3, 4)
+
+      get :index, as: :json
+
+      expect(row_for('Two Variants')['total_on_hand']).to eq(7)
+    end
+
+    # Untracked stock is unlimited, which is not a number to send.
+    it 'is null when a variant does not track inventory' do
+      untracked = stocked_product('Untracked', 3, 4)
+      untracked.variants.last.update!(track_inventory: false)
+
+      get :index, as: :json
+
+      expect(row_for('Untracked')['total_on_hand']).to be_nil
+    end
+
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index, as: :json }
+
+      let!(:records) { %w[First Second Third].map { |name| stocked_product(name, 1, 2) } }
+    end
+  end
+
   describe 'GET #index' do
     subject { get :index, params: {}, as: :json }
 
