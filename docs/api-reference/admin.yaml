@@ -27316,6 +27316,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -27434,6 +27435,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -27564,6 +27566,7 @@ paths:
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
