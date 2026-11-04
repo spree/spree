@@ -54,6 +54,15 @@ RSpec.describe Spree::GiftCards::IssueFromOrder do
     expect(published.count('gift_card.issued')).to eq(2)
   end
 
+  it 'issues nothing when a refund lands before the order lock' do
+    allow(order).to receive(:lock!).and_wrap_original do |method, *args|
+      Spree::Order.where(id: order.id).update_all(payment_status: 'balance_due')
+      method.call(*args)
+    end
+
+    expect { subject }.not_to change(Spree::GiftCard, :count)
+  end
+
   context 'when the store sets a validity' do
     before { allow(store).to receive(:preferred_gift_card_default_validity_days).and_return(365) }
 
