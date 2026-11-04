@@ -17,10 +17,11 @@ module Spree
     # Kinds that move goods but not money: a set of only these leaves the
     # order total alone, so confirming it skips the re-sum.
     STOCK_KINDS = %w[receive_item add_fulfillment].freeze
+    CORE_KINDS = (ITEM_KINDS + STOCK_KINDS).freeze
 
     # Configuration, not a frozen constant: Spree::OrderChange.register_action_kind
     # appends here alongside registering the applier.
-    class_attribute :kinds, default: %w[add_item update_item remove_item receive_item add_fulfillment]
+    class_attribute :kinds, default: CORE_KINDS.dup
 
     belongs_to :order_change, class_name: 'Spree::OrderChange', inverse_of: :actions
 

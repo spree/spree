@@ -21,7 +21,9 @@ module Spree
         outcome = nil
 
         ApplicationRecord.transaction(requires_new: true) do
-          outcome = preview(Spree::Order.find(order.id), actions, requested_by)
+          # Locked first, as Begin and Confirm do: a preview that held the
+          # open-set slot before the order row would deadlock a save.
+          outcome = preview(Spree::Order.lock.find(order.id), actions, requested_by)
           raise ActiveRecord::Rollback
         end
 
