@@ -22729,6 +22729,32 @@ paths:
                   docs_url:
                   third_party: false
                   installed: true
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        label:
+                          type: string
+                        installed_count:
+                          type: integer
+                          description: How many payment methods of this provider the
+                            store has.
+                        installed:
+                          type: boolean
+                          deprecated: true
+                          description: Use installed_count. Removed in 6.2.
+                      required:
+                      - type
+                      - label
+                      - installed_count
+                required:
+                - data
   "/api/v3/admin/payment_methods/{id}":
     get:
       summary: Show a payment method
