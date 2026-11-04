@@ -68590,8 +68590,9 @@ components:
         balance_delta:
           type: string
           nullable: true
-          description: 'How far the total moves: positive when the customer would
-            owe more, negative when they would be owed a refund.'
+          description: 'How far the order total moves: positive when it goes up, negative
+            when it goes down. Whether the customer owes money or is owed some is
+            outstanding_balance.'
       required:
       - currency
       - item_total

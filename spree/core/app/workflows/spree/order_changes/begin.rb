@@ -44,6 +44,12 @@ module Spree
       private
 
       def ensure_changeable
+        # Confirm restocks and ships against the record's own order, so a
+        # record from another order would move stock on the wrong sale.
+        if post_sale_record && post_sale_record.order_id != order.id
+          raise ArgumentError, "#{post_sale_record.class.name} #{post_sale_record.id} belongs to another order"
+        end
+
         refusal = self.class.refusal_for(order)
         failure(order, refusal) if refusal
       end

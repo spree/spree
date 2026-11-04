@@ -44,7 +44,9 @@ module Spree
                   actions: actions_param,
                   requested_by: current_actor,
                   confirm: params[:confirm].to_b,
-                  metadata: permitted_params[:metadata].to_h
+                  # Unnormalized: metadata is the caller's own data, and an
+                  # id-looking value in it is not one of ours to decode.
+                  metadata: params.permit(*declared_permitted_attributes)[:metadata].to_h
                 )
 
                 render_result(result, status: :created)
@@ -118,10 +120,19 @@ module Spree
                     kind: action[:kind].to_s,
                     line_item: line_items[action[:line_item_id]],
                     variant: variants[action[:variant_id]],
-                    quantity: action[:quantity].presence&.to_i
+                    quantity: whole_number(action[:quantity])
                   }.compact
                 end
               end
+            end
+
+            # A whole number as an Integer; anything else as sent, so the
+            # action refuses `3.7` or `"3abc"` rather than saving what to_i
+            # made of it.
+            def whole_number(value)
+              return if value.blank?
+
+              Integer(value.to_s, 10, exception: false) || value
             end
 
             # @return [Hash{String => ActiveRecord::Base}] records by the prefixed id asked for

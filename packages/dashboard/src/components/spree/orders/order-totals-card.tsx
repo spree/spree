@@ -85,7 +85,10 @@ export function OrderTotalsCard({
   const subtotalChanged = projected !== null && compareMoney(projected, order.item_total) !== 0
 
   // Derived from the order's own totals, so charges not itemised here count.
-  const totalProjectable = subtotalChanged && compareMoney(order.total, order.item_total) === 0
+  // Never for a placed order: its server preview is the only total to trust,
+  // since an edit can move shipping, tax and promotions.
+  const totalProjectable =
+    !order.completed_at && subtotalChanged && compareMoney(order.total, order.item_total) === 0
 
   const after = {
     item_total: preview?.item_total ?? (subtotalChanged ? projected : null),
@@ -106,8 +109,16 @@ export function OrderTotalsCard({
     subtotalChanged,
     totalProjectable,
   })
-  // How far the customer's balance moves; shown only when it moves at all.
-  const balanceDelta = preview && !isZeroMoney(preview.balance_delta) ? preview.balance_delta : null
+  // How far the total moves; shown only when it moves at all, and not while
+  // the figures on screen belong to the previous edit.
+  const balanceDelta =
+    preview && !previewPending && !isZeroMoney(preview.balance_delta) ? preview.balance_delta : null
+  // Whether money is owed either way follows from what was already paid, not
+  // from how far the total moved.
+  const outstanding =
+    balanceDelta && preview && !isZeroMoney(preview.outstanding_balance)
+      ? preview.outstanding_balance
+      : null
 
   return (
     <Card className="gap-0 py-0">
@@ -199,9 +210,9 @@ export function OrderTotalsCard({
       <Separator />
 
       <CardContent className="space-y-2 px-5 py-4">
-        {balanceDelta && (
+        {outstanding && (
           <p className="text-xs font-medium">
-            {isPositiveMoney(balanceDelta)
+            {isPositiveMoney(outstanding)
               ? t('admin.orders.edit.balance_owed_hint')
               : t('admin.orders.edit.balance_refund_hint')}
           </p>
