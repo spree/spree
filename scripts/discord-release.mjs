@@ -101,7 +101,8 @@ export function buildEmbed(release) {
 
     const titles = bullets.map((b) => b.match(/^\*\*(.+?)\.?\*\*/)?.[1]).filter(Boolean)
     if (titles.length) {
-      titled.push({ name: clip(`${heading} (${bullets.length})`, 256), value: list(titles) })
+      const name = clip(`${heading} (${bullets.length})`, 256)
+      titled.push({ name, value: list(titles), brief: name })
     } else if (/^\p{Extended_Pictographic}/u.test(heading)) {
       const name = clip(`${heading} (${bullets.length})`, 256)
       titled.push({ name, value: list(bullets.map(summary)), brief: name })
@@ -111,7 +112,7 @@ export function buildEmbed(release) {
     }
   }
 
-  if (highlights.length) titled.unshift({ name: '✨ Highlights', value: list(highlights) })
+  if (highlights.length) titled.unshift({ name: '✨ Highlights', value: list(highlights), brief: '✨ Highlights' })
 
   // Upgrade notes and contributors always fit; the other sections fill what is left.
   const required = upgrades.slice(0, 3)
@@ -154,7 +155,7 @@ export function buildEmbed(release) {
     if (embed.fields.length < MAX_FIELDS - required.length - 1 && size(field) <= budget) {
       embed.fields.push(field)
       budget -= size(field)
-    } else if (brief) {
+    } else {
       left.push(brief)
     }
   }
@@ -207,8 +208,10 @@ function title(release, lines) {
   return h1 ? h1.slice(2) : `Spree ${release.tag_name.slice(1)}`
 }
 
+// Only change lines credit an author, so "configured by @someone" in prose doesn't.
 function contributorsOf(release) {
-  return [...new Set([...(release.body || '').matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1]))]
+  const bullets = (release.body || '').split('\n').filter((l) => /^\s*[-*] /.test(l))
+  return [...new Set(bullets.flatMap((l) => [...l.matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1])))]
 }
 
 async function discordIds() {
@@ -245,15 +248,15 @@ function summary(bullet) {
     .replace(/\[([^\]]{0,300})\]\([^)\s]{0,300}\)/g, '$1')
     .replace(/ in$/, '')
     .trim()
-  // A sentence ends before a capital letter or code, never after e.g., i.e. or vs.
-  const sentence = text.match(/^.+?(?<!\b(?:e\.g|i\.e|vs|etc))[.!?](?= +[\p{Lu}`]| *$)/u)?.[0] ?? text
+  // A sentence ends before a capital letter, code or emphasis, never after e.g., i.e. or vs.
+  const sentence = text.match(/^.+?(?<!\b(?:e\.g|i\.e|vs|etc))[.!?](?= +[\p{Lu}`*_]| *$)/u)?.[0] ?? text
   let short = sentence.replace(/[.]$/, '')
   if (short.length > MAX_SUMMARY) {
     const cut = short.lastIndexOf(' ', MAX_SUMMARY - 1)
     short = `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 1)}…`
   }
   // Never leave a code span open.
-  if ((short.match(/`/g) || []).length % 2) short = `${short.slice(0, short.lastIndexOf('`')).trimEnd()}…`
+  if ((short.match(/`/g) || []).length % 2) short = `${short.replace(/…$/, '')}\`…`
   return short
 }
 
