@@ -1,6 +1,8 @@
 export type {
   AuthProvider,
   AuthProvidersResponse,
+  Extended,
+  ExtensionContext,
   FileUploadCreateParams,
   RequestOptions,
   RetryConfig,
@@ -29,6 +31,8 @@ export {
 // both names so hosts can say what they mean.
 export type { Client, Client as SellerApiClient, SellerClientConfig } from './client'
 export { createSellerClient } from './client'
+export type { SellerExtension } from './extensions'
+export { defineSellerExtension } from './extensions'
 export type {
   AccountUpdateParams,
   BulkProductResult,

@@ -1,5 +1,8 @@
 // Universal code, re-exported so every SDK can offer it
 export * from '@spree/core'
+// Extensions
+export type { Extended, Extension, ExtensionApi, ExtensionContext } from './extensions'
+export { defineExtension, extendClient } from './extensions'
 export type { FilterSpec } from './filter-types'
 export { renderAppFilterTypes, renderFilterTypes } from './filter-types'
 export type { ResolvedRetryConfig } from './helpers'

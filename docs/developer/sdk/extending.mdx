@@ -30,4 +30,35 @@ const nike = await client.request<Brand>('GET', '/brands/nike')
 
 `client.request` uses the same auth headers, retry logic, and locale/currency defaults as `client.products.list()` or any other built-in resource.
 
+## Shipping a client for an extension
+
+An extension that adds Store API endpoints can ship a typed client for them as an npm package. The package defines an extension with `defineStoreExtension`, and an app adds it to its client with `extend`:
+
+```typescript
+// in the extension's package
+import { defineStoreExtension } from '@spree/sdk'
+import type { Quote } from './types'
+
+export const storeQuotes = defineStoreExtension('quotes', ({ request }) => ({
+  get: (id: string) => request<Quote>('GET', `/quotes/${id}`),
+  accept: (id: string) => request<Quote>('PATCH', `/quotes/${id}/accept`),
+}))
+```
+
+```typescript
+// in the app
+import { createClient } from '@spree/sdk'
+import { storeQuotes } from 'my-quotes-extension'
+
+const client = createClient({ baseUrl, publishableKey }).extend(storeQuotes)
+
+const quote = await client.quotes.get('quote_1') // typed as Quote
+```
+
+- `request` is the client's own: paths are relative to `/api/v3/store`, and the extension's calls carry the same auth, headers, retries and defaults as the built-in resources.
+- `extend` returns a new client and leaves the original as it was. Both share their settings, so a token or locale set on either one applies to the other.
+- Extensions chain: `client.extend(quotes).extend(loyalty)`.
+- An extension adds a new namespace only. `extend` throws a `TypeError` for a name the client already has (`products`, or the same extension twice) and for an extension of another API.
+- The package lists `@spree/sdk` as a peer dependency, so the app's own client is the one extended.
+
 For a complete walkthrough — creating the API endpoints on the backend, defining TypeScript types, filtering, and expanding associations — see the [API](/developer/tutorial/model-and-api) and [SDK](/developer/tutorial/storefront) tutorials.
