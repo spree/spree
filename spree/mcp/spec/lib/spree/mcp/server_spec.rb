@@ -100,6 +100,7 @@ RSpec.describe Spree::Mcp::Server do
 
         expect(cancel.dig('annotations', 'destructiveHint')).to be(true)
         expect(cancel.dig('annotations', 'readOnlyHint')).to be(false)
+        expect(cancel.dig('annotations', 'openWorldHint')).to be(true)
       end
 
       it 'tells a create apart from a delete' do

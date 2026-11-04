@@ -5,8 +5,7 @@ module Spree
     # Mutating not because it changes the store — it does not — but because
     # it produces a file of store data and emails a link to it. That leaves
     # the building, so a merchant decides, not the model. Additive, since
-    # nothing in the store is overwritten, and open-world, since the email
-    # is the part that leaves.
+    # nothing in the store is overwritten.
     class CreateExport < Spree::AgentTool
       tool_name 'create_export'
       description 'Export records to a CSV file. Say which kind of records and, ' \
@@ -28,7 +27,6 @@ module Spree
       permission nil
       mutating!
       additive!
-      open_world!
 
       param :resource, description: 'What to export: products, orders, customers',
                        required: true

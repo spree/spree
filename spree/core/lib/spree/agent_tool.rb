@@ -38,7 +38,6 @@ class AgentTool
     class_attribute :declared_permission, instance_accessor: false
     class_attribute :declared_mutating, instance_accessor: false, default: false
     class_attribute :declared_additive, instance_accessor: false, default: false
-    class_attribute :declared_open_world, instance_accessor: false, default: false
     class_attribute :declared_audience, instance_accessor: false, default: :admin
     class_attribute :declared_params, instance_accessor: false, default: {}.freeze
 
@@ -109,20 +108,6 @@ class AgentTool
         mutating? && declared_additive != true
       end
 
-      # Declares that this tool reaches beyond the store — sends an email,
-      # calls an outside service — rather than only reading and writing
-      # store data.
-      #
-      # @return [void]
-      def open_world!
-        self.declared_open_world = true
-      end
-
-      # @return [Boolean]
-      def open_world?
-        declared_open_world == true
-      end
-
       # @param name [Symbol]
       # @param type [Symbol] JSON schema type
       # @param description [String]
@@ -191,7 +176,7 @@ class AgentTool
       @context = context
     end
 
-    delegate :tool_name, :description, :permission, :mutating?, :destructive?, :open_world?, :params, to: :class
+    delegate :tool_name, :description, :permission, :mutating?, :destructive?, :params, to: :class
 
     # Runs the tool. Subclasses implement this with keyword arguments matching
     # their declared params.

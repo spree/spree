@@ -41,6 +41,9 @@ module Spree
         # server's word need every hint set explicitly: the protocol defaults
         # `destructiveHint` and `openWorldHint` to true, so a tool that says
         # nothing would be confirmed like a deletion that leaves the store.
+        # Every write runs the same workflow the dashboard does, which can
+        # email, charge a gateway or fire webhooks, so writes are open-world
+        # and reads are not.
         #
         # @return [Hash]
         def annotations(tool)
@@ -48,7 +51,7 @@ module Spree
             read_only_hint: !tool.mutating?,
             destructive_hint: tool.destructive?,
             idempotent_hint: !tool.mutating?,
-            open_world_hint: tool.open_world?
+            open_world_hint: tool.mutating?
           }
         end
 

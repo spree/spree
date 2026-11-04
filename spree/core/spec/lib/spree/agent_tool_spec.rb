@@ -27,14 +27,4 @@ RSpec.describe Spree::AgentTool do
       expect(Class.new(write)).to be_destructive
     end
   end
-
-  describe '.open_world?' do
-    it 'is false unless declared' do
-      expect(write).not_to be_open_world
-    end
-
-    it 'is true once declared' do
-      expect(Class.new(described_class) { open_world! }).to be_open_world
-    end
-  end
 end
