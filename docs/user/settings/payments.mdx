@@ -89,11 +89,33 @@ Which one suits depends on how quickly you fulfil:
 
 <Warning>Reserved amounts do not hold indefinitely. Card authorisations expire after a period set by the card network, so **On dispatch** and **Manually** need the order fulfilled or the payment taken within that window, or the reservation lapses and has to be retaken.</Warning>
 
+### Checkout conditions
+
+Conditions decide when customers are offered a method at checkout. A method with no conditions is offered at every checkout. Add one with **Add condition**:
+
+| Condition | Offers the method only… |
+|---|---|
+| **Channel** | On the sales channels you pick, such as invoice payment on the wholesale storefront only. |
+| **Market** | In the markets you pick. |
+| **Order total** | When the order total is within a minimum and maximum, set separately for each currency. A currency left blank is not limited. |
+| **Customer group** | To signed-in customers in the groups you pick. Guests never see it. |
+| **Company** | To orders placed for a company. Pick companies to narrow it to those companies and their divisions. |
+
+Every active condition must be met for the method to appear. Turn a condition's switch off to pause it without losing its settings.
+
+<Note>Conditions apply to customers checking out on your storefront. Your team can still record any active method against an order in the dashboard.</Note>
+
+### Running two accounts with one provider
+
+You can add the same provider more than once, for example a Stripe account for Europe and another for the United States. The provider list shows how many of each you already have. Give each method a **Market** condition with its own markets, and make sure no market is in both. A market listed in both would show customers two identical options at checkout.
+
+<Warning>If your marketplace pays sellers through Stripe Connect, only one Stripe method can be active at a time.</Warning>
+
 Click **Create payment method** when you are done.
 
 ## How to Edit a Payment Method
 
-Click **Configure** on a provider's card, or click a manual method's row, to update the name, description, visibility, status or credentials. The edit panel shows the provider in its subtitle rather than as a dropdown.
+Click **Configure** on a provider's card, or click a manual method's row, to update the name, description, visibility, status, credentials or checkout conditions. The edit panel shows the provider in its subtitle rather than as a dropdown.
 
 The provider cannot be changed once a method exists. If you need a different provider, create a new method and disable the old one.
 
