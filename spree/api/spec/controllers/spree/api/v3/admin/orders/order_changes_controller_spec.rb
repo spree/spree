@@ -99,6 +99,26 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(json_response['actions'].first['line_item_id']).to eq(added.prefixed_id)
     end
 
+    it 'applies a discount with the edit' do
+      post :create, params: {
+        order_id: order.prefixed_id, confirm: true,
+        actions: [{ kind: 'add_discount', label: 'Goodwill', value: '10', value_type: 'percent', line_item_id: line_item.prefixed_id }]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['actions'].first).to include('kind' => 'add_discount', 'label' => 'Goodwill', 'value' => '10', 'value_type' => 'percent')
+      expect(order.reload.discounts.manual.sole.line_item).to eq(line_item)
+    end
+
+    it 'refuses a discount value that is not a decimal string' do
+      post :create, params: {
+        order_id: order.prefixed_id, actions: [{ kind: 'add_discount', label: 'Goodwill', value: 'ten' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(order.order_changes).to be_empty
+    end
+
     it 'refuses a quantity that is not a whole number' do
       post :create, params: {
         order_id: order.prefixed_id, actions: [{ kind: 'update_item', line_item_id: line_item.prefixed_id, quantity: 3.7 }]

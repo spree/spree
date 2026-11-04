@@ -314,6 +314,80 @@ RSpec.describe 'Spree::OrderChanges workflows' do
     end
   end
 
+  describe 'discount actions' do
+    def apply(*actions)
+      Spree::OrderChanges::Apply.call(order: order, actions: actions, requested_by: admin)
+    end
+
+    def manual_discount
+      Spree.order_discount_create_service.call(order: order, label: 'Goodwill', value: 1, line_item: line_item).value.sole
+    end
+
+    it 'adds a manual discount to a line and lowers the total' do
+      previous_total = order.total
+
+      result = apply({ kind: 'add_discount', label: 'Goodwill', value: '2.00', line_item: line_item })
+
+      expect(result).to be_success
+      expect(order.reload.discounts.manual.sole).to have_attributes(label: 'Goodwill', amount: -2, line_item_id: line_item.id)
+      expect(order.total).to eq(previous_total - 2)
+      expect(result.value.actions.sole).to have_attributes(kind: 'add_discount', value_type: 'flat')
+    end
+
+    # Applied after the item edits, so the new line takes its share.
+    it 'spreads an order-level discount over the lines as the change leaves them' do
+      variant = create(:variant)
+
+      apply({ kind: 'add_item', variant: variant, quantity: 1 },
+            { kind: 'add_discount', label: 'Ten off', value: 10, value_type: 'percent' })
+
+      added = order.reload.line_items.find_by(variant: variant)
+      expect(order.discounts.manual.map(&:line_item_id)).to include(added.id)
+    end
+
+    it 'changes and removes a manual discount' do
+      discount = manual_discount
+
+      apply({ kind: 'update_discount', discount: discount, amount: -0.5, label: 'Smaller' })
+      expect(discount.reload).to have_attributes(amount: -0.5, label: 'Smaller')
+
+      apply({ kind: 'remove_discount', discount: discount })
+      expect(order.reload.discounts.manual).to be_empty
+    end
+
+    it 'refuses a promotion discount, which recalculation owns' do
+      promotion_row = order.discounts.create!(line_item: line_item, label: 'Promo', amount: -1, kind: 'promotion')
+
+      result = apply({ kind: 'remove_discount', discount: promotion_row })
+
+      expect(result).to be_failure
+      expect(promotion_row.reload).to be_persisted
+    end
+
+    it 'refuses a discount from another order' do
+      other = create(:completed_order_with_totals, store: store)
+      foreign = other.discounts.create!(line_item: other.line_items.first, label: 'Theirs', amount: -1, kind: 'manual')
+
+      expect(apply({ kind: 'remove_discount', discount: foreign })).to be_failure
+      expect(foreign.reload).to be_persisted
+    end
+
+    it 'refuses a discount worth nothing' do
+      expect(apply({ kind: 'add_discount', label: 'Zero', value: 0 })).to be_failure
+      expect(order.reload.order_changes).to be_empty
+    end
+
+    it 'previews a discount without keeping it' do
+      previous_total = order.total
+
+      result = Spree::OrderChanges::Preview.call(order: order, actions: [{ kind: 'add_discount', label: 'Goodwill', value: 3 }])
+
+      expect(result.value.balance_delta).to eq(-3)
+      expect(order.reload.discounts).to be_empty
+      expect(order.total).to eq(previous_total)
+    end
+  end
+
   describe Spree::OrderChanges::Preview do
     it 'reports the totals the change would produce without keeping any of it' do
       previous_total = order.total

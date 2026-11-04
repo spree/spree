@@ -20,9 +20,10 @@ module Spree
         # Confirm re-reads the set under its lock, so its actions arrive
         # unloaded; one query per association rather than one per action.
         ActiveRecord::Associations::Preloader.new(
-          records: order_change.actions.to_a, associations: [:line_item, :variant, :fulfillment, :delivery_method]
+          records: order_change.actions.to_a, associations: [:line_item, :variant, :fulfillment, :delivery_method, :discount]
         ).call
         step :apply_item_actions
+        step :apply_discount_actions
         step :apply_receive_actions
         step :apply_fulfillment_actions
         step :apply_registered_actions
@@ -80,6 +81,30 @@ module Spree
 
           line_item = lines[action.variant_id]
           action.update!(line_item: line_item) if line_item
+        end
+      end
+
+      # After the item edits, so an order-level discount is spread over the
+      # lines as they end up. Through the same services as the discounts
+      # endpoints, so a discount reads the same however it was made.
+      def apply_discount_actions
+        actions_of(*Spree::OrderChangeAction::DISCOUNT_KINDS).sort_by(&:position).each do |action|
+          result = apply_discount_action(action)
+          return result if result.failure?
+        end
+        nil
+      end
+
+      def apply_discount_action(action)
+        case action.kind
+        when 'add_discount'
+          Spree.order_discount_create_service.call(order: order, label: action.label, value: action.value,
+                                                   value_type: action.value_type, line_item: action.line_item)
+        when 'update_discount'
+          Spree.order_discount_update_service.call(order: order, discount: action.discount,
+                                                   attributes: { label: action.label, amount: action.amount }.compact)
+        when 'remove_discount'
+          Spree.order_discount_destroy_service.call(order: order, discount: action.discount)
         end
       end
 
