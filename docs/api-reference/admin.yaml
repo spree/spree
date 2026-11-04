@@ -21034,6 +21034,156 @@ paths:
                     not part of a checkout
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/orders/{id}/withdraw_payment_request":
+    patch:
+      summary: Withdraw a draft order's payment request
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Takes a draft order back out of the storefront after a payment request, so its customer can no
+        longer read or pay it, and cancels the payment sessions they opened for it. Use it before changing
+        a draft the customer was asked to pay. A draft never requested is returned unchanged; a placed
+        order is refused.
+
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const order = await client.orders.withdrawPaymentRequest('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{id}/withdraw_payment_request -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment request withdrawn
+          content:
+            application/json:
+              example:
+                id: or_UkLWZg9DAJ
+                market_id: mkt_UkLWZg9DAJ
+                withdrawal_period_ends_at:
+                within_withdrawal_period: false
+                shipping_eq_billing_address: false
+                cart_id:
+                channel_id: ch_UkLWZg9DAJ
+                company_id:
+                company_name:
+                po_document_filename:
+                po_document_byte_size:
+                number: R1001
+                email: scarlett@gleichner.name
+                customer_note:
+                po_number:
+                currency: USD
+                locale: en
+                total_quantity: 1
+                coupon_code:
+                fulfillment_status:
+                payment_status:
+                completed_at:
+                item_total: '10.00'
+                discount_total: '0.00'
+                tax_total: '0.00'
+                included_tax_total: '0.00'
+                additional_tax_total: '0.00'
+                delivery_total: '100.00'
+                fee_total: '0.00'
+                gift_card_total: '0.00'
+                store_credit_total: '0.00'
+                total: '110.00'
+                amount_due: '110.00'
+                covered_by_store_credit: false
+                adjustment_total: '0.00'
+                gift_card:
+                market:
+                  id: mkt_UkLWZg9DAJ
+                  name: United States
+                  currency: USD
+                  default_locale: en
+                  tax_inclusive: false
+                  default: true
+                  country_codes:
+                  - US
+                  supported_locales:
+                  - en
+                  created_at: '2026-11-04T15:33:28.861Z'
+                  updated_at: '2026-11-04T15:33:28.861Z'
+                  tax_provider:
+                external_references: {}
+                status: draft
+                last_ip_address:
+                considered_risky: false
+                confirmation_delivered: false
+                store_owner_notification_delivered:
+                metadata: {}
+                cancel_note:
+                canceled_at:
+                approved_at:
+                payment_requested_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                payment_total: '0.00'
+                commission_amount_total: '0.00'
+                commission_tax_total: '0.00'
+                commission_total: '0.00'
+                preferred_stock_location_id:
+                po_document_url:
+                seller_id:
+                order_group_id:
+                tags: []
+                internal_note:
+                internal_note_html:
+                approver_id:
+                approver_type:
+                canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
+                cancel_reason_id:
+                cancel_reason_name:
+                customer_id: cust_UkLWZg9DAJ
+                freight_summary:
+        '422':
+          description: not a draft
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: Payment can only be requested for a draft order that is
+                    not part of a checkout
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/orders/{id}/resend_confirmation":
     post:
       summary: Resend confirmation email
