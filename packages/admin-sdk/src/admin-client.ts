@@ -2999,10 +2999,10 @@ export class AdminClient {
     ruleTypes: (
       options?: RequestOptions,
     ): Promise<{
-      data: Array<{ type: string; name: string; description: string; schema: PreferenceSchema }>
+      data: Array<{ type: string; label: string; description: string; schema: PreferenceSchema }>
     }> =>
       this.request<{
-        data: Array<{ type: string; name: string; description: string; schema: PreferenceSchema }>
+        data: Array<{ type: string; label: string; description: string; schema: PreferenceSchema }>
       }>('GET', '/payment_method_rules/types', options),
   }
 

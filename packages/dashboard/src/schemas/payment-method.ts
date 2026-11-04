@@ -72,16 +72,6 @@ export function filterPaymentMethodProviderTypes<T extends { type: string }>(typ
   return types.filter((entry) => !hidden.has(entry.type))
 }
 
-/** Rules as the API takes them: the array replaces the method's whole set. */
-function rulesParams(rules: PaymentMethodRuleDraft[]) {
-  return rules.map((rule) => ({
-    ...(rule.id ? { id: rule.id } : {}),
-    type: rule.type,
-    active: rule.active,
-    preferences: rule.preferences,
-  }))
-}
-
 export function paymentMethodValuesToCreateParams(
   v: PaymentMethodFormValues,
   preferences: Record<string, unknown>,
@@ -97,7 +87,7 @@ export function paymentMethodValuesToCreateParams(
     capture_method: v.capture_method || null,
     storefront_visible: v.storefront_visible,
     ...(Object.keys(preferences).length > 0 ? { preferences } : {}),
-    ...(v.rules.length > 0 ? { rules: rulesParams(v.rules) } : {}),
+    ...(v.rules.length > 0 ? { rules: v.rules } : {}),
   }
 }
 
@@ -110,6 +100,6 @@ export function paymentMethodValuesToUpdateParams(
     active: v.active,
     capture_method: v.capture_method || null,
     storefront_visible: v.storefront_visible,
-    rules: rulesParams(v.rules),
+    rules: v.rules,
   }
 }

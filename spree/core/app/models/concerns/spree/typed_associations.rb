@@ -71,8 +71,7 @@ module Spree
           listed_ids = rows.filter_map { |row| decode_typed_association_id(row[:id]) }
           collection.where.not(id: listed_ids).destroy_all
           collection.reset
-          kept_ids = rows.each_with_index.map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
-          collection.where.not(id: kept_ids).destroy_all
+          rows.each_with_index { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
           # `where.not(...).destroy_all` deletes the dropped rows from the DB but
           # leaves them in the already-loaded association target. Reset so a
           # same-request read (e.g. the serializer rendering `rule_ids`) reflects
