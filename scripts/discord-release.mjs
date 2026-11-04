@@ -133,7 +133,8 @@ export function buildEmbed(release) {
   }
 
   let budget = MAX_EMBED - size(embed) - required.reduce((n, f) => n + size(f), 0)
-  for (const field of titled.slice(0, MAX_FIELDS - required.length)) {
+  for (const field of titled) {
+    if (embed.fields.length >= MAX_FIELDS - required.length) break
     if (size(field) > budget) continue
     embed.fields.push(field)
     budget -= size(field)
