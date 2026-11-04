@@ -1298,6 +1298,13 @@ RSpec.describe SpreeStripe::Gateway do
         expect(build(:stripe_gateway, store: connect_store, name: 'Stripe EU', active: false)).to be_valid
       end
 
+      it 'still saves an account that was already active beside another' do
+        second = create(:stripe_gateway, store: connect_store, name: 'Stripe EU', active: false)
+        second.update_columns(active: true)
+
+        expect(gateway.reload.update(name: 'Stripe US (renamed)')).to be(true)
+      end
+
       it 'stops the store switching to Connect while two accounts are active' do
         connect_store.update!(preferred_payout_provider: nil)
         create(:stripe_gateway, store: connect_store, name: 'Stripe EU')
