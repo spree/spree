@@ -114,6 +114,8 @@ import type {
   PackageTypeSort,
   PaymentFilters,
   PaymentMethodFilters,
+  PaymentMethodRuleFilters,
+  PaymentMethodRuleSort,
   PaymentMethodSort,
   PaymentSort,
   PolicyFilters,
@@ -2941,12 +2943,13 @@ export class AdminClient {
     rules: {
       list: (
         paymentMethodId: string,
+        params?: ListParams<PaymentMethodRuleFilters, PaymentMethodRuleSort>,
         options?: RequestOptions,
       ): Promise<PaginatedResponse<PaymentMethodRule>> =>
         this.request<PaginatedResponse<PaymentMethodRule>>(
           'GET',
           `/payment_methods/${paymentMethodId}/rules`,
-          options,
+          { ...options, params: params ? transformListParams(params) : undefined },
         ),
 
       create: (

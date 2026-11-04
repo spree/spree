@@ -77,6 +77,14 @@ describe Spree::PaymentMethodRule, type: :model do
       expect(rule.eligible?(cart)).to be(false)
     end
 
+    it 'refuses a minimum above the maximum in one currency' do
+      rule = described_class.new(payment_method: payment_method,
+                                 preferred_min_totals: { 'USD' => '500' }, preferred_max_totals: { 'USD' => '100' })
+
+      expect(rule).not_to be_valid
+      expect(rule.errors.full_messages.join).to include('USD')
+    end
+
     it 'leaves a currency with no threshold unrestricted' do
       rule = described_class.new(payment_method: payment_method, preferred_min_totals: { 'EUR' => '5000' })
 
