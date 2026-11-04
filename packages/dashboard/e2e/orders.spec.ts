@@ -610,6 +610,54 @@ test.describe('placed order editing', () => {
     })
     await expect(page).toHaveURL(`${orderUrl}/edit`)
   })
+
+  // A discount on a placed order is an order change too: it is recorded with
+  // the order's changes and waits for an open one like Save does.
+  test('records a discount as an order change and refuses one while another change is open', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+    const orderUrl = `${ORDERS_PATH(creds.store_id)}/${order.id}`
+
+    async function addDiscount(label: string) {
+      await page.getByRole('button', { name: /^add discount$/i }).click()
+      const dialog = page.getByRole('dialog')
+      await dialog.getByLabel(/label/i).fill(label)
+      await dialog.locator('input[name="value"]').fill('1.00')
+      await dialog.getByRole('button', { name: /^add discount$/i }).click()
+    }
+
+    await page.goto(orderUrl)
+    await addDiscount('Goodwill')
+    await expect(page.getByText('Goodwill')).toBeVisible({ timeout: 15_000 })
+
+    const changes = await adminRequest<{ data: { status: string; actions: { kind: string }[] }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}/order_changes`,
+    )
+    expect(changes.data.map((change) => [change.status, change.actions[0].kind])).toEqual([
+      ['confirmed', 'add_discount'],
+    ])
+
+    const { items } = await adminRequest<{ items: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}?expand=items`,
+    )
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/order_changes`, {
+      actions: [{ kind: 'update_item', line_item_id: items[0].id, quantity: 5 }],
+    })
+
+    await page.reload()
+    await addDiscount('Second thoughts')
+    await expect(page.getByText(/another change to this order is in progress/i)).toBeVisible({
+      timeout: 15_000,
+    })
+  })
 })
 
 test.describe('order addresses', () => {
