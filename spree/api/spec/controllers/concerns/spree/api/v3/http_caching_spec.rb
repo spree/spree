@@ -56,10 +56,13 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           expect(response.headers['Cache-Control']).to include('no-store')
         end
 
-        it 'does not set Vary header' do
+        # Rails varies every negotiated response on Accept and X-Requested-With on its own.
+        it 'adds none of the guest cache headers to Vary' do
           get :index
 
-          expect(response.headers['Vary']).to be_nil
+          vary = response.headers['Vary'].to_s.split(',').map { |h| h.strip.downcase }
+          guest_headers = Spree::Api::V3::HttpCaching::VARY_HEADERS - %w[Accept]
+          expect(vary).not_to include(*guest_headers.map(&:downcase))
         end
       end
     end
