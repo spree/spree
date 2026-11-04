@@ -3291,6 +3291,16 @@
           "customer_help": "Entfernen Sie den Kunden, um daraus eine Gastbestellung zu machen.",
           "confirm_detach": "Diese Bestellung erscheint nicht mehr im Bestellverlauf und Konto des Kunden. Kunde entfernen?",
           "detach": "Kunde entfernen"
+        },
+        "issued_gift_cards": {
+          "title": "Ausgestellte Geschenkkarten",
+          "never_expires": "Nie",
+          "columns": {
+            "code": "Code",
+            "amount": "Betrag",
+            "expires": "Läuft ab",
+            "recipient": "Empfänger"
+          }
         }
       },
       "edit": {
@@ -4204,7 +4214,8 @@
           "tab_downloads": "Digitale Downloads",
           "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben.",
           "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
-          "tab_default_package": "Standardpaket"
+          "tab_default_package": "Standardpaket",
+          "tab_gift_cards": "Geschenkkarten"
         },
         "tax_categories": {
           "add_sheet_title": "Steuerkategorie hinzufügen",

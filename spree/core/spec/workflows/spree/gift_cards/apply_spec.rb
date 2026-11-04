@@ -60,6 +60,17 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  context 'when the order buys a gift card' do
+    before { create(:line_item, order: order, product: create(:gift_card_product, store: store)) }
+
+    it 'refuses, so one balance cannot buy another' do
+      expect { subject }.not_to change(Spree::StoreCredit, :count)
+
+      expect(subject).to be_failure
+      expect(subject.error.value).to eq(:balance_buying_gift_card_error)
+    end
+  end
+
   context 'when the gift card has a different currency' do
     let(:gift_card) { create(:gift_card, amount: 50, store: store, customer: gift_card_user, currency: 'USD') }
     let(:order) { create(:order, store: store, customer: order_user, currency: 'EUR') }

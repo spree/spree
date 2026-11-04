@@ -3291,6 +3291,16 @@
           "customer_help": "Xóa khách hàng để biến đây thành một đơn đặt hàng của khách.",
           "confirm_detach": "Đơn hàng này sẽ không còn xuất hiện trong lịch sử đặt hàng hoặc tài khoản của khách hàng nữa. Loại bỏ khách hàng?",
           "detach": "Xóa khách hàng"
+        },
+        "issued_gift_cards": {
+          "title": "Thẻ quà tặng đã phát hành",
+          "never_expires": "Không bao giờ",
+          "columns": {
+            "code": "Mã",
+            "amount": "Số tiền",
+            "expires": "Hết hạn",
+            "recipient": "Người nhận"
+          }
         }
       },
       "edit": {
@@ -4204,7 +4214,8 @@
           "tab_downloads": "Tải xuống kỹ thuật số",
           "downloads_help": "Liên kết tải xuống hoạt động trong bao lâu và có thể sử dụng được bao nhiêu lần. Các tệp riêng lẻ có thể ghi đè những con số này.",
           "default_package_description": "Hộp bạn thường gửi. Các nhà cung cấp cước vận chuyển thêm trọng lượng của gói hàng vào mỗi gói hàng và sử dụng kích thước của gói hàng đó để định giá theo trọng lượng theo chiều.",
-          "tab_default_package": "Gói mặc định"
+          "tab_default_package": "Gói mặc định",
+          "tab_gift_cards": "Thẻ quà tặng"
         },
         "tax_categories": {
           "add_sheet_title": "Thêm danh mục thuế",

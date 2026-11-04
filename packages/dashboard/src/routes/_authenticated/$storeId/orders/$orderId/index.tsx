@@ -8,6 +8,7 @@ import {
 } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { EnterprisePreviewNote } from '../../../../../components/spree/enterprise-upsell'
 import { OrderDigitalLinksCard } from '../../../../../components/spree/order-digital-links-card'
+import { OrderIssuedGiftCardsCard } from '../../../../../components/spree/order-issued-gift-cards-card'
 import {
   OrderClaimsCard,
   OrderExchangesCard,
@@ -65,6 +66,7 @@ function OrderDetailPage() {
         <>
           <FulfillmentsCard order={order} />
           <OrderDigitalLinksCard order={order} />
+          <OrderIssuedGiftCardsCard order={order} />
           {/* Nothing can come back from an order that has not been placed:
               all three read fulfilled units, and a draft has none, so they
               would only ever render an empty card with a disabled action. */}

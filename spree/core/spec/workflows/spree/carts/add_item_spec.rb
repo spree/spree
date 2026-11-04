@@ -31,6 +31,57 @@ module Spree
       end
     end
 
+    context 'with a gift card recipient' do
+      let(:variant) { create(:gift_card_product, store: cart.store).default_variant }
+      let(:recipient) { { email: 'friend@example.com', name: 'Alex', message: 'Enjoy' } }
+      let(:execute) { subject.call(cart: cart, variant: variant, quantity: qty, recipient: recipient) }
+
+      it 'records who the line is for' do
+        expect(execute).to be_success
+        expect(value.gift_card_recipient).to have_attributes(email: 'friend@example.com', name: 'Alex', message: 'Enjoy')
+      end
+
+      it 'joins the line already going to the same person' do
+        subject.call(cart: cart, variant: variant, recipient: recipient)
+
+        expect(execute).to be_success
+        expect(cart.line_items.count).to eq(1)
+        expect(value.quantity).to eq(2)
+      end
+
+      it 'starts a new line for someone else' do
+        subject.call(cart: cart, variant: variant, recipient: recipient.merge(email: 'other@example.com'))
+
+        expect(execute).to be_success
+        expect(cart.line_items.count).to eq(2)
+        expect(cart.line_items.map { |line_item| line_item.gift_card_recipient.email }).to contain_exactly('friend@example.com', 'other@example.com')
+      end
+
+      it 'keeps a line without a recipient apart' do
+        subject.call(cart: cart, variant: variant)
+
+        expect(execute).to be_success
+        expect(cart.line_items.count).to eq(2)
+      end
+
+      it 'refuses an invalid email without adding the line' do
+        result = subject.call(cart: cart, variant: variant, recipient: { email: 'not-an-email' })
+
+        expect(result).to be_failure
+        expect(cart.line_items.count).to eq(0)
+      end
+
+      context 'when the variant is not a gift card' do
+        let(:variant) { create(:variant, price: 20) }
+
+        it 'refuses' do
+          expect(execute).to be_failure
+          expect(execute.error.to_s).to include('A recipient can only be given for a gift card.')
+          expect(cart.line_items.count).to eq(0)
+        end
+      end
+    end
+
     context 'not given a fulfillment' do
       it 'ensures updated fulfillments' do
         expect(cart).to receive(:ensure_updated_fulfillments)

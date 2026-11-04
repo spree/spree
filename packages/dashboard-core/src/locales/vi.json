@@ -855,6 +855,11 @@
         "discontinue_on": {
           "label": "Ngừng bật"
         },
+        "gift_card": {
+          "label": "Thẻ quà tặng",
+          "switch": "Sản phẩm này là thẻ quà tặng",
+          "help": "Mỗi biến thể là một mệnh giá có giá bằng giá trị của thẻ. Đơn hàng đã thanh toán sẽ gửi email một thẻ cho mỗi đơn vị đến người nhận. Tồn kho, thuế, khuyến mãi và vận chuyển không áp dụng."
+        },
         "make_active_at": {
           "label": "Hãy hoạt động tại"
         },
@@ -972,6 +977,11 @@
         },
         "digital_asset_authorized_days": {
           "label": "Số ngày có sẵn"
+        },
+        "gift_card_default_validity_days": {
+          "label": "Thời hạn thẻ quà tặng (ngày)",
+          "placeholder": "Không bao giờ hết hạn",
+          "help": "Thẻ quà tặng mua trên cửa hàng có thể sử dụng trong bao lâu. Để trống để thẻ không bao giờ hết hạn."
         }
       }
     },

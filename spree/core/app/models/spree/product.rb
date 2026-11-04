@@ -235,6 +235,7 @@ module Spree
     # profile alone. Falls back to the store's default profile, keeping the
     # required association satisfiable without the caller naming one.
     before_validation :stamp_template_delivery_profile, on: :create
+    before_validation :apply_gift_card_rules, if: :gift_card?
 
     after_create :sync_associations_from_product_type
     after_update :sync_associations_from_product_type, if: :saved_change_to_product_type_id?
@@ -242,6 +243,7 @@ module Spree
     after_create :set_default_variant
 
     after_save :auto_promote_default_variant
+    after_save :stop_tracking_gift_card_inventory, if: -> { gift_card? && saved_change_to_gift_card? }
 
     after_commit :auto_match_collections, if: :eligible_for_collection_matching?
 
@@ -258,6 +260,11 @@ module Spree
     validates :default_variant, presence: true, on: :update
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
+    # A gift card is the marketplace's liability, not a seller's sale.
+    validate :gift_card_must_belong_to_operator, if: :gift_card?
+    # Every order line reads the flag live, so flipping it on a product that
+    # has sold would issue cards for goods, or none for cards already bought.
+    validate :gift_card_fixed_once_sold, if: -> { persisted? && gift_card_changed? }
 
     scope :for_store, ->(store) { where(store_id: store.id) }
     # Products belonging to the given seller. Passing nil selects the
@@ -1009,6 +1016,40 @@ module Spree
 
       self.delivery_profile_id = product_type&.delivery_profile_id ||
         (store && Spree::DeliveryProfile.default_for(store)&.id)
+    end
+
+    # Promotions and delivery read their own columns, so the flag sets them:
+    # no discounts, and digital delivery so it never creates a shipment. Tax
+    # reads the flag itself (Spree::TaxProvider::Base#taxable_item?).
+    def apply_gift_card_rules
+      self.promotionable = false
+      self.delivery_profile = gift_card_delivery_profile if store && !delivery_profile&.digital?
+    end
+
+    # Under the store's lock, so two first gift card products in a store
+    # cannot both seed a digital profile.
+    def gift_card_delivery_profile
+      Spree::DeliveryProfiles::Digital.find_by(store: store) || store.with_lock do
+        Spree::DeliveryProfiles::Digital.find_by(store: store) || begin
+          Spree::Seeds::DigitalDelivery.call(store: store)
+          Spree::DeliveryProfiles::Digital.find_by(store: store)
+        end
+      end
+    end
+
+    def stop_tracking_gift_card_inventory
+      variants.select { |variant| variant.track_inventory? || variant[:delivery_profile_id] }.
+        each { |variant| variant.update!(track_inventory: false, delivery_profile_id: nil) }
+    end
+
+    # Neither the product nor any of its listings may be a seller's.
+    def gift_card_must_belong_to_operator
+      errors.add(:gift_card, :seller_not_allowed) if seller_id.present? || (persisted? && variants.where.not(seller_id: nil).exists?)
+    end
+
+    def gift_card_fixed_once_sold
+      sold = Spree::LineItem.where(variant_id: Spree::Variant.with_deleted.where(product_id: id)).where.not(order_id: nil)
+      errors.add(:gift_card, :already_sold) if sold.exists?
     end
 
     def delivery_profile_must_belong_to_store

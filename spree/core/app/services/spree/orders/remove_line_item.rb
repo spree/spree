@@ -13,7 +13,7 @@ module Spree
       def call(order:, line_item:, options: {})
         result = Spree.order_upsert_items_workflow.call(
           order: order,
-          items: [{ variant_id: line_item.variant_id, quantity: 0 }]
+          items: [{ variant_id: line_item.variant_id, line_item_id: line_item.id, quantity: 0 }]
         )
 
         result.success? ? success(line_item) : failure(line_item, result.error)

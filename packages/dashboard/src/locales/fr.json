@@ -3291,6 +3291,16 @@
           "customer_help": "Retirez le client pour en faire une commande invité.",
           "confirm_detach": "Cette commande n'apparaîtra plus dans l'historique des commandes ni dans le compte du client. Retirer le client ?",
           "detach": "Retirer le client"
+        },
+        "issued_gift_cards": {
+          "title": "Cartes cadeaux émises",
+          "never_expires": "Jamais",
+          "columns": {
+            "code": "Code",
+            "amount": "Montant",
+            "expires": "Expire",
+            "recipient": "Destinataire"
+          }
         }
       },
       "edit": {
@@ -4205,7 +4215,8 @@
           "tab_downloads": "Téléchargements numériques",
           "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs.",
           "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
-          "tab_default_package": "Colis par défaut"
+          "tab_default_package": "Colis par défaut",
+          "tab_gift_cards": "Cartes cadeaux"
         },
         "tax_categories": {
           "add_sheet_title": "Ajouter une catégorie de taxe",

@@ -853,6 +853,11 @@
         "discontinue_on": {
           "label": "Arrêter le"
         },
+        "gift_card": {
+          "label": "Carte cadeau",
+          "switch": "Ce produit est une carte cadeau",
+          "help": "Chaque variante est une valeur faciale dont le prix correspond au montant de la carte. Une commande payée envoie par e-mail une carte par unité au destinataire. Le stock, les taxes, les promotions et la livraison ne s'appliquent pas."
+        },
         "make_active_at": {
           "label": "Activer le"
         },
@@ -970,6 +975,11 @@
         },
         "digital_asset_authorized_days": {
           "label": "Jours de disponibilité"
+        },
+        "gift_card_default_validity_days": {
+          "label": "Validité des cartes cadeaux (jours)",
+          "placeholder": "N'expire jamais",
+          "help": "Combien de temps une carte cadeau achetée sur la boutique reste utilisable. Laissez vide pour que les cartes n'expirent jamais."
         }
       }
     },

@@ -329,6 +329,12 @@ en:
           attributes:
             base:
               cannot_destroy_used_gift_card: Can't delete a used gift card
+        spree/gift_card_recipient:
+          attributes:
+            line_item:
+              not_a_gift_card: is not a gift card
+            send_at:
+              too_far_ahead: can be at most 90 days ahead
         spree/import:
           attributes:
             attachment:
@@ -339,6 +345,8 @@ en:
           attributes:
             currency:
               must_match_order_currency: Must match order currency
+            quantity:
+              below_issued_gift_cards: can't be lower than the %{count} gift cards already issued for this line
         spree/market:
           attributes:
             base:
@@ -402,6 +410,9 @@ en:
               status_decided_by_review: A product in review changes status by being approved or sent back, not by editing it.
             discontinue_on:
               invalid_date_range: must be later than available date
+            gift_card:
+              already_sold: can't be changed once the product has been ordered. Create a new product instead.
+              seller_not_allowed: can only be set on the store's own products, not a seller's
         spree/product_publication:
           attributes:
             unpublished_at:
@@ -459,6 +470,8 @@ en:
               must_be_a_carton: must be a package type of kind carton
             order_multiple:
               incompatible_with_carton: must divide into or be a multiple of %{units_per_carton} units per carton
+            seller:
+              gift_card_not_allowed: can't be set on a gift card, which only the store sells
             units_per_carton:
               required_for_carton_purchase_unit: is required when the purchase unit is cartons
         spree/webhook_endpoint:
@@ -681,6 +694,7 @@ en:
     availability: availability
     backorderable: Backorderable
     backordered: Backordered
+    balance_buying_gift_card_error: A gift card can't be paid for with a gift card or store credit.
     bill_address: Bill Address
     billing_address: Billing Address
     calculator: Calculator
@@ -704,6 +718,7 @@ en:
       pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
       quantity_rule_violated: "%{li_name} cannot be ordered in that quantity. Try %{quantities}."
+      recipient_not_allowed: A recipient can only be given for a gift card.
       tax_unavailable: Tax could not be calculated. Please try again.
     catalogs:
       no_price_list_to_import: This catalog has no price list to import products from.
@@ -716,6 +731,7 @@ en:
     checkout_requirements:
       delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
+      gift_card_paid_with_balance: A gift card can't be paid for with a gift card or store credit. Remove the gift card or store credit from your cart.
       line_items_required: Add at least one item to your cart
       order_minimum_not_met: Orders must come to at least %{minimum}. Add %{shortfall} more to check out.
       payment_required: Add a payment method
@@ -886,6 +902,7 @@ en:
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         exactly_one_of_line_item_or_fulfillment: must be charged against exactly one of a line item or a fulfillment
         flat_fee_cannot_charge_delivery: is not available on a flat fee, which already charges for the sale the delivery belongs to — add a separate rate to charge delivery
+        gift_card_not_discountable: a gift card is sold at its face value and cannot be discounted
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
         invalid_collection_rule: is not a registered collection rule

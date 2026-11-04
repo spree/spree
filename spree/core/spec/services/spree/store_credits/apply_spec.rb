@@ -196,6 +196,22 @@ describe Spree::StoreCredits::Apply, type: :service do
       end
     end
 
+    context 'when the order buys a gift card' do
+      let(:store_credit) { create(:store_credit, amount: 500, store: store) }
+      let(:order) { create(:order, customer: store_credit.customer, store: store) }
+
+      before do
+        create(:line_item, order: order, product: create(:gift_card_product, store: store))
+        order.update_column(:total, 50)
+      end
+
+      it 'refuses, so one balance cannot buy another' do
+        expect(subject).not_to be_success
+        expect(subject.error.to_s).to eq("A gift card can't be paid for with a gift card or store credit.")
+        expect(order.reload.payments.store_credits).to be_empty
+      end
+    end
+
     context 'there are multiple store credits' do
       let(:amount_difference) { 100 }
       let!(:older_store_credit) { create(:store_credit, amount: (order_total - amount_difference), store: store, created_at: 2.days.ago) }

@@ -16,6 +16,7 @@ import {
   FulfillmentSchema,
   GiftCardSchema,
   GiftCardBatchSchema,
+  GiftCardIssuedEventSchema,
   ImportSchema,
   ImportRowSchema,
   InvitationSchema,
@@ -125,6 +126,7 @@ type WebhookEventName =
   | 'gift_card.canceled'
   | 'gift_card.created'
   | 'gift_card.deleted'
+  | 'gift_card.issued'
   | 'gift_card.partially_redeemed'
   | 'gift_card.redeemed'
   | 'gift_card.updated'
@@ -388,6 +390,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'gift_card.canceled': GiftCardSchema,
   'gift_card.created': GiftCardSchema,
   'gift_card.deleted': GiftCardSchema,
+  'gift_card.issued': GiftCardIssuedEventSchema,
   'gift_card.partially_redeemed': GiftCardSchema,
   'gift_card.redeemed': GiftCardSchema,
   'gift_card.updated': GiftCardSchema,

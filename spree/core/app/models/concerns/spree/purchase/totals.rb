@@ -11,11 +11,20 @@ module Spree
       end
 
       # What promotion calculators take a share of: the line amounts less the
-      # free gifts, so a gift never enlarges a percentage off the order.
+      # free gifts and the lines no promotion may touch, so neither enlarges
+      # a percentage off the order.
       #
       # @return [BigDecimal]
       def amount
-        line_items.sum(BigDecimal('0'), &:amount) - gift_amount
+        lines_with_products.sum(BigDecimal('0')) { |line_item| line_item.promotionable? ? line_item.amount : 0 } - gift_amount
+      end
+
+      # What the lines of non-promotionable products cost — gift cards among
+      # them. They take no discount, so they never count toward one either.
+      #
+      # @return [BigDecimal]
+      def non_promotionable_amount
+        lines_with_products.reject(&:promotionable?).sum(BigDecimal('0'), &:amount)
       end
 
       # The list price of the units gift promotions give away. The gift keeps
@@ -38,6 +47,10 @@ module Spree
         return BigDecimal('0') if excluded_gift_promo_actions.empty?
 
         line_items.sum(BigDecimal('0')) do |line_item|
+          # A non-promotionable line is already out of what promotions
+          # measure; taking its gift out again would count it twice.
+          next BigDecimal('0') unless line_item.promotionable?
+
           gifted_quantity = excluded_gift_promo_actions.sum { |action| action.gifted_quantity_of(line_item) }
           Spree::Money::Rounding.to_currency(line_item.price * [gifted_quantity, line_item.quantity].min, line_item.currency)
         end
@@ -98,6 +111,13 @@ module Spree
       end
 
       private
+
+      # Loaded once and kept: calculators ask for these amounts several times
+      # in one evaluation.
+      def lines_with_products
+        line_items.load
+        line_items_with_variants(variant: :product)
+      end
 
       # Other promotions' gifts are looked for among the promotions a
       # recalculation writes discounts for, so a gift leaves the measure

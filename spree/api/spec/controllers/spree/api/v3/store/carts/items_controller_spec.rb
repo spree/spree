@@ -199,6 +199,96 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
     end
   end
 
+  describe 'gift card recipients' do
+    let(:gift_card_variant) { create(:gift_card_product, store: store).default_variant }
+    let(:recipient) { { email: 'friend@example.com', name: 'Alex', message: 'Enjoy' } }
+
+    it 'records who the card is for and returns it on the line' do
+      post :create, params: { cart_id: order.prefixed_id, variant_id: gift_card_variant.prefixed_id, recipient: recipient }
+
+      expect(response).to have_http_status(:created)
+      item = json_response['items'].sole
+      expect(item['gift_card']).to be(true)
+      expect(item['recipient']).to include('email' => 'friend@example.com', 'name' => 'Alex', 'message' => 'Enjoy', 'send_at' => nil)
+    end
+
+    it 'gives a second recipient their own line' do
+      post :create, params: { cart_id: order.prefixed_id, variant_id: gift_card_variant.prefixed_id, recipient: recipient }
+      post :create, params: { cart_id: order.prefixed_id, variant_id: gift_card_variant.prefixed_id, recipient: recipient.merge(email: 'sam@example.com') }
+
+      expect(json_response['items'].map { |item| item['recipient']['email'] }).to contain_exactly('friend@example.com', 'sam@example.com')
+    end
+
+    it 'refuses a recipient on anything but a gift card' do
+      post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, recipient: recipient }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to include('A recipient can only be given for a gift card.')
+    end
+
+    it 'refuses an invalid email' do
+      post :create, params: { cart_id: order.prefixed_id, variant_id: gift_card_variant.prefixed_id, recipient: { email: 'nope' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(order.line_items.reload).to be_empty
+    end
+
+    context 'with two lines for the same denomination' do
+      let!(:for_alex) { create(:line_item, cart: order, order: nil, variant: gift_card_variant) }
+      let!(:for_sam) { create(:line_item, cart: order, order: nil, variant: gift_card_variant) }
+
+      before do
+        for_alex.assign_gift_card_recipient(email: 'alex@example.com')
+        for_sam.assign_gift_card_recipient(email: 'sam@example.com')
+      end
+
+      it 'changes the quantity of the line named in the path' do
+        patch :update, params: { cart_id: order.prefixed_id, id: for_sam.prefixed_id, quantity: 3 }
+
+        expect(response).to have_http_status(:ok)
+        expect(for_sam.reload.quantity).to eq(3)
+        expect(for_alex.reload.quantity).to eq(1)
+      end
+
+      it 'replaces the recipient of that line' do
+        patch :update, params: { cart_id: order.prefixed_id, id: for_sam.prefixed_id, recipient: { email: 'jo@example.com', name: 'Jo' } }
+
+        expect(response).to have_http_status(:ok)
+        recipient = for_sam.reload.gift_card_recipient
+        expect([recipient.email, recipient.name]).to eq(['jo@example.com', 'Jo'])
+      end
+
+      it 'clears what the new recipient leaves out' do
+        for_sam.assign_gift_card_recipient(email: 'sam@example.com', message: 'For Sam only')
+
+        patch :update, params: { cart_id: order.prefixed_id, id: for_sam.prefixed_id, recipient: { email: 'jo@example.com' } }
+
+        expect(for_sam.reload.gift_card_recipient.message).to be_nil
+      end
+
+      it 'keeps the recipient when the quantity is refused' do
+        patch :update, params: { cart_id: order.prefixed_id, id: for_sam.prefixed_id, quantity: 0, recipient: { email: 'jo@example.com' } }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(for_sam.reload.gift_card_recipient.email).to eq('sam@example.com')
+      end
+
+      it 'removes the line named in the path' do
+        delete :destroy, params: { cart_id: order.prefixed_id, id: for_sam.prefixed_id }
+
+        expect(order.line_items.reload).to contain_exactly(for_alex)
+      end
+    end
+
+    it 'refuses a recipient on an existing line that is not a gift card' do
+      line_item = create(:line_item, cart: order, order: nil, variant: variant)
+
+      patch :update, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id, recipient: recipient }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
   describe 'PATCH #update' do
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
 

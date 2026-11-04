@@ -21,6 +21,7 @@ module Spree
       end
 
       def update
+        preload_products
         apply_line_item_discounts
         apply_fulfillment_discounts
         apply_order_level_discount
@@ -33,6 +34,7 @@ module Spree
       def candidate_for?(action)
         case action.discount_scope
         when :line_item
+          preload_products
           order.line_items.any? { |line_item| line_item_candidates(line_item).any? { |c| c[:action].id == action.id } }
         when :fulfillment
           order.fulfillments.any? && eligible_promotions.include?(action.promotion)
@@ -80,6 +82,14 @@ module Spree
         end
       end
 
+      # Every line is asked whether its product takes promotions.
+      def preload_products
+        return if @products_preloaded
+
+        ActiveRecord::Associations::Preloader.new(records: order.line_items.to_a, associations: { variant: :product }).call
+        @products_preloaded = true
+      end
+
       def discount_actions(scope)
         eligible_promotions.flat_map(&:promotion_actions).select { |action| action.discount_scope == scope }
       end
@@ -98,6 +108,8 @@ module Spree
 
       def line_item_candidates(line_item)
         @line_item_candidates ||= {}
+        return @line_item_candidates[line_item.id] = [] unless line_item.promotionable?
+
         @line_item_candidates[line_item.id] ||= discount_actions(:line_item).filter_map do |action|
           next unless action.applies_to_line_item?(order, line_item)
 
@@ -145,7 +157,9 @@ module Spree
       # the promotion amount and no line goes below zero.
       def distribute_over_line_items(chosen)
         line_items = order.line_items.to_a
-        bases = line_items.map { |line_item| [discountable_base(line_item), BigDecimal(0)].max }
+        bases = line_items.map do |line_item|
+          line_item.promotionable? ? [discountable_base(line_item), BigDecimal(0)].max : BigDecimal(0)
+        end
         bases_sum = bases.sum
         return if bases_sum <= 0
 

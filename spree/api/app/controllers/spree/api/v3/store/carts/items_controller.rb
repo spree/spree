@@ -16,6 +16,8 @@ module Spree
                 example: { gift_message: 'Happy Birthday!' },
                 description: 'Write-only key-value metadata.'
               body.attribute :options, :hash, description: 'Values for line item attributes an extension adds.'
+              body.attribute :recipient, :object, shape: Spree::Api::V3::Store::GiftCardRecipientRequestSchema,
+                description: 'Who a gift card is for; only accepted when the variant is a gift card. Without it the card is emailed to the order email. Adding the same denomination for a different recipient creates a separate line.'
             end
 
             request_params 'UpdateLineItemParams', action: :update do |body|
@@ -23,6 +25,8 @@ module Spree
               body.attribute :metadata, :hash,
                 example: { engraving: 'J.D.' },
                 description: 'Write-only key-value metadata, merged with what the line item has.'
+              body.attribute :recipient, :object, shape: Spree::Api::V3::Store::GiftCardRecipientRequestSchema,
+                description: 'Replaces who a gift card line is for. Only accepted on a gift card line.'
             end
 
             # POST  /api/v3/store/carts/:cart_id/items
@@ -33,7 +37,8 @@ module Spree
                   variant: variant,
                   quantity: permitted_params[:quantity] || 1,
                   metadata: permitted_params[:metadata] || {},
-                  options: item_options
+                  options: item_options,
+                  recipient: permitted_params[:recipient]&.to_h
                 )
 
                 if result.success?
@@ -50,35 +55,46 @@ module Spree
               with_order_lock do
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
-                if permitted_params[:quantity].present?
-                  # Zero and negatives remove the row in the upsert vocabulary,
-                  # but this endpoint documents `quantity >= 1` and DELETE is
-                  # how a client removes an item. Deleting on a PATCH the
-                  # schema forbids would be a surprising 200.
-                  if permitted_params[:quantity].to_i < 1
-                    return render_error(
-                      code: ERROR_CODES[:invalid_quantity],
-                      message: I18n.t('spree.cart_line_item.quantity_must_be_positive'),
-                      status: :unprocessable_content
-                    )
-                  end
+                # Zero and negatives remove the row in the upsert vocabulary,
+                # but this endpoint documents `quantity >= 1` and DELETE is
+                # how a client removes an item. Deleting on a PATCH the
+                # schema forbids would be a surprising 200.
+                if permitted_params[:quantity].present? && permitted_params[:quantity].to_i < 1
+                  return render_error(
+                    code: ERROR_CODES[:invalid_quantity],
+                    message: I18n.t('spree.cart_line_item.quantity_must_be_positive'),
+                    status: :unprocessable_content
+                  )
+                end
 
+                # Checked now and written last, so a refused request never
+                # leaves a new recipient behind.
+                recipient = permitted_params[:recipient].present? ? @line_item.stage_gift_card_recipient(permitted_params[:recipient].to_h) : nil
+                return render_validation_error(recipient.errors) if recipient&.invalid?
+
+                if permitted_params[:quantity].present?
                   result = Spree.cart_upsert_items_workflow.call(
                     cart: @cart,
                     items: [{
                       variant_id: @line_item.variant_id,
+                      line_item_id: @line_item.id,
                       quantity: permitted_params[:quantity],
                       metadata: permitted_params[:metadata]
                     }]
                   )
 
                   if result.success?
+                    # A validate handler can turn the change down as a warning;
+                    # the recipient goes with the change, or not at all.
+                    recipient&.save! if Array(@cart.warnings).none? { |warning| warning.with_indifferent_access[:item_index].to_i.zero? }
                     sweep_unavailable_coupon_code!
                     render_cart
                   else
                     render_result_error(result)
                   end
                 else
+                  recipient&.save!
+
                   # Metadata-only edit — no quantity change, so no item rules
                   # to run and nothing for the cart to recalculate.
                   if permitted_params[:metadata].present?
@@ -98,7 +114,7 @@ module Spree
 
                 result = Spree.cart_upsert_items_workflow.call(
                   cart: @cart,
-                  items: [{ variant_id: @line_item.variant_id, quantity: 0 }]
+                  items: [{ variant_id: @line_item.variant_id, line_item_id: @line_item.id, quantity: 0 }]
                 )
 
                 if result.success?

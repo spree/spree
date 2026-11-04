@@ -14603,8 +14603,9 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2923250
-                  slug: product-2923250
+                  name: Product 2943250
+                  slug: product-2943250
+                  gift_card: false
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14721,6 +14722,7 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: Hand-thrown mug
                 slug: hand-thrown-mug
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14819,8 +14821,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2956710
-                slug: product-2956710
+                name: Product 2976710
+                slug: product-2976710
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14911,7 +14914,8 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2988212
+                slug: product-3008212
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15035,8 +15039,9 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 3017816
-                slug: product-3017816
+                name: Product 3037816
+                slug: product-3037816
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15147,8 +15152,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 303209
-                slug: product-303209
+                name: Product 305209
+                slug: product-305209
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15238,8 +15244,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3049405
-                slug: product-3049405
+                name: Product 3069405
+                slug: product-3069405
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -28281,6 +28288,10 @@ components:
           type: string
         slug:
           type: string
+        gift_card:
+          type: boolean
+          description: 'True when the product is a gift card: each variant is a denomination,
+            and buying one issues a card per unit when the order is paid.'
         meta_title:
           type: string
           nullable: true
@@ -28404,6 +28415,7 @@ components:
       - id
       - name
       - slug
+      - gift_card
       - meta_title
       - meta_description
       - meta_keywords
@@ -30558,6 +30570,10 @@ components:
           type: string
         product_id:
           type: string
+        gift_card:
+          type: boolean
+          description: True when the variant is a gift card denomination; its price
+            is the card's face value.
         sku:
           type: string
           nullable: true
@@ -31119,6 +31135,7 @@ components:
       required:
       - id
       - product_id
+      - gift_card
       - sku
       - options_text
       - track_inventory

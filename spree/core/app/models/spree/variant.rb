@@ -132,6 +132,10 @@ module Spree
     # changes nothing, and the storefront never has to know which mode it is
     # in. Only a variant on a master product keeps what it is given.
     before_validation :blank_owned_product_overrides
+    # A gift card denomination is prepaid money, never stock, and is
+    # delivered the way its product is.
+    before_validation -> { assign_attributes(track_inventory: false, delivery_profile_id: nil) }, if: -> { product&.gift_card? }
+    validate -> { errors.add(:seller, :gift_card_not_allowed) }, if: -> { self[:seller_id].present? && product&.gift_card? }
 
     validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
@@ -968,6 +972,13 @@ module Spree
       return false unless backorderable? || preorder?
 
       backorder_limit.nil? || can_supply?(1)
+    end
+
+    # Whether this variant is a gift card denomination.
+    #
+    # @return [Boolean]
+    def gift_card?
+      product&.gift_card? || false
     end
 
     # Shortcut method to determine if inventory tracking is enabled for this variant
