@@ -9,6 +9,7 @@ export const PaymentMethodSchema = z.object({
   type: z.string(),
   session_required: z.boolean(),
   source_required: z.boolean(),
+  public_preferences: z.record(z.string(), z.unknown()),
   custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
