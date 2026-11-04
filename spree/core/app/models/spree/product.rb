@@ -758,9 +758,13 @@ module Spree
                            # The same figure in one query: the per-variant floor
                            # needs the sums grouped before they are added up.
                            # Unordered, since the variants' position order cannot
-                           # sit beside a GROUP BY on PostgreSQL.
+                           # sit beside a GROUP BY on PostgreSQL. Holds count only
+                           # while the store reserves stock, as on each variant.
+                           levels = Spree::StockLevel.arel_table
+                           purchasable = levels[:count_on_hand] - levels[:allocated_count]
+                           purchasable -= levels[:reserved_count] if store_preference(:stock_reservations_enabled)
                            stock_levels.with_active_stock_location.unscope(:order).group(:variant_id).
-                             sum(Spree::StockLevel.purchasable_arel).values.sum { |count| [count, 0].max }
+                             sum(purchasable).values.sum { |count| [count, 0].max }
                          end
     end
 
