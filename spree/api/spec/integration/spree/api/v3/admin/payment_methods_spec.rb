@@ -109,10 +109,15 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
                      properties: {
                        type: { type: :string },
                        label: { type: :string },
+                       description: { type: :string, nullable: true },
+                       schema: { type: :object, description: "JSON Schema of the provider's preferences." },
+                       logo_url: { type: :string, nullable: true },
+                       docs_url: { type: :string, nullable: true },
+                       third_party: { type: :boolean },
                        installed_count: { type: :integer, description: 'How many payment methods of this provider the store has.' },
                        installed: { type: :boolean, deprecated: true, description: 'Use installed_count. Removed in 6.2.' }
                      },
-                     required: %w[type label installed_count]
+                     required: %w[type label schema installed_count]
                    }
                  }
                },
