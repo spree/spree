@@ -137,7 +137,7 @@ export function writeTypes(
 
 /**
  * Removes what this command writes for one API, leaving the response types
- * (`generated/`, `spree.ts`) that `rake spree:sdk:serializer_types` writes.
+ * (`types/`, `spree.ts`) that `rake spree:sdk:serializer_types` writes.
  */
 function removeTypes(out: string): void {
   rmSync(join(out, 'params'), { recursive: true, force: true })
