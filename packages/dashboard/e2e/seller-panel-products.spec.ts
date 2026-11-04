@@ -9,6 +9,7 @@ import {
   openRowMenu,
   sellerLogin,
 } from './helpers'
+import { inventoryCard } from './products-helpers'
 
 // The card serves whatever is attached, so the shared image fixture will do.
 const DIGITAL_FILE = path.join(
@@ -36,6 +37,34 @@ async function selectProduct(page: Page, name: string) {
 }
 
 test.describe('seller panel — products', () => {
+  test('shows how many units of a listing are in stock', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    // A shelf of this test's own, so the product has somewhere to hold stock.
+    const shelf = `E2E Shelf ${Date.now()}`
+    await page.goto(`${home}/settings/stock-locations`)
+    await page.getByRole('button', { name: /add stock location/i }).click({ timeout: 15_000 })
+    await page.locator('#name').fill(shelf)
+    await page.getByRole('button', { name: /create stock location/i }).click()
+    await expect(page.getByRole('row').filter({ hasText: shelf })).toBeVisible({ timeout: 15_000 })
+
+    const name = `E2E Stocked Lamp ${Date.now()}`
+    await listProduct(page, home, name)
+
+    const onHand = inventoryCard(page).getByRole('textbox', {
+      name: new RegExp(`^on hand at ${shelf}$`, 'i'),
+    })
+    await onHand.dblclick()
+    await onHand.fill('7')
+    await onHand.press('Tab')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.goto(`${home}/products`)
+    await expect(productRow(page, name).getByText(/^7 in stock$/i)).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('renames a listing from its own page', async ({ page }) => {
     const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
     const name = `E2E Vase ${Date.now()}`

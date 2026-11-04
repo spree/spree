@@ -993,7 +993,6 @@
           }
         },
         "inventory": {
-          "in_stock": "{{count}} en stock",
           "in_stock_short": "Con stock",
           "on_backorder": "En contrarreserva",
           "out_of_stock": "Sin stock"
@@ -1190,9 +1189,7 @@
           "section_to": "Hasta",
           "sheet_title": "Nueva transferencia de inventario"
         },
-        "variants_empty": "Todavía no hay variantes.",
-        "variants_one": "{{count}} variante",
-        "variants_other": "{{count}} variantes"
+        "variants_empty": "Todavía no hay variantes."
       },
       "oauth": {
         "authorize": {

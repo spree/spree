@@ -667,7 +667,8 @@
     "columns": {
       "name": "المنتج",
       "price": "السعر",
-      "status": "الحالة"
+      "status": "الحالة",
+      "inventory": "جرد"
     },
     "custom_fields": "تفاصيل المنتج",
     "details": "التفاصيل",

@@ -3838,7 +3838,6 @@
           }
         },
         "inventory": {
-          "in_stock": "{{count}} auf Lager",
           "in_stock_short": "Auf Lager",
           "on_backorder": "Im Rückstand",
           "out_of_stock": "Nicht auf Lager"
@@ -4035,9 +4034,7 @@
           "section_to": "Nach",
           "sheet_title": "Neue Bestandsübertragung"
         },
-        "variants_empty": "Noch keine Varianten.",
-        "variants_one": "{{count}} Variante",
-        "variants_other": "{{count}} Varianten"
+        "variants_empty": "Noch keine Varianten."
       },
       "profile": {
         "load_failed_title": "Ihr Profil konnte nicht geladen werden",

@@ -655,7 +655,8 @@
     "columns": {
       "name": "Sản phẩm",
       "price": "Giá",
-      "status": "Trạng thái"
+      "status": "Trạng thái",
+      "inventory": "Hàng tồn kho"
     },
     "custom_fields": "Chi tiết sản phẩm",
     "details": "Chi tiết",

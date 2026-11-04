@@ -3838,7 +3838,6 @@
           }
         },
         "inventory": {
-          "in_stock": "在庫 {{count}}",
           "in_stock_short": "在庫あり",
           "on_backorder": "入荷待ち",
           "out_of_stock": "在庫切れ"
@@ -4035,9 +4034,7 @@
           "section_to": "移動先",
           "sheet_title": "新しい在庫の移動"
         },
-        "variants_empty": "バリアントはまだありません。",
-        "variants_one": "バリアント {{count}} 件",
-        "variants_other": "バリアント {{count}} 件"
+        "variants_empty": "バリアントはまだありません。"
       },
       "profile": {
         "load_failed_title": "プロフィールを読み込めませんでした",

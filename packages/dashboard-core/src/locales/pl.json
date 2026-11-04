@@ -494,6 +494,16 @@
         "discard_confirm": "Odrzuć",
         "discard_message": "Wszystko, co zostało wprowadzone, zostanie utracone. Nie można tego cofnąć.",
         "discard_title": "Odrzucić szkic?"
+      },
+      "product_stock": {
+        "out_of_stock": "Brak w magazynie",
+        "on_backorder": "Na zamówienie",
+        "in_stock": "{{count}} w magazynie",
+        "in_stock_short": "W magazynie",
+        "variants_few": "{{count}} warianty",
+        "variants_many": "{{count}} wariantów",
+        "variants_one": "{{count}} wariant",
+        "variants_other": "{{count}} wariantów"
       }
     },
     "currency_amounts": {

@@ -3839,7 +3839,6 @@
           }
         },
         "inventory": {
-          "in_stock": "{{count}} en stock",
           "in_stock_short": "En stock",
           "on_backorder": "En réapprovisionnement",
           "out_of_stock": "En rupture de stock"
@@ -4036,9 +4035,7 @@
           "section_to": "Vers",
           "sheet_title": "Nouveau transfert de stock"
         },
-        "variants_empty": "Aucune variante pour le moment.",
-        "variants_one": "{{count}} variante",
-        "variants_other": "{{count}} variantes"
+        "variants_empty": "Aucune variante pour le moment."
       },
       "profile": {
         "load_failed_title": "Impossible de charger votre profil",
