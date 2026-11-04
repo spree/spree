@@ -62,13 +62,21 @@ RSpec.describe Spree::Mcp::Server do
         expect(search.dig('annotations', 'destructiveHint')).to be(false)
       end
 
+      it 'marks a search as staying inside the store' do
+        search = tools.find { |tool| tool['name'] == 'search_resources' }
+
+        expect(search.dig('annotations', 'openWorldHint')).to be(false)
+      end
+
       # An export changes nothing, but it produces a file of store data and
       # mails a link to it — that leaves the building, so it is annotated for
       # confirmation even though the key only reads.
-      it 'still marks an export for confirmation' do
+      it 'still marks an export for confirmation, as additive and leaving the store' do
         export = tools.find { |tool| tool['name'] == 'create_export' }
 
-        expect(export.dig('annotations', 'destructiveHint')).to be(true)
+        expect(export.dig('annotations', 'readOnlyHint')).to be(false)
+        expect(export.dig('annotations', 'destructiveHint')).to be(false)
+        expect(export.dig('annotations', 'openWorldHint')).to be(true)
       end
     end
 
@@ -92,6 +100,23 @@ RSpec.describe Spree::Mcp::Server do
 
         expect(cancel.dig('annotations', 'destructiveHint')).to be(true)
         expect(cancel.dig('annotations', 'readOnlyHint')).to be(false)
+        expect(cancel.dig('annotations', 'openWorldHint')).to be(true)
+      end
+
+      it 'tells an upload apart from a delete' do
+        upload = tools.find { |tool| tool['name'] == 'upload_file' }
+        delete = tools.find { |tool| tool['name'] == 'delete_resource' }
+
+        expect(upload.dig('annotations', 'destructiveHint')).to be(false)
+        expect(delete.dig('annotations', 'destructiveHint')).to be(true)
+      end
+
+      # A create reaches every writable resource, refunds and payments
+      # among them, so it is warned about like any other write.
+      it 'keeps the generic create destructive' do
+        create = tools.find { |tool| tool['name'] == 'create_resource' }
+
+        expect(create.dig('annotations', 'destructiveHint')).to be(true)
       end
 
       it 'builds each action tool\'s schema from its Admin API operation' do
