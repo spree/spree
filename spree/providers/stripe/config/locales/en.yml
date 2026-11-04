@@ -6,6 +6,7 @@ en:
       errors:
         publishable_key_provided: You have provided your publishable key instead of your secret key
         secret_key_invalid: Secret key is invalid
+        single_account_while_paying_sellers: Only one Stripe payment method can be active while sellers are paid through Stripe Connect. Deactivate %{name} first
         stripe_unavailable: Something went wrong with Stripe. Try again later.
       payment_session_errors:
         payment_in_progress: A payment for this checkout is already in progress.

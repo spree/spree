@@ -910,6 +910,7 @@ en:
         oidc_authentication_failed: We could not sign you in with this provider. Please try again.
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
+        payout_provider_unavailable: "%{provider} cannot pay sellers on this store yet. Check its requirements, such as having exactly one active payment method of that provider"
         pickup_point_not_found: pickup point could not be found with this provider
         product_in_review: A product awaiting review is approved or rejected, not moved to another status
         product_not_in_store: must all belong to this store
