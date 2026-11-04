@@ -89,7 +89,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns every registered payment provider with the JSON Schema of its `preferences`. `installed` marks a provider the store already has, which a "Provider" picker leaves out.'
+      description 'Returns every registered payment provider with the JSON Schema of its `preferences`. `installed_count` is how many payment methods of that provider the store already has; a store may run several, one per provider account, each scoped with rules. `installed` is deprecated: use `installed_count`. Removed in 6.2.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/types'
@@ -111,8 +111,8 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)
           expect(data).to all(include('type', 'label'))
-          installed = data.to_h { |entry| [entry['type'], entry['installed']] }
-          expect(installed).to include('store_credit' => true, 'bogus' => false)
+          installed = data.to_h { |entry| [entry['type'], entry['installed_count']] }
+          expect(installed).to include('store_credit' => 1, 'bogus' => 0)
         end
       end
     end
@@ -170,6 +170,155 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['name']).to eq('Cheque')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/payment_methods/{payment_method_id}/rules' do
+    let(:payment_method_id) { payment_method.prefixed_id }
+    let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+    get 'List payment method rules' do
+      tags 'Payment Methods'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the conditions a payment method must meet to be offered at storefront checkout, such as a channel, a market or an order total range. Every active rule must pass; a method with no rules is offered everywhere. Payments taken in the dashboard ignore rules.'
+      admin_scope :read, :settings
+
+      admin_sdk_example 'payment-methods/rules-list'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :payment_method_id, in: :path, type: :string, required: true
+      filter_parameters_for
+
+      response '200', 'rules found' do
+        let!(:rule) { create(:company_payment_method_rule, payment_method: payment_method) }
+
+        schema SwaggerSchemaHelpers.paginated('PaymentMethodRule')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['data'].pluck('id')).to include(rule.prefixed_id)
+        end
+      end
+    end
+
+    post 'Create a payment method rule' do
+      tags 'Payment Methods'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Adds a condition to a payment method. `type` is a rule kind from the
+        payment method rule types endpoint, and `preferences` takes the values
+        its schema declares. Each kind can appear once per method. To run two
+        accounts of one provider, give each payment method a `market_rule`
+        with its own markets.
+      DESC
+      admin_scope :write, :settings
+
+      admin_sdk_example 'payment-methods/rules-create'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :payment_method_id, in: :path, type: :string, required: true
+      request_body_for
+
+      response '201', 'rule created' do
+        let(:body) { { type: 'order_total_rule', preferences: { min_totals: { USD: '5000.00' } } } }
+
+        schema '$ref' => '#/components/schemas/PaymentMethodRule'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['type']).to eq('order_total_rule')
+          expect(data['active']).to be(true)
+        end
+      end
+
+      response '422', 'unknown rule type' do
+        let(:body) { { type: 'not_a_rule' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/payment_methods/{payment_method_id}/rules/{id}' do
+    let(:payment_method_id) { payment_method.prefixed_id }
+    let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+    let(:rule) { create(:company_payment_method_rule, payment_method: payment_method) }
+    let(:id) { rule.prefixed_id }
+
+    patch 'Update a payment method rule' do
+      tags 'Payment Methods'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description "Changes a rule's settings or turns it off. Its `type` is fixed once created."
+      admin_scope :write, :settings
+
+      admin_sdk_example 'payment-methods/rules-update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :payment_method_id, in: :path, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+      request_body_for
+
+      response '200', 'rule updated' do
+        let(:body) { { active: false, preferences: { company_orders_only: false } } }
+
+        schema '$ref' => '#/components/schemas/PaymentMethodRule'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['active']).to be(false)
+        end
+      end
+    end
+
+    delete 'Delete a payment method rule' do
+      tags 'Payment Methods'
+      security [api_key: [], bearer_auth: []]
+      description 'Removes a condition from a payment method.'
+      admin_scope :write, :settings
+
+      admin_sdk_example 'payment-methods/rules-delete'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :payment_method_id, in: :path, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+
+      response '204', 'rule deleted' do
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/payment_method_rules/types' do
+    get 'List available payment method rule types' do
+      tags 'Payment Methods'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Enumerates the registered payment method rule kinds with their names, descriptions and preference schemas, for building an "Add condition" picker. Plugins extend the list by registering `Spree::PaymentMethodRule` subclasses in `Spree.payment_method_rules`.'
+      admin_scope :read, :settings
+
+      admin_sdk_example 'payment-methods/rule-types'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'types found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |type| type['type'] }).to include('channel_rule', 'market_rule', 'order_total_rule')
+          expect(data.first).to include('name', 'description', 'schema')
         end
       end
     end

@@ -4,6 +4,7 @@ import type DeliveryMethodRule from './generated/DeliveryMethodRule'
 import type Integration from './generated/Integration'
 import type OrderRoutingRule from './generated/OrderRoutingRule'
 import type PaymentMethod from './generated/PaymentMethod'
+import type PaymentMethodRule from './generated/PaymentMethodRule'
 import type PriceRule from './generated/PriceRule'
 import type PromotionRule from './generated/PromotionRule'
 import type SellerRequirement from './generated/SellerRequirement'
@@ -240,6 +241,52 @@ export interface PaymentMethodPreferencesMap {
 
 /** A payment method whose `preferences` are typed by its `type`. */
 export type TypedPaymentMethod = Narrowed<PaymentMethod, PaymentMethodPreferencesMap>
+
+/** Settings of the `channel_rule` payment method rule. */
+export type PaymentMethodRuleChannelRulePreferences = {
+  /** Prefixed `ch_` ids. */
+  channel_ids: Array<string>
+}
+
+/** Settings of the `company_rule` payment method rule. */
+export type PaymentMethodRuleCompanyRulePreferences = {
+  /** Prefixed `comp_` ids. */
+  company_ids: Array<string>
+  company_orders_only: boolean
+}
+
+/** Settings of the `customer_group_rule` payment method rule. */
+export type PaymentMethodRuleCustomerGroupRulePreferences = {
+  /** Prefixed `cg_` ids. */
+  customer_group_ids: Array<string>
+}
+
+/** Settings of the `market_rule` payment method rule. */
+export type PaymentMethodRuleMarketRulePreferences = {
+  /** Prefixed `mkt_` ids. */
+  market_ids: Array<string>
+}
+
+/** Settings of the `order_total_rule` payment method rule. */
+export type PaymentMethodRuleOrderTotalRulePreferences = {
+  min_totals: Record<string, string>
+  max_totals: Record<string, string>
+}
+
+/**
+ * The settings of each payment method rule type Spree ships, by `type`. An interface,
+ * so an extension types its own by declaration merging.
+ */
+export interface PaymentMethodRulePreferencesMap {
+  channel_rule: PaymentMethodRuleChannelRulePreferences
+  company_rule: PaymentMethodRuleCompanyRulePreferences
+  customer_group_rule: PaymentMethodRuleCustomerGroupRulePreferences
+  market_rule: PaymentMethodRuleMarketRulePreferences
+  order_total_rule: PaymentMethodRuleOrderTotalRulePreferences
+}
+
+/** A payment method rule whose `preferences` are typed by its `type`. */
+export type TypedPaymentMethodRule = Narrowed<PaymentMethodRule, PaymentMethodRulePreferencesMap>
 
 /** Settings of the `channel_rule` price rule. */
 export type PriceRuleChannelRulePreferences = {

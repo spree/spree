@@ -95,6 +95,7 @@ export { PackageTypeSchema, type PackageType } from './PackageType';
 export { PaymentSchema, type Payment } from './Payment';
 export { PaymentCaptureEventSchema, type PaymentCaptureEvent } from './PaymentCaptureEvent';
 export { PaymentMethodSchema, type PaymentMethod } from './PaymentMethod';
+export { PaymentMethodRuleSchema, type PaymentMethodRule } from './PaymentMethodRule';
 export { PaymentSourceSchema, type PaymentSource } from './PaymentSource';
 export { PaymentSplitSchema, type PaymentSplit } from './PaymentSplit';
 export { PermissionSchema, type Permission } from './Permission';

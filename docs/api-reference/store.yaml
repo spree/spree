@@ -1097,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3476979
-                  slug: product-3476979
+                  name: Product 3806979
+                  slug: product-3806979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1390,8 +1390,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3959085
-                  slug: product-3959085
+                  name: Product 4289085
+                  slug: product-4289085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1422,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3968209
-                  slug: product-3968209
+                  name: Product 4298209
+                  slug: product-4298209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1552,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4236885
-                slug: product-4236885
+                name: Product 4566885
+                slug: product-4566885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -2037,7 +2037,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 362 Lovely Street
+                  address1: 384 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2062,7 +2062,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 363 Lovely Street
+                  address1: 385 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2087,7 +2087,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 364 Lovely Street
+                  address1: 386 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2190,7 +2190,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a9cd29e72a70654182038480207bd929343f6a07
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--401a66529174b991d6bb3e308acbb271da6420b2
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -2198,7 +2198,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--d1ccdf3e94900f0c8f62feb07f43a3d33eb3b0df
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--f78e3efb0cc0a5b9ae930e4ea5cab339c9e4c1f2
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -2505,8 +2505,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 318715
-                    slug: product-318715
+                    name: Product 351715
+                    slug: product-351715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2626,8 +2626,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3192171
-                    slug: product-3192171
+                    name: Product 3522171
+                    slug: product-3522171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2915,7 +2915,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 323307 was removed because it was sold out
+                  message: Product 356307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -3158,8 +3158,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3243263
-                  slug: product-3243263
+                  name: Product 3573263
+                  slug: product-3573263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3382,8 +3382,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3268992
-                  slug: product-3268992
+                  name: Product 3598992
+                  slug: product-3598992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3413,7 +3413,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 384 Lovely Street
+                  address1: 406 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3439,7 +3439,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 383 Lovely Street
+                  address1: 405 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3614,11 +3614,12 @@ paths:
                     gateway_payment_profile_id:
                   payment_method:
                     id: pm_UkLWZg9DAJ
-                    name: Check 9
+                    name: Check 15
                     description:
                     type: check
                     session_required: false
                     source_required: false
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 discounts: []
@@ -3631,8 +3632,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3294794
-                  slug: product-3294794
+                  name: Product 3624794
+                  slug: product-3624794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3686,8 +3687,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 174
-                    code: UPS_GROUND_192
+                    name: UPS Ground 185
+                    code: UPS_GROUND_203
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -3710,7 +3711,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 174
+                    name: UPS Ground 185
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -3729,8 +3730,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 174
-                      code: UPS_GROUND_192
+                      name: UPS Ground 185
+                      code: UPS_GROUND_203
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -3742,7 +3743,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 390 Lovely Street
+                  address1: 412 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3765,7 +3766,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 389 Lovely Street
+                  address1: 411 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3952,8 +3953,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3622614
-                  slug: product-3622614
+                  name: Product 3952614
+                  slug: product-3952614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4147,8 +4148,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3633461
-                  slug: product-3633461
+                  name: Product 3963461
+                  slug: product-3963461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4336,8 +4337,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3658182
-                  slug: product-3658182
+                  name: Product 3988182
+                  slug: product-3988182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4391,8 +4392,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 195
-                    code: UPS_GROUND_214
+                    name: UPS Ground 206
+                    code: UPS_GROUND_225
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4415,7 +4416,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 195
+                    name: UPS Ground 206
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -4434,8 +4435,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 195
-                      code: UPS_GROUND_214
+                      name: UPS Ground 206
+                      code: UPS_GROUND_225
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4448,7 +4449,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 509 Lovely Street
+                  address1: 531 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4629,6 +4630,7 @@ paths:
                     type: store_credit
                     session_required: false
                     source_required: true
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 current_step: address
@@ -4657,8 +4659,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3675702
-                  slug: product-3675702
+                  name: Product 4005702
+                  slug: product-4005702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4869,6 +4871,7 @@ paths:
                     type: store_credit
                     session_required: false
                     source_required: true
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 current_step: address
@@ -4901,8 +4904,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3719569
-                  slug: product-3719569
+                  name: Product 4049569
+                  slug: product-4049569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5031,10 +5034,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 37463 cannot be delivered to the selected address
+                  message: Product 40763 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 375298 cannot be delivered to the selected address
+                  message: Product 408298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -5093,8 +5096,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 37463
-                  slug: product-37463
+                  name: Product 40763
+                  slug: product-40763
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5124,8 +5127,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 375298
-                  slug: product-375298
+                  name: Product 408298
+                  slug: product-408298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5340,8 +5343,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3819165
-                  slug: product-3819165
+                  name: Product 4149165
+                  slug: product-4149165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5620,11 +5623,13 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 221
+                  name: Credit Card 235
                   description:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
       requestBody:
@@ -5707,11 +5712,13 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 222
+                  name: Credit Card 236
                   description:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
         '404':
@@ -5775,11 +5782,13 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 224
+                  name: Credit Card 238
                   description:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
       requestBody:
@@ -5876,11 +5885,13 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 225
+                  name: Credit Card 239
                   description:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
         '404':
@@ -5971,11 +5982,12 @@ paths:
                 source:
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Check 10
+                  name: Check 16
                   description:
                   type: check
                   session_required: false
                   source_required: false
+                  public_preferences: {}
               schema:
                 "$ref": "#/components/schemas/Payment"
         '422':
@@ -6120,6 +6132,7 @@ paths:
                     type: store_credit
                     session_required: false
                     source_required: true
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 current_step: address
@@ -6148,8 +6161,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4469789
-                  slug: product-4469789
+                  name: Product 4799789
+                  slug: product-4799789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6333,8 +6346,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 448179
-                  slug: product-448179
+                  name: Product 481179
+                  slug: product-481179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6694,8 +6707,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 385496
-                  slug: product-385496
+                  name: Product 418496
+                  slug: product-418496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6758,8 +6771,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
-                    code: UPS_GROUND_228
+                    name: UPS Ground 220
+                    code: UPS_GROUND_239
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6782,7 +6795,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
+                    name: UPS Ground 220
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6801,8 +6814,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 209
-                      code: UPS_GROUND_228
+                      name: UPS Ground 220
+                      code: UPS_GROUND_239
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6814,7 +6827,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 565 Lovely Street
+                  address1: 587 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6837,7 +6850,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 566 Lovely Street
+                  address1: 588 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7166,7 +7179,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 335 Lovely Street
+                  address1: 357 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7191,7 +7204,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 336 Lovely Street
+                  address1: 358 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7216,7 +7229,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 337 Lovely Street
+                  address1: 359 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7430,7 +7443,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 349 Lovely Street
+                address1: 371 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -7516,7 +7529,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 355 Lovely Street
+                address1: 377 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -8074,8 +8087,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3495270
-                    slug: product-3495270
+                    name: Product 3825270
+                    slug: product-3825270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -8138,8 +8151,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 187
-                      code: UPS_GROUND_205
+                      name: UPS Ground 198
+                      code: UPS_GROUND_216
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8162,7 +8175,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 187
+                      name: UPS Ground 198
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -8181,8 +8194,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 187
-                        code: UPS_GROUND_205
+                        name: UPS Ground 198
+                        code: UPS_GROUND_216
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -8194,7 +8207,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 449 Lovely Street
+                    address1: 471 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8217,7 +8230,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 450 Lovely Street
+                    address1: 472 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8403,8 +8416,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3515633
-                  slug: product-3515633
+                  name: Product 3845633
+                  slug: product-3845633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -8467,8 +8480,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 189
-                    code: UPS_GROUND_207
+                    name: UPS Ground 200
+                    code: UPS_GROUND_218
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -8491,7 +8504,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 189
+                    name: UPS Ground 200
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -8510,8 +8523,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 189
-                      code: UPS_GROUND_207
+                      name: UPS Ground 200
+                      code: UPS_GROUND_218
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8523,7 +8536,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 455 Lovely Street
+                  address1: 477 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8546,7 +8559,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 456 Lovely Street
+                  address1: 478 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8740,7 +8753,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 483 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8765,7 +8778,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 462 Lovely Street
+                  address1: 484 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8791,7 +8804,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 462 Lovely Street
+                  address1: 484 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8817,7 +8830,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 483 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8913,7 +8926,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 463 Lovely Street
+                  address1: 485 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8938,7 +8951,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 464 Lovely Street
+                  address1: 486 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8964,7 +8977,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 464 Lovely Street
+                  address1: 486 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8990,7 +9003,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 463 Lovely Street
+                  address1: 485 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9690,11 +9703,13 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 227
+                  name: Credit Card 241
                   description:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSetupSession"
         '401':
@@ -9782,11 +9797,13 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 230
+                  name: Credit Card 244
                   description:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSetupSession"
         '404':
@@ -9863,11 +9880,13 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 232
+                  name: Credit Card 246
                   description:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSetupSession"
         '404':
@@ -11298,7 +11317,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-556
+                  sku: SKU-591
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11384,7 +11403,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-557
+                  sku: SKU-592
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11812,7 +11831,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-04T14:46:47.500Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11830,19 +11849,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-04T14:46:47.502Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-04T14:46:47.505Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-04T14:46:47.497Z'
                 meta:
                   page: 1
                   limit: 25
@@ -12510,7 +12529,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 419 Lovely Street
+                  address1: 441 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12644,7 +12663,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 425 Lovely Street
+                address1: 447 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -12914,8 +12933,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3485649
-                    slug: product-3485649
+                    name: Product 3815649
+                    slug: product-3815649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -12977,8 +12996,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 178
-                      code: UPS_GROUND_196
+                      name: UPS Ground 189
+                      code: UPS_GROUND_207
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -13001,7 +13020,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 178
+                      name: UPS Ground 189
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -13020,8 +13039,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 178
-                        code: UPS_GROUND_196
+                        name: UPS Ground 189
+                        code: UPS_GROUND_207
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -13033,7 +13052,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 433 Lovely Street
+                    address1: 455 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -13056,7 +13075,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 434 Lovely Street
+                    address1: 456 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -20692,6 +20711,11 @@ components:
           type: boolean
         source_required:
           type: boolean
+        public_preferences:
+          type: object
+          description: Configuration the storefront needs to load this method, such
+            as a Stripe publishable key. Each provider decides which of its preferences
+            are public; most have none.
         custom_fields:
           type: array
           items:
@@ -20703,6 +20727,7 @@ components:
       - type
       - session_required
       - source_required
+      - public_preferences
       x-typelizer: true
     Payment:
       type: object
