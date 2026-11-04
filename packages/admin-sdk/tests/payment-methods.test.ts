@@ -182,7 +182,9 @@ describe('paymentMethods', () => {
         type: 'channel_rule',
         preferences: { channel_ids: ['ch_1'] },
       })
-      const updated = await client.paymentMethods.rules.update('pm_1', 'pmrule_1', { active: false })
+      const updated = await client.paymentMethods.rules.update('pm_1', 'pmrule_1', {
+        active: false,
+      })
 
       expect(bodies).toEqual([
         { type: 'channel_rule', preferences: { channel_ids: ['ch_1'] } },
@@ -200,7 +202,9 @@ describe('paymentMethods', () => {
         }),
         http.get(`${API_PREFIX}/payment_method_rules/types`, () =>
           HttpResponse.json({
-            data: [{ type: 'market_rule', name: 'Market', description: '', schema: { type: 'object' } }],
+            data: [
+              { type: 'market_rule', name: 'Market', description: '', schema: { type: 'object' } },
+            ],
           }),
         ),
       )

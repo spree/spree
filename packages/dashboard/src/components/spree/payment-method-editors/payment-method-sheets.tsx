@@ -226,6 +226,12 @@ export function EditPaymentMethodSheet({
       storefront_visible: paymentMethod.storefront_visible ?? true,
       active: paymentMethod.active,
       capture_method: paymentMethod.capture_method ?? '',
+      rules: (paymentMethod.rules ?? []).map((rule) => ({
+        id: rule.id,
+        type: rule.type,
+        active: rule.active,
+        preferences: rule.preferences ?? {},
+      })),
     })
     const initialPreferences = (paymentMethod.preferences as Record<string, unknown>) ?? {}
     setPreferences(initialPreferences)

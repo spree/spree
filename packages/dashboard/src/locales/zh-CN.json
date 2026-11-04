@@ -4636,6 +4636,17 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "active": "开启或关闭 {{name}}",
+        "add": "添加条件",
+        "description": "仅当所有启用的条件都满足时，才在店铺结账时提供此支付方式。在后台录入的付款不受这些条件限制。",
+        "empty": "没有条件 — 此支付方式在每次结账时都会提供。",
+        "fields": {
+          "max_totals": "最高订单金额",
+          "min_totals": "最低订单金额"
+        },
+        "title": "结账条件"
+      },
       "create_description": "选择服务商并配置其凭据。",
       "create_label": "创建支付方式",
       "delete_confirm": {
@@ -4649,6 +4660,7 @@
         "updated": "支付方式已更新"
       },
       "provider_description": "服务商：{{provider}}",
+      "provider_installed": "{{provider}} · 已安装 {{count}} 个",
       "status": {
         "disabled": "已禁用"
       },

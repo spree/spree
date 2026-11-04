@@ -1345,6 +1345,28 @@
           "description": "Cumplir desde la ubicación fijada en el pedido, cuando esté definida"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "Ofrecer este método de pago solo en los canales de venta seleccionados",
+          "name": "Canal"
+        },
+        "company_rule": {
+          "description": "Ofrecer este método de pago solo a pedidos realizados para una empresa, o para las empresas seleccionadas y sus divisiones",
+          "name": "Empresa"
+        },
+        "customer_group_rule": {
+          "description": "Ofrecer este método de pago solo a clientes de los grupos seleccionados",
+          "name": "Grupo de clientes"
+        },
+        "market_rule": {
+          "description": "Ofrecer este método de pago solo en los mercados seleccionados; también es como una tienda usa una segunda cuenta de un proveedor",
+          "name": "Mercado"
+        },
+        "order_total_rule": {
+          "description": "Ofrecer este método de pago solo cuando el total del pedido esté dentro de un rango, definido por moneda",
+          "name": "Total del pedido"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "Canal",

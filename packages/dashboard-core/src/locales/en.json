@@ -2020,6 +2020,28 @@
           "description": "Fulfill from the location pinned on the order, when one is set"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "Offer this payment method only on the selected sales channels",
+          "name": "Channel"
+        },
+        "company_rule": {
+          "description": "Offer this payment method only to orders placed for a company, or for the selected companies and their divisions",
+          "name": "Company"
+        },
+        "customer_group_rule": {
+          "description": "Offer this payment method only to customers in the selected groups",
+          "name": "Customer group"
+        },
+        "market_rule": {
+          "description": "Offer this payment method only in the selected markets — also how a store runs a second account of one provider",
+          "name": "Market"
+        },
+        "order_total_rule": {
+          "description": "Offer this payment method only when the order total is within a range, set per currency",
+          "name": "Order total"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "Channel",

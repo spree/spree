@@ -4704,6 +4704,17 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "active": "Włącz lub wyłącz: {{name}}",
+        "add": "Dodaj warunek",
+        "description": "Ta metoda płatności jest oferowana w kasie sklepu tylko wtedy, gdy spełnione są wszystkie aktywne warunki. Płatności przyjmowane w panelu je pomijają.",
+        "empty": "Brak warunków — ta metoda płatności jest oferowana przy każdym zamówieniu.",
+        "fields": {
+          "max_totals": "Maksymalna wartość zamówienia",
+          "min_totals": "Minimalna wartość zamówienia"
+        },
+        "title": "Warunki w kasie"
+      },
       "create_description": "Wybierz dostawcę i skonfiguruj jego dane uwierzytelniające.",
       "create_label": "Utwórz metodę płatności",
       "delete_confirm": {
@@ -4717,6 +4728,7 @@
         "updated": "Zaktualizowano metodę płatności"
       },
       "provider_description": "Dostawca: {{provider}}",
+      "provider_installed": "{{provider}} · zainstalowano: {{count}}",
       "status": {
         "disabled": "Wyłączona"
       },

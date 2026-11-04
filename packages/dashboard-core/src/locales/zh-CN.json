@@ -2017,6 +2017,28 @@
           "description": "如订单已指定库存地点，则从该地点发货"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "仅在所选销售渠道提供此支付方式",
+          "name": "渠道"
+        },
+        "company_rule": {
+          "description": "仅向以公司名义下的订单，或所选公司及其部门的订单提供此支付方式",
+          "name": "公司"
+        },
+        "customer_group_rule": {
+          "description": "仅向所选群组中的客户提供此支付方式",
+          "name": "客户群组"
+        },
+        "market_rule": {
+          "description": "仅在所选市场提供此支付方式 — 店铺也通过这种方式使用同一服务商的第二个账户",
+          "name": "市场"
+        },
+        "order_total_rule": {
+          "description": "仅当订单总额在按币种设置的范围内时提供此支付方式",
+          "name": "订单总额"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "销售渠道",
