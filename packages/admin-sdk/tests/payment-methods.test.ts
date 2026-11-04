@@ -203,7 +203,7 @@ describe('paymentMethods', () => {
         http.get(`${API_PREFIX}/payment_method_rules/types`, () =>
           HttpResponse.json({
             data: [
-              { type: 'market_rule', name: 'Market', description: '', schema: { type: 'object' } },
+              { type: 'market_rule', label: 'Market', description: '', schema: { type: 'object' } },
             ],
           }),
         ),
