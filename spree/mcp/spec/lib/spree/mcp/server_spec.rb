@@ -103,12 +103,20 @@ RSpec.describe Spree::Mcp::Server do
         expect(cancel.dig('annotations', 'openWorldHint')).to be(true)
       end
 
-      it 'tells a create apart from a delete' do
-        create = tools.find { |tool| tool['name'] == 'create_resource' }
+      it 'tells an upload apart from a delete' do
+        upload = tools.find { |tool| tool['name'] == 'upload_file' }
         delete = tools.find { |tool| tool['name'] == 'delete_resource' }
 
-        expect(create.dig('annotations', 'destructiveHint')).to be(false)
+        expect(upload.dig('annotations', 'destructiveHint')).to be(false)
         expect(delete.dig('annotations', 'destructiveHint')).to be(true)
+      end
+
+      # A create reaches every writable resource, refunds and payments
+      # among them, so it is warned about like any other write.
+      it 'keeps the generic create destructive' do
+        create = tools.find { |tool| tool['name'] == 'create_resource' }
+
+        expect(create.dig('annotations', 'destructiveHint')).to be(true)
       end
 
       it 'builds each action tool\'s schema from its Admin API operation' do
