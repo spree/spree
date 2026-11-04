@@ -47,22 +47,36 @@ test.describe('seller panel — products', () => {
     await page.getByRole('button', { name: /create stock location/i }).click()
     await expect(page.getByRole('row').filter({ hasText: shelf })).toBeVisible({ timeout: 15_000 })
 
-    const name = `E2E Stocked Lamp ${Date.now()}`
-    await listProduct(page, home, name)
+    try {
+      const name = `E2E Stocked Lamp ${Date.now()}`
+      await listProduct(page, home, name)
 
-    const onHand = inventoryCard(page).getByRole('textbox', {
-      name: new RegExp(`^on hand at ${shelf}$`, 'i'),
-    })
-    await onHand.dblclick()
-    await onHand.fill('7')
-    await onHand.press('Tab')
-    await page.getByRole('button', { name: /^save$/i }).click()
-    await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
+      const onHand = inventoryCard(page).getByRole('textbox', {
+        name: new RegExp(`^on hand at ${shelf}$`, 'i'),
+      })
+      await onHand.dblclick()
+      await onHand.fill('7')
+      await onHand.press('Tab')
+      await page.getByRole('button', { name: /^save$/i }).click()
+      await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
 
-    await page.goto(`${home}/products`)
-    await expect(productRow(page, name).getByText(/^7 in stock$/i)).toBeVisible({
-      timeout: 15_000,
-    })
+      await page.goto(`${home}/products`)
+      await expect(productRow(page, name).getByText(/^7 in stock$/i)).toBeVisible({
+        timeout: 15_000,
+      })
+    } finally {
+      // The fixture seller is shared, so its locations must not pile up.
+      const admin = await adminApiSession(page)
+      const found = await adminRequest<{ data: { id: string }[] }>(
+        page,
+        admin,
+        'get',
+        `/stock_locations?q[name_eq]=${encodeURIComponent(shelf)}`,
+      )
+      for (const location of found.data) {
+        await adminRequest(page, admin, 'delete', `/stock_locations/${location.id}`)
+      }
+    }
   })
 
   test('renames a listing from its own page', async ({ page }) => {

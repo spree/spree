@@ -3837,11 +3837,6 @@
             "no_variants": "Thêm ít nhất một biến thể để bắt đầu chỉnh sửa giá."
           }
         },
-        "inventory": {
-          "in_stock_short": "Còn hàng",
-          "on_backorder": "Đang đặt hàng trước",
-          "out_of_stock": "Hết hàng"
-        },
         "media_empty": "Chưa có phương tiện truyền thông nào.",
         "media_upload": "Tải lên phương tiện",
         "new": {

@@ -9,6 +9,17 @@ export interface ProductStockFields {
 }
 
 /**
+ * Whether a product has stock, by its total rather than `in_stock`. Null is
+ * untracked stock, which is unlimited; undefined is a server too old to send
+ * a total, which leaves only the sellable flag to go by. Shared so every place
+ * that labels a product's stock agrees.
+ */
+export function productInStock(product: Pick<ProductStockFields, 'in_stock' | 'total_on_hand'>) {
+  const total = product.total_on_hand
+  return total === undefined ? product.in_stock : total === null || total > 0
+}
+
+/**
  * A product's stock in a products list: how many units are on hand, on
  * backorder, or out of stock, followed by the variant count when there are
  * several. Shared by the admin and seller product lists.
@@ -19,13 +30,9 @@ export interface ProductStockFields {
  */
 export function ProductStockSummary({ product }: { product: ProductStockFields }) {
   const { t } = useTranslation()
-
-  // Null is untracked stock, which is unlimited. Undefined is a server too
-  // old to send a total, which leaves only the sellable flag to go by.
   const total = product.total_on_hand
-  const inStock = total === undefined ? product.in_stock : total === null || total > 0
 
-  const status = inStock ? (
+  const status = productInStock(product) ? (
     typeof total === 'number' ? (
       t('admin.components.product_stock.in_stock', { count: total })
     ) : (

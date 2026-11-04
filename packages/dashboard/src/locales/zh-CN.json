@@ -3826,11 +3826,6 @@
             "no_variants": "至少添加一个变体以开始编辑价格。"
           }
         },
-        "inventory": {
-          "in_stock_short": "有库存",
-          "on_backorder": "可延期交货",
-          "out_of_stock": "缺货"
-        },
         "media_empty": "暂无媒体。",
         "media_upload": "上传媒体",
         "new": {

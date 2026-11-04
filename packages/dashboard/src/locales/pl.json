@@ -3877,11 +3877,6 @@
             "no_variants": "Dodaj co najmniej jeden wariant, aby rozpocząć edycję cen."
           }
         },
-        "inventory": {
-          "in_stock_short": "W magazynie",
-          "on_backorder": "Na zamówienie",
-          "out_of_stock": "Brak w magazynie"
-        },
         "media_empty": "Brak multimediów.",
         "media_upload": "Prześlij multimedia",
         "new": {
