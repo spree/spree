@@ -70,6 +70,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'request_store', '~> 1.5'
 
   s.add_dependency 'stringex'
+  # stringex requires ostruct without declaring it; ostruct is no longer a default gem since Ruby 4.0
+  s.add_dependency 'ostruct'
   s.add_dependency 'tracking_number'
   s.add_dependency 'validates_zipcode'
   s.add_dependency 'valvat', '~> 2.0'

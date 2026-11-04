@@ -21,6 +21,7 @@ module Spree
       # passes; whatever uses the file checks its own permission after.
       permission 'write_products'
       mutating!
+      additive!
 
       param :filename, description: 'The file name, with its extension', required: true
       param :content, description: 'The file contents — text as text, binary base64 encoded',

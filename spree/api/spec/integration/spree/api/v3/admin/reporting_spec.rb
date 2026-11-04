@@ -10,6 +10,7 @@ RSpec.describe 'Admin Reporting API', type: :request, swagger_doc: 'api-referenc
   path '/api/v3/admin/reporting/query' do
     post 'Run a reporting query' do
       tags 'Reports'
+      agent_tool false, reason: 'query_report runs this query, with describe_reporting to learn the vocabulary first.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

@@ -1,4 +1,4 @@
-import type { FilterPredicate } from '@spree/core'
+import { type FilterPredicate, randomUUID } from '@spree/core'
 import {
   Button,
   Checkbox,
@@ -865,7 +865,7 @@ function QuickEnumFilter({
       onFiltersChange([
         ...others,
         {
-          id: existing?.id ?? crypto.randomUUID(),
+          id: existing?.id ?? randomUUID(),
           field: column.key,
           operator: 'in',
           value: values.join(','),
@@ -956,7 +956,7 @@ function QuickResourceFilter({
       onFiltersChange([
         ...others,
         {
-          id: existing?.id ?? crypto.randomUUID(),
+          id: existing?.id ?? randomUUID(),
           field: column.key,
           operator: 'in',
           value: values.join(','),
@@ -1039,14 +1039,14 @@ function QuickDateFilter({
       const next: FilterRule[] = [...others]
       if (rangeFrom) {
         next.push({
-          id: crypto.randomUUID(),
+          id: randomUUID(),
           field: column.key,
           operator: 'gteq',
           value: rangeFrom,
         })
       }
       if (rangeTo) {
-        next.push({ id: crypto.randomUUID(), field: column.key, operator: 'lteq', value: rangeTo })
+        next.push({ id: randomUUID(), field: column.key, operator: 'lteq', value: rangeTo })
       }
       onFiltersChange(next)
     },
@@ -1626,10 +1626,7 @@ function FilterPanel({
     const others = filters.filter(
       (f) => !(f.field === field && f.operator === nextOperator) && f.id !== editing,
     )
-    onApply([
-      ...others,
-      { id: crypto.randomUUID(), field, operator: nextOperator, value: nextValue },
-    ])
+    onApply([...others, { id: randomUUID(), field, operator: nextOperator, value: nextValue }])
   }
 
   /** Replace this field's bounds with a preset's, and close. */
@@ -1641,10 +1638,10 @@ function FilterPanel({
     )
     const next = [...others]
     if (range.from) {
-      next.push({ id: crypto.randomUUID(), field, operator: 'gteq', value: range.from })
+      next.push({ id: randomUUID(), field, operator: 'gteq', value: range.from })
     }
     if (range.to) {
-      next.push({ id: crypto.randomUUID(), field, operator: 'lteq', value: range.to })
+      next.push({ id: randomUUID(), field, operator: 'lteq', value: range.to })
     }
     onApply(next)
   }
@@ -1672,7 +1669,7 @@ function FilterPanel({
     onChange(
       next.length === 0
         ? others
-        : [...others, { id: crypto.randomUUID(), field, operator: 'in', value: next.join(',') }],
+        : [...others, { id: randomUUID(), field, operator: 'in', value: next.join(',') }],
     )
   }
 
@@ -1911,7 +1908,7 @@ function FilterPanel({
                   const next = [...others]
                   if (customRange.from) {
                     next.push({
-                      id: crypto.randomUUID(),
+                      id: randomUUID(),
                       field,
                       operator: 'gteq',
                       value: customRange.from,
@@ -1919,7 +1916,7 @@ function FilterPanel({
                   }
                   if (customRange.to) {
                     next.push({
-                      id: crypto.randomUUID(),
+                      id: randomUUID(),
                       field,
                       operator: 'lteq',
                       value: customRange.to,

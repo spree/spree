@@ -495,6 +495,14 @@
         "discard_confirm": "破棄",
         "discard_message": "ここまで入力した内容はすべて失われます。元に戻すことはできません。",
         "discard_title": "この下書きを破棄しますか？"
+      },
+      "product_stock": {
+        "out_of_stock": "在庫切れ",
+        "on_backorder": "入荷待ち",
+        "in_stock": "在庫 {{count}}",
+        "in_stock_short": "在庫あり",
+        "variants_one": "バリアント {{count}} 件",
+        "variants_other": "バリアント {{count}} 件"
       }
     },
     "currency_amounts": {

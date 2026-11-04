@@ -3887,12 +3887,6 @@
             "no_variants": "Dodaj co najmniej jeden wariant, aby rozpocząć edycję cen."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} w magazynie",
-          "in_stock_short": "W magazynie",
-          "on_backorder": "Na zamówienie",
-          "out_of_stock": "Brak w magazynie"
-        },
         "media_empty": "Brak multimediów.",
         "media_upload": "Prześlij multimedia",
         "new": {
@@ -4093,11 +4087,7 @@
           "section_to": "Do",
           "sheet_title": "Nowy transfer magazynowy"
         },
-        "variants_empty": "Brak wariantów.",
-        "variants_few": "{{count}} warianty",
-        "variants_many": "{{count}} wariantów",
-        "variants_one": "{{count}} wariant",
-        "variants_other": "{{count}} wariantów"
+        "variants_empty": "Brak wariantów."
       },
       "profile": {
         "load_failed_title": "Nie udało się załadować Twojego profilu",

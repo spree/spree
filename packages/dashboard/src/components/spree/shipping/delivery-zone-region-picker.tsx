@@ -1,5 +1,5 @@
 import type { DeliveryZone } from '@spree/admin-sdk'
-import type { CountryCode } from '@spree/core'
+import { type CountryCode, randomUUID } from '@spree/core'
 import { useCountryDisplayName, useSortByCountryName, useStore } from '@spree/dashboard-core'
 import {
   Button,
@@ -386,7 +386,7 @@ function PostalRulesSection({
   // must not gain one, so React keys are minted here and kept out of the value.
   const keys = useRef<string[]>([])
   while (keys.current.length < rules.length) {
-    keys.current = [...keys.current, `postal-rule-${crypto.randomUUID()}`]
+    keys.current = [...keys.current, `postal-rule-${randomUUID()}`]
   }
 
   const countryOptions = countries

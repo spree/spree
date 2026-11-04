@@ -14,21 +14,23 @@ module Spree
       param :id, description: 'The record id as shown in search results', required: true
       param :expand, type: :array, items: :string,
                      description: "Associations to include, e.g. [\"variants\"] on a product"
+      param :parent_id, description: PARENT_ID_DESCRIPTION
 
-      def call(resource:, id:, expand: nil)
+      def call(resource:, id:, expand: nil, parent_id: nil)
         entry = ResourceMap.find(resource)
         return unknown_resource(resource) if entry.nil?
         return { error: "You do not have permission to read #{entry.key}." } unless
           context.permitted?(entry.permission)
 
-        path = entry.api_path(:show)
-        return { error: "#{entry.key} cannot be fetched one at a time." } if path.blank?
-        return nested_resource_error(entry, 'fetched', :show) if entry.nested?(:show)
+        return { error: "#{entry.key} cannot be fetched one at a time." } if entry.api_path(:show).blank?
+
+        path = entry.path_for(:show, id: id, parent_id: parent_id)
+        return nested_resource_error(entry, 'fetched', :show) if path.nil?
 
         requested, refusal = expansions(entry, expand)
         return refusal if refusal
 
-        response = dispatch.call(method: :get, path: path.sub(':id', id.to_s),
+        response = dispatch.call(method: :get, path: path,
                                  params: requested.any? ? { expand: requested.join(',') } : {})
         return { error: not_found(entry, id, response) } unless response.success?
 

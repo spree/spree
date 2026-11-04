@@ -14652,6 +14652,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   product_type_id:
                   delivery_profile_id: fp_UkLWZg9DAJ
+                  total_on_hand: 0
                 meta:
                   page: 1
                   limit: 25
@@ -14753,6 +14754,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -14863,6 +14865,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -14950,6 +14953,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -15091,6 +15095,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -15194,6 +15199,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
   "/api/v3/seller/products/{id}/archive":
@@ -15280,6 +15286,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
+                total_on_hand: 0
               schema:
                 "$ref": "#/components/schemas/Product"
   "/api/v3/seller/products/bulk_submit":
@@ -28397,6 +28404,9 @@ components:
         delivery_profile_id:
           type: string
           nullable: true
+        total_on_hand:
+          type: number
+          nullable: true
         submission:
           allOf:
           - "$ref": "#/components/schemas/ProductSubmission"
@@ -28432,6 +28442,7 @@ components:
       - updated_at
       - product_type_id
       - delivery_profile_id
+      - total_on_hand
       x-typelizer: true
     ProductSubmission:
       type: object

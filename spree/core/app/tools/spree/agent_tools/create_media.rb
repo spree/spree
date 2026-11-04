@@ -16,6 +16,7 @@ module Spree
                   'the file sits in the library for the merchant to place later.'
       permission 'write_media'
       mutating!
+      additive!
 
       param :file_id, description: 'The file_id upload_file returned', required: true
       param :product_id, description: "A product's prefixed id, to place the file in its gallery"
@@ -27,7 +28,7 @@ module Spree
         # endpoint resolves the parent, checks it and verifies the signed id,
         # so there is nothing to look up here first.
         path = if product_id.present?
-                 "/api/v3/admin/products/#{product_id}/media"
+                 "/api/v3/admin/products/#{ERB::Util.url_encode(product_id)}/media"
                else
                  '/api/v3/admin/media'
                end

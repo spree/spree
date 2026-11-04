@@ -72,4 +72,51 @@ RSpec.describe 'Admin Customer Tax Identifiers API', type: :request, swagger_doc
       end
     end
   end
+
+  path '/api/v3/admin/customers/{customer_id}/tax_identifiers/{id}/validate' do
+    let(:customer_id) { customer.prefixed_id }
+    let(:id) { tax_identifier.prefixed_id }
+    let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+    parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+    parameter name: :Authorization, in: :header, type: :string, required: true
+    parameter name: :customer_id, in: :path, type: :string, required: true
+    parameter name: :id, in: :path, type: :string, required: true
+
+    post 'Re-check a customer tax registration' do
+      tags 'Customers'
+      admin_sdk_example 'customer-tax-identifiers/validate'
+      operationId 'customer_tax_identifiers_validate'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Asks the registry again. Manual because a registry answers only "valid now" — a number verified
+        last year may have been deregistered since — and because a check that came back unavailable
+        cannot otherwise be retried without editing the number.
+      DESC
+      admin_scope :write, :customers
+
+      response '202', 'registry check queued' do
+        # Core ships no registry for eu_vat, so the spec installs the base
+        # validator; the queued job is not performed here.
+        around do |example|
+          with_tax_identifier_validator('eu_vat', 'Spree::TaxIdentifiers::Validator::Base') { example.run }
+        end
+
+        schema '$ref' => '#/components/schemas/TaxIdentifier'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['validation_status']).to eq('pending')
+        end
+      end
+
+      response '422', 'no validator installed for this kind' do
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['error']['code']).to eq('tax_id_not_validatable')
+        end
+      end
+    end
+  end
 end

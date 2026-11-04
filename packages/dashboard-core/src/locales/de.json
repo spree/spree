@@ -493,6 +493,14 @@
         "discard_confirm": "Verwerfen",
         "discard_message": "Alles bisher Eingegebene geht verloren. Das lässt sich nicht rückgängig machen.",
         "discard_title": "Entwurf verwerfen?"
+      },
+      "product_stock": {
+        "out_of_stock": "Nicht auf Lager",
+        "on_backorder": "Im Rückstand",
+        "in_stock": "{{count}} auf Lager",
+        "in_stock_short": "Auf Lager",
+        "variants_one": "{{count}} Variante",
+        "variants_other": "{{count}} Varianten"
       }
     },
     "currency_amounts": {

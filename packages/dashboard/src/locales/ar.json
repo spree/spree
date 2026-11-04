@@ -3879,12 +3879,6 @@
             "no_variants": "أضف متغيرًا واحدًا على الأقل لبدء تعديل الأسعار."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} في المخزون",
-          "in_stock_short": "في المخزون",
-          "on_backorder": "على المؤجل",
-          "out_of_stock": "إنتهى من المخزن"
-        },
         "media_empty": "لا توجد وسائل الإعلام بعد.",
         "media_upload": "تحميل الوسائط",
         "new": {
@@ -4077,9 +4071,7 @@
           "section_to": "ل",
           "sheet_title": "نقل المخزون الجديد"
         },
-        "variants_empty": "لا توجد متغيرات حتى الآن.",
-        "variants_one": "{{count}} البديل",
-        "variants_other": "{{count}} متغيرات"
+        "variants_empty": "لا توجد متغيرات حتى الآن."
       },
       "profile": {
         "load_failed_title": "تعذر تحميل ملفك الشخصي",

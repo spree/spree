@@ -347,4 +347,40 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       end
     end
   end
+
+  path '/api/v3/admin/orders/{id}/resend_digital_links' do
+    post 'Resend digital download links' do
+      tags 'Orders'
+      admin_sdk_example 'orders/resend-digital-links'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Emails the customer their download links for the digital products on
+        this order again. Nothing is sent when the order has no digital links or
+        the store does not send transactional emails. Use it when the original
+        email was lost; to restore used-up downloads or an expired link, reset
+        the digital link instead.
+      DESC
+      admin_scope :write, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :id, in: :path, type: :string, required: true,
+                description: 'Order ID'
+
+      response '200', 'digital links resent' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:order) { create(:completed_order_with_totals, store: store) }
+        let(:id) { order.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Order'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['id']).to eq(order.prefixed_id)
+        end
+      end
+    end
+  end
 end
