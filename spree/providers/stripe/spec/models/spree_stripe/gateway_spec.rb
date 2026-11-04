@@ -1298,6 +1298,18 @@ RSpec.describe SpreeStripe::Gateway do
         expect(build(:stripe_gateway, store: connect_store, name: 'Stripe EU', active: false)).to be_valid
       end
 
+      it 'refuses to reactivate a second account' do
+        second = create(:stripe_gateway, store: connect_store, name: 'Stripe EU', active: false)
+
+        expect(second.update(active: true)).to be(false)
+      end
+
+      it 'refuses to move an active account into the store' do
+        other_store_account = create(:stripe_gateway, store: create(:store), name: 'Stripe Other')
+
+        expect(other_store_account.update(store: connect_store)).to be(false)
+      end
+
       it 'still saves an account that was already active beside another' do
         second = create(:stripe_gateway, store: connect_store, name: 'Stripe EU', active: false)
         second.update_columns(active: true)
