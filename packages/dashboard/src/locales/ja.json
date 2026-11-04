@@ -3837,12 +3837,6 @@
             "no_variants": "価格の編集を始めるには、バリアントを 1 つ以上追加してください。"
           }
         },
-        "inventory": {
-          "in_stock": "在庫 {{count}}",
-          "in_stock_short": "在庫あり",
-          "on_backorder": "入荷待ち",
-          "out_of_stock": "在庫切れ"
-        },
         "media_empty": "メディアはまだありません。",
         "media_upload": "メディアをアップロード",
         "new": {
@@ -4035,9 +4029,7 @@
           "section_to": "移動先",
           "sheet_title": "新しい在庫の移動"
         },
-        "variants_empty": "バリアントはまだありません。",
-        "variants_one": "バリアント {{count}} 件",
-        "variants_other": "バリアント {{count}} 件"
+        "variants_empty": "バリアントはまだありません。"
       },
       "profile": {
         "load_failed_title": "プロフィールを読み込めませんでした",

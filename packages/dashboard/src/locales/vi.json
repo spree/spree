@@ -3837,12 +3837,6 @@
             "no_variants": "Thêm ít nhất một biến thể để bắt đầu chỉnh sửa giá."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} còn hàng",
-          "in_stock_short": "Còn hàng",
-          "on_backorder": "Đang đặt hàng trước",
-          "out_of_stock": "Hết hàng"
-        },
         "media_empty": "Chưa có phương tiện truyền thông nào.",
         "media_upload": "Tải lên phương tiện",
         "new": {
@@ -4035,9 +4029,7 @@
           "section_to": "Đến",
           "sheet_title": "Tạo phiếu chuyển kho"
         },
-        "variants_empty": "Chưa có biến thể nào.",
-        "variants_one": "{{count}} biến thể",
-        "variants_other": "{{count}} biến thể"
+        "variants_empty": "Chưa có biến thể nào."
       },
       "profile": {
         "load_failed_title": "Không thể tải hồ sơ của bạn",

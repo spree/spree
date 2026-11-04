@@ -655,7 +655,8 @@
     "columns": {
       "name": "Produit",
       "price": "Prix",
-      "status": "Statut"
+      "status": "Statut",
+      "inventory": "Stock"
     },
     "custom_fields": "Détails du produit",
     "details": "Détails",

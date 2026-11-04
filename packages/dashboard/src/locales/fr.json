@@ -3838,12 +3838,6 @@
             "no_variants": "Ajoutez au moins une variante pour commencer à modifier les prix."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} en stock",
-          "in_stock_short": "En stock",
-          "on_backorder": "En réapprovisionnement",
-          "out_of_stock": "En rupture de stock"
-        },
         "media_empty": "Aucun média pour le moment.",
         "media_upload": "Téléverser un média",
         "new": {
@@ -4036,9 +4030,7 @@
           "section_to": "Vers",
           "sheet_title": "Nouveau transfert de stock"
         },
-        "variants_empty": "Aucune variante pour le moment.",
-        "variants_one": "{{count}} variante",
-        "variants_other": "{{count}} variantes"
+        "variants_empty": "Aucune variante pour le moment."
       },
       "profile": {
         "load_failed_title": "Impossible de charger votre profil",

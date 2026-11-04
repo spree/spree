@@ -734,6 +734,13 @@ describe Spree::Product, type: :model do
       end
     end
 
+    it 'subtracts units placed orders have taken, loaded or not' do
+      product.stock_levels.first.update!(count_on_hand: 7, allocated_count: 2)
+
+      expect(described_class.find(product.id).total_on_hand).to be(5)
+      expect(described_class.find(product.id).tap { |fresh| fresh.variants.load }.total_on_hand).to be(5)
+    end
+
     it 'leaves out stock at an inactive location, loaded or not' do
       product.stock_levels.first.set_count_on_hand 5
       closed = create(:stock_location, store: product.store, active: false)

@@ -655,7 +655,8 @@
     "columns": {
       "name": "商品",
       "price": "価格",
-      "status": "状態"
+      "status": "状態",
+      "inventory": "在庫"
     },
     "custom_fields": "商品の詳細",
     "details": "詳細",

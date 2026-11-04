@@ -13,6 +13,7 @@ import {
   adminClient,
   defineSearchEntry,
   formatAmount,
+  productInStock,
   Subject,
   searchRegistry,
   useMoneyLocale,
@@ -247,11 +248,11 @@ searchRegistry.add(
 function ProductMeta({ product }: { product: Product }) {
   const { t } = useTranslation()
   const moneyLocale = useMoneyLocale()
-  const stock = product.in_stock
-    ? t('admin.pages.products.inventory.in_stock_short')
+  const stock = productInStock(product)
+    ? t('admin.components.product_stock.in_stock_short')
     : product.backorderable
-      ? t('admin.pages.products.inventory.on_backorder')
-      : t('admin.pages.products.inventory.out_of_stock')
+      ? t('admin.components.product_stock.on_backorder')
+      : t('admin.components.product_stock.out_of_stock')
   const price = formatAmount(product.price?.amount, product.price?.currency, moneyLocale, '')
 
   return (
