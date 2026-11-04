@@ -95,7 +95,7 @@ module Spree
 
             def collection_includes
               [:requested_by, :order, :return, :exchange, :claim,
-               { actions: [:line_item, :variant, :fulfillment, :delivery_method, :discount] }]
+               { actions: [:line_item, :variant, :fulfillment, :delivery_method] }]
             end
 
             private

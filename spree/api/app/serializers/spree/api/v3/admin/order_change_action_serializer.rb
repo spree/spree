@@ -30,7 +30,13 @@ module Spree
             Spree::Money::Rounding.format(record.amount, record.order_change.order.currency) unless record.amount.nil?
           end
 
-          prefixed_id_attributes :line_item, :variant, :fulfillment, :delivery_method, :discount
+          # From the column: a removed discount's row is gone, and the action
+          # still has to say which one it removed.
+          attribute :discount_id do |record|
+            Spree::Discount.prefixed_id_for(record.discount_id)
+          end
+
+          prefixed_id_attributes :line_item, :variant, :fulfillment, :delivery_method
         end
       end
     end

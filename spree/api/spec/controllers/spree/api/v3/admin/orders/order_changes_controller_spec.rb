@@ -110,6 +110,17 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(order.reload.discounts.manual.sole.line_item).to eq(line_item)
     end
 
+    it 'still names a discount it removed' do
+      discount = Spree.order_discount_create_service.call(order: order, label: 'Goodwill', value: 1, line_item: line_item).value.sole
+
+      post :create, params: {
+        order_id: order.prefixed_id, confirm: true, actions: [{ kind: 'remove_discount', discount_id: discount.prefixed_id }]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['actions'].first['discount_id']).to eq(discount.prefixed_id)
+    end
+
     it 'refuses a discount value that is not a decimal string' do
       post :create, params: {
         order_id: order.prefixed_id, actions: [{ kind: 'add_discount', label: 'Goodwill', value: 'ten' }]
