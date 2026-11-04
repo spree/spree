@@ -1,3 +1,13 @@
+## 2026-11-04: Manual discounts on a placed order are order change actions
+
+**Context:** The order change substrate covered item edits, restocks and replacement shipments, but a manual discount on a placed order was still written straight through `orders/:id/discounts`, so it was neither previewed, nor held behind the one-open-change rule, nor recorded. Medusa, Shopify and Vendure all treat a discount as part of an order edit.
+
+**Decision:** `add_discount`, `update_discount` and `remove_discount` are order change kinds, applied through the existing discount services after item edits. The order discounts endpoints apply a one-action change set on a placed order and keep their responses; drafts keep writing rows directly. Promotion rows stay read-only. Fees and delivery changes become kinds when a consumer needs them, fees next.
+
+**Consequences:** A discount added after placement shows in the order's change history and is refused while another change is open. Preview covers discounts. The edit screen does not yet stage discounts with item edits.
+
+**Plan amended:** `6.1-order-change-substrate.md` (Key Decisions, kinds, Phase 4b).
+
 ## 2026-11-03: OrderChange confirm moves no money; the edit screen previews statelessly and applies in one call
 
 **Context:** Implementing `6.1-order-change-substrate.md` (Phases 1–4) left three questions the plan did not settle: whether confirming a change set charges or refunds at the gateway, how the admin edit screen drives a change set, and how returns, exchanges and claims link to theirs.
