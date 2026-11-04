@@ -74,6 +74,10 @@ module Spree
     has_many :payment_sessions, class_name: 'Spree::PaymentSession', dependent: :destroy
     has_many :payment_setup_sessions, class_name: 'Spree::PaymentSetupSession', dependent: :destroy
     has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', dependent: :destroy
+    has_many :payment_method_rules, class_name: 'Spree::PaymentMethodRule',
+             dependent: :destroy, inverse_of: :payment_method
+
+    after_save :apply_pending_rules, if: -> { @pending_payment_method_rules.present? }
 
     def self.providers
       Spree.payment_methods
@@ -332,6 +336,22 @@ module Spree
       !order.covered_by_store_credit?
     end
 
+    # Storefront checkout eligibility: the gateway's own hook and every active
+    # rule. Back-office payments check {#available_for_order?} only.
+    #
+    # @param purchase [Spree::Cart, Spree::Order]
+    # @return [Boolean]
+    def eligible_for_order?(purchase)
+      available_for_order?(purchase) && payment_method_rules.select(&:active).all? { |rule| rule.eligible?(purchase) }
+    end
+
+    # Flat-payload writer for `rules`, so one PATCH saves the method and its
+    # conditions together. See
+    # {Spree::TypedAssociations#assign_typed_association}.
+    def rules=(rows)
+      assign_typed_association(:payment_method_rules, rows)
+    end
+
     def available_for_store?(store)
       return true if store.blank?
 
@@ -385,6 +405,10 @@ module Spree
 
     def public_preference_keys
       []
+    end
+
+    def apply_pending_rules
+      flush_pending_typed_association(:payment_method_rules)
     end
 
     def set_name
