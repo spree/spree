@@ -10,6 +10,9 @@
 // Only `v*` tags are posted; @spree/cli and create-spree-app releases are not.
 // Reads the release from the GitHub API with $GITHUB_TOKEN (optional locally),
 // or from the JSON file at $RELEASE_FILE.
+//
+// Contributors listed in .github/discord-contributors.json (GitHub login →
+// Discord user id) are pinged in the message; Discord can't notify by name.
 
 const REPO = process.env.GITHUB_REPOSITORY || 'spree/spree'
 const COLOR = 0x2ecc71
@@ -36,7 +39,7 @@ if (release.draft || release.prerelease) {
   process.exit(0)
 }
 
-const payload = { embeds: [buildEmbed(release)], allowed_mentions: { parse: [] } }
+const payload = { ...thanks(contributorsOf(release), await discordIds()), embeds: [buildEmbed(release)] }
 
 if (dryRun) {
   console.log(JSON.stringify(payload, null, 2))
@@ -111,9 +114,9 @@ export function buildEmbed(release) {
 
   // Upgrade notes and contributors always fit; the other sections fill what is left.
   const required = upgrades.slice(0, 3)
-  const contributors = [...new Set([...(release.body || '').matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1]))]
+  const contributors = contributorsOf(release)
   if (contributors.length) {
-    const names = contributors.map((c) => `[${c}](https://github.com/${c})`).join(', ')
+    const names = contributors.map((c) => `[@${c}](https://github.com/${c})`).join(', ')
     required.push({ name: `🙌 Thanks to ${contributors.length} community contributor${contributors.length > 1 ? 's' : ''}`, value: clip(names, 1024) })
   }
 
@@ -183,6 +186,31 @@ function title(release, lines) {
   if (release.name && release.name !== release.tag_name) return release.name
   const h1 = lines.find((l) => /^# Spree/.test(l))
   return h1 ? h1.slice(2) : `Spree ${release.tag_name.slice(1)}`
+}
+
+function contributorsOf(release) {
+  return [...new Set([...(release.body || '').matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1]))]
+}
+
+async function discordIds() {
+  const { readFile } = await import('node:fs/promises')
+  const file = new URL('../.github/discord-contributors.json', import.meta.url)
+  try {
+    return JSON.parse(await readFile(file, 'utf8'))
+  } catch (error) {
+    if (error.code === 'ENOENT') return {}
+    throw error
+  }
+}
+
+// Pings only the mapped contributors; nothing else in the notes can mention anyone.
+export function thanks(contributors, ids) {
+  const users = [...new Set(contributors.map((c) => ids[c]).filter((id) => /^\d{17,20}$/.test(id)))]
+  if (!users.length) return { allowed_mentions: { parse: [] } }
+  return {
+    content: `🙌 Thanks ${users.map((id) => `<@${id}>`).join(' ')} for contributing to this release!`,
+    allowed_mentions: { parse: [], users: users.slice(0, 100) },
+  }
 }
 
 // The first sentence of a bullet, without its pull request links and author.
