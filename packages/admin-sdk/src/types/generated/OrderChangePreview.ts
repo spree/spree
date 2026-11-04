@@ -18,7 +18,7 @@ interface OrderChangePreview {
   previous_total: string | null;
   /** What the customer would still owe after the change. Negative when they would be owed money back. */
   outstanding_balance: string | null;
-  /** How far the total moves: positive when the customer would owe more, negative when they would be owed a refund. */
+  /** How far the order total moves: positive when it goes up, negative when it goes down. Whether the customer owes money or is owed some is outstanding_balance. */
   balance_delta: string | null;
 }
 

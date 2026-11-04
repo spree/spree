@@ -53,7 +53,10 @@ module Spree
     # they would move stock nobody accounted for.
     def stock_kind_has_post_sale_record
       return unless STOCK_KINDS.include?(kind)
-      return if order_change&.post_sale_record
+
+      record = order_change&.post_sale_record
+      # A claim keeps the goods it is about, so it has nowhere to restock to.
+      return if record && (kind != 'receive_item' || record.respond_to?(:stock_location))
 
       errors.add(:kind, :requires_post_sale_record,
                  message: I18n.t('spree.order_change_requires_post_sale_record'))

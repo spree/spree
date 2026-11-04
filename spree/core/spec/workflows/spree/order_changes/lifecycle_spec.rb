@@ -6,8 +6,15 @@ RSpec.describe 'Spree::OrderChanges workflows' do
   let(:line_item) { order.line_items.first }
   let(:admin) { create(:admin_user) }
 
-  before { Spree.hooks.clear! }
-  after { Spree.hooks.clear! }
+  # Only this spec's own keys: clearing every hook would also drop the
+  # handlers the engine registers at boot.
+  around do |example|
+    order_change_hooks = -> { Spree.hooks.keys.grep(/\Aorder_changes\./).each { |key| Spree.hooks.unregister(key) } }
+    order_change_hooks.call
+    example.run
+  ensure
+    order_change_hooks.call
+  end
 
   def begin_change(target = order)
     Spree::OrderChanges::Begin.call(order: target, requested_by: admin).value
@@ -45,6 +52,13 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(result.error.value).to eq(:order_change_in_progress)
     end
 
+    it 'refuses a return, exchange or claim from another order' do
+      claim = create(:approved_claim, store: store, order: create(:completed_order_with_totals, store: store))
+
+      expect { Spree::OrderChanges::Begin.call(order: order, post_sale_record: claim) }
+        .to raise_error(ArgumentError, /another order/)
+    end
+
     it 'opens a new set once the previous one is closed' do
       Spree::OrderChanges::Cancel.call(order_change: begin_change)
 
@@ -62,6 +76,16 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(result).to be_success
       expect(result.value.variant).to eq(line_item.variant)
       expect(line_item.reload.quantity).not_to eq(5)
+    end
+
+    it 'refuses a restock on a claim, which keeps the goods it is about' do
+      claim = create(:approved_claim, store: store, order: order)
+      change = Spree::OrderChanges::Begin.call(order: order, post_sale_record: claim).value
+
+      result = Spree::OrderChanges::AddAction.call(order_change: change, kind: 'receive_item',
+                                                   variant: line_item.variant, quantity: 1)
+
+      expect(result).to be_failure
     end
 
     it 'refuses a line item from another order' do
@@ -180,7 +204,7 @@ RSpec.describe 'Spree::OrderChanges workflows' do
     # addition is caught.
     it 'fails without applying anything when an addition is out of stock' do
       variant = create(:variant)
-      variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
       change = requested_change({ kind: 'remove_item', line_item: line_item },
                                 { kind: 'add_item', variant: variant, quantity: 1 })
 
@@ -229,7 +253,7 @@ RSpec.describe 'Spree::OrderChanges workflows' do
     # be left behind for that transaction to commit.
     it 'leaves nothing applied when it fails inside a caller transaction' do
       variant = create(:variant)
-      variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      variant.stock_levels.update_all(count_on_hand: 0, backorderable: false)
       change = requested_change({ kind: 'update_item', line_item: line_item, quantity: 4 },
                                 { kind: 'add_item', variant: variant, quantity: 1 })
 
