@@ -201,15 +201,18 @@ function title(release, lines) {
   return h1 ? h1.slice(2) : `Spree ${release.tag_name.slice(1)}`
 }
 
-// Only change lines credit an author, so "configured by @someone" in prose doesn't.
+// Only change lines in the sections the post shows credit an author, so
+// "configured by @someone" in prose, a code block or Installation doesn't.
 function contributorsOf(release) {
-  const bullets = []
-  let inFence = false
-  for (const line of (release.body || '').split('\n')) {
-    if (line.trim().startsWith('```')) inFence = !inFence
-    else if (!inFence && /^\s*[-*] /.test(line)) bullets.push(line)
+  const lines = (release.body || '').replace(/\r/g, '').split('\n').map((l) => l.trim())
+  const bullets = parseSections(lines)
+    .filter(({ heading }) => !SKIP.test(heading))
+    .flatMap(({ body }) => body.filter((l) => /^[-*] /.test(l)))
+  const logins = new Map()
+  for (const [, login] of bullets.flatMap((l) => [...l.matchAll(/\bby \[?@([\w-]+)/g)])) {
+    if (!logins.has(login.toLowerCase())) logins.set(login.toLowerCase(), login)
   }
-  return [...new Set(bullets.flatMap((l) => [...l.matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1])))]
+  return [...logins.values()]
 }
 
 async function discordIds() {
@@ -256,7 +259,7 @@ function summary(bullet) {
     short = `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 3)}…`
   }
   // Never leave a code span open.
-  if (open(short)) short = `${short.replace(/…$/, '')}\`…`
+  if (open(short)) short = `${short.replace(/…$/, '').slice(0, MAX_SUMMARY - 2).trimEnd()}\`…`
   return short
 }
 
