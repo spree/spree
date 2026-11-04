@@ -251,6 +251,14 @@ A few rules to know:
 - **Drafts are edited directly** through the order. Order changes are for placed
   orders only.
 
+Manual discounts are order changes too. Alongside item actions, a change can
+carry `add_discount` (`label`, `value`, optional `value_type` and
+`line_item_id`), `update_discount` (`discount_id` with a new `label` or
+`amount`) and `remove_discount` (`discount_id`); discounts apply after the item
+edits, so an order-level discount is spread over the lines the change leaves.
+The [order discounts endpoints](/api-reference/admin) do the same on a placed
+order, one discount per change. Discounts from promotions are read-only.
+
 Returns, exchanges and claims use the same mechanism: receiving goods back and
 shipping replacements each leave an order change on the order, linked to the
 return, exchange or claim that made it.
