@@ -127,8 +127,61 @@ A `PaymentMethod` can have the following attributes:
 | `position`   | The position of the payment method in lists. Lower numbers appear first.                      | `1`                    |
 
 <Info>
-Each payment method is associated to a Store, so you can decide which Payment Method will appear on which Store. This allows you to create different experiences for your customers in different countries.
+Each payment method belongs to one store. To offer a method only on some channels, in some markets or to some customers, give it [rules](#payment-method-rules).
 </Info>
+
+### Payment method rules
+
+Rules decide whether a payment method is offered at storefront checkout. A method with no rules is offered everywhere; with rules, every active rule must pass. Rules read the cart's own channel, market, total, customer and company, so the cart's list of payment methods and payment and session creation all apply them. Payments created through the Admin API or the dashboard ignore rules, so staff can record any active method against an order.
+
+| Rule (`type`) | Preferences | Passes when |
+|---|---|---|
+| `channel_rule` | `channel_ids` | The cart is on one of the channels. |
+| `market_rule` | `market_ids` | The cart is in one of the markets. |
+| `order_total_rule` | `min_totals`, `max_totals` (amounts keyed by currency) | The total is within the bounds for the cart's currency. A currency with no amount is not limited. |
+| `customer_group_rule` | `customer_group_ids` | The customer belongs to one of the groups. Guests never pass. |
+| `company_rule` | `company_ids`, `company_orders_only` | The cart is placed for a listed company or one of its divisions. With no companies listed, `company_orders_only` requires any company. |
+
+An empty id list restricts nothing, so a rule saved half-configured never hides a method. Rules are sent with the payment method as `rules`, which replaces the whole set, or managed one at a time:
+
+<Tabs>
+<Tab title="Admin SDK">
+
+```typescript
+// Invoice only on the wholesale channel, and only above 500 EUR
+await adminClient.paymentMethods.update('pm_xyz789', {
+  rules: [
+    { type: 'channel_rule', preferences: { channel_ids: ['ch_wholesale'] } },
+    { type: 'order_total_rule', preferences: { min_totals: { EUR: '500.00' } } },
+  ],
+})
+
+// The kinds a store accepts, with each one's preference schema
+const { data: ruleTypes } = await adminClient.paymentMethods.ruleTypes()
+```
+
+</Tab>
+<Tab title="cURL">
+
+```bash
+curl -X POST 'https://api.mystore.com/api/v3/admin/payment_methods/pm_xyz789/rules' \
+  -H 'Authorization: Bearer sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "type": "channel_rule", "preferences": { "channel_ids": ["ch_wholesale"] } }'
+```
+
+</Tab>
+</Tabs>
+
+Extensions add rule kinds by subclassing `Spree::PaymentMethodRule`, implementing `eligible?(purchase)`, and appending the class to `Spree.payment_method_rules`. The provider's own `available_for_order?` check still runs first.
+
+### Several accounts of one provider
+
+A store can hold more than one payment method of the same provider. Each is a separate account, with its own credentials and webhook endpoint. Give each a `market_rule` with markets that don't overlap: rules never choose between methods, so two methods whose rules both pass are both offered.
+
+The Store API sends each method's `public_preferences`, the configuration a storefront needs to load it. Stripe lists its publishable key there, so the storefront loads Stripe.js with the account the cart was offered. A provider gem makes a preference public by listing it in `public_preference_keys`.
+
+<Warning>While a store pays sellers through Stripe Connect, only one Stripe payment method may be active: a seller's connected account belongs to one Stripe platform account. Activating a second one, or switching the store to Stripe Connect while two are active, is refused.</Warning>
 
 ### Session-based vs direct payment methods
 
