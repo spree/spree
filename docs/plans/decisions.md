@@ -1,3 +1,13 @@
+## 2026-11-02: Payment method rules retarget to 6.1; multiple accounts of one provider are records scoped by rules
+
+**Context:** `6.1-payment-method-rules.md` (then `6.0-…`) was not built in 6.0. The 2026-07-23 entry below had parked "multiple provider credentials in one store" for grooming, with two candidate shapes. Reviewing it against what shipped since: an open-source platform's hosted payments product (October 2026) added multiple accounts with no data model at all — one provider instance registered per account, scoped by region — and the hosted leader's multi-entity model is one payments account per legal entity mapped to markets. In Spree, two `SpreeStripe::Gateway` records in one store already work at the data layer (own keys, own webhook endpoint and secret, own sessions and gateway customers); only the dashboard's "installed" filter, the storefront's single publishable key from an environment variable, and the marketplace payout provider's "first Stripe method" lookup stand in the way. The Company tree also shipped (2026-08-25), and the checkout seam moved to `Spree::Purchase::PaymentProcessing#payment_methods` on carts, which the cart payment-sessions controller bypasses.
+
+**Decision:** Retarget the plan to 6.1 and rename it. Multiple accounts of one provider are multiple `PaymentMethod` records with a `MarketRule` (or `ChannelRule`) on each — Phase 2 of the rules plan, not a plan of its own and not a credential map on one record. Phase 2 is plumbing: `public_preferences` on the Store API payment method (Stripe lists its publishable key, reclassified from password to string), `installed` on the admin types endpoint becomes a deprecated flag beside `installed_count` and stops gating the dashboard picker and Integrations gallery, and the storefront reads the key from the chosen method with the environment variable as a one-release fallback. Marketplaces: the Stripe payout provider resolves the gateway from the order's funding payment, and while a store pays sellers through Stripe Connect only one Stripe method may be active, enforced by validation. `CompanyRule` joins the initial rule set (matching the purchase's company or any ancestor). `OrderTotalRule` thresholds are per currency, in the `Calculator::CurrencyAmounts` shape, with a missing currency meaning unrestricted. Session creation is routed through the seam in Phase 1.
+
+**Consequences:** No new model or table beyond `spree_payment_method_rules`. Nothing may assume one payment method per provider per store; a gem needing a per-store singleton states it as a validation with a reason (Stripe Connect is the one known case). `6.0-integrations-admin.md`'s one-integration-per-(store, type) rule stands — this decision is about payment methods only. Seller onboarding per platform account, a backend enforcement toggle and a dashboard overlap warning stay deferred with their unblockers named in the plan.
+
+**Plan:** `6.1-payment-method-rules.md` (renamed from `6.0-payment-method-rules.md`; links updated in seven plans). **Plans amended:** `6.0-integrations-admin.md` (multi-account note).
+
 ## 2026-10-06: Custom fields stay a merchant-facing feature, not a data modelling system
 
 **Context:** Custom fields were heading toward a general-purpose schema (record references, files, value lists, reusable content types) while basic gaps went unfixed: admin-only fields leaked through storefront search, a definition's type can change under existing values, shoppers cannot fill a field in at checkout, and core itself stores integration data in auto-created definitions. Revised 2026-11-02 after a review against the code and the plans written since, with 6.0.0 already released.
@@ -7,6 +17,7 @@
 **Consequences:** Every shopper-facing read filters `storefront_visible: true`. API writes resolve existing definitions and never auto-create them. Required checkout input is a checkout requirement, never only a completion hook. No update path (API, import, configurator) may change a definition's type. See `6.0-6.1-custom-fields-roadmap.md`.
 
 **Plans amended:** `5.4-metafield-translations.md` (6.1, superseded on mechanism), `5.5-6.0-resource-translations-api.md` (custom-field phase moves to 6.1), `5.4-search-provider.md` (faceting dropped, filterable-attribute constraint superseded), `6.0-extendable-validations.md` (validation designed here; checkout requirement, not hook), `6.0-seller-order-management.md` (sellers see shopper-writable order fields), `6.0-payment-gateways-monorepo.md` (Adyen references in metadata), `6.0-admin-spa.md` (6.1 kinds), `6.0-cli-configurator.md` (section order, no type updates). Amends decisions.md "`storefront_visible` boolean (default: true)" for custom field definitions only.
+
 
 ## 2026-10-27: PayPal becomes a provider gem in a 6.0 patch release
 
@@ -751,7 +762,7 @@ call on what a pickup date range promises when stock has to travel.
 
 **Context:** `6.0-b2b-wholesale-shipping.md` originally specified deposits as part of wholesale freight: a delivery method would carry a `deposit_percentage`, checkout would collect it, and the order would complete part-paid. Building it raised two questions that had to be answered before it could ship. Is a shipping method the right thing to hang a payment arrangement on? And does merchant-configurable deposit collection belong in open source at all? Researching the second answered the first.
 
-**Decision:** This plan covers how goods **ship**; how the buyer **pays** is a separate subject with its own plan. Three findings drove it. **Deposits and net terms are two halves of one arrangement** — merchants combine them ("40% deposit, balance Net 30"), and the only native implementation in the market models the deposit as an attribute *on* a payment term. Shipping half the subject inside a shipping plan leaves a vocabulary with no way to set it and no home for the other half. **The arrangement belongs to the buyer, not the shipment** — a deposit is negotiated with a company; no comparable platform configures one per shipping method, and every one that offers deposits scopes them per product, per customer, or per order. **Two OSS plans already defer net terms** to a payment-terms plan that does not exist (`6.0-payment-method-rules.md`, `6.0-6.1-b2b-payment-terms.md`), so the destination was already named — it just had not been written.
+**Decision:** This plan covers how goods **ship**; how the buyer **pays** is a separate subject with its own plan. Three findings drove it. **Deposits and net terms are two halves of one arrangement** — merchants combine them ("40% deposit, balance Net 30"), and the only native implementation in the market models the deposit as an attribute *on* a payment term. Shipping half the subject inside a shipping plan leaves a vocabulary with no way to set it and no home for the other half. **The arrangement belongs to the buyer, not the shipment** — a deposit is negotiated with a company; no comparable platform configures one per shipping method, and every one that offers deposits scopes them per product, per customer, or per order. **Two OSS plans already defer net terms** to a payment-terms plan that does not exist (`6.1-payment-method-rules.md`, `6.0-6.1-b2b-payment-terms.md`), so the destination was already named — it just had not been written.
 
 **Consequences:** No delivery method carries a `deposit_percentage`, and freight must not become a second place payment arrangements are configured. One piece is deliberately kept so the payment-terms plan starts from a hook rather than from patching: `Purchase#amount_due_at_checkout`, answering the full total through `Spree::Purchases::AmountDueAtCheckout` (registered in `Spree::Dependencies`), read by the four decisions that gate on money arriving — checkout requirements, both completion guards, and dispatch. Without it, an arrangement collecting part of the total up front has to patch those four independently. It ships with a spec proving the open-source answer is the total, and a spec registering a half-up-front replacement and proving checkout, completion and dispatch all follow it. What a new payment or gateway session *defaults* to, and the capture loop, still read `total`: those are amounts rather than decisions. Partial payments are untouched — they predate this work. A related fix rides along because it holds independently: dispatch now guards on `payment_total >= amount_due_at_checkout` rather than `paid?`, which required a positive total and so refused to ship a fully discounted or store-credit-paid order.
 ## 2026-09-04: Catalog audiences are alternatives, not layers — a company buyer is never also priced by their customer group (V-3570)
@@ -3346,7 +3357,7 @@ certain markets) plus a four-platform review (OSS platform C channel-scoped
 PaymentMethods + `PaymentMethodEligibilityChecker`, OSS platform A region-scoped
 payment providers, OSS platform B per-channel payment apps, the hosted leader's Payment Customization Functions + the May-2026 per-market multi-entity payments product) settled three things:
 
-1. **`6.0-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
+1. **`6.1-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
    (Channel / Market / OrderTotal / CustomerGroup rules), mirroring the
    PromotionRule/PriceRule/OrderRoutingRule house pattern; enforced through
    the single `Order#collect_frontend_payment_methods` seam; storefront-only
@@ -4033,7 +4044,7 @@ ShippingMethod an eligibility-checker strategy parallel to its calculator.
 
 **Decision:** `Spree::DeliveryMethodRule` STI on DeliveryMethod — the fifth
 instance of the house rule pattern and the symmetric sibling of
-`6.0-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
+`6.1-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
 CustomerGroup later, in lockstep with the payment set). One enforcement
 seam: the Estimator's method filter, so calculator- and provider-priced
 methods obey the same eligibility; no admin-bypass concept (the Estimator is
@@ -4164,7 +4175,7 @@ domains are deliberately opposite:
   store.** Two Stripe accounts are two merchants of record (separate
   settlement and liability), selected per market at checkout — exactly
   what PaymentMethod rows model, gated by MarketRule once
-  `6.0-payment-method-rules.md` lands. Credentials stay on the method
+  `6.1-payment-method-rules.md` lands. Credentials stay on the method
   row; converging them onto Integration would fight its store+type
   uniqueness and is explicitly NOT planned.
 
@@ -4245,7 +4256,7 @@ registered subclasses by matching two hardcoded class names
 returning `[]`. Four families had each worked around that with a private
 per-class override in three different idioms (`PriceRule`,
 `OrderRoutingRule`, `CollectionRule`, `DeliveryMethodRule`), and
-`6.0-payment-method-rules.md` specced a fifth. The empty-list fallback
+`6.1-payment-method-rules.md` specced a fifth. The empty-list fallback
 failed **silently**: `find_by_api_type` returned nil, so
 `TypedAssociations` dropped typed rows from a payload with no error and
 `subclasses_with_preference_schema` rendered empty admin pickers — the
@@ -4263,7 +4274,7 @@ PromotionRule, PromotionAction, PriceRule, OrderRoutingRule,
 CollectionRule, DeliveryMethodRule, and **PaymentMethod** — gateways
 declare `registers_subclasses_via { providers }` rather than being a
 special case in the resolver, so there is exactly one resolution rule.
-`6.0-payment-method-rules.md` updated to the new form.
+`6.1-payment-method-rules.md` updated to the new form.
 
 Known debt: the registry is a lodger inside `PreferenceSchema` (which
 `Spree::Base` includes, so ~200 models carry class methods only six use),
