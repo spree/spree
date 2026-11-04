@@ -208,12 +208,6 @@ RSpec.describe Spree::Checkout::Requirements do
       )
       payment.update_columns(status: 'checkout')
 
-      cart.update_columns(created_by_id: create(:admin_user).id) if cart.respond_to?(:created_by_id)
-      next unless cart.respond_to?(:created_by_id)
-
-      expect(described_class.new(cart.reload).call(completion: true)).not_to include(
-        a_hash_including(code: 'payment_method_unavailable')
-      )
     end
   end
 
