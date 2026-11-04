@@ -1,0 +1,45 @@
+name: Discord release post
+
+# Posts each published Spree release (v* tags only) to the Discord #changelog
+# channel as a digest embed built by scripts/discord-release.mjs. Prereleases,
+# drafts, @spree/cli and create-spree-app releases are skipped.
+#
+# Run it by hand to re-post a release or try a change against the test channel.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to post, e.g. v6.0.2
+        required: true
+      channel:
+        description: Where to post
+        type: choice
+        options: [test, changelog]
+        default: test
+
+permissions:
+  contents: read
+
+jobs:
+  post:
+    name: Post to Discord
+    if: startsWith(github.event.release.tag_name || inputs.tag, 'v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: scripts/discord-release.mjs
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+
+      - name: Post the release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DISCORD_WEBHOOK_URL: ${{ (github.event_name == 'release' || inputs.channel == 'changelog') && secrets.DISCORD_CHANGELOG_WEBHOOK || secrets.DISCORD_TEST_WEBHOOK }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: node scripts/discord-release.mjs "$TAG"
