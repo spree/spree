@@ -120,6 +120,14 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
       expect(discount.amount).to eq(-2)
     end
 
+    it 'never stringifies a label that is not a string' do
+      discount = create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual')
+
+      patch :update, params: { order_id: order.prefixed_id, id: discount.prefixed_id, label: { a: 1 }, amount: '-1.00' }, as: :json
+
+      expect(discount.reload.label).to eq('Loyalty')
+    end
+
     it 'leaves a draft order without a change record' do
       draft = create(:order_with_line_items, store: store)
 
