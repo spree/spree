@@ -27,6 +27,10 @@ module Spree
       # template reads them, with the links built here because one carries
       # the order token.
       def deliver_post_sale_email(record, key, serializer, **assigns)
+        # The subscriber checks too, but a withdrawal can land while the job
+        # waits in the queue; with no mail built, nothing is sent.
+        return if record.canceled?
+
         @order = record.order
         @current_store = record.store || Spree::Store.default
 
