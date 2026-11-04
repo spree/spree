@@ -119,7 +119,8 @@ module Spree
       # @param item [Spree::LineItem, Spree::ExchangeLineItem, Spree::Fulfillment, Spree::Fee]
       # @return [Boolean]
       def taxable_item?(item)
-        !(item.respond_to?(:variant) && item.variant&.gift_card?)
+        variant = item.respond_to?(:new_variant) ? item.new_variant : item.try(:variant)
+        !variant&.gift_card?
       end
 
       # Finalizes tax with the provider when the order is placed. No-op for a
