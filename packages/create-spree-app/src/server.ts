@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { execa } from 'execa'
 import { SERVER_REPO } from './constants.js'
+import { run } from './run.js'
 
 // Starter paths (relative to server/) that don't belong in a generated
 // project: the wrapper ships its own root README, and release.yml publishes the
@@ -19,7 +19,7 @@ const SKIP_SERVER_PATHS = ['README.md', '.github/workflows/release.yml']
  */
 export async function downloadServer(projectDir: string): Promise<void> {
   const serverDir = path.join(projectDir, 'server')
-  await execa('git', ['clone', '--depth', '1', SERVER_REPO, serverDir], { stdio: 'ignore' })
+  await run('git', ['clone', '--depth', '1', SERVER_REPO, serverDir], { stdio: 'ignore' })
   fs.rmSync(path.join(serverDir, '.git'), { recursive: true, force: true })
 
   prepareServerTemplate(projectDir)

@@ -1,4 +1,4 @@
-import { execa } from 'execa'
+import { run } from './run.js'
 import type { PackageManager } from './types.js'
 import { runCommand } from './utils.js'
 
@@ -17,5 +17,5 @@ export async function setupAgents(
   const args = ['spree', 'add', 'ai', '--quiet']
   if (!opts.skills) args.push('--no-skills')
   if (!opts.mcp) args.push('--no-mcp')
-  await execa(runCommand(opts.packageManager), args, { cwd: projectDir, stdio: 'inherit' })
+  await run(runCommand(opts.packageManager), args, { cwd: projectDir, stdio: 'inherit' })
 }

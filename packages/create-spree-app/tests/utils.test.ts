@@ -1,7 +1,9 @@
-import { execa } from 'execa'
+import net from 'node:net'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { run } from '../src/run'
 import {
   detectPackageManager,
+  findFreePort,
   generateEncryptionKeys,
   generateSecretKeyBase,
   installCommand,
@@ -9,9 +11,9 @@ import {
   storefrontPm,
 } from '../src/utils'
 
-vi.mock('execa', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('execa')>()),
-  execa: vi.fn(),
+vi.mock('../src/run', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../src/run')>()),
+  run: vi.fn(),
 }))
 
 describe('detectPackageManager', () => {
@@ -19,7 +21,7 @@ describe('detectPackageManager', () => {
 
   beforeEach(() => {
     process.env.npm_config_user_agent = originalEnv
-    vi.mocked(execa).mockReset()
+    vi.mocked(run).mockReset()
   })
 
   it('respects an explicit yarn agent', async () => {
@@ -37,7 +39,7 @@ describe('detectPackageManager', () => {
   it('prefers pnpm over an npm agent when pnpm is installed', async () => {
     process.env.npm_config_user_agent = 'npm/10.0.0 node/v20.0.0'
     await expect(detectPackageManager()).resolves.toBe('pnpm')
-    expect(execa).toHaveBeenCalledWith('pnpm', ['--version'], { stdio: 'ignore' })
+    expect(run).toHaveBeenCalledWith('pnpm', ['--version'], { stdio: 'ignore' })
   })
 
   it('prefers pnpm when the agent is unknown', async () => {
@@ -47,7 +49,7 @@ describe('detectPackageManager', () => {
 
   it('falls back to npm when pnpm is not installed', async () => {
     process.env.npm_config_user_agent = 'npm/10.0.0 node/v20.0.0'
-    vi.mocked(execa).mockRejectedValue(new Error('spawn pnpm ENOENT'))
+    vi.mocked(run).mockRejectedValue(new Error('spawn pnpm ENOENT'))
     await expect(detectPackageManager()).resolves.toBe('npm')
   })
 })
@@ -116,5 +118,51 @@ describe('storefrontPm', () => {
   it('keeps npm and pnpm as-is', () => {
     expect(storefrontPm('npm')).toBe('npm')
     expect(storefrontPm('pnpm')).toBe('pnpm')
+  })
+})
+
+describe('findFreePort', () => {
+  it('skips a port something already listens on', async () => {
+    const server = net.createServer()
+    await new Promise<void>((resolve) => server.listen(0, resolve))
+    const taken = (server.address() as net.AddressInfo).port
+    try {
+      const port = await findFreePort(taken, taken + 20)
+      expect(port).not.toBe(taken)
+    } finally {
+      server.close()
+    }
+  })
+
+  it('returns another free port when the whole range is taken', async () => {
+    const server = net.createServer()
+    await new Promise<void>((resolve) => server.listen(0, resolve))
+    const taken = (server.address() as net.AddressInfo).port
+    try {
+      const port = await findFreePort(taken, taken)
+      expect(port).not.toBe(taken)
+      await new Promise<void>((resolve, reject) => {
+        const probe = net.createServer()
+        probe.once('error', reject)
+        probe.listen(port, () => probe.close(() => resolve()))
+      })
+    } finally {
+      server.close()
+    }
+  })
+
+  it('never hands out the same port twice', async () => {
+    const first = await findFreePort(40100, 40120)
+    expect(await findFreePort(first, first + 20)).not.toBe(first)
+  })
+
+  it('picks a free port when asked for port 0', async () => {
+    expect(await findFreePort(0, 0)).toBeGreaterThan(0)
+  })
+
+  it('stops at the highest valid port', async () => {
+    const port = await findFreePort(65535, 65600)
+    expect(port).toBeGreaterThan(0)
+    expect(port).toBeLessThanOrEqual(65535)
   })
 })

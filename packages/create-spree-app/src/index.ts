@@ -1,12 +1,11 @@
 import * as p from '@clack/prompts'
 import { Command, Option } from 'commander'
-import getPort, { portNumbers } from 'get-port'
 import pc from 'picocolors'
 import { DEFAULT_SPREE_PORT } from './constants.js'
 import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
 import type { PackageManager } from './types.js'
-import { detectPackageManager } from './utils.js'
+import { detectPackageManager, findFreePort } from './utils.js'
 
 const program = new Command()
   .name('create-spree-app')
@@ -57,7 +56,7 @@ const program = new Command()
       })
 
       const preferred = Number(flags.port)
-      const port = await getPort({ port: portNumbers(preferred, preferred + 100) })
+      const port = await findFreePort(preferred, preferred + 100)
       if (port !== preferred) {
         p.log.warn(`Port ${preferred} is in use, using port ${pc.bold(String(port))} instead.`)
       }
@@ -66,8 +65,8 @@ const program = new Command()
       // any local mail catcher takes them. Compose fails on a bound port with
       // a raw daemon error minutes into the run — after the image pull — so
       // probe them here like the web port rather than letting that happen.
-      const mailpitSmtpPort = await getPort({ port: portNumbers(1025, 1125) })
-      const mailpitUiPort = await getPort({ port: portNumbers(8025, 8125) })
+      const mailpitSmtpPort = await findFreePort(1025, 1125)
+      const mailpitUiPort = await findFreePort(8025, 8125)
       for (const [label, preferredPort, resolved] of [
         ['Mailpit SMTP', 1025, mailpitSmtpPort],
         ['Mailpit UI', 8025, mailpitUiPort],

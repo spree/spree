@@ -74,7 +74,7 @@ vi.mock('../src/dashboard', () => ({
 }))
 
 // `spree init` is shelled out to; the scaffold only decides its arguments.
-vi.mock('execa', () => ({ execa: vi.fn() }))
+vi.mock('../src/run', () => ({ run: vi.fn() }))
 
 vi.mock('../src/utils', async (importOriginal) => {
   const mod = await importOriginal<typeof import('../src/utils')>()
@@ -138,8 +138,8 @@ describe('scaffold (no-start)', () => {
   // BEFORE loading sample data, so a failure there leaves a project that later
   // runs read as "already set up" and can never finish setup.
   it('runs first-run setup with sample data opted out', async () => {
-    const { execa } = await import('execa')
-    vi.mocked(execa).mockClear()
+    const { run } = await import('../src/run')
+    vi.mocked(run).mockClear()
 
     await scaffold({
       directory: getTempProjectDir(),
@@ -150,7 +150,7 @@ describe('scaffold (no-start)', () => {
       port: 3000,
     })
 
-    const init = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
+    const init = vi.mocked(run).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
     expect(init?.[1]).toEqual(['spree', 'init', '--no-sample-data'])
   })
 
@@ -369,8 +369,8 @@ describe('scaffold (no-start)', () => {
   })
 
   it('delegates the agent setup to `spree add ai`, passing what was declined', async () => {
-    const { execa } = await import('execa')
-    vi.mocked(execa).mockClear()
+    const { run } = await import('../src/run')
+    vi.mocked(run).mockClear()
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -384,7 +384,7 @@ describe('scaffold (no-start)', () => {
       port: 3000,
     })
 
-    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+    expect(vi.mocked(run)).toHaveBeenCalledWith(
       'npx',
       ['spree', 'add', 'ai', '--quiet', '--no-skills'],
       expect.objectContaining({ cwd: path.resolve(projectDir) }),
@@ -392,8 +392,8 @@ describe('scaffold (no-start)', () => {
   })
 
   it('skips the agent setup when both halves are declined', async () => {
-    const { execa } = await import('execa')
-    vi.mocked(execa).mockClear()
+    const { run } = await import('../src/run')
+    vi.mocked(run).mockClear()
 
     await scaffold({
       directory: getTempProjectDir(),
@@ -406,15 +406,15 @@ describe('scaffold (no-start)', () => {
       port: 3000,
     })
 
-    const addAi = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[2] === 'ai')
+    const addAi = vi.mocked(run).mock.calls.find(([, args]) => (args as string[])?.[2] === 'ai')
     expect(addAi).toBeUndefined()
   })
 
   // Agent setup is a convenience: a failure must not stop first-run setup.
   it('continues to first-run setup when the agent setup fails', async () => {
-    const { execa } = await import('execa')
-    vi.mocked(execa).mockClear()
-    vi.mocked(execa).mockImplementation((async (_command: string, args: string[]) => {
+    const { run } = await import('../src/run')
+    vi.mocked(run).mockClear()
+    vi.mocked(run).mockImplementation((async (_command: string, args: string[]) => {
       if (args.includes('ai')) throw new Error('network down')
     }) as never)
 
@@ -428,9 +428,9 @@ describe('scaffold (no-start)', () => {
       port: 3000,
     })
 
-    const init = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
+    const init = vi.mocked(run).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
     expect(init).toBeDefined()
-    vi.mocked(execa).mockReset()
+    vi.mocked(run).mockReset()
   })
 
   it('rejects non-empty directory', async () => {

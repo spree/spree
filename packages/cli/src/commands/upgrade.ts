@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import {
   INSTALL_PACKAGES,
@@ -22,6 +21,7 @@ import {
   restartAppServices,
 } from '../docker.js'
 import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
+import { run } from '../lib/run.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
 interface UpgradeFlags {
@@ -121,7 +121,7 @@ async function serverReleaseLine(
   try {
     const stdout = fromNewImage
       ? (
-          await execa(
+          await run(
             'docker',
             ['compose', 'run', '--rm', '--no-deps', '-T', 'web', 'bundle', 'list'],
             { cwd: projectDir },
@@ -547,7 +547,7 @@ async function runPackageManager(
   target: { relative: string; dir: string },
 ): Promise<void> {
   p.log.step(`${pc.bold(`${pm} ${args.join(' ')}`)} ${pc.dim(`in ${target.relative}`)}`)
-  await execa(pm, args, { cwd: target.dir, stdio: 'inherit' })
+  await run(pm, args, { cwd: target.dir, stdio: 'inherit' })
 }
 
 // We can detect the conventional create-spree-app storefront and tell the

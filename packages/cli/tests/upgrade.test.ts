@@ -4,7 +4,7 @@ import path from 'node:path'
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('execa', () => ({ execa: vi.fn() }))
+vi.mock('../src/lib/run', () => ({ run: vi.fn() }))
 
 const LINE = vi.hoisted(() => ({
   packages: [
@@ -45,7 +45,6 @@ vi.mock('@clack/prompts', () => ({
 
 import * as p from '@clack/prompts'
 import * as prompts from '@clack/prompts'
-import { execa } from 'execa'
 import {
   detectSpreeGems,
   detectSpreePackages,
@@ -59,6 +58,7 @@ import {
   sdkAdvisory,
 } from '../src/commands/upgrade'
 import { npmVersionOf, releaseLineFor } from '../src/lib/release-line'
+import { run } from '../src/lib/run'
 
 describe('npmVersionOf', () => {
   it('spells gem versions the way the packages are published', () => {
@@ -159,14 +159,14 @@ describe('sdkAdvisory', () => {
 })
 
 describe('detectSpreeGems', () => {
-  const mockExeca = vi.mocked(execa)
-  afterEach(() => mockExeca.mockReset())
+  const mockRun = vi.mocked(run)
+  afterEach(() => mockRun.mockReset())
 
   // detectSpreeGems goes through dockerComposeCapture, which probes the web
   // container first (`compose ps`) — route the probe to "running" so the
   // command call itself drives each scenario.
   function routeBundleList(command: () => Promise<{ stdout: string }>): void {
-    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+    mockRun.mockImplementation((async (_cmd: string, args: string[]) => {
       if (args.includes('ps')) return { stdout: 'running' }
       return command()
     }) as never)
@@ -185,7 +185,7 @@ describe('detectSpreeGems', () => {
   it('runs bundle install and lists again when the bundle is out of sync', async () => {
     let listCalls = 0
     const calls: string[] = []
-    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+    mockRun.mockImplementation((async (_cmd: string, args: string[]) => {
       if (args.includes('ps')) return { stdout: 'running' }
       if (args.includes('list')) {
         listCalls += 1
@@ -205,7 +205,7 @@ describe('detectSpreeGems', () => {
   })
 
   it('throws with the bundler error when listing still fails after bundle install', async () => {
-    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+    mockRun.mockImplementation((async (_cmd: string, args: string[]) => {
       if (args.includes('ps')) return { stdout: 'running' }
       if (args.includes('install')) return { stdout: '' }
       throw Object.assign(new Error('x'), { exitCode: 1, stderr: 'Could not find gem spree_core' })
@@ -501,21 +501,21 @@ describe('packageUpdateArgs', () => {
 })
 
 describe('spree upgrade', () => {
-  const mockExeca = vi.mocked(execa)
+  const mockRun = vi.mocked(run)
   let commands: string[]
   let versionProbes: string[]
 
-  // Every docker and package-manager call goes through execa; record them in
+  // Every docker and package-manager call goes through run; record them in
   // order, leaving out the read-only probes (`compose ps`, `bundle list`, …).
   // `spreeVersion` is what the server's bundle reports for spree_core.
-  function routeExeca({
+  function routeRun({
     failOn,
     spreeVersion = '6.0.0.rc7',
   }: {
     failOn?: string
     spreeVersion?: string | null
   } = {}): void {
-    mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
+    mockRun.mockImplementation((async (cmd: string, args: string[]) => {
       if (args.includes('ps')) return { stdout: 'running' }
       if (args.includes('--name-only')) return { stdout: 'spree\nspree_core\n' }
       if (args.includes('list')) {
@@ -567,11 +567,11 @@ describe('spree upgrade', () => {
     commands = []
     versionProbes = []
     vi.mocked(prompts.log.warn).mockClear()
-    routeExeca()
+    routeRun()
   })
 
   afterEach(() => {
-    mockExeca.mockReset()
+    mockRun.mockReset()
     fs.rmSync(projectDir, { recursive: true, force: true })
   })
 
@@ -669,7 +669,7 @@ describe('spree upgrade', () => {
         '@spree/dashboard-core': '^1.0.0',
       },
     })
-    routeExeca({ spreeVersion: '6.0.0.rc8' })
+    routeRun({ spreeVersion: '6.0.0.rc8' })
 
     await runUpgrade()
 
@@ -699,7 +699,7 @@ describe('spree upgrade', () => {
     const manifest = JSON.parse(fs.readFileSync(dashboardPackageJson, 'utf-8'))
     manifest.devDependencies = { '@spree/admin-sdk': '6.0.0-rc.7' }
     fs.writeFileSync(dashboardPackageJson, JSON.stringify(manifest))
-    routeExeca({ spreeVersion: '6.0.0' })
+    routeRun({ spreeVersion: '6.0.0' })
 
     await runUpgrade()
 
@@ -720,7 +720,7 @@ describe('spree upgrade', () => {
 
   it('keeps a pin on a final version exact', async () => {
     writeProject({ ejected: true, dashboardDependencies: { '@spree/dashboard': '6.0.0' } })
-    routeExeca({ spreeVersion: '6.0.1' })
+    routeRun({ spreeVersion: '6.0.1' })
 
     await runUpgrade()
 
@@ -737,7 +737,7 @@ describe('spree upgrade', () => {
 
   it('falls back to the built-in Spree version, with a warning, when the server cannot say', async () => {
     writeProject({ ejected: true, dashboardDependencies: { '@spree/dashboard': '6.0.0-rc.6' } })
-    routeExeca({ spreeVersion: null })
+    routeRun({ spreeVersion: null })
 
     await runUpgrade()
 
@@ -749,7 +749,7 @@ describe('spree upgrade', () => {
 
   it('moves nothing on a server from before the packages shared its version', async () => {
     writeProject({ ejected: true, dashboardDependencies: { '@spree/dashboard': '1.0.0-rc.6' } })
-    routeExeca({ spreeVersion: '5.6.2' })
+    routeRun({ spreeVersion: '5.6.2' })
 
     await runUpgrade()
 
@@ -762,7 +762,7 @@ describe('spree upgrade', () => {
 
   it('has already bumped the packages when a backfill fails', async () => {
     writeProject({ ejected: true })
-    routeExeca({ failOn: 'spree:upgrade' })
+    routeRun({ failOn: 'spree:upgrade' })
 
     await expect(runUpgrade()).rejects.toThrow(/spree:upgrade failed/)
 
@@ -772,7 +772,7 @@ describe('spree upgrade', () => {
 
   describe('when `compose ps` fails', () => {
     function failProbe(stderr: string): void {
-      mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+      mockRun.mockImplementation((async (_cmd: string, args: string[]) => {
         if (args.includes('ps')) {
           throw Object.assign(
             new Error(
@@ -810,7 +810,7 @@ describe('spree upgrade', () => {
     })
 
     it('says Docker is not installed when the docker command is missing', async () => {
-      mockExeca.mockImplementation((async () => {
+      mockRun.mockImplementation((async () => {
         throw Object.assign(new Error('Command failed with ENOENT: docker compose ps web'), {
           code: 'ENOENT',
           originalMessage: 'spawn docker ENOENT',

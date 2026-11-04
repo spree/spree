@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import {
   addPackageCommand,
@@ -20,6 +19,7 @@ import {
   snapshotInstallFiles,
 } from '../lib/extensions.js'
 import { confirmOrExit } from '../lib/prompt.js'
+import { run } from '../lib/run.js'
 import type { ProjectContext } from '../types.js'
 import { detectPackageManager } from './add.js'
 import { ejectProject } from './eject.js'
@@ -190,7 +190,7 @@ async function installPlugins(ctx: ProjectContext, extension: Extension): Promis
     const pm = detectPackageManager(ctx.projectDir, appDir)
     p.log.step(`Adding ${pc.bold(pkg)} to apps/${target.dir}/...`)
     try {
-      await execa(pm, [pm === 'npm' ? 'install' : 'add', pkg], { cwd: appDir, stdio: 'inherit' })
+      await run(pm, [pm === 'npm' ? 'install' : 'add', pkg], { cwd: appDir, stdio: 'inherit' })
       installed = true
     } catch (error) {
       p.log.warn(

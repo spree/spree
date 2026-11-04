@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('execa', () => ({ execa: vi.fn().mockResolvedValue({ stdout: '' }) }))
+vi.mock('../src/lib/run', () => ({ run: vi.fn().mockResolvedValue({ stdout: '' }) }))
 
 let monorepoEdge = false
 vi.mock('../src/context', () => ({
@@ -14,7 +14,6 @@ vi.mock('@clack/prompts', () => ({
   log: { info: (...args: unknown[]) => logInfoMock(...args) },
 }))
 
-import { execa } from 'execa'
 import {
   captureTask,
   dockerCompose,
@@ -24,26 +23,27 @@ import {
   prepareDatabase,
   primeBundleVolume,
 } from '../src/docker'
+import { run } from '../src/lib/run'
 
-const mockExeca = vi.mocked(execa)
+const mockRun = vi.mocked(run)
 
-// The exec-or-run helpers make several `execa` calls (the `compose ps` probe,
+// The exec-or-run helpers make several `run` calls (the `compose ps` probe,
 // then `exec`/`run`). Route by args: the probe contains `ps`, everything else
 // is the command itself. Lets a single mock drive web-up vs web-down.
-function routeExeca(webUp: boolean, commandStdout = ''): void {
-  mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+function routeRun(webUp: boolean, commandStdout = ''): void {
+  mockRun.mockImplementation((async (_cmd: string, args: string[]) => {
     if (args.includes('ps')) return { stdout: webUp ? 'running' : '' }
     return { stdout: commandStdout }
   }) as never)
 }
 
 describe('dockerComposeRun', () => {
-  afterEach(() => mockExeca.mockReset())
+  afterEach(() => mockRun.mockReset())
 
   it('builds `compose run --rm <service> <argv>` with inherited stdio', async () => {
     await dockerComposeRun(['bin/rails', 'console'], '/proj')
 
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'run', '--rm', 'web', 'bin/rails', 'console'],
       { cwd: '/proj', stdio: 'inherit' },
@@ -53,11 +53,10 @@ describe('dockerComposeRun', () => {
   it('honors a non-default service', async () => {
     await dockerComposeRun(['psql'], '/proj', { service: 'postgres' })
 
-    expect(mockExeca).toHaveBeenCalledWith(
-      'docker',
-      ['compose', 'run', '--rm', 'postgres', 'psql'],
-      { cwd: '/proj', stdio: 'inherit' },
-    )
+    expect(mockRun).toHaveBeenCalledWith('docker', ['compose', 'run', '--rm', 'postgres', 'psql'], {
+      cwd: '/proj',
+      stdio: 'inherit',
+    })
   })
 
   it('threads -e KEY=VALUE pairs before the service, like dockerComposeExec', async () => {
@@ -65,7 +64,7 @@ describe('dockerComposeRun', () => {
       env: { DRY_RUN: '1', STEP: 'channels' },
     })
 
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       [
         'compose',
@@ -86,23 +85,23 @@ describe('dockerComposeRun', () => {
   it('does not pass --no-deps (deps must start + health-wait)', async () => {
     await dockerComposeRun(['bin/rails', 'db:drop'], '/proj')
 
-    const [, args] = mockExeca.mock.calls[0] as [string, string[]]
+    const [, args] = mockRun.mock.calls[0] as [string, string[]]
     expect(args).not.toContain('--no-deps')
   })
 
   it('inherits stdio wholesale by default (no stderr capture)', async () => {
     await dockerComposeRun(['bin/rails', 'console'], '/proj')
 
-    const [, , opts] = mockExeca.mock.calls[0] as [string, string[], Record<string, unknown>]
+    const [, , opts] = mockRun.mock.calls[0] as [string, string[], Record<string, unknown>]
     expect(opts).toMatchObject({ cwd: '/proj', stdio: 'inherit' })
   })
 
   it('tees stderr to `[pipe, inherit]` when captureStderr is set', async () => {
-    // Plain `stdio: inherit` leaves ExecaError.stderr undefined; the tee keeps it
+    // Plain `stdio: inherit` leaves the error's stderr undefined; the tee keeps it
     // printed live AND buffered so db:reset can match the Postgres error.
     await dockerComposeRun(['bin/rails', 'db:drop'], '/proj', { captureStderr: true })
 
-    const [, , opts] = mockExeca.mock.calls[0] as [string, string[], Record<string, unknown>]
+    const [, , opts] = mockRun.mock.calls[0] as [string, string[], Record<string, unknown>]
     expect(opts).toMatchObject({
       cwd: '/proj',
       stdin: 'inherit',
@@ -114,13 +113,13 @@ describe('dockerComposeRun', () => {
 })
 
 describe('dockerCompose', () => {
-  afterEach(() => mockExeca.mockReset())
+  afterEach(() => mockRun.mockReset())
 
   it('explains an exhausted Docker network pool and how to free it', async () => {
     const daemonError = new Error(
       'Command failed with exit code 1: docker compose up -d\nError response from daemon: all predefined address pools have been fully subnetted',
     )
-    mockExeca.mockRejectedValueOnce(daemonError)
+    mockRun.mockRejectedValueOnce(daemonError)
 
     const error = await dockerCompose(['up', '-d'], '/proj').catch((caught: Error) => caught)
 
@@ -131,19 +130,19 @@ describe('dockerCompose', () => {
 
   it('rethrows any other failure unchanged', async () => {
     const daemonError = new Error('Command failed with exit code 1: docker compose up -d')
-    mockExeca.mockRejectedValueOnce(daemonError)
+    mockRun.mockRejectedValueOnce(daemonError)
 
     await expect(dockerCompose(['up', '-d'], '/proj')).rejects.toBe(daemonError)
   })
 })
 
 describe('primeBundleVolume', () => {
-  afterEach(() => mockExeca.mockReset())
+  afterEach(() => mockRun.mockReset())
 
   it('captures stderr while still streaming it to the terminal', async () => {
     await primeBundleVolume('/proj')
 
-    expect(mockExeca).toHaveBeenCalledWith('docker', ['compose', 'up', '-d', '--no-deps', 'web'], {
+    expect(mockRun).toHaveBeenCalledWith('docker', ['compose', 'up', '-d', '--no-deps', 'web'], {
       cwd: '/proj',
       stdin: 'inherit',
       stdout: 'inherit',
@@ -152,7 +151,7 @@ describe('primeBundleVolume', () => {
   })
 
   it('stops on an exhausted Docker network pool so its hint reaches the operator', async () => {
-    mockExeca.mockRejectedValueOnce(
+    mockRun.mockRejectedValueOnce(
       new Error(
         'Error response from daemon: all predefined address pools have been fully subnetted',
       ),
@@ -162,20 +161,20 @@ describe('primeBundleVolume', () => {
   })
 
   it("leaves any other failure to the caller's own `up`", async () => {
-    mockExeca.mockRejectedValueOnce(new Error('pull access denied'))
+    mockRun.mockRejectedValueOnce(new Error('pull access denied'))
 
     await expect(primeBundleVolume('/proj')).resolves.toBeUndefined()
   })
 })
 
 describe('prepareDatabase', () => {
-  afterEach(() => mockExeca.mockReset())
+  afterEach(() => mockRun.mockReset())
 
   it('waits for a healthy postgres, then runs db:prepare in a one-off web container', async () => {
     await prepareDatabase('/proj')
 
-    expect(mockExeca).toHaveBeenCalledTimes(2)
-    expect(mockExeca).toHaveBeenNthCalledWith(
+    expect(mockRun).toHaveBeenCalledTimes(2)
+    expect(mockRun).toHaveBeenNthCalledWith(
       1,
       'docker',
       ['compose', 'up', '-d', '--wait', 'postgres'],
@@ -184,7 +183,7 @@ describe('prepareDatabase', () => {
         stdio: 'pipe',
       },
     )
-    expect(mockExeca).toHaveBeenNthCalledWith(
+    expect(mockRun).toHaveBeenNthCalledWith(
       2,
       'docker',
       ['compose', 'run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'],
@@ -204,7 +203,7 @@ describe('dockerComposeExecOrRun', () => {
     monorepoEdge = false
     cancelMock.mockClear()
     logInfoMock.mockClear()
-    mockExeca.mockReset()
+    mockRun.mockReset()
     vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
       throw new ExitError(code ?? 0)
     })
@@ -213,16 +212,16 @@ describe('dockerComposeExecOrRun', () => {
   afterEach(() => vi.restoreAllMocks())
 
   it('execs into the running container when the service is up', async () => {
-    routeExeca(true)
+    routeRun(true)
 
     await dockerComposeExecOrRun(['bin/rails', 'console'], '/proj')
 
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'exec', 'web', 'bin/rails', 'console'],
       { cwd: '/proj', stdio: 'inherit' },
     )
-    expect(mockExeca).not.toHaveBeenCalledWith(
+    expect(mockRun).not.toHaveBeenCalledWith(
       'docker',
       expect.arrayContaining(['run']),
       expect.anything(),
@@ -230,11 +229,11 @@ describe('dockerComposeExecOrRun', () => {
   })
 
   it('falls back to a one-off `run` container when the service is down', async () => {
-    routeExeca(false)
+    routeRun(false)
 
     await dockerComposeExecOrRun(['bin/rails', 'console'], '/proj')
 
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'run', '--rm', 'web', 'bin/rails', 'console'],
       { cwd: '/proj', stdio: 'inherit' },
@@ -243,7 +242,7 @@ describe('dockerComposeExecOrRun', () => {
   })
 
   it('refuses the one-off fallback in a monorepo edge project', async () => {
-    routeExeca(false)
+    routeRun(false)
     monorepoEdge = true
 
     await expect(dockerComposeExecOrRun(['bin/rails', 'console'], '/proj')).rejects.toMatchObject({
@@ -251,7 +250,7 @@ describe('dockerComposeExecOrRun', () => {
     })
 
     expect(cancelMock).toHaveBeenCalled()
-    expect(mockExeca).not.toHaveBeenCalledWith(
+    expect(mockRun).not.toHaveBeenCalledWith(
       'docker',
       expect.arrayContaining(['run']),
       expect.anything(),
@@ -259,7 +258,7 @@ describe('dockerComposeExecOrRun', () => {
   })
 
   it('appends the edgeHint to the monorepo-edge refusal message', async () => {
-    routeExeca(false)
+    routeRun(false)
     monorepoEdge = true
 
     await expect(
@@ -284,7 +283,7 @@ describe('dockerComposeCapture', () => {
     monorepoEdge = false
     cancelMock.mockClear()
     logInfoMock.mockClear()
-    mockExeca.mockReset()
+    mockRun.mockReset()
     vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
       throw new ExitError(code ?? 0)
     })
@@ -293,12 +292,12 @@ describe('dockerComposeCapture', () => {
   afterEach(() => vi.restoreAllMocks())
 
   it('captures stdout via a non-interactive exec when the service is up', async () => {
-    routeExeca(true, 'spree\nspree_core\n')
+    routeRun(true, 'spree\nspree_core\n')
 
     await expect(dockerComposeCapture(['bundle', 'list', '--name-only'], '/proj')).resolves.toBe(
       'spree\nspree_core\n',
     )
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'exec', '-T', 'web', 'bundle', 'list', '--name-only'],
       { cwd: '/proj' },
@@ -306,10 +305,10 @@ describe('dockerComposeCapture', () => {
   })
 
   it('falls back to a one-off `run --rm -T` container when the service is down', async () => {
-    routeExeca(false, 'output')
+    routeRun(false, 'output')
 
     await expect(dockerComposeCapture(['bin/rails', 'db:seed'], '/proj')).resolves.toBe('output')
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'run', '--rm', '-T', 'web', 'bin/rails', 'db:seed'],
       { cwd: '/proj' },
@@ -318,13 +317,13 @@ describe('dockerComposeCapture', () => {
   })
 
   it('threads -e KEY=VALUE pairs before the service', async () => {
-    routeExeca(true)
+    routeRun(true)
 
     await dockerComposeCapture(['bin/rails', 'spree:cli:create_admin'], '/proj', {
       env: { EMAIL: 'a@b.c' },
     })
 
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'exec', '-T', '-e', 'EMAIL=a@b.c', 'web', 'bin/rails', 'spree:cli:create_admin'],
       { cwd: '/proj' },
@@ -332,7 +331,7 @@ describe('dockerComposeCapture', () => {
   })
 
   it('refuses the one-off fallback in a monorepo edge project', async () => {
-    routeExeca(false)
+    routeRun(false)
     monorepoEdge = true
 
     await expect(dockerComposeCapture(['bin/rails', 'db:seed'], '/proj')).rejects.toMatchObject({
@@ -346,16 +345,16 @@ describe('captureTask', () => {
   beforeEach(() => {
     monorepoEdge = false
     logInfoMock.mockClear()
-    mockExeca.mockReset()
+    mockRun.mockReset()
   })
 
   afterEach(() => vi.restoreAllMocks())
 
   it('strips backend boot noise from the captured output', async () => {
-    routeExeca(true, '[Spree Events] subscribers loaded\napi_key_abc\n')
+    routeRun(true, '[Spree Events] subscribers loaded\napi_key_abc\n')
 
     await expect(captureTask('spree:cli:ensure_api_key', '/proj')).resolves.toBe('api_key_abc')
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'exec', '-T', 'web', 'bin/rails', 'spree:cli:ensure_api_key'],
       { cwd: '/proj' },
@@ -363,10 +362,10 @@ describe('captureTask', () => {
   })
 
   it('falls back to a one-off container when web is down', async () => {
-    routeExeca(false, 'seeded')
+    routeRun(false, 'seeded')
 
     await expect(captureTask('db:seed', '/proj')).resolves.toBe('seeded')
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockRun).toHaveBeenCalledWith(
       'docker',
       ['compose', 'run', '--rm', '-T', 'web', 'bin/rails', 'db:seed'],
       { cwd: '/proj' },

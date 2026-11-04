@@ -1,4 +1,4 @@
-import { execa } from 'execa'
+import { run } from './run.js'
 import type { PackageManager } from './types.js'
 import { runCommand } from './utils.js'
 
@@ -26,5 +26,5 @@ export async function scaffoldApp(
   // own "… added!" note would just duplicate them.
   const args = ['spree', 'add', component, '--quiet']
   if (!opts.install) args.push('--no-install')
-  await execa(runCommand(opts.packageManager), args, { cwd: projectDir, stdio: 'inherit' })
+  await run(runCommand(opts.packageManager), args, { cwd: projectDir, stdio: 'inherit' })
 }
