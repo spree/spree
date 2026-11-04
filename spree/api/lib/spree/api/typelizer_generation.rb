@@ -5,6 +5,15 @@ module Spree
     # place where the API's and the email serializers are all loaded: running
     # it with any serializer missing would delete that serializer's types.
     module TypelizerGeneration
+      # Serializers that exist only for the Admin API, kept out of the Store
+      # SDK. Event serializers stay in: they describe the `data` of the typed
+      # webhook events the Store SDK ships.
+      STORE_EXCLUDED = %w[Asset CartPromotion OrderPromotion Report TaxCategory].to_set.freeze
+
+      # The store-level types the Seller SDK carries because a seller
+      # serializer nests them (see the seller writer in the initializer).
+      SELLER_STORE_TYPES = %w[Category CustomField OptionType OptionValue Seller].to_set.freeze
+
       # Typelizer's Alba plugin, taught the custom Alba types (see alba.rb);
       # unmapped typed attributes crash generation.
       #

@@ -16,9 +16,7 @@ Rails.application.config.after_initialize do
 
     # Serializers that exist only for the Admin API. Event serializers stay in:
     # they describe the `data` of the typed webhook events the Store SDK ships.
-    store_excluded = %w[
-      Asset CartPromotion OrderPromotion Report TaxCategory
-    ].to_set
+    store_excluded = Spree::Api::TypelizerGeneration::STORE_EXCLUDED
 
     # Store SDK — no prefix, package provides namespace
     config.writer(:store) do |c|
@@ -67,9 +65,7 @@ Rails.application.config.after_initialize do
     # branch; Category and CustomField are not, but the store product
     # serializer this branch inherits references them, so their types still
     # have to exist in the package.
-    store_nested_for_seller = %w[
-      Category CustomField OptionType OptionValue Seller
-    ].to_set
+    store_nested_for_seller = Spree::Api::TypelizerGeneration::SELLER_STORE_TYPES
 
     config.writer(:seller) do |c|
       c.output_dir = api_root.join('../../packages/seller-sdk/src/types/generated')

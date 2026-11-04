@@ -49,7 +49,7 @@ RSpec.describe Spree::Api::SdkTypes do
   it "writes the extension's types for the API its serializers belong to" do
     expect(described_class.generate!(engine: engine, out: 'types')).to eq([:admin])
 
-    widget = generated('admin/generated/Widget.ts')
+    widget = generated('admin/types/Widget.ts')
     expect(widget).to include('interface Widget {')
     expect(widget).to include('export type { Widget };')
     expect(widget).to match(/import type \{.*Order.*\} from '\.\.\/spree'/)
@@ -59,20 +59,20 @@ RSpec.describe Spree::Api::SdkTypes do
   it "takes core's types from the SDK instead of writing copies" do
     described_class.generate!(engine: engine, out: 'types')
 
-    expect(out.join('admin/generated/Order.ts')).not_to exist
+    expect(out.join('admin/types/Order.ts')).not_to exist
     expect(generated('admin/spree.ts')).to include("export type * from '@spree/admin-sdk'")
-    expect(generated('admin/spree.ts')).to include("export type * from './generated'")
+    expect(generated('admin/spree.ts')).to include("export type * from './types'")
   end
 
   it 'defines its own value lists, open to values a store adds' do
     described_class.generate!(engine: engine, out: 'types')
 
-    expect(generated('admin/generated/Enums.ts')).to include(%(export type WidgetStatus = 'draft' | 'sent' | (string & {});))
+    expect(generated('admin/types/Enums.ts')).to include(%(export type WidgetStatus = 'draft' | 'sent' | (string & {});))
     expect(Typelizer::OpenEnums.source).to eq('@spree/sdk-core')
   end
 
   it 'removes the types of an API that no longer has serializers' do
-    stale = out.join('store/generated')
+    stale = out.join('store/types')
     FileUtils.mkdir_p(stale)
     File.write(stale.join('Gadget.ts'), '')
     File.write(out.join('store/spree.ts'), '')
@@ -81,7 +81,7 @@ RSpec.describe Spree::Api::SdkTypes do
 
     expect(stale).not_to exist
     expect(out.join('store/spree.ts')).not_to exist
-    expect(out.join('admin/generated/Widget.ts')).to exist
+    expect(out.join('admin/types/Widget.ts')).to exist
   end
 
   it 'refuses two serializers that would generate one type' do
@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::SdkTypes do
 
     expect { described_class.generate!(engine: engine, out: 'types') }
       .to raise_error(ArgumentError, /both generate the admin type Widget/)
-    expect(out.join('admin/generated')).not_to exist
+    expect(out.join('admin/types')).not_to exist
   end
 
   it "refuses a serializer that would generate a type the SDK exports" do
@@ -123,6 +123,32 @@ RSpec.describe Spree::Api::SdkTypes do
 
     expect { described_class.generate!(engine: engine, out: 'types') }
       .to raise_error(ArgumentError, %r{SdkTypesFixture::Admin::OrderSerializer generates Order, which @spree/admin-sdk already exports})
+  end
+
+  it 'refuses a value list named like a generated type' do
+    File.write(root.join('app/serializers/sdk_types_fixture/admin/widget_status_serializer.rb'), <<~RUBY)
+      module SdkTypesFixture
+        module Admin
+          class WidgetStatusSerializer
+            include Alba::Resource
+            include Typelizer::DSL
+
+            attributes :id
+          end
+        end
+      end
+    RUBY
+
+    expect { described_class.generate!(engine: engine, out: 'types') }
+      .to raise_error(ArgumentError, /The value list WidgetStatus is also the name of a type the admin API generates/)
+  end
+
+  it "reserves only the names the SDK exports" do
+    names = described_class.send(:core_type_names, :store)
+
+    expect(names).to include('Order')
+    expect(names).not_to include('TaxCategory')
+    expect(described_class.send(:core_type_names, :seller)).to include('Category')
   end
 
   it 'sorts serializers by namespace, as core does' do

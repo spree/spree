@@ -7,7 +7,7 @@ module Spree
     # with Typelizer, the way Spree generates its SDKs' types. Runs in the
     # extension's test app, through the task in sdk_types_task.rb.
     #
-    # Writes `<out>/<api>/generated/` for each API the extension has
+    # Writes `<out>/<api>/types/` for each API the extension has
     # serializers for, sorted by namespace as core's are (`::Admin::`,
     # `::Seller::`, the rest Store), and `<out>/<api>/spree.ts` beside it. The
     # generated files import every type they reference from `spree.ts`, which
@@ -39,16 +39,16 @@ module Spree
           # as it was, so an API whose last serializer went away would keep
           # publishing its old types.
           SDKS.each_key do |api|
-            FileUtils.rm_rf(out.join(api.to_s, 'generated'))
+            FileUtils.rm_rf(out.join(api.to_s, 'types'))
             FileUtils.rm_f(out.join(api.to_s, 'spree.ts'))
           end
           run_typelizer
 
           SDKS.keys.select do |api|
-            generated = out.join(api.to_s, 'generated')
-            next false unless generated.exist?
+            types = out.join(api.to_s, 'types')
+            next false unless types.exist?
 
-            TypelizerGeneration.use_interfaces!(generated)
+            TypelizerGeneration.use_interfaces!(types)
             File.write(out.join(api.to_s, 'spree.ts'), barrel(api))
             true
           end
@@ -80,23 +80,34 @@ module Spree
             end
 
             taken = interfaces.find { |interface| core_type_names(api).include?(interface.name) }
-            next unless taken
+            if taken
+              raise ArgumentError, "#{taken.serializer.name} generates #{taken.name}, which #{SDKS[api]} already exports; " \
+                                   'rename the serializer'
+            end
 
-            raise ArgumentError, "#{taken.serializer.name} generates #{taken.name}, which #{SDKS[api]} already exports; " \
-                                 'rename the serializer'
+            # A value list and a type of one name are both exported from the
+            # generated index.
+            names = interfaces.map(&:name).to_set
+            list = interfaces.flat_map(&:enum_types).find { |property| names.include?(property.enum_type_name) }
+            next unless list
+
+            raise ArgumentError, "The value list #{list.enum_type_name} is also the name of a type the #{api} API generates; " \
+                                 'give its enum_type_name another name'
           end
         end
 
         # The type names Spree's own serializers give the SDK of one API, read
-        # from their file names. The Seller SDK also carries store types.
+        # from their file names and filtered as core's writers filter them.
         def core_type_names(api)
           @core_type_names ||= {}
           @core_type_names[api] ||= begin
             root = Spree::Api::Engine.root.join('app/serializers/spree/api/v3')
-            patterns = { store: ['*_serializer.rb'], admin: ['admin/**/*_serializer.rb'],
-                         seller: ['seller/**/*_serializer.rb', '*_serializer.rb'] }.fetch(api)
-            patterns.flat_map { |pattern| Dir[root.join(pattern)] }
-                    .to_set { |file| File.basename(file, '_serializer.rb').camelize }
+            names = ->(pattern) { Dir[root.join(pattern)].to_set { |file| File.basename(file, '_serializer.rb').camelize } }
+            case api
+            when :store then names.call('*_serializer.rb') - TypelizerGeneration::STORE_EXCLUDED
+            when :admin then names.call('admin/**/*_serializer.rb')
+            when :seller then names.call('seller/**/*_serializer.rb') | TypelizerGeneration::SELLER_STORE_TYPES
+            end
           end
         end
 
@@ -116,7 +127,7 @@ module Spree
 
             SDKS.each_key do |api|
               config.writer(api) do |writer|
-                writer.output_dir = out.join(api.to_s, 'generated')
+                writer.output_dir = out.join(api.to_s, 'types')
                 writer.types_import_path = '../spree'
                 # Named type exports compile whether or not the package sets
                 # `verbatimModuleSyntax`; a default export of a type does not.
@@ -147,7 +158,7 @@ module Spree
 
             // Every type the generated files reference: the SDK's, and this package's own.
             export type * from '#{SDKS[api]}'
-            export type * from './generated'
+            export type * from './types'
           TS
         end
       end
