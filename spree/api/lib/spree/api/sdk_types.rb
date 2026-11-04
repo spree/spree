@@ -86,12 +86,20 @@ module Spree
             end
 
             # A value list and a type of one name are both exported from the
-            # generated index.
+            # generated index, and one the SDK already has would be exported
+            # twice from `spree.ts`.
             names = interfaces.map(&:name).to_set
-            list = interfaces.flat_map(&:enum_types).find { |property| names.include?(property.enum_type_name) }
+            lists = interfaces.flat_map(&:enum_types)
+            list = lists.find { |property| names.include?(property.enum_type_name) }
+            if list
+              raise ArgumentError, "The value list #{list.enum_type_name} is also the name of a type the #{api} API generates; " \
+                                   'give its enum_type_name another name'
+            end
+
+            list = lists.find { |property| core_list_names(api).include?(property.enum_type_name) }
             next unless list
 
-            raise ArgumentError, "The value list #{list.enum_type_name} is also the name of a type the #{api} API generates; " \
+            raise ArgumentError, "The value list #{list.enum_type_name}, which #{SDKS[api]} already exports, is declared again; " \
                                  'give its enum_type_name another name'
           end
         end
@@ -108,6 +116,21 @@ module Spree
             when :admin then names.call('admin/**/*_serializer.rb')
             when :seller then names.call('seller/**/*_serializer.rb') | TypelizerGeneration::SELLER_STORE_TYPES
             end
+          end
+        end
+
+        # The value lists Spree's own serializers give the SDK of one API, read
+        # from their `enum_type_name:` declarations, and the shared code lists
+        # every SDK exports.
+        def core_list_names(api)
+          @core_list_names ||= {}
+          @core_list_names[api] ||= begin
+            root = Spree::Api::Engine.root.join('app/serializers/spree/api/v3')
+            patterns = { store: ['*_serializer.rb'], admin: ['admin/**/*_serializer.rb', '*_serializer.rb'],
+                         seller: ['seller/**/*_serializer.rb', '*_serializer.rb'] }.fetch(api)
+            declared = patterns.flat_map { |pattern| Dir[root.join(pattern)] }
+                               .flat_map { |file| File.read(file).scan(/enum_type_name: ['"](\w+)['"]/).flatten }
+            declared.to_set | Typelizer::OpenEnums::CLOSED_TYPE_NAMES
           end
         end
 

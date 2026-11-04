@@ -143,12 +143,21 @@ RSpec.describe Spree::Api::SdkTypes do
       .to raise_error(ArgumentError, /The value list WidgetStatus is also the name of a type the admin API generates/)
   end
 
+  it 'refuses a value list the SDK already exports' do
+    source = serializer_source.sub("enum_type_name: 'WidgetStatus'", "enum_type_name: 'OrderStatus'")
+    File.write(root.join('app/serializers/sdk_types_fixture/admin/widget_serializer.rb'), source)
+
+    expect { described_class.generate!(engine: engine, out: 'types') }
+      .to raise_error(ArgumentError, %r{The value list OrderStatus, which @spree/admin-sdk already exports})
+  end
+
   it "reserves only the names the SDK exports" do
     names = described_class.send(:core_type_names, :store)
 
     expect(names).to include('Order')
     expect(names).not_to include('TaxCategory')
     expect(described_class.send(:core_type_names, :seller)).to include('Category')
+    expect(described_class.send(:core_list_names, :admin)).to include('OrderStatus', 'CurrencyCode')
   end
 
   it 'sorts serializers by namespace, as core does' do
