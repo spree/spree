@@ -73,8 +73,9 @@ module Spree
                   next render_promotion_row_error if @resource.promotion?
 
                   amount = money_param(:amount, @parent.currency) if params.key?(:amount)
-                  # As sent, blank included, so a blank label is refused as on a draft.
-                  label = params[:label].to_s if params.key?(:label)
+                  # Read as a draft's update reads it: a blank label is refused,
+                  # and anything but a string is dropped rather than stringified.
+                  label = permitted_params[:label]
                   result = apply_change(kind: 'update_discount', discount: @resource, label: label, amount: amount)
                   next result.success? ? render(json: serialize_resource(@resource.reload)) : render_result_error(result)
                 end
