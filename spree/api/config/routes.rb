@@ -511,6 +511,10 @@ Spree::Core::Engine.add_routes do
 
         resources :payment_methods, concerns: :custom_fieldable do
           get :types, on: :collection
+          resources :rules, controller: 'payment_methods/rules', only: [:index, :show, :create, :update, :destroy]
+        end
+        resources :payment_method_rules, only: [] do
+          get :types, on: :collection
         end
 
         resources :integrations do

@@ -14,6 +14,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       subject { get :index, as: :json }
 
       let!(:second_payment_method) { create(:check_payment_method, store: store, name: 'Second method') }
+      let!(:rules) { [payment_method, second_payment_method].map { |method| create(:company_payment_method_rule, payment_method: method) } }
     end
 
     it 'returns store-scoped payment methods' do
@@ -147,6 +148,15 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(created.store).to eq(store)
     end
 
+    it 'saves rules sent with the method' do
+      channel = create(:channel, store: store)
+
+      post :create, params: create_params.merge(rules: [{ type: 'channel_rule', preferences: { channel_ids: [channel.prefixed_id] } }]), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['rules'].sole).to include('type' => 'channel_rule', 'preferences' => { 'channel_ids' => [channel.prefixed_id] })
+    end
+
     it 'rejects an unknown subclass' do
       post :create, params: create_params.merge(type: 'NotARealClass'), as: :json
 
@@ -162,6 +172,30 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(payment_method.reload.name).to eq('Updated')
       expect(payment_method.reload.active).to be false
+    end
+
+    it 'replaces the rules with the ones sent' do
+      company_rule = create(:company_payment_method_rule, payment_method: payment_method)
+      create(:market_payment_method_rule, payment_method: payment_method)
+
+      patch :update, params: {
+        id: payment_method.prefixed_id,
+        rules: [{ id: company_rule.prefixed_id, type: 'company_rule', active: false },
+                { type: 'order_total_rule', preferences: { max_totals: { USD: '500.00' } } }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['rules'].map { |rule| rule['type'] }).to contain_exactly('company_rule', 'order_total_rule')
+      expect(company_rule.reload.active).to be(false)
+    end
+
+    it 'refuses an unknown rule type and keeps the existing rules' do
+      rule = create(:company_payment_method_rule, payment_method: payment_method)
+
+      patch :update, params: { id: payment_method.prefixed_id, rules: [{ type: 'not_a_rule' }] }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(payment_method.reload.payment_method_rules).to eq([rule])
     end
 
     context 'when the payment method has a :password preference' do
@@ -311,14 +345,16 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(types).to include('bogus', 'store_credit', 'custom_payment_source_method')
     end
 
-    it 'marks providers already installed in the current store, keeping their schema' do
+    it 'counts the methods of each provider the current store has, keeping their schema' do
+      create(:check_payment_method, store: store, name: 'Second check')
+      create(:check_payment_method, store: create(:store))
+
       get :types, as: :json
 
-      # The seeded `check_payment_method` belongs to `store`: the create picker
-      # leaves `check` out, while its edit form still reads its schema here.
       check = json_response['data'].find { |entry| entry['type'] == 'check' }
-      expect(check).to include('installed' => true, 'schema' => include('type' => 'object'))
-      expect(json_response['data'].find { |entry| entry['type'] == 'bogus' }['installed']).to be(false)
+      expect(check).to include('installed_count' => 2, 'installed' => true, 'schema' => include('type' => 'object'))
+      bogus = json_response['data'].find { |entry| entry['type'] == 'bogus' }
+      expect(bogus).to include('installed_count' => 0, 'installed' => false)
     end
 
     # Bogus declares `preference :dummy_secret_key, :password, default: 'SECRETKEY123'`.

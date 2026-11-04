@@ -14,4 +14,15 @@ export type PaymentMethodCreateParams = {
   metadata?: Record<string, unknown>
   /** Values for the provider's preference schema, from the payment method types endpoint. */
   preferences?: Record<string, unknown>
+  /**
+   * Conditions that decide whether the method is offered at storefront checkout. Replaces the full
+   * set: omitted rules are removed.
+   */
+  rules?: {
+    id?: string
+    /** A rule kind from the payment method rule types endpoint. */
+    type?: string
+    active?: boolean
+    preferences?: Record<string, unknown>
+  }[]
 }
