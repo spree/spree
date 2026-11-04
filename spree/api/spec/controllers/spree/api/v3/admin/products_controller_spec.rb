@@ -78,23 +78,10 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(row_for('Untracked')['total_on_hand']).to be_nil
     end
 
-    it 'reads a page of products in the same number of queries as one' do
-      count_queries = lambda do
-        queries = 0
-        counter = lambda do |*, payload|
-          queries += 1 unless payload[:name] == 'SCHEMA' || payload[:sql].match?(/\A(BEGIN|COMMIT|SAVEPOINT|RELEASE)/)
-        end
-        ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { get :index, as: :json }
-        queries
-      end
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index, as: :json }
 
-      stocked_product('First', 1, 2)
-      count_queries.call # warms the per-process caches the first request fills
-      baseline = count_queries.call
-      stocked_product('Second', 1, 2)
-      stocked_product('Third', 1, 2)
-
-      expect(count_queries.call).to eq(baseline)
+      let!(:records) { %w[First Second Third].map { |name| stocked_product(name, 1, 2) } }
     end
   end
 

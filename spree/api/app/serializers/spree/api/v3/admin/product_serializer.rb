@@ -50,14 +50,13 @@ module Spree
 
           prefixed_id_attributes :product_type, :tax_category
 
-          # Units purchasable now across every variant, counted the way each
-          # variant's own `total_on_hand` is. Null when any variant is not
-          # tracked: its stock is unlimited, so the product's is too.
+          # Units purchasable now across every variant. Null when any variant
+          # is not tracked: its stock is unlimited, so the product's is too.
+          # Loading the variants first makes the total net of checkout holds.
           attribute :total_on_hand do |product|
-            variants = product.variants.to_a
-            next if variants.empty? || variants.any? { |variant| !variant.should_track_inventory? }
-
-            variants.sum { |variant| variant.total_on_hand.to_i }
+            product.variants.load
+            total = product.total_on_hand
+            total.to_i unless total.infinite?
           end
 
           attribute :price do |product|
