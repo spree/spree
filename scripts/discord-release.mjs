@@ -103,7 +103,8 @@ export function buildEmbed(release) {
     if (titles.length) {
       titled.push({ name: clip(`${heading} (${bullets.length})`, 256), value: list(titles) })
     } else if (/^\p{Extended_Pictographic}/u.test(heading)) {
-      titled.push({ name: clip(`${heading} (${bullets.length})`, 256), value: list(bullets.map(summary)) })
+      const name = clip(`${heading} (${bullets.length})`, 256)
+      titled.push({ name, value: list(bullets.map(summary)), brief: name })
     } else {
       // Major releases describe areas under plain headings; name the areas.
       highlights.push(heading)
@@ -116,8 +117,17 @@ export function buildEmbed(release) {
   const required = upgrades.slice(0, 3)
   const contributors = contributorsOf(release)
   if (contributors.length) {
-    const names = contributors.map((c) => `[@${c}](https://github.com/${c})`).join(', ')
-    required.push({ name: `🙌 Thanks to ${contributors.length} community contributor${contributors.length > 1 ? 's' : ''}`, value: clip(names, 1024) })
+    const names = []
+    for (const c of contributors) {
+      const link = `[@${c}](https://github.com/${c})`
+      if ([...names, link].join(', ').length > 980) break
+      names.push(link)
+    }
+    const more = contributors.length - names.length
+    required.push({
+      name: `🙌 Thanks to ${contributors.length} community contributor${contributors.length > 1 ? 's' : ''}`,
+      value: names.join(', ') + (more ? ` and ${more} more` : ''),
+    })
   }
 
   const description = [
@@ -136,13 +146,19 @@ export function buildEmbed(release) {
     timestamp: release.published_at,
   }
 
-  let budget = MAX_EMBED - size(embed) - required.reduce((n, f) => n + size(f), 0)
-  for (const field of titled) {
-    if (embed.fields.length >= MAX_FIELDS - required.length) break
-    if (size(field) > budget) continue
-    embed.fields.push(field)
-    budget -= size(field)
+  // Space is held back so a section that doesn't fit is still named in one line.
+  const reserve = 300
+  let budget = MAX_EMBED - size(embed) - required.reduce((n, f) => n + size(f), 0) - reserve
+  const left = []
+  for (const { brief, ...field } of titled) {
+    if (embed.fields.length < MAX_FIELDS - required.length - 1 && size(field) <= budget) {
+      embed.fields.push(field)
+      budget -= size(field)
+    } else if (brief) {
+      left.push(brief)
+    }
   }
+  if (left.length) embed.fields.push({ name: 'Also in this release', value: clip(left.join(' · '), reserve - 25) })
   embed.fields.push(...required)
 
   const image = (release.body || '').match(/<img[^>]+src="([^"]+)"/)?.[1]
@@ -220,12 +236,18 @@ function summary(bullet) {
     .replace(/,? ?\[#\d+\]\([^)\s]{0,300}\)/g, '')
     .replace(/ by \[?@[\w-]+\]?(\([^)\s]{0,300}\))?/g, '')
     .replace(/\[([^\]]{0,300})\]\([^)\s]{0,300}\)/g, '$1')
+    .replace(/ in$/, '')
     .trim()
-  const sentence = text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text
-  const short = sentence.replace(/[.]$/, '')
-  if (short.length <= MAX_SUMMARY) return short
-  const cut = short.lastIndexOf(' ', MAX_SUMMARY - 1)
-  return `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 1)}…`
+  // A sentence ends before a capital letter or code, never after e.g., i.e. or vs.
+  const sentence = text.match(/^.+?(?<!\b(?:e\.g|i\.e|vs|etc))[.!?](?= +[\p{Lu}`]| *$)/u)?.[0] ?? text
+  let short = sentence.replace(/[.]$/, '')
+  if (short.length > MAX_SUMMARY) {
+    const cut = short.lastIndexOf(' ', MAX_SUMMARY - 1)
+    short = `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 1)}…`
+  }
+  // Never leave a code span open.
+  if ((short.match(/`/g) || []).length % 2) short = `${short.slice(0, short.lastIndexOf('`')).trimEnd()}…`
+  return short
 }
 
 function list(items) {
