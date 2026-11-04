@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Order, Variant } from '@spree/admin-sdk'
+import type { Order, OrderChange, Variant } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, useResourceKey } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
@@ -145,8 +145,9 @@ export function useOrderItemsEditor(order: Order | undefined) {
     savingRef.current = true
     setIsSaving(true)
     let patched = false
+    let response: unknown
     try {
-      await saveMutation.mutateAsync(request)
+      response = await saveMutation.mutateAsync(request)
       patched = true
     } catch (err) {
       if (!stillShown()) return false
@@ -189,15 +190,25 @@ export function useOrderItemsEditor(order: Order | undefined) {
         // sent as the saved values, so the form is pristine and the next
         // read of the order re-hydrates it with the server's totals.
         toastManager.add({ type: 'warning', title: t('admin.orders.edit.saved_not_reloaded') })
-        // Lines added by this save have no id on the form, and an order
-        // change can only edit a line by its id: fetch them so the next edit
-        // reaches them.
         queryClient.invalidateQueries({ queryKey: orderKey })
+        // An order change can only edit a line by its id, so lines this save
+        // added take theirs from the change's add actions, which record the
+        // line each one landed on.
+        const addedLines = new Map<string, string>(
+          'actions' in request
+            ? ((response as OrderChange).actions ?? []).flatMap((action) =>
+                action.kind === 'add_item' && action.variant_id && action.line_item_id
+                  ? [[action.variant_id, action.line_item_id] as const]
+                  : [],
+              )
+            : [],
+        )
         form.reset({
           items: values.items
             .filter((item) => !item.removed)
             .map((item) => ({
               ...item,
+              line_item_id: item.line_item_id ?? addedLines.get(item.variant_id) ?? null,
               added: false,
               saved_quantity: item.quantity,
               saved_price: item.price,

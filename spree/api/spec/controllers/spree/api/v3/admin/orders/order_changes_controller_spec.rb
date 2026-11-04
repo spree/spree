@@ -86,6 +86,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(order.reload.line_items.map(&:quantity)).to eq([2])
     end
 
+    it 'answers the line each confirmed addition landed on' do
+      variant = create(:variant)
+
+      post :create, params: {
+        order_id: order.prefixed_id, confirm: true,
+        actions: [{ kind: 'add_item', variant_id: variant.prefixed_id, quantity: 1 }]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      added = order.reload.line_items.find_by(variant: variant)
+      expect(json_response['actions'].first['line_item_id']).to eq(added.prefixed_id)
+    end
+
     it 'leaves the change requested without confirm' do
       post :create, params: {
         order_id: order.prefixed_id, actions: [{ kind: 'remove_item', line_item_id: line_item.prefixed_id }]
