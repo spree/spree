@@ -70,6 +70,8 @@ describe Spree::Core::Dependencies, type: :model do
       expect { deps.register(:cart_add_item_workflow_class, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
       expect(deps.cart_add_item_workflow_class).to eq(Spree::Carts::AddItem)
       expect { deps.register(:search_provider, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
+      deps.define_singleton_method(:extension_thing_workflow=) { |_value| nil }
+      expect { deps.register(:extension_thing_workflow, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
     end
 
     it 'leaves nothing registered when the default raises' do

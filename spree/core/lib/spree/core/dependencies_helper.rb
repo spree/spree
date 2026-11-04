@@ -79,9 +79,10 @@ module Spree
       point = point.to_sym
       raise ArgumentError, "#{point} is already a dependency" if injection_point?(point)
       # `cart_add_item_workflow_class` would shadow the resolving reader core
-      # defines for `cart_add_item_workflow`, and a key `Spree` already
-      # answers itself (`search_provider`) would never be read.
-      if [self, Spree].any? { |owner| owner.respond_to?(point, true) || owner.respond_to?("#{point}_class", true) }
+      # defines for `cart_add_item_workflow`, a key `Spree` already answers
+      # itself (`search_provider`) would never be read, and an existing
+      # setter would lose its own behaviour to the tracked one.
+      if [self, Spree].any? { |owner| [point, "#{point}_class", "#{point}="].any? { |name| owner.respond_to?(name, true) } }
         raise ArgumentError, "#{point} would replace an existing method"
       end
 
