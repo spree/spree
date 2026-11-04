@@ -423,8 +423,6 @@ import type {
   DeliveryMethodCreateParams,
   DeliveryMethodRuleCreateParams,
   DeliveryMethodRuleUpdateParams,
-  PaymentMethodRuleCreateParams,
-  PaymentMethodRuleUpdateParams,
   DeliveryMethodUpdateParams,
   DeliveryOriginGroupParams,
   DeliveryProfileCreateParams,
@@ -493,6 +491,8 @@ import type {
   PaymentCaptureParams,
   PaymentCreateParams,
   PaymentMethodCreateParams,
+  PaymentMethodRuleCreateParams,
+  PaymentMethodRuleUpdateParams,
   PaymentMethodUpdateParams,
   PolicyCreateParams,
   PolicyUpdateParams,
@@ -625,7 +625,6 @@ import type {
   Delivery,
   DeliveryMethod,
   DeliveryMethodRule,
-  PaymentMethodRule,
   DeliveryOriginGroup,
   DeliveryProfile,
   DeliveryRateProviderOption,
@@ -670,6 +669,7 @@ import type {
   PackageType,
   Payment,
   PaymentMethod,
+  PaymentMethodRule,
   PaymentMethodType,
   Permission,
   Policy,
@@ -2944,10 +2944,14 @@ export class AdminClient {
         params: PaymentMethodRuleUpdateParams,
         options?: RequestOptions,
       ): Promise<PaymentMethodRule> =>
-        this.request<PaymentMethodRule>('PATCH', `/payment_methods/${paymentMethodId}/rules/${id}`, {
-          ...options,
-          body: params,
-        }),
+        this.request<PaymentMethodRule>(
+          'PATCH',
+          `/payment_methods/${paymentMethodId}/rules/${id}`,
+          {
+            ...options,
+            body: params,
+          },
+        ),
 
       delete: (paymentMethodId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/payment_methods/${paymentMethodId}/rules/${id}`, options),
