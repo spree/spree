@@ -158,8 +158,11 @@ export function buildEmbed(release) {
       left.push(brief)
     }
   }
-  if (left.length) embed.fields.push({ name: 'Also in this release', value: clip(left.join(' · '), reserve - 25) })
   embed.fields.push(...required)
+  const room = MAX_EMBED - size(embed) - embed.fields.reduce((n, f) => n + size(f), 0) - 20
+  if (left.length && room > 20) {
+    embed.fields.splice(embed.fields.length - required.length, 0, { name: 'Also in this release', value: clip(left.join(' · '), Math.min(reserve - 25, room)) })
+  }
 
   const image = (release.body || '').match(/<img[^>]+src="([^"]+)"/)?.[1]
   if (image) embed.image = { url: image }
@@ -212,7 +215,8 @@ async function discordIds() {
   const { readFile } = await import('node:fs/promises')
   const file = new URL('../.github/discord-contributors.json', import.meta.url)
   try {
-    return JSON.parse(await readFile(file, 'utf8'))
+    const ids = JSON.parse(await readFile(file, 'utf8'))
+    return ids && typeof ids === 'object' && !Array.isArray(ids) ? ids : {}
   } catch (error) {
     if (error.code === 'ENOENT') return {}
     throw error
@@ -220,12 +224,15 @@ async function discordIds() {
 }
 
 // Pings only the mapped contributors; nothing else in the notes can mention anyone.
+// Ids must be strings: a JSON number this long loses precision and would ping someone else.
 export function thanks(contributors, ids) {
-  const users = [...new Set(contributors.map((c) => ids[c]).filter((id) => /^\d{17,20}$/.test(id)))]
+  const users = [...new Set(contributors.map((c) => (Object.hasOwn(ids, c) ? ids[c] : null)))]
+    .filter((id) => typeof id === 'string' && /^\d{17,20}$/.test(id))
+    .slice(0, 80)
   if (!users.length) return { allowed_mentions: { parse: [] } }
   return {
     content: `🙌 Thanks ${users.map((id) => `<@${id}>`).join(' ')} for contributing to this release!`,
-    allowed_mentions: { parse: [], users: users.slice(0, 100) },
+    allowed_mentions: { parse: [], users },
   }
 }
 
