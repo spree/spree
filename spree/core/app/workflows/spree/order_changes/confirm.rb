@@ -3,7 +3,7 @@ module Spree
     # Applies a requested change set to its order in one transaction.
     #
     # No money moves here. The order is re-summed and its payment status
-    # re-derived — `balance_due` when the customer owes more, `credit_owed`
+    # re-derived — `partially_paid` when the customer owes more, `overcharged`
     # when they are owed some back — and the merchant settles it from the
     # order's payments, as after any edit. `before_confirm` and
     # `after_confirm` handlers read `balance_delta`, but both may run inside a
@@ -25,6 +25,7 @@ module Spree
       def perform(order_change:)
         super
 
+        payload = nil
         # requires_new: a failure partway through applying rolls back to here
         # even inside a caller's transaction, instead of leaving half an edit
         # for the caller to commit.
@@ -39,11 +40,13 @@ module Spree
           @balance_delta = order.total - previous_total
           order_change.update!(status: 'confirmed', confirmed_at: Time.current)
           run_hooks :before_confirm
+          # Built here, so a payload that fails to build rolls the edit back.
+          payload = order_change.event_payload_for('order_change.confirmed') if Spree::Events.enabled?
         end
 
         # Registered before after_confirm: a handler rejecting here cannot
         # undo a confirm that already committed, so its event still goes out.
-        ActiveRecord.after_all_transactions_commit { order_change.publish_event('order_change.confirmed') }
+        ActiveRecord.after_all_transactions_commit { order_change.publish_event('order_change.confirmed', payload) }
         run_hooks :after_confirm
         success(order_change)
       end

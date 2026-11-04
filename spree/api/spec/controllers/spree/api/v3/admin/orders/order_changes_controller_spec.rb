@@ -99,6 +99,24 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(json_response['actions'].first['line_item_id']).to eq(added.prefixed_id)
     end
 
+    it 'refuses a quantity that is not a whole number' do
+      post :create, params: {
+        order_id: order.prefixed_id, actions: [{ kind: 'update_item', line_item_id: line_item.prefixed_id, quantity: 3.7 }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(order.order_changes).to be_empty
+    end
+
+    it 'keeps metadata as sent, id-looking values included' do
+      post :create, params: {
+        order_id: order.prefixed_id, metadata: { ticket_id: line_item.prefixed_id },
+        actions: [{ kind: 'remove_item', line_item_id: line_item.prefixed_id }]
+      }, as: :json
+
+      expect(order.order_changes.sole.metadata).to eq('ticket_id' => line_item.prefixed_id)
+    end
+
     it 'leaves the change requested without confirm' do
       post :create, params: {
         order_id: order.prefixed_id, actions: [{ kind: 'remove_item', line_item_id: line_item.prefixed_id }]

@@ -16,7 +16,7 @@ module Spree
                              total: 'The order total after the change.',
                              previous_total: 'The order total before the change.',
                              outstanding_balance: 'What the customer would still owe after the change. Negative when they would be owed money back.',
-                             balance_delta: 'How far the total moves: positive when the customer would owe more, negative when they would be owed a refund.'
+                             balance_delta: 'How far the order total moves: positive when it goes up, negative when it goes down. Whether the customer owes money or is owed some is outstanding_balance.'
                            }
         end
       end
