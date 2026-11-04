@@ -1,15 +1,11 @@
 module Spree
   module AgentTools
-    # The tools Spree ships: the generic read tools, and the workflows exposed
-    # as write tools.
+    # The hand-written tools Spree ships: the generic reads and writes,
+    # reporting, imports, files and stock.
     #
-    # The write allowlist is the whole catalog of back-office writes an agent
-    # may make. Every entry names a `Spree::Dependencies` key, so a host app
-    # that swaps in its own workflow class keeps the tool and gets the
-    # replacement's schema; and a permission, which must equal the write scope
-    # of the admin controller that invokes the same workflow — a contract spec
-    # in `spree_api` fails when the two disagree, or when a controller gains a
-    # workflow that is neither listed here nor excluded below.
+    # Back-office actions are not listed here. Every Admin API action is a
+    # tool built from its OpenAPI operation ({OperationCatalog}); an action
+    # that should not be one is marked in its rswag spec, with the reason.
     module DefaultCatalog
       # Read tools, and the writes that are not workflows.
       TOOLS = %w[
@@ -33,15 +29,11 @@ module Spree
       ].freeze
 
 
-      # Workflow key => permission, or => {permission:, except:, summary:}.
+      # @deprecated The 6.0.0 workflow allowlist, kept only so a reference to
+      #   it does not break through 6.0.x. Nothing reads it: Admin API
+      #   operations are tools on their own. Removed in 6.1.
       WORKFLOWS = {
         # Catalog
-        #
-        # The three status moves below run in this process rather than through
-        # an endpoint, because the Admin API has none for them: `PATCH` writes
-        # the column and the bulk action uses `update_all`, so neither
-        # publishes the status event nor withdraws an open seller submission.
-        # They dispatch as soon as an admin status endpoint exists.
         product_activate_workflow: 'write_products',
         product_draft_workflow: 'write_products',
         product_archive_workflow: 'write_products',
@@ -105,9 +97,9 @@ module Spree
         tax_exemption_certificate_verify_workflow: 'write_customers'
       }.freeze
 
-      # Workflows an admin controller invokes that are deliberately NOT tools,
-      # each with the reason. The contract spec reads this list, so a workflow
-      # can never be quietly dropped: it is exposed, or it is here.
+      # @deprecated The 6.0.0 exclusion list, kept like {WORKFLOWS}. Its
+      #   reasons now travel as `agent_tool false, reason:` on the operation's
+      #   rswag spec. Removed in 6.1.
       # The email template editor is a draft-and-publish surface: its steps
       # move a draft through revisions against a live preview, and they mean
       # nothing outside that screen. Publishing one sends real mail in the
@@ -174,9 +166,10 @@ module Spree
         # @return [void]
         def install(registry)
           TOOLS.each { |tool| registry << tool }
-          registry.expose_workflows(**WORKFLOWS)
         end
       end
+
+      deprecate_constant :WORKFLOWS, :EXCLUDED_WORKFLOWS
     end
   end
 end

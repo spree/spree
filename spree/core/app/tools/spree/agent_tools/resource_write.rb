@@ -41,7 +41,6 @@ module Spree
 
         path = entry.api_path(action)
         return [nil, { error: not_writable(entry, action) }] if path.blank?
-        return [nil, nested_resource_error(entry, verb_for(action), action)] if entry.nested?(action)
 
         # The endpoint answers 403 for a scope the credential lacks, in its
         # own words. This check only avoids offering a tool that cannot work
@@ -76,6 +75,17 @@ module Spree
 
         [nil, { error: "#{entry.key} does not accept #{unknown.to_sentence}.",
                 accepted_attributes: accepted }]
+      end
+
+      # The path for this write, or the refusal saying which record a nested
+      # resource needs.
+      #
+      # @return [Array(String, nil), Array(nil, Hash)]
+      def write_path(entry, action, id: nil, parent_id: nil)
+        path = entry.path_for(action, id: id, parent_id: parent_id)
+        return [path, nil] if path
+
+        [nil, nested_resource_error(entry, verb_for(action), action)]
       end
 
       def result_for(response, entry, summary:)

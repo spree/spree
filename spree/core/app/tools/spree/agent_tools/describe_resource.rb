@@ -84,15 +84,33 @@ module Spree
         entry.writable_attribute_names.presence
       end
 
+      # The action tools this caller is offered, by resource, worked out once
+      # per call rather than once per resource described.
+      def actions_for(entry)
+        @actions ||= Spree.admin_agent_tools.to_a.grep(->(klass) { klass < Spree::AgentTools::OperationTool }).
+                     select { |klass| context.permitted?(klass.permission) }.
+                     group_by { |klass| klass.operation.resource_key }.
+                     transform_values { |classes| classes.map(&:tool_name).sort }
+        @actions[entry.key]
+      end
+
       def describe(entry, detailed:)
         {
           resource: entry.key,
+          # A resource reached through another record — an order's items, a
+          # product's variants when written — needs that record's id as
+          # parent_id on the calls whose route runs under it.
+          parent: %i[index create update].lazy.filter_map { |action| entry.parent_key(action) }.first,
           filterable_fields: entry.filterable_fields,
           # What a generic write accepts, so the model learns the schema here
           # rather than by sending an invalid write and reading the refusal —
           # which is what create_resource and update_resource tell it to do.
           # Offered only where the caller could actually write.
           writable_attributes: writable_attributes_for(entry),
+          # The action tools that act on this resource — cancel, approve,
+          # capture — so a model that found an order learns what it can do
+          # to one without scanning the whole tool list.
+          actions: actions_for(entry),
           # What goes inside a list-valued attribute. Without it a model sees
           # `variants` and has no idea a whole variant fits there, so it
           # creates the product and then adds each variant separately.

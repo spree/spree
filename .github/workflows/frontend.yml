@@ -1,52 +1,15 @@
-name: Packages
+name: Frontend
 
+# Called by ci.yml, which runs this suite only when relevant files changed.
 on:
-  push:
-    branches: [main, '6-0-dev']
-    paths:
-      - "packages/**"
-      - "spree/api/app/**"
-      - "spree/api/lib/typelizer/**"
-      - "spree/core/app/**"
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - "biome.json"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - "scripts/sync-starter.mjs"
-      - "scripts/check-dependency-ranges.mjs"
-      - ".github/workflows/packages.yml"
-  pull_request:
-    paths:
-      - "packages/**"
-      - "spree/api/app/**"
-      - "spree/api/lib/typelizer/**"
-      - "spree/core/app/**"
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - "biome.json"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - "scripts/sync-starter.mjs"
-      - "scripts/check-dependency-ranges.mjs"
-      - ".github/workflows/packages.yml"
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 permissions:
   contents: read
 
 jobs:
   check:
-    name: "Typecheck, Test & Build"
+    name: "Lint, typecheck, test and build"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -136,7 +99,7 @@ jobs:
   # @spree/* package is a symlink resolved under the root overrides, while a
   # generated app installs packed tarballs on its own.
   scaffolded-app:
-    name: "Scaffolded app - Typecheck & Lint"
+    name: "Scaffolded app (typecheck and lint)"
     runs-on: ubuntu-latest
     steps:
       # Runs the pull request's install and build scripts; nothing needs an
@@ -233,7 +196,7 @@ jobs:
           exit "$status"
 
   sdk-integration:
-    name: "SDK Integration Tests"
+    name: "SDK integration tests"
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -268,7 +231,7 @@ jobs:
         run: pnpm test:integration
 
   dashboard-e2e:
-    name: "Dashboard - E2E (${{ matrix.shard }}/4)"
+    name: "Dashboard E2E (${{ matrix.shard }}/4)"
     runs-on: ubuntu-latest
     # Each shard is a full isolated stack (own Rails + SQLite + Vite), so
     # shards can't interfere through shared server state the way parallel
@@ -386,18 +349,3 @@ jobs:
             packages/dashboard/test-results-first-run/
           retention-days: 14
 
-  # Stable single-status roll-up of the shard matrix, keeping the check name
-  # branch-protection rules and status badges can pin against.
-  dashboard-e2e-result:
-    name: "Dashboard - E2E"
-    needs: dashboard-e2e
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check shard results
-        run: |
-          if [ "${{ needs.dashboard-e2e.result }}" != "success" ]; then
-            echo "One or more E2E shards did not succeed: ${{ needs.dashboard-e2e.result }}"
-            exit 1
-          fi
-          echo "All E2E shards passed."

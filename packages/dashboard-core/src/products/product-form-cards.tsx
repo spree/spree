@@ -13,7 +13,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { CurrencyCode } from '@spree/core'
+import { type CurrencyCode, randomUUID } from '@spree/core'
 import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
 import {
   getApiClient,
@@ -370,7 +370,7 @@ export function MediaCard({
     async (files: FileList | File[]) => {
       const fileArray = Array.from(files)
       for (const file of fileArray) {
-        const uploadId = crypto.randomUUID()
+        const uploadId = randomUUID()
         const preview = URL.createObjectURL(file)
         setPending((prev) => [...prev, { id: uploadId, file, preview, progress: 'uploading' }])
         try {
@@ -447,7 +447,7 @@ export function MediaCard({
           ...entries.map((entry, index) => ({
             ...entry,
             position: current.length + index + 1,
-            uploadId: crypto.randomUUID(),
+            uploadId: randomUUID(),
           })),
         ],
         { shouldDirty: true },

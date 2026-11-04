@@ -495,6 +495,14 @@
         "discard_confirm": "Discard",
         "discard_message": "Everything you have filled in so far will be lost. This cannot be undone.",
         "discard_title": "Discard this draft?"
+      },
+      "product_stock": {
+        "out_of_stock": "Out of stock",
+        "on_backorder": "On backorder",
+        "in_stock": "{{count}} in stock",
+        "in_stock_short": "In stock",
+        "variants_one": "{{count}} variant",
+        "variants_other": "{{count}} variants"
       }
     },
     "currency_amounts": {

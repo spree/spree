@@ -493,6 +493,14 @@
         "discard_confirm": "Abandonner",
         "discard_message": "Tout ce que vous avez saisi sera perdu. Cette action est irréversible.",
         "discard_title": "Abandonner ce brouillon ?"
+      },
+      "product_stock": {
+        "out_of_stock": "En rupture de stock",
+        "on_backorder": "En réapprovisionnement",
+        "in_stock": "{{count}} en stock",
+        "in_stock_short": "En stock",
+        "variants_one": "{{count}} variante",
+        "variants_other": "{{count}} variantes"
       }
     },
     "currency_amounts": {

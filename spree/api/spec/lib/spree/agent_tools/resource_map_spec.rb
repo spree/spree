@@ -88,6 +88,20 @@ RSpec.describe Spree::AgentTools::ResourceMap do
       expect(described_class.find('line_items').api_path(:index)).to include(':')
     end
 
+    # A `?` would end the path, sending a line item's delete to the order.
+    it 'keeps a caller-supplied id inside its own segment' do
+      path = described_class.find('line_items').path_for(:destroy, id: 'li_1', parent_id: 'or_1?x=y')
+
+      expect(path).to end_with('/orders/or_1%3Fx%3Dy/items/li_1')
+    end
+
+    it 'refuses a path it cannot fill completely' do
+      entry = described_class.find('line_items')
+      allow(entry).to receive(:api_path).and_return('/api/v3/admin/stores/:store_id/orders/:order_id/items/:id')
+
+      expect(entry.path_for(:show, id: 'li_1', parent_id: 'or_1')).to be_nil
+    end
+
     it 'knows which resources a tool can dispatch to' do
       expect(described_class.find('products')).to be_dispatchable
       expect(described_class.find('imports')).not_to be_dispatchable

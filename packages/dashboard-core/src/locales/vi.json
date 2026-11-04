@@ -495,6 +495,14 @@
         "discard_confirm": "Loại bỏ",
         "discard_message": "Mọi thứ bạn đã điền cho đến nay sẽ bị mất. Điều này không thể hoàn tác được.",
         "discard_title": "Hủy bản nháp này?"
+      },
+      "product_stock": {
+        "out_of_stock": "Hết hàng",
+        "on_backorder": "Đang đặt hàng trước",
+        "in_stock": "{{count}} còn hàng",
+        "in_stock_short": "Còn hàng",
+        "variants_one": "{{count}} biến thể",
+        "variants_other": "{{count}} biến thể"
       }
     },
     "currency_amounts": {

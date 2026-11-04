@@ -225,9 +225,46 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/products/{id}/clone' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    post 'Clone a product' do
+      tags 'Products'
+      admin_sdk_example 'products/clone'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Creates a draft copy of a product, named "COPY OF …", with its variants,
+        prices, stock locations, images, categories, channels and tags; stock on
+        hand starts at zero. Use it to start a similar product from an existing
+        one instead of building it from scratch.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '201', 'product cloned' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['id']).not_to eq(product.prefixed_id)
+          expect(data['name']).to eq("COPY OF #{product.name}")
+          expect(data['status']).to eq('draft')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/products/bulk_status_update' do
     post 'Bulk-update product status' do
       tags 'Products'
+      agent_tool false, reason: 'Writes the status column for many products at once, skipping the status workflows ' \
+                                'and their events; products_activate, products_archive and products_draft run them.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -559,6 +596,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
   path '/api/v3/admin/products/bulk_destroy' do
     delete 'Bulk-delete products' do
       tags 'Products'
+      agent_tool false, reason: 'Deletes many products in one call behind a single confirmation; delete_resource removes them one at a time.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -594,20 +632,12 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     patch 'Approve a submitted product' do
       tags 'Products'
       admin_sdk_example 'products/approve'
-      consumes 'application/json'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description <<~DESC
+      admin_operation :write, :products, description: <<~DESC
         Puts a product a seller submitted for review on sale, and closes the
         submission. Only a product awaiting review can be approved.
       DESC
-      admin_scope :write, :products
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :Authorization, in: :header, type: :string, required: true
 
       response '200', 'product approved' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:submitted) { create(:product, store: store, status: 'proposed') }
         let(:id) { submitted.prefixed_id }
 
@@ -619,7 +649,6 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       end
 
       response '422', 'the product is not awaiting review' do
-        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { product.prefixed_id }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
@@ -660,6 +689,126 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         run_test! do |response|
           expect(JSON.parse(response.body)['status']).to eq('rejected')
           expect(submitted.reload.rejection_reason).to eq('Photos are too dark')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/activate' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Activate a product' do
+      tags 'Products'
+      admin_sdk_example 'products/activate'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Puts one product on sale. Runs the activation workflow, so its hooks and the `product.activated` event fire, which `bulk_status_update` does not. A product awaiting review is refused: approve or reject it instead.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'product active' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'draft').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('active')
+        end
+      end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/archive' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Archive a product' do
+      tags 'Products'
+      admin_sdk_example 'products/archive'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Takes one product off sale and archives it; activating it puts it back on sale. Runs the archive workflow, so its hooks and its event fire. A product awaiting review is refused: approve or reject it instead.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'product archived' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'active').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('archived')
+        end
+      end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/draft' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Move a product back to draft' do
+      tags 'Products'
+      admin_sdk_example 'products/draft'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Takes one product off sale, back to a draft. Runs the draft workflow, so its hooks and its event fire. A product awaiting review is refused: approve or reject it instead.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'product draft' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'active').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('draft')
+        end
+      end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
         end
       end
     end

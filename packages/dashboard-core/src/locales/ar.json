@@ -493,6 +493,14 @@
         "discard_confirm": "تجاهل",
         "discard_message": "سيُفقد كل ما أدخلته حتى الآن، ولا يمكن التراجع عن ذلك.",
         "discard_title": "تجاهل هذه المسودة؟"
+      },
+      "product_stock": {
+        "out_of_stock": "إنتهى من المخزن",
+        "on_backorder": "على المؤجل",
+        "in_stock": "{{count}} في المخزون",
+        "in_stock_short": "في المخزون",
+        "variants_one": "{{count}} البديل",
+        "variants_other": "{{count}} متغيرات"
       }
     },
     "currency_amounts": {

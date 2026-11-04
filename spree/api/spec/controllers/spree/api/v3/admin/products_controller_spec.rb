@@ -41,6 +41,50 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe 'stock total' do
+    let(:location) { Spree::StockLocation.find_by(store: store) || create(:stock_location, store: store) }
+
+    before { request.headers.merge!(headers) }
+
+    def stocked_product(name, *counts)
+      create(:product, store: store, name: name).tap do |stocked|
+        create(:variant, product: stocked) while stocked.reload.variants.size < counts.size
+        stocked.variants.each { |variant| variant.stock_levels.update_all(count_on_hand: 0) }
+        stocked.variants.zip(counts).each do |variant, count|
+          location.stock_level_or_create(variant).update!(count_on_hand: count)
+        end
+      end
+    end
+
+    def row_for(name)
+      json_response['data'].find { |row| row['name'] == name }
+    end
+
+    it 'sums what every variant has on hand' do
+      stocked_product('Two Variants', 3, 4)
+
+      get :index, as: :json
+
+      expect(row_for('Two Variants')['total_on_hand']).to eq(7)
+    end
+
+    # Untracked stock is unlimited, which is not a number to send.
+    it 'is null when a variant does not track inventory' do
+      untracked = stocked_product('Untracked', 3, 4)
+      untracked.variants.last.update!(track_inventory: false)
+
+      get :index, as: :json
+
+      expect(row_for('Untracked')['total_on_hand']).to be_nil
+    end
+
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index, as: :json }
+
+      let!(:records) { %w[First Second Third].map { |name| stocked_product(name, 1, 2) } }
+    end
+  end
+
   describe 'GET #index' do
     subject { get :index, params: {}, as: :json }
 
@@ -1554,6 +1598,40 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(draft.reload).to be_draft
+    end
+  end
+
+  # One product's status, moved through its workflow so its event fires.
+  describe 'moving one product\'s status' do
+    before { request.headers.merge!(headers) }
+
+    it 'activates a draft and publishes the event' do
+      draft = create(:product, store: store, status: 'draft')
+      expect_any_instance_of(Spree::Product).to receive(:publish_event).with('product.activated')
+
+      patch :activate, params: { id: draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft.reload).to be_active
+    end
+
+    # A retried request must not tell every webhook subscriber twice.
+    it 'answers a product already in that status without publishing again' do
+      active = create(:product, store: store, status: 'active')
+      expect_any_instance_of(Spree::Product).not_to receive(:publish_event)
+
+      patch :activate, params: { id: active.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'refuses a product awaiting review' do
+      submitted = create(:product, store: store, status: 'proposed')
+
+      patch :archive, params: { id: submitted.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(submitted.reload.status).to eq('proposed')
     end
   end
 

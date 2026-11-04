@@ -38,7 +38,8 @@ RSpec.describe Spree::Addresses::GeocodeAddressJob do
     it 'handles the error' do
       expect(Rails.error).to receive(:report).with(
         Spree::Addresses::GeocodeAddressError.new("Cannot geocode address ID: #{address.id}"),
-        handled: false,
+        handled: true,
+        severity: :warning,
         context: { address_id: address.id },
         source: 'spree.core'
       )

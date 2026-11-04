@@ -6,6 +6,7 @@ require 'rswag/specs'
 # Load OpenAPI helpers
 require 'spree/api/openapi/schema_helper'
 require 'spree/api/openapi/filter_documentation'
+require 'spree/api/testing_support/openapi'
 
 RSpec.configure do |config|
   # Output to the main spree docs directory at /docs/api-reference/
@@ -315,6 +316,9 @@ RSpec.configure do |config|
   }
 
   config.openapi_format = :yaml
+
+  config.extend Spree::Api::TestingSupport::AdminOperation, type: :request
+  config.extend Spree::Api::TestingSupport::AgentTools, type: :request
 
   # Auto-generate examples from actual test responses
   # This captures real response data and embeds it in the OpenAPI spec

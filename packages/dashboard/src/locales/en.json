@@ -3837,12 +3837,6 @@
             "no_variants": "Add at least one variant to start editing prices."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} in stock",
-          "in_stock_short": "In stock",
-          "on_backorder": "On backorder",
-          "out_of_stock": "Out of stock"
-        },
         "media_empty": "No media yet.",
         "media_upload": "Upload media",
         "new": {
@@ -4035,9 +4029,7 @@
           "section_to": "To",
           "sheet_title": "New stock transfer"
         },
-        "variants_empty": "No variants yet.",
-        "variants_one": "{{count}} variant",
-        "variants_other": "{{count}} variants"
+        "variants_empty": "No variants yet."
       },
       "profile": {
         "load_failed_title": "Couldn't load your profile",
