@@ -979,7 +979,7 @@
       },
       "returnable": {
         "label": "Customers can return this",
-        "help": "Turn off for final sale items, or goods exempt from the EU right of withdrawal, such as sealed hygiene products or personalised and perishable items. Orders keep the setting they were placed with."
+        "help": "Turn off for final sale items, or goods exempt from the EU right of withdrawal, such as personalised or perishable items. Sealed hygiene products are exempt only once unsealed, so leave them on and refuse opened ones when they arrive. Orders keep the setting they were placed with."
       }
     },
     "image_upload": {

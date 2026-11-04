@@ -1005,7 +1005,7 @@
       },
       "returnable": {
         "label": "Los clientes pueden devolver este artículo",
-        "help": "Desactívalo para artículos de venta final o productos excluidos del derecho de desistimiento de la UE, como productos de higiene precintados o artículos personalizados y perecederos. Los pedidos conservan el ajuste con el que se realizaron."
+        "help": "Desactívalo para artículos de venta final o productos excluidos del derecho de desistimiento de la UE, como artículos personalizados o perecederos. Los productos de higiene precintados solo quedan excluidos una vez desprecintados, así que déjalo activado y rechaza los abiertos cuando lleguen. Los pedidos conservan el ajuste con el que se realizaron."
       }
     },
     "products": {

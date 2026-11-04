@@ -21751,6 +21751,9 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: approved
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
@@ -26319,6 +26322,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: false
                 description: Dolore facere hic laboriosam sapiente nobis. Doloribus
@@ -27298,6 +27302,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: true
                 description: Tempora doloribus sit consectetur cumque omnis. Quod
@@ -27425,6 +27430,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: false
                 description: In exercitationem nobis illo accusamus non quibusdam.
@@ -27544,6 +27550,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: false
                 description: Temporibus fugiat ducimus quae voluptas error. Iure repellat
