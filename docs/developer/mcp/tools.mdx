@@ -4,7 +4,7 @@ sidebarTitle: Tools
 description: "Every tool the MCP server offers, what it is for and which permission it needs."
 ---
 
-100 tools ship with the server: 17 general ones, and one for each action the Admin API offers — cancel an order, capture a payment, approve a seller. An assistant is only ever shown the ones you approved, so a connection for products alone sees a fraction of them.
+103 tools ship with the server: 17 general ones, and one for each action the Admin API offers — cancel an order, capture a payment, approve a seller. An assistant is only ever shown the ones you approved, so a connection for products alone sees a fraction of them.
 
 The catalog is not a mirror of the API's 500-odd operations. Plain reads and writes of a record go through the generic tools under [creating, changing and deleting records](#creating-changing-and-deleting-records), and each [action](#actions) is a tool of its own, built from the Admin API operation it runs.
 
@@ -155,6 +155,9 @@ Every Admin API action that is not a plain create, update or delete is a tool, n
 | `exchanges_cancel` | `write_orders` |
 | `exchanges_fulfill` | `write_orders` |
 | `exchanges_receive` | `write_orders` |
+| `order_changes_cancel` | `write_orders` |
+| `order_changes_confirm` | `write_orders` |
+| `order_changes_preview` | `write_orders` |
 | `orders_approve` | `write_orders` |
 | `orders_cancel` | `write_orders` |
 | `orders_complete` | `write_orders` |
