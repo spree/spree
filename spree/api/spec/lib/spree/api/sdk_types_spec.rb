@@ -107,6 +107,24 @@ RSpec.describe Spree::Api::SdkTypes do
     expect(out.join('admin/generated')).not_to exist
   end
 
+  it "refuses a serializer that would generate a type the SDK exports" do
+    File.write(root.join('app/serializers/sdk_types_fixture/admin/order_serializer.rb'), <<~RUBY)
+      module SdkTypesFixture
+        module Admin
+          class OrderSerializer
+            include Alba::Resource
+            include Typelizer::DSL
+
+            attributes :id
+          end
+        end
+      end
+    RUBY
+
+    expect { described_class.generate!(engine: engine, out: 'types') }
+      .to raise_error(ArgumentError, %r{SdkTypesFixture::Admin::OrderSerializer generates Order, which @spree/admin-sdk already exports})
+  end
+
   it 'sorts serializers by namespace, as core does' do
     expect(described_class.api_of(Spree::Api::V3::Admin::OrderSerializer)).to eq(:admin)
     expect(described_class.api_of(Spree::Api::V3::Seller::PayoutSerializer)).to eq(:seller)

@@ -68,15 +68,35 @@ module Spree
 
         # Two serializers in one API named alike in different namespaces
         # (`Orders::ItemSerializer`, `Returns::ItemSerializer`) would write one
-        # file and one type name.
+        # file and one type name, and a name the SDK already exports (`Order`)
+        # would make `spree.ts` export two types under it.
         def refuse_name_collisions!
           SDKS.each_key do |api|
-            names = Typelizer.interfaces(writer_name: api).group_by(&:name)
-            clash = names.find { |_name, interfaces| interfaces.size > 1 }
-            next unless clash
+            interfaces = Typelizer.interfaces(writer_name: api)
+            clash = interfaces.group_by(&:name).find { |_name, named| named.size > 1 }
+            if clash
+              raise ArgumentError, "#{clash.last.map { |i| i.serializer.name }.join(' and ')} both generate the #{api} type " \
+                                   "#{clash.first}; rename one of the serializers"
+            end
 
-            raise ArgumentError, "#{clash.last.map { |i| i.serializer.name }.join(' and ')} both generate the #{api} type " \
-                                 "#{clash.first}; rename one of the serializers"
+            taken = interfaces.find { |interface| core_type_names(api).include?(interface.name) }
+            next unless taken
+
+            raise ArgumentError, "#{taken.serializer.name} generates #{taken.name}, which #{SDKS[api]} already exports; " \
+                                 'rename the serializer'
+          end
+        end
+
+        # The type names Spree's own serializers give the SDK of one API, read
+        # from their file names. The Seller SDK also carries store types.
+        def core_type_names(api)
+          @core_type_names ||= {}
+          @core_type_names[api] ||= begin
+            root = Spree::Api::Engine.root.join('app/serializers/spree/api/v3')
+            patterns = { store: ['*_serializer.rb'], admin: ['admin/**/*_serializer.rb'],
+                         seller: ['seller/**/*_serializer.rb', '*_serializer.rb'] }.fetch(api)
+            patterns.flat_map { |pattern| Dir[root.join(pattern)] }
+                    .to_set { |file| File.basename(file, '_serializer.rb').camelize }
           end
         end
 
