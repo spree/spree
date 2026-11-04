@@ -95,7 +95,7 @@ module Spree
 
             def collection_includes
               [:requested_by, :order, :return, :exchange, :claim,
-               { actions: [:line_item, :variant, :fulfillment, :delivery_method] }]
+               { actions: [:line_item, :variant, :fulfillment, :delivery_method, :discount] }]
             end
 
             private
@@ -111,16 +111,24 @@ module Spree
             # one query per kind of record, however many actions there are.
             def actions_param
               @actions_param ||= begin
-                actions = Array(params[:actions]).map { |action| action.permit(:kind, :line_item_id, :variant_id, :quantity) }
+                actions = Array(params[:actions]).map do |action|
+                  action.permit(:kind, :line_item_id, :variant_id, :quantity, :discount_id, :label, :value, :value_type, :amount)
+                end
                 line_items = resolve_ids(@order.line_items.includes(:variant), actions.pluck(:line_item_id))
                 variants = resolve_ids(current_store.variants, actions.pluck(:variant_id))
+                discounts = resolve_ids(@order.discounts, actions.pluck(:discount_id))
 
                 actions.map do |action|
                   {
                     kind: action[:kind].to_s,
                     line_item: line_items[action[:line_item_id]],
                     variant: variants[action[:variant_id]],
-                    quantity: whole_number(action[:quantity])
+                    quantity: whole_number(action[:quantity]),
+                    discount: discounts[action[:discount_id]],
+                    label: action[:label].presence,
+                    value: discount_value(action),
+                    value_type: action[:value_type].presence,
+                    amount: action_decimal(action[:amount], @order.currency)
                   }.compact
                 end
               end
@@ -133,6 +141,19 @@ module Spree
               return if value.blank?
 
               Integer(value.to_s, 10, exception: false) || value
+            end
+
+            # A flat discount is money in the order's currency; a percentage is a rate.
+            def discount_value(action)
+              action_decimal(action[:value], (@order.currency unless action[:value_type] == 'percent'))
+            end
+
+            # Money when +currency+ is given, a plain rate otherwise; either
+            # way a canonical decimal string, reported against `actions`.
+            def action_decimal(value, currency = nil)
+              currency ? Spree::Money::Rounding.parse_canonical(value, currency) : Spree::Money::Rounding.parse_canonical_decimal(value)
+            rescue Spree::Money::InvalidFormat => error
+              raise Spree::Money::InvalidFormat.new(error.message, field: :actions)
             end
 
             # @return [Hash{String => ActiveRecord::Base}] records by the prefixed id asked for

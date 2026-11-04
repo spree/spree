@@ -37,7 +37,15 @@ class CreateSpreeOrderChanges < ActiveRecord::Migration[8.1]
       t.references :variant
       t.references :fulfillment
       t.references :delivery_method
+      t.references :discount
       t.integer :quantity
+      # add_discount: what the discount is called and worth (`value` read
+      # as money for `flat`, a rate for `percent`); update_discount: the
+      # row's new `amount`.
+      t.string :label
+      t.decimal :value, precision: 19, scale: 4
+      t.string :value_type
+      t.decimal :amount, precision: 19, scale: 4
       t.integer :position, null: false, default: 0
       if t.respond_to?(:jsonb)
         t.jsonb :metadata

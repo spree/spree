@@ -241,6 +241,9 @@ export const ORDER_CHANGE_ACTION_KINDS = [
   'remove_item',
   'receive_item',
   'add_fulfillment',
+  'add_discount',
+  'update_discount',
+  'remove_discount',
 ] as const
 export type OrderChangeActionKind = (typeof ORDER_CHANGE_ACTION_KINDS)[number] | (string & {})
 
