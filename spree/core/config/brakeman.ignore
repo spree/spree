@@ -115,6 +115,29 @@
       "user_input": "resolve_sql(filter[:metric].sql_for(:grouped => true))",
       "warning_code": 0,
       "warning_type": "SQL Injection"
+    },
+    {
+      "check_name": "UnsafeReflection",
+      "code": "Spree::OrderChange.action_appliers[action.kind].constantize",
+      "confidence": "Medium",
+      "cwe_id": [
+        470
+      ],
+      "file": "app/workflows/spree/order_changes/apply_actions.rb",
+      "fingerprint": "130e304375e6596db9eb81bf81615601dc3fdf3c80c25eb32e2752ff1c05046d",
+      "line": 98,
+      "link": "https://brakemanscanner.org/docs/warning_types/remote_code_execution/",
+      "location": {
+        "type": "method",
+        "class": "Spree::OrderChanges::ApplyActions",
+        "method": "apply_registered_actions"
+      },
+      "message": "Unsafe reflection method `constantize` called on model attribute",
+      "note": "False positive: the class name comes from Spree::OrderChange.action_appliers, a registry written only by register_action_kind in application code; action.kind only selects a registered entry, and kinds are validated against the registered list.",
+      "render_path": null,
+      "user_input": "Spree::OrderChange.action_appliers[action.kind]",
+      "warning_code": 24,
+      "warning_type": "Remote Code Execution"
     }
   ]
 }
