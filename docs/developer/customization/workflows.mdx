@@ -266,6 +266,12 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `carts.recalculate_totals` | `set_tax_line_context` | context | Before tax is estimated |
 | `orders.cancel` | `before_cancel` | validate | Before the cancellation is recorded |
 | `orders.cancel` | `after_cancel` | lifecycle | With the cancellation, in transaction |
+| `order_changes.begin` | `after_begin` | lifecycle | After a change set is opened on a placed order (in transaction) |
+| `order_changes.add_action` | `validate` | validate | Before an action joins a change set — also runs for every preview, so a refused edit is refused before Save. `workflow.kind`, `workflow.line_item`, `workflow.variant` and `workflow.quantity` describe it |
+| `order_changes.request` | `after_request` | lifecycle | After the set is submitted and its actions are frozen (in transaction) |
+| `order_changes.confirm` | `before_confirm` | lifecycle | Once the actions are applied and the set marked confirmed, before the transaction commits; `reject!` rolls the whole change back. `workflow.balance_delta` is how far the total moved |
+| `order_changes.confirm` | `after_confirm` | lifecycle | After the change has committed. Settle money in a subscriber to the `order_change.confirmed` event instead: a return or claim can confirm inside a larger step that may still fail |
+| `order_changes.cancel` | `after_cancel` | lifecycle | After the set is canceled (in transaction) |
 | `orders.complete` | `validate` | validate | Under the order's row lock, before payments are processed and a draft order is placed — admin and B2B drafts. Checkout does not run it (its payment is already taken by then; veto checkout in `carts.complete.validate`), nor do the orders a seller division places beside the first. Handlers hold the order's lock, so keep them to database reads |
 | `fulfillments.create` | `validate` | validate | Before the order is locked |
 | `fulfillments.create` | `get_provider_data` | context | Before the fulfillment is built |
@@ -326,11 +332,14 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 
 `before_cancel` accept `reject!` like a `validate` hook.
 
-Draft-order editing in the admin uses **twin workflows** with their own keys —
+Order editing in the admin uses **twin workflows** with their own keys —
 `orders.add_item`, `orders.upsert_items`, `orders.recalculate`,
 `orders.recalculate_totals` — carrying the same hooks as their cart
 counterparts. Register against the cart key for storefront carts, the order key
-for admin edits, or both.
+for admin edits, or both. A placed order's edits reach `orders.upsert_items`
+through an [order change](/developer/core-concepts/orders#editing-a-placed-order),
+for previews as well as saves, so a handler there may see an edit that is
+rolled back.
 
 <Note>
 `carts.add_item` **adds** to a quantity; `carts.upsert_items` **sets** it, and
