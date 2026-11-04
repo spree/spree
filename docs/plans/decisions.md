@@ -1,3 +1,13 @@
+## 2026-11-04: Payment method rules use the delivery-method-rules API shape; CompanyRule gains a presence mode
+
+**Context:** Implementing `6.1-payment-method-rules.md`. The plan drafted shallow rule routes and an `expand=payment_method_rules` read, but the newer sibling family, `DeliveryMethodRule`, embeds `rules` on its parent, writes them through the same field, and nests all CRUD under the parent. The plan's `CompanyRule` matched listed companies only, and under the fail-open convention an empty list restricts nothing, so "every company buyer" could not be expressed.
+
+**Decision:** The admin payment method embeds and accepts `rules`; nested CRUD at `/payment_methods/:id/rules`, discovery at `/payment_method_rules/types`. `CompanyRule` carries `company_ids` (ancestor walk) plus `company_orders_only` (default true), matching the delivery rule's preference of the same name. Both phases ship in one pull request; the storefront key change is a companion pull request on `spree/storefront`.
+
+**Consequences:** Rule families now share one API shape — a new family should copy `DeliveryMethodRule`'s, not the order-routing one. Read and write names match for `rules` on both parents.
+
+**Plan:** `6.1-payment-method-rules.md`.
+
 ## 2026-11-02: Payment method rules retarget to 6.1; multiple accounts of one provider are records scoped by rules
 
 **Context:** `6.1-payment-method-rules.md` (then `6.0-…`) was not built in 6.0. The 2026-07-23 entry below had parked "multiple provider credentials in one store" for grooming, with two candidate shapes. Reviewing it against what shipped since: an open-source platform's hosted payments product (October 2026) added multiple accounts with no data model at all — one provider instance registered per account, scoped by region — and the hosted leader's multi-entity model is one payments account per legal entity mapped to markets. In Spree, two `SpreeStripe::Gateway` records in one store already work at the data layer (own keys, own webhook endpoint and secret, own sessions and gateway customers); only the dashboard's "installed" filter, the storefront's single publishable key from an environment variable, and the marketplace payout provider's "first Stripe method" lookup stand in the way. The Company tree also shipped (2026-08-25), and the checkout seam moved to `Spree::Purchase::PaymentProcessing#payment_methods` on carts, which the cart payment-sessions controller bypasses.
