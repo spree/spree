@@ -82,7 +82,8 @@ module Spree
       # defines for `cart_add_item_workflow`, a key `Spree` already answers
       # itself (`search_provider`) would never be read, and an existing
       # setter would lose its own behaviour to the tracked one.
-      if [self, Spree].any? { |owner| [point, "#{point}_class", "#{point}="].any? { |name| owner.respond_to?(name, true) } }
+      names = [point, "#{point}_class", "#{point}="]
+      if [self, Spree].any? { |owner| names.any? { |name| owner.respond_to?(name, true) } }
         raise ArgumentError, "#{point} would replace an existing method"
       end
 
