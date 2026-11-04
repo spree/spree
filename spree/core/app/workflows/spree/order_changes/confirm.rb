@@ -41,8 +41,10 @@ module Spree
           run_hooks :before_confirm
         end
 
-        run_hooks :after_confirm
+        # Registered before after_confirm: a handler rejecting here cannot
+        # undo a confirm that already committed, so its event still goes out.
         ActiveRecord.after_all_transactions_commit { order_change.publish_event('order_change.confirmed') }
+        run_hooks :after_confirm
         success(order_change)
       end
 
