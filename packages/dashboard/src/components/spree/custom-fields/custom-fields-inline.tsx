@@ -333,7 +333,7 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
       // Read the definitions again so a field made required since the page
       // loaded is checked too. The server leaves `required` to this check.
       const { data: fresh } = await refetchDefinitions()
-      if (!fresh && isLoading) {
+      if (!fresh && !definitionsResponse) {
         toastManager.add({
           type: 'error',
           title: t('admin.components.custom_fields.definitions_check_failed'),
@@ -354,7 +354,7 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
     return () => {
       formSubmitChecks.delete(cfForm.control)
     }
-  }, [cfForm, definitions, definitionIds, isLoading, refetchDefinitions, t])
+  }, [cfForm, definitions, definitionsResponse, definitionIds, refetchDefinitions, t])
 
   const setValue = useCallback(
     (definitionId: string, value: unknown) => {
