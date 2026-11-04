@@ -372,6 +372,15 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(foreign.reload).to be_persisted
     end
 
+    it 'refuses a discount on a line the same change removes' do
+      result = apply({ kind: 'remove_item', line_item: line_item },
+                     { kind: 'add_discount', label: 'Goodwill', value: 1, line_item: line_item })
+
+      expect(result).to be_failure
+      expect(order.reload.discounts).to be_empty
+      expect(order.line_items).to include(line_item)
+    end
+
     it 'refuses a discount worth nothing' do
       expect(apply({ kind: 'add_discount', label: 'Zero', value: 0 })).to be_failure
       expect(order.reload.order_changes).to be_empty
