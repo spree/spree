@@ -24641,6 +24641,9 @@ components:
           - number
           - boolean
           - json
+          - date
+          - date_time
+          - choice
         key:
           type: string
         value: {}
@@ -29131,6 +29134,9 @@ components:
           - number
           - boolean
           - json
+          - date
+          - date_time
+          - choice
         value: {}
       required:
       - id

@@ -575,7 +575,15 @@
         "empty_title": "No custom fields yet",
         "errors": {
           "failed_to_save": "Failed to save custom field",
-          "failed_to_load": "Custom fields could not be loaded. Reload the page to try again."
+          "failed_to_load": "Custom fields could not be loaded. Reload the page to try again.",
+          "required": "Enter a value",
+          "too_short": "Use at least {{count}} characters",
+          "too_long": "Use at most {{count}} characters",
+          "less_than_min": "Must be at least {{min}}",
+          "greater_than_max": "Must be at most {{max}}",
+          "before_min": "Must be on or after {{min}}",
+          "after_max": "Must be on or before {{max}}",
+          "choice_not_offered": "{{value}} is not one of the choices"
         },
         "manage_in_settings": "Manage in settings",
         "new_definition_description": "Define a custom field to store typed, structured information on your {{resource}}.",
@@ -584,7 +592,11 @@
         "section_title": "Custom fields",
         "set_up": "Set up custom fields",
         "values_save_partial_failed": "Some custom fields could not be saved: {{fields}}",
-        "values_saved": "Custom fields saved"
+        "values_saved": "Custom fields saved",
+        "required_field_hint": "Required",
+        "values_invalid": "Fix these custom fields before saving: {{fields}}",
+        "choose": "Choose…",
+        "no_choices": "No matching choices"
       }
     },
     "custom_field_definitions": {
@@ -1383,7 +1395,10 @@
             "long_text": "Long text",
             "number": "Number",
             "rich_text": "Rich text",
-            "short_text": "Short text"
+            "short_text": "Short text",
+            "date": "Date",
+            "date_time": "Date and time",
+            "choice": "Choice"
           },
           "read_only_help": "The type can't be changed once values exist — switching it would leave stored values misinterpreted."
         },
@@ -1428,16 +1443,50 @@
           "api_only_group": "Through the API only"
         },
         "searchable": {
-          "help": "Include values in storefront product text search (short text, long text, and number only). After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated.",
+          "help": "Include values in storefront product text search. After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated.",
           "label": "Searchable"
         },
         "sortable": {
-          "help": "Allow storefront product listings to sort by this field (short text and number only). After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated.",
+          "help": "Allow storefront product listings to sort by this field. After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated.",
           "label": "Sortable"
         },
         "storefront_visible": {
           "column_label": "Storefront",
           "label": "Visible on storefront"
+        },
+        "validations": {
+          "title": "Validation",
+          "help": "Checked when a value is saved. Existing values stay as they are until they are edited.",
+          "required": {
+            "label": "Required",
+            "help": "Marks the field and stops this dashboard from saving it blank."
+          },
+          "min": {
+            "length": "Minimum characters",
+            "number": "Minimum",
+            "date": "Earliest date",
+            "date_time": "Earliest date and time"
+          },
+          "max": {
+            "length": "Maximum characters",
+            "number": "Maximum",
+            "date": "Latest date",
+            "date_time": "Latest date and time"
+          },
+          "choices": {
+            "label": "Choices",
+            "value": "Value",
+            "choice_label": "Display label",
+            "add": "Add choice",
+            "remove": "Remove choice",
+            "required": "Add at least one choice",
+            "value_required": "Enter a value",
+            "duplicate": "Each value must be different"
+          },
+          "multiple": {
+            "label": "Allow several choices",
+            "help": "The value becomes a list. A field with several choices cannot be sortable."
+          }
         }
       },
       "customer": {

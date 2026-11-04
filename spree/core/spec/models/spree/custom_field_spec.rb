@@ -17,6 +17,54 @@ RSpec.describe Spree::CustomField, type: :model do
     end
   end
 
+  describe 'typed subclass' do
+    let(:product) { create(:product) }
+    let(:definition) { create(:custom_field_definition, :number_field) }
+
+    it 'builds the definition type when the row is built from its definition' do
+      custom_field = product.custom_fields.find_or_initialize_by(custom_field_definition_id: definition.id)
+
+      expect(custom_field).to be_a(Spree::CustomFields::Number)
+    end
+
+    it 'builds the typed class from a prefixed definition id' do
+      custom_field = product.custom_fields.build(custom_field_definition_id: definition.prefixed_id)
+
+      expect(custom_field).to be_a(Spree::CustomFields::Number)
+    end
+
+    it 'applies the type validations on the first write' do
+      expect { product.set_custom_field(definition, 'abc') }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
+  describe 'validation rules' do
+    let(:product) { create(:product) }
+    let(:definition) { create(:custom_field_definition, :short_text_field, validations: { max: 5 }) }
+
+    it 'checks a value when it is written' do
+      expect { product.set_custom_field(definition, 'too long') }.to raise_error(ActiveRecord::RecordInvalid, /too long/)
+    end
+
+    it 'leaves a stored value readable after a rule tightens, and checks it again when rewritten' do
+      custom_field = product.set_custom_field(definition, 'short')
+      definition.update!(validations: { max: 2 })
+      custom_field.reload
+
+      expect(custom_field).to be_valid
+      custom_field.value = 'other'
+      expect(custom_field).not_to be_valid
+    end
+
+    it 'leaves required to the forms: a blank value removes the field' do
+      definition.update!(validations: { required: true })
+      product.set_custom_field(definition, 'abc')
+
+      expect(product.set_custom_field(definition, '')).to be_nil
+      expect(product.custom_fields.count).to eq(0)
+    end
+  end
+
   context 'Scopes' do
     describe '.with_key' do
       it 'returns the custom_fields with the given key' do

@@ -585,7 +585,15 @@
         "empty_title": "Brak pól niestandardowych",
         "errors": {
           "failed_to_save": "Nie udało się zapisać pola niestandardowego",
-          "failed_to_load": "Nie udało się wczytać pól niestandardowych. Odśwież stronę, aby spróbować ponownie."
+          "failed_to_load": "Nie udało się wczytać pól niestandardowych. Odśwież stronę, aby spróbować ponownie.",
+          "required": "Wpisz wartość",
+          "too_short": "Użyj co najmniej {{count}} znaków",
+          "too_long": "Użyj najwyżej {{count}} znaków",
+          "less_than_min": "Musi wynosić co najmniej {{min}}",
+          "greater_than_max": "Może wynosić najwyżej {{max}}",
+          "before_min": "Musi przypadać {{min}} lub później",
+          "after_max": "Musi przypadać {{max}} lub wcześniej",
+          "choice_not_offered": "{{value}} nie jest jedną z opcji"
         },
         "manage_in_settings": "Zarządzaj w ustawieniach",
         "new_definition_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje dla: {{resource}}.",
@@ -594,7 +602,11 @@
         "section_title": "Pola niestandardowe",
         "set_up": "Skonfiguruj pola niestandardowe",
         "values_save_partial_failed": "Niektórych pól niestandardowych nie udało się zapisać: {{fields}}",
-        "values_saved": "Pola niestandardowe zapisane"
+        "values_saved": "Pola niestandardowe zapisane",
+        "required_field_hint": "Wymagane",
+        "values_invalid": "Popraw te pola niestandardowe przed zapisem: {{fields}}",
+        "choose": "Wybierz…",
+        "no_choices": "Brak pasujących opcji"
       }
     },
     "custom_field_definitions": {
@@ -1401,7 +1413,10 @@
             "long_text": "Długi tekst",
             "number": "Liczba",
             "rich_text": "Tekst sformatowany",
-            "short_text": "Krótki tekst"
+            "short_text": "Krótki tekst",
+            "date": "Data",
+            "date_time": "Data i godzina",
+            "choice": "Wybór"
           },
           "read_only_help": "Typu nie można zmienić, gdy istnieją już wartości — zmiana spowodowałaby błędną interpretację zapisanych wartości."
         },
@@ -1446,16 +1461,50 @@
           "api_only_group": "Tylko przez API"
         },
         "searchable": {
-          "help": "Uwzględnij wartości w wyszukiwaniu produktów storefront (tylko krótki tekst, długi tekst i liczba). Po włączeniu z Meilisearch uruchom rake spree:search:reindex, aby zaktualizować istniejące produkty.",
+          "help": "Uwzględnij wartości w wyszukiwaniu produktów storefront. Po włączeniu z Meilisearch uruchom rake spree:search:reindex, aby zaktualizować istniejące produkty.",
           "label": "Przeszukiwalne"
         },
         "sortable": {
-          "help": "Pozwól sortować listy produktów storefront według tego pola (tylko krótki tekst i liczba). Po włączeniu z Meilisearch uruchom rake spree:search:reindex, aby zaktualizować istniejące produkty.",
+          "help": "Pozwól sortować listy produktów storefront według tego pola. Po włączeniu z Meilisearch uruchom rake spree:search:reindex, aby zaktualizować istniejące produkty.",
           "label": "Sortowalne"
         },
         "storefront_visible": {
           "column_label": "Sklep",
           "label": "Widoczne w sklepie"
+        },
+        "validations": {
+          "title": "Walidacja",
+          "help": "Sprawdzane przy zapisie wartości. Istniejące wartości pozostają bez zmian, dopóki nie zostaną edytowane.",
+          "required": {
+            "label": "Wymagane",
+            "help": "Oznacza pole i nie pozwala temu panelowi zapisać go pustego."
+          },
+          "min": {
+            "length": "Minimalna liczba znaków",
+            "number": "Minimum",
+            "date": "Najwcześniejsza data",
+            "date_time": "Najwcześniejsza data i godzina"
+          },
+          "max": {
+            "length": "Maksymalna liczba znaków",
+            "number": "Maksimum",
+            "date": "Najpóźniejsza data",
+            "date_time": "Najpóźniejsza data i godzina"
+          },
+          "choices": {
+            "label": "Opcje",
+            "value": "Wartość",
+            "choice_label": "Etykieta wyświetlana",
+            "add": "Dodaj opcję",
+            "remove": "Usuń opcję",
+            "required": "Dodaj co najmniej jedną opcję",
+            "value_required": "Wpisz wartość",
+            "duplicate": "Każda wartość musi być inna"
+          },
+          "multiple": {
+            "label": "Pozwól wybrać kilka opcji",
+            "help": "Wartość staje się listą. Pole z kilkoma opcjami nie może być sortowalne."
+          }
         }
       },
       "customer": {

@@ -5,5 +5,5 @@ store = Spree::Current.store
     namespace: 'custom',
     key: key,
     resource_type: 'Spree::Product'
-  )
+  ) { |definition| definition.storefront_visible = true }
 end

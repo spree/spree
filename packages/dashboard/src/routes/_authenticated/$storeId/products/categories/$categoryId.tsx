@@ -26,6 +26,7 @@ import {
   CategoryMain,
   CategorySidebar,
 } from '../../../../../components/spree/categories/category-form'
+import { customFieldsAllowSubmit } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import {
   flushProductMembership,
   ProductMembershipStagingProvider,
@@ -92,6 +93,7 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
   }, [category, form])
 
   const onSubmit = async (values: CategoryFormValues) => {
+    if (!(await customFieldsAllowSubmit(form))) return
     // Read before any reset — extension values live in raw form state (the
     // Zod parse behind `values` strips keys the schema doesn't know).
     const extensionValues = extensionSubmitValues('category', form)

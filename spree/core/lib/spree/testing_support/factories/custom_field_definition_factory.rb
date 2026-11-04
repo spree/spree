@@ -50,6 +50,37 @@ FactoryBot.define do
       label { 'Metadata' }
     end
 
+    trait :date_field do
+      field_type { 'Spree::CustomFields::Date' }
+      key { 'delivery_date' }
+      label { 'Delivery date' }
+    end
+
+    trait :date_time_field do
+      field_type { 'Spree::CustomFields::DateTime' }
+      key { 'pickup_at' }
+      label { 'Pickup at' }
+    end
+
+    trait :choice_field do
+      transient do
+        multiple { false }
+      end
+
+      field_type { 'Spree::CustomFields::Choice' }
+      key { 'zone' }
+      label { 'Zone' }
+      validations do
+        choices = [{ value: 'a', label: 'Zone A' }, { value: 'b', label: 'Zone B' }, { value: 'c', label: 'Zone C' }]
+        multiple ? { choices: choices, multiple: true } : { choices: choices }
+      end
+    end
+
+    trait :multiple_choice_field do
+      choice_field
+      multiple { true }
+    end
+
     trait :searchable do
       searchable { true }
     end

@@ -1,3 +1,11 @@
+## 2026-11-03: Custom fields 6.1 ships without the 6.0.x type patch, in several pull requests
+
+**Context:** The custom fields roadmap planned a 6.0.x patch that would ignore a definition type change with a deprecation warning, ahead of the 6.1 rejection. The 6.1 work is ready to start before `main` moves to 6.1, and the whole 6.1 scope touches every API and both dashboards.
+
+**Decision:** No 6.0.x patch. The first 6.1 pull request merges once `main` targets 6.1 and rejects a type change with 422 directly. 6.1 ships in several pull requests: the first covers fixed definition types, the hidden-by-default storefront visibility, the `date`, `date_time` and `choice` types, and validation rules. Shopper writes, emails and webhooks, translations and cleanup follow. Media external URLs move from the `external.url` custom field to an `external_url` column, not to metadata.
+
+**Consequences:** On 6.0.x, a definition's type can still be changed through the Admin API; the dashboard has never offered it. Amends the 2026-10-06 entry's 6.0.x rollout. See `6.0-6.1-custom-fields-roadmap.md`.
+
 ## 2026-10-06: Custom fields stay a merchant-facing feature, not a data modelling system
 
 **Context:** Custom fields were heading toward a general-purpose schema (record references, files, value lists, reusable content types) while basic gaps went unfixed: admin-only fields leaked through storefront search, a definition's type can change under existing values, shoppers cannot fill a field in at checkout, and core itself stores integration data in auto-created definitions. Revised 2026-11-02 after a review against the code and the plans written since, with 6.0.0 already released.

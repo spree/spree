@@ -18,6 +18,7 @@ module Spree
     validates :key, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id, :resource_type, :namespace] }
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
+    validate :field_type_and_resource_type_must_not_change, on: :update
 
     #
     # Scopes
@@ -38,6 +39,10 @@ module Spree
     before_validation :set_default_type, if: -> { self[:field_type].blank? }, on: :create
     before_validation :set_label_from_key, if: -> { label.blank? }, on: :create
     before_validation :set_filter_key
+
+    # After the callbacks above: rules are normalized for the type the
+    # definition ends up with.
+    include Spree::CustomFieldDefinition::ValidationRules
 
     #
     # Ransack
@@ -79,6 +84,11 @@ module Spree
     # @return [String]
     def field_type_class_name
       self[:field_type]
+    end
+
+    # @return [Class, nil] the registered custom field class for this type
+    def field_type_class
+      self.class.available_types.find { |type| type.name == field_type_class_name }
     end
 
     #
@@ -175,6 +185,16 @@ module Spree
       return if valid_available_types.include?(class_name)
 
       errors.add(:field_type, :inclusion)
+    end
+
+    # Stored values were written and checked as this type, on this resource;
+    # changing either would leave them misread or unreachable.
+    def field_type_and_resource_type_must_not_change
+      %i[field_type resource_type].each do |attribute|
+        next unless will_save_change_to_attribute?(attribute)
+
+        errors.add(attribute, :cannot_change, message: I18n.t('spree.errors.messages.custom_field_type_cannot_change'))
+      end
     end
 
     def valid_available_resources

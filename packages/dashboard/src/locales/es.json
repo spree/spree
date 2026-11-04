@@ -1424,7 +1424,10 @@
             "long_text": "Texto largo",
             "number": "Número",
             "rich_text": "Texto enriquecido",
-            "short_text": "Texto corto"
+            "short_text": "Texto corto",
+            "date": "Fecha",
+            "date_time": "Fecha y hora",
+            "choice": "Opción"
           },
           "read_only_help": "El tipo no se puede cambiar una vez que existen valores: cambiarlo dejaría valores guardados mal interpretados."
         },
@@ -1469,16 +1472,50 @@
           "api_only_group": "Solo a través de la API"
         },
         "searchable": {
-          "help": "Incluir los valores en la búsqueda de texto de productos del storefront (solo texto corto, texto largo y número). Después de activarlo con Meilisearch, ejecutá rake spree:search:reindex para actualizar los productos existentes.",
+          "help": "Incluir los valores en la búsqueda de texto de productos del storefront. Después de activarlo con Meilisearch, ejecutá rake spree:search:reindex para actualizar los productos existentes.",
           "label": "Buscar en"
         },
         "sortable": {
-          "help": "Permitir que los listados de productos del storefront ordenen por este campo (solo texto corto y número). Después de activarlo con Meilisearch, ejecutá rake spree:search:reindex para actualizar los productos existentes.",
+          "help": "Permitir que los listados de productos del storefront ordenen por este campo. Después de activarlo con Meilisearch, ejecutá rake spree:search:reindex para actualizar los productos existentes.",
           "label": "Ordenable"
         },
         "storefront_visible": {
           "column_label": "Storefront",
           "label": "Visible en el storefront"
+        },
+        "validations": {
+          "title": "Validación",
+          "help": "Se comprueba al guardar un valor. Los valores existentes no cambian hasta que se editan.",
+          "required": {
+            "label": "Obligatorio",
+            "help": "Marca el campo e impide que este panel lo guarde vacío."
+          },
+          "min": {
+            "length": "Mínimo de caracteres",
+            "number": "Mínimo",
+            "date": "Fecha más temprana",
+            "date_time": "Fecha y hora más tempranas"
+          },
+          "max": {
+            "length": "Máximo de caracteres",
+            "number": "Máximo",
+            "date": "Fecha más tardía",
+            "date_time": "Fecha y hora más tardías"
+          },
+          "choices": {
+            "label": "Opciones",
+            "value": "Valor",
+            "choice_label": "Etiqueta visible",
+            "add": "Añadir opción",
+            "remove": "Quitar opción",
+            "required": "Añade al menos una opción",
+            "value_required": "Introduce un valor",
+            "duplicate": "Cada valor debe ser distinto"
+          },
+          "multiple": {
+            "label": "Permitir varias opciones",
+            "help": "El valor pasa a ser una lista. Un campo con varias opciones no puede ser ordenable."
+          }
         }
       },
       "customer": {
@@ -5736,7 +5773,15 @@
         "empty_title": "Todavía no hay campos personalizados",
         "errors": {
           "failed_to_save": "No se pudo guardar el campo personalizado",
-          "failed_to_load": "No se pudieron cargar los campos personalizados. Recarga la página para intentarlo de nuevo."
+          "failed_to_load": "No se pudieron cargar los campos personalizados. Recarga la página para intentarlo de nuevo.",
+          "required": "Introduce un valor",
+          "too_short": "Usa al menos {{count}} caracteres",
+          "too_long": "Usa como máximo {{count}} caracteres",
+          "less_than_min": "Debe ser al menos {{min}}",
+          "greater_than_max": "Debe ser como máximo {{max}}",
+          "before_min": "Debe ser el {{min}} o posterior",
+          "after_max": "Debe ser el {{max}} o anterior",
+          "choice_not_offered": "{{value}} no es una de las opciones"
         },
         "manage_in_settings": "Gestionar en configuración",
         "new_definition_description": "Definí un campo personalizado para guardar información tipada y estructurada en tus {{resource}}.",
@@ -5745,7 +5790,11 @@
         "section_title": "Campos personalizados",
         "set_up": "Configurar campos personalizados",
         "values_save_partial_failed": "Algunos campos personalizados no se pudieron guardar: {{fields}}",
-        "values_saved": "Campos personalizados guardados"
+        "values_saved": "Campos personalizados guardados",
+        "required_field_hint": "Obligatorio",
+        "values_invalid": "Corrige estos campos personalizados antes de guardar: {{fields}}",
+        "choose": "Elegir…",
+        "no_choices": "No hay opciones que coincidan"
       }
     },
     "table_descriptions": {

@@ -129,19 +129,10 @@ module Spree
       def set_custom_field(definition_or_key, value)
         definition_id = resolve_custom_field_definition_id(definition_or_key)
         custom_field = custom_fields.find_or_initialize_by(custom_field_definition_id: definition_id)
-        if value_blank?(value)
+        # An empty list is a value for JSON, but no choice at all for a choice field.
+        if value_blank?(value) || (value == [] && custom_field.is_a?(Spree::CustomFields::Choice))
           custom_field.destroy if custom_field.persisted?
           return nil
-        end
-
-        # JSON custom fields store canonical JSON in the underlying text column.
-        # Coerce Hash/Array values BEFORE assignment, since the STI subclass
-        # (`Spree::CustomFields::Json`) isn't switched on until before_validation,
-        # so its custom `value=` writer doesn't run yet on a fresh
-        # `find_or_initialize_by` record.
-        if (value.is_a?(Hash) || value.is_a?(Array)) &&
-           custom_field.custom_field_definition&.field_type == 'json'
-          value = value.to_json
         end
 
         custom_field.value = value
@@ -252,6 +243,12 @@ module Spree
             # validation error so the controller returns 422 with structured
             # `details`, instead of leaking ArgumentError as a 400/500.
             errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
+            raise ActiveRecord::RecordInvalid, self
+          rescue ActiveRecord::RecordInvalid => e
+            # A value that breaks its definition's rules is reported on this
+            # record, since `save` swallows the custom field's own error when
+            # it is raised from the after_save replay.
+            e.record.errors.each { |error| errors.add("custom_fields[#{index}].#{error.attribute}", error.message) }
             raise ActiveRecord::RecordInvalid, self
           end
         end
