@@ -25,6 +25,7 @@ module Spree
                                :stock_splitters,
                                :commission_rules,
                                :delivery_method_rules,
+                               :payment_method_rules,
                                :seller_requirements,
                                :delivery_rate_providers,
                                :digital_asset_providers,
@@ -77,7 +78,7 @@ module Spree
         # Registries are seeded before application initializers so extensions
         # and host apps can append their own entries from initializer files.
         # Core's defaults are concatenated in after_initialize below.
-        %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
+        %i[subscribers actor_classes commission_rules delivery_method_rules payment_method_rules seller_requirements
            delivery_rate_providers tax_providers pricing_providers inventory_providers
            payout_providers digital_asset_providers delivery_profile_types pickup_point_providers
            maintenance_tasks cart_copiers].each do |registry|
@@ -362,6 +363,15 @@ module Spree
           Spree::DeliveryMethodRules::ChannelRule,
           Spree::DeliveryMethodRules::VolumeRule,
           Spree::DeliveryMethodRules::CompanyRule
+        ]
+
+        # Payment-method eligibility rule kinds (docs/plans/6.1-payment-method-rules.md).
+        Rails.application.config.spree.payment_method_rules.concat [
+          Spree::PaymentMethodRules::ChannelRule,
+          Spree::PaymentMethodRules::MarketRule,
+          Spree::PaymentMethodRules::OrderTotalRule,
+          Spree::PaymentMethodRules::CustomerGroupRule,
+          Spree::PaymentMethodRules::CompanyRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
