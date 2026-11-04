@@ -395,6 +395,9 @@
           "on_backorder": "En contrarreserva",
           "out_of_stock": "Sin stock"
         },
+        "market_availability": {
+          "title": "Mercados"
+        },
         "media_empty": "Todavía no hay multimedia.",
         "media_upload": "Subir multimedia",
         "new": {
@@ -875,6 +878,23 @@
         },
         "make_active_at": {
           "label": "Activar el"
+        },
+        "market_availability": {
+          "help": {
+            "all": "Los clientes de todos los mercados pueden ver y comprar este producto.",
+            "all_except": "Oculto para los clientes de los mercados indicados abajo en todas partes, incluida su propia página.",
+            "only": "Solo los clientes de los mercados indicados abajo pueden ver y comprar este producto."
+          },
+          "label": "Se vende en",
+          "options": {
+            "all": "Todos los mercados",
+            "all_except": "Todos los mercados excepto…",
+            "only": "Solo en…"
+          }
+        },
+        "market_ids": {
+          "label": "Mercados",
+          "placeholder": "Elegir mercados"
         },
         "name": {
           "label": "Nombre",

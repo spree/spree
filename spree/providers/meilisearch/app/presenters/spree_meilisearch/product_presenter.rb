@@ -75,6 +75,8 @@ module SpreeMeilisearch
         preorder: product.preorder?,
         store_ids: Array(product.store_id).map(&:to_s),
         channel_ids: channel_ids_for_store,
+        market_availability: product.market_availability_mode,
+        market_ids: market_ids_for_index,
         discontinue_on: product.discontinue_on&.to_i || 0,
         category_ids: category_ids_with_ancestors,
         category_names: product.categories.map { |t| translated(t, :name, fallback_locale) },
@@ -145,6 +147,10 @@ module SpreeMeilisearch
       @compare_at_cache ||= {}
       @compare_at_cache[currency] = product.compare_at_amount_in(currency) unless @compare_at_cache.key?(currency)
       @compare_at_cache[currency]
+    end
+
+    def market_ids_for_index
+      @market_ids_for_index ||= product.market_availability_market_ids.map(&:to_s)
     end
 
     def channel_ids_for_store

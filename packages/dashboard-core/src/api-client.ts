@@ -198,6 +198,14 @@ export interface PanelApiClient {
     list(params?: Record<string, unknown>): Promise<{ data: PanelDeliveryProfile[] }>
   }
   /**
+   * The store's markets, which a product's market availability names. Both
+   * panels register it: a seller decides where their own products may be sold
+   * (docs/plans/6.1-product-market-availability.md).
+   */
+  markets?: {
+    list(params?: Record<string, unknown>): Promise<{ data: PanelNamedRecord[] }>
+  }
+  /**
    * The packaging this panel can see: the boxes parcels ship in, the cartons
    * products are packed into, the pallets a wholesale order leaves on.
    *

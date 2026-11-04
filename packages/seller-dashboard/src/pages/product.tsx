@@ -7,6 +7,7 @@ import {
   extensionSubmitValues,
   GeneralCard,
   InventoryCard,
+  MarketAvailabilityCard,
   MediaCard,
   mapSpreeErrorsToForm,
   newProductFormDefaults,
@@ -141,6 +142,8 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         // means "leave it".
         product_type_id: values.product_type_id ?? null,
         delivery_profile_id: values.delivery_profile_id ?? undefined,
+        market_availability: values.market_availability,
+        market_ids: values.market_ids,
         // Both lists are the whole intent: anything the seller removed is
         // absent here, which is what tells the API to drop it.
         // The video address and the focal point ride along because the
@@ -287,6 +290,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 />
               )}
               <CategorizationCard form={form} />
+              <MarketAvailabilityCard form={form} />
               <Slot name="seller.product.form_sidebar" context={{ product, mode }} />
             </>
           }

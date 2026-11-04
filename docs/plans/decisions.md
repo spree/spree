@@ -1,3 +1,13 @@
+## 2026-11-03: Market exclusions keep the cart line, bind staff orders and are open to sellers
+
+**Context:** Building `6.1-product-market-availability.md` raised four calls the plan left open: what a cart does with a line its new market excludes, whether staff orders are exempt, the API field names, and who may set an exclusion on a marketplace.
+
+**Decision:** A line the cart's market excludes stays in the cart, is reported as `not_available_in_market` in the checkout requirements as soon as the market changes, and blocks completion, the way Saleor reports checkout problems and Spree reports `not_orderable`. Staff orders are bound too: territory is a distribution right, so unlike catalogs there is no staff exemption (Shopify exempts draft orders; Saleor and Vendure enforce through the channel). The Admin and Seller APIs read and write `market_availability` (`all`, `all_except`, `only`; `all` is stored as NULL) and `market_ids`. Sellers manage exclusions on their own products.
+
+**Consequences:** Any new path that admits a line into a cart or an order resolves through `Spree::Products::ForContext` with the market, or it leaks an excluded product. A restricted mode needs at least one market. The visible-but-unpurchasable display mode stays deferred.
+
+**Plan amended:** `6.1-product-market-availability.md`.
+
 ## 2026-10-06: Custom fields stay a merchant-facing feature, not a data modelling system
 
 **Context:** Custom fields were heading toward a general-purpose schema (record references, files, value lists, reusable content types) while basic gaps went unfixed: admin-only fields leaked through storefront search, a definition's type can change under existing values, shoppers cannot fill a field in at checkout, and core itself stores integration data in auto-created definitions. Revised 2026-11-02 after a review against the code and the plans written since, with 6.0.0 already released.

@@ -18,11 +18,16 @@ module Spree
           typelize status: [:string, enum: Spree::Product.statuses, enum_type_name: 'ProductStatus'], metadata: 'Record<string, unknown>',
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
+                   market_availability: [:string, enum: Spree::Product::MARKET_AVAILABILITY_MODES, enum_type_name: 'ProductMarketAvailability'],
+                   market_ids: [:string, multi: true],
                    submission: ['ProductSubmission', nullable: true]
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
 
           prefixed_id_attributes :product_type, :delivery_profile
+
+          attribute :market_availability, &:market_availability_mode
+          attribute :market_ids, &:market_availability_prefixed_market_ids
 
           many :variants,
                resource: proc { Spree.api.seller_variant_serializer },

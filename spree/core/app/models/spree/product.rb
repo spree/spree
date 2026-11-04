@@ -34,6 +34,7 @@ module Spree
     include Spree::Searchable
     include Spree::Product::Slugs
     include Spree::Product::Channels
+    include Spree::Product::MarketAvailability
     include Spree::SearchIndexable
     include Spree::StorePreferences
 
@@ -339,10 +340,7 @@ module Spree
     # preventing cross-store category attachment. Decodes prefixed IDs, then calls
     # the generated setter via super.
     def category_ids=(ids)
-      decoded_ids = Array(ids).filter_map do |id|
-        id.to_s.include?('_') ? Spree::Category.decode_prefixed_id(id) : id
-      end
-      super(Spree::Category.for_store(assignable_store).where(id: decoded_ids).ids)
+      super(assignable_ids(Spree::Category, ids))
     end
 
     # Accepts both prefixed IDs and raw integer IDs. Only collections belonging
@@ -357,11 +355,7 @@ module Spree
     # regeneration). So incoming automatic ids are ignored, and the product's
     # existing automatic memberships are carried over untouched.
     def collection_ids=(ids)
-      decoded_ids = Array(ids).filter_map do |id|
-        id.to_s.include?('_') ? Spree::Collection.decode_prefixed_id(id) : id
-      end
-      manual_ids = Spree::Collection.for_store(assignable_store).manual.where(id: decoded_ids).ids
-      super(manual_ids | collections.automatic.ids)
+      super(assignable_ids(Spree::Collection.manual, ids) | collections.automatic.ids)
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id price]

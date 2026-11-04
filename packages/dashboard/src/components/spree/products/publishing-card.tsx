@@ -1,6 +1,11 @@
 import type { Channel } from '@spree/admin-sdk'
 import type { ProductFormValues } from '@spree/dashboard-core'
-import { formatStoreDateTime, StoreDatePicker, useStore } from '@spree/dashboard-core'
+import {
+  formatStoreDateTime,
+  MarketAvailabilitySection,
+  StoreDatePicker,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -175,6 +180,9 @@ export function PublishingCard({
             />
           ),
         )}
+        <div className="mt-3 border-t pt-4">
+          <MarketAvailabilitySection form={form} />
+        </div>
       </CardContent>
       <ManageChannelsSheet
         open={manageOpen}
