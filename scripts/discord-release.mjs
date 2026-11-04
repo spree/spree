@@ -1,6 +1,7 @@
 // Posts a GitHub release of spree/spree to Discord as a digest embed: the
-// intro paragraph, the upgrade command, feature titles, counts for the other
-// sections and any upgrade notes, with a link to the full notes. Run by
+// intro paragraph, the upgrade command, feature titles, a one-line summary of
+// each other change, upgrade notes and contributors, with a link to the full
+// notes. Run by
 // discord-release.yml:
 //
 //   node scripts/discord-release.mjs <tag>             post to $DISCORD_WEBHOOK_URL
@@ -13,6 +14,7 @@
 const REPO = process.env.GITHUB_REPOSITORY || 'spree/spree'
 const COLOR = 0x2ecc71
 const MAX_TITLES = 8
+const MAX_SUMMARY = 120
 // Discord rejects an embed past 6000 characters or 25 fields.
 const MAX_EMBED = 6000
 const MAX_FIELDS = 25
@@ -82,7 +84,6 @@ export function buildEmbed(release) {
 
   const titled = []
   const upgrades = []
-  const counts = []
   const highlights = []
 
   for (const { heading, body } of sections) {
@@ -99,7 +100,7 @@ export function buildEmbed(release) {
     if (titles.length) {
       titled.push({ name: clip(`${heading} (${bullets.length})`, 256), value: list(titles) })
     } else if (/^\p{Extended_Pictographic}/u.test(heading)) {
-      counts.push(`${heading}: **${bullets.length}**`)
+      titled.push({ name: clip(`${heading} (${bullets.length})`, 256), value: list(bullets.map(summary)) })
     } else {
       // Major releases describe areas under plain headings; name the areas.
       highlights.push(heading)
@@ -108,12 +109,12 @@ export function buildEmbed(release) {
 
   if (highlights.length) titled.unshift({ name: '✨ Highlights', value: list(highlights) })
 
-  // Upgrade notes, counts and contributors always fit; titled sections fill what is left.
+  // Upgrade notes and contributors always fit; the other sections fill what is left.
   const required = upgrades.slice(0, 3)
-  if (counts.length) required.push({ name: '\u200b', value: clip(counts.join(' · '), 1024) })
-  const contributors = new Set([...(release.body || '').matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1]))
-  if (contributors.size) {
-    required.push({ name: '🙌 Community', value: `${contributors.size} contributor${contributors.size > 1 ? 's' : ''}` })
+  const contributors = [...new Set([...(release.body || '').matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1]))]
+  if (contributors.length) {
+    const names = contributors.map((c) => `[${c}](https://github.com/${c})`).join(', ')
+    required.push({ name: `🙌 Thanks to ${contributors.length} community contributor${contributors.length > 1 ? 's' : ''}`, value: clip(names, 1024) })
   }
 
   const description = [
@@ -182,6 +183,18 @@ function title(release, lines) {
   if (release.name && release.name !== release.tag_name) return release.name
   const h1 = lines.find((l) => /^# Spree/.test(l))
   return h1 ? h1.slice(2) : `Spree ${release.tag_name.slice(1)}`
+}
+
+// The first sentence of a bullet, without its pull request links and author.
+function summary(bullet) {
+  const text = bullet
+    .replace(/,?\s*\[#\d+\]\([^)]*\)/g, '')
+    .replace(/\s+by \[?@[\w-]+\]?(\([^)]*\))?/g, '')
+    .trim()
+  const sentence = text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text
+  const short = sentence.replace(/[.]$/, '')
+  if (short.length <= MAX_SUMMARY) return short
+  return `${short.slice(0, short.lastIndexOf(' ', MAX_SUMMARY - 1))}…`
 }
 
 function list(items) {
