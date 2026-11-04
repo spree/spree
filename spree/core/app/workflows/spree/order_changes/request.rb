@@ -8,10 +8,12 @@ module Spree
       def perform(order_change:)
         super
 
-        failure(order_change, :order_change_not_pending) unless order_change.pending?
-        failure(order_change, :order_change_empty) if order_change.actions.empty?
-
         ApplicationRecord.transaction do
+          # A request racing a cancel must not move a canceled set back to open.
+          order_change.lock_for_transition!
+          failure(order_change, :order_change_not_pending) unless order_change.pending?
+          failure(order_change, :order_change_empty) if order_change.actions.empty?
+
           order_change.update!(status: 'requested', requested_at: Time.current)
           run_hooks :after_request
         end
