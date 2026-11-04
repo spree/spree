@@ -100,6 +100,24 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       response '200', 'provider types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
+        schema type: :object,
+               properties: {
+                 data: {
+                   type: :array,
+                   items: {
+                     type: :object,
+                     properties: {
+                       type: { type: :string },
+                       label: { type: :string },
+                       installed_count: { type: :integer, description: 'How many payment methods of this provider the store has.' },
+                       installed: { type: :boolean, deprecated: true, description: 'Use installed_count. Removed in 6.2.' }
+                     },
+                     required: %w[type label installed_count]
+                   }
+                 }
+               },
+               required: %w[data]
+
         before do
           # Install StoreCredit in the store so the entry is marked installed.
           # (Check is also installed via the let!(:payment_method), but other

@@ -11,6 +11,15 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethods::RulesController, type: :co
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index, params: { payment_method_id: payment_method.prefixed_id }, as: :json }
+
+      let!(:rules) do
+        [create(:company_payment_method_rule, payment_method: payment_method),
+         create(:market_payment_method_rule, payment_method: payment_method)]
+      end
+    end
+
     let!(:rule) { create(:channel_payment_method_rule, payment_method: payment_method, preferred_channel_ids: [channel.id]) }
 
     it 'lists the rules with prefixed ids in their preferences' do
