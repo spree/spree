@@ -6,9 +6,9 @@ module Spree
     let(:categories) { create_list(:category, 2) }
     let(:products) { create_list(:product, 3) }
 
-    def product_updated_events
+    def events_named(name)
       published = []
-      Spree::Events.subscribe('product.updated', async: false) { |event| published << event }
+      Spree::Events.subscribe(name, async: false) { |event| published << event }
       Spree::Events.activate!
       yield
       published
@@ -60,10 +60,28 @@ module Spree
         before { Spree::Events.reset! }
         after { Spree::Events.reset! }
 
-        it 'publishes product.updated once per product' do
-          published = product_updated_events { subject }
+        it 'publishes product_category.created once per new membership' do
+          published = events_named('product_category.created') { subject }
 
-          expect(published.size).to eq(products.size)
+          expect(published.size).to eq(categories.size * products.size)
+        end
+
+        it 'identifies the membership each event is about' do
+          published = events_named('product_category.created') { subject }
+          memberships = Spree::ProductCategory.where(category_id: categories.map(&:id))
+
+          expect(published.map { |event| event.payload['id'] }).
+            to match_array(memberships.map(&:prefixed_id))
+        end
+
+        it 'says nothing about a membership that was already there' do
+          service.call(categories: categories, products: products)
+
+          published = events_named('product_category.created') do
+            service.call(categories: categories, products: [products.first])
+          end
+
+          expect(published).to be_empty
         end
       end
     end

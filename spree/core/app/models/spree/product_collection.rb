@@ -4,6 +4,10 @@ module Spree
   class ProductCollection < Spree.base_class
     self.table_name = 'spree_product_collections'
 
+    has_prefix_id :pcoll
+
+    publishes_lifecycle_events only: %i[create delete]
+
     acts_as_list scope: :collection
 
     # products_count is a plain Rails counter_cache on the collection (collections are

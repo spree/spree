@@ -6,9 +6,9 @@ module Spree
     let(:categories) { create_list(:category, 2) }
     let(:products) { create_list(:product, 3) }
 
-    def product_updated_events
+    def events_named(name)
       published = []
-      Spree::Events.subscribe('product.updated', async: false) { |event| published << event }
+      Spree::Events.subscribe(name, async: false) { |event| published << event }
       Spree::Events.activate!
       yield
       published
@@ -68,10 +68,28 @@ module Spree
         before { Spree::Events.reset! }
         after { Spree::Events.reset! }
 
-        it 'publishes product.updated once per product' do
-          published = product_updated_events { subject }
+        it 'publishes product_category.deleted once per membership removed' do
+          published = events_named('product_category.deleted') { subject }
 
-          expect(published.size).to eq(products.size)
+          expect(published.size).to eq(categories.size * products.size)
+        end
+
+        it 'still identifies the membership that was removed' do
+          memberships = Spree::ProductCategory.where(category_id: categories.map(&:id)).map(&:prefixed_id)
+
+          published = events_named('product_category.deleted') { subject }
+
+          expect(published.map { |event| event.payload['id'] }).to match_array(memberships)
+        end
+
+        it 'says nothing about a product that was in none of the categories' do
+          outsider = create(:product)
+
+          published = events_named('product_category.deleted') do
+            service.call(categories: categories, products: [outsider])
+          end
+
+          expect(published).to be_empty
         end
       end
     end

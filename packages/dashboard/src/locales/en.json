@@ -4315,6 +4315,8 @@
             "payment_setup_session": "Payment setup session",
             "price": "Price",
             "product": "Product",
+            "product_category": "Product category",
+            "product_collection": "Product collection",
             "product_submission": "Product submission",
             "promotion": "Promotion",
             "purchase_order": "Purchase order",

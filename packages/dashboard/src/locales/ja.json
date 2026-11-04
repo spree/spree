@@ -4315,6 +4315,8 @@
             "payment_setup_session": "支払い設定のセッション",
             "price": "価格",
             "product": "商品",
+            "product_category": "商品カテゴリー",
+            "product_collection": "商品コレクション",
             "product_submission": "商品の申請",
             "promotion": "プロモーション",
             "purchase_order": "発注書",

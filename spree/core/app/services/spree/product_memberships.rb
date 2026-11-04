@@ -9,6 +9,7 @@ module Spree
     def add_memberships(groups, products)
       group_ids = groups.pluck(:id)
       product_ids = products.pluck(:id)
+      existing = membership_class.where(group_key => group_ids, product_id: product_ids).ids
       # Every group's current size in one grouped count, rather than a probe
       # per group for the position to append at.
       sizes = membership_class.where(group_key => group_ids).group(group_key).count
@@ -24,15 +25,20 @@ module Spree
       end
       membership_class.insert_all(rows)
 
+      created = membership_class.where(group_key => group_ids, product_id: product_ids).where.not(id: existing)
+      publish_membership_events(created, 'created')
+
       refresh_after_membership_change(group_ids, products)
     end
 
     # Removes the products, then re-packs the remaining positions from 1.
     def remove_memberships(groups, products)
       group_ids = groups.pluck(:id)
+      product_ids = products.pluck(:id)
+      deleted = membership_class.where(group_key => group_ids, product_id: product_ids).to_a
 
       ApplicationRecord.transaction do
-        membership_class.where(group_key => group_ids, product_id: products.pluck(:id)).delete_all
+        membership_class.where(group_key => group_ids, product_id: product_ids).delete_all
 
         # What survived the delete, for every group in one read.
         remaining = membership_class.where(group_key => group_ids).order(:position).pluck(group_key, :product_id).
@@ -49,11 +55,19 @@ module Spree
         membership_class.upsert_all(rows, unique_by: ([group_key, :product_id] unless Spree.mysql?)) if rows.any?
       end
 
+      publish_membership_events(deleted, 'deleted')
+
       refresh_after_membership_change(group_ids, products)
     end
 
-    # Bulk writes skip the join model's callbacks, so counters, caches,
-    # the search index and the product's update event are handled here.
+    def publish_membership_events(memberships, action)
+      name = "#{membership_class.model_name.element}.#{action}"
+
+      memberships.each { |membership| membership.publish_event(name) }
+    end
+
+    # Bulk writes skip the join model's callbacks, so counters, caches and the
+    # search index are refreshed here.
     def refresh_after_membership_change(group_ids, products)
       product_ids = products.pluck(:id)
       Spree::Product.reset_counters_in_bulk(product_ids, membership_class.model_name.element.pluralize.to_sym)
@@ -62,15 +76,6 @@ module Spree
       Spree::Product.where(id: product_ids).touch_all
       products.each(&:enqueue_search_index)
       group_class.where(id: group_ids).touch_all
-
-      publish_product_updated(product_ids)
-    end
-
-    # Read fresh rather than reusing the records handed in: the counter
-    # reset and the touch above are part of what changed, and those records
-    # predate both.
-    def publish_product_updated(product_ids)
-      Spree::Product.where(id: product_ids).find_each { |product| product.publish_event('product.updated') }
     end
 
     def group_key

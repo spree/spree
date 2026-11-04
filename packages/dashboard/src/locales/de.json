@@ -4315,6 +4315,8 @@
             "payment_setup_session": "Zahlungseinrichtungssitzung",
             "price": "Preis",
             "product": "Produkt",
+            "product_category": "Produktkategorie",
+            "product_collection": "Produktkollektion",
             "product_submission": "Produkteinreichung",
             "promotion": "Aktion",
             "purchase_order": "Bestellung beim Lieferanten",

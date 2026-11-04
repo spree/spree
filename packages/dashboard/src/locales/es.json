@@ -731,6 +731,8 @@
             "payment_setup_session": "Sesión de configuración de pago",
             "price": "Precio",
             "product": "Producto",
+            "product_category": "Categoría de producto",
+            "product_collection": "Colección de productos",
             "product_submission": "Envío de producto",
             "promotion": "Promoción",
             "purchase_order": "Orden de compra",
