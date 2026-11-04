@@ -26,6 +26,17 @@ export interface ParamsSpec {
   components?: { schemas?: Record<string, ParamsSchema> }
 }
 
+/**
+ * Output for an extension's own package rather than an SDK in this
+ * repository (`spree sdk types`).
+ */
+export interface ExtensionTypesOptions {
+  /** The first line of every file, saying how it was generated. */
+  header: string
+  /** The SDK whose shared types the files import (`@spree/admin-sdk`). */
+  sdk: string
+}
+
 const isRequestSchema = (name: string) => name.endsWith('Params')
 
 // Code lists the request schemas reference by name: ISO countries and
@@ -155,19 +166,32 @@ function references(schema: ParamsSchema, found = new Set<string>()): Set<string
  * same layout Typelizer writes the response types in.
  *
  * @param spec - an API reference, parsed
+ * @param extension - write for an extension's package instead of an SDK
  * @returns file name → TypeScript source
  */
-export function renderParamsTypes(spec: ParamsSpec): Map<string, string> {
+export function renderParamsTypes(
+  spec: ParamsSpec,
+  extension?: ExtensionTypesOptions,
+): Map<string, string> {
+  const header = extension ? `${extension.header}\n` : HEADER
+  // The SDKs keep the code lists next to their params; an extension imports
+  // them from the SDK it extends.
+  const codeLists = extension?.sdk ?? '../generated'
   const schemas = spec.components?.schemas ?? {}
   const names = Object.keys(schemas).filter(isRequestSchema).sort()
   const files = new Map<string, string>()
 
   for (const name of names) {
+    // Each name becomes a file name and a type name, so anything but an
+    // identifier would write outside the output folder or break the file.
+    if (!/^[A-Za-z_$][\w$]*$/.test(name)) {
+      throw new Error(`${name} is not a request type name an API reference can declare`)
+    }
     const schema = schemas[name]
-    const out = [HEADER]
+    const out = [header]
     const imports = [...references(schema)].filter((reference) => reference !== name).sort()
     for (const reference of imports) {
-      const from = SHARED_CODE_LISTS.has(reference) ? '../generated' : `./${reference}`
+      const from = SHARED_CODE_LISTS.has(reference) ? codeLists : `./${reference}`
       out.push(`import type { ${reference} } from '${from}'`)
     }
     if (imports.length) out.push('')
@@ -178,7 +202,7 @@ export function renderParamsTypes(spec: ParamsSpec): Map<string, string> {
     files.set(`${name}.ts`, `${out.join('\n')}\n`)
   }
 
-  const index = [HEADER, ...names.map((name) => `export type { ${name} } from './${name}'`)]
+  const index = [header, ...names.map((name) => `export type { ${name} } from './${name}'`)]
   files.set('index.ts', `${index.join('\n')}\n`)
   return files
 }

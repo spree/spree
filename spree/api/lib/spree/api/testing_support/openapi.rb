@@ -1,6 +1,7 @@
 require 'spree/api/testing_support/v3/base'
 require 'spree/api/testing_support/agent_tools'
 require 'spree/api/testing_support/deterministic_openapi'
+require 'spree/api/testing_support/filter_parameters'
 
 module Spree
   module Api
@@ -142,7 +143,9 @@ module Spree
 
       # What an extension needs to generate the `openapi/admin.yaml` its gem
       # ships, documenting its Admin API endpoints the way core documents its
-      # own. The extension can build its API docs or a client from the file. In the extension's swagger helper:
+      # own, and with `store_title:` an `openapi/store.yaml` for its Store API
+      # endpoints. The extension can build its API docs or a client from the
+      # files (`spree sdk types`). In the extension's swagger helper:
       #
       #   require 'rswag/specs'
       #   require 'spree/api/testing_support/openapi'
@@ -153,24 +156,54 @@ module Spree
       #     )
       #   end
       #
+      # A Store API spec names its document and authenticates as a customer:
+      #
+      #   path '/api/v3/store/quotes' do
+      #     get 'List quotes', openapi_spec: 'openapi/store.yaml' do
+      #       include_context 'API v3 Store authenticated'
+      #
       # and in its Rakefile, `require 'spree/api/testing_support/openapi_tasks'`
       # for `rake spree:openapi:generate`.
       module Openapi
-        HELPERS = [RequestBody, AdminScope, AdminOperation, AgentTools].freeze
+        HELPERS = [RequestBody, FilterParameters, AdminScope, AdminOperation, AgentTools].freeze
 
         class << self
           # @param config [RSpec::Core::Configuration]
           # @param engine [Class<Rails::Engine>]
           # @param title [String]
           # @param description [String, nil]
+          # @param store_title [String, nil] also writes `openapi/store.yaml`,
+          #   for an extension with Store API endpoints
           # @return [void]
-          def configure(config, engine:, title:, description: nil)
+          def configure(config, engine:, title:, description: nil, store_title: nil)
             config.openapi_root = engine.root.to_s
+            # Admin first: rswag writes an operation that names no document there.
             config.openapi_specs = { 'openapi/admin.yaml' => admin_document(title, description) }
+            config.openapi_specs['openapi/store.yaml'] = store_document(store_title) if store_title
             config.openapi_format = :yaml
             HELPERS.each { |helper| config.extend helper, type: :request }
             # The admin and secret key admin_operation authenticates with.
             config.include_context 'API v3 Admin', type: :request
+          end
+
+          # The skeleton of an extension's store document: the same security
+          # schemes as core's Store API.
+          #
+          # @return [Hash]
+          def store_document(title)
+            {
+              openapi: '3.0.3',
+              info: { title: title, version: 'v3' },
+              paths: {},
+              components: {
+                securitySchemes: {
+                  api_key: { type: :apiKey, name: 'x-spree-api-key', in: :header,
+                             description: 'Publishable API key for store access' },
+                  bearer_auth: { type: :http, scheme: :bearer, bearerFormat: 'JWT',
+                                 description: 'JWT token for authenticated customers' }
+                }
+              }
+            }
           end
 
           # The skeleton of an extension's admin document: the same security

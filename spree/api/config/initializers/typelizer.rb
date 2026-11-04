@@ -2,6 +2,8 @@
 # via `bundle exec rake typelizer:generate`. Set ENABLE_TYPELIZER=1 to enable.
 ENV["DISABLE_TYPELIZER"] ||= "true" unless ENV["ENABLE_TYPELIZER"]
 
+require 'spree/api/typelizer_generation'
+
 Rails.application.config.after_initialize do
   api_root = Spree::Api::Engine.root
 
@@ -10,22 +12,11 @@ Rails.application.config.after_initialize do
     config.comments = true
     config.listen = false
 
-    # Teach typelizer's Alba plugin about custom Alba types (see alba.rb);
-    # unmapped typed attributes crash generation.
-    config.plugin_configs = {
-      alba: {
-        ts_mapper: Typelizer::SerializerPlugins::Alba::ALBA_TS_MAPPER.merge(
-          'iso8601' => { type: :string },
-          'string' => { type: :string }
-        )
-      }
-    }
+    config.plugin_configs = Spree::Api::TypelizerGeneration.plugin_configs
 
     # Serializers that exist only for the Admin API. Event serializers stay in:
     # they describe the `data` of the typed webhook events the Store SDK ships.
-    store_excluded = %w[
-      Asset CartPromotion OrderPromotion Report TaxCategory
-    ].to_set
+    store_excluded = Spree::Api::TypelizerGeneration::STORE_EXCLUDED
 
     # Store SDK — no prefix, package provides namespace
     config.writer(:store) do |c|
@@ -74,9 +65,7 @@ Rails.application.config.after_initialize do
     # branch; Category and CustomField are not, but the store product
     # serializer this branch inherits references them, so their types still
     # have to exist in the package.
-    store_nested_for_seller = %w[
-      Category CustomField OptionType OptionValue Seller
-    ].to_set
+    store_nested_for_seller = Spree::Api::TypelizerGeneration::SELLER_STORE_TYPES
 
     config.writer(:seller) do |c|
       c.output_dir = api_root.join('../../packages/seller-sdk/src/types/generated')

@@ -1,12 +1,20 @@
 // Universal code, re-exported so every SDK can offer it
 export * from '@spree/core'
-export type { FilterSpec } from './filter-types'
+// Extensions
+export type { ExtensionSourceOptions, ExtensionSpec } from './extension-source'
+export { renderExtensionSource } from './extension-source'
+export type { Extended, Extension, ExtensionApi, ExtensionContext } from './extensions'
+export { defineExtension, extendClient } from './extensions'
+export type { ExtensionFilterTypesOptions, FilterSpec } from './filter-types'
 export { renderAppFilterTypes, renderFilterTypes } from './filter-types'
 export type { ResolvedRetryConfig } from './helpers'
 // Helpers
 export { getParams, resolveRetryConfig } from './helpers'
 // Params
 export { transformListParams } from './params'
+// Request body types, for `spree sdk types`
+export type { ExtensionTypesOptions, ParamsSpec } from './params-types'
+export { renderParamsTypes } from './params-types'
 export type {
   AuthConfig,
   InternalRequestOptions,

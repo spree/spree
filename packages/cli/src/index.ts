@@ -25,6 +25,7 @@ import { registerRakeCommand } from './commands/rake.js'
 import { registerRestartCommand } from './commands/restart.js'
 import { registerRoutesCommand } from './commands/routes.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
+import { registerSdkCommand } from './commands/sdk.js'
 import { registerSeedCommand } from './commands/seed.js'
 import { registerShellCommand } from './commands/shell.js'
 import { registerStopCommand } from './commands/stop.js'
@@ -99,6 +100,7 @@ registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)
 registerFiltersCommand(program)
+registerSdkCommand(program)
 registerPluginCommand(program)
 
 // Admin API access (works against any Spree 5.5+ instance, not just local projects)

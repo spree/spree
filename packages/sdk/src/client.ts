@@ -1,5 +1,6 @@
 import type { LocaleDefaults, RequestConfig, RetryConfig } from '@spree/sdk-core'
-import { createRequestFn, resolveRetryConfig } from '@spree/sdk-core'
+import { createRequestFn, type Extended, extendClient, resolveRetryConfig } from '@spree/sdk-core'
+import type { StoreExtension } from './extensions'
 import { StoreClient } from './store-client'
 
 export interface ClientConfig {
@@ -30,6 +31,20 @@ export interface Client extends StoreClient {
   setCountry(country: string): void
   /** Set default sales-channel code for all subsequent requests */
   setChannel(channel: string): void
+  /**
+   * Returns a client with a package's namespace added, built on this one
+   * (see `defineStoreExtension`). This client is left as it was; both share
+   * its settings, so a token or locale set on either applies to the other.
+   *
+   * @example
+   * ```ts
+   * const client = base.extend(quotes)
+   * await client.quotes.get('quote_1')
+   * ```
+   */
+  extend<Name extends string, Namespace>(
+    extension: StoreExtension<Name, Namespace>,
+  ): Extended<this, Name, Namespace>
 }
 
 /**
@@ -83,6 +98,13 @@ export function createClient(config: ClientConfig): Client {
   client.setChannel = (channel: string) => {
     defaults.channel = channel
   }
+
+  client.extend = function <Name extends string, Namespace>(
+    this: Client,
+    extension: StoreExtension<Name, Namespace>,
+  ) {
+    return extendClient(this, 'store', requestFn, extension)
+  } as Client['extend']
 
   return client
 }
