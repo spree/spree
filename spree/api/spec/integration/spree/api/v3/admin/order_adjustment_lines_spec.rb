@@ -67,7 +67,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a manual discount. With line_item_id a single row is created; without it the amount is distributed across line items (largest remainder). This is the sanctioned post-placement discount path and works on completed orders.'
+      description 'Creates a manual discount. With line_item_id a single row is created; without it the amount is distributed across line items (largest remainder). On a placed order the discount is applied as an order change, so it is recorded in the order\'s changes and refused while another change is open.'
       admin_scope :write, :orders
 
       admin_sdk_example 'orders/discounts-create'
@@ -100,7 +100,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Edits the label or amount of a manual discount and re-sums the order totals. Promotion-sourced rows are owned by recalculation and respond 422.'
+      description 'Edits the label or amount of a manual discount and re-sums the order totals. On a placed order the edit is applied as an order change. Promotion-sourced rows are owned by recalculation and respond 422.'
       admin_scope :write, :orders
 
       admin_sdk_example 'orders/discounts-update'

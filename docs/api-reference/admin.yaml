@@ -17878,7 +17878,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Creates a manual discount. With line_item_id a single row is created; without it the amount is distributed across line items (largest remainder). This is the sanctioned post-placement discount path and works on completed orders.
+        Creates a manual discount. With line_item_id a single row is created; without it the amount is distributed across line items (largest remainder). On a placed order the discount is applied as an order change, so it is recorded in the order's changes and refused while another change is open.
 
         **Required scope:** `write_orders` (for API-key authentication).
       x-codeSamples:
@@ -17966,7 +17966,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Edits the label or amount of a manual discount and re-sums the order totals. Promotion-sourced rows are owned by recalculation and respond 422.
+        Edits the label or amount of a manual discount and re-sums the order totals. On a placed order the edit is applied as an order change. Promotion-sourced rows are owned by recalculation and respond 422.
 
         **Required scope:** `write_orders` (for API-key authentication).
       x-codeSamples:
@@ -19440,13 +19440,18 @@ paths:
                   - id: ordchga_UkLWZg9DAJ
                     kind: update_item
                     quantity: 2
+                    label:
+                    value_type:
                     metadata: {}
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
+                    value:
+                    amount:
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     fulfillment_id:
                     delivery_method_id:
+                    discount_id:
                 meta:
                   page: 1
                   limit: 25
@@ -19530,13 +19535,18 @@ paths:
                 - id: ordchga_UkLWZg9DAJ
                   kind: update_item
                   quantity: 2
+                  label:
+                  value_type:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  value:
+                  amount:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   fulfillment_id:
                   delivery_method_id:
+                  discount_id:
               schema:
                 "$ref": "#/components/schemas/OrderChange"
         '422':
@@ -19703,13 +19713,18 @@ paths:
                 - id: ordchga_UkLWZg9DAJ
                   kind: update_item
                   quantity: 2
+                  label:
+                  value_type:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  value:
+                  amount:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   fulfillment_id:
                   delivery_method_id:
+                  discount_id:
               schema:
                 "$ref": "#/components/schemas/OrderChange"
   "/api/v3/admin/orders/{order_id}/order_changes/{id}/cancel":
@@ -19787,13 +19802,18 @@ paths:
                 - id: ordchga_UkLWZg9DAJ
                   kind: update_item
                   quantity: 2
+                  label:
+                  value_type:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  value:
+                  amount:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   fulfillment_id:
                   delivery_method_id:
+                  discount_id:
               schema:
                 "$ref": "#/components/schemas/OrderChange"
   "/api/v3/admin/orders/{order_id}/store_credits":
@@ -68333,11 +68353,21 @@ components:
             - remove_item
             - receive_item
             - add_fulfillment
+            - add_discount
+            - update_discount
+            - remove_discount
           - type: string
           description: What the action does to the order. Extensions may register
             further kinds.
         quantity:
           type: number
+          nullable: true
+        label:
+          type: string
+          nullable: true
+          description: The discount name, for discount kinds.
+        value_type:
+          type: string
           nullable: true
         metadata:
           type: object
@@ -68345,6 +68375,15 @@ components:
           type: string
         updated_at:
           type: string
+        value:
+          type: string
+          nullable: true
+          description: 'What `add_discount` takes off: an amount for `flat`, a percentage
+            for `percent`.'
+        amount:
+          type: string
+          nullable: true
+          description: The new amount `update_discount` gives the row.
         line_item_id:
           type: string
           nullable: true
@@ -68357,17 +68396,25 @@ components:
         delivery_method_id:
           type: string
           nullable: true
+        discount_id:
+          type: string
+          nullable: true
       required:
       - id
       - kind
       - quantity
+      - label
+      - value_type
       - metadata
       - created_at
       - updated_at
+      - value
+      - amount
       - line_item_id
       - variant_id
       - fulfillment_id
       - delivery_method_id
+      - discount_id
       x-typelizer: true
     OrderChangePreview:
       type: object
@@ -84508,21 +84555,55 @@ components:
                   - add_item
                   - update_item
                   - remove_item
+                  - add_discount
+                  - update_discount
+                  - remove_discount
                 - type: string
                 description: "`add_item` takes `variant_id` and `quantity`; `update_item`
                   takes `line_item_id` and the new `quantity`; `remove_item` takes
-                  `line_item_id`. The values listed are the built-in ones; extensions
-                  may add more."
+                  `line_item_id`. `add_discount` takes `label` and `value`, with `value_type`
+                  and `line_item_id` optional; `update_discount` takes `discount_id`
+                  and a new `label` or `amount`; `remove_discount` takes `discount_id`.
+                  The values listed are the built-in ones; extensions may add more."
                 example: update_item
               line_item_id:
                 type: string
-                description: A line item of this order.
+                description: A line item of this order. For `add_discount`, the line
+                  the discount applies to; omitted, it is spread across the lines.
               variant_id:
                 type: string
                 description: A variant of this store, for `add_item`.
               quantity:
                 type: integer
                 example: 2
+              discount_id:
+                type: string
+                description: A manual discount of this order, for `update_discount`
+                  and `remove_discount`.
+              label:
+                type: string
+                description: The discount name, for `add_discount` and `update_discount`.
+                example: Customer appeasement
+              value:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                description: 'For `add_discount`: an amount in the order currency
+                  for a `flat` discount, or a percentage for a `percent` one.'
+                example: '10.00'
+              value_type:
+                type: string
+                enum:
+                - flat
+                - percent
+                description: For `add_discount`. Defaults to `flat`.
+              amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                description: 'For `update_discount`: the row''s new amount in the
+                  order currency, zero or less.'
+                example: "-5.00"
             required:
             - kind
           description: The changes, applied in order.
@@ -84550,21 +84631,55 @@ components:
                   - add_item
                   - update_item
                   - remove_item
+                  - add_discount
+                  - update_discount
+                  - remove_discount
                 - type: string
                 description: "`add_item` takes `variant_id` and `quantity`; `update_item`
                   takes `line_item_id` and the new `quantity`; `remove_item` takes
-                  `line_item_id`. The values listed are the built-in ones; extensions
-                  may add more."
+                  `line_item_id`. `add_discount` takes `label` and `value`, with `value_type`
+                  and `line_item_id` optional; `update_discount` takes `discount_id`
+                  and a new `label` or `amount`; `remove_discount` takes `discount_id`.
+                  The values listed are the built-in ones; extensions may add more."
                 example: update_item
               line_item_id:
                 type: string
-                description: A line item of this order.
+                description: A line item of this order. For `add_discount`, the line
+                  the discount applies to; omitted, it is spread across the lines.
               variant_id:
                 type: string
                 description: A variant of this store, for `add_item`.
               quantity:
                 type: integer
                 example: 2
+              discount_id:
+                type: string
+                description: A manual discount of this order, for `update_discount`
+                  and `remove_discount`.
+              label:
+                type: string
+                description: The discount name, for `add_discount` and `update_discount`.
+                example: Customer appeasement
+              value:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                description: 'For `add_discount`: an amount in the order currency
+                  for a `flat` discount, or a percentage for a `percent` one.'
+                example: '10.00'
+              value_type:
+                type: string
+                enum:
+                - flat
+                - percent
+                description: For `add_discount`. Defaults to `flat`.
+              amount:
+                type: string
+                format: decimal
+                pattern: "^-?\\d+(\\.\\d+)?$"
+                description: 'For `update_discount`: the row''s new amount in the
+                  order currency, zero or less.'
+                example: "-5.00"
             required:
             - kind
           description: The changes to preview. Nothing is saved.

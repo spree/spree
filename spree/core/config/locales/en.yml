@@ -1077,6 +1077,7 @@ en:
     order_change_order_canceled: A canceled order cannot be changed.
     order_change_order_not_placed: Only a placed order can be changed this way. Edit a draft order directly.
     order_change_requires_post_sale_record: is made by returns, exchanges and claims, which check what came back and what is owed first
+    order_change_update_discount_empty: Give the discount a new label or amount.
     order_routing:
       strategies:
         legacy: Legacy
