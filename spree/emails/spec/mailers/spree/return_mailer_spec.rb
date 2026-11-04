@@ -72,6 +72,12 @@ describe Spree::ReturnMailer, type: :mailer do
 
       expect(email_body(described_class.requested_email(return_record.reload))).to include("/account/orders/#{order.prefixed_id}")
     end
+
+    it 'sends nothing once the request was withdrawn' do
+      return_record.update_columns(status: 'canceled')
+
+      expect(message.message).to be_a(ActionMailer::Base::NullMail)
+    end
   end
 
   describe '#approved_email' do

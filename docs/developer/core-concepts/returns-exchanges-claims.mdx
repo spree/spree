@@ -66,11 +66,12 @@ Both answers come from the same return rules that decide the create call, includ
 const order = await client.orders.get('or_xxx')
 
 // A checkout split across sellers answers with its group; returns are opened
-// per seller order, so read them from each order in the group.
-if (!('orders' in order) && order.returns_eligibility?.eligible) {
-  const units = order.fulfillments.flatMap((f) => f.items.flatMap((row) => row.units ?? []))
-  const returnable = units.filter((unit) => unit.returnable_quantity > 0)
-}
+// per seller order, so read each order in the group.
+const sellerOrders = 'orders' in order ? order.orders : [order]
+const returnable = sellerOrders
+  .filter((o) => o.returns_eligibility?.eligible)
+  .flatMap((o) => o.fulfillments.flatMap((f) => f.items.flatMap((row) => row.units ?? [])))
+  .filter((unit) => unit.returnable_quantity > 0)
 
 // The store's reasons, for the form
 const { data: reasons } = await client.returnReasons.list()
