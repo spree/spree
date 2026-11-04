@@ -3,6 +3,17 @@ module Spree
     module V3
       module Store
         class <%= plural_name.camelize %>Controller < ResourceController
+<% if writable? -%>
+          # What create and update accept: the controller permits from it, and
+          # the integration spec documents it (`request_body_for`), which is
+          # where the SDK request types come from.
+          request_params :<%= singular_name %> do |body|
+<% request_param_attributes.each do |name, type| -%>
+            body.attribute :<%= name %>, :<%= type %>
+<% end -%>
+          end
+
+<% end -%>
           protected
 
           def model_class
@@ -16,12 +27,6 @@ module Spree
 <% else -%>
           def serializer_class
             Spree::Api::V3::<%= bare_class_name %>Serializer
-          end
-<% end -%>
-<% if writable? -%>
-
-          def resource_permitted_attributes
-            [<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>]
           end
 <% end -%>
         end

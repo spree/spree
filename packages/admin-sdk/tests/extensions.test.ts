@@ -64,6 +64,24 @@ describe('client.extend', () => {
     await expect(client.extend(quotes).quotes.send('quote_1')).rejects.toBeInstanceOf(SpreeError)
   })
 
+  it("gives an extension the SDK's list and read params", async () => {
+    const { client, calls } = recordingClient()
+    const lists = defineAdminExtension('quotes', ({ request, listParams, readParams }) => ({
+      list: (params: object) => request('GET', '/quotes', { params: listParams(params) }),
+      get: (id: string, params: { expand?: string[] }) =>
+        request('GET', `/quotes/${id}`, { params: readParams(params) }),
+    }))
+    const extended = client.extend(lists)
+
+    await extended.quotes.list({ status_eq: 'sent', page: 2 })
+    await extended.quotes.get('quote_1', { expand: ['revisions', 'order'] })
+
+    const list = new URL(calls[0].url)
+    expect(list.searchParams.get('q[status_eq]')).toBe('sent')
+    expect(list.searchParams.get('page')).toBe('2')
+    expect(new URL(calls[1].url).searchParams.get('expand')).toBe('revisions,order')
+  })
+
   it('refuses a name the client already has', () => {
     const { client } = recordingClient()
 

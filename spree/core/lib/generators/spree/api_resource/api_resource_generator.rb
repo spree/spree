@@ -169,6 +169,10 @@ module Spree
       if options[:admin]
         template 'admin_controller_spec.rb.tt',
                  "spec/controllers/spree/api/v3/admin/#{plural_name}_controller_spec.rb"
+        # Documents the endpoints in openapi/admin.yaml (`spree task
+        # openapi:generate`): the SDK request types and the agent tools come
+        # from there.
+        template 'admin_integration_spec.rb.tt', "spec/integration/admin/#{plural_name}_spec.rb"
       end
     end
 
@@ -297,6 +301,9 @@ module Spree
       if options[:store] || options[:admin]
         say "    #{store_scoped? ? 5 : 4}. Run the specs:  pnpm exec spree test spec/controllers/spree/api/v3/"
       end
+      if options[:admin] && !options[:skip_specs]
+        say "    #{store_scoped? ? 6 : 5}. Document the Admin API (agent tools, SDK types):  pnpm exec spree task openapi:generate"
+      end
       say ''
     end
 
@@ -344,15 +351,31 @@ module Spree
       # Attributes the controller permits on write. By default, every column
       # except references (FKs come through nested), attachments, rich text.
       def permitted_attribute_names
-        attributes
-          .reject { |a| a.reference? || a.attachment? || a.attachments? || a.rich_text? || a.token? || a.password_digest? }
-          .map(&:name)
+        writable_attributes.map(&:name)
+      end
+
+      # @return [Array<Array(String, Symbol)>] each writable attribute and its
+      #   `request_params` type
+      def request_param_attributes
+        writable_attributes.map { |a| [a.name, REQUEST_PARAM_TYPES.fetch(a.type, :string)] }
+      end
+
+      def writable_attributes
+        attributes.reject { |a| a.reference? || a.attachment? || a.attachments? || a.rich_text? || a.token? || a.password_digest? }
       end
     end
 
     private
 
     INITIALIZER_PATH = 'config/initializers/spree.rb'.freeze
+
+    # A migration column type → the `request_params` type that documents it.
+    REQUEST_PARAM_TYPES = {
+      string: :string, text: :string, citext: :string,
+      integer: :integer, bigint: :integer, float: :number, decimal: :decimal,
+      boolean: :boolean, date: :date, datetime: :datetime, timestamp: :datetime,
+      json: :hash, jsonb: :hash
+    }.freeze
 
     def permission_scope_block
       <<~RUBY

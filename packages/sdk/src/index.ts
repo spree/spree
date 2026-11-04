@@ -2,6 +2,7 @@
 
 export type {
   Extended,
+  Extension,
   ExtensionContext,
   RequestFn,
   RequestOptions,

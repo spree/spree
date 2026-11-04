@@ -1,12 +1,15 @@
 require 'spree/testing_support/common_rake'
 
-# `rake spree:openapi:generate` writes the extension's openapi/admin.yaml from
-# its rswag specs.
+# `rake spree:openapi:generate` writes the extension's openapi/*.yaml from its
+# rswag specs, and `rake spree:sdk:serializer_types` the response types of a
+# package that extends the SDKs (both run by `spree sdk generate`).
 begin
   require 'spree/api/testing_support/openapi_tasks'
+  require 'spree/api/sdk_types_task'
+  Spree::Api::SdkTypesTask.new
 rescue LoadError
-  # An extension without spree_api has no admin operations to document. The
-  # file loads nothing else, so this is the only thing that can be missing.
+  # An extension without spree_api has no API to document. These files load
+  # nothing else, so this is the only thing that can be missing.
 end
 
 desc 'Generates a dummy app for testing an extension'

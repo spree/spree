@@ -1,3 +1,5 @@
+import { getParams } from './helpers'
+import { transformListParams } from './params'
 import type { RequestFn } from './request'
 
 /** The API an extension calls, and so the client it can be added to. */
@@ -11,6 +13,13 @@ export interface ExtensionContext {
    * resources. Paths are relative to the client's API.
    */
   request: RequestFn
+  /**
+   * Turns typed list params (filters, sort, page) into the query a list
+   * endpoint reads, as the built-in `list` methods do.
+   */
+  listParams: typeof transformListParams
+  /** Turns `{ expand, fields }` into the query a read endpoint takes. */
+  readParams: typeof getParams
 }
 
 /**
@@ -91,7 +100,8 @@ export function extendClient<
   }
 
   const extended = Object.create(client) as Extended<Client, Name, Namespace>
-  Object.defineProperty(extended, name, { value: extension.build({ request }), enumerable: true })
+  const context = { request, listParams: transformListParams, readParams: getParams }
+  Object.defineProperty(extended, name, { value: extension.build(context), enumerable: true })
   return extended
 }
 

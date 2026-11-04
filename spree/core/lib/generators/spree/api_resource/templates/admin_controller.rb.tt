@@ -9,6 +9,15 @@ module Spree
           # existing resource name instead if this endpoint belongs under one.
           scoped_resource :<%= plural_name %>
 
+          # What create and update accept: the controller permits from it, and
+          # the integration spec documents it (`request_body_for`), which is
+          # where the SDK request types come from.
+          request_params :<%= singular_name %> do |body|
+<% request_param_attributes.each do |name, type| -%>
+            body.attribute :<%= name %>, :<%= type %>
+<% end -%>
+          end
+
           protected
 
           def model_class
@@ -17,10 +26,6 @@ module Spree
 
           def serializer_class
             Spree::Api::V3::Admin::<%= bare_class_name %>Serializer
-          end
-
-          def resource_permitted_attributes
-            [<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>]
           end
         end
       end
