@@ -1,6 +1,7 @@
 import type { adminClient } from '@spree/dashboard-core'
 import {
   currencyParts,
+  defaultPreferences,
   filterPreferenceSchema,
   PreferencesForm,
   type ResourceFilterConfig,
@@ -88,11 +89,11 @@ export function PaymentMethodConditions({
                     rulesArray.append({
                       type: type.type,
                       active: true,
-                      preferences: defaultsFor(type),
+                      preferences: defaultPreferences(type.schema),
                     })
                   }
                 >
-                  {typeLabel('payment_method_rule', type.type, type.name)}
+                  {typeLabel('payment_method_rule', type.type, type.label)}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -119,15 +120,6 @@ export function PaymentMethodConditions({
         ))}
       </div>
     </FormSection>
-  )
-}
-
-function defaultsFor(type: PaymentMethodRuleType): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(type.schema?.properties ?? {}).map(([key, property]) => [
-      key,
-      property.default ?? null,
-    ]),
   )
 }
 
@@ -162,7 +154,7 @@ function ConditionRow({
       (key) => key !== idList?.[0] && !currencyAmountKeys.includes(key),
     )
   const label = ruleType
-    ? typeLabel('payment_method_rule', ruleType.type, ruleType.name)
+    ? typeLabel('payment_method_rule', ruleType.type, ruleType.label)
     : fallbackLabel
   const description = ruleType
     ? typeDescription('payment_method_rule', ruleType.type, ruleType.description)

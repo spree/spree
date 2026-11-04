@@ -347,7 +347,7 @@ module SpreeStripe
     def single_account_while_paying_sellers
       return if store.nil? || store.payout_provider_class != SpreeStripe::PayoutProvider
 
-      other = store.payment_methods.active.where.not(id: id).find { |method| method.is_a?(SpreeStripe::Gateway) }
+      other = SpreeStripe::PayoutProvider.active_gateways(store).where.not(id: id).first
       return if other.nil?
 
       errors.add(:base, :single_account_while_paying_sellers,

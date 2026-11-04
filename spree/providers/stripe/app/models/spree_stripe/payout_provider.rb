@@ -65,7 +65,14 @@ module SpreeStripe
     # to one platform account, so with two the marketplace could not say which
     # one pays them.
     def self.available_for_store?(store)
-      store.payment_methods.active.count { |method| method.is_a?(SpreeStripe::Gateway) } == 1
+      active_gateways(store).count == 1
+    end
+
+    # The store's active Stripe accounts.
+    #
+    # @return [ActiveRecord::Relation<SpreeStripe::Gateway>]
+    def self.active_gateways(store)
+      SpreeStripe::Gateway.active.where(store: store)
     end
 
     # The store's Stripe gateway — the Connect account that pays sellers.
@@ -74,7 +81,7 @@ module SpreeStripe
     #
     # @return [SpreeStripe::Gateway, nil]
     def self.gateway_for(store)
-      store.payment_methods.active.find { |method| method.is_a?(SpreeStripe::Gateway) }
+      active_gateways(store).first
     end
 
     # Stripe's own hosted onboarding, where the seller gives Stripe their
