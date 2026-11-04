@@ -309,6 +309,25 @@ describe('dependabotContent', () => {
     expect(dependabotContent(true, true)).not.toContain('/apps/seller-dashboard')
   })
 
+  it('keeps majors out of the grouped version PRs for both dashboards', () => {
+    const content = dependabotContent(true, true, true)
+    // Admin Dashboard and Seller Panel only; root, server, actions and storefront stay as-is.
+    expect(content.match(/update-types:\n {10}- minor\n {10}- patch/g)).toHaveLength(2)
+    expect(content.match(/dependency-name: "@types\/node"/g)).toHaveLength(2)
+    expect(content).toContain(
+      'dashboard-version:\n        applies-to: version-updates\n        update-types:',
+    )
+    expect(content).toContain(
+      'seller-dashboard-version:\n        applies-to: version-updates\n        update-types:',
+    )
+  })
+
+  it('leaves majors grouped when there are no dashboards', () => {
+    const content = dependabotContent(true)
+    expect(content).not.toContain('update-types:')
+    expect(content).not.toContain('ignore:')
+  })
+
   it('omits the dashboard ecosystem by default', () => {
     expect(dependabotContent(true)).not.toContain('/apps/dashboard')
   })
