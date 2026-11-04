@@ -37,7 +37,7 @@ RSpec.describe Spree::Api::SdkTypes do
 
   after do
     Typelizer.instance_variable_set(:@configuration, @configuration)
-    Typelizer.base_classes.delete('SdkTypesFixture::Admin::WidgetSerializer')
+    Typelizer.base_classes.delete_if { |name| name.start_with?('SdkTypesFixture::') }
     Object.send(:remove_const, :SdkTypesFixture) if defined?(SdkTypesFixture)
     FileUtils.rm_rf(root)
   end
@@ -69,6 +69,42 @@ RSpec.describe Spree::Api::SdkTypes do
 
     expect(generated('admin/generated/Enums.ts')).to include(%(export type WidgetStatus = 'draft' | 'sent' | (string & {});))
     expect(Typelizer::OpenEnums.source).to eq('@spree/sdk-core')
+  end
+
+  it 'removes the types of an API that no longer has serializers' do
+    stale = out.join('store/generated')
+    FileUtils.mkdir_p(stale)
+    File.write(stale.join('Gadget.ts'), '')
+    File.write(out.join('store/spree.ts'), '')
+
+    described_class.generate!(engine: engine, out: 'types')
+
+    expect(stale).not_to exist
+    expect(out.join('store/spree.ts')).not_to exist
+    expect(out.join('admin/generated/Widget.ts')).to exist
+  end
+
+  it 'refuses two serializers that would generate one type' do
+    dir = root.join('app/serializers/sdk_types_fixture/admin/parts')
+    FileUtils.mkdir_p(dir)
+    File.write(dir.join('widget_serializer.rb'), <<~RUBY)
+      module SdkTypesFixture
+        module Admin
+          module Parts
+            class WidgetSerializer
+              include Alba::Resource
+              include Typelizer::DSL
+
+              attributes :id
+            end
+          end
+        end
+      end
+    RUBY
+
+    expect { described_class.generate!(engine: engine, out: 'types') }
+      .to raise_error(ArgumentError, /both generate the admin type Widget/)
+    expect(out.join('admin/generated')).not_to exist
   end
 
   it 'sorts serializers by namespace, as core does' do

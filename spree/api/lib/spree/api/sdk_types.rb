@@ -34,6 +34,14 @@ module Spree
           serializers = engine.root.join('app/serializers')
           out = engine.root.join(out)
           configure(serializers, out)
+          refuse_name_collisions!
+          # Typelizer skips a writer with no serializers and leaves its folder
+          # as it was, so an API whose last serializer went away would keep
+          # publishing its old types.
+          SDKS.each_key do |api|
+            FileUtils.rm_rf(out.join(api.to_s, 'generated'))
+            FileUtils.rm_f(out.join(api.to_s, 'spree.ts'))
+          end
           run_typelizer
 
           SDKS.keys.select do |api|
@@ -57,6 +65,20 @@ module Spree
         end
 
         private
+
+        # Two serializers in one API named alike in different namespaces
+        # (`Orders::ItemSerializer`, `Returns::ItemSerializer`) would write one
+        # file and one type name.
+        def refuse_name_collisions!
+          SDKS.each_key do |api|
+            names = Typelizer.interfaces(writer_name: api).group_by(&:name)
+            clash = names.find { |_name, interfaces| interfaces.size > 1 }
+            next unless clash
+
+            raise ArgumentError, "#{clash.last.map { |i| i.serializer.name }.join(' and ')} both generate the #{api} type " \
+                                 "#{clash.first}; rename one of the serializers"
+          end
+        end
 
         # Replaces the writers Spree configured for its own SDKs: run in an
         # extension's app, they would write core's types into the installed gem.
