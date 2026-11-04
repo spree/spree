@@ -88,7 +88,20 @@ module Spree
       # lines as they end up. Through the same services as the discounts
       # endpoints, so a discount reads the same however it was made.
       def apply_discount_actions
-        actions_of(*Spree::OrderChangeAction::DISCOUNT_KINDS).sort_by(&:position).each do |action|
+        actions = actions_of(*Spree::OrderChangeAction::DISCOUNT_KINDS)
+        return if actions.empty?
+
+        # A line removed by this change, or since it was requested, takes its
+        # discounts with it; a discount written to it would outlive the line.
+        line_item_ids = order.line_items.ids
+        discount_ids = order.discounts.ids
+        gone = actions.any? do |action|
+          (action.line_item_id && line_item_ids.exclude?(action.line_item_id)) ||
+            (action.discount_id && discount_ids.exclude?(action.discount_id))
+        end
+        failure(order_change, :order_change_line_item_gone) if gone
+
+        actions.sort_by(&:position).each do |action|
           result = apply_discount_action(action)
           return result if result.failure?
         end

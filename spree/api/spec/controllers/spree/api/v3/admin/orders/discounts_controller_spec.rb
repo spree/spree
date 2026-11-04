@@ -110,6 +110,16 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
       expect(order.discounts).to be_empty
     end
 
+    it 'refuses a blank label as a draft does' do
+      discount = create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual')
+
+      patch :update, params: { order_id: order.prefixed_id, id: discount.prefixed_id, label: '', amount: '-1.00' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(discount.reload.label).to eq('Loyalty')
+      expect(discount.amount).to eq(-2)
+    end
+
     it 'leaves a draft order without a change record' do
       draft = create(:order_with_line_items, store: store)
 
