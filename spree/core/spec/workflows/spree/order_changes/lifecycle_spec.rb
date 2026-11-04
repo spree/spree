@@ -155,6 +155,17 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(line_item.reload.quantity).to eq(3)
     end
 
+    it 'records the line each addition landed on' do
+      variant = create(:variant)
+      change = requested_change({ kind: 'add_item', variant: variant, quantity: 1 },
+                                { kind: 'add_item', variant: line_item.variant, quantity: 1 })
+
+      Spree::OrderChanges::Confirm.call(order_change: change)
+
+      added = order.reload.line_items.find_by(variant: variant)
+      expect(change.actions.reload.map(&:line_item)).to contain_exactly(added, line_item)
+    end
+
     it 'never re-prices a negotiated line' do
       line_item.update_columns(price: 3.33, price_source: Spree::LineItem::MANUAL_PRICE_SOURCE)
       change = requested_change(kind: 'update_item', line_item: line_item, quantity: 4)
