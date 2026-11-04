@@ -30,6 +30,8 @@ const nike = await client.request<Brand>('GET', '/brands/nike')
 
 `client.request` uses the same auth headers, retry logic, and locale/currency defaults as `client.products.list()` or any other built-in resource.
 
+For a complete walkthrough — creating the API endpoints on the backend, defining TypeScript types, filtering, and expanding associations — see the [API](/developer/tutorial/model-and-api) and [SDK](/developer/tutorial/storefront) tutorials.
+
 ## Shipping a client for an extension
 
 An extension that adds Store API endpoints can ship a typed client for them as an npm package. The package defines an extension with `defineStoreExtension`, and an app adds it to its client with `extend`:
@@ -61,4 +63,18 @@ const quote = await client.quotes.get('quote_1') // typed as Quote
 - An extension adds a new namespace only. `extend` throws a `TypeError` for a name the client already has (`products`, or the same extension twice) and for an extension of another API.
 - The package lists `@spree/sdk` as a peer dependency, so the app's own client is the one extended.
 
-For a complete walkthrough — creating the API endpoints on the backend, defining TypeScript types, filtering, and expanding associations — see the [API](/developer/tutorial/model-and-api) and [SDK](/developer/tutorial/storefront) tutorials.
+### Generating the extension's types
+
+The extension documents its endpoints in its own `openapi/*.yaml` with rswag (see [documenting your extension's endpoints](/developer/mcp/custom-tools#documenting-your-extensions-endpoints)). The package generates its request body and list filter types from those documents, the same way the SDKs generate theirs:
+
+```bash
+spree sdk types --spec ../my_extension/openapi/admin.yaml --spec ../my_extension/openapi/store.yaml
+```
+
+This writes `src/types/<api>/params/` and `src/types/<api>/filters.ts`, which the extension's methods use for their arguments:
+
+```typescript
+import type { QuoteCreateParams } from './types/store/params'
+```
+
+Response types come from the extension's serializers, generated with [Typelizer](https://github.com/skryukov/typelizer) the way Spree generates its own.

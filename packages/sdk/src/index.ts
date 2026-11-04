@@ -6,6 +6,7 @@ export type {
   RequestFn,
   RequestOptions,
   RetryConfig,
+  TimeZone,
 } from '@spree/sdk-core'
 // Request infrastructure (re-export from sdk-core)
 export {

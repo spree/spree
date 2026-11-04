@@ -52,6 +52,8 @@ The task comes with `spree/testing_support/extension_rake`, which your Rakefile 
 s.files = Dir['{app,config,db,lib}/**/*', 'openapi/*.yaml', 'LICENSE', 'README.md']
 ```
 
+An extension with Store API endpoints documents them too, in `openapi/store.yaml`: pass `store_title:` to `Spree::Api::TestingSupport::Openapi.configure` in its `spec/swagger_helper.rb`, and name the document in those specs with `openapi_spec: 'openapi/store.yaml'`. A package that ships a client for the extension generates its types from these documents with [`spree sdk types`](/developer/cli/quickstart#spree-sdk-types).
+
 ### Writing the specs
 
 Document each admin endpoint the way core does:

@@ -280,7 +280,7 @@ spree auth logout --profile prod
 
 ## Dev workflow commands
 
-These commands run inside the project's containers against the running stack. The one exception is `spree filters types --from`, which reads a saved file and needs no running stack.
+These commands run inside the project's containers against the running stack. The exceptions are `spree filters types --from`, which reads a saved file, and `spree sdk types`, which reads an extension's OpenAPI documents; neither needs a running stack.
 
 ### `spree generate`
 
@@ -306,6 +306,17 @@ spree filters types --from filter-tables.json                         # from `sp
 ```
 
 See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
+
+### `spree sdk types`
+
+Generate the request body and list filter types for a package that [ships a client for an extension's endpoints](/developer/sdk/extending#shipping-a-client-for-an-extension). Run it in the package, against the `openapi/*.yaml` documents the extension generates with `rake spree:openapi:generate`. It writes `src/types/<api>/params/` and, when the document lists filters, `src/types/<api>/filters.ts`, one folder per document. Run it again after you change an endpoint.
+
+```bash
+spree sdk types                                                 # openapi/store.yaml, admin.yaml and seller.yaml, those that exist
+spree sdk types --spec ../my_extension/openapi/admin.yaml --out src/types
+```
+
+The files import shared types from the SDK the document's API belongs to (`@spree/sdk`, `@spree/admin-sdk` or `@spree/seller-sdk`).
 
 ### `spree migrate`
 

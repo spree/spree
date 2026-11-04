@@ -3,13 +3,16 @@ export * from '@spree/core'
 // Extensions
 export type { Extended, Extension, ExtensionApi, ExtensionContext } from './extensions'
 export { defineExtension, extendClient } from './extensions'
-export type { FilterSpec } from './filter-types'
+export type { ExtensionFilterTypesOptions, FilterSpec } from './filter-types'
 export { renderAppFilterTypes, renderFilterTypes } from './filter-types'
 export type { ResolvedRetryConfig } from './helpers'
 // Helpers
 export { getParams, resolveRetryConfig } from './helpers'
 // Params
 export { transformListParams } from './params'
+// Request body types, for `spree sdk types`
+export type { ExtensionTypesOptions, ParamsSpec } from './params-types'
+export { renderParamsTypes } from './params-types'
 export type {
   AuthConfig,
   InternalRequestOptions,
