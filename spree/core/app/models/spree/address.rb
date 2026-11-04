@@ -270,7 +270,7 @@ module Spree
     #
     # @return [String, nil]
     def company
-      stored = read_attribute(:company)
+      stored = super
       return stored if stored.present?
 
       owner.name if owner.is_a?(Spree::Company)

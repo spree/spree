@@ -705,6 +705,25 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe '#company' do
+    let(:company) { create(:company, name: 'Acme Logistics') }
+
+    it 'is the stored line' do
+      expect(create(:company_address, owner: company, company: 'Acme Logistics — Dock B').company).to eq('Acme Logistics — Dock B')
+    end
+
+    it "tracks the owning node's current name when nothing is stored" do
+      address = create(:company_address, owner: company, company: nil)
+      company.update!(name: 'Acme Freight')
+
+      expect(address.reload.company).to eq('Acme Freight')
+    end
+
+    it 'is nil when nothing is stored and no company owns the address' do
+      expect(create(:address, company: nil).company).to be_nil
+    end
+  end
+
   describe '#to_s' do
     let(:address) { create(:address) }
 
