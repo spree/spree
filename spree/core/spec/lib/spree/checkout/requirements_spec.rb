@@ -189,6 +189,25 @@ RSpec.describe Spree::Checkout::Requirements do
         a_hash_including(step: 'payment', field: 'payment')
       )
     end
+    # The cart can grow past an order-total limit after the payment is added.
+    it 'refuses completion on a payment method the rules no longer offer' do
+      cart = create(:cart_with_line_items, store: store, line_items_price: 100)
+      payment = create(:payment, cart: cart, order: nil, amount: cart.total)
+      create(:order_total_payment_method_rule, payment_method: payment.payment_method,
+                                               preferred_max_totals: { 'USD' => (cart.total - 1).to_s })
+
+      expect(described_class.new(cart.reload).call(completion: true)).to include(
+        a_hash_including(step: 'payment', code: 'payment_method_unavailable')
+      )
+      expect(described_class.new(cart).call).not_to include(a_hash_including(code: 'payment_method_unavailable'))
+
+      cart.update_columns(created_by_id: create(:admin_user).id) if cart.respond_to?(:created_by_id)
+      next unless cart.respond_to?(:created_by_id)
+
+      expect(described_class.new(cart.reload).call(completion: true)).not_to include(
+        a_hash_including(code: 'payment_method_unavailable')
+      )
+    end
   end
 
   describe 'po_number requirement' do

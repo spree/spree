@@ -299,6 +299,14 @@ describe Spree::PaymentMethod, type: :model do
       expect(payment_method.reload.payment_method_rules).to eq([channel_rule])
     end
 
+    it 'replaces a rule removed and added back as the same kind in one save' do
+      payment_method.update!(rules: [{ type: 'channel_rule', preferences: { channel_ids: [] } }])
+
+      payment_method.update!(rules: [{ type: 'channel_rule', preferences: { channel_ids: [channel.prefixed_id] } }])
+
+      expect(payment_method.reload.payment_method_rules.sole.preferred_channel_ids.map(&:to_s)).to eq([channel.id.to_s])
+    end
+
     it 'buffers rows on a new method until it is saved' do
       new_method = build(:check_payment_method, store: store, rules: [{ type: 'company_rule' }])
       new_method.save!
