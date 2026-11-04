@@ -6,6 +6,14 @@ module Spree
     let(:categories) { create_list(:category, 2) }
     let(:products) { create_list(:product, 3) }
 
+    def product_updated_events
+      published = []
+      Spree::Events.subscribe('product.updated', async: false) { |event| published << event }
+      Spree::Events.activate!
+      yield
+      published
+    end
+
     describe '#call' do
       subject { service.call(categories: categories, products: products) }
 
@@ -46,6 +54,17 @@ module Spree
       it 'updates categories_count on products' do
         expect { subject }.to change { products.first.reload.categories_count }.from(0).to(categories.size)
           .and change { products.second.reload.categories_count }.from(0).to(categories.size)
+      end
+
+      context 'events', events: true do
+        before { Spree::Events.reset! }
+        after { Spree::Events.reset! }
+
+        it 'publishes product.updated once per product' do
+          published = product_updated_events { subject }
+
+          expect(published.size).to eq(products.size)
+        end
       end
     end
   end

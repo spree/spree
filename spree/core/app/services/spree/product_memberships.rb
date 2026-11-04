@@ -52,8 +52,8 @@ module Spree
       refresh_after_membership_change(group_ids, products)
     end
 
-    # Bulk writes skip the join model's callbacks, so counters, caches and the
-    # search index are refreshed here.
+    # Bulk writes skip the join model's callbacks, so counters, caches,
+    # the search index and the product's update event are handled here.
     def refresh_after_membership_change(group_ids, products)
       product_ids = products.pluck(:id)
       Spree::Product.reset_counters_in_bulk(product_ids, membership_class.model_name.element.pluralize.to_sym)
@@ -62,6 +62,15 @@ module Spree
       Spree::Product.where(id: product_ids).touch_all
       products.each(&:enqueue_search_index)
       group_class.where(id: group_ids).touch_all
+
+      publish_product_updated(product_ids)
+    end
+
+    # Read fresh rather than reusing the records handed in: the counter
+    # reset and the touch above are part of what changed, and those records
+    # predate both.
+    def publish_product_updated(product_ids)
+      Spree::Product.where(id: product_ids).find_each { |product| product.publish_event('product.updated') }
     end
 
     def group_key
