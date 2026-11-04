@@ -452,6 +452,14 @@ describe Spree::TaxProvider::Internal, type: :model do
       expect(order.tax_lines.reload).to be_empty
     end
 
+    it 'does not tax a gift card taken in exchange' do
+      line.new_variant.product.update_column(:gift_card, true)
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.charges).to be_empty
+    end
+
     it 'leaves the credit for the units coming back alone' do
       credit = create(:tax_line, order: order, line_item: nil, exchange_line_item: line, credit: true, amount: 1)
 
