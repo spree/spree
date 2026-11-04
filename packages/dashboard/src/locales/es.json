@@ -5902,6 +5902,7 @@
         "values_saved": "Campos personalizados guardados",
         "required_field_hint": "Obligatorio",
         "values_invalid": "Corrige estos campos personalizados antes de guardar: {{fields}}",
+        "definitions_check_failed": "No se pudieron comprobar los campos personalizados. Vuelve a guardar.",
         "choose": "Elegir…",
         "no_choices": "No hay opciones que coincidan"
       }

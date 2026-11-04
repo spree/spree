@@ -612,6 +612,7 @@
         "values_saved": "Pola niestandardowe zapisane",
         "required_field_hint": "Wymagane",
         "values_invalid": "Popraw te pola niestandardowe przed zapisem: {{fields}}",
+        "definitions_check_failed": "Nie udało się sprawdzić pól niestandardowych. Spróbuj zapisać ponownie.",
         "choose": "Wybierz…",
         "no_choices": "Brak pasujących opcji"
       }

@@ -602,6 +602,7 @@
         "values_saved": "Đã lưu trường tùy chỉnh",
         "required_field_hint": "Bắt buộc",
         "values_invalid": "Sửa các trường tùy chỉnh này trước khi lưu: {{fields}}",
+        "definitions_check_failed": "Không thể kiểm tra các trường tùy chỉnh. Hãy thử lưu lại.",
         "choose": "Chọn…",
         "no_choices": "Không có lựa chọn phù hợp"
       }

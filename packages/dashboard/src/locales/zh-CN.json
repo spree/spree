@@ -600,6 +600,7 @@
         "values_saved": "自定义字段已保存",
         "required_field_hint": "必填",
         "values_invalid": "保存前请修正以下自定义字段：{{fields}}",
+        "definitions_check_failed": "无法检查自定义字段。请重新保存。",
         "choose": "选择…",
         "no_choices": "没有匹配的选项"
       }

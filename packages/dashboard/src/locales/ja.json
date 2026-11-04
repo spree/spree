@@ -602,6 +602,7 @@
         "values_saved": "カスタムフィールドを保存しました",
         "required_field_hint": "必須",
         "values_invalid": "保存する前に次のカスタムフィールドを修正してください: {{fields}}",
+        "definitions_check_failed": "カスタムフィールドを確認できませんでした。もう一度保存してください。",
         "choose": "選択…",
         "no_choices": "一致する選択肢がありません"
       }

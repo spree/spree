@@ -609,6 +609,7 @@
         "values_saved": "تم حفظ الحقول المخصصة",
         "required_field_hint": "مطلوب",
         "values_invalid": "صحّح هذه الحقول المخصصة قبل الحفظ: {{fields}}",
+        "definitions_check_failed": "تعذّر التحقق من الحقول المخصصة. حاول الحفظ مرة أخرى.",
         "choose": "اختر…",
         "no_choices": "لا توجد خيارات مطابقة"
       }
