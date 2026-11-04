@@ -14,16 +14,24 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
 export function usePaymentMethodTypes({ enabled = true }: { enabled?: boolean } = {}) {
-  // Every provider, with `installed` set for those this store already has:
-  // pickers filter (see `filterPaymentMethodProviderTypes`), while an edit form
-  // reads an installed provider's schema from the same list. Store-scoped
-  // because `installed` is. Matches the +['payment-methods', 'types']+ shape
+  // Every provider, with `installed_count` for how many this store already
+  // has: the picker labels them, and an edit form reads an installed
+  // provider's schema from the same list. Store-scoped because the count is.
+  // Matches the +['payment-methods', 'types']+ shape
   // that +useResourceMutation+ expands to +['payment-methods', storeId, 'types']+.
   return useQuery({
     queryKey: useResourceKey('payment-methods', 'types'),
     queryFn: () => adminClient.paymentMethods.types(),
     staleTime: Infinity,
     enabled,
+  })
+}
+
+export function usePaymentMethodRuleTypes() {
+  return useQuery({
+    queryKey: useResourceKey('payment-method-rule-types'),
+    queryFn: () => adminClient.paymentMethods.ruleTypes(),
+    staleTime: 1000 * 60 * 30,
   })
 }
 
@@ -54,8 +62,7 @@ export function usePaymentMethod(id: string | undefined) {
 }
 
 export function useCreatePaymentMethod() {
-  // Invalidate the types registry too — the server filters out installed
-  // providers, so the picker should drop the just-added one.
+  // Invalidate the types registry too, so the picker's installed counts move.
   return useResourceMutation<PaymentMethod, Error, PaymentMethodCreateParams>({
     mutationFn: (params) => adminClient.paymentMethods.create(params),
     // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).

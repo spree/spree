@@ -114,6 +114,8 @@ import type {
   PackageTypeSort,
   PaymentFilters,
   PaymentMethodFilters,
+  PaymentMethodRuleFilters,
+  PaymentMethodRuleSort,
   PaymentMethodSort,
   PaymentSort,
   PolicyFilters,
@@ -528,6 +530,8 @@ import type {
   PaymentCaptureParams,
   PaymentCreateParams,
   PaymentMethodCreateParams,
+  PaymentMethodRuleCreateParams,
+  PaymentMethodRuleUpdateParams,
   PaymentMethodType,
   PaymentMethodUpdateParams,
   PolicyCreateParams,
@@ -700,6 +704,7 @@ import type {
   PackageType,
   Payment,
   PaymentMethod,
+  PaymentMethodRule,
   Permission,
   Policy,
   Price,
@@ -2933,6 +2938,58 @@ export class AdminClient {
 
     types: (options?: RequestOptions): Promise<{ data: PaymentMethodType[] }> =>
       this.request<{ data: PaymentMethodType[] }>('GET', '/payment_methods/types', options),
+
+    /** Conditions that decide whether a payment method is offered at storefront checkout. */
+    rules: {
+      list: (
+        paymentMethodId: string,
+        params?: ListParams<PaymentMethodRuleFilters, PaymentMethodRuleSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<PaymentMethodRule>> =>
+        this.request<PaginatedResponse<PaymentMethodRule>>(
+          'GET',
+          `/payment_methods/${paymentMethodId}/rules`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      create: (
+        paymentMethodId: string,
+        params: PaymentMethodRuleCreateParams,
+        options?: RequestOptions,
+      ): Promise<PaymentMethodRule> =>
+        this.request<PaymentMethodRule>('POST', `/payment_methods/${paymentMethodId}/rules`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        paymentMethodId: string,
+        id: string,
+        params: PaymentMethodRuleUpdateParams,
+        options?: RequestOptions,
+      ): Promise<PaymentMethodRule> =>
+        this.request<PaymentMethodRule>(
+          'PATCH',
+          `/payment_methods/${paymentMethodId}/rules/${id}`,
+          {
+            ...options,
+            body: params,
+          },
+        ),
+
+      delete: (paymentMethodId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/payment_methods/${paymentMethodId}/rules/${id}`, options),
+    },
+
+    /** Registered rule kinds with preference schemas for building pickers. */
+    ruleTypes: (
+      options?: RequestOptions,
+    ): Promise<{
+      data: Array<{ type: string; label: string; description: string; schema: PreferenceSchema }>
+    }> =>
+      this.request<{
+        data: Array<{ type: string; label: string; description: string; schema: PreferenceSchema }>
+      }>('GET', '/payment_method_rules/types', options),
   }
 
   // ============================================

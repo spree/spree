@@ -61,16 +61,27 @@ module SpreeStripe
       true
     end
 
+    # Exactly one active Stripe account: a seller's connected account belongs
+    # to one platform account, so with two the marketplace could not say which
+    # one pays them.
     def self.available_for_store?(store)
-      gateway_for(store).present?
+      active_gateways(store).count == 1
     end
 
-    # The store's Stripe gateway — the account that charges customers, and so
-    # the account that pays sellers.
+    # The store's active Stripe accounts.
+    #
+    # @return [ActiveRecord::Relation<SpreeStripe::Gateway>]
+    def self.active_gateways(store)
+      SpreeStripe::Gateway.active.where(store: store)
+    end
+
+    # The store's Stripe gateway — the Connect account that pays sellers.
+    # While a store pays through Connect it runs exactly one Stripe account
+    # (see {.available_for_store?}).
     #
     # @return [SpreeStripe::Gateway, nil]
     def self.gateway_for(store)
-      store.payment_methods.active.find { |method| method.is_a?(SpreeStripe::Gateway) }
+      active_gateways(store).first
     end
 
     # Stripe's own hosted onboarding, where the seller gives Stripe their
@@ -389,8 +400,11 @@ module SpreeStripe
     end
 
     # The charge that paid for this order, so Stripe can fund the transfer from
-    # it. Nil when the order was not paid by card — a store-credit sale has no
-    # charge to draw on, and Stripe then funds from the platform balance.
+    # it. Only a charge the Connect account itself took: a transfer must be
+    # made by the account holding the charge it draws on, and a seller's
+    # connected account belongs to that one platform account. An order paid
+    # without it — store credit, or a Stripe account since deactivated — is
+    # funded from the platform balance instead.
     # Stripe funds a transfer from a *charge*, and `response_code` holds the
     # payment intent rather than the charge it produced — sending that would
     # fail every card-funded transfer on an id Stripe cannot use. The charge

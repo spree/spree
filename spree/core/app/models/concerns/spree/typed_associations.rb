@@ -66,8 +66,12 @@ module Spree
       collection = public_send(association)
       begin
         self.class.transaction do
-          kept_ids = rows.each_with_index.map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
-          collection.where.not(id: kept_ids).destroy_all
+          # Rows left out go first, so a kind removed and added back in one
+          # payload does not collide with itself on a per-kind uniqueness rule.
+          listed_ids = rows.filter_map { |row| decode_typed_association_id(row[:id]) }
+          collection.where.not(id: listed_ids).destroy_all
+          collection.reset
+          rows.each_with_index { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
           # `where.not(...).destroy_all` deletes the dropped rows from the DB but
           # leaves them in the already-loaded association target. Reset so a
           # same-request read (e.g. the serializer rendering `rule_ids`) reflects
@@ -120,7 +124,7 @@ module Spree
 
     def find_or_build_typed_association_row(collection, row, pointer)
       if row[:id].present?
-        id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
+        id = decode_typed_association_id(row[:id])
         existing = collection.find { |r| r.id == id } || collection.find_by(id: id)
         return existing if existing
       end
@@ -138,6 +142,12 @@ module Spree
       record = klass.new
       collection.proxy_association.add_to_target(record)
       record
+    end
+
+    def decode_typed_association_id(id)
+      return if id.blank?
+
+      Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id
     end
 
     def unknown_row_type_error(family, type, pointer)

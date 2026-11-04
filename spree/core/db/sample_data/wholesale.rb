@@ -108,3 +108,23 @@ division.memberships.find_or_create_by!(customer: buyer)
 catalog = store.catalogs.find_or_create_by!(name: 'Wholesale Assortment')
 catalog.add_products(store.products.order(:id).limit(20).ids)
 catalog.catalog_assignments.find_or_create_by!(assignable: company)
+
+# Wholesale buyers pay on invoice; retail checkout never offers it. The rule is
+# what keeps it off the retail channel (docs/plans/6.1-payment-method-rules.md).
+wholesale_channel = store.channels.find_by(code: Spree::Seeds::Channels::WHOLESALE_CODE)
+if wholesale_channel
+  invoice = store.payment_methods.find_or_initialize_by(type: 'Spree::PaymentMethod::Check', name: 'Pay on invoice')
+  invoice.description = 'Invoice payable on your agreed terms.'
+  invoice.active = true
+  invoice.storefront_visible = true
+  invoice.save!
+
+  # The method is assigned first: the channel ids resolve through its store.
+  # Reset on every run, so an edited or switched-off rule cannot leave the
+  # invoice offered on retail checkout.
+  rule = invoice.payment_method_rules.find_by(type: 'Spree::PaymentMethodRules::ChannelRule') ||
+         Spree::PaymentMethodRules::ChannelRule.new(payment_method: invoice)
+  rule.active = true
+  rule.preferred_channel_ids = [wholesale_channel.id]
+  rule.save!
+end

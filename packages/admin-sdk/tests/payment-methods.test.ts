@@ -141,4 +141,80 @@ describe('paymentMethods', () => {
       expect(res.data[0]?.type).toBe('bogus')
     })
   })
+
+  describe('rules', () => {
+    const sampleRule = {
+      id: 'pmrule_1',
+      type: 'channel_rule',
+      active: true,
+      preferences: { channel_ids: ['ch_1'] },
+      created_at: '2026-05-01T00:00:00Z',
+      updated_at: '2026-05-01T00:00:00Z',
+    }
+
+    it('GETs /payment_methods/:id/rules', async () => {
+      server.use(
+        http.get(`${API_PREFIX}/payment_methods/pm_1/rules`, () =>
+          HttpResponse.json(paginated([sampleRule])),
+        ),
+      )
+
+      const res = await createTestClient().paymentMethods.rules.list('pm_1')
+
+      expect(res.data[0]?.type).toBe('channel_rule')
+    })
+
+    it('POSTs and PATCHes rule bodies verbatim', async () => {
+      const bodies: Array<Record<string, unknown>> = []
+      server.use(
+        http.post(`${API_PREFIX}/payment_methods/pm_1/rules`, async ({ request }) => {
+          bodies.push((await request.json()) as Record<string, unknown>)
+          return HttpResponse.json(sampleRule, { status: 201 })
+        }),
+        http.patch(`${API_PREFIX}/payment_methods/pm_1/rules/pmrule_1`, async ({ request }) => {
+          bodies.push((await request.json()) as Record<string, unknown>)
+          return HttpResponse.json({ ...sampleRule, active: false })
+        }),
+      )
+
+      const client = createTestClient()
+      await client.paymentMethods.rules.create('pm_1', {
+        type: 'channel_rule',
+        preferences: { channel_ids: ['ch_1'] },
+      })
+      const updated = await client.paymentMethods.rules.update('pm_1', 'pmrule_1', {
+        active: false,
+      })
+
+      expect(bodies).toEqual([
+        { type: 'channel_rule', preferences: { channel_ids: ['ch_1'] } },
+        { active: false },
+      ])
+      expect(updated.active).toBe(false)
+    })
+
+    it('DELETEs a rule and GETs the rule types', async () => {
+      let deleted = false
+      server.use(
+        http.delete(`${API_PREFIX}/payment_methods/pm_1/rules/pmrule_1`, () => {
+          deleted = true
+          return new HttpResponse(null, { status: 204 })
+        }),
+        http.get(`${API_PREFIX}/payment_method_rules/types`, () =>
+          HttpResponse.json({
+            data: [
+              { type: 'market_rule', label: 'Market', description: '', schema: { type: 'object' } },
+            ],
+          }),
+        ),
+      )
+
+      const client = createTestClient()
+      await client.paymentMethods.rules.delete('pm_1', 'pmrule_1')
+      const types = await client.paymentMethods.ruleTypes()
+
+      expect(deleted).toBe(true)
+      expect(types.data[0]?.type).toBe('market_rule')
+    })
+  })
 })

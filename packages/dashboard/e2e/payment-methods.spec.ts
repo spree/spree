@@ -17,10 +17,7 @@ async function selectProvider(page: Page, label: string) {
   await page.getByRole('option', { name: label }).click()
 }
 
-// Each provider can only be installed once per store (the "types" endpoint
-// filters out already-installed providers from the picker). Tests run
-// serially against a shared DB, so each lifecycle test claims a different
-// provider so they don't starve each other.
+// Tests run serially against a shared DB.
 test.describe.configure({ mode: 'serial' })
 
 test.describe('payment methods', () => {
@@ -29,8 +26,6 @@ test.describe('payment methods', () => {
     await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
   })
 
-  // Runs BEFORE the lifecycle tests so both providers it switches between are
-  // still in the dropdown (the lifecycle tests below consume them).
   test('swaps the preferences editor when the provider changes', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
@@ -50,9 +45,6 @@ test.describe('payment methods', () => {
     await expect(page.getByText(/dummy secret key/i)).toHaveCount(0)
   })
 
-  // Runs before create/edit so Check is still in the picker. Custom payment
-  // source is hidden from the UI and store credit is seeded — Check is the
-  // spare installable provider for this lifecycle test.
   test('deletes a payment method', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
@@ -118,11 +110,94 @@ test.describe('payment methods', () => {
     await expect(secret).toHaveText(/^•+9876$/)
     await page.keyboard.press('Escape')
 
-    // A provider is installed once per store, so the picker stops offering it.
+    // An installed provider stays in the picker — a second record is how a
+    // store runs a second account — and says how many the store has.
     await page.getByRole('button', { name: /add payment method/i }).click()
     await page.locator('#type').click()
-    await expect(page.getByRole('option', { name: 'Check' })).toBeVisible()
-    await expect(page.getByRole('option', { name: 'Bogus' })).toHaveCount(0)
+    await expect(page.getByRole('option', { name: /^Bogus · \d+ installed$/ })).toBeVisible()
+  })
+
+  test('adds checkout conditions to a payment method', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Conditions ${Date.now()}`
+    await page.getByRole('button', { name: /add payment method/i }).click()
+    await selectProvider(page, 'Check')
+    await page.locator('#name').fill(name)
+    await page.getByRole('button', { name: /create payment method/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await rowButton(page, name).click()
+    await expect(page.getByText(/no conditions/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Order total' }).click()
+    await page.getByLabel('Minimum order total (USD)').fill('5000')
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Company' }).click()
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+
+    await page.reload()
+    await rowButton(page, name).click()
+    await expect(page.getByLabel('Minimum order total (USD)')).toHaveValue('5000.00', {
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('switch', { name: /turn company on or off/i })).toBeChecked()
+
+    // Adding a condition is the only change, and it is still saved.
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Market' }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+    await page.reload()
+    await rowButton(page, name).click()
+    await expect(page.getByRole('switch', { name: /turn market on or off/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    // Removing it again is the only change, and it is still saved.
+    await page
+      .getByText('Market', { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"border")][1]')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+    await page.reload()
+    await rowButton(page, name).click()
+    await expect(page.getByRole('switch', { name: /turn company on or off/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('switch', { name: /turn market on or off/i })).toHaveCount(0)
+
+    // Switching a condition off keeps it, but stops it applying.
+    await page.getByRole('switch', { name: /turn company on or off/i }).click()
+    // Removing one drops it.
+    await page
+      .getByText('Order total', { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"border")][1]')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+
+    const methods = await adminRequest<{ data: { id: string; name: string }[] }>(
+      page,
+      creds,
+      'get',
+      '/payment_methods?limit=100',
+    )
+    const method = methods.data.find((candidate) => candidate.name === name)
+    const rules = await adminRequest<{ data: { type: string; active: boolean }[] }>(
+      page,
+      creds,
+      'get',
+      `/payment_methods/${method?.id}/rules`,
+    )
+    expect(rules.data).toEqual([expect.objectContaining({ type: 'company_rule', active: false })])
   })
 
   test('edits a payment method', async ({ page }) => {

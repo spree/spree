@@ -1943,6 +1943,28 @@
           "description": "Versand vom am Auftrag hinterlegten Lagerort, sofern gesetzt"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "Diese Zahlungsart nur in den ausgewählten Verkaufskanälen anbieten",
+          "name": "Kanal"
+        },
+        "company_rule": {
+          "description": "Diese Zahlungsart nur für Bestellungen eines Unternehmens anbieten oder für die ausgewählten Unternehmen und ihre Bereiche",
+          "name": "Unternehmen"
+        },
+        "customer_group_rule": {
+          "description": "Diese Zahlungsart nur Kunden in den ausgewählten Gruppen anbieten",
+          "name": "Kundengruppe"
+        },
+        "market_rule": {
+          "description": "Diese Zahlungsart nur in den ausgewählten Märkten anbieten – so betreibt ein Shop auch ein zweites Konto eines Anbieters",
+          "name": "Markt"
+        },
+        "order_total_rule": {
+          "description": "Diese Zahlungsart nur anbieten, wenn die Bestellsumme in einem Bereich liegt, je Währung festgelegt",
+          "name": "Bestellsumme"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "Vertriebskanal",

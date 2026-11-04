@@ -282,6 +282,57 @@ describe Spree::PaymentMethod, type: :model do
     end
   end
 
+  describe '#rules=' do
+    let(:payment_method) { create(:check_payment_method, store: store) }
+    let(:channel) { create(:channel, store: store) }
+
+    it 'saves typed rule rows with the method, and drops rows left out' do
+      payment_method.update!(rules: [{ type: 'channel_rule', preferences: { channel_ids: [channel.prefixed_id] } },
+                                     { type: 'order_total_rule', preferences: { min_totals: { 'USD' => '100' } } }])
+
+      expect(payment_method.payment_method_rules.map(&:class)).to contain_exactly(
+        Spree::PaymentMethodRules::ChannelRule, Spree::PaymentMethodRules::OrderTotalRule
+      )
+
+      channel_rule = payment_method.payment_method_rules.find_by!(type: 'Spree::PaymentMethodRules::ChannelRule')
+      payment_method.update!(rules: [{ id: channel_rule.prefixed_id, type: 'channel_rule', preferences: { channel_ids: [] } }])
+      expect(payment_method.reload.payment_method_rules).to eq([channel_rule])
+    end
+
+    it 'replaces a rule removed and added back as the same kind in one save' do
+      payment_method.update!(rules: [{ type: 'channel_rule', preferences: { channel_ids: [] } }])
+
+      payment_method.update!(rules: [{ type: 'channel_rule', preferences: { channel_ids: [channel.prefixed_id] } }])
+
+      expect(payment_method.reload.payment_method_rules.sole.preferred_channel_ids.map(&:to_s)).to eq([channel.id.to_s])
+    end
+
+    it 'buffers rows on a new method until it is saved' do
+      new_method = build(:check_payment_method, store: store, rules: [{ type: 'company_rule' }])
+      new_method.save!
+
+      expect(new_method.payment_method_rules.map(&:class)).to eq([Spree::PaymentMethodRules::CompanyRule])
+    end
+  end
+
+  describe '#eligible_for_order?' do
+    let(:payment_method) { create(:check_payment_method, store: store) }
+    let(:cart) { create(:cart_with_line_items, store: store) }
+
+    it 'requires the gateway hook and every active rule to pass' do
+      expect(payment_method.eligible_for_order?(cart)).to be(true)
+
+      rule = create(:company_payment_method_rule, payment_method: payment_method)
+      expect(payment_method.reload.eligible_for_order?(cart)).to be(false)
+
+      rule.update!(active: false)
+      expect(payment_method.reload.eligible_for_order?(cart)).to be(true)
+
+      allow(payment_method).to receive(:available_for_order?).and_return(false)
+      expect(payment_method.eligible_for_order?(cart)).to be(false)
+    end
+  end
+
   describe '#available_for_store?' do
     let!(:store_1) { create(:store) }
     let!(:pm) { create(:credit_card_payment_method) }

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
+import type { PaymentMethod, PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
 import {
   defaultPreferences,
   mapSpreeErrorsToForm,
@@ -171,6 +171,15 @@ export function CreatePaymentMethodSheet({
   )
 }
 
+function rulesFromRecord(paymentMethod: PaymentMethod): PaymentMethodFormValues['rules'] {
+  return (paymentMethod.rules ?? []).map((rule) => ({
+    id: rule.id,
+    type: rule.type,
+    active: rule.active,
+    preferences: rule.preferences ?? {},
+  }))
+}
+
 export function EditPaymentMethodSheet({
   id,
   open,
@@ -213,6 +222,7 @@ export function EditPaymentMethodSheet({
       storefront_visible: paymentMethod.storefront_visible ?? true,
       active: paymentMethod.active,
       capture_method: paymentMethod.capture_method ?? '',
+      rules: rulesFromRecord(paymentMethod),
     })
     const initialPreferences = (paymentMethod.preferences as Record<string, unknown>) ?? {}
     setPreferences(initialPreferences)
@@ -226,7 +236,11 @@ export function EditPaymentMethodSheet({
   )
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    const params = paymentMethodValuesToUpdateParams(values)
+    // Compared with what was loaded rather than read from `dirtyFields`,
+    // which a field array only fills in when something subscribes to it.
+    const rulesChanged =
+      JSON.stringify(values.rules) !== JSON.stringify(form.formState.defaultValues?.rules ?? [])
+    const params = paymentMethodValuesToUpdateParams(values, { rulesChanged })
     // Read from the ref rather than the memo: a retry runs before the next
     // render recomputes it.
     const prefsDirty = JSON.stringify(preferences) !== originalPreferencesRef.current
@@ -236,8 +250,10 @@ export function EditPaymentMethodSheet({
       // custom field save sends only the custom fields.
       const savesRecord = form.formState.isDirty || prefsDirty
       if (savesRecord) {
-        await updateMutation.mutateAsync(params)
-        form.reset(values)
+        const saved = await updateMutation.mutateAsync(params)
+        // The saved rules carry the ids the server gave new ones, so the next
+        // save updates them rather than replacing them.
+        form.reset({ ...values, rules: rulesFromRecord(saved) })
         originalPreferencesRef.current = JSON.stringify(preferences)
       }
       if (!(await customFields.save({ announce: !savesRecord }))) return
