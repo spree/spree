@@ -144,12 +144,14 @@ module Spree
 
       # Rules are checked when a payment is added, but the cart can change
       # afterwards — grow past an order-total limit, move market — so a payment
-      # on a method the rules no longer offer is refused here. Staff keying an
+      # not yet processed on a method the rules no longer offer is refused
+      # here. One a provider has already taken or reserved money for is left
+      # alone: refusing it would strand the money on a cart. Staff keying an
       # order in bypass rules, as they do everywhere else.
       def payment_rule_errors
         return [] if keyed_in_by_staff?
 
-        excluded = @cart.payments.valid.includes(payment_method: :payment_method_rules).filter_map(&:payment_method).
+        excluded = @cart.payments.where(status: 'checkout').includes(payment_method: :payment_method_rules).filter_map(&:payment_method).
                    uniq.reject { |method| method.rules_pass?(@cart) }
         return [] if excluded.empty?
 

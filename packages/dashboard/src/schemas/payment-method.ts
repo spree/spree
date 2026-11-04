@@ -91,8 +91,14 @@ export function paymentMethodValuesToCreateParams(
   }
 }
 
+/**
+ * `rules` replaces the method's whole set on the server, so it is sent only
+ * when the conditions were edited — a rule added elsewhere while the sheet was
+ * open is not wiped by saving an unrelated field.
+ */
 export function paymentMethodValuesToUpdateParams(
   v: PaymentMethodFormValues,
+  { rulesChanged = true }: { rulesChanged?: boolean } = {},
 ): PaymentMethodUpdateParams {
   return {
     name: v.name,
@@ -100,6 +106,6 @@ export function paymentMethodValuesToUpdateParams(
     active: v.active,
     capture_method: v.capture_method || null,
     storefront_visible: v.storefront_visible,
-    rules: v.rules,
+    ...(rulesChanged ? { rules: v.rules } : {}),
   }
 }

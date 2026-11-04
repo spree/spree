@@ -245,7 +245,9 @@ export function EditPaymentMethodSheet({
   )
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    const params = paymentMethodValuesToUpdateParams(values)
+    const params = paymentMethodValuesToUpdateParams(values, {
+      rulesChanged: Boolean(form.formState.dirtyFields.rules),
+    })
     // Read from the ref rather than the memo: a retry runs before the next
     // render recomputes it.
     const prefsDirty = JSON.stringify(preferences) !== originalPreferencesRef.current

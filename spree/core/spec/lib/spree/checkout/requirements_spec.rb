@@ -201,6 +201,13 @@ RSpec.describe Spree::Checkout::Requirements do
       )
       expect(described_class.new(cart).call).not_to include(a_hash_including(code: 'payment_method_unavailable'))
 
+      # Money a provider has already taken stays with the order.
+      payment.update_columns(status: 'completed')
+      expect(described_class.new(cart.reload).call(completion: true)).not_to include(
+        a_hash_including(code: 'payment_method_unavailable')
+      )
+      payment.update_columns(status: 'checkout')
+
       cart.update_columns(created_by_id: create(:admin_user).id) if cart.respond_to?(:created_by_id)
       next unless cart.respond_to?(:created_by_id)
 
