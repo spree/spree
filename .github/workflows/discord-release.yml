@@ -28,8 +28,10 @@ jobs:
     if: startsWith(github.event.release.tag_name || inputs.tag, 'v')
     runs-on: ubuntu-latest
     steps:
+      # Run the script from the default branch, never from the release tag.
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.repository.default_branch }}
           sparse-checkout: scripts/discord-release.mjs
           sparse-checkout-cone-mode: false
 
@@ -37,9 +39,18 @@ jobs:
         with:
           node-version: 22
 
+      # A missing secret fails the run instead of posting to the other channel.
       - name: Post the release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          DISCORD_WEBHOOK_URL: ${{ (github.event_name == 'release' || inputs.channel == 'changelog') && secrets.DISCORD_CHANGELOG_WEBHOOK || secrets.DISCORD_TEST_WEBHOOK }}
+          CHANNEL: ${{ github.event_name == 'release' && 'changelog' || inputs.channel }}
+          CHANGELOG_WEBHOOK: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK }}
+          TEST_WEBHOOK: ${{ secrets.DISCORD_TEST_WEBHOOK }}
           TAG: ${{ github.event.release.tag_name || inputs.tag }}
-        run: node scripts/discord-release.mjs "$TAG"
+        run: |
+          if [ "$CHANNEL" = changelog ]; then
+            export DISCORD_WEBHOOK_URL="$CHANGELOG_WEBHOOK"
+          else
+            export DISCORD_WEBHOOK_URL="$TEST_WEBHOOK"
+          fi
+          node scripts/discord-release.mjs "$TAG"

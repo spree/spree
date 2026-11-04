@@ -13,6 +13,9 @@
 const REPO = process.env.GITHUB_REPOSITORY || 'spree/spree'
 const COLOR = 0x2ecc71
 const MAX_TITLES = 8
+// Discord rejects an embed past 6000 characters or 25 fields.
+const MAX_EMBED = 6000
+const MAX_FIELDS = 25
 
 // Sections that never make it into the embed.
 const SKIP = /package versions|contributors|installation|feedback/i
@@ -77,7 +80,8 @@ export function buildEmbed(release) {
   const lines = (release.body || '').replace(/\r/g, '').split('\n').map((l) => l.trim())
   const sections = parseSections(lines)
 
-  const fields = []
+  const titled = []
+  const upgrades = []
   const counts = []
   const highlights = []
 
@@ -87,13 +91,13 @@ export function buildEmbed(release) {
     if (!bullets.length) continue
 
     if (/upgrad/i.test(heading)) {
-      fields.push({ name: heading, value: clip(bullets.map((b) => `• ${b}`).join('\n'), 1024) })
+      upgrades.push({ name: clip(heading, 256), value: clip(bullets.map((b) => `• ${b}`).join('\n'), 1024) })
       continue
     }
 
     const titles = bullets.map((b) => b.match(/^\*\*(.+?)\.?\*\*/)?.[1]).filter(Boolean)
     if (titles.length) {
-      fields.push({ name: `${heading} (${bullets.length})`, value: list(titles) })
+      titled.push({ name: clip(`${heading} (${bullets.length})`, 256), value: list(titles) })
     } else if (/^\p{Extended_Pictographic}/u.test(heading)) {
       counts.push(`${heading}: **${bullets.length}**`)
     } else {
@@ -102,12 +106,14 @@ export function buildEmbed(release) {
     }
   }
 
-  if (highlights.length) fields.unshift({ name: '✨ Highlights', value: list(highlights) })
-  if (counts.length) fields.push({ name: '​', value: counts.join(' · ') })
+  if (highlights.length) titled.unshift({ name: '✨ Highlights', value: list(highlights) })
 
+  // Upgrade notes, counts and contributors always fit; titled sections fill what is left.
+  const required = upgrades.slice(0, 3)
+  if (counts.length) required.push({ name: '\u200b', value: clip(counts.join(' · '), 1024) })
   const contributors = new Set([...(release.body || '').matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1]))
   if (contributors.size) {
-    fields.push({ name: '🙌 Community', value: `${contributors.size} contributor${contributors.size > 1 ? 's' : ''}` })
+    required.push({ name: '🙌 Community', value: `${contributors.size} contributor${contributors.size > 1 ? 's' : ''}` })
   }
 
   const description = [
@@ -118,13 +124,21 @@ export function buildEmbed(release) {
 
   const embed = {
     author: { name: REPO, url: `https://github.com/${REPO}` },
-    title: title(release, lines),
+    title: clip(title(release, lines), 256),
     url: release.html_url,
     description,
     color: COLOR,
-    fields: fields.slice(0, 25),
+    fields: [],
     timestamp: release.published_at,
   }
+
+  let budget = MAX_EMBED - size(embed) - required.reduce((n, f) => n + size(f), 0)
+  for (const field of titled.slice(0, MAX_FIELDS - required.length)) {
+    if (size(field) > budget) break
+    embed.fields.push(field)
+    budget -= size(field)
+  }
+  embed.fields.push(...required)
 
   const image = (release.body || '').match(/<img[^>]+src="([^"]+)"/)?.[1]
   if (image) embed.image = { url: image }
@@ -135,8 +149,10 @@ export function buildEmbed(release) {
 function parseSections(lines) {
   const sections = []
   let current = null
+  let inFence = false
   for (const line of lines) {
-    const m = line.match(/^#{1,3} (.+)/)
+    if (line.startsWith('```')) inFence = !inFence
+    const m = !inFence && line.match(/^#{1,3} (.+)/)
     if (m) {
       current = { heading: m[1].trim(), body: [] }
       sections.push(current)
@@ -170,6 +186,11 @@ function list(items) {
   const shown = items.slice(0, MAX_TITLES).map((t) => `• ${t}`)
   if (items.length > MAX_TITLES) shown.push(`…and ${items.length - MAX_TITLES} more`)
   return clip(shown.join('\n'), 1024)
+}
+
+// Characters Discord counts toward the embed limit.
+function size({ title = '', description = '', author, name = '', value = '' }) {
+  return title.length + description.length + (author?.name.length ?? 0) + name.length + value.length
 }
 
 function clip(text, max) {
