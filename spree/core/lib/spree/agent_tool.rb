@@ -37,6 +37,8 @@ class AgentTool
     class_attribute :declared_description, instance_accessor: false
     class_attribute :declared_permission, instance_accessor: false
     class_attribute :declared_mutating, instance_accessor: false, default: false
+    class_attribute :declared_additive, instance_accessor: false, default: false
+    class_attribute :declared_open_world, instance_accessor: false, default: false
     class_attribute :declared_audience, instance_accessor: false, default: :admin
     class_attribute :declared_params, instance_accessor: false, default: {}.freeze
 
@@ -89,6 +91,36 @@ class AgentTool
       # @return [Boolean]
       def mutating?
         declared_mutating == true
+      end
+
+      # Declares that this tool only adds — it creates a record or a file and
+      # never overwrites, removes or changes the state of one that exists.
+      # Every other mutating tool counts as destructive, so a tool that
+      # forgets to say is warned about more, never less.
+      #
+      # @return [void]
+      def additive!
+        self.declared_additive = true
+      end
+
+      # @return [Boolean] whether the tool may overwrite, remove or change
+      #   the state of existing data
+      def destructive?
+        mutating? && declared_additive != true
+      end
+
+      # Declares that this tool reaches beyond the store — sends an email,
+      # calls an outside service — rather than only reading and writing
+      # store data.
+      #
+      # @return [void]
+      def open_world!
+        self.declared_open_world = true
+      end
+
+      # @return [Boolean]
+      def open_world?
+        declared_open_world == true
       end
 
       # @param name [Symbol]
@@ -159,7 +191,7 @@ class AgentTool
       @context = context
     end
 
-    delegate :tool_name, :description, :permission, :mutating?, :params, to: :class
+    delegate :tool_name, :description, :permission, :mutating?, :destructive?, :open_world?, :params, to: :class
 
     # Runs the tool. Subclasses implement this with keyword arguments matching
     # their declared params.

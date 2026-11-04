@@ -38,13 +38,18 @@ module Spree
         end
 
         # Clients that gate confirmation on annotations rather than on a
-        # server's word need both hints set explicitly: the gem defaults
-        # `destructiveHint` to true, so a read tool that says nothing would be
-        # confirmed like a deletion.
+        # server's word need every hint set explicitly: the protocol defaults
+        # `destructiveHint` and `openWorldHint` to true, so a tool that says
+        # nothing would be confirmed like a deletion that leaves the store.
         #
         # @return [Hash]
         def annotations(tool)
-          { read_only_hint: !tool.mutating?, destructive_hint: tool.mutating?, idempotent_hint: !tool.mutating? }
+          {
+            read_only_hint: !tool.mutating?,
+            destructive_hint: tool.destructive?,
+            idempotent_hint: !tool.mutating?,
+            open_world_hint: tool.open_world?
+          }
         end
 
         # A tool answers with a plain hash. A hash carrying `:error` is the

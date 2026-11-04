@@ -16,6 +16,7 @@ module Spree
                   'the file sits in the library for the merchant to place later.'
       permission 'write_media'
       mutating!
+      additive!
 
       param :file_id, description: 'The file_id upload_file returned', required: true
       param :product_id, description: "A product's prefixed id, to place the file in its gallery"

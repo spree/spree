@@ -3,6 +3,7 @@ module Spree
     # Creates a record, through the Admin API's own create operation.
     class CreateResource < Spree::AgentTools::ResourceWrite
       tool_name 'create_resource'
+      additive!
       description 'Create a record — a product with its variants, an order with its line ' \
                   'items, a market, channel, payment method and so on. Send the whole record ' \
                   'in one call: a list-valued attribute takes complete rows, so a product\'s ' \
