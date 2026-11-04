@@ -118,16 +118,9 @@ export function buildEmbed(release) {
   const required = upgrades.slice(0, 3)
   const contributors = contributorsOf(release)
   if (contributors.length) {
-    const names = []
-    for (const c of contributors) {
-      const link = `[@${c}](https://github.com/${c})`
-      if ([...names, link].join(', ').length > 980) break
-      names.push(link)
-    }
-    const more = contributors.length - names.length
     required.push({
       name: `🙌 Thanks to ${contributors.length} community contributor${contributors.length > 1 ? 's' : ''}`,
-      value: names.join(', ') + (more ? ` and ${more} more` : ''),
+      value: joinFitting(contributors.map((c) => `[@${c}](https://github.com/${c})`), 1000, ', '),
     })
   }
 
@@ -162,7 +155,7 @@ export function buildEmbed(release) {
   embed.fields.push(...required)
   const room = MAX_EMBED - size(embed) - embed.fields.reduce((n, f) => n + size(f), 0) - 20
   if (left.length && room > 20) {
-    embed.fields.splice(embed.fields.length - required.length, 0, { name: 'Also in this release', value: clip(left.join(' · '), Math.min(reserve - 25, room)) })
+    embed.fields.splice(embed.fields.length - required.length, 0, { name: 'Also in this release', value: joinFitting(left, Math.min(reserve - 25, room)) })
   }
 
   const image = (release.body || '').match(/<img[^>]+src="([^"]+)"/)?.[1]
@@ -210,7 +203,12 @@ function title(release, lines) {
 
 // Only change lines credit an author, so "configured by @someone" in prose doesn't.
 function contributorsOf(release) {
-  const bullets = (release.body || '').split('\n').filter((l) => /^\s*[-*] /.test(l))
+  const bullets = []
+  let inFence = false
+  for (const line of (release.body || '').split('\n')) {
+    if (line.trim().startsWith('```')) inFence = !inFence
+    else if (!inFence && /^\s*[-*] /.test(line)) bullets.push(line)
+  }
   return [...new Set(bullets.flatMap((l) => [...l.matchAll(/\bby \[?@([\w-]+)/g)].map((m) => m[1])))]
 }
 
@@ -229,7 +227,8 @@ async function discordIds() {
 // Pings only the mapped contributors; nothing else in the notes can mention anyone.
 // Ids must be strings: a JSON number this long loses precision and would ping someone else.
 export function thanks(contributors, ids) {
-  const users = [...new Set(contributors.map((c) => (Object.hasOwn(ids, c) ? ids[c] : null)))]
+  const byLogin = new Map(Object.entries(ids).map(([login, id]) => [login.toLowerCase(), id]))
+  const users = [...new Set(contributors.map((c) => byLogin.get(c.toLowerCase())))]
     .filter((id) => typeof id === 'string' && /^\d{17,20}$/.test(id))
     .slice(0, 80)
   if (!users.length) return { allowed_mentions: { parse: [] } }
@@ -251,13 +250,26 @@ function summary(bullet) {
   // A sentence ends before a capital letter, code or emphasis, never after e.g., i.e. or vs.
   const sentence = text.match(/^.+?(?<!\b(?:e\.g|i\.e|vs|etc))[.!?](?= +[\p{Lu}`*_]| *$)/u)?.[0] ?? text
   let short = sentence.replace(/[.]$/, '')
+  const open = (text) => (text.match(/`/g) || []).length % 2
   if (short.length > MAX_SUMMARY) {
-    const cut = short.lastIndexOf(' ', MAX_SUMMARY - 1)
-    short = `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 1)}…`
+    const cut = short.lastIndexOf(' ', MAX_SUMMARY - 3)
+    short = `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 3)}…`
   }
   // Never leave a code span open.
-  if ((short.match(/`/g) || []).length % 2) short = `${short.replace(/…$/, '')}\`…`
+  if (open(short)) short = `${short.replace(/…$/, '')}\`…`
   return short
+}
+
+// Whole items only, ending with "and N more" when they don't all fit in max characters.
+function joinFitting(items, max, separator = ' · ') {
+  const shown = []
+  for (const item of items) {
+    const rest = items.length - shown.length - 1
+    if ([...shown, item].join(separator).length + (rest ? ` and ${rest} more`.length : 0) > max) break
+    shown.push(item)
+  }
+  const more = items.length - shown.length
+  return shown.join(separator) + (more ? `${shown.length ? ' and' : ''} ${more} more` : '')
 }
 
 function list(items) {
