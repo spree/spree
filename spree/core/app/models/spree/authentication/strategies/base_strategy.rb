@@ -82,12 +82,18 @@ module Spree
         # account as "ada@example.com" — an exact match would refuse login to
         # someone who capitalizes their own address differently.
         #
+        # An exact match is tried first, through the model, so the lookup goes
+        # through whatever the app layers on the column: an app that encrypts
+        # email (`encrypts :email, deterministic: true, downcase: true`)
+        # stores ciphertext, which `LOWER(email)` in SQL can never match.
+        #
         # @param email [String]
         # @return [Object, nil]
         def find_user_by_email(email)
           return nil if email.blank?
 
-          user_class.find_by(user_class.arel_table[:email].lower.eq(email.to_s.downcase))
+          user_class.find_by(email: email.to_s) ||
+            user_class.find_by(user_class.arel_table[:email].lower.eq(email.to_s.downcase))
         end
 
         # Find or create user identity

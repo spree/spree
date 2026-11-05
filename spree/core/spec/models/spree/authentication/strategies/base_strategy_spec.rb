@@ -61,6 +61,26 @@ describe Spree::Authentication::Strategies::BaseStrategy do
         expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
       end
     end
+
+    # An app may encrypt the column, deterministically so it can still be
+    # looked up. SQL then only ever sees ciphertext.
+    context 'when the app encrypts email' do
+      let(:user_class) do
+        stub_const('EncryptedEmailUser', Class.new(Spree.customer_class) do
+          self.table_name = Spree.customer_class.table_name
+          encrypts :email, deterministic: true, downcase: true
+        end)
+      end
+      let!(:user) { user_class.create!(email: 'Ada@Example.com', password: 'secret123', password_confirmation: 'secret123') }
+
+      it 'finds the user, whatever the case' do
+        stored = user_class.connection.select_value(user_class.unscoped.where(id: user.id).select(:email).to_sql)
+        expect(stored).not_to include('example.com')
+
+        expect(strategy.send(:find_user_by_email, 'ada@example.com')).to eq(user)
+        expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
+      end
+    end
   end
 
   describe '#find_or_create_user_from_oauth' do
