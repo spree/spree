@@ -34,7 +34,7 @@ module Spree
 
     after_save(if: :saved_changes?) { variant.touch }
     after_commit -> { variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::InStock]) },
-                 if: :sellability_changed?
+                 if: -> { destroyed? || sellability_changed? }
     after_touch { variant.touch }
     after_destroy { variant.touch }
 

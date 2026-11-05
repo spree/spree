@@ -16,7 +16,8 @@ namespace :spree do
 
         store.collections.where.missing(:publications).in_batches(of: batch_size) do |batch|
           collection_ids = batch.ids
-          channels.add_collections(collection_ids)
+          # All or none of a batch's channels, so a rerun finds an interrupted batch unpublished.
+          ApplicationRecord.transaction { channels.add_collections(collection_ids) }
           published += collection_ids.size
         end
       end
