@@ -1,0 +1,6 @@
+---
+en:
+  spree:
+    integrations:
+      klaviyo:
+        description: Customer profiles, newsletter sign-ups and order events in Klaviyo, so you can build flows, segments and campaigns on your store's data.
