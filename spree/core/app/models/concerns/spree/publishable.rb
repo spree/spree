@@ -207,8 +207,9 @@ module Spree
       return unless Spree::Events.enabled?
 
       @_current_event_name = event_name
-      payload ||= event_payload_for(event_name)
-      publish_in_event_store { Spree::Events.publish(event_name, payload, metadata) }
+      publish_in_event_store do
+        Spree::Events.publish(event_name, payload || event_payload_for(event_name), metadata)
+      end
     ensure
       @_current_event_name = nil
     end
@@ -389,7 +390,7 @@ module Spree
     end
 
     def capture_pre_destroy_payload
-      @_pre_destroy_payload = event_payload
+      @_pre_destroy_payload = in_event_store { event_payload }
     end
 
     # Publishes with the record's own store, so the event is
@@ -400,10 +401,14 @@ module Spree
     # while the context is still open: a subscriber job or a webhook
     # delivery reads it long after.
     def publish_in_event_store
-      store = (respond_to?(:store) ? self.store : nil) || Spree::Current.store
-      return yield if store.nil? || store == Spree::Current.store
+      in_event_store { yield.tap { |event| event&.store_id } }
+    end
 
-      Spree::Current.with_store(store) { yield.tap { |event| event&.store_id } }
+    def in_event_store(&block)
+      store = (respond_to?(:store) ? self.store : nil) || Spree::Current.store
+      return block.call if store.nil? || store == Spree::Current.store
+
+      Spree::Current.with_store(store, &block)
     end
   end
 end
