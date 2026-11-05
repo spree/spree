@@ -19,7 +19,7 @@ module Spree
         ApplicationRecord.transaction do
           Spree::CollectionExclusion.where(pairs).delete_all
           add_memberships(collections, products)
-          Spree::ProductCollection.where(pairs).where(source: [nil, 'rule']).update_all(source: 'manual', updated_at: Time.current)
+          Spree::ProductCollection.hand_pick(collection_ids: pairs[:collection_id], product_ids: pairs[:product_id])
         end
         success(true)
       end

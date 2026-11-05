@@ -23,6 +23,16 @@ module Spree
     validates :position, numericality: { only_integer: true, allow_blank: true, allow_nil: true }
     validates :collection_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }
 
+    # Makes existing rule memberships hand-picked, keeping their positions.
+    #
+    # @param collection_ids [Array<Integer>, ActiveRecord::Relation]
+    # @param product_ids [Array<Integer>, ActiveRecord::Relation]
+    # @return [Integer] the rows changed
+    def self.hand_pick(collection_ids:, product_ids:)
+      where(collection_id: collection_ids, product_id: product_ids, source: [nil, 'rule']).
+        update_all(source: 'manual', updated_at: Time.current)
+    end
+
     self.whitelisted_ransackable_attributes = %w[collection_id product_id source]
   end
 end

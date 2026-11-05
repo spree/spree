@@ -5,6 +5,10 @@ module Spree
     # Products discounted below their compare-at price in the rule's currency
     # (the store's default when blank).
     class Sale < Spree::CollectionRule
+      def self.uses_currency?
+        true
+      end
+
       def apply(scope)
         case match_policy
         when 'is_equal_to', 'contains'

@@ -865,13 +865,13 @@ module Spree
       return if archived?
       return if store.nil?
 
-      collections = store.collections.automatic
-      collections = collections.where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) if rule_types
-      return unless collections.exists?
-
       # Fails open: an unreachable cache reads as no pending job.
       pending_key = "spree/auto_match_collections/#{id}"
       return if Rails.cache.read(pending_key)
+
+      collections = store.collections.automatic
+      collections = collections.where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) if rule_types
+      return unless collections.exists?
 
       Rails.cache.write(pending_key, true, expires_in: 30.seconds)
 
@@ -1092,8 +1092,8 @@ module Spree
     end
 
     def apply_collection_picks
-      Spree::CollectionExclusion.where(product_id: id, collection_id: @picked_collection_ids).delete_all
-      Spree::Collection.where(id: @dropped_collection_ids).find_each(&:enqueue_regenerate_products)
+      Spree::CollectionExclusion.where(product_id: id, collection_id: @picked_collection_ids).delete_all if @picked_collection_ids.any?
+      Spree::Collection.automatic.where(id: @dropped_collection_ids).find_each(&:enqueue_regenerate_products) if @dropped_collection_ids.any?
       @picked_collection_ids = @dropped_collection_ids = nil
     end
 
