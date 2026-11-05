@@ -401,7 +401,11 @@ module Spree
     # while the context is still open: a subscriber job or a webhook
     # delivery reads it long after.
     def publish_in_event_store
-      in_event_store { yield.tap { |event| event&.store_id } }
+      in_event_store do
+        published = yield
+        published.store_id if published.is_a?(Spree::Event)
+        published
+      end
     end
 
     def in_event_store(&block)
