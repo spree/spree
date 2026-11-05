@@ -6730,3 +6730,13 @@ which loads them on demand.
 
 **Plan:** `6.0-agent-tools-from-openapi.md`. **Plans amended:** `6.0-mcp-server.md` (allowlist keyed by dependency key superseded; "never one tool per endpoint" narrowed to CRUD and reads).
 
+
+## 2026-11-05 — Collections are published per channel, live by default
+
+**Context:** Every collection was public through the Store API the moment it was saved: no draft, schedule or channel scoping, where merchants expect per-channel publishing with a scheduled date. A gap review of collections also found they can't be promotion targets, have three rule types where merchants expect conditions on price, stock, category, title, type, seller and custom fields, can't mix manual picks with rules, and have two correctness bugs (`Sale` reads only the default currency; old permalinks 404 through the Store API).
+
+**Decision:** `Spree::CollectionPublication` mirrors `ProductPublication` (channel + optional `published_at`/`unpublished_at` window), and the Store API serves only collections published on the request's channel. New collections publish to every active channel through a new `Spree.collection_create_workflow`, and the migration backfills existing collections the same way, both with `insert_all`, so upgrading changes nothing. Price and Sale rules evaluate in one named currency and keep one materialized membership per collection. No sub-collections: categories are the hierarchy.
+
+**Consequences:** Store API reads of collections must go through `Store::CollectionsController#scope`, and anything that creates collections must use the workflow or write publications itself, or the collection is invisible. A merchant stages a collection with a future `published_at`.
+
+**Plan:** `6.1-collections-merchandising.md`.
