@@ -20,6 +20,13 @@ RSpec.describe SpreeKlaviyo::BaseJob do
     allow(integration).to receive(:request_profile_deletion).and_raise(error)
   end
 
+  it 'keeps the email arguments of every Klaviyo job out of the log' do
+    jobs = [SpreeKlaviyo::SyncProfileJob, SpreeKlaviyo::UpdateSubscriptionJob,
+            SpreeKlaviyo::TrackEventJob, SpreeKlaviyo::DeleteProfileJob]
+
+    expect(jobs.map(&:log_arguments?)).to all(be(false))
+  end
+
   it 'runs on the gem queue' do
     previous = SpreeKlaviyo.queue
     SpreeKlaviyo.queue = :klaviyo
