@@ -998,6 +998,44 @@
           "subtitle": "Xem ai đã thay đổi những gì trong cửa hàng của bạn và khi nào.",
           "title": "Nhật ký kiểm tra"
         },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Sản phẩm được thêm vào đúng danh mục khi nhập, khi người bán thay đổi và khi bạn thay đổi ánh xạ.",
+              "title": "Luôn cập nhật"
+            },
+            "kept": {
+              "description": "Các danh mục bạn tự thêm hoặc xóa vẫn giữ nguyên. Trình ánh xạ chỉ gỡ những gì nó đã thêm.",
+              "title": "Thay đổi của bạn được giữ"
+            },
+            "once": {
+              "description": "Ánh xạ một danh mục của người bán sang một danh mục của bạn và mọi sản phẩm trong đó sẽ theo. Ánh xạ cùng một danh mục cho nhiều người bán cùng lúc.",
+              "title": "Ánh xạ một lần"
+            }
+          },
+          "intro": "Mỗi người bán sắp xếp sản phẩm theo cách riêng. Ánh xạ danh mục của từng người bán sang danh mục của thị trường một lần, và sản phẩm của họ sẽ được thêm vào danh mục của bạn khi nhập và mỗi khi thay đổi.",
+          "nav": "Trình ánh xạ danh mục",
+          "steps": {
+            "add": {
+              "description": "Sản phẩm được tự động thêm vào danh mục của bạn.",
+              "title": "Thêm"
+            },
+            "import": {
+              "description": "Sản phẩm của người bán đến kèm danh mục riêng của họ.",
+              "title": "Nhập"
+            },
+            "map": {
+              "description": "Bạn ánh xạ từng danh mục của người bán sang một danh mục của bạn.",
+              "title": "Ánh xạ"
+            },
+            "review": {
+              "description": "Sản phẩm đến bước duyệt đã nằm trong danh mục.",
+              "title": "Duyệt"
+            }
+          },
+          "subtitle": "Tự động đưa sản phẩm của mọi người bán vào danh mục của bạn.",
+          "title": "Trình ánh xạ danh mục"
+        },
         "company_onboarding": {
           "benefits": {
             "agreement": {
@@ -3837,12 +3875,6 @@
             "no_variants": "Thêm ít nhất một biến thể để bắt đầu chỉnh sửa giá."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} còn hàng",
-          "in_stock_short": "Còn hàng",
-          "on_backorder": "Đang đặt hàng trước",
-          "out_of_stock": "Hết hàng"
-        },
         "media_empty": "Chưa có phương tiện truyền thông nào.",
         "media_upload": "Tải lên phương tiện",
         "new": {
@@ -4035,9 +4067,7 @@
           "section_to": "Đến",
           "sheet_title": "Tạo phiếu chuyển kho"
         },
-        "variants_empty": "Chưa có biến thể nào.",
-        "variants_one": "{{count}} biến thể",
-        "variants_other": "{{count}} biến thể"
+        "variants_empty": "Chưa có biến thể nào."
       },
       "profile": {
         "load_failed_title": "Không thể tải hồ sơ của bạn",

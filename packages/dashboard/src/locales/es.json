@@ -994,12 +994,6 @@
             "no_variants": "Agregá al menos una variante para empezar a editar precios."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} en stock",
-          "in_stock_short": "Con stock",
-          "on_backorder": "En contrarreserva",
-          "out_of_stock": "Sin stock"
-        },
         "media_empty": "Todavía no hay multimedia.",
         "media_upload": "Subir multimedia",
         "new": {
@@ -1192,9 +1186,7 @@
           "section_to": "Hasta",
           "sheet_title": "Nueva transferencia de inventario"
         },
-        "variants_empty": "Todavía no hay variantes.",
-        "variants_one": "{{count}} variante",
-        "variants_other": "{{count}} variantes"
+        "variants_empty": "Todavía no hay variantes."
       },
       "oauth": {
         "authorize": {
@@ -6373,6 +6365,44 @@
           },
           "subtitle": "Mirá quién cambió qué en tu tienda, y cuándo.",
           "title": "Registro de auditoría"
+        },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Los productos se añaden a las categorías correctas al importarse, cuando el vendedor los cambia y cuando cambias una asignación.",
+              "title": "Siempre al día"
+            },
+            "kept": {
+              "description": "Las categorías que añades o quitas a mano se quedan como las dejaste. El mapeador solo quita lo que añadió.",
+              "title": "Tus cambios se mantienen"
+            },
+            "once": {
+              "description": "Asigna una categoría del vendedor a una de las tuyas y todos sus productos la siguen. Asigna la misma categoría para muchos vendedores a la vez.",
+              "title": "Asigna una vez"
+            }
+          },
+          "intro": "Cada vendedor organiza sus productos a su manera. Asigna una vez las categorías de cada vendedor a las categorías de tu marketplace, y sus productos se añadirán a tus categorías al importarse y cada vez que cambien.",
+          "nav": "Mapeador de categorías",
+          "steps": {
+            "add": {
+              "description": "Los productos se añaden a tus categorías automáticamente.",
+              "title": "Añadir"
+            },
+            "import": {
+              "description": "Los productos del vendedor llegan con sus propias categorías.",
+              "title": "Importar"
+            },
+            "map": {
+              "description": "Asignas cada categoría del vendedor a una de tus categorías.",
+              "title": "Asignar"
+            },
+            "review": {
+              "description": "Los productos llegan a tu revisión ya en sus categorías.",
+              "title": "Revisar"
+            }
+          },
+          "subtitle": "Coloca automáticamente los productos de cada vendedor en tus categorías.",
+          "title": "Mapeador de categorías"
         },
         "company_onboarding": {
           "benefits": {

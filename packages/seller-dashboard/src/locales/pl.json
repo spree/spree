@@ -661,7 +661,8 @@
     "columns": {
       "name": "Produkt",
       "price": "Cena",
-      "status": "Status"
+      "status": "Status",
+      "inventory": "Stan magazynowy"
     },
     "custom_fields": "Szczegóły produktu",
     "details": "Szczegóły",

@@ -1,0 +1,164 @@
+# RuboCop for every Spree gem, enforced on new and changed lines only by local
+# hooks (not CI): scripts/lint/rubocop.
+#
+# Starts from RuboCop and rubocop-rails defaults. The overrides below follow
+# what the codebase already does, measured across all engines, so new code
+# reads like the code around it. Existing code is never reformatted to match.
+
+plugins:
+  - rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 3.2
+  TargetRailsVersion: 8.1
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - '**/spec/dummy/**/*'
+    - '**/sandbox/**/*'
+    - '**/vendor/**/*'
+    - '**/node_modules/**/*'
+    - '**/tmp/**/*'
+    # Copied into host apps, and some are ERB.
+    - '**/generators/**/templates/**/*'
+
+# --- Layout -----------------------------------------------------------------
+
+# Method chains break after the dot (3x more common than leading dots).
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/LineLength:
+  Max: 150
+
+# --- Style ------------------------------------------------------------------
+
+# Engines ship no frozen string literal comments.
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Public API is documented in docs/, not class comments.
+Style/Documentation:
+  Enabled: false
+
+# `permit(:name, option_values: [])` and `[:a, :b]` are both used widely;
+# neither form is wrong.
+Style/HashAsLastArrayItem:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+# `expect { ... }.to change { ... }` is the RSpec idiom.
+Style/BlockDelimiters:
+  AllowedMethods:
+    - lambda
+    - proc
+    - it
+    - expect
+    - change
+
+Lint/AmbiguousBlockAssociation:
+  AllowedMethods:
+    - change
+    - not_change
+
+# `%{name}` matches the I18n interpolation used across the codebase.
+Style/FormatStringToken:
+  EnforcedStyle: template
+
+# State transitions and services return booleans from bang-less verbs
+# (`authorize`, `process`); renaming them would break the public API.
+Naming/PredicateMethod:
+  Enabled: false
+
+# `product_1` and `product1` both appear in specs and fixtures.
+Naming/VariableNumber:
+  Enabled: false
+
+# --- Metrics ----------------------------------------------------------------
+
+# Size limits fight Rails models and request specs; complexity still counts.
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Max: 20
+
+Metrics/PerceivedComplexity:
+  Max: 20
+
+# Services take keyword arguments; only positional ones count.
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+# --- Rails ------------------------------------------------------------------
+
+# Engines inherit from Spree::Base and Spree's own base classes, never the
+# host app's Application* classes.
+Rails/ApplicationController:
+  Enabled: false
+
+Rails/ApplicationJob:
+  Enabled: false
+
+Rails/ApplicationMailer:
+  Enabled: false
+
+Rails/ApplicationRecord:
+  Enabled: false
+
+# Spree helpers, not Rails dynamic finders.
+Rails/DynamicFindBy:
+  AllowedMethods:
+    - find_by_api_type
+    - find_by_external_id
+    - find_by_iso
+    - find_by_iso!
+    - find_by_param
+    - find_by_param!
+    - find_by_password_reset_token
+    - find_by_password_reset_token!
+    - find_by_permalink
+    - find_by_prefix_id
+    - find_by_prefix_id!
+    - find_by_prefixed_id!
+    - find_by_secret_token
+    - find_by_token!
+    - find_by_token_for
+    - find_by_token_for!
+
+# Generators, rake tasks and sample data talk to a terminal.
+Rails/Output:
+  Exclude:
+    - '**/lib/generators/**/*'
+    - '**/lib/tasks/**/*'
+    - '**/*.rake'
+    - '**/testing_support/common_rake.rb'
+    - 'core/app/services/spree/sample_data/**/*'
+
+# Resource controllers inherit their actions from a shared base controller.
+Rails/LexicallyScopedActionFilter:
+  Enabled: false
+
+# Counters, timestamps and bulk writes skip callbacks on purpose.
+Rails/SkipsModelValidations:
+  Enabled: false

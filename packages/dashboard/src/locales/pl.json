@@ -1016,6 +1016,44 @@
           "subtitle": "Sprawdzaj, kto, co i kiedy zmienił w Twoim sklepie.",
           "title": "Dziennik zmian"
         },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Produkty trafiają do właściwych kategorii przy imporcie, gdy sprzedawca je zmienia i gdy zmienisz przypisanie.",
+              "title": "Zawsze aktualne"
+            },
+            "kept": {
+              "description": "Kategorie dodane lub usunięte ręcznie zostają tak, jak je zostawisz. Mapowanie usuwa tylko to, co samo dodało.",
+              "title": "Twoje zmiany zostają"
+            },
+            "once": {
+              "description": "Przypisz kategorię sprzedawcy do jednej z Twoich, a każdy produkt z niej pójdzie za nią. Przypisz tę samą kategorię wielu sprzedawcom naraz.",
+              "title": "Przypisz raz"
+            }
+          },
+          "intro": "Każdy sprzedawca porządkuje produkty po swojemu. Przypisz raz kategorie każdego sprzedawcy do kategorii Twojego marketplace, a jego produkty trafią do Twoich kategorii przy imporcie i przy każdej zmianie.",
+          "nav": "Mapowanie kategorii",
+          "steps": {
+            "add": {
+              "description": "Produkty są automatycznie dodawane do Twoich kategorii.",
+              "title": "Dodaj"
+            },
+            "import": {
+              "description": "Produkty sprzedawcy przychodzą z jego własnymi kategoriami.",
+              "title": "Import"
+            },
+            "map": {
+              "description": "Przypisujesz każdą kategorię sprzedawcy do jednej z Twoich kategorii.",
+              "title": "Przypisz"
+            },
+            "review": {
+              "description": "Produkty trafiają do weryfikacji już w swoich kategoriach.",
+              "title": "Weryfikuj"
+            }
+          },
+          "subtitle": "Automatycznie umieszczaj produkty każdego sprzedawcy w swoich kategoriach.",
+          "title": "Mapowanie kategorii"
+        },
         "company_onboarding": {
           "benefits": {
             "agreement": {
@@ -3877,12 +3915,6 @@
             "no_variants": "Dodaj co najmniej jeden wariant, aby rozpocząć edycję cen."
           }
         },
-        "inventory": {
-          "in_stock": "{{count}} w magazynie",
-          "in_stock_short": "W magazynie",
-          "on_backorder": "Na zamówienie",
-          "out_of_stock": "Brak w magazynie"
-        },
         "media_empty": "Brak multimediów.",
         "media_upload": "Prześlij multimedia",
         "new": {
@@ -4083,11 +4115,7 @@
           "section_to": "Do",
           "sheet_title": "Nowy transfer magazynowy"
         },
-        "variants_empty": "Brak wariantów.",
-        "variants_few": "{{count}} warianty",
-        "variants_many": "{{count}} wariantów",
-        "variants_one": "{{count}} wariant",
-        "variants_other": "{{count}} wariantów"
+        "variants_empty": "Brak wariantów."
       },
       "profile": {
         "load_failed_title": "Nie udało się załadować Twojego profilu",

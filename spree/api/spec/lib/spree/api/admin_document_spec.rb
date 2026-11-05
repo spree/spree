@@ -73,6 +73,16 @@ RSpec.describe Spree::Api::AdminDocument do
     expect(described_class.resolve_parameter('$ref' => '#/components/parameters/WidgetId')['in']).to eq('path')
   end
 
+  it "keeps core's filter table when an extension's app filters the record differently, without a conflict" do
+    core_order = described_class.send(:read, described_class.send(:core_path)).dig('components', 'x-spree-filter-tables', 'Order')
+    changed = core_order.merge('scopes' => core_order['scopes'].to_h.merge('email_cont' => 'text'))
+    write_extension('components' => { 'x-spree-filter-tables' => { 'Order' => changed, 'Quote' => { 'attributes' => { 'number' => 'text' } } } })
+
+    expect(described_class.document.dig('components', 'x-spree-filter-tables', 'Order')).to eq(core_order)
+    expect(described_class.document.dig('components', 'x-spree-filter-tables', 'Quote')).to be_present
+    expect(described_class.conflicts).to be_empty
+  end
+
   it 'keeps core\'s component when an extension defines it differently' do
     write_extension('components' => { 'schemas' => { 'Order' => { 'type' => 'string' } } })
 

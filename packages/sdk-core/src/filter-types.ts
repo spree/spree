@@ -75,6 +75,17 @@ function checkPredicates(published: Record<Kind, string[]> | undefined) {
   }
 }
 
+/**
+ * Output for an extension's own package rather than an SDK in this
+ * repository (`spree sdk types`).
+ */
+export interface ExtensionFilterTypesOptions {
+  /** The first line of the file, saying how it was generated. */
+  header: string
+  /** The extension's package, which an app augments to add its own filters. */
+  module?: string
+}
+
 const MAX_DEPTH = 2
 const PACKAGES: Record<string, string> = {
   store: '@spree/sdk',
@@ -191,10 +202,20 @@ function rootType(tables: Record<string, FilterTable>, name: string, prefix = ''
 /**
  * The list filter and sort types an SDK publishes, from its API reference.
  *
- * @param spec the parsed `docs/api-reference/<api>.yaml`
+ * @param spec the parsed `docs/api-reference/<api>.yaml`, or an extension's
+ *   `openapi/<api>.yaml`
  * @param api `store`, `admin` or `seller`
+ * @param extension write for an extension's package instead of an SDK
  */
-export function renderFilterTypes(spec: FilterSpec, api: string): string {
+export function renderFilterTypes(
+  spec: FilterSpec,
+  api: string,
+  extension?: ExtensionFilterTypesOptions,
+): string {
+  // An extension's package cannot import the private sdk-core; the SDK it
+  // extends exports the same building blocks.
+  const blocks = extension ? PACKAGES[api] : '@spree/sdk-core'
+  const augmented = extension ? extension.module : PACKAGES[api]
   checkPredicates(spec.components?.['x-spree-filter-predicates'])
   const tables = spec.components?.['x-spree-filter-tables'] ?? {}
   const groups = endpointGroups(spec)
@@ -222,13 +243,21 @@ export function renderFilterTypes(spec: FilterSpec, api: string): string {
     if (typeName === name) {
       out.push(
         '/**',
-        ` * Filters your app adds to ${name} lists. Generate them with \`spree filters types\`,`,
-        ' * or declare them by hand in a file that has an `export`:',
-        ' *',
-        ' *     export {}',
-        ` *     declare module '${PACKAGES[api]}' {`,
-        ` *       interface ${name}FilterExtensions { erp_id_eq?: string }`,
-        ' *     }',
+        // `spree filters types` augments the SDKs only, so an extension's
+        // lists take an app's filters by hand.
+        extension
+          ? ` * Filters your app adds to ${name} lists. Declare them by hand${augmented ? ' in a file that has an `export`:' : ', in a module augmentation of this package.'}`
+          : ` * Filters your app adds to ${name} lists. Generate them with \`spree filters types\`,`,
+        ...(augmented
+          ? [
+              ...(extension ? [] : [' * or declare them by hand in a file that has an `export`:']),
+              ' *',
+              ' *     export {}',
+              ` *     declare module '${augmented}' {`,
+              ` *       interface ${name}FilterExtensions { erp_id_eq?: string }`,
+              ' *     }',
+            ]
+          : []),
         ' */',
         `export interface ${name}FilterExtensions {}`,
         '',
@@ -243,7 +272,8 @@ export function renderFilterTypes(spec: FilterSpec, api: string): string {
   }
 
   // A namespace import, so no table name can collide with a building block.
-  return `${PACKAGE_HEADER}\nimport type * as Filter from '@spree/sdk-core'\n\n${out.join('\n').trimEnd()}\n`
+  const header = extension ? `${extension.header}\n` : PACKAGE_HEADER
+  return `${header}\nimport type * as Filter from '${blocks}'\n\n${out.join('\n').trimEnd()}\n`
 }
 
 /**

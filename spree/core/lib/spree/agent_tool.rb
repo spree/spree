@@ -91,6 +91,26 @@ class AgentTool
         declared_mutating == true
       end
 
+      # Declares that this tool only adds — it creates a record or a file and
+      # never overwrites, removes or changes the state of one that exists.
+      # Every other mutating tool counts as destructive, so a tool that
+      # forgets to say is warned about more, never less.
+      #
+      # Unlike the declarations above, this one is not inherited: a subclass
+      # that overrides `call` may well change existing data, so it is
+      # destructive until it says otherwise itself.
+      #
+      # @return [void]
+      def additive!
+        @additive = true
+      end
+
+      # @return [Boolean] whether the tool may overwrite, remove or change
+      #   the state of existing data
+      def destructive?
+        mutating? && @additive != true
+      end
+
       # @param name [Symbol]
       # @param type [Symbol] JSON schema type
       # @param description [String]
@@ -159,7 +179,7 @@ class AgentTool
       @context = context
     end
 
-    delegate :tool_name, :description, :permission, :mutating?, :params, to: :class
+    delegate :tool_name, :description, :permission, :mutating?, :destructive?, :params, to: :class
 
     # Runs the tool. Subclasses implement this with keyword arguments matching
     # their declared params.

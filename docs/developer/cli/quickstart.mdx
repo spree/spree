@@ -280,7 +280,7 @@ spree auth logout --profile prod
 
 ## Dev workflow commands
 
-These commands run inside the project's containers against the running stack. The one exception is `spree filters types --from`, which reads a saved file and needs no running stack.
+These commands run inside the project's containers against the running stack. The exceptions are `spree filters types --from`, which reads a saved file, and `spree sdk generate`, which runs against an extension's own bundle; neither needs a running stack.
 
 ### `spree generate`
 
@@ -306,6 +306,18 @@ spree filters types --from filter-tables.json                         # from `sp
 ```
 
 See [using your own filters from TypeScript](/developer/core-concepts/search-filtering#using-your-own-filters-from-typescript).
+
+### `spree sdk generate`
+
+Generate the client of a package that [ships a client for an extension's endpoints](/developer/sdk/extending#shipping-a-client-for-an-extension), from the extension itself. Run it in the package, with the extension named in its `package.json` (`"spree": { "extension": "../my_extension" }`). It runs the extension's `rake spree:openapi:generate` and `rake spree:sdk:serializer_types`, then writes `src/generated/<api>/`: one SDK extension per resource (`client.ts`), the request body types (`params/`), the list filters (`filters.ts`) and the response types (`types/`, `spree.ts`). Run it again after you change an endpoint or a serializer.
+
+```bash
+spree sdk generate                 # run the extension's rake tasks, then write everything
+spree sdk generate --no-backend    # from the committed openapi/*.yaml and response types
+spree sdk generate --check         # in CI: write nothing, fail when the files are out of date
+```
+
+The files import shared types from the SDK each API belongs to (`@spree/sdk`, `@spree/admin-sdk` or `@spree/seller-sdk`).
 
 ### `spree migrate`
 

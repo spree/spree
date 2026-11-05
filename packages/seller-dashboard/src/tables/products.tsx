@@ -1,5 +1,5 @@
 import { PRODUCT_STATUSES } from '@spree/core'
-import { defineTable, formatPrice } from '@spree/dashboard-core'
+import { defineTable, formatPrice, ProductStockSummary } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Product } from '@spree/seller-sdk'
@@ -43,6 +43,12 @@ defineTable<Product>('seller-products', {
           label={i18n.t(`products.statuses.${product.status}`)}
         />
       ),
+    },
+    {
+      key: 'inventory',
+      label: i18n.t('products.columns.inventory'),
+      default: true,
+      render: (product) => <ProductStockSummary product={product} />,
     },
     {
       key: 'price',

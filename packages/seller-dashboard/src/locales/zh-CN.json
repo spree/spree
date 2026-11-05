@@ -652,7 +652,8 @@
     "columns": {
       "name": "商品",
       "price": "价格",
-      "status": "状态"
+      "status": "状态",
+      "inventory": "库存"
     },
     "custom_fields": "商品详情",
     "details": "详情",

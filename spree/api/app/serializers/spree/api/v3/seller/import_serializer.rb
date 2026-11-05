@@ -16,7 +16,6 @@ module Spree
                    failed_rows_count: :number,
                    processing_errors: [:string, nullable: true],
                    delimiter: :string,
-                   schema_fields: 'Array<{ name: string; label: string; required: boolean }>',
                    csv_headers: [:string, multi: true],
                    sample_row: 'Record<string, string | null>',
                    original_filename: [:string, nullable: true],
@@ -52,6 +51,7 @@ module Spree
             import.rows_status_counts['failed'] || 0
           end
 
+          typelize({ name: :string, label: :string, required: :boolean }, multi: true)
           attribute :schema_fields do |import|
             import.schema_fields.map do |field|
               { name: field[:name], label: field[:label], required: field[:required].present? }
