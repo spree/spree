@@ -20,5 +20,10 @@ module Spree
     validates :collection_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }
 
     self.whitelisted_ransackable_attributes = %w[collection_id product_id]
+
+    # To set proper context when publishing events
+    def store
+      Spree::Product.with_deleted.find_by(id: product_id)&.store
+    end
   end
 end

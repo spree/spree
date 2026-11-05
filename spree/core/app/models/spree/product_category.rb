@@ -27,6 +27,11 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['category_id', 'product_id']
 
+    # To set proper context when publishing events
+    def store
+      Spree::Product.with_deleted.find_by(id: product_id)&.store
+    end
+
     scope :by_best_selling, lambda { |order_direction = :desc|
       left_joins(product: :orders).
         select("#{Spree::ProductCategory.table_name}.*, COUNT(#{Spree::Order.table_name}.id) AS completed_orders_count, SUM(#{Spree::Order.table_name}.total) AS completed_orders_total").
