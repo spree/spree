@@ -60,6 +60,17 @@ module Spree
       end
     end
 
+    context 'when logged in user email differs from inputed email only in casing' do
+      let(:user) { create(:user, email: 'Ada@Example.com') }
+      let(:email) { 'ada@example.com' }
+
+      it 'auto-verifies without double opt-in' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
+
+        expect(service).to be_verified
+      end
+    end
+
     context 'when logged in user inputs another email' do
       let(:user) { create(:user) }
       let(:email) { 'test@example.com' }
