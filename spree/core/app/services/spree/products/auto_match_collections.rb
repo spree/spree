@@ -19,8 +19,14 @@ module Spree
           collections_to_remove << collection unless collection.products_matching_rules.ids.include?(product.id)
         end
 
+        # Held before the delete: the rows are gone by the time their deleted
+        # events can be published.
+        removed_rows = []
+
         if collections_to_remove.any?
-          Spree::ProductCollection.where(collection: collections_to_remove, product: product).delete_all
+          scope = Spree::ProductCollection.where(collection: collections_to_remove, product: product)
+          removed_rows = scope.to_a
+          scope.delete_all
         end
 
         # automatic collections in the product's store that it now matches
@@ -56,10 +62,20 @@ module Spree
           Spree::Product.reset_counters(product.id, :product_collections)
         end
 
+        publish_membership_events(product, removed_rows, collections_to_add)
+
         success(product)
       end
 
       private
+
+      def publish_membership_events(product, removed_rows, added_collections)
+        removed_rows.each { |row| row.publish_event('product_collection.deleted') }
+        return if added_collections.empty?
+
+        Spree::ProductCollection.where(collection_id: added_collections.map(&:id), product_id: product.id).
+          each { |row| row.publish_event('product_collection.created') }
+      end
 
       def product_collection_attributes(collection, product, position)
         {

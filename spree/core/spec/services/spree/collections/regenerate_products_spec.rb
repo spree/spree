@@ -11,6 +11,14 @@ module Spree
 
     subject { described_class.call(collection: collection) }
 
+    def events_named(*names)
+      published = []
+      names.each { |name| Spree::Events.subscribe(name, async: false) { |event| published << event } }
+      Spree::Events.activate!
+      yield
+      published
+    end
+
     it 'materializes membership from the rules' do
       subject
       expect(collection.reload.products).to contain_exactly(matching_product)
@@ -40,6 +48,44 @@ module Spree
 
       it 'is a no-op' do
         expect { subject }.not_to change { Spree::ProductCollection.count }
+      end
+    end
+
+    context 'events', events: true do
+      before { Spree::Events.reset! }
+      after { Spree::Events.reset! }
+
+      it 'announces a product that newly matches' do
+        newcomer = create(:product, tags: [tag])
+
+        published = events_named('product_collection.created', 'product_collection.deleted') { subject }
+
+        expect(published.map(&:name)).to eq(['product_collection.created'])
+        expect(published.first.payload['id']).to eq(
+          Spree::ProductCollection.find_by(collection_id: collection.id, product_id: newcomer.id).prefixed_id
+        )
+      end
+
+      it 'says nothing when a re-run changes no membership' do
+        subject
+
+        published = events_named('product_collection.created', 'product_collection.deleted') do
+          described_class.call(collection: collection)
+        end
+
+        expect(published).to be_empty
+      end
+
+      it 'announces a product that stopped matching' do
+        subject
+        matching_product.tag_list.remove('sale')
+        matching_product.save!
+
+        published = events_named('product_collection.created', 'product_collection.deleted') do
+          described_class.call(collection: collection)
+        end
+
+        expect(published.map(&:name)).to eq(['product_collection.deleted'])
       end
     end
   end

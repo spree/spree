@@ -12,7 +12,10 @@ module Spree
         return if collection.destroyed?
         return if collection.manual?
 
-        previous_products_ids = collection.product_collections.order(position: :asc).pluck(:product_id)
+        # Loaded rather than plucked: the rows dropped below are gone by the
+        # time their deleted events can be published, so they have to be held.
+        previous_rows = collection.product_collections.order(position: :asc).to_a
+        previous_products_ids = previous_rows.map(&:product_id)
 
         # Hard-delete the join rows (no callbacks). Class-level delete on the collection
         # scope rather than the association proxy, which under `dependent: :destroy_async`
@@ -46,10 +49,31 @@ module Spree
         Spree::Collection.reset_counters(collection.id, :product_collections)
         Spree::Product.reset_counters_in_bulk(previous_products_ids + product_ids_to_insert, :product_collections)
 
+        publish_membership_events(collection, previous_rows, product_ids_to_insert)
+
         success(collection)
       end
 
       private
+
+      # Only what actually moved: a regeneration rewrites every row, so
+      # announcing each one would publish two events per member on a run that
+      # changed nothing — and this runs on a schedule, so it would bury the
+      # memberships that did change.
+      def publish_membership_events(collection, previous_rows, current_product_ids)
+        current = current_product_ids.to_set
+        previous = previous_rows.map(&:product_id).to_set
+
+        previous_rows.each do |row|
+          row.publish_event('product_collection.deleted') unless current.include?(row.product_id)
+        end
+
+        added_ids = current_product_ids.reject { |id| previous.include?(id) }
+        return if added_ids.empty?
+
+        Spree::ProductCollection.where(collection_id: collection.id, product_id: added_ids).
+          each { |row| row.publish_event('product_collection.created') }
+      end
 
       def product_collection_attributes(product_id, collection, position)
         {
