@@ -109,17 +109,28 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       expect(json_response['data'].pluck('id')).to eq([product.prefixed_id])
     end
 
-    it 'ignores a collections Ransack predicate naming a collection not yet published' do
-      get :index, params: { q: { collections_id_eq: scheduled.prefixed_id } }, as: :json
+    it 'ignores collections conditions nested in groupings' do
+      get :index, params: { q: { g: { '0' => { collections_id_eq: scheduled.prefixed_id } } } }, as: :json
 
-      expect(json_response['data']).to be_empty
+      expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
     end
 
-    it 'ignores collections conditions nested in groupings or OR attributes' do
-      get :index, params: { q: { g: { '0' => { collections_id_eq: scheduled.prefixed_id } } } }, as: :json
-      expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
-
+    it 'ignores collections conditions in OR attributes' do
       get :index, params: { q: { name_or_collections_permalink_eq: scheduled.permalink } }, as: :json
+
+      expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
+    end
+
+    it 'ignores collections attributes named in a condition' do
+      condition = { a: { '0' => { name: 'collections_permalink' } }, p: 'eq', v: { '0' => { value: scheduled.permalink } } }
+      get :index, params: { q: { c: { '0' => condition } } }, as: :json
+
+      expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
+    end
+
+    it 'ignores collections conditions combined with OR' do
+      get :index, params: { q: { m: 'or', collections_permalink_eq: scheduled.permalink } }, as: :json
+
       expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
     end
 
