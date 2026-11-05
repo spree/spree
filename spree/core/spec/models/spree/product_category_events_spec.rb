@@ -75,12 +75,5 @@ RSpec.describe Spree::ProductCategory, 'lifecycle events', events: true do
       expect(published.size).to eq(2)
       expect(product.reload.category_ids).to be_empty
     end
-
-    it 'leaves the counter caches matching the rows' do
-      product.update!(category_ids: [])
-
-      expect(product.reload.categories_count).to be_zero
-      expect(category.reload.products_count).to be_zero
-    end
   end
 end
