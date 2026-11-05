@@ -428,16 +428,16 @@ Private packages (`@spree/dashboard-starter`, `@spree/dashboard-plugin-example`,
 
 Consistent code style is enforced via automated linters. Please make sure your changes pass linting before submitting a PR.
 
-**Ruby:** We use [RuboCop](https://rubocop.org/) with [rubocop-rails](https://docs.rubocop.org/rubocop-rails/). The configuration lives in `spree/.rubocop.yml`; offenses that predate it are listed in `spree/.rubocop_todo.yml`, and new code must not add to that list. After `cd spree && bundle install`, check the Ruby files your branch changed from the repository root:
+**Ruby:** We use [RuboCop](https://rubocop.org/) with [rubocop-rails](https://docs.rubocop.org/rubocop-rails/). The configuration lives in `spree/.rubocop.yml`. Only lines your branch adds or changes are checked, so existing code is never flagged or reformatted. After `cd spree && bundle install`, run from the repository root:
 
 ```bash
 scripts/lint/rubocop
 ```
 
-To auto-fix correctable offenses, or to check specific files:
+To check specific files, autocorrecting the ones that are new on your branch:
 
 ```bash
-scripts/lint/rubocop --fix spree/core/app/models/spree/product.rb
+scripts/lint/rubocop --fix spree/core/app/models/spree/my_new_model.rb
 ```
 
 The lefthook pre-commit and pre-push hooks run the same check. CI does not run RuboCop.

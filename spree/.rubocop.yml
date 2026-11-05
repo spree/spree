@@ -1,18 +1,9 @@
-# RuboCop for every Spree gem, enforced by local hooks (not CI). Run from this
-# directory: `bundle exec rubocop`.
+# RuboCop for every Spree gem, enforced on new and changed lines only by local
+# hooks (not CI): scripts/lint/rubocop.
 #
 # Starts from RuboCop and rubocop-rails defaults. The overrides below follow
 # what the codebase already does, measured across all engines, so new code
-# reads like the code around it. Offenses in existing files are listed in
-# .rubocop_todo.yml; new files must pass every enabled cop, and the todo file
-# should only shrink (`bundle exec rubocop -a <file>` when you touch one).
-
-inherit_from: .rubocop_todo.yml
-
-# Let the todo file's per-file exclusions add to the ones below.
-inherit_mode:
-  merge:
-    - Exclude
+# reads like the code around it. Existing code is never reformatted to match.
 
 plugins:
   - rubocop-rails

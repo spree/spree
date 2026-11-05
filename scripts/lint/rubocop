@@ -1,60 +1,83 @@
 #!/usr/bin/env bash
-# RuboCop for the Spree gems, configured by spree/.rubocop.yml.
+# RuboCop for the Spree gems, configured by spree/.rubocop.yml. Only lines this
+# branch added or changed count, so existing code is never flagged or rewritten.
 #
 #   scripts/lint/rubocop                 Ruby files this branch changed against main,
 #                                        committed or not
 #   scripts/lint/rubocop FILE...         only these files (others are skipped)
-#   scripts/lint/rubocop --fix [FILE...] same, applying safe autocorrections first
+#   scripts/lint/rubocop --fix [FILE...] same, first autocorrecting files that are
+#                                        new on this branch (existing files are
+#                                        never rewritten as a whole)
 #
-# Exits 0 when there is nothing to check, 1 on offenses, 3 when RuboCop is not
+# Exits 0 when there is nothing to report, 1 on offenses, 3 when RuboCop is not
 # installed for spree/.
-set -euo pipefail
 
 # Hooks run under parents whose PATH may predate the version manager's setup.
 if command -v mise >/dev/null; then
   eval "$(mise activate bash --shims)"
 fi
+exec ruby -x "$0" "$@"
 
-root="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)"
-cd "$root"
+#!ruby
+require 'json'
+require 'open3'
+require 'set'
 
-fix=()
-if [ "${1:-}" = "--fix" ]; then
-  fix=(--autocorrect)
-  shift
-fi
+root = `git -C "#{__dir__}" rev-parse --show-toplevel`.strip
+Dir.chdir(root)
 
-if [ $# -gt 0 ]; then
-  candidates=$(printf '%s\n' "$@")
-else
-  base=$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main 2>/dev/null || true)
-  candidates=$(
-    { [ -n "$base" ] && git diff --name-only --diff-filter=d "$base" HEAD
-      git diff --name-only --diff-filter=d HEAD
-      git ls-files --others --exclude-standard; } 2>/dev/null
-  )
-fi
+fix = ARGV.delete('--fix')
+base = ['origin/main', 'main'].lazy.map { |ref| `git merge-base HEAD #{ref} 2>/dev/null`.strip }.find { |sha| !sha.empty? } || 'HEAD'
 
-files=()
-while IFS= read -r file; do
-  [ -n "$file" ] || continue
-  file="${file#"$root"/}"
-  case "$file" in
-    spree/*.rb | spree/*.rake | spree/*.gemspec | spree/*Gemfile | spree/*Rakefile) ;;
-    *) continue ;;
-  esac
-  [ -f "$file" ] && files+=("${file#spree/}")
-done < <(printf '%s\n' "$candidates" | sort -u)
+candidates =
+  if ARGV.any?
+    ARGV.map { |path| File.expand_path(path).delete_prefix("#{root}/") }
+  else
+    `git diff --name-only --diff-filter=d #{base}`.lines + `git ls-files --others --exclude-standard`.lines
+  end
 
-[ ${#files[@]} -gt 0 ] || exit 0
+ruby_file = %r{\Aspree/.*(\.rb|\.rake|\.gemspec|/Gemfile|/Rakefile)\z}
+files = candidates.map(&:strip).uniq.select { |path| path.match?(ruby_file) && File.file?(path) }
+exit 0 if files.empty?
 
-cd spree
-# A PATH can reach ruby through a symlink yet miss the directory where gems put
-# their executables, which `bundle exec` needs.
-PATH="$(ruby -e 'print Gem.bindir' 2>/dev/null):$PATH"
-if ! bundle exec rubocop --version >/dev/null 2>&1; then
-  echo "RuboCop is not installed for spree/. Run: (cd spree && bundle install)" >&2
+# Changed line numbers per file; nil means the whole file is new.
+changed = files.to_h do |path|
+  next [path, nil] unless system('git', 'cat-file', '-e', "#{base}:#{path}", err: File::NULL)
+
+  lines = Set.new
+  `git diff -U0 --no-ext-diff #{base} -- "#{path}"`.scan(/^@@ -\S+ \+(\d+)(?:,(\d+))? @@/) do |start, count|
+    lines.merge(start.to_i...(start.to_i + (count || 1).to_i))
+  end
+  [path, lines]
+end
+changed.reject! { |_, lines| lines&.empty? }
+exit 0 if changed.empty?
+
+Dir.chdir('spree')
+ENV['PATH'] = "#{Gem.bindir}:#{ENV['PATH']}" # bundle exec needs the gems' bin dir
+rubocop = %w[bundle exec rubocop --force-exclusion]
+unless system(*rubocop, '--version', out: File::NULL, err: File::NULL)
+  warn 'RuboCop is not installed for spree/. Run: (cd spree && bundle install)'
   exit 3
-fi
+end
 
-exec bundle exec rubocop --force-exclusion --format simple "${fix[@]}" "${files[@]}"
+relative = ->(path) { path.delete_prefix('spree/') }
+new_files = changed.select { |_, lines| lines.nil? }.keys
+system(*rubocop, '--autocorrect', '--format', 'quiet', *new_files.map(&relative), out: File::NULL) if fix && new_files.any?
+
+out, = Open3.capture2(*rubocop, '--format', 'json', *changed.keys.map(&relative))
+offenses = JSON.parse(out)['files'].flat_map do |file|
+  path = "spree/#{file['path']}"
+  lines = changed[path]
+  file['offenses'].filter_map do |offense|
+    location = offense['location']
+    next if lines && (location['start_line']..location['last_line']).none? { |line| lines.include?(line) }
+
+    note = offense['correctable'] ? ' [Correctable]' : ''
+    "#{path}:#{location['start_line']}:#{location['start_column']}: #{offense['cop_name']}: #{offense['message']}#{note}"
+  end
+end
+
+exit 0 if offenses.empty?
+puts offenses, '', "#{offenses.size} RuboCop offense(s) on lines this branch added or changed."
+exit 1

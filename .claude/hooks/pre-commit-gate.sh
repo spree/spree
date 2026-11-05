@@ -187,7 +187,7 @@ elif [ $rubocop_exit -ne 0 ]; then
   echo "" >&2
   echo "$rubocop_out" >&2
   echo "" >&2
-  echo "Fix: run 'scripts/lint/rubocop --fix' to apply safe fixes, then resolve the rest by hand. Don't add files to spree/.rubocop_todo.yml." >&2
+  echo "Fix the lines listed above and leave the rest of each file alone. 'scripts/lint/rubocop --fix' autocorrects files that are new on this branch. Never add rubocop:disable comments." >&2
   exit 2
 fi
 

@@ -16,15 +16,16 @@ cd "${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}" 2>/dev/
 file_path=$(jq -r '.tool_input.file_path // empty')
 [ -z "$file_path" ] && exit 0
 
-# Ruby: apply RuboCop's safe fixes, then hand what is left back to Claude
-# (exit 2 on PostToolUse shows stderr to the model without undoing the edit).
+# Ruby: autocorrect files new on this branch, then hand offenses on new or
+# changed lines back to Claude (exit 2 on PostToolUse shows stderr to the
+# model without undoing the edit).
 # A missing bundle is left to the pre-commit gate.
 case "$file_path" in
   *.rb|*.rake|*.gemspec|*Gemfile|*Rakefile)
     rubocop_out=$(scripts/lint/rubocop --fix "$file_path" 2>&1)
     if [ $? -eq 1 ]; then
-      echo "RuboCop offenses remain in $file_path (safe ones were fixed). Fix these now:" >&2
-      echo "$rubocop_out" | grep -v '\[Corrected\]' >&2
+      echo "RuboCop offenses on lines you added or changed in $file_path. Fix these now, leaving other lines alone:" >&2
+      echo "$rubocop_out" >&2
       exit 2
     fi
     exit 0 ;;

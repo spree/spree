@@ -4,8 +4,8 @@ Rails 8.1 engines, everything namespaced under `Spree::`. Follow Rails conventio
 
 ## Style
 
-- Ruby passes RuboCop with rubocop-rails (`spree/.rubocop.yml`): single quotes, trailing dots on multi-line chains, nested `module` blocks, lines up to 150 characters. Hooks fix what they can after each edit and block a commit or push that still has offenses. Check by hand with `scripts/lint/rubocop [--fix] [files]`.
-- Never add entries to `spree/.rubocop_todo.yml` or `rubocop:disable` comments to get past the check. Fix the code. When you touch a file listed in the todo file, fixing its offenses and removing it from the list is welcome.
+- New and changed Ruby lines pass RuboCop with rubocop-rails (`spree/.rubocop.yml`): single quotes, trailing dots on multi-line chains, nested `module` blocks, lines up to 150 characters. Hooks report offenses on the lines you wrote after each edit and block a commit or push until they are fixed. Check by hand with `scripts/lint/rubocop [--fix] [files]`.
+- Leave existing code alone: don't reformat lines you didn't need to change. Never add `rubocop:disable` comments to get past the check.
 
 ## Architecture
 
