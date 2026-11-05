@@ -29,7 +29,9 @@ module Spree
           to_add << collection if membership.nil? && matches
         end
 
-        Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id)).delete_all if to_remove.any?
+        if to_remove.any?
+          Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id)).where.not(source: 'manual').delete_all
+        end
         add(product, to_add)
 
         affected_ids = (to_remove + to_add).map(&:id)

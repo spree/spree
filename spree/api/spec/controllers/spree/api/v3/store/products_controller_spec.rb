@@ -109,6 +109,12 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       expect(json_response['data'].pluck('id')).to eq([product.prefixed_id])
     end
 
+    it 'ignores a collections Ransack predicate naming a collection not yet published' do
+      get :index, params: { q: { collections_id_eq: scheduled.prefixed_id } }, as: :json
+
+      expect(json_response['data']).to be_empty
+    end
+
     it 'lists nothing for a collection not yet published' do
       get :index, params: { q: { in_collection: scheduled.prefixed_id } }, as: :json
 
