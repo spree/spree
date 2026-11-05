@@ -68,6 +68,10 @@ describe Spree::Authentication::Strategies::BaseStrategy do
       let!(:user) { create(:user, email: 'ada@example.com') }
 
       before do
+        # MySQL's default collation compares case-insensitively, so its unique
+        # index can't hold such accounts, and the case cannot arise there.
+        skip 'the email index is case-insensitive on MySQL' if ActiveRecord::Base.connection.adapter_name.match?(/mysql/i)
+
         other = create(:user, email: 'other@example.com')
         other.update_columns(email: 'Ada@Example.com')
       end
