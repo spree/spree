@@ -66,11 +66,12 @@ unless system(*rubocop, '--version', out: File::NULL, err: File::NULL)
   exit 3
 end
 
-relative = ->(path) { path.delete_prefix('spree/') }
+# Absolute paths, so a file named like an option (`--require=x.rb`) stays a path.
+absolute = ->(path) { File.join(root, path) }
 new_files = changed.select { |_, lines| lines.nil? }.keys
-system(*rubocop, '--autocorrect', '--format', 'quiet', *new_files.map(&relative), out: File::NULL) if fix && new_files.any?
+system(*rubocop, '--autocorrect', '--format', 'quiet', *new_files.map(&absolute), out: File::NULL) if fix && new_files.any?
 
-out, = Open3.capture2(*rubocop, '--format', 'json', *changed.keys.map(&relative))
+out, = Open3.capture2(*rubocop, '--format', 'json', *changed.keys.map(&absolute))
 offenses = JSON.parse(out)['files'].flat_map do |file|
   path = "spree/#{file['path']}"
   lines = changed[path]
