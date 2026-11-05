@@ -322,6 +322,28 @@ test.describe('promotions', () => {
     await submitCreate(page, name)
   })
 
+  test('creates a promotion with a Collection rule', async ({ page }) => {
+    const creds = await login(page)
+    const collectionName = `E2E Promo Collection ${Date.now()}`
+    await adminRequest(page, creds, 'post', '/collections', { name: collectionName })
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Collection Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^collections\b/i)
+    await expect(page.getByRole('heading', { name: /^collections$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await page.getByText(/^any of these collections$/i).click()
+    await pickAutocompleteOption(page, /search collections/i, collectionName)
+    await saveEditor(page)
+
+    await expect(page.getByText(collectionName).first()).toBeVisible({ timeout: 5_000 })
+
+    await submitCreate(page, name)
+  })
+
   test('creates a promotion with a Customer rule', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)

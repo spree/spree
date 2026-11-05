@@ -41,7 +41,14 @@ function NewCollectionPage() {
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(collectionFormSchema),
     // Extension fields seed their blank value (`from(null)`) on create.
-    defaultValues: { ...COLLECTION_DEFAULTS, ...extensionFormValues('collection', null) },
+    // `publications: null` until the Publishing card seeds every active
+    // channel: a save before channels load leaves the server's default
+    // (publish on every active channel) in charge.
+    defaultValues: {
+      ...COLLECTION_DEFAULTS,
+      publications: null,
+      ...extensionFormValues('collection', null),
+    },
   })
 
   const onSubmit = async (values: CollectionFormValues) => {

@@ -24,6 +24,7 @@ import {
   fieldTypeSupportsSearchable,
   fieldTypeSupportsSortable,
   resourceTypeLabel,
+  supportsCollectionCondition,
 } from '../../../schemas/custom-field-definition'
 
 interface DefinitionFormFieldsProps {
@@ -67,6 +68,10 @@ export function DefinitionFormFields({
   const fieldType = form.watch('field_type')
   const searchableSupported = fieldTypeSupportsSearchable(fieldType)
   const sortableSupported = fieldTypeSupportsSortable(fieldType)
+  const collectionConditionSupported = supportsCollectionCondition(
+    form.watch('resource_type'),
+    fieldType,
+  )
 
   const fieldTypeItems = FIELD_TYPES.map((value) => ({
     value,
@@ -155,7 +160,12 @@ export function DefinitionFormFields({
               <Select
                 items={resourceTypeItems}
                 value={field.value}
-                onValueChange={field.onChange}
+                onValueChange={(value) => {
+                  field.onChange(value)
+                  if (!supportsCollectionCondition(String(value), form.getValues('field_type'))) {
+                    form.setValue('collection_condition', false)
+                  }
+                }}
                 disabled={resourceTypeReadOnly}
               >
                 <SelectTrigger
@@ -220,7 +230,10 @@ export function DefinitionFormFields({
                 if (!fieldTypeSupportsSortable(next)) {
                   form.setValue('sortable', false)
                 }
-                form.clearErrors(['searchable', 'sortable'])
+                if (!supportsCollectionCondition(form.getValues('resource_type'), next)) {
+                  form.setValue('collection_condition', false)
+                }
+                form.clearErrors(['searchable', 'sortable', 'collection_condition'])
               }}
               disabled={fieldTypeReadOnly}
             >
@@ -314,6 +327,32 @@ export function DefinitionFormFields({
           />
         </div>
         <FieldError errors={[errors.sortable]} />
+      </Field>
+
+      <Field>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <FieldLabel htmlFor="cfd-collection-condition" className="cursor-pointer">
+              {t('admin.fields.custom_field_definition.collection_condition.label')}
+            </FieldLabel>
+            <span className="text-xs text-muted-foreground">
+              {t('admin.fields.custom_field_definition.collection_condition.help')}
+            </span>
+          </div>
+          <Controller
+            name="collection_condition"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                id="cfd-collection-condition"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+                disabled={!collectionConditionSupported}
+              />
+            )}
+          />
+        </div>
+        <FieldError errors={[errors.collection_condition]} />
       </Field>
     </div>
   )

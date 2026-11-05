@@ -341,10 +341,23 @@
       },
       "delete_label": "Kollektion löschen",
       "empty": "Noch keine Kollektionen.",
-      "fields": {
-        "automatic": {
-          "label": "Produkte automatisch über Regeln zuordnen"
+      "exclusions": {
+        "confirm_message": "\"{{name}}\" ausschließen? Es verlässt die Kollektion sofort und bleibt draußen, auch wenn die Regeln zutreffen.",
+        "confirm_title": "Produkt ausschließen",
+        "description": "Bleiben unabhängig von den Regeln aus dieser Kollektion. Änderungen hier gelten sofort.",
+        "exclude": "Ausschließen",
+        "exclude_row": "{{name}} ausschließen",
+        "messages": {
+          "excluded": "Produkt ausgeschlossen",
+          "removed": "Ausschluss aufgehoben"
         },
+        "remove": "Ausschluss aufheben",
+        "remove_confirm_message": "\"{{name}}\" wieder zulassen? Es kehrt in die Kollektion zurück, wenn die Regeln zutreffen.",
+        "remove_confirm_title": "Ausschluss aufheben",
+        "remove_row": "Ausschluss von {{name}} aufheben",
+        "title": "Ausgeschlossene Produkte"
+      },
+      "fields": {
         "rule_match_policy": {
           "label": "Bedingung"
         },
@@ -383,10 +396,8 @@
       "new_title": "Neue Kollektion",
       "products": {
         "add_cta": "Produkte hinzufügen",
-        "automatic_hint": "Die Produkte ergeben sich aus den Regeln oben und werden automatisch aktualisiert.",
         "column_product": "Produkt",
         "empty": "Noch keine Produkte in dieser Kollektion.",
-        "empty_automatic": "Noch keine Produkte erfüllen die Regeln.",
         "filter_placeholder": "Produkte filtern…",
         "no_matches": "Keine Produkte entsprechen dem Filter.",
         "pending_added_badge": "Neu",
@@ -396,20 +407,37 @@
         "remove": "Aus Kollektion entfernen",
         "remove_selected": "Entfernen",
         "restore": "Wiederherstellen",
+        "rules_hint": "Ein Produkt, auf das die Regeln zutreffen, kommt nach dem Entfernen zurück. Schließe es aus, um es fernzuhalten.",
         "search_placeholder": "Produkte suchen…",
         "select_all": "Alle auswählen",
         "select_row": "Produkt auswählen",
         "title": "Produkte"
       },
+      "publishing": {
+        "empty": "Noch auf keinem Vertriebskanal veröffentlicht.",
+        "manage_description": "Wähle die Vertriebskanäle, deren Storefronts diese Kollektion zeigen."
+      },
       "rule_match_policies": {
         "contains": "enthält",
         "does_not_contain": "enthält nicht",
+        "ends_with": "endet mit",
+        "greater_than": "ist größer als",
         "is_equal_to": "ist gleich",
-        "is_not_equal_to": "ist ungleich"
+        "is_not_equal_to": "ist ungleich",
+        "less_than": "ist kleiner als",
+        "starts_with": "beginnt mit"
       },
       "rules": {
         "add": "Regel hinzufügen",
-        "description": "Produkte manuell auswählen oder die Kollektion per Regeln aktuell halten.",
+        "amount_invalid": "Gib einen Betrag wie 49.99 ein.",
+        "boolean_false": "Nein",
+        "boolean_true": "Ja",
+        "currency_label": "Währung",
+        "custom_field_empty": "Keine benutzerdefinierten Felder sind für Kollektionsregeln markiert.",
+        "custom_field_label": "Benutzerdefiniertes Feld",
+        "custom_field_placeholder": "Benutzerdefiniertes Feld wählen…",
+        "description": "Regeln wählen Produkte automatisch aus. Von Hand hinzugefügte Produkte bleiben daneben erhalten.",
+        "include_descendants": "Unterkategorien einbeziehen",
         "remove": "Regel entfernen",
         "title": "Zuordnung"
       },
@@ -1413,6 +1441,10 @@
         "label": "Land"
       },
       "custom_field_definition": {
+        "collection_condition": {
+          "help": "Automatische Kollektionen können Produkte nach diesem Feld auswählen. Nur Produkt-Text-, Zahlen- und Ja/Nein-Felder.",
+          "label": "In Kollektionsregeln verwenden"
+        },
         "field_type": {
           "label": "Typ",
           "options": {
@@ -5098,6 +5130,7 @@
       },
       "rule_summary": {
         "category_count": "{{count}} Kategorien",
+        "collection_count": "{{count}} Kollektionen",
         "customer_count": "{{count}} Kunden",
         "product_count": "{{count}} Produkte"
       },
@@ -5121,6 +5154,21 @@
         },
         "channel": {
           "label": "Kanäle"
+        },
+        "collection": {
+          "empty": "Keine passenden Kollektionen",
+          "label": "Kollektionen",
+          "match_policy": {
+            "all": {
+              "description": "Die Bestellung muss ein Produkt aus jeder Kollektion enthalten.",
+              "label": "Alle diese Kollektionen"
+            },
+            "any": {
+              "description": "Die Bestellung muss ein Produkt aus mindestens einer enthalten.",
+              "label": "Eine dieser Kollektionen"
+            }
+          },
+          "search_placeholder": "Kollektionen suchen…"
         },
         "country": {
           "empty": "Keine passenden Länder",

@@ -28,8 +28,10 @@ import {
   FormBackedCustomFieldsProvider,
 } from '../custom-fields/custom-fields-inline'
 import { MediaRichTextEditor } from '../media-rich-text-editor'
+import { PublishingCard } from '../publishing-card'
 import { ResourceImageField } from '../resource-image-field'
 import { ResourceTranslationsCard } from '../translations/resource-translations-card'
+import { CollectionExclusionsCard } from './collection-exclusions-card'
 import { CollectionProductsCard } from './collection-products-card'
 import { CollectionRulesCard } from './collection-rules-card'
 
@@ -46,10 +48,6 @@ export function CollectionMain({
 }) {
   const { t } = useTranslation()
   const { errors } = form.formState
-  // Live form value, not the persisted one: flipping the switch has to take the
-  // curation affordances away immediately, since a save would hand membership
-  // over to the rules and discard anything picked by hand in the meantime.
-  const automatic = form.watch('automatic')
 
   return (
     <>
@@ -92,7 +90,8 @@ export function CollectionMain({
 
       {collection && (
         <>
-          <CollectionProductsCard collectionId={collection.id} automatic={automatic} />
+          <CollectionProductsCard collectionId={collection.id} />
+          <CollectionExclusionsCard collectionId={collection.id} />
           <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />
           <FormBackedCustomFieldsProvider form={form} resourceType="collection">
             <CustomFieldsInlineCard />
@@ -115,6 +114,12 @@ export function CollectionSidebar({
 
   return (
     <>
+      <PublishingCard
+        form={form}
+        name="publications"
+        seed={collection ? undefined : 'active'}
+        translationNamespace="admin.collections"
+      />
       <Card>
         <CardHeader>
           <CardTitle>{t('admin.collections.images.title')}</CardTitle>

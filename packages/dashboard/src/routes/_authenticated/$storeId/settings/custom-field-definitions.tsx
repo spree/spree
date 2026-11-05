@@ -238,6 +238,7 @@ function EditSheet({
         storefront_visible: definition.storefront_visible,
         searchable: definition.searchable,
         sortable: definition.sortable,
+        collection_condition: definition.collection_condition ?? false,
       })
     }
   }, [definition, form])

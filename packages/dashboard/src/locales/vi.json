@@ -341,10 +341,23 @@
       },
       "delete_label": "Xóa bộ sưu tập",
       "empty": "Chưa có bộ sưu tập nào.",
-      "fields": {
-        "automatic": {
-          "label": "Đặt thành viên tự động từ các quy tắc"
+      "exclusions": {
+        "confirm_message": "Loại trừ \"{{name}}\"? Sản phẩm rời bộ sưu tập ngay và không quay lại dù khớp quy tắc.",
+        "confirm_title": "Loại trừ sản phẩm",
+        "description": "Luôn nằm ngoài bộ sưu tập này dù quy tắc khớp. Thay đổi ở đây áp dụng ngay.",
+        "exclude": "Loại trừ",
+        "exclude_row": "Loại trừ {{name}}",
+        "messages": {
+          "excluded": "Đã loại trừ sản phẩm",
+          "removed": "Đã bỏ loại trừ"
         },
+        "remove": "Bỏ loại trừ",
+        "remove_confirm_message": "Cho phép lại \"{{name}}\"? Sản phẩm quay lại bộ sưu tập nếu khớp quy tắc.",
+        "remove_confirm_title": "Bỏ loại trừ",
+        "remove_row": "Bỏ loại trừ {{name}}",
+        "title": "Sản phẩm bị loại trừ"
+      },
+      "fields": {
         "rule_match_policy": {
           "label": "Tình trạng"
         },
@@ -383,10 +396,8 @@
       "new_title": "Bộ sưu tập mới",
       "products": {
         "add_cta": "Thêm sản phẩm",
-        "automatic_hint": "Thành viên được thiết lập theo các quy tắc trên và tự động làm mới.",
         "column_product": "Sản phẩm",
         "empty": "Chưa có sản phẩm nào trong bộ sưu tập này.",
-        "empty_automatic": "Chưa có sản phẩm nào phù hợp với quy tắc.",
         "filter_placeholder": "Lọc sản phẩm…",
         "no_matches": "Không có sản phẩm nào phù hợp với bộ lọc của bạn.",
         "pending_added_badge": "Mới",
@@ -396,20 +407,37 @@
         "remove": "Xóa khỏi bộ sưu tập",
         "remove_selected": "Xóa",
         "restore": "Khôi phục",
+        "rules_hint": "Sản phẩm khớp quy tắc sẽ quay lại sau khi bạn xóa. Hãy loại trừ để giữ nó ngoài.",
         "search_placeholder": "Tìm kiếm sản phẩm…",
         "select_all": "Chọn tất cả",
         "select_row": "Chọn sản phẩm",
         "title": "Sản phẩm"
       },
+      "publishing": {
+        "empty": "Chưa xuất bản trên kênh bán hàng nào.",
+        "manage_description": "Chọn các kênh bán hàng có cửa hàng hiển thị bộ sưu tập này."
+      },
       "rule_match_policies": {
         "contains": "chứa",
         "does_not_contain": "không chứa",
+        "ends_with": "kết thúc bằng",
+        "greater_than": "lớn hơn",
         "is_equal_to": "bằng với",
-        "is_not_equal_to": "không bằng"
+        "is_not_equal_to": "không bằng",
+        "less_than": "nhỏ hơn",
+        "starts_with": "bắt đầu bằng"
       },
       "rules": {
         "add": "Thêm quy tắc",
-        "description": "Chọn sản phẩm theo cách thủ công hoặc để các quy tắc cập nhật bộ sưu tập.",
+        "amount_invalid": "Nhập số tiền, ví dụ 49.99.",
+        "boolean_false": "Không",
+        "boolean_true": "Có",
+        "currency_label": "Tiền tệ",
+        "custom_field_empty": "Không có trường tùy chỉnh nào được đánh dấu cho quy tắc bộ sưu tập.",
+        "custom_field_label": "Trường tùy chỉnh",
+        "custom_field_placeholder": "Chọn trường tùy chỉnh…",
+        "description": "Quy tắc tự động chọn sản phẩm. Sản phẩm bạn thêm thủ công vẫn được giữ cùng.",
+        "include_descendants": "Bao gồm danh mục con",
         "remove": "Xóa quy tắc",
         "title": "Tư cách thành viên"
       },
@@ -1413,6 +1441,10 @@
         "label": "Quốc gia"
       },
       "custom_field_definition": {
+        "collection_condition": {
+          "help": "Cho phép bộ sưu tập tự động chọn sản phẩm theo trường này. Chỉ áp dụng cho trường văn bản, số và có/không của sản phẩm.",
+          "label": "Dùng trong quy tắc bộ sưu tập"
+        },
         "field_type": {
           "label": "Loại",
           "options": {
@@ -5065,6 +5097,7 @@
       },
       "rule_summary": {
         "category_count": "{{count}} danh mục",
+        "collection_count": "{{count}} bộ sưu tập",
         "customer_count": "{{count}} khách hàng",
         "product_count": "{{count}} sản phẩm"
       },
@@ -5088,6 +5121,21 @@
         },
         "channel": {
           "label": "Kênh"
+        },
+        "collection": {
+          "empty": "Không có bộ sưu tập phù hợp",
+          "label": "Bộ sưu tập",
+          "match_policy": {
+            "all": {
+              "description": "Đơn hàng phải có sản phẩm từ mọi bộ sưu tập.",
+              "label": "Tất cả các bộ sưu tập này"
+            },
+            "any": {
+              "description": "Đơn hàng phải có sản phẩm từ ít nhất một bộ sưu tập.",
+              "label": "Bất kỳ bộ sưu tập nào"
+            }
+          },
+          "search_placeholder": "Tìm bộ sưu tập…"
         },
         "country": {
           "empty": "Không có quốc gia nào phù hợp",

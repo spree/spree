@@ -3,6 +3,7 @@ import { AdjustmentActionEditor } from './action-adjustment'
 import { CreateLineItemsActionEditor } from './action-create-line-items'
 import { CategoryRuleEditor } from './rule-category'
 import { ChannelRuleEditor } from './rule-channel'
+import { CollectionRuleEditor } from './rule-collection'
 import { CountryRuleEditor } from './rule-country'
 import { CustomerGroupRuleEditor } from './rule-customer-group'
 import { MarketRuleEditor } from './rule-market'
@@ -33,6 +34,11 @@ registerSlot(ruleFormSlot('product'), {
 registerSlot(ruleFormSlot('category'), {
   id: 'builtin',
   component: CategoryRuleEditor,
+})
+
+registerSlot(ruleFormSlot('collection'), {
+  id: 'builtin',
+  component: CollectionRuleEditor,
 })
 
 registerSlot(ruleFormSlot('customer'), {
