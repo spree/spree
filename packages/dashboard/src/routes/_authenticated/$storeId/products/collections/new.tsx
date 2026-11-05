@@ -1,4 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import {
   extensionFormValues,
@@ -20,11 +19,13 @@ import {
   CollectionMain,
   CollectionSidebar,
 } from '../../../../../components/spree/collections/collection-form'
-import { useCreateCollection } from '../../../../../hooks/use-collections'
+import {
+  useCollectionFormResolver,
+  useCreateCollection,
+} from '../../../../../hooks/use-collections'
 import {
   COLLECTION_DEFAULTS,
   type CollectionFormValues,
-  collectionFormSchema,
   collectionToParams,
 } from '../../../../../schemas/collection'
 
@@ -39,7 +40,7 @@ function NewCollectionPage() {
   const createCollection = useCreateCollection()
 
   const form = useForm<CollectionFormValues>({
-    resolver: zodResolver(collectionFormSchema),
+    resolver: useCollectionFormResolver(),
     // Extension fields seed their blank value (`from(null)`) on create.
     // `publications: null` until the Publishing card seeds every active
     // channel: a save before channels load leaves the server's default

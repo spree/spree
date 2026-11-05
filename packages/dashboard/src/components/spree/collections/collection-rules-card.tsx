@@ -1,12 +1,11 @@
 import type { CustomFieldDefinition, ResourceTypeDefinition } from '@spree/admin-sdk'
 import { COLLECTION_RULE_MATCH_POLICIES, MATCH_POLICIES } from '@spree/core'
 import {
-  adminClient,
   CurrencySelect,
   ResourceCombobox,
   typeLabel,
-  useResourceKey,
   useStore,
+  useTenantId,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -32,12 +31,12 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import i18n from 'i18next'
+import { useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { categoryAutocompleteProps } from '../../../hooks/use-categories'
 import { useCollectionRuleTypes } from '../../../hooks/use-collections'
-import { customFieldDefinitionLabel } from '../../../hooks/use-custom-field-definitions'
+import { customFieldDefinitionAutocompleteProps } from '../../../hooks/use-custom-field-definitions'
 import { productTypeAutocompleteProps } from '../../../hooks/use-product-types'
 import { sellerAutocompleteProps } from '../../../hooks/use-sellers'
 import {
@@ -50,6 +49,8 @@ import {
 type CollectionRuleType = ResourceTypeDefinition & {
   match_policies?: string[]
   value_required?: boolean
+  /** Evaluated in a currency, the store's default when the rule names none. */
+  uses_currency?: boolean
 }
 
 type MatchPolicy = CollectionRuleFormValues['match_policy']
@@ -61,32 +62,10 @@ const RECORD_PICKERS = {
   seller: sellerAutocompleteProps,
 } as const
 
-/** Rule types evaluated in a currency (the store's default when none is named). */
-const CURRENCY_RULE_TYPES = ['price', 'sale']
-
-/** Custom field types a rule can compare. */
-const CONDITION_FIELD_TYPES = ['short_text', 'long_text', 'number', 'boolean']
-
-function customFieldDefinitionPicker(queryKey: string) {
-  return {
-    queryKey,
-    search: (q: string) =>
-      adminClient.customFieldDefinitions.list({
-        resource_type_eq: 'product',
-        collection_condition_eq: true,
-        label_or_key_cont: q,
-        limit: 100,
-        sort: 'key',
-      }),
-    hydrate: (ids: string[]) =>
-      adminClient.customFieldDefinitions.list({ id_in: ids, limit: ids.length }),
-    getOptionLabel: customFieldDefinitionLabel,
-    filterOption: (definition: CustomFieldDefinition) =>
-      CONDITION_FIELD_TYPES.includes(definition.field_type),
-    placeholder: i18n.t('admin.collections.rules.custom_field_placeholder'),
-    emptyText: i18n.t('admin.collections.rules.custom_field_empty'),
-  }
-}
+/** Product custom fields marked for collection rules; the value input follows the field's type. */
+const customFieldDefinitionPicker = customFieldDefinitionAutocompleteProps('product', {
+  collection_condition_eq: true,
+})
 
 /**
  * Membership card: the rules that pick products automatically. Membership
@@ -221,7 +200,7 @@ function RuleRow({
 }) {
   const { t } = useTranslation()
   const type = form.watch(`rules.${index}.type`)
-  const valueRequired = ruleTypes.find((ruleType) => ruleType.type === type)?.value_required
+  const ruleType = ruleTypes.find((entry) => entry.type === type)
   const matchPolicyOptions = policiesFor(ruleTypes, type).map((value) => ({
     value,
     label: t(`admin.collections.rule_match_policies.${value}`),
@@ -284,7 +263,8 @@ function RuleRow({
           />
         </Field>
 
-        {valueRequired !== false && type !== 'sale' && (
+        {/* A sale rule's value is always `true`, so it gets no input. */}
+        {ruleType?.value_required !== false && type !== 'sale' && (
           <div className="flex-1">
             <RuleValueField form={form} index={index} type={type} />
           </div>
@@ -301,7 +281,12 @@ function RuleRow({
         </Button>
       </div>
 
-      <RuleSettings form={form} index={index} type={type} />
+      <RuleSettings
+        form={form}
+        index={index}
+        type={type}
+        usesCurrency={!!ruleType?.uses_currency}
+      />
     </div>
   )
 }
@@ -404,15 +389,19 @@ function CustomFieldValueField({
   const error = form.formState.errors.rules?.[index]?.value
   const preferences = form.watch(`rules.${index}.preferences`)
   const definitionId = (preferences?.custom_field_definition_id as string | undefined) ?? null
-  // The value input follows the field's type, read from the definition itself.
-  const { data: definitions } = useQuery({
-    queryKey: useResourceKey('custom-field-definitions', definitionId ?? 'noop'),
-    queryFn: () =>
-      adminClient.customFieldDefinitions.list({ id_in: [definitionId as string], limit: 1 }),
-    enabled: !!definitionId,
-    staleTime: 1000 * 60 * 5,
+  const picker = customFieldDefinitionPicker(`collection-rule-custom-field-${index}`)
+  // The picked record carries the field type. On load the same query the
+  // picker hydrates its label from answers it, so this is no extra request.
+  const [picked, setPicked] = useState<CustomFieldDefinition | null>(null)
+  const tenantId = useTenantId()
+  const { data: hydrated } = useQuery({
+    queryKey: [picker.queryKey, tenantId, 'hydrate', definitionId],
+    queryFn: () => picker.hydrate([definitionId as string]),
+    enabled: !!definitionId && picked?.id !== definitionId,
+    staleTime: 60_000,
   })
-  const fieldType = definitions?.data[0]?.field_type
+  const definition = picked?.id === definitionId ? picked : hydrated?.data[0]
+  const fieldType = definition?.field_type
   const booleanOptions = ['true', 'false'].map((value) => ({
     value,
     label: t(`admin.collections.rules.boolean_${value}`),
@@ -425,15 +414,18 @@ function CustomFieldValueField({
           {t('admin.collections.rules.custom_field_label')}
         </FieldLabel>
         <ResourceCombobox<CustomFieldDefinition>
-          {...customFieldDefinitionPicker(`collection-rule-custom-field-${index}`)}
+          {...picker}
+          placeholder={t('admin.collections.rules.custom_field_placeholder')}
+          emptyText={t('admin.collections.rules.custom_field_empty')}
           value={definitionId}
-          onChange={(next) =>
+          onChange={(next, record) => {
+            setPicked(record)
             form.setValue(
               `rules.${index}.preferences`,
               { ...preferences, custom_field_definition_id: next ?? undefined },
               { shouldDirty: true },
             )
-          }
+          }}
         />
       </Field>
       <Field>
@@ -479,10 +471,12 @@ function RuleSettings({
   form,
   index,
   type,
+  usesCurrency,
 }: {
   form: UseFormReturn<CollectionFormValues>
   index: number
   type: string
+  usesCurrency: boolean
 }) {
   const { t } = useTranslation()
   const { defaultCurrency } = useStore()
@@ -510,7 +504,7 @@ function RuleSettings({
     )
   }
 
-  if (CURRENCY_RULE_TYPES.includes(type)) {
+  if (usesCurrency) {
     const currencyId = `collection-rule-currency-${index}`
     return (
       <Field orientation="horizontal" className="items-center">
