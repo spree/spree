@@ -21,6 +21,8 @@ export { ClaimSchema, type Claim } from './Claim';
 export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';
 export { ClaimReasonSchema, type ClaimReason } from './ClaimReason';
 export { CollectionSchema, type Collection } from './Collection';
+export { CollectionExclusionSchema, type CollectionExclusion } from './CollectionExclusion';
+export { CollectionPublicationSchema, type CollectionPublication } from './CollectionPublication';
 export { CollectionRuleSchema, type CollectionRule } from './CollectionRule';
 export { CommissionLineSchema, type CommissionLine } from './CommissionLine';
 export { CommissionRateSchema, type CommissionRate } from './CommissionRate';
