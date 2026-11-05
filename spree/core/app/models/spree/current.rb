@@ -116,7 +116,7 @@ module Spree
     # settings page checking availability across the whole registry.
     # @return [Array<Spree::Integration>]
     def integrations
-      super || (self.integrations = store ? store.integrations.active.to_a : [])
+      super || (self.integrations = store ? store.integrations.active.registered.to_a : [])
     end
 
     # Returns the standalone (rule-matched) price lists in effect for the
