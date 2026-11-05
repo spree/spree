@@ -3,8 +3,10 @@
 // (see `catalog:` in pnpm-workspace.yaml). Fails when:
 //
 //   - a dependency two or more packages install is declared in dependencies
-//     or devDependencies as anything but `catalog:` or the catalog's exact
-//     version (@spree/dashboard-ui pins its runtime dependencies)
+//     or devDependencies as anything but `catalog:`
+//   - a runtime dependency of @spree/dashboard-ui comes from a catalog entry
+//     that is a range rather than an exact version (it ships source, so
+//     `pnpm publish` must write out exact pins)
 //   - a peer dependency has no matching dependency or devDependency, so the
 //     workspace would install it from the peer range instead of the catalog
 //   - the version the workspace installs falls outside the package's own peer
@@ -23,7 +25,7 @@ import { parse as parseYaml } from 'yaml'
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 // Released with `npm publish`, which ships `catalog:` verbatim.
 const NPM_PUBLISHED = new Set(['packages/docs/package.json'])
-// Ships source, so it pins runtime dependencies to the catalog's exact version.
+// Ships source, so its runtime dependencies use exact catalog versions.
 const EXACT_PINS = 'packages/dashboard-ui/package.json'
 
 const { catalog = {} } = parseYaml(
@@ -53,22 +55,21 @@ for (const manifest of manifests) {
   }
 }
 
-function pinsCatalogVersion(name, spec) {
-  return catalog[name] && semver.valid(spec) && spec === semver.minVersion(catalog[name]).version
-}
-
 const problems = []
 for (const manifest of manifests) {
   for (const section of ['dependencies', 'devDependencies']) {
     for (const [name, spec] of Object.entries(manifest[section] ?? {})) {
-      if (isWorkspace(spec) || spec === 'catalog:' || NPM_PUBLISHED.has(manifest.file)) continue
-      if (installers.get(name).size < 2) continue
       if (
         manifest.file === EXACT_PINS &&
         section === 'dependencies' &&
-        pinsCatalogVersion(name, spec)
+        spec === 'catalog:' &&
+        !semver.valid(catalog[name])
       )
-        continue
+        problems.push(
+          `${manifest.file}: ${name} needs an exact version in the catalog, not "${catalog[name]}"`,
+        )
+      if (isWorkspace(spec) || spec === 'catalog:' || NPM_PUBLISHED.has(manifest.file)) continue
+      if (installers.get(name).size < 2) continue
       problems.push(`${manifest.file}: ${section}.${name} is "${spec}" — use "catalog:"`)
     }
   }
