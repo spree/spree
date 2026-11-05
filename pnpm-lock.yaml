@@ -19,14 +19,20 @@ catalogs:
       specifier: ^1.8.0
       version: 1.8.1
     '@dnd-kit/core':
-      specifier: ^6.3.1
+      specifier: 6.3.1
       version: 6.3.1
     '@dnd-kit/sortable':
-      specifier: ^10.0.0
+      specifier: 10.0.0
       version: 10.0.0
     '@dnd-kit/utilities':
-      specifier: ^3.2.2
+      specifier: 3.2.2
       version: 3.2.2
+    '@fontsource-variable/geist':
+      specifier: 5.3.0
+      version: 5.3.0
+    '@fontsource-variable/geist-mono':
+      specifier: 5.3.0
+      version: 5.3.0
     '@hookform/resolvers':
       specifier: ^6.0.0
       version: 6.0.0
@@ -34,7 +40,7 @@ catalogs:
       specifier: ^1.64.1
       version: 1.64.1
     '@tanstack/react-hotkeys':
-      specifier: ^0.16.0
+      specifier: 0.16.0
       version: 0.16.0
     '@tanstack/react-query':
       specifier: ^5.104.5
@@ -42,6 +48,9 @@ catalogs:
     '@tanstack/react-router':
       specifier: ^1.170.45
       version: 1.170.45
+    '@tanstack/react-table':
+      specifier: 9.3.1
+      version: 9.3.1
     '@tanstack/router-plugin':
       specifier: ^1.168.47
       version: 1.168.47
@@ -60,29 +69,41 @@ catalogs:
     '@typescript/typescript6':
       specifier: ^6.0.2
       version: 6.0.2
+    '@uiw/react-json-view':
+      specifier: 1.12.2
+      version: 1.12.2
     '@vitejs/plugin-react':
       specifier: ^6.0.1
       version: 6.1.2
     '@vitest/coverage-v8':
       specifier: ^5.0.5
       version: 5.0.5
+    class-variance-authority:
+      specifier: 0.7.1
+      version: 0.7.1
+    clsx:
+      specifier: 2.1.1
+      version: 2.1.1
     commander:
       specifier: ^15.0.0
       version: 15.0.0
     date-fns:
-      specifier: ^4.4.0
+      specifier: 4.4.0
       version: 4.4.0
     date-fns-tz:
-      specifier: ^3.2.0
+      specifier: 3.2.0
       version: 3.2.0
     execa:
       specifier: ^10.2.0
       version: 10.2.0
+    flag-icons:
+      specifier: 7.6.0
+      version: 7.6.0
     i18next:
       specifier: ^26.5.3
       version: 26.5.3
     lucide-react:
-      specifier: ^1.60.0
+      specifier: 1.60.0
       version: 1.60.0
     msw:
       specifier: ^3.0.3
@@ -93,6 +114,12 @@ catalogs:
     react:
       specifier: ^19.3.1
       version: 19.3.1
+    react-colorful:
+      specifier: 5.8.1
+      version: 5.8.1
+    react-day-picker:
+      specifier: 10.0.2
+      version: 10.0.2
     react-dom:
       specifier: ^19.3.1
       version: 19.3.1
@@ -108,6 +135,9 @@ catalogs:
     shadcn:
       specifier: ^4.22.1
       version: 4.22.1
+    tailwind-merge:
+      specifier: 3.7.0
+      version: 3.7.0
     tailwindcss:
       specifier: ^4.2.4
       version: 4.3.3
@@ -117,6 +147,9 @@ catalogs:
     tsx:
       specifier: ^4.21.0
       version: 4.23.15
+    tw-animate-css:
+      specifier: 1.4.0
+      version: 1.4.0
     typescript:
       specifier: ~7.0.2
       version: 7.0.2
@@ -638,19 +671,19 @@ importers:
         specifier: 6.43.15
         version: 6.43.15
       '@dnd-kit/core':
-        specifier: 6.3.1
+        specifier: 'catalog:'
         version: 6.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@dnd-kit/sortable':
-        specifier: 10.0.0
+        specifier: 'catalog:'
         version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
       '@dnd-kit/utilities':
-        specifier: 3.2.2
+        specifier: 'catalog:'
         version: 3.2.2(react@19.3.1)
       '@fontsource-variable/geist':
-        specifier: 5.3.0
+        specifier: 'catalog:'
         version: 5.3.0
       '@fontsource-variable/geist-mono':
-        specifier: 5.3.0
+        specifier: 'catalog:'
         version: 5.3.0
       '@spree/core':
         specifier: workspace:^
@@ -659,7 +692,7 @@ importers:
         specifier: 'catalog:'
         version: 0.16.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@tanstack/react-table':
-        specifier: 9.3.1
+        specifier: 'catalog:'
         version: 9.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@tiptap/core':
         specifier: 3.32.0
@@ -683,40 +716,40 @@ importers:
         specifier: 3.32.0
         version: 3.32.0
       '@uiw/react-json-view':
-        specifier: 1.12.2
+        specifier: 'catalog:'
         version: 1.12.2(@babel/runtime@8.0.7)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       class-variance-authority:
-        specifier: 0.7.1
+        specifier: 'catalog:'
         version: 0.7.1
       clsx:
-        specifier: 2.1.1
+        specifier: 'catalog:'
         version: 2.1.1
       date-fns:
-        specifier: 4.4.0
+        specifier: 'catalog:'
         version: 4.4.0
       date-fns-tz:
-        specifier: 3.2.0
+        specifier: 'catalog:'
         version: 3.2.0(date-fns@4.4.0)
       flag-icons:
-        specifier: 7.6.0
+        specifier: 'catalog:'
         version: 7.6.0
       lucide-react:
-        specifier: 1.60.0
+        specifier: 'catalog:'
         version: 1.60.0(@types/react@19.3.0)(react@19.3.1)
       react-colorful:
-        specifier: 5.8.1
+        specifier: 'catalog:'
         version: 5.8.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react-day-picker:
-        specifier: 10.0.2
+        specifier: 'catalog:'
         version: 10.0.2(@types/react@19.3.0)(react@19.3.1)
       recharts:
         specifier: 'catalog:'
         version: 3.10.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react-is@19.2.5)(react@19.3.1)(redux@5.0.1)
       tailwind-merge:
-        specifier: 3.7.0
+        specifier: 'catalog:'
         version: 3.7.0
       tw-animate-css:
-        specifier: 1.4.0
+        specifier: 'catalog:'
         version: 1.4.0
     devDependencies:
       '@tanstack/react-router':
