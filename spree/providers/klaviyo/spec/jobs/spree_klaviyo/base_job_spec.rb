@@ -95,12 +95,11 @@ RSpec.describe SpreeKlaviyo::BaseJob do
   end
 
   describe 'any other 4xx' do
-    # The identifier conflict on import. Stubbed as 409 until the cassettes
-    # confirm the status (Phase 8).
-    [403, 409].each do |code|
+    # A key missing a scope (403, as recorded) and a request Klaviyo rejects (400).
+    [400, 403].each do |code|
       it "reports a #{code} once and does not retry" do
         fail_with(api_error(code,
-                            body: { errors: [{ code: 'forbidden', title: 'You do not have permission',
+                            body: { errors: [{ code: 'permission_denied', title: 'You do not have permission to perform this action.',
                                                detail: 'Missing scope for ada@example.com' }] }.to_json))
 
         expect { job.perform_now }.not_to have_enqueued_job
@@ -111,8 +110,9 @@ RSpec.describe SpreeKlaviyo::BaseJob do
 
   describe 'a report' do
     before do
-      errors = [{ code: 'duplicate_profile', title: 'Conflict', detail: 'ada@example.com already exists' }]
-      fail_with(api_error(409, headers: { 'X-Request' => 'ada@example.com' }, body: { errors: errors }.to_json))
+      errors = [{ code: 'permission_denied', title: 'You do not have permission to perform this action.',
+                  detail: 'Missing scope for ada@example.com' }]
+      fail_with(api_error(403, headers: { 'X-Request' => 'ada@example.com' }, body: { errors: errors }.to_json))
       job.perform_now
     end
 
@@ -120,7 +120,8 @@ RSpec.describe SpreeKlaviyo::BaseJob do
       error, options = reports.first
 
       expect(error).to be_a(SpreeKlaviyo::BaseJob::RequestFailed)
-      expect(options[:context]).to include(status: 409, errors: [{ 'code' => 'duplicate_profile', 'title' => 'Conflict' }])
+      title = 'You do not have permission to perform this action.'
+      expect(options[:context]).to include(status: 403, errors: [{ 'code' => 'permission_denied', 'title' => title }])
     end
 
     it 'holds no email' do

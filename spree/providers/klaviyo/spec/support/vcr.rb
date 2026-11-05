@@ -30,6 +30,11 @@ VCR.configure do |c|
   end
 
   c.filter_sensitive_data('<KLAVIYO_PRIVATE_API_KEY>') { ENV.fetch('KLAVIYO_PRIVATE_API_KEY', nil) }
+  c.filter_sensitive_data('<KLAVIYO_LIMITED_API_KEY>') { ENV.fetch('KLAVIYO_LIMITED_API_KEY', nil) }
+
+  # The inbox is filtered by its two halves, because the addresses put a plus tag between them.
+  c.filter_sensitive_data('<KLAVIYO_TEST_INBOX_USER>') { ENV['KLAVIYO_TEST_INBOX']&.split('@', 2)&.first }
+  c.filter_sensitive_data('<KLAVIYO_TEST_INBOX_DOMAIN>') { ENV['KLAVIYO_TEST_INBOX']&.split('@', 2)&.last }
 
   c.before_record do |interaction|
     # Klaviyo authenticates with `Authorization: Klaviyo-API-Key <key>`, which

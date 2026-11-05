@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/events
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"event","attributes":{"metric":{"data":{"type":"metric","attributes":{"name":"Canceled
+        Order"}}},"profile":{"data":{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+events-13edca32@<KLAVIYO_TEST_INBOX_DOMAIN>"}}},"properties":{"OrderId":"R1001","ItemNames":["Product
+        2335"],"Categories":[],"Items":[{"ProductID":"prod_UkLWZg9DAJ","SKU":"SKU-2","ProductName":"Product
+        2335","Quantity":1,"ItemPrice":10.0,"RowTotal":10.0,"ProductURL":"http://www.example.com:3000/products/product-2335","ImageURL":null,"Categories":[]}],"DiscountCode":null,"DiscountValue":0.0,"Subtotal":10.0,"ShippingTotal":100.0,"TaxTotal":0.0,"Total":110.0,"BillingAddress":{"FirstName":"John","LastName":"Doe","Company":"Company","Address1":"3
+        Lovely Street","Address2":"Northwest","City":"New York","Region":"New York","RegionCode":"NY","Country":"United
+        States","CountryCode":"US","Zip":"10118","Phone":"555-555-0199"},"ShippingAddress":{"FirstName":"John","LastName":"Doe","Company":"Company","Address1":"4
+        Lovely Street","Address2":"Northwest","City":"New York","Region":"New York","RegionCode":"NY","Country":"United
+        States","CountryCode":"US","Zip":"10118","Phone":"555-555-0199"},"NotifyCustomer":true},"time":"2026-11-05T14:31:53Z","unique_id":"or_UkLWZg9DAJ","value":110.0,"value_currency":"USD"}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 202
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:54 GMT
+      Content-Length:
+      - '0'
+      Cf-Ray:
+      - a55c909188f6bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - base-uri 'none'; frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com
+        admin.shopify.com klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        script-src 'report-sample' 'strict-dynamic' 'unsafe-eval'; object-src 'none';
+        report-uri /csp/
+      Ratelimit-Limit:
+      - 350, 350;w=1, 3500;w=60
+      Ratelimit-Remaining:
+      - '348'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '72'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 7b33dad7-5bcf-47e8-a612-c6c44831bc45
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+  recorded_at: Thu, 05 Nov 2026 14:31:54 GMT
+recorded_with: VCR 6.4.1

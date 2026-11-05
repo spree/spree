@@ -360,33 +360,39 @@ RSpec.describe Spree::Integrations::Klaviyo do
         expect { integration.import_profile(profile(klaviyo_test_address('after'), external_id)) }.not_to raise_error
       end
 
-      # Confirmation 1: what Klaviyo does when the email matches a profile
-      # holding a different external_id. Narrowed once recorded.
-      it 'answers an import whose email holds another external id',
+      # Confirmation 1: the external id outranks the email, so a 1.x profile
+      # is never matched by email alone.
+      it 'creates a second profile when the email holds another external id',
          vcr: { cassette_name: 'import_profile_external_id_mismatch' } do
         address = klaviyo_test_address('mismatch')
-        integration.import_profile(profile(address, "cus_#{SecureRandom.hex(4)}"))
+        first = integration.import_profile(profile(address, "cus_#{SecureRandom.hex(4)}"))
+        second = integration.import_profile(profile(address, "cus_#{SecureRandom.hex(4)}"))
 
-        outcome = begin
-          integration.import_profile(profile(address, "cus_#{SecureRandom.hex(4)}"))
-          :accepted
-        rescue KlaviyoAPI::ApiError => e
-          e.code
-        end
-
-        expect(outcome).to eq(:accepted).or(be_between(400, 499))
+        expect(second.dig(:data, :id)).not_to eq(first.dig(:data, :id))
+        expect(second.dig(:data, :attributes, :email)).to eq(first.dig(:data, :attributes, :email))
       end
 
-      # Confirmation 2: the status of an identifier conflict.
-      it 'refuses an email and an external id belonging to two profiles',
+      # Confirmation 2: Klaviyo answers 200 rather than a conflict.
+      it 'moves the email to the profile holding the external id',
          vcr: { cassette_name: 'import_profile_identifier_conflict' } do
         address_a = klaviyo_test_address('conflict-a')
         external_id_y = "cus_#{SecureRandom.hex(4)}"
         integration.import_profile(profile(address_a, "cus_#{SecureRandom.hex(4)}"))
-        integration.import_profile(profile(klaviyo_test_address('conflict-b'), external_id_y))
+        holder = integration.import_profile(profile(klaviyo_test_address('conflict-b'), external_id_y))
 
-        expect { integration.import_profile(profile(address_a, external_id_y)) }.
-          to raise_error(KlaviyoAPI::ApiError) { |error| expect(error.code).to be_between(400, 499) }
+        moved = integration.import_profile(profile(address_a, external_id_y))
+
+        expect(moved.dig(:data, :id)).to eq(holder.dig(:data, :id))
+      end
+
+      # A guest's profile carries no external id, so registering must not split the person.
+      it 'gives a guest profile the external id when the guest registers', vcr: { cassette_name: 'import_profile_guest_registers' } do
+        address = klaviyo_test_address('guest')
+        guest = integration.import_profile(SpreeKlaviyo::Profile.new(email: address))
+
+        registered = integration.import_profile(profile(address, "cus_#{SecureRandom.hex(4)}"))
+
+        expect(registered.dig(:data, :id)).to eq(guest.dig(:data, :id))
       end
     end
 
@@ -397,8 +403,7 @@ RSpec.describe Spree::Integrations::Klaviyo do
         expect { integration.subscribe(klaviyo_test_address('subscribe')) }.not_to raise_error
       end
 
-      # Confirmation 3, read in the inbox: whether Klaviyo resends a pending
-      # double opt-in confirmation.
+      # Confirmation 3, read in the inbox: each sign-up got its own confirmation.
       it 'accepts a second sign-up while the first is unconfirmed', vcr: { cassette_name: 'subscribe_pending_again' } do
         address = klaviyo_test_address('pending')
         integration.subscribe(address)
@@ -451,6 +456,15 @@ RSpec.describe Spree::Integrations::Klaviyo do
 
         expect { integration.create_event(event) }.not_to raise_error
       end
+
+      # Read in the account, not in the 202: the event joined the older of the two profiles.
+      it 'accepts an event for an email two profiles share', vcr: { cassette_name: 'event_shared_email' } do
+        address = klaviyo_test_address('shared-event')
+        2.times { integration.import_profile(SpreeKlaviyo::Profile.new(email: address, external_id: "cus_#{SecureRandom.hex(4)}")) }
+        order.update_column(:email, address)
+
+        expect { integration.create_event(SpreeKlaviyo::MetricEvent.placed_order(order, notify_customer: true)) }.not_to raise_error
+      end
     end
 
     describe '#request_profile_deletion' do
@@ -458,6 +472,15 @@ RSpec.describe Spree::Integrations::Klaviyo do
         integration = recording_integration
         address = klaviyo_test_address('erasure')
         integration.import_profile(SpreeKlaviyo::Profile.new(email: address))
+
+        expect { integration.request_profile_deletion(address) }.not_to raise_error
+      end
+
+      # Read in the account once Klaviyo's deletion job ran: both profiles were deleted.
+      it 'requests the deletion of an email two profiles share', vcr: { cassette_name: 'request_profile_deletion_shared_email' } do
+        integration = recording_integration
+        address = klaviyo_test_address('shared-erasure')
+        2.times { integration.import_profile(SpreeKlaviyo::Profile.new(email: address, external_id: "cus_#{SecureRandom.hex(4)}")) }
 
         expect { integration.request_profile_deletion(address) }.not_to raise_error
       end
