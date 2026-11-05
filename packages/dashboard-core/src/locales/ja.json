@@ -478,7 +478,10 @@
         "select_all": "すべて選択",
         "sort_by": "並べ替え",
         "sort_tooltip": "並べ替え",
-        "visible_columns": "表示する列"
+        "visible_columns": "表示する列",
+        "row_density": "行の密度",
+        "density_comfortable": "標準",
+        "density_compact": "コンパクト"
       },
       "tag_combobox": {
         "create_option": "「{{tag}}」を作成",

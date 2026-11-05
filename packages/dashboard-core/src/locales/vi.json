@@ -478,7 +478,10 @@
         "select_all": "Chọn tất cả",
         "sort_by": "Sắp xếp theo",
         "sort_tooltip": "Sắp xếp",
-        "visible_columns": "Cột hiển thị"
+        "visible_columns": "Cột hiển thị",
+        "row_density": "Mật độ hàng",
+        "density_comfortable": "Thoải mái",
+        "density_compact": "Gọn"
       },
       "tag_combobox": {
         "create_option": "Tạo \"{{tag}}\"",

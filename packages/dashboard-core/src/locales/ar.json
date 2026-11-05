@@ -476,7 +476,10 @@
         "select_all": "تحديد الكل",
         "sort_by": "ترتيب حسب",
         "sort_tooltip": "ترتيب",
-        "visible_columns": "الأعمدة المرئية"
+        "visible_columns": "الأعمدة المرئية",
+        "row_density": "كثافة الصفوف",
+        "density_comfortable": "مريحة",
+        "density_compact": "مضغوطة"
       },
       "tag_combobox": {
         "create_option": "إنشاء «{{tag}}»",

@@ -41,6 +41,7 @@ import { Fragment, type ReactNode, useCallback, useDeferredValue, useMemo, useSt
 import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
+import { type TableDensity, useTableDensity } from '../hooks/use-table-density'
 import {
   DATE_PRESET_KEYS,
   type DatePresetKey,
@@ -1175,6 +1176,7 @@ function ColumnSelector({
   onVisibleColumnsChange: (columns: string[]) => void
 }) {
   const { t } = useTranslation()
+  const [density, setDensity] = useTableDensity()
   const defaults = columns.filter((c) => c.default).map((c) => c.key)
 
   return (
@@ -1213,6 +1215,19 @@ function ColumnSelector({
             {col.label}
           </DropdownMenuCheckboxItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>{t('admin.components.table_toolbar.row_density')}</DropdownMenuLabel>
+        <DropdownMenuRadioGroup
+          value={density}
+          onValueChange={(value) => setDensity(value as TableDensity)}
+        >
+          <DropdownMenuRadioItem value="comfortable" closeOnClick={false}>
+            {t('admin.components.table_toolbar.density_comfortable')}
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="compact" closeOnClick={false}>
+            {t('admin.components.table_toolbar.density_compact')}
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
         <Button
           variant="ghost"

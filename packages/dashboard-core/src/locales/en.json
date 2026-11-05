@@ -478,7 +478,10 @@
         "select_all": "Select all",
         "sort_by": "Sort by",
         "sort_tooltip": "Sort",
-        "visible_columns": "Visible columns"
+        "visible_columns": "Visible columns",
+        "row_density": "Row density",
+        "density_comfortable": "Comfortable",
+        "density_compact": "Compact"
       },
       "tag_combobox": {
         "create_option": "Create \"{{tag}}\"",

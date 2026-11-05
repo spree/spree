@@ -476,7 +476,10 @@
         "select_all": "Alle auswählen",
         "sort_by": "Sortieren nach",
         "sort_tooltip": "Sortieren",
-        "visible_columns": "Sichtbare Spalten"
+        "visible_columns": "Sichtbare Spalten",
+        "row_density": "Zeilendichte",
+        "density_comfortable": "Komfortabel",
+        "density_compact": "Kompakt"
       },
       "tag_combobox": {
         "create_option": "„{{tag}}“ erstellen",
