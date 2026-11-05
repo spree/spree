@@ -144,6 +144,19 @@ module Spree
       nil
     end
 
+    # Template keys ({Spree.editable_email_templates}) of the customer emails
+    # this integration sends in Spree's place while it is active, so Spree
+    # skips them (see {Spree::Store#sends_customer_email?}).
+    #
+    # Never list an email whose link carries a token Spree must later redeem
+    # (password reset, data export, a digital download): the integration's
+    # copy could not carry a working link.
+    #
+    # @return [Array<String>]
+    def replaced_customer_emails
+      []
+    end
+
     # Checks if the integration can establish a connection.
     # This is a base implementation that always returns true.
     # Subclasses should override this method to implement their own connection validation logic.

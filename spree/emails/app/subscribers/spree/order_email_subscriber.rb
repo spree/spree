@@ -21,7 +21,7 @@ module Spree
     def send_customer_confirmation(order, event)
       return if order.confirmation_delivered?
       return if event.metadata['notify_customer'] == false
-      return unless order.store.prefers_send_consumer_transactional_emails?
+      return unless order.store.sends_customer_email?('spree/order_mailer/confirm_email')
 
       OrderMailer.confirm_email(order.id).deliver_later
       order.update_column(:confirmation_delivered, true)
@@ -36,8 +36,7 @@ module Spree
       return unless order
       return order.order_group.publish_event('order_group.resend_confirmation_email') if order.grouped?
 
-      store = order.store
-      return unless store.prefers_send_consumer_transactional_emails?
+      return unless order.store.sends_customer_email?('spree/order_mailer/confirm_email')
 
       OrderMailer.confirm_email(order.id, true).deliver_later
       order.update_column(:confirmation_delivered, true)
@@ -48,8 +47,7 @@ module Spree
       return unless order
       return if event.metadata['notify_customer'] == false
 
-      store = order.store
-      return unless store.prefers_send_consumer_transactional_emails?
+      return unless order.store.sends_customer_email?('spree/order_mailer/cancel_email')
 
       OrderMailer.cancel_email(order.id).deliver_later
     end

@@ -23,7 +23,7 @@ module Spree
       order = find_order(event)
       return unless order
       return if order.digital_links.empty?
-      return unless order.store.prefers_send_consumer_transactional_emails?
+      return unless order.store.sends_customer_email?('spree/digital_asset_mailer/files_ready_email')
 
       DigitalAssetMailer.files_ready_email(order.id, resend).deliver_later
     end
