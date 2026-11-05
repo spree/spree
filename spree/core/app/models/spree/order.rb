@@ -360,7 +360,11 @@ module Spree
         conditions << search_condition(Spree::Address, :last_name, full_name.last)
       end
 
-      left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
+      # The exact match goes through the model, so it still finds an order in
+      # an app that encrypts email, where SQL only ever sees ciphertext.
+      left_joins(:bill_address).where(email: query).
+        or(left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase))).
+        or(where(conditions.reduce(:or)))
     end
 
     # Find an order by prefixed ID first, falling back to number, then integer id for backwards compatibility
