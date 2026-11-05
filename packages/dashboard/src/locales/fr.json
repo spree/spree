@@ -998,6 +998,44 @@
           "subtitle": "Voyez qui a modifié quoi dans votre boutique, et quand.",
           "title": "Journal d'audit"
         },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Les produits sont ajoutés aux bonnes catégories lors de leur import, quand le vendeur les modifie et quand vous changez une correspondance.",
+              "title": "Toujours à jour"
+            },
+            "kept": {
+              "description": "Les catégories que vous ajoutez ou retirez à la main restent telles que vous les avez laissées. Le mappeur ne retire que ce qu'il a ajouté.",
+              "title": "Vos changements restent"
+            },
+            "once": {
+              "description": "Associez une catégorie du vendeur à l'une des vôtres et tous ses produits suivent. Associez la même catégorie pour plusieurs vendeurs en une fois.",
+              "title": "Associez une fois"
+            }
+          },
+          "intro": "Chaque vendeur organise ses produits à sa manière. Associez une fois les catégories de chaque vendeur aux catégories de votre marketplace, et ses produits sont ajoutés à vos catégories à l'import et à chaque modification.",
+          "nav": "Mappeur de catégories",
+          "steps": {
+            "add": {
+              "description": "Les produits sont ajoutés automatiquement à vos catégories.",
+              "title": "Ajouter"
+            },
+            "import": {
+              "description": "Les produits du vendeur arrivent avec ses propres catégories.",
+              "title": "Importer"
+            },
+            "map": {
+              "description": "Vous associez chaque catégorie du vendeur à l'une de vos catégories.",
+              "title": "Associer"
+            },
+            "review": {
+              "description": "Les produits arrivent dans votre revue déjà classés.",
+              "title": "Vérifier"
+            }
+          },
+          "subtitle": "Classez automatiquement les produits de chaque vendeur dans vos catégories.",
+          "title": "Mappeur de catégories"
+        },
         "company_onboarding": {
           "benefits": {
             "agreement": {

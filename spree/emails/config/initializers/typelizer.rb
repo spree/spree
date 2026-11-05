@@ -2,7 +2,7 @@
 # into @spree/admin-sdk as Email* types, for the dashboard's template editor.
 # Runs only under `bundle exec rake typelizer:generate`.
 Rails.application.config.after_initialize do
-  next unless defined?(Typelizer) && ENV['ENABLE_TYPELIZER']
+  next unless defined?(Typelizer) && ENV['TYPELIZER'] == 'true'
 
   emails_root = Spree::Emails::Engine.root
 

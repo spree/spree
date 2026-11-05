@@ -63738,6 +63738,24 @@ components:
           type: array
           items:
             type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+                nullable: true
+              position:
+                type: number
+                nullable: true
+              stock_location_ids:
+                type: array
+                items:
+                  type: string
+            required:
+            - id
+            - name
+            - position
+            - stock_location_ids
         products_count:
           type: number
         delivery_methods_count:
@@ -65076,6 +65094,14 @@ components:
           type: array
           items:
             type: object
+            properties:
+              kind:
+                type: string
+              url:
+                type: string
+            required:
+            - kind
+            - url
         labels:
           type: array
           items:
@@ -65840,6 +65866,14 @@ components:
           type: boolean
         store:
           type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+          required:
+          - id
+          - name
       required:
       - id
       - email
@@ -71481,6 +71515,14 @@ components:
           type: array
           items:
             type: object
+            properties:
+              kind:
+                type: string
+              url:
+                type: string
+            required:
+            - kind
+            - url
         labels:
           type: array
           items:
@@ -72304,6 +72346,15 @@ components:
           nullable: true
         blocker:
           type: object
+          properties:
+            state:
+              type: string
+            message:
+              type: string
+              nullable: true
+          required:
+          - state
+          - message
           nullable: true
         blocking:
           type: boolean
@@ -72482,6 +72533,14 @@ components:
           type: number
         onboarding_progress:
           type: object
+          properties:
+            done:
+              type: number
+            total:
+              type: number
+          required:
+          - done
+          - total
         onboarding_complete:
           type: boolean
         legal_name:

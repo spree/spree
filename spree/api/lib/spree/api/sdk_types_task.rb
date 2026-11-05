@@ -50,10 +50,10 @@ module Spree
 
       private
 
-      # Spree's initializer turns Typelizer off unless ENABLE_TYPELIZER is set,
-      # so it has to be set before the app boots.
+      # Typelizer records the serializers' `typelize` declarations only when
+      # TYPELIZER is on as the app boots, so it is set first.
       def boot(dummy)
-        ENV['ENABLE_TYPELIZER'] = '1'
+        ENV['TYPELIZER'] = 'true'
         if File.exist?(dummy)
           ENV['RAILS_ENV'] ||= 'test'
           require File.expand_path(dummy)

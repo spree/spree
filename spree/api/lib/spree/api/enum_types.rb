@@ -35,7 +35,10 @@ module Spree
       # @return [Array<Typelizer::Property>] those carrying a named list, nested and inline ones included
       def self.named_properties(properties)
         properties.flat_map do |property|
-          nested = property.nested_properties.to_a
+          # Nested attributes are an inline shape (Typelizer 0.13+); an
+          # inline association is an inline interface.
+          nested = []
+          nested += property.type.properties if property.type.is_a?(Typelizer::Shape)
           nested += property.type.properties if property.type.is_a?(Typelizer::Interface) && property.type.inline?
 
           [property, *named_properties(nested)]

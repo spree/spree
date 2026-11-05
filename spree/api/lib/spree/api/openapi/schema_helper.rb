@@ -651,11 +651,11 @@ module Spree
         # Typelizer is normally disabled in test/production, but we need it
         # enabled to generate OpenAPI schemas from serializer type hints
         def with_typelizer_enabled
-          original = ENV['DISABLE_TYPELIZER']
-          ENV['DISABLE_TYPELIZER'] = 'false'
+          original = ENV['TYPELIZER']
+          ENV['TYPELIZER'] = 'true'
           yield
         ensure
-          ENV['DISABLE_TYPELIZER'] = original
+          ENV['TYPELIZER'] = original
         end
       end
     end

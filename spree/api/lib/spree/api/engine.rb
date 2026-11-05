@@ -15,6 +15,17 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_api'
 
+      # Typelizer 0.13+ ties two things to TYPELIZER: recording the serializers'
+      # `typelize` declarations, and generating types on a development server's
+      # first request. The rswag specs build the OpenAPI schemas from those
+      # declarations, so tests record them; an app's server must never generate,
+      # or it would write Spree's SDK types into the installed gem.
+      # `rake typelizer:generate` sets TYPELIZER=true itself. Set before
+      # Typelizer reads it when configuring its DSL.
+      initializer 'spree.api.typelizer', before: 'typelizer.configure_dsl' do
+        ENV['TYPELIZER'] ||= Rails.env.test? ? 'true' : 'false'
+      end
+
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::Api::Configuration.new
         Spree::Api::Dependencies = Spree::Api::ApiDependencies.new
