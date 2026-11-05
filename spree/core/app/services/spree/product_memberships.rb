@@ -35,9 +35,12 @@ module Spree
     def remove_memberships(groups, products)
       group_ids = groups.pluck(:id)
       product_ids = products.pluck(:id)
-      deleted = membership_class.where(group_key => group_ids, product_id: product_ids).to_a
+      deleted = []
 
       ApplicationRecord.transaction do
+        # Ordered so two callers queue for the same rows in the same sequence rather than deadlocking on each other.
+        deleted = membership_class.where(group_key => group_ids, product_id: product_ids).order(:id).lock.to_a
+
         membership_class.where(group_key => group_ids, product_id: product_ids).delete_all
 
         # What survived the delete, for every group in one read.
