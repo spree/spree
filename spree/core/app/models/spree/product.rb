@@ -245,6 +245,7 @@ module Spree
 
     after_commit :auto_match_collections, if: :eligible_for_collection_matching?
     after_commit :apply_collection_picks, if: -> { @picked_collection_ids }
+    after_commit :auto_match_category_collections, if: -> { @category_ids_assigned }
 
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
@@ -344,6 +345,7 @@ module Spree
         id.to_s.include?('_') ? Spree::Category.decode_prefixed_id(id) : id
       end
       super(Spree::Category.for_store(assignable_store).where(id: decoded_ids).ids)
+      @category_ids_assigned = true
     end
 
     # @return [Array<Integer>] the collections this product is hand-picked into
@@ -1089,6 +1091,11 @@ module Spree
       end
 
       true
+    end
+
+    def auto_match_category_collections
+      @category_ids_assigned = nil
+      auto_match_collections(rule_types: [Spree::CollectionRules::Category])
     end
 
     def apply_collection_picks

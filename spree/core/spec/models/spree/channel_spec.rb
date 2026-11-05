@@ -213,7 +213,7 @@ RSpec.describe Spree::Channel, type: :model do
       channel.add_collections([collection.id])
 
       expect { channel.add_collections([collection.id]) }.not_to change(Spree::CollectionPublication, :count)
-      expect(collection.reload.published_on?(channel)).to be(true)
+      expect(collection.publications.published.exists?(channel: channel)).to be(true)
     end
 
     it 'keeps an existing window when re-published without one' do
@@ -233,7 +233,7 @@ RSpec.describe Spree::Channel, type: :model do
       channel.add_collections([collection.id])
 
       expect(channel.remove_collections([collection.id])).to eq(1)
-      expect(collection.reload.published_on?(channel)).to be(false)
+      expect(collection.publications.exists?(channel: channel)).to be(false)
     end
   end
 

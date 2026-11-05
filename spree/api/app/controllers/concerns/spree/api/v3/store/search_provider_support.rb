@@ -34,7 +34,20 @@ module Spree
             if filters['in_collection'].present? && !published_collection?(filters['in_collection'])
               filters['in_collection'] = Spree::Collection.prefixed_id_for(0)
             end
+            limit_collection_predicates(filters)
             @search_filters = filters.presence
+          end
+
+          # `collections_*` Ransack predicates match only collections this
+          # channel serves: requested ids are narrowed to them, and any other
+          # collections predicate is limited to them.
+          def limit_collection_predicates(filters)
+            return unless filters.keys.any? { |key| key.to_s.start_with?('collections_') }
+
+            visible_ids = storefront_collections.ids
+            requested = filters.delete('collections_id_eq') || filters['collections_id_in']
+            ids = requested.nil? ? visible_ids : Array(requested).map(&:to_i) & visible_ids
+            filters['collections_id_in'] = ids.presence || [0]
           end
 
           # A collection not published on this channel filters to nothing,

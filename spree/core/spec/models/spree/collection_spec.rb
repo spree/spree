@@ -60,6 +60,23 @@ RSpec.describe Spree::Collection, type: :model do
     let(:collection) { create(:automatic_collection, store: store) }
     let(:category) { create(:category, store: store) }
 
+    it 'writes preferences through the rule type schema' do
+      collection.update!(rules: [{ type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to',
+                                   preferences: { include_descendants: true } }])
+
+      expect(collection.reload.rules.sole.preferred_include_descendants).to be(true)
+      expect {
+        collection.update(rules: [{ type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to',
+                                    preferences: { include_descendants: 'false' } }])
+      }.to raise_error(Spree::Preferences::InvalidPreferences)
+    end
+
+    it 'refuses preferences the rule type does not declare' do
+      expect {
+        collection.update(rules: [{ type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to', preferences: { foo: 1 } }])
+      }.to raise_error(Spree::Preferences::InvalidPreferences)
+    end
+
     it 'replaces a rule whose type changes, so the new type reads its own value' do
       rule = create(:tag_collection_rule, collection: collection, value: 'sale', match_policy: 'is_equal_to')
 
@@ -83,7 +100,7 @@ RSpec.describe Spree::Collection, type: :model do
       collection.update!(publications: [{ channel_id: pos.prefixed_id, published_at: 1.day.from_now }, { channel_id: foreign.prefixed_id }])
 
       expect(collection.reload.channels).to contain_exactly(pos)
-      expect(collection).not_to be_published_on(pos)
+      expect(collection.publications.published).to be_empty
     end
   end
 

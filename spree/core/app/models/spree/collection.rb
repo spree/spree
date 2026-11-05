@@ -144,12 +144,6 @@ module Spree
       self.permalink = value
     end
 
-    # @param channel [Spree::Channel]
-    # @return [Boolean] whether the collection is visible on the channel right now
-    def published_on?(channel)
-      publications.any? { |publication| publication.channel_id == channel&.id && publication.published? }
-    end
-
     # Replaces the collection's publications with the given set: one hash per
     # channel (`channel_id`, optional `published_at` / `unpublished_at`).
     # Channels left out are unpublished. Applied after save, so a new
@@ -282,6 +276,7 @@ module Spree
       rules_params.each_with_index do |rule_data, index|
         data = rule_data.to_h.with_indifferent_access
         rule_id = data.delete(:id)
+        preferences = data.delete(:preferences)
         if data.key?(:type) || rule_id.blank?
           # Refused with the accepted kinds named; letting the nil through
           # answered "type can't be blank" to a caller who had sent one.
@@ -299,8 +294,9 @@ module Spree
         record = if existing && (data[:type].nil? || data[:type] == existing.type)
                    existing.tap { |rule| rule.assign_attributes(data) }
                  else
-                   rules.build(existing ? { type: existing.type }.merge(data) : data)
+                   rules.build(data)
                  end
+        record.assign_preferences(preferences, pointer: "/rules/#{index}/preferences") unless preferences.nil?
         retained_ids << record.id if record.persisted?
       end
 
