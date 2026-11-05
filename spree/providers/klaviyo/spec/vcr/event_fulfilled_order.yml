@@ -1,0 +1,75 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/events
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"event","attributes":{"metric":{"data":{"type":"metric","attributes":{"name":"Fulfilled
+        Order"}}},"profile":{"data":{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+events-f945e9c9@<KLAVIYO_TEST_INBOX_DOMAIN>"}}},"properties":{"OrderId":"R1001","FulfillmentNumber":"R1001-F1","TrackingNumber":"U10000","TrackingURL":null,"ItemNames":["Product
+        58938"],"Items":[{"ProductID":"prod_UkLWZg9DAJ","SKU":"SKU-5","ProductName":"Product
+        58938","Quantity":1,"ItemPrice":10.0,"RowTotal":10.0,"ProductURL":"http://www.example.com:3000/products/product-58938","ImageURL":null,"Categories":[]}],"ShippingAddress":{"FirstName":"John","LastName":"Doe","Company":"Company","Address1":"10
+        Lovely Street","Address2":"Northwest","City":"New York","Region":"New York","RegionCode":"NY","Country":"United
+        States","CountryCode":"US","Zip":"10118","Phone":"555-555-0199"},"NotifyCustomer":true},"time":"2026-11-05T14:31:54Z","unique_id":"ful_UkLWZg9DAJ","value":10.0,"value_currency":"USD"}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 202
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:55 GMT
+      Content-Length:
+      - '0'
+      Cf-Ray:
+      - a55c90979dc4bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - object-src 'none'; frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com
+        admin.shopify.com klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        script-src 'report-sample' 'strict-dynamic' 'unsafe-eval'; base-uri 'none';
+        report-uri /csp/
+      Ratelimit-Limit:
+      - 350, 350;w=1, 3500;w=60
+      Ratelimit-Remaining:
+      - '347'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '88'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 9050b20e-bb93-4b7b-a6a4-7f896996f5c8
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+  recorded_at: Thu, 05 Nov 2026 14:31:55 GMT
+recorded_with: VCR 6.4.1

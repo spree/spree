@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/data-privacy-deletion-jobs
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"data-privacy-deletion-job","attributes":{"profile":{"data":{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+erasure-scope-0210ca2c@<KLAVIYO_TEST_INBOX_DOMAIN>"}}}}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 403
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:58 GMT
+      Content-Type:
+      - application/vnd.api+json
+      Content-Length:
+      - '260'
+      Cf-Ray:
+      - a55c90ae0ef9bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - object-src 'none'; frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com
+        admin.shopify.com klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        base-uri 'none'; script-src 'report-sample' 'strict-dynamic' 'unsafe-eval';
+        report-uri /csp/
+      Ratelimit-Limit:
+      - 3, 3;w=1, 60;w=60
+      Ratelimit-Remaining:
+      - '1'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '80'
+      X-Klaviyo-Req-Id:
+      - 20112709-46f6-4f58-8610-2b1208f684a9
+    body:
+      encoding: ASCII-8BIT
+      string: '{"errors":[{"id":"20112709-46f6-4f58-8610-2b1208f684a9","status":403,"code":"permission_denied","title":"You
+        do not have permission to perform this action.","detail":"Your API key is
+        missing required scopes: data-privacy:write","source":{"pointer":"/data/"}}]}'
+  recorded_at: Thu, 05 Nov 2026 14:31:58 GMT
+recorded_with: VCR 6.4.1

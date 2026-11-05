@@ -4757,8 +4757,12 @@
       "terms_effective_from_description": "Những người bán đã chấp nhận trước ngày này sẽ được hỏi lại.",
       "terms_url": "URL điều khoản",
       "terms_url_description": "Bản sao được xuất bản tùy chọn của các điều khoản tương tự, được mở trong tab mới.",
+      "default_newsletter_list_id": "ID danh sách bản tin",
+      "default_newsletter_list_id_description": "Danh sách Klaviyo nhận các lượt đăng ký bản tin. Cài đặt opt-in của danh sách quyết định Klaviyo có gửi email xác nhận hay không.",
+      "klaviyo_private_api_key": "Khóa API riêng tư",
+      "klaviyo_private_api_key_description": "Tạo trong Klaviyo tại Settings → Account → API keys, với các phạm vi mà hướng dẫn thiết lập liệt kê.",
       "use_database_ids_as_external_ids": "Khớp hồ sơ theo ID cơ sở dữ liệu",
-      "use_database_ids_as_external_ids_description": "Gửi ID cơ sở dữ liệu của từng khách hàng làm ID ngoài của Klaviyo, như tiện ích Klaviyo 1.x đã làm, để các hồ sơ do nó tạo vẫn khớp. Hãy để tắt với tài khoản Klaviyo mới: khi đó hồ sơ mang ID Spree của khách hàng. Các cửa hàng dùng chung một tài khoản Klaviyo nên dùng cùng một cài đặt.",
+      "use_database_ids_as_external_ids_description": "Gửi ID cơ sở dữ liệu của từng khách hàng làm ID ngoài của Klaviyo, như tiện ích Klaviyo 1.x đã làm, để các hồ sơ do nó tạo vẫn khớp. Hãy để tắt với tài khoản Klaviyo mới: khi đó hồ sơ mang ID Spree của khách hàng. Khi tắt, Klaviyo tạo hồ sơ thứ hai có cùng email cho mỗi khách hàng mà tiện ích 1.x đã đồng bộ. Các cửa hàng dùng chung một tài khoản Klaviyo nên dùng cùng một cài đặt.",
       "webhook_secret": "Bí mật ký Webhook",
       "webhook_secret_description": "Bí mật bạn đặt trên webhook EasyPost. Cập nhật nhà cung cấp dịch vụ bị từ chối nếu không có nó."
     },

@@ -58,8 +58,8 @@ Turning the integration on reads your newsletter list, so a wrong key, a key wit
 
 In the Spree admin dashboard, open **Settings → Integrations**, find Klaviyo under Marketing and add it. Enter:
 
-- **Klaviyo private API key**: the key you just created.
-- **Default newsletter list id**: the Klaviyo list newsletter sign-ups go to. Find it in Klaviyo under **Audience → Lists & segments**, in the list's settings.
+- **Private API key**: the key you just created.
+- **Newsletter list ID**: the Klaviyo list newsletter sign-ups go to. Find it in Klaviyo under **Audience → Lists & segments**, in the list's settings.
 
 Save, then turn the integration on. Only an active integration sends anything to Klaviyo.
 
@@ -72,7 +72,7 @@ Klaviyo runs the newsletter opt-in. Every sign-up goes to Klaviyo at once, and t
 
 While the integration is active, Spree does not send its own newsletter confirmation in either case. A signed-in customer who ticks "email me" also confirms through Klaviyo's email on a double opt-in list, because the list's setting covers every source.
 
-{/* Pending the Klaviyo test-account check: whether Klaviyo resends a pending double opt-in confirmation when an address that has not confirmed yet signs up again. */}
+An address that signs up again before confirming is sent another confirmation email.
 
 When a subscription is removed (the customer opts out, staff delete the subscriber, or you erase the customer), Spree unsubscribes the address, which revokes its email-marketing consent in Klaviyo. Klaviyo keeps consent per account, not per list. Stores that share one Klaviyo account therefore share consent: an unsubscribe sent for one store stops marketing email from all of them.
 
@@ -93,7 +93,7 @@ Confirmations and unsubscribes made in Klaviyo are not reflected in Spree. Klavi
 
 A split checkout on a marketplace is one purchase: it sends one Placed Order with the whole basket, and its sellers' orders send none. Shipments and cancellations are still sent per seller's order.
 
-Each profile carries the customer's email, name and location from their billing address, plus an external id so Klaviyo keeps one profile when the customer changes their email. A guest is identified by email alone.
+Each profile carries the customer's email, name and location from their billing address, plus an external id so Klaviyo keeps one profile when the customer changes their email. A guest is identified by email alone. When a guest registers, Klaviyo adds the external id to their guest profile, so their history stays on one profile.
 
 ### Event properties
 
@@ -137,9 +137,9 @@ Keep in mind:
 
 ## Stores coming from the 1.x extension
 
-The 1.x extension sent each customer's database id as the profile's external id. Turn on **Match profiles by database id** so the profiles it created keep matching. A new Klaviyo account should leave it off: profiles then carry the customer's Spree id (`cus_…`), which you can look up in the dashboard and the API. Stores that share one Klaviyo account should use the same setting.
+The 1.x extension sent each customer's database id as the profile's external id. Turn on **Match profiles by database ID** so the profiles it created keep matching. A new Klaviyo account should leave it off: profiles then carry the customer's Spree id (`cus_…`), which you can look up in the dashboard and the API. Stores that share one Klaviyo account should use the same setting.
 
-{/* Pending the Klaviyo test-account check: what happens to a 1.x profile when this switch is off and the customer's email matches it. */}
+With the switch off, Klaviyo does not match a 1.x profile by its email. It creates a second profile with the same email and the customer's Spree id, and the history the 1.x extension sent stays on the first one. Events, which Spree sends by email, keep going to the older 1.x profile, while profile updates go to the new one.
 
 See the [upgrade guide](/developer/upgrades/5.6-to-6.0#klaviyo) for everything else that changed from 1.x.
 
@@ -169,7 +169,7 @@ Ad blockers and declined cookie consent stop Klaviyo's script, and with it some 
 
 ## Erasing a customer
 
-When you erase a customer, Spree asks every active Klaviyo integration, in every store, to delete the person's profile. The request goes out 30 minutes after the erasure, after the unsubscribes of their newsletter subscriptions. Deletion removes the profile's whole history in Klaviyo and cannot be undone, which is what erasure requires.
+When you erase a customer, Spree asks every active Klaviyo integration, in every store, to delete the person's profile. Klaviyo deletes every profile with their email, so a duplicate goes too. The request goes out 30 minutes after the erasure, after the unsubscribes of their newsletter subscriptions. Deletion removes the profile's whole history in Klaviyo and cannot be undone, which is what erasure requires.
 
 Deletion needs the **Data Privacy (write)** scope. Without it, Klaviyo refuses the request with 403, and the failure is only reported to your error tracker. The profile stays in Klaviyo, so check the scope.
 
