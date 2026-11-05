@@ -39,8 +39,6 @@ require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
-require 'spree/testing_support/url_helpers'
-require 'spree/testing_support/kernel'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree_klaviyo/factories'
 
@@ -71,8 +69,8 @@ RSpec.configure do |config|
   end
 
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
   config.include Spree::TestingSupport::Preferences
-  config.include Spree::TestingSupport::Kernel
 
   config.order = :random
   Kernel.srand config.seed
