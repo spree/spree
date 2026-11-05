@@ -33,6 +33,8 @@ module Spree
     delegate :product, to: :variant
 
     after_save(if: :saved_changes?) { variant.touch }
+    after_commit -> { variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::InStock]) },
+                 if: -> { saved_changes.keys.intersect?(%w[count_on_hand allocated_count backorderable]) }
     after_touch { variant.touch }
     after_destroy { variant.touch }
 

@@ -61,6 +61,7 @@ namespace :spree do
           # Membership is copied verbatim below, so don't rebuild it from the rules.
           collection.marked_for_regenerate_products = false
           collection.save!(validate: false)
+          Spree::Channel.where(store_id: store_id).active.add_collections(collection.id)
 
           # Table-backend translations (collection_translations has no pretty_name;
           # description is ActionText, moved separately below).

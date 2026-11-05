@@ -40,6 +40,9 @@ module Spree
     belongs_to :resource, polymorphic: true, touch: true
     belongs_to :custom_field_definition, class_name: 'Spree::CustomFieldDefinition'
 
+    after_commit -> { resource.auto_match_collections(rule_types: [Spree::CollectionRules::CustomField]) },
+                 if: -> { resource.is_a?(Spree::Product) && custom_field_definition&.collection_condition? }
+
     # API-facing form of the STI `type` column. Returns the token
     # (`short_text`) when the row's type is a registered built-in; falls
     # through to the raw class name for plugin types.

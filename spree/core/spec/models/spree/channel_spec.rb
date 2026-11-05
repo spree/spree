@@ -205,6 +205,49 @@ RSpec.describe Spree::Channel, type: :model do
     end
   end
 
+  describe '#add_collections' do
+    let(:channel) { described_class.create!(store: store, name: 'POS', code: 'pos') }
+    let(:collection) { create(:collection, :unpublished, store: store) }
+
+    it 'publishes the collections, idempotently' do
+      channel.add_collections([collection.id])
+
+      expect { channel.add_collections([collection.id]) }.not_to change(Spree::CollectionPublication, :count)
+      expect(collection.reload.published_on?(channel)).to be(true)
+    end
+
+    it 'keeps an existing window when re-published without one' do
+      future = 1.day.from_now.change(usec: 0)
+      channel.add_collections([collection.id], published_at: future)
+      channel.add_collections([collection.id])
+
+      expect(Spree::CollectionPublication.find_by(channel: channel, collection: collection).published_at).to eq(future)
+    end
+  end
+
+  describe '#remove_collections' do
+    let(:channel) { described_class.create!(store: store, name: 'POS', code: 'pos') }
+    let(:collection) { create(:collection, :unpublished, store: store) }
+
+    it 'unpublishes the collections' do
+      channel.add_collections([collection.id])
+
+      expect(channel.remove_collections([collection.id])).to eq(1)
+      expect(collection.reload.published_on?(channel)).to be(false)
+    end
+  end
+
+  describe '.add_collections' do
+    let!(:pos) { described_class.create!(store: store, name: 'POS', code: 'pos') }
+    let(:collection) { create(:collection, :unpublished, store: store) }
+
+    it 'publishes on every channel in scope' do
+      store.channels.add_collections(collection.id)
+
+      expect(collection.reload.channels).to match_array(store.channels)
+    end
+  end
+
   describe '#remove_products' do
     let(:channel) { described_class.create!(store: store, name: 'POS', code: 'pos') }
     let(:product) { create(:product) }

@@ -9,6 +9,8 @@ module Spree
 
     has_prefix_id :coll
 
+    publishes_events :published, :unpublished
+
     RULES_MATCH_POLICIES = %w[all any].freeze
     # Space format (e.g. 'price asc') is required by the search sort pipeline:
     # FiltersAggregator#to_api_sort splits on a space, and apply_sort maps to 'price'/etc.
@@ -62,6 +64,12 @@ module Spree
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :collection
     has_many :products, through: :product_collections
 
+    has_many :publications, class_name: 'Spree::CollectionPublication', dependent: :destroy, inverse_of: :collection
+    has_many :channels, through: :publications, class_name: 'Spree::Channel'
+
+    has_many :exclusions, class_name: 'Spree::CollectionExclusion', dependent: :delete_all, inverse_of: :collection
+    has_many :excluded_products, through: :exclusions, source: :product, class_name: 'Spree::Product'
+
     has_many :rules, class_name: 'Spree::CollectionRule', dependent: :destroy, inverse_of: :collection
     accepts_nested_attributes_for :rules, allow_destroy: true, reject_if: proc { |attributes|
       attributes['value'].blank?
@@ -91,12 +99,17 @@ module Spree
     validates :sort_order, inclusion: { in: SORT_ORDERS }, presence: true
 
     before_validation :set_permalink, if: :name
+    after_save :apply_pending_publications, if: -> { @pending_publications }
 
     #
     # Scopes
     #
     scope :manual, -> { where.not(automatic: true) }
     scope :automatic, -> { where(automatic: true) }
+    # Collections live on the channel now: a publication exists and its window is open.
+    scope :published_on, lambda { |channel|
+      where(id: Spree::CollectionPublication.published.where(channel_id: channel&.id).select(:collection_id))
+    }
 
     #
     # Ransack
@@ -107,9 +120,12 @@ module Spree
     #
     # Automatic (rule-based) membership
     #
-    after_commit :regenerate_products, on: [:update], if: -> { automatic? && (saved_change_to_automatic? || saved_change_to_rules_match_policy?) }
+    after_commit :regenerate_products, on: [:update], if: -> { saved_change_to_rules_match_policy? && rules.exists? }
     attribute :marked_for_regenerate_products, :boolean, default: true
 
+    # `automatic` means "has rules": RegenerateProducts keeps the column in
+    # step with the rules. Membership mixes rule-matched and hand-picked
+    # products either way.
     def manual?
       !automatic?
     end
@@ -126,6 +142,33 @@ module Spree
       self.permalink = value
     end
 
+    # @param channel [Spree::Channel]
+    # @return [Boolean] whether the collection is visible on the channel right now
+    def published_on?(channel)
+      publications.any? { |publication| publication.channel_id == channel&.id && publication.published? }
+    end
+
+    # Replaces the collection's publications with the given set: one hash per
+    # channel (`channel_id`, optional `published_at` / `unpublished_at`).
+    # Channels left out are unpublished. Applied after save, so a new
+    # collection gets an id first. Channels of another store are ignored.
+    #
+    # @param publications_params [Array<Hash>, Array<Spree::CollectionPublication>]
+    # @return [void]
+    def publications=(publications_params)
+      if publications_params.nil? || publications_params.first.is_a?(Spree::CollectionPublication)
+        super
+      else
+        @publications_assigned = true
+        @pending_publications = publications_params.map { |row| row.to_h.with_indifferent_access }
+      end
+    end
+
+    # @return [Boolean] whether the save carries a publications set
+    def publications_assigned?
+      @publications_assigned == true
+    end
+
     # Rebuild the materialized ProductCollection membership from the rules.
     # Pass only_once: true to fire at most once per object lifecycle.
     #
@@ -138,11 +181,18 @@ module Spree
       self.marked_for_regenerate_products = false if !frozen? && only_once
     end
 
+    # Regenerates in the background, for writes that shouldn't wait for it.
+    #
+    # @return [void]
+    def enqueue_regenerate_products
+      Spree::Collections::RegenerateProductsJob.perform_later(id) if rules.exists?
+    end
+
     # Products matching the automatic rules (mirrors Spree::Category#products_matching_rules).
     #
     # @return [ActiveRecord::Relation]
     def products_matching_rules(opts = {})
-      return Spree::Product.none if manual? || rules.empty?
+      return Spree::Product.none if rules.empty?
 
       currency = opts[:currency] || store.default_currency
       storefront = opts[:storefront] || false
@@ -270,6 +320,29 @@ module Spree
       def generate_slug
         permalink.blank? ? name_with_fallback.to_url : permalink.to_url
       end
+    end
+
+    private
+
+    def apply_pending_publications
+      rows = @pending_publications
+      @pending_publications = nil
+      channels_by_id = store.channels.where(id: rows.map { |row| decode_channel_id(row[:channel_id]) }).index_by(&:id)
+      existing = publications.to_a.index_by(&:channel_id)
+      kept = rows.filter_map do |row|
+        channel = channels_by_id[decode_channel_id(row[:channel_id]).to_i]
+        next unless channel
+
+        publication = existing[channel.id] || publications.build(channel: channel)
+        publication.update!(row.slice(:published_at, :unpublished_at))
+        publication
+      end
+
+      (existing.values - kept).each(&:destroy!)
+    end
+
+    def decode_channel_id(value)
+      Spree::PrefixedId.decode_prefixed_id(value.to_s) || value
     end
   end
 end

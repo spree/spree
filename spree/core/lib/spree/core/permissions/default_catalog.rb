@@ -88,7 +88,8 @@ module Spree
           [Spree::Category, Spree::ProductCategory]
         })
         catalog.register_scope(:collections, group: :catalog, resources: -> {
-          [Spree::Collection, Spree::ProductCollection, Spree::CollectionRule]
+          [Spree::Collection, Spree::ProductCollection, Spree::CollectionRule, Spree::CollectionPublication,
+           Spree::CollectionExclusion]
         })
         catalog.register_scope(:stock, group: :catalog, audiences: %i[store seller], resources: -> {
           [Spree::StockLevel, Spree::StockLocation, Spree::StockMovement,
