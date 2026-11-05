@@ -5099,6 +5099,7 @@ paths:
                   storefront_visible: true
                   searchable: false
                   sortable: false
+                  collection_condition: false
                   filter_key: cf_specs_fabric
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -5111,6 +5112,7 @@ paths:
                   storefront_visible: true
                   searchable: false
                   sortable: false
+                  collection_condition: false
                   filter_key: cf_custom_order_notes
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -5181,6 +5183,7 @@ paths:
                 storefront_visible: true
                 searchable: false
                 sortable: false
+                collection_condition: false
                 filter_key: cf_specs_origin
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -5259,6 +5262,7 @@ paths:
                 storefront_visible: true
                 searchable: false
                 sortable: false
+                collection_condition: false
                 filter_key: cf_specs_fabric
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -5320,6 +5324,7 @@ paths:
                 storefront_visible: false
                 searchable: false
                 sortable: false
+                collection_condition: false
                 filter_key: cf_specs_fabric
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -63816,6 +63821,8 @@ components:
           type: boolean
         sortable:
           type: boolean
+        collection_condition:
+          type: boolean
         filter_key:
           type: string
         created_at:
@@ -63836,6 +63843,7 @@ components:
       - storefront_visible
       - searchable
       - sortable
+      - collection_condition
       - filter_key
       - created_at
       - updated_at
@@ -70985,7 +70993,7 @@ components:
           type: array
           items:
             type: string
-          description: Collections the product is hand-picked into; rule-matched memberships
+          description: Collections the product is hand-picked into; rule memberships
             are left out.
         product_publications:
           type: array
@@ -81740,8 +81748,8 @@ components:
           example: tag
         value:
           type: string
-          description: What the rule compares against. Rule types that name a record
-            (category, product type, seller) take its prefixed id.
+          description: 'What the rule compares against: a prefixed id for the category,
+            product type and seller types.'
           example: summer
         match_policy:
           type: string
@@ -82247,6 +82255,10 @@ components:
           type: boolean
           description: Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`).
             Supported for `short_text` and `number` fields; other types are refused.
+        collection_condition:
+          type: boolean
+          description: Offer this field in collection rules. Product short text, long
+            text, number and boolean fields only.
       required:
       - key
       - field_type
@@ -82285,6 +82297,10 @@ components:
           type: boolean
           description: Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`).
             Supported for `short_text` and `number` fields; other types are refused.
+        collection_condition:
+          type: boolean
+          description: Offer this field in collection rules. Product short text, long
+            text, number and boolean fields only.
     CustomFieldUpdateParams:
       type: object
       properties:
@@ -85395,8 +85411,8 @@ components:
           type: array
           items:
             type: string
-          description: Collections this product is hand-picked into. Memberships the
-            collection rules created are kept; naming one makes it hand-picked.
+          description: Collections this product is hand-picked into. Memberships created
+            by collection rules are kept.
         metadata:
           type: object
           additionalProperties: true
@@ -85697,8 +85713,8 @@ components:
           type: array
           items:
             type: string
-          description: Collections this product is hand-picked into. Memberships the
-            collection rules created are kept; naming one makes it hand-picked.
+          description: Collections this product is hand-picked into. Memberships created
+            by collection rules are kept.
         metadata:
           type: object
           additionalProperties: true

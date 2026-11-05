@@ -8,8 +8,7 @@ export type CollectionRuleParams = {
   /** Wire shorthand for the rule kind, from the collection rule types endpoint. */
   type?: string
   /**
-   * What the rule compares against. Rule types that name a record (category, product type, seller)
-   * take its prefixed id.
+   * What the rule compares against: a prefixed id for the category, product type and seller types.
    */
   value?: string
   /**
