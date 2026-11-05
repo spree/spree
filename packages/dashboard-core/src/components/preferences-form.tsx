@@ -295,9 +295,12 @@ export function PreferenceField({
       return (
         <Field>
           <div className="flex items-start justify-between gap-4">
-            <FieldLabel htmlFor={id} className="cursor-pointer">
-              {displayLabel}
-            </FieldLabel>
+            <div className="flex flex-col gap-1">
+              <FieldLabel htmlFor={id} className="cursor-pointer">
+                {displayLabel}
+              </FieldLabel>
+              {description && <FieldDescription>{description}</FieldDescription>}
+            </div>
             <Switch id={id} checked={!!value} onCheckedChange={(checked) => onChange(checked)} />
           </div>
         </Field>
