@@ -11,7 +11,7 @@ RSpec.describe Spree::RansackableAttributes do
 
   describe 'for the Store API' do
     it 'reaches only the associations a storefront filters by' do
-      expect(Spree::Product.ransackable_associations(:store)).to match_array(%w[tags categories collections])
+      expect(Spree::Product.ransackable_associations(:store)).to match_array(%w[tags categories])
       expect(Spree::Order.ransackable_associations(:store)).to be_empty
     end
 

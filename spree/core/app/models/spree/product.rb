@@ -878,14 +878,13 @@ module Spree
       return if store.nil?
 
       # Fails open: an unreachable cache reads as no pending job.
-      pending_key = "spree/auto_match_collections/#{id}"
-      return if Rails.cache.read(pending_key)
+      return if Rails.cache.read("spree/auto_match_collections/#{store_id}/#{id}")
 
       collections = store.collections.automatic
       collections = collections.with_rule_types(rule_types) if rule_types
       return unless collections.exists?
 
-      Rails.cache.write(pending_key, true, expires_in: 30.seconds)
+      Rails.cache.write("spree/auto_match_collections/#{store_id}/#{id}", true, expires_in: 30.seconds)
 
       Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
     end
