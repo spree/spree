@@ -232,6 +232,7 @@ export function PreferenceField({
   const { t, i18n } = useTranslation()
   const moneyLocale = useMoneyLocale()
   const id = `preference-${field.key}`
+  const descriptionId = `${id}-description`
   // Localize the field label from the preference key when no explicit
   // override is given, falling back to a humanized key for custom/extension
   // preferences that ship no translation.
@@ -299,9 +300,14 @@ export function PreferenceField({
               <FieldLabel htmlFor={id} className="cursor-pointer">
                 {displayLabel}
               </FieldLabel>
-              {description && <FieldDescription>{description}</FieldDescription>}
+              {description && <FieldDescription id={descriptionId}>{description}</FieldDescription>}
             </div>
-            <Switch id={id} checked={!!value} onCheckedChange={(checked) => onChange(checked)} />
+            <Switch
+              id={id}
+              aria-describedby={description ? descriptionId : undefined}
+              checked={!!value}
+              onCheckedChange={(checked) => onChange(checked)}
+            />
           </div>
         </Field>
       )
@@ -416,15 +422,20 @@ export function PreferenceField({
         </Field>
       )
 
+    // SecretInput shows its own help only while a secret is stored, so the
+    // preference's description sits below it in both states.
     case 'password':
       return (
-        <SecretInput
-          id={id}
-          label={displayLabel}
-          value={value}
-          onChange={onChange}
-          redactWhenMasked={!!redactPasswords}
-        />
+        <div className="flex flex-col gap-1">
+          <SecretInput
+            id={id}
+            label={displayLabel}
+            value={value}
+            onChange={onChange}
+            redactWhenMasked={!!redactPasswords}
+          />
+          {description && <FieldDescription>{description}</FieldDescription>}
+        </div>
       )
 
     default:
