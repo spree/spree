@@ -57,6 +57,10 @@ A collection with rules now accepts hand-picked products too, and any collection
 - Rows of `spree_product_collections` carry a `source` (`manual` or `rule`). Code that inserts memberships directly must set it. The column becomes required in Spree 6.2.
 - A product's `collection_ids` in the Admin API lists and sets the collections it is hand-picked into. Memberships created by rules are kept when you write it.
 
+### Store API product search filters by collection through `in_collection` only
+
+`q[in_collection]` accepts only collections published on the request's channel; any other collection filters to nothing. Ransack conditions on the `collections` association (`q[collections_id_eq]` and similar) are no longer accepted by the Store API, because they could reach unpublished collections. Use `q[in_collection]` instead.
+
 ### Old collection and category permalinks keep working
 
 A request for a renamed collection or category by its old permalink now returns the record instead of a 404. Compare the returned `permalink` with the requested one to redirect.

@@ -404,7 +404,10 @@ module Spree
     # The storefront filters by tag, category and collection; every other hop
     # (variants, prices, channels) reaches back-office data, and variants lead
     # back to the product, which lets one filter chain joins without end.
-    self.storefront_ransackable_associations = %w[tags categories collections]
+    # Not collections: the Store API filters by collection through the
+    # `in_collection` scope, which checks the collection is published on the
+    # channel; a Ransack predicate on the association would skip that check.
+    self.storefront_ransackable_associations = %w[tags categories]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
                                              search in_stock out_of_stock with_option_value_ids
