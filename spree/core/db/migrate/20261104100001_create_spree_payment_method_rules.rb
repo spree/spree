@@ -16,6 +16,6 @@ class CreateSpreePaymentMethodRules < ActiveRecord::Migration[8.1]
     end
 
     add_index :spree_payment_method_rules, [:payment_method_id, :type], unique: true,
-              name: 'idx_payment_method_rules_uniqueness'
+                                                                        name: 'idx_payment_method_rules_uniqueness'
   end
 end
