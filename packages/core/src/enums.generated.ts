@@ -42,6 +42,10 @@ export const COLLECTION_RULE_MATCH_POLICIES = [
   'is_not_equal_to',
   'contains',
   'does_not_contain',
+  'greater_than',
+  'less_than',
+  'starts_with',
+  'ends_with',
 ] as const
 export type CollectionRuleMatchPolicy = (typeof COLLECTION_RULE_MATCH_POLICIES)[number]
 
