@@ -41,6 +41,11 @@ export type VariantParams = {
   cartons_per_pallet?: number | null
   track_inventory?: boolean
   /**
+   * Whether customers may send this variant back through self-service returns. Null follows the
+   * product.
+   */
+  returnable?: boolean | null
+  /**
    * Sell this variant before it's in stock. Adds the pre-order label and ships-by promise; the cap
    * comes from `backorder_limit`, an incoming stock count, or backorder.
    */

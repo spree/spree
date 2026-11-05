@@ -35,7 +35,12 @@ describe 'rendered emails', type: :mailer do
       'new purchase notification' => Spree::OrderGroupMailer.store_owner_notification_email(order_group),
       'fulfillment' => Spree::FulfillmentMailer.fulfilled_email(create(:shipped_order, store: store).fulfillments.first),
       'files ready' => Spree::DigitalAssetMailer.files_ready_email(order_with_downloads),
+      'order lookup' => Spree::OrderMailer.lookup_email(create(:shipped_order, store: store, email: 'guest@example.com').id),
+      'return requested' => Spree::ReturnMailer.requested_email(create(:return, store: store)),
+      'return approved' => Spree::ReturnMailer.approved_email(create(:return, store: store, status: 'approved', approved_at: Time.current)),
       'refund' => Spree::ReturnMailer.refunded_email(create(:received_return, store: store)),
+      'exchange requested' => Spree::ExchangeMailer.requested_email(create(:exchange, store: store)),
+      'exchange approved' => Spree::ExchangeMailer.approved_email(create(:exchange, store: store, status: 'approved', approved_at: Time.current)),
       'password reset' => Spree::CustomerMailer.password_reset_email(create(:user, first_name: payload), 'token', store),
       'data export' => Spree::CustomerMailer.data_export_email(create(:data_request, store: store)),
       'data request confirmation' => Spree::CustomerMailer.data_request_confirmation_email(

@@ -28,6 +28,7 @@ export const OrderSchema = z.object({
   market_id: z.string().nullable(),
   withdrawal_period_ends_at: z.string().nullable(),
   within_withdrawal_period: z.boolean(),
+  returns_eligibility: z.object({ eligible: z.boolean(), errors: z.array(z.object({ code: z.string(), message: z.string() })), return_window_ends_at: z.string().nullable(), withdrawal_period_ends_at: z.string().nullable() }).optional(),
   shipping_eq_billing_address: z.boolean(),
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
@@ -120,6 +121,7 @@ export const OrderSchema = z.object({
   market_id: z.ZodType<Order['market_id']>;
   withdrawal_period_ends_at: z.ZodType<Order['withdrawal_period_ends_at']>;
   within_withdrawal_period: z.ZodType<Order['within_withdrawal_period']>;
+  returns_eligibility: z.ZodOptional<z.ZodType<Exclude<Order['returns_eligibility'], undefined>>>;
   shipping_eq_billing_address: z.ZodType<Order['shipping_eq_billing_address']>;
   cart_id: z.ZodType<Order['cart_id']>;
   channel_id: z.ZodType<Order['channel_id']>;

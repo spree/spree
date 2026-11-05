@@ -971,6 +971,13 @@
         "digital_asset_authorized_days": {
           "label": "可用天数"
         }
+      },
+      "returns": {
+        "label": "退货"
+      },
+      "returnable": {
+        "label": "顾客可以退回此商品",
+        "help": "仅在法律允许时关闭此项，例如定制商品或很快变质的商品。在欧盟，仅标注为最终特价并不能取消撤销权，密封卫生用品也仅在拆封后才不适用撤销权。订单保留下单时的设置。"
       }
     },
     "image_upload": {
@@ -1710,7 +1717,12 @@
           "packing_help": "此商品成批出库的方式。货运报价依据这些数字计算。",
           "no_carton_types": "在<settingsLink>设置 → 包装类型</settingsLink>中添加纸箱类型，以记录此产品的包装方式。",
           "carton_placeholder": "未装箱",
-          "pending_save": "此处的更改随商品一并保存。"
+          "pending_save": "此处的更改随商品一并保存。",
+          "returnable": {
+            "inherit": "与商品相同",
+            "true": "可退货",
+            "false": "不可退货"
+          }
         },
         "title": "变体",
         "variant_label": "变体"

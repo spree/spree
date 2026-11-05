@@ -23,6 +23,7 @@ export const ProductSchema = z.object({
   purchasable: z.boolean(),
   preorder: z.boolean(),
   in_stock: z.boolean(),
+  returnable: z.boolean(),
   backorderable: z.boolean(),
   available: z.boolean(),
   description: z.string().nullable(),

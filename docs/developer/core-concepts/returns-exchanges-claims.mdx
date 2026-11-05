@@ -49,7 +49,49 @@ Each step is its own API call, because each one needs information the last one d
 
 ## Customer self-service
 
-Customers can open a return or a claim on their own order and follow its progress. Approving, receiving and refunding stay with the merchant.
+Customers return or exchange what they bought from their order page, and report a damaged or missing item as a claim. Opening a request and withdrawing it before the store acts are the customer's. Approving, receiving and refunding stay with the merchant. Any storefront can build a returns portal on the order page with the Store API below; the [Next.js storefront](https://github.com/spree/storefront) is adding one.
+
+### Showing what can come back
+
+The order tells the storefront whether returns are open and what each shipped unit allows, so no rule is restated in the storefront:
+
+- `returns_eligibility` on the order says whether the customer may open a return now, and why not when they can't. It also carries the store's return window and the EU withdrawal deadline.
+- Each fulfillment's `items` row lists its shipped `units`. A unit carries the `fulfillment_item_id` a return is opened against, the `returnable_quantity` still available, and a `non_returnable_reason` when nothing is, such as `already_returned`, `not_returnable` (final sale) or `digital_content`.
+
+Both answers come from the same return rules that decide the create call, including any your store adds (see [Return policy](#return-policy)).
+
+<CodeGroup>
+
+```typescript Store SDK
+const order = await client.orders.get('or_xxx')
+
+// A checkout split across sellers answers with its group; returns are opened
+// per seller order, so keep each unit with the order it is returned through.
+const sellerOrders = 'orders' in order ? order.orders : [order]
+const returnable = sellerOrders
+  .filter((o) => o.returns_eligibility?.eligible)
+  .flatMap((o) =>
+    o.fulfillments
+      .flatMap((f) => f.items)
+      .flatMap((row) => (row.units ?? []).map((unit) => ({ orderId: o.id, itemId: row.item_id, variantId: row.variant_id, unit })))
+      .filter(({ unit }) => unit.returnable_quantity > 0),
+  )
+
+// The store's reasons, for the form
+const { data: reasons } = await client.returnReasons.list()
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/orders/or_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer <customer JWT>'
+```
+
+</CodeGroup>
+
+### Opening a return or an exchange
+
+A return refunds what comes back. An exchange swaps a shipped unit for another purchasable variant of the same product, such as a different size or colour; anything else is a return and a new order, because the storefront cannot take a payment for a difference.
 
 <CodeGroup>
 
@@ -61,14 +103,19 @@ const returnRequest = await client.orders.returns.create('or_xxx', {
   memo: 'Too small',
 })
 
+// Swap a unit for another variant of the same product
+const exchange = await client.orders.exchanges.create('or_xxx', {
+  items: [{ fulfillment_item_id: 'fi_yyy', new_variant_id: 'variant_xxx', quantity: 1 }],
+})
+
+// Withdraw a request the store has not acted on yet (`cancelable`)
+await client.orders.returns.cancel('or_xxx', returnRequest.id)
+
 // Report a problem
 const claim = await client.orders.claims.create('or_xxx', {
   items: [{ line_item_id: 'li_xxx', quantity: 1, description: 'Arrived cracked' }],
   reason_id: 'clr_xxx',
 })
-
-// Follow progress
-const returns = await client.orders.returns.list('or_xxx')
 ```
 
 ```bash cURL
@@ -82,7 +129,32 @@ curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_xxx/returns' \
 
 </CodeGroup>
 
-Claim reasons are records each store owns. New stores are seeded with *Arrived damaged*, *Never arrived*, *Wrong item sent*, *Missing item from order* and *Item not as described*, and merchants can add, rename or remove their own.
+A request the store's rules refuse answers `422` with the rule's message. Returns and exchanges show the customer whether they are still `cancelable`, and for returns whether a prepaid label is waiting (`label_available`) and where the parcel is (`tracking`, `tracking_url`).
+
+Claim reasons are records each store owns. New stores are seeded with *Arrived damaged*, *Never arrived*, *Wrong item sent*, *Missing item from order* and *Item not as described*, and merchants can add, rename or remove their own. Both vocabularies are listed for customers through `returnReasons.list()` and `claimReasons.list()`.
+
+### Guests
+
+A guest opens their order with the order token, sent as `X-Spree-Token`. When a guest has lost the link, a "find my order" form sends their order number and email to `orderLookups.create()`. On a match, a link to the order goes to the address the order was placed with. The answer is the same `202` whether or not anything matched, so the form never reveals which address placed an order.
+
+<CodeGroup>
+
+```typescript Store SDK
+await client.orderLookups.create({ number: 'R123456789', email: 'customer@example.com' })
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/order_lookups' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "number": "R123456789", "email": "customer@example.com" }'
+```
+
+</CodeGroup>
+
+### Emails
+
+Customers are emailed when a return or exchange request is opened and again when it is approved, with where to send the goods. A guest's lookup link is emailed too. With [Spree Emails](/developer/customization/emails) these are editable templates. A storefront that sends its own emails subscribes to the `return.requested`, `exchange.requested` and `order.lookup_requested` [webhooks](/developer/core-concepts/webhooks): the return and exchange events carry the order and the lines, and the lookup event carries the order token, so it reaches only endpoints that name it.
 
 ## Processing a return
 
@@ -299,13 +371,56 @@ curl 'https://api.mystore.com/api/v3/admin/claims?q[created_at_gt]=2026-08-01' \
 
 ## Return policy
 
-Spree ships one built-in rule: a return window, counted from when the order was placed and set per market (30 days by default). Whether a customer may open a return is store policy, and it's checked when the return is created — so you can hold customers to that window while letting staff make an exception for a good customer, and vary the rule by market where local law requires it.
+Whether a customer may open a return is decided when it is created, by a set of rules any store can change. Spree ships three, all applied to customers and advisory for staff, so a supervisor can still make an exception for a good customer:
 
-Set the return window per market, or express a more specific rule in your own application. See [Configuration](/developer/customization/configuration) and [Services & Workflows](/developer/customization/workflows).
+- **Return window.** Counted from when the order was placed and set per market (30 days by default).
+- **Returnable goods.** A product can be marked as not returnable, and a variant can override its product. The answer is frozen onto each order line when the order is placed, so marking a product final sale later never takes back a right already sold. Units must also have shipped.
+- **Digital content.** Digitally delivered units cannot come back.
+
+Mark goods as not returnable from the product page in the admin dashboard, or with `returnable` on the Admin API's products and variants.
+
+Set the return window per market, or express a more specific rule in your own application, such as a category that is always final sale. A rule is a handler on the `returns.create.validate` hook; register the same class on `exchanges.create.validate` to apply it to exchanges. The storefront's preview runs the same handlers, so your rule's message reaches customers before they pick anything. See [Configuration](/developer/customization/configuration) and [Services & Workflows](/developer/customization/workflows).
+
+```ruby server/app/services/my_store/swimwear_is_final_sale.rb
+module MyStore
+  class SwimwearIsFinalSale
+    def call(workflow)
+      return if workflow.created_by.present? # staff may make exceptions
+
+      swimwear = Array(workflow.items).select do |item|
+        item[:fulfillment_item].variant.product.categories.exists?(permalink: 'swimwear')
+      end
+      return if swimwear.empty?
+
+      workflow.errors.add(:base, :final_sale_category, message: 'Swimwear is final sale')
+      workflow.reject!
+    end
+  end
+end
+```
+
+```ruby server/config/initializers/spree.rb
+Spree.hooks.register('returns.create.validate', 'MyStore::SwimwearIsFinalSale')
+Spree.hooks.register('exchanges.create.validate', 'MyStore::SwimwearIsFinalSale')
+```
+
+### EU consumer rights
+
+The EU Consumer Rights Directive gives online buyers 14 days to withdraw from a purchase. Spree covers the parts a platform can:
+
+| The rule | What Spree does |
+| --- | --- |
+| 14 days to withdraw, from receipt of the last parcel (Art. 9) | Each market sets its withdrawal period, and the order shows `withdrawal_period_ends_at` once everything has been delivered. Keep your return window at least as long. |
+| A withdrawal sent through the website is acknowledged without delay (Art. 11(3)) | The customer is emailed the moment a request is opened. |
+| The refund goes back the way the money came (Art. 13(1)) | Refunds default to the original payment method, and customers cannot choose another. |
+| Exempt goods: personalised goods, goods that deteriorate or expire rapidly, sealed hygiene goods once unsealed (Art. 16) | Mark only exempt products as not returnable; a final sale label alone does not end the right of withdrawal. Perishable goods qualify only when they spoil quickly. The API exposes `returnable` on the product, variant and line item. Your storefront must show it before purchase, since Spree cannot. Sealed hygiene goods stay returnable, because only an unsealed one is exempt, and staff refuse opened ones on arrival. State on the product page that unsealing ends the right of withdrawal (Art. 6(1)(k)). |
+| Digital content once supply has begun (Art. 16(m)) | Customers cannot return digital content. The exemption only holds if the customer gave prior express consent to immediate supply and acknowledged losing the right, and you confirmed it. Collect that at checkout. Where you did not, staff can still open the return, or remove `Spree::Returns::DigitalContentValidator` from the hooks. |
+
+Some obligations stay with you: refund within 14 days of getting the goods back or proof they were sent, and state in your return policy who pays for sending goods back. Within the withdrawal period you cannot refuse a valid request, so you may approve such requests automatically with a handler on `returns.create.after_create` that calls the approve workflow when `order.within_withdrawal_period?`.
 
 ## Events
 
-Each step publishes an [event](/developer/core-concepts/events) — `return.received`, `return.refunded`, `exchange.fulfilled`, `claim.resolved` — which also reach [webhooks](/developer/core-concepts/webhooks).
+Each step publishes an [event](/developer/core-concepts/events) — `return.requested`, `return.received`, `return.refunded`, `exchange.requested`, `exchange.fulfilled`, `claim.resolved` — which also reach [webhooks](/developer/core-concepts/webhooks).
 
 Returns and claims also update the order's [payment status](/developer/core-concepts/orders#statuses), so a refunded order reflects it without any manual bookkeeping.
 

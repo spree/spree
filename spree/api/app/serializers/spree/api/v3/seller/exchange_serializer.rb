@@ -11,6 +11,11 @@ module Spree
         class ExchangeSerializer < V3::ExchangeSerializer
           without_formatted_money(:seller)
 
+          # A seller reads their own goods coming back, never the buyer's order.
+          _attributes.delete(:order)
+          # Whether the customer may still withdraw it; a seller may cancel more.
+          _attributes.delete(:cancelable)
+
           # No guest price gating here, so the inherited money fields are always present.
           typelize price_difference: [:string, nullable: false]
 

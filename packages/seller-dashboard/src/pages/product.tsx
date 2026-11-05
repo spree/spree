@@ -16,6 +16,7 @@ import {
   type ProductFormValues,
   productFormSchema,
   productToFormValues,
+  ReturnsCard,
   Slot,
   useAssignableVariants,
   VariantsCard,
@@ -141,6 +142,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         // means "leave it".
         product_type_id: values.product_type_id ?? null,
         delivery_profile_id: values.delivery_profile_id ?? undefined,
+        returnable: values.returnable,
         // Both lists are the whole intent: anything the seller removed is
         // absent here, which is what tells the API to drop it.
         // The video address and the focal point ride along because the
@@ -287,6 +289,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 />
               )}
               <CategorizationCard form={form} />
+              <ReturnsCard form={form} />
               <Slot name="seller.product.form_sidebar" context={{ product, mode }} />
             </>
           }

@@ -382,4 +382,15 @@ describe Spree::OrderMailer, type: :mailer do
       expect(email_body(payment_link_email)).to include(payment_url)
     end
   end
+
+  describe '#lookup_email' do
+    let(:guest_order) { create(:shipped_order, store: store, customer: nil, email: 'guest@example.com') }
+
+    it 'sends the guest a link to the order, with its token, at the order address' do
+      message = described_class.lookup_email(guest_order.id)
+
+      expect(message.to).to contain_exactly(guest_order.email)
+      expect(email_body(message)).to include("/orders/#{guest_order.prefixed_id}?token=#{guest_order.token}")
+    end
+  end
 end

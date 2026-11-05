@@ -16,6 +16,10 @@ class Spree::OrderPreview < ActionMailer::Preview
     Spree::OrderMailer.store_owner_notification_email(order)
   end
 
+  def lookup_email
+    Spree::OrderMailer.lookup_email(order.id)
+  end
+
   private
 
   # The most recent complete order, with its locale overridden in memory when the

@@ -888,6 +888,23 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.name).to eq('Updated Name')
     end
 
+    # Final sale, or goods the EU right of withdrawal exempts. A variant may
+    # say otherwise, and nil hands the decision back to the product.
+    it 'marks a product non-returnable and lets a variant override it' do
+      variant = create(:variant, product: product)
+
+      patch :update, params: {
+        id: product.prefixed_id,
+        returnable: false,
+        variants: [{ id: variant.prefixed_id, returnable: true }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['returnable']).to be(false)
+      expect(product.reload.returnable).to be(false)
+      expect(variant.reload.returnable?).to be(true)
+    end
+
     # A store whose language writes a comma decimal (nl, de, fr) must still
     # read the dashboard's canonical "49.50" as forty-nine fifty, and saving an
     # untouched price must not grow it by a power of ten.

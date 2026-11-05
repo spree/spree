@@ -1097,8 +1097,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3476979
-                  slug: product-3476979
+                  name: Product 3576979
+                  slug: product-3576979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1108,6 +1108,7 @@ paths:
                   purchasable: true
                   preorder: false
                   in_stock: false
+                  returnable: true
                   backorderable: true
                   available: true
                   description: Accusantium ex dicta error nemo ipsa vel eaque porro.
@@ -1390,8 +1391,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3959085
-                  slug: product-3959085
+                  name: Product 4149085
+                  slug: product-4149085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1401,6 +1402,7 @@ paths:
                   purchasable: true
                   preorder: false
                   in_stock: false
+                  returnable: true
                   backorderable: true
                   available: true
                   description: A comfortable cotton t-shirt.
@@ -1422,8 +1424,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 3968209
-                  slug: product-3968209
+                  name: Product 4158209
+                  slug: product-4158209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1433,6 +1435,7 @@ paths:
                   purchasable: true
                   preorder: false
                   in_stock: false
+                  returnable: true
                   backorderable: true
                   available: true
                   description: Quasi nostrum error iste autem recusandae consequuntur
@@ -1552,8 +1555,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4236885
-                slug: product-4236885
+                name: Product 4426885
+                slug: product-4426885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1563,6 +1566,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: true
                 description: A comfortable cotton t-shirt.
@@ -2037,7 +2041,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 362 Lovely Street
+                  address1: 366 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2062,7 +2066,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 363 Lovely Street
+                  address1: 367 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2087,7 +2091,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 364 Lovely Street
+                  address1: 368 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2190,7 +2194,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a9cd29e72a70654182038480207bd929343f6a07
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--cb9e55799d007ef08f693788d6247d168359bd11
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -2198,7 +2202,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--d1ccdf3e94900f0c8f62feb07f43a3d33eb3b0df
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--bbf3d8b7ce4a43e823a6b4402425a8be4a685a5e
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -2505,9 +2509,10 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 318715
-                    slug: product-318715
+                    name: Product 328715
+                    slug: product-328715
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -2626,9 +2631,10 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3192171
-                    slug: product-3192171
+                    name: Product 3292171
+                    slug: product-3292171
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -2915,7 +2921,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 323307 was removed because it was sold out
+                  message: Product 333307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -3158,9 +3164,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3243263
-                  slug: product-3243263
+                  name: Product 3343263
+                  slug: product-3343263
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3382,9 +3389,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3268992
-                  slug: product-3268992
+                  name: Product 3368992
+                  slug: product-3368992
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3413,7 +3421,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 384 Lovely Street
+                  address1: 388 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3439,7 +3447,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 383 Lovely Street
+                  address1: 387 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3631,9 +3639,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3294794
-                  slug: product-3294794
+                  name: Product 3394794
+                  slug: product-3394794
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3686,8 +3695,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 174
-                    code: UPS_GROUND_192
+                    name: UPS Ground 176
+                    code: UPS_GROUND_194
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -3710,7 +3719,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 174
+                    name: UPS Ground 176
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -3729,8 +3738,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 174
-                      code: UPS_GROUND_192
+                      name: UPS Ground 176
+                      code: UPS_GROUND_194
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -3742,7 +3751,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 390 Lovely Street
+                  address1: 394 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3765,7 +3774,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 389 Lovely Street
+                  address1: 393 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3952,9 +3961,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3622614
-                  slug: product-3622614
+                  name: Product 3722614
+                  slug: product-3722614
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4147,9 +4157,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3633461
-                  slug: product-3633461
+                  name: Product 3733461
+                  slug: product-3733461
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4336,9 +4347,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3658182
-                  slug: product-3658182
+                  name: Product 3828182
+                  slug: product-3828182
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4391,8 +4403,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 195
-                    code: UPS_GROUND_214
+                    name: UPS Ground 203
+                    code: UPS_GROUND_222
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4415,7 +4427,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 195
+                    name: UPS Ground 203
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -4434,8 +4446,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 195
-                      code: UPS_GROUND_214
+                      name: UPS Ground 203
+                      code: UPS_GROUND_222
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4448,7 +4460,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 509 Lovely Street
+                  address1: 533 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4657,9 +4669,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3675702
-                  slug: product-3675702
+                  name: Product 3845702
+                  slug: product-3845702
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4901,9 +4914,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3719569
-                  slug: product-3719569
+                  name: Product 3889569
+                  slug: product-3889569
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -5031,10 +5045,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 37463 cannot be delivered to the selected address
+                  message: Product 39163 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 375298 cannot be delivered to the selected address
+                  message: Product 392298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -5093,9 +5107,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 37463
-                  slug: product-37463
+                  name: Product 39163
+                  slug: product-39163
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -5124,9 +5139,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 375298
-                  slug: product-375298
+                  name: Product 392298
+                  slug: product-392298
                   options_text: ''
+                  returnable: true
                   price: '19.99'
                   display_price: "$19.99"
                   total: '19.99'
@@ -5340,9 +5356,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3819165
-                  slug: product-3819165
+                  name: Product 3989165
+                  slug: product-3989165
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -5620,7 +5637,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 221
+                  name: Credit Card 237
                   description:
                   type: bogus
                   session_required: true
@@ -5707,7 +5724,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 222
+                  name: Credit Card 238
                   description:
                   type: bogus
                   session_required: true
@@ -5775,7 +5792,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 224
+                  name: Credit Card 240
                   description:
                   type: bogus
                   session_required: true
@@ -5876,7 +5893,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 225
+                  name: Credit Card 241
                   description:
                   type: bogus
                   session_required: true
@@ -6148,9 +6165,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4469789
-                  slug: product-4469789
+                  name: Product 4679789
+                  slug: product-4679789
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -6333,9 +6351,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 448179
-                  slug: product-448179
+                  name: Product 469179
+                  slug: product-469179
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -6546,6 +6565,291 @@ paths:
             schema:
               "$ref": "#/components/schemas/CreateClaimParams"
         required: true
+  "/api/v3/store/orders/{order_id}/exchanges":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    get:
+      summary: List exchanges
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The exchanges opened on one of the customer's orders, newest first.
+        Accessible via JWT or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `fulfilled`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Exchange
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
+      responses:
+        '200':
+          description: exchanges listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: exch_UkLWZg9DAJ
+                  number: EX1001
+                  status: requested
+                  cancelable: true
+                  order_id: or_UkLWZg9DAJ
+                  reason_id:
+                  price_difference: '9.99'
+                  display_price_difference: "$9.99"
+                  approved_at:
+                  received_at:
+                  fulfilled_at:
+                  canceled_at:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Exchange"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Open an exchange
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Swaps shipped units of one of the customer's orders for another
+        purchasable variant of the same product — a different size or colour. Approving,
+        receiving and sending the replacement are the merchant's. Accessible via JWT
+        or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '201':
+          description: exchange opened
+          content:
+            application/json:
+              example:
+                id: exch_gbHJdmfrXB
+                number: EX1002
+                status: requested
+                cancelable: true
+                order_id: or_gbHJdmfrXB
+                reason_id:
+                price_difference: '9.99'
+                display_price_difference: "$9.99"
+                approved_at:
+                received_at:
+                fulfilled_at:
+                canceled_at:
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+        '422':
+          description: the replacement is not a variant of the same product
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: An exchange can only swap an item for another available
+                    variant of the same product
+                  details:
+                    base:
+                    - An exchange can only swap an item for another available variant
+                      of the same product
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateExchangeParams"
+        required: true
+  "/api/v3/store/orders/{order_id}/exchanges/{id}/cancel":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Exchange prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Withdraw an exchange request
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Withdraws an exchange the customer opened, while the merchant has
+        not acted on it yet (`cancelable` on the exchange). Accessible via JWT or
+        the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '200':
+          description: exchange withdrawn
+          content:
+            application/json:
+              example:
+                id: exch_UkLWZg9DAJ
+                number: EX1001
+                status: canceled
+                cancelable: false
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                price_difference: '9.99'
+                display_price_difference: "$9.99"
+                approved_at:
+                received_at:
+                fulfilled_at:
+                canceled_at: '2026-01-15T12:00:00Z'
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+  "/api/v3/store/order_lookups":
+    post:
+      summary: Find an order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+      description: '"Find my order" for a guest who lost the confirmation email. When
+        the order number and email match an order, a link to it is emailed to that
+        address. The answer is always 202, match or not, so it never reveals which
+        address placed an order.'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: lookup accepted for a miss, without saying so
+          content:
+            application/json:
+              example:
+                message: If we found an order for these details, we have emailed a
+                  link to it.
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateOrderLookupParams"
+        required: true
   "/api/v3/store/orders/{id}":
     get:
       summary: Get an order
@@ -6633,6 +6937,11 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                returns_eligibility:
+                  eligible: true
+                  errors: []
+                  return_window_ends_at: '2026-02-14T12:00:00Z'
+                  withdrawal_period_ends_at:
                 shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
@@ -6694,9 +7003,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 385496
-                  slug: product-385496
+                  name: Product 404496
+                  slug: product-404496
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -6746,6 +7056,13 @@ paths:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
+                    returnable_quantity: 0
+                    non_returnable_reason: not_shipped
+                    units:
+                    - fulfillment_item_id: fi_UkLWZg9DAJ
+                      quantity: 1
+                      returnable_quantity: 0
+                      non_returnable_reason: not_shipped
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -6758,8 +7075,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
-                    code: UPS_GROUND_228
+                    name: UPS Ground 219
+                    code: UPS_GROUND_238
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6782,7 +7099,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 209
+                    name: UPS Ground 219
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6801,8 +7118,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 209
-                      code: UPS_GROUND_228
+                      name: UPS Ground 219
+                      code: UPS_GROUND_238
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6814,7 +7131,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 565 Lovely Street
+                  address1: 593 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6837,7 +7154,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 566 Lovely Street
+                  address1: 594 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6880,6 +7197,100 @@ paths:
                   message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/return_reasons":
+    get:
+      summary: List return reasons
+      tags:
+      - Orders
+      security:
+      - api_key: []
+      description: Why goods come back, offered when opening a return or an exchange.
+        Active reasons only, by name; the merchant owns the list.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: rar_UkLWZg9DAJ
+                  name: Wrong size
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ReturnReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/store/claim_reasons":
+    get:
+      summary: List claim reasons
+      tags:
+      - Orders
+      security:
+      - api_key: []
+      description: What went wrong with a delivery, offered when filing a claim. Active
+        reasons only, by name; the merchant owns the list.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: clr_UkLWZg9DAJ
+                  name: Wrong size
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ClaimReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/orders/{order_id}/returns":
     parameters:
     - name: order_id
@@ -6964,6 +7375,10 @@ paths:
                 - id: ret_UkLWZg9DAJ
                   number: RET1001
                   status: requested
+                  cancelable: true
+                  label_available: false
+                  tracking:
+                  tracking_url:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   refund_total: '10.00'
@@ -7033,6 +7448,10 @@ paths:
                 id: ret_gbHJdmfrXB
                 number: RET1002
                 status: requested
+                cancelable: true
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_gbHJdmfrXB
                 reason_id: rar_UkLWZg9DAJ
                 refund_total: '10.00'
@@ -7051,6 +7470,88 @@ paths:
             schema:
               "$ref": "#/components/schemas/CreateReturnParams"
         required: true
+  "/api/v3/store/orders/{order_id}/returns/{id}/cancel":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Return prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Withdraw a return request
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Withdraws a return the customer opened, while the merchant has
+        not acted on it yet (`cancelable` on the return). Accessible via JWT or the
+        order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return withdrawn
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: canceled
+                cancelable: false
+                label_available: false
+                tracking:
+                tracking_url:
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.00'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.00'
+                display_refund_tax_total: "$0.00"
+                approved_at:
+                received_at:
+                refunded_at:
+                canceled_at: '2026-01-15T12:00:00Z'
+              schema:
+                "$ref": "#/components/schemas/Return"
+        '422':
+          description: the merchant has already acted on it
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: This request can no longer be withdrawn, because the store
+                    has already acted on it
+                  details:
+                    base:
+                    - This request can no longer be withdrawn, because the store has
+                      already acted on it
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/customers/me/addresses":
     get:
       summary: List customer addresses
@@ -7166,7 +7667,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 335 Lovely Street
+                  address1: 339 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7191,7 +7692,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 336 Lovely Street
+                  address1: 340 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7216,7 +7717,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 337 Lovely Street
+                  address1: 341 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7430,7 +7931,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 349 Lovely Street
+                address1: 353 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -7516,7 +8017,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 355 Lovely Street
+                address1: 359 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -8074,9 +8575,10 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3495270
-                    slug: product-3495270
+                    name: Product 3595270
+                    slug: product-3595270
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -8138,8 +8640,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 187
-                      code: UPS_GROUND_205
+                      name: UPS Ground 189
+                      code: UPS_GROUND_207
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8162,7 +8664,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 187
+                      name: UPS Ground 189
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -8181,8 +8683,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 187
-                        code: UPS_GROUND_205
+                        name: UPS Ground 189
+                        code: UPS_GROUND_207
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -8194,7 +8696,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 449 Lovely Street
+                    address1: 453 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8217,7 +8719,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 450 Lovely Street
+                    address1: 454 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -8403,9 +8905,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3515633
-                  slug: product-3515633
+                  name: Product 3615633
+                  slug: product-3615633
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -8467,8 +8970,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 189
-                    code: UPS_GROUND_207
+                    name: UPS Ground 191
+                    code: UPS_GROUND_209
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -8491,7 +8994,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 189
+                    name: UPS Ground 191
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -8510,8 +9013,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 189
-                      code: UPS_GROUND_207
+                      name: UPS Ground 191
+                      code: UPS_GROUND_209
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -8523,7 +9026,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 455 Lovely Street
+                  address1: 459 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8546,7 +9049,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 456 Lovely Street
+                  address1: 460 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8740,7 +9243,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 465 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8765,7 +9268,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 462 Lovely Street
+                  address1: 466 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8791,7 +9294,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 462 Lovely Street
+                  address1: 466 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8817,7 +9320,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 461 Lovely Street
+                  address1: 465 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8913,7 +9416,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 463 Lovely Street
+                  address1: 467 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8938,7 +9441,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 464 Lovely Street
+                  address1: 468 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8964,7 +9467,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 464 Lovely Street
+                  address1: 468 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8990,7 +9493,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 463 Lovely Street
+                  address1: 467 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9690,7 +10193,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 227
+                  name: Credit Card 243
                   description:
                   type: bogus
                   session_required: true
@@ -9782,7 +10285,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 230
+                  name: Credit Card 246
                   description:
                   type: bogus
                   session_required: true
@@ -9863,7 +10366,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 232
+                  name: Credit Card 248
                   description:
                   type: bogus
                   session_required: true
@@ -11298,7 +11801,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-556
+                  sku: SKU-583
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11308,6 +11811,7 @@ paths:
                   in_stock: false
                   backorderable: true
                   preorder: false
+                  returnable: true
                   weight: 0.0
                   height:
                   width:
@@ -11384,7 +11888,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-557
+                  sku: SKU-584
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11394,6 +11898,7 @@ paths:
                   in_stock: false
                   backorderable: true
                   preorder: false
+                  returnable: true
                   weight: 0.0
                   height:
                   width:
@@ -11812,7 +12317,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-03T09:41:00.567Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11830,19 +12335,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-03T09:41:00.572Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-03T09:41:00.575Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-11-03T09:41:00.563Z'
                 meta:
                   page: 1
                   limit: 25
@@ -12510,7 +13015,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 419 Lovely Street
+                  address1: 423 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -12644,7 +13149,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 425 Lovely Street
+                address1: 429 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -12914,9 +13419,10 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3485649
-                    slug: product-3485649
+                    name: Product 3585649
+                    slug: product-3585649
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -12977,8 +13483,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 178
-                      code: UPS_GROUND_196
+                      name: UPS Ground 180
+                      code: UPS_GROUND_198
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -13001,7 +13507,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 178
+                      name: UPS Ground 180
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -13020,8 +13526,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 178
-                        code: UPS_GROUND_196
+                        name: UPS Ground 180
+                        code: UPS_GROUND_198
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -13033,7 +13539,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 433 Lovely Street
+                    address1: 437 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -13056,7 +13562,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 434 Lovely Street
+                    address1: 438 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -13947,6 +14453,43 @@ components:
           type: integer
           description: Quantity in this fulfillment
           example: 2
+        returnable_quantity:
+          type: integer
+          description: Units the customer can still return or exchange. Store order
+            page only
+          example: 1
+        non_returnable_reason:
+          type: string
+          nullable: true
+          description: Why nothing can come back, when returnable_quantity is 0. Store
+            order page only
+          example: not_returnable
+        units:
+          type: array
+          description: The shipped units a return or exchange is opened against. Store
+            order page only
+          items:
+            type: object
+            properties:
+              fulfillment_item_id:
+                type: string
+                description: Fulfillment item ID to open a return or exchange with
+                example: fi_abc123
+              quantity:
+                type: integer
+                example: 1
+              returnable_quantity:
+                type: integer
+                example: 1
+              non_returnable_reason:
+                type: string
+                nullable: true
+                example:
+            required:
+            - fulfillment_item_id
+            - quantity
+            - returnable_quantity
+            - non_returnable_reason
       required:
       - item_id
       - variant_id
@@ -16910,6 +17453,8 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        cancelable:
+          type: boolean
         order_id:
           type: string
           nullable: true
@@ -16939,6 +17484,8 @@ components:
           nullable: true
         reason:
           "$ref": "#/components/schemas/ReturnReason"
+        order:
+          "$ref": "#/components/schemas/Order"
         exchange_line_items:
           type: array
           items:
@@ -16947,6 +17494,7 @@ components:
       - id
       - number
       - status
+      - cancelable
       - order_id
       - reason_id
       - price_difference
@@ -18094,6 +18642,8 @@ components:
           type: string
         options_text:
           type: string
+        returnable:
+          type: boolean
         price:
           type: string
           nullable: true
@@ -18218,6 +18768,7 @@ components:
       - name
       - slug
       - options_text
+      - returnable
       - price
       - display_price
       - total
@@ -19966,6 +20517,27 @@ components:
       - shipping_address
       - orders
       x-typelizer: true
+    OrderLookupRequestedEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        number:
+          type: string
+        order_token:
+          type: string
+        store_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - email
+      - number
+      - order_token
+      - store_id
+      x-typelizer: true
     Order:
       type: object
       properties:
@@ -19979,6 +20551,8 @@ components:
           nullable: true
         within_withdrawal_period:
           type: boolean
+        returns_eligibility:
+          type: object
         shipping_eq_billing_address:
           type: boolean
         cart_id:
@@ -21957,6 +22531,8 @@ components:
           type: boolean
         in_stock:
           type: boolean
+        returnable:
+          type: boolean
         backorderable:
           type: boolean
         available:
@@ -22035,6 +22611,7 @@ components:
       - purchasable
       - preorder
       - in_stock
+      - returnable
       - backorderable
       - available
       - description
@@ -22293,6 +22870,16 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        cancelable:
+          type: boolean
+        label_available:
+          type: boolean
+        tracking:
+          type: string
+          nullable: true
+        tracking_url:
+          type: string
+          nullable: true
         order_id:
           type: string
           nullable: true
@@ -22331,6 +22918,8 @@ components:
           nullable: true
         reason:
           "$ref": "#/components/schemas/ReturnReason"
+        order:
+          "$ref": "#/components/schemas/Order"
         return_line_items:
           type: array
           items:
@@ -22343,6 +22932,10 @@ components:
       - id
       - number
       - status
+      - cancelable
+      - label_available
+      - tracking
+      - tracking_url
       - order_id
       - reason_id
       - refund_total
@@ -23313,6 +23906,8 @@ components:
           type: boolean
         preorder:
           type: boolean
+        returnable:
+          type: boolean
         weight:
           type: number
           nullable: true
@@ -23393,6 +23988,7 @@ components:
       - in_stock
       - backorderable
       - preorder
+      - returnable
       - weight
       - height
       - width
@@ -24537,6 +25133,34 @@ components:
           description: The storefront page the confirmation link opens, with the token
             appended. Ignored unless it matches one of the store's allowed origins.
           example: https://myshop.com/account/data-requests/confirm
+    CreateExchangeParams:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              fulfillment_item_id:
+                type: string
+                description: The shipped unit coming back.
+              new_variant_id:
+                type: string
+                description: A purchasable variant of the same product as the unit
+                  coming back.
+              quantity:
+                type: integer
+            required:
+            - fulfillment_item_id
+            - new_variant_id
+            - quantity
+        reason_id:
+          type: string
+          description: One of the store's return reasons.
+        memo:
+          type: string
+      required:
+      - items
     CreateNewsletterSubscriberParams:
       type: object
       properties:
@@ -24552,6 +25176,21 @@ components:
             origins.
           example: https://your-store.com/newsletter/confirm
       required:
+      - email
+    CreateOrderLookupParams:
+      type: object
+      properties:
+        number:
+          type: string
+          description: The order number.
+          example: R123456789
+        email:
+          type: string
+          format: email
+          description: The email the order was placed with.
+          example: customer@example.com
+      required:
+      - number
       - email
     CreatePaymentParams:
       type: object
@@ -25101,6 +25740,22 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+    Exchange:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - fulfilled
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
     GiftCard:
       attributes:
         code: text

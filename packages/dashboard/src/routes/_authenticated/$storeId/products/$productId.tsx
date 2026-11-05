@@ -18,6 +18,7 @@ import {
   productFormSchema,
   productToFormValues,
   RecordMetadataCard,
+  ReturnsCard,
   SEOCard,
   Slot,
   StatusCard,
@@ -347,6 +348,7 @@ function ProductForm({ product }: { product: Product }) {
               <PublishingCard form={form} />
               <CategorizationCard form={form} />
               <TaxCard form={form} />
+              <ReturnsCard form={form} />
               <SEOCard form={form} product={product} />
               <Slot name="product.form_sidebar" context={{ product, mode: 'edit' }} />
             </>

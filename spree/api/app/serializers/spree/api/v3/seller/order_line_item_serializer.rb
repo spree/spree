@@ -13,9 +13,11 @@ module Spree
         class OrderLineItemSerializer < V3::BaseSerializer
           typelize name: :string, sku: [:string, nullable: true], options_text: [:string, nullable: true],
                    quantity: :number, currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], variant_id: [:string, nullable: true],
-                   thumbnail_url: [:string, nullable: true]
+                   thumbnail_url: [:string, nullable: true], returnable: :boolean
 
-          attributes :name, :options_text, :quantity, :currency
+          # Frozen when the order was placed: whether the customer may send
+          # this line back themselves.
+          attributes :name, :options_text, :quantity, :currency, :returnable
 
           # The tax charged on top is what a claim refunds beside the goods.
           money_attributes :price, unit_price: true

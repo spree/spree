@@ -53,6 +53,7 @@ module Spree
           step :process_payments unless payment_pending || !order.payment_required?
           step :split_by_seller
           step :finalize_fulfillments
+          step :freeze_returnable
           step :place_order
           step :freeze_tax_exemptions
           step :use_coupon_codes
@@ -174,6 +175,16 @@ module Spree
 
         items.each do |item|
           stock_location.allocate(item.variant, item.quantity, fulfillment, stock_level: stock_levels[item.variant.id])
+        end
+      end
+
+      # The terms a customer buys under are fixed when the order is placed. A
+      # draft's lines follow the catalogue only when they are saved, so a line
+      # untouched since the product turned final sale is caught up here.
+      def freeze_returnable
+        order.line_items.includes(variant: :product).each do |line_item|
+          returnable = line_item.variant.present? ? line_item.variant.returnable? : line_item.returnable
+          line_item.update_column(:returnable, returnable) if line_item.returnable != returnable
         end
       end
 

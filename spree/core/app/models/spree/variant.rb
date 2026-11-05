@@ -466,6 +466,18 @@ module Spree
       resolved_delivery_profile&.id
     end
 
+    # Whether a customer may send this variant back through self-service
+    # returns. Nil on the variant defers to the product, the way the delivery
+    # profile and tax category do. Line items freeze this answer when the
+    # order is placed; see Spree::LineItem#returnable.
+    #
+    # @return [Boolean]
+    def returnable?
+      return product.nil? || product.returnable if returnable.nil?
+
+      returnable
+    end
+
 
     # Returns the options text of the variant.
     # @return [String] the options text of the variant

@@ -5,7 +5,8 @@ module Spree
         typelize variant_id: :string, quantity: :number, currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], name: :string, slug: :string,
                  options_text: :string, compare_at_amount: [:string, nullable: true, comment: 'The compare-at price times quantity, or null when the variant has none.'],
                  thumbnail_url: [:string, nullable: true], preorder: :boolean,
-                 preorder_ships_at: [:string, nullable: true], seller_id: [:string, nullable: true]
+                 preorder_ships_at: [:string, nullable: true], seller_id: [:string, nullable: true],
+                 returnable: :boolean
 
         prefixed_id_attributes :variant
 
@@ -27,6 +28,11 @@ module Spree
         end
 
         attributes :quantity, :currency, :name, :slug, :options_text
+
+        # Whether this line may come back through self-service returns. On an
+        # order it is the answer frozen when the order was placed; on a cart,
+        # the variant's current one.
+        attribute :returnable, &:returnable_now?
 
         # Nulled for gated (prices_hidden) guests so the cart's line items can't
         # leak the prices that product/variant serializers already withhold.

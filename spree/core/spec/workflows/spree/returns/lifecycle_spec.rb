@@ -582,6 +582,29 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(Spree::Returns::Cancel.call(return_record: received)).to be_failure
     end
 
+    # The customer withdraws only what the merchant has not acted on.
+    it 'refuses a status the caller narrowed away' do
+      approved = create_return.value.tap { |r| r.update_columns(status: 'approved', approved_at: Time.current) }
+
+      expect(Spree::Returns::Cancel.call(return_record: approved, only_from: %w[requested])).to be_failure
+      expect(approved.reload).to be_approved
+    end
+
+    it 'allows nothing when the caller narrows to no status at all' do
+      expect(Spree::Returns::Cancel.call(return_record: create_return.value, only_from: [])).to be_failure
+    end
+
+    # A merchant approving between the check and the write must win.
+    it 're-checks the status under the row lock' do
+      return_record = create_return.value
+      Spree::Return.where(id: return_record.id).update_all(status: 'approved')
+
+      result = Spree::Returns::Cancel.call(return_record: return_record, only_from: %w[requested])
+
+      expect(result).to be_failure
+      expect(return_record.reload).to be_approved
+    end
+
     it 'frees the quantity for a new return request' do
       create_return.value.then { |r| Spree::Returns::Cancel.call(return_record: r) }
 

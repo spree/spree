@@ -7,6 +7,7 @@ export { EmailCustomerGroupSchema, type EmailCustomerGroup } from './EmailCustom
 export { EmailDeliverySchema, type EmailDelivery } from './EmailDelivery';
 export { EmailDeliveryMethodSchema, type EmailDeliveryMethod } from './EmailDeliveryMethod';
 export { EmailDeliveryRateSchema, type EmailDeliveryRate } from './EmailDeliveryRate';
+export { EmailExchangeSchema, type EmailExchange } from './EmailExchange';
 export { EmailFeeSchema, type EmailFee } from './EmailFee';
 export { EmailFreightSummarySchema, type EmailFreightSummary } from './EmailFreightSummary';
 export { EmailFulfillmentSchema, type EmailFulfillment } from './EmailFulfillment';
@@ -21,6 +22,7 @@ export { EmailOrderGroupSchema, type EmailOrderGroup } from './EmailOrderGroup';
 export { EmailParcelItemSchema, type EmailParcelItem } from './EmailParcelItem';
 export { EmailPaymentSchema, type EmailPayment } from './EmailPayment';
 export { EmailPaymentMethodSchema, type EmailPaymentMethod } from './EmailPaymentMethod';
+export { EmailReplacementItemSchema, type EmailReplacementItem } from './EmailReplacementItem';
 export { EmailReturnSchema, type EmailReturn } from './EmailReturn';
 export { EmailStockLocationSchema, type EmailStockLocation } from './EmailStockLocation';
 export { EmailStoreSchema, type EmailStore } from './EmailStore';
