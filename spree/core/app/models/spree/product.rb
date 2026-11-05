@@ -350,7 +350,7 @@ module Spree
 
     # @return [Array<Integer>] the collections this product is hand-picked into
     def hand_picked_collection_ids
-      product_collections.select { |membership| membership.source == 'manual' }.map(&:collection_id)
+      product_collections.select(&:hand_picked?).map(&:collection_id)
     end
 
     # The collections this product is hand-picked into, as prefixed or raw
@@ -369,7 +369,7 @@ module Spree
       product_collections.each do |membership|
         if picked_ids.include?(membership.collection_id)
           membership.source = 'manual'
-        elsif membership.source == 'manual'
+        elsif membership.hand_picked?
           membership.mark_for_destruction
           @dropped_collection_ids << membership.collection_id
         end

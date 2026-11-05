@@ -10,7 +10,7 @@ module Spree
     belongs_to :collection, class_name: 'Spree::Collection', inverse_of: :publications, touch: true
     belongs_to :channel, class_name: 'Spree::Channel', inverse_of: :collection_publications
 
-    validates :collection_id, uniqueness: { scope: :channel_id }
+    validates :collection_id, uniqueness: { scope: spree_base_uniqueness_scope + [:channel_id] }
     validate :channel_belongs_to_collection_store, if: -> { collection && channel }
 
     after_create_commit -> { publish_collection_event('collection.published') }
