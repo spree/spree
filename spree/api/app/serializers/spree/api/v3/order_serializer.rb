@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       # Store API Order Serializer
-      # Post-purchase order data (completed orders)
+      # A placed order, or a draft order the merchant raised for the buyer to pay
       class OrderSerializer < BaseSerializer
         typelize cart_id: [:string, nullable: true], number: :string, email: :string,
                  customer_note: [:string, nullable: true], market_id: [:string, nullable: true],
@@ -79,6 +79,10 @@ module Spree
         one :shipping_address, resource: proc { Spree.api.address_serializer }
         one :gift_card, resource: proc { Spree.api.gift_card_serializer }
         one :market, resource: proc { Spree.api.market_serializer }
+
+        # What the buyer can pay a draft order with. A placed order is past
+        # choosing, so only a draft the buyer was asked to pay carries it.
+        many :payment_methods, resource: proc { Spree.api.payment_method_serializer }, if: proc { |order| order.payable_draft? }
 
         expandable_custom_fields
       end

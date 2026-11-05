@@ -319,6 +319,93 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
     end
   end
 
+  path '/api/v3/admin/orders/{id}/request_payment' do
+    patch 'Request payment for a draft order' do
+      tags 'Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESCRIPTION
+        Opens a draft order to its customer, who can then read and pay it through the Store API, and
+        publishes `order.payment_requested`. Until then the storefront cannot see the draft. Requesting again
+        re-stamps `payment_requested_at` and publishes the event again. Only a draft raised for a customer
+        qualifies — not a placed order, nor the draft of a checkout in progress.
+      DESCRIPTION
+      admin_scope :write, :orders
+
+      admin_sdk_example 'orders/request-payment'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :id, in: :path, type: :string, required: true,
+                description: 'Order ID'
+
+      response '200', 'payment requested' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:order) { create(:order_with_line_items, store: store) }
+        let(:id) { order.prefixed_id }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['payment_requested_at']).to be_present
+        end
+      end
+
+      response '422', 'not a draft raised for a customer' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:order) { create(:completed_order_with_totals, store: store) }
+        let(:id) { order.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+
+  path '/api/v3/admin/orders/{id}/withdraw_payment_request' do
+    patch "Withdraw a draft order's payment request" do
+      tags 'Orders'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESCRIPTION
+        Takes a draft order back out of the storefront after a payment request, so its customer can no
+        longer read or pay it, and cancels the payment sessions they opened for it. Use it before changing
+        a draft the customer was asked to pay. A draft never requested is returned unchanged; a placed
+        order is refused.
+      DESCRIPTION
+      admin_scope :write, :orders
+
+      admin_sdk_example 'orders/withdraw-payment-request'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :id, in: :path, type: :string, required: true,
+                description: 'Order ID'
+
+      response '200', 'payment request withdrawn' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:order) { create(:order_with_line_items, store: store, payment_requested_at: Time.current) }
+        let(:id) { order.prefixed_id }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['payment_requested_at']).to be_nil
+        end
+      end
+
+      response '422', 'not a draft' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:order) { create(:completed_order_with_totals, store: store) }
+        let(:id) { order.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
   path '/api/v3/admin/orders/{id}/resend_confirmation' do
     post 'Resend confirmation email' do
       tags 'Orders'

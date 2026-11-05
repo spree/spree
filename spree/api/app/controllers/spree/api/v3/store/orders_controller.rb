@@ -4,13 +4,39 @@ module Spree
       module Store
         class OrdersController < Store::BaseController
           include Spree::Api::V3::PurchaseSerialization
+          include Spree::Api::V3::DraftOrderResolvable
+
+          # Single order lookup — accessible via order token (guests) or JWT (authenticated users)
+          before_action :find_order!, only: :show
+          # Completing again after placement answers with the order, as a
+          # double-clicked Pay or a webhook that got there first expects.
+          before_action(only: :complete) { find_draft_order!(include_placed: true) }
 
           # GET /api/v3/store/orders/:id
-          # Single order lookup — accessible via order token (guests) or JWT (authenticated users)
-          before_action :find_order!
-
           def show
             render json: serializer_class.new(@order, params: serializer_params).to_h
+          end
+
+          # POST /api/v3/store/orders/:id/complete
+          #
+          # Places a draft order the merchant raised, processing its payments —
+          # the buyer's checkout for an order they did not build in a cart.
+          def complete
+            return render_purchase(@order.order_group || @order) if @order.placed?
+
+            if @order.guest_checkout_disallowed?
+              return render_authentication_required(I18n.t('spree.api.errors.guest_checkout_not_allowed'))
+            end
+
+            result = Spree.carts_complete_workflow.call(cart: @order)
+
+            if result.success?
+              render_purchase(result.value)
+            elsif result.error.to_s.present?
+              render_result_failure(result, code: ERROR_CODES[:order_cannot_complete])
+            else
+              render_service_error('Could not complete the order', code: ERROR_CODES[:order_cannot_complete])
+            end
           end
 
           private
@@ -48,6 +74,19 @@ module Spree
             raise ActiveRecord::RecordNotFound.new(nil, Spree::Order.name)
           end
 
+          # Read back through a lazily preloading relation, so a group's orders
+          # and everything each of them renders load once rather than per order.
+          def render_purchase(record)
+            purchases = record.is_a?(Spree::OrderGroup) ? current_store.order_groups : current_store.orders
+            record = purchases.where(id: record.id).preload_associations_lazily.take!
+
+            render json: purchase_serializer_for(record).new(record, params: serializer_params).to_h
+          end
+
+          # Placed orders, and the drafts a merchant asked the buyer to pay —
+          # never one still being prepared, nor a checkout's transient draft,
+          # which belongs to its cart.
+          #
           # Preloaded lazily, which `collection` would do for a list: this
           # controller loads through `find_order!`, so it asks for it itself.
           # Every association the serializer walks — items, parcels, their
@@ -55,7 +94,7 @@ module Spree
           # need it, rather than once per row.
           def scope
             storefront_access_policy.
-              scope(current_store.orders.complete, token: order_token).
+              scope(current_store.orders.complete.or(current_store.orders.payable_drafts), token: order_token).
               preload_associations_lazily
           end
 
