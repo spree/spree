@@ -64,6 +64,98 @@ export function OrderSummaryCard({ order }: { order: Order }) {
         <CardTitle>{t('admin.pages.orders.detail.section_summary')}</CardTitle>
       </CardHeader>
       <div className="py-1">
+        {/* Money first: what the order comes to and what is still owed is what
+            this card is opened for; where it came from follows. */}
+        <SummaryRow
+          label={t('admin.fields.subtotal.label')}
+          value={<Money amount={order.item_total} currency={order.currency} />}
+        />
+
+        {isPositiveMoney(order.delivery_total) && (
+          <SummaryRow
+            label={t('admin.fields.shipping.label')}
+            value={<Money amount={order.delivery_total} currency={order.currency} />}
+          />
+        )}
+
+        {!isZeroMoney(order.discount_total) && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.promotions')}
+            value={<Money amount={order.discount_total} currency={order.currency} />}
+          />
+        )}
+
+        {!isZeroMoney(order.adjustment_total) && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.adjustments')}
+            value={<Money amount={order.adjustment_total} currency={order.currency} />}
+          />
+        )}
+
+        {isPositiveMoney(order.included_tax_total) && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.tax_included')}
+            value={<Money amount={order.included_tax_total} currency={order.currency} />}
+          />
+        )}
+
+        {(isPositiveMoney(order.additional_tax_total) ||
+          (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
+          <SummaryRow
+            label={t('admin.orders.detail.summary.tax_additional')}
+            value={<Money amount={order.additional_tax_total} currency={order.currency} />}
+          />
+        )}
+
+        <Separator />
+
+        <SummaryRow
+          label={t('admin.fields.total.label')}
+          value={<Money amount={order.total} currency={order.currency} />}
+          bold
+        />
+
+        {/* Labelled "marketplace fee" rather than a bare "fee": Spree::Fee is
+            a buyer-facing charge (handling, gift wrap, COD) that rolls into
+            the order total, while this is billed to the seller and does not.
+            The two must never read alike in one summary. */}
+        {showCommission && (
+          <>
+            <Separator />
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_fee')}
+              value={<Money amount={order.commission_amount_total} currency={order.currency} />}
+            />
+            {commissionTaxed && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.commission_tax')}
+                value={<Money amount={order.commission_tax_total} currency={order.currency} />}
+              />
+            )}
+            <SummaryRow
+              label={t('admin.orders.detail.summary.commission_total')}
+              value={<Money amount={order.commission_total} currency={order.currency} />}
+              bold
+            />
+          </>
+        )}
+
+        <Separator />
+
+        <SummaryRow
+          label={t('admin.orders.detail.summary.payment_total')}
+          value={<Money amount={order.payment_total} currency={order.currency} />}
+          highlight
+        />
+        <SummaryRow
+          label={t('admin.orders.detail.summary.outstanding_balance')}
+          value={<Money amount={order.amount_due} currency={order.currency} />}
+          highlight
+          danger={outstanding}
+        />
+
+        <Separator />
+
         {order.created_by && (
           <SummaryRow
             label={t('admin.pages.orders.detail.summary.created_by')}
@@ -163,96 +255,6 @@ export function OrderSummaryCard({ order }: { order: Order }) {
           value={order.locale ? <LocaleLabel code={order.locale} /> : '—'}
         />
         <SummaryRow label={t('admin.fields.currency.label')} value={order.currency} />
-
-        <Separator />
-
-        <SummaryRow
-          label={t('admin.fields.subtotal.label')}
-          value={<Money amount={order.item_total} currency={order.currency} />}
-        />
-
-        {isPositiveMoney(order.delivery_total) && (
-          <SummaryRow
-            label={t('admin.fields.shipping.label')}
-            value={<Money amount={order.delivery_total} currency={order.currency} />}
-          />
-        )}
-
-        {!isZeroMoney(order.discount_total) && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.promotions')}
-            value={<Money amount={order.discount_total} currency={order.currency} />}
-          />
-        )}
-
-        {!isZeroMoney(order.adjustment_total) && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.adjustments')}
-            value={<Money amount={order.adjustment_total} currency={order.currency} />}
-          />
-        )}
-
-        {isPositiveMoney(order.included_tax_total) && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.tax_included')}
-            value={<Money amount={order.included_tax_total} currency={order.currency} />}
-          />
-        )}
-
-        {(isPositiveMoney(order.additional_tax_total) ||
-          (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.tax_additional')}
-            value={<Money amount={order.additional_tax_total} currency={order.currency} />}
-          />
-        )}
-
-        <Separator />
-
-        <SummaryRow
-          label={t('admin.fields.total.label')}
-          value={<Money amount={order.total} currency={order.currency} />}
-          bold
-        />
-
-        {/* Labelled "marketplace fee" rather than a bare "fee": Spree::Fee is
-            a buyer-facing charge (handling, gift wrap, COD) that rolls into
-            the order total, while this is billed to the seller and does not.
-            The two must never read alike in one summary. */}
-        {showCommission && (
-          <>
-            <Separator />
-            <SummaryRow
-              label={t('admin.orders.detail.summary.commission_fee')}
-              value={<Money amount={order.commission_amount_total} currency={order.currency} />}
-            />
-            {commissionTaxed && (
-              <SummaryRow
-                label={t('admin.orders.detail.summary.commission_tax')}
-                value={<Money amount={order.commission_tax_total} currency={order.currency} />}
-              />
-            )}
-            <SummaryRow
-              label={t('admin.orders.detail.summary.commission_total')}
-              value={<Money amount={order.commission_total} currency={order.currency} />}
-              bold
-            />
-          </>
-        )}
-
-        <Separator />
-
-        <SummaryRow
-          label={t('admin.orders.detail.summary.payment_total')}
-          value={<Money amount={order.payment_total} currency={order.currency} />}
-          highlight
-        />
-        <SummaryRow
-          label={t('admin.orders.detail.summary.outstanding_balance')}
-          value={<Money amount={order.amount_due} currency={order.currency} />}
-          highlight
-          danger={outstanding}
-        />
       </div>
     </Card>
   )

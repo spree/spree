@@ -166,7 +166,17 @@ export function PaymentsCard({ order }: { order: Order }) {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <StatusBadge status={payment.status} />
+                      {/* A pending card payment that can be captured holds an
+                          authorization — the same thing the order's status
+                          calls it, so the two never disagree. */}
+                      {payment.status === 'pending' && payment.can_capture ? (
+                        <StatusBadge
+                          status="authorized"
+                          label={t('admin.orders.payment_statuses.authorized')}
+                        />
+                      ) : (
+                        <StatusBadge status={payment.status} />
+                      )}
                       {(payment.avs_risky || payment.cvv_risky) && (
                         <Badge variant="warning">
                           <ShieldAlertIcon />

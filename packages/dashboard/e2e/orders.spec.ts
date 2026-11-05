@@ -621,6 +621,44 @@ test.describe('order payments', () => {
     await expect(dialog.getByRole('row').filter({ hasText: '€10.00' })).toBeVisible()
   })
 
+  test('offers capturing an authorized payment from the order header', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    const orderId = orders.data[0].id
+
+    // Capturing for real would change the fixture other specs read, so the
+    // order payload reports one payment still waiting to be captured.
+    await page.route(`**/api/v3/admin/orders/${orderId}**`, async (route) => {
+      const url = new URL(route.request().url())
+      if (route.request().method() !== 'GET' || !url.pathname.endsWith(`/orders/${orderId}`)) {
+        return route.fallback()
+      }
+      const response = await route.fetch()
+      const order = await response.json()
+      order.payments = order.payments
+        .slice(0, 1)
+        .map((payment: object) => ({ ...payment, status: 'pending', can_capture: true }))
+      await route.fulfill({ response, json: order })
+    })
+
+    await page.goto(`/${creds.comma_store_id}/orders/${orderId}`)
+
+    // The payment row names the hold the way the order's status does.
+    const row = page.locator('tr').filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+    await expect(row.getByText('Authorized')).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^capture .*10\.00/i }).click()
+    const dialog = page.getByRole('alertdialog').or(page.getByRole('dialog'))
+    await expect(dialog.getByText('Capture this payment?')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+  })
+
   test('offers Void on a payment the gateway can void', async ({ page }) => {
     const creds = await login(page)
     const orders = await adminRequest<{ data: { id: string }[] }>(
