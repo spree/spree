@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./shadcn.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/inter/opsz.css";
 @import "@fontsource-variable/geist-mono";
 
 /* Tailwind v4 only scans the consuming project's own source by default.
@@ -409,8 +409,18 @@
 }
 
 @theme inline {
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans--font-feature-settings: "cv11", "ss01";
   --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+  /* Geist Mono's ligatures merge a space and a following `--` into one glyph,
+     hiding the space in command-line flags. */
+  --font-mono--font-feature-settings: "liga" 0, "calt" 0;
+
+  /* Inter at 13-14px reads thin under grayscale antialiasing, so every step
+     sits 50 heavier than the CSS keyword it replaces. */
+  --font-weight-normal: 450;
+  --font-weight-medium: 550;
+  --font-weight-semibold: 650;
 
   /* Typography scale — matches Spree admin (smaller than Tailwind defaults) */
   --text-xs: 0.75rem;
@@ -842,8 +852,7 @@
   }
 
   html {
-    @apply font-sans antialiased;
-    text-rendering: optimizeLegibility;
+    @apply font-sans font-normal antialiased;
     /* No `overflow-y: scroll` here. It used to reserve the scrollbar gutter so
      * the page would not jump sideways between a short route and a tall one,
      * back when the document was what scrolled. The inset shell ended that:

@@ -71,7 +71,11 @@ const theme = EditorView.theme({
     fontSize: '13px',
     height: '100%',
   },
-  '.cm-scroller': { fontFamily: 'var(--font-mono, ui-monospace, monospace)', lineHeight: '1.6' },
+  '.cm-scroller': {
+    fontFamily: 'var(--font-mono, ui-monospace, monospace)',
+    fontFeatureSettings: 'var(--default-mono-font-feature-settings, normal)',
+    lineHeight: '1.6',
+  },
   '.cm-content': { caretColor: 'var(--foreground)' },
   '.cm-gutters': {
     backgroundColor: 'var(--background)',
