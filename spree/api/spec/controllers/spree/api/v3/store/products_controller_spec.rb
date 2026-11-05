@@ -134,6 +134,12 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
     end
 
+    it 'ignores a multiparameter in_collection key' do
+      get :index, params: { q: { 'in_collection(1)' => scheduled.prefixed_id } }, as: :json
+
+      expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
+    end
+
     it 'lists nothing for a collection not yet published' do
       get :index, params: { q: { in_collection: scheduled.prefixed_id } }, as: :json
 
