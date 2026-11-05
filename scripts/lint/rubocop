@@ -41,16 +41,21 @@ candidates =
     (git.call('diff', '-z', '--name-only', '--diff-filter=d', base) + git.call('ls-files', '-z', '--others', '--exclude-standard')).split("\0")
   end
 
-ruby_file = %r{\Aspree/.*(\.rb|\.rake|\.gemspec|/Gemfile|/Rakefile)\z}
+ruby_file = %r{\Aspree/(.*\.(rb|rake|gemspec)|(.*/)?(Gemfile|Rakefile))\z}
 files = candidates.map(&:strip).uniq.select { |path| path.match?(ruby_file) && File.file?(path) }
 exit 0 if files.empty?
 
+# A renamed file is diffed against its old path, so it isn't treated as new.
+renamed_from = git.call('diff', '-z', '--name-status', '-M', '--diff-filter=R', base).split("\0").
+  each_slice(3).to_h { |_status, old_path, new_path| [new_path, old_path] }
+
 # Changed line numbers per file; nil means the whole file is new.
 changed = files.to_h do |path|
-  next [path, nil] unless system('git', 'cat-file', '-e', "#{base}:#{path}", err: File::NULL)
+  previous = renamed_from.fetch(path, path)
+  next [path, nil] unless system('git', 'cat-file', '-e', "#{base}:#{previous}", err: File::NULL)
 
   lines = Set.new
-  git.call('diff', '-U0', '--no-ext-diff', base, '--', path).scan(/^@@ -\S+ \+(\d+)(?:,(\d+))? @@/) do |start, count|
+  git.call('diff', '-U0', '-M', '--no-ext-diff', base, '--', previous, path).scan(/^@@ -\S+ \+(\d+)(?:,(\d+))? @@/) do |start, count|
     lines.merge(start.to_i...(start.to_i + (count || 1).to_i))
   end
   [path, lines]
@@ -61,7 +66,7 @@ exit 0 if changed.empty?
 Dir.chdir('spree')
 ENV['PATH'] = "#{Gem.bindir}:#{ENV['PATH']}" # bundle exec needs the gems' bin dir
 rubocop = %w[bundle exec rubocop --force-exclusion]
-unless system(*rubocop, '--version', out: File::NULL, err: File::NULL)
+unless system('bundle', 'exec', 'ruby', '-e', 'require "rubocop"', out: File::NULL, err: File::NULL)
   warn 'RuboCop is not installed for spree/. Run: (cd spree && bundle install)'
   exit 3
 end
@@ -71,7 +76,12 @@ absolute = ->(path) { File.join(root, path) }
 new_files = changed.select { |_, lines| lines.nil? }.keys
 system(*rubocop, '--autocorrect', '--format', 'quiet', *new_files.map(&absolute), out: File::NULL) if fix && new_files.any?
 
-out, = Open3.capture2(*rubocop, '--format', 'json', *changed.keys.map(&absolute))
+out, error, status = Open3.capture3(*rubocop, '--format', 'json', *changed.keys.map(&absolute))
+# Exit 1 means offenses (maybe only on unchanged lines); anything above is a crash or bad config.
+if status.exitstatus.to_i > 1
+  warn error
+  exit 1
+end
 offenses = JSON.parse(out)['files'].flat_map do |file|
   path = "spree/#{file['path']}"
   lines = changed[path]
