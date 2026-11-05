@@ -23,17 +23,22 @@ require 'json'
 require 'open3'
 require 'set'
 
-root = `git -C "#{__dir__}" rev-parse --show-toplevel`.strip
+Encoding.default_external = Encoding::UTF_8 # file names and RuboCop output
+
+# Paths are passed as arguments, never through a shell: file names are untrusted.
+git = ->(*args) { Open3.capture2('git', *args, err: File::NULL).first }
+
+root = git.call('-C', __dir__, 'rev-parse', '--show-toplevel').strip
 Dir.chdir(root)
 
 fix = ARGV.delete('--fix')
-base = ['origin/main', 'main'].lazy.map { |ref| `git merge-base HEAD #{ref} 2>/dev/null`.strip }.find { |sha| !sha.empty? } || 'HEAD'
+base = ['origin/main', 'main'].lazy.map { |ref| git.call('merge-base', 'HEAD', ref).strip }.find { |sha| !sha.empty? } || 'HEAD'
 
 candidates =
   if ARGV.any?
     ARGV.map { |path| File.expand_path(path).delete_prefix("#{root}/") }
   else
-    `git diff --name-only --diff-filter=d #{base}`.lines + `git ls-files --others --exclude-standard`.lines
+    (git.call('diff', '-z', '--name-only', '--diff-filter=d', base) + git.call('ls-files', '-z', '--others', '--exclude-standard')).split("\0")
   end
 
 ruby_file = %r{\Aspree/.*(\.rb|\.rake|\.gemspec|/Gemfile|/Rakefile)\z}
@@ -45,7 +50,7 @@ changed = files.to_h do |path|
   next [path, nil] unless system('git', 'cat-file', '-e', "#{base}:#{path}", err: File::NULL)
 
   lines = Set.new
-  `git diff -U0 --no-ext-diff #{base} -- "#{path}"`.scan(/^@@ -\S+ \+(\d+)(?:,(\d+))? @@/) do |start, count|
+  git.call('diff', '-U0', '--no-ext-diff', base, '--', path).scan(/^@@ -\S+ \+(\d+)(?:,(\d+))? @@/) do |start, count|
     lines.merge(start.to_i...(start.to_i + (count || 1).to_i))
   end
   [path, lines]
