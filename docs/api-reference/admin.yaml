@@ -19447,11 +19447,11 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                     value:
                     amount:
+                    discount_id:
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     fulfillment_id:
                     delivery_method_id:
-                    discount_id:
                 meta:
                   page: 1
                   limit: 25
@@ -19542,11 +19542,11 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   value:
                   amount:
+                  discount_id:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   fulfillment_id:
                   delivery_method_id:
-                  discount_id:
               schema:
                 "$ref": "#/components/schemas/OrderChange"
         '422':
@@ -19720,11 +19720,11 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   value:
                   amount:
+                  discount_id:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   fulfillment_id:
                   delivery_method_id:
-                  discount_id:
               schema:
                 "$ref": "#/components/schemas/OrderChange"
   "/api/v3/admin/orders/{order_id}/order_changes/{id}/cancel":
@@ -19809,11 +19809,11 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   value:
                   amount:
+                  discount_id:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   fulfillment_id:
                   delivery_method_id:
-                  discount_id:
               schema:
                 "$ref": "#/components/schemas/OrderChange"
   "/api/v3/admin/orders/{order_id}/store_credits":
@@ -68384,6 +68384,9 @@ components:
           type: string
           nullable: true
           description: The new amount `update_discount` gives the row.
+        discount_id:
+          type: string
+          nullable: true
         line_item_id:
           type: string
           nullable: true
@@ -68394,9 +68397,6 @@ components:
           type: string
           nullable: true
         delivery_method_id:
-          type: string
-          nullable: true
-        discount_id:
           type: string
           nullable: true
       required:
@@ -68410,11 +68410,11 @@ components:
       - updated_at
       - value
       - amount
+      - discount_id
       - line_item_id
       - variant_id
       - fulfillment_id
       - delivery_method_id
-      - discount_id
       x-typelizer: true
     OrderChangePreview:
       type: object
