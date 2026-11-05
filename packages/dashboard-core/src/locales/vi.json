@@ -630,6 +630,11 @@
       "code": {
         "label": "Mã"
       },
+      "collection_rule": {
+        "value": {
+          "label": "Giá trị"
+        }
+      },
       "company": {
         "label": "Công ty"
       },

@@ -628,6 +628,11 @@
       "code": {
         "label": "代码"
       },
+      "collection_rule": {
+        "value": {
+          "label": "值"
+        }
+      },
       "company": {
         "label": "公司"
       },

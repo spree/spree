@@ -3,6 +3,7 @@ import {
   COLLECTION_RULE_MATCH_POLICIES,
   COLLECTION_SORT_ORDERS,
   type CollectionSortOrder,
+  isDecimalString,
   MATCH_POLICIES,
 } from '@spree/core'
 import { customFieldFormSchema, signedIdParam } from '@spree/dashboard-core'
@@ -55,34 +56,35 @@ const imageFields = {
   square_image_cleared: z.boolean(),
 }
 
-/** Built-in rule types whose value has a shape the form can check. */
-const VALUELESS_RULE_TYPES = ['in_stock']
+/** Built-in rule types whose value is an amount. */
 const AMOUNT_RULE_TYPES = ['price']
-const DECIMAL = /^-?\d+(\.\d+)?$/
 
-const collectionRuleSchema = z
-  .object({
-    /** Prefixed `crule_` id. Absent on a rule the merchant just added. */
-    id: z.string().optional(),
-    type: z.string().min(1),
-    value: z.string(),
-    match_policy: z.enum(COLLECTION_RULE_MATCH_POLICIES),
-    /** Price and sale rules: the currency they evaluate in; null is the store's default. */
-    currency: z.string().nullable(),
-    /** Per-type settings, e.g. `include_descendants`, `custom_field_definition_id`. */
-    preferences: z.record(z.string(), z.unknown()),
-  })
-  .superRefine((rule, ctx) => {
-    if (VALUELESS_RULE_TYPES.includes(rule.type)) return
+const collectionRuleFields = z.object({
+  /** Prefixed `crule_` id. Absent on a rule the merchant just added. */
+  id: z.string().optional(),
+  type: z.string().min(1),
+  value: z.string(),
+  match_policy: z.enum(COLLECTION_RULE_MATCH_POLICIES),
+  /** Price and sale rules: the currency they evaluate in; null is the store's default. */
+  currency: z.string().nullable(),
+  /** Per-type settings, e.g. `include_descendants`, `custom_field_definition_id`. */
+  preferences: z.record(z.string(), z.unknown()),
+})
+
+/**
+ * @param valuelessTypes rule types the types endpoint lists with
+ *   `value_required: false` (in stock), which take no value
+ */
+function collectionRuleSchema(valuelessTypes: readonly string[]) {
+  return collectionRuleFields.superRefine((rule, ctx) => {
+    if (valuelessTypes.includes(rule.type)) return
     if (rule.value.trim() === '') {
       ctx.addIssue({
         code: 'custom',
         path: ['value'],
-        message: i18n.t('admin.validation.required', {
-          field: i18n.t('admin.collections.fields.rule_value.label'),
-        }),
+        message: requiredMessage('collection_rule.value')(),
       })
-    } else if (AMOUNT_RULE_TYPES.includes(rule.type) && !DECIMAL.test(rule.value.trim())) {
+    } else if (AMOUNT_RULE_TYPES.includes(rule.type) && !isDecimalString(rule.value.trim())) {
       ctx.addIssue({
         code: 'custom',
         path: ['value'],
@@ -90,46 +92,52 @@ const collectionRuleSchema = z
       })
     }
   })
+}
 
-export type CollectionRuleFormValues = z.infer<typeof collectionRuleSchema>
+export type CollectionRuleFormValues = z.infer<typeof collectionRuleFields>
 
-export const collectionFormSchema = z.object({
-  /**
-   * Staged product membership, applied on Save through the nested products
-   * endpoints. Deliberately opaque: it holds SDK `Product` records so a
-   * staged addition can render before it exists server-side, and RHF's
-   * `Path<T>` must not walk that object graph (see the note on
-   * `RuleEmbedRecord` in schemas/price-list.ts). Never sent to the API —
-   * `collectionToParams` drops it.
-   */
-  staged_products: z.custom<ProductMembershipStagingValue>(() => true),
-  name: z.string().min(1, { error: requiredMessage('name') }),
-  description: z.string(),
-  permalink: z.string(),
-  meta_title: z.string(),
-  meta_description: z.string(),
-  sort_order: z.enum(COLLECTION_SORT_ORDERS),
-  rules_match_policy: z.enum(MATCH_POLICIES),
-  rules: z.array(collectionRuleSchema),
-  /**
-   * The channels the collection is published on — a sync set. Null on a new
-   * collection until the Publishing card seeds it, so a create that never
-   * loaded channels still publishes everywhere (the server's default).
-   */
-  publications: z
-    .array(
-      z.object({
-        channel_id: z.string(),
-        published_at: z.string().nullable(),
-        unpublished_at: z.string().nullable(),
-      }),
-    )
-    .nullable(),
-  custom_fields: z.array(customFieldFormSchema).optional(),
-  ...imageFields,
-})
+/**
+ * The collection form schema. Which rule types take no value comes from the
+ * types endpoint, so the caller passes it in (see `useCollectionFormResolver`).
+ */
+export const collectionFormSchema = (valuelessTypes: readonly string[] = []) =>
+  z.object({
+    /**
+     * Staged product membership, applied on Save through the nested products
+     * endpoints. Deliberately opaque: it holds SDK `Product` records so a
+     * staged addition can render before it exists server-side, and RHF's
+     * `Path<T>` must not walk that object graph (see the note on
+     * `RuleEmbedRecord` in schemas/price-list.ts). Never sent to the API —
+     * `collectionToParams` drops it.
+     */
+    staged_products: z.custom<ProductMembershipStagingValue>(() => true),
+    name: z.string().min(1, { error: requiredMessage('name') }),
+    description: z.string(),
+    permalink: z.string(),
+    meta_title: z.string(),
+    meta_description: z.string(),
+    sort_order: z.enum(COLLECTION_SORT_ORDERS),
+    rules_match_policy: z.enum(MATCH_POLICIES),
+    rules: z.array(collectionRuleSchema(valuelessTypes)),
+    /**
+     * The channels the collection is published on — a sync set. Null on a new
+     * collection until the Publishing card seeds it, so a create that never
+     * loaded channels still publishes everywhere (the server's default).
+     */
+    publications: z
+      .array(
+        z.object({
+          channel_id: z.string(),
+          published_at: z.string().nullable(),
+          unpublished_at: z.string().nullable(),
+        }),
+      )
+      .nullable(),
+    custom_fields: z.array(customFieldFormSchema).optional(),
+    ...imageFields,
+  })
 
-export type CollectionFormValues = z.infer<typeof collectionFormSchema>
+export type CollectionFormValues = z.infer<ReturnType<typeof collectionFormSchema>>
 
 const IMAGE_DEFAULTS = {
   image_signed_id: null,

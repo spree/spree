@@ -209,7 +209,7 @@ test.describe('collections management', () => {
     const published = sheet
       .getByRole('button')
       .filter({ has: page.getByRole('checkbox', { checked: true }) })
-    const channelName = (await published.first().innerText()).trim()
+    const channelName = ((await published.first().textContent()) ?? '').trim()
     await published.first().click()
     await sheet.getByRole('button', { name: /^done$/i }).click()
     await page.getByRole('button', { name: /^save$/i }).click()
