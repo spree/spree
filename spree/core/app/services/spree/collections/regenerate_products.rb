@@ -41,7 +41,7 @@ module Spree
       def remove(memberships, product_ids)
         return if product_ids.empty?
 
-        memberships.where(product_id: product_ids).delete_all
+        memberships.where(product_id: product_ids).where.not(source: 'manual').delete_all
         now = Time.current
         remaining = memberships.order(:position).pluck(:collection_id, :product_id, :source)
         return if remaining.empty?
