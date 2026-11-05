@@ -21,11 +21,11 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     let!(:other_product) { create(:product, store: store) }
 
     before do
-      Spree::ProductCollection.create!(collection: collection, product: product_b, position: 1)
-      Spree::ProductCollection.create!(collection: collection, product: product_a, position: 2)
-      Spree::ProductCollection.create!(collection: collection, product: product_c, position: 3)
+      Spree::ProductCollection.create!(collection: collection, product: product_b, position: 1, source: 'manual')
+      Spree::ProductCollection.create!(collection: collection, product: product_a, position: 2, source: 'manual')
+      Spree::ProductCollection.create!(collection: collection, product: product_c, position: 3, source: 'manual')
       # A product in a different collection must not leak into this list.
-      Spree::ProductCollection.create!(collection: other_collection, product: other_product, position: 1)
+      Spree::ProductCollection.create!(collection: other_collection, product: other_product, position: 1, source: 'manual')
     end
 
     it 'lists only the collection products, ordered by membership position' do
@@ -48,7 +48,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     it 'lists the rule-materialized products of an automatic collection' do
       automatic = create(:automatic_collection, store: store)
       member = create(:product, store: store)
-      Spree::ProductCollection.create!(collection: automatic, product: member, position: 1)
+      Spree::ProductCollection.create!(collection: automatic, product: member, position: 1, source: 'rule')
 
       get :index, params: { collection_id: automatic.prefixed_id }, as: :json
 
@@ -72,24 +72,45 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     end
   end
 
-  describe 'automatic collections' do
+  describe 'collections with rules' do
     let!(:product) { create(:product, store: store) }
-    let(:automatic) { create(:automatic_collection, store: store) }
+    let!(:ruled) { create(:automatic_collection, store: store) }
 
-    it 'rejects adding (rule-managed, not curated)' do
-      post :create, params: { collection_id: automatic.prefixed_id, product_ids: [product.prefixed_id] }, as: :json
+    before { create(:tag_collection_rule, collection: ruled, value: 'nothing-matches') }
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['code']).to eq('validation_error')
-      expect(json_response['error']['message']).to eq(I18n.t('spree.api.errors.automatic_collection_curation'))
+    it 'hand-picks a product, marking the membership manual' do
+      post :create, params: { collection_id: ruled.prefixed_id, product_ids: [product.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::ProductCollection.find_by(collection: ruled, product: product).source).to eq('manual')
     end
 
-    it 'rejects removing before looking up the products' do
-      delete :destroy, params: { collection_id: automatic.prefixed_id, product_ids: [product.prefixed_id] }, as: :json
+    it 'turns a rule-matched membership into a hand-picked one' do
+      Spree::ProductCollection.create!(collection: ruled, product: product, position: 1, source: 'rule')
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['code']).to eq('validation_error')
-      expect(json_response['error']['message']).to eq(I18n.t('spree.api.errors.automatic_collection_curation'))
+      post :create, params: { collection_id: ruled.prefixed_id, product_ids: [product.prefixed_id] }, as: :json
+
+      expect(Spree::ProductCollection.where(collection: ruled, product: product).pluck(:source)).to eq(['manual'])
+    end
+
+    it 'removes a product' do
+      Spree::ProductCollection.create!(collection: ruled, product: product, position: 1, source: 'manual')
+
+      delete :destroy, params: { collection_id: ruled.prefixed_id, product_ids: [product.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(Spree::ProductCollection.where(collection: ruled, product: product)).to be_empty
+    end
+
+    it 'repositions a product' do
+      other = create(:product, store: store)
+      Spree::ProductCollection.create!(collection: ruled, product: product, position: 1, source: 'rule')
+      Spree::ProductCollection.create!(collection: ruled, product: other, position: 2, source: 'manual')
+
+      patch :reposition, params: { collection_id: ruled.prefixed_id, id: other.prefixed_id, new_position: 0 }, as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(Spree::ProductCollection.where(collection: ruled).order(:position).pluck(:product_id)).to eq([other.id, product.id])
     end
   end
 
@@ -99,9 +120,9 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     let!(:third)  { create(:product, store: store) }
 
     before do
-      Spree::ProductCollection.create!(collection: collection, product: first, position: 1)
-      Spree::ProductCollection.create!(collection: collection, product: second, position: 2)
-      Spree::ProductCollection.create!(collection: collection, product: third, position: 3)
+      Spree::ProductCollection.create!(collection: collection, product: first, position: 1, source: 'manual')
+      Spree::ProductCollection.create!(collection: collection, product: second, position: 2, source: 'manual')
+      Spree::ProductCollection.create!(collection: collection, product: third, position: 3, source: 'manual')
     end
 
     it 'moves a product to the requested index' do

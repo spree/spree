@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::Store::Collections::ProductsController, type: :co
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
-    Spree::ProductCollection.create!(collection: collection, product: in_product)
+    Spree::ProductCollection.create!(collection: collection, product: in_product, source: 'manual')
   end
 
   describe 'GET #index' do
@@ -43,8 +43,8 @@ RSpec.describe Spree::Api::V3::Store::Collections::ProductsController, type: :co
       cheap = create(:product, status: 'active', price: 5)
       pricey = create(:product, status: 'active', price: 50)
       sorted = create(:collection, store: store, sort_order: 'price asc')
-      Spree::ProductCollection.create!(collection: sorted, product: pricey, position: 1)
-      Spree::ProductCollection.create!(collection: sorted, product: cheap, position: 2)
+      Spree::ProductCollection.create!(collection: sorted, product: pricey, position: 1, source: 'manual')
+      Spree::ProductCollection.create!(collection: sorted, product: cheap, position: 2, source: 'manual')
 
       get :index, params: { collection_id: sorted.prefixed_id }
 
@@ -68,6 +68,16 @@ RSpec.describe Spree::Api::V3::Store::Collections::ProductsController, type: :co
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].pluck('id')).to include(in_product.prefixed_id)
       end
+    end
+  end
+
+  describe 'an unpublished collection' do
+    it 'returns not found' do
+      hidden = create(:collection, :unpublished, store: store)
+
+      get :index, params: { collection_id: hidden.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

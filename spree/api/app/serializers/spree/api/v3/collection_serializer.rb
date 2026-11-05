@@ -10,7 +10,9 @@ module Spree
                  meta_title: [:string, nullable: true], meta_description: [:string, nullable: true], meta_keywords: [:string, nullable: true],
                  description: :string, description_html: :string,
                  image_url: [:string, nullable: true], square_image_url: [:string, nullable: true],
-                 products_count: :number
+                 image_alt: [:string, nullable: true], square_image_alt: [:string, nullable: true],
+                 products_count: [:number, comment: 'Members of the collection in every market. ' \
+                                                    'A market-correct count is the listing endpoint `meta.count`.']
 
         attributes :name, :permalink, :position, :sort_order,
                    :meta_title, :meta_description, :meta_keywords, :products_count
@@ -27,6 +29,14 @@ module Spree
 
         attribute :square_image_url do |collection|
           image_url_for(collection.square_image)
+        end
+
+        attribute :image_alt do |collection|
+          collection.library_media_alt(:image)
+        end
+
+        attribute :square_image_alt do |collection|
+          collection.library_media_alt(:square_image)
         end
 
         expandable_custom_fields

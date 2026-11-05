@@ -4,6 +4,7 @@ module Spree
       module Store
         class CollectionsController < ResourceController
           include Spree::Api::V3::HttpCaching
+          include Spree::Api::V3::Store::PermalinkLookup
 
           protected
 
@@ -15,19 +16,14 @@ module Spree
             Spree.api.collection_serializer
           end
 
+          # Only collections published on the request's channel, for list,
+          # show and search alike: an unpublished collection is a 404.
           def scope
-            super.ordered
+            super.published_on(Spree::Current.channel).ordered
           end
 
-          # Find by permalink or prefixed ID (SEO-friendly URLs), i18n-scoped with a
-          # fallback to the default locale — mirrors the Categories controller.
           def find_resource
-            id = params[:id]
-            if id.to_s.start_with?('coll_')
-              scope.find_by_prefix_id!(id)
-            else
-              find_with_fallback_default_locale { scope.i18n.find_by!(permalink: id) }
-            end
+            find_by_id_or_permalink!(scope, params[:id])
           end
         end
       end

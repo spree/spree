@@ -32,8 +32,9 @@ module Spree
             body.attribute :category_ids, :array, of: :id
             # Reachable with `write_products` rather than `write_collections`:
             # filing a product into its groupings is part of maintaining it.
-            body.attribute :collection_ids, :array, of: :id,
-              description: 'Manual collections this product belongs to. Automatic collections are kept as they are, since their rules decide membership.'
+            body.attribute :collection_ids, :array,
+                           of: :id,
+                           description: 'Collections this product is hand-picked into. Memberships created by collection rules are kept.'
             body.attribute :metadata, :hash
             body.attribute :prices, :array, of: Spree::Api::V3::PriceRequestSchema,
               description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant. For products with options, set prices per variant under `variants` instead. Don't pass both."
@@ -465,12 +466,8 @@ module Spree
           def apply_collections(service)
             authorize! :update, model_class
 
-            # Only manual collections accept curation — automatic membership is
-            # rebuilt from rules, so a manual add/remove would be lost on the next
-            # regeneration (mirrors apply_categories, whose association is manual).
             collection_ids = decode_ids(params[:collection_ids])
-            collections = current_store.collections.manual.
-                          accessible_by(current_ability, :update).where(id: collection_ids)
+            collections = current_store.collections.accessible_by(current_ability, :update).where(id: collection_ids)
 
             service.call(collections: collections, products: bulk_collection)
 
