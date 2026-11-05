@@ -4,3 +4,6 @@ en:
     integrations:
       klaviyo:
         description: Customer profiles, newsletter sign-ups and order events in Klaviyo, so you can build flows, segments and campaigns on your store's data.
+        missing_klaviyo_private_api_key: Enter your Klaviyo private API key before turning the integration on.
+        missing_default_newsletter_list_id: Enter the id of the Klaviyo list newsletter sign-ups go to before turning the integration on.
+        connection_failed: Klaviyo could not be reached. Check the private API key and the list id, then try again.
