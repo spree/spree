@@ -81,7 +81,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
 
       expect(response).to have_http_status(:created)
       expect(json_response['status']).to eq('confirmed')
-      expect(json_response['actions'].map { |action| action['kind'] }).to eq(%w[update_item remove_item])
+      expect(json_response['actions'].pluck('kind')).to eq(%w[update_item remove_item])
       expect(json_response['requested_by_id']).to eq(admin_user.prefixed_id)
       expect(order.reload.line_items.map(&:quantity)).to eq([2])
     end

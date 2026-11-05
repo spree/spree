@@ -55,8 +55,8 @@ RSpec.describe 'Spree::OrderChanges workflows' do
     it 'refuses a return, exchange or claim from another order' do
       claim = create(:approved_claim, store: store, order: create(:completed_order_with_totals, store: store))
 
-      expect { Spree::OrderChanges::Begin.call(order: order, post_sale_record: claim) }
-        .to raise_error(ArgumentError, /another order/)
+      expect { Spree::OrderChanges::Begin.call(order: order, post_sale_record: claim) }.
+        to raise_error(ArgumentError, /another order/)
     end
 
     it 'opens a new set once the previous one is closed' do
@@ -138,8 +138,8 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       change = begin_change
       Spree::OrderChanges::AddAction.call(order_change: change, kind: 'remove_item', line_item: line_item)
 
-      expect { Spree::OrderChanges::Request.call(order_change: change) }
-        .to change { change.reload.status }.from('pending').to('requested')
+      expect { Spree::OrderChanges::Request.call(order_change: change) }.
+        to change { change.reload.status }.from('pending').to('requested')
     end
   end
 
