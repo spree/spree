@@ -52,9 +52,7 @@ module Spree
     # @param applier [String, Class] held by name, so a code reload is picked up
     def self.register_action_kind(kind, applier)
       kind = kind.to_s
-      if Spree::OrderChangeAction::CORE_KINDS.include?(kind)
-        raise ArgumentError, "#{kind} is applied by Spree itself and cannot be registered"
-      end
+      raise ArgumentError, "#{kind} is applied by Spree itself and cannot be registered" if Spree::OrderChangeAction::CORE_KINDS.include?(kind)
 
       Spree::OrderChangeAction.kinds += [kind] unless Spree::OrderChangeAction.kinds.include?(kind)
       self.action_appliers = action_appliers.merge(kind => applier.to_s)

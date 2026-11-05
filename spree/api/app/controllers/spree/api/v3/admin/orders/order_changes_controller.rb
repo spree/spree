@@ -15,20 +15,20 @@ module Spree
 
             request_params :order_change do |body|
               body.attribute :actions, :array,
-                of: Spree::Api::V3::Admin::OrderChangeActionRequestSchema,
-                required: true, on: :create, only: :create, permit: false,
-                description: 'The changes, applied in order.'
+                             of: Spree::Api::V3::Admin::OrderChangeActionRequestSchema,
+                             required: true, on: :create, only: :create, permit: false,
+                             description: 'The changes, applied in order.'
               body.attribute :confirm, :boolean,
-                only: :create, permit: false,
-                description: 'Apply the change at once. Omitted or false, it waits as `requested` for a confirm or cancel.'
+                             only: :create, permit: false,
+                             description: 'Apply the change at once. Omitted or false, it waits as `requested` for a confirm or cancel.'
               body.attribute :metadata, :hash, only: :create
             end
 
             request_params 'OrderChangePreviewParams', action: :preview do |body|
               body.attribute :actions, :array,
-                of: Spree::Api::V3::Admin::OrderChangeActionRequestSchema,
-                required: true, permit: false,
-                description: 'The changes to preview. Nothing is saved.'
+                             of: Spree::Api::V3::Admin::OrderChangeActionRequestSchema,
+                             required: true, permit: false,
+                             description: 'The changes to preview. Nothing is saved.'
             end
 
             before_action :set_resource, only: [:show, :confirm, :cancel]
@@ -43,7 +43,7 @@ module Spree
                   order: @order,
                   actions: actions_param,
                   requested_by: current_actor,
-                  confirm: params[:confirm].to_b,
+                  confirm: params.fetch(:confirm, nil).to_b,
                   # Unnormalized: metadata is the caller's own data, and an
                   # id-looking value in it is not one of ours to decode.
                   metadata: params.permit(*declared_permitted_attributes)[:metadata].to_h
@@ -152,8 +152,8 @@ module Spree
             # way a canonical decimal string, reported against `actions`.
             def action_decimal(value, currency = nil)
               currency ? Spree::Money::Rounding.parse_canonical(value, currency) : Spree::Money::Rounding.parse_canonical_decimal(value)
-            rescue Spree::Money::InvalidFormat => error
-              raise Spree::Money::InvalidFormat.new(error.message, field: :actions)
+            rescue Spree::Money::InvalidFormat => e
+              raise Spree::Money::InvalidFormat.new(e.message, field: :actions)
             end
 
             # @return [Hash{String => ActiveRecord::Base}] records by the prefixed id asked for
