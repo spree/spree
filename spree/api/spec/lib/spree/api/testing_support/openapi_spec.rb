@@ -17,10 +17,6 @@ RSpec.describe Spree::Api::TestingSupport::Openapi do
     end
   end
   let(:config) { config_class.new }
-
-  # configure records the engine for the whole process; Spree's own documents
-  # are written with none.
-  after { described_class.engine = nil }
   let(:engine) { Spree::Api::Engine }
 
   it "writes the extension's admin document" do
@@ -59,29 +55,16 @@ RSpec.describe Spree::Api::TestingSupport::Openapi do
       end.new
     end
 
-    # Spree::Order is defined in spree_core, so it is the extension's own
-    # table when the engine is spree_core, and core's when it is spree_api.
-    let(:order_table) { double(model: Spree::Order, to_h: { attributes: { number: 'text' } }) }
-
-    def register(engine, tables)
+    it 'registers them in the document the operation names' do
       described_class.configure(config, engine: engine, title: 'Quotes Admin API', store_title: 'Quotes Store API')
       allow(RSpec.configuration).to receive(:openapi_specs).and_return(config.openapi_specs)
-      operation.send(:register_filter_tables, tables)
-      config.openapi_specs['openapi/store.yaml'][:components]
-    end
 
-    it 'registers them in the document the operation names' do
-      store = register(Spree::Core::Engine, 'Order' => order_table)
+      operation.send(:register_filter_tables, 'Quote' => double(to_h: { attributes: { number: 'text' } }))
 
-      expect(store[:'x-spree-filter-tables']).to eq('Order' => { attributes: { number: 'text' } })
+      store = config.openapi_specs['openapi/store.yaml'][:components]
+      expect(store[:'x-spree-filter-tables']).to eq('Quote' => { attributes: { number: 'text' } })
       expect(store[:'x-spree-filter-predicates']).to eq(Spree::Api::V3::FilterPredicates::BY_KIND)
       expect(config.openapi_specs['openapi/admin.yaml'][:components]).not_to have_key(:'x-spree-filter-tables')
-    end
-
-    it "leaves out the tables of models the engine doesn't define, which core's document has" do
-      store = register(Spree::Api::Engine, 'Order' => order_table)
-
-      expect(store[:'x-spree-filter-tables']).to eq({})
     end
   end
 end

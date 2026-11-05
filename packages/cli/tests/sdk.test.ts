@@ -150,18 +150,6 @@ describe('spree sdk generate', () => {
     expect(client).toContain('client.extend(quoteSettings).extend(quotes)')
   })
 
-  it("filters through a core table from the SDK, which the extension's document leaves out", async () => {
-    const withOrder = structuredClone(adminSpec)
-    withOrder.components['x-spree-filter-tables'].Quote.associations = { order: 'Order' }
-    writeFileSync('ext/openapi/admin.yaml', stringify(withOrder))
-
-    await run(['--no-backend'])
-
-    const filters = read('admin/filters.ts')
-    expect(filters).toContain("Filter.Prefixed<'order_', Filter.OrderFields>")
-    expect(filters).not.toContain('export type OrderFields')
-  })
-
   it('writes the request and filter types beside the client', async () => {
     await run(['--no-backend'])
 

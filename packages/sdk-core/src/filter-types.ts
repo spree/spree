@@ -158,12 +158,8 @@ function associationsType(
   if (depth >= MAX_DEPTH) return []
 
   return Object.entries(table.associations).map(([association, target]) => {
-    // An extension's document lists only its own tables; a core one it
-    // reaches comes from the SDK, without the core table's own associations.
-    const known = tables[target]
-    const nested = known ? associationsType(tables, known, depth + 1, prefix) : []
-    const fields = known ? `${prefix}${target}Fields` : `Filter.${target}Fields`
-    const inner = [fields, ...nested].join(' & ')
+    const nested = associationsType(tables, tables[target], depth + 1, prefix)
+    const inner = [`${prefix}${target}Fields`, ...nested].join(' & ')
     return `Filter.Prefixed<'${association}_', ${inner}>`
   })
 }
