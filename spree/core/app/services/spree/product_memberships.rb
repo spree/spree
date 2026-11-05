@@ -26,9 +26,9 @@ module Spree
       membership_class.insert_all(rows)
 
       created = membership_class.where(group_key => group_ids, product_id: product_ids).where.not(id: existing)
-      publish_membership_events(created, 'created')
 
       refresh_after_membership_change(group_ids, products)
+      publish_membership_events(created, 'created')
     end
 
     # Removes the products, then re-packs the remaining positions from 1.
@@ -58,9 +58,8 @@ module Spree
         membership_class.upsert_all(rows, unique_by: ([group_key, :product_id] unless Spree.mysql?)) if rows.any?
       end
 
-      publish_membership_events(deleted, 'deleted')
-
       refresh_after_membership_change(group_ids, products)
+      publish_membership_events(deleted, 'deleted')
     end
 
     def publish_membership_events(memberships, action)

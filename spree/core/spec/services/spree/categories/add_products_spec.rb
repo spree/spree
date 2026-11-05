@@ -83,6 +83,19 @@ module Spree
 
           expect(published).to be_empty
         end
+
+        it 'has the counters settled by the time a subscriber sees the event' do
+          observed = []
+          Spree::Events.subscribe('product_category.created', async: false) do |_event|
+            observed << [categories.first.reload.products_count, products.first.reload.categories_count]
+          end
+          Spree::Events.activate!
+
+          subject
+
+          expect(observed.size).to eq(categories.size * products.size)
+          expect(observed).to all(eq([products.size, categories.size]))
+        end
       end
     end
   end
