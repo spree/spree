@@ -1,0 +1,31 @@
+# Spree 6.0 → 6.1 upgrade manifest. See 5_6_to_6_0/manifest.yml for what
+# belongs here: only version-specific data steps, each idempotent.
+---
+from: "6.0"
+to: "6.1"
+docs: "https://spreecommerce.org/docs/developer/upgrades/6.0-to-6.1"
+
+steps:
+  - id: backfill_collection_publications
+    name: "Publish existing collections on every active channel"
+    task: "spree:collections:backfill_publications"
+    notes: |
+      Spree 6.1 publishes collections per channel, and the Store API serves
+      only collections published on the request's channel. Collections were
+      public before, so this step puts every collection that has no
+      publication on every active channel of its store. Nothing a shopper
+      sees changes.
+
+      Idempotent: collections that already have a publication are skipped.
+
+  - id: backfill_collection_membership_sources
+    name: "Record where each collection membership came from"
+    task: "spree:collections:backfill_membership_sources"
+    notes: |
+      Spree 6.1 lets a collection mix rule-matched and hand-picked products,
+      and records which is which so regeneration leaves hand-picked products
+      alone. Memberships created before 6.1 have no source yet: this step
+      marks those of automatic collections as rule-matched and the rest as
+      hand-picked. Spree 6.2 makes the column required.
+
+      Idempotent: only memberships without a source are touched.

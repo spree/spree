@@ -19,7 +19,7 @@ module Spree
         product_ids.map do |product_id|
           {
             group_key => group_id, product_id: product_id, position: (position += 1),
-            created_at: Time.current, updated_at: Time.current
+            created_at: Time.current, updated_at: Time.current, **membership_attributes
           }
         end
       end
@@ -82,6 +82,11 @@ module Spree
       Spree::Product.where(id: product_ids).touch_all
       products.each(&:enqueue_search_index)
       group_class.where(id: group_ids).touch_all
+    end
+
+    # Extra columns every added row carries (a collection names its source).
+    def membership_attributes
+      {}
     end
 
     def group_key

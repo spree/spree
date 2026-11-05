@@ -389,7 +389,7 @@ module Spree
           Spree::Calculator::FlexiRate
         ]
 
-        Rails.application.config.spree.promotions.rules.concat [
+        Rails.application.config.spree.promotions.rules.push(
           Spree::Promotion::Rules::Currency,
           Spree::Promotion::Rules::Country,
           Spree::Promotion::Rules::Channel,
@@ -402,8 +402,9 @@ module Spree
           Spree::Promotion::Rules::UserLoggedIn,
           Spree::Promotion::Rules::OneUsePerUser,
           Spree::Promotion::Rules::Category,
-          Spree::Promotion::Rules::OptionValue,
-        ]
+          Spree::Promotion::Rules::Collection,
+          Spree::Promotion::Rules::OptionValue
+        )
 
         # Default registry. MarketRule is the only geography rule: price
         # lists that were zone-scoped before 6.0 are converted onto it by
@@ -462,6 +463,13 @@ module Spree
           Spree::CollectionRules::Tag,
           Spree::CollectionRules::AvailableOn,
           Spree::CollectionRules::Sale,
+          Spree::CollectionRules::Category,
+          Spree::CollectionRules::ProductType,
+          Spree::CollectionRules::Price,
+          Spree::CollectionRules::InStock,
+          Spree::CollectionRules::Title,
+          Spree::CollectionRules::Seller,
+          Spree::CollectionRules::CustomField
         ]
 
         # Net-new (no taxon_rules equivalent — taxons ship no scheduled refresh).

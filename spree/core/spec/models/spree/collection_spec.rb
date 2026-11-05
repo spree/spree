@@ -43,6 +43,44 @@ RSpec.describe Spree::Collection, type: :model do
     end
   end
 
+  describe '.find_from_permalink_history!' do
+    let!(:collection) { create(:collection, name: 'Summer', store: store).tap { |record| record.update!(permalink: 'winter') } }
+
+    it 'finds the collection that used the permalink, within the scope' do
+      expect(store.collections.find_from_permalink_history!('summer')).to eq(collection)
+    end
+
+    it 'misses outside the scope' do
+      expect { create(:store).collections.find_from_permalink_history!('summer') }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { store.collections.find_from_permalink_history!('autumn') }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe '#publications=' do
+    let(:collection) { create(:collection, :unpublished, store: store) }
+    let!(:pos) { create(:channel, store: store, name: 'POS', code: 'pos') }
+
+    it 'replaces the publication set and ignores channels of another store' do
+      collection.update!(publications: [{ channel_id: store.default_channel.prefixed_id }])
+      foreign = create(:channel, store: create(:store))
+
+      collection.update!(publications: [{ channel_id: pos.prefixed_id, published_at: 1.day.from_now }, { channel_id: foreign.prefixed_id }])
+
+      expect(collection.reload.channels).to contain_exactly(pos)
+      expect(collection).not_to be_published_on(pos)
+    end
+  end
+
+  describe '.published_on' do
+    it 'lists collections live on the channel' do
+      live = create(:collection, store: store)
+      hidden = create(:collection, :unpublished, store: store)
+
+      expect(described_class.published_on(store.default_channel)).to include(live)
+      expect(described_class.published_on(store.default_channel)).not_to include(hidden)
+    end
+  end
+
   describe 'validations' do
     it 'rejects an unknown sort_order' do
       collection = build(:collection, sort_order: 'nonsense')
@@ -95,6 +133,8 @@ RSpec.describe Spree::Collection, type: :model do
 
   describe 'automatic regeneration callback' do
     let(:collection) { create(:automatic_collection) }
+
+    before { create(:tag_collection_rule, collection: collection, value: 'sale') }
 
     it 'regenerates products when the match policy changes' do
       expect(collection).to receive(:regenerate_products)
