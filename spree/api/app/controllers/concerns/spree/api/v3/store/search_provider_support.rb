@@ -34,35 +34,7 @@ module Spree
             if filters['in_collection'].present? && !published_collection?(filters['in_collection'])
               filters['in_collection'] = Spree::Collection.prefixed_id_for(0)
             end
-            limit_collection_predicates(filters)
             @search_filters = filters.presence
-          end
-
-          # `collections_*` Ransack predicates match only collections this
-          # channel serves: requested ids are narrowed to them, and any other
-          # collections predicate is limited to them.
-          def limit_collection_predicates(filters)
-            drop_nested_collection_predicates(filters, top_level: true)
-            return unless filters.keys.any? { |key| key.to_s.start_with?('collections_') }
-
-            ids = storefront_collections.ids
-            requested_eq = filters.delete('collections_id_eq')
-            ids &= Array(requested_eq).map(&:to_i) unless requested_eq.nil?
-            ids &= Array(filters['collections_id_in']).map(&:to_i) unless filters['collections_id_in'].nil?
-            filters['collections_id_in'] = ids.presence || [0]
-          end
-
-          # A collections condition inside a grouping (`g`, `c`) or an OR
-          # attribute (`name_or_collections_…`) would get past the narrowing
-          # above, so it is dropped.
-          def drop_nested_collection_predicates(filters, top_level: false)
-            filters.delete_if do |key, _|
-              name = key.to_s
-              name.include?('collections_') && !(top_level && name.start_with?('collections_'))
-            end
-            filters.each_value do |value|
-              Array.wrap(value).each { |item| drop_nested_collection_predicates(item) if item.is_a?(Hash) }
-            end
           end
 
           # A collection not published on this channel filters to nothing,
