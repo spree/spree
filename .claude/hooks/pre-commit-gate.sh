@@ -183,7 +183,7 @@ if [ $rubocop_exit -eq 3 ]; then
   echo "Install it, then retry: changed Ruby files must pass RuboCop before a commit or push." >&2
   exit 2
 elif [ $rubocop_exit -ne 0 ]; then
-  echo "RuboCop failed on changed Ruby files. CI will reject this commit." >&2
+  echo "RuboCop failed on changed Ruby files." >&2
   echo "" >&2
   echo "$rubocop_out" >&2
   echo "" >&2

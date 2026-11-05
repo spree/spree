@@ -1,4 +1,5 @@
-# RuboCop for every Spree gem. Run from this directory: `bundle exec rubocop`.
+# RuboCop for every Spree gem, enforced by local hooks (not CI). Run from this
+# directory: `bundle exec rubocop`.
 #
 # Starts from RuboCop and rubocop-rails defaults. The overrides below follow
 # what the codebase already does, measured across all engines, so new code

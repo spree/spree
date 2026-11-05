@@ -440,7 +440,7 @@ To auto-fix correctable offenses, or to check specific files:
 scripts/lint/rubocop --fix spree/core/app/models/spree/product.rb
 ```
 
-The lefthook pre-commit and pre-push hooks run the same check, and CI runs RuboCop on every Spree gem.
+The lefthook pre-commit and pre-push hooks run the same check. CI does not run RuboCop.
 
 **TypeScript:** We use [Biome](https://biomejs.dev/) for linting and formatting TypeScript code. Run it from the repository root:
 
