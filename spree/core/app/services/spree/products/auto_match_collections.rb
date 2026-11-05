@@ -9,13 +9,13 @@ module Spree
       # @param product [Spree::Product]
       # @return [Spree::ServiceModule::Base::Result]
       def call(product:)
-        return unless product.present?
+        return if product.blank?
 
         collections_to_remove = []
         collections_to_add = []
 
         # existing memberships that no longer match (tags/prices changed)
-        product.collections.automatic.includes(:rules).each do |collection|
+        product.collections.automatic.includes(:rules).find_each do |collection|
           collections_to_remove << collection unless collection.products_matching_rules.ids.include?(product.id)
         end
 
@@ -30,7 +30,7 @@ module Spree
         end
 
         # automatic collections in the product's store that it now matches
-        Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :products).each do |collection|
+        Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :products).find_each do |collection|
           collections_to_add << collection if collection.products.exclude?(product) && collection.products_matching_rules.ids.include?(product.id)
         end
 
@@ -74,7 +74,7 @@ module Spree
         return if added_collections.empty?
 
         Spree::ProductCollection.where(collection_id: added_collections.map(&:id), product_id: product.id).
-          each { |row| row.publish_event('product_collection.created') }
+          find_each { |row| row.publish_event('product_collection.created') }
       end
 
       def product_collection_attributes(collection, product, position)
