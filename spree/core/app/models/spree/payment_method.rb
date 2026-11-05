@@ -75,7 +75,7 @@ module Spree
     has_many :payment_setup_sessions, class_name: 'Spree::PaymentSetupSession', dependent: :destroy
     has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', dependent: :destroy
     has_many :payment_method_rules, class_name: 'Spree::PaymentMethodRule',
-             dependent: :destroy, inverse_of: :payment_method
+                                    dependent: :destroy, inverse_of: :payment_method
 
     after_save :apply_pending_rules, if: -> { @pending_payment_method_rules.present? }
 

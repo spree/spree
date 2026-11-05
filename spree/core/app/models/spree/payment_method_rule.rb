@@ -14,7 +14,7 @@ module Spree
     has_prefix_id :pmrule
 
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod',
-               inverse_of: :payment_method_rules, touch: true
+                                inverse_of: :payment_method_rules, touch: true
 
     delegate :store, to: :payment_method
 

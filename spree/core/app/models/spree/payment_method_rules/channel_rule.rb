@@ -6,7 +6,7 @@ module Spree
       # Accepts prefixed IDs and stores raw ones; the scope confines them to
       # the method's store.
       preference :channel_ids, :array, of: :id, model: 'Spree::Channel', default: [],
-                 scope: ->(rule) { rule.store.channels }
+                                       scope: ->(rule) { rule.store.channels }
 
       def eligible?(purchase)
         # An empty preference leaves the method unrestricted, so a

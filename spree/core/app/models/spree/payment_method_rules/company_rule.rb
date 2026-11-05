@@ -10,7 +10,7 @@ module Spree
     # purchase qualifies; off, the rule restricts nothing.
     class CompanyRule < Spree::PaymentMethodRule
       preference :company_ids, :array, of: :id, model: 'Spree::Company', default: [],
-                 scope: ->(rule) { rule.store.companies }
+                                       scope: ->(rule) { rule.store.companies }
       preference :company_orders_only, :boolean, default: true
 
       def eligible?(purchase)

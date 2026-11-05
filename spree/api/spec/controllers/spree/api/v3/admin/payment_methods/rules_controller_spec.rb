@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethods::RulesController, type: :co
       get :types, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |row| row['type'] }).to contain_exactly(
+      expect(json_response['data'].pluck('type')).to contain_exactly(
         'channel_rule', 'market_rule', 'order_total_rule', 'customer_group_rule', 'company_rule'
       )
       company = json_response['data'].find { |row| row['type'] == 'company_rule' }

@@ -366,13 +366,13 @@ module Spree
         ]
 
         # Payment-method eligibility rule kinds (docs/plans/6.1-payment-method-rules.md).
-        Rails.application.config.spree.payment_method_rules.concat [
+        Rails.application.config.spree.payment_method_rules.push(
           Spree::PaymentMethodRules::ChannelRule,
           Spree::PaymentMethodRules::MarketRule,
           Spree::PaymentMethodRules::OrderTotalRule,
           Spree::PaymentMethodRules::CustomerGroupRule,
           Spree::PaymentMethodRules::CompanyRule
-        ]
+        )
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
           Spree::Calculator::FlatPercentItemTotal,
