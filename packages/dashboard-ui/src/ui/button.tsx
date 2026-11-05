@@ -11,7 +11,10 @@ const buttonVariants = cva(
         // `shadow-xs` like the outline and destructive variants: the primary
         // action is the one thing on a page that should sit slightly above it,
         // and it was the only variant with no lift at all.
-        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85',
+        // Disabled drops the fill rather than fading it: a faded black (or, in
+        // dark mode, white) pill still reads as the page's live primary action.
+        default:
+          'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85 disabled:border-border disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 disabled:shadow-none',
         outline:
           'border-border/80 bg-card shadow-xs text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
         // `group-hover/row:` — inside a hovered table row the row already wears

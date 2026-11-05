@@ -190,7 +190,8 @@
       "unsaved_changes": "You have unsaved changes.",
       "yes": "Yes",
       "done": "Done",
-      "error": "Something went wrong."
+      "error": "Something went wrong.",
+      "unsaved_label": "Unsaved changes"
     },
     "components": {
       "address_block": {

@@ -190,7 +190,8 @@
       "unsaved_changes": "Vous avez des modifications non enregistrées.",
       "yes": "Oui",
       "done": "Terminé",
-      "error": "Une erreur s'est produite."
+      "error": "Une erreur s'est produite.",
+      "unsaved_label": "Modifications non enregistrées"
     },
     "components": {
       "address_block": {

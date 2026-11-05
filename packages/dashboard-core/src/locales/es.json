@@ -1722,7 +1722,8 @@
       "unsaved_changes": "Tenés cambios sin guardar.",
       "yes": "Sí",
       "done": "Listo",
-      "error": "Algo salió mal."
+      "error": "Algo salió mal.",
+      "unsaved_label": "Cambios sin guardar"
     },
     "messages": {
       "address_removed": "Dirección eliminada",

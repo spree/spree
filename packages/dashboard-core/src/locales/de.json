@@ -190,7 +190,8 @@
       "unsaved_changes": "Sie haben ungespeicherte Änderungen.",
       "yes": "Ja",
       "done": "Fertig",
-      "error": "Etwas ist schiefgelaufen."
+      "error": "Etwas ist schiefgelaufen.",
+      "unsaved_label": "Ungespeicherte Änderungen"
     },
     "components": {
       "address_block": {

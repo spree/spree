@@ -190,7 +190,8 @@
       "unsaved_changes": "保存していない変更があります。",
       "yes": "はい",
       "done": "完了",
-      "error": "問題が起きました。"
+      "error": "問題が起きました。",
+      "unsaved_label": "未保存の変更"
     },
     "components": {
       "address_block": {

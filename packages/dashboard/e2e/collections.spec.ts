@@ -166,8 +166,10 @@ test.describe('collections management', () => {
 
     // Staged, not written: Discard rolls it back with the rest of the form.
     await expect(productRow.getByRole('button', { name: /restore/i })).toBeVisible()
+    await expect(page.getByText(/^unsaved changes$/i)).toBeVisible()
     await page.getByRole('button', { name: /^discard$/i }).click()
     await expect(productRow.getByRole('button', { name: /restore/i })).toHaveCount(0)
+    await expect(page.getByText(/^unsaved changes$/i)).toHaveCount(0)
     await expect(productRow).toBeVisible()
 
     // Staging it again and saving is what actually removes it.

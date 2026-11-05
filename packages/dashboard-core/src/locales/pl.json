@@ -191,7 +191,8 @@
       "unsaved_changes": "Masz niezapisane zmiany.",
       "yes": "Tak",
       "done": "Gotowe",
-      "error": "Coś poszło nie tak."
+      "error": "Coś poszło nie tak.",
+      "unsaved_label": "Niezapisane zmiany"
     },
     "components": {
       "address_block": {

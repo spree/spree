@@ -190,7 +190,8 @@
       "unsaved_changes": "Bạn có những thay đổi chưa được lưu.",
       "yes": "Có",
       "done": "Xong",
-      "error": "Đã xảy ra lỗi."
+      "error": "Đã xảy ra lỗi.",
+      "unsaved_label": "Thay đổi chưa lưu"
     },
     "components": {
       "address_block": {

@@ -190,7 +190,8 @@
       "unsaved_changes": "لديك تغييرات غير محفوظة.",
       "yes": "نعم",
       "done": "تم",
-      "error": "حدث خطأ ما."
+      "error": "حدث خطأ ما.",
+      "unsaved_label": "تغييرات غير محفوظة"
     },
     "components": {
       "address_block": {

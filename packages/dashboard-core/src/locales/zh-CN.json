@@ -190,7 +190,8 @@
       "unsaved_changes": "您有未保存的更改。",
       "yes": "是",
       "done": "完成",
-      "error": "出了点问题。"
+      "error": "出了点问题。",
+      "unsaved_label": "未保存的更改"
     },
     "components": {
       "address_block": {
