@@ -365,6 +365,11 @@ export type PromotionRuleChannelPreferences = {
   channel_ids: Array<string>
 }
 
+/** Settings of the `collection` promotion rule. */
+export type PromotionRuleCollectionPreferences = {
+  match_policy: 'any' | 'all'
+}
+
 /** Settings of the `country` promotion rule. */
 export type PromotionRuleCountryPreferences = {
   country_codes: Array<string>
@@ -432,6 +437,7 @@ export type PromotionRuleProductPreferences = {
 export interface PromotionRulePreferencesMap {
   category: PromotionRuleCategoryPreferences
   channel: PromotionRuleChannelPreferences
+  collection: PromotionRuleCollectionPreferences
   country: PromotionRuleCountryPreferences
   currency: PromotionRuleCurrencyPreferences
   customer: PromotionRuleCustomerPreferences

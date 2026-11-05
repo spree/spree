@@ -429,6 +429,9 @@ import type {
   ClaimResolveParams,
   ClaimUpdateParams,
   CollectionCreateParams,
+  CollectionExclusionCreateParams,
+  CollectionPublicationCreateParams,
+  CollectionPublicationUpdateParams,
   CollectionUpdateParams,
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
@@ -641,6 +644,8 @@ import type {
   Claim,
   ClaimReason,
   Collection,
+  CollectionExclusion,
+  CollectionPublication,
   CommissionLine,
   CommissionRate,
   Company,
@@ -1418,9 +1423,9 @@ export class AdminClient {
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
 
     /**
-     * Attach every product in `ids` to every collection in `collection_ids`.
-     * Automatic collections are skipped (their membership comes from rules), so
-     * `collection_count` reports how many were actually applied.
+     * Hand-pick every product in `ids` into every collection in
+     * `collection_ids`. Products a collection's rules already matched become
+     * hand-picked in place; `collection_count` is how many collections applied.
      */
     bulkAddToCollections: (
       params: ProductBulkCollectionsParams,
@@ -5064,11 +5069,86 @@ export class AdminClient {
       this.request<void>('DELETE', `/collections/${id}`, options),
 
     /**
-     * Manual product membership + ordering within a collection. `add`, `remove`
-     * and `reposition` are rejected on an automatic collection, whose members
-     * are materialized from its rules; `list` works on both.
+     * Product membership + ordering within a collection. `list` covers
+     * rule-matched and hand-picked members; `add` hand-picks a product (a
+     * rule-matched one becomes hand-picked in place). Removing a product the
+     * rules still match brings it back on regeneration: exclude it instead.
      */
     products: this.positionedProductMembership('/collections'),
+
+    /**
+     * The channels a collection is published on, each with an optional
+     * window. A collection is visible on a channel's storefront only while
+     * a publication exists and its window is open.
+     */
+    publications: {
+      list: (
+        collectionId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CollectionPublication>> =>
+        this.request<PaginatedResponse<CollectionPublication>>(
+          'GET',
+          `/collections/${collectionId}/publications`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      create: (
+        collectionId: string,
+        params: CollectionPublicationCreateParams,
+        options?: RequestOptions,
+      ): Promise<CollectionPublication> =>
+        this.request<CollectionPublication>('POST', `/collections/${collectionId}/publications`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        collectionId: string,
+        id: string,
+        params: CollectionPublicationUpdateParams,
+        options?: RequestOptions,
+      ): Promise<CollectionPublication> =>
+        this.request<CollectionPublication>(
+          'PATCH',
+          `/collections/${collectionId}/publications/${id}`,
+          { ...options, body: params },
+        ),
+
+      delete: (collectionId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/collections/${collectionId}/publications/${id}`, options),
+    },
+
+    /**
+     * Products kept out of a collection whatever its rules match or a
+     * merchant picked. Deleting an exclusion brings the product back if the
+     * rules still match.
+     */
+    exclusions: {
+      list: (
+        collectionId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CollectionExclusion>> =>
+        this.request<PaginatedResponse<CollectionExclusion>>(
+          'GET',
+          `/collections/${collectionId}/exclusions`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      create: (
+        collectionId: string,
+        params: CollectionExclusionCreateParams,
+        options?: RequestOptions,
+      ): Promise<CollectionExclusion> =>
+        this.request<CollectionExclusion>('POST', `/collections/${collectionId}/exclusions`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (collectionId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/collections/${collectionId}/exclusions/${id}`, options),
+    },
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.collection),
 

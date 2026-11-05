@@ -40,8 +40,8 @@ export type ProductCreateParams = {
   tags?: string[]
   category_ids?: string[]
   /**
-   * Manual collections this product belongs to. Automatic collections are kept as they are, since
-   * their rules decide membership.
+   * Collections this product is hand-picked into. Memberships the collection rules created are
+   * kept; naming one makes it hand-picked.
    */
   collection_ids?: string[]
   metadata?: Record<string, unknown>

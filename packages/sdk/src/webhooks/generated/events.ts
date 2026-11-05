@@ -2,6 +2,7 @@
 import type {
   Cart,
   Claim,
+  Collection,
   Company,
   CompanyInvitation,
   Customer,
@@ -79,6 +80,8 @@ export interface WebhookEventMap {
   'claim.opened': Claim
   'claim.resolved': Claim
   'claim.updated': Claim
+  'collection.published': Collection
+  'collection.unpublished': Collection
   'company.created': Company
   'company.deleted': Company
   'company.updated': Company
