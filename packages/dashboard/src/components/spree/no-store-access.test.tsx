@@ -22,6 +22,10 @@ const storelessUser = {
 
 const signOut = async () => {}
 
+function CreateStore({ user }: NoStoreAccessSlotContext) {
+  return <a href="https://platform.example.com/new-store">Create a store for {user.email}</a>
+}
+
 function renderIndexRoute(user: AdminUser) {
   const IndexRedirect = IndexRoute.options.component!
   const auth = { user, logout: signOut } as unknown as NonNullable<ContextType<typeof AuthContext>>
@@ -47,9 +51,6 @@ describe('the no store access screen', () => {
   })
 
   it('is replaced by a plugin registered on its slot', () => {
-    function CreateStore({ user }: NoStoreAccessSlotContext) {
-      return <a href="https://platform.example.com/new-store">Create a store for {user.email}</a>
-    }
     registerSlot<NoStoreAccessSlotContext>(NO_STORE_ACCESS_SLOT, {
       id: 'create-store',
       component: CreateStore,
