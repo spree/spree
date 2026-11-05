@@ -19,6 +19,7 @@ module Spree
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
     validate :collection_condition_must_suit_field, if: :collection_condition?
+    after_commit :regenerate_custom_field_collections, if: :saved_change_to_collection_condition?
 
     #
     # Scopes
@@ -157,6 +158,11 @@ module Spree
     end
 
     private
+
+    def regenerate_custom_field_collections
+      Spree::Collection.automatic.where(store_id: store_id).with_rule_types([Spree::CollectionRules::CustomField]).
+        find_each(&:enqueue_regenerate_products)
+    end
 
     # Collection rules compare product fields as text, numbers or booleans.
     def collection_condition_must_suit_field

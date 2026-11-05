@@ -60,6 +60,17 @@ module Spree
         to eq([[other_product.id, 1], [matching_product.id, 2]])
     end
 
+    it 'removes an excluded product even when it was hand-picked' do
+      create(:product_collection, collection: collection, product: other_product, position: 1)
+      # Inserted without callbacks: an exclusion made while a regeneration was running.
+      Spree::CollectionExclusion.insert_all([{ collection_id: collection.id, product_id: other_product.id,
+                                               created_at: Time.current, updated_at: Time.current }])
+
+      described_class.call(collection: collection)
+
+      expect(collection.reload.products).not_to include(other_product)
+    end
+
     it 'leaves excluded products out' do
       create(:collection_exclusion, collection: collection, product: matching_product)
 

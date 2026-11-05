@@ -884,9 +884,8 @@ module Spree
       collections = collections.with_rule_types(rule_types) if rule_types
       return unless collections.exists?
 
-      Rails.cache.write("spree/auto_match_collections/#{store_id}/#{id}", true, expires_in: 30.seconds)
-
       Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
+      Rails.cache.write("spree/auto_match_collections/#{store_id}/#{id}", true, expires_in: 30.seconds)
     end
 
     # @param seller [Spree::Seller, nil] the seller exporting their own
