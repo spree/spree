@@ -10,8 +10,7 @@ module Spree
       fulfillment = find_fulfillment(event)
       return unless fulfillment
 
-      store = fulfillment.store
-      return unless store.prefers_send_consumer_transactional_emails?
+      return unless fulfillment.store.sends_customer_email?('spree/fulfillment_mailer/fulfilled_email')
 
       FulfillmentMailer.fulfilled_email(fulfillment.id).deliver_later
     end

@@ -46,10 +46,7 @@ module Spree
       # @param store [Spree::Store, nil]
       # @return [Array<Spree::Integration>]
       def active_integrations(store)
-        return [] if store.nil?
-        return Spree::Current.integrations if store.id == Spree::Current.store&.id
-
-        store.integrations.active.to_a
+        store&.active_integrations || []
       end
 
       # The name a merchant sees when choosing a provider.

@@ -599,6 +599,27 @@ module Spree
         formatted_url
     end
 
+    # The store's active integrations. Through {Spree::Current} for the
+    # request's own store, so every lookup in a request shares one query.
+    #
+    # @return [Array<Spree::Integration>]
+    def active_integrations
+      return Spree::Current.integrations if id == Spree::Current.store&.id
+
+      integrations.active.to_a
+    end
+
+    # Whether Spree sends this customer email for the store: customer emails
+    # are on and no active integration sends it instead
+    # ({Spree::Integration#replaced_customer_emails}).
+    #
+    # @param template_key [String] e.g. "spree/order_mailer/confirm_email"
+    # @return [Boolean]
+    def sends_customer_email?(template_key)
+      prefers_send_consumer_transactional_emails? &&
+        active_integrations.none? { |integration| integration.replaced_customer_emails.include?(template_key) }
+    end
+
     # Returns true if the given URL's origin matches one of the store's allowed origins.
     # See {Spree::AllowedOrigin#matches?} for the matching rules (scheme/host/port).
     #

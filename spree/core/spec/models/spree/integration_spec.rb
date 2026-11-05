@@ -38,6 +38,12 @@ RSpec.describe Spree::Integration, type: :model do
     end
   end
 
+  describe '#replaced_customer_emails' do
+    it 'takes over no customer email by default' do
+      expect(integration.replaced_customer_emails).to eq([])
+    end
+  end
+
   describe 'gallery metadata' do
     let(:described_klass) do
       Class.new(described_class) do
