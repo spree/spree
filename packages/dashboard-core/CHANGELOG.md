@@ -1,5 +1,15 @@
 # @spree/dashboard-core
 
+## 6.0.3
+
+### Patch Changes
+
+- [#15111](https://github.com/spree/spree/pull/15111) [`b037880`](https://github.com/spree/spree/commit/b037880301f991a7386f0f83a6c98753fc1b08c9) Thanks [@mad-eel](https://github.com/mad-eel)! - The product form mapping now sends a product's categories, collections and tags only when they changed, so saving a product no longer removes ones added after the page was opened, from another tab, a bulk action or an import.
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The table toolbar and the product form cards no longer call `crypto.randomUUID`, which browsers only provide on secure pages, so they work on a dashboard opened over plain HTTP at an address other than `localhost`. They use `randomUUID()` from `@spree/core`.
+- Updated dependencies [[`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6)]:
+  - @spree/core@6.0.3
+
 ## 6.0.2
 
 ### Patch Changes
