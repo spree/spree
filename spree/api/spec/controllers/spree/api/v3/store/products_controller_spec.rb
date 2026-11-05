@@ -115,6 +115,14 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       expect(json_response['data']).to be_empty
     end
 
+    it 'ignores collections conditions nested in groupings or OR attributes' do
+      get :index, params: { q: { g: { '0' => { collections_id_eq: scheduled.prefixed_id } } } }, as: :json
+      expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
+
+      get :index, params: { q: { name_or_collections_permalink_eq: scheduled.permalink } }, as: :json
+      expect(json_response['data'].pluck('id')).to include(product2.prefixed_id)
+    end
+
     it 'lists nothing for a collection not yet published' do
       get :index, params: { q: { in_collection: scheduled.prefixed_id } }, as: :json
 
