@@ -39,9 +39,9 @@ module SpreeKlaviyo
       def placed_order(purchase, notify_customer:)
         new(
           metric: PLACED_ORDER,
-          email: purchase.email,
+          email: email_for(purchase),
           unique_id: purchase.prefixed_id,
-          time: purchase.is_a?(Spree::OrderGroup) ? purchase.cart&.completed_at : purchase.completed_at,
+          time: completed_at(purchase),
           currency: purchase.currency,
           value: purchase.total.to_d,
           properties: purchase_properties(purchase).merge(NotifyCustomer: notify_customer)
@@ -54,7 +54,7 @@ module SpreeKlaviyo
 
         new(
           metric: ORDERED_PRODUCT,
-          email: order.email,
+          email: email_for(order),
           unique_id: line_item.prefixed_id,
           time: order.completed_at,
           currency: line_item.currency,
@@ -79,7 +79,7 @@ module SpreeKlaviyo
 
         new(
           metric: FULFILLED_ORDER,
-          email: order.email,
+          email: email_for(order),
           unique_id: fulfillment.prefixed_id,
           time: fulfillment.fulfilled_at,
           currency: order.currency,
@@ -105,7 +105,7 @@ module SpreeKlaviyo
       def canceled_order(order, notify_customer:)
         new(
           metric: CANCELED_ORDER,
-          email: order.email,
+          email: email_for(order),
           unique_id: order.prefixed_id,
           time: order.canceled_at,
           currency: order.currency,
@@ -129,7 +129,7 @@ module SpreeKlaviyo
 
         new(
           metric: RETURN_REFUNDED,
-          email: order.email,
+          email: email_for(order),
           unique_id: event_id,
           time: published_at,
           currency: return_record.currency,
@@ -145,6 +145,20 @@ module SpreeKlaviyo
       end
 
       private
+
+      # The customer's current address, so an order placed before an email change
+      # still reaches the profile Spree keeps up to date; a guest's order email.
+      def email_for(purchase)
+        purchase.customer&.email.presence || purchase.email
+      end
+
+      # A split checkout completes on its cart; a group staff raised has none, so
+      # it takes its first order's completion.
+      def completed_at(purchase)
+        return purchase.completed_at unless purchase.is_a?(Spree::OrderGroup)
+
+        purchase.cart&.completed_at || purchase.orders.minimum(:completed_at)
+      end
 
       # The number the customer was given: the group's for a split checkout.
       def order_id(order)

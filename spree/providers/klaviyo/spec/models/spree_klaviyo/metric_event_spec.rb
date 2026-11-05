@@ -2,8 +2,7 @@ require 'spec_helper'
 
 RSpec.describe SpreeKlaviyo::MetricEvent do
   let(:store) { @default_store }
-  # The factory takes the email from the customer, so it is set afterwards.
-  let(:order) { create(:completed_order_with_totals, store: store).tap { |record| record.update_column(:email, 'ada@example.com') } }
+  let(:order) { create(:completed_order_with_totals, store: store, customer: create(:customer, email: 'ada@example.com')) }
 
   def attributes(event)
     event.to_body.dig(:data, :attributes)
@@ -23,6 +22,19 @@ RSpec.describe SpreeKlaviyo::MetricEvent do
     subject(:event) { described_class.placed_order(order, notify_customer: true) }
 
     it_behaves_like 'an event identifying the profile by email only'
+
+    it "reaches the customer's current address after they change their email" do
+      order.customer.update_column(:email, 'ada.new@example.com')
+
+      expect(attributes(event).dig(:profile, :data, :attributes, :email)).to eq('ada.new@example.com')
+    end
+
+    it 'names a guest by the order email' do
+      guest_order = create(:completed_order_with_totals, store: store, customer: nil, email: 'guest@example.com')
+
+      expect(attributes(described_class.placed_order(guest_order, notify_customer: true)).dig(:profile, :data, :attributes, :email)).
+        to eq('guest@example.com')
+    end
 
     it 'is a Placed Order for the order, valued at its total' do
       body = attributes(event)
@@ -73,6 +85,15 @@ RSpec.describe SpreeKlaviyo::MetricEvent do
         expect(body[:properties][:OrderId]).to eq(group.number)
         expect(body[:properties][:Items].size).to eq(group.line_items.count)
         expect(group.line_items.count).to eq(2)
+      end
+
+      it "takes its first order's completion time when staff raised it without a cart" do
+        staff_group = create(:order_group, :with_parcels, store: store, email: 'ada@example.com')
+        first, second = staff_group.orders.to_a
+        first.update_column(:completed_at, completed_at)
+        second.update_column(:completed_at, completed_at + 1.hour)
+
+        expect(attributes(described_class.placed_order(staff_group, notify_customer: true))[:time]).to eq(completed_at.iso8601)
       end
     end
   end

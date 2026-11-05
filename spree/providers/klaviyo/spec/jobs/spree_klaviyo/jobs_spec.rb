@@ -43,7 +43,9 @@ RSpec.describe 'Klaviyo jobs' do
 
     it 'sends nothing for a tombstone email' do
       order = create(:completed_order_with_totals, store: store)
+      # An erasure rewrites the customer and their orders alike.
       order.update_column(:email, tombstone)
+      order.customer.update_column(:email, tombstone)
 
       expect(integration).not_to receive(:import_profile)
 
@@ -53,7 +55,14 @@ RSpec.describe 'Klaviyo jobs' do
 
   describe SpreeKlaviyo::UpdateSubscriptionJob do
     it 'subscribes' do
+      create(:newsletter_subscriber, store: store, email: 'ada@example.com')
       expect(integration).to receive(:subscribe).with('ada@example.com')
+
+      described_class.perform_now(integration, 'ada@example.com', subscribed: true)
+    end
+
+    it 'skips a subscribe whose subscriber was removed while it waited' do
+      expect(integration).not_to receive(:subscribe)
 
       described_class.perform_now(integration, 'ada@example.com', subscribed: true)
     end
@@ -91,11 +100,18 @@ RSpec.describe 'Klaviyo jobs' do
         end
       end
 
-      it 'is rescheduled within 20 minutes of being enqueued' do
-        run_after(19.minutes, subscribed: false)
+      it 'is rescheduled while the retry still lands within 20 minutes' do
+        run_after(18.minutes, subscribed: false)
 
         expect(enqueued_jobs.size).to eq(1)
         expect(reports).to be_empty
+      end
+
+      it "is reported when Klaviyo's Retry-After would carry it past 20 minutes" do
+        run_after(19.minutes + 30.seconds, subscribed: false)
+
+        expect(enqueued_jobs).to be_empty
+        expect(reports.size).to eq(1)
       end
 
       it 'is reported and not rescheduled 21 minutes after being enqueued' do
@@ -121,6 +137,7 @@ RSpec.describe 'Klaviyo jobs' do
       end
 
       it 'keeps rescheduling a subscribe however long it waits' do
+        create(:newsletter_subscriber, store: store, email: 'ada@example.com')
         run_after(2.hours, subscribed: true)
 
         expect(enqueued_jobs.size).to eq(1)
@@ -169,6 +186,7 @@ RSpec.describe 'Klaviyo jobs' do
 
     it 'sends nothing for a tombstone email' do
       order.update_column(:email, tombstone)
+      order.customer&.update_column(:email, tombstone)
 
       expect(integration).not_to receive(:create_event)
 
