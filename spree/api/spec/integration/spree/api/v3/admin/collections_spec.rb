@@ -338,6 +338,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
                   'A collection appears on a channel\'s storefront only while a publication exists and its window is open.'
       admin_scope :read, :collections
 
+      admin_sdk_example 'collections/publications/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -373,6 +375,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Publishes a collection on a sales channel so shoppers on that channel can see it. ' \
                   'Set `published_at` to schedule the launch and `unpublished_at` to take it down later; both are optional.'
       admin_scope :write, :collections
+
+      admin_sdk_example 'collections/publications/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -415,6 +419,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Changes when a collection goes live on a channel, or when it comes down. The channel itself cannot be changed.'
       admin_scope :write, :collections
 
+      admin_sdk_example 'collections/publications/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -442,6 +448,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Takes a collection off a sales channel. Shoppers on that channel stop seeing it straight away.'
       admin_scope :write, :collections
 
+      admin_sdk_example 'collections/publications/delete'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
@@ -465,6 +473,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Lists the products kept out of a collection, whatever its rules match or a merchant picked.'
       admin_scope :read, :collections
+
+      admin_sdk_example 'collections/exclusions/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -494,6 +504,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       description 'Keeps a product out of a collection even when the collection rules match it, and removes it if it is already in. ' \
                   'Adding the product to the collection by hand later lifts the exclusion.'
       admin_scope :write, :collections
+
+      admin_sdk_example 'collections/exclusions/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
@@ -535,6 +547,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Lets an excluded product back into a collection. The collection is regenerated, so the product returns if its rules still match.'
       admin_scope :write, :collections
+
+      admin_sdk_example 'collections/exclusions/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
