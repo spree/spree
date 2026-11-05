@@ -1087,18 +1087,38 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(product.reload.collections).to eq([manual_collection])
       end
 
-      # Automatic membership is materialized from rules, so a hand-set member
-      # would vanish on the next regeneration — mirrors the bulk endpoints.
-      it 'ignores automatic collections' do
-        automatic = create(:automatic_collection, store: store)
+      it 'hand-picks the product into a collection with rules' do
+        ruled = create(:automatic_collection, store: store)
+        create(:tag_collection_rule, collection: ruled, value: 'nothing-matches')
 
         patch :update, params: {
           id: product.prefixed_id,
-          collection_ids: [manual_collection.prefixed_id, automatic.prefixed_id]
+          collection_ids: [manual_collection.prefixed_id, ruled.prefixed_id]
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(product.reload.collections).to eq([manual_collection])
+        expect(product.reload.collections).to contain_exactly(manual_collection, ruled)
+        expect(product.product_collections.map(&:source).uniq).to eq(['manual'])
+      end
+
+      it 'keeps rule-matched memberships it does not name' do
+        ruled = create(:automatic_collection, store: store)
+        Spree::ProductCollection.create!(collection: ruled, product: product, position: 1, source: 'rule')
+
+        patch :update, params: { id: product.prefixed_id, collection_ids: [manual_collection.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.collections).to contain_exactly(manual_collection, ruled)
+      end
+
+      it 'reads back only the hand-picked collections' do
+        ruled = create(:automatic_collection, store: store)
+        Spree::ProductCollection.create!(collection: ruled, product: product, position: 1, source: 'rule')
+        Spree::ProductCollection.create!(collection: manual_collection, product: product, position: 1, source: 'manual')
+
+        get :show, params: { id: product.prefixed_id }, as: :json
+
+        expect(json_response['collection_ids']).to eq([manual_collection.prefixed_id])
       end
 
       it "ignores a collection that belongs to another store" do
@@ -1836,18 +1856,18 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.collections).not_to include(foreign_collection)
     end
 
-    it 'silently ignores automatic collections (curation is manual-only)' do
-      automatic = create(:automatic_collection, store: store)
+    it 'hand-picks products into a collection with rules' do
+      ruled = create(:automatic_collection, store: store)
+      create(:tag_collection_rule, collection: ruled, value: 'nothing-matches')
 
       post :bulk_add_to_collections, params: {
         ids: [product.prefixed_id],
-        collection_ids: [collection.prefixed_id, automatic.prefixed_id]
+        collection_ids: [collection.prefixed_id, ruled.prefixed_id]
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['collection_count']).to eq(1)
-      expect(product.reload.collections).to include(collection)
-      expect(product.reload.collections).not_to include(automatic)
+      expect(json_response['collection_count']).to eq(2)
+      expect(Spree::ProductCollection.find_by(collection: ruled, product: product).source).to eq('manual')
     end
 
     it 'silently drops products from other stores' do
