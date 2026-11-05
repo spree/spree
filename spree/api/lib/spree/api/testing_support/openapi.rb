@@ -2,6 +2,7 @@ require 'spree/api/testing_support/v3/base'
 require 'spree/api/testing_support/agent_tools'
 require 'spree/api/testing_support/deterministic_openapi'
 require 'spree/api/testing_support/filter_parameters'
+require 'spree/api/testing_support/sdk_method'
 
 module Spree
   module Api
@@ -165,7 +166,7 @@ module Spree
       # and in its Rakefile, `require 'spree/api/testing_support/openapi_tasks'`
       # for `rake spree:openapi:generate`.
       module Openapi
-        HELPERS = [RequestBody, FilterParameters, AdminScope, AdminOperation, AgentTools].freeze
+        HELPERS = [RequestBody, FilterParameters, AdminScope, AdminOperation, AgentTools, SdkMethod].freeze
 
         class << self
           # @param config [RSpec::Core::Configuration]

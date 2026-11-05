@@ -245,7 +245,99 @@ describe('spree sdk generate', () => {
     writeFileSync('ext/openapi/admin.yaml', stringify(clash))
 
     expect(() => generate(join(dir, 'ext'), out())).toThrow(
-      /would both be quotes.send; give one an operationId/,
+      /would both be quotes.send; name one with x-spree-sdk-method/,
+    )
+  })
+
+  it("puts a path nested under one of the SDK's resources in a namespace of its own", () => {
+    const nested = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, unknown>
+    }
+    nested.paths['/api/v3/admin/orders/{order_id}/quote_notes'] = {
+      post: { summary: 'Note a quote on an order' },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(nested))
+
+    generate(join(dir, 'ext'), out())
+
+    const client = read('admin/client.ts')
+    // The SDK has `orders`; an extension cannot add to it.
+    expect(client).not.toContain("defineAdminExtension('orders'")
+    expect(client).toContain("export const quoteNotes = defineAdminExtension('quoteNotes'")
+    expect(client).toContain('create: (orderId: string, options?: RequestOptions)')
+  })
+
+  it('names a method and its namespace apart from the operationId', () => {
+    const named = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, unknown>
+    }
+    named.paths['/api/v3/admin/quotes/{id}/attachments/{attachment_id}'] = {
+      delete: {
+        summary: 'Remove a file',
+        operationId: 'quotes_remove_file',
+        'x-spree-sdk-method': 'remove_attachment',
+      },
+    }
+    named.paths['/api/v3/admin/orders/{order_id}/quote_files'] = {
+      post: {
+        summary: 'Presign a file',
+        'x-spree-sdk-method': 'presign_file',
+        'x-spree-sdk-namespace': 'quotes',
+      },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(named))
+
+    generate(join(dir, 'ext'), out())
+
+    const client = read('admin/client.ts')
+    expect(client).toContain('removeAttachment: (id: string, attachmentId: string')
+    expect(client).not.toContain('quotesRemoveFile')
+    expect(client).toContain('presignFile: (orderId: string, options?: RequestOptions)')
+    expect(client).not.toContain("defineAdminExtension('quoteFiles'")
+  })
+
+  it('types a response declared inline from its schema', () => {
+    const inline = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, unknown>
+    }
+    inline.paths['/api/v3/admin/quotes/statuses'] = {
+      get: {
+        summary: 'List quote statuses',
+        responses: {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['data'],
+                  properties: {
+                    data: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        required: ['value', 'count'],
+                        properties: { value: { type: 'string' }, count: { type: 'integer' } },
+                      },
+                    },
+                    latest: { $ref: '#/components/schemas/Quote' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(inline))
+
+    generate(join(dir, 'ext'), out())
+
+    const client = read('admin/client.ts')
+    expect(client).toContain('export type QuotesStatusesResponse = {')
+    expect(client).toContain('  data: {\n    value: string\n    count: number\n  }[]')
+    expect(client).toContain('  latest?: Quote')
+    expect(client).toContain(
+      'statuses: (params?: { expand?: string[] }, options?: RequestOptions): Promise<QuotesStatusesResponse> =>',
     )
   })
 

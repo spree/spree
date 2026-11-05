@@ -42,6 +42,28 @@ RSpec.describe Spree::Api::TestingSupport::Openapi do
     expect(config.helpers).to include(Spree::Api::TestingSupport::FilterParameters)
   end
 
+  describe 'sdk_method' do
+    let(:operation) do
+      Class.new do
+        extend Spree::Api::TestingSupport::SdkMethod
+
+        def self.metadata
+          @metadata ||= { operation: {} }
+        end
+      end
+    end
+
+    it 'names the SDK method, and its namespace, on the operation' do
+      described_class.configure(config, engine: engine, title: 'Quotes Admin API')
+      operation.sdk_method :presign_attachment, namespace: :quotes
+
+      expect(config.helpers).to include(Spree::Api::TestingSupport::SdkMethod)
+      expect(operation.metadata[:operation]).to eq(
+        'x-spree-sdk-method': 'presign_attachment', 'x-spree-sdk-namespace': 'quotes'
+      )
+    end
+  end
+
   describe 'filter tables' do
     # An operation in the extension's store document, as rswag hands it to
     # filter_parameters_for.

@@ -6,6 +6,7 @@
 // writes it next to the request, filter and response types.
 
 import type { ExtensionApi } from './extensions'
+import { type ParamsSchema, schemaType } from './params-types'
 
 const SDKS: Record<ExtensionApi, string> = {
   store: '@spree/sdk',
@@ -22,11 +23,15 @@ interface Schema {
 
 interface Operation {
   operationId?: string
+  /** The SDK method's name, apart from `operationId`, which also names the agent tool. */
+  'x-spree-sdk-method'?: string
+  /** The namespace the method goes in, instead of the path's resource. */
+  'x-spree-sdk-namespace'?: string
   summary?: string
   description?: string
   parameters?: { name: string; in: string }[]
   requestBody?: { required?: boolean; content?: Record<string, { schema?: Schema }> }
-  responses?: Record<string, { content?: Record<string, { schema?: Schema }> }>
+  responses?: Record<string, { content?: Record<string, { schema?: ParamsSchema }> }>
   'x-spree-filters'?: { table: string }
 }
 
@@ -55,6 +60,8 @@ interface Method {
   body?: { type: string; required: boolean }
   filters?: string
   response: string
+  /** A response declared inline: its type, written above the extensions. */
+  responseType?: { name: string; source: string; references: string[] }
   doc: string[]
 }
 
@@ -82,32 +89,47 @@ export function renderExtensionSource(
   const prefix = `/api/v3/${api}/`
   const filters = Boolean(spec.components?.['x-spree-filter-tables'])
   const resources = new Map<string, Method[]>()
+  const paths = Object.entries(spec.paths ?? {})
+    .filter(([path]) => path.startsWith(prefix))
+    .map(([path, item]) => ({ path, item, segments: path.slice(prefix.length).split('/') }))
+  // The resources the extension serves itself, at `/quotes` or `/quotes/{id}`.
+  // A path under any other (`/carts/{cart_id}/quote_attachments`) nests under
+  // one of the SDK's own, whose namespace the extension cannot add to.
+  const owned = new Set(
+    paths
+      .filter(
+        ({ segments }) => segments.length === 1 || (segments.length === 2 && isParam(segments[1])),
+      )
+      .map(({ segments }) => segments[0]),
+  )
 
-  for (const [path, item] of Object.entries(spec.paths ?? {})) {
-    if (!path.startsWith(prefix)) continue
-    const segments = path.slice(prefix.length).split('/')
-    const resource = segments[0]
+  for (const { path, item, segments } of paths) {
+    const nested =
+      !owned.has(segments[0]) && isParam(segments[1]) && segments[2] && !isParam(segments[2])
+    const resource = nested ? segments[2] : segments[0]
+    const tail = segments.slice(nested ? 3 : 1)
     for (const verb of VERBS) {
       const operation = item[verb]
       if (!operation) continue
+      const namespace = operation['x-spree-sdk-namespace'] ?? resource
       const method = methodFor(
-        resource,
-        segments.slice(1),
+        { resource, namespace },
+        tail,
         verb,
         operation,
         path.slice(prefix.length - 1),
         options.types,
         filters,
       )
-      const methods = resources.get(resource) ?? []
+      const methods = resources.get(namespace) ?? []
       const taken = methods.find(({ name }) => name === method.name)
       if (taken) {
         throw new Error(
-          `${verb.toUpperCase()} ${method.path} and ${taken.verb.toUpperCase()} ${taken.path} would both be ${camel(resource)}.${method.name}; give one an operationId`,
+          `${verb.toUpperCase()} ${method.path} and ${taken.verb.toUpperCase()} ${taken.path} would both be ${camel(namespace)}.${method.name}; name one with x-spree-sdk-method (\`sdk_method\` in its rswag spec)`,
         )
       }
       methods.push(method)
-      resources.set(resource, methods)
+      resources.set(namespace, methods)
     }
   }
   if (resources.size === 0) return undefined
@@ -119,8 +141,10 @@ export function renderExtensionSource(
   )
 }
 
+const isParam = (segment: string | undefined) => Boolean(segment?.startsWith('{'))
+
 function methodFor(
-  resource: string,
+  { resource, namespace }: { resource: string; namespace: string },
   tail: string[],
   verb: Verb,
   operation: Operation,
@@ -137,9 +161,8 @@ function methodFor(
     !member &&
     (Boolean(operation['x-spree-filters']) || queryNames.includes('page'))
 
-  const name = operation.operationId
-    ? camel(operation.operationId)
-    : defaultName(verb, statics, member, isList)
+  const given = operation['x-spree-sdk-method'] ?? operation.operationId
+  const name = given ? camel(given) : defaultName(verb, statics, member, isList)
 
   const bodySchema = operation.requestBody?.content?.['application/json']?.schema
   const bodyType = refName(bodySchema)
@@ -156,7 +179,13 @@ function methodFor(
     kind,
     body,
     filters: isList && filters ? operation['x-spree-filters']?.table : undefined,
-    response: responseType(resource, verb, operation, types),
+    ...responseType(
+      resource,
+      `${pascal(namespace)}${pascal(name)}Response`,
+      verb,
+      operation,
+      types,
+    ),
     // `*/` in a description would end the doc comment early.
     doc: [operation.summary, operation.description]
       .filter((text): text is string => Boolean(text))
@@ -195,18 +224,36 @@ function defaultName(verb: Verb, statics: string[], member: boolean, isList: boo
 
 function responseType(
   resource: string,
+  inlineName: string,
   verb: Verb,
   operation: Operation,
   types: Set<string>,
-): string {
-  const declared = ['200', '201']
-    .map((status) => refName(operation.responses?.[status]?.content?.['application/json']?.schema))
+): Pick<Method, 'response' | 'responseType'> {
+  const schema = ['200', '201']
+    .map((status) => operation.responses?.[status]?.content?.['application/json']?.schema)
     .find(Boolean)
-  if (declared && types.has(declared)) return declared
-  if (verb === 'delete' && !declared) return 'void'
+  const declared = refName(schema)
+  if (declared && types.has(declared)) return { response: declared }
+
+  // An inline schema (`{ data: [...] }`, not one of the package's records)
+  // is typed from the schema itself.
+  if (schema && !schema.$ref && (schema.type || schema.properties || schema.allOf)) {
+    const references = new Set<string>()
+    const source = schemaType(schema, (ref) => {
+      const name = refName({ $ref: ref }) ?? ''
+      if (!types.has(name)) return 'unknown'
+      references.add(name)
+      return name
+    })
+    return {
+      response: inlineName,
+      responseType: { name: inlineName, source, references: [...references] },
+    }
+  }
+  if (verb === 'delete' && !declared) return { response: 'void' }
 
   const byName = [pascal(singular(resource)), pascal(resource)].find((name) => types.has(name))
-  return byName ?? 'unknown'
+  return { response: byName ?? 'unknown' }
 }
 
 function render(
@@ -216,9 +263,14 @@ function render(
 ): string {
   const Api = pascal(api)
   const methods = resources.flatMap(([, list]) => list)
-  const responseTypes = new Set(
-    methods.map(({ response }) => response).filter((type) => type !== 'void' && type !== 'unknown'),
-  )
+  const inline = methods.flatMap(({ responseType }) => (responseType ? [responseType] : []))
+  const inlineNames = new Set(inline.map(({ name }) => name))
+  const responseTypes = new Set([
+    ...methods
+      .map(({ response }) => response)
+      .filter((type) => type !== 'void' && type !== 'unknown' && !inlineNames.has(type)),
+    ...inline.flatMap(({ references }) => references),
+  ])
   const bodyTypes = new Set(methods.flatMap(({ body }) => (body ? [body.type] : [])))
   const filterTables = new Set(methods.flatMap(({ filters }) => (filters ? [filters] : [])))
   const lists = methods.some(({ kind }) => kind === 'list')
@@ -238,6 +290,8 @@ function render(
     out.push(`import type { ${[...bodyTypes].sort().join(', ')} } from './params'`)
   if (responseTypes.size)
     out.push(`import type { ${[...responseTypes].sort().join(', ')} } from './spree'`)
+
+  for (const { name, source } of inline) out.push('', `export type ${name} = ${source}`)
 
   const constants: string[] = []
   for (const [resource, list] of resources) {
