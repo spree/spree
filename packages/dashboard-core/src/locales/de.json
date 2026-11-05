@@ -987,7 +987,7 @@
       },
       "returnable": {
         "label": "Kunden können diesen Artikel zurücksenden",
-        "help": "Für Sale-Artikel ohne Rückgabe deaktivieren oder für Waren, die vom EU-Widerrufsrecht ausgenommen sind, etwa personalisierte oder verderbliche Waren. Versiegelte Hygieneartikel sind erst nach dem Entsiegeln ausgenommen. Lassen Sie die Option für sie aktiviert und lehnen Sie geöffnete Artikel bei Eingang ab. Bestellungen behalten die Einstellung, mit der sie aufgegeben wurden."
+        "help": "Nur deaktivieren, wo das Gesetz es erlaubt, etwa bei personalisierten Artikeln oder schnell verderblichen Waren. In der EU hebt eine Kennzeichnung als Sale-Artikel allein das Widerrufsrecht nicht auf, und versiegelte Hygieneartikel sind erst nach dem Entsiegeln ausgenommen. Bestellungen behalten die Einstellung, mit der sie aufgegeben wurden."
       }
     },
     "image_upload": {

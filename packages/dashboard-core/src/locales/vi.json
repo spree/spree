@@ -989,7 +989,7 @@
       },
       "returnable": {
         "label": "Khách hàng có thể trả lại sản phẩm này",
-        "help": "Tắt đối với hàng bán thanh lý không đổi trả, hoặc hàng hóa được miễn quyền rút lại của EU như hàng cá nhân hóa hoặc hàng dễ hỏng. Sản phẩm vệ sinh niêm phong chỉ được miễn khi đã bóc niêm phong, vì vậy hãy để bật và từ chối hàng đã mở khi nhận lại. Đơn hàng giữ nguyên cài đặt tại thời điểm đặt."
+        "help": "Chỉ tắt khi pháp luật cho phép, chẳng hạn với hàng cá nhân hóa hoặc hàng nhanh hỏng. Tại EU, chỉ ghi là hàng thanh lý không đổi trả thì không làm mất quyền rút lại, và sản phẩm vệ sinh niêm phong chỉ được miễn khi đã bóc niêm phong. Đơn hàng giữ nguyên cài đặt tại thời điểm đặt."
       }
     },
     "image_upload": {
