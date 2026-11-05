@@ -240,6 +240,19 @@ same commands and the notes, run none of them, and stop.
    minor takes `--latest=false`. A prerelease takes `--prerelease` and not
    `--latest`.
 
+   Publishing a stable release should start `discord-release.yml`, which posts
+   it to Discord #changelog. GitHub does not always start it, for example when
+   the release is created from a cloud session. Give it a minute, then post it
+   by hand if no run exists:
+
+   ```bash
+   gh run list --workflow discord-release.yml --event release --json headBranch,conclusion --jq '.[] | select(.headBranch == "v<version>")'
+   gh workflow run discord-release.yml -f tag=v<version> -f channel=changelog
+   ```
+
+   Run the second command only when the first prints nothing, so the release
+   is not posted twice. Skip this for a prerelease, which is never posted.
+
 4. Wait until the registries serve the exact version. A green release
    workflow means the upload finished, not that the version is installable:
    RubyGems' API, Bundler's compact index and npm's replicated metadata each
