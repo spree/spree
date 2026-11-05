@@ -94,8 +94,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
       patch :update, params: { order_id: order.prefixed_id, id: discount.prefixed_id, amount: '-0.50' }, as: :json
       delete :destroy, params: { order_id: order.prefixed_id, id: discount.prefixed_id }, as: :json
 
-      expect(order.order_changes.map { |change| change.actions.sole.kind })
-        .to contain_exactly('add_discount', 'update_discount', 'remove_discount')
+      expect(order.order_changes.map { |change| change.actions.sole.kind }).
+        to contain_exactly('add_discount', 'update_discount', 'remove_discount')
       expect(order.order_changes).to all(be_confirmed)
       expect(order.reload.discounts.manual).to be_empty
     end

@@ -147,7 +147,7 @@ module Spree
       def apply_registered_actions
         order_change.actions.each do |action|
           applier = Spree::OrderChange.action_appliers[action.kind]
-          applier&.constantize&.new&.call(order_change: order_change, action: action)
+          applier.constantize.new.call(order_change: order_change, action: action) if applier
         end
       end
     end

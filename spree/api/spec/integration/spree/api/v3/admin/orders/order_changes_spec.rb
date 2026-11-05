@@ -21,7 +21,8 @@ RSpec.describe 'Admin Order Changes API', type: :request, swagger_doc: 'api-refe
       tags 'Orders'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Lists every change made to a placed order: admin edits, and the restocks and replacement shipments of its returns, exchanges and claims.'
+      description 'Lists every change made to a placed order: admin edits, and the restocks and replacement shipments ' \
+                  'of its returns, exchanges and claims.'
       admin_scope :read, :orders
 
       admin_sdk_example 'order-changes/list'
@@ -35,7 +36,7 @@ RSpec.describe 'Admin Order Changes API', type: :request, swagger_doc: 'api-refe
         before { requested_change }
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to eq([requested_change.prefixed_id])
+          expect(JSON.parse(response.body)['data'].pluck('id')).to eq([requested_change.prefixed_id])
         end
       end
     end
@@ -45,7 +46,9 @@ RSpec.describe 'Admin Order Changes API', type: :request, swagger_doc: 'api-refe
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Changes the line items of a placed order in one transaction. With `confirm: true` the change is applied at once; otherwise it waits as `requested`. No money moves: the order shows any balance due or credit owed, settled from its payments. Edit a draft order through the order itself instead.'
+      description 'Changes the line items of a placed order in one transaction. With `confirm: true` the change is applied at once; ' \
+                  'otherwise it waits as `requested`. No money moves: the order shows any balance due or credit owed, ' \
+                  'settled from its payments. Edit a draft order through the order itself instead.'
       admin_scope :write, :orders
 
       admin_sdk_example 'order-changes/create'
