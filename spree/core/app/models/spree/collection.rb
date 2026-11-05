@@ -286,7 +286,7 @@ module Spree
         end
 
         existing = if rule_id.present?
-                     existing_by_id[Spree::PrefixedId.decode_prefixed_id(rule_id) || rule_id] ||
+                     existing_by_id[Spree::CollectionRule.decode_own_prefixed_id(rule_id) || rule_id] ||
                        raise(ActiveRecord::RecordNotFound.new("Couldn't find Spree::CollectionRule with param=#{rule_id}", 'Spree::CollectionRule'))
                    end
 
@@ -355,6 +355,11 @@ module Spree
     def apply_pending_publications
       rows = @pending_publications
       @pending_publications = nil
+      if rows.any? { |row| row[:channel_id].blank? }
+        errors.add(:publications, :blank)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
       channels_by_id = store.channels.where(id: rows.map { |row| decode_channel_id(row[:channel_id]) }).index_by(&:id)
       existing = publications.to_a.index_by(&:channel_id)
       kept = rows.filter_map do |row|
@@ -373,7 +378,7 @@ module Spree
     end
 
     def decode_channel_id(value)
-      Spree::PrefixedId.decode_prefixed_id(value.to_s) || value
+      Spree::Channel.decode_own_prefixed_id(value.to_s) || value
     end
   end
 end
