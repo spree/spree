@@ -33,8 +33,9 @@ test.describe('home dashboard', () => {
     // is empty, as on a store that has just opened.
     await page.route('**/api/v3/admin/reporting/query', async (route) => {
       const response = await route.fetch().catch(() => null)
-      if (!response) return route.abort()
-      const result = await response.json()
+      // The page cancels a query it no longer needs, which disposes its response.
+      const result = await response?.json().catch(() => null)
+      if (!response || !result) return route.abort().catch(() => {})
       if (!Array.isArray(result.rows) || result.rows.length < 2) return route.fulfill({ response })
       const zeroed = (row: { metrics: Record<string, { value: unknown }> }) => ({
         ...row,
