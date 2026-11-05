@@ -22,6 +22,8 @@ module Spree
           end
 
           def search_filters
+            return @search_filters if defined?(@search_filters)
+
             q = search_params
             # Decode Stripe-style prefixed IDs in `*_id_in`/`id_eq`/etc. so
             # SPA + storefront filters can pass `prod_…` keys; the search
@@ -31,7 +33,7 @@ module Spree
             if filters['in_collection'].present? && !published_collection?(filters['in_collection'])
               filters['in_collection'] = Spree::Collection.prefixed_id_for(0)
             end
-            filters.presence
+            @search_filters = filters.presence
           end
 
           # A collection not published on this channel filters to nothing,

@@ -25,8 +25,8 @@ module Spree
             # Members the rules matched are hand-picked in place, so they stay
             # when the rules stop matching; the rest are added as usual.
             def create
-              Spree::ProductCollection.where(collection_id: @parent_collection.id, product_id: requested_products(product_scope).map(&:id)).
-                where(source: [nil, 'rule']).update_all(source: 'manual', updated_at: Time.current)
+              Spree::ProductCollection.hand_pick(collection_ids: @parent_collection.id,
+                                                 product_ids: product_scope.where(id: decode_prefixed_ids(params[:product_ids])).select(:id))
               super
             end
 

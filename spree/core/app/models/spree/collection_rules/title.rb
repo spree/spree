@@ -8,15 +8,7 @@ module Spree
       end
 
       def apply(scope)
-        term = Spree::Product.sanitize_sql_like(value.to_s)
-        pattern = case match_policy
-                  when 'contains', 'does_not_contain' then "%#{term}%"
-                  when 'starts_with' then "#{term}%"
-                  when 'ends_with' then "%#{term}"
-                  else term
-                  end
-
-        match(scope, Spree::Product.where(Spree::Product.arel_table[:name].matches(pattern, '\\')))
+        match(scope, Spree::Product.where(Spree::Product.arel_table[:name].matches(like_pattern, '\\')))
       end
     end
   end
