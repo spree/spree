@@ -1,5 +1,17 @@
 # @spree/dashboard
 
+## 6.0.3
+
+### Patch Changes
+
+- [#15111](https://github.com/spree/spree/pull/15111) [`b037880`](https://github.com/spree/spree/commit/b037880301f991a7386f0f83a6c98753fc1b08c9) Thanks [@mad-eel](https://github.com/mad-eel)! - Added a Category mapper preview to the Sellers section. It shows where the Spree Enterprise page for mapping each seller's own categories to your marketplace's categories will appear once installed.
+
+- [#15111](https://github.com/spree/spree/pull/15111) [`b037880`](https://github.com/spree/spree/commit/b037880301f991a7386f0f83a6c98753fc1b08c9) Thanks [@mad-eel](https://github.com/mad-eel)! - Saving a product no longer removes categories, collections or tags added after the page was opened, from another tab, a bulk action or an import. The product page now sends the product's categories, collections and tags only when you changed them.
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed "crypto.randomUUID is not a function" when the dashboard is opened over plain HTTP at an address other than `localhost`, for example a server's IP address. Saving anything failed, starting with the store setup page; it now works.
+- Updated dependencies [[`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6)]:
+  - @spree/core@6.0.3
+
 ## 6.0.2
 
 ### Patch Changes

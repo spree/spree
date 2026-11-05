@@ -1,5 +1,15 @@
 # @spree/admin-sdk
 
+## 6.0.3
+
+### Patch Changes
+
+- [#15092](https://github.com/spree/spree/pull/15092) [`54d3227`](https://github.com/spree/spree/commit/54d32275ed2254e1f1d09da67bb80b8073a154a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.products.activate`, `archive` and `draft`, which move one product to that status through its workflow, so the status event fires. Unlike `bulkStatusUpdate`, they refuse a product awaiting review.
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Admin API client now works in browsers on pages served over plain HTTP at an address other than `localhost`, for example a server's IP address. It used `crypto.randomUUID` for the key that makes a retried write safe, and browsers only provide that on secure pages; it now uses `randomUUID()` from `@spree/core`.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.extend()` and `defineAdminExtension`, so a package can add a typed namespace for an extension's own endpoints to the client, such as `client.quotes`. The extension calls through the client's own request function, so it shares the client's auth, locale defaults and retries; `extend` returns a new client and refuses a name the client already has. An extension's `build` also gets `listParams` and `readParams`, which build list and read queries the way the built-in methods do, and the package now exports the `Extension` and `RequestFn` types its published declarations reference.
+
 ## 6.0.2
 
 ### Patch Changes
