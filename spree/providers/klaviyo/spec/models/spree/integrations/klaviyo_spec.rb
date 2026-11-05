@@ -41,15 +41,15 @@ RSpec.describe Spree::Integrations::Klaviyo do
   end
 
   describe 'a row left by the 1.x gem' do
+    # Read back by type and store, since MySQL's adapter has no `returning:`.
     def insert_row(preferences:, secret_preferences: nil)
-      id = Spree::Integration.insert_all!(
+      Spree::Integration.insert_all!(
         [{ type: 'Spree::Integrations::Klaviyo', store_id: store.id, active: true,
            preferences: preferences, secret_preferences: secret_preferences,
-           created_at: Time.current, updated_at: Time.current }],
-        returning: :id
-      ).rows.first.first
+           created_at: Time.current, updated_at: Time.current }]
+      )
 
-      Spree::Integration.find(id)
+      Spree::Integration.where(type: 'Spree::Integrations::Klaviyo', store_id: store.id).sole
     end
 
     it 'loads and reads its key and list id, ignoring the public key' do
