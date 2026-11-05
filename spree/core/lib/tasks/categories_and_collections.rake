@@ -103,6 +103,7 @@ namespace :spree do
             {
               collection_id: collection.id,
               product_id: product_category.product_id,
+              source: 'rule',
               position: product_category.position,
               created_at: Time.current,
               updated_at: Time.current

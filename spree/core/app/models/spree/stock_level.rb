@@ -34,7 +34,7 @@ module Spree
 
     after_save(if: :saved_changes?) { variant.touch }
     after_commit -> { variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::InStock]) },
-                 if: -> { saved_changes.keys.intersect?(%w[count_on_hand allocated_count backorderable]) }
+                 if: :sellability_changed?
     after_touch { variant.touch }
     after_destroy { variant.touch }
 
@@ -262,6 +262,16 @@ module Spree
     end
 
     private
+
+    # Whether the level crossed between sellable and not, the only change an
+    # in-stock collection rule can see.
+    def sellability_changed?
+      return true if saved_change_to_backorderable?
+      return false unless saved_change_to_count_on_hand? || saved_change_to_allocated_count?
+
+      on_hand_before = count_on_hand_before_last_save.to_i - allocated_count_before_last_save.to_i
+      on_hand_before.positive? != (count_on_hand.to_i - allocated_count.to_i).positive?
+    end
 
     # One atomic UPDATE, clamped at zero in the statement itself so a
     # withdrawal larger than the counter — a level whose figure was already

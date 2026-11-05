@@ -94,6 +94,28 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     end
   end
 
+  describe 'filtering by collection' do
+    let!(:published) { create(:collection, store: store) }
+    let!(:scheduled) { create(:collection, :unpublished, store: store) }
+
+    before do
+      store.default_channel.add_collections(scheduled.id, published_at: 1.week.from_now)
+      Spree::Collections::AddProducts.call(collections: [published, scheduled], products: [product])
+    end
+
+    it 'lists the products of a published collection' do
+      get :index, params: { q: { in_collection: published.prefixed_id } }, as: :json
+
+      expect(json_response['data'].pluck('id')).to eq([product.prefixed_id])
+    end
+
+    it 'lists nothing for a collection not yet published' do
+      get :index, params: { q: { in_collection: scheduled.prefixed_id } }, as: :json
+
+      expect(json_response['data']).to be_empty
+    end
+  end
+
   describe 'GET #index' do
     it_behaves_like 'a list without N+1 queries' do
       subject { get :index }

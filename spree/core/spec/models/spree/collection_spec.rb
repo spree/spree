@@ -71,6 +71,25 @@ RSpec.describe Spree::Collection, type: :model do
     end
   end
 
+  it 'reports an invalid publication window on the collection' do
+    collection = create(:collection, :unpublished, store: store)
+
+    saved = collection.update(publications: [{ channel_id: store.default_channel.prefixed_id,
+                                               published_at: 2.days.from_now, unpublished_at: 1.day.from_now }])
+
+    expect(saved).to be(false)
+    expect(collection.errors[:publications]).to be_present
+  end
+
+  it 'drops its promotion rule links when destroyed' do
+    collection = create(:collection, store: store)
+    rule = Spree::Promotion::Rules::Collection.create!(promotion: create(:promotion, store: store), collection_ids: [collection.id])
+
+    collection.destroy!
+
+    expect(rule.reload.collection_ids).to be_empty
+  end
+
   describe '.published_on' do
     it 'lists collections live on the channel' do
       live = create(:collection, store: store)
