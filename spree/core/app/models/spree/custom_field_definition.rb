@@ -18,6 +18,7 @@ module Spree
     validates :key, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id, :resource_type, :namespace] }
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
+    validate :collection_condition_must_suit_field, if: :collection_condition?
 
     #
     # Scopes
@@ -42,7 +43,8 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable]
+    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable
+                                                 collection_condition]
 
     # Both columns store class names; filters take the short names clients see.
     def self.api_type_resolver(attribute)
@@ -155,6 +157,13 @@ module Spree
     end
 
     private
+
+    # Collection rules compare product fields as text, numbers or booleans.
+    def collection_condition_must_suit_field
+      return if resource_type == 'Spree::Product' && field_type.in?(%w[short_text long_text number boolean])
+
+      errors.add(:collection_condition, :invalid)
+    end
 
     def valid_available_types
       self.class.available_types.map(&:to_s)

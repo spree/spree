@@ -141,7 +141,7 @@ module Spree
       self.category_ids = ids
     end
 
-    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy, inverse_of: :product
+    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy, inverse_of: :product, autosave: true
     has_many :collections, through: :product_collections, dependent: :destroy
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy_async, inverse_of: :product
     has_many :catalogs, through: :catalog_products
@@ -246,6 +246,7 @@ module Spree
     after_save :auto_promote_default_variant
 
     after_commit :auto_match_collections, if: :eligible_for_collection_matching?
+    after_commit :apply_collection_picks, if: -> { @picked_collection_ids }
 
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
@@ -347,23 +348,37 @@ module Spree
       super(Spree::Category.for_store(assignable_store).where(id: decoded_ids).ids)
     end
 
-    # Accepts both prefixed IDs and raw integer IDs. Only collections belonging
-    # to the product's own store are assigned; this overrides the generated
-    # setter and calls super.
-    #
-    # This is a replace setter, so it governs manual membership only. Automatic
-    # collections are materialized from their rules, which means they must
-    # survive a write that doesn't mention them (otherwise saving a product
-    # would wipe rule-derived membership until the next regeneration) and must
-    # not be assignable by hand (a hand-set member would vanish at that
-    # regeneration). So incoming automatic ids are ignored, and the product's
-    # existing automatic memberships are carried over untouched.
+    # @return [Array<Integer>] the collections this product is hand-picked into
+    def hand_picked_collection_ids
+      product_collections.select { |membership| membership.source == 'manual' }.map(&:collection_id)
+    end
+
+    # The collections this product is hand-picked into, as prefixed or raw
+    # ids of its own store's collections. Memberships the collections' rules
+    # created are kept: naming one makes it hand-picked, leaving it out leaves
+    # it to the rules. Hand-picking lifts an exclusion; dropping a hand-pick
+    # regenerates the collection, which brings the product back if its rules
+    # still match.
     def collection_ids=(ids)
       decoded_ids = Array(ids).filter_map do |id|
         id.to_s.include?('_') ? Spree::Collection.decode_prefixed_id(id) : id
       end
-      manual_ids = Spree::Collection.for_store(assignable_store).manual.where(id: decoded_ids).ids
-      super(manual_ids | collections.automatic.ids)
+      picked_ids = Spree::Collection.for_store(assignable_store).where(id: decoded_ids).ids
+      @dropped_collection_ids = []
+
+      product_collections.each do |membership|
+        if picked_ids.include?(membership.collection_id)
+          membership.source = 'manual'
+        elsif membership.source == 'manual'
+          membership.mark_for_destruction
+          @dropped_collection_ids << membership.collection_id
+        end
+      end
+
+      (picked_ids - product_collections.map(&:collection_id)).each do |collection_id|
+        product_collections.build(collection_id: collection_id, source: 'manual')
+      end
+      @picked_collection_ids = picked_ids
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id price]
@@ -841,10 +856,21 @@ module Spree
       @resolved_delivery_profile = delivery_profile || (store && Spree::DeliveryProfile.default_for(store))
     end
 
-    def auto_match_collections
+    # Re-matches the product against its store's collection rules in the
+    # background. Writes landing within the wait share one job.
+    #
+    # @param rule_types [Array<Class>, nil] only when a collection uses one of
+    #   these rule types; nil for any collection with rules
+    # @return [void]
+    def auto_match_collections(rule_types: nil)
       return if deleted?
       return if archived?
-      return if store.nil? || store.collections.automatic.none?
+      return if store.nil?
+
+      collections = store.collections.automatic
+      collections = collections.where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) if rule_types
+      return unless collections.exists?
+      return unless Rails.cache.write("spree/auto_match_collections/#{id}", true, unless_exist: true, expires_in: 30.seconds)
 
       Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
     end
@@ -1057,8 +1083,15 @@ module Spree
       true
     end
 
+    def apply_collection_picks
+      Spree::CollectionExclusion.where(product_id: id, collection_id: @picked_collection_ids).delete_all
+      Spree::Collection.where(id: @dropped_collection_ids).find_each(&:enqueue_regenerate_products)
+      @picked_collection_ids = @dropped_collection_ids = nil
+    end
+
     def eligible_for_collection_matching?
-      previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
+      previously_new_record? || tag_list_previously_changed? ||
+        saved_changes.keys.intersect?(%w[available_on name product_type_id seller_id])
     end
   end
 end

@@ -19,9 +19,15 @@ module Spree
 
     delegate :store, to: :product, allow_nil: true
 
+    SOURCES = %w[manual rule].freeze
+
+    # Nullable in the database until 6.2 (docs/plans/6.1-collections-merchandising.md);
+    # every writer names it.
+    validates :source, inclusion: { in: SOURCES }
+
     validates :position, numericality: { only_integer: true, allow_blank: true, allow_nil: true }
     validates :collection_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }
 
-    self.whitelisted_ransackable_attributes = %w[collection_id product_id]
+    self.whitelisted_ransackable_attributes = %w[collection_id product_id source]
   end
 end

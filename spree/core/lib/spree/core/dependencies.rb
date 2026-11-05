@@ -200,6 +200,10 @@ module Spree
         product_approve_workflow: 'Spree::Products::Approve',
         product_reject_workflow: 'Spree::Products::Reject',
 
+        # collections — every path that creates one publishes it, so a new
+        # collection is never invisible on every storefront
+        collection_create_workflow: 'Spree::Collections::Create',
+
         # catalogs — the agreement, written together with the price list it
         # prices through (docs/plans/6.0-catalog-agreement-rework.md)
         catalog_create_workflow: 'Spree::Catalogs::Create',
