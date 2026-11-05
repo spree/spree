@@ -6741,6 +6741,15 @@ which loads them on demand.
 
 **Plan:** `6.1-collections-merchandising.md`.
 
+## 2026-11-05 — Collection membership rows name their source; `automatic` is derived
+
+**Context:** Collections gain mixed membership: rules, hand-picked products and exclusions in one collection. Each `spree_product_collections` row now records whether it came from a rule or by hand, so regeneration can leave hand-picked rows alone. Existing rows need that value filled by an upgrade step before the column can be NOT NULL.
+
+**Decision:** `spree_product_collections.source` (`manual` or `rule`) ships nullable in 6.1 and becomes NOT NULL in 6.2, after `spree:collections:backfill_membership_sources` has had a release to run. The model requires a source and every writer, bulk inserts included, names one. `Collection#automatic` becomes "has rules": the Admin API still accepts the field but ignores it and marks it deprecated.
+
+**Consequences:** Any code or extension that inserts collection memberships must pass `source`. Clients that sent `automatic: false` to switch a collection to hand-picking now send `rules: []` to drop its rules; hand-picking works on every collection.
+
+**Plan:** `6.1-collections-merchandising.md`.
 
 ## 2026-11-11 — One anonymised diagnostics report for bug reports
 
