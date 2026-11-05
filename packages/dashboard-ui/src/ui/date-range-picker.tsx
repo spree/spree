@@ -1,6 +1,5 @@
 import { format } from 'date-fns'
 import { useMemo, useState } from 'react'
-import type { DateRange as DayPickerDateRange } from 'react-day-picker'
 import { useTranslation } from 'react-i18next'
 import { activeDateLocale } from '../lib/date-locale'
 import {
@@ -9,10 +8,9 @@ import {
   matchDateRangePreset,
   resolveDateRangePreset,
 } from '../lib/date-range-presets'
-import { cn } from '../lib/utils'
 import { CalendarIcon, ChevronDownIcon } from '../spree/icons'
 import { Button } from './button'
-import { Calendar } from './calendar'
+import { DateRangePanel } from './date-range-panel'
 import { Popover, PopoverContent, PopoverTrigger } from './popover'
 
 export interface DateRange {
@@ -43,8 +41,6 @@ export interface DateRangePickerProps {
 export function DateRangePicker({ value, onChange, timezone }: DateRangePickerProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [calendarRange, setCalendarRange] = useState<DayPickerDateRange | undefined>()
-  const [month, setMonth] = useState<Date>(value.from)
 
   const zone = useMemo(
     () => timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC',
@@ -62,34 +58,8 @@ export function DateRangePicker({ value, onChange, timezone }: DateRangePickerPr
       ? `${format(value.from, 'MMM d', { locale: dateLocale })} – ${format(value.to, 'MMM d', { locale: dateLocale })}`
       : t(PRESET_LABEL_KEYS[activePreset])
 
-  function selectPreset(key: Exclude<DateRangePresetKey, 'custom'>) {
-    const range = resolveDateRangePreset(key, zone)
-    setCalendarRange({ from: range.from, to: range.to })
-    setMonth(range.from)
-    onChange(range)
-    setOpen(false)
-  }
-
-  function applyCustomRange() {
-    if (calendarRange?.from && calendarRange?.to) {
-      onChange({ from: calendarRange.from, to: calendarRange.to })
-      setOpen(false)
-    }
-  }
-
-  const canApply = calendarRange?.from && calendarRange?.to
-
   return (
-    <Popover
-      open={open}
-      onOpenChange={(nextOpen) => {
-        setOpen(nextOpen)
-        if (nextOpen) {
-          setCalendarRange({ from: value.from, to: value.to })
-          setMonth(value.from)
-        }
-      }}
-    >
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button size="sm" variant="outline" className="h-8 gap-2 text-sm font-normal">
           <CalendarIcon className="size-3.5" />
@@ -97,40 +67,23 @@ export function DateRangePicker({ value, onChange, timezone }: DateRangePickerPr
           <ChevronDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-auto p-0">
-        <div className="flex">
-          <div className="flex flex-col border-r py-2">
-            {DATE_RANGE_PRESET_KEYS.map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => selectPreset(key)}
-                className={cn(
-                  'whitespace-nowrap px-4 py-1.5 text-left text-sm transition-colors hover:bg-accent',
-                  activePreset === key && 'font-medium text-foreground',
-                  activePreset !== key && 'text-muted-foreground',
-                )}
-              >
-                {t(PRESET_LABEL_KEYS[key])}
-              </button>
-            ))}
-          </div>
-          <div className="flex flex-col p-3">
-            <Calendar
-              mode="range"
-              month={month}
-              onMonthChange={setMonth}
-              selected={calendarRange}
-              onSelect={setCalendarRange}
-              numberOfMonths={2}
-            />
-            <div className="flex justify-end border-t pt-3">
-              <Button size="sm" disabled={!canApply} onClick={applyCustomRange}>
-                {t('admin.actions.apply')}
-              </Button>
-            </div>
-          </div>
-        </div>
+      <PopoverContent align="end" className="w-auto max-w-[calc(100vw-1rem)] p-0">
+        <DateRangePanel
+          // Reseeds the calendar whenever the applied range changes, even if
+          // the popover reopens before its closing animation unmounts it.
+          key={`${value.from.getTime()}:${value.to.getTime()}`}
+          presets={DATE_RANGE_PRESET_KEYS.map((key) => ({ key, label: t(PRESET_LABEL_KEYS[key]) }))}
+          activePreset={activePreset}
+          onPresetSelect={(key) => {
+            onChange(resolveDateRangePreset(key, zone))
+            setOpen(false)
+          }}
+          initialRange={{ from: value.from, to: value.to }}
+          onApply={(range) => {
+            onChange(range)
+            setOpen(false)
+          }}
+        />
       </PopoverContent>
     </Popover>
   )

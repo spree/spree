@@ -46,6 +46,31 @@ test.describe('orders', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/new$`), { timeout: 15_000 })
     await expect(page.getByRole('heading', { name: CTA })).toBeVisible()
   })
+
+  test('filters by a date range picked on the calendar', async ({ page }) => {
+    const creds = await login(page)
+    await gotoOrdersIndex(page, ORDERS_PATH(creds.store_id))
+    const trigger = page.getByRole('button', { name: /^date/i })
+
+    // A preset applies at once and shows as the trigger's value.
+    await trigger.click()
+    await page.getByRole('button', { name: /^last 30 days$/i }).click()
+    await expect(trigger).toContainText(/last 30 days/i)
+
+    // A range picked last month leaves out every order placed by this run.
+    await trigger.click()
+    const lastMonth = page.getByRole('grid').first()
+    await lastMonth.getByRole('button', { name: /\b10(st|nd|rd|th)\b/ }).click()
+    // The second day completes the range and applies it, like a preset.
+    await lastMonth.getByRole('button', { name: /\b12(st|nd|rd|th)\b/ }).click()
+    await expect(trigger).toContainText(/10 – \w+ 12/)
+    await expect(page.getByText(/no orders found/i)).toBeVisible({ timeout: 15_000 })
+
+    await trigger.click()
+    await page.getByRole('button', { name: /^any date$/i }).click()
+    await expect(trigger).toContainText(/any date/i)
+    await expect(page.getByText(/no orders found/i)).toBeHidden({ timeout: 15_000 })
+  })
 })
 
 test.describe('draft orders', () => {
