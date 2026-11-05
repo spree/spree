@@ -1217,6 +1217,15 @@ describe Spree::Product, type: :model do
         expect(product.reload.collections).to eq([automatic])
       end
 
+      it 'counts a pre-6.1 membership of a manual collection as hand-picked' do
+        create(:product_collection, collection: collection, product: product).update_columns(source: nil)
+
+        expect(product.reload.hand_picked_collection_ids).to eq([collection.id])
+
+        product.update!(collection_ids: [])
+        expect(product.reload.collections).to eq([automatic])
+      end
+
       it 'lifts an exclusion when the product is hand-picked' do
         create(:collection_exclusion, collection: collection, product: product)
 
@@ -1296,6 +1305,15 @@ describe Spree::Product, type: :model do
       allow(Rails.cache).to receive(:write).and_return(nil)
 
       expect { product.auto_match_collections }.to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+
+    it 'is enqueued when an allocation takes the last unit' do
+      create(:in_stock_collection_rule, collection: create(:automatic_collection, store: store))
+      level = product.default_variant.stock_levels.first
+      level.update_columns(count_on_hand: 1, allocated_count: 0, backorderable: false)
+
+      expect { level.reload.adjust_allocated_count(1) }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
     end
 
     it 'is not enqueued when stock moves without crossing zero' do

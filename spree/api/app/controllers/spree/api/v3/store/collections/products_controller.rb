@@ -9,6 +9,7 @@ module Spree
           # and the collection's sort_order is the default when the request omits `sort`.
           class ProductsController < Spree::Api::V3::Store::ProductsController
             include Spree::Api::V3::Store::PermalinkLookup
+            include Spree::Api::V3::Store::StorefrontCollections
 
             protected
 
@@ -44,7 +45,7 @@ module Spree
             # endpoints serve, so an unpublished collection's listing is a 404.
             def current_collection
               @current_collection ||= find_by_id_or_permalink!(
-                current_store.collections.published_on(Spree::Current.channel), params[:collection_id]
+                storefront_collections, params[:collection_id]
               )
             end
           end

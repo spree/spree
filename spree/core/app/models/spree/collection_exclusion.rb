@@ -9,7 +9,7 @@ module Spree
     belongs_to :collection, class_name: 'Spree::Collection', inverse_of: :exclusions, touch: true
     belongs_to :product, class_name: 'Spree::Product'
 
-    validates :product_id, uniqueness: { scope: :collection_id }
+    validates :product_id, uniqueness: { scope: spree_base_uniqueness_scope + [:collection_id] }
     validate :product_belongs_to_collection_store, if: -> { collection && product }
 
     after_create :remove_membership
