@@ -7,8 +7,7 @@ module Spree
                    expires_at: [:string, nullable: true],
                    accepted_at: [:string, nullable: true],
                    inviter_email: :string,
-                   invitee_exists: [:boolean, optional: true],
-                   seller: '{ id: string; name: string }'
+                   invitee_exists: [:boolean, optional: true]
 
           attributes :email,
                      created_at: :iso8601, expires_at: :iso8601, accepted_at: :iso8601
@@ -29,6 +28,7 @@ module Spree
 
           # The smallest shape the acceptance page's title ("Join <seller>")
           # needs; the page is public, so nothing more of the seller goes out.
+          typelize({ id: :string, name: :string })
           attribute :seller do |invitation|
             { id: invitation.resource.prefixed_id, name: invitation.resource.name }
           end

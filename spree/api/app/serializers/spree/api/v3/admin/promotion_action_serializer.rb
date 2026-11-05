@@ -13,8 +13,7 @@ module Spree
           typelize type: [:string, comment: 'Action type. Built-in: create_adjustment, create_item_adjustments, create_line_items, free_shipping. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   calculator: 'TypedPromotionCalculator | null',
-                   line_items: 'Array<{ variant_id: string; quantity: number }> | null'
+                   calculator: 'TypedPromotionCalculator | null'
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
@@ -44,6 +43,7 @@ module Spree
           # Line items the action will add for CreateLineItems. variant_id
           # is prefixed for consistency with the rest of the API. Null on
           # actions that don't have the association.
+          typelize({ variant_id: :string, quantity: :number }, multi: true, nullable: true)
           attribute :line_items do |action|
             next nil unless action.respond_to?(:promotion_action_line_items)
 

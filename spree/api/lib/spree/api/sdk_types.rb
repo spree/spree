@@ -163,15 +163,15 @@ module Spree
         end
 
         def run_typelizer
-          disabled = ENV['DISABLE_TYPELIZER']
+          enabled = ENV['TYPELIZER']
           source = Typelizer::OpenEnums.source
-          ENV['DISABLE_TYPELIZER'] = 'false'
+          ENV['TYPELIZER'] = 'true'
           Typelizer::OpenEnums.source = nil
 
           require 'typelizer/generator'
           Typelizer::Generator.call(force: true)
         ensure
-          ENV['DISABLE_TYPELIZER'] = disabled
+          ENV['TYPELIZER'] = enabled
           Typelizer::OpenEnums.source = source
         end
 

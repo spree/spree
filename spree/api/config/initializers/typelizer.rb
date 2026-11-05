@@ -1,6 +1,6 @@
-# Disable automatic type generation on boot — types are generated manually
-# via `bundle exec rake typelizer:generate`. Set ENABLE_TYPELIZER=1 to enable.
-ENV["DISABLE_TYPELIZER"] ||= "true" unless ENV["ENABLE_TYPELIZER"]
+# Types are generated only by `bundle exec rake typelizer:generate`, which sets
+# TYPELIZER=true before booting; the engine's `spree.api.typelizer` initializer
+# keeps Typelizer from generating on its own.
 
 require 'spree/api/typelizer_generation'
 

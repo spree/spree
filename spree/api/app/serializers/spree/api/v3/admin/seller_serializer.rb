@@ -20,7 +20,6 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number, users_count: :number,
-                   onboarding_progress: '{ done: number; total: number }',
                    onboarding_complete: :boolean,
                    metadata: 'Record<string, unknown> | null'
 
@@ -63,7 +62,8 @@ module Spree
           # requirements themselves, with their submissions, stay on the
           # heavier `onboarding` action; a list of sellers needs the number,
           # not the rows behind it.
-          attributes :onboarding_progress
+          typelize({ done: :number, total: :number })
+          attribute :onboarding_progress, &:onboarding_progress
 
           attribute :onboarding_complete, &:onboarding_complete?
 
