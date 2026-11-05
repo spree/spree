@@ -9,7 +9,7 @@ const HEADER =
 export interface ParamsSchema {
   type?: string
   format?: string
-  enum?: string[]
+  enum?: (string | number | boolean)[]
   nullable?: boolean
   deprecated?: boolean
   description?: string
@@ -19,6 +19,7 @@ export interface ParamsSchema {
   items?: ParamsSchema
   allOf?: ParamsSchema[]
   anyOf?: ParamsSchema[]
+  oneOf?: ParamsSchema[]
   $ref?: string
 }
 
@@ -117,22 +118,41 @@ function valueType(schema: ParamsSchema, indent: string, ref: RefResolver = refN
   if (schema.$ref) {
     type = ref(schema.$ref)
   } else if (schema.allOf) {
-    type = schema.allOf.map((part) => valueType(part, indent, ref)).join(' & ')
+    // A union part is parenthesized, or `&` would bind to its last member only.
+    type = schema.allOf
+      .map((part) => {
+        const partType = valueType(part, indent, ref)
+        return partType.includes(' | ') && !partType.startsWith('{') ? `(${partType})` : partType
+      })
+      .join(' & ')
   } else if (schema.anyOf) {
     // An open list: the built-in values, plus any other string an extension
     // adds, which `(string & {})` accepts without swallowing autocompletion.
     type = schema.anyOf
-      .map((part) =>
-        part.enum ? valueType(part, indent, ref) : `(${valueType(part, indent, ref)} & {})`,
-      )
+      .map((part) => {
+        if (part.enum) return valueType(part, indent, ref)
+        // `null` stays outside `& {}`, which would reduce it to `never`.
+        const open = `(${valueType({ ...part, nullable: false }, indent, ref)} & {})`
+        return part.nullable ? `${open} | null` : open
+      })
       .join(' | ')
+  } else if (schema.oneOf) {
+    type = schema.oneOf.map((part) => valueType(part, indent, ref)).join(' | ')
   } else if (schema.enum) {
-    type = schema.enum.map(literal).join(' | ')
+    type = schema.enum
+      .map((value) => (typeof value === 'string' ? literal(value) : String(value)))
+      .join(' | ')
   } else if (schema.type === 'array') {
     const item = valueType(schema.items ?? {}, indent, ref)
     type = /[|& ]/.test(item) && !item.startsWith('{') ? `Array<${item}>` : `${item}[]`
-  } else if (schema.type === 'object') {
-    type = schema.properties ? objectType(schema, indent, ref) : 'Record<string, unknown>'
+  } else if (schema.type === 'object' || schema.properties) {
+    if (schema.properties) {
+      type = objectType(schema, indent, ref)
+    } else if (typeof schema.additionalProperties === 'object') {
+      type = `Record<string, ${valueType(schema.additionalProperties, indent, ref)}>`
+    } else {
+      type = 'Record<string, unknown>'
+    }
   } else if (schema.type === 'string' || schema.type === 'boolean') {
     type = schema.type
   } else if (schema.type === 'integer' || schema.type === 'number') {

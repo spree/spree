@@ -68,6 +68,13 @@ interface Method {
 const camel = (value: string) => value.replace(/[_-](\w)/g, (_, c: string) => c.toUpperCase())
 const pascal = (value: string) => camel(value).replace(/^\w/, (c) => c.toUpperCase())
 const refName = (schema?: Schema) => schema?.$ref?.split('/').pop()
+const IDENTIFIER = /^[A-Za-z_$][\w$]*$/
+// Words `export const <name>` cannot take.
+const RESERVED = new Set(
+  'arguments await break case catch class const continue debugger default delete do else enum eval export extends false finally for function if implements import in instanceof interface let new null package private protected public return static super switch this throw true try typeof var void while with yield'.split(
+    ' ',
+  ),
+)
 
 function singular(word: string): string {
   if (word.endsWith('ies')) return `${word.slice(0, -3)}y`
@@ -89,32 +96,25 @@ export function renderExtensionSource(
   const prefix = `/api/v3/${api}/`
   const filters = Boolean(spec.components?.['x-spree-filter-tables'])
   const resources = new Map<string, Method[]>()
-  const paths = Object.entries(spec.paths ?? {})
-    .filter(([path]) => path.startsWith(prefix))
-    .map(([path, item]) => ({ path, item, segments: path.slice(prefix.length).split('/') }))
-  // The resources the extension serves itself, at `/quotes` or `/quotes/{id}`.
-  // A path under any other (`/carts/{cart_id}/quote_attachments`) nests under
-  // one of the SDK's own, whose namespace the extension cannot add to.
-  const owned = new Set(
-    paths
-      .filter(
-        ({ segments }) => segments.length === 1 || (segments.length === 2 && isParam(segments[1])),
-      )
-      .map(({ segments }) => segments[0]),
-  )
+  const inlineNames = new Map<string, string>()
 
-  for (const { path, item, segments } of paths) {
-    const nested =
-      !owned.has(segments[0]) && isParam(segments[1]) && segments[2] && !isParam(segments[2])
-    const resource = nested ? segments[2] : segments[0]
-    const tail = segments.slice(nested ? 3 : 1)
+  for (const [path, item] of Object.entries(spec.paths ?? {})) {
+    if (!path.startsWith(prefix)) continue
+    const segments = path.slice(prefix.length).split('/')
+    const resource = segments[0]
     for (const verb of VERBS) {
       const operation = item[verb]
       if (!operation) continue
-      const namespace = operation['x-spree-sdk-namespace'] ?? resource
+      // Camel-cased as read, so `quote_notes` and `quoteNotes` are one namespace.
+      const namespace = camel(operation['x-spree-sdk-namespace'] ?? resource)
+      if (!IDENTIFIER.test(namespace) || RESERVED.has(namespace)) {
+        throw new Error(
+          `${verb.toUpperCase()} ${path} would be the namespace ${namespace}, which is not an identifier; name one with x-spree-sdk-namespace (\`sdk_method namespace:\` in its rswag spec)`,
+        )
+      }
       const method = methodFor(
         { resource, namespace },
-        tail,
+        segments.slice(1),
         verb,
         operation,
         path.slice(prefix.length - 1),
@@ -125,8 +125,18 @@ export function renderExtensionSource(
       const taken = methods.find(({ name }) => name === method.name)
       if (taken) {
         throw new Error(
-          `${verb.toUpperCase()} ${method.path} and ${taken.verb.toUpperCase()} ${taken.path} would both be ${camel(namespace)}.${method.name}; name one with x-spree-sdk-method (\`sdk_method\` in its rswag spec)`,
+          `${verb.toUpperCase()} ${method.path} and ${taken.verb.toUpperCase()} ${taken.path} would both be ${namespace}.${method.name}; name one with x-spree-sdk-method (\`sdk_method\` in its rswag spec)`,
         )
+      }
+      const inline = method.responseType?.name
+      if (inline) {
+        const other = inlineNames.get(inline)
+        if (other || options.types.has(inline)) {
+          throw new Error(
+            `${verb.toUpperCase()} ${method.path} would declare the response type ${inline}, which ${other ? `${other} declares too` : 'the package already has'}; rename the method with x-spree-sdk-method`,
+          )
+        }
+        inlineNames.set(inline, `${verb.toUpperCase()} ${method.path}`)
       }
       methods.push(method)
       resources.set(namespace, methods)
@@ -140,8 +150,6 @@ export function renderExtensionSource(
     options,
   )
 }
-
-const isParam = (segment: string | undefined) => Boolean(segment?.startsWith('{'))
 
 function methodFor(
   { resource, namespace }: { resource: string; namespace: string },
@@ -237,7 +245,14 @@ function responseType(
 
   // An inline schema (`{ data: [...] }`, not one of the package's records)
   // is typed from the schema itself.
-  if (schema && !schema.$ref && (schema.type || schema.properties || schema.allOf)) {
+  const inlineSchema =
+    schema?.type ||
+    schema?.properties ||
+    schema?.allOf ||
+    schema?.anyOf ||
+    schema?.oneOf ||
+    schema?.enum
+  if (schema && !schema.$ref && inlineSchema) {
     const references = new Set<string>()
     const source = schemaType(schema, (ref) => {
       const name = refName({ $ref: ref }) ?? ''
@@ -278,7 +293,11 @@ function render(
   const sdkImports = [
     `define${Api}Extension`,
     'type Client',
-    ...(lists ? ['type ListParams', 'type PaginatedResponse'] : []),
+    ...(lists ? ['type ListParams'] : []),
+    // An inline response already describes the whole list, `meta` included.
+    ...(methods.some(({ kind, responseType }) => kind === 'list' && !responseType)
+      ? ['type PaginatedResponse']
+      : []),
     'type RequestOptions',
   ]
   const out = [options.header, '', `import { ${sdkImports.join(', ')} } from '${SDKS[api]}'`]
@@ -339,7 +358,9 @@ function renderMethod(method: Method): string[] {
   args.push('options?: RequestOptions')
 
   const response =
-    method.kind === 'list' ? `PaginatedResponse<${method.response}>` : method.response
+    method.kind === 'list' && !method.responseType
+      ? `PaginatedResponse<${method.response}>`
+      : method.response
   const doc = method.doc.length
     ? ['  /**', ...method.doc.map((line) => `   * ${line}`.trimEnd()), '   */']
     : []
