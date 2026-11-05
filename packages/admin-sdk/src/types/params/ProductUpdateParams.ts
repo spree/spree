@@ -40,8 +40,7 @@ export type ProductUpdateParams = {
   tags?: string[]
   category_ids?: string[]
   /**
-   * Collections this product is hand-picked into. Memberships the collection rules created are
-   * kept; naming one makes it hand-picked.
+   * Collections this product is hand-picked into. Memberships created by collection rules are kept.
    */
   collection_ids?: string[]
   metadata?: Record<string, unknown>
