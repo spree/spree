@@ -34,6 +34,21 @@ export function fieldTypeSupportsSortable(fieldType: string): boolean {
   return (SORTABLE_FIELD_TYPES as readonly string[]).includes(fieldType)
 }
 
+/** Field types a collection rule can compare, on product definitions only (mirrors backend validation). */
+export const COLLECTION_CONDITION_FIELD_TYPES = [
+  'short_text',
+  'long_text',
+  'number',
+  'boolean',
+] as const
+
+export function supportsCollectionCondition(resourceType: string, fieldType: string): boolean {
+  return (
+    resourceType === 'product' &&
+    (COLLECTION_CONDITION_FIELD_TYPES as readonly string[]).includes(fieldType)
+  )
+}
+
 export function fieldTypeLabel(value: string): string {
   return i18n.t(`admin.fields.custom_field_definition.field_type.options.${value}`, {
     defaultValue: value,
@@ -97,6 +112,7 @@ export const customFieldDefinitionSchema = z.object({
   storefront_visible: z.boolean(),
   searchable: z.boolean(),
   sortable: z.boolean(),
+  collection_condition: z.boolean(),
 })
 
 export type CustomFieldDefinitionFormValues = z.infer<typeof customFieldDefinitionSchema>
@@ -110,6 +126,7 @@ export const CUSTOM_FIELD_DEFINITION_DEFAULTS: CustomFieldDefinitionFormValues =
   storefront_visible: false,
   searchable: false,
   sortable: false,
+  collection_condition: false,
 }
 
 export function customFieldDefinitionValuesToCreateParams(
@@ -124,6 +141,7 @@ export function customFieldDefinitionValuesToCreateParams(
     storefront_visible: v.storefront_visible,
     searchable: v.searchable,
     sortable: v.sortable,
+    collection_condition: v.collection_condition,
   }
 }
 
@@ -143,5 +161,6 @@ export function customFieldDefinitionValuesToUpdateParams(
     storefront_visible: v.storefront_visible,
     searchable: v.searchable,
     sortable: v.sortable,
+    collection_condition: v.collection_condition,
   }
 }

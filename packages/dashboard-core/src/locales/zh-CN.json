@@ -1957,6 +1957,34 @@
         "tag": {
           "name": "标签",
           "description": "带有匹配标签的商品"
+        },
+        "category": {
+          "name": "分类",
+          "description": "某分类中的商品，可包含子分类"
+        },
+        "product_type": {
+          "name": "商品类型",
+          "description": "某商品类型的商品"
+        },
+        "price": {
+          "name": "价格",
+          "description": "有变体价格高于或低于某金额的商品"
+        },
+        "in_stock": {
+          "name": "有库存",
+          "description": "有可立即销售变体的商品"
+        },
+        "title": {
+          "name": "标题",
+          "description": "名称匹配某文本的商品"
+        },
+        "seller": {
+          "name": "卖家",
+          "description": "某市场卖家上架的商品"
+        },
+        "custom_field": {
+          "name": "自定义字段",
+          "description": "自定义字段匹配某值的商品"
         }
       },
       "commission_rule": {
@@ -2113,6 +2141,10 @@
         "product": {
           "name": "商品",
           "description": "订单包含指定商品"
+        },
+        "collection": {
+          "name": "系列",
+          "description": "订单包含指定系列中的商品"
         }
       },
       "seller_requirement": {

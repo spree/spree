@@ -1963,6 +1963,34 @@
         "tag": {
           "name": "وسم",
           "description": "منتجات تحمل وسمًا مطابقًا"
+        },
+        "category": {
+          "name": "الفئة",
+          "description": "منتجات فئة، مع فئاتها الفرعية اختياريًا"
+        },
+        "product_type": {
+          "name": "نوع المنتج",
+          "description": "منتجات من نوع منتج"
+        },
+        "price": {
+          "name": "السعر",
+          "description": "منتجات لها متغير بسعر أعلى أو أقل من مبلغ"
+        },
+        "in_stock": {
+          "name": "متوفر",
+          "description": "منتجات لها متغير يمكن بيعه الآن"
+        },
+        "title": {
+          "name": "العنوان",
+          "description": "منتجات يطابق اسمها نصًا"
+        },
+        "seller": {
+          "name": "البائع",
+          "description": "منتجات يعرضها بائع في السوق"
+        },
+        "custom_field": {
+          "name": "حقل مخصص",
+          "description": "منتجات يطابق حقلها المخصص قيمة"
         }
       },
       "commission_rule": {
@@ -2119,6 +2147,10 @@
         "product": {
           "name": "المنتجات",
           "description": "يتضمن الطلب منتجًا (منتجات) محددة"
+        },
+        "collection": {
+          "name": "المجموعات",
+          "description": "يتضمن الطلب منتجات من مجموعات محددة"
         }
       },
       "seller_requirement": {

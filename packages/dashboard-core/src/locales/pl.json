@@ -1989,6 +1989,34 @@
         "tag": {
           "name": "Tag",
           "description": "Produkty z pasującym tagiem"
+        },
+        "category": {
+          "name": "Kategoria",
+          "description": "Produkty z kategorii, opcjonalnie z podkategoriami"
+        },
+        "product_type": {
+          "name": "Typ produktu",
+          "description": "Produkty danego typu"
+        },
+        "price": {
+          "name": "Cena",
+          "description": "Produkty z wariantem droższym lub tańszym niż kwota"
+        },
+        "in_stock": {
+          "name": "Na stanie",
+          "description": "Produkty z wariantem dostępnym do sprzedaży"
+        },
+        "title": {
+          "name": "Tytuł",
+          "description": "Produkty, których nazwa pasuje do tekstu"
+        },
+        "seller": {
+          "name": "Sprzedawca",
+          "description": "Produkty wystawione przez sprzedawcę"
+        },
+        "custom_field": {
+          "name": "Pole niestandardowe",
+          "description": "Produkty, których pole niestandardowe pasuje do wartości"
         }
       },
       "commission_rule": {
@@ -2145,6 +2173,10 @@
         "product": {
           "name": "Produkt(y)",
           "description": "Zamówienie zawiera określone produkty"
+        },
+        "collection": {
+          "name": "Kolekcje",
+          "description": "Zamówienie zawiera produkty z wybranych kolekcji"
         }
       },
       "seller_requirement": {

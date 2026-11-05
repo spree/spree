@@ -38,7 +38,8 @@ import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fiel
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
 import { DigitalFilesFormCard } from '../../../../components/spree/products/digital-files-form-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
-import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { PublishingCard } from '../../../../components/spree/publishing-card'
+import { MissingPriceAlert } from '../../../../components/spree/products/missing-price-alert'
 import { useCreateProduct } from '../../../../hooks/use-product'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/new')({
@@ -245,7 +246,13 @@ function NewProductPage() {
           sidebar={
             <>
               <StatusCard form={form} />
-              <PublishingCard form={form} seedDefaultChannel />
+              <PublishingCard
+                form={form}
+                name="product_publications"
+                statusField="status"
+                seed="default"
+                notice={<MissingPriceAlert form={form} />}
+              />
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} />

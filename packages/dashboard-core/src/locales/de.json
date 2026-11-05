@@ -1958,6 +1958,34 @@
         "tag": {
           "name": "Schlagwort",
           "description": "Produkte mit einem passenden Schlagwort"
+        },
+        "category": {
+          "name": "Kategorie",
+          "description": "Produkte einer Kategorie, optional mit Unterkategorien"
+        },
+        "product_type": {
+          "name": "Produkttyp",
+          "description": "Produkte eines Produkttyps"
+        },
+        "price": {
+          "name": "Preis",
+          "description": "Produkte mit einer Variante über oder unter einem Betrag"
+        },
+        "in_stock": {
+          "name": "Auf Lager",
+          "description": "Produkte mit einer sofort verkäuflichen Variante"
+        },
+        "title": {
+          "name": "Titel",
+          "description": "Produkte, deren Name einem Text entspricht"
+        },
+        "seller": {
+          "name": "Verkäufer",
+          "description": "Produkte, die ein Marktplatz-Verkäufer anbietet"
+        },
+        "custom_field": {
+          "name": "Benutzerdefiniertes Feld",
+          "description": "Produkte, deren benutzerdefiniertes Feld einem Wert entspricht"
         }
       },
       "commission_rule": {
@@ -2114,6 +2142,10 @@
         "product": {
           "name": "Produkt(e)",
           "description": "Bestellung enthält die angegebenen Produkte"
+        },
+        "collection": {
+          "name": "Kollektionen",
+          "description": "Bestellung enthält Produkte aus bestimmten Kollektionen"
         }
       },
       "seller_requirement": {
