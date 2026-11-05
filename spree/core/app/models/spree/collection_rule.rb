@@ -42,6 +42,11 @@ module Spree
       true
     end
 
+    # @return [Boolean] true for a rule type that reads `currency` (price, sale)
+    def self.uses_currency?
+      false
+    end
+
     # What the `/collection_rules/types` endpoint lists for each type,
     # beside its label and preference schema.
     #
@@ -49,7 +54,7 @@ module Spree
     def self.types_listing
       subclasses_with_preference_schema.map do |entry|
         klass = registered_subclasses.find { |subclass| subclass.api_type == entry[:type] }
-        entry.merge(match_policies: klass.match_policies, value_required: klass.value_required?)
+        entry.merge(match_policies: klass.match_policies, value_required: klass.value_required?, uses_currency: klass.uses_currency?)
       end
     end
 
@@ -72,6 +77,19 @@ module Spree
 
     def negated?
       match_policy.in?(%w[is_not_equal_to does_not_contain])
+    end
+
+    # The case-insensitive LIKE pattern for a text relation, wildcards in the
+    # value escaped (match with `'\\'` as the escape character).
+    def like_pattern
+      term = self.class.sanitize_sql_like(value.to_s)
+
+      case match_policy
+      when 'contains', 'does_not_contain' then "%#{term}%"
+      when 'starts_with' then "#{term}%"
+      when 'ends_with' then "%#{term}"
+      else term
+      end
     end
 
     # Applies a positive condition, or its negation, to the scope.

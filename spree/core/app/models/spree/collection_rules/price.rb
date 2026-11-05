@@ -4,6 +4,10 @@ module Spree
     # currency (the store's default when blank). Base prices only: a price
     # list is what one audience pays, not the shelf price.
     class Price < Spree::CollectionRule
+      def self.uses_currency?
+        true
+      end
+
       validate :value_must_be_an_amount, if: -> { value.present? }
 
       def self.match_policies

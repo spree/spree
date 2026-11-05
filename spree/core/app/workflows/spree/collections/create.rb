@@ -44,8 +44,9 @@ module Spree
       def publish_on_active_channels
         return if collection.publications_assigned?
 
-        @published_channels = store.channels.active.to_a
-        Spree::Channel.where(id: @published_channels.map(&:id)).add_collections(collection.id)
+        channels = store.channels.active
+        channels.add_collections(collection.id)
+        @published_channels = channels.to_a
       end
     end
   end
