@@ -138,7 +138,7 @@ module Spree
 
         existing_rows = Spree::ProductCategory.where(product_id: scoped_ids, category_id: category_ids).
                         pluck(:id, :product_id, :category_id)
-        existing = existing_rows.map { |_id, product_id, category_id| [product_id, category_id] }.to_set
+        existing = existing_rows.to_set { |_id, product_id, category_id| [product_id, category_id] }
 
         # acts_as_list scopes position per category here (unlike option types,
         # which scope per product), so each category continues its own sequence.
