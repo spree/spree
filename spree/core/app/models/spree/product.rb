@@ -143,6 +143,7 @@ module Spree
 
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy, inverse_of: :product, autosave: true
     has_many :collections, through: :product_collections, dependent: :destroy
+    has_many :collection_exclusions, class_name: 'Spree::CollectionExclusion', dependent: :delete_all
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy_async, inverse_of: :product
     has_many :catalogs, through: :catalog_products
 
@@ -459,8 +460,12 @@ module Spree
       run_status_workflow(Spree.product_draft_workflow)
     end
 
-    def self.bulk_auto_match_collections(store, product_ids)
-      return if store.collections.automatic.none?
+    # @param rule_types [Array<Class>, nil] only when a collection uses one of
+    #   these rule types; nil for any collection with rules
+    def self.bulk_auto_match_collections(store, product_ids, rule_types: nil)
+      collections = store.collections.automatic
+      collections = collections.with_rule_types(rule_types) if rule_types
+      return if collections.none?
 
       products_to_auto_match_ids = store.products.not_deleted.not_archived.where(id: product_ids).ids
 
@@ -874,7 +879,7 @@ module Spree
       return if Rails.cache.read(pending_key)
 
       collections = store.collections.automatic
-      collections = collections.where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) if rule_types
+      collections = collections.with_rule_types(rule_types) if rule_types
       return unless collections.exists?
 
       Rails.cache.write(pending_key, true, expires_in: 30.seconds)
