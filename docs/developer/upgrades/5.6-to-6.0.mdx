@@ -761,6 +761,39 @@ STEP=register_paypal_webhooks bundle exec rake spree:upgrade
 
 </CodeGroup>
 
+## Klaviyo
+
+`spree_klaviyo` 1.x does not run on Spree 6.0. Klaviyo now ships with Spree as a provider gem of the same name, released with Spree and pinned to its version (`spree add klaviyo` pins it for you). The integration keeps its stored class, `Spree::Integrations::Klaviyo`, and its preference names, so a store's Klaviyo connection works the moment the gem is installed. See the [Klaviyo guide](/integrations/marketing/klaviyo) for what it sends.
+
+| 1.x | 6.0 |
+|---|---|
+| The integration row, its private key and its list id | Kept. If you upgraded to 6.0 before adding the gem, the private key is still in the plain `preferences` column. It works, and `spree upgrade --step preferences_json`, then `--step encrypt_secret_preferences`, move and encrypt it |
+| Profiles' external id is the customer's database id | Turn on **Match profiles by database ID** to keep matching them. With it off, profiles carry the customer's Spree id (`cus_…`) |
+| Orders and sign-ups synced even with the integration switched off | Only an active integration syncs. Check it is on |
+| Public API key in the integration form | Set `KLAVIYO_COMPANY_ID` in the storefront instead |
+| Private key scopes: Events, Lists, Profiles, Subscriptions | Add **Data Privacy (write)**. Without it, deleting an erased customer's profile fails with 403 and is only reported to your error tracker |
+| Spree sent the newsletter confirmation | Klaviyo sends it on a double opt-in list. On a single opt-in list nobody does |
+| Metric names | Re-point flows, segments and templates, using the table below. A refund flow moves to Return Refunded |
+| `klaviyo_id` in the customer's metadata | No longer read or written. You can remove it |
+| `klaviyo.subscribed` custom field on newsletter subscribers | No longer written. You can delete the definition and its values |
+| Rails storefront tracking (product lists, search, coupons, checkout steps) | Viewed Product, Added to Cart and Started Checkout come from the storefront's Klaviyo script. The rest are not sent |
+| `create_back_in_stock_subscription` | Gone |
+
+Klaviyo matches a profile by its external id before its email. With **Match profiles by database ID** off, every customer the 1.x extension synced therefore gets a second profile with the same email and their Spree id, and their 1.x history stays on the first one. Events keep going to the older profile, while profile updates go to the new one. Decide on the switch before the first sync, and use the same setting in every store that shares the Klaviyo account.
+
+The events now use Klaviyo's standard ecommerce metric names, so Klaviyo's flow templates and lifetime-value reports recognise them:
+
+| 1.x | 6.0 |
+|---|---|
+| Order Completed | Placed Order |
+| (none) | Ordered Product, one per line |
+| Package Shipped | Fulfilled Order, one per package |
+| Order Cancelled | Canceled Order |
+| Reimbursement Paid | Return Refunded |
+| Checkout Started | Started Checkout, from the storefront |
+
+The old metrics keep their history in Klaviyo but stop receiving events.
+
 ## Removed in 6.0
 
 These were deprecated in 5.x and are **gone now** — there is no bridge, so calls raise `NoMethodError`. Most were one-line delegations to a replacement that already exists.

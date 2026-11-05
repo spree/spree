@@ -13,7 +13,7 @@ module Spree
       data_request = Spree::DataRequest.find_by_prefix_id(event.payload['id'])
       return unless data_request&.access?
       return unless data_request.downloadable?
-      return unless data_request.store.prefers_send_consumer_transactional_emails?
+      return unless data_request.store.sends_customer_email?('spree/customer_mailer/data_export_email')
 
       CustomerMailer.data_export_email(data_request).deliver_later
     end

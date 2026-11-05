@@ -1,0 +1,137 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"profile-subscription-bulk-create-job","attributes":{"profiles":{"data":[{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+unsubscribe-a8266fb7@<KLAVIYO_TEST_INBOX_DOMAIN>","subscriptions":{"email":{"marketing":{"consent":"SUBSCRIBED"}}}}}]}},"relationships":{"list":{"data":{"type":"list","id":"Wv3WNB"}}}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 202
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:52 GMT
+      Content-Length:
+      - '0'
+      Cf-Ray:
+      - a55c90852fd7bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - object-src 'none'; script-src 'report-sample' 'strict-dynamic' 'unsafe-eval';
+        frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com admin.shopify.com
+        klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        base-uri 'none'; report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '71'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '66'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 9f150fc9-d442-4fd2-a817-01b2cbdf7138
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+  recorded_at: Thu, 05 Nov 2026 14:31:52 GMT
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/profile-subscription-bulk-delete-jobs
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"profile-subscription-bulk-delete-job","attributes":{"profiles":{"data":[{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+unsubscribe-a8266fb7@<KLAVIYO_TEST_INBOX_DOMAIN>","subscriptions":{"email":{"marketing":{"consent":"UNSUBSCRIBED"}}}}}]}},"relationships":{"list":{"data":{"type":"list","id":"Wv3WNB"}}}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 202
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:52 GMT
+      Content-Length:
+      - '0'
+      Cf-Ray:
+      - a55c90867905bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - object-src 'none'; script-src 'report-sample' 'strict-dynamic' 'unsafe-eval';
+        frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com admin.shopify.com
+        klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        base-uri 'none'; report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '74'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '83'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 0f1cd764-2d49-4fe9-b83e-d45defde3cdf
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+  recorded_at: Thu, 05 Nov 2026 14:31:52 GMT
+recorded_with: VCR 6.4.1

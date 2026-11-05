@@ -745,4 +745,24 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(customer.reload.email).to eq('buyer@example.com')
     end
   end
+
+  describe 'the after_anonymize hook' do
+    let(:seen) { {} }
+    let(:handler) do
+      lambda do |workflow|
+        seen[:original_email] = workflow.original_email
+        seen[:customer_email] = workflow.customer.email
+      end
+    end
+
+    before { Spree.hooks.register('customers.anonymize.after_anonymize', handler) }
+    after { Spree.hooks.unregister('customers.anonymize.after_anonymize', handler) }
+
+    it 'gives handlers the address from before the erasure' do
+      result
+
+      expect(seen[:original_email]).to eq('buyer@example.com')
+      expect(seen[:customer_email]).to end_with("@#{described_class::REDACTED_DOMAIN}")
+    end
+  end
 end

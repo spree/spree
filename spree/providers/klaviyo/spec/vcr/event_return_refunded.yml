@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/events
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"event","attributes":{"metric":{"data":{"type":"metric","attributes":{"name":"Return
+        Refunded"}}},"profile":{"data":{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+events-6f15e2ec@<KLAVIYO_TEST_INBOX_DOMAIN>"}}},"properties":{"ReturnNumber":"RET1001","OrderId":"R1001","RefundedTotal":10.0,"Currency":"USD","ItemNames":["Product
+        44994"],"Items":[{"ProductID":"prod_UkLWZg9DAJ","SKU":"SKU-4","ProductName":"Product
+        44994","Quantity":1,"ItemPrice":10.0,"RowTotal":10.0,"ProductURL":"http://www.example.com:3000/products/product-44994","ImageURL":null,"Categories":[]}]},"time":"2026-11-05T14:31:54Z","unique_id":"455e81ab-2df5-4406-aa64-afb9281b73c4"}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 202
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:54 GMT
+      Content-Length:
+      - '0'
+      Cf-Ray:
+      - a55c9095bc5fbf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - object-src 'none'; frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com
+        admin.shopify.com klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        script-src 'report-sample' 'strict-dynamic' 'unsafe-eval'; base-uri 'none';
+        report-uri /csp/
+      Ratelimit-Limit:
+      - 350, 350;w=1, 3500;w=60
+      Ratelimit-Remaining:
+      - '348'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '70'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 79766df0-6575-4557-81d6-d0add4b41b3b
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+  recorded_at: Thu, 05 Nov 2026 14:31:54 GMT
+recorded_with: VCR 6.4.1

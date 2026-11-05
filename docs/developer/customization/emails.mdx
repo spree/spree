@@ -171,6 +171,32 @@ end
 
 A sample builds from the record the merchant picked, else the store's latest one; a store with none is told there is nothing to preview with yet. Pass placeholder URLs, never real tokens, and register only emails your customers receive.
 
+## Integrations that send customer emails
+
+An integration can take over customer emails while it is active, so a marketing platform sends them instead of Spree. List their template keys in `replaced_customer_emails`:
+
+```ruby server/app/models/my_app/loyalty_mail_integration.rb
+module MyApp
+  class LoyaltyMailIntegration < Spree::Integration
+    preference :sends_order_confirmation, :boolean, default: false
+
+    def replaced_customer_emails
+      preferred_sends_order_confirmation ? %w[spree/order_mailer/confirm_email] : []
+    end
+  end
+end
+```
+
+Each customer email subscriber in `spree_emails` asks `store.sends_customer_email?('<template key>')` before sending. The answer is `false` when the store's customer emails are turned off, or when any active integration of that store lists the key. With no such integration, every email is sent as before. Staff, store-owner and seller emails are never taken over.
+
+Never list an email whose link carries a token Spree must later redeem: the password reset, the data export, the data request confirmation, the digital downloads email, the payment link and company invitations. Your platform could not put a working link in its copy. The newsletter confirmation is the exception only when the platform runs the whole double opt-in itself, as [Klaviyo](/integrations/marketing/klaviyo) does, so Spree's token is never sent.
+
+A customer email your own app adds should ask the same question, so an integration can take it over too:
+
+```ruby server/app/subscribers/review_request_subscriber.rb
+return unless order.store.sends_customer_email?('spree/review_mailer/request_email')
+```
+
 ## Your own mailers
 
 A mailer that inherits `Spree::BaseMailer` and renders its own ERB views with `mail` keeps working. Spree wraps its HTML in the same layout as every other email, so it carries the store's logo, header and footer. The `spree/shared/mailer_hero` and `spree/shared/mailer_button` partials are still there for those views.

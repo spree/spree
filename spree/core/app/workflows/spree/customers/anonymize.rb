@@ -25,6 +25,13 @@ module Spree
 
       hooks :validate, :after_anonymize
 
+      # The customer's email as it was before erasure. An +after_anonymize+
+      # handler releasing the person's data held by a third party reads it
+      # here, because the customer record already holds the tombstone.
+      #
+      # @return [String, nil]
+      attr_reader :original_email
+
       # What replaces a name. Recognisable as a tombstone rather than looking
       # like a real person called Anonymized.
       REDACTED_NAME = 'Redacted'.freeze

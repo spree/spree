@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://a.klaviyo.com/api/lists/Wv3WNB
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:53 GMT
+      Content-Type:
+      - application/vnd.api+json
+      Content-Length:
+      - '788'
+      Cf-Ray:
+      - a55c908b9c79bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - base-uri 'none'; script-src 'report-sample' 'strict-dynamic' 'unsafe-eval';
+        frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com admin.shopify.com
+        klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        object-src 'none'; report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '72'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '63'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 81666195-25a4-4863-866c-5c1164afca3e
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":{"type":"list","id":"Wv3WNB","attributes":{"name":"Email List","created":"2026-11-05T11:02:15+00:00","updated":"2026-11-05T11:02:15+00:00","opt_in_process":"double_opt_in"},"relationships":{"profiles":{"links":{"self":"https://a.klaviyo.com/api/lists/Wv3WNB/relationships/profiles/","related":"https://a.klaviyo.com/api/lists/Wv3WNB/profiles/"}},"tags":{"links":{"self":"https://a.klaviyo.com/api/lists/Wv3WNB/relationships/tags/","related":"https://a.klaviyo.com/api/lists/Wv3WNB/tags/"}},"flow-triggers":{"links":{"self":"https://a.klaviyo.com/api/lists/Wv3WNB/relationships/flow-triggers/","related":"https://a.klaviyo.com/api/lists/Wv3WNB/flow-triggers/"}}},"links":{"self":"https://a.klaviyo.com/api/lists/Wv3WNB/"}},"links":{"self":"https://a.klaviyo.com/api/lists/Wv3WNB"}}'
+  recorded_at: Thu, 05 Nov 2026 14:31:53 GMT
+recorded_with: VCR 6.4.1

@@ -107,6 +107,7 @@ See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/ema
 - Templates are `app/views/spree/<mailer>/<action>.liquid` (that path is a public key), MJML with front-matter subject; never ERB.
 - Mailers inherit `Spree::BaseMailer`, wrap sends in `with_store_locale`, and pass data through `email_data(record, Spree::Emails::XyzSerializer)` — templates never touch models. Every record a customer email serializes has its own serializer under `spree/emails/app/serializers/spree/emails/`.
 - Never serialize a token: build reset, invitation and download URLs in the mailer.
+- Whether to send a customer email is `store.sends_customer_email?(template_key)`, never a direct read of `send_consumer_transactional_emails`, because an active integration may take the email over. An email whose link carries a token Spree must later redeem is never taken over.
 - Colors and fonts come from `store.branding`.
 - A new or changed customer email updates `docs/developer/customization/email-variables.mdx`, `spree/emails/spec/mailers/spree/rendered_emails_spec.rb` and gets a mailer preview. A new customer email is registered in `Spree.editable_email_templates` with a sample builder; staff and seller emails never are.
 
