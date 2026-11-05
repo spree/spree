@@ -45,3 +45,34 @@ FactoryBot.define do
     end
   end
 end
+
+FactoryBot.define do
+  factory :category_collection_rule, class: Spree::CollectionRules::Category do
+    match_policy { 'is_equal_to' }
+  end
+
+  factory :product_type_collection_rule, class: Spree::CollectionRules::ProductType do
+    match_policy { 'is_equal_to' }
+  end
+
+  factory :seller_collection_rule, class: Spree::CollectionRules::Seller do
+    match_policy { 'is_equal_to' }
+  end
+
+  factory :price_collection_rule, class: Spree::CollectionRules::Price do
+    match_policy { 'less_than' }
+    value { '50' }
+  end
+
+  factory :in_stock_collection_rule, class: Spree::CollectionRules::InStock do
+    match_policy { 'is_equal_to' }
+  end
+
+  factory :title_collection_rule, class: Spree::CollectionRules::Title do
+    match_policy { 'contains' }
+  end
+
+  factory :custom_field_collection_rule, class: Spree::CollectionRules::CustomField do
+    match_policy { 'is_equal_to' }
+  end
+end

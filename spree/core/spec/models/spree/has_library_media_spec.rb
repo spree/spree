@@ -21,6 +21,15 @@ RSpec.shared_examples 'library media slots' do
     expect(placement.alt).to eq('thinking-cat.jpg')
   end
 
+  it 'reads the alt text of the file placed in a slot' do
+    record.image.attach(fixture_upload('wide.jpg'))
+    record.save!
+    record.media.sole.update!(alt: 'A linen shirt on a hanger')
+
+    expect(record.reload.library_media_alt(:image)).to eq('A linen shirt on a hanger')
+    expect(record.library_media_alt(:square_image)).to be_nil
+  end
+
   it 'places each slot with its own file' do
     record.image.attach(fixture_upload('wide.jpg'))
     record.square_image.attach(fixture_upload('square.jpg'))
