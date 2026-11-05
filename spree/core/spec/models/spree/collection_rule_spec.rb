@@ -7,6 +7,21 @@ RSpec.describe Spree::CollectionRule, type: :model do
   let(:store) { @default_store }
   let(:collection) { create(:automatic_collection, store: store) }
 
+  describe 'automatic flag' do
+    let(:manual) { create(:collection, store: store) }
+
+    it 'follows whether the collection has rules, claiming legacy memberships as hand-picked first' do
+      legacy = create(:product_collection, collection: manual).tap { |row| row.update_columns(source: nil) }
+
+      rule = create(:tag_collection_rule, collection: manual, value: 'sale')
+      expect(manual.reload).to be_automatic
+      expect(legacy.reload.source).to eq('manual')
+
+      rule.destroy!
+      expect(manual.reload).not_to be_automatic
+    end
+  end
+
   describe '.types_listing' do
     it 'lists the relations and whether a value is needed for each type' do
       price = described_class.types_listing.find { |entry| entry[:type] == 'price' }

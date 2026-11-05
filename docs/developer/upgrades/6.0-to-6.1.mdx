@@ -53,6 +53,7 @@ A channel created after the upgrade starts with no collections. Publish them fro
 A collection with rules now accepts hand-picked products too, and any collection can exclude products. Adding products to a rule-based collection used to return a 422; it now succeeds.
 
 - `automatic` is ignored on write and deprecated. A collection is automatic while it has rules; send `rules: []` to remove them.
+- Rules left on a collection that was manual in 6.0 stay inactive until a rule is saved on that collection. Review them before you add one.
 - Rows of `spree_product_collections` carry a `source` (`manual` or `rule`). Code that inserts memberships directly must set it. The column becomes required in Spree 6.2.
 - A product's `collection_ids` in the Admin API lists and sets the collections it is hand-picked into. Memberships created by rules are kept when you write it.
 

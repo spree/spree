@@ -15,11 +15,9 @@ module Spree
         return if collection.nil?
         return if collection.destroyed?
 
+        collection.claim_unknown_membership_sources!
         memberships = Spree::ProductCollection.where(collection_id: collection.id)
-        # Rows from before 6.1 carry no source until the upgrade step fills
-        # it: on a collection that was automatic they came from its rules.
-        unknown_source = collection.automatic? ? 'rule' : 'manual'
-        sources = memberships.order(:position).pluck(:product_id, :source).to_h { |id, source| [id, source || unknown_source] }
+        sources = memberships.order(:position).pluck(:product_id, :source).to_h
 
         excluded_ids = collection.exclusions.pluck(:product_id)
         matched_ids = collection.products_matching_rules.where.not(id: excluded_ids).ids
@@ -29,10 +27,8 @@ module Spree
         new_ids = matched_ids - sources.keys
 
         ApplicationRecord.transaction do
-          memberships.where(source: nil).update_all(source: unknown_source)
           remove(memberships, stale_ids)
           append(collection, memberships, new_ids)
-          collection.update_columns(automatic: collection.rules.exists?)
         end
 
         refresh(collection, stale_ids + new_ids)

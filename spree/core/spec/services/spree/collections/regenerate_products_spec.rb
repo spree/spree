@@ -68,10 +68,12 @@ module Spree
       expect(collection.reload.products).to be_empty
     end
 
-    it 'marks the collection automatic while it has rules' do
+    it 'leaves rules inert on a collection that was manual before 6.1' do
       collection.update_columns(automatic: false)
 
-      expect { subject }.to change { collection.reload.automatic }.to(true)
+      subject
+
+      expect(collection.reload.products).to be_empty
     end
 
     context 'with memberships from before 6.1' do
@@ -85,12 +87,12 @@ module Spree
         expect(sources).to eq([[matching_product.id, 'rule']])
       end
 
-      it 'treats them as hand-picked on a collection that had no rules' do
+      it 'treats them as hand-picked on a collection that was manual' do
         collection.update_columns(automatic: false)
 
         described_class.call(collection: collection)
 
-        expect(sources).to eq([[other_product.id, 'manual'], [matching_product.id, 'rule']])
+        expect(sources).to eq([[other_product.id, 'manual']])
       end
     end
 
@@ -98,7 +100,7 @@ module Spree
       before do
         described_class.call(collection: collection)
         create(:product_collection, collection: collection, product: other_product, position: 2)
-        rule.delete
+        rule.destroy!
       end
 
       it 'removes the rule rows, keeps the hand-picked ones and stops being automatic' do

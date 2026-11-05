@@ -30,6 +30,14 @@ RSpec.describe Spree::CollectionRules::CustomField, type: :model do
     expect(rule(weight, match_policy: 'less_than', value: '200').apply(store.products)).to contain_exactly(linen)
   end
 
+  it 'skips stored values that are not numbers' do
+    blank = create(:product, store: store)
+    Spree::CustomField.insert_all([{ type: 'Spree::CustomFields::Number', resource_type: 'Spree::Product', resource_id: blank.id,
+                                     custom_field_definition_id: weight.id, value: '', created_at: Time.current, updated_at: Time.current }])
+
+    expect(rule(weight, match_policy: 'greater_than', value: '200').apply(store.products)).to contain_exactly(wool)
+  end
+
   it 'only accepts definitions marked as collection conditions' do
     expect(rule(hidden, value: 'x')).not_to be_valid
   end

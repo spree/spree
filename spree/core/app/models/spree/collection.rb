@@ -67,6 +67,7 @@ module Spree
     has_many :publications, class_name: 'Spree::CollectionPublication', dependent: :destroy, inverse_of: :collection
     has_many :channels, through: :publications, class_name: 'Spree::Channel'
 
+    has_many :promotion_rule_collections, class_name: 'Spree::PromotionRuleCollection', dependent: :delete_all
     has_many :exclusions, class_name: 'Spree::CollectionExclusion', dependent: :delete_all, inverse_of: :collection
     has_many :excluded_products, through: :exclusions, source: :product, class_name: 'Spree::Product'
 
@@ -123,9 +124,10 @@ module Spree
     after_commit :regenerate_products, on: [:update], if: -> { saved_change_to_rules_match_policy? && rules.exists? }
     attribute :marked_for_regenerate_products, :boolean, default: true
 
-    # `automatic` means "has rules": RegenerateProducts keeps the column in
-    # step with the rules. Membership mixes rule-matched and hand-picked
-    # products either way.
+    # `automatic` means "has rules": saving or removing a rule keeps the
+    # column in step. Membership mixes rule-matched and hand-picked products
+    # either way. Rules left on a collection that was manual before 6.1 stay
+    # inert until a rule is saved on it.
     def manual?
       !automatic?
     end
@@ -181,6 +183,28 @@ module Spree
       self.marked_for_regenerate_products = false if !frozen? && only_once
     end
 
+    # Names the source of memberships from before 6.1, which have none until
+    # the upgrade step runs: on a collection that was automatic they came
+    # from its rules. Runs before the automatic flag changes.
+    #
+    # @return [void]
+    def claim_unknown_membership_sources!
+      product_collections.where(source: nil).update_all(source: automatic? ? 'rule' : 'manual')
+    end
+
+    # Keeps `automatic` in step with the rules.
+    #
+    # @return [void]
+    def sync_automatic!
+      return if destroyed?
+
+      has_rules = rules.exists?
+      return if automatic? == has_rules
+
+      claim_unknown_membership_sources!
+      update_columns(automatic: has_rules)
+    end
+
     # Regenerates in the background, for writes that shouldn't wait for it.
     #
     # @return [void]
@@ -192,7 +216,7 @@ module Spree
     #
     # @return [ActiveRecord::Relation]
     def products_matching_rules(opts = {})
-      return Spree::Product.none if rules.empty?
+      return Spree::Product.none if manual? || rules.empty?
 
       currency = opts[:currency] || store.default_currency
       storefront = opts[:storefront] || false
@@ -334,7 +358,10 @@ module Spree
         next unless channel
 
         publication = existing[channel.id] || publications.build(channel: channel)
-        publication.update!(row.slice(:published_at, :unpublished_at))
+        unless publication.update(row.slice(:published_at, :unpublished_at))
+          publication.errors.each { |error| errors.add(:publications, error.full_message) }
+          raise ActiveRecord::RecordInvalid, self
+        end
         publication
       end
 

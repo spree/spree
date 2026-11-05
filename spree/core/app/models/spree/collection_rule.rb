@@ -88,11 +88,13 @@ module Spree
       errors.add(:type, :invalid_collection_rule, message: I18n.t('spree.errors.messages.invalid_collection_rule'))
     end
 
+    # The flag first: regeneration reads it to tell the rules apply.
     def regenerate_collection_products
       # A rule whose type changed in place is still loaded as its old class.
       # Reload on every rule's commit: with only_once, the first rule to commit
       # regenerates, and that may not be the retyped one.
       collection.rules.reset
+      collection.sync_automatic!
       collection.regenerate_products(only_once: true)
     end
   end

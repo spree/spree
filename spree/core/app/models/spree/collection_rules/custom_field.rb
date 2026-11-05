@@ -32,25 +32,39 @@ module Spree
       def apply(scope)
         return scope.none if definition.nil?
 
-        fields = Spree::CustomField.where(resource_type: 'Spree::Product', custom_field_definition_id: definition.id).
-                 where(value_condition)
-        match(scope, Spree::Product.where(id: fields.select(:resource_id)))
+        fields = Spree::CustomField.where(resource_type: 'Spree::Product', custom_field_definition_id: definition.id)
+        product_ids = definition.field_type == 'number' ? number_matches(fields) : fields.where(value_condition).select(:resource_id)
+        match(scope, Spree::Product.where(id: product_ids))
       end
 
       private
+
+      # Stored values are text, and a blank or stale one would make a SQL cast
+      # fail for every row, so numbers are compared here.
+      def number_matches(fields)
+        target = decimal(value)
+        return [] if target.nil?
+
+        fields.pluck(:resource_id, :value).filter_map do |product_id, stored|
+          number = decimal(stored)
+          next if number.nil?
+
+          product_id if (match_policy == 'greater_than' && number > target) ||
+                        (match_policy == 'less_than' && number < target) ||
+                        (match_policy.in?(%w[is_equal_to is_not_equal_to]) && number == target)
+        end
+      end
+
+      def decimal(text)
+        BigDecimal(text.to_s)
+      rescue ArgumentError
+        nil
+      end
 
       def value_condition
         column = Spree::CustomField.arel_table[:value]
 
         case definition.field_type
-        when 'number'
-          number = Arel::Nodes::NamedFunction.new('CAST', [column.as(Arel.sql('DECIMAL(19,4)'))])
-          amount = BigDecimal(value.to_s)
-          case match_policy
-          when 'greater_than' then number.gt(amount)
-          when 'less_than' then number.lt(amount)
-          else number.eq(amount)
-          end
         when 'boolean'
           column.eq(ActiveModel::Type::Boolean.new.cast(value).to_s)
         else
