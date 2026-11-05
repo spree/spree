@@ -42791,6 +42791,7 @@ paths:
                   - is_equal_to
                   - is_not_equal_to
                   value_required: true
+                  uses_currency: false
                 - type: custom_field
                   label: Custom field
                   description: Products whose custom field matches a value
@@ -42812,6 +42813,7 @@ paths:
                   - greater_than
                   - less_than
                   value_required: true
+                  uses_currency: false
                 - type: in_stock
                   label: In stock
                   description: Products with a variant that can be sold now
@@ -42823,6 +42825,7 @@ paths:
                   - is_equal_to
                   - is_not_equal_to
                   value_required: false
+                  uses_currency: false
                 - type: sale
                   label: On sale
                   description: Products currently discounted below their compare-at
@@ -42837,6 +42840,7 @@ paths:
                   - contains
                   - does_not_contain
                   value_required: true
+                  uses_currency: true
                 - type: price
                   label: Price
                   description: Products with a variant priced above or below an amount
@@ -42848,6 +42852,7 @@ paths:
                   - greater_than
                   - less_than
                   value_required: true
+                  uses_currency: true
                 - type: product_type
                   label: Product type
                   description: Products of a product type
@@ -42859,6 +42864,7 @@ paths:
                   - is_equal_to
                   - is_not_equal_to
                   value_required: true
+                  uses_currency: false
                 - type: available_on
                   label: Recently published
                   description: Products published within the last N days
@@ -42872,6 +42878,7 @@ paths:
                   - contains
                   - does_not_contain
                   value_required: true
+                  uses_currency: false
                 - type: seller
                   label: Seller
                   description: Products a marketplace seller lists
@@ -42883,6 +42890,7 @@ paths:
                   - is_equal_to
                   - is_not_equal_to
                   value_required: true
+                  uses_currency: false
                 - type: tag
                   label: Tag
                   description: Products carrying a matching tag
@@ -42896,6 +42904,7 @@ paths:
                   - contains
                   - does_not_contain
                   value_required: true
+                  uses_currency: false
                 - type: title
                   label: Title
                   description: Products whose name matches a text
@@ -42911,6 +42920,7 @@ paths:
                   - starts_with
                   - ends_with
                   value_required: true
+                  uses_currency: false
   "/api/v3/admin/collections/{collection_id}/publications":
     get:
       summary: List collection publications
