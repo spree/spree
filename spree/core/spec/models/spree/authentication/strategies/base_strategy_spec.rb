@@ -62,6 +62,21 @@ describe Spree::Authentication::Strategies::BaseStrategy do
       end
     end
 
+    # Older data can hold two accounts differing only in case; the casing
+    # typed must not choose between them.
+    context 'when two accounts differ only in case' do
+      let!(:user) { create(:user, email: 'ada@example.com') }
+
+      before do
+        other = create(:user, email: 'other@example.com')
+        other.update_columns(email: 'Ada@Example.com')
+      end
+
+      it 'finds the same account whatever the casing' do
+        expect(strategy.send(:find_user_by_email, 'Ada@Example.com')).to eq(strategy.send(:find_user_by_email, 'ada@example.com'))
+      end
+    end
+
     # An app may encrypt the column, deterministically so it can still be
     # looked up. SQL then only ever sees ciphertext.
     context 'when the app encrypts email' do
