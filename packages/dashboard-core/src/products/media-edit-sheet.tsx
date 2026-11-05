@@ -251,7 +251,7 @@ export function MediaEditSheet({
 
   return (
     <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(o) : handleCancel())}>
-      <SheetContent side="right" showCloseButton={false} className="flex flex-col">
+      <SheetContent side="right" className="flex flex-col">
         <SheetHeader>
           <SheetTitle>{t('admin.products.media.edit_title')}</SheetTitle>
         </SheetHeader>

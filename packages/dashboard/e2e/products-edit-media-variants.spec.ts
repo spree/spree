@@ -138,6 +138,13 @@ test.describe('edit product — media variant linking', () => {
     // accidentally wipe sibling edits.)
     await clickMediaThumbnailAction(media, 'edit')
     await expect(sheet.getByLabel('Alt text')).toHaveValue(newAlt)
+
+    // The header's close button discards the same way.
+    await sheet.getByLabel('Alt text').fill('TYPED THEN CLOSED')
+    await sheet.getByRole('button', { name: /^close$/i }).click()
+    await expect(page.getByRole('heading', { name: /^edit media$/i })).toBeHidden()
+    await clickMediaThumbnailAction(media, 'edit')
+    await expect(sheet.getByLabel('Alt text')).toHaveValue(newAlt)
   })
 
   test('saves a custom field on a persisted image from the sheet', async ({ page }) => {
