@@ -14,9 +14,11 @@ module Spree
 
     SOURCES = %w[manual rule].freeze
 
-    # Nullable in the database until 6.2 (docs/plans/6.1-collections-merchandising.md);
-    # every writer names it.
-    validates :source, inclusion: { in: SOURCES }
+    # Nullable in the database until 6.2 (docs/plans/6.1-collections-merchandising.md):
+    # every new row names it, and rows from before 6.1 still save until the
+    # upgrade step fills theirs.
+    validates :source, inclusion: { in: SOURCES }, on: :create
+    validates :source, inclusion: { in: SOURCES }, allow_nil: true, on: :update
 
     validates :position, numericality: { only_integer: true, allow_blank: true, allow_nil: true }
     validates :collection_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }

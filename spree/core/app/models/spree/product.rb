@@ -868,7 +868,12 @@ module Spree
       collections = store.collections.automatic
       collections = collections.where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) if rule_types
       return unless collections.exists?
-      return unless Rails.cache.write("spree/auto_match_collections/#{id}", true, unless_exist: true, expires_in: 30.seconds)
+
+      # Fails open: an unreachable cache reads as no pending job.
+      pending_key = "spree/auto_match_collections/#{id}"
+      return if Rails.cache.read(pending_key)
+
+      Rails.cache.write(pending_key, true, expires_in: 30.seconds)
 
       Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
     end
