@@ -639,7 +639,8 @@
       "autocomplete": {
         "empty": "لا يوجد عملاء مطابقون",
         "empty_for_company": "لا يوجد عملاء يمكنهم الشراء لهذه الشركة",
-        "placeholder": "البحث عن العملاء…"
+        "placeholder": "البحث عن العملاء…",
+        "add_new": "إضافة عميل جديد"
       },
       "columns": {
         "companies": "الشركات",

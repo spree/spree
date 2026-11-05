@@ -476,6 +476,42 @@ test.describe('order customer', () => {
     await expect(page.getByText(newEmail)).toBeVisible({ timeout: 15_000 })
   })
 
+  test('lists customers by name and adds a new one from the picker', async ({ page }) => {
+    const creds = await login(page)
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-guest-${Date.now()}@example.com`,
+    })
+    const stamp = Date.now()
+    const email = `e2e-new-customer-${stamp}@example.com`
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    const picker = dialog.locator('#order-customer-picker')
+
+    // Existing customers read by name, with the email under it.
+    await picker.fill('Promo')
+    const promo = page.getByRole('option').filter({ hasText: 'Promo Customer' })
+    await expect(promo).toBeVisible({ timeout: 15_000 })
+    await expect(promo).toContainText(FIXTURE_PROMO_CUSTOMER_EMAIL)
+
+    // One not on file is created from the picker and chosen straight away.
+    await page.getByRole('button', { name: /^add new customer$/i }).click()
+    const sheet = page.getByRole('dialog', { name: /new customer/i })
+    await sheet.getByLabel(/^email$/i).fill(email)
+    await sheet.getByLabel(/^first name$/i).fill('Ada')
+    await sheet.getByLabel(/^last name$/i).fill(`Picker ${stamp}`)
+    await sheet.getByRole('button', { name: /^create customer$/i }).click()
+    await expect(sheet).toBeHidden({ timeout: 15_000 })
+    await expect(picker).toHaveValue(`Ada Picker ${stamp}`)
+
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: `Ada Picker ${stamp}`, exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('detaches the customer, leaving a guest order', async ({ page }) => {
     const creds = await login(page)
     const customers = await adminRequest<{ data: { id: string }[] }>(

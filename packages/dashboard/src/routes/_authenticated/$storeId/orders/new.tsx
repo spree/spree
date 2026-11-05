@@ -52,6 +52,8 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChannelSelect } from '../../../../components/spree/channel-select'
 import { CompanyComboboxOption } from '../../../../components/spree/company-combobox-option'
+import { CustomerComboboxOption } from '../../../../components/spree/customer-combobox-option'
+import { NewCustomerSheet } from '../../../../components/spree/customers/new-customer-sheet'
 import { useChannels } from '../../../../hooks/use-channels'
 import { companyAutocompleteProps, useCompanyAddresses } from '../../../../hooks/use-companies'
 import { customerAutocompleteProps, useCustomerAddresses } from '../../../../hooks/use-customers'
@@ -81,6 +83,7 @@ function NewOrderPage() {
   // (Customer record, picked Variants) and bespoke widgets (ResourceCombobox,
   // typeahead button list, items table), not standard form fields.
   const [customer, setCustomer] = useState<Customer | null>(null)
+  const [creatingCustomer, setCreatingCustomer] = useState(false)
   const [company, setCompany] = useState<Company | null>(null)
   const [items, setItems] = useState<PendingItem[]>([])
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
@@ -330,15 +333,27 @@ function NewOrderPage() {
                             clearPickedAddresses()
                           })
                       }}
-                      renderOption={(c) => (
-                        <div>
-                          <div className="font-medium">{c.email}</div>
-                          {(c.first_name || c.last_name) && (
-                            <div className="text-xs text-muted-foreground">{c.full_name}</div>
-                          )}
-                        </div>
-                      )}
+                      renderOption={(c) => <CustomerComboboxOption customer={c} />}
+                      action={{
+                        label: t('admin.customers.autocomplete.add_new'),
+                        onSelect: () => setCreatingCustomer(true),
+                      }}
                     />
+                    {creatingCustomer && (
+                      <NewCustomerSheet
+                        open
+                        onOpenChange={setCreatingCustomer}
+                        // Picked as soon as it exists, through the same step as
+                        // choosing one from the list.
+                        onCreated={(created) => {
+                          setCreatingCustomer(false)
+                          changeSalesContext(() => {
+                            setCustomer(created)
+                            clearPickedAddresses()
+                          })
+                        }}
+                      />
+                    )}
                   </Field>
                   {!customer && (
                     <Field>

@@ -21,6 +21,8 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { customerAutocompleteProps } from '../../../hooks/use-customers'
 import { useOrderMutation } from '../../../hooks/use-order'
+import { CustomerComboboxOption } from '../customer-combobox-option'
+import { NewCustomerSheet } from '../customers/new-customer-sheet'
 
 /**
  * Who the order belongs to: an existing customer, or a guest known only by
@@ -42,6 +44,7 @@ export function OrderCustomerDialog({
   // created, so a newly picked customer's email is sent alongside it —
   // otherwise notifications keep going to the previous customer.
   const [customerEmail, setCustomerEmail] = useState<string | undefined>()
+  const [creatingCustomer, setCreatingCustomer] = useState(false)
   const form = useForm<{ email: string }>({ defaultValues: { email: order.email ?? '' } })
 
   const mutation = useOrderMutation(
@@ -101,14 +104,11 @@ export function OrderCustomerDialog({
                     setCustomerId(id)
                     setCustomerEmail(customer?.email ?? undefined)
                   }}
-                  renderOption={(customer) => (
-                    <div>
-                      <div className="font-medium">{customer.email}</div>
-                      {(customer.first_name || customer.last_name) && (
-                        <div className="text-xs text-muted-foreground">{customer.full_name}</div>
-                      )}
-                    </div>
-                  )}
+                  renderOption={(customer) => <CustomerComboboxOption customer={customer} />}
+                  action={{
+                    label: t('admin.customers.autocomplete.add_new'),
+                    onSelect: () => setCreatingCustomer(true),
+                  }}
                 />
                 <FieldDescription>
                   {t('admin.orders.detail.customer_edit.customer_help')}
@@ -140,6 +140,20 @@ export function OrderCustomerDialog({
             </Button>
           </DialogFooter>
         </form>
+        {/* Inside the content, not beside the dialog: Base UI keeps a dialog
+              open under a layer nested in it, but closes it for one outside. */}
+        {creatingCustomer && (
+          <NewCustomerSheet
+            open
+            onOpenChange={setCreatingCustomer}
+            // Picked as soon as it exists, so the merchant only has to save.
+            onCreated={(created) => {
+              setCustomerId(created.id)
+              setCustomerEmail(created.email ?? undefined)
+              setCreatingCustomer(false)
+            }}
+          />
+        )}
       </DialogContent>
     </Dialog>
   )

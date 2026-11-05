@@ -630,7 +630,8 @@
       "autocomplete": {
         "empty": "没有匹配的客户",
         "empty_for_company": "没有客户可为此公司采购",
-        "placeholder": "搜索客户…"
+        "placeholder": "搜索客户…",
+        "add_new": "添加新客户"
       },
       "columns": {
         "companies": "公司",

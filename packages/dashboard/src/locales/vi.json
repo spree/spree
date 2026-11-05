@@ -632,7 +632,8 @@
       "autocomplete": {
         "empty": "Không có khách hàng nào phù hợp",
         "empty_for_company": "Không có khách hàng nào có thể mua cho công ty này",
-        "placeholder": "Tìm kiếm khách hàng…"
+        "placeholder": "Tìm kiếm khách hàng…",
+        "add_new": "Thêm khách hàng mới"
       },
       "columns": {
         "companies": "Công ty",

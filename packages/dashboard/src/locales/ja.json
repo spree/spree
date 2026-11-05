@@ -632,7 +632,8 @@
       "autocomplete": {
         "empty": "一致する顧客はいません",
         "empty_for_company": "この会社のために購入できる顧客はいません",
-        "placeholder": "顧客を検索…"
+        "placeholder": "顧客を検索…",
+        "add_new": "新しい顧客を追加"
       },
       "columns": {
         "companies": "会社",

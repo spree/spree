@@ -4085,7 +4085,8 @@
       "autocomplete": {
         "empty": "No hay clientes que coincidan",
         "empty_for_company": "Ningún cliente puede comprar para esta empresa",
-        "placeholder": "Buscar clientes…"
+        "placeholder": "Buscar clientes…",
+        "add_new": "Añadir nuevo cliente"
       },
       "columns": {
         "companies": "Empresas",

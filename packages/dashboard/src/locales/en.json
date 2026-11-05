@@ -632,7 +632,8 @@
       "autocomplete": {
         "empty": "No customers match",
         "empty_for_company": "No customers can buy for this company",
-        "placeholder": "Search customers…"
+        "placeholder": "Search customers…",
+        "add_new": "Add new customer"
       },
       "columns": {
         "companies": "Companies",

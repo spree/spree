@@ -33,7 +33,12 @@ export function customerAutocompleteProps(queryKey: string, companyId?: string |
   return {
     queryKey: companyId ? `${queryKey}:${companyId}` : queryKey,
     search: (q: string) =>
-      adminClient.customers.list({ search: q, limit: 100, fields: ['email'], ...scope }),
+      adminClient.customers.list({
+        search: q,
+        limit: 100,
+        fields: ['email', 'first_name', 'last_name', 'full_name'],
+        ...scope,
+      }),
     // Deliberately unscoped, where `search` is not: this resolves ids the form
     // already holds into labels, and offers nothing selectable. Narrowing it to
     // the company would make a selection taken before the company changed
@@ -41,7 +46,9 @@ export function customerAutocompleteProps(queryKey: string, companyId?: string |
     // gain — the scope that matters is on `search`, which decides what can be
     // picked.
     hydrate: (ids: string[]) => adminClient.customers.list({ id_in: ids, limit: ids.length }),
-    getOptionLabel: (c: Customer) => c.email ?? c.id,
+    // The name when there is one, as a merchant knows their customers by it.
+    getOptionLabel: (c: Customer) =>
+      c.first_name || c.last_name ? c.full_name : (c.email ?? c.id),
     placeholder: i18n.t('admin.customers.autocomplete.placeholder'),
     emptyText: companyId
       ? i18n.t('admin.customers.autocomplete.empty_for_company')

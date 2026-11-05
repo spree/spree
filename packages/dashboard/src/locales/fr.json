@@ -632,7 +632,8 @@
       "autocomplete": {
         "empty": "Aucun client correspondant",
         "empty_for_company": "Aucun client ne peut acheter pour cette entreprise",
-        "placeholder": "Rechercher des clients…"
+        "placeholder": "Rechercher des clients…",
+        "add_new": "Ajouter un nouveau client"
       },
       "columns": {
         "companies": "Entreprises",

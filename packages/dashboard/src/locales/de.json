@@ -632,7 +632,8 @@
       "autocomplete": {
         "empty": "Keine passenden Kunden",
         "empty_for_company": "Keine Kunden können für diese Firma einkaufen",
-        "placeholder": "Kunden suchen…"
+        "placeholder": "Kunden suchen…",
+        "add_new": "Neuen Kunden hinzufügen"
       },
       "columns": {
         "companies": "Firmen",
