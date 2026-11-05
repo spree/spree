@@ -5,7 +5,7 @@ module Spree
     # own markets.
     class MarketRule < Spree::PaymentMethodRule
       preference :market_ids, :array, of: :id, model: 'Spree::Market', default: [],
-                 scope: ->(rule) { rule.store.markets }
+                                      scope: ->(rule) { rule.store.markets }
 
       def eligible?(purchase)
         return true if preferred_market_ids.empty?

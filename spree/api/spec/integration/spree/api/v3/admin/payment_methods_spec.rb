@@ -89,7 +89,10 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns every registered payment provider with the JSON Schema of its `preferences`. `installed_count` is how many payment methods of that provider the store already has; a store may run several, one per provider account, each scoped with rules. `installed` is deprecated: use `installed_count`. Removed in 6.2.'
+      description 'Returns every registered payment provider with the JSON Schema of its `preferences`. ' \
+                  '`installed_count` is how many payment methods of that provider the store already has; ' \
+                  'a store may run several, one per provider account, each scoped with rules. ' \
+                  '`installed` is deprecated: use `installed_count`. Removed in 6.2.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/types'
@@ -206,7 +209,9 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns the conditions a payment method must meet to be offered at storefront checkout, such as a channel, a market or an order total range. Every active rule must pass; a method with no rules is offered everywhere. Payments taken in the dashboard ignore rules.'
+      description 'Returns the conditions a payment method must meet to be offered at storefront checkout, ' \
+                  'such as a channel, a market or an order total range. Every active rule must pass; ' \
+                  'a method with no rules is offered everywhere. Payments taken in the dashboard ignore rules.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/rules-list'
@@ -327,7 +332,9 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Enumerates the registered payment method rule kinds with their names, descriptions and preference schemas, for building an "Add condition" picker. Plugins extend the list by registering `Spree::PaymentMethodRule` subclasses in `Spree.payment_method_rules`.'
+      description 'Enumerates the registered payment method rule kinds with their names, descriptions and preference schemas, ' \
+                  'for building an "Add condition" picker. Plugins extend the list by registering ' \
+                  '`Spree::PaymentMethodRule` subclasses in `Spree.payment_method_rules`.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/rule-types'
@@ -340,7 +347,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
-          expect(data.map { |type| type['type'] }).to include('channel_rule', 'market_rule', 'order_total_rule')
+          expect(data.pluck('type')).to include('channel_rule', 'market_rule', 'order_total_rule')
           expect(data.first).to include('label', 'description', 'schema')
         end
       end

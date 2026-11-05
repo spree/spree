@@ -31,8 +31,9 @@ module Spree
             body.attribute :preferences, :hash,
               description: "Values for the provider's preference schema, from the payment method types endpoint."
             body.attribute :rules, :array,
-              permit: false,
-              description: 'Conditions that decide whether the method is offered at storefront checkout. Replaces the full set: omitted rules are removed.' do |rule|
+                           permit: false,
+                           description: 'Conditions that decide whether the method is offered at storefront checkout. ' \
+                                        'Replaces the full set: omitted rules are removed.' do |rule|
               rule.attribute :id, :id
               rule.attribute :type, :string, description: 'A rule kind from the payment method rule types endpoint.'
               rule.attribute :active, :boolean

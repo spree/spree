@@ -15,10 +15,10 @@ module Spree
 
             request_params :payment_method_rule do |body|
               body.attribute :type, :string,
-                required: true,
-                only: :create,
-                example: 'channel_rule',
-                description: 'A rule kind from the payment method rule types endpoint.'
+                             required: true,
+                             only: :create,
+                             example: 'channel_rule',
+                             description: 'A rule kind from the payment method rule types endpoint.'
               body.attribute :active, :boolean, description: 'Defaults to true on create.'
               body.attribute :preferences, :hash, description: "Values for the rule kind's preference schema."
             end

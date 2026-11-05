@@ -39,7 +39,7 @@ module SpreeStripe
     def stored_preference(name)
       return super unless name.to_sym == :publishable_key
 
-      super(name) { nil }.presence || legacy_publishable_key || yield
+      super { nil }.presence || legacy_publishable_key || yield
     end
 
     def self.logo_url

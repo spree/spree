@@ -185,7 +185,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['rules'].map { |rule| rule['type'] }).to contain_exactly('company_rule', 'order_total_rule')
+      expect(json_response['rules'].pluck('type')).to contain_exactly('company_rule', 'order_total_rule')
       expect(company_rule.reload.active).to be(false)
     end
 

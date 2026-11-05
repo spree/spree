@@ -207,7 +207,6 @@ RSpec.describe Spree::Checkout::Requirements do
         a_hash_including(code: 'payment_method_unavailable')
       )
       payment.update_columns(status: 'checkout')
-
     end
   end
 

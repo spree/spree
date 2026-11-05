@@ -2,9 +2,15 @@ module Spree
   module Api
     module V3
       class PaymentMethodSerializer < BaseSerializer
-        typelize name: :string, description: [:string, nullable: true], type: [:string, comment: 'Payment method type. Built-in: check, store_credit, custom_payment_source_method, bogus (test only); payment provider gems register their own, for example stripe.'],
+        typelize name: :string, description: [:string, nullable: true],
+                 type: [:string, comment: 'Payment method type. Built-in: check, store_credit, custom_payment_source_method, bogus (test only); ' \
+                                          'payment provider gems register their own, for example stripe.'],
                  session_required: :boolean, source_required: :boolean,
-                 public_preferences: ['Record<string, unknown>', comment: 'Configuration the storefront needs to load this method, such as a Stripe publishable key. Each provider decides which of its preferences are public; most have none.']
+                 public_preferences: [
+                   'Record<string, unknown>',
+                   comment: 'Configuration the storefront needs to load this method, such as a Stripe publishable key. ' \
+                            'Each provider decides which of its preferences are public; most have none.'
+                 ]
 
         attributes :name, :description
 
