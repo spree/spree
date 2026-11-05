@@ -7,16 +7,13 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   percentToFraction,
+  SettingsSection,
   useStore,
 } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
-  Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   ErrorState,
   Field,
   FieldDescription,
@@ -210,13 +207,10 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
               {/* Money first: paying sellers is what an operator configures on
                   day one, and the rest of the page is how they join and what
                   they hear from you. */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.marketplace.payouts_title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.pages.settings.marketplace.payouts_description')}
-                  </CardDescription>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.payouts_title')}
+                description={t('admin.pages.settings.marketplace.payouts_description')}
+              >
                 <CardContent>
                   <FieldGroup>
                     <Controller
@@ -327,15 +321,12 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                     </Field>
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.marketplace.admission_title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.pages.settings.marketplace.admission_description')}
-                  </CardDescription>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.admission_title')}
+                description={t('admin.pages.settings.marketplace.admission_description')}
+              >
                 <CardContent>
                   <FieldGroup>
                     <SwitchField
@@ -354,15 +345,12 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                     />
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.marketplace.seller_files_title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.pages.settings.marketplace.seller_files_description')}
-                  </CardDescription>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.seller_files_title')}
+                description={t('admin.pages.settings.marketplace.seller_files_description')}
+              >
                 <CardContent>
                   <FieldGroup>
                     <SwitchField
@@ -406,12 +394,9 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                     )}
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.marketplace.communication_title')}</CardTitle>
-                </CardHeader>
+              <SettingsSection title={t('admin.pages.settings.marketplace.communication_title')}>
                 <CardContent>
                   <FieldGroup>
                     <SwitchField
@@ -423,14 +408,9 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                     />
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    {t('admin.pages.settings.marketplace.commission_tax_title')}
-                  </CardTitle>
-                </CardHeader>
+              <SettingsSection title={t('admin.pages.settings.marketplace.commission_tax_title')}>
                 <CardContent>
                   <FieldGroup>
                     <Field>
@@ -460,7 +440,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                     </Field>
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
             </>
           }
         />

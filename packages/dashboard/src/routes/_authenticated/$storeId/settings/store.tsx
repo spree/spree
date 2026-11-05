@@ -18,17 +18,14 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   reconcileStoreDefaultLocale,
+  SettingsSection,
   Slot,
   useAuth,
   useStore,
   useSwitchAdminLocale,
 } from '@spree/dashboard-core'
 import {
-  Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   ErrorState,
   ExternalLink,
   Field,
@@ -434,10 +431,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   {errors.root.message}
                 </p>
               )}
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_general')}</CardTitle>
-                </CardHeader>
+              <SettingsSection title={t('admin.pages.settings.store.tab_general')}>
                 <CardContent>
                   <FieldGroup>
                     <Field>
@@ -453,13 +447,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     </Field>
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.store.seo.title')}</CardTitle>
-                  <CardDescription>{t('admin.store.seo.description')}</CardDescription>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.store.seo.title')}
+                description={t('admin.store.seo.description')}
+              >
                 <CardContent>
                   <FieldGroup>
                     <Field>
@@ -491,17 +484,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     </Field>
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
               <ResourceTranslationsCard
                 resourceType="store"
                 resourceId={store.id}
                 fields={SEO_TRANSLATABLE_FIELDS}
               />
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_standards')}</CardTitle>
-                </CardHeader>
+              <SettingsSection title={t('admin.pages.settings.store.tab_standards')}>
                 <CardContent>
                   <FieldGroup>
                     <SelectField
@@ -536,12 +526,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     />
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_storefront_access')}</CardTitle>
-                </CardHeader>
+              <SettingsSection title={t('admin.pages.settings.store.tab_storefront_access')}>
                 <CardContent>
                   <FieldGroup>
                     <SelectField
@@ -584,11 +571,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     />
                   </FieldGroup>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_addresses')}</CardTitle>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection title={t('admin.pages.settings.store.tab_addresses')}>
                 <CardContent>
                   <FieldGroup>
                     <SwitchField
@@ -607,11 +591,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     />
                   </FieldGroup>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_order_numbers')}</CardTitle>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection title={t('admin.pages.settings.store.tab_order_numbers')}>
                 <CardContent>
                   <FieldGroup>
                     <SelectField
@@ -676,12 +657,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     </Field>
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_payments')}</CardTitle>
-                </CardHeader>
+              <SettingsSection title={t('admin.pages.settings.store.tab_payments')}>
                 <CardContent>
                   <FieldGroup>
                     <Controller
@@ -706,11 +684,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     />
                   </FieldGroup>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_inventory')}</CardTitle>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection title={t('admin.pages.settings.store.tab_inventory')}>
                 <CardContent>
                   <FieldGroup>
                     <SwitchField
@@ -753,14 +728,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     </Field>
                   </FieldGroup>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.fields.store.data_sources.pricing.title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.fields.store.data_sources.pricing.description')}
-                  </CardDescription>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection
+                title={t('admin.fields.store.data_sources.pricing.title')}
+                description={t('admin.fields.store.data_sources.pricing.description')}
+              >
                 <CardContent>
                   <FieldGroup>
                     <SelectField
@@ -791,14 +763,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     </ExternalLink>
                   </div>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.fields.store.data_sources.inventory.title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.fields.store.data_sources.inventory.description')}
-                  </CardDescription>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection
+                title={t('admin.fields.store.data_sources.inventory.title')}
+                description={t('admin.fields.store.data_sources.inventory.description')}
+              >
                 <CardContent>
                   <FieldGroup>
                     <SelectField
@@ -826,11 +795,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     </ExternalLink>
                   </div>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_catalog')}</CardTitle>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection title={t('admin.pages.settings.store.tab_catalog')}>
                 <CardContent>
                   <FieldGroup>
                     <SwitchField
@@ -856,11 +822,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     />
                   </FieldGroup>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_downloads')}</CardTitle>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection title={t('admin.pages.settings.store.tab_downloads')}>
                 <CardContent>
                   <FieldGroup>
                     <p className="text-muted-foreground text-sm">
@@ -952,7 +915,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     )}
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
               <DraftCustomFieldsCard draft={customFields} />
               <Slot name="store.form_main" context={{ store }} />
             </>

@@ -123,14 +123,16 @@ test.describe('seller panel — team', () => {
 })
 
 test.describe('seller panel — settings', () => {
+  // The settings index is the phone and tablet way into settings; a desktop
+  // screen goes straight to a section, with the rail beside it.
   test('each settings card opens its page', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
     const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
     await page.goto(`${home}/settings`)
 
     await page
       .getByRole('main')
       .getByRole('link', { name: /^policies/i })
-      .last()
       .click({ timeout: 15_000 })
     await expect(page).toHaveURL(/\/settings\/policies/)
     await expect(page.getByRole('heading', { name: /^policies$/i, level: 1 })).toBeVisible({

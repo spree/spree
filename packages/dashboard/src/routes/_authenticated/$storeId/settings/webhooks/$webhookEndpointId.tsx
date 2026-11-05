@@ -12,6 +12,7 @@ import {
   type ResourceSearch,
   ResourceTable,
   resourceSearchSchema,
+  SettingsSection,
   Slot,
   Subject,
 } from '@spree/dashboard-core'
@@ -470,10 +471,7 @@ function DetailsCard({ endpoint }: { endpoint: WebhookEndpoint }) {
   const { t } = useTranslation()
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.settings.webhooks.detail.details_title')}</CardTitle>
-      </CardHeader>
+    <SettingsSection title={t('admin.pages.settings.webhooks.detail.details_title')}>
       <CardContent className="flex flex-col divide-y divide-border p-0">
         <DetailRow
           label={t('admin.pages.settings.webhooks.detail.subscriptions')}
@@ -500,7 +498,7 @@ function DetailsCard({ endpoint }: { endpoint: WebhookEndpoint }) {
           value={<RelativeTime iso={endpoint.updated_at} />}
         />
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 

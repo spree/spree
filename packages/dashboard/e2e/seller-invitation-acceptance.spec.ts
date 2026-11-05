@@ -180,10 +180,13 @@ test.describe('seller invitation lifecycle', () => {
       // The settings rail is shared from dashboard-core, whose strings the
       // panel has to carry too — keys defined only in the operator's bundle
       // render as their own name here.
+      // On a desktop screen the settings index hands over to the first section
+      // the seller can open, with the rail beside it.
       await inviteePage.goto(`${SELLER_PANEL}${new URL(inviteePage.url()).pathname}/settings`)
-      await expect(inviteePage.getByRole('heading', { name: /^settings$/i })).toBeVisible({
-        timeout: 20_000,
-      })
+      await expect(inviteePage).toHaveURL(/\/settings\/.+/, { timeout: 20_000 })
+      await expect(
+        inviteePage.getByRole('complementary', { name: /settings/i }).getByText(/^settings$/i),
+      ).toBeVisible({ timeout: 20_000 })
       await expect(inviteePage.getByText(/admin\.settings_page/)).toHaveCount(0)
     } finally {
       await inviteeContext.close()

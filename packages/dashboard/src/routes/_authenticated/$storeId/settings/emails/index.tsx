@@ -5,16 +5,13 @@ import {
   ImageUploadField,
   mapSpreeErrorsToForm,
   PageHeader,
+  SettingsSection,
   Subject,
   signedIdParam,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   ColorPicker,
   ErrorState,
   Field,
@@ -182,10 +179,7 @@ function EmailSettingsForm({ store }: { store: Store }) {
               </p>
             )}
 
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('admin.pages.settings.emails.section_delivery')}</CardTitle>
-              </CardHeader>
+            <SettingsSection title={t('admin.pages.settings.emails.section_delivery')}>
               <CardContent>
                 <Field>
                   <div className="flex items-start justify-between gap-4">
@@ -211,14 +205,11 @@ function EmailSettingsForm({ store }: { store: Store }) {
                   </div>
                 </Field>
               </CardContent>
-            </Card>
+            </SettingsSection>
 
             {sendConsumerEmails && (
               <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('admin.pages.settings.emails.section_addresses')}</CardTitle>
-                  </CardHeader>
+                <SettingsSection title={t('admin.pages.settings.emails.section_addresses')}>
                   <CardContent>
                     <FieldGroup>
                       <Field>
@@ -275,7 +266,7 @@ function EmailSettingsForm({ store }: { store: Store }) {
                       </Field>
                     </FieldGroup>
                   </CardContent>
-                </Card>
+                </SettingsSection>
 
                 <BrandingCard form={form} logoUrl={store.mailer_logo_url} />
               </>
@@ -335,11 +326,10 @@ function BrandingCard({
   }))
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.settings.emails.branding.title')}</CardTitle>
-        <CardDescription>{t('admin.pages.settings.emails.branding.description')}</CardDescription>
-      </CardHeader>
+    <SettingsSection
+      title={t('admin.pages.settings.emails.branding.title')}
+      description={t('admin.pages.settings.emails.branding.description')}
+    >
       <CardContent className="grid gap-6 lg:grid-cols-2">
         <FieldGroup>
           <LogoField form={form} initialLogoUrl={logoUrl} />
@@ -398,7 +388,7 @@ function BrandingCard({
         </FieldGroup>
         {permissions.can('update', Subject.EmailTemplate) && <BrandingPreview form={form} />}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 

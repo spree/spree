@@ -11,6 +11,7 @@ import {
   getInitials,
   mapSpreeErrorsToForm,
   PageHeader,
+  SettingsSection,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -20,10 +21,7 @@ import {
   AvatarImage,
   Badge,
   Button,
-  Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Checkbox,
   Dialog,
   DialogBody,
@@ -161,10 +159,7 @@ function StaffSettingsPage() {
 function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean }) {
   const { t } = useTranslation()
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.staff.members_section')}</CardTitle>
-      </CardHeader>
+    <SettingsSection title={t('admin.pages.staff.members_section')}>
       <CardContent className="p-0">
         {loading ? (
           <div className="flex flex-col gap-3 p-4">
@@ -200,7 +195,7 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
           </Table>
         )}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 
@@ -429,10 +424,7 @@ function PendingInvitationsCard({
 }) {
   const { t } = useTranslation()
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.staff.invitations_section')}</CardTitle>
-      </CardHeader>
+    <SettingsSection title={t('admin.pages.staff.invitations_section')}>
       <CardContent className="p-0">
         {loading ? (
           <div className="p-4">
@@ -456,7 +448,7 @@ function PendingInvitationsCard({
           </Table>
         )}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 
