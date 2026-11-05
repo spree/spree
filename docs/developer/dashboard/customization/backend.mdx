@@ -17,7 +17,7 @@ The SPA boots a single `adminClient` instance and exposes it from `@spree/dashbo
 ```ts
 import { adminClient } from '@spree/dashboard'
 
-await adminClient.products.list({ filter: { name_cont: 'shirt' } })
+await adminClient.products.list({ name_cont: 'shirt' })
 await adminClient.products.get('prod_86Rf07xd4z', { expand: ['variants'] })
 await adminClient.products.create({ name: 'New product' })
 await adminClient.products.update('prod_86Rf07xd4z', { name: 'Renamed' })

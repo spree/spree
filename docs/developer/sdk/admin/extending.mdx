@@ -48,20 +48,20 @@ await client.request<void>('DELETE', `/brands/${created.id}`)
 
 ## Ransack filters and pagination
 
-Standard list params work — pass them as the third argument's `params`:
+`client.request` sends `params` as the query string as they are, so write filters the way the Admin API reads them, as `q[<attribute>_<predicate>]`:
 
 ```typescript
 const result = await client.request<PaginatedResponse<Brand>>('GET', '/brands', {
   params: {
     page: 2,
     limit: 25,
-    filter: { name_cont: 'nike' },
+    'q[name_cont]': 'nike',
     sort: '-created_at',
   },
 })
 ```
 
-The SDK transforms `filter`/`sort` into the Ransack-flavored query string the Admin API expects (`q[name_cont]=nike&q[s]=created_at%20desc`) automatically — same behavior as `client.products.list({ filter: ... })`.
+The built-in `list` methods take filters as plain keys and wrap them for you — `client.products.list({ name_cont: 'nike' })` sends `q[name_cont]=nike`. To get the same in a wrapper of your own, define it as an extension (below): its `listParams` is that transform.
 
 ## Shipping a client for an extension
 
