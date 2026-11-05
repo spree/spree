@@ -1026,7 +1026,7 @@ A collection's products come from three sources, which can be combined:
 
 `GET /api/v3/admin/collection_rules/types` lists every rule type with the relations it accepts, including types an extension registers. A `category`, `product_type` or `seller` rule takes the record's prefixed id as its `value`. A `custom_field` rule works on product custom fields whose definition has `collection_condition` set.
 
-`price` and `sale` rules compare prices in one currency: the rule's `currency`, or the store's default currency when it is empty. A collection has one set of members for every market, so "Under $50" means $50 in that currency everywhere. To show different price bands per market, create one collection per market and publish each on the matching channel.
+`price` and `sale` rules compare prices in one currency: the rule's `currency`, or the store's default currency when it is empty. A collection has one set of members for every market, so "Under $50" means $50 in that currency everywhere. For different price bands per market, create one collection per market, each with a rule in that market's currency, and link each from the storefront pages of its market. Channels and markets are separate: publishing a collection on a channel does not limit it to a market.
 
 `products_count` counts every member of the collection. The product listing's `meta.count` counts only what a shopper in the current market can buy.
 
@@ -1051,7 +1051,7 @@ await adminClient.collections.exclusions.create(collection.id, { product_id: 'pr
 
 ```bash cURL
 curl -X POST 'https://api.mystore.com/api/v3/admin/collections' \
-  -H 'Authorization: Bearer sk_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "name": "Under $50",
@@ -1063,7 +1063,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/collections' \
   }'
 
 curl -X POST 'https://api.mystore.com/api/v3/admin/collections/coll_abc123/exclusions' \
-  -H 'Authorization: Bearer sk_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "product_id": "prod_def456" }'
 ```
@@ -1090,7 +1090,7 @@ await adminClient.collections.publications.create('coll_abc123', { channel_id: '
 
 ```bash cURL
 curl -X POST 'https://api.mystore.com/api/v3/admin/collections/coll_abc123/publications' \
-  -H 'Authorization: Bearer sk_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "channel_id": "ch_pos", "published_at": "2026-11-09T08:00:00Z" }'
 ```

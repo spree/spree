@@ -425,6 +425,9 @@ function CustomFieldValueField({
               { ...preferences, custom_field_definition_id: next ?? undefined },
               { shouldDirty: true },
             )
+            // A value typed for the previous field means nothing for this one.
+            if (next !== definitionId)
+              form.setValue(`rules.${index}.value`, '', { shouldDirty: true })
           }}
         />
       </Field>
